@@ -1,0 +1,24 @@
+video {
+	width: 100%;
+	z-index: 0;
+}
+.videoView {
+	width: 33%;
+	float: left;
+}
+.videoContainer {
+	width: 33%;
+	float: left;
+}
+.nameIndicator {
+	position: relative;
+	z-index: 5;
+	color: white;
+	width: 100%;
+	text-align: center;
+	float: left;
+	top: -50px;
+}
+.nameIndicator button {
+	opacity: 0.9;
+}
