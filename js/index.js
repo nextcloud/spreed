@@ -56,6 +56,7 @@ $(window).load(function() {
 	$(window).on('hashchange', function() {
 		OCA.SpreedMe.Rooms.join(window.location.hash.substring(1));
 		$('#emptycontent').hide();
+		$('.videoView').addClass('hidden');
 		$('#app-content').addClass('icon-loading');
 	});
 
