@@ -28,6 +28,7 @@
 		join: function(roomId) {
 			currentRoomId = roomId;
 			webrtc.joinRoom(roomId);
+			OCA.SpreedMe.Rooms.ping();
 		},
 		currentRoom: function() {
 			return currentRoomId;
@@ -36,6 +37,14 @@
 			return $.ajax({
 				url: OC.generateUrl('/apps/spreedme/api/room/{roomId}/peers', {roomId: roomId})
 			});
+		},
+		ping: function() {
+			$.post(
+				OC.generateUrl('/apps/spreedme/api/ping'),
+				{
+					currentRoom: OCA.SpreedMe.Rooms.currentRoom()
+				}
+			);
 		}
 	}
 })(OCA);

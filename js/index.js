@@ -14,12 +14,7 @@ $(window).load(function() {
 	// Send a ping to the server all 5 seconds to ensure that the connection is
 	// still alive.
 	setInterval(function() {
-		$.post(
-			OC.generateUrl('/apps/spreedme/api/ping'),
-			{
-				currentRoom: OCA.SpreedMe.Rooms.currentRoom()
-			}
-		);
+		OCA.SpreedMe.Rooms.ping();
 	}, 5000);
 
 	// If page is opened already with a hash in the URL redirect to plain URL
