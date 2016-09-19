@@ -6,7 +6,7 @@
 	OCA.SpreedMe.Rooms = {
 		create: function(roomName) {
 			$.post(
-				OC.generateUrl('/apps/spreedme/api/room'),
+				OC.generateUrl('/apps/spreed/api/room'),
 				{
 					roomName: roomName
 				}
@@ -14,7 +14,7 @@
 		},
 		list: function() {
 			$.ajax({
-				url: OC.generateUrl('/apps/spreedme/api/room'),
+				url: OC.generateUrl('/apps/spreed/api/room'),
 				success: function(data) {
 					$('#app-navigation ul').html('');
 					data.forEach(function(element) {
@@ -35,12 +35,12 @@
 		},
 		peers: function(roomId) {
 			return $.ajax({
-				url: OC.generateUrl('/apps/spreedme/api/room/{roomId}/peers', {roomId: roomId})
+				url: OC.generateUrl('/apps/spreed/api/room/{roomId}/peers', {roomId: roomId})
 			});
 		},
 		ping: function() {
 			$.post(
-				OC.generateUrl('/apps/spreedme/api/ping'),
+				OC.generateUrl('/apps/spreed/api/ping'),
 				{
 					currentRoom: OCA.SpreedMe.Rooms.currentRoom()
 				}

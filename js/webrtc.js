@@ -12,7 +12,7 @@ webrtc = new SimpleWebRTC({
 function openEventSource() {
 
 // Connect to the messages endpoint and pull for new messages
-	var messageEventSource = new OC.EventSource(OC.generateUrl('/apps/spreedme/messages'));
+	var messageEventSource = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
 	var previousUsersInRoom = [];
 	Array.prototype.diff = function(a) {
 		return this.filter(function(i) {return a.indexOf(i) < 0;});

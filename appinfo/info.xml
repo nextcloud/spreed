@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <info>
-	<id>spreedme</id>
-	<name>Spreed.Me</name>
+	<id>spreed</id>
+	<name>Spreed.ME video calls</name>
 	<description>Voice over IP conferencing using WebRTC</description>
-	<licence>AGPL</licence>
-	<author>Lukas Reschke</author>
+	<licence>AGPLv3+</licence>
+	<author>Lukas Reschke, Jan-Christoph Borchardt</author>
 	<default_enable/>
 	<version>1.0.6</version>
 	<dependencies>
 		<owncloud min-version="9.1" max-version="9.2" />
 	</dependencies>
-	<namespace>SpreedMe</namespace>
+	<namespace>Spreed</namespace>
 </info>

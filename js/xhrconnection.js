@@ -6,7 +6,7 @@
 		on: function(ev, fn) {
 			var self = this;
 
-			$.post(OC.generateUrl('/apps/spreedme/signalling'), {ev: ev}, function(data) {
+			$.post(OC.generateUrl('/apps/spreed/signalling'), {ev: ev}, function(data) {
 				self.emit(fn, data);
 			});
 		},
@@ -30,7 +30,7 @@
 						// their signalling information.
 						var callback = arguments[2];
 						$.post(
-							OC.generateUrl('/apps/spreedme/api/room/{roomId}/join', {roomId: data}),
+							OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: data}),
 							function() {
 
 								OCA.SpreedMe.Rooms.peers(data).then(function(result) {
@@ -52,7 +52,7 @@
 						);
 						break;
 					case 'message':
-						$.post(OC.generateUrl('/apps/spreedme/signalling'), {ev: fn, fn: JSON.stringify(data)});
+						$.post(OC.generateUrl('/apps/spreed/signalling'), {ev: fn, fn: JSON.stringify(data)});
 						break;
 				}
 			}

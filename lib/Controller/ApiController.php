@@ -21,7 +21,7 @@
  *
  */
 
-namespace OCA\SpreedMe\Controller;
+namespace OCA\Spreed\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
