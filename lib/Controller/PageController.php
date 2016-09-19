@@ -70,7 +70,9 @@ class PageController extends Controller {
 			'sessionId' => $this->userId,
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
-		$csp = (new ContentSecurityPolicy())->addAllowedConnectDomain('*');
+		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('*');
+		$csp->addAllowedMediaDOmain('blob:');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
