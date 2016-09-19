@@ -2,9 +2,9 @@
 /** @var \OCP\IL10N $l */
 /** @var array $_ */
 
-style('spreedme', 'style');
+style('spreed', 'style');
 script(
-	'spreedme',
+	'spreed',
 	[
 		'simplewebrtc',
 		'xhrconnection',
