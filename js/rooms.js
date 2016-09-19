@@ -18,7 +18,7 @@
 				success: function(data) {
 					$('#app-navigation ul').html('');
 					data.forEach(function(element) {
-						$('#app-navigation ul').append('<li><a href="#'+escapeHTML(element['id'])+'">'+escapeHTML(element['name'])+' (' + escapeHTML(element['count']) + ')</a></li>');
+						$('#app-navigation ul').append('<li><a href="#'+escapeHTML(element['id'])+'">'+escapeHTML(element['name'])+' <span class="utils">' + escapeHTML(element['count']) + '</span></a></li>');
 					});
 					$('#app-navigation').removeClass('icon-loading');
 				}

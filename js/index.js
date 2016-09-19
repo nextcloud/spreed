@@ -26,7 +26,7 @@ $(window).load(function() {
 	$('#hideVideo').click(function() {
 		if(videoHidden) {
 			webrtc.resumeVideo();
-			$(this).text('Pause video');
+			$(this).text('Disable video');
 			videoHidden = false;
 		} else {
 			webrtc.pauseVideo();
