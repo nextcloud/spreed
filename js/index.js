@@ -1,7 +1,7 @@
 var webrtc;
 $(window).load(function() {
 	// Create a new room
-	$('#oca-spreedme-add-room > input[type="submit"]').click(function() {
+	$('#oca-spreedme-add-room > button.icon-confirm').click(function() {
 		OCA.SpreedMe.Rooms.create($('#oca-spreedme-add-room > input[type="text"]').val());
 	});
 
