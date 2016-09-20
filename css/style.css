@@ -1,27 +1,55 @@
-.participants-2 {
-	background-color: red;
-}
 video {
 	width: 100%;
 	z-index: 0;
+	max-height: 100%;
 }
-.videoView {
-	width: 33%;
-	float: left;
-}
+
+.participants-1 .videoView,
 .videoContainer {
-	width: 33%;
-	float: left;
-}
-.nameIndicator {
 	position: relative;
+	width: 50%;
+	float: left;
+	border-radius: none;
+}
+
+.videoView {
+	position: absolute;
+	width: 33%;
+	right: 20px;
+	bottom: 20px;
+	z-index: 10;
+}
+.videoView video {
+	border-radius: 3px;
+}
+
+#app-content.participants-2 {
+	background-color: #000;
+}
+.participants-2 .videoContainer {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+.nameIndicator {
+	position: absolute;
+	bottom: 5%;
 	z-index: 5;
-	color: white;
+	color: #fff;
 	width: 100%;
 	text-align: center;
-	float: left;
-	top: -50px;
+	font-size: 16px;
 }
+
 .nameIndicator button {
-	opacity: 0.9;
+	background-color: transparent;
+	border: none;
+	width: 44px;
+	height: 44px;
+	background-size: 25px;
+}
+.nameIndicator button.audio-disabled,
+.nameIndicator button.video-disabled {
+	opacity: .5;
 }

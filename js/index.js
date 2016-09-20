@@ -26,11 +26,11 @@ $(window).load(function() {
 	$('#hideVideo').click(function() {
 		if(videoHidden) {
 			webrtc.resumeVideo();
-			$(this).text('Disable video');
+			$(this).data('title', 'Disable video').removeClass('video-disabled');
 			videoHidden = false;
 		} else {
 			webrtc.pauseVideo();
-			$(this).text('Enable video');
+			$(this).data('title', 'Enable video').addClass('video-disabled');
 			videoHidden = true;
 		}
 	});
@@ -38,11 +38,11 @@ $(window).load(function() {
 	$('#mute').click(function() {
 		if(audioMuted) {
 			webrtc.unmute();
-			$(this).text('Mute audio');
+			$(this).data('title', 'Mute audio').removeClass('audio-disabled');
 			audioMuted = false;
 		} else {
 			webrtc.mute();
-			$(this).text('Enable audio');
+			$(this).data('title', 'Enable audio').addClass('audio-disabled');
 			audioMuted = true;
 		}
 	});
