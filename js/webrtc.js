@@ -22,6 +22,8 @@ function openEventSource() {
 		users.forEach(function(user) {
 			currentUsersInRoom.push(user['userId']);
 		});
+		$('#app-content').attr('class','');
+		$('#app-content').addClass('participants-'+currentUsersInRoom.length);
 
 		var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
 		disconnectedUsers.forEach(function(user) {
