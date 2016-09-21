@@ -34,8 +34,8 @@ video {
 	z-index: 10;
 }
 .videoView #localVideo {
+	display: block;
 	border-top-right-radius: 3px;
-	margin-bottom: -6px;
 }
 
 .participants-1 #emptycontent {
