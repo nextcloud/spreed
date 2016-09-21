@@ -50,9 +50,9 @@ $(window).load(function() {
 	// If the hash changes a room gets joined
 	$(window).on('hashchange', function() {
 		OCA.SpreedMe.Rooms.join(window.location.hash.substring(1));
-		$('#emptycontent').hide();
-		$('.videoView').addClass('hidden');
-		$('#app-content').addClass('icon-loading');
 	});
+	if(window.location.hash.substring(1) === '') {
+		OCA.SpreedMe.Rooms.join();
+	}
 
 });

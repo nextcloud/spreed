@@ -9,6 +9,9 @@
 				OC.generateUrl('/apps/spreed/api/room'),
 				{
 					roomName: roomName
+				},
+				function(roomId) {
+					OCA.SpreedMe.Rooms.join(roomId);
 				}
 			);
 		},
@@ -23,9 +26,12 @@
 					$('#app-navigation').removeClass('icon-loading');
 				}
 			});
-
 		},
 		join: function(roomId) {
+			$('#emptycontent').hide();
+			$('.videoView').addClass('hidden');
+			$('#app-content').addClass('icon-loading');
+
 			currentRoomId = roomId;
 			webrtc.joinRoom(roomId);
 			OCA.SpreedMe.Rooms.ping();

@@ -64,12 +64,50 @@ class ApiController extends Controller {
 	}
 
 	/**
+	 * @return array
+	 */
+	private function getAllRooms() {
+		$qb = $this->dbConnection->getQueryBuilder();
+		return $qb->select('*')
+			->from('spreedme_rooms')
+			->execute()
+			->fetchAll();
+	}
+
+	/**
+	 * @param int $roomId
+	 */
+	private function deleteRoom($roomId) {
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->delete('spreedme_rooms')
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($roomId)))
+			->execute();
+	}
+
+	/**
+	 * Checks for all empty rooms and deletes them
+	 */
+	private function deleteEmptyRooms() {
+		$rooms = $this->getAllRooms();
+		foreach($rooms as $room) {
+			$activePeers = $this->getActivePeers($room['id']);
+			if(count($activePeers) === 0) {
+				//$this->deleteRoom($room['id']);
+			}
+		}
+	}
+
+	/**
+	 * Get all currently existent rooms
+	 *
 	 * @NoAdminRequired
 	 * @NoCSRFRequired
 	 *
 	 * @return JSONResponse
 	 */
 	public function getRooms() {
+		$this->deleteEmptyRooms();
+
 		$qb = $this->dbConnection->getQueryBuilder();
 		$rooms = $qb->select('*')
 			->from('spreedme_rooms')
@@ -94,9 +132,13 @@ class ApiController extends Controller {
 				[
 					'name' => $qb->createNamedParameter($roomName),
 				]
-			)
-			->execute();
-		return new JSONResponse();
+			)->execute();
+
+		return new JSONResponse(
+			[
+				'roomId' => $qb->getLastInsertId(),
+			]
+		);
 	}
 
 	/**
