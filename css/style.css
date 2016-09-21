@@ -41,8 +41,9 @@ video {
 	bottom: 0;
 	z-index: 10;
 }
-.videoView video {
+.videoView #localVideo {
 	border-top-right-radius: 3px;
+	margin-bottom: -6px;
 }
 
 #app-content.participants-2 {
@@ -65,7 +66,7 @@ video {
 
 .nameIndicator {
 	position: absolute;
-	bottom: 5%;
+	bottom: 3%;
 	z-index: 5;
 	color: #fff;
 	width: 100%;
