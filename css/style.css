@@ -1,20 +1,23 @@
 #oca-spreedme-add-room {
 	position: relative;
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 5px;
 }
 #oca-spreedme-add-room input {
-	width: 238px;
-	margin: 8px 5px 4px;
-	padding-right: 36px;
+	width: 100%;
+	padding: 14px 44px 14px 12px;
+	margin: 0;
+	border: none;
 }
 #oca-spreedme-add-room button {
 	position: absolute;
 	background-color: transparent;
 	border: none;
 	right: 0;
-	top: 2px;
-	padding: 22px;
+	top: 0;
+	padding: 23px;
 	margin: 0;
-	opacity: .5;
+	opacity: .3;
 }
 
 video {
