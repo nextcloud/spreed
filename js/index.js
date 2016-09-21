@@ -47,6 +47,33 @@ $(window).load(function() {
 		}
 	});
 
+	$('#video-more').click(function() {
+		var fullscreenElem = document.getElementById('app-content');
+
+		if (!document.fullscreenElement && !document.mozFullScreenElement &&
+!document.webkitFullscreenElement && !document.msFullscreenElement) {
+			if (fullscreenElem.requestFullscreen) {
+				fullscreenElem.requestFullscreen();
+			} else if (fullscreenElem.webkitRequestFullscreen) {
+				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			} else if (fullscreenElem.mozRequestFullScreen) {
+				fullscreenElem.mozRequestFullScreen();
+			} else if (fullscreenElem.msRequestFullscreen) {
+				fullscreenElem.msRequestFullscreen();
+			}
+		} else {
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen();
+			}
+		}
+	});
+
 	// If the hash changes a room gets joined
 	$(window).on('hashchange', function() {
 		OCA.SpreedMe.Rooms.join(window.location.hash.substring(1));
