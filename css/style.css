@@ -1,7 +1,13 @@
+.app-spreed #app-navigation {
+	padding-top: 46px;
+	padding-bottom: 0;
+}
+
 #oca-spreedme-add-room {
-	position: relative;
-	border-bottom: 1px solid #ddd;
-	margin-bottom: 5px;
+	position: absolute;
+	width: 249px;
+	top: 0;
+	border-bottom: 1px solid #eee;
 }
 #oca-spreedme-add-room input {
 	width: 100%;
