@@ -26,13 +26,6 @@ video {
 	filter: contrast(1.1) saturate(1.1) sepia(.1);
 }
 
-.participants-1 .videoView,
-.videoContainer {
-	position: relative;
-	width: 50%;
-	float: left;
-}
-
 .videoView {
 	position: absolute;
 	width: 33%;
@@ -43,6 +36,10 @@ video {
 .videoView #localVideo {
 	border-top-right-radius: 3px;
 	margin-bottom: -6px;
+}
+
+.participants-1 #emptycontent {
+	display: block !important;
 }
 
 #app-content.participants-2 {
