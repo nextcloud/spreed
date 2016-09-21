@@ -21,6 +21,9 @@ video {
 	width: 100%;
 	z-index: 0;
 	max-height: 100%;
+	/* default filter for slightly better look */
+	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
+	filter: contrast(1.1) saturate(1.1) sepia(.1);
 }
 
 .participants-1 .videoView,
@@ -37,8 +40,9 @@ video {
 	bottom: 0;
 	z-index: 10;
 }
-.videoView video {
+.videoView #localVideo {
 	border-top-right-radius: 3px;
+	margin-bottom: -6px;
 }
 
 #app-content.participants-2 {
@@ -61,7 +65,7 @@ video {
 
 .nameIndicator {
 	position: absolute;
-	bottom: 5%;
+	bottom: 3%;
 	z-index: 5;
 	color: #fff;
 	width: 100%;
