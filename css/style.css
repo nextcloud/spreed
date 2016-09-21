@@ -21,6 +21,9 @@ video {
 	width: 100%;
 	z-index: 0;
 	max-height: 100%;
+	/* default filter for slightly better look */
+	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
+	filter: contrast(1.1) saturate(1.1) sepia(.1);
 }
 
 .participants-1 .videoView,
