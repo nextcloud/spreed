@@ -3,6 +3,10 @@
 	padding-bottom: 0;
 }
 
+.app-spreed #app-content {
+	background-color: #000;
+}
+
 #oca-spreedme-add-room {
 	position: absolute;
 	width: 249px;
@@ -33,9 +37,11 @@ video {
 	/* default filter for slightly better look */
 	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
 	filter: contrast(1.1) saturate(1.1) sepia(.1);
+	vertical-align: top; /* fix white line below video */
 }
 
 .videoContainer {
+	position: relative;
 	display: inline-block;
 	width: 50%;
 }
@@ -52,13 +58,13 @@ video {
 	border-top-right-radius: 3px;
 }
 
+#app-content.participants-1 {
+	background-color: #fff;
+}
 .participants-1 #emptycontent {
 	display: block !important;
 }
 
-#app-content.participants-2 {
-	background-color: #000;
-}
 .participants-2 .videoContainer {
 	position: absolute;
 	width: 100%;
@@ -72,6 +78,10 @@ video {
 	left: 50%;
 	top: 50%;
 	transform: translateY(-50%) translateX(-50%);
+}
+
+.participants-4 .videoContainer {
+	height: 50%;
 }
 
 .nameIndicator {
