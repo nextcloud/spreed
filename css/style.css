@@ -3,10 +3,6 @@
 	padding-bottom: 0;
 }
 
-.app-spreed #app-content {
-	background-color: #000;
-}
-
 #oca-spreedme-add-room {
 	position: absolute;
 	width: 249px;
@@ -58,9 +54,6 @@ video {
 	border-top-right-radius: 3px;
 }
 
-#app-content.participants-1 {
-	background-color: #fff;
-}
 .participants-1 #emptycontent {
 	display: block !important;
 }
@@ -82,6 +75,18 @@ video {
 
 .participants-4 .videoContainer {
 	height: 50%;
+}
+
+#app-content.participants-2,
+#app-content.participants-3,
+#app-content.participants-4,
+#app-content.participants-5,
+#app-content.participants-6,
+#app-content.participants-7,
+#app-content.participants-8,
+#app-content.participants-9,
+#app-content.participants-10 {
+	background-color: #000;
 }
 
 .nameIndicator {
