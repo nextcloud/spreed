@@ -23,9 +23,8 @@
 			</field>
 			<field>
 				<name>object</name>
-				<type>text</type>
+				<type>clob</type>
 				<notnull>true</notnull>
-				<length>8000</length>
 			</field>
 			<field>
 				<name>timestamp</name>
@@ -49,7 +48,7 @@
 				<name>name</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>256</length>
+				<length>255</length>
 			</field>
 		</declaration>
 	</table>
@@ -60,13 +59,13 @@
 				<name>userId</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>256</length>
+				<length>255</length>
 			</field>
 			<field>
 				<name>roomId</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>256</length>
+				<length>255</length>
 			</field>
 			<field>
 				<name>lastPing</name>
