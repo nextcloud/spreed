@@ -10,7 +10,8 @@
 				{
 					roomName: roomName
 				},
-				function(roomId) {
+				function(data) {
+					var roomId = data.roomId;
 					OCA.SpreedMe.Rooms.join(roomId);
 				}
 			);
