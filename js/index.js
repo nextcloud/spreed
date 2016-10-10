@@ -1,8 +1,17 @@
 var webrtc;
 $(window).load(function() {
+	$('#oca-spreedme-add-room').submit(function() {
+		return false;
+	});
+
 	// Create a new room
 	$('#oca-spreedme-add-room > button.icon-confirm').click(function() {
-		OCA.SpreedMe.Rooms.create($('#oca-spreedme-add-room > input[type="text"]').val());
+		var roomname = $('#oca-spreedme-add-room > input[type="text"]').val();
+		if (roomname === "") {
+			return;
+		}
+
+		OCA.SpreedMe.Rooms.create(roomname);
 	});
 
 	// Load the list of rooms all 10 seconds
