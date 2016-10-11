@@ -18,7 +18,7 @@ script(
 <div id="app" data-sessionId="<?php p($_['sessionId']) ?>">
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
-			<input type="text" placeholder="<?php p($l->t('Choose room name …')) ?>"/>
+			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose room name …')) ?>"/>
 			<button class="icon-confirm" title="<?php p($l->t('Create new room')) ?>"></button>
 		</form>
 		<ul>

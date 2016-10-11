@@ -50,6 +50,15 @@
 				<notnull>true</notnull>
 				<length>255</length>
 			</field>
+
+			<index>
+				<name>spreedme_rooms_name_index</name>
+				<unique>true</unique>
+				<field>
+					<name>name</name>
+					<sorting>ascending</sorting>
+				</field>
+			</index>
 		</declaration>
 	</table>
 	<table>

@@ -1,4 +1,10 @@
-(function(OCA) {
+$(document).ready(function() {
+
+	var editRoomname = $('#edit-roomname');
+	editRoomname.keyup(function() {
+		editRoomname.tooltip('hide');
+		editRoomname.removeClass('error');
+	});
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	var currentRoomId = 0;
@@ -11,6 +17,14 @@
 					roomName: roomName
 				},
 				function(data) {
+					if (data.status !== 'success') {
+						editRoomname.prop('title', data.message);
+						editRoomname.tooltip({placement: 'right', trigger: 'manual'});
+						editRoomname.tooltip('show');
+						editRoomname.addClass('error');
+						return;
+					}
+
 					var roomId = data.roomId;
 					OCA.SpreedMe.Rooms.join(roomId);
 				}
@@ -54,4 +68,5 @@
 			);
 		}
 	}
-})(OCA);
+
+});
