@@ -62,6 +62,11 @@ return [
 			'name' => 'api#ping',
 			'url' => '/api/ping',
 			'verb' => 'POST',
+		],
+		[
+			'name' => 'AppSettings#setSpreedSettings',
+			'url' => '/settings',
+			'verb' => 'POST',
 		]
 	],
 ];

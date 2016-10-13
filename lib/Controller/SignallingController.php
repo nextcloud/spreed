@@ -25,10 +25,15 @@ namespace OCA\Spreed\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 
+use OCA\Spreed\Util;
+
 class SignallingController extends Controller {
+	/** @var IConfig */
+	private $config;
 	/** @var IDBConnection */
 	private $dbConnection;
 	/** @var string */
@@ -37,14 +42,17 @@ class SignallingController extends Controller {
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
+	 * @param IConfig $config
 	 * @param IDBConnection $connection
 	 * @param string $UserId
 	 */
 	public function __construct($appName,
 								IRequest $request,
+								IConfig $config,
 								IDBConnection $connection,
 								$UserId) {
 		parent::__construct($appName, $request);
+		$this->config = $config;
 		$this->dbConnection = $connection;
 		$this->userId = $UserId;
 	}
@@ -80,12 +88,13 @@ class SignallingController extends Controller {
 
 				break;
 			case 'stunservers':
-				// FIXME: Use non-google servers
-				$response = [
-					[
-						'url' => 'stun:stun.l.google.com:19302',
-					],
-				];
+				$response = [];
+				$stunServer = Util::getStunServer($this->config);
+				if ($stunServer) {
+					array_push($response, [
+						'url' => 'stun:' . $stunServer,
+					]);
+				}
 				break;
 		}
 		return new JSONResponse($response);

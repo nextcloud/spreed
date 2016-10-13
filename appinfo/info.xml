@@ -11,4 +11,7 @@
 		<owncloud min-version="9.1" max-version="9.2" />
 	</dependencies>
 	<namespace>Spreed</namespace>
+	<settings>
+		<admin>OCA\Spreed\Settings\Admin</admin>
+	</settings>
 </info>
