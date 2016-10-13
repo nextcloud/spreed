@@ -120,9 +120,6 @@ video {
 #app-content:-ms-fullscreen {
 	width: 100%;
 }
-#app-content:full-screen {
-	width: 100%;
-}
 #app-content:fullscreen {
 	width: 100%;
 }
