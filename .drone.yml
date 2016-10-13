@@ -1,0 +1,9 @@
+pipeline:
+  eslint:
+    image: nextcloudci/eslint:eslint-1
+    commands:
+      - ./run-eslint.sh
+  stylelint:
+    image: nextcloudci/stylelint:stylelint-1
+    commands:
+      - ./run-stylelint.sh
