@@ -17,18 +17,24 @@ $(document).ready(function() {
 					roomName: roomName
 				},
 				function(data) {
-					if (data.status !== 'success') {
-						editRoomname.prop('title', data.message);
-						editRoomname.tooltip({placement: 'right', trigger: 'manual'});
-						editRoomname.tooltip('show');
-						editRoomname.addClass('error');
-						return;
-					}
-
 					var roomId = data.roomId;
 					OCA.SpreedMe.Rooms.join(roomId);
 				}
-			);
+			).fail(function(jqXHR, status, error) {
+				var message;
+				try {
+					message = JSON.parse(jqXHR.responseText).message
+				} catch (e) {
+					// Ignore exception, received no/invalid JSON.
+				}
+				if (!message) {
+					message = jqXHR.responseText || error;
+				}
+				editRoomname.prop('title', message);
+				editRoomname.tooltip({placement: 'right', trigger: 'manual'});
+				editRoomname.tooltip('show');
+				editRoomname.addClass('error');
+			});
 		},
 		list: function() {
 			$.ajax({

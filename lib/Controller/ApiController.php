@@ -25,6 +25,7 @@ namespace OCA\Spreed\Controller;
 
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -145,15 +146,13 @@ class ApiController extends Controller {
 		} catch (UniqueConstraintViolationException $e) {
 			return new JSONResponse(
 				[
-					'status' => 'error',
 					'message' => $this->l10n->t('A room with this name already exists.'),
-				]
+				], Http::STATUS_CONFLICT
 			);
 		}
 
 		return new JSONResponse(
 			[
-				'status' => 'success',
 				'roomId' => $query->getLastInsertId(),
 			]
 		);
