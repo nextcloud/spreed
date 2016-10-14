@@ -23,9 +23,12 @@
 
 namespace OCA\Spreed\Controller;
 
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IRequest;
 
 class ApiController extends Controller {
@@ -33,6 +36,8 @@ class ApiController extends Controller {
 	private $userId;
 	/** @var IDBConnection */
 	private $dbConnection;
+	/** @var IL10N */
+	private $l10n;
 
 	/**
 	 * @param string $appName
@@ -43,10 +48,12 @@ class ApiController extends Controller {
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
-								IDBConnection $dbConnection) {
+								IDBConnection $dbConnection,
+								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->dbConnection = $dbConnection;
+		$this->l10n = $l10n;
 	}
 
 	/**
@@ -126,17 +133,27 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function createRoom($roomName) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->insert('spreedme_rooms')
+		$query = $this->dbConnection->getQueryBuilder();
+		$query->insert('spreedme_rooms')
 			->values(
 				[
-					'name' => $qb->createNamedParameter($roomName),
+					'name' => $query->createNamedParameter($roomName),
 				]
-			)->execute();
+			);
+
+		try {
+			$query->execute();
+		} catch (UniqueConstraintViolationException $e) {
+			return new JSONResponse(
+				[
+					'message' => $this->l10n->t('A room with this name already exists.'),
+				], Http::STATUS_CONFLICT
+			);
+		}
 
 		return new JSONResponse(
 			[
-				'roomId' => $qb->getLastInsertId(),
+				'roomId' => $query->getLastInsertId(),
 			]
 		);
 	}
