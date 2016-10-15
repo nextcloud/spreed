@@ -63,5 +63,5 @@
 		disconnect: function() {
 			console.log('disconnect');
 		}
-	}
+	};
 })(OCA);

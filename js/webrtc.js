@@ -1,4 +1,72 @@
+// TODO(fancycode): Should load through AMD if possible.
+/* global SimpleWebRTC: false */
+
 var webrtc;
+
+function openEventSource() {
+
+// Connect to the messages endpoint and pull for new messages
+	var messageEventSource = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
+	var previousUsersInRoom = [];
+	Array.prototype.diff = function(a) {
+		return this.filter(function(i) {return a.indexOf(i) < 0;});
+	};
+	messageEventSource.listen('usersInRoom', function(users) {
+		var currentUsersInRoom = [];
+		users.forEach(function(user) {
+			currentUsersInRoom.push(user['userId']);
+		});
+
+		if(currentUsersInRoom.length !== previousUsersInRoom.length) {
+			$('#app-content').attr('class','');
+			$('#app-content').addClass('participants-'+currentUsersInRoom.length);
+		}
+
+		var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
+		disconnectedUsers.forEach(function(user) {
+			webrtc.removePeers(user);
+		});
+		previousUsersInRoom = currentUsersInRoom;
+	});
+
+	messageEventSource.listen('message', function(message) {
+		message = JSON.parse(message);
+		var peers = self.webrtc.getPeers(message.from, message.roomType);
+		var peer;
+
+		if (message.type === 'offer') {
+			if (peers.length) {
+				peers.forEach(function (p) {
+					if (p.sid === message.sid) {
+						peer = p;
+					}
+				});
+			}
+			if (!peer) {
+				peer = self.webrtc.createPeer({
+					id: message.from,
+					sid: message.sid,
+					type: message.roomType,
+					enableDataChannels: false,
+					sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
+					broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
+				});
+				webrtc.emit('createdPeer', peer);
+			}
+			peer.handleMessage(message);
+		} else if (peers.length) {
+			peers.forEach(function (peer) {
+				if (message.sid) {
+					if (peer.sid === message.sid) {
+						peer.handleMessage(message);
+					}
+				} else {
+					peer.handleMessage(message);
+				}
+			});
+		}
+	});
+}
 
 $(document).ready(function() {
 	webrtc = new SimpleWebRTC({
@@ -64,66 +132,3 @@ $(document).ready(function() {
 		}
 	});
 });
-
-function openEventSource() {
-
-// Connect to the messages endpoint and pull for new messages
-	var messageEventSource = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
-	var previousUsersInRoom = [];
-	Array.prototype.diff = function(a) {
-		return this.filter(function(i) {return a.indexOf(i) < 0;});
-	};
-	messageEventSource.listen('usersInRoom', function(users) {
-		var currentUsersInRoom = [];
-		users.forEach(function(user) {
-			currentUsersInRoom.push(user['userId']);
-		});
-
-		if(currentUsersInRoom.length !== previousUsersInRoom.length) {
-			$('#app-content').attr('class','');
-			$('#app-content').addClass('participants-'+currentUsersInRoom.length);
-		}
-
-		var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
-		disconnectedUsers.forEach(function(user) {
-			webrtc.removePeers(user);
-		});
-		previousUsersInRoom = currentUsersInRoom;
-	});
-
-	messageEventSource.listen('message', function(message) {
-		message = JSON.parse(message);
-		var peers = self.webrtc.getPeers(message.from, message.roomType);
-		var peer;
-
-		if (message.type === 'offer') {
-			if (peers.length) {
-				peers.forEach(function (p) {
-					if (p.sid == message.sid) peer = p;
-				});
-			}
-			if (!peer) {
-				peer = self.webrtc.createPeer({
-					id: message.from,
-					sid: message.sid,
-					type: message.roomType,
-					enableDataChannels: false,
-					sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
-					broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
-				});
-				webrtc.emit('createdPeer', peer);
-			}
-			peer.handleMessage(message);
-		} else if (peers.length) {
-			peers.forEach(function (peer) {
-				if (message.sid) {
-					if (peer.sid === message.sid) {
-						peer.handleMessage(message);
-					}
-				} else {
-					peer.handleMessage(message);
-				}
-			});
-		}
-	});
-}

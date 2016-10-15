@@ -1,3 +1,6 @@
+// TODO(fancycode): Should load through AMD if possible.
+/* global webrtc: false */
+
 $(document).ready(function() {
 
 	var editRoomname = $('#edit-roomname');
@@ -23,7 +26,7 @@ $(document).ready(function() {
 			).fail(function(jqXHR, status, error) {
 				var message;
 				try {
-					message = JSON.parse(jqXHR.responseText).message
+					message = JSON.parse(jqXHR.responseText).message;
 				} catch (e) {
 					// Ignore exception, received no/invalid JSON.
 				}
@@ -73,6 +76,6 @@ $(document).ready(function() {
 				}
 			);
 		}
-	}
+	};
 
 });
