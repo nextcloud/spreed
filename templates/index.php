@@ -12,7 +12,8 @@ script(
 		'xhrconnection',
 		'rooms',
 		'webrtc',
-		'index',
+		'app',
+		'init',
 	]
 );
 ?>
