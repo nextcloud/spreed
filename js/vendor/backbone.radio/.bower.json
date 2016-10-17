@@ -1,0 +1,38 @@
+{
+  "name": "backbone.radio",
+  "version": "2.0.0",
+  "homepage": "https://github.com/marionettejs/backbone.radio",
+  "authors": [
+    "Jmeas <jellyes2@gmail.com>"
+  ],
+  "description": "Messaging patterns for Backbone applications.",
+  "main": "build/backbone.radio.js",
+  "keywords": [
+    "backbone",
+    "marionette",
+    "decoupled",
+    "pubsub",
+    "publish",
+    "subscribe",
+    "messaging",
+    "architecture",
+    "spa"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "2.0.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.0.0",
+    "commit": "8d3c7deec61205daddbd49ce86dbac27afb1aaad"
+  },
+  "_source": "https://github.com/marionettejs/backbone.radio.git",
+  "_target": "^2.0.0",
+  "_originalSource": "backbone.radio"
+}
