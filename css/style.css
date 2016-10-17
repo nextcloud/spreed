@@ -123,3 +123,22 @@ video {
 #app-content:fullscreen {
 	width: 100%;
 }
+
+.localmediaerror h2 {
+	color: red;
+	font-weight: bold;
+}
+
+.localmediaerror .uploadmessage {
+	display: none;
+}
+
+#app-navigation .utils .action {
+	display: inline-block;
+	line-height: 20px;
+	height: 20px;
+	width: 16px;
+	padding: 12px 6px;
+	cursor: pointer;
+	vertical-align: top;
+}
