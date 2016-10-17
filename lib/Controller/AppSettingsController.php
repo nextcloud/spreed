@@ -78,7 +78,7 @@ class AppSettingsController extends Controller {
 					'min_range' => 1,
 				),
 			);
-			if (count($parts) == 2 && !filter_var($parts[1], FILTER_VALIDATE_INT, $options)) {
+			if (count($parts) === 2 && !filter_var($parts[1], FILTER_VALIDATE_INT, $options)) {
 				return array('data' =>
 					array('message' =>
 						(string) $this->l10n->t('Invalid port specified.')

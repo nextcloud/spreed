@@ -3,7 +3,37 @@ pipeline:
     image: nextcloudci/eslint:eslint-1
     commands:
       - ./run-eslint.sh
+    when:
+      matrix:
+        TESTS: eslint
   stylelint:
     image: nextcloudci/stylelint:stylelint-1
     commands:
       - ./run-stylelint.sh
+    when:
+      matrix:
+        TESTS: stylelint
+  check-app-compatbility:
+    image: nextcloudci/php5.6:php5.6-3
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server
+
+      # Code checker
+      - ./occ app:check-code $APP_NAME
+      - cd apps/$APP_NAME/
+    when:
+      matrix:
+        TESTS: check-app-compatbility
+
+matrix:
+  include:
+    - TESTS: eslint
+    - TESTS: stylelint
+    - TESTS: check-app-compatbility
