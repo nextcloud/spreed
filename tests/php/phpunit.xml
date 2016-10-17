@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit bootstrap="bootstrap.php"
+		 strict="true"
+		 verbose="true"
+		 timeoutForSmallTests="900"
+		 timeoutForMediumTests="900"
+		 timeoutForLargeTests="900"
+>
+	<testsuite name='Spreed App Tests'>
+		<directory suffix='Test.php'>.</directory>
+	</testsuite>
+	<!-- filters for code coverage -->
+	<filter>
+		<whitelist>
+			<directory suffix=".php">../../../spreed/appinfo</directory>
+			<directory suffix=".php">../../../spreed/lib</directory>
+		</whitelist>
+	</filter>
+	<logging>
+		<!-- and this is where your report will be written -->
+		<log type="coverage-clover" target="./clover.xml"/>
+	</logging>
+</phpunit>
