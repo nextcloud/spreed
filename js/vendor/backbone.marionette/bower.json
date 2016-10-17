@@ -1,0 +1,41 @@
+{
+  "name": "backbone.marionette",
+  "description": "The Backbone Framework",
+  "homepage": "http://marionettejs.org",
+  "main": "./lib/backbone.marionette.js",
+  "version": "3.1.0",
+  "keywords": [
+    "backbone",
+    "framework",
+    "client",
+    "browser",
+    "composite"
+  ],
+  "author": {
+    "name": "Derick Bailey",
+    "email": "derickbailey@gmail.com"
+  },
+  "ignore": [
+    "api",
+    "docs",
+    "gulp",
+    "jsdoc",
+    "src",
+    "tasks",
+    "test",
+    ".babelrc",
+    ".editorconfig",
+    ".eslintrc",
+    ".gitignore",
+    ".jscsrc",
+    ".npmignore",
+    ".travis.yml",
+    "CONTRIBUTING.md",
+    "gulpfile.babel.js",
+    "SpecRunner.html",
+    "upgradeGuide.md"
+  ],
+  "dependencies": {
+    "backbone.radio": "^2.0.0"
+  }
+}
