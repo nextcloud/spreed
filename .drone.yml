@@ -31,9 +31,126 @@ pipeline:
     when:
       matrix:
         TESTS: check-app-compatbility
+  syntax-php5.6:
+    image: nextcloudci/php5.6:php5.6-3
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server
+      - composer install
+      - ./lib/composer/bin/parallel-lint --exclude lib/composer/jakub-onderka/ --exclude 3rdparty/symfony/polyfill-php70/Resources/stubs/ --exclude 3rdparty/patchwork/utf8/src/Patchwork/Utf8/Bootup/ --exclude 3rdparty/paragonie/random_compat/lib/ --exclude lib/composer/composer/autoload_static.php --exclude 3rdparty/composer/autoload_static.php .
+    when:
+      matrix:
+        TESTS: syntax-php5.6
+  syntax-php7.0:
+    image: nextcloudci/php7.0:php7.0-2
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server
+      - composer install
+      - ./lib/composer/bin/parallel-lint --exclude lib/composer/jakub-onderka/ --exclude 3rdparty/symfony/polyfill-php70/Resources/stubs/ --exclude 3rdparty/patchwork/utf8/src/Patchwork/Utf8/Bootup/ --exclude 3rdparty/paragonie/random_compat/lib/ --exclude lib/composer/composer/autoload_static.php --exclude 3rdparty/composer/autoload_static.php .
+    when:
+      matrix:
+        TESTS: syntax-php7.0
+  signed-off-check:
+    image: nextcloudci/php7.0:php7.0-2
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server
+      - php ./build/signed-off-checker.php
+    when:
+      matrix:
+        TESTS: signed-off-check
+  php5.6:
+    image: nextcloudci/php5.6:php5.6-3
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      - apt update && apt-get -y install php5-xdebug
+
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server/apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+      # Create coverage report
+      - wget https://codecov.io/bash -O codecov.sh
+      - sh -c "if [ '$DRONE_BUILD_EVENT' = 'pull_request' ]; then bash codecov.sh -B $DRONE_BRANCH -C $DRONE_COMMIT -P $DRONE_PULL_REQUEST -t 5315d2c6-105e-4462-91d9-d9e7d4a0cf17 -f clover.xml; fi"
+      - sh -c "if [ '$DRONE_BUILD_EVENT' != 'pull_request' ]; then bash codecov.sh -B $DRONE_BRANCH -C $DRONE_COMMIT -t 5315d2c6-105e-4462-91d9-d9e7d4a0cf17 -f clover.xml; fi"
+    when:
+      matrix:
+        TESTS: php5.6
+  php7.0:
+    image: nextcloudci/php7.0:php7.0-2
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server/apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+    when:
+      matrix:
+        TESTS: php7.0
+  php7.1:
+    image: nextcloudci/php7.1:php7.1-3
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # FIXME: Move into Docker image
+      - yum -y install wget
+
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server/apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+    when:
+      matrix:
+        TESTS: php7.1
 
 matrix:
   include:
     - TESTS: eslint
     - TESTS: stylelint
     - TESTS: check-app-compatbility
+    - TESTS: syntax-php5.6
+    - TESTS: syntax-php7.0
+    - TESTS: signed-off-check
+    - TESTS: php5.6
+    - TESTS: php7.0
+    - TESTS: php7.1
