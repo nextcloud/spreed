@@ -1,0 +1,5 @@
+# Exclude npm deps
+node_modules
+
+# Karma/jasmine coverage data
+coverage

@@ -30,6 +30,6 @@
     "commit": "e4743ab712b8ab42ad4ccb48b155034d02394e4d"
   },
   "_source": "https://github.com/jashkenas/underscore.git",
-  "_target": ">=1.8.3",
+  "_target": ">=1.7.0",
   "_originalSource": "underscore"
 }

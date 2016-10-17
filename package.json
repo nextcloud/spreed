@@ -1,0 +1,26 @@
+{
+  "name": "spreed",
+  "version": "1.0.0",
+  "description": "This code is a proof of concept. Do not use it in production.",
+  "main": " ",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com//nextcloud/spreed.git"
+  },
+  "author": "",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "jasmine": "^2.5.2",
+    "jasmine-ajax": "^3.2.0",
+    "jasmine-core": "^2.5.2",
+    "karma": "^1.3.0",
+    "karma-coverage": "^1.1.1",
+    "karma-jasmine": "^1.0.2",
+    "karma-jasmine-ajax": "^0.1.13",
+    "karma-phantomjs-launcher": "^1.0.2",
+    "phantomjs-prebuilt": "^2.1.13"
+  }
+}

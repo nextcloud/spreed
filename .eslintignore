@@ -1,2 +1,4 @@
 js/simplewebrtc.js
 js/vendor/*
+js/tests/*
+karma.conf.js
