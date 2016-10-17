@@ -26,8 +26,7 @@ pipeline:
       - cd ../server
 
       # Code checker
-      - ./occ app:check-code $APP_NAME -c strong-comparison
-      - ./occ app:check-code $APP_NAME -c deprecation
+      - ./occ app:check-code $APP_NAME
       - cd apps/$APP_NAME/
     when:
       matrix:
