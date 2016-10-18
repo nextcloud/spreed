@@ -11,6 +11,7 @@ $(document).ready(function() {
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	var currentRoomId = 0;
+	var roomChannel = Backbone.Radio.channel('rooms');
 
 	OCA.SpreedMe.Rooms = {
 		join: function(roomId) {
@@ -20,6 +21,7 @@ $(document).ready(function() {
 
 			currentRoomId = roomId;
 			webrtc.joinRoom(roomId);
+			roomChannel.trigger('active', roomId);
 			OCA.SpreedMe.Rooms.ping();
 		},
 		currentRoom: function() {

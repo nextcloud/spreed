@@ -1,4 +1,4 @@
-/* global Marionette, webrtc */
+/* global Marionette, Backbone, webrtc */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -20,7 +20,7 @@
  *
  */
 
-(function(OCA, Marionette, webrtc) {
+(function(OCA, Marionette, Backbone, webrtc) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -154,8 +154,22 @@
 				OCA.SpreedMe.Rooms.ping();
 			}, 5000);
 		},
+		/**
+		 * @param {int} roomId
+		 */
+		_setRoomActive: function(roomId) {
+			this._rooms.forEach(function(room) {
+				room.set('active', room.get('id') === roomId);
+			});
+		},
 		syncRooms: function() {
 			this._rooms.fetch();
+		},
+		initialize: function() {
+			var roomChannel = Backbone.Radio.channel('rooms');
+
+			this._rooms = new OCA.SpreedMe.Models.RoomCollection();
+			this.listenTo(roomChannel, 'active', this._setRoomActive);
 		},
 		onStart: function() {
 			console.log('Starting spreed …');
@@ -164,7 +178,6 @@
 			this._registerPageEvents();
 			this._onRegisterHashChange();
 
-			this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 			this._showRoomList();
 			this._rooms.fetch({
 				success: function() {
@@ -179,4 +192,4 @@
 	});
 
 	OCA.SpreedMe.App = App;
-})(OCA, Marionette, webrtc);
+})(OCA, Marionette, Backbone, webrtc);
