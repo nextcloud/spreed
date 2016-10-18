@@ -33,6 +33,11 @@
 		modelEvents: {
 			change: 'render'
 		},
+		onRender: function() {
+			if (this.model.get('active')) {
+				this.$el.addClass('active');
+			}
+		},
 		template: Handlebars.compile(ITEM_TEMPLATE)
 	});
 

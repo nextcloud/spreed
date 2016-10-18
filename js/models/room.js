@@ -29,7 +29,8 @@
 	var Room = Backbone.Model.extend({
 		defaults: {
 			name: '',
-			count: 0
+			count: 0,
+			active: false
 		}
 	});
 
