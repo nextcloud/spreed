@@ -30,7 +30,7 @@ script(
 			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
 			<!-- <button class="icon-confirm" title="<?php p($l->t('Create new room')) ?>"></button> -->
 		</form>
-		<ul id="spreedme-room-list">
+		<ul id="spreedme-room-list" class="with-icon">
 		</ul>
 		<!--<div id="app-settings">
 			<div id="app-settings-header">

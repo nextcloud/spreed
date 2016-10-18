@@ -13,38 +13,25 @@
 /**
  * Sidebar styles
  */
+
+#select2-drop {
+	top: 50px !important;
+}
 #oca-spreedme-add-room .select2-container {
 	width: 100%;
 	margin: 0;
 	border: none;
+	padding: 9px;
+	padding-left: 36px;
 }
 #oca-spreedme-add-room .select2-arrow {
 	display: none;
 }
-#oca-spreedme-add-room .select2-default {
-	border: none;
-	border-radius: 0;
-	background-image: none;
-}
-.select2-chosen {
-	padding-top: 2px;
-}
-.select2-chosen .avatar {
-	float: left;
-	margin-right: 5px;
-}
-#select2-drop .avatar {
-	float: left;
-	margin-right: 5px;
-}
-.select2-result-label {
-	height: 35px;
-}
-.select2-choice {
-	height: 35px !important;
-}
+
 #app-navigation .avatar {
-	float: left;
+	position: absolute;
+	left: 8px;
+	top: 8px;
 }
 
 #oca-spreedme-add-room button {
