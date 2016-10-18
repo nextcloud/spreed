@@ -59,6 +59,8 @@
 		onRender: function() {
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
+			} else {
+				this.$el.removeClass('active');
 			}
 		},
 		template: Handlebars.compile(ITEM_TEMPLATE)
