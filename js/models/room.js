@@ -1,3 +1,5 @@
+/* global Backbone */
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -18,10 +20,18 @@
  *
  */
 
-(function(OCA, $) {
-	$(function() {
-		OCA.SpreedMe.app = new OCA.SpreedMe.App();
-		// Here we go!
-		OCA.SpreedMe.app.start();
+(function(OCA, Backbone) {
+	'use strict';
+
+	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
+
+	var Room = Backbone.Model.extend({
+		defaults: {
+			name: '',
+			count: 0
+		}
 	});
-})(OCA, $);
+
+	OCA.SpreedMe.Models.Room = Room;
+})(OCA, Backbone);

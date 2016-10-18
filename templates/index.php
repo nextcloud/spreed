@@ -8,6 +8,9 @@ script(
 	[
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'models/room',
+		'models/roomcollection',
+		'views/roomlistview',
 		'simplewebrtc',
 		'xhrconnection',
 		'rooms',

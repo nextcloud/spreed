@@ -1,3 +1,5 @@
+/* global Marionette, Handlebars */
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -18,10 +20,27 @@
  *
  */
 
-(function(OCA, $) {
-	$(function() {
-		OCA.SpreedMe.app = new OCA.SpreedMe.App();
-		// Here we go!
-		OCA.SpreedMe.app.start();
+(function(OCA, Marionette, Handlebars) {
+	'use strict';
+
+	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
+
+	var ITEM_TEMPLATE = '<a href="#{{id}}">{{name}} <span class="utils">{{count}}</span></a>';
+
+	var RoomItenView = Marionette.View.extend({
+		tagName: 'li',
+		modelEvents: {
+			change: 'render'
+		},
+		template: Handlebars.compile(ITEM_TEMPLATE)
 	});
-})(OCA, $);
+
+	var RoomListView = Marionette.CollectionView.extend({
+		tagName: 'ul',
+		childView: RoomItenView
+	});
+
+	OCA.SpreedMe.Views.RoomListView = RoomListView;
+
+})(OCA, Marionette, Handlebars);

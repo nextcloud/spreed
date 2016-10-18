@@ -26,20 +26,46 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
 	var App = Marionette.Application.extend({
+		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
+		_rooms: null,
+		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
+		_roomsView: null,
 		_registerPageEvents: function() {
+			var self = this;
+
 			$('#oca-spreedme-add-room').submit(function() {
 				return false;
 			});
 
 			// Create a new room
 			$('#oca-spreedme-add-room > button.icon-confirm').click(function() {
-				var roomname = $('#oca-spreedme-add-room > input[type="text"]').
-					val();
+				var roomname = $('#oca-spreedme-add-room > input[type="text"]').val();
 				if (roomname === "") {
 					return;
 				}
 
-				OCA.SpreedMe.Rooms.create(roomname);
+				self._rooms.create({
+					name: roomname
+				}, {
+					success: function(data) {
+						OCA.SpreedMe.Rooms.join(data.get('id'));
+					}, error: function(jqXHR, status, error) {
+						var message;
+						var editRoomname = $('#edit-roomname');
+						try {
+							message = JSON.parse(jqXHR.responseText).message;
+						} catch (e) {
+							// Ignore exception, received no/invalid JSON.
+						}
+						if (!message) {
+							message = jqXHR.responseText || error;
+						}
+						editRoomname.prop('title', message);
+						editRoomname.tooltip({placement: 'right', trigger: 'manual'});
+						editRoomname.tooltip('show');
+						editRoomname.addClass('error');
+					}
+				});
 			});
 
 			var videoHidden = false;
@@ -108,11 +134,17 @@
 				OCA.SpreedMe.Rooms.join();
 			}
 		},
+		_showRoomList: function() {
+			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
+				el: '#app-navigation ul',
+				collection: this._rooms
+			});
+		},
 		_pollForRoomChanges: function() {
 			// Load the list of rooms all 10 seconds
-			OCA.SpreedMe.Rooms.list();
+			var self = this;
 			setInterval(function() {
-				OCA.SpreedMe.Rooms.list();
+				self.syncRooms();
 			}, 10000);
 		},
 		_startPing: function() {
@@ -122,11 +154,25 @@
 				OCA.SpreedMe.Rooms.ping();
 			}, 5000);
 		},
+		syncRooms: function() {
+			this._rooms.fetch();
+		},
 		onStart: function() {
 			console.log('Starting spreed …');
+			var self = this;
 
 			this._registerPageEvents();
 			this._onRegisterHashChange();
+
+			this._rooms = new OCA.SpreedMe.Models.RoomCollection();
+			this._showRoomList();
+			this._rooms.fetch({
+				success: function() {
+					$('#app-navigation').removeClass('icon-loading');
+					self._roomsView.render();
+				}
+			});
+
 			this._pollForRoomChanges();
 			this._startPing();
 		}

@@ -1,20 +1,3 @@
-### [2.0.0](https://github.com/marionettejs/backbone.radio/releases/tag/2.0.0)
-
-- Updated Backbone and Underscore version ranges.
-- Moved Backbone and Underscore to peerDependencies.
-
-### [2.0.0-pre.2](https://github.com/marionettejs/backbone.radio/releases/tag/2.0.0-pre.2)
-
-- Updated Backbone and Underscore version ranges.
-
-### [2.0.0-pre.1](https://github.com/marionettejs/backbone.radio/releases/tag/2.0.0-pre.1)
-
-- Moved Backbone and Underscore to peerDependencies.
-
-### [1.0.5](https://github.com/marionettejs/backbone.radio/releases/tag/1.0.5)
-
-- Updated Backbone dep to allow v1.3.3
-
 ### [1.0.4](https://github.com/marionettejs/backbone.radio/releases/tag/1.0.4)
 
 - **Bug fix**: The UMD generated from rollup was setting `global` to `undefined`.

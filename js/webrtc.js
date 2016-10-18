@@ -103,7 +103,7 @@ $(document).ready(function() {
 		$('#app-content').removeClass('icon-loading');
 		$('.videoView').removeClass('hidden');
 		openEventSource();
-		OCA.SpreedMe.Rooms.list();
+		OCA.SpreedMe.app.syncRooms();
 	});
 
 	webrtc.on('videoAdded', function (video, peer) {

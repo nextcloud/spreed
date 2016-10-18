@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "backbone": "1.2.3",
-    "backbone.marionette": "^3.1.0",
+    "backbone.marionette": "3.0.0"
     "jquery": "^2.0"
   }
 }
