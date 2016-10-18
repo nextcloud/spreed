@@ -12,9 +12,9 @@ script(
 		'models/roomcollection',
 		'views/roomlistview',
 		'simplewebrtc',
+		'webrtc',
 		'xhrconnection',
 		'rooms',
-		'webrtc',
 		'app',
 		'init',
 	]
