@@ -123,3 +123,50 @@ video {
 #app-content:fullscreen {
 	width: 100%;
 }
+
+.localmediaerror h2 {
+	color: red;
+	font-weight: bold;
+}
+
+.localmediaerror .uploadmessage {
+	display: none;
+}
+
+#app-navigation .utils .action {
+	display: inline-block;
+	line-height: 20px;
+	height: 20px;
+	width: 16px;
+	padding: 12px 6px;
+	cursor: pointer;
+	vertical-align: top;
+}
+
+#app-navigation .app-navigation-entry-menu li {
+	width: auto !important;
+	float: inherit;
+	height: 36px;
+}
+
+#app-navigation .app-navigation-entry-menu li button {
+	float: inherit !important;
+	margin: 0;
+	padding: 0;
+	width: 100% !important;
+}
+
+#app-navigation .app-navigation-entry-menu li span {
+	display: inline-block;
+	height: 36px;
+	line-height: 36px;
+	padding-right: 10px;
+	font-weight: 400;
+	float: left;
+}
+
+#app-navigation .app-navigation-entry-menu li span.svg {
+	padding: 5px;
+	width: 36px;
+	box-sizing: border-box;
+}

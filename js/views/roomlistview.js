@@ -26,7 +26,30 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
-	var ITEM_TEMPLATE = '<a href="#{{id}}">{{name}} <span class="utils">{{count}}</span></a>';
+	var ITEM_TEMPLATE = '<a href="#{{id}}">{{name}}</a>'+
+						'<span class="utils">'+
+									'<span class="action">{{count}}</span>'+
+									'<span class="action icon-more" href="#" title="More" role="button"></span>'+
+								'</span>'+
+								'<div id="more-actions-{{name}}" class="app-navigation-entry-menu">'+
+									'<ul>'+
+										'<li><button>'+
+												'<span class="icon-add svg"></span>'+
+												'<span>Add person</span>'+
+											'</button>'+
+										'</li>'+
+										'<li><button>'+
+												'<span class="icon-share svg"></span>'+
+												'<span>Share group</span>'+
+											'</button>'+
+										'</li>'+
+										'<li><button>'+
+												'<span class="icon-close svg"></span>'+
+												'<span>Leave group</span>'+
+											'</button>'+
+										'</li>'+
+									'</ul>'+
+								'</div>';
 
 	var RoomItenView = Marionette.View.extend({
 		tagName: 'li',
