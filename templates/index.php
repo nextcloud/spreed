@@ -27,7 +27,7 @@ script(
 			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose room name …')) ?>"/>
 			<button class="icon-confirm" title="<?php p($l->t('Create new room')) ?>"></button>
 		</form>
-		<ul>
+		<ul id="spreedme-room-list">
 		</ul>
 		<!--<div id="app-settings">
 			<div id="app-settings-header">
