@@ -27,6 +27,7 @@
 
 	var RoomCollection = Backbone.Collection.extend({
 		model: OCA.SpreedMe.Models.Room,
+		comparator: 'name',
 		url: OC.generateUrl('/apps/spreed/api/room')
 	});
 

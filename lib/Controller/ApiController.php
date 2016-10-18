@@ -129,15 +129,15 @@ class ApiController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param string $roomName
+	 * @param string $name
 	 * @return JSONResponse
 	 */
-	public function createRoom($roomName) {
+	public function createRoom($name) {
 		$query = $this->dbConnection->getQueryBuilder();
 		$query->insert('spreedme_rooms')
 			->values(
 				[
-					'name' => $query->createNamedParameter($roomName),
+					'name' => $query->createNamedParameter($name),
 				]
 			);
 
@@ -151,11 +151,9 @@ class ApiController extends Controller {
 			);
 		}
 
-		return new JSONResponse(
-			[
-				'roomId' => $query->getLastInsertId(),
-			]
-		);
+		return new JSONResponse([
+				'id' => $query->getLastInsertId(),
+		]);
 	}
 
 	/**
