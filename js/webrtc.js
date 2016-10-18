@@ -82,18 +82,21 @@ $(document).ready(function() {
 
 	webrtc.on('localMediaError', function(error) {
 		console.log("Access to local media failed", error);
-		var message;
+		var message, messageAdditional;
 		if (error.name === "NotAllowedError") {
 			if (error.message && error.message.indexOf("Only secure origins") !== -1) {
-				message = t('spreedm', 'Access to the microphone / camera is only possible when running over HTTPS. Please check your configuration.');
+				message = t('spreed', 'Access to microphone & camera is only possible with HTTPS');
+				messageAdditional = t('spreed', 'Please adjust your configuration');
 			} else {
-				message = t('spreed', 'Access to the microphone / camera was denied.');
+				message = t('spreed', 'Access to microphone & camera was denied');
+				$('#emptycontent p').hide();
 			}
 		} else {
 			message = t('spreed', 'Error while accessing local media: {error}', {error: error.message || error.name});
+			$('#emptycontent p').hide();
 		}
 		$('#emptycontent h2').text(message);
-		$('#emptycontent').addClass('localmediaerror');
+		$('#emptycontent p').text(messageAdditional);
 	});
 
 	webrtc.on('joinedRoom', function() {
