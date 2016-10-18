@@ -1,4 +1,4 @@
-/* global Marionette, Backbone webrtc */
+/* global Marionette, Backbone, webrtc */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
