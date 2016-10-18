@@ -142,6 +142,15 @@ pipeline:
     when:
       matrix:
         TESTS: php7.1
+  jsunit:
+    image: nextcloudci/jsunit:jsunit-5
+    commands:
+      - unset PHANTOMJS_BIN
+      - npm install
+      - node_modules/karma/bin/karma start --single-run
+    when:
+      matrix:
+        TESTS: jsunit
 
 matrix:
   include:
@@ -154,3 +163,4 @@ matrix:
     - TESTS: php5.6
     - TESTS: php7.0
     - TESTS: php7.1
+    - TESTS: jsunit
