@@ -1,3 +1,5 @@
+/* global Backbone */
+
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
  *
@@ -18,10 +20,15 @@
  *
  */
 
-(function(OCA, $) {
-	$(function() {
-		OCA.SpreedMe.app = new OCA.SpreedMe.App();
-		// Here we go!
-		OCA.SpreedMe.app.start();
+(function(OCA, Backbone) {
+
+	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
+
+	var RoomCollection = Backbone.Collection.extend({
+		model: OCA.SpreedMe.Models.Room,
+		url: OC.generateUrl('/apps/spreed/api/room')
 	});
-})(OCA, $);
+
+	OCA.SpreedMe.Models.RoomCollection = RoomCollection;
+})(OCA, Backbone);
