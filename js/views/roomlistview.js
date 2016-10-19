@@ -26,9 +26,19 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
+	Handlebars.registerHelper('isGroupCall', function(options) {
+		if(typeof this.type !== 'undefined') {
+			if(this.type === "1") {
+				return options.inverse(this);
+			} else {
+				return options.fn(this);
+			}
+		}
+	});
+
 	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-userName="{{name}}"></div> {{name}}</a>'+
 						'<span class="utils">'+
-									'<span class="action">{{count}}</span>'+
+									'{{#isGroupCall}}<span class="action">{{count}}</span>{{/isGroupCall}}'+
 									'<span class="action icon-more" href="#" title="More" role="button"></span>'+
 								'</span>'+
 								'<div id="more-actions-{{name}}" class="app-navigation-entry-menu">'+
