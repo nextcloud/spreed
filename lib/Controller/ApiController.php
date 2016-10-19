@@ -198,7 +198,7 @@ class ApiController extends Controller {
 			->execute()
 			->fetchAll();
 		if(count($results) > 1) {
-			return (int)$results[(count($results-1))]['roomId'];
+			return (int)$results[count($results)-1]['roomId'];
 		}
 
 		throw new RoomNotFoundException();
