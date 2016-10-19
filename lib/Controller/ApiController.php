@@ -138,10 +138,17 @@ class ApiController extends Controller {
 							// read out the other recipient in the room.
 							foreach($participantsInCall as $participant) {
 								$uid = $participant['userId'];
+
+								$user = $this->userManager->get($uid);
+								if($user === null) {
+									// TODO: This should not really ever happen. Add some
+									// error handling and fail here.
+									continue;
+								}
+
 								if($uid !== $this->userId) {
 									$rooms[$key]['name'] = $uid;
-									$rooms[$key]['displayName'] = sprintf('%s (%s)', $this->userManager->get($uid)->getDisplayName(), $uid);
-
+									$rooms[$key]['displayName'] = $user->getDisplayName();
 								}
 							}
 							$validRoom = true;
