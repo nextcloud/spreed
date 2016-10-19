@@ -152,14 +152,14 @@ video {
 	display: none;
 }
 
+#app-navigation .utils {
+	padding: 0;
+}
 #app-navigation .utils .action {
 	display: inline-block;
-	line-height: 20px;
-	height: 20px;
-	width: 16px;
-	padding: 12px 6px;
+	padding: 22px;
 	cursor: pointer;
-	vertical-align: top;
+	opacity: .3;
 }
 
 #app-navigation .app-navigation-entry-menu li {
