@@ -56,7 +56,7 @@
 
 						var results = [];
 						$.each(response.ocs.data.users, function(id, user) {
-							results.push({ id: user.value.shareWith});
+							results.push({ id: user.value.shareWith, displayName: user.label});
 						});
 
 						return {
@@ -70,7 +70,7 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
-					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.id) + '"></div>' + escapeHTML(element.id) + '</span>';
+					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
 				},
 				formatSelection: function () {
 					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
