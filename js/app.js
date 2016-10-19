@@ -1,4 +1,4 @@
-/* global Marionette, Backbone, webrtc */
+/* global Marionette, Backbone, OCA */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -20,7 +20,7 @@
  *
  */
 
-(function(OCA, Marionette, Backbone, webrtc) {
+(function(OCA, Marionette, Backbone) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -71,11 +71,11 @@
 			var videoHidden = false;
 			$('#hideVideo').click(function() {
 				if (videoHidden) {
-					webrtc.resumeVideo();
+					OCA.SpreedMe.webrtc.resumeVideo();
 					$(this).data('title', 'Disable video').removeClass('video-disabled');
 					videoHidden = false;
 				} else {
-					webrtc.pauseVideo();
+					OCA.SpreedMe.webrtc.pauseVideo();
 					$(this).data('title', 'Enable video').addClass('video-disabled');
 					videoHidden = true;
 				}
@@ -83,11 +83,11 @@
 			var audioMuted = false;
 			$('#mute').click(function() {
 				if (audioMuted) {
-					webrtc.unmute();
+					OCA.SpreedMe.webrtc.unmute();
 					$(this).data('title', 'Mute audio').removeClass('audio-disabled');
 					audioMuted = false;
 				} else {
-					webrtc.mute();
+					OCA.SpreedMe.webrtc.mute();
 					$(this).data('title', 'Enable audio').addClass('audio-disabled');
 					audioMuted = true;
 				}
@@ -175,6 +175,8 @@
 			console.log('Starting spreed …');
 			var self = this;
 
+			OCA.SpreedMe.initWebRTC();
+			OCA.SpreedMe.initRooms();
 			this._registerPageEvents();
 			this._onRegisterHashChange();
 
@@ -192,4 +194,4 @@
 	});
 
 	OCA.SpreedMe.App = App;
-})(OCA, Marionette, Backbone, webrtc);
+})(OCA, Marionette, Backbone);

@@ -1,4 +1,4 @@
-/* global Backbone */
+/* global Backbone, OC, OCA */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -20,7 +20,8 @@
  *
  */
 
-(function(OCA, Backbone) {
+(function(OCA, OC, Backbone) {
+	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
@@ -32,4 +33,5 @@
 	});
 
 	OCA.SpreedMe.Models.RoomCollection = RoomCollection;
-})(OCA, Backbone);
+
+})(OCA, OC, Backbone);

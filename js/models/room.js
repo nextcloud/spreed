@@ -1,4 +1,4 @@
-/* global Backbone */
+/* global Backbone, OCA */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -35,4 +35,5 @@
 	});
 
 	OCA.SpreedMe.Models.Room = Room;
+
 })(OCA, Backbone);
