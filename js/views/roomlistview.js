@@ -36,7 +36,7 @@
 		}
 	});
 
-	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-userName="{{name}}"></div> {{name}}</a>'+
+	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-userName="{{name}}"></div> {{displayName}}</a>'+
 						'<span class="utils">'+
 									'{{#isGroupCall}}<span class="action">{{count}}</span>{{/isGroupCall}}'+
 									'<span class="action icon-more" href="#" title="More" role="button"></span>'+
