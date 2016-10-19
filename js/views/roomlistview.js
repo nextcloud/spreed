@@ -26,7 +26,7 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
-	var ITEM_TEMPLATE = '<a href="#{{id}}">{{name}}</a>'+
+	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-userName="{{name}}"></div> {{name}}</a>'+
 						'<span class="utils">'+
 									'<span class="action">{{count}}</span>'+
 									'<span class="action icon-more" href="#" title="More" role="button"></span>'+
@@ -62,6 +62,10 @@
 			} else {
 				this.$el.removeClass('active');
 			}
+
+			_.each(this.$el.find('.avatar'), function(a) {
+				$(a).avatar($(a).data('username'), 32);
+			});
 		},
 		template: Handlebars.compile(ITEM_TEMPLATE)
 	});

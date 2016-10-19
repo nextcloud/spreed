@@ -2,6 +2,9 @@
 /** @var \OCP\IL10N $l */
 /** @var array $_ */
 
+vendor_script('select2/select2');
+vendor_style('select2/select2');
+
 style('spreed', 'style');
 script(
 	'spreed',
@@ -24,10 +27,10 @@ script(
 <div id="app" data-sessionId="<?php p($_['sessionId']) ?>">
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
-			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose room name …')) ?>"/>
-			<button class="icon-confirm" title="<?php p($l->t('Create new room')) ?>"></button>
+			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
+			<!-- <button class="icon-confirm" title="<?php p($l->t('Create new room')) ?>"></button> -->
 		</form>
-		<ul id="spreedme-room-list">
+		<ul id="spreedme-room-list" class="with-icon">
 		</ul>
 		<!--<div id="app-settings">
 			<div id="app-settings-header">

@@ -33,37 +33,78 @@
 		_registerPageEvents: function() {
 			var self = this;
 
-			$('#oca-spreedme-add-room').submit(function() {
-				return false;
+			$('#edit-roomname').select2({
+				ajax: {
+					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
+					dataType: 'json',
+					quietMillis: 100,
+					data: function (term) {
+						return {
+							format: 'json',
+							search: term,
+							perPage: 200,
+							itemType: 'folder',
+							shareType: 0
+						};
+					},
+					results: function (response) {
+						// TODO improve error case
+						if (response.ocs.data === undefined) {
+							console.error('Failure happened', response);
+							return;
+						}
+
+						var results = [];
+						$.each(response.ocs.data.users, function(id, user) {
+							results.push({ id: user.value.shareWith});
+						});
+
+						return {
+							results: results,
+							more: false
+						};
+					}
+				},
+				initSelection: function (element, callback) {
+					console.log(element);
+					callback({id: element.val()});
+				},
+				formatResult: function (element) {
+					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.id) + '"></div>' + escapeHTML(element.id) + '</span>';
+				},
+				formatSelection: function (element) {
+					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.id) + '"></div>' + escapeHTML(element.id) + '</span>';
+				}
+			});
+			$('#edit-roomname').on("change", function(e) {
+				OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+				$('body').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 28, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 28);
+					}
+				});
+			});
+			$('#edit-roomname').on("click", function() {
+				$('body').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 28, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 28);
+					}
+				});
 			});
 
-			// Create a new room
-			$('#oca-spreedme-add-room > button.icon-confirm').click(function() {
-				var roomname = $('#oca-spreedme-add-room > input[type="text"]').val();
-				if (roomname === "") {
-					return;
-				}
-
-				self._rooms.create({
-					name: roomname
-				}, {
-					success: function(data) {
-						OCA.SpreedMe.Rooms.join(data.get('id'));
-					}, error: function(jqXHR, status, error) {
-						var message;
-						var editRoomname = $('#edit-roomname');
-						try {
-							message = JSON.parse(jqXHR.responseText).message;
-						} catch (e) {
-							// Ignore exception, received no/invalid JSON.
-						}
-						if (!message) {
-							message = jqXHR.responseText || error;
-						}
-						editRoomname.prop('title', message);
-						editRoomname.tooltip({placement: 'right', trigger: 'manual'});
-						editRoomname.tooltip('show');
-						editRoomname.addClass('error');
+			$('#edit-roomname').on("select2-loaded", function() {
+				$('body').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 28, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 28);
 					}
 				});
 			});
@@ -131,7 +172,7 @@
 				OCA.SpreedMe.Rooms.join(window.location.hash.substring(1));
 			});
 			if (window.location.hash.substring(1) === '') {
-				OCA.SpreedMe.Rooms.join();
+				OCA.SpreedMe.Rooms.showCamera();
 			}
 		},
 		_showRoomList: function() {

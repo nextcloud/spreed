@@ -9,12 +9,31 @@
 	top: 0;
 	border-bottom: 1px solid #eee;
 }
-#oca-spreedme-add-room input {
+
+/**
+ * Sidebar styles
+ */
+
+#select2-drop {
+	top: 50px !important;
+}
+#oca-spreedme-add-room .select2-container {
 	width: 100%;
-	padding: 14px 44px 14px 12px;
 	margin: 0;
 	border: none;
+	padding: 9px;
+	padding-left: 36px;
 }
+#oca-spreedme-add-room .select2-arrow {
+	display: none;
+}
+
+#app-navigation .avatar {
+	position: absolute;
+	left: 8px;
+	top: 8px;
+}
+
 #oca-spreedme-add-room button {
 	position: absolute;
 	background-color: transparent;
