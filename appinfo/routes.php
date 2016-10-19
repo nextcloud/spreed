@@ -49,11 +49,6 @@ return [
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'api#joinRoom',
-			'url' => '/api/room/{roomId}/join',
-			'verb' => 'POST',
-		],
-		[
 			'name' => 'api#getPeersInRoom',
 			'url' => '/api/room/{roomId}/peers',
 			'verb' => 'GET',
@@ -67,6 +62,12 @@ return [
 			'name' => 'AppSettings#setSpreedSettings',
 			'url' => '/settings',
 			'verb' => 'POST',
-		]
+		],
+		[
+			'name' => 'api#createOneToOneVideoCallRoom',
+			'url' => '/api/oneToOne',
+			'verb' => 'PUT',
+		],
 	],
 ];
+

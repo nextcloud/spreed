@@ -62,9 +62,6 @@ class PageController extends Controller {
 		$qb->delete('spreedme_messages')
 			->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
 			->execute();
-		$qb->delete('spreedme_room_participants')
-			->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-			->execute();
 
 		$params = [
 			'sessionId' => $this->userId,

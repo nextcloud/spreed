@@ -9,12 +9,44 @@
 	top: 0;
 	border-bottom: 1px solid #eee;
 }
-#oca-spreedme-add-room input {
+
+/**
+ * Sidebar styles
+ */
+#oca-spreedme-add-room .select2-container {
 	width: 100%;
-	padding: 14px 44px 14px 12px;
 	margin: 0;
 	border: none;
 }
+#oca-spreedme-add-room .select2-arrow {
+	display: none;
+}
+#oca-spreedme-add-room .select2-default {
+	border: none;
+	border-radius: 0;
+	background-image: none;
+}
+.select2-chosen {
+	padding-top: 2px;
+}
+.select2-chosen .avatar {
+	float: left;
+	margin-right: 5px;
+}
+#select2-drop .avatar {
+	float: left;
+	margin-right: 5px;
+}
+.select2-result-label {
+	height: 35px;
+}
+.select2-choice {
+	height: 35px !important;
+}
+#app-navigation .avatar {
+	float: left;
+}
+
 #oca-spreedme-add-room button {
 	position: absolute;
 	background-color: transparent;
