@@ -30,7 +30,8 @@
 		defaults: {
 			name: '',
 			count: 0,
-			active: false
+			active: false,
+			lastPing: 0
 		}
 	});
 
