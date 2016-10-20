@@ -49,7 +49,7 @@ script(
 			<div class="nameIndicator">
 				<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
 				<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
-				<button id="video-more" class="icon-more-white" data-title="<?php p($l->t('More options')) ?>"></button>
+				<button id="video-fullscreen" class="icon-fullscreen-white" data-title="<?php p($l->t('Fullscreen')) ?>"></button>
 			</div>
 		</div>
 		<div id="remotes" style="display: inline"></div>

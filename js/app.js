@@ -134,7 +134,7 @@
 				}
 			});
 
-			$('#video-more').click(function() {
+			$('#video-fullscreen').click(function() {
 				var fullscreenElem = document.getElementById('app-content');
 
 				if (!document.fullscreenElement && !document.mozFullScreenElement &&
