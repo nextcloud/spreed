@@ -201,13 +201,16 @@ class ApiController extends Controller {
 				$qb->expr()->eq('p1.roomId', 'r1.id')
 			))
 			->where($qb->expr()->isNotNull('p2.userId'))
+			->andWhere($qb->expr()->isNotNull('p1.userId'))
 			->leftJoin('r1', 'spreedme_room_participants', 'p2', $qb->expr()->andX(
 				$qb->expr()->eq('p2.userId', $qb->createNamedParameter($user2)),
 				$qb->expr()->eq('p2.roomId', 'r1.id')
 			))
 			->execute()
 			->fetchAll();
-		if(count($results) > 1) {
+
+		//There should be only one result if there is any.
+		if(count($results) >=  1) {
 			return (int)$results[count($results)-1]['roomId'];
 		}
 
