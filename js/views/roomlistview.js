@@ -50,7 +50,7 @@
 								'<li>'+
 									'<button>'+
 										'<span class="icon-add svg"></span>'+
-										'<span>'+t('spreedMe', 'Add person')+'</span>'+
+										'<span>'+t('spreedme', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
 							'</ul>'+
@@ -58,7 +58,7 @@
 								'<li>'+
 									'<button>'+
 										'<span class="icon-share svg"></span>'+
-										'<span>'+t('spreedMe', 'Share group')+'</span>'+
+										'<span>'+t('spreedme', 'Share group')+'</span>'+
 									'</button>'+
 								'</li>'+
 							'</ul>'+
@@ -66,7 +66,7 @@
 								'<li>'+
 									'<button>'+
 										'<span class="icon-close svg"></span>'+
-										'<span>'+t('spreedMe', 'Leave group')+'</span>'+
+										'<span>'+t('spreedme', 'Leave group')+'</span>'+
 									'</button>'+
 								'</li>'+
 							'</ul>'+
