@@ -110,22 +110,20 @@ class SignallingController extends Controller {
 		while(true) {
 			// Check if the connection is still active, if not: Kill all existing
 			// messages and end the event source
-			$currentRoom = $this->dbConnection->getQueryBuilder()->select('*')
+			$qb = $this->dbConnection->getQueryBuilder();
+			$currentRoom = $qb->select('*')
 				->from('spreedme_room_participants')
-				->where('userId = :userId')
-				->andWhere('lastPing > :lastPing')
-				->setParameter(':userId', $this->userId)
-				->setParameter(':lastPing', time() - 10)
+				->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
+				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 10)))
 				->execute()
 				->fetchAll();
 			if ($currentRoom === []) {
 				$eventSource->close();
 
 				// Delete all messages for the recipient
-				$this->dbConnection->getQueryBuilder()
-					->delete('spreedme_messages')
-					->where('recipient = :recipient')
-					->setParameter(':recipient', $this->userId)
+				$qb = $this->dbConnection->getQueryBuilder();
+				$qb->delete('spreedme_messages')
+					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
 					->execute();
 				break;
 			}
@@ -141,18 +139,17 @@ class SignallingController extends Controller {
 			$eventSource->send('usersInRoom', $usersInRoom);
 
 			// Query all messages and send them to the user
-			$results = $this->dbConnection->getQueryBuilder()
-				->select('*')
+			$qb = $this->dbConnection->getQueryBuilder();
+			$results = $qb->select('*')
 				->from('spreedme_messages')
 				->where('recipient = :recipient')
-				->setParameter(':recipient', $this->userId)
+				->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
 				->execute()
 				->fetchAll();
 			foreach($results as $result) {
-				$this->dbConnection->getQueryBuilder()
-					->delete('spreedme_messages')
-					->where('id = :id')
-					->setParameter(':id', $result['id'])
+				$qb = $this->dbConnection->getQueryBuilder();
+				$qb->delete('spreedme_messages')
+					->where($qb->expr()->eq('id', $qb->createNamedParameter($result['id'])))
 					->execute();
 				$eventSource->send('message', $result['object']);
 			}

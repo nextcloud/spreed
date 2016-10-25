@@ -6,7 +6,7 @@
 	<licence>AGPLv3+</licence>
 	<author>Lukas Reschke, Jan-Christoph Borchardt</author>
 	<default_enable/>
-	<version>1.0.14</version>
+	<version>1.0.15</version>
 	<dependencies>
 		<owncloud min-version="9.1" max-version="9.2" />
 	</dependencies>
