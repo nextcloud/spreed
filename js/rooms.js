@@ -62,20 +62,6 @@
 		}
 	};
 
-	$(document).click(function(e) {
-	    var target = e.target;
-	    // Hide all more-actions menus
-	    $('.app-navigation-entry-menu').each(function() {
-			$(this).removeClass("open");
-		});
-	    // Open more-actions menu from selected row
-	    if ($(target).is('.icon-more')) {
-	    	if (!$(target).parent().parent().find('.app-navigation-entry-menu').hasClass("open")) {
-	    		$(target).parent().parent().find('.app-navigation-entry-menu').addClass("open");
-	    	};
-	    }
-	});
-
 	OCA.SpreedMe.initRooms = initRooms;
 
 })(OCA, OC, $);

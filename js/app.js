@@ -211,6 +211,8 @@
 
 			this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 			this.listenTo(roomChannel, 'active', this._setRoomActive);
+
+			$(document).on('click', this.onDocumentClick);
 		},
 		onStart: function() {
 			console.log('Starting spreed …');
@@ -231,6 +233,11 @@
 
 			this._pollForRoomChanges();
 			this._startPing();
+		},
+		onDocumentClick: function(event) {
+			var uiChannel = Backbone.Radio.channel('ui');
+
+			uiChannel.trigger('document:click', event);
 		}
 	});
 
