@@ -70,9 +70,9 @@
 			</field>
 			<field>
 				<name>roomId</name>
-				<type>text</type>
+				<type>integer</type>
 				<notnull>true</notnull>
-				<length>255</length>
+				<length>4</length>
 			</field>
 			<field>
 				<name>lastPing</name>
