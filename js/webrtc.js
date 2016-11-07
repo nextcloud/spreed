@@ -111,11 +111,12 @@ var webrtc;
 			$('#emptycontent p').text(messageAdditional);
 		});
 
-		OCA.SpreedMe.webrtc.on('joinedRoom', function() {
+		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
+			
 			openEventSource();
-			OCA.SpreedMe.app.syncRooms();
+			OCA.SpreedMe.app.syncAndSetRoom(name);
 		});
 
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
