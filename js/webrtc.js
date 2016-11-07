@@ -114,9 +114,9 @@ var webrtc;
 		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
-			
+
 			openEventSource();
-			OCA.SpreedMe.app.syncAndSetRoom(name);
+			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
