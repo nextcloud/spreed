@@ -241,7 +241,7 @@ class ApiController extends Controller {
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
 			$roomId = $this->getPrivateChatRoomForUsers($targetUser->getUID(), $this->userId);
-			return new JSONResponse(['roomId' => $roomId], Http::STATUS_CONFLICT);
+			return new JSONResponse(['roomId' => $roomId], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			// Create the room
 			$qb = $this->dbConnection->getQueryBuilder();
