@@ -218,7 +218,7 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * Initiates a one-to-one video call from the urrent user to the recipient
+	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
 	 * @NoAdminRequired
 	 *
@@ -266,6 +266,15 @@ class ApiController extends Controller {
 					)
 					->execute();
 			}
+
+			$notification = \OC::$server->getNotificationManager()->createNotification();
+			$notification->setApp('spreed')
+				->setUser($targetUser->getUID())
+				->setDateTime(new \DateTime())
+				->setObject('one2one', $roomId)
+				->setSubject('invitation', [$this->userId]);
+
+			\OC::$server->getNotificationManager()->notify($notification);
 
 			return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
 		}
