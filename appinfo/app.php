@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @author Jan-Christoph Borchardt, http://jancborchardt.net
  *
@@ -20,15 +19,16 @@
  *
  */
 
-$l = \OC::$server->getL10N('spreed');
-$g = \OC::$server->getURLGenerator();
+\OC::$server->getNavigationManager()->add(function() {
+	$l = \OC::$server->getL10N('spreed');
+	$g = \OC::$server->getURLGenerator();
 
-\OC::$server->getNavigationManager()->add(
-	[
+	return [
 		'id' => 'spreed',
 		'order' => 3,
-		'href' => $g->linkToRoute( 'spreed.page.index' ),
-		'icon' => $g->imagePath( 'spreed', 'app.svg' ),
+		'href' => $g->linkToRoute('spreed.page.index'),
+		'icon' => $g->imagePath('spreed', 'app.svg'),
 		'name' => $l->t('Calls'),
-	]
-);
+
+	];
+});
