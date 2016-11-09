@@ -23,4 +23,5 @@ namespace OCA\Spreed;
 
 class Room {
 	const ONE_TO_ONE_CALL = 1;
+	const GROUP_CALL = 2;
 }
