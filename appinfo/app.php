@@ -35,13 +35,10 @@
 
 $manager = \OC::$server->getNotificationManager();
 $manager->registerNotifier(function() {
-	return new \OCA\Spreed\Notification\Notifier(
-		\OC::$server->getL10NFactory(),
-		\OC::$server->getURLGenerator(),
-		\OC::$server->getUserManager()
-	);
+	return \OC::$server->query('OCA\Spreed\Notification\Notifier');
 }, function() {
 	$l = \OC::$server->getL10N('spreed');
+
 	return [
 		'id' => 'spreed',
 		'name' => $l->t('Spreed'),
