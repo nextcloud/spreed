@@ -33,6 +33,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
 
 class ApiController extends Controller {
@@ -46,6 +47,8 @@ class ApiController extends Controller {
 	private $userManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IManager */
+	private $notificationManager;
 
 	/**
 	 * @param string $appName
@@ -55,6 +58,7 @@ class ApiController extends Controller {
 	 * @param IL10N $l10n
 	 * @param IUserManager $userManager
 	 * @param ISecureRandom $secureRandom
+	 * @param IManager $notificationManager
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -62,13 +66,15 @@ class ApiController extends Controller {
 								IDBConnection $dbConnection,
 								IL10N $l10n,
 								IUserManager $userManager,
-								ISecureRandom $secureRandom) {
+								ISecureRandom $secureRandom,
+								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->dbConnection = $dbConnection;
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->secureRandom = $secureRandom;
+		$this->notificationManager = $notificationManager;
 	}
 
 	/**
@@ -218,7 +224,7 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * Initiates a one-to-one video call from the urrent user to the recipient
+	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
 	 * @NoAdminRequired
 	 *
@@ -267,6 +273,14 @@ class ApiController extends Controller {
 					->execute();
 			}
 
+			$notification = $this->notificationManager->createNotification();
+			$notification->setApp('spreed')
+				->setUser($targetUser->getUID())
+				->setDateTime(new \DateTime())
+				->setObject('one2one', $roomId)
+				->setSubject('invitation', [$this->userId]);
+			$this->notificationManager->notify($notification);
+
 			return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
 		}
 	}
@@ -278,6 +292,12 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function ping($currentRoom) {
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp('spreed')
+			->setUser($this->userId)
+			->setObject('one2one', $currentRoom);
+		$this->notificationManager->markProcessed($notification);
+
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->update('spreedme_room_participants')
 			->set('lastPing', $qb->createNamedParameter(time()))

@@ -3,3 +3,5 @@ node_modules
 
 # Karma/jasmine coverage data
 coverage
+tests/php/coverage-html
+tests/php/clover.xml

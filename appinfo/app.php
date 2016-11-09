@@ -29,6 +29,18 @@
 		'href' => $g->linkToRoute('spreed.page.index'),
 		'icon' => $g->imagePath('spreed', 'app.svg'),
 		'name' => $l->t('Calls'),
+	];
+});
 
+
+$manager = \OC::$server->getNotificationManager();
+$manager->registerNotifier(function() {
+	return \OC::$server->query('OCA\Spreed\Notification\Notifier');
+}, function() {
+	$l = \OC::$server->getL10N('spreed');
+
+	return [
+		'id' => 'spreed',
+		'name' => $l->t('Spreed'),
 	];
 });

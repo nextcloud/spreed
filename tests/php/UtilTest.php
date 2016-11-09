@@ -18,7 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Tests\Settings;
+namespace OCA\Spreed\Tests\php;
+
 use OCA\Spreed\Util;
 use OCP\IConfig;
 use Test\TestCase;
