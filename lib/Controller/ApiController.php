@@ -128,41 +128,76 @@ class ApiController extends Controller {
 			->fetchAll();
 		foreach($rooms as $key => $room) {
 			$validRoom = false;
+			$usersInCall = [];
+			
+			// First we get room users (except current user).
+			$participantsInCall = $this->getRoomParticipants($room['id']);
+			foreach($participantsInCall as $i => $participantInCall) {
+				$uid = $participantsInCall[$i]['userId'];
+		        if($uid === $this->userId){
+		            //Delete current user from participantsInCall.
+		            unset($participantsInCall[$i]);
+		    	} else {
+		    		$user = $this->userManager->get($uid);
+		    		if($user === null) {
+						// TODO: This should not really ever happen. Add some
+						// error handling and fail here.
+						continue;
+					}
+		    		$usersInCall[] = $user;
+		    	}
+			}
+			
 			switch($room['type']) {
 				case Room::ONE_TO_ONE_CALL:
 					// As name of the room use the name of the other person participating
-					$participantsInCall = $this->getRoomParticipants($room['id']);
-
-					switch(count($participantsInCall)) {
+					switch(count($usersInCall)) {
 						case 1:
-							// Empty call, this means the other person has left
-							// the room. For now ignore this situation
-							$validRoom = false;
-							continue;
-						case 2:
-							// Two people are in the room. This is expected, now
-							// read out the other recipient in the room.
-							foreach($participantsInCall as $participant) {
-								$uid = $participant['userId'];
-
-								$user = $this->userManager->get($uid);
-								if($user === null) {
-									// TODO: This should not really ever happen. Add some
-									// error handling and fail here.
-									continue;
-								}
-
-								if($uid !== $this->userId) {
-									$rooms[$key]['name'] = $uid;
-									$rooms[$key]['displayName'] = $user->getDisplayName();
-								}
-							}
+							// Only one other participant in the room. This is expected.
+							$participant = $usersInCall[0];
+							$rooms[$key]['name'] = $participant->getUID();
+							$rooms[$key]['displayName'] = $participant->getDisplayName();
 							$validRoom = true;
 							break;
 						default:
 							$validRoom = false;
 							// TODO: This should not really ever happen. Add some
 							// error handling and fail here.
+					}
+
+					break;
+				case Room::GROUP_CALL:
+					// First we check if the room has a name
+					if (false) {
+						$rooms[$key]['displayName'] = $room['name'];
+					} else {
+						switch(count($usersInCall)) {
+							case 0:
+								// Only you
+								$rooms[$key]['displayName'] = $room['id'];
+								break;
+							case 1:
+								// Only one more participant
+								$participant = $usersInCall[0];
+								$rooms[$key]['displayName'] = $participant->getDisplayName();
+								$validRoom = true;
+								break;
+							case 2:
+								// 2 more participants
+								$participant = $usersInCall[0];
+								$participant2 = $usersInCall[1];
+								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()}";
+								$validRoom = true;
+								break;
+							default:
+								// More than 2 other participants
+								$participant = $usersInCall[0];
+								$participant2 = $usersInCall[1];
+								$others = count($usersInCall) - 2;
+								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()} and {$others} more";
+								$validRoom = true;
+								break;
+						}
 					}
 
 					break;
@@ -208,6 +243,7 @@ class ApiController extends Controller {
 			))
 			->where($qb->expr()->isNotNull('p2.userId'))
 			->andWhere($qb->expr()->isNotNull('p1.userId'))
+			->andWhere($qb->expr()->eq('r1.type', $qb->createNamedParameter('1')))
 			->leftJoin('r1', 'spreedme_room_participants', 'p2', $qb->expr()->andX(
 				$qb->expr()->eq('p2.userId', $qb->createNamedParameter($user2)),
 				$qb->expr()->eq('p2.roomId', 'r1.id')
