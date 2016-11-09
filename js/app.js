@@ -25,6 +25,8 @@
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
+	var roomChannel = Backbone.Radio.channel('rooms');
+
 	var App = Marionette.Application.extend({
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
@@ -206,9 +208,14 @@
 		syncRooms: function() {
 			this._rooms.fetch();
 		},
+		syncAndSetActiveRoom: function(roomId) {
+			this._rooms.fetch({
+				success: function() {
+					roomChannel.trigger('active', roomId);
+				}
+			});
+		},
 		initialize: function() {
-			var roomChannel = Backbone.Radio.channel('rooms');
-
 			this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 			this.listenTo(roomChannel, 'active', this._setRoomActive);
 

@@ -29,7 +29,7 @@
 				type: 'PUT',
 				data: 'targetUserName='+recipientUserId,
 				success: function(data) {
-					OCA.SpreedMe.Rooms.join(data.roomId);
+					window.location.href = "#" + data.roomId;
 				}
 			});
 		},
@@ -37,11 +37,9 @@
 			$('#emptycontent').hide();
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
-			$('li[data-id="'+roomId+'"]').addClass('active');
 
 			currentRoomId = roomId;
 			OCA.SpreedMe.webrtc.joinRoom(roomId);
-			roomChannel.trigger('active', roomId);
 			OCA.SpreedMe.Rooms.ping();
 		},
 		currentRoom: function() {
