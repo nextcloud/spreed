@@ -243,6 +243,7 @@ class ApiController extends Controller {
 			))
 			->where($qb->expr()->isNotNull('p2.userId'))
 			->andWhere($qb->expr()->isNotNull('p1.userId'))
+			->andWhere($qb->expr()->eq('r1.type', $qb->createNamedParameter('1')))
 			->leftJoin('r1', 'spreedme_room_participants', 'p2', $qb->expr()->andX(
 				$qb->expr()->eq('p2.userId', $qb->createNamedParameter($user2)),
 				$qb->expr()->eq('p2.roomId', 'r1.id')
