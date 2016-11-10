@@ -57,7 +57,16 @@
 						}
 
 						var results = [];
+						$.each(response.ocs.data.exact.users, function(id, user) {
+							if (oc_current_user === user.value.shareWith) {
+								return;
+							};
+							results.push({ id: user.value.shareWith, displayName: user.label});
+						});
 						$.each(response.ocs.data.users, function(id, user) {
+							if (oc_current_user === user.value.shareWith) {
+								return;
+							};
 							results.push({ id: user.value.shareWith, displayName: user.label});
 						});
 
