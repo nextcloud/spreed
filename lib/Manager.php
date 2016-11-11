@@ -1,6 +1,5 @@
 <?php
 /**
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -22,25 +21,44 @@
 
 namespace OCA\Spreed;
 
-class Room {
-	const ONE_TO_ONE_CALL = 1;
-	const GROUP_CALL = 2;
 
-	public function __construct($id, $type, $name) {
-		$this->id = $id;
-		$this->type = $type;
-		$this->name = $name;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
+
+class Manager {
+
+	/** @var IDBConnection */
+	private $db;
+
+	/**
+	 * Manager constructor.
+	 *
+	 * @param IDBConnection $db
+	 */
+	public function __construct(IDBConnection $db) {
+		$this->db = $db;
 	}
 
-	public function getId() {
-		return $this->id;
-	}
+	/**
+	 * @param int $id
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomById($id) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms')
+			->where($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
 
-	public function getType() {
-		return $this->type;
-	}
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
 
-	public function getName() {
-		return $this->name;
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		return new Room((int) $row['id'], (int) $row['type'], $row['name']);
 	}
 }

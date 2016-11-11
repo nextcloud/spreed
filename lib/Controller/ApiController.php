@@ -316,7 +316,7 @@ class ApiController extends Controller {
 			$notification->setApp('spreed')
 				->setUser($targetUser->getUID())
 				->setDateTime(new \DateTime())
-				->setObject('one2one', $roomId)
+				->setObject('room', $roomId)
 				->setSubject('invitation', [$this->userId]);
 			$this->notificationManager->notify($notification);
 
@@ -387,7 +387,7 @@ class ApiController extends Controller {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setUser($this->userId)
-			->setObject('one2one', $currentRoom);
+			->setObject('room', $currentRoom);
 		$this->notificationManager->markProcessed($notification);
 
 		$qb = $this->dbConnection->getQueryBuilder();
