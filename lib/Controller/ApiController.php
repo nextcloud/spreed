@@ -174,14 +174,11 @@ class ApiController extends Controller {
 
 					break;
 				case Room::GROUP_CALL:
-					// First we check if the room has a name
-					if (false) {
-						$rooms[$key]['displayName'] = $room['name'];
-					} else {
-						switch(count($usersInCall)) {
+					/// As name of the room use the names of the other participants
+					switch(count($usersInCall)) {
 							case 0:
 								// Only you
-								$rooms[$key]['displayName'] = $room['id'];
+								$rooms[$key]['displayName'] = "You";
 								break;
 							case 1:
 								// Only one more participant
@@ -205,7 +202,6 @@ class ApiController extends Controller {
 								$validRoom = true;
 								break;
 						}
-					}
 
 					break;
 				default:
