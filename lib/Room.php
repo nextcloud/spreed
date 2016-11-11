@@ -22,25 +22,72 @@
 
 namespace OCA\Spreed;
 
+use OCP\IDBConnection;
+use OCP\IUser;
+
 class Room {
 	const ONE_TO_ONE_CALL = 1;
 	const GROUP_CALL = 2;
 
-	public function __construct($id, $type, $name) {
+	/** @var IDBConnection */
+	private $db;
+
+	/** @var int */
+	private $id;
+	/** @var int */
+	private $type;
+	/** @var string */
+	private $name;
+
+	/**
+	 * Room constructor.
+	 *
+	 * @param IDBConnection $db
+	 * @param int $id
+	 * @param int $type
+	 * @param string $name
+	 */
+	public function __construct(IDBConnection $db, $id, $type, $name) {
+		$this->db = $db;
 		$this->id = $id;
 		$this->type = $type;
 		$this->name = $name;
 	}
 
+	/**
+	 * @return int
+	 */
 	public function getId() {
 		return $this->id;
 	}
 
+	/**
+	 * @return int
+	 */
 	public function getType() {
 		return $this->type;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * @param IUser $user
+	 */
+	public function addUser(IUser $user) {
+		$query = $this->db->getQueryBuilder();
+		$query->insert('spreedme_room_participants')
+			->values(
+				[
+					'userId' => $query->createNamedParameter($user),
+					'roomId' => $query->createNamedParameter($this->getId()),
+					'lastPing' => $query->createNamedParameter('0'),
+				]
+			);
+		$query->execute();
 	}
 }

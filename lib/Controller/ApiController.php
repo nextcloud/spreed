@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -51,6 +52,8 @@ class ApiController extends Controller {
 	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var Manager */
+	private $manager;
 	/** @var IManager */
 	private $notificationManager;
 
@@ -63,6 +66,7 @@ class ApiController extends Controller {
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param ISecureRandom $secureRandom
+	 * @param Manager $manager
 	 * @param IManager $notificationManager
 	 */
 	public function __construct($appName,
@@ -73,6 +77,7 @@ class ApiController extends Controller {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								ISecureRandom $secureRandom,
+								Manager $manager,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
@@ -81,6 +86,7 @@ class ApiController extends Controller {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
+		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
 	}
 
@@ -273,6 +279,7 @@ class ApiController extends Controller {
 	public function createOneToOneVideoCallRoom($targetUserName) {
 		// Get the user
 		$targetUser = $this->userManager->get($targetUserName);
+		$currentUser = $this->userManager->get($this->userId);
 		if(!($targetUser instanceof IUser)) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -282,45 +289,19 @@ class ApiController extends Controller {
 			$roomId = $this->getPrivateChatRoomForUsers($targetUser->getUID(), $this->userId);
 			return new JSONResponse(['roomId' => $roomId], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
-			// Create the room
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->insert('spreedme_rooms')
-				->values(
-					[
-						'name' => $qb->createNamedParameter($this->secureRandom->generate(12)),
-						'type' => $qb->createNamedParameter(Room::ONE_TO_ONE_CALL),
-					]
-				)
-				->execute();
-			$roomId = $qb->getLastInsertId();
-
-			// Add both users to new room
-			$usersToAdd = [
-				$targetUser->getUID(),
-				$this->userId,
-			];
-			foreach($usersToAdd as $user) {
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->insert('spreedme_room_participants')
-					->values(
-						[
-							'userId' => $qb->createNamedParameter($user),
-							'roomId' => $qb->createNamedParameter($roomId),
-							'lastPing' => $qb->createNamedParameter('0'),
-						]
-					)
-					->execute();
-			}
+			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, $this->secureRandom->generate(12));
+			$room->addUser($currentUser);
+			$room->addUser($targetUser);
 
 			$notification = $this->notificationManager->createNotification();
 			$notification->setApp('spreed')
 				->setUser($targetUser->getUID())
 				->setDateTime(new \DateTime())
-				->setObject('room', $roomId)
+				->setObject('room', $room->getId())
 				->setSubject('invitation', [$this->userId]);
 			$this->notificationManager->notify($notification);
 
-			return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
+			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 		}
 	}
 

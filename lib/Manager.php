@@ -59,6 +59,31 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room((int) $row['id'], (int) $row['type'], $row['name']);
+		return new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+	}
+
+	/**
+	 * @param int $type
+	 * @param string $name
+	 * @return Room
+	 * @throws \BadMethodCallException
+	 */
+	public function createRoom($type, $name) {
+		if (!in_array($type, [Room::ONE_TO_ONE_CALL, Room::GROUP_CALL])) {
+			throw new \BadMethodCallException('Invalid room type');
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->insert('spreedme_rooms')
+			->values(
+				[
+					'name' => $query->createNamedParameter($name),
+					'type' => $query->createNamedParameter($type),
+				]
+			);
+		$query->execute();
+		$roomId = $query->getLastInsertId();
+
+		return new Room($this->db, $roomId, $type, $name);
 	}
 }
