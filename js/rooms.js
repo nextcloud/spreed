@@ -49,6 +49,8 @@
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
 
+			OCA.SpreedMe.webrtc.leaveRoom();
+
 			currentRoomId = roomId;
 			OCA.SpreedMe.webrtc.joinRoom(roomId);
 			OCA.SpreedMe.Rooms.ping();
