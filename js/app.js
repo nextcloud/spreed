@@ -45,8 +45,7 @@
 							format: 'json',
 							search: term,
 							perPage: 200,
-							itemType: 'folder',
-							shareType: 0
+							itemType: 'call'
 						};
 					},
 					results: function (response) {
@@ -61,13 +60,19 @@
 							if (oc_current_user === user.value.shareWith) {
 								return;
 							};
-							results.push({ id: user.value.shareWith, displayName: user.label});
+							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+						});
+						$.each(response.ocs.data.exact.groups, function(id, group) {
+							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
 						});
 						$.each(response.ocs.data.users, function(id, user) {
 							if (oc_current_user === user.value.shareWith) {
 								return;
 							};
-							results.push({ id: user.value.shareWith, displayName: user.label});
+							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+						});
+						$.each(response.ocs.data.groups, function(id, group) {
+							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
 						});
 
 						return {
@@ -88,7 +93,12 @@
 				}
 			});
 			$('#edit-roomname').on("change", function(e) {
-				OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+				if (e.added.type === "user") {
+					OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+				} else if (e.added.type == "group") {
+					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
+				}
+				
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {

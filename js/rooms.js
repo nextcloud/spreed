@@ -33,6 +33,17 @@
 				}
 			});
 		},
+		createGroupVideoCall: function(groupId) {
+			console.log(groupId);
+			$.ajax({
+				url: OC.generateUrl('/apps/spreed/api/group'),
+				type: 'PUT',
+				data: 'targetGroupName='+groupId,
+				success: function(data) {
+					window.location.href = "#" + data.roomId;
+				}
+			});
+		},
 		join: function(roomId) {
 			$('#emptycontent').hide();
 			$('.videoView').addClass('hidden');
