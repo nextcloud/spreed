@@ -68,6 +68,11 @@ return [
 			'url' => '/api/oneToOne',
 			'verb' => 'PUT',
 		],
+		[
+			'name' => 'api#createGroupVideoCallRoom',
+			'url' => '/api/group',
+			'verb' => 'PUT',
+		],
 	],
 ];
 

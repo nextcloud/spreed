@@ -33,10 +33,23 @@
 				}
 			});
 		},
+		createGroupVideoCall: function(groupId) {
+			console.log(groupId);
+			$.ajax({
+				url: OC.generateUrl('/apps/spreed/api/group'),
+				type: 'PUT',
+				data: 'targetGroupName='+groupId,
+				success: function(data) {
+					window.location.href = "#" + data.roomId;
+				}
+			});
+		},
 		join: function(roomId) {
 			$('#emptycontent').hide();
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
+
+			OCA.SpreedMe.webrtc.leaveRoom();
 
 			currentRoomId = roomId;
 			OCA.SpreedMe.webrtc.joinRoom(roomId);

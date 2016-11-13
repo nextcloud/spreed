@@ -33,6 +33,8 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
 
@@ -45,6 +47,8 @@ class ApiController extends Controller {
 	private $l10n;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
 	/** @var IManager */
@@ -57,6 +61,7 @@ class ApiController extends Controller {
 	 * @param IDBConnection $dbConnection
 	 * @param IL10N $l10n
 	 * @param IUserManager $userManager
+	 * @param IGroupManager $groupManager
 	 * @param ISecureRandom $secureRandom
 	 * @param IManager $notificationManager
 	 */
@@ -66,6 +71,7 @@ class ApiController extends Controller {
 								IDBConnection $dbConnection,
 								IL10N $l10n,
 								IUserManager $userManager,
+								IGroupManager $groupManager,
 								ISecureRandom $secureRandom,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
@@ -73,6 +79,7 @@ class ApiController extends Controller {
 		$this->dbConnection = $dbConnection;
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
+		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
 		$this->notificationManager = $notificationManager;
 	}
@@ -167,14 +174,11 @@ class ApiController extends Controller {
 
 					break;
 				case Room::GROUP_CALL:
-					// First we check if the room has a name
-					if (false) {
-						$rooms[$key]['displayName'] = $room['name'];
-					} else {
-						switch(count($usersInCall)) {
+					/// As name of the room use the names of the other participants
+					switch(count($usersInCall)) {
 							case 0:
 								// Only you
-								$rooms[$key]['displayName'] = $room['id'];
+								$rooms[$key]['displayName'] = "You";
 								break;
 							case 1:
 								// Only one more participant
@@ -198,7 +202,6 @@ class ApiController extends Controller {
 								$validRoom = true;
 								break;
 						}
-					}
 
 					break;
 				default:
@@ -319,6 +322,59 @@ class ApiController extends Controller {
 
 			return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
 		}
+	}
+
+	/**
+	 * Initiates a group video call from the selected group
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $targetGroupName
+	 * @return JSONResponse
+	 */
+	public function createGroupVideoCallRoom($targetGroupName) {
+		// Get the group
+		$targetGroup = $this->groupManager->get($targetGroupName);
+		// Get current user
+		$currentUser = $this->userManager->get($this->userId);
+
+		if(!($targetGroup instanceof IGroup)) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		// Create the room
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->insert('spreedme_rooms')
+			->values(
+				[
+					'name' => $qb->createNamedParameter($targetGroup->getGID()),
+					'type' => $qb->createNamedParameter(Room::GROUP_CALL),
+				]
+			)
+			->execute();
+		$roomId = $qb->getLastInsertId();
+
+		// Add users to new room
+		$usersInGroup = $targetGroup->getUsers();
+		// If the user who is creating this call is not part of this group, add it.
+		if (!($targetGroup->inGroup($currentUser))) {
+			$usersInGroup[] = $currentUser;
+		}
+
+		foreach($usersInGroup as $user) {
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->insert('spreedme_room_participants')
+				->values(
+					[
+						'userId' => $qb->createNamedParameter($user->getUID()),
+						'roomId' => $qb->createNamedParameter($roomId),
+						'lastPing' => $qb->createNamedParameter('0'),
+					]
+				)
+				->execute();
+		}
+
+		return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
 	}
 
 	/**
