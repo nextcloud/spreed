@@ -77,7 +77,7 @@ class Notifier implements INotifier {
 			$room = $this->manager->getRoomById((int) $notification->getObjectId());
 		} catch (RoomNotFoundException $e) {
 			// Room does not exist
-			throw new \InvalidArgumentException();
+			throw new \InvalidArgumentException('Invalid room');
 		}
 
 		if ($notification->getSubject() === 'invitation') {

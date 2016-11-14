@@ -21,7 +21,10 @@
 
 namespace OCA\Spreed\Tests\php;
 
+use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Manager;
 use OCA\Spreed\Notification\Notifier;
+use OCA\Spreed\Room;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -37,6 +40,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $url;
 	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
+	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	protected $manager;
 	/** @var Notifier */
 	protected $notifier;
 
@@ -46,18 +51,20 @@ class NotifierTest extends \Test\TestCase {
 		$this->lFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->manager = $this->createMock(Manager::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
 			$this->url,
-			$this->userManager
+			$this->userManager,
+			$this->manager
 		);
 	}
 
 	public function dataPrepare() {
 		return [
-			['admin', 'Admin', 'Admin wants to have a call with you'],
-			['test', 'Test user', 'Test user wants to have a call with you'],
+			['admin', 'Admin', 'Admin invited you to a private call'],
+			['test', 'Test user', 'Test user invited you to a private call'],
 		];
 	}
 
@@ -75,6 +82,14 @@ class NotifierTest extends \Test\TestCase {
 			->will($this->returnCallback(function($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			}));
+
+		$room = $this->createMock(Room::class);
+		$room->expects($this->once())
+			->method('getType')
+			->willReturn(Room::ONE_TO_ONE_CALL);
+		$this->manager->expects($this->once())
+			->method('getRoomById')
+			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
 			->method('get')
@@ -102,7 +117,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturnSelf();
 		$n->expects($this->once())
 			->method('setRichSubject')
-			->with('{user} wants to have a call with you',[
+			->with('{user} invited you to a private call',[
 				'user' => [
 					'type' => 'user',
 					'id' => $uid,
@@ -122,17 +137,18 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn([$uid]);
 		$n->expects($this->once())
 			->method('getObjectType')
-			->willReturn('one2one');
+			->willReturn('room');
 
 		$this->notifier->prepare($n, 'de');
 	}
 
 	public function dataPrepareThrows() {
 		return [
-			['Incorrect app', 'invalid-app', null, null, null],
-			['Unknown subject', 'spreed', 'invalid-subject', null, null],
-			['Unknown object type', 'spreed', 'invitation', ['admin'], 'invalid-object-type'],
-			['Calling user does not exist anymore', 'spreed', 'invitation', ['admin'], 'one2one'],
+			['Incorrect app', 'invalid-app', null, null, null, null],
+			['Invalid room', 'spreed', false, null, null, null],
+			['Unknown subject', 'spreed', true, 'invalid-subject', null, null],
+			['Unknown object type', 'spreed', true, 'invitation', ['admin'], 'invalid-object-type'],
+			['Calling user does not exist anymore', 'spreed', true, 'invitation', ['admin'], 'room'],
 		];
 	}
 
@@ -143,15 +159,32 @@ class NotifierTest extends \Test\TestCase {
 	 *
 	 * @param string $message
 	 * @param string $app
+	 * @param bool|null $validRoom
 	 * @param string|null $subject
 	 * @param array|null $params
 	 * @param string|null $objectType
 	 */
-	public function testPrepareThrows($message, $app, $subject, $params, $objectType) {
+	public function testPrepareThrows($message, $app, $validRoom, $subject, $params, $objectType) {
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 
-		$this->lFactory->expects($subject === null ? $this->never() : $this->once())
+		if ($validRoom === null) {
+			$this->manager->expects($this->never())
+				->method('getRoomById');
+		} else if ($validRoom === true) {
+			$room = $this->createMock(Room::class);
+			$room->expects($this->never())
+				->method('getType');
+			$this->manager->expects($this->once())
+				->method('getRoomById')
+				->willReturn($room);
+		} else if ($validRoom === false) {
+			$this->manager->expects($this->once())
+				->method('getRoomById')
+				->willThrowException(new RoomNotFoundException());
+		}
+
+		$this->lFactory->expects($validRoom === null ? $this->never() : $this->once())
 			->method('get')
 			->with('spreed', 'de')
 			->willReturn($l);
