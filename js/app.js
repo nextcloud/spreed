@@ -96,13 +96,13 @@
 				} else if (e.added.type === "group") {
 					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
 				}
-				
+
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 28, undefined, false, undefined, element.data('user-display-name'));
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
 					} else {
-						element.avatar(element.data('user'), 28);
+						element.avatar(element.data('user'), 32);
 					}
 				});
 			});
@@ -110,9 +110,9 @@
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 28, undefined, false, undefined, element.data('user-display-name'));
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
 					} else {
-						element.avatar(element.data('user'), 28);
+						element.avatar(element.data('user'), 32);
 					}
 				});
 			});
@@ -121,9 +121,9 @@
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 28, undefined, false, undefined, element.data('user-display-name'));
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
 					} else {
-						element.avatar(element.data('user'), 28);
+						element.avatar(element.data('user'), 32);
 					}
 				});
 			});

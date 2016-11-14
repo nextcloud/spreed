@@ -28,10 +28,17 @@
 	display: none;
 }
 
-#app-navigation .avatar {
+#app-navigation .avatar,
+#app-navigation .icon-contacts-dark {
 	position: absolute;
 	left: 8px;
 	top: 8px;
+}
+#app-navigation .icon-contacts-dark {
+	background-color: transparent;
+	border-radius: 0;
+	width: 32px;
+	height: 32px;
 }
 
 #oca-spreedme-add-room button {
@@ -152,6 +159,9 @@ video {
 	display: none;
 }
 
+#app-navigation li > a {
+    padding-right: 44px !important;
+}
 #app-navigation .utils {
 	padding: 0;
 }
@@ -188,4 +198,8 @@ video {
 	padding: 5px;
 	width: 36px;
 	box-sizing: border-box;
+}
+
+#app-navigation .app-navigation-entry-utils-menu-button {
+	display: inline-block;
 }

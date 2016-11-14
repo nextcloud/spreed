@@ -136,7 +136,7 @@ class ApiController extends Controller {
 		foreach($rooms as $key => $room) {
 			$validRoom = false;
 			$usersInCall = [];
-			
+
 			// First we get room users (except current user).
 			$participantsInCall = $this->getRoomParticipants($room['id']);
 			foreach($participantsInCall as $i => $participantInCall) {
@@ -154,7 +154,7 @@ class ApiController extends Controller {
 		    		$usersInCall[] = $user;
 		    	}
 			}
-			
+
 			switch($room['type']) {
 				case Room::ONE_TO_ONE_CALL:
 					// As name of the room use the name of the other person participating
@@ -198,7 +198,7 @@ class ApiController extends Controller {
 								$participant = $usersInCall[0];
 								$participant2 = $usersInCall[1];
 								$others = count($usersInCall) - 2;
-								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()} and {$others} more";
+								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()} & {$others} more";
 								$validRoom = true;
 								break;
 						}
