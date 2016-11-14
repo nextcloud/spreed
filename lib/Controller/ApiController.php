@@ -164,7 +164,7 @@ class ApiController extends Controller {
 					} else {
 						// More than 2 other participants
 						$others = $numOtherParticipants - 2;
-						$roomData['displayName'] = $this->l10n->n('%1$s, %2$s and %n more', '%1$s, %2$s and %n more', $others, [
+						$roomData['displayName'] = $this->l10n->n('%1$s, %2$s & %n more', '%1$s, %2$s & %n more', $others, [
 							$usersInCall[0]->getDisplayName(),
 							$usersInCall[1]->getDisplayName(),
 						]);
