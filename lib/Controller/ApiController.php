@@ -283,6 +283,34 @@ class ApiController extends Controller {
 	 * @param int $roomId
 	 * @return JSONResponse
 	 */
+	public function leaveRoom($roomId) {
+		try {
+			$room = $this->manager->getRoomById($roomId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participants = $room->getParticipants();
+		if (!isset($participants[$this->userId])) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL || sizeof($participants) === 1) {
+			$room->deleteRoom();
+		} else {
+			$currentUser = $this->userManager->get($this->userId);
+			$room->removeUser($currentUser);
+		}
+
+		return new JSONResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
 	public function ping($roomId) {
 		try {
 			$room = $this->manager->getRoomById($roomId);

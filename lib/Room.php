@@ -109,6 +109,17 @@ class Room {
 	}
 
 	/**
+	 * @param IUser $user
+	 */
+	public function removeUser(IUser $user) {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('spreedme_room_participants')
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($user->getUID())));
+		$query->execute();
+	}
+
+	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return array[] Array of users with [userId => lastPing]
 	 */
