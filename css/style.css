@@ -35,7 +35,8 @@
 	top: 8px;
 }
 #app-navigation .icon-contacts-dark {
-	background-color: transparent;
+	background-color: transparent !important;
+	color: transparent;
 	border-radius: 0;
 	width: 32px;
 	height: 32px;
