@@ -83,7 +83,12 @@ return [
 		],
 		[
 			'name' => 'AppSettings#setSpreedSettings',
-			'url' => '/settings',
+			'url' => '/settings/admin',
+			'verb' => 'POST',
+		],
+		[
+			'name' => 'PersonalSettings#setSpreedSettings',
+			'url' => '/settings/personal',
 			'verb' => 'POST',
 		],
 		[
