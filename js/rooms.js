@@ -16,7 +16,7 @@
 	}
 
 	var currentRoomId = 0;
-	var roomChannel = Backbone.Radio.channel('rooms');
+	Backbone.Radio.channel('rooms');
 
 	OCA.SpreedMe.Rooms = {
 		showCamera: function() {

@@ -33,8 +33,6 @@
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
 		_roomsView: null,
 		_registerPageEvents: function() {
-			var self = this;
-
 			$('#edit-roomname').select2({
 				ajax: {
 					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
@@ -59,7 +57,7 @@
 						$.each(response.ocs.data.exact.users, function(id, user) {
 							if (oc_current_user === user.value.shareWith) {
 								return;
-							};
+							}
 							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
 						});
 						$.each(response.ocs.data.exact.groups, function(id, group) {
@@ -68,7 +66,7 @@
 						$.each(response.ocs.data.users, function(id, user) {
 							if (oc_current_user === user.value.shareWith) {
 								return;
-							};
+							}
 							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
 						});
 						$.each(response.ocs.data.groups, function(id, group) {
@@ -95,7 +93,7 @@
 			$('#edit-roomname').on("change", function(e) {
 				if (e.added.type === "user") {
 					OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
-				} else if (e.added.type == "group") {
+				} else if (e.added.type === "group") {
 					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
 				}
 				
