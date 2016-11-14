@@ -284,17 +284,17 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function ping($roomId) {
-		$notification = $this->notificationManager->createNotification();
-		$notification->setApp('spreed')
-			->setUser($this->userId)
-			->setObject('room', $roomId);
-		$this->notificationManager->markProcessed($notification);
-
 		try {
 			$room = $this->manager->getRoomById($roomId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
+
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp('spreed')
+			->setUser($this->userId)
+			->setObject('room', (string) $roomId);
+		$this->notificationManager->markProcessed($notification);
 
 		$room->ping($this->userId, time());
 		return new JSONResponse();
