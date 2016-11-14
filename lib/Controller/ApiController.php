@@ -193,7 +193,7 @@ class ApiController extends Controller {
 	 */
 	public function getPeersInRoom($roomId) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -286,16 +286,12 @@ class ApiController extends Controller {
 	 */
 	public function addParticipantToRoom($roomId, $newParticipant) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$participants = $room->getParticipants();
-		if (!isset($participants[$this->userId])) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
-		}
-
 		if (isset($participants[$newParticipant])) {
 			return new JSONResponse([]);
 		}
@@ -329,16 +325,12 @@ class ApiController extends Controller {
 	 */
 	public function leaveRoom($roomId) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$participants = $room->getParticipants();
-		if (!isset($participants[$this->userId])) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
-		}
-
 		if ($room->getType() === Room::ONE_TO_ONE_CALL || sizeof($participants) === 1) {
 			$room->deleteRoom();
 		} else {
@@ -357,7 +349,7 @@ class ApiController extends Controller {
 	 */
 	public function ping($roomId) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -367,11 +359,6 @@ class ApiController extends Controller {
 			->setUser($this->userId)
 			->setObject('room', (string) $roomId);
 		$this->notificationManager->markProcessed($notification);
-
-		$participants = $room->getParticipants();
-		if (!isset($participants[$this->userId])) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
-		}
 
 		$room->ping($this->userId, time());
 		return new JSONResponse();

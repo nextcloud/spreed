@@ -65,15 +65,43 @@ class Manager {
 	}
 
 	/**
+	 * @param int $roomId
+	 * @param string $participant
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForParticipant($roomId, $participant) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms', 'r')
+			->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+				$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
+				$query->expr()->eq('p.roomId', 'r.id')
+			))
+			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->isNotNull('p.userId'));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		return new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+	}
+
+	/**
 	 * @param int $id
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomById($id) {
+	public function getRoomById($roomId) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms')
-			->where($query->expr()->eq('id', $query->createNamedParameter($id, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
