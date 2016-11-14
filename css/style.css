@@ -28,10 +28,17 @@
 	display: none;
 }
 
-#app-navigation .avatar {
+#app-navigation .avatar,
+#app-navigation .icon-contacts-dark {
 	position: absolute;
 	left: 8px;
 	top: 8px;
+}
+#app-navigation .icon-contacts-dark {
+	background-color: transparent;
+	border-radius: 0;
+	width: 32px;
+	height: 32px;
 }
 
 #oca-spreedme-add-room button {

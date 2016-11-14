@@ -73,7 +73,7 @@
 			this.listenTo(uiChannel, 'document:click', function(event) {
 				var target = $(event.target);
 
-				if (!this.$el.is(target.closest('li.room-list-item'))) {
+				if (!this.$el.is(target.closest('.room-list-item'))) {
 					// Click was not triggered by this element -> close menu
 					this.menuShown = false;
 					this.toggleMenuClass();
@@ -87,9 +87,15 @@
 				this.$el.removeClass('active');
 			}
 
-			_.each(this.$el.find('.avatar'), function(a) {
-				$(a).avatar($(a).data('user'), 32);
-			});
+			if (this.model.get('type') == 1) { // 1on1
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).avatar($(a).data('user'), 32);
+				});
+			} else if (this.model.get('type') == 2) { // group
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).addClass('icon-contacts-dark');
+				});
+			}
 
 			this.toggleMenuClass();
 		},
