@@ -118,15 +118,19 @@ class ApiController extends Controller {
 				'name' => $room->getName(),
 				'displayName' => $room->getName(),
 				'count' => $room->getNumberOfParticipants(time() - 10),
+				'lastPing' => 0,
 			];
 
 			// First we get room users (except current user).
 			$participantPings = $room->getParticipants();
-			unset($participantPings[$this->userId]);
-
 			/** @var IUser[] $usersInCall */
 			$usersInCall = [];
 			foreach ($participantPings as $participant => $lastPing) {
+				if ($participant === $this->userId) {
+					$roomData['lastPing'] = $lastPing;
+					continue;
+				}
+
 				$user = $this->userManager->get($participant);
 				if ($user instanceof IUser) {
 					$usersInCall[] = $user;
