@@ -280,22 +280,23 @@ class ApiController extends Controller {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $currentRoom
+	 * @param int $roomId
 	 * @return JSONResponse
 	 */
-	public function ping($currentRoom) {
+	public function ping($roomId) {
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setUser($this->userId)
-			->setObject('room', $currentRoom);
+			->setObject('room', $roomId);
 		$this->notificationManager->markProcessed($notification);
 
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->update('spreedme_room_participants')
-			->set('lastPing', $qb->createNamedParameter(time()))
-			->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-			->andWhere($qb->expr()->eq('roomId', $qb->createNamedParameter($currentRoom)))
-			->execute();
+		try {
+			$room = $this->manager->getRoomById($roomId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$room->ping($this->userId, time());
 		return new JSONResponse();
 	}
 }

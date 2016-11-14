@@ -153,4 +153,18 @@ class Room {
 
 		return (int) $row['num_participants'];
 	}
+
+	/**
+	 * @param string $participant
+	 * @param int $timestamp
+	 */
+	public function ping($participant, $timestamp) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_room_participants')
+			->set('lastPing', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('userId', $query->createNamedParameter($participant)))
+			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		$query->execute();
+	}
 }
