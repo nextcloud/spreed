@@ -338,8 +338,7 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$participants = $room->getParticipants();
-		if ($room->getType() === Room::ONE_TO_ONE_CALL || sizeof($participants) === 1) {
+		if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
 		} else {
 			$currentUser = $this->userManager->get($this->userId);

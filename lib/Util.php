@@ -22,11 +22,32 @@
 namespace OCA\Spreed;
 
 use OCP\IConfig;
+use OCP\IUser;
 
 class Util {
 
-    public static function getStunServer(IConfig $config) {
-        return $config->getAppValue('spreed', 'stun_server', 'stun.l.google.com:19302');
-    }
+	/**
+	 * @param IConfig $config
+	 * @return string
+	 */
+	public static function getStunServer(IConfig $config) {
+		return $config->getAppValue('spreed', 'stun_server', 'stun.l.google.com:19302');
+	}
 
+	/**
+	 * @param IUser $user
+	 */
+	public static function deleteUser(IUser $user) {
+		/** @var Manager $manager */
+		$manager = \OC::$server->query(Manager::class);
+		$rooms = $manager->getRoomsForParticipant($user->getUID());
+
+		foreach ($rooms as $room) {
+			if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
+				$room->deleteRoom();
+			} else {
+				$room->removeUser($user);
+			}
+		}
+	}
 }
