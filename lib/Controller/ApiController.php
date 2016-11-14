@@ -31,6 +31,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -52,6 +53,8 @@ class ApiController extends Controller {
 	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var ILogger */
+	private $logger;
 	/** @var Manager */
 	private $manager;
 	/** @var IManager */
@@ -66,6 +69,7 @@ class ApiController extends Controller {
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param ISecureRandom $secureRandom
+	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param IManager $notificationManager
 	 */
@@ -77,6 +81,7 @@ class ApiController extends Controller {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								ISecureRandom $secureRandom,
+								ILogger $logger,
 								Manager $manager,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
@@ -86,6 +91,7 @@ class ApiController extends Controller {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
+		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
 	}
@@ -100,99 +106,84 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function getRooms() {
-		$qb = $this->dbConnection->getQueryBuilder();
-		$rooms = $qb->select('*')
-			->from('spreedme_rooms', 'r')
-			->leftJoin('r', 'spreedme_room_participants', 'p', $qb->expr()->andX(
-				$qb->expr()->eq('p.userId', $qb->createNamedParameter($this->userId)),
-				$qb->expr()->eq('p.roomId', 'r.id')
-			))
-			->where($qb->expr()->isNotNull('p.userId'))
-			->execute()
-			->fetchAll();
-		foreach($rooms as $key => $room) {
-			$roomObject = $this->manager->getRoomById($room['id']);
-			$validRoom = false;
-			$usersInCall = [];
+		$rooms = $this->manager->getRoomsForParticipant($this->userId);
+
+		$return = [];
+		foreach ($rooms as $room) {
+			$roomData = [
+				'name' => $room->getName(),
+				'displayName' => $room->getName(),
+				'count' => $room->getNumberOfParticipants(time() - 10),
+				'validRoom' => true,
+			];
 
 			// First we get room users (except current user).
-			$participantsInCall = $roomObject->getParticipants();
-			foreach($participantsInCall as $i => $participantInCall) {
-				$uid = $participantsInCall[$i]['userId'];
-		        if($uid === $this->userId){
-		            //Delete current user from participantsInCall.
-		            unset($participantsInCall[$i]);
-		    	} else {
-		    		$user = $this->userManager->get($uid);
-		    		if($user === null) {
-						// TODO: This should not really ever happen. Add some
-						// error handling and fail here.
-						continue;
-					}
-		    		$usersInCall[] = $user;
-		    	}
+			$participantPings = $room->getParticipants();
+			unset($participantPings[$this->userId]);
+
+			/** @var IUser[] $usersInCall */
+			$usersInCall = [];
+			foreach ($participantPings as $participant => $lastPing) {
+				$user = $this->userManager->get($participant);
+				if ($user instanceof IUser) {
+					$usersInCall[] = $user;
+				}
 			}
 
-			switch($room['type']) {
+			$numOtherParticipants = sizeof($usersInCall);
+			
+			switch($room->getType()) {
 				case Room::ONE_TO_ONE_CALL:
 					// As name of the room use the name of the other person participating
-					switch(count($usersInCall)) {
-						case 1:
-							// Only one other participant in the room. This is expected.
-							$participant = $usersInCall[0];
-							$rooms[$key]['name'] = $participant->getUID();
-							$rooms[$key]['displayName'] = $participant->getDisplayName();
-							$validRoom = true;
-							break;
-						default:
-							$validRoom = false;
-							// TODO: This should not really ever happen. Add some
-							// error handling and fail here.
+					if ($numOtherParticipants === 1) {
+						// Only one other participant
+						$roomData['name'] = $usersInCall[0]->getUID();
+						$roomData['displayName'] = $usersInCall[0]->getDisplayName();
+					} else {
+						// Invalid user count, there must be exactly 2 users in each one2one room
+						$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
+							'app' => 'spreed',
+						]);
+						$room->deleteRoom();
 					}
-
 					break;
+
 				case Room::GROUP_CALL:
 					/// As name of the room use the names of the other participants
-					switch(count($usersInCall)) {
-							case 0:
-								// Only you
-								$rooms[$key]['displayName'] = "You";
-								break;
-							case 1:
-								// Only one more participant
-								$participant = $usersInCall[0];
-								$rooms[$key]['displayName'] = $participant->getDisplayName();
-								$validRoom = true;
-								break;
-							case 2:
-								// 2 more participants
-								$participant = $usersInCall[0];
-								$participant2 = $usersInCall[1];
-								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()}";
-								$validRoom = true;
-								break;
-							default:
-								// More than 2 other participants
-								$participant = $usersInCall[0];
-								$participant2 = $usersInCall[1];
-								$others = count($usersInCall) - 2;
-								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()} & {$others} more";
-								$validRoom = true;
-								break;
-						}
-
+					if ($numOtherParticipants === 0) {
+						// Only you
+						$roomData['displayName'] = $this->l10n->t('You');
+					} else if ($numOtherParticipants === 1) {
+						// Only one other participant
+						$roomData['displayName'] = $usersInCall[0]->getDisplayName();
+					} else if ($numOtherParticipants === 2) {
+						// 2 other participants
+						$roomData['displayName'] = $this->l10n->t('%1$s, %2$s', [
+							$usersInCall[0]->getDisplayName(),
+							$usersInCall[1]->getDisplayName(),
+						]);
+					} else {
+						// More than 2 other participants
+						$others = $numOtherParticipants - 2;
+						$roomData['displayName'] = $this->l10n->n('%1$s, %2$s and %n more', '%1$s, %2$s and %n more', $others, [
+							$usersInCall[0]->getDisplayName(),
+							$usersInCall[1]->getDisplayName(),
+						]);
+					}
 					break;
-				default:
-					// TODO: More sane handling and logging of the room. Because
-					// This shouldn't happen.
-					continue;
 
+				default:
+					// Invalid room type
+					$this->logger->warning('Invalid room type found. Leaving room for everyone', [
+						'app' => 'spreed',
+					]);
+					$room->deleteRoom();
 			}
-			$rooms[$key]['validRoom'] = $validRoom;
-			$rooms[$key]['count'] = $roomObject->getNumberOfParticipants(time() - 10);
+
+			$return[] = $roomData;
 		}
 
-		return new JSONResponse($rooms);
+		return new JSONResponse($return);
 	}
 
 	/**
@@ -207,7 +198,16 @@ class ApiController extends Controller {
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
-		return new JSONResponse($room->getParticipants());
+
+		$data = [];
+		foreach ($room->getParticipants() as $participant => $lastPing) {
+			$data[] = [
+				'userId' => $participant,
+				'roomId' => $roomId,
+				'lastPing' => $lastPing,
+			];
+		}
+		return new JSONResponse($data);
 	}
 
 	/**

@@ -76,6 +76,22 @@ class Room {
 		return $this->name;
 	}
 
+	public function deleteRoom() {
+		$query = $this->db->getQueryBuilder();
+
+		// Delete all participants
+		$query->delete('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		// FIXME Delete notifications
+
+		// Delete room
+		$query->delete('spreedme_rooms')
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+	}
+
 	/**
 	 * @param IUser $user
 	 */
@@ -84,7 +100,7 @@ class Room {
 		$query->insert('spreedme_room_participants')
 			->values(
 				[
-					'userId' => $query->createNamedParameter($user),
+					'userId' => $query->createNamedParameter($user->getUID()),
 					'roomId' => $query->createNamedParameter($this->getId()),
 					'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
 				]
@@ -94,7 +110,7 @@ class Room {
 
 	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
-	 * @return array[] Array of users with [userId, roomId, lastPing]
+	 * @return array[] Array of users with [userId => lastPing]
 	 */
 	public function getParticipants($lastPing = 0) {
 		$query = $this->db->getQueryBuilder();
@@ -107,7 +123,11 @@ class Room {
 		}
 
 		$result = $query->execute();
-		$rows = $result->fetchAll();
+
+		$rows = [];
+		while ($row = $result->fetch()) {
+			$rows[$row['userId']] = (int) $row['lastPing'];
+		}
 		$result->closeCursor();
 
 		return $rows;

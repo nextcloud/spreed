@@ -41,6 +41,30 @@ class Manager {
 	}
 
 	/**
+	 * @param string $participant
+	 * @return Room[]
+	 */
+	public function getRoomsForParticipant($participant) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms', 'r')
+			->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+				$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
+				$query->expr()->eq('p.roomId', 'r.id')
+			))
+			->where($query->expr()->isNotNull('p.userId'));
+
+		$result = $query->execute();
+		$rooms = [];
+		while ($row = $result->fetch()) {
+			$rooms[] = new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+		}
+		$result->closeCursor();
+
+		return $rooms;
+	}
+
+	/**
 	 * @param int $id
 	 * @return Room
 	 * @throws RoomNotFoundException
