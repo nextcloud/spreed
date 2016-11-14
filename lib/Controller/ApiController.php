@@ -114,7 +114,6 @@ class ApiController extends Controller {
 				'name' => $room->getName(),
 				'displayName' => $room->getName(),
 				'count' => $room->getNumberOfParticipants(time() - 10),
-				'validRoom' => true,
 			];
 
 			// First we get room users (except current user).
@@ -211,41 +210,6 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * Returns the private chat room for two users or if not existent a
-	 * RoomNotFoundException
-	 *
-	 * @param string $user1
-	 * @param string $user2
-	 * @return int
-	 * @throws RoomNotFoundException
-	 */
-	private function getPrivateChatRoomForUsers($user1, $user2) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		$results = $qb->select('*')
-			->from('spreedme_rooms', 'r1')
-			->leftJoin('r1', 'spreedme_room_participants', 'p1', $qb->expr()->andX(
-				$qb->expr()->eq('p1.userId', $qb->createNamedParameter($user1)),
-				$qb->expr()->eq('p1.roomId', 'r1.id')
-			))
-			->where($qb->expr()->isNotNull('p2.userId'))
-			->andWhere($qb->expr()->isNotNull('p1.userId'))
-			->andWhere($qb->expr()->eq('r1.type', $qb->createNamedParameter('1')))
-			->leftJoin('r1', 'spreedme_room_participants', 'p2', $qb->expr()->andX(
-				$qb->expr()->eq('p2.userId', $qb->createNamedParameter($user2)),
-				$qb->expr()->eq('p2.roomId', 'r1.id')
-			))
-			->execute()
-			->fetchAll();
-
-		//There should be only one result if there is any.
-		if(count($results) >=  1) {
-			return (int)$results[count($results)-1]['roomId'];
-		}
-
-		throw new RoomNotFoundException();
-	}
-
-	/**
 	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
 	 * @NoAdminRequired
@@ -263,8 +227,8 @@ class ApiController extends Controller {
 
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
-			$roomId = $this->getPrivateChatRoomForUsers($targetUser->getUID(), $this->userId);
-			return new JSONResponse(['roomId' => $roomId], Http::STATUS_OK);
+			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
+			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, $this->secureRandom->generate(12));
 			$room->addUser($currentUser);

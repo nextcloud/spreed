@@ -87,6 +87,39 @@ class Manager {
 	}
 
 	/**
+	 * @param string $participant1
+	 * @param string $participant2
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getOne2OneRoom($participant1, $participant2) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms', 'r1')
+			->leftJoin('r1', 'spreedme_room_participants', 'p1', $query->expr()->andX(
+				$query->expr()->eq('p1.userId', $query->createNamedParameter($participant1)),
+				$query->expr()->eq('p1.roomId', 'r1.id')
+			))
+			->leftJoin('r1', 'spreedme_room_participants', 'p2', $query->expr()->andX(
+				$query->expr()->eq('p2.userId', $query->createNamedParameter($participant2)),
+				$query->expr()->eq('p2.roomId', 'r1.id')
+			))
+			->where($query->expr()->eq('r1.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->isNotNull('p1.userId'))
+			->andWhere($query->expr()->isNotNull('p2.userId'));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		return new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+	}
+
+	/**
 	 * @param int $type
 	 * @param string $name
 	 * @return Room
