@@ -26,22 +26,11 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
-	Handlebars.registerHelper('isGroupCall', function(options) {
-		if(typeof this.type !== 'undefined') {
-			if(this.type === "1") {
-				return options.inverse(this);
-			} else {
-				return options.fn(this);
-			}
-		}
-	});
-
 	var uiChannel = Backbone.Radio.channel('ui');
 
 	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
-								'{{#isGroupCall}}<li class="app-navigation-entry-utils-counter">{{count}}</li>{{/isGroupCall}}'+
 								'<li class="app-navigation-entry-utils-menu-button svg"><button></button></li>'+
 							'</ul>'+
 						'</div>'+
