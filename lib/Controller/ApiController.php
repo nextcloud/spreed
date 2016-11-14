@@ -111,6 +111,8 @@ class ApiController extends Controller {
 		$return = [];
 		foreach ($rooms as $room) {
 			$roomData = [
+				'id' => $room->getId(),
+				'type' => $room->getType(),
 				'name' => $room->getName(),
 				'displayName' => $room->getName(),
 				'count' => $room->getNumberOfParticipants(time() - 10),
