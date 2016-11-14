@@ -22,6 +22,7 @@
 
 namespace OCA\Spreed;
 
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
 
@@ -85,9 +86,30 @@ class Room {
 				[
 					'userId' => $query->createNamedParameter($user),
 					'roomId' => $query->createNamedParameter($this->getId()),
-					'lastPing' => $query->createNamedParameter('0'),
+					'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
 				]
 			);
 		$query->execute();
+	}
+
+	/**
+	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
+	 * @return array[] Array of users with [userId, roomId, lastPing]
+	 */
+	public function getParticipants($lastPing = 0) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($lastPing > 0) {
+			$query->andWhere($query->expr()->gt('lastPing', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
+		}
+
+		$result = $query->execute();
+		$rows = $result->fetchAll();
+		$result->closeCursor();
+
+		return $rows;
 	}
 }

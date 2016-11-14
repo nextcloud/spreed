@@ -78,7 +78,7 @@ class Manager {
 			->values(
 				[
 					'name' => $query->createNamedParameter($name),
-					'type' => $query->createNamedParameter($type),
+					'type' => $query->createNamedParameter($type, IQueryBuilder::PARAM_INT),
 				]
 			);
 		$query->execute();

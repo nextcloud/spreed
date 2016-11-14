@@ -93,30 +93,29 @@ class ApiController extends Controller {
 	/**
 	 * @param int $roomId
 	 * @return array
+	 * @deprecated
 	 */
 	private function getActivePeers($roomId) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		return $qb->select('*')
-			->from('spreedme_room_participants')
-			->where($qb->expr()->eq('roomId', $qb->createNamedParameter($roomId)))
-			->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 10)))
-			->execute()
-			->fetchAll();
+		try {
+			$room = $this->manager->getRoomById($roomId);
+		} catch (RoomNotFoundException $e) {
+			return [];
+		}
+		return $room->getParticipants(time() - 10);
 	}
 
 	/**
-	 * Get all participants for a room
-	 *
 	 * @param int $roomId
 	 * @return array
+	 * @deprecated
 	 */
 	private function getRoomParticipants($roomId) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		return $qb->select('*')
-			->from('spreedme_room_participants')
-			->where($qb->expr()->eq('roomId', $qb->createNamedParameter($roomId)))
-			->execute()
-			->fetchAll();
+		try {
+			$room = $this->manager->getRoomById($roomId);
+		} catch (RoomNotFoundException $e) {
+			return [];
+		}
+		return $room->getParticipants();
 	}
 
 	/**
@@ -230,7 +229,12 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function getPeersInRoom($roomId) {
-		return new JSONResponse($this->getActivePeers($roomId));
+		try {
+			$room = $this->manager->getRoomById($roomId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+		return new JSONResponse($room->getParticipants());
 	}
 
 	/**
