@@ -101,6 +101,8 @@
 			_.each(this.$el.find('.avatar'), function(a) {
 				$(a).avatar($(a).data('username'), 32);
 			});
+
+			this.toggleMenuClass();
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
