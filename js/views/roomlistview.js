@@ -38,7 +38,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-userName="{{name}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
 								'{{#isGroupCall}}<li class="app-navigation-entry-utils-counter">{{count}}</li>{{/isGroupCall}}'+
@@ -99,7 +99,7 @@
 			}
 
 			_.each(this.$el.find('.avatar'), function(a) {
-				$(a).avatar($(a).data('username'), 32);
+				$(a).avatar($(a).data('user'), 32);
 			});
 
 			this.toggleMenuClass();
