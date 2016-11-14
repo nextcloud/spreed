@@ -64,10 +64,14 @@
 			});
 		},
 		ping: function() {
+			if (OCA.SpreedMe.Rooms.currentRoom() == "0") {
+				return;
+			}
+
 			$.post(
 				OC.generateUrl('/apps/spreed/api/ping'),
 				{
-					currentRoom: OCA.SpreedMe.Rooms.currentRoom()
+					roomId: OCA.SpreedMe.Rooms.currentRoom()
 				}
 			);
 		}
