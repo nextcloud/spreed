@@ -314,48 +314,26 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function createGroupVideoCallRoom($targetGroupName) {
-		// Get the group
 		$targetGroup = $this->groupManager->get($targetGroupName);
-		// Get current user
 		$currentUser = $this->userManager->get($this->userId);
 
 		if(!($targetGroup instanceof IGroup)) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		// Create the room
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->insert('spreedme_rooms')
-			->values(
-				[
-					'name' => $qb->createNamedParameter($targetGroup->getGID()),
-					'type' => $qb->createNamedParameter(Room::GROUP_CALL),
-				]
-			)
-			->execute();
-		$roomId = $qb->getLastInsertId();
-
-		// Add users to new room
 		$usersInGroup = $targetGroup->getUsers();
-		// If the user who is creating this call is not part of this group, add it.
+		// If the user who is creating this call is not part of this group add them
 		if (!($targetGroup->inGroup($currentUser))) {
 			$usersInGroup[] = $currentUser;
 		}
 
-		foreach($usersInGroup as $user) {
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->insert('spreedme_room_participants')
-				->values(
-					[
-						'userId' => $qb->createNamedParameter($user->getUID()),
-						'roomId' => $qb->createNamedParameter($roomId),
-						'lastPing' => $qb->createNamedParameter('0'),
-					]
-				)
-				->execute();
+		// Create the room
+		$room = $this->manager->createRoom(Room::GROUP_CALL, $targetGroup->getGID());
+		foreach ($usersInGroup as $user) {
+			$room->addUser($user);
 		}
 
-		return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
+		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 	}
 
 	/**
