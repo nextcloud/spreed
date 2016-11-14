@@ -189,3 +189,7 @@ video {
 	width: 36px;
 	box-sizing: border-box;
 }
+
+#app-navigation .app-navigation-entry-utils-menu-button {
+	display: inline-block;
+}
