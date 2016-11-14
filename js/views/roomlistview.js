@@ -48,7 +48,7 @@
 						'<div class="app-navigation-entry-menu">'+
 							'<ul>'+
 								'<li>'+
-									'<button>'+
+									'<button id="add-person-button">'+
 										'<span class="icon-add svg"></span>'+
 										'<span>'+t('spreedme', 'Add person')+'</span>'+
 									'</button>'+
@@ -56,7 +56,7 @@
 							'</ul>'+
 							'<ul>'+
 								'<li>'+
-									'<button>'+
+									'<button id="share-group-button">'+
 										'<span class="icon-share svg"></span>'+
 										'<span>'+t('spreedme', 'Share group')+'</span>'+
 									'</button>'+
@@ -64,7 +64,7 @@
 							'</ul>'+
 							'<ul>'+
 								'<li>'+
-									'<button>'+
+									'<button id="leave-group-button">'+
 										'<span class="icon-close svg"></span>'+
 										'<span>'+t('spreedme', 'Leave group')+'</span>'+
 									'</button>'+
@@ -106,6 +106,9 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
+			'click .app-navigation-entry-menu #add-person-button': 'addPerson',
+			'click .app-navigation-entry-menu #share-group-button': 'shareGroup',
+			'click .app-navigation-entry-menu #leave-group-button': 'leaveGroup',
 		},
 		ui: {
 			'menu': 'div.app-navigation-entry-menu',
@@ -119,6 +122,15 @@
 		},
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
+		},
+		addPerson: function(e) {
+			console.log("add person", this.model.get('id'));
+		},
+		shareGroup: function(e) {
+			console.log("share group", this.model.get('id'));
+		},
+		leaveGroup: function(e) {
+			console.log("leave group", this.model.get('id'));
 		}
 	});
 
