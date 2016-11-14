@@ -368,6 +368,11 @@ class ApiController extends Controller {
 			->setObject('room', (string) $roomId);
 		$this->notificationManager->markProcessed($notification);
 
+		$participants = $room->getParticipants();
+		if (!isset($participants[$this->userId])) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$room->ping($this->userId, time());
 		return new JSONResponse();
 	}
