@@ -13,6 +13,9 @@ globals:
   OC: false
   OCA: false
   t: false
+  Backbone: false
+  _: false
+  oc_current_user: false
 
 rules:
   curly: error
