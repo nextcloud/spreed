@@ -281,6 +281,50 @@ class ApiController extends Controller {
 	 * @NoAdminRequired
 	 *
 	 * @param int $roomId
+	 * @param string $newParticipant
+	 * @return JSONResponse
+	 */
+	public function addParticipantToRoom($roomId, $newParticipant) {
+		try {
+			$room = $this->manager->getRoomById($roomId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participants = $room->getParticipants();
+		if (!isset($participants[$this->userId])) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (isset($participants[$newParticipant])) {
+			return new JSONResponse([]);
+		}
+
+		$newUser = $this->userManager->get($newParticipant);
+		if (!$newUser instanceof IUser) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			// In case a user is added to a one2one call, we create a new group call and add the participants manually
+			$room = $this->manager->createRoom(Room::GROUP_CALL, $this->secureRandom->generate(12));
+			foreach ($participants as $participant => $lastPing) {
+				$user = $this->userManager->get($participant);
+				if ($user instanceof IUser) {
+					$room->addUser($user);
+				}
+			}
+			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+		}
+
+		$room->addUser($newUser);
+		return new JSONResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
 	 * @return JSONResponse
 	 */
 	public function leaveRoom($roomId) {

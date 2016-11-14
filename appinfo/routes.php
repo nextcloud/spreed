@@ -49,6 +49,11 @@ return [
 			'verb' => 'GET',
 		],
 		[
+			'name' => 'api#addParticipantToRoom',
+			'url' => '/api/room/{roomId}',
+			'verb' => 'POST',
+		],
+		[
 			'name' => 'api#leaveRoom',
 			'url' => '/api/room/{roomId}',
 			'verb' => 'DELETE',
