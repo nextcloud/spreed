@@ -112,4 +112,25 @@ class Room {
 
 		return $rows;
 	}
+
+	/**
+	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
+	 * @return int
+	 */
+	public function getNumberOfParticipants($lastPing = 0) {
+		$query = $this->db->getQueryBuilder();
+		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_participants')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($lastPing > 0) {
+			$query->andWhere($query->expr()->gt('lastPing', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
+		}
+
+		$result = $query->execute();
+		$row = $result->fetchAll();
+		$result->closeCursor();
+
+		return (int) $row['num_participants'];
+	}
 }

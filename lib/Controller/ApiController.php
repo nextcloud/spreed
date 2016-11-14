@@ -91,34 +91,6 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * @param int $roomId
-	 * @return array
-	 * @deprecated
-	 */
-	private function getActivePeers($roomId) {
-		try {
-			$room = $this->manager->getRoomById($roomId);
-		} catch (RoomNotFoundException $e) {
-			return [];
-		}
-		return $room->getParticipants(time() - 10);
-	}
-
-	/**
-	 * @param int $roomId
-	 * @return array
-	 * @deprecated
-	 */
-	private function getRoomParticipants($roomId) {
-		try {
-			$room = $this->manager->getRoomById($roomId);
-		} catch (RoomNotFoundException $e) {
-			return [];
-		}
-		return $room->getParticipants();
-	}
-
-	/**
 	 * Get all currently existent rooms which the user has joined
 	 *
 	 * @NoAdminRequired
@@ -139,11 +111,12 @@ class ApiController extends Controller {
 			->execute()
 			->fetchAll();
 		foreach($rooms as $key => $room) {
+			$roomObject = $this->manager->getRoomById($room['id']);
 			$validRoom = false;
 			$usersInCall = [];
 
 			// First we get room users (except current user).
-			$participantsInCall = $this->getRoomParticipants($room['id']);
+			$participantsInCall = $roomObject->getParticipants();
 			foreach($participantsInCall as $i => $participantInCall) {
 				$uid = $participantsInCall[$i]['userId'];
 		        if($uid === $this->userId){
@@ -216,7 +189,7 @@ class ApiController extends Controller {
 
 			}
 			$rooms[$key]['validRoom'] = $validRoom;
-			$rooms[$key]['count'] = count($this->getActivePeers($room['id']));
+			$rooms[$key]['count'] = $roomObject->getNumberOfParticipants(time() - 10);
 		}
 
 		return new JSONResponse($rooms);
