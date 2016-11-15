@@ -64,7 +64,7 @@
 			});
 		},
 		ping: function() {
-			if (OCA.SpreedMe.Rooms.currentRoom() == "0") {
+			if (OCA.SpreedMe.Rooms.currentRoom() === 0) {
 				return;
 			}
 
