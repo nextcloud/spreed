@@ -150,6 +150,18 @@ video {
 #app-content:fullscreen {
 	width: 100%;
 }
+#app-content:-webkit-full-screen #app-navigation-toggle {
+	display: none !important;
+}
+#app-content:-moz-full-screen #app-navigation-toggle {
+	display: none !important;
+}
+#app-content:-ms-fullscreen #app-navigation-toggle {
+	display: none !important;
+}
+#app-content:fullscreen #app-navigation-toggle {
+	display: none !important;
+}
 
 .localmediaerror h2 {
 	color: red;
