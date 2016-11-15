@@ -28,7 +28,6 @@ use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IUserSession;
 
 class PersonalSettingsController extends Controller {
 
@@ -37,26 +36,26 @@ class PersonalSettingsController extends Controller {
 	/** @var IConfig */
 	private $config;
 	/**
-	 * @var bool|IUser
+	 * @var string
 	 */
-	private $user;
+	private $userId;
 
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IL10N $l10n
 	 * @param IConfig $config
-	 * @param IUserSession $userSession
+	 * @param string $userId
 	 */
 	public function __construct($appName,
 								IRequest $request,
 								IL10N $l10n,
 								IConfig $config,
-								IUserSession $userSession) {
+								$userId) {
 		parent::__construct($appName, $request);
 		$this->l10n = $l10n;
 		$this->config = $config;
-		$this->user = $userSession && $userSession->isLoggedIn() ? $userSession->getUser() : false;
+		$this->userId = $userId;
 	}
 
 	/**
@@ -65,7 +64,7 @@ class PersonalSettingsController extends Controller {
 	 * @return TemplateResponse
 	 */
 	public function displayPanel() {
-		$settings = Util::getTurnSettings($this->config, $this->user->getUID());
+		$settings = Util::getTurnSettings($this->config, $this->userId);
 		return new TemplateResponse('spreed', 'settings-personal', [
 			'turnSettings' => $settings,
 		], '');
@@ -82,7 +81,7 @@ class PersonalSettingsController extends Controller {
 	 * @param string $turn_protocols
 	 */
 	public function setSpreedSettings($turn_server, $turn_username, $turn_password, $turn_protocols) {
-		if (!$this->user) {
+		if (!$this->userId) {
 			return array('data' =>
 				array('message' =>
 					(string) $this->l10n->t('Not logged in.')
@@ -136,7 +135,7 @@ class PersonalSettingsController extends Controller {
 			'protocols' => $turn_protocols
 		);
 
-		$this->config->setUserValue($this->user->getUID(),
+		$this->config->setUserValue($this->userId,
 			'spreed',
 			'turn_settings',
 			json_encode($turn_settings));
