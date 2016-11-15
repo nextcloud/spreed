@@ -21,7 +21,10 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Util;
+
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -54,6 +57,18 @@ class PersonalSettingsController extends Controller {
 		$this->l10n = $l10n;
 		$this->config = $config;
 		$this->user = $userSession && $userSession->isLoggedIn() ? $userSession->getUser() : false;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @return TemplateResponse
+	 */
+	public function displayPanel() {
+		$settings = Util::getTurnSettings($this->config, $this->user->getUID());
+		return new TemplateResponse('spreed', 'settings-personal', [
+			'turnSettings' => $settings,
+		], '');
 	}
 
 	/**

@@ -19,7 +19,18 @@
  *
  */
 
-$app = new \OCA\Spreed\AppInfo\Application();
-/** @var OCA\Spreed\Controller\PersonalSettingsController */
-$controller = $app->getContainer()->query('PersonalSettingsController');
-return $controller->displayPanel()->render();
+namespace OCA\Spreed\AppInfo;
+
+use OCP\AppFramework\App;
+use OCA\Spreed\Controller\PersonalSettingsController;
+
+class Application extends App {
+
+    public function __construct () {
+        parent::__construct('spreed');
+        $container = $this->getContainer();
+
+        $container->registerAlias('PersonalSettingsController', PersonalSettingsController::class);
+    }
+
+}
