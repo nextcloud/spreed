@@ -87,11 +87,11 @@
 				this.$el.removeClass('active');
 			}
 
-			if (this.model.get('type') == 1) { // 1on1
+			if (this.model.get('type') === 1) { // 1on1
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).avatar($(a).data('user'), 32);
 				});
-			} else if (this.model.get('type') == 2) { // group
+			} else if (this.model.get('type') === 2) { // group
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).addClass('icon-contacts-dark');
 				});
@@ -118,13 +118,13 @@
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
 		},
-		addPerson: function(e) {
+		addPerson: function() {
 			console.log("add person", this.model.get('id'));
 		},
-		shareGroup: function(e) {
+		shareGroup: function() {
 			console.log("share group", this.model.get('id'));
 		},
-		leaveGroup: function(e) {
+		leaveGroup: function() {
 			console.log("leave group", this.model.get('id'));
 		}
 	});
