@@ -91,6 +91,14 @@ var webrtc;
 			remoteVideosEl: '',
 			autoRequestMedia: true,
 			debug: false,
+			media: {
+				audio: true,
+				video: {
+					width: { max: 512 },
+					height: { max: 384 },
+					frameRate: { max: 15 }
+				}
+			},
 			autoAdjustMic: false,
 			detectSpeakingEvents: true,
 			connection: OCA.SpreedMe.XhrConnection,
