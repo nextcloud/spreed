@@ -13994,10 +13994,12 @@
 		});
 
 		this.webrtc.on('iceFailed', function (peer) {
-			// local ice failure
+			// TODO: local ice failure
+			console.error('iceFailed event received');
 		});
 		this.webrtc.on('connectivityError', function (peer) {
-			// remote ice failure
+			// TODO: remote ice failure
+			console.error('connectivityError event received');
 		});
 
 
