@@ -44,3 +44,5 @@ $manager->registerNotifier(function() {
 		'name' => $l->t('Spreed'),
 	];
 });
+
+\OCP\Util::connectHook('OC_User', 'post_deleteUser', \OCA\Spreed\Util::class, 'deleteUser');

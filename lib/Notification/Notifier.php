@@ -22,6 +22,9 @@
 namespace OCA\Spreed\Notification;
 
 
+use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -40,15 +43,20 @@ class Notifier implements INotifier {
 	/** @var IUserManager */
 	protected $userManager;
 
+	/** @var Manager */
+	protected $manager;
+
 	/**
 	 * @param IFactory $lFactory
 	 * @param IURLGenerator $url
 	 * @param IUserManager $userManager
+	 * @param Manager $manager
 	 */
-	public function __construct(IFactory $lFactory, IURLGenerator $url, IUserManager $userManager) {
+	public function __construct(IFactory $lFactory, IURLGenerator $url, IUserManager $userManager, Manager $manager) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->userManager = $userManager;
+		$this->manager = $manager;
 	}
 
 	/**
@@ -65,6 +73,13 @@ class Notifier implements INotifier {
 
 		$l = $this->lFactory->get('spreed', $languageCode);
 
+		try {
+			$room = $this->manager->getRoomById((int) $notification->getObjectId());
+		} catch (RoomNotFoundException $e) {
+			// Room does not exist
+			throw new \InvalidArgumentException('Invalid room');
+		}
+
 		if ($notification->getSubject() === 'invitation') {
 			$parameters = $notification->getSubjectParameters();
 			$uid = $parameters[0];
@@ -72,23 +87,40 @@ class Notifier implements INotifier {
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
 				->setLink($this->url->linkToRouteAbsolute('spreed.page.index') . '#' . $notification->getObjectId());
 
-			if ($notification->getObjectType() === 'one2one') {
+			if ($notification->getObjectType() === 'room') {
 				$user = $this->userManager->get($uid);
 				if ($user instanceof IUser) {
-					$notification
-						->setParsedSubject(
-							$l->t('%s wants to have a call with you', [$user->getDisplayName()])
-						)
-						->setRichSubject(
-							$l->t('{user} wants to have a call with you'), [
-								'user' => [
-									'type' => 'user',
-									'id' => $uid,
-									'name' => $user->getDisplayName(),
+					if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+						$notification
+							->setParsedSubject(
+								$l->t('%s invited you to a private call', [$user->getDisplayName()])
+							)
+							->setRichSubject(
+								$l->t('{user} invited you to a private call'), [
+									'user' => [
+										'type' => 'user',
+										'id' => $uid,
+										'name' => $user->getDisplayName(),
+									]
 								]
-							]
-						)
-					;
+							)
+						;
+					} else if ($room->getType() === Room::GROUP_CALL) {
+						$notification
+							->setParsedSubject(
+								$l->t('%s invited you to a group call', [$user->getDisplayName()])
+							)
+							->setRichSubject(
+								$l->t('{user} invited you to a group call'), [
+									'user' => [
+										'type' => 'user',
+										'id' => $uid,
+										'name' => $user->getDisplayName(),
+									]
+								]
+							)
+						;
+					}
 				} else {
 					throw new \InvalidArgumentException('Calling user does not exist anymore');
 				}

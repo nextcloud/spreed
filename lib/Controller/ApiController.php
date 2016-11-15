@@ -1,8 +1,10 @@
 <?php
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
+ * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
  * @author Lukas Reschke <lukas@statuscode.ch>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -24,12 +26,14 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
 use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -51,6 +55,10 @@ class ApiController extends Controller {
 	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var ILogger */
+	private $logger;
+	/** @var Manager */
+	private $manager;
 	/** @var IManager */
 	private $notificationManager;
 
@@ -63,6 +71,8 @@ class ApiController extends Controller {
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param ISecureRandom $secureRandom
+	 * @param ILogger $logger
+	 * @param Manager $manager
 	 * @param IManager $notificationManager
 	 */
 	public function __construct($appName,
@@ -73,6 +83,8 @@ class ApiController extends Controller {
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								ISecureRandom $secureRandom,
+								ILogger $logger,
+								Manager $manager,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
@@ -81,36 +93,9 @@ class ApiController extends Controller {
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
+		$this->logger = $logger;
+		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
-	}
-
-	/**
-	 * @param int $roomId
-	 * @return array
-	 */
-	private function getActivePeers($roomId) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		return $qb->select('*')
-			->from('spreedme_room_participants')
-			->where($qb->expr()->eq('roomId', $qb->createNamedParameter($roomId)))
-			->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 10)))
-			->execute()
-			->fetchAll();
-	}
-
-	/**
-	 * Get all participants for a room
-	 *
-	 * @param int $roomId
-	 * @return array
-	 */
-	private function getRoomParticipants($roomId) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		return $qb->select('*')
-			->from('spreedme_room_participants')
-			->where($qb->expr()->eq('roomId', $qb->createNamedParameter($roomId)))
-			->execute()
-			->fetchAll();
 	}
 
 	/**
@@ -123,98 +108,89 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function getRooms() {
-		$qb = $this->dbConnection->getQueryBuilder();
-		$rooms = $qb->select('*')
-			->from('spreedme_rooms', 'r')
-			->leftJoin('r', 'spreedme_room_participants', 'p', $qb->expr()->andX(
-				$qb->expr()->eq('p.userId', $qb->createNamedParameter($this->userId)),
-				$qb->expr()->eq('p.roomId', 'r.id')
-			))
-			->where($qb->expr()->isNotNull('p.userId'))
-			->execute()
-			->fetchAll();
-		foreach($rooms as $key => $room) {
-			$validRoom = false;
-			$usersInCall = [];
+		$rooms = $this->manager->getRoomsForParticipant($this->userId);
+
+		$return = [];
+		foreach ($rooms as $room) {
+			$roomData = [
+				'id' => $room->getId(),
+				'type' => $room->getType(),
+				'name' => $room->getName(),
+				'displayName' => $room->getName(),
+				'count' => $room->getNumberOfParticipants(time() - 10),
+				'lastPing' => 0,
+			];
 
 			// First we get room users (except current user).
-			$participantsInCall = $this->getRoomParticipants($room['id']);
-			foreach($participantsInCall as $i => $participantInCall) {
-				$uid = $participantsInCall[$i]['userId'];
-		        if($uid === $this->userId){
-		            //Delete current user from participantsInCall.
-		            unset($participantsInCall[$i]);
-		    	} else {
-		    		$user = $this->userManager->get($uid);
-		    		if($user === null) {
-						// TODO: This should not really ever happen. Add some
-						// error handling and fail here.
-						continue;
-					}
-		    		$usersInCall[] = $user;
-		    	}
+			$participantPings = $room->getParticipants();
+			/** @var IUser[] $usersInCall */
+			$usersInCall = [];
+			foreach ($participantPings as $participant => $lastPing) {
+				if ($participant === $this->userId) {
+					$roomData['lastPing'] = $lastPing;
+					continue;
+				}
+
+				$user = $this->userManager->get($participant);
+				if ($user instanceof IUser) {
+					$usersInCall[] = $user;
+				}
 			}
 
-			switch($room['type']) {
+			$numOtherParticipants = sizeof($usersInCall);
+			
+			switch($room->getType()) {
 				case Room::ONE_TO_ONE_CALL:
 					// As name of the room use the name of the other person participating
-					switch(count($usersInCall)) {
-						case 1:
-							// Only one other participant in the room. This is expected.
-							$participant = $usersInCall[0];
-							$rooms[$key]['name'] = $participant->getUID();
-							$rooms[$key]['displayName'] = $participant->getDisplayName();
-							$validRoom = true;
-							break;
-						default:
-							$validRoom = false;
-							// TODO: This should not really ever happen. Add some
-							// error handling and fail here.
+					if ($numOtherParticipants === 1) {
+						// Only one other participant
+						$roomData['name'] = $usersInCall[0]->getUID();
+						$roomData['displayName'] = $usersInCall[0]->getDisplayName();
+					} else {
+						// Invalid user count, there must be exactly 2 users in each one2one room
+						$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
+							'app' => 'spreed',
+						]);
+						$room->deleteRoom();
 					}
-
 					break;
+
 				case Room::GROUP_CALL:
 					/// As name of the room use the names of the other participants
-					switch(count($usersInCall)) {
-							case 0:
-								// Only you
-								$rooms[$key]['displayName'] = "You";
-								break;
-							case 1:
-								// Only one more participant
-								$participant = $usersInCall[0];
-								$rooms[$key]['displayName'] = $participant->getDisplayName();
-								$validRoom = true;
-								break;
-							case 2:
-								// 2 more participants
-								$participant = $usersInCall[0];
-								$participant2 = $usersInCall[1];
-								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()}";
-								$validRoom = true;
-								break;
-							default:
-								// More than 2 other participants
-								$participant = $usersInCall[0];
-								$participant2 = $usersInCall[1];
-								$others = count($usersInCall) - 2;
-								$rooms[$key]['displayName'] = "{$participant->getDisplayName()}, {$participant2->getDisplayName()} & {$others} more";
-								$validRoom = true;
-								break;
-						}
-
+					if ($numOtherParticipants === 0) {
+						// Only you
+						$roomData['displayName'] = $this->l10n->t('You');
+					} else if ($numOtherParticipants === 1) {
+						// Only one other participant
+						$roomData['displayName'] = $usersInCall[0]->getDisplayName();
+					} else if ($numOtherParticipants === 2) {
+						// 2 other participants
+						$roomData['displayName'] = $this->l10n->t('%1$s, %2$s', [
+							$usersInCall[0]->getDisplayName(),
+							$usersInCall[1]->getDisplayName(),
+						]);
+					} else {
+						// More than 2 other participants
+						$others = $numOtherParticipants - 2;
+						$roomData['displayName'] = $this->l10n->n('%1$s, %2$s & %n more', '%1$s, %2$s & %n more', $others, [
+							$usersInCall[0]->getDisplayName(),
+							$usersInCall[1]->getDisplayName(),
+						]);
+					}
 					break;
-				default:
-					// TODO: More sane handling and logging of the room. Because
-					// This shouldn't happen.
-					continue;
 
+				default:
+					// Invalid room type
+					$this->logger->warning('Invalid room type found. Leaving room for everyone', [
+						'app' => 'spreed',
+					]);
+					$room->deleteRoom();
 			}
-			$rooms[$key]['validRoom'] = $validRoom;
-			$rooms[$key]['count'] = count($this->getActivePeers($room['id']));
+
+			$return[] = $roomData;
 		}
 
-		return new JSONResponse($rooms);
+		return new JSONResponse($return);
 	}
 
 	/**
@@ -224,42 +200,21 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function getPeersInRoom($roomId) {
-		return new JSONResponse($this->getActivePeers($roomId));
-	}
-
-	/**
-	 * Returns the private chat room for two users or if not existent a
-	 * RoomNotFoundException
-	 *
-	 * @param string $user1
-	 * @param string $user2
-	 * @return int
-	 * @throws RoomNotFoundException
-	 */
-	private function getPrivateChatRoomForUsers($user1, $user2) {
-		$qb = $this->dbConnection->getQueryBuilder();
-		$results = $qb->select('*')
-			->from('spreedme_rooms', 'r1')
-			->leftJoin('r1', 'spreedme_room_participants', 'p1', $qb->expr()->andX(
-				$qb->expr()->eq('p1.userId', $qb->createNamedParameter($user1)),
-				$qb->expr()->eq('p1.roomId', 'r1.id')
-			))
-			->where($qb->expr()->isNotNull('p2.userId'))
-			->andWhere($qb->expr()->isNotNull('p1.userId'))
-			->andWhere($qb->expr()->eq('r1.type', $qb->createNamedParameter('1')))
-			->leftJoin('r1', 'spreedme_room_participants', 'p2', $qb->expr()->andX(
-				$qb->expr()->eq('p2.userId', $qb->createNamedParameter($user2)),
-				$qb->expr()->eq('p2.roomId', 'r1.id')
-			))
-			->execute()
-			->fetchAll();
-
-		//There should be only one result if there is any.
-		if(count($results) >=  1) {
-			return (int)$results[count($results)-1]['roomId'];
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		throw new RoomNotFoundException();
+		$data = [];
+		foreach ($room->getParticipants() as $participant => $lastPing) {
+			$data[] = [
+				'userId' => $participant,
+				'roomId' => $roomId,
+				'lastPing' => $lastPing,
+			];
+		}
+		return new JSONResponse($data);
 	}
 
 	/**
@@ -273,54 +228,29 @@ class ApiController extends Controller {
 	public function createOneToOneVideoCallRoom($targetUserName) {
 		// Get the user
 		$targetUser = $this->userManager->get($targetUserName);
+		$currentUser = $this->userManager->get($this->userId);
 		if(!($targetUser instanceof IUser)) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
-			$roomId = $this->getPrivateChatRoomForUsers($targetUser->getUID(), $this->userId);
-			return new JSONResponse(['roomId' => $roomId], Http::STATUS_OK);
+			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
+			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
-			// Create the room
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->insert('spreedme_rooms')
-				->values(
-					[
-						'name' => $qb->createNamedParameter($this->secureRandom->generate(12)),
-						'type' => $qb->createNamedParameter(Room::ONE_TO_ONE_CALL),
-					]
-				)
-				->execute();
-			$roomId = $qb->getLastInsertId();
-
-			// Add both users to new room
-			$usersToAdd = [
-				$targetUser->getUID(),
-				$this->userId,
-			];
-			foreach($usersToAdd as $user) {
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->insert('spreedme_room_participants')
-					->values(
-						[
-							'userId' => $qb->createNamedParameter($user),
-							'roomId' => $qb->createNamedParameter($roomId),
-							'lastPing' => $qb->createNamedParameter('0'),
-						]
-					)
-					->execute();
-			}
+			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, $this->secureRandom->generate(12));
+			$room->addUser($currentUser);
+			$room->addUser($targetUser);
 
 			$notification = $this->notificationManager->createNotification();
 			$notification->setApp('spreed')
 				->setUser($targetUser->getUID())
 				->setDateTime(new \DateTime())
-				->setObject('one2one', $roomId)
+				->setObject('room', $room->getId())
 				->setSubject('invitation', [$this->userId]);
 			$this->notificationManager->notify($notification);
 
-			return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
+			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 		}
 	}
 
@@ -333,69 +263,111 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function createGroupVideoCallRoom($targetGroupName) {
-		// Get the group
 		$targetGroup = $this->groupManager->get($targetGroupName);
-		// Get current user
 		$currentUser = $this->userManager->get($this->userId);
 
 		if(!($targetGroup instanceof IGroup)) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		// Create the room
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->insert('spreedme_rooms')
-			->values(
-				[
-					'name' => $qb->createNamedParameter($targetGroup->getGID()),
-					'type' => $qb->createNamedParameter(Room::GROUP_CALL),
-				]
-			)
-			->execute();
-		$roomId = $qb->getLastInsertId();
-
-		// Add users to new room
 		$usersInGroup = $targetGroup->getUsers();
-		// If the user who is creating this call is not part of this group, add it.
+		// If the user who is creating this call is not part of this group add them
 		if (!($targetGroup->inGroup($currentUser))) {
 			$usersInGroup[] = $currentUser;
 		}
 
-		foreach($usersInGroup as $user) {
-			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->insert('spreedme_room_participants')
-				->values(
-					[
-						'userId' => $qb->createNamedParameter($user->getUID()),
-						'roomId' => $qb->createNamedParameter($roomId),
-						'lastPing' => $qb->createNamedParameter('0'),
-					]
-				)
-				->execute();
+		// Create the room
+		$room = $this->manager->createRoom(Room::GROUP_CALL, $targetGroup->getGID());
+		foreach ($usersInGroup as $user) {
+			$room->addUser($user);
 		}
 
-		return new JSONResponse(['roomId' => $roomId], Http::STATUS_CREATED);
+		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $currentRoom
+	 * @param int $roomId
+	 * @param string $newParticipant
 	 * @return JSONResponse
 	 */
-	public function ping($currentRoom) {
+	public function addParticipantToRoom($roomId, $newParticipant) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participants = $room->getParticipants();
+		if (isset($participants[$newParticipant])) {
+			return new JSONResponse([]);
+		}
+
+		$newUser = $this->userManager->get($newParticipant);
+		if (!$newUser instanceof IUser) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			// In case a user is added to a one2one call, we create a new group call and add the participants manually
+			$room = $this->manager->createRoom(Room::GROUP_CALL, $this->secureRandom->generate(12));
+			foreach ($participants as $participant => $lastPing) {
+				$user = $this->userManager->get($participant);
+				if ($user instanceof IUser) {
+					$room->addUser($user);
+				}
+			}
+			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+		}
+
+		$room->addUser($newUser);
+		return new JSONResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function leaveRoom($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
+			$room->deleteRoom();
+		} else {
+			$currentUser = $this->userManager->get($this->userId);
+			$room->removeUser($currentUser);
+		}
+
+		return new JSONResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function ping($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$notification = $this->notificationManager->createNotification();
 		$notification->setApp('spreed')
 			->setUser($this->userId)
-			->setObject('one2one', $currentRoom);
+			->setObject('room', (string) $roomId);
 		$this->notificationManager->markProcessed($notification);
 
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->update('spreedme_room_participants')
-			->set('lastPing', $qb->createNamedParameter(time()))
-			->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-			->andWhere($qb->expr()->eq('roomId', $qb->createNamedParameter($currentRoom)))
-			->execute();
+		$room->ping($this->userId, time());
 		return new JSONResponse();
 	}
 }

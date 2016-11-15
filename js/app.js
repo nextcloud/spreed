@@ -188,7 +188,8 @@
 
 			// If the hash changes a room gets joined
 			$(window).on('hashchange', function() {
-				OCA.SpreedMe.Rooms.join(window.location.hash.substring(1));
+				var roomId = parseInt(window.location.hash.substring(1), 10);
+				OCA.SpreedMe.Rooms.join(roomId);
 			});
 			if (window.location.hash.substring(1) === '') {
 				OCA.SpreedMe.Rooms.showCamera();
