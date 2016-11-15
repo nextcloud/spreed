@@ -31,7 +31,7 @@ class Util {
 	 * @return string
 	 */
 	public static function getStunServer(IConfig $config) {
-		return $config->getAppValue('spreed', 'stun_server', 'stun.l.google.com:19302');
+		return $config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443');
 	}
 
 	/**
