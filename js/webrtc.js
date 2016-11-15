@@ -75,6 +75,12 @@ var webrtc;
 				});
 			}
 		});
+		messageEventSource.listen('__internal__', function(data) {
+			if (data === 'close') {
+				console.log('signaling connection closed - will reopen');
+				setTimeout(openEventSource, 0);
+			}
+		});
 	}
 
 	function initWebRTC() {
