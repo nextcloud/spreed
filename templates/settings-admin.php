@@ -4,7 +4,7 @@ script('spreed', ['settings-admin']);
 
 <div id="spreed" class="section">
     <form id="spreed_settings_form" class="spreed_settings">
-        <h2 class="app-name">Spreed</h2>
+        <h2 class="app-name">Spreed video calls</h2>
         <span id="spreed_settings_msg" class="msg"></span>
         <p>
             <label for="stun_server"><?php p($l->t('STUN server')) ?></label>

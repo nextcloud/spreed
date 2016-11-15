@@ -4,7 +4,7 @@ script('spreed', ['settings-personal']);
 
 <div id="spreedSettings" class="section">
     <form id="spreed_settings_form" class="spreed_settings">
-        <h2><?php p($l->t('Spreed')); ?></h2>
+        <h2><?php p($l->t('Spreed video calls')); ?></h2>
         <p>
             <?php p($l->t('The TURN server is used to relay audio/video streams in cases where the participants can\'t connect directly to each other.')) ?>
         </p>
