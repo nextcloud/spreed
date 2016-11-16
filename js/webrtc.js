@@ -96,9 +96,8 @@ var webrtc;
 			media: {
 				audio: true,
 				video: {
-					width: { max: 512 },
-					height: { max: 384 }
-				//	frameRate: { max: 15 }
+					width: { max: 1280 },
+					height: { max: 720 }
 				}
 			},
 			autoAdjustMic: false,
