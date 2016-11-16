@@ -101,7 +101,7 @@ video {
 }
 
 .participants-4 .videoContainer {
-	height: 50%;
+	max-height: 50%;
 }
 
 #app-content.participants-2,
