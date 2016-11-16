@@ -158,6 +158,32 @@ var webrtc;
 				video.oncontextmenu = function() {
 					return false;
 				};
+
+				// show the ice connection state
+				if (peer && peer.pc) {
+					peer.pc.on('iceConnectionStateChange', function (event) {
+						switch (peer.pc.iceConnectionState) {
+							case 'checking':
+								console.log('Connecting to peer...');
+								break;
+							case 'connected':
+							case 'completed': // on caller side
+								console.log('Connection established.');
+								break;
+							case 'disconnected':
+								peer.end();
+								console.log('Disconnected.');
+								break;
+							case 'failed':
+								console.log('Connection failed.');
+								break;
+							case 'closed':
+								console.log('Connection closed.');
+								break;
+						}
+					});
+				}
+
 				remotes.appendChild(container);
 			}
 		});

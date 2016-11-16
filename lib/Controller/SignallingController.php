@@ -122,7 +122,7 @@ class SignallingController extends Controller {
 			$currentRoom = $qb->select('*')
 				->from('spreedme_room_participants')
 				->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 10)))
+				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 30)))
 				->execute()
 				->fetchAll();
 			if ($currentRoom === []) {
@@ -141,7 +141,7 @@ class SignallingController extends Controller {
 			$usersInRoom = $qb->select('*')
 				->from('spreedme_room_participants')
 				->where($qb->expr()->eq('roomId', $qb->createNamedParameter($currentRoom[0]['roomId'])))
-				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 10)))
+				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 30)))
 				->execute()
 				->fetchAll();
 			$eventSource->send('usersInRoom', $usersInRoom);
