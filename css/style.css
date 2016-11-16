@@ -92,7 +92,7 @@ video {
 	overflow: hidden;
 }
 .videoContainer video {
-	position: absolute;
+	position: relative;
 	width: initial;
 	height: 100%;
 	left: 50%;
@@ -101,13 +101,15 @@ video {
 }
 
 .participants-3 .videoContainer,
-.participants-4 .videoContainer {
+.participants-4 .videoContainer,
+.participants-5 .videoContainer {
 	height: 50%;
 }
-.participants-5 .videoContainer,
-.participants-6 .videoContainer {
+.participants-6 .videoContainer,
+.participants-7 .videoContainer {
 	height: 33%;
 }
+
 .participants-3 .videoView,
 .participants-4 .videoView,
 .participants-5 .videoView,
