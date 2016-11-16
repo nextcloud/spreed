@@ -1,3 +1,7 @@
+.app-spreed #app-content {
+    overflow: hidden;
+}
+
 .app-spreed #app-navigation {
 	padding-top: 46px;
 	padding-bottom: 0;
@@ -100,7 +104,9 @@ video {
 	transform: translateY(-50%) translateX(-50%);
 }
 
-.participants-3 .videoContainer,
+.participants-3 .videoContainer {
+	height: 66%;
+}
 .participants-4 .videoContainer,
 .participants-5 .videoContainer {
 	height: 50%;
@@ -110,8 +116,6 @@ video {
 	height: 33%;
 }
 
-.participants-3 .videoView,
-.participants-4 .videoView,
 .participants-5 .videoView,
 .participants-6 .videoView,
 .participants-7 .videoView,
