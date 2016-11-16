@@ -207,7 +207,7 @@ class ApiController extends Controller {
 		}
 
 		$data = [];
-		foreach ($room->getParticipants() as $participant => $lastPing) {
+		foreach ($room->getParticipants(time() - 10) as $participant => $lastPing) {
 			$data[] = [
 				'userId' => $participant,
 				'roomId' => $roomId,

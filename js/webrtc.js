@@ -33,6 +33,7 @@ var webrtc;
 
 			var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
 			disconnectedUsers.forEach(function(user) {
+				console.log('XXX Remove peer', user);
 				OCA.SpreedMe.webrtc.removePeers(user);
 			});
 			previousUsersInRoom = currentUsersInRoom;
@@ -90,21 +91,27 @@ var webrtc;
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
 			autoRequestMedia: true,
-			debug: false,
+			debug: true,
 			media: {
 				audio: true,
 				video: {
 					width: { max: 512 },
-					height: { max: 384 },
-					frameRate: { max: 15 }
+					height: { max: 384 }
+				//	frameRate: { max: 15 }
 				}
 			},
 			autoAdjustMic: false,
-			detectSpeakingEvents: true,
+			detectSpeakingEvents: false,
 			connection: OCA.SpreedMe.XhrConnection,
-			supportDataChannel: true
+			supportDataChannel: false
 		});
 		OCA.SpreedMe.webrtc = webrtc;
+
+		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
+			peer.pc.on('PeerConnectionTrace', function (event) {
+				console.log('trace', event);
+			});
+		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
 			console.log('Access to microphone & camera failed', error);

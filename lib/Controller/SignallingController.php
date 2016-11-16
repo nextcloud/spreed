@@ -38,6 +38,8 @@ class SignallingController extends Controller {
 	private $dbConnection;
 	/** @var string */
 	private $userId;
+	private static $endOfCandidatesFor = [];
+
 
 	/**
 	 * @param string $appName
@@ -59,44 +61,50 @@ class SignallingController extends Controller {
 
 	/**
 	 * @NoAdminRequired
-	 * @param string $ev
-	 * @param string $fn
+	 *
+	 * @param string $messages
 	 * @return JSONResponse
 	 */
-	public function signalling($ev, $fn) {
+	public function signalling($messages) {
 		$response = [];
-		switch ($ev) {
-			case 'message':
-				if(!is_string($fn)) {
-					break;
-				}
-				$decodedMessage = json_decode($fn, true);
-				$decodedMessage['from'] = $this->userId;
-				$this->dbConnection->beginTransaction();
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->insert('spreedme_messages')
-					->values(
-						[
-							'recipient' => $qb->createNamedParameter($decodedMessage['to']),
-							'timestamp' => $qb->createNamedParameter(time()),
-							'object' => $qb->createNamedParameter(json_encode($decodedMessage)),
-						]
-					)
-					->execute();
-				$this->dbConnection->commit();
-				$this->dbConnection->close();
+		$messages = json_decode($messages, true);
+		foreach($messages as $message) {
+			$ev = $message['ev'];
+			$fn = $message['fn'];
+			switch ($ev) {
+				case 'message':
+					if (!is_string($fn)) {
+						break;
+					}
+					$decodedMessage = json_decode($fn, true);
+					$decodedMessage['from'] = $this->userId;
+					$this->dbConnection->beginTransaction();
+					$qb = $this->dbConnection->getQueryBuilder();
+					$qb->insert('spreedme_messages')
+						->values(
+							[
+								'recipient' => $qb->createNamedParameter($decodedMessage['to']),
+								'timestamp' => $qb->createNamedParameter(time()),
+								'object' => $qb->createNamedParameter(json_encode($decodedMessage)),
+							]
+						)
+						->execute();
+					$this->dbConnection->commit();
+					$this->dbConnection->close();
 
-				break;
-			case 'stunservers':
-				$response = [];
-				$stunServer = Util::getStunServer($this->config);
-				if ($stunServer) {
-					array_push($response, [
-						'url' => 'stun:' . $stunServer,
-					]);
-				}
-				break;
+					break;
+				case 'stunservers':
+					$response = [];
+					$stunServer = Util::getStunServer($this->config);
+					if ($stunServer) {
+						array_push($response, [
+							'url' => 'stun:' . $stunServer,
+						]);
+					}
+					break;
+			}
 		}
+
 		return new JSONResponse($response);
 	}
 
@@ -146,14 +154,26 @@ class SignallingController extends Controller {
 				->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
 				->execute()
 				->fetchAll();
+
 			foreach($results as $result) {
 				$qb = $this->dbConnection->getQueryBuilder();
 				$qb->delete('spreedme_messages')
 					->where($qb->expr()->eq('id', $qb->createNamedParameter($result['id'])))
 					->execute();
-				$eventSource->send('message', $result['object']);
-			}
 
+				$object = json_decode($result['object'], true);
+
+				$send = true;
+				if ($object['type'] === 'endOfCandidates') {
+					self::$endOfCandidatesFor[$object['from']] = true;
+				}
+				if ($object['type'] === 'candidate' && isset(self::$endOfCandidatesFor[$object['from']])) {
+					$send = false;
+				}
+				if ($send === true) {
+					$eventSource->send('message', $result['object']);
+				}
+			}
 			$this->dbConnection->close();
 
 			sleep(1);
