@@ -104,6 +104,7 @@ class Room {
 					'userId' => $query->createNamedParameter($user->getUID()),
 					'roomId' => $query->createNamedParameter($this->getId()),
 					'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
+					'sessionId' => $query->createNamedParameter('0'),
 				]
 			);
 		$query->execute();
