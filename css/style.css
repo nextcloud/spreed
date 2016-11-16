@@ -1,3 +1,7 @@
+.app-spreed #app-content {
+    overflow: hidden;
+}
+
 .app-spreed #app-navigation {
 	padding-top: 46px;
 	padding-bottom: 0;
@@ -91,8 +95,8 @@ video {
 	height: 100%;
 	overflow: hidden;
 }
-.participants-2 .videoContainer video {
-	position: absolute;
+.videoContainer video {
+	position: relative;
 	width: initial;
 	height: 100%;
 	left: 50%;
@@ -100,13 +104,27 @@ video {
 	transform: translateY(-50%) translateX(-50%);
 }
 
-.participants-3 .videoContainer,
-.participants-4 .videoContainer {
-	max-height: 50%;
+.participants-3 .videoContainer {
+	height: 66%;
 }
-.participants-5 .videoContainer,
-.participants-6 .videoContainer {
-	max-height: 33%;
+.participants-4 .videoContainer,
+.participants-5 .videoContainer {
+	height: 50%;
+}
+.participants-6 .videoContainer,
+.participants-7 .videoContainer {
+	height: 33%;
+}
+
+.participants-3 .videoView,
+.participants-4 .videoView,
+.participants-5 .videoView,
+.participants-6 .videoView,
+.participants-7 .videoView,
+.participants-8 .videoView,
+.participants-9 .videoView,
+.participants-10 .videoView {
+    width: 20%;
 }
 
 #app-content.participants-2,
@@ -130,6 +148,9 @@ video {
 	width: 100%;
 	text-align: center;
 	font-size: 20px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .nameIndicator button {

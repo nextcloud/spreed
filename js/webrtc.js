@@ -96,9 +96,8 @@ var webrtc;
 			media: {
 				audio: true,
 				video: {
-					width: { max: 512 },
-					height: { max: 384 }
-				//	frameRate: { max: 15 }
+					width: { max: 1280 },
+					height: { max: 720 }
 				}
 			},
 			autoAdjustMic: false,
@@ -161,7 +160,7 @@ var webrtc;
 
 				// show the ice connection state
 				if (peer && peer.pc) {
-					peer.pc.on('iceConnectionStateChange', function (event) {
+					peer.pc.on('iceConnectionStateChange', function () {
 						switch (peer.pc.iceConnectionState) {
 							case 'checking':
 								console.log('Connecting to peer...');
