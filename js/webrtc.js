@@ -23,7 +23,7 @@ var webrtc;
 		messageEventSource.listen('usersInRoom', function(users) {
 			var currentUsersInRoom = [];
 			users.forEach(function(user) {
-				currentUsersInRoom.push(user['userId']);
+				currentUsersInRoom.push(user['sessionId']);
 			});
 
 			if (currentUsersInRoom.length !== previousUsersInRoom.length) {
@@ -86,6 +86,7 @@ var webrtc;
 
 	function initWebRTC() {
 		'use strict';
+		openEventSource();
 
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
@@ -103,8 +104,9 @@ var webrtc;
 			autoAdjustMic: false,
 			detectSpeakingEvents: false,
 			connection: OCA.SpreedMe.XhrConnection,
-			supportDataChannel: false
-		});
+			supportDataChannel: false,
+			nick: OC.getCurrentUser()['displayName']
+	});
 		OCA.SpreedMe.webrtc = webrtc;
 
 		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
@@ -135,8 +137,6 @@ var webrtc;
 		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
-
-			openEventSource();
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
@@ -147,7 +147,7 @@ var webrtc;
 				// Indicator for username
 				var userIndicator = document.createElement('div');
 				userIndicator.className = 'nameIndicator';
-				userIndicator.textContent = peer.id;
+				userIndicator.textContent = peer.nick;
 
 				// Generic container
 				var container = document.createElement('div');
@@ -171,7 +171,7 @@ var webrtc;
 								console.log('Connection established.');
 								break;
 							case 'disconnected':
-								peer.end();
+								OCA.SpreedMe.webrtc.removePeers(peer.id);
 								console.log('Disconnected.');
 								break;
 							case 'failed':
@@ -196,6 +196,7 @@ var webrtc;
 				remotes.removeChild(el);
 			}
 		});
+
 	}
 
 	OCA.SpreedMe.initWebRTC = initWebRTC;

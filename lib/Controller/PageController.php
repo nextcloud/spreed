@@ -55,14 +55,6 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 */
 	public function index() {
-		// If the page is newly loaded, remove all sessions and messages that the
-		// current user has.
-		// FIXME: Move to CSRF protected controller that is called via XHR
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->delete('spreedme_messages')
-			->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
-			->execute();
-
 		$params = [
 			'sessionId' => $this->userId,
 		];

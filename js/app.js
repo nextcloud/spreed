@@ -215,6 +215,13 @@
 				OCA.SpreedMe.Rooms.ping();
 			}, 5000);
 		},
+		_leaveAllRooms: function() {
+			$.ajax({
+				url: OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: 0}),
+				method: 'POST',
+				async: false
+			});
+		},
 		/**
 		 * @param {int} roomId
 		 */
@@ -245,6 +252,7 @@
 
 			OCA.SpreedMe.initWebRTC();
 			OCA.SpreedMe.initRooms();
+			this._leaveAllRooms();
 			this._registerPageEvents();
 			this._onRegisterHashChange();
 

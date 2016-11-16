@@ -64,6 +64,11 @@ return [
 			'verb' => 'GET',
 		],
 		[
+			'name' => 'api#joinRoom',
+			'url' => '/api/room/{roomId}/join',
+			'verb' => 'POST',
+		],
+		[
 			'name' => 'api#ping',
 			'url' => '/api/ping',
 			'verb' => 'POST',

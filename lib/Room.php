@@ -122,7 +122,7 @@ class Room {
 
 	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
-	 * @return array[] Array of users with [userId => lastPing]
+	 * @return array[] Array of users with [userId => [lastPing, sessionId]]
 	 */
 	public function getParticipants($lastPing = 0) {
 		$query = $this->db->getQueryBuilder();
@@ -138,7 +138,10 @@ class Room {
 
 		$rows = [];
 		while ($row = $result->fetch()) {
-			$rows[$row['userId']] = (int) $row['lastPing'];
+			$rows[$row['userId']] = [
+				'lastPing' => (int) $row['lastPing'],
+				'sessionId' => $row['sessionId'],
+			];
 		}
 		$result->closeCursor();
 

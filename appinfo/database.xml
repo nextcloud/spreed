@@ -16,10 +16,22 @@
 				<length>4</length>
 			</field>
 			<field>
+				<name>sender</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
+			</field>
+			<field>
 				<name>recipient</name>
 				<type>text</type>
 				<notnull>true</notnull>
-				<length>128</length>
+				<length>255</length>
+			</field>
+			<field>
+				<name>sessionId</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
 			</field>
 			<field>
 				<name>object</name>
@@ -78,6 +90,12 @@
 				<name>lastPing</name>
 				<type>integer</type>
 				<notnull>true</notnull>
+			</field>
+			<field>
+				<name>sessionId</name>
+				<type>text</type>
+				<notnull>true</notnull>
+				<length>255</length>
 			</field>
 
 			<index>

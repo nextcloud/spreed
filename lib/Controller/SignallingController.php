@@ -38,7 +38,6 @@ class SignallingController extends Controller {
 	private $dbConnection;
 	/** @var string */
 	private $userId;
-	private static $endOfCandidatesFor = [];
 
 
 	/**
@@ -77,15 +76,17 @@ class SignallingController extends Controller {
 						break;
 					}
 					$decodedMessage = json_decode($fn, true);
-					$decodedMessage['from'] = $this->userId;
+					$decodedMessage['from'] = $message['sessionId'];
 					$this->dbConnection->beginTransaction();
 					$qb = $this->dbConnection->getQueryBuilder();
 					$qb->insert('spreedme_messages')
 						->values(
 							[
+								'sender' => $qb->createNamedParameter($message['sessionId']),
 								'recipient' => $qb->createNamedParameter($decodedMessage['to']),
 								'timestamp' => $qb->createNamedParameter(time()),
 								'object' => $qb->createNamedParameter(json_encode($decodedMessage)),
+								'sessionId' => $qb->createNamedParameter($message['sessionId']),
 							]
 						)
 						->execute();
@@ -125,16 +126,6 @@ class SignallingController extends Controller {
 				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 30)))
 				->execute()
 				->fetchAll();
-			if ($currentRoom === []) {
-				$eventSource->close();
-
-				// Delete all messages for the recipient
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->delete('spreedme_messages')
-					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
-					->execute();
-				break;
-			}
 
 			// Send list to client of connected users in the current room
 			$qb = $this->dbConnection->getQueryBuilder();
@@ -146,12 +137,22 @@ class SignallingController extends Controller {
 				->fetchAll();
 			$eventSource->send('usersInRoom', $usersInRoom);
 
+			// Get last session ID of the user
+			$qb = $this->dbConnection->getQueryBuilder();
+			$currentSessionId = $qb->select('sessionId')
+				->from('spreedme_room_participants')
+				->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
+				->orderBy('lastPing', 'DESC')
+				->setMaxResults(1)
+				->execute()
+				->fetchAll()[0]['sessionId'];
+
 			// Query all messages and send them to the user
 			$qb = $this->dbConnection->getQueryBuilder();
 			$results = $qb->select('*')
 				->from('spreedme_messages')
 				->where('recipient = :recipient')
-				->where($qb->expr()->eq('recipient', $qb->createNamedParameter($this->userId)))
+				->where($qb->expr()->eq('recipient', $qb->createNamedParameter($currentSessionId)))
 				->execute()
 				->fetchAll();
 
@@ -160,19 +161,7 @@ class SignallingController extends Controller {
 				$qb->delete('spreedme_messages')
 					->where($qb->expr()->eq('id', $qb->createNamedParameter($result['id'])))
 					->execute();
-
-				$object = json_decode($result['object'], true);
-
-				$send = true;
-				if ($object['type'] === 'endOfCandidates') {
-					self::$endOfCandidatesFor[$object['from']] = true;
-				}
-				if ($object['type'] === 'candidate' && isset(self::$endOfCandidatesFor[$object['from']])) {
-					$send = false;
-				}
-				if ($send === true) {
-					$eventSource->send('message', $result['object']);
-				}
+				$eventSource->send('message', $result['object']);
 			}
 			$this->dbConnection->close();
 

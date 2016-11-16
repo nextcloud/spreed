@@ -1,4 +1,5 @@
 var spreedArrayConnection = [];
+var sessionId = '';
 
 (function(OCA) {
 
@@ -34,16 +35,16 @@ var spreedArrayConnection = [];
 						var callback = arguments[2];
 						$.post(
 							OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: data}),
-							function() {
-
+							function(sessionData) {
+								sessionId = sessionData.sessionId;
 								OCA.SpreedMe.Rooms.peers(data).then(function(result) {
 									var roomDescription = {
 										'clients': {}
 									};
 
 									result.forEach(function(element) {
-										if(self.getSessionid() !== element['userId']) {
-											roomDescription['clients'][element['userId']] = {
+										if(OC.getCurrentUser()['uid'] !== element['userId']) {
+											roomDescription['clients'][element['sessionId']] = {
 												'type': 'video'
 											};
 										}
@@ -58,13 +59,17 @@ var spreedArrayConnection = [];
 						if(data.type === 'answer' || data.type === 'offer') {
 							console.log("ANSWER/OFFER", data);
 						}
-						spreedArrayConnection.push({ev: fn, fn: JSON.stringify(data)});
+						spreedArrayConnection.push({
+							ev: fn,
+							fn: JSON.stringify(data),
+							sessionId: sessionId
+						});
 						break;
 				}
 			}
 		},
 		getSessionid: function() {
-			return $('#app').data('sessionid');
+			return sessionId;
 		},
 		disconnect: function() {
 			console.log('disconnect');

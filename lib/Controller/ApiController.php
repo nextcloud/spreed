@@ -31,6 +31,7 @@ use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -102,7 +103,6 @@ class ApiController extends Controller {
 	 * Get all currently existent rooms which the user has joined
 	 *
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 *
 	 * @throws \Exception
 	 * @return JSONResponse
@@ -125,9 +125,10 @@ class ApiController extends Controller {
 			$participantPings = $room->getParticipants();
 			/** @var IUser[] $usersInCall */
 			$usersInCall = [];
-			foreach ($participantPings as $participant => $lastPing) {
+			foreach ($participantPings as $participant => $data) {
 				if ($participant === $this->userId) {
-					$roomData['lastPing'] = $lastPing;
+					$roomData['lastPing'] = $data['lastPing'];
+					$roomData['sessionId'] = $data['sessionId'];
 					continue;
 				}
 
@@ -195,6 +196,7 @@ class ApiController extends Controller {
 
 	/**
 	 * @NoAdminRequired
+	 * @NoCSRFRequired
 	 *
 	 * @param int $roomId
 	 * @return JSONResponse
@@ -206,15 +208,16 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$data = [];
-		foreach ($room->getParticipants(time() - 10) as $participant => $lastPing) {
-			$data[] = [
+		$result = [];
+		foreach ($room->getParticipants(time() - 10) as $participant => $data) {
+			$result[] = [
 				'userId' => $participant,
 				'roomId' => $roomId,
-				'lastPing' => $lastPing,
+				'lastPing' => $data['lastPing'],
+				'sessionId' => $data['sessionId'],
 			];
 		}
-		return new JSONResponse($data);
+		return new JSONResponse($result);
 	}
 
 	/**
@@ -369,5 +372,52 @@ class ApiController extends Controller {
 
 		$room->ping($this->userId, time());
 		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function joinRoom($roomId) {
+		// Delete all messages from or to the current user
+		$qb = $this->dbConnection->getQueryBuilder();
+		$sessionIds = $qb->select('sessionId')
+			->from('spreedme_room_participants')
+			->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
+			->execute()
+			->fetchAll();
+		foreach($sessionIds as $sessionId) {
+			$sessionId = $sessionId['sessionId'];
+			$qb->delete('spreedme_messages')
+				->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
+				->orWhere($qb->expr()->eq('sender', $qb->createNamedParameter($sessionId)))
+				->execute();
+		}
+
+		// Set the session ID for the new room ID
+		$sessionId = $this->secureRandom->generate(255);
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('spreedme_room_participants')
+			->set('sessionId', $qb->createNamedParameter($sessionId))
+			->where($qb->expr()->eq('roomId', $qb->createNamedParameter($roomId)))
+			->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
+			->execute();
+
+		// For all other rooms set the last access time to 0 since the user isn't
+		// active anymore in the room. This ensures that the user is considered
+		// not active in the other rooms anymore.
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('spreedme_room_participants')
+			->set('lastPing', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT))
+			->set('sessionId', $qb->createNamedParameter(0))
+			->where($qb->expr()->neq('roomId', $qb->createNamedParameter($roomId)))
+			->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
+			->execute();
+
+		return new JSONResponse([
+			'sessionId' => $sessionId,
+		]);
 	}
 }

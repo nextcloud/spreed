@@ -24,7 +24,7 @@ script(
 );
 ?>
 
-<div id="app" data-sessionId="<?php p($_['sessionId']) ?>">
+<div id="app">
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
 			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
