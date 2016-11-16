@@ -272,16 +272,16 @@ var spreedMappingTable = [];
 			$('#emptycontent p').text(messageAdditional);
 		});
 
-		OCA.SpreedMe.webrtc.on('WebrtcError', function(error) {
-			console.log('Access to WebRTC failed', error);
+		if(!OCA.SpreedMe.webrtc.capabilities.support) {
+			console.log('WebRTC not supported');
 			var message, messageAdditional;
 
-			message = t('spreed', 'WebRTC doesn’t seem to work in your browser :-/');
+			message = t('spreed', 'WebRTC is not supported in your browser :-/');
 			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
-		});
+		}
 
 		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
 			$('#app-content').removeClass('icon-loading');
