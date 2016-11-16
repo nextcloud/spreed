@@ -161,7 +161,7 @@ var webrtc;
 
 				// show the ice connection state
 				if (peer && peer.pc) {
-					peer.pc.on('iceConnectionStateChange', function (event) {
+					peer.pc.on('iceConnectionStateChange', function () {
 						switch (peer.pc.iceConnectionState) {
 							case 'checking':
 								console.log('Connecting to peer...');
