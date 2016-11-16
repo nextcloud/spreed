@@ -38,7 +38,7 @@ class UtilTest extends TestCase {
 		$config
 			->expects($this->once())
 			->method('getAppValue')
-			->with('spreed', 'stun_server', 'stun.l.google.com:19302')
+			->with('spreed', 'stun_server', 'stun.nextcloud.com:443')
 			->willReturn('88.198.160.129');
 
 		$this->assertSame('88.198.160.129', $this->util->getStunServer($config));
