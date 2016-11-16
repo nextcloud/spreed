@@ -69,9 +69,9 @@ class SignallingController extends Controller {
 		$messages = json_decode($messages, true);
 		foreach($messages as $message) {
 			$ev = $message['ev'];
-			$fn = $message['fn'];
 			switch ($ev) {
 				case 'message':
+					$fn = $message['fn'];
 					if (!is_string($fn)) {
 						break;
 					}
@@ -126,6 +126,12 @@ class SignallingController extends Controller {
 				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 30)))
 				->execute()
 				->fetchAll();
+
+			if ($currentRoom === []) {
+				$eventSource->send('usersInRoom', []);
+				sleep(1);
+				continue;
+			}
 
 			// Send list to client of connected users in the current room
 			$qb = $this->dbConnection->getQueryBuilder();
