@@ -1,3 +1,5 @@
+var spreedArrayConnection = [];
+
 (function(OCA) {
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -6,7 +8,8 @@
 		on: function(ev, fn) {
 			var self = this;
 
-			$.post(OC.generateUrl('/apps/spreed/signalling'), {ev: ev}, function(data) {
+			var message = [{ev: ev}];
+			$.post(OC.generateUrl('/apps/spreed/signalling'), {messages: JSON.stringify(message)}, function(data) {
 				self.emit(fn, data);
 			});
 		},
@@ -52,7 +55,10 @@
 						);
 						break;
 					case 'message':
-						$.post(OC.generateUrl('/apps/spreed/signalling'), {ev: fn, fn: JSON.stringify(data)});
+						if(data.type === 'answer' || data.type === 'offer') {
+							console.log("ANSWER/OFFER", data);
+						}
+						spreedArrayConnection.push({ev: fn, fn: JSON.stringify(data)});
 						break;
 				}
 			}
@@ -65,3 +71,10 @@
 		}
 	};
 })(OCA);
+
+window.setInterval(function(){
+	if(spreedArrayConnection.length > 0) {
+		$.post(OC.generateUrl('/apps/spreed/signalling'), {messages: JSON.stringify(spreedArrayConnection)});
+		spreedArrayConnection = [];
+	}
+}, 500);

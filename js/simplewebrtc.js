@@ -10258,7 +10258,8 @@
 	};
 
 	TraceablePeerConnection.prototype.close = function () {
-		this.trace('stop');
+		this.trace('stopXXX');
+		console.trace('Stop Trace');
 		if (this.peerconnection.signalingState != 'closed') {
 			this.peerconnection.close();
 		}
