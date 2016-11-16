@@ -170,16 +170,8 @@ var webrtc;
 								console.log('Connection established.');
 								break;
 							case 'disconnected':
-								// Remove as peer if the connection has been
-								// disconnected.
-								console.log('Disconnected. Now trying to remove peers.', peer.id);
 								OCA.SpreedMe.webrtc.removePeers(peer.id);
-								// Afterwards: Try to reconnect
-								console.log('Trying to reconnect to peer');
-								OCA.SpreedMe.webrtc.createPeer({
-									id: peer.id,
-									type: 'type'
-								});
+								console.log('Disconnected.');
 								break;
 							case 'failed':
 								console.log('Connection failed.');
