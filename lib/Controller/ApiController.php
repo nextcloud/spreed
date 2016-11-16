@@ -303,16 +303,10 @@ class ApiController extends Controller {
 		}
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			// In case a user is added to a one2one call, we create a new group call and add the participants manually
-			$room = $this->manager->createRoom(Room::GROUP_CALL, $this->secureRandom->generate(12));
-			foreach ($participants as $participant => $lastPing) {
-				$user = $this->userManager->get($participant);
-				if ($user instanceof IUser) {
-					$room->addUser($user);
-				}
-			}
+			// In case a user is added to a one2one call, we change the call to a group call
+			$room->changeType(Room::GROUP_CALL);
 			$room->addUser($newUser);
-			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+			return new JSONResponse(['type' => $room->getType()]);
 		}
 
 		$room->addUser($newUser);
