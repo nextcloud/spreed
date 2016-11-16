@@ -128,28 +128,22 @@
 				});
 			});
 
-			var videoHidden = false;
 			$('#hideVideo').click(function() {
-				if (videoHidden) {
-					OCA.SpreedMe.webrtc.resumeVideo();
-					$(this).data('title', 'Disable video').removeClass('video-disabled');
-					videoHidden = false;
-				} else {
+				if (OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 					OCA.SpreedMe.webrtc.pauseVideo();
 					$(this).data('title', 'Enable video').addClass('video-disabled');
-					videoHidden = true;
+				} else {
+					OCA.SpreedMe.webrtc.resumeVideo();
+					$(this).data('title', 'Disable video').removeClass('video-disabled');
 				}
 			});
-			var audioMuted = false;
 			$('#mute').click(function() {
-				if (audioMuted) {
-					OCA.SpreedMe.webrtc.unmute();
-					$(this).data('title', 'Mute audio').removeClass('audio-disabled');
-					audioMuted = false;
-				} else {
+				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
 					OCA.SpreedMe.webrtc.mute();
 					$(this).data('title', 'Enable audio').addClass('audio-disabled');
-					audioMuted = true;
+				} else {
+					OCA.SpreedMe.webrtc.unmute();
+					$(this).data('title', 'Mute audio').removeClass('audio-disabled');
 				}
 			});
 
