@@ -71,6 +71,8 @@ video {
 	position: relative;
 	display: inline-block;
 	width: 50%;
+	overflow: hidden;
+	vertical-align: top;
 }
 
 .videoView {
@@ -117,7 +119,6 @@ video {
 }
 
 .participants-3 .videoView,
-.participants-4 .videoView,
 .participants-5 .videoView,
 .participants-6 .videoView,
 .participants-7 .videoView,
