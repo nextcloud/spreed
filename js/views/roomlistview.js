@@ -125,7 +125,18 @@
 			console.log("share group", this.model.get('id'));
 		},
 		leaveGroup: function() {
-			console.log("leave group", this.model.get('id'));
+			//If user is in that room, it should leave that room first.
+			if (this.model.get('active')) {
+				OCA.SpreedMe.webrtc.leaveRoom();
+				window.location.replace(window.location.href.slice(0, -window.location.hash.length));
+			}
+
+			this.$el.slideUp();
+
+			$.ajax({
+				url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
+				type: 'DELETE'
+			});
 		}
 	});
 

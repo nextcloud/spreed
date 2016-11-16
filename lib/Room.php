@@ -115,7 +115,7 @@ class Room {
 	public function removeUser(IUser $user) {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('spreedme_room_participants')
-			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($user->getUID())));
 		$query->execute();
 	}
