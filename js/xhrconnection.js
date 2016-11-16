@@ -16,8 +16,6 @@ var sessionId = '';
 		},
 
 		emit: function(fn, data) {
-			var self = this;
-
 			if (typeof fn === 'function') {
 				fn(data);
 			} else {
