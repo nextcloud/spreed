@@ -264,8 +264,8 @@ var spreedMappingTable = [];
 					$('#emptycontent p').hide();
 				}
 			} else {
-				message = t('spreed', 'Error while accessing microphone & camera: {error}', {error: error.message || error.name});
-				$('#emptycontent p').hide();
+				message = t('spreed', 'Error while accessing microphone & camera');
+				messageAdditional = error.message || error.name;
 			}
 			$('#emptycontent .icon-video').removeClass('icon-video').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
