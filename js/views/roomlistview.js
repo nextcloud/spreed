@@ -64,7 +64,12 @@
 	var RoomItenView = Marionette.View.extend({
 		tagName: 'li',
 		modelEvents: {
-			change: 'render'
+			'change:active': function() {
+			  this.render();
+			},
+			'change:displayName': function() {
+			  this.render();
+			}
 		},
 		initialize: function() {
 			// Add class to every room list item to detect it on click.
