@@ -91,7 +91,7 @@ video {
 	height: 100%;
 	overflow: hidden;
 }
-.participants-2 .videoContainer video {
+.videoContainer video {
 	position: absolute;
 	width: initial;
 	height: 100%;
@@ -102,11 +102,21 @@ video {
 
 .participants-3 .videoContainer,
 .participants-4 .videoContainer {
-	max-height: 50%;
+	height: 50%;
 }
 .participants-5 .videoContainer,
 .participants-6 .videoContainer {
-	max-height: 33%;
+	height: 33%;
+}
+.participants-3 .videoView,
+.participants-4 .videoView,
+.participants-5 .videoView,
+.participants-6 .videoView,
+.participants-7 .videoView,
+.participants-8 .videoView,
+.participants-9 .videoView,
+.participants-10 .videoView {
+    width: 20%;
 }
 
 #app-content.participants-2,
