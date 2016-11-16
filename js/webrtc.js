@@ -107,7 +107,7 @@ var webrtc;
 		OCA.SpreedMe.webrtc = webrtc;
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
-			console.log("Access to local media failed", error);
+			console.log('Access to microphone & camera failed', error);
 			var message, messageAdditional;
 			if (error.name === "NotAllowedError") {
 				if (error.message && error.message.indexOf("Only secure origins") !== -1) {
@@ -118,7 +118,7 @@ var webrtc;
 					$('#emptycontent p').hide();
 				}
 			} else {
-				message = t('spreed', 'Error while accessing local media: {error}', {error: error.message || error.name});
+				message = t('spreed', 'Error while accessing microphone & camera: {error}', {error: error.message || error.name});
 				$('#emptycontent p').hide();
 			}
 			$('#emptycontent h2').text(message);
