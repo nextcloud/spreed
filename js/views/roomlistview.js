@@ -131,7 +131,7 @@
 				window.location.replace(window.location.href.slice(0, -window.location.hash.length));
 			}
 
-			this.$el.hide();
+			this.$el.slideUp();
 
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
