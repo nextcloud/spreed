@@ -100,8 +100,13 @@ video {
 	transform: translateY(-50%) translateX(-50%);
 }
 
+.participants-3 .videoContainer,
 .participants-4 .videoContainer {
 	max-height: 50%;
+}
+.participants-5 .videoContainer,
+.participants-6 .videoContainer {
+	max-height: 33%;
 }
 
 #app-content.participants-2,
