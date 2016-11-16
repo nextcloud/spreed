@@ -124,7 +124,7 @@
 		shareGroup: function() {
 			console.log("share group", this.model.get('id'));
 		},
-		leaveGroup: function(e) {
+		leaveGroup: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.webrtc.leaveRoom();
