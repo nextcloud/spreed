@@ -97,6 +97,7 @@
 .videoContainer {
 	position: relative;
 	width: 100%;
+    padding: 0 2%;
 	-webkit-box-flex: auto;
 	-moz-box-flex: auto;
 	-webkit-flex: auto;
@@ -105,7 +106,8 @@
 	z-index: 2;
 }
 #videos .videoContainer video {
-    padding: 0 5%;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
 }
 .participants-1 #videos .videoContainer video,
 .participants-2 #videos .videoContainer video {
