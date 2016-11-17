@@ -32,6 +32,7 @@ use OCP\IUser;
 class Room {
 	const ONE_TO_ONE_CALL = 1;
 	const GROUP_CALL = 2;
+	const PUBLIC_CALL = 3;
 
 	/** @var IDBConnection */
 	private $db;
@@ -94,7 +95,7 @@ class Room {
 	}
 
 	/**
-	 * @param int $newType Currently it is only allowed to change to: Room::GROUP_CALL
+	 * @param int $newType Currently it is only allowed to change to: Room::GROUP_CALL, Room::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function changeType($newType) {
@@ -102,7 +103,7 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($newType, [Room::GROUP_CALL])) {
+		if (!in_array($newType, [Room::GROUP_CALL, Room::PUBLIC_CALL])) {
 			return false;
 		}
 

@@ -39,14 +39,19 @@ return [
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'api#createRoom',
-			'url' => '/api/room',
-			'verb' => 'POST',
-		],
-		[
 			'name' => 'api#getRooms',
 			'url' => '/api/room',
 			'verb' => 'GET',
+		],
+		[
+			'name' => 'api#makePublic',
+			'url' => '/api/room/public',
+			'verb' => 'POST',
+		],
+		[
+			'name' => 'api#makePrivate',
+			'url' => '/api/room/public',
+			'verb' => 'DELETE',
 		],
 		[
 			'name' => 'api#addParticipantToRoom',

@@ -342,6 +342,46 @@ class ApiController extends Controller {
 	 * @param int $roomId
 	 * @return JSONResponse
 	 */
+	public function makePublic($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() !== Room::PUBLIC_CALL) {
+			$room->changeType(Room::PUBLIC_CALL);
+		}
+
+		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function makePrivate($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() === Room::PUBLIC_CALL) {
+			$room->changeType(Room::GROUP_CALL);
+		}
+
+		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
 	public function ping($roomId) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
