@@ -142,7 +142,11 @@ var spreedMappingTable = [];
 				return '#container_' + sanitizedId + '_type_incoming';
 			},
 			switchVideoToId: function(id) {
-				var videoSpeakingElement = $('#video-speaking');
+				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
+				if(newContainer.find('video') === []) {
+					console.warn('promote: no video found for ID', id);
+					return;
+				}
 
 				if (latestSpeakerId !== null) {
 					console.log('promote: unpromote speaker "' + spreedMappingTable[latestSpeakerId] + '"');
@@ -153,7 +157,6 @@ var spreedMappingTable = [];
 				}
 
 				// add new user to it
-				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
 				newContainer.addClass('speaking');
 				newContainer.after(
 					$('<div>')
