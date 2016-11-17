@@ -319,7 +319,7 @@ var spreedMappingTable = [];
 
 			var otherSpeakerPromoted = false;
 			for (key in spreedListofSpeakers) {
-				if (obj.hasOwnProperty(key)) {
+				if (spreedListofSpeakers.hasOwnProperty(key)) {
 					otherSpeakerPromoted = true;
 					break;
 				}
