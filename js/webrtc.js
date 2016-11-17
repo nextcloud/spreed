@@ -136,9 +136,10 @@ var spreedMappingTable = [];
 
 					var currentTime = spreedListofSpeakers[currentId];
 					var id = currentId.replace('\\', '');
-					data.push([spreedMappingTable[id], currentTime]);
+					data.push([spreedMappingTable[id], id, currentTime]);
 				}
 				console.table(data);
+				console.table(spreedMappingTable);
 			},
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
@@ -173,11 +174,11 @@ var spreedMappingTable = [];
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
 				if (latestSpeakerId === id) {
-					console.log('latest speaker is already promoted');
+					console.log('latest speaker is already promoted ', spreedMappingTable[id]);
 					return;
 				}
 
-				console.log('change promoted speaker after speaking');
+				console.log('change promoted speaker after speaking ', spreedMappingTable[id]);
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id) {
@@ -189,11 +190,11 @@ var spreedMappingTable = [];
 				spreedListofSpeakers[sanitizedId] = -1;
 
 				if (latestSpeakerId !== id) {
-					console.log('stopped speaker is not promoted');
+					console.log('stopped speaker is not promoted ', spreedMappingTable[id]);
 					return;
 				}
 
-				console.log('change promoted speaker after speakingStopped');
+				console.log('change promoted speaker after speakingStopped ', spreedMappingTable[id]);
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
@@ -214,7 +215,7 @@ var spreedMappingTable = [];
 				}
 
 				if (mostRecentId !== null) {
-					console.log('promoted new speaker');
+					console.log('promoted new speaker ', spreedMappingTable[id]);
 					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
 				} else {
 					console.log('no recent speaker to promote');
