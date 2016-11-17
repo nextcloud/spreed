@@ -272,8 +272,8 @@ var spreedMappingTable = [];
 
 				// Mute indicator
 				var muteIndicator = document.createElement('div');
-				muteIndicator.className = 'muteIndicator hidden';
-				muteIndicator.textContent = 'muted';
+				muteIndicator.className = 'muteIndicator icon-sound-white hidden';
+				muteIndicator.textContent = '';
 
 				// Generic container
 				var container = document.createElement('div');
