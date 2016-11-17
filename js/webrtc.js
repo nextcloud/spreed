@@ -124,29 +124,57 @@ var spreedMappingTable = [];
 
 		var $appContent = $('#app-content');
 		var spreedListofSpeakers = {};
+		var latestSpeakerId = null;
 		OCA.SpreedMe.speakers = {
+			sanitizeId: function(id) {
+				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+			},
+			getContainerId: function(id) {
+				if (id === OCA.SpreedMe.XhrConnection.getSessionid()) {
+					return '#localVideoContainer';
+				} else {
+					var sanitizedId = OCA.SpreedMe.speakers.sanitizeId(id);
+					return '#container_' + sanitizedId + '_type_incoming';
+				}
+			},
+			switchVideoToId: function(id) {
+				var videoSpeakingElement = $('#video-speaking');
+
+				if (latestSpeakerId !== null) {
+					console.log('move existing promoted user back');
+					// move old video to new location
+					videoSpeakingElement.find('video').detach().prependTo(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+				}
+
+				console.log('change promoted speaker after speaking');
+
+				// add new user to it
+				$(OCA.SpreedMe.speakers.getContainerId(id)).detach().prependTo(videoSpeakingElement);
+
+				latestSpeakerId = id;
+			},
 			add: function(id) {
-				id = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-				spreedListofSpeakers[id] = (new Date()).getTime();
-				var currentContainer = $('#container_' + id + '_type_incoming');
-				if (currentContainer.hasClass('speaking') ) {
+				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
+				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
+
+				if (latestSpeakerId === id) {
 					console.log('latest speaker is already promoted');
 					return;
 				}
+
 				console.log('change promoted speaker after speaking');
-				$appContent.find('.speaking').removeClass('speaking');
-				currentContainer.addClass('speaking');
+				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id) {
-				id = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-				spreedListofSpeakers[id] = -1;
-				var currentContainer = $('#container_' + id + '_type_incoming');
-				if (!currentContainer.hasClass('speaking') ) {
+				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
+				spreedListofSpeakers[sanitizedId] = -1;
+
+				if (latestSpeakerId !== id) {
 					console.log('stopped speaker is not promoted');
 					return;
 				}
+
 				console.log('change promoted speaker after speakingStopped');
-				currentContainer.removeClass('speaking');
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
@@ -163,11 +191,10 @@ var spreedMappingTable = [];
 
 				if (mostRecentId !== null) {
 					console.log('promoted new speaker');
-					$('#container_' + id + '_type_incoming').addClass('speaking');
+					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
 				} else {
 					console.log('no recent speaker to promote');
 				}
-
 			}
 		};
 

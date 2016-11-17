@@ -45,8 +45,11 @@ script(
 
 	<div id="app-content">
 
+		<div id="video-speaking">
+
+		</div>
 		<div id="videos">
-			<div class="videoView videoContainer hidden">
+			<div class="videoView videoContainer hidden" id="localVideoContainer">
 				<video id="localVideo"></video>
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
