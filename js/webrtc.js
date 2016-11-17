@@ -130,9 +130,12 @@ var spreedMappingTable = [];
 
 					var currentTime = spreedListofSpeakers[currentId];
 					var id = currentId.replace('\\', '');
-					data.push([spreedMappingTable[id], currentTime]);
+					data.push([spreedMappingTable[id], id, currentTime]);
 				}
+				console.log('spreedListofSpeakers');
 				console.table(data);
+				console.log('spreedMappingTable');
+				console.table(spreedMappingTable);
 			},
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
@@ -142,19 +145,21 @@ var spreedMappingTable = [];
 				var videoSpeakingElement = $('#video-speaking');
 
 				if (latestSpeakerId !== null) {
-					console.log('move existing promoted user back');
+					console.log('promote: unpromote speaker "' + spreedMappingTable[latestSpeakerId] + '"');
 					// move old video to new location
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('speaking');
 					oldContainer.parent().find('.videoContainer-dummy').remove();
 				}
 
-				console.log('change promoted speaker after speaking');
-
 				// add new user to it
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
 				newContainer.addClass('speaking');
-				newContainer.after('<div class="videoContainer videoContainer-dummy"></div>');
+				newContainer.after(
+					$('<div>')
+						.addClass('videoContainer videoContainer-dummy')
+						.append(newContainer.find('.nameIndicator'))
+					);
 
 				latestSpeakerId = id;
 			},
@@ -167,11 +172,11 @@ var spreedMappingTable = [];
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
 				if (latestSpeakerId === id) {
-					console.log('latest speaker is already promoted');
+					console.log('promoting: latest speaker "' + spreedMappingTable[id] + '" is already promoted');
 					return;
 				}
 
-				console.log('change promoted speaker after speaking');
+				console.log('promoting: change promoted speaker to "' + spreedMappingTable[id] + '" after speaking');
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id) {
@@ -183,11 +188,11 @@ var spreedMappingTable = [];
 				spreedListofSpeakers[sanitizedId] = -1;
 
 				if (latestSpeakerId !== id) {
-					console.log('stopped speaker is not promoted');
+					console.log('promoting: stopped speaker "' + spreedMappingTable[id] + '" is not promoted');
 					return;
 				}
 
-				console.log('change promoted speaker after speakingStopped');
+				console.log('promoting: try to find better promoted speaker for "' + spreedMappingTable[id] + '"');
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
@@ -208,10 +213,10 @@ var spreedMappingTable = [];
 				}
 
 				if (mostRecentId !== null) {
-					console.log('promoted new speaker');
+					console.log('promoting: change promoted speaker from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId] + '" after speakingStopped');
 					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
 				} else {
-					console.log('no recent speaker to promote');
+					console.log('promoting: no recent speaker to promote - keep "' + spreedMappingTable[id] + '"');
 				}
 			}
 		};
@@ -274,8 +279,8 @@ var spreedMappingTable = [];
 
 				// Mute indicator
 				var muteIndicator = document.createElement('div');
-				muteIndicator.className = 'muteIndicator hidden';
-				muteIndicator.textContent = 'muted';
+				muteIndicator.className = 'muteIndicator icon-sound-white hidden';
+				muteIndicator.textContent = '';
 
 				// Generic container
 				var container = document.createElement('div');
@@ -367,7 +372,7 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				var avatar = $el.find('.avatar');
-				avatar.avatar(spreedMappingTable[data.id], 128);
+				avatar.avatar(spreedMappingTable[data.id], 256);
 
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');

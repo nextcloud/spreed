@@ -108,6 +108,15 @@ video {
 	top: 5%;
 	width: 100%;
 }
+.videoContainer .avatar-container .avatar {
+	display: inline-block;
+}
+.videoContainer.speaking .avatar-container {
+	top: 30%;
+}
+.videoContainer.speaking .avatar-container + .nameIndicator {
+	top: 55%;
+}
 
 .participants-1 #emptycontent {
 	display: block !important;
@@ -178,6 +187,17 @@ video {
 .nameIndicator button.audio-disabled,
 .nameIndicator button.video-disabled {
 	opacity: .5;
+}
+
+.muteIndicator {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 22px;
+	height: 22px;
+	background-size: 22px;
+	padding: 22px;
+	opacity: .75;
 }
 
 #app-content:-webkit-full-screen  {
