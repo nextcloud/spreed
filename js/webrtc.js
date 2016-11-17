@@ -248,6 +248,7 @@ var spreedMappingTable = [];
 				message = t('spreed', 'Error while accessing microphone & camera: {error}', {error: error.message || error.name});
 				$('#emptycontent p').hide();
 			}
+			$('#emptycontent .icon-video').removeClass('icon-video').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
 		});
