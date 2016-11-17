@@ -112,7 +112,7 @@ video {
 	bottom: 0;
 	z-index: 10;
 }
-.participants-2 .videoContainer {
+.participants-2 .videoContainer,
 .videoContainer.speaking {
 	position: relative;
 	width: 100%;
