@@ -65,7 +65,7 @@ var spreedMappingTable = [];
 						id: message.from,
 						sid: message.sid,
 						type: message.roomType,
-						enableDataChannels: false,
+						enableDataChannels: true,
 						sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
 						broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
 					});
@@ -117,7 +117,7 @@ var spreedMappingTable = [];
 			autoAdjustMic: false,
 			detectSpeakingEvents: true,
 			connection: OCA.SpreedMe.XhrConnection,
-			supportDataChannel: false,
+			enableDataChannels: true,
 			nick: OC.getCurrentUser()['displayName']
 	});
 		OCA.SpreedMe.webrtc = webrtc;
