@@ -189,7 +189,6 @@ video {
 	position: absolute;
 	bottom: 0;
 	border-top-right-radius: 3px;
-	max-height: 33%;
 }
 
 #app-content.participants-2,
