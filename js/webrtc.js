@@ -316,6 +316,17 @@ var spreedMappingTable = [];
 
 				$(container).prependTo($('#videos'));
 			}
+
+			var otherSpeakerPromoted = false;
+			for (key in spreedListofSpeakers) {
+				if (obj.hasOwnProperty(key)) {
+					otherSpeakerPromoted = true;
+					break;
+				}
+			}
+			if (!otherSpeakerPromoted) {
+				OCA.SpreedMe.add(peer.id);
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
