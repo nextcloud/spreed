@@ -152,7 +152,7 @@ var spreedMappingTable = [];
 					// move old video to new location
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('speaking');
-					oldContainer.find('.videoContainer-dummy').remove();
+					oldContainer.parent().find('.videoContainer-dummy').remove();
 				}
 
 				console.log('change promoted speaker after speaking');
@@ -160,7 +160,7 @@ var spreedMappingTable = [];
 				// add new user to it
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
 				newContainer.addClass('speaking');
-				newContainer.find('video').after('<div class="videoContainer videoContainer-dummy"></div>');
+				newContainer.after('<div class="videoContainer videoContainer-dummy"></div>');
 
 				latestSpeakerId = id;
 			},
