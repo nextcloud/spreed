@@ -57,14 +57,35 @@
 	opacity: .3;
 }
 
-video {
+
+/* FLEXBOX
+#videos {
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-justify-content: space-around;
+	justify-content: space-around;
+	-webkit-align-items: stretch;
+	align-items: stretch;
+}
+
+.videoContainer {
 	width: 100%;
-	z-index: 0;
-	max-height: 100%;
-	/* default filter for slightly better look */
-	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
-	filter: contrast(1.1) saturate(1.1) sepia(.1);
-	vertical-align: top; /* fix white line below video */
+	-webkit-box-flex: auto;
+	-moz-box-flex: auto;
+	-webkit-flex: auto;
+	-ms-flex: auto;
+	flex: auto;
+	-webkit-align-self: stretch;
+	align-self: stretch;
+}
+*/
+
+#remotes {
+	position: absolute;
+	bottom: 0;
 }
 
 .videoContainer {
@@ -75,21 +96,18 @@ video {
 	vertical-align: top;
 }
 
+video {
+	width: 100%;
+	z-index: 0;
+	max-height: 100%;
+	/* default filter for slightly better look */
+	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
+	filter: contrast(1.1) saturate(1.1) sepia(.1);
+	vertical-align: top; /* fix white line below video */
+}
+
 .participants-1 #emptycontent {
 	display: block !important;
-}
-
-.videoContainer video {
-}
-
-
-#remotes {
-	position: absolute;
-	bottom: 0;
-}
-#remotes,
-.videoView {
-	height: 40%;
 }
 
 .videoView {
