@@ -158,7 +158,7 @@ var spreedMappingTable = [];
 				newContainer.after(
 					$('<div>')
 						.addClass('videoContainer videoContainer-dummy')
-						.append(newContainer.find('.nameIndicator'))
+						.append(newContainer.find('.nameIndicator').clone())
 					);
 
 				latestSpeakerId = id;
