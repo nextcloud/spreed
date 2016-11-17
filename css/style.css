@@ -180,7 +180,7 @@ video {
 .nameIndicator {
 	position: absolute;
 	bottom: 0;
-	padding: 12px 36px;
+	padding: 12px;
 	color: #fff;
 	text-shadow: 3px 3px 10px rgba(0, 0, 0, .5), 3px -3px 10px rgba(0, 0, 0, .5), -3px 3px 10px rgba(0, 0, 0, .5), -3px -3px 10px rgba(0, 0, 0, .5);
 	width: 100%;
@@ -194,6 +194,10 @@ video {
 	width: 100%;
 	padding: 0;
 }
+/* ellipsize name in 1on1 calls */
+.participants-2 .videoContainer.speaking + .videoContainer-dummy .nameIndicator {
+	padding: 12px 35%;
+}
 
 .nameIndicator button {
 	background-color: transparent;
@@ -204,18 +208,16 @@ video {
 }
 .nameIndicator button.audio-disabled,
 .nameIndicator button.video-disabled {
-	opacity: .5;
+	opacity: .7;
 }
 
 .muteIndicator {
 	position: absolute;
-	right: 5%;
-	bottom: 0;
-	width: 22px;
-	height: 22px;
+	width: 100%;
+	bottom: 44px;
 	background-size: 22px;
-	padding: 22px;
-	opacity: .75;
+	padding: 12px;
+	opacity: .7;
 }
 
 #app-content:-webkit-full-screen  {
