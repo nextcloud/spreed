@@ -258,12 +258,23 @@ var spreedMappingTable = [];
 				userIndicator.className = 'nameIndicator';
 				userIndicator.textContent = peer.nick;
 
+				// Avatar for username
+				var avatar = document.createElement('div');
+				avatar.className = 'avatar hidden';
+
+				// Mute indicator
+				var muteIndicator = document.createElement('div');
+				muteIndicator.className = 'muteIndicator hidden';
+				muteIndicator.textContent = 'muted';
+
 				// Generic container
 				var container = document.createElement('div');
 				container.className = 'videoContainer';
 				container.id = 'container_' + OCA.SpreedMe.webrtc.getDomId(peer);
 				container.appendChild(video);
+				container.appendChild(avatar);
 				container.appendChild(userIndicator);
+				container.appendChild(muteIndicator);
 				video.oncontextmenu = function() {
 					return false;
 				};
@@ -321,6 +332,45 @@ var spreedMappingTable = [];
 			var el = document.getElementById(peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer');
 			if (remotes && el) {
 				remotes.removeChild(el);
+			}
+		});
+
+		// Peer is muted
+		OCA.SpreedMe.webrtc.on('mute', function(data) {
+			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
+					id: data.id,
+					type: 'type',
+					broadcaster: false
+				}));
+			var $el = $(el);
+
+			if (data.name === 'video') {
+				var avatar = $el.find('.avatar');
+				avatar.avatar(spreedMappingTable[data.id], 128);
+				avatar.removeClass('hidden');
+				avatar.show();
+				$el.find('video').hide();
+			} else {
+				var muteIndicator = $el.find('.muteIndicator');
+				muteIndicator.removeClass('hidden');
+				muteIndicator.show();
+			}
+		});
+
+		// Peer is umuted
+		OCA.SpreedMe.webrtc.on('unmute', function(data) {
+			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
+					id: data.id,
+					type: 'type',
+					broadcaster: false
+				}));
+			var $el = $(el);
+
+			if (data.name === 'video') {
+				$el.find('.avatar').hide();
+				$el.find('video').show();
+			} else {
+				$el.find('.muteIndicator').hide();
 			}
 		});
 
