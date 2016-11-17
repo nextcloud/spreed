@@ -193,7 +193,7 @@ video {
 
 .muteIndicator {
 	position: absolute;
-	right: 4px;
+	right: 5%;
 	bottom: 0;
 	width: 22px;
 	height: 22px;
