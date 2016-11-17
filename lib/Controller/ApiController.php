@@ -186,7 +186,7 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
 	 * @param int $roomId
@@ -194,13 +194,36 @@ class ApiController extends Controller {
 	 */
 	public function getPeersInRoom($roomId) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomById($roomId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$participants = $room->getParticipants(time() - 10);
+
+		switch ($room->getType()) {
+			case Room::ONE_TO_ONE_CALL:
+			case Room::GROUP_CALL:
+				// No guests allowed
+				if ($this->userId === null) {
+					return new JSONResponse([], Http::STATUS_NOT_FOUND);
+				}
+
+				// Check if user is a participant
+				try {
+					$this->manager->getRoomForParticipant($roomId, $this->userId);
+				} catch (RoomNotFoundException $e) {
+					return new JSONResponse([], Http::STATUS_NOT_FOUND);
+				}
+				break;
+
+			case Room::PUBLIC_CALL:
+				// Nothing to do
+				break;
+		}
+
 		$result = [];
-		foreach ($room->getParticipants(time() - 10) as $participant => $data) {
+		foreach ($participants as $participant => $data) {
 			$result[] = [
 				'userId' => $participant,
 				'roomId' => $roomId,
