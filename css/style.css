@@ -60,6 +60,7 @@
 
 #videos {
 	position: absolute;
+	width: 100%;
 	bottom: 0;
 	display: -webkit-box;
 	display: -moz-box;
@@ -83,14 +84,6 @@
 	-webkit-align-self: stretch;
 	align-self: stretch;
 }
-
-/*.videoContainer {
-	position: relative;
-	display: inline-block;
-	width: 50%;
-	overflow: hidden;
-	vertical-align: top;
-}*/
 
 video {
 	width: 100%;
