@@ -159,6 +159,11 @@ video {
 	z-index: 10;
 	border-top-left-radius: 3px;
 }
+.participants-1 .videoView video,
+.participants-2 .videoView video {
+	position: absolute;
+	bottom: 0;
+}
 
 #app-content.participants-2,
 #app-content.participants-3,
