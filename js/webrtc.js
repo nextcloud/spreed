@@ -137,7 +137,7 @@ var spreedMappingTable = [];
 				console.log('spreedMappingTable');
 				console.table(spreedMappingTable);
 				console.log('latestSpeakerId');
-				console.table(latestSpeakerId);
+				console.log(latestSpeakerId);
 			},
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
@@ -145,7 +145,7 @@ var spreedMappingTable = [];
 			},
 			switchVideoToId: function(id) {
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
-				if(newContainer.find('video') === []) {
+				if(newContainer.find('video').length === 0) {
 					console.warn('promote: no video found for ID', id);
 					return;
 				}
@@ -212,7 +212,7 @@ var spreedMappingTable = [];
 					if (!(typeof currentId === 'string' || currentId instanceof String))  continue;
 
 					var currentTime = spreedListofSpeakers[currentId];
-					if (currentTime > mostRecentTime) {
+					if (currentTime > mostRecentTime && $(OCA.SpreedMe.speakers.getContainerId(currentId.replace('\\', ''))).length > 0) {
 						mostRecentTime = currentTime;
 						mostRecentId = currentId;
 					}
@@ -220,7 +220,7 @@ var spreedMappingTable = [];
 
 				if (mostRecentId !== null) {
 					console.log('promoting: change promoted speaker from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId] + '" after speakingStopped');
-					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
+					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId.replace('\\', ''));
 				} else {
 					console.log('promoting: no recent speaker to promote - keep "' + spreedMappingTable[id] + '"');
 				}
