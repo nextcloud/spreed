@@ -134,7 +134,7 @@ var spreedMappingTable = [];
 
 					var currentTime = spreedListofSpeakers[currentId];
 					var id = currentId.replace('\\', '');
-					data.push([id, currentTime]);
+					data.push([OCA.SpreedMe.spreedMappingTable[id], currentTime]);
 				}
 				console.table(data);
 			},
