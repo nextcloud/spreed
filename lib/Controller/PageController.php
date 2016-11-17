@@ -23,40 +23,81 @@
 
 namespace OCA\Spreed\Controller;
 
+use OC\HintException;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IDBConnection;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 
 class PageController extends Controller {
 	/** @var string */
 	private $userId;
 	/** @var IDBConnection */
 	private $dbConnection;
+	/** @var IURLGenerator */
+	private $url;
+	/** @var Manager */
+	private $manager;
 
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param string $UserId
 	 * @param IDBConnection $dbConnection
+	 * @param IURLGenerator $url
+	 * @param Manager $manager
 	 */
 	public function __construct($appName,
 								IRequest $request,
 								$UserId,
-								IDBConnection $dbConnection) {
+								IDBConnection $dbConnection,
+								IURLGenerator $url,
+								Manager $manager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->dbConnection = $dbConnection;
+		$this->url = $url;
+		$this->manager = $manager;
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 * @NoCSRFRequired
+	 *
+	 * @param int $roomId
+	 * @return TemplateResponse
 	 */
-	public function index() {
+	public function index($roomId = 0) {
+		if ($this->userId === null) {
+			return $this->guestEnterRoom($roomId);
+		}
+
+		if ($roomId !== 0) {
+			try {
+				$this->manager->getRoomForParticipant($roomId, $this->userId);
+			} catch (RoomNotFoundException $e) {
+				// Room not found - try if it is a public room
+				try {
+					$room = $this->manager->getRoomById($roomId);
+					if ($room->getType() !== Room::PUBLIC_CALL) {
+						throw new RoomNotFoundException();
+					}
+				} catch (RoomNotFoundException $e) {
+					// Room not found, redirect to main page
+					$roomId = 0;
+				}
+			}
+		}
+
 		$params = [
 			'sessionId' => $this->userId,
+			'roomId' => $roomId,
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
@@ -66,4 +107,21 @@ class PageController extends Controller {
 		return $response;
 	}
 
+	/**
+	 * @param $roomId
+	 * @return TemplateResponse
+	 * @throws HintException
+	 */
+	protected function guestEnterRoom($roomId) {
+		try {
+			$room = $this->manager->getRoomById($roomId);
+			if ($room->getType() !== Room::PUBLIC_CALL) {
+				throw new RoomNotFoundException();
+			}
+		} catch (RoomNotFoundException $e) {
+			throw new HintException('Room not found');
+		}
+
+		throw new HintException('Room found');
+	}
 }
