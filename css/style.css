@@ -102,7 +102,7 @@ video {
 	vertical-align: top; /* fix white line below video */
 }
 
-.videoContainer .avatar {
+.videoContainer .avatar-container {
 	position: absolute;
 	text-align: center;
 	top: 5%;
