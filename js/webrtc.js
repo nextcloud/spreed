@@ -42,6 +42,15 @@ var webrtc;
 			previousUsersInRoom = currentUsersInRoom;
 		});
 
+		messageEventSource.listen('speaking', function(id) {
+			console.log('received speaking event from ', id);
+			OCA.SpreedMe.speakers.add(id);
+		});
+		messageEventSource.listen('speaking', function(id) {
+			console.log('received stoppedSpeaking event from ', id);
+			OCA.SpreedMe.speakers.remove(id);
+		});
+
 		messageEventSource.listen('message', function(message) {
 			message = JSON.parse(message);
 			var peers = self.webrtc.getPeers(message.from, message.roomType);
@@ -95,7 +104,7 @@ var webrtc;
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
 			autoRequestMedia: true,
-			debug: true,
+			debug: false,
 			media: {
 				audio: true,
 				video: {
@@ -104,12 +113,59 @@ var webrtc;
 				}
 			},
 			autoAdjustMic: false,
-			detectSpeakingEvents: false,
+			detectSpeakingEvents: true,
 			connection: OCA.SpreedMe.XhrConnection,
 			supportDataChannel: false,
 			nick: OC.getCurrentUser()['displayName']
 	});
 		OCA.SpreedMe.webrtc = webrtc;
+
+		var $appContent = $('#app-content');
+		OCA.SpreedMe.speakers = {
+			listOfSpeaker: {},
+			add: function(id) {
+				OCA.SpreedMe.speakers.listOfSpeakers[id] = (new Date()).getTime();
+				var currentContainer = $('#container_' + id);
+				if (currentContainer.hasClass('speaking') ) {
+					console.log('latest speaker is already promoted');
+					return;
+				}
+				console.log('change promoted speaker after speaking');
+				$appContent.find('.speaking').removeClass('speaking');
+				currentContainer.addClass('speaking');
+			},
+			remove: function(id) {
+				OCA.SpreedMe.speakers.listOfSpeakers[id] = -1;
+				var currentContainer = $('#container_' + id);
+				if (!currentContainer.hasClass('speaking') ) {
+					console.log('stopped speaker is not promoted');
+					return;
+				}
+				console.log('change promoted speaker after speakingStopped');
+				currentContainer.removeClass('speaking');
+
+				var mostRecentTime = 0,
+					mostRecentId = null;
+				for (var currentId in OCA.SpreedMe.speakers.listOfSpeakers) {
+					// skip loop if the property is from prototype
+					if (!OCA.SpreedMe.speakers.listOfSpeakers.hasOwnProperty(currentId)) continue;
+
+					var currentTime = OCA.SpreedMe.speakers.listOfSpeakers[currentId];
+					if (currentTime > mostRecentTime) {
+						mostRecentTime = currentTime;
+						mostRecentId = currentId
+					}
+				}
+
+				if (mostRecentId !== null) {
+					console.log('promoted new speaker');
+					$('#container_' + id).addClass('speaking');
+				} else {
+					console.log('no recent speaker to promote');
+				}
+
+			}
+		};
 
 		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
 			peer.pc.on('PeerConnectionTrace', function (event) {
@@ -194,6 +250,15 @@ var webrtc;
 
 				$(container).prependTo($('#videos'));
 			}
+		});
+
+		OCA.SpreedMe.webrtc.on('speaking', function(){
+			console.log('local speaking');
+			OCA.SpreedMe.webrtc.sendToAll('speaking', OCA.SpreedMe.XhrConnection.getSessionid());
+		});
+		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
+			console.log('local stoppedSpeaking');
+			OCA.SpreedMe.webrtc.sendToAll('stoppedSpeaking', OCA.SpreedMe.XhrConnection.getSessionid());
 		});
 
 		// a peer was removed

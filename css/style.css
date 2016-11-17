@@ -58,8 +58,9 @@
 }
 
 
-/* FLEXBOX
 #videos {
+	position: absolute;
+	bottom: 0;
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -72,6 +73,7 @@
 }
 
 .videoContainer {
+	position: relative;
 	width: 100%;
 	-webkit-box-flex: auto;
 	-moz-box-flex: auto;
@@ -81,20 +83,14 @@
 	-webkit-align-self: stretch;
 	align-self: stretch;
 }
-*/
 
-#remotes {
-	position: absolute;
-	bottom: 0;
-}
-
-.videoContainer {
+/*.videoContainer {
 	position: relative;
 	display: inline-block;
 	width: 50%;
 	overflow: hidden;
 	vertical-align: top;
-}
+}*/
 
 video {
 	width: 100%;
@@ -110,23 +106,6 @@ video {
 	display: block !important;
 }
 
-#videos {
-	position: absolute;
-	bottom: 0;
-}
-#videos,
-.videoView {
-	height: 40%;
-}
-
-.videoView {
-	position: absolute;
-	width: 33%;
-	right: 0;
-	bottom: 0;
-	z-index: 10;
-}
-
 .participants-2 .videoContainer,
 .videoContainer.speaking {
 	position: absolute;
@@ -134,43 +113,14 @@ video {
 	height: 100%;
 	overflow: hidden;
 }
-.participants-2 #remotes {
-	position: initial;
-}
-
-.participants-3 .videoContainer,
-.participants-3 .videoView {
+.participants-1 .videoView,
+.participants-2 .videoView {
+	position: absolute;
 	width: 33%;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
 }
-.participants-4 .videoContainer,
-.participants-4 .videoView {
-	width: 25%;
-}
-.participants-5 .videoContainer,
-.participants-5 .videoView {
-	width: 20%;
-}
-.participants-6 .videoContainer,
-.participants-6 .videoView {
-	width: 16.7%;
-}
-.participants-7 .videoContainer,
-.participants-7 .videoView {
-	width: 14.3%;
-}
-.participants-8 .videoContainer,
-.participants-8 .videoView {
-	width: 12.5%;
-}
-.participants-9 .videoContainer,
-.participants-9 .videoView {
-	width: 11.2%;
-}
-.participants-10 .videoContainer,
-.participants-10 .videoView {
-	width: 10%;
-}
-
 
 #app-content.participants-2,
 #app-content.participants-3,
