@@ -416,7 +416,7 @@ var spreedMappingTable = [];
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');
 				avatarContainer.show();
-				//$el.find('video').hide();
+				$el.find('video').hide();
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('hidden');
@@ -435,7 +435,7 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				$el.find('.avatar-container').hide();
-				//avaa$el.find('video').show();
+				$el.find('video').show();
 			} else {
 				$el.find('.muteIndicator').hide();
 			}

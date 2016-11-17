@@ -131,6 +131,7 @@
 			$('#hideVideo').click(function() {
 				var $this = $(this);
 				var avatarContainer = $this.closest('.videoView').find('.avatar-container');
+				var localVideo = $this.closest('.videoView').find('#localVideo');
 
 				if (OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 					OCA.SpreedMe.webrtc.pauseVideo();
@@ -141,12 +142,15 @@
 					avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
 					avatarContainer.removeClass('hidden');
 					avatarContainer.show();
+
+					localVideo.hide();
 				} else {
 					OCA.SpreedMe.webrtc.resumeVideo();
 					$this.data('title', 'Disable video')
 						.removeClass('video-disabled icon-video-off-white')
 						.addClass('icon-video-white');
 					avatarContainer.hide();
+					localVideo.show();
 				}
 			});
 			$('#mute').click(function() {
