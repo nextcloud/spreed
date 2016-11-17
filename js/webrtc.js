@@ -43,6 +43,7 @@ var spreedMappingTable = [];
 			disconnectedUsers.forEach(function(user) {
 				console.log('XXX Remove peer', user);
 				OCA.SpreedMe.webrtc.removePeers(user);
+				OCA.SpreedMe.speakers.remove(user);
 			});
 			previousUsersInRoom = currentUsersInRoom;
 		});
