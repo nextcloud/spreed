@@ -61,7 +61,8 @@
 #videos {
 	position: absolute;
 	width: 100%;
-	bottom: 0;
+	height: 100%;
+	top: 0;
 	display: -webkit-box;
 	display: -moz-box;
 	display: -ms-flexbox;
@@ -69,8 +70,8 @@
 	display: flex;
 	-webkit-justify-content: space-around;
 	justify-content: space-around;
-	-webkit-align-items: stretch;
-	align-items: stretch;
+	-webkit-align-items: flex-end;
+	align-items: flex-end;
 }
 
 .videoContainer {
@@ -81,11 +82,10 @@
 	-webkit-flex: auto;
 	-ms-flex: auto;
 	flex: auto;
-	-webkit-align-self: stretch;
-	align-self: stretch;
+	z-index: 2;
 }
 #videos .videoContainer {
-    padding: 2%;
+    padding: 0 2%;
 }
 .participants-1 #videos .videoContainer,
 .participants-2 #videos .videoContainer {
@@ -112,10 +112,13 @@ video {
 }
 .participants-2 .videoContainer,
 .videoContainer.speaking {
-	position: relative;
+	position: absolute;
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	left: 0;
+	top: 0;
+	z-index: 1;
 }
 .participants-1 .videoView,
 .participants-2 .videoView {
@@ -154,6 +157,7 @@ video {
 	text-overflow: ellipsis;
 }
 .videoView .nameIndicator {
+	width: 100%;
 	padding: 0;
 }
 

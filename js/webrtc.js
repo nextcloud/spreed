@@ -130,7 +130,9 @@ var spreedMappingTable = [];
 				var data = [];
 				for (var currentId in spreedListofSpeakers) {
 					// skip loop if the property is from prototype
-					if (!spreedListofSpeakers.hasOwnProperty(currentId)) continue;
+					if (!spreedListofSpeakers.hasOwnProperty(currentId)) {
+						continue;
+					}
 
 					var currentTime = spreedListofSpeakers[currentId];
 					var id = currentId.replace('\\', '');
@@ -138,19 +140,9 @@ var spreedMappingTable = [];
 				}
 				console.table(data);
 			},
-			unsanitizeId: function(id) {
-				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
-			},
-			sanitizeId: function(id) {
-				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
-			},
 			getContainerId: function(id) {
-				if (id === OCA.SpreedMe.XhrConnection.getSessionid()) {
-					return '#localVideoContainer';
-				} else {
-					var sanitizedId = OCA.SpreedMe.speakers.sanitizeId(id);
-					return '#container_' + sanitizedId + '_type_incoming';
-				}
+				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+				return '#container_' + sanitizedId + '_type_incoming';
 			},
 			switchVideoToId: function(id) {
 				var videoSpeakingElement = $('#video-speaking');
@@ -158,21 +150,21 @@ var spreedMappingTable = [];
 				if (latestSpeakerId !== null) {
 					console.log('move existing promoted user back');
 					// move old video to new location
-					var oldSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
-					oldSpeakerContainer.find('.videoContainer').remove();
-					videoSpeakingElement.find('video').detach().prependTo(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+					$(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId)).removeClass('speaking');
 				}
 
 				console.log('change promoted speaker after speaking');
 
 				// add new user to it
-				var newSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
-				newSpeakerContainer.find('video').detach().prependTo(videoSpeakingElement);
-				newSpeakerContainer.prepend($('<div class="videoContainer"></div>'));
+				$(OCA.SpreedMe.speakers.getContainerId(id)).addClass('speaking');
 
 				latestSpeakerId = id;
 			},
 			add: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
@@ -185,6 +177,10 @@ var spreedMappingTable = [];
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = -1;
 
@@ -199,12 +195,17 @@ var spreedMappingTable = [];
 					mostRecentId = null;
 				for (var currentId in spreedListofSpeakers) {
 					// skip loop if the property is from prototype
-					if (!spreedListofSpeakers.hasOwnProperty(currentId)) continue;
+					if (!spreedListofSpeakers.hasOwnProperty(currentId)) {
+						continue;
+					}
+
+					// skip non-string ids
+					if (!(typeof currentId === 'string' || currentId instanceof String))  continue;
 
 					var currentTime = spreedListofSpeakers[currentId];
 					if (currentTime > mostRecentTime) {
 						mostRecentTime = currentTime;
-						mostRecentId = currentId
+						mostRecentId = currentId;
 					}
 				}
 
