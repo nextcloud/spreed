@@ -170,7 +170,9 @@ var webrtc;
 								console.log('Connection established.');
 								break;
 							case 'disconnected':
-								OCA.SpreedMe.webrtc.removePeers(peer.id);
+								setTimeout(function() {
+									console.log('5 seconds passed! Let us check what the state is.', peer.pc.iceConnectionState);
+								}, 5000);
 								console.log('Disconnected.');
 								break;
 							case 'failed':
