@@ -159,16 +159,13 @@ var spreedMappingTable = [];
 					console.log('move existing promoted user back');
 					// move old video to new location
 					var oldSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
-					oldSpeakerContainer.find('.videoContainer').remove();
-					videoSpeakingElement.find('video').detach().prependTo(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+					$(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId)).removeClass('speaking');
 				}
 
 				console.log('change promoted speaker after speaking');
 
 				// add new user to it
-				var newSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
-				newSpeakerContainer.find('video').detach().prependTo(videoSpeakingElement);
-				newSpeakerContainer.prepend($('<div class="videoContainer"></div>'));
+				$(OCA.SpreedMe.speakers.getContainerId(id)).addClass('speaking');
 
 				latestSpeakerId = id;
 			},
