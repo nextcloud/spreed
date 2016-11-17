@@ -80,12 +80,6 @@ video {
 }
 
 .videoContainer video {
-	position: relative;
-	width: initial;
-	height: 100%;
-	left: 50%;
-	top: 50%;
-	transform: translateY(-50%) translateX(-50%);
 }
 
 
