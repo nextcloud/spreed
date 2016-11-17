@@ -353,7 +353,7 @@ var spreedMappingTable = [];
 				avatar.avatar(spreedMappingTable[data.id], 128);
 				avatar.removeClass('hidden');
 				avatar.show();
-				$el.find('video').hide();
+				//$el.find('video').hide();
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('hidden');
@@ -372,7 +372,7 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				$el.find('.avatar').hide();
-				$el.find('video').show();
+				//$el.find('video').show();
 			} else {
 				$el.find('.muteIndicator').hide();
 			}
