@@ -443,6 +443,10 @@ var spreedMappingTable = [];
 			}
 		});
 
+		OCA.SpreedMe.webrtc.on('localStream', function() {
+			console.log('localStream event received - let\'s enable video');
+			OCA.SpreedMe.app.enableVideo();
+		});
 	}
 
 	OCA.SpreedMe.initWebRTC = initWebRTC;

@@ -129,28 +129,10 @@
 			});
 
 			$('#hideVideo').click(function() {
-				var $this = $(this);
-				var avatarContainer = $this.closest('.videoView').find('.avatar-container');
-				var localVideo = $this.closest('.videoView').find('#localVideo');
-
 				if (OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
-					OCA.SpreedMe.webrtc.pauseVideo();
-					$this.data('title', 'Enable video')
-						.addClass('video-disabled icon-video-off-white')
-						.removeClass('icon-video-white');
-
-					avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
-					avatarContainer.removeClass('hidden');
-					avatarContainer.show();
-
-					localVideo.hide();
+					OCA.SpreedMe.app.enableVideo();
 				} else {
-					OCA.SpreedMe.webrtc.resumeVideo();
-					$this.data('title', 'Disable video')
-						.removeClass('video-disabled icon-video-off-white')
-						.addClass('icon-video-white');
-					avatarContainer.hide();
-					localVideo.show();
+					OCA.SpreedMe.app.disableVideo();
 				}
 			});
 			$('#mute').click(function() {
@@ -273,11 +255,42 @@
 
 			this._pollForRoomChanges();
 			this._startPing();
+
+			// disable by default and enable once we get a stream from the webcam
+			this.disableVideo();
 		},
 		onDocumentClick: function(event) {
 			var uiChannel = Backbone.Radio.channel('ui');
 
 			uiChannel.trigger('document:click', event);
+		},
+		enableVideo: function() {
+			var $hideVideoButton = $('#hideVideo');
+			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
+			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
+
+			OCA.SpreedMe.webrtc.resumeVideo();
+			$hideVideoButton.data('title', 'Disable video')
+				.removeClass('video-disabled icon-video-off-white')
+				.addClass('icon-video-white');
+			avatarContainer.hide();
+			localVideo.show();
+		},
+		disableVideo: function() {
+			var $hideVideoButton = $('#hideVideo');
+			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
+			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
+
+			OCA.SpreedMe.webrtc.pauseVideo();
+			$hideVideoButton.data('title', 'Enable video')
+				.addClass('video-disabled icon-video-off-white')
+				.removeClass('icon-video-white');
+
+			avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
+			avatarContainer.removeClass('hidden');
+			avatarContainer.show();
+
+			localVideo.hide();
 		}
 	});
 
