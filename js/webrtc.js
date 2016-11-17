@@ -141,7 +141,7 @@ var webrtc;
 
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
 			console.log('video added', peer);
-			var remotes = document.getElementById('remotes');
+			var remotes = document.getElementById('videos');
 			if (remotes) {
 				// Indicator for username
 				var userIndicator = document.createElement('div');
@@ -189,13 +189,13 @@ var webrtc;
 					});
 				}
 
-				remotes.appendChild(container);
+				$(container).prependTo($('#videos'));
 			}
 		});
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
-			var remotes = document.getElementById('remotes');
+			var remotes = document.getElementById('videos');
 			var el = document.getElementById(peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer');
 			if (remotes && el) {
 				remotes.removeChild(el);
