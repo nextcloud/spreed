@@ -140,19 +140,9 @@ var spreedMappingTable = [];
 				}
 				console.table(data);
 			},
-			unsanitizeId: function(id) {
-				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-			},
-			sanitizeId: function(id) {
-				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-			},
 			getContainerId: function(id) {
-				if (id === OCA.SpreedMe.XhrConnection.getSessionid()) {
-					return '#localVideoContainer';
-				} else {
-					var sanitizedId = OCA.SpreedMe.speakers.sanitizeId(id);
-					return '#container_' + sanitizedId + '_type_incoming';
-				}
+				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+				return '#container_' + sanitizedId + '_type_incoming';
 			},
 			switchVideoToId: function(id) {
 				var videoSpeakingElement = $('#video-speaking');
@@ -171,10 +161,10 @@ var spreedMappingTable = [];
 				latestSpeakerId = id;
 			},
 			add: function(id) {
-				// if no connection is established yet
-				if(id.length < 5) {
+				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
 				}
+
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
@@ -187,6 +177,10 @@ var spreedMappingTable = [];
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = -1;
 
@@ -204,6 +198,9 @@ var spreedMappingTable = [];
 					if (!spreedListofSpeakers.hasOwnProperty(currentId)) {
 						continue;
 					}
+
+					// skip non-string ids
+					if (!(typeof currentId === 'string' || currentId instanceof String))  continue;
 
 					var currentTime = spreedListofSpeakers[currentId];
 					if (currentTime > mostRecentTime) {
