@@ -126,6 +126,8 @@ video {
 .participants-2 #videos {
 	height: 100%;
 }
+
+/* big speaker video */
 .participants-2 .videoContainer,
 .videoContainer.speaking {
 	position: absolute;
@@ -136,6 +138,16 @@ video {
 	top: 0;
 	z-index: 1;
 }
+.participants-2 .videoContainer video {
+	position: absolute;
+	width: initial;
+	height: 100%;
+	left: 50%;
+	top: 50%;
+	transform: translateY(-50%) translateX(-50%);
+}
+
+/* own video */
 .participants-1 .videoView,
 .participants-2 .videoView {
 	position: absolute;
