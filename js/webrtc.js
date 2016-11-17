@@ -161,7 +161,11 @@ var spreedMappingTable = [];
 				// add new user to it
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
 				newContainer.addClass('speaking');
-				newContainer.after('<div class="videoContainer videoContainer-dummy"></div>');
+				newContainer.after(
+					$('<div>')
+						.addClass('videoContainer videoContainer-dummy')
+						.append(newContainer.find('.nameIndicator'))
+					);
 
 				latestSpeakerId = id;
 			},
