@@ -257,6 +257,14 @@ var spreedMappingTable = [];
 				OCA.SpreedMe.speakers.add(peer.id);
 			} else if(label === 'stoppedSpeaking') {
 				OCA.SpreedMe.speakers.remove(peer.id);
+			} else if(label === 'audioOn') {
+				OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'audio'});
+			} else if(label === 'audioOff') {
+				OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'audio'});
+			} else if(label === 'videoOn') {
+				OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'video'});
+			} else if(label === 'videoOff') {
+				OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 			}
 		});
 
@@ -359,6 +367,20 @@ var spreedMappingTable = [];
 			if (remotes && el) {
 				remotes.removeChild(el);
 			}
+		});
+
+		// Send the audio on and off events via data channel
+		OCA.SpreedMe.webrtc.on('audioOn', function() {
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('audioOn');
+		});
+		OCA.SpreedMe.webrtc.on('audioOff', function() {
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('audioOff');
+		});
+		OCA.SpreedMe.webrtc.on('videoOn', function() {
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOn');
+		});
+		OCA.SpreedMe.webrtc.on('videoOff', function() {
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOff');
 		});
 
 		// Peer is muted
