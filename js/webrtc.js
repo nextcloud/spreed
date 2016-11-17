@@ -170,8 +170,12 @@ var webrtc;
 								console.log('Connection established.');
 								break;
 							case 'disconnected':
+								// If the peer is still disconnected after 5 seconds
+								// we close the video connection.
 								setTimeout(function() {
-									console.log('5 seconds passed! Let us check what the state is.', peer.pc.iceConnectionState);
+									if(peer.pc.iceConnectionState === 'disconnected') {
+										OCA.SpreedMe.webrtc.removePeers(peer.id);
+									}
 								}, 5000);
 								console.log('Disconnected.');
 								break;
