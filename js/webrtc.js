@@ -158,7 +158,6 @@ var spreedMappingTable = [];
 				if (latestSpeakerId !== null) {
 					console.log('move existing promoted user back');
 					// move old video to new location
-					var oldSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					$(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId)).removeClass('speaking');
 				}
 
@@ -302,10 +301,12 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('speaking', function(){
 			console.log('local speaking');
 			OCA.SpreedMe.webrtc.sendToAll('speaking', OCA.SpreedMe.XhrConnection.getSessionid());
+			OCA.SpreedMe.speakers.add(OCA.SpreedMe.XhrConnection.getSessionid());
 		});
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			console.log('local stoppedSpeaking');
 			OCA.SpreedMe.webrtc.sendToAll('stoppedSpeaking', OCA.SpreedMe.XhrConnection.getSessionid());
+			OCA.SpreedMe.speakers.remove(OCA.SpreedMe.XhrConnection.getSessionid());
 		});
 
 		// a peer was removed
