@@ -130,7 +130,9 @@ var spreedMappingTable = [];
 				var data = [];
 				for (var currentId in spreedListofSpeakers) {
 					// skip loop if the property is from prototype
-					if (!spreedListofSpeakers.hasOwnProperty(currentId)) continue;
+					if (!spreedListofSpeakers.hasOwnProperty(currentId)) {
+						continue;
+					}
 
 					var currentTime = spreedListofSpeakers[currentId];
 					var id = currentId.replace('\\', '');
@@ -139,10 +141,10 @@ var spreedMappingTable = [];
 				console.table(data);
 			},
 			unsanitizeId: function(id) {
-				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
 			},
 			sanitizeId: function(id) {
-				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
 			},
 			getContainerId: function(id) {
 				if (id === OCA.SpreedMe.XhrConnection.getSessionid()) {
@@ -199,12 +201,14 @@ var spreedMappingTable = [];
 					mostRecentId = null;
 				for (var currentId in spreedListofSpeakers) {
 					// skip loop if the property is from prototype
-					if (!spreedListofSpeakers.hasOwnProperty(currentId)) continue;
+					if (!spreedListofSpeakers.hasOwnProperty(currentId)) {
+						continue;
+					}
 
 					var currentTime = spreedListofSpeakers[currentId];
 					if (currentTime > mostRecentTime) {
 						mostRecentTime = currentTime;
-						mostRecentId = currentId
+						mostRecentId = currentId;
 					}
 				}
 
