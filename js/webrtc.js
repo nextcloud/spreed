@@ -26,10 +26,13 @@ var webrtc;
 				currentUsersInRoom.push(user['sessionId']);
 			});
 
-			if (currentUsersInRoom.length !== previousUsersInRoom.length) {
-				$('#app-content').attr('class', '');
-				$('#app-content').addClass('participants-' + currentUsersInRoom.length);
+			var currentUsersNo = currentUsersInRoom.length;
+			if(currentUsersNo === 0) {
+				currentUsersNo = 1;
 			}
+
+			$('#app-content').attr('class', '');
+			$('#app-content').addClass('participants-' + currentUsersNo);
 
 			var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
 			disconnectedUsers.forEach(function(user) {
