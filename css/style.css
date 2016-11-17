@@ -102,6 +102,13 @@ video {
 	vertical-align: top; /* fix white line below video */
 }
 
+.videoContainer .avatar {
+	position: absolute;
+	text-align: center;
+	top: 5%;
+	width: 100%;
+}
+
 .participants-1 #emptycontent {
 	display: block !important;
 }
