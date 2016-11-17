@@ -143,13 +143,17 @@ var spreedMappingTable = [];
 				if (latestSpeakerId !== null) {
 					console.log('move existing promoted user back');
 					// move old video to new location
+					var oldSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+					oldSpeakerContainer.find('.videoContainer').remove();
 					videoSpeakingElement.find('video').detach().prependTo(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 				}
 
 				console.log('change promoted speaker after speaking');
 
 				// add new user to it
-				$(OCA.SpreedMe.speakers.getContainerId(id)).detach().prependTo(videoSpeakingElement);
+				var newSpeakerContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
+				newSpeakerContainer.find('video').detach().prependTo(videoSpeakingElement);
+				newSpeakerContainer.prepend($('<div class="videoContainer"></div>'));
 
 				latestSpeakerId = id;
 			},
@@ -294,6 +298,9 @@ var spreedMappingTable = [];
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
+			// a removed peer can't speak anymore ;)
+			OCA.SpreedMe.speakers.remove(peer);
+
 			var remotes = document.getElementById('videos');
 			var el = document.getElementById(peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer');
 			if (remotes && el) {
