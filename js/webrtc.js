@@ -42,15 +42,6 @@ var webrtc;
 			previousUsersInRoom = currentUsersInRoom;
 		});
 
-		messageEventSource.listen('speaking', function(id) {
-			console.log('received speaking event from ', id);
-			OCA.SpreedMe.speakers.add(id);
-		});
-		messageEventSource.listen('speaking', function(id) {
-			console.log('received stoppedSpeaking event from ', id);
-			OCA.SpreedMe.speakers.remove(id);
-		});
-
 		messageEventSource.listen('message', function(message) {
 			message = JSON.parse(message);
 			var peers = self.webrtc.getPeers(message.from, message.roomType);
@@ -76,6 +67,12 @@ var webrtc;
 					OCA.SpreedMe.webrtc.emit('createdPeer', peer);
 				}
 				peer.handleMessage(message);
+			} else if(message.type === 'speaking') {
+				console.log('received speaking event from ', message.payload);
+				OCA.SpreedMe.speakers.add(message.payload);
+			} else if(message.type === 'stoppedSpeaking') {
+				console.log('received stoppedSpeaking event from ', message.payload);
+				OCA.SpreedMe.speakers.remove(message.payload);
 			} else if (peers.length) {
 				peers.forEach(function(peer) {
 					if (message.sid) {
@@ -121,11 +118,12 @@ var webrtc;
 		OCA.SpreedMe.webrtc = webrtc;
 
 		var $appContent = $('#app-content');
+		var spreedListofSpeakers = {};
 		OCA.SpreedMe.speakers = {
-			listOfSpeaker: {},
 			add: function(id) {
-				OCA.SpreedMe.speakers.listOfSpeakers[id] = (new Date()).getTime();
-				var currentContainer = $('#container_' + id);
+				id = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+				spreedListofSpeakers[id] = (new Date()).getTime();
+				var currentContainer = $('#container_' + id + '_type_incoming');
 				if (currentContainer.hasClass('speaking') ) {
 					console.log('latest speaker is already promoted');
 					return;
@@ -135,8 +133,9 @@ var webrtc;
 				currentContainer.addClass('speaking');
 			},
 			remove: function(id) {
-				OCA.SpreedMe.speakers.listOfSpeakers[id] = -1;
-				var currentContainer = $('#container_' + id);
+				id = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+				spreedListofSpeakers[id] = -1;
+				var currentContainer = $('#container_' + id + '_type_incoming');
 				if (!currentContainer.hasClass('speaking') ) {
 					console.log('stopped speaker is not promoted');
 					return;
@@ -146,11 +145,11 @@ var webrtc;
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
-				for (var currentId in OCA.SpreedMe.speakers.listOfSpeakers) {
+				for (var currentId in spreedListofSpeakers) {
 					// skip loop if the property is from prototype
-					if (!OCA.SpreedMe.speakers.listOfSpeakers.hasOwnProperty(currentId)) continue;
+					if (!spreedListofSpeakers.hasOwnProperty(currentId)) continue;
 
-					var currentTime = OCA.SpreedMe.speakers.listOfSpeakers[currentId];
+					var currentTime = spreedListofSpeakers[currentId];
 					if (currentTime > mostRecentTime) {
 						mostRecentTime = currentTime;
 						mostRecentId = currentId
@@ -159,7 +158,7 @@ var webrtc;
 
 				if (mostRecentId !== null) {
 					console.log('promoted new speaker');
-					$('#container_' + id).addClass('speaking');
+					$('#container_' + id + '_type_incoming').addClass('speaking');
 				} else {
 					console.log('no recent speaker to promote');
 				}
