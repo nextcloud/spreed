@@ -58,7 +58,6 @@
 }
 
 
-/* FLEXBOX
 #videos {
 	display: -webkit-box;
 	display: -moz-box;
@@ -81,20 +80,14 @@
 	-webkit-align-self: stretch;
 	align-self: stretch;
 }
-*/
 
-#remotes {
-	position: absolute;
-	bottom: 0;
-}
-
-.videoContainer {
+/*.videoContainer {
 	position: relative;
 	display: inline-block;
 	width: 50%;
 	overflow: hidden;
 	vertical-align: top;
-}
+}*/
 
 video {
 	width: 100%;
@@ -110,22 +103,6 @@ video {
 	display: block !important;
 }
 
-#videos {
-	position: absolute;
-	bottom: 0;
-}
-#videos,
-.videoView {
-	height: 40%;
-}
-
-.videoView {
-	position: absolute;
-	width: 33%;
-	right: 0;
-	bottom: 0;
-	z-index: 10;
-}
 
 .participants-2 .videoContainer,
 .videoContainer.speaking {
@@ -134,8 +111,13 @@ video {
 	height: 100%;
 	overflow: hidden;
 }
-.participants-2 #remotes {
-	position: initial;
+.participants-1 .videoView,
+.participants-2 .videoView {
+	position: absolute;
+	width: 33%;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
 }
 
 .participants-3 .videoContainer,
