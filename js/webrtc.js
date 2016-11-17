@@ -31,8 +31,11 @@ var webrtc;
 				currentUsersNo = 1;
 			}
 
-			$('#app-content').attr('class', '');
-			$('#app-content').addClass('participants-' + currentUsersNo);
+			var appContentElement = $('#app-content'),
+				participantsClass = 'participants-' + currentUsersNo;
+			if (!appContentElement.hasClass(participantsClass)) {
+				appContentElement.attr('class', '').addClass(participantsClass);
+			}
 
 			var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
 			disconnectedUsers.forEach(function(user) {
