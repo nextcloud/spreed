@@ -203,21 +203,6 @@
 				}
 			});
 		},
-		_onRegisterHashChange: function() {
-			// If page is opened already with a hash in the URL redirect to plain URL
-			if (window.location.hash !== '') {
-				window.location.replace(window.location.href.slice(0, -window.location.hash.length));
-			}
-
-			// If the hash changes a room gets joined
-			$(window).on('hashchange', function() {
-				var roomId = parseInt(window.location.hash.substring(1), 10);
-				OCA.SpreedMe.Rooms.join(roomId);
-			});
-			if (window.location.hash.substring(1) === '') {
-				OCA.SpreedMe.Rooms.showCamera();
-			}
-		},
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
 				el: '#app-navigation ul',
@@ -270,7 +255,11 @@
 			OCA.SpreedMe.initRooms();
 			OCA.SpreedMe.Rooms.leaveAllRooms();
 			this._registerPageEvents();
-			this._onRegisterHashChange();
+			var roomId = parseInt($('#app').attr('data-roomId'), 10);
+			if (roomId) {
+				OCA.SpreedMe.Rooms.join(roomId);
+			}
+			OCA.SpreedMe.Rooms.showCamera();
 
 			this._showRoomList();
 			this._rooms.fetch({

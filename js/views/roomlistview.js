@@ -28,7 +28,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
 								'<li class="app-navigation-entry-utils-menu-button svg"><button></button></li>'+
@@ -88,6 +88,13 @@
 			if (this.model.get('type') === 2) { // group
 				this.addTooltip();
 			}
+
+			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
+			this.$el.find('.app-navigation-entry-link').on('click', function(e) {
+				e.preventDefault();
+				var roomId = $(this).attr('data-roomId');
+				OCA.SpreedMe.Rooms.join(roomId);
+			});
 
 			if (this.model.get('active')) {
 				this.$el.addClass('active');

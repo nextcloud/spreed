@@ -29,12 +29,6 @@ return [
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'page#index',
-			'url' => '/room/{roomId}',
-			'verb' => 'GET',
-			'requirements' => ['roomId' => '\d+'],
-		],
-		[
 			'name' => 'signalling#signalling',
 			'url' => '/signalling',
 			'verb' => 'POST',
