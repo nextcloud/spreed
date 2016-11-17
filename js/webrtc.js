@@ -136,6 +136,8 @@ var spreedMappingTable = [];
 				console.table(data);
 				console.log('spreedMappingTable');
 				console.table(spreedMappingTable);
+				console.log('latestSpeakerId');
+				console.table(latestSpeakerId);
 			},
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
