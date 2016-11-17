@@ -126,6 +126,21 @@ var spreedMappingTable = [];
 		var spreedListofSpeakers = {};
 		var latestSpeakerId = null;
 		OCA.SpreedMe.speakers = {
+			showStatus: function() {
+				var data = [];
+				for (var currentId in spreedListofSpeakers) {
+					// skip loop if the property is from prototype
+					if (!spreedListofSpeakers.hasOwnProperty(currentId)) continue;
+
+					var currentTime = spreedListofSpeakers[currentId];
+					var id = currentId.replace('\\', '');
+					data.push([id, currentTime]);
+				}
+				console.table(data);
+			},
+			unsanitizeId: function(id) {
+				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
+			},
 			sanitizeId: function(id) {
 				return id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&")
 			},
