@@ -242,6 +242,11 @@ var spreedMappingTable = [];
 				var avatar = document.createElement('div');
 				avatar.className = 'avatar hidden';
 
+				// Mute indicator
+				var muteIndicator = document.createElement('div');
+				muteIndicator.className = 'muteIndicator hidden';
+				muteIndicator.textContent = 'muted';
+
 				// Generic container
 				var container = document.createElement('div');
 				container.className = 'videoContainer';
@@ -249,6 +254,7 @@ var spreedMappingTable = [];
 				container.appendChild(video);
 				container.appendChild(avatar);
 				container.appendChild(userIndicator);
+				container.appendChild(muteIndicator);
 				video.oncontextmenu = function() {
 					return false;
 				};
@@ -316,9 +322,15 @@ var spreedMappingTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				$el.find('.avatar').avatar(spreedMappingTable[data.id], 128);
-				$el.find('.avatar').show();
+				var avatar = $el.find('.avatar');
+				avatar.avatar(spreedMappingTable[data.id], 128);
+				avatar.removeClass('hidden');
+				avatar.show();
 				$el.find('video').hide();
+			} else {
+				var muteIndicator = $el.find('.muteIndicator');
+				muteIndicator.removeClass('hidden');
+				muteIndicator.show();
 			}
 		});
 
@@ -334,6 +346,8 @@ var spreedMappingTable = [];
 			if (data.name === 'video') {
 				$el.find('.avatar').hide();
 				$el.find('video').show();
+			} else {
+				$el.find('.muteIndicator').hide();
 			}
 		});
 
