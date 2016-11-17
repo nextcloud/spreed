@@ -57,16 +57,19 @@ return [
 			'name' => 'api#addParticipantToRoom',
 			'url' => '/api/room/{roomId}',
 			'verb' => 'POST',
+			'requirements' => ['roomId' => '\d+'],
 		],
 		[
 			'name' => 'api#leaveRoom',
 			'url' => '/api/room/{roomId}',
 			'verb' => 'DELETE',
+			'requirements' => ['roomId' => '\d+'],
 		],
 		[
 			'name' => 'api#getPeersInRoom',
 			'url' => '/api/room/{roomId}/peers',
 			'verb' => 'GET',
+			'requirements' => ['roomId' => '\d+'],
 		],
 		[
 			'name' => 'api#joinRoom',
