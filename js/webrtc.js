@@ -313,6 +313,17 @@ var spreedMappingTable = [];
 							case 'connected':
 							case 'completed': // on caller side
 								console.log('Connection established.');
+								// Send the current information about the video and microphone state
+								if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
+									OCA.SpreedMe.webrtc.emit('videoOff');
+								} else {
+									OCA.SpreedMe.webrtc.emit('videoOn');
+								}
+								if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
+									OCA.SpreedMe.webrtc.emit('audioOff');
+								} else {
+									OCA.SpreedMe.webrtc.emit('audioOn');
+								}
 								break;
 							case 'disconnected':
 								// If the peer is still disconnected after 5 seconds
