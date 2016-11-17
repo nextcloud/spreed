@@ -44,15 +44,17 @@ script(
 	</div>
 
 	<div id="app-content">
-		<div class="videoView hidden">
-			<video id="localVideo"></video>
-			<div class="nameIndicator">
-				<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
-				<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
-				<button id="video-fullscreen" class="icon-fullscreen-white" data-title="<?php p($l->t('Fullscreen')) ?>"></button>
+
+		<div id="videos" style="display: inline">
+			<div class="videoView videoContainer hidden">
+				<video id="localVideo"></video>
+				<div class="nameIndicator">
+					<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
+					<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
+					<button id="video-fullscreen" class="icon-fullscreen-white" data-title="<?php p($l->t('Fullscreen')) ?>"></button>
+				</div>
 			</div>
 		</div>
-		<div id="remotes" style="display: inline"></div>
 
 
 		<div id="emptycontent">
