@@ -85,7 +85,7 @@
 	align-self: stretch;
 }
 #videos .videoContainer {
-    padding: 2%;
+    padding: 0 2%;
 }
 .participants-1 #videos .videoContainer,
 .participants-2 #videos .videoContainer {
