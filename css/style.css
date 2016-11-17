@@ -119,6 +119,7 @@ video {
 #videos .videoContainer video {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
+	background-color: #000;
 	box-shadow: 0 0 15px rgba(0, 0, 0, .7);
 }
 #videos .videoContainer.speaking video {
