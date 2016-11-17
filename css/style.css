@@ -75,28 +75,10 @@ video {
 	vertical-align: top;
 }
 
-.videoView {
-	position: absolute;
-	width: 33%;
-	right: 0;
-	bottom: 0;
-	z-index: 10;
-}
-.videoView #localVideo {
-	display: block;
-	border-top-right-radius: 3px;
-}
-
 .participants-1 #emptycontent {
 	display: block !important;
 }
 
-.participants-2 .videoContainer {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
 .videoContainer video {
 	position: relative;
 	width: initial;
@@ -106,27 +88,64 @@ video {
 	transform: translateY(-50%) translateX(-50%);
 }
 
-.participants-3 .videoContainer {
-	height: 66%;
+
+#remotes {
+	position: absolute;
+	bottom: 0;
 }
-.participants-4 .videoContainer,
-.participants-5 .videoContainer {
-	height: 50%;
-}
-.participants-6 .videoContainer,
-.participants-7 .videoContainer {
-	height: 33%;
+#remotes,
+.videoView {
+	height: 40%;
 }
 
-.participants-3 .videoView,
-.participants-5 .videoView,
-.participants-6 .videoView,
-.participants-7 .videoView,
-.participants-8 .videoView,
-.participants-9 .videoView,
-.participants-10 .videoView {
-    width: 20%;
+.videoView {
+	position: absolute;
+	width: 33%;
+	right: 0;
+	bottom: 0;
+	z-index: 10;
 }
+
+.participants-2 .videoContainer,
+.videoContainer .speaking {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+.participants-3 .videoContainer,
+.participants-3 .videoView {
+	width: 33%;
+}
+.participants-4 .videoContainer,
+.participants-4 .videoView {
+	width: 25%;
+}
+.participants-5 .videoContainer,
+.participants-5 .videoView {
+	width: 20%;
+}
+.participants-6 .videoContainer,
+.participants-6 .videoView {
+	width: 16.7%;
+}
+.participants-7 .videoContainer,
+.participants-7 .videoView {
+	width: 14.3%;
+}
+.participants-8 .videoContainer,
+.participants-8 .videoView {
+	width: 12.5%;
+}
+.participants-9 .videoContainer,
+.participants-9 .videoView {
+	width: 11.2%;
+}
+.participants-10 .videoContainer,
+.participants-10 .videoView {
+	width: 10%;
+}
+
 
 #app-content.participants-2,
 #app-content.participants-3,
