@@ -23,20 +23,26 @@
 }
 #oca-spreedme-add-room .select2-container {
 	width: 100%;
-	margin: 0;
+	margin: 0 !important;
 	border: none;
 	padding: 9px;
-	padding-left: 36px;
 }
 #oca-spreedme-add-room .select2-arrow {
 	display: none;
+}
+.select2-search input {
+	padding: 13px 12px !important;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	background-image: none !important;
 }
 
 #app-navigation .avatar,
 #app-navigation .icon-contacts-dark {
 	position: absolute;
-	left: 8px;
-	top: 8px;
+	left: 6px;
+	top: 6px;
 }
 #app-navigation .icon-contacts-dark {
 	background-color: transparent !important;
