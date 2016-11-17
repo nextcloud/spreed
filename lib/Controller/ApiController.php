@@ -311,6 +311,7 @@ class ApiController extends Controller {
 					$room->addUser($user);
 				}
 			}
+			$room->addUser($newUser);
 			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 		}
 
