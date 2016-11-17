@@ -169,6 +169,10 @@ var spreedMappingTable = [];
 				latestSpeakerId = id;
 			},
 			add: function(id) {
+				// if no connection is established yet
+				if(id.length < 5) {
+					return;
+				}
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
@@ -301,12 +305,10 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('speaking', function(){
 			console.log('local speaking');
 			OCA.SpreedMe.webrtc.sendToAll('speaking', OCA.SpreedMe.XhrConnection.getSessionid());
-			OCA.SpreedMe.speakers.add(OCA.SpreedMe.XhrConnection.getSessionid());
 		});
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			console.log('local stoppedSpeaking');
 			OCA.SpreedMe.webrtc.sendToAll('stoppedSpeaking', OCA.SpreedMe.XhrConnection.getSessionid());
-			OCA.SpreedMe.speakers.remove(OCA.SpreedMe.XhrConnection.getSessionid());
 		});
 
 		// a peer was removed
