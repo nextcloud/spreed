@@ -138,7 +138,9 @@ var spreedMappingTable = [];
 					var id = currentId.replace('\\', '');
 					data.push([spreedMappingTable[id], id, currentTime]);
 				}
+				console.log('spreedListofSpeakers');
 				console.table(data);
+				console.log('spreedMappingTable');
 				console.table(spreedMappingTable);
 			},
 			getContainerId: function(id) {
@@ -149,14 +151,12 @@ var spreedMappingTable = [];
 				var videoSpeakingElement = $('#video-speaking');
 
 				if (latestSpeakerId !== null) {
-					console.log('move existing promoted user back');
+					console.log('promote: unpromote speaker "' + spreedMappingTable[latestSpeakerId] + '"');
 					// move old video to new location
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('speaking');
 					oldContainer.parent().find('.videoContainer-dummy').remove();
 				}
-
-				console.log('change promoted speaker after speaking');
 
 				// add new user to it
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
@@ -174,11 +174,11 @@ var spreedMappingTable = [];
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
 				if (latestSpeakerId === id) {
-					console.log('latest speaker is already promoted ', spreedMappingTable[id]);
+					console.log('promoting: latest speaker "' + spreedMappingTable[id] + '" is already promoted');
 					return;
 				}
 
-				console.log('change promoted speaker after speaking ', spreedMappingTable[id]);
+				console.log('promoting: change promoted speaker to "' + spreedMappingTable[id] + '" after speaking');
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id) {
@@ -190,11 +190,11 @@ var spreedMappingTable = [];
 				spreedListofSpeakers[sanitizedId] = -1;
 
 				if (latestSpeakerId !== id) {
-					console.log('stopped speaker is not promoted ', spreedMappingTable[id]);
+					console.log('promoting: stopped speaker "' + spreedMappingTable[id] + '" is not promoted');
 					return;
 				}
 
-				console.log('change promoted speaker after speakingStopped ', spreedMappingTable[id]);
+				console.log('promoting: try to find better promoted speaker for "' + spreedMappingTable[id] + '"');
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
@@ -215,10 +215,10 @@ var spreedMappingTable = [];
 				}
 
 				if (mostRecentId !== null) {
-					console.log('promoted new speaker ', spreedMappingTable[id]);
+					console.log('promoting: change promoted speaker from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId] + '" after speakingStopped');
 					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
 				} else {
-					console.log('no recent speaker to promote');
+					console.log('promoting: no recent speaker to promote - keep "' + spreedMappingTable[id] + '"');
 				}
 			}
 		};
