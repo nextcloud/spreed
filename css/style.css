@@ -108,6 +108,7 @@
 #videos .videoContainer video {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, .9);
 }
 .participants-1 #videos .videoContainer video,
 .participants-2 #videos .videoContainer video {
