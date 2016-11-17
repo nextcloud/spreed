@@ -105,7 +105,7 @@ video {
 .videoContainer .avatar-container {
 	position: absolute;
 	text-align: center;
-	top: 5%;
+	bottom: 44px;
 	width: 100%;
 }
 .videoContainer .avatar-container .avatar {
@@ -157,12 +157,12 @@ video {
 	top: initial;
 	left: initial;
 	z-index: 10;
-	border-top-left-radius: 3px;
 }
 .participants-1 .videoView video,
 .participants-2 .videoView video {
 	position: absolute;
 	bottom: 0;
+	border-top-right-radius: 3px;
 }
 
 #app-content.participants-2,
