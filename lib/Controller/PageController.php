@@ -32,6 +32,7 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 
@@ -42,6 +43,8 @@ class PageController extends Controller {
 	private $dbConnection;
 	/** @var IURLGenerator */
 	private $url;
+	/** @var IL10N */
+	private $l10n;
 	/** @var Manager */
 	private $manager;
 
@@ -51,6 +54,7 @@ class PageController extends Controller {
 	 * @param string $UserId
 	 * @param IDBConnection $dbConnection
 	 * @param IURLGenerator $url
+	 * @param IL10N $l10n
 	 * @param Manager $manager
 	 */
 	public function __construct($appName,
@@ -58,11 +62,13 @@ class PageController extends Controller {
 								$UserId,
 								IDBConnection $dbConnection,
 								IURLGenerator $url,
+								IL10N $l10n,
 								Manager $manager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->dbConnection = $dbConnection;
 		$this->url = $url;
+		$this->l10n = $l10n;
 		$this->manager = $manager;
 	}
 
@@ -119,9 +125,18 @@ class PageController extends Controller {
 				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException $e) {
-			throw new HintException('Room not found');
+			throw new HintException($this->l10n->t('The room does not exist.'));
 		}
 
-		throw new HintException('Room found');
+		$params = [
+			'sessionId' => 'lukas-fix-rand',
+			'roomId' => $roomId,
+		];
+		$response = new TemplateResponse($this->appName, 'index', $params, 'blank');
+		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('*');
+		$csp->addAllowedMediaDomain('blob:');
+		$response->setContentSecurityPolicy($csp);
+		return $response;
 	}
 }
