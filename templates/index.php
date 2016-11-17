@@ -45,7 +45,7 @@ script(
 
 	<div id="app-content">
 
-		<div id="videos" style="display: inline">
+		<div id="videos">
 			<div class="videoView videoContainer hidden">
 				<video id="localVideo"></video>
 				<div class="nameIndicator">
