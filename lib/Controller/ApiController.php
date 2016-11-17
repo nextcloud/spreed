@@ -161,6 +161,7 @@ class ApiController extends Controller {
 					break;
 
 				case Room::GROUP_CALL:
+				case Room::PUBLIC_CALL:
 					/// As name of the room use the names of the other participants
 					if ($numOtherParticipants === 0) {
 						// Only you
