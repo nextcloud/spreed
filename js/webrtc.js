@@ -258,11 +258,16 @@ var spreedMappingTable = [];
 				userIndicator.className = 'nameIndicator';
 				userIndicator.textContent = peer.nick;
 
+				// Avatar for username
+				var avatar = document.createElement('div');
+				avatar.className = 'avatar hidden';
+
 				// Generic container
 				var container = document.createElement('div');
 				container.className = 'videoContainer';
 				container.id = 'container_' + OCA.SpreedMe.webrtc.getDomId(peer);
 				container.appendChild(video);
+				container.appendChild(avatar);
 				container.appendChild(userIndicator);
 				video.oncontextmenu = function() {
 					return false;
@@ -321,6 +326,37 @@ var spreedMappingTable = [];
 			var el = document.getElementById(peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer');
 			if (remotes && el) {
 				remotes.removeChild(el);
+			}
+		});
+
+		// Peer is muted
+		OCA.SpreedMe.webrtc.on('mute', function(data) {
+			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
+					id: data.id,
+					type: 'type',
+					broadcaster: false
+				}));
+			var $el = $(el);
+
+			if (data.name === 'video') {
+				$el.find('.avatar').avatar(spreedMappingTable[data.id], 128);
+				$el.find('.avatar').show();
+				$el.find('video').hide();
+			}
+		});
+
+		// Peer is umuted
+		OCA.SpreedMe.webrtc.on('unmute', function(data) {
+			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
+					id: data.id,
+					type: 'type',
+					broadcaster: false
+				}));
+			var $el = $(el);
+
+			if (data.name === 'video') {
+				$el.find('.avatar').hide();
+				$el.find('video').show();
 			}
 		});
 
