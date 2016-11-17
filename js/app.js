@@ -136,7 +136,7 @@
 					OCA.SpreedMe.webrtc.pauseVideo();
 					$this.data('title', 'Enable video').addClass('video-disabled');
 
-					avatarContainer.find('.avatar').avatar(OC.currentUser, 256);
+					avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
 					avatarContainer.removeClass('hidden');
 					avatarContainer.show();
 				} else {
