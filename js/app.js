@@ -129,12 +129,20 @@
 			});
 
 			$('#hideVideo').click(function() {
+				var $this = $(this);
+				var avatarContainer = $this.closest('.videoView').find('.avatar-container');
+
 				if (OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 					OCA.SpreedMe.webrtc.pauseVideo();
-					$(this).data('title', 'Enable video').addClass('video-disabled');
+					$this.data('title', 'Enable video').addClass('video-disabled');
+
+					avatarContainer.find('.avatar').avatar(OC.currentUser, 256);
+					avatarContainer.removeClass('hidden');
+					avatarContainer.show();
 				} else {
 					OCA.SpreedMe.webrtc.resumeVideo();
-					$(this).data('title', 'Disable video').removeClass('video-disabled');
+					$this.data('title', 'Disable video').removeClass('video-disabled');
+					avatarContainer.hide();
 				}
 			});
 			$('#mute').click(function() {

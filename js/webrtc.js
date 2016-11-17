@@ -370,7 +370,7 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				var avatar = $el.find('.avatar');
-				avatar.avatar(spreedMappingTable[data.id], 128);
+				avatar.avatar(spreedMappingTable[data.id], 256);
 
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');

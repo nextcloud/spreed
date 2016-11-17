@@ -51,6 +51,9 @@ script(
 		<div id="videos">
 			<div class="videoView videoContainer hidden" id="localVideoContainer">
 				<video id="localVideo"></video>
+				<div class="avatar-container hidden">
+					<div class="avatar"></div>
+				</div>
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
