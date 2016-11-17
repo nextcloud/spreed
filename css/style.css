@@ -115,7 +115,7 @@ video {
 	top: 30%;
 }
 .videoContainer.speaking .avatar-container + .nameIndicator {
-	top: 55%;
+	display: none;
 }
 
 .participants-1 #emptycontent {
