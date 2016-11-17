@@ -134,24 +134,32 @@
 
 				if (OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 					OCA.SpreedMe.webrtc.pauseVideo();
-					$this.data('title', 'Enable video').addClass('video-disabled');
+					$this.data('title', 'Enable video')
+						.addClass('video-disabled icon-video-off-white')
+						.removeClass('icon-video-white');
 
 					avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
 					avatarContainer.removeClass('hidden');
 					avatarContainer.show();
 				} else {
 					OCA.SpreedMe.webrtc.resumeVideo();
-					$this.data('title', 'Disable video').removeClass('video-disabled');
+					$this.data('title', 'Disable video')
+						.removeClass('video-disabled icon-video-off-white')
+						.addClass('icon-video-white');
 					avatarContainer.hide();
 				}
 			});
 			$('#mute').click(function() {
 				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
 					OCA.SpreedMe.webrtc.mute();
-					$(this).data('title', 'Enable audio').addClass('audio-disabled');
+					$(this).data('title', 'Enable audio')
+						.addClass('audio-disabled icon-audio-off-white')
+						.removeClass('icon-audio-white');
 				} else {
 					OCA.SpreedMe.webrtc.unmute();
-					$(this).data('title', 'Mute audio').removeClass('audio-disabled');
+					$(this).data('title', 'Mute audio')
+						.removeClass('audio-disabled icon-audio-off-white')
+						.addClass('icon-audio-white');
 				}
 			});
 
