@@ -161,6 +161,7 @@ class ApiController extends Controller {
 					break;
 
 				case Room::GROUP_CALL:
+				case Room::PUBLIC_CALL:
 					/// As name of the room use the names of the other participants
 					if ($numOtherParticipants === 0) {
 						// Only you
@@ -303,16 +304,10 @@ class ApiController extends Controller {
 		}
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			// In case a user is added to a one2one call, we create a new group call and add the participants manually
-			$room = $this->manager->createRoom(Room::GROUP_CALL, $this->secureRandom->generate(12));
-			foreach ($participants as $participant => $lastPing) {
-				$user = $this->userManager->get($participant);
-				if ($user instanceof IUser) {
-					$room->addUser($user);
-				}
-			}
+			// In case a user is added to a one2one call, we change the call to a group call
+			$room->changeType(Room::GROUP_CALL);
 			$room->addUser($newUser);
-			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+			return new JSONResponse(['type' => $room->getType()]);
 		}
 
 		$room->addUser($newUser);
@@ -340,6 +335,46 @@ class ApiController extends Controller {
 		}
 
 		return new JSONResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function makePublic($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() !== Room::PUBLIC_CALL) {
+			$room->changeType(Room::PUBLIC_CALL);
+		}
+
+		return new JSONResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function makePrivate($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($room->getType() === Room::PUBLIC_CALL) {
+			$room->changeType(Room::GROUP_CALL);
+		}
+
+		return new JSONResponse();
 	}
 
 	/**

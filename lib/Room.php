@@ -32,6 +32,7 @@ use OCP\IUser;
 class Room {
 	const ONE_TO_ONE_CALL = 1;
 	const GROUP_CALL = 2;
+	const PUBLIC_CALL = 3;
 
 	/** @var IDBConnection */
 	private $db;
@@ -91,6 +92,30 @@ class Room {
 		$query->delete('spreedme_rooms')
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
+	}
+
+	/**
+	 * @param int $newType Currently it is only allowed to change to: Room::GROUP_CALL, Room::PUBLIC_CALL
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function changeType($newType) {
+		if ($newType === $this->getType()) {
+			return true;
+		}
+
+		if (!in_array($newType, [Room::GROUP_CALL, Room::PUBLIC_CALL])) {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_rooms')
+			->set('type', $query->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->type = (int) $newType;
+
+		return true;
 	}
 
 	/**
