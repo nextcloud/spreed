@@ -325,7 +325,7 @@ var spreedMappingTable = [];
 				}
 			}
 			if (!otherSpeakerPromoted) {
-				OCA.SpreedMe.add(peer.id);
+				OCA.SpreedMe.speakers.add(peer.id);
 			}
 		});
 
