@@ -170,18 +170,37 @@
 							return;
 						}
 
-						var results = [];
+						var results = [],
+						    participants = _this.model.get('participants');
+
 						$.each(response.ocs.data.exact.users, function(id, user) {
-							if (oc_current_user === user.value.shareWith) {
-								return;
+							var isExactUserInGroup = false;
+
+							$.each(participants, function(participantId, participant) {
+								if (participantId === user.value.shareWith) {
+									isExactUserInGroup = true;
+									return;
+								}
+							})
+
+							if (!isExactUserInGroup) {
+								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
 							}
-							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
 						});
+
 						$.each(response.ocs.data.users, function(id, user) {
-							if (oc_current_user === user.value.shareWith) {
-								return;
+							var isUserInGroup = false;
+
+							$.each(participants, function(participantId, participant) {
+								if (participantId === user.value.shareWith) {
+									isUserInGroup = true;
+									return;
+								}
+							})
+
+							if (!isUserInGroup) {
+								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
 							}
-							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
 						});
 
 						return {
