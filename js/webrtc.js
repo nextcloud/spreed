@@ -39,6 +39,15 @@ var webrtc;
 			previousUsersInRoom = currentUsersInRoom;
 		});
 
+		messageEventSource.listen('speaking', function(id) {
+			console.log('received speaking event from ', id);
+			OCA.SpreedMe.speakers.add(id);
+		});
+		messageEventSource.listen('speaking', function(id) {
+			console.log('received stoppedSpeaking event from ', id);
+			OCA.SpreedMe.speakers.remove(id);
+		});
+
 		messageEventSource.listen('message', function(message) {
 			message = JSON.parse(message);
 			var peers = self.webrtc.getPeers(message.from, message.roomType);
@@ -74,12 +83,6 @@ var webrtc;
 						peer.handleMessage(message);
 					}
 				});
-			} else if (message.type === 'speaking') {
-				console.log('received speaking event from ', message.payload);
-				OCA.SpreedMe.speakers.add(message.payload);
-			} else if (message.type === 'stoppedSpeaking') {
-				console.log('received stoppedSpeaking event from ', message.payload);
-				OCA.SpreedMe.speakers.remove(message.payload);
 			}
 		});
 		messageEventSource.listen('__internal__', function(data) {
