@@ -43,7 +43,7 @@ script(
 		</div>-->
 	</div>
 
-	<div id="app-content">
+	<div id="app-content" class="participants-1">
 
 		<div id="video-speaking">
 
@@ -65,8 +65,8 @@ script(
 
 		<div id="emptycontent">
 			<div class="icon-video"></div>
-			<h2><?php p($l->t('Time to do your hair! :)')) ?></h2>
-			<p class="uploadmessage"><?php p($l->t('Then join a room or create a new one')) ?></p>
+			<h2><?php p($l->t('Looking great today! :)')) ?></h2>
+			<p class="uploadmessage"><?php p($l->t('Time to call your friends')) ?></p>
 		</div>
 	</div>
 </div>

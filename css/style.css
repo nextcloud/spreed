@@ -122,11 +122,6 @@ video {
 	display: block !important;
 }
 
-.participants-1 #videos,
-.participants-2 #videos {
-	height: 100%;
-}
-
 /* big speaker video */
 .participants-1 .videoContainer,
 .participants-2 .videoContainer,
