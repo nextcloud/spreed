@@ -108,6 +108,12 @@ video {
 	top: 5%;
 	width: 100%;
 }
+.videoContainer .avatar-container .avatar {
+	display: inline-block;
+}
+.videoContainer.speaking .avatar-container {
+	top: 30%;
+}
 
 .participants-1 #emptycontent {
 	display: block !important;
