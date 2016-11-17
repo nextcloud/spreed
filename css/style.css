@@ -125,6 +125,10 @@ video {
 	height: 100%;
 	overflow: hidden;
 }
+.participants-2 #remotes {
+	position: initial;
+}
+
 .participants-3 .videoContainer,
 .participants-3 .videoView {
 	width: 33%;
