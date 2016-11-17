@@ -143,6 +143,8 @@ video {
 	height: auto;
 	right: 0;
 	bottom: 0;
+	top: initial;
+	left: initial;
 	z-index: 10;
 	border-top-left-radius: 3px;
 }
