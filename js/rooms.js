@@ -74,7 +74,14 @@
 					roomId: OCA.SpreedMe.Rooms.currentRoom()
 				}
 			);
-		}
+		},
+		leaveAllRooms: function() {
+			$.ajax({
+				url: OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: 0}),
+				method: 'POST',
+				async: false
+			});
+		},
 	};
 
 	OCA.SpreedMe.initRooms = initRooms;

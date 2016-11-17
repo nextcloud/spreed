@@ -217,13 +217,6 @@
 				OCA.SpreedMe.Rooms.ping();
 			}, 5000);
 		},
-		_leaveAllRooms: function() {
-			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: 0}),
-				method: 'POST',
-				async: false
-			});
-		},
 		/**
 		 * @param {int} roomId
 		 */
@@ -254,7 +247,7 @@
 
 			OCA.SpreedMe.initWebRTC();
 			OCA.SpreedMe.initRooms();
-			this._leaveAllRooms();
+			OCA.SpreedMe.Rooms.leaveAllRooms();
 			this._registerPageEvents();
 			this._onRegisterHashChange();
 
@@ -278,3 +271,7 @@
 
 	OCA.SpreedMe.App = App;
 })(OCA, Marionette, Backbone);
+
+$(window).unload(function () {
+	OCA.SpreedMe.Rooms.leaveAllRooms();
+});
