@@ -127,21 +127,19 @@ class SignallingController extends Controller {
 				->execute()
 				->fetchAll();
 
-			if ($currentRoom === []) {
+			if ($currentRoom !== []) {
+				// Send list to client of connected users in the current room
+				$qb = $this->dbConnection->getQueryBuilder();
+				$usersInRoom = $qb->select('*')
+					->from('spreedme_room_participants')
+					->where($qb->expr()->eq('roomId', $qb->createNamedParameter($currentRoom[0]['roomId'])))
+					->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 30)))
+					->execute()
+					->fetchAll();
+				$eventSource->send('usersInRoom', $usersInRoom);
+			} else {
 				$eventSource->send('usersInRoom', []);
-				sleep(1);
-				continue;
 			}
-
-			// Send list to client of connected users in the current room
-			$qb = $this->dbConnection->getQueryBuilder();
-			$usersInRoom = $qb->select('*')
-				->from('spreedme_room_participants')
-				->where($qb->expr()->eq('roomId', $qb->createNamedParameter($currentRoom[0]['roomId'])))
-				->andWhere($qb->expr()->gt('lastPing', $qb->createNamedParameter(time() - 30)))
-				->execute()
-				->fetchAll();
-			$eventSource->send('usersInRoom', $usersInRoom);
 
 			// Get last session ID of the user
 			$qb = $this->dbConnection->getQueryBuilder();
