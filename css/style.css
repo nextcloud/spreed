@@ -119,7 +119,7 @@ video {
 }
 
 .participants-2 .videoContainer,
-.videoContainer .speaking {
+.videoContainer.speaking {
 	position: absolute;
 	width: 100%;
 	height: 100%;
