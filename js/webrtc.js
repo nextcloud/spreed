@@ -72,12 +72,6 @@ var spreedMappingTable = [];
 					OCA.SpreedMe.webrtc.emit('createdPeer', peer);
 				}
 				peer.handleMessage(message);
-			} else if(message.type === 'speaking') {
-				console.log('received speaking event from ', spreedMappingTable[message.payload]);
-				OCA.SpreedMe.speakers.add(message.payload);
-			} else if(message.type === 'stoppedSpeaking') {
-				console.log('received stoppedSpeaking event from ', spreedMappingTable[message.payload]);
-				OCA.SpreedMe.speakers.remove(message.payload);
 			} else if (peers.length) {
 				peers.forEach(function(peer) {
 					if (message.sid) {
@@ -253,6 +247,14 @@ var spreedMappingTable = [];
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
+		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label, data) {
+			if(label === 'speaking') {
+				OCA.SpreedMe.speakers.add(peer.id);
+			} else if(label === 'stoppedSpeaking') {
+				OCA.SpreedMe.speakers.remove(peer.id);
+			}
+		});
+
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
 			console.log('video added', peer);
 			var remotes = document.getElementById('videos');
@@ -335,11 +337,11 @@ var spreedMappingTable = [];
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
 			console.log('local speaking');
-			OCA.SpreedMe.webrtc.sendToAll('speaking', OCA.SpreedMe.XhrConnection.getSessionid());
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('speaking');
 		});
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			console.log('local stoppedSpeaking');
-			OCA.SpreedMe.webrtc.sendToAll('stoppedSpeaking', OCA.SpreedMe.XhrConnection.getSessionid());
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('stoppedSpeaking');
 		});
 
 		// a peer was removed
