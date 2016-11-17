@@ -105,15 +105,6 @@
 	flex: auto;
 	z-index: 2;
 }
-#videos .videoContainer video {
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-	box-shadow: 0 0 10px rgba(0, 0, 0, .9);
-}
-.participants-1 #videos .videoContainer video,
-.participants-2 #videos .videoContainer video {
-	padding: 0;
-}
 
 video {
 	width: 100%;
@@ -123,6 +114,21 @@ video {
 	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
 	filter: contrast(1.1) saturate(1.1) sepia(.1);
 	vertical-align: top; /* fix white line below video */
+}
+
+#videos .videoContainer video {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+	box-shadow: 0 0 15px rgba(0, 0, 0, .7);
+}
+#videos .videoContainer.speaking video {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.participants-1 #videos .videoContainer video,
+.participants-2 #videos .videoContainer video {
+	padding: 0;
 }
 
 .videoContainer .avatar-container {
@@ -182,6 +188,7 @@ video {
 	position: absolute;
 	bottom: 0;
 	border-top-right-radius: 3px;
+	max-height: 33%;
 }
 
 #app-content.participants-2,
@@ -233,7 +240,7 @@ video {
 
 .muteIndicator {
 	position: absolute;
-	width: 100%;
+	width: 85%;
 	bottom: 44px;
 	background-size: 22px;
 	padding: 12px;
