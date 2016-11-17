@@ -264,7 +264,11 @@ var spreedMappingTable = [];
 
 				// Avatar for username
 				var avatar = document.createElement('div');
-				avatar.className = 'avatar hidden';
+				avatar.className = 'avatar';
+
+				var avatarContainer = document.createElement('div');
+				avatarContainer.className = 'avatar-container hidden';
+				avatarContainer.appendChild(avatar);
 
 				// Mute indicator
 				var muteIndicator = document.createElement('div');
@@ -276,7 +280,7 @@ var spreedMappingTable = [];
 				container.className = 'videoContainer';
 				container.id = 'container_' + OCA.SpreedMe.webrtc.getDomId(peer);
 				container.appendChild(video);
-				container.appendChild(avatar);
+				container.appendChild(avatarContainer);
 				container.appendChild(userIndicator);
 				container.appendChild(muteIndicator);
 				video.oncontextmenu = function() {
@@ -362,8 +366,10 @@ var spreedMappingTable = [];
 			if (data.name === 'video') {
 				var avatar = $el.find('.avatar');
 				avatar.avatar(spreedMappingTable[data.id], 128);
-				avatar.removeClass('hidden');
-				avatar.show();
+
+				var avatarContainer = $el.find('.avatar-container');
+				avatarContainer.removeClass('hidden');
+				avatarContainer.show();
 				//$el.find('video').hide();
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
@@ -382,8 +388,8 @@ var spreedMappingTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				$el.find('.avatar').hide();
-				//$el.find('video').show();
+				$el.find('.avatar-container').hide();
+				//avaa$el.find('video').show();
 			} else {
 				$el.find('.muteIndicator').hide();
 			}
