@@ -114,6 +114,9 @@ video {
 .videoContainer.speaking .avatar-container {
 	top: 30%;
 }
+.videoContainer.speaking .avatar-container + .nameIndicator {
+	top: 55%;
+}
 
 .participants-1 #emptycontent {
 	display: block !important;
