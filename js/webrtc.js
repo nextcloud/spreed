@@ -158,7 +158,8 @@ var spreedMappingTable = [];
 				newContainer.after(
 					$('<div>')
 						.addClass('videoContainer videoContainer-dummy')
-						.append(newContainer.find('.nameIndicator'))
+						.append(newContainer.find('.nameIndicator').clone())
+						.append(newContainer.find('.muteIndicator').clone())
 					);
 
 				latestSpeakerId = id;
@@ -287,7 +288,7 @@ var spreedMappingTable = [];
 
 				// Mute indicator
 				var muteIndicator = document.createElement('div');
-				muteIndicator.className = 'muteIndicator icon-sound-white hidden';
+				muteIndicator.className = 'muteIndicator icon-audio-white hidden';
 				muteIndicator.textContent = '';
 
 				// Generic container
@@ -394,7 +395,7 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				var avatar = $el.find('.avatar');
-				avatar.avatar(spreedMappingTable[data.id], 256);
+				avatar.avatar(spreedMappingTable[data.id], 128);
 
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');
