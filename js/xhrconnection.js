@@ -9,10 +9,12 @@ var sessionId = '';
 		on: function(ev, fn) {
 			var self = this;
 
-			var message = [{ev: ev}];
-			$.post(OC.generateUrl('/apps/spreed/signalling'), {messages: JSON.stringify(message)}, function(data) {
-				self.emit(fn, data);
-			});
+			if (ev !== 'message') {
+				var message = [{ev: ev}];
+				$.post(OC.generateUrl('/apps/spreed/signalling'), {messages: JSON.stringify(message)}, function (data) {
+					self.emit(fn, data);
+				});
+			}
 		},
 
 		emit: function(fn, data) {
