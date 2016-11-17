@@ -73,10 +73,10 @@ var spreedMappingTable = [];
 				}
 				peer.handleMessage(message);
 			} else if(message.type === 'speaking') {
-				console.log('received speaking event from ', message.payload);
+				console.log('received speaking event from ', spreedMappingTable[message.payload]);
 				OCA.SpreedMe.speakers.add(message.payload);
 			} else if(message.type === 'stoppedSpeaking') {
-				console.log('received stoppedSpeaking event from ', message.payload);
+				console.log('received stoppedSpeaking event from ', spreedMappingTable[message.payload]);
 				OCA.SpreedMe.speakers.remove(message.payload);
 			} else if (peers.length) {
 				peers.forEach(function(peer) {
@@ -134,7 +134,7 @@ var spreedMappingTable = [];
 
 					var currentTime = spreedListofSpeakers[currentId];
 					var id = currentId.replace('\\', '');
-					data.push([OCA.SpreedMe.spreedMappingTable[id], currentTime]);
+					data.push([spreedMappingTable[id], currentTime]);
 				}
 				console.table(data);
 			},
