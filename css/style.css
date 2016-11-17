@@ -99,20 +99,25 @@ video {
 	display: block !important;
 }
 
-.participants-2 .videoContainer,
-.videoContainer.speaking {
-	position: absolute;
-	width: 100%;
+.participants-1 #videos,
+.participants-2 #videos {
 	height: 100%;
-	overflow: hidden;
 }
 .participants-1 .videoView,
 .participants-2 .videoView {
 	position: absolute;
 	width: 33%;
+	height: auto;
 	right: 0;
 	bottom: 0;
 	z-index: 10;
+}
+.participants-2 .videoContainer {
+.videoContainer.speaking {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 
 #app-content.participants-2,
