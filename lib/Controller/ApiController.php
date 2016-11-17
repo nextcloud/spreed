@@ -112,41 +112,45 @@ class ApiController extends Controller {
 
 		$return = [];
 		foreach ($rooms as $room) {
+			// Sort by lastPing
+			$participantPings = $room->getParticipants();
+			uasort($participantPings, function(array $participant1, array $participant2) {
+				if ($participant1['lastPing'] === $participant2['lastPing']) {
+					return 0;
+				}
+				return ($participant1['lastPing'] > $participant2['lastPing']) ? -1 : 1;
+			});
+
+			$participantList = [];
+			foreach ($participantPings as $participant => $lastPing) {
+				$user = $this->userManager->get($participant);
+				if ($user instanceof IUser) {
+					$participantList[$participant] = $user->getDisplayName();
+				}
+			}
+
 			$roomData = [
 				'id' => $room->getId(),
 				'type' => $room->getType(),
 				'name' => $room->getName(),
 				'displayName' => $room->getName(),
 				'count' => $room->getNumberOfParticipants(time() - 10),
-				'lastPing' => 0,
+				'lastPing' => isset($participantPings[$this->userId]['lastPing']) ? $participantPings[$this->userId]['lastPing'] : 0,
+				'sessionId' => isset($participantPings[$this->userId]['sessionId']) ? $participantPings[$this->userId]['sessionId'] : 0,
+				'participants' => $participantList,
 			];
 
-			// First we get room users (except current user).
-			$participantPings = $room->getParticipants();
-			/** @var IUser[] $usersInCall */
-			$usersInCall = [];
-			foreach ($participantPings as $participant => $data) {
-				if ($participant === $this->userId) {
-					$roomData['lastPing'] = $data['lastPing'];
-					$roomData['sessionId'] = $data['sessionId'];
-					continue;
-				}
+			unset($participantList[$this->userId]);
+			$numOtherParticipants = sizeof($participantList);
 
-				$user = $this->userManager->get($participant);
-				if ($user instanceof IUser) {
-					$usersInCall[] = $user;
-				}
-			}
-
-			$numOtherParticipants = sizeof($usersInCall);
-			
-			switch($room->getType()) {
+			switch ($room->getType()) {
 				case Room::ONE_TO_ONE_CALL:
 					// As name of the room use the name of the other person participating
 					if ($numOtherParticipants === 1) {
 						// Only one other participant
-						$roomData['name'] = $usersInCall[0]->getUID();
-						$roomData['displayName'] = $usersInCall[0]->getDisplayName();
+						reset($participantList);
+						$roomData['name'] = key($participantList);
+						$roomData['displayName'] = $participantList[$roomData['name']];
 					} else {
 						// Invalid user count, there must be exactly 2 users in each one2one room
 						$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
@@ -161,22 +165,8 @@ class ApiController extends Controller {
 					if ($numOtherParticipants === 0) {
 						// Only you
 						$roomData['displayName'] = $this->l10n->t('You');
-					} else if ($numOtherParticipants === 1) {
-						// Only one other participant
-						$roomData['displayName'] = $usersInCall[0]->getDisplayName();
-					} else if ($numOtherParticipants === 2) {
-						// 2 other participants
-						$roomData['displayName'] = $this->l10n->t('%1$s, %2$s', [
-							$usersInCall[0]->getDisplayName(),
-							$usersInCall[1]->getDisplayName(),
-						]);
 					} else {
-						// More than 2 other participants
-						$others = $numOtherParticipants - 2;
-						$roomData['displayName'] = $this->l10n->n('%1$s, %2$s & %n more', '%1$s, %2$s & %n more', $others, [
-							$usersInCall[0]->getDisplayName(),
-							$usersInCall[1]->getDisplayName(),
-						]);
+						$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
 					}
 					break;
 
