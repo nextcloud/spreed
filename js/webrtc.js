@@ -2,6 +2,7 @@
 /* global SimpleWebRTC, OC, OCA: false */
 
 var webrtc;
+var spreedMappingTable = [];
 
 (function(OCA, OC) {
 	'use strict';
@@ -24,6 +25,7 @@ var webrtc;
 			var currentUsersInRoom = [];
 			users.forEach(function(user) {
 				currentUsersInRoom.push(user['sessionId']);
+				spreedMappingTable[user['sessionId']] = user['userId'];
 			});
 
 			var currentUsersNo = currentUsersInRoom.length;
