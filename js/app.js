@@ -32,6 +32,8 @@
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
 		_roomsView: null,
+		/** @property {boolean} _videoWasEnabledAtLeastOnce  */
+		_videoWasEnabledAtLeastOnce: false,
 		_registerPageEvents: function() {
 			$('#edit-roomname').select2({
 				ajax: {
@@ -129,7 +131,16 @@
 			});
 
 			$('#hideVideo').click(function() {
-				if (OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
+				if(!OCA.SpreedMe.app._videoWasEnabledAtLeastOnce) {
+					// don't allow clicking the video toggle
+					// when no video ever was streamed (that
+					// means that permission wasn't granted
+					// yet or there is no video available at
+					// all)
+					console.log('video can not be enabled - there was no stream available before');
+					return;
+				}
+				if ($(this).hasClass('video-disabled')) {
 					OCA.SpreedMe.app.enableVideo();
 				} else {
 					OCA.SpreedMe.app.disableVideo();
@@ -265,6 +276,9 @@
 			uiChannel.trigger('document:click', event);
 		},
 		enableVideo: function() {
+			if(!OCA.SpreedMe.app._videoWasEnabledAtLeastOnce) {
+				OCA.SpreedMe.app._videoWasEnabledAtLeastOnce = true;
+			}
 			var $hideVideoButton = $('#hideVideo');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
