@@ -28,7 +28,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a href="#{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
 								'<li class="app-navigation-entry-utils-menu-button svg"><button></button></li>'+
@@ -85,6 +85,10 @@
 		onRender: function() {
 			this.initPersonSelector();
 
+			if (this.model.get('type') === 2) { // group
+				this.addTooltip();
+			}
+
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
 			} else {
@@ -110,6 +114,7 @@
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
 		},
 		ui: {
+			'room': '.app-navigation-entry-link',
 			'menu': '.app-navigation-entry-menu',
 			'menuList': '.app-navigation-entry-menu-list',
 			'personSelectorForm' : '.oca-spreedme-add-person',
@@ -145,6 +150,16 @@
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
 				type: 'DELETE'
+			});
+		},
+		addTooltip: function () {
+			var htmlstring = this.model.get('displayName').replace(/\, /g, '<br>');
+
+			this.ui.room.tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				html: 'true',
+				title: htmlstring
 			});
 		},
 		initPersonSelector: function() {
