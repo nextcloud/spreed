@@ -151,7 +151,7 @@ var spreedMappingTable = [];
 					return;
 				}
 
-				if(lastestSpeakerId === id) {
+				if(latestSpeakerId === id) {
 					console.log('promote: no need to repromote same speaker');
 					return
 				}
