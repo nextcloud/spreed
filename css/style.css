@@ -336,7 +336,7 @@ video {
 
 #videos .videoContainer.speaking:not(.videoView) .nameIndicator,
 #videos .videoContainer-dummy .nameIndicator,
-#videos .videoContainer.videoView.speaking .nameIndicator .icon-audio {
+#videos .videoContainer.videoView.speaking .nameIndicator .icon-audio-white {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;
 }
