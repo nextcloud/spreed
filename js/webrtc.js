@@ -172,6 +172,7 @@ var spreedMappingTable = [];
 						.addClass('videoContainer videoContainer-dummy')
 						.append(newContainer.find('.nameIndicator').clone())
 						.append(newContainer.find('.muteIndicator').clone())
+						.append(newContainer.find('.speakingIndicator').clone())
 					);
 
 				latestSpeakerId = id;
