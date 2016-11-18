@@ -284,6 +284,7 @@ var spreedMappingTable = [];
 			message = t('spreed', 'WebRTC is not supported in your browser :-/');
 			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 
+			$('#emptycontent .icon-video').removeClass('icon-video').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
 		}
