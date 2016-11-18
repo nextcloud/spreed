@@ -53,13 +53,15 @@
 }
 
 #app-navigation .avatar,
-#app-navigation .icon-contacts-dark {
+#app-navigation .icon-contacts-dark,
+#app-navigation .app-navigation-entry-link .icon-public {
 	position: absolute;
 	left: 6px;
 	top: 6px;
 }
 #app-navigation .icon-contacts-dark,
-.icon-add {
+#app-navigation .app-navigation-entry-link .icon-public,
+.icon-add  {
 	background-color: transparent !important;
 	color: transparent !important;
 	border-radius: 0;
@@ -76,6 +78,22 @@
 	padding: 23px;
 	margin: 0;
 	opacity: .3;
+}
+
+.public-room {
+	display: block !important;
+}
+
+.private-room {
+	display: none !important;
+}
+
+.icon-clippy.public-room {
+    background-size: 16px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 16px;
 }
 
 
@@ -302,7 +320,6 @@ video {
 #app-navigation .app-navigation-entry-menu li {
 	width: auto !important;
 	float: inherit;
-	height: 36px;
 }
 
 #app-navigation .app-navigation-entry-menu li button {
@@ -313,7 +330,11 @@ video {
 }
 
 #app-navigation .app-navigation-entry-menu input {
-	margin-left: 3px !important;
+	margin-left: 5px !important;
+	margin-top: -5px;
+	padding-right: 22px;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
 #app-navigation .app-navigation-entry-menu li span {
@@ -325,7 +346,8 @@ video {
 	float: left;
 }
 
-#app-navigation .app-navigation-entry-menu li span.svg {
+#app-navigation .app-navigation-entry-menu li span[class^='icon-'],
+#app-navigation .app-navigation-entry-menu li span[class*=' icon-'] {
 	padding: 5px;
 	width: 36px;
 	box-sizing: border-box;

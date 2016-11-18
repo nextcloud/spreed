@@ -31,26 +31,29 @@
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
-								'<li class="app-navigation-entry-utils-menu-button svg"><button></button></li>'+
+								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
 							'</ul>'+
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
 								'<li>'+
 									'<button class="add-person-button">'+
-										'<span class="icon-add svg"></span>'+
+										'<span class="icon-add"></span>'+
 										'<span>'+t('spreedme', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'<li>'+
 									'<button class="share-link-button">'+
-										'<span class="icon-public svg"></span>'+
+										'<span class="icon-public"></span>'+
 										'<span>'+t('spreedme', 'Share link')+'</span>'+
+										'<span class="icon-delete private-room"></span>'+
 									'</button>'+
+									'<input class="share-link-input private-room" type="text"/>'+
+									'<div class="icon-clippy private-room"></div>'+
 								'</li>'+
 								'<li>'+
 									'<button class="leave-group-button">'+
-										'<span class="icon-close svg"></span>'+
+										'<span class="icon-close"></span>'+
 										'<span>'+t('spreedme', 'Leave group')+'</span>'+
 									'</button>'+
 								'</li>'+
@@ -68,6 +71,9 @@
 			},
 			'change:displayName': function() {
 				this.render();
+			},
+			'change:type': function() {
+				this.checkSharingStatus();
 			}
 		},
 		initialize: function() {
@@ -84,10 +90,7 @@
 		},
 		onRender: function() {
 			this.initPersonSelector();
-
-			if (this.model.get('type') === 2) { // group
-				this.addTooltip();
-			}
+			this.checkSharingStatus();
 
 			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
 			this.$el.find('.app-navigation-entry-link').on('click', function(e) {
@@ -102,15 +105,10 @@
 				this.$el.removeClass('active');
 			}
 
-			if (this.model.get('type') === 1) { // 1on1
-				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).avatar($(a).data('user'), 32);
-				});
-			} else if (this.model.get('type') === 2) { // group
-				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).addClass('icon-contacts-dark');
-				});
-			}
+			//If the room is not a one2one room, we show tooltip.
+			if (this.model.get('type') !== 1) {
+				this.addTooltip();
+			};
 
 			this.toggleMenuClass();
 		},
@@ -119,9 +117,11 @@
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
+			'click .icon-delete' : 'unshareGroup'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
+			'shareInput': '.share-link-input',
 			'menu': '.app-navigation-entry-menu',
 			'menuList': '.app-navigation-entry-menu-list',
 			'personSelectorForm' : '.oca-spreedme-add-person',
@@ -137,13 +137,66 @@
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
 		},
+		checkSharingStatus: function() {
+			if (this.model.get('type') === 1) { // 1on1
+				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
+
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).avatar($(a).data('user'), 32);
+				});
+			} else if (this.model.get('type') === 2) { // Group
+				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
+
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).removeClass('icon-public').addClass('icon-contacts-dark');
+				});
+			} else if (this.model.get('type') === 3) { // Public room
+				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
+
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).removeClass('icon-contacts-dark').addClass('icon-public');
+				});
+				console.log(OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id')), this.ui.shareInput);
+				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
+				this.ui.shareInput.val(url);
+			}
+		},
 		addPerson: function() {
 			this.ui.menuList.attr('style', 'display: none !important');
 			this.ui.personSelectorForm.toggleClass('hidden');
 			this.ui.personSelectorInput.select2('open');
 		},
 		shareGroup: function() {
-			console.log("share group", this.model.get('id'));
+			var app = OCA.SpreedMe.app;
+
+			// This should be the only case
+			if (this.model.get('type') !== 3) {
+				$.ajax({
+					url: OC.generateUrl('/apps/spreed/api/room/public'),
+					type: 'POST',
+					data: 'roomId='+this.model.get('id'),
+					success: function(data) {
+						console.log('is Public!');
+						app.syncRooms();
+					}
+				});
+			}
+		},
+		unshareGroup: function() {
+			var app = OCA.SpreedMe.app;
+
+			// This should be the only case
+			if (this.model.get('type') === 3) {
+				$.ajax({
+					url: OC.generateUrl('/apps/spreed/api/room/public'),
+					type: 'DELETE',
+					data: 'roomId='+this.model.get('id'),
+					success: function(data) {
+						console.log('is Private!');
+						app.syncRooms();
+					}
+				});
+			}
 		},
 		leaveGroup: function() {
 			//If user is in that room, it should leave that room first.
