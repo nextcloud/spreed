@@ -335,7 +335,7 @@ video {
 	display: inline-block;
 }
 
-#videos .videoContainer.speaking:not(.videoView) .speakingIndicator {
+#videos .videoContainer .speakingIndicator {
 	display: none;
 }
 
