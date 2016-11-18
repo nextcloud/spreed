@@ -169,7 +169,7 @@ var spreedMappingTable = [];
 				newContainer.addClass('promoted');
 				newContainer.after(
 					$('<div>')
-						.addClass('videoContainer videoContainer-dummy')
+						.addClass('videoContainer videoContainer-dummy speaking')
 						.append(newContainer.find('.nameIndicator').clone())
 						.append(newContainer.find('.muteIndicator').clone())
 					);
