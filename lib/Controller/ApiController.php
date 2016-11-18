@@ -199,7 +199,7 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$participants = $room->getParticipants(time() - 10);
+		$participants = $room->getParticipants(time() - 30);
 
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
