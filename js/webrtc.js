@@ -445,6 +445,7 @@ var spreedMappingTable = [];
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('hidden');
 				muteIndicator.show();
+				$el.removeClass('speaking');
 			}
 		});
 
