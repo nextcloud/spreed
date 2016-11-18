@@ -394,6 +394,12 @@ var spreedMappingTable = [];
 			}
 		});
 
+		// a peer stream was removed
+		OCA.SpreedMe.webrtc.on('peerStreamRemoved', function(peer) {
+			// a removed peer can't speak anymore ;)
+			OCA.SpreedMe.speakers.remove(peer.id);
+		});
+
 		// Send the audio on and off events via data channel
 		OCA.SpreedMe.webrtc.on('audioOn', function() {
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('audioOn');
