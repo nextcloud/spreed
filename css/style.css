@@ -242,6 +242,7 @@ video {
 	opacity: .7;
 }
 
+.speakingIndicator,
 .muteIndicator {
 	position: absolute;
 	width: 85%;
