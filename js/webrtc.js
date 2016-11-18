@@ -156,9 +156,9 @@ var spreedMappingTable = [];
 					// move old video to new location
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('speaking');
-					oldContainer.parent().find('.videoContainer-dummy').remove();
 				}
 
+				$('.videoContainer-dummy').remove();
 				// add new user to it
 				newContainer.addClass('speaking');
 				newContainer.after(
