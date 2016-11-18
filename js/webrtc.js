@@ -263,6 +263,11 @@ var spreedMappingTable = [];
 					message = t('spreed', 'Access to microphone & camera was denied');
 					$('#emptycontent p').hide();
 				}
+			} else if(!OCA.SpreedMe.webrtc.capabilities.support) {
+				console.log('WebRTC not supported');
+
+				message = t('spreed', 'WebRTC is not supported in your browser :-/');
+				messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 			} else {
 				message = t('spreed', 'Error while accessing microphone & camera');
 				messageAdditional = error.message || error.name;
