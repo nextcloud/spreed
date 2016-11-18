@@ -43,7 +43,7 @@ var spreedMappingTable = [];
 			disconnectedUsers.forEach(function(user) {
 				console.log('XXX Remove peer', user);
 				OCA.SpreedMe.webrtc.removePeers(user);
-				OCA.SpreedMe.speakers.remove(user);
+				OCA.SpreedMe.speakers.remove(user, true);
 			});
 			previousUsersInRoom = currentUsersInRoom;
 		});
@@ -196,7 +196,7 @@ var spreedMappingTable = [];
 				console.log('promoting: change promoted speaker to "' + spreedMappingTable[id] + '" after speaking');
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
-			remove: function(id) {
+			remove: function(id, enforce) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
 				}
@@ -235,6 +235,11 @@ var spreedMappingTable = [];
 				if (mostRecentId !== null) {
 					console.log('promoting: change promoted speaker from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId] + '" after speakingStopped');
 					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId.replace('\\', ''));
+				} else if (enforce === true) {
+					console.log('promoting: no recent speaker to promote - but enforced removal');
+					// if there is no mostRecentId is available there is no user left in call
+					// remove the remaining dummy container then too
+					$('.videoContainer-dummy').remove();
 				} else {
 					console.log('promoting: no recent speaker to promote - keep "' + spreedMappingTable[id] + '"');
 				}
@@ -396,19 +401,13 @@ var spreedMappingTable = [];
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
 			// a removed peer can't speak anymore ;)
-			OCA.SpreedMe.speakers.remove(peer);
+			OCA.SpreedMe.speakers.remove(peer, true);
 
 			var remotes = document.getElementById('videos');
 			var el = document.getElementById(peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer');
 			if (remotes && el) {
 				remotes.removeChild(el);
 			}
-		});
-
-		// a peer stream was removed
-		OCA.SpreedMe.webrtc.on('peerStreamRemoved', function(peer) {
-			// a removed peer can't speak anymore ;)
-			OCA.SpreedMe.speakers.remove(peer.id);
 		});
 
 		// Send the audio on and off events via data channel
