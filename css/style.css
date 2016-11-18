@@ -128,7 +128,6 @@ video {
 #videos .videoContainer video,
 #videos .videoContainer .avatar {
 	box-shadow: 0 0 15px rgba(0, 0, 0, .5);
-	transition-duration: 0.5s;
 }
 
 .participants-1 #videos .videoContainer video,
@@ -335,7 +334,20 @@ video {
 	display: inline-block;
 }
 
-#videos .videoContainer.speaking video,
-#videos .videoContainer.speaking .avatar-container {
-	box-shadow: 0 0 10px #dd2800;
+#videos .videoContainer.speaking .nameIndicator,
+#videos .videoContainer-dummy .nameIndicator {
+	animation: pulse 1s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: .7;
+	}
+	100% {
+		opacity: 1;
+	}
 }
