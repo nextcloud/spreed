@@ -242,7 +242,6 @@ video {
 	opacity: .7;
 }
 
-.speakingIndicator,
 .muteIndicator {
 	position: absolute;
 	width: 85%;
@@ -335,15 +334,7 @@ video {
 	display: inline-block;
 }
 
-#videos .videoContainer .speakingIndicator {
-	display: none;
-}
-
-#videos .videoContainer.speaking .speakingIndicator {
-	display: block;
-}
-
-#videos .videoContainer.speaking .speakingIndicator,
+#videos .videoContainer.speaking .nameIndicator,
 #videos .videoContainer.videoView.speaking .nameIndicator .icon-audio-white {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;

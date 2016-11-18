@@ -311,11 +311,6 @@ var spreedMappingTable = [];
 				muteIndicator.className = 'muteIndicator icon-audio-off-white hidden';
 				muteIndicator.textContent = '';
 
-				// Speaking indicator
-				var speakingIndicator = document.createElement('div');
-				speakingIndicator.className = 'speakingIndicator icon-audio-white';
-				speakingIndicator.textContent = '';
-
 				// Generic container
 				var container = document.createElement('div');
 				container.className = 'videoContainer';
@@ -323,7 +318,6 @@ var spreedMappingTable = [];
 				container.appendChild(video);
 				container.appendChild(avatarContainer);
 				container.appendChild(userIndicator);
-				container.appendChild(speakingIndicator);
 				container.appendChild(muteIndicator);
 				video.oncontextmenu = function() {
 					return false;
