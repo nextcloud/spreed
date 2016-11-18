@@ -151,6 +151,11 @@ var spreedMappingTable = [];
 					return;
 				}
 
+				if(lastestSpeakerId === id) {
+					console.log('promote: no need to repromote same speaker');
+					return
+				}
+
 				if (latestSpeakerId !== null) {
 					console.log('promote: unpromote speaker "' + spreedMappingTable[latestSpeakerId] + '"');
 					// move old video to new location
