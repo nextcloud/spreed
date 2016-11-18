@@ -158,6 +158,7 @@ var spreedMappingTable = [];
 					oldContainer.removeClass('speaking');
 				}
 
+				console.log('promote: promote speaker "' + spreedMappingTable[id] + '"');
 				$('.videoContainer-dummy').remove();
 				// add new user to it
 				newContainer.addClass('speaking');
