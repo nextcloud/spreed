@@ -334,7 +334,15 @@ video {
 	display: inline-block;
 }
 
-#videos .videoContainer.speaking:not(.videoView) .nameIndicator,
+#videos .videoContainer.speaking:not(.videoView) .speakingIndicator {
+	display: none;
+}
+
+#videos .videoContainer.speaking .speakingIndicator {
+	display: block;
+}
+
+#videos .videoContainer.speaking .speakingIndicator,
 #videos .videoContainer.videoView.speaking .nameIndicator .icon-audio-white {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;
