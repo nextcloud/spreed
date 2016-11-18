@@ -164,7 +164,8 @@ video {
 	top: 0;
 	z-index: 1;
 }
-.videoContainer.speaking video {
+.videoContainer.speaking video,
+.participants-2 .videoContainer:not(.videoView) video {
 	position: absolute;
 	width: initial;
 	height: 100%;
