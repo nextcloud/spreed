@@ -160,13 +160,13 @@ var spreedMappingTable = [];
 					console.log('promote: unpromote speaker "' + spreedMappingTable[latestSpeakerId] + '"');
 					// move old video to new location
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
-					oldContainer.removeClass('speaking');
+					oldContainer.removeClass('promoted');
 				}
 
 				console.log('promote: promote speaker "' + spreedMappingTable[id] + '"');
 				$('.videoContainer-dummy').remove();
 				// add new user to it
-				newContainer.addClass('speaking');
+				newContainer.addClass('promoted');
 				newContainer.after(
 					$('<div>')
 						.addClass('videoContainer videoContainer-dummy')
@@ -184,6 +184,9 @@ var spreedMappingTable = [];
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
 
+				// set speaking class
+				$(sanitizedId).addClass('speaking');
+
 				if (latestSpeakerId === id) {
 					console.log('promoting: latest speaker "' + spreedMappingTable[id] + '" is already promoted');
 					return;
@@ -199,6 +202,9 @@ var spreedMappingTable = [];
 
 				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
 				spreedListofSpeakers[sanitizedId] = -1;
+
+				// remove speaking class
+				$(sanitizedId).removeClass('speaking');
 
 				if (latestSpeakerId !== id) {
 					console.log('promoting: stopped speaker "' + spreedMappingTable[id] + '" is not promoted');
@@ -376,10 +382,14 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('speaking', function(){
 			console.log('local speaking');
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('speaking');
+
+			$('#localVideoContainer').addClass('speaking');
 		});
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			console.log('local stoppedSpeaking');
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('stoppedSpeaking');
+
+			$('#localVideoContainer').removeClass('speaking');
 		});
 
 		// a peer was removed

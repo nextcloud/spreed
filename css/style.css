@@ -121,13 +121,14 @@ video {
     border-top-right-radius: 3px;
 	background-color: #000;
 }
-#videos .videoContainer.speaking video {
+#videos .videoContainer.promoted video {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
 #videos .videoContainer video,
 #videos .videoContainer .avatar {
 	box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+	transition-duration: 0.5s;
 }
 
 .participants-1 #videos .videoContainer video,
@@ -144,10 +145,10 @@ video {
 .videoContainer .avatar-container .avatar {
 	display: inline-block;
 }
-.videoContainer.speaking .avatar-container {
+.videoContainer.promoted .avatar-container {
 	top: 30%;
 }
-.videoContainer.speaking .avatar-container + .nameIndicator {
+.videoContainer.promoted .avatar-container + .nameIndicator {
 	display: none;
 }
 
@@ -158,7 +159,7 @@ video {
 /* big speaker video */
 .participants-1 .videoContainer,
 .participants-2 .videoContainer,
-.videoContainer.speaking {
+.videoContainer.promoted {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -167,7 +168,7 @@ video {
 	top: 0;
 	z-index: 1;
 }
-.videoContainer.speaking video,
+.videoContainer.promoted video,
 .participants-2 .videoContainer:not(.videoView) video {
 	position: absolute;
 	width: initial;
@@ -226,7 +227,7 @@ video {
 	right: 0;
 }
 /* ellipsize name in 1on1 calls */
-.participants-2 .videoContainer.speaking + .videoContainer-dummy .nameIndicator {
+.participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	padding: 12px 35%;
 }
 
@@ -332,4 +333,9 @@ video {
 
 #app-navigation .app-navigation-entry-utils-menu-button {
 	display: inline-block;
+}
+
+#videos .videoContainer.speaking video,
+#videos .videoContainer.speaking .avatar-container {
+	box-shadow: 0 0 10px #dd2800;
 }
