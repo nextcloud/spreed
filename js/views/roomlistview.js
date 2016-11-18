@@ -43,9 +43,9 @@
 									'</button>'+
 								'</li>'+
 								'<li>'+
-									'<button class="share-group-button">'+
-										'<span class="icon-share svg"></span>'+
-										'<span>'+t('spreedme', 'Share group')+'</span>'+
+									'<button class="share-link-button">'+
+										'<span class="icon-public svg"></span>'+
+										'<span>'+t('spreedme', 'Share link')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'<li>'+
@@ -117,7 +117,7 @@
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
-			'click .app-navigation-entry-menu .share-group-button': 'shareGroup',
+			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
 		},
 		ui: {
