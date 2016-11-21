@@ -1,0 +1,8 @@
+#spreed_settings_form label {
+	min-width: 200px;
+	display: inline-block;
+}
+
+#spreed_settings_form input {
+	width: 300px;
+}

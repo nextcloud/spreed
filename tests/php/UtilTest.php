@@ -21,7 +21,9 @@
 namespace OCA\Spreed\Tests\php;
 
 use OCA\Spreed\Util;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\ISession;
 use Test\TestCase;
 
 class UtilTest extends TestCase {
@@ -34,7 +36,7 @@ class UtilTest extends TestCase {
 	}
 
 	public function testGetStunServer() {
-		$config = $this->getMock(IConfig::class);
+		$config = $this->createMock(IConfig::class);
 		$config
 			->expects($this->once())
 			->method('getAppValue')
@@ -42,5 +44,45 @@ class UtilTest extends TestCase {
 			->willReturn('88.198.160.129');
 
 		$this->assertSame('88.198.160.129', $this->util->getStunServer($config));
+	}
+
+	public function testGenerateTurnSettings() {
+		$session = $this->createMock(ISession::class);
+		$session
+			->expects($this->once())
+			->method('get')
+			->with('spreed-session')
+			->willReturn('thisisalongsessionid');
+		$config = $this->createMock(IConfig::class);
+		$config
+			->expects($this->at(0))
+			->method('getAppValue')
+			->with('spreed', 'turn_server', '')
+			->willReturn('turn.example.org');
+		$config
+			->expects($this->at(1))
+			->method('getAppValue')
+			->with('spreed', 'turn_server_secret', '')
+			->willReturn('thisisasupersecretsecret');
+		$config
+			->expects($this->at(2))
+			->method('getAppValue')
+			->with('spreed', 'turn_server_protocols', '')
+			->willReturn('udp,tcp');
+		$time = $this->createMock(ITimeFactory::class);
+		$time
+			->expects($this->once())
+			->method('getTime')
+			->willReturn(1479743025);
+
+		$this->assertSame(array(
+			'server' => 'turn.example.org',
+			'username' => 'thisisalongsessionid',
+			'password' => '4rx+b/38p1nKK9vf6YAqXObKSco=',
+			'protocols' => 'udp,tcp',
+		), $this->util->generateTurnSettings($config, $session, $time));
+
+		// command to calculate this by manually
+		// echo -n "$(($(date +"%s")+3600)):USERNAME" | openssl dgst -sha1 -hmac "SECRET" -binary | base64
 	}
 }

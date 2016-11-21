@@ -21,7 +21,9 @@
 
 namespace OCA\Spreed;
 
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\ISession;
 use OCP\IUser;
 
 class Util {
@@ -52,11 +54,45 @@ class Util {
 	}
 
     public static function getTurnSettings(IConfig $config, $uid) {
-        $value = $config->getUserValue($uid, 'spreed', 'turn_settings');
-        if (empty($value)) {
-            return array();
+		$value = $config->getUserValue($uid, 'spreed', 'turn_settings');
+		if (empty($value)) {
+			return array();
         }
-        return json_decode($value, true);
+		return json_decode($value, true);
     }
+
+	/**
+	 * Generates a username and password for the TURN server based on the
+	 *
+	 * @param IConfig $config
+	 * @param ISession $session
+	 * @param ITimeFactory $timeFactory
+	 * @return array
+	 */
+    public static function generateTurnSettings(IConfig $config, ISession $session, ITimeFactory $timeFactory) {
+		// generate from shared secret
+		$turnServer = $config->getAppValue('spreed', 'turn_server', '');
+		$turnServerSecret = $config->getAppValue('spreed', 'turn_server_secret', '');
+		$turnServerProtocols = $config->getAppValue('spreed', 'turn_server_protocols', '');
+		$sessionId = $session->get('spreed-session');
+
+		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '' || empty($session)) {
+			return array();
+		}
+
+		$time = $timeFactory->getTime();
+
+		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then
+		$string = sprintf('%d:%s', $time + 86400, $sessionId);
+		$hashedString = hash_hmac('sha1', $string, $turnServerSecret, true);
+		$password = base64_encode($hashedString);
+
+		return array(
+			'server' => $turnServer,
+			'username' => $sessionId,
+			'password' => $password,
+			'protocols' => $turnServerProtocols,
+		);
+	}
 
 }
