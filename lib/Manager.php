@@ -180,4 +180,43 @@ class Manager {
 
 		return new Room($this->db, $roomId, $type, $name);
 	}
+
+	/**
+	 * @param string $userId
+	 * @return string[]
+	 */
+	public function getSessionIdsForUser($userId) {
+		if (!is_string($userId) || $userId === '') {
+			// No deleting messages for guests
+			return [];
+		}
+
+		// Delete all messages from or to the current user
+		$query = $this->db->getQueryBuilder();
+		$query->select('sessionId')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)));
+		$result = $query->execute();
+
+		$sessionIds = [];
+		while ($row = $result->fetch()) {
+			if ($row['sessionId'] !== '0') {
+				$sessionIds[] = $row['sessionId'];
+			}
+		}
+		$result->closeCursor();
+
+		return $sessionIds;
+	}
+
+	/**
+	 * @param string[] $sessionIds
+	 */
+	public function deleteMessagesForSessionIds($sessionIds) {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('spreedme_messages')
+			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
+			->orWhere($query->expr()->in('sender', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$query->execute();
+	}
 }

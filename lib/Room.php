@@ -158,6 +158,41 @@ class Room {
 	}
 
 	/**
+	 * @param string $userId
+	 * @param string $sessionId
+	 */
+	public function enterRoomAsUser($userId, $sessionId) {
+		$query = $this->db->getQueryBuilder();
+
+		$query->update('spreedme_room_participants')
+			->set('sessionId', $query->createNamedParameter($sessionId))
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
+		$query->execute();
+
+		$query->update('spreedme_room_participants')
+			->set('sessionId', $query->createNamedParameter('0'))
+			->where($query->expr()->neq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
+		$query->execute();
+	}
+
+	/**
+	 * @param string $sessionId
+	 */
+	public function enterRoomAsGuest($sessionId) {
+		$query = $this->db->getQueryBuilder();
+		$query->insert('spreedme_room_participants')
+			->values([
+				'userId' => $query->createNamedParameter(''),
+				'roomId' => $query->createNamedParameter($this->getId()),
+				'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
+				'sessionId' => $query->createNamedParameter($sessionId),
+			]);
+		$query->execute();
+	}
+
+	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
 	 */

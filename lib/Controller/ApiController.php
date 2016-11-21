@@ -436,49 +436,35 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 *
 	 * @param int $roomId
 	 * @return JSONResponse
 	 */
 	public function joinRoom($roomId) {
-		// Delete all messages from or to the current user
-		$qb = $this->dbConnection->getQueryBuilder();
-		$sessionIds = $qb->select('sessionId')
-			->from('spreedme_room_participants')
-			->where($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-			->execute()
-			->fetchAll();
-		foreach($sessionIds as $sessionId) {
-			$sessionId = $sessionId['sessionId'];
-			$qb->delete('spreedme_messages')
-				->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
-				->orWhere($qb->expr()->eq('sender', $qb->createNamedParameter($sessionId)))
-				->execute();
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		// Set the session ID for the new room ID
-		$sessionId = $this->secureRandom->generate(255);
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->update('spreedme_room_participants')
-			->set('sessionId', $qb->createNamedParameter($sessionId))
-			->where($qb->expr()->eq('roomId', $qb->createNamedParameter($roomId)))
-			->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-			->execute();
+		$newSessionId = $this->secureRandom->generate(255);
 
-		// For all other rooms set the last access time to 0 since the user isn't
-		// active anymore in the room. This ensures that the user is considered
-		// not active in the other rooms anymore.
-		$qb = $this->dbConnection->getQueryBuilder();
-		$qb->update('spreedme_room_participants')
-			->set('lastPing', $qb->createNamedParameter(0, IQueryBuilder::PARAM_INT))
-			->set('sessionId', $qb->createNamedParameter(0))
-			->where($qb->expr()->neq('roomId', $qb->createNamedParameter($roomId)))
-			->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter($this->userId)))
-			->execute();
+		if ($this->userId !== null) {
+			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
+
+			$room->enterRoomAsUser($this->userId, $newSessionId);
+
+			if (!empty($sessionIds)) {
+				$this->manager->deleteMessagesForSessionIds($sessionIds);
+			}
+		} else {
+			$room->enterRoomAsGuest($newSessionId);
+		}
 
 		return new JSONResponse([
-			'sessionId' => $sessionId,
+			'sessionId' => $newSessionId,
 		]);
 	}
 }
