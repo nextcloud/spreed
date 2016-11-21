@@ -107,6 +107,8 @@ class Room {
 			return false;
 		}
 
+		$oldType = $this->getType();
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_rooms')
 			->set('type', $query->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
@@ -114,6 +116,15 @@ class Room {
 		$query->execute();
 
 		$this->type = (int) $newType;
+
+		if ($oldType === Room::PUBLIC_CALL) {
+			// Kick all guests
+			$query = $this->db->getQueryBuilder();
+			$query->delete('spreedme_room_participants')
+				->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+				->andWhere($query->expr()->eq('userId', $query->createNamedParameter('')));
+			$query->execute();
+		}
 
 		return true;
 	}
@@ -148,7 +159,7 @@ class Room {
 
 	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
-	 * @return array[] Array of users with [userId => [lastPing, sessionId]]
+	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
 	 */
 	public function getParticipants($lastPing = 0) {
 		$query = $this->db->getQueryBuilder();
@@ -162,16 +173,26 @@ class Room {
 
 		$result = $query->execute();
 
-		$rows = [];
+		$users = $guests = [];
 		while ($row = $result->fetch()) {
-			$rows[$row['userId']] = [
-				'lastPing' => (int) $row['lastPing'],
-				'sessionId' => $row['sessionId'],
-			];
+			if ($row['userId'] !== '' && $row['userId'] !== null) {
+				$users[$row['userId']] = [
+					'lastPing' => (int) $row['lastPing'],
+					'sessionId' => $row['sessionId'],
+				];
+			} else {
+				$guests[] = [
+					'lastPing' => (int) $row['lastPing'],
+					'sessionId' => $row['sessionId'],
+				];
+			}
 		}
 		$result->closeCursor();
 
-		return $rows;
+		return [
+			'users' => $users,
+			'guests' => $guests,
+		];
 	}
 
 	/**
@@ -197,13 +218,15 @@ class Room {
 
 	/**
 	 * @param string $participant
+	 * @param string $sessionId
 	 * @param int $timestamp
 	 */
-	public function ping($participant, $timestamp) {
+	public function ping($participant, $sessionId, $timestamp) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_room_participants')
 			->set('lastPing', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('userId', $query->createNamedParameter($participant)))
+			->where($query->expr()->eq('userId', $query->createNamedParameter((string) $participant)))
+			->andWhere($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 
 		$query->execute();

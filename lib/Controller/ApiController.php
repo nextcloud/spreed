@@ -113,16 +113,18 @@ class ApiController extends Controller {
 		$return = [];
 		foreach ($rooms as $room) {
 			// Sort by lastPing
-			$participantPings = $room->getParticipants();
-			uasort($participantPings, function(array $participant1, array $participant2) {
+			$participants = $room->getParticipants();
+			$sortParticipants = function(array $participant1, array $participant2) {
 				if ($participant1['lastPing'] === $participant2['lastPing']) {
 					return 0;
 				}
 				return ($participant1['lastPing'] > $participant2['lastPing']) ? -1 : 1;
-			});
+			};
+			uasort($participants['users'], $sortParticipants);
+			uasort($participants['guests'], $sortParticipants);
 
 			$participantList = [];
-			foreach ($participantPings as $participant => $lastPing) {
+			foreach ($participants['users'] as $participant => $lastPing) {
 				$user = $this->userManager->get($participant);
 				if ($user instanceof IUser) {
 					$participantList[$participant] = $user->getDisplayName();
@@ -141,7 +143,8 @@ class ApiController extends Controller {
 			];
 
 			unset($participantList[$this->userId]);
-			$numOtherParticipants = sizeof($participantList);
+			$numOtherParticipants = sizeof($participantList['users']);
+			$numGuestParticipants = sizeof($participants['guests']);
 
 			switch ($room->getType()) {
 				case Room::ONE_TO_ONE_CALL:
@@ -164,11 +167,15 @@ class ApiController extends Controller {
 				case Room::PUBLIC_CALL:
 					/// As name of the room use the names of the other participants
 					if ($numOtherParticipants === 0) {
-						// Only you
-						$roomData['displayName'] = $this->l10n->t('You');
-					} else {
-						$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
+						$participantList = [$this->l10n->t('You')];
 					}
+
+					if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+						// Only you
+						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+					}
+
+					$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
 					break;
 
 				default:
@@ -187,7 +194,6 @@ class ApiController extends Controller {
 
 	/**
 	 * @PublicPage
-	 * @NoCSRFRequired
 	 *
 	 * @param int $roomId
 	 * @return JSONResponse
@@ -223,7 +229,7 @@ class ApiController extends Controller {
 		}
 
 		$result = [];
-		foreach ($participants as $participant => $data) {
+		foreach ($participants['users'] as $participant => $data) {
 			$result[] = [
 				'userId' => $participant,
 				'roomId' => $roomId,
@@ -231,6 +237,16 @@ class ApiController extends Controller {
 				'sessionId' => $data['sessionId'],
 			];
 		}
+
+		foreach ($participants['guests'] as $data) {
+			$result[] = [
+				'userId' => '',
+				'roomId' => $roomId,
+				'lastPing' => $data['lastPing'],
+				'sessionId' => $data['sessionId'],
+			];
+		}
+
 		return new JSONResponse($result);
 	}
 
@@ -332,7 +348,7 @@ class ApiController extends Controller {
 		}
 
 		$participants = $room->getParticipants();
-		if (isset($participants[$newParticipant])) {
+		if (isset($participants['users'][$newParticipant])) {
 			return new JSONResponse([]);
 		}
 
@@ -416,16 +432,38 @@ class ApiController extends Controller {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 *
 	 * @param int $roomId
+	 * @param string $sessionId
 	 * @return JSONResponse
 	 */
-	public function ping($roomId) {
+	public function ping($roomId, $sessionId) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomById($roomId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		switch ($room->getType()) {
+			case Room::ONE_TO_ONE_CALL:
+			case Room::GROUP_CALL:
+				// No guests allowed
+				if ($this->userId === null) {
+					return new JSONResponse([], Http::STATUS_NOT_FOUND);
+				}
+
+				// Check if user is a participant
+				try {
+					$this->manager->getRoomForParticipant($roomId, $this->userId);
+				} catch (RoomNotFoundException $e) {
+					return new JSONResponse([], Http::STATUS_NOT_FOUND);
+				}
+				break;
+
+			case Room::PUBLIC_CALL:
+				// Nothing to do
+				break;
 		}
 
 		$notification = $this->notificationManager->createNotification();
@@ -434,7 +472,7 @@ class ApiController extends Controller {
 			->setObject('room', (string) $roomId);
 		$this->notificationManager->markProcessed($notification);
 
-		$room->ping($this->userId, time());
+		$room->ping($this->userId, $sessionId, time());
 		return new JSONResponse();
 	}
 
