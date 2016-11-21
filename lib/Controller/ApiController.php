@@ -165,8 +165,8 @@ class ApiController extends Controller {
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
 			'count' => $room->getNumberOfParticipants(time() - 30),
-			'lastPing' => isset($participants[$this->userId]['lastPing']) ? $participants[$this->userId]['lastPing'] : 0,
-			'sessionId' => isset($participants[$this->userId]['sessionId']) ? $participants[$this->userId]['sessionId'] : '0',
+			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
+			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
 			'participants' => $participantList,
 		];
 
