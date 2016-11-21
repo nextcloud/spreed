@@ -200,34 +200,12 @@ class ApiController extends Controller {
 	 */
 	public function getPeersInRoom($roomId) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$participants = $room->getParticipants(time() - 30);
-
-		switch ($room->getType()) {
-			case Room::ONE_TO_ONE_CALL:
-			case Room::GROUP_CALL:
-				// No guests allowed
-				if ($this->userId === null) {
-					return new JSONResponse([], Http::STATUS_NOT_FOUND);
-				}
-
-				// Check if user is a participant
-				try {
-					$this->manager->getRoomForParticipant($roomId, $this->userId);
-				} catch (RoomNotFoundException $e) {
-					return new JSONResponse([], Http::STATUS_NOT_FOUND);
-				}
-				break;
-
-			case Room::PUBLIC_CALL:
-				// Nothing to do
-				break;
-		}
-
 		$result = [];
 		foreach ($participants['users'] as $participant => $data) {
 			$result[] = [
@@ -440,37 +418,18 @@ class ApiController extends Controller {
 	 */
 	public function ping($roomId, $sessionId) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		switch ($room->getType()) {
-			case Room::ONE_TO_ONE_CALL:
-			case Room::GROUP_CALL:
-				// No guests allowed
-				if ($this->userId === null) {
-					return new JSONResponse([], Http::STATUS_NOT_FOUND);
-				}
-
-				// Check if user is a participant
-				try {
-					$this->manager->getRoomForParticipant($roomId, $this->userId);
-				} catch (RoomNotFoundException $e) {
-					return new JSONResponse([], Http::STATUS_NOT_FOUND);
-				}
-				break;
-
-			case Room::PUBLIC_CALL:
-				// Nothing to do
-				break;
+		if ($this->userId !== null) {
+			$notification = $this->notificationManager->createNotification();
+			$notification->setApp('spreed')
+				->setUser($this->userId)
+				->setObject('room', (string) $roomId);
+			$this->notificationManager->markProcessed($notification);
 		}
-
-		$notification = $this->notificationManager->createNotification();
-		$notification->setApp('spreed')
-			->setUser($this->userId)
-			->setObject('room', (string) $roomId);
-		$this->notificationManager->markProcessed($notification);
 
 		$room->ping($this->userId, $sessionId, time());
 		return new JSONResponse();

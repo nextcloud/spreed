@@ -74,12 +74,15 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms', 'r')
-			->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
-				$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
-				$query->expr()->eq('p.roomId', 'r.id')
-			))
-			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNotNull('p.userId'));
+			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		if ($participant !== null) {
+			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
+					$query->expr()->eq('p.roomId', 'r.id')
+				))
+				->andWhere($query->expr()->isNotNull('p.userId'));
+		}
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -89,7 +92,13 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+		$room = new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+
+		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
+			throw new RoomNotFoundException();
+		}
+
+		return $room;
 	}
 
 	/**
