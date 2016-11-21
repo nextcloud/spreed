@@ -172,10 +172,10 @@ class ApiController extends Controller {
 
 		if ($this->userId !== null) {
 			unset($participantList[$this->userId]);
-			$numOtherParticipants = sizeof($participantList['users']);
+			$numOtherParticipants = sizeof($participantList);
 			$numGuestParticipants = sizeof($participants['guests']);
 		} else {
-			$numOtherParticipants = sizeof($participantList['users']);
+			$numOtherParticipants = sizeof($participantList);
 			$numGuestParticipants = sizeof($participants['guests']) - 1;
 		}
 
