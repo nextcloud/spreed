@@ -487,6 +487,15 @@ class ApiController extends Controller {
 	 * @return JSONResponse
 	 */
 	public function joinRoom($roomId) {
+		if ($roomId === 0) {
+			if ($this->userId !== null) {
+				$this->manager->disconnectUserFromAllRooms($this->userId);
+			}
+
+			$this->session->remove('spreed-session');
+			return new JSONResponse([]);
+		}
+
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {

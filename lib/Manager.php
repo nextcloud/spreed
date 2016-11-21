@@ -183,6 +183,17 @@ class Manager {
 
 	/**
 	 * @param string $userId
+	 */
+	public function disconnectUserFromAllRooms($userId) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_room_participants')
+			->set('sessionId', $query->createNamedParameter('0'))
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)));
+		$query->execute();
+	}
+
+	/**
+	 * @param string $userId
 	 * @return string[]
 	 */
 	public function getSessionIdsForUser($userId) {
