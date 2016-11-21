@@ -20,6 +20,7 @@
  *
  */
 
+
 (function(OC, OCA, Marionette, Handlebars) {
 	'use strict';
 
@@ -48,8 +49,8 @@
 										'<span>'+t('spreedme', 'Share link')+'</span>'+
 										'<span class="icon-delete private-room"></span>'+
 									'</button>'+
-									'<input class="share-link-input private-room" type="text"/>'+
-									'<div class="icon-clippy private-room"></div>'+
+									'<input id="shareInput-{{id}}"class="share-link-input private-room" readonly="readonly" type="text"/>'+
+									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"</div>'+
 								'</li>'+
 								'<li>'+
 									'<button class="leave-group-button">'+
@@ -87,6 +88,8 @@
 					this.toggleMenuClass();
 				}
 			});
+
+			this.initClipboard();
 		},
 		onRender: function() {
 			this.initPersonSelector();
@@ -122,6 +125,7 @@
 		ui: {
 			'room': '.app-navigation-entry-link',
 			'shareInput': '.share-link-input',
+			'shareButton': '.clipboardButton',
 			'menu': '.app-navigation-entry-menu',
 			'menuList': '.app-navigation-entry-menu-list',
 			'personSelectorForm' : '.oca-spreedme-add-person',
@@ -220,6 +224,50 @@
 				trigger: 'hover',
 				html: 'true',
 				title: htmlstring
+			});
+		},
+		initClipboard: function () {
+			this.$el.find('.clipboardButton').tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: t('spreedme', 'Copy')
+			});
+
+			var clipboard = new Clipboard('.clipboardButton');
+			clipboard.on('success', function(e) {
+				var $input = $(e.trigger);
+				$input.tooltip('hide')
+					.attr('data-original-title', t('spreedme', 'Copied!'))
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function() {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreedme', 'Copy'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+			clipboard.on('error', function (e) {
+				var $input = $(e.trigger);
+				var actionMsg = '';
+				if (/iPhone|iPad/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Not supported!');
+				} else if (/Mac/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Press ⌘-C to copy.');
+				} else {
+					actionMsg = t('core', 'Press Ctrl-C to copy.');
+				}
+
+				$input.tooltip('hide')
+					.attr('data-original-title', actionMsg)
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function () {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreedme', 'Copy'))
+						.tooltip('fixTitle');
+				}, 3000);
 			});
 		},
 		initPersonSelector: function() {
