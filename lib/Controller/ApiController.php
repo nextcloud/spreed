@@ -136,7 +136,7 @@ class ApiController extends Controller {
 				'type' => $room->getType(),
 				'name' => $room->getName(),
 				'displayName' => $room->getName(),
-				'count' => $room->getNumberOfParticipants(time() - 10),
+				'count' => $room->getNumberOfParticipants(time() - 30),
 				'lastPing' => isset($participantPings[$this->userId]['lastPing']) ? $participantPings[$this->userId]['lastPing'] : 0,
 				'sessionId' => isset($participantPings[$this->userId]['sessionId']) ? $participantPings[$this->userId]['sessionId'] : 0,
 				'participants' => $participantList,
@@ -208,6 +208,11 @@ class ApiController extends Controller {
 		$participants = $room->getParticipants(time() - 30);
 		$result = [];
 		foreach ($participants['users'] as $participant => $data) {
+			if ($data['sessionId'] === '0') {
+				// Use left the room
+				continue;
+			}
+
 			$result[] = [
 				'userId' => $participant,
 				'roomId' => $roomId,
