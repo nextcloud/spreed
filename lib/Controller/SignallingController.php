@@ -103,6 +103,20 @@ class SignallingController extends Controller {
 						]);
 					}
 					break;
+				case 'turnservers':
+					$response = [];
+					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
+					if (!empty($turnSettings)) {
+						$protocols = explode(",", $turnSettings['protocols']);
+						foreach ($protocols as $proto) {
+							array_push($response, [
+								'url' => 'turn:' . $turnSettings['server'] . '?transport=' . $proto,
+								'username' => $turnSettings['username'],
+								'credential' => $turnSettings['password'],
+							]);
+						}
+					}
+					break;
 			}
 		}
 

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <info>
 	<id>spreed</id>
-	<name>Spreed.ME video calls</name>
+	<name>Spreed video calls</name>
 	<description>Voice over IP conferencing using WebRTC</description>
 	<licence>AGPLv3+</licence>
 	<author>Lukas Reschke, Jan-Christoph Borchardt, Morris Jobke</author>

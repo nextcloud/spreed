@@ -50,4 +50,13 @@ class Util {
 			}
 		}
 	}
+
+    public static function getTurnSettings(IConfig $config, $uid) {
+        $value = $config->getUserValue($uid, 'spreed', 'turn_settings');
+        if (empty($value)) {
+            return array();
+        }
+        return json_decode($value, true);
+    }
+
 }
