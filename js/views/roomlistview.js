@@ -98,7 +98,7 @@
 			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
 			this.$el.find('.app-navigation-entry-link').on('click', function(e) {
 				e.preventDefault();
-				var roomId = $(this).attr('data-roomId');
+				var roomId = parseInt($(this).attr('data-roomId'), 10);
 				OCA.SpreedMe.Rooms.join(roomId);
 			});
 
