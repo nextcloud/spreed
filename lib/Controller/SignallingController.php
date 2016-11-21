@@ -25,11 +25,13 @@ namespace OCA\Spreed\Controller;
 
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 
 use OCA\Spreed\Util;
+use OCP\ISession;
 
 class SignallingController extends Controller {
 	/** @var IConfig */
@@ -38,6 +40,10 @@ class SignallingController extends Controller {
 	private $dbConnection;
 	/** @var string */
 	private $userId;
+	/** @var ISession */
+	private $session;
+	/** @var ITimeFactory */
+	private $timeFactory;
 
 
 	/**
@@ -46,16 +52,22 @@ class SignallingController extends Controller {
 	 * @param IConfig $config
 	 * @param IDBConnection $connection
 	 * @param string $UserId
+	 * @param ISession $session
+	 * @param ITimeFactory $timeFactory
 	 */
 	public function __construct($appName,
 								IRequest $request,
 								IConfig $config,
 								IDBConnection $connection,
-								$UserId) {
+								$UserId,
+								ISession $session,
+								ITimeFactory $timeFactory) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->dbConnection = $connection;
 		$this->userId = $UserId;
+		$this->session = $session;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -106,6 +118,9 @@ class SignallingController extends Controller {
 				case 'turnservers':
 					$response = [];
 					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
+					if(empty($turnSettings)) {
+						$turnSettings = Util::generateTurnSettings($this->config, $this->session, $this->timeFactory);
+					}
 					if (!empty($turnSettings)) {
 						$protocols = explode(",", $turnSettings['protocols']);
 						foreach ($protocols as $proto) {

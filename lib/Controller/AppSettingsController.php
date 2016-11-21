@@ -53,8 +53,10 @@ class AppSettingsController extends Controller {
 	 * in the form "stunserver:port", e.g. "stun.domain.invalid:1234".
 	 *
 	 * @param string $stun_server
+	 * @param string $turn_server
+	 * @param string $turn_server_secret
 	 */
-	public function setSpreedSettings($stun_server) {
+	public function setSpreedSettings($stun_server, $turn_server, $turn_server_secret, $turn_server_protocols) {
 		$stun_server = trim($stun_server);
 		if ($stun_server !== "") {
 			if (substr($stun_server, 0, 5) === "stun:") {
@@ -87,8 +89,36 @@ class AppSettingsController extends Controller {
 				);
 			}
 		}
+		if ($turn_server_protocols !== '') {
+			if (!in_array($turn_server_protocols, array('udp,tcp', 'tcp', 'udp'))) {
+				return array('data' =>
+					array('message' =>
+						(string) $this->l10n->t('Invalid protocols specified.')
+					),
+					'status' => 'error'
+				);
+			}
+		}
 
-		$this->config->setAppValue('spreed', 'stun_server', $stun_server);
+		$currentStunServer = $this->config->getAppValue('spreed', 'stun_server', '');
+		if ( $currentStunServer !== $stun_server ) {
+			$this->config->setAppValue('spreed', 'stun_server', $stun_server);
+		}
+
+		$currentTurnServer = $this->config->getAppValue('spreed', 'turn_server', '');
+		if ( $currentTurnServer !== $turn_server ) {
+			$this->config->setAppValue('spreed', 'turn_server', $turn_server);
+		}
+
+		$currentTurnServerSecret = $this->config->getAppValue('spreed', 'turn_server_secret', '');
+		if ( $currentTurnServerSecret !== $turn_server_secret ) {
+			$this->config->setAppValue('spreed', 'turn_server_secret', $turn_server_secret);
+		}
+
+		$currentTurnServerProtocols = $this->config->getAppValue('spreed', 'turn_server_protocols', '');
+		if ( $currentTurnServerProtocols !== $turn_server_protocols ) {
+			$this->config->setAppValue('spreed', 'turn_server_protocols', $turn_server_protocols);
+		}
 
 		return array('data' =>
 			array('message' =>
