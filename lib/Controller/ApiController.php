@@ -31,11 +31,10 @@ use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\DB\QueryBuilder\IQueryBuilder;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
@@ -46,8 +45,6 @@ use OCP\Security\ISecureRandom;
 class ApiController extends Controller {
 	/** @var string */
 	private $userId;
-	/** @var IDBConnection */
-	private $dbConnection;
 	/** @var IL10N */
 	private $l10n;
 	/** @var IUserManager */
@@ -56,6 +53,8 @@ class ApiController extends Controller {
 	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var ISession */
+	private $session;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -67,11 +66,11 @@ class ApiController extends Controller {
 	 * @param string $appName
 	 * @param string $UserId
 	 * @param IRequest $request
-	 * @param IDBConnection $dbConnection
 	 * @param IL10N $l10n
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param ISecureRandom $secureRandom
+	 * @param ISession $session
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param IManager $notificationManager
@@ -79,21 +78,21 @@ class ApiController extends Controller {
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
-								IDBConnection $dbConnection,
 								IL10N $l10n,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								ISecureRandom $secureRandom,
+								ISession $session,
 								ILogger $logger,
 								Manager $manager,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
-		$this->dbConnection = $dbConnection;
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
 		$this->secureRandom = $secureRandom;
+		$this->session = $session;
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
@@ -418,15 +417,16 @@ class ApiController extends Controller {
 	 * @PublicPage
 	 *
 	 * @param int $roomId
-	 * @param string $sessionId
 	 * @return JSONResponse
 	 */
-	public function ping($roomId, $sessionId) {
+	public function ping($roomId) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
+
+		$sessionId = $this->session->get('spreed-session');
 
 		if ($this->userId !== null) {
 			$notification = $this->notificationManager->createNotification();
@@ -442,6 +442,7 @@ class ApiController extends Controller {
 
 	/**
 	 * @PublicPage
+	 * @UseSession
 	 *
 	 * @param int $roomId
 	 * @return JSONResponse
@@ -455,6 +456,7 @@ class ApiController extends Controller {
 
 		// Set the session ID for the new room ID
 		$newSessionId = $this->secureRandom->generate(255);
+		$this->session->set('spreed-session', $newSessionId);
 
 		if ($this->userId !== null) {
 			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
