@@ -78,7 +78,7 @@ class UtilTest extends TestCase {
 		$this->assertSame(array(
 			'server' => 'turn.example.org',
 			'username' => 'thisisalongsessionid',
-			'password' => 'MTVT2kC2SL9I81lZrI6gJznKQKk=',
+			'password' => '4rx+b/38p1nKK9vf6YAqXObKSco=',
 			'protocols' => 'udp,tcp',
 		), $this->util->generateTurnSettings($config, $session, $time));
 

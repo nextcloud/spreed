@@ -82,7 +82,8 @@ class Util {
 
 		$time = $timeFactory->getTime();
 
-		$string = sprintf('%d:%s', $time + 3600, $sessionId);
+		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then
+		$string = sprintf('%d:%s', $time + 86400, $sessionId);
 		$hashedString = hash_hmac('sha1', $string, $turnServerSecret, true);
 		$password = base64_encode($hashedString);
 
