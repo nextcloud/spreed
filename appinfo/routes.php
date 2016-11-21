@@ -54,6 +54,12 @@ return [
 			'verb' => 'DELETE',
 		],
 		[
+			'name' => 'api#getRoom',
+			'url' => '/api/room/{roomId}',
+			'verb' => 'GET',
+			'requirements' => ['roomId' => '\d+'],
+		],
+		[
 			'name' => 'api#addParticipantToRoom',
 			'url' => '/api/room/{roomId}',
 			'verb' => 'POST',

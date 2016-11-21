@@ -103,7 +103,6 @@ class ApiController extends Controller {
 	 *
 	 * @NoAdminRequired
 	 *
-	 * @throws \Exception
 	 * @return JSONResponse
 	 */
 	public function getRooms() {
@@ -111,84 +110,124 @@ class ApiController extends Controller {
 
 		$return = [];
 		foreach ($rooms as $room) {
-			// Sort by lastPing
-			$participants = $room->getParticipants();
-			$sortParticipants = function(array $participant1, array $participant2) {
-				if ($participant1['lastPing'] === $participant2['lastPing']) {
-					return 0;
-				}
-				return ($participant1['lastPing'] > $participant2['lastPing']) ? -1 : 1;
-			};
-			uasort($participants['users'], $sortParticipants);
-			uasort($participants['guests'], $sortParticipants);
-
-			$participantList = [];
-			foreach ($participants['users'] as $participant => $lastPing) {
-				$user = $this->userManager->get($participant);
-				if ($user instanceof IUser) {
-					$participantList[$participant] = $user->getDisplayName();
-				}
+			try {
+				$return[] = $this->formatRoom($room);
+			} catch (RoomNotFoundException $e) {
 			}
-
-			$roomData = [
-				'id' => $room->getId(),
-				'type' => $room->getType(),
-				'name' => $room->getName(),
-				'displayName' => $room->getName(),
-				'count' => $room->getNumberOfParticipants(time() - 30),
-				'lastPing' => isset($participantPings[$this->userId]['lastPing']) ? $participantPings[$this->userId]['lastPing'] : 0,
-				'sessionId' => isset($participantPings[$this->userId]['sessionId']) ? $participantPings[$this->userId]['sessionId'] : 0,
-				'participants' => $participantList,
-			];
-
-			unset($participantList[$this->userId]);
-			$numOtherParticipants = sizeof($participantList['users']);
-			$numGuestParticipants = sizeof($participants['guests']);
-
-			switch ($room->getType()) {
-				case Room::ONE_TO_ONE_CALL:
-					// As name of the room use the name of the other person participating
-					if ($numOtherParticipants === 1) {
-						// Only one other participant
-						reset($participantList);
-						$roomData['name'] = key($participantList);
-						$roomData['displayName'] = $participantList[$roomData['name']];
-					} else {
-						// Invalid user count, there must be exactly 2 users in each one2one room
-						$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
-							'app' => 'spreed',
-						]);
-						$room->deleteRoom();
-					}
-					break;
-
-				case Room::GROUP_CALL:
-				case Room::PUBLIC_CALL:
-					/// As name of the room use the names of the other participants
-					if ($numOtherParticipants === 0) {
-						$participantList = [$this->l10n->t('You')];
-					}
-
-					if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
-						// Only you
-						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
-					}
-
-					$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
-					break;
-
-				default:
-					// Invalid room type
-					$this->logger->warning('Invalid room type found. Leaving room for everyone', [
-						'app' => 'spreed',
-					]);
-					$room->deleteRoom();
-			}
-
-			$return[] = $roomData;
 		}
 
 		return new JSONResponse($return);
+	}
+
+	/**
+	 * @PublicPage
+	 *
+	 * @param int $roomId
+	 * @return JSONResponse
+	 */
+	public function getRoom($roomId) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			return new JSONResponse($this->formatRoom($room));
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+	}
+
+	/**
+	 * @param Room $room
+	 * @return array
+	 * @throws RoomNotFoundException
+	 */
+	protected function formatRoom(Room $room) {
+		// Sort by lastPing
+		$participants = $room->getParticipants();
+		$sortParticipants = function(array $participant1, array $participant2) {
+			if ($participant1['lastPing'] === $participant2['lastPing']) {
+				return 0;
+			}
+			return ($participant1['lastPing'] > $participant2['lastPing']) ? -1 : 1;
+		};
+		uasort($participants['users'], $sortParticipants);
+		uasort($participants['guests'], $sortParticipants);
+
+		$participantList = [];
+		foreach ($participants['users'] as $participant => $lastPing) {
+			$user = $this->userManager->get($participant);
+			if ($user instanceof IUser) {
+				$participantList[$participant] = $user->getDisplayName();
+			}
+		}
+
+		$roomData = [
+			'id' => $room->getId(),
+			'type' => $room->getType(),
+			'name' => $room->getName(),
+			'displayName' => $room->getName(),
+			'count' => $room->getNumberOfParticipants(time() - 30),
+			'lastPing' => isset($participantPings[$this->userId]['lastPing']) ? $participantPings[$this->userId]['lastPing'] : 0,
+			'sessionId' => isset($participantPings[$this->userId]['sessionId']) ? $participantPings[$this->userId]['sessionId'] : 0,
+			'participants' => $participantList,
+		];
+
+		if ($this->userId !== null) {
+			unset($participantList[$this->userId]);
+			$numOtherParticipants = sizeof($participantList['users']);
+			$numGuestParticipants = sizeof($participants['guests']);
+		} else {
+			$numOtherParticipants = sizeof($participantList['users']);
+			$numGuestParticipants = sizeof($participants['guests']) - 1;
+		}
+
+		switch ($room->getType()) {
+			case Room::ONE_TO_ONE_CALL:
+				// As name of the room use the name of the other person participating
+				if ($numOtherParticipants === 1) {
+					// Only one other participant
+					reset($participantList);
+					$roomData['name'] = key($participantList);
+					$roomData['displayName'] = $participantList[$roomData['name']];
+				} else {
+					// Invalid user count, there must be exactly 2 users in each one2one room
+					$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
+						'app' => 'spreed',
+					]);
+					$room->deleteRoom();
+				}
+				break;
+
+			case Room::GROUP_CALL:
+			case Room::PUBLIC_CALL:
+				/// As name of the room use the names of the other participants
+				if ($this->userId === null) {
+					$participantList[] = $this->l10n->t('You');
+
+					if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+						$participantList[] = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
+					}
+				} else if ($numOtherParticipants === 0) {
+					$participantList = [$this->l10n->t('You')];
+
+					if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+					}
+				} else if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+					$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+				}
+
+				$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
+				break;
+
+			default:
+				// Invalid room type
+				$this->logger->warning('Invalid room type found. Leaving room for everyone', [
+					'app' => 'spreed',
+				]);
+				$room->deleteRoom();
+				throw new RoomNotFoundException();
+		}
+
+		return $roomData;
 	}
 
 	/**
