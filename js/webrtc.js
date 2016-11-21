@@ -117,7 +117,6 @@ var spreedMappingTable = [];
 	});
 		OCA.SpreedMe.webrtc = webrtc;
 
-		var $appContent = $('#app-content');
 		var spreedListofSpeakers = {};
 		var latestSpeakerId = null;
 		OCA.SpreedMe.speakers = {
@@ -153,7 +152,7 @@ var spreedMappingTable = [];
 
 				if(latestSpeakerId === id) {
 					console.log('promote: no need to repromote same speaker');
-					return
+					return;
 				}
 
 				if (latestSpeakerId !== null) {
@@ -223,7 +222,9 @@ var spreedMappingTable = [];
 					}
 
 					// skip non-string ids
-					if (!(typeof currentId === 'string' || currentId instanceof String))  continue;
+					if (!(typeof currentId === 'string' || currentId instanceof String)) {
+						continue;
+					}
 
 					var currentTime = spreedListofSpeakers[currentId];
 					if (currentTime > mostRecentTime && $(OCA.SpreedMe.speakers.getContainerId(currentId.replace('\\', ''))).length > 0) {
@@ -295,7 +296,7 @@ var spreedMappingTable = [];
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
-		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label, data) {
+		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label) {
 			if(label === 'speaking') {
 				OCA.SpreedMe.speakers.add(peer.id);
 			} else if(label === 'stoppedSpeaking') {
