@@ -127,7 +127,7 @@ class ApiController extends Controller {
 	 */
 	public function getRoom($roomId) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomById($roomId);
 			return new JSONResponse($this->formatRoom($room));
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
@@ -460,7 +460,7 @@ class ApiController extends Controller {
 	 */
 	public function ping($roomId) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomById($roomId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}

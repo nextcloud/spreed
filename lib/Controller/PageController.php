@@ -35,6 +35,7 @@ use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\Security\ISecureRandom;
 
 class PageController extends Controller {
 	/** @var string */
@@ -47,6 +48,8 @@ class PageController extends Controller {
 	private $l10n;
 	/** @var Manager */
 	private $manager;
+	/** @var ISecureRandom */
+	private $secureRandom;
 
 	/**
 	 * @param string $appName
@@ -56,6 +59,7 @@ class PageController extends Controller {
 	 * @param IURLGenerator $url
 	 * @param IL10N $l10n
 	 * @param Manager $manager
+	 * @param ISecureRandom $secureRandom
 	 */
 	public function __construct($appName,
 								IRequest $request,
@@ -63,13 +67,15 @@ class PageController extends Controller {
 								IDBConnection $dbConnection,
 								IURLGenerator $url,
 								IL10N $l10n,
-								Manager $manager) {
+								Manager $manager,
+								ISecureRandom $secureRandom) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->dbConnection = $dbConnection;
 		$this->url = $url;
 		$this->l10n = $l10n;
 		$this->manager = $manager;
+		$this->secureRandom = $secureRandom;
 	}
 
 	/**
@@ -128,11 +134,12 @@ class PageController extends Controller {
 			throw new HintException($this->l10n->t('The room does not exist.'));
 		}
 
+		$newSessionId = $this->secureRandom->generate(255);
 		$params = [
-			'sessionId' => 'lukas-fix-rand',
+			'sessionId' => $newSessionId,
 			'roomId' => $roomId,
 		];
-		$response = new TemplateResponse($this->appName, 'index', $params, 'blank');
+		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
