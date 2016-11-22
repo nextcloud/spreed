@@ -1,3 +1,7 @@
+#body-public {
+	height: 100%;
+}
+
 .app-spreed #app-content {
     overflow: hidden;
 }
