@@ -317,6 +317,11 @@ video {
 	opacity: .3;
 }
 
+.bubble,
+#app-navigation .app-navigation-entry-menu {
+    right: 15px;
+}
+
 #app-navigation .app-navigation-entry-menu li {
 	width: auto !important;
 	float: inherit;
