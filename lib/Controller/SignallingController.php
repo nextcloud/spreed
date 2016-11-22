@@ -154,25 +154,49 @@ class SignallingController extends Controller {
 		set_time_limit(0);
 		$eventSource = \OC::$server->createEventSource();
 
-
 		while(true) {
-			$sessionId = $this->session->get('spreed-session');
+			if ($this->userId === null) {
+				$sessionId = $this->session->get('spreed-session');
 
-			if (empty($sessionId)) {
+				if (empty($sessionId)) {
+					// User is not active anywhere
+					$eventSource->send('usersInRoom', []);
+					$currentParticipant = false;
+				} else {
+					$qb = $this->dbConnection->getQueryBuilder();
+					$qb->select('*')
+						->from('spreedme_room_participants')
+						->where($qb->expr()->eq('sessionId', $qb->createNamedParameter($sessionId)))
+						->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string)$this->userId)));
+					$result = $qb->execute();
+					$currentParticipant = $result->fetch();
+					$result->closeCursor();
+				}
+			} else {
+				$qb = $this->dbConnection->getQueryBuilder();
+				$qb->select('*')
+					->from('spreedme_room_participants')
+					->where($qb->expr()->neq('sessionId', $qb->createNamedParameter('0')))
+					->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string)$this->userId)))
+					->orderBy('lastPing', 'DESC')
+					->setMaxResults(1);
+				$result = $qb->execute();
+				$currentParticipant = $result->fetch();
+				$result->closeCursor();
+
+				if ($currentParticipant === false) {
+					$sessionId = null;
+				} else {
+					$sessionId = $currentParticipant['sessionId'];
+				}
+			}
+
+			if ($sessionId === null) {
 				// User is not active anywhere
 				$eventSource->send('usersInRoom', []);
 			} else {
 				// Check if the connection is still active, if not: Kill all existing
 				// messages and end the event source
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->select('*')
-					->from('spreedme_room_participants')
-					->where($qb->expr()->eq('sessionId', $qb->createNamedParameter($sessionId)))
-					->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string) $this->userId)));
-				$result = $qb->execute();
-				$currentParticipant = $result->fetch();
-				$result->closeCursor();
-
 				if ($currentParticipant) {
 					try {
 						$room = $this->manager->getRoomForParticipant($currentParticipant['roomId'], $this->userId);
@@ -186,18 +210,19 @@ class SignallingController extends Controller {
 
 				// Query all messages and send them to the user
 				$qb = $this->dbConnection->getQueryBuilder();
-				$results = $qb->select('*')
+				$qb->select('*')
 					->from('spreedme_messages')
-					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
-					->execute()
-					->fetchAll();
+					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)));
+				$result = $qb->execute();
+				$rows = $result->fetchAll();
+				$result->closeCursor();
 
-				foreach($results as $result) {
+				foreach($rows as $row) {
 					$qb = $this->dbConnection->getQueryBuilder();
 					$qb->delete('spreedme_messages')
-						->where($qb->expr()->eq('id', $qb->createNamedParameter($result['id'])))
-						->execute();
-					$eventSource->send('message', $result['object']);
+						->where($qb->expr()->eq('id', $qb->createNamedParameter($row['id'])));
+					$qb->execute();
+					$eventSource->send('message', $row['object']);
 				}
 			}
 
