@@ -160,7 +160,7 @@
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-contacts-dark').addClass('icon-public');
 				});
-				console.log(OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id')), this.ui.shareInput);
+
 				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
 				this.ui.shareInput.val(url);
 			}
@@ -203,8 +203,10 @@
 		leaveGroup: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
+				var homeURL = OC.generateUrl('/apps/spreed');
+
 				OCA.SpreedMe.webrtc.leaveRoom();
-				window.location.replace(window.location.href.slice(0, -window.location.hash.length));
+				window.location.replace(homeURL);
 			}
 
 			this.$el.slideUp();
