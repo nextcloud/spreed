@@ -170,13 +170,22 @@ class ApiController extends Controller {
 			'participants' => $participantList,
 		];
 
+		$activeGuests = array_filter($participants['guests'], function($data) {
+			return $data['lastPing'] > time() - 30;
+		});
+
+		$numActiveGuests = sizeof($activeGuests);
+		if ($numActiveGuests !== sizeof($participants['guests'])) {
+			$room->cleanGuestParticipants();
+		}
+
 		if ($this->userId !== null) {
 			unset($participantList[$this->userId]);
 			$numOtherParticipants = sizeof($participantList);
-			$numGuestParticipants = sizeof($participants['guests']);
+			$numGuestParticipants = $numActiveGuests;
 		} else {
 			$numOtherParticipants = sizeof($participantList);
-			$numGuestParticipants = sizeof($participants['guests']) - 1;
+			$numGuestParticipants = $numActiveGuests - 1;
 		}
 
 		switch ($room->getType()) {

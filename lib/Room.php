@@ -192,6 +192,15 @@ class Room {
 		$query->execute();
 	}
 
+	public function cleanGuestParticipants() {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('userId', $query->createNamedParameter('')))
+			->andWhere($query->expr()->lte('lastPing', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+	}
+
 	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
