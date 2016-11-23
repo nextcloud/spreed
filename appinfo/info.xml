@@ -13,7 +13,6 @@
 	<default_enable/>
 	<version>1.0.18</version>
 	<dependencies>
-		<owncloud min-version="9.1" max-version="9.1" />
 		<nextcloud min-version="11" max-version="11" />
 	</dependencies>
 	<namespace>Spreed</namespace>
