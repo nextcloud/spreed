@@ -20,6 +20,7 @@
  *
  */
 
+
 (function(OC, OCA, Marionette, Handlebars) {
 	'use strict';
 
@@ -28,29 +29,32 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
-								'<li class="app-navigation-entry-utils-menu-button svg"><button></button></li>'+
+								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
 							'</ul>'+
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
 								'<li>'+
 									'<button class="add-person-button">'+
-										'<span class="icon-add svg"></span>'+
+										'<span class="icon-add"></span>'+
 										'<span>'+t('spreedme', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'<li>'+
-									'<button class="share-group-button">'+
-										'<span class="icon-share svg"></span>'+
-										'<span>'+t('spreedme', 'Share group')+'</span>'+
+									'<button class="share-link-button">'+
+										'<span class="icon-public"></span>'+
+										'<span>'+t('spreedme', 'Share link')+'</span>'+
+										'<span class="icon-delete private-room"></span>'+
 									'</button>'+
+									'<input id="shareInput-{{id}}"class="share-link-input private-room" readonly="readonly" type="text"/>'+
+									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"</div>'+
 								'</li>'+
 								'<li>'+
 									'<button class="leave-group-button">'+
-										'<span class="icon-close svg"></span>'+
+										'<span class="icon-close"></span>'+
 										'<span>'+t('spreedme', 'Leave group')+'</span>'+
 									'</button>'+
 								'</li>'+
@@ -68,6 +72,9 @@
 			},
 			'change:displayName': function() {
 				this.render();
+			},
+			'change:type': function() {
+				this.checkSharingStatus();
 			}
 		},
 		initialize: function() {
@@ -81,13 +88,19 @@
 					this.toggleMenuClass();
 				}
 			});
+
+			this.initClipboard();
 		},
 		onRender: function() {
 			this.initPersonSelector();
+			this.checkSharingStatus();
 
-			if (this.model.get('type') === 2) { // group
-				this.addTooltip();
-			}
+			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
+			this.$el.find('.app-navigation-entry-link').on('click', function(e) {
+				e.preventDefault();
+				var roomId = parseInt($(this).attr('data-roomId'), 10);
+				OCA.SpreedMe.Rooms.join(roomId);
+			});
 
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
@@ -95,14 +108,9 @@
 				this.$el.removeClass('active');
 			}
 
-			if (this.model.get('type') === 1) { // 1on1
-				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).avatar($(a).data('user'), 32);
-				});
-			} else if (this.model.get('type') === 2) { // group
-				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).addClass('icon-contacts-dark');
-				});
+			//If the room is not a one2one room, we show tooltip.
+			if (this.model.get('type') !== 1) {
+				this.addTooltip();
 			}
 
 			this.toggleMenuClass();
@@ -110,11 +118,14 @@
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
-			'click .app-navigation-entry-menu .share-group-button': 'shareGroup',
+			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
+			'click .icon-delete' : 'unshareGroup'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
+			'shareInput': '.share-link-input',
+			'shareButton': '.clipboardButton',
 			'menu': '.app-navigation-entry-menu',
 			'menuList': '.app-navigation-entry-menu-list',
 			'personSelectorForm' : '.oca-spreedme-add-person',
@@ -130,19 +141,72 @@
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
 		},
+		checkSharingStatus: function() {
+			if (this.model.get('type') === 1) { // 1on1
+				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
+
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).avatar($(a).data('user'), 32);
+				});
+			} else if (this.model.get('type') === 2) { // Group
+				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
+
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).removeClass('icon-public').addClass('icon-contacts-dark');
+				});
+			} else if (this.model.get('type') === 3) { // Public room
+				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
+
+				_.each(this.$el.find('.avatar'), function(a) {
+					$(a).removeClass('icon-contacts-dark').addClass('icon-public');
+				});
+
+				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
+				this.ui.shareInput.val(url);
+			}
+		},
 		addPerson: function() {
 			this.ui.menuList.attr('style', 'display: none !important');
 			this.ui.personSelectorForm.toggleClass('hidden');
 			this.ui.personSelectorInput.select2('open');
 		},
 		shareGroup: function() {
-			console.log("share group", this.model.get('id'));
+			var app = OCA.SpreedMe.app;
+
+			// This should be the only case
+			if (this.model.get('type') !== 3) {
+				$.ajax({
+					url: OC.generateUrl('/apps/spreed/api/room/public'),
+					type: 'POST',
+					data: 'roomId='+this.model.get('id'),
+					success: function() {
+						app.syncRooms();
+					}
+				});
+			}
+		},
+		unshareGroup: function() {
+			var app = OCA.SpreedMe.app;
+
+			// This should be the only case
+			if (this.model.get('type') === 3) {
+				$.ajax({
+					url: OC.generateUrl('/apps/spreed/api/room/public'),
+					type: 'DELETE',
+					data: 'roomId='+this.model.get('id'),
+					success: function() {
+						app.syncRooms();
+					}
+				});
+			}
 		},
 		leaveGroup: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
+				var homeURL = OC.generateUrl('/apps/spreed');
+
 				OCA.SpreedMe.webrtc.leaveRoom();
-				window.location.replace(window.location.href.slice(0, -window.location.hash.length));
+				window.location.replace(homeURL);
 			}
 
 			this.$el.slideUp();
@@ -160,6 +224,50 @@
 				trigger: 'hover',
 				html: 'true',
 				title: htmlstring
+			});
+		},
+		initClipboard: function () {
+			this.$el.find('.clipboardButton').tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: t('spreedme', 'Copy')
+			});
+
+			var clipboard = new Clipboard('.clipboardButton');
+			clipboard.on('success', function(e) {
+				var $input = $(e.trigger);
+				$input.tooltip('hide')
+					.attr('data-original-title', t('spreedme', 'Copied!'))
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function() {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreedme', 'Copy'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+			clipboard.on('error', function (e) {
+				var $input = $(e.trigger);
+				var actionMsg = '';
+				if (/iPhone|iPad/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Not supported!');
+				} else if (/Mac/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Press ⌘-C to copy.');
+				} else {
+					actionMsg = t('core', 'Press Ctrl-C to copy.');
+				}
+
+				$input.tooltip('hide')
+					.attr('data-original-title', actionMsg)
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function () {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreedme', 'Copy'))
+						.tooltip('fixTitle');
+				}, 3000);
 			});
 		},
 		initPersonSelector: function() {

@@ -77,7 +77,7 @@
 			<field>
 				<name>userId</name>
 				<type>text</type>
-				<notnull>true</notnull>
+				<notnull>false</notnull>
 				<length>255</length>
 			</field>
 			<field>
@@ -97,20 +97,6 @@
 				<notnull>true</notnull>
 				<length>255</length>
 			</field>
-
-			<index>
-				<name>spreedme_room_participants_userid_roomid</name>
-				<primary>true</primary>
-				<unique>true</unique>
-				<field>
-					<name>userId</name>
-					<sorting>ascending</sorting>
-				</field>
-				<field>
-					<name>roomId</name>
-					<sorting>ascending</sorting>
-				</field>
-			</index>
 		</declaration>
 	</table>
 </database>

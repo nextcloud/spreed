@@ -11,7 +11,7 @@
 	<author>Morris Jobke</author>
 
 	<default_enable/>
-	<version>1.0.18</version>
+	<version>1.0.20</version>
 	<dependencies>
 		<nextcloud min-version="11" max-version="11" />
 	</dependencies>

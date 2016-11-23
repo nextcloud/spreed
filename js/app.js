@@ -26,6 +26,7 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
+	var currentUser = oc_current_user;
 
 	var App = Marionette.Application.extend({
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
@@ -118,7 +119,7 @@
 				});
 			});
 
-			$('#edit-roomname').on("click", function(e) {
+			$('#edit-roomname').on("click", function() {
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
@@ -133,7 +134,7 @@
 				if (e.object.type === "createPublicRoom") {
 					OCA.SpreedMe.Rooms.createPublicVideoCall();
 				}
-	        });
+			});
 
 			$('#edit-roomname').on("select2-loaded", function() {
 				$('body').find('.avatar').each(function () {
@@ -203,21 +204,6 @@
 				}
 			});
 		},
-		_onRegisterHashChange: function() {
-			// If page is opened already with a hash in the URL redirect to plain URL
-			if (window.location.hash !== '') {
-				window.location.replace(window.location.href.slice(0, -window.location.hash.length));
-			}
-
-			// If the hash changes a room gets joined
-			$(window).on('hashchange', function() {
-				var roomId = parseInt(window.location.hash.substring(1), 10);
-				OCA.SpreedMe.Rooms.join(roomId);
-			});
-			if (window.location.hash.substring(1) === '') {
-				OCA.SpreedMe.Rooms.showCamera();
-			}
-		},
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
 				el: '#app-navigation ul',
@@ -242,23 +228,31 @@
 		 * @param {int} roomId
 		 */
 		_setRoomActive: function(roomId) {
-			this._rooms.forEach(function(room) {
-				room.set('active', room.get('id') === roomId);
-			});
+			if (currentUser) {
+				this._rooms.forEach(function(room) {
+					room.set('active', room.get('id') === roomId);
+				});
+			}
 		},
 		syncRooms: function() {
-			this._rooms.fetch();
+			if (currentUser) {
+				this._rooms.fetch();
+			}
 		},
 		syncAndSetActiveRoom: function(roomId) {
-			this._rooms.fetch({
-				success: function() {
-					roomChannel.trigger('active', roomId);
-				}
-			});
+			if (currentUser) {
+				this._rooms.fetch({
+					success: function() {
+						roomChannel.trigger('active', roomId);
+					}
+				});
+			}
 		},
 		initialize: function() {
-			this._rooms = new OCA.SpreedMe.Models.RoomCollection();
-			this.listenTo(roomChannel, 'active', this._setRoomActive);
+			if (currentUser) {
+				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
+				this.listenTo(roomChannel, 'active', this._setRoomActive);
+			}
 
 			$(document).on('click', this.onDocumentClick);
 		},
@@ -267,20 +261,31 @@
 			var self = this;
 
 			OCA.SpreedMe.initWebRTC();
-			OCA.SpreedMe.initRooms();
-			OCA.SpreedMe.Rooms.leaveAllRooms();
+
+			if (currentUser) {
+				OCA.SpreedMe.initRooms();
+				OCA.SpreedMe.Rooms.leaveAllRooms();
+			}
+
 			this._registerPageEvents();
-			this._onRegisterHashChange();
+			var roomId = parseInt($('#app').attr('data-roomId'), 10);
+			if (roomId) {
+				OCA.SpreedMe.Rooms.join(roomId);
+			}
+			OCA.SpreedMe.Rooms.showCamera();
 
-			this._showRoomList();
-			this._rooms.fetch({
-				success: function() {
-					$('#app-navigation').removeClass('icon-loading');
-					self._roomsView.render();
-				}
-			});
+			if (currentUser) {
+				this._showRoomList();
+				this._rooms.fetch({
+					success: function() {
+						$('#app-navigation').removeClass('icon-loading');
+						self._roomsView.render();
+					}
+				});
 
-			this._pollForRoomChanges();
+				this._pollForRoomChanges();
+			}
+
 			this._startPing();
 
 			// disable by default and enable once we get a stream from the webcam

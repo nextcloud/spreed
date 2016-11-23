@@ -16,6 +16,7 @@ globals:
   Backbone: false
   _: false
   oc_current_user: false
+  Clipboard: false
 
 rules:
   curly: error

@@ -23,38 +23,45 @@
 			$('.videoView').removeClass('hidden');
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
+			var self = this;
 			console.log(recipientUserId);
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/oneToOne'),
 				type: 'PUT',
 				data: 'targetUserName='+recipientUserId,
 				success: function(data) {
-					window.location.href = "#" + data.roomId;
+					self.join(data.roomId);
 				}
 			});
 		},
 		createGroupVideoCall: function(groupId) {
+			var self = this;
 			console.log(groupId);
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/group'),
 				type: 'PUT',
 				data: 'targetGroupName='+groupId,
 				success: function(data) {
-					window.location.href = "#" + data.roomId;
+					self.join(data.roomId);
 				}
 			});
 		},
 		createPublicVideoCall: function() {
+			var self = this;
 			console.log("Creating a new public room.");
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/public'),
 				type: 'PUT',
 				success: function(data) {
-					window.location.href = "#" + data.roomId;
+					self.join(data.roomId);
 				}
 			});
 		},
 		join: function(roomId) {
+			if (OCA.SpreedMe.Rooms.currentRoom() === roomId) {
+				return;
+			}
+
 			$('#emptycontent').hide();
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
@@ -62,6 +69,9 @@
 			OCA.SpreedMe.webrtc.leaveRoom();
 
 			currentRoomId = roomId;
+			OC.Util.History.pushState({
+				roomId: roomId
+			});
 			OCA.SpreedMe.webrtc.joinRoom(roomId);
 			OCA.SpreedMe.Rooms.ping();
 		},
