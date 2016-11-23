@@ -119,7 +119,7 @@
 				});
 			});
 
-			$('#edit-roomname').on("click", function(e) {
+			$('#edit-roomname').on("click", function() {
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {

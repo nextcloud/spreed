@@ -47,12 +47,13 @@
 			});
 		},
 		createPublicVideoCall: function() {
+			var self = this;
 			console.log("Creating a new public room.");
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/public'),
 				type: 'PUT',
 				success: function(data) {
-					window.location.href = "#" + data.roomId;
+					self.join(data.roomId);
 				}
 			});
 		},
