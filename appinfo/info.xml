@@ -4,11 +4,15 @@
 	<name>Spreed video calls</name>
 	<description>Voice over IP conferencing using WebRTC</description>
 	<licence>AGPLv3+</licence>
-	<author>Lukas Reschke, Jan-Christoph Borchardt, Morris Jobke</author>
+
+	<author>Ivan Sein</author>
+	<author>Jan-Christoph Borchardt</author>
+	<author>Lukas Reschke</author>
+	<author>Morris Jobke</author>
+
 	<default_enable/>
 	<version>1.0.18</version>
 	<dependencies>
-		<owncloud min-version="9.1" max-version="9.1" />
 		<nextcloud min-version="11" max-version="11" />
 	</dependencies>
 	<namespace>Spreed</namespace>
