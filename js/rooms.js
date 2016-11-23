@@ -44,6 +44,16 @@
 				}
 			});
 		},
+		createPublicVideoCall: function() {
+			console.log("Creating a new public room.");
+			$.ajax({
+				url: OC.generateUrl('/apps/spreed/api/public'),
+				type: 'PUT',
+				success: function(data) {
+					window.location.href = "#" + data.roomId;
+				}
+			});
+		},
 		join: function(roomId) {
 			$('#emptycontent').hide();
 			$('.videoView').addClass('hidden');

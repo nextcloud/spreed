@@ -284,11 +284,11 @@ class ApiController extends Controller {
 	 *
 	 * @return JSONResponse
 	 */
-	public function createEmptyRoom() {
+	public function createPublicRoom() {
 		$currentUser = $this->userManager->get($this->userId);
 
 		// Create the room
-		$room = $this->manager->createRoom(Room::GROUP_CALL, $this->secureRandom->generate(12));
+		$room = $this->manager->createRoom(Room::PUBLIC_CALL, $this->secureRandom->generate(12));
 		$room->addUser($currentUser);
 
 		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);

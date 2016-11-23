@@ -56,6 +56,10 @@
 						}
 
 						var results = [];
+
+						//Add custom entry to create a new empty room
+						results.push({ id: "create-public-room", displayName: t('spreed', 'Create a new public room'), type: "createPublicRoom"});
+
 						$.each(response.ocs.data.exact.users, function(id, user) {
 							if (oc_current_user === user.value.shareWith) {
 								return;
@@ -86,12 +90,17 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
+					if (element.type === "createPublicRoom") {
+						return '<span><div class="avatar icon-add"></div>' + escapeHTML(element.displayName) + '</span>';
+					}
+
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
 				},
 				formatSelection: function () {
 					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
 				}
 			});
+
 			$('#edit-roomname').on("change", function(e) {
 				if (e.added.type === "user") {
 					OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
@@ -108,7 +117,8 @@
 					}
 				});
 			});
-			$('#edit-roomname').on("click", function() {
+
+			$('#edit-roomname').on("click", function(e) {
 				$('body').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
@@ -118,6 +128,12 @@
 					}
 				});
 			});
+
+			$('#edit-roomname').on("select2-selecting", function(e) {
+				if (e.object.type === "createPublicRoom") {
+					OCA.SpreedMe.Rooms.createPublicVideoCall();
+				}
+	        });
 
 			$('#edit-roomname').on("select2-loaded", function() {
 				$('body').find('.avatar').each(function () {

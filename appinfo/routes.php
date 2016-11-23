@@ -102,8 +102,8 @@ return [
 			'verb' => 'PUT',
 		],
 		[
-			'name' => 'api#createEmptyRoom',
-			'url' => '/api/new',
+			'name' => 'api#createPublicRoom',
+			'url' => '/api/public',
 			'verb' => 'PUT',
 		],
 	],

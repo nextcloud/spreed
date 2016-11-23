@@ -154,7 +154,7 @@ class Manager {
 	 * @throws \BadMethodCallException
 	 */
 	public function createRoom($type, $name) {
-		if (!in_array($type, [Room::ONE_TO_ONE_CALL, Room::GROUP_CALL])) {
+		if (!in_array($type, [Room::ONE_TO_ONE_CALL, Room::GROUP_CALL, Room::PUBLIC_CALL])) {
 			throw new \BadMethodCallException('Invalid room type');
 		}
 
