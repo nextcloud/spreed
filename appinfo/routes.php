@@ -92,13 +92,18 @@ return [
 			'verb' => 'POST',
 		],
 		[
-			'name' => 'api#createOneToOneVideoCallRoom',
+			'name' => 'api#createOneToOneRoom',
 			'url' => '/api/oneToOne',
 			'verb' => 'PUT',
 		],
 		[
-			'name' => 'api#createGroupVideoCallRoom',
+			'name' => 'api#createGroupRoom',
 			'url' => '/api/group',
+			'verb' => 'PUT',
+		],
+		[
+			'name' => 'api#createPublicRoom',
+			'url' => '/api/public',
 			'verb' => 'PUT',
 		],
 	],

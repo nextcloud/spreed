@@ -219,7 +219,7 @@ class ApiController extends Controller {
 	 * @param string $targetUserName
 	 * @return JSONResponse
 	 */
-	public function createOneToOneVideoCallRoom($targetUserName) {
+	public function createOneToOneRoom($targetUserName) {
 		// Get the user
 		$targetUser = $this->userManager->get($targetUserName);
 		$currentUser = $this->userManager->get($this->userId);
@@ -256,7 +256,7 @@ class ApiController extends Controller {
 	 * @param string $targetGroupName
 	 * @return JSONResponse
 	 */
-	public function createGroupVideoCallRoom($targetGroupName) {
+	public function createGroupRoom($targetGroupName) {
 		$targetGroup = $this->groupManager->get($targetGroupName);
 		$currentUser = $this->userManager->get($this->userId);
 
@@ -275,6 +275,21 @@ class ApiController extends Controller {
 		foreach ($usersInGroup as $user) {
 			$room->addUser($user);
 		}
+
+		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @return JSONResponse
+	 */
+	public function createPublicRoom() {
+		$currentUser = $this->userManager->get($this->userId);
+
+		// Create the room
+		$room = $this->manager->createRoom(Room::PUBLIC_CALL, $this->secureRandom->generate(12));
+		$room->addUser($currentUser);
 
 		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 	}
