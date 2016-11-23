@@ -134,7 +134,7 @@
 				if (e.object.type === "createPublicRoom") {
 					OCA.SpreedMe.Rooms.createPublicVideoCall();
 				}
-	        });
+			});
 
 			$('#edit-roomname').on("select2-loaded", function() {
 				$('body').find('.avatar').each(function () {

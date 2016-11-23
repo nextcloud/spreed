@@ -111,7 +111,7 @@
 			//If the room is not a one2one room, we show tooltip.
 			if (this.model.get('type') !== 1) {
 				this.addTooltip();
-			};
+			}
 
 			this.toggleMenuClass();
 		},
@@ -179,8 +179,7 @@
 					url: OC.generateUrl('/apps/spreed/api/room/public'),
 					type: 'POST',
 					data: 'roomId='+this.model.get('id'),
-					success: function(data) {
-						console.log('is Public!');
+					success: function() {
 						app.syncRooms();
 					}
 				});
@@ -195,8 +194,7 @@
 					url: OC.generateUrl('/apps/spreed/api/room/public'),
 					type: 'DELETE',
 					data: 'roomId='+this.model.get('id'),
-					success: function(data) {
-						console.log('is Private!');
+					success: function() {
 						app.syncRooms();
 					}
 				});
