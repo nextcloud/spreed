@@ -83,19 +83,22 @@ class Notifier implements INotifier {
 		if ($notification->getSubject() === 'invitation') {
 			$parameters = $notification->getSubjectParameters();
 			$uid = $parameters[0];
-			$notification
-				->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
-				->setLink($this->url->linkToRouteAbsolute('spreed.page.index') . '#' . $notification->getObjectId());
+
+			if (method_exists($notification, 'setIcon')) {
+				$notification->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')));
+			}
+			$notification->setLink($this->url->linkToRouteAbsolute('spreed.page.index') . '?roomId=' . $notification->getObjectId());
 
 			if ($notification->getObjectType() === 'room') {
 				$user = $this->userManager->get($uid);
 				if ($user instanceof IUser) {
 					if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-						$notification
-							->setParsedSubject(
-								$l->t('%s invited you to a private call', [$user->getDisplayName()])
-							)
-							->setRichSubject(
+						$notification->setParsedSubject(
+							$l->t('%s invited you to a private call', [$user->getDisplayName()])
+						);
+
+						if (method_exists($notification, 'setRichSubject')) {
+							$notification->setRichSubject(
 								$l->t('{user} invited you to a private call'), [
 									'user' => [
 										'type' => 'user',
@@ -103,14 +106,15 @@ class Notifier implements INotifier {
 										'name' => $user->getDisplayName(),
 									]
 								]
-							)
-						;
+							);
+						}
 					} else if ($room->getType() === Room::GROUP_CALL) {
-						$notification
-							->setParsedSubject(
-								$l->t('%s invited you to a group call', [$user->getDisplayName()])
-							)
-							->setRichSubject(
+						$notification->setParsedSubject(
+							$l->t('%s invited you to a group call', [$user->getDisplayName()])
+						);
+
+						if (method_exists($notification, 'setRichSubject')) {
+							$notification->setRichSubject(
 								$l->t('{user} invited you to a group call'), [
 									'user' => [
 										'type' => 'user',
@@ -118,8 +122,8 @@ class Notifier implements INotifier {
 										'name' => $user->getDisplayName(),
 									]
 								]
-							)
-						;
+							);
+						}
 					}
 				} else {
 					throw new \InvalidArgumentException('Calling user does not exist anymore');
