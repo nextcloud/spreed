@@ -59,7 +59,7 @@
 						var results = [];
 
 						//Add custom entry to create a new empty room
-						results.push({ id: "create-public-room", displayName: t('spreed', 'Create a new public room'), type: "createPublicRoom"});
+						results.push({ id: "create-public-room", displayName: t('spreed', 'New shared call'), type: "createPublicRoom"});
 
 						$.each(response.ocs.data.exact.users, function(id, user) {
 							if (oc_current_user === user.value.shareWith) {
