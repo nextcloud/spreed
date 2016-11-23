@@ -55,7 +55,7 @@
 								'<li>'+
 									'<button class="leave-group-button">'+
 										'<span class="icon-close"></span>'+
-										'<span>'+t('spreedme', 'Leave group')+'</span>'+
+										'<span>'+t('spreedme', 'Leave call')+'</span>'+
 									'</button>'+
 								'</li>'+
 							'</ul>'+
