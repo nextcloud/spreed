@@ -105,7 +105,8 @@ class Notifier implements INotifier {
 								]
 							)
 						;
-					} else if ($room->getType() === Room::GROUP_CALL) {
+					} else if ($room->getType() === Room::GROUP_CALL ||
+						$room->getType() === Room::PUBLIC_CALL) {
 						$notification
 							->setParsedSubject(
 								$l->t('%s invited you to a group call', [$user->getDisplayName()])
@@ -120,6 +121,8 @@ class Notifier implements INotifier {
 								]
 							)
 						;
+					} else {
+						throw new \InvalidArgumentException('Unknown room type');
 					}
 				} else {
 					throw new \InvalidArgumentException('Calling user does not exist anymore');
