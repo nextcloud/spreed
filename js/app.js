@@ -25,8 +25,8 @@
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
-	var roomChannel = Backbone.Radio.channel('rooms'),
-	    currentUser = oc_current_user;
+	var roomChannel = Backbone.Radio.channel('rooms');
+	var currentUser = oc_current_user;
 
 	var App = Marionette.Application.extend({
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
