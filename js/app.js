@@ -35,6 +35,7 @@
 		_roomsView: null,
 		/** @property {boolean} _videoWasEnabledAtLeastOnce  */
 		_videoWasEnabledAtLeastOnce: false,
+		_searchTerm: '',
 		_registerPageEvents: function() {
 			$('#edit-roomname').select2({
 				ajax: {
@@ -42,6 +43,7 @@
 					dataType: 'json',
 					quietMillis: 100,
 					data: function (term) {
+						OCA.SpreedMe.app._searchTerm = term;
 						return {
 							format: 'json',
 							search: term,
@@ -57,9 +59,6 @@
 						}
 
 						var results = [];
-
-						//Add custom entry to create a new empty room
-						results.push({ id: "create-public-room", displayName: t('spreed', 'New shared call'), type: "createPublicRoom"});
 
 						$.each(response.ocs.data.exact.users, function(id, user) {
 							if (oc_current_user === user.value.shareWith) {
@@ -79,6 +78,13 @@
 						$.each(response.ocs.data.groups, function(id, group) {
 							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
 						});
+
+						//Add custom entry to create a new empty room
+						if (OCA.SpreedMe.app._searchTerm === '') {
+							results.unshift({ id: "create-public-room", displayName: t('spreed', 'New shared call'), type: "createPublicRoom"});
+						} else {
+							results.push({ id: "create-public-room", displayName: t('spreed', 'New shared call'), type: "createPublicRoom"});
+						}
 
 						return {
 							results: results,
