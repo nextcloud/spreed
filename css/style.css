@@ -31,12 +31,6 @@
 #select2-drop {
 	margin-top: -44px !important;
 }
-
-.select2-search input {
-	width: 100%;
-	box-sizing: border-box;
-}
-
 #oca-spreedme-add-room .select2-container,
 .oca-spreedme-add-person .select2-container {
 	width: 100%;
@@ -44,16 +38,24 @@
 	border: none;
 	padding: 9px;
 }
+#oca-spreedme-add-room .select2-container .select2-choice,
+.oca-spreedme-add-person .select2-container .select2-choice {
+    border: none;
+}
 #oca-spreedme-add-room .select2-arrow,
 .oca-spreedme-add-person .select2-arrow {
 	display: none !important;
 }
-.select2-search input {
-	padding: 13px 12px !important;
+#select2-drop .select2-search input {
+	padding: 13px 12px 13px 43px !important;
 	width: 100%;
 	box-sizing: border-box;
 	margin: 0;
+	border: none;
 	background-image: none !important;
+}
+#select2-drop .select2-results .select2-result {
+	padding: 0;
 }
 
 #app-navigation .avatar,
