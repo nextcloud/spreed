@@ -100,6 +100,14 @@
     padding: 16px;
 }
 
+.icon-delete.public-room {
+    background-size: 16px;
+    position: absolute;
+    right: 0;
+    bottom: 34px;
+    padding: 16px;
+}
+
 
 #videos {
 	position: absolute;
