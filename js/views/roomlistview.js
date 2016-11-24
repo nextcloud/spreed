@@ -47,10 +47,10 @@
 									'<button class="share-link-button">'+
 										'<span class="icon-public"></span>'+
 										'<span>'+t('spreedme', 'Share link')+'</span>'+
-										'<span class="icon-delete private-room"></span>'+
 									'</button>'+
 									'<input id="shareInput-{{id}}"class="share-link-input private-room" readonly="readonly" type="text"/>'+
-									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"</div>'+
+									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
+									'<div class="icon-delete private-room"></div>'+
 								'</li>'+
 								'<li>'+
 									'<button class="leave-group-button">'+
