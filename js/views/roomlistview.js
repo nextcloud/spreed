@@ -96,14 +96,10 @@
 			this.checkSharingStatus();
 
 			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
-			this.$el.find('.app-navigation-entry-link').on('click', function(e) {
-				e.preventDefault();
-				var roomId = parseInt($(this).attr('data-roomId'), 10);
-				OCA.SpreedMe.Rooms.join(roomId);
-			});
 
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
+				this.addRoomMessage();
 			} else {
 				this.$el.removeClass('active');
 			}
@@ -120,7 +116,8 @@
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
-			'click .icon-delete' : 'unshareGroup'
+			'click .icon-delete': 'unshareGroup',
+			'click .app-navigation-entry-link': 'joinRoom'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
@@ -164,6 +161,10 @@
 				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
 				this.ui.shareInput.val(url);
 			}
+
+			if (this.model.get('active')) {
+				this.addRoomMessage();
+			};
 		},
 		addPerson: function() {
 			this.ui.menuList.attr('style', 'display: none !important');
@@ -215,6 +216,69 @@
 				url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
 				type: 'DELETE'
 			});
+		},
+		joinRoom: function(e) {
+			e.preventDefault();
+			var roomId = parseInt(this.ui.room.attr('data-roomId'), 10);
+			OCA.SpreedMe.Rooms.join(roomId);
+		},
+		addRoomMessage: function() {
+			var message, messageAdditional;
+
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById("emptyContentIcon")
+			emptyContentIcon.removeAttribute("class");
+			emptyContentIcon.innerHTML = "";
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			switch(this.model.get('type')) {
+				case 1:
+					var participants, waitingParticipant;
+
+					participants = this.model.get('participants');
+
+					$.each(participants, function(participantId, participantName) {
+						if (oc_current_user !== participantId) {
+							waitingParticipant = participantName;
+						}
+					});
+
+					// Avatar for username
+					var avatar = document.createElement('div');
+					avatar.className = 'avatar room-avatar';
+
+					$('#emptyContentIcon').append(avatar);
+
+					$('#emptyContentIcon').find('.avatar').each(function () {
+						$(this).avatar(waitingParticipant, 128);
+					});
+
+					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipant});
+					messageAdditional = '';
+					break;
+				case 2:
+					message = t('spreed', 'Waiting for others to join the room …');
+					messageAdditional = '';
+					$('#emptyContentIcon').addClass('icon-contacts-dark');
+					break;
+				case 3:
+					message = t('spreed', 'Waiting for others to join the room …');
+					messageAdditional = 'Share this link with your friends!';
+					$('#emptyContentIcon').addClass('icon-public');
+
+					//Add link
+					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
+					$('#shareRoomInput').val(url);
+					$('#shareRoomInput').removeClass('hidden');
+					$('#shareRoomClipboardButton').removeClass('hidden');
+					break;
+				default:
+					break;
+			}
+
+			$('#emptycontent h2').text(message);
+			$('#emptycontent p').text(messageAdditional);
 		},
 		addTooltip: function () {
 			var htmlstring = this.model.get('displayName').replace(/\, /g, '<br>');
@@ -348,7 +412,7 @@
 						newParticipant: e.val
 					}
 				);
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -358,7 +422,7 @@
 				});
 			});
 			this.ui.personSelectorInput.on('click', function() {
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -369,7 +433,7 @@
 			});
 
 			this.ui.personSelectorInput.on('select2-loaded', function() {
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));

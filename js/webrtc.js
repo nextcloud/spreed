@@ -273,7 +273,15 @@ var spreedMappingTable = [];
 				message = t('spreed', 'Error while accessing microphone & camera');
 				messageAdditional = error.message || error.name;
 			}
-			$('#emptycontent .icon-video').removeClass('icon-video').addClass('icon-video-off');
+
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById("emptyContentIcon")
+			emptyContentIcon.removeAttribute("class");
+			emptyContentIcon.innerHTML = "";
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			$('#emptyContentIcon').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
 		});
@@ -285,7 +293,14 @@ var spreedMappingTable = [];
 			message = t('spreed', 'WebRTC is not supported in your browser :-/');
 			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 
-			$('#emptycontent .icon-video').removeClass('icon-video').addClass('icon-video-off');
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById("emptyContentIcon")
+			emptyContentIcon.removeAttribute("class");
+			emptyContentIcon.innerHTML = "";
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			$('#emptyContentIcon').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
 		}
