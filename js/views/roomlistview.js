@@ -29,7 +29,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
 								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
@@ -88,22 +88,16 @@
 					this.toggleMenuClass();
 				}
 			});
-
-			this.initClipboard();
 		},
 		onRender: function() {
 			this.initPersonSelector();
 			this.checkSharingStatus();
 
 			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
-			this.$el.find('.app-navigation-entry-link').on('click', function(e) {
-				e.preventDefault();
-				var roomId = parseInt($(this).attr('data-roomId'), 10);
-				OCA.SpreedMe.Rooms.join(roomId);
-			});
 
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
+				this.addRoomMessage();
 			} else {
 				this.$el.removeClass('active');
 			}
@@ -114,13 +108,15 @@
 			}
 
 			this.toggleMenuClass();
+			this.initClipboard();
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
-			'click .icon-delete' : 'unshareGroup'
+			'click .icon-delete': 'unshareGroup',
+			'click .app-navigation-entry-link': 'joinRoom'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
@@ -146,7 +142,11 @@
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).avatar($(a).data('user'), 32);
+					if ($(a).data('user-display-name')) {
+						$(a).avatar($(a).data('user'), 32, undefined, false, undefined, $(a).data('user-display-name'));
+					} else {
+						$(a).avatar($(a).data('user'), 32);
+					}
 				});
 			} else if (this.model.get('type') === 2) { // Group
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
@@ -163,6 +163,11 @@
 
 				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
 				this.ui.shareInput.val(url);
+				this.initClipboard();
+			}
+
+			if (this.model.get('active')) {
+				this.addRoomMessage();
 			}
 		},
 		addPerson: function() {
@@ -215,6 +220,83 @@
 				url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
 				type: 'DELETE'
 			});
+		},
+		joinRoom: function(e) {
+			e.preventDefault();
+			var roomId = parseInt(this.ui.room.attr('data-roomId'), 10);
+			OCA.SpreedMe.Rooms.join(roomId);
+		},
+		addRoomMessage: function() {
+			var message, messageAdditional, participants;
+
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById("emptyContentIcon");
+			emptyContentIcon.removeAttribute("class");
+			emptyContentIcon.innerHTML = "";
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			participants = this.model.get('participants');
+
+			switch(this.model.get('type')) {
+				case 1:
+					var waitingParticipantId, waitingParticipantName;
+
+					$.each(participants, function(participantId, participantName) {
+						if (oc_current_user !== participantId) {
+							waitingParticipantId = participantId;
+							waitingParticipantName = participantName;
+						}
+					});
+
+					// Avatar for username
+					var avatar = document.createElement('div');
+					avatar.className = 'avatar room-avatar';
+
+					$('#emptyContentIcon').append(avatar);
+
+					$('#emptyContentIcon').find('.avatar').each(function () {
+						if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
+							$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
+						} else {
+							$(this).avatar(waitingParticipantId, 128);
+						}
+					});
+
+					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
+					messageAdditional = '';
+					break;
+				case 2:
+					if (Object.keys(participants).length > 1) {
+						message = t('spreed', 'Waiting for others to join the room …');
+						messageAdditional = '';
+					} else {
+						message = t('spreed', 'No other participants in this call! :(');
+						messageAdditional = 'You can invite other participants to this call by clicking "+ Add person" in the call menu.';
+					}
+					$('#emptyContentIcon').addClass('icon-contacts-dark');
+					break;
+				case 3:
+					if (Object.keys(participants).length > 1) {
+						message = t('spreed', 'Waiting for others to join the room …');
+					} else {
+						message = t('spreed', 'No other participants in this call! :(');
+					}
+					messageAdditional = 'Share this link with your friends!';
+					$('#emptyContentIcon').addClass('icon-public');
+
+					//Add link
+					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
+					$('#shareRoomInput').val(url);
+					$('#shareRoomInput').removeClass('hidden');
+					$('#shareRoomClipboardButton').removeClass('hidden');
+					break;
+				default:
+					break;
+			}
+
+			$('#emptycontent h2').text(message);
+			$('#emptycontent p').text(messageAdditional);
 		},
 		addTooltip: function () {
 			var htmlstring = this.model.get('displayName').replace(/\, /g, '<br>');
@@ -348,7 +430,7 @@
 						newParticipant: e.val
 					}
 				);
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -358,7 +440,7 @@
 				});
 			});
 			this.ui.personSelectorInput.on('click', function() {
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -369,7 +451,7 @@
 			});
 
 			this.ui.personSelectorInput.on('select2-loaded', function() {
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));

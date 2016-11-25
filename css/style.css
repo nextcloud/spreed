@@ -184,6 +184,29 @@ video {
 	display: none;
 }
 
+#emptycontent {
+	position: absolute;
+	z-index: 40;
+}
+
+#emptyContentIcon {
+	width: 128px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+
+#shareRoomInput {
+	width: 400px;
+}
+
+#shareRoomClipboardButton {
+	background-size: 23px !important;
+	height: 32px !important;
+	width: 32px !important;
+	margin: 4px auto !important;
+	opacity: 0.8 !important;
+}
+
 .participants-1 #emptycontent {
 	display: block !important;
 }

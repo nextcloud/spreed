@@ -115,7 +115,7 @@
 					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
 				}
 
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -126,7 +126,7 @@
 			});
 
 			$('#edit-roomname').on("click", function() {
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -143,7 +143,7 @@
 			});
 
 			$('#edit-roomname').on("select2-loaded", function() {
-				$('body').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -274,6 +274,7 @@
 			}
 
 			this._registerPageEvents();
+			this.initShareRoomClipboard();
 			var roomId = parseInt($('#app').attr('data-roomId'), 10);
 			if (roomId) {
 				OCA.SpreedMe.Rooms.join(roomId);
@@ -332,6 +333,50 @@
 			avatarContainer.show();
 
 			localVideo.hide();
+		},
+		initShareRoomClipboard: function () {
+			$('body').find('.shareRoomClipboard').tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: t('spreedme', 'Copy')
+			});
+
+			var clipboard = new Clipboard('.shareRoomClipboard');
+			clipboard.on('success', function(e) {
+				var $input = $(e.trigger);
+				$input.tooltip('hide')
+					.attr('data-original-title', t('spreedme', 'Copied!'))
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function() {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreedme', 'Copy'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+			clipboard.on('error', function (e) {
+				var $input = $(e.trigger);
+				var actionMsg = '';
+				if (/iPhone|iPad/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Not supported!');
+				} else if (/Mac/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Press ⌘-C to copy.');
+				} else {
+					actionMsg = t('core', 'Press Ctrl-C to copy.');
+				}
+
+				$input.tooltip('hide')
+					.attr('data-original-title', actionMsg)
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function () {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreedme', 'Copy'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
 		}
 	});
 
