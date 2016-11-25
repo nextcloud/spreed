@@ -3,14 +3,16 @@
 	<id>spreed</id>
 	<name>Spreed video calls</name>
 	<description>Voice over IP conferencing using WebRTC</description>
-	<licence>AGPLv3+</licence>
+	<licence>AGPL</licence>
 
 	<author>Ivan Sein</author>
 	<author>Jan-Christoph Borchardt</author>
 	<author>Lukas Reschke</author>
 	<author>Morris Jobke</author>
 
-	<default_enable/>
+	<category>multimedia</category>
+	<category>social</category>
+
 	<version>1.0.21</version>
 	<dependencies>
 		<nextcloud min-version="11" max-version="11" />
