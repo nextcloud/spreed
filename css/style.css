@@ -246,6 +246,7 @@ video {
 .participants-2 .videoView {
 	position: absolute;
 	width: 33%;
+	min-width: 200px;
 	right: 0;
 	bottom: 0;
 	top: initial;
