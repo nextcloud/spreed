@@ -106,8 +106,9 @@
     background-size: 16px;
     position: absolute;
     right: 0;
-    bottom: 34px;
+    top: 0;
     padding: 16px;
+	opacity: .5;
 }
 
 
