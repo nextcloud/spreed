@@ -88,8 +88,6 @@
 					this.toggleMenuClass();
 				}
 			});
-
-			this.initClipboard();
 		},
 		onRender: function() {
 			this.initPersonSelector();
@@ -110,6 +108,7 @@
 			}
 
 			this.toggleMenuClass();
+			this.initClipboard();
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
@@ -164,6 +163,7 @@
 
 				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
 				this.ui.shareInput.val(url);
+				this.initClipboard();
 			}
 
 			if (this.model.get('active')) {
