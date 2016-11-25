@@ -303,15 +303,9 @@ class ApiController extends Controller {
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, $this->secureRandom->generate(12));
 			$room->addUser($currentUser);
-			$room->addUser($targetUser);
 
-			$notification = $this->notificationManager->createNotification();
-			$notification->setApp('spreed')
-				->setUser($targetUser->getUID())
-				->setDateTime(new \DateTime())
-				->setObject('room', $room->getId())
-				->setSubject('invitation', [$this->userId]);
-			$this->notificationManager->notify($notification);
+			$room->addUser($targetUser);
+			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
 		}
@@ -343,6 +337,10 @@ class ApiController extends Controller {
 		$room = $this->manager->createRoom(Room::GROUP_CALL, $targetGroup->getGID());
 		foreach ($usersInGroup as $user) {
 			$room->addUser($user);
+
+			if ($currentUser->getUID() !== $user->getUID()) {
+				$this->createNotification($currentUser, $user, $room);
+			}
 		}
 
 		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
@@ -382,6 +380,7 @@ class ApiController extends Controller {
 			return new JSONResponse([]);
 		}
 
+		$currentUser = $this->userManager->get($this->userId);
 		$newUser = $this->userManager->get($newParticipant);
 		if (!$newUser instanceof IUser) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
@@ -390,11 +389,16 @@ class ApiController extends Controller {
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			// In case a user is added to a one2one call, we change the call to a group call
 			$room->changeType(Room::GROUP_CALL);
+
 			$room->addUser($newUser);
+			$this->createNotification($currentUser, $newUser, $room);
+
 			return new JSONResponse(['type' => $room->getType()]);
 		}
 
 		$room->addUser($newUser);
+		$this->createNotification($currentUser, $newUser, $room);
+
 		return new JSONResponse([]);
 	}
 
@@ -530,5 +534,20 @@ class ApiController extends Controller {
 		return new JSONResponse([
 			'sessionId' => $newSessionId,
 		]);
+	}
+
+	/**
+	 * @param IUser $actor
+	 * @param IUser $user
+	 * @param Room $room
+	 */
+	protected function createNotification(IUser $actor, IUser $user, Room $room) {
+		$notification = $this->notificationManager->createNotification();
+		$notification->setApp('spreed')
+			->setUser($user->getUID())
+			->setDateTime(new \DateTime())
+			->setObject('room', $room->getId())
+			->setSubject('invitation', [$actor->getUID()]);
+		$this->notificationManager->notify($notification);
 	}
 }
