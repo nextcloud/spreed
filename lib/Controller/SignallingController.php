@@ -134,7 +134,8 @@ class SignallingController extends Controller {
 						$protocols = explode(",", $turnSettings['protocols']);
 						foreach ($protocols as $proto) {
 							array_push($response, [
-								'url' => 'turn:' . $turnSettings['server'] . '?transport=' . $proto,
+								'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+								'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
 								'username' => $turnSettings['username'],
 								'credential' => $turnSettings['password'],
 							]);
