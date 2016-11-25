@@ -244,7 +244,7 @@
 
 					$.each(participants, function(participantId, participantName) {
 						if (oc_current_user !== participantId) {
-							waitingParticipantId = participantId
+							waitingParticipantId = participantId;
 							waitingParticipantName = participantName;
 						}
 					});
