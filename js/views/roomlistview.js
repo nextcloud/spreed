@@ -29,7 +29,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
 								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
@@ -143,7 +143,11 @@
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).avatar($(a).data('user'), 32);
+					if ($(a).data('user-display-name')) {
+						$(a).avatar($(a).data('user'), 32, undefined, false, undefined, $(a).data('user-display-name'));
+					} else {
+						$(a).avatar($(a).data('user'), 32);
+					}
 				});
 			} else if (this.model.get('type') === 2) { // Group
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
@@ -223,7 +227,7 @@
 			OCA.SpreedMe.Rooms.join(roomId);
 		},
 		addRoomMessage: function() {
-			var message, messageAdditional;
+			var message, messageAdditional, participants;
 
 			//Remove previous icon, avatar or link from emptycontent
 			var emptyContentIcon = document.getElementById("emptyContentIcon");
@@ -232,15 +236,16 @@
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
+			participants = this.model.get('participants');
+
 			switch(this.model.get('type')) {
 				case 1:
-					var participants, waitingParticipant;
-
-					participants = this.model.get('participants');
+					var waitingParticipantId, waitingParticipantName;
 
 					$.each(participants, function(participantId, participantName) {
 						if (oc_current_user !== participantId) {
-							waitingParticipant = participantName;
+							waitingParticipantId = participantId
+							waitingParticipantName = participantName;
 						}
 					});
 
@@ -251,19 +256,32 @@
 					$('#emptyContentIcon').append(avatar);
 
 					$('#emptyContentIcon').find('.avatar').each(function () {
-						$(this).avatar(waitingParticipant, 128);
+						if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
+							$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
+						} else {
+							$(this).avatar(waitingParticipantId, 128);
+						}
 					});
 
-					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipant});
+					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
 					messageAdditional = '';
 					break;
 				case 2:
-					message = t('spreed', 'Waiting for others to join the room …');
-					messageAdditional = '';
+					if (Object.keys(participants).length > 1) {
+						message = t('spreed', 'Waiting for others to join the room …');
+						messageAdditional = '';
+					} else {
+						message = t('spreed', 'No other participants in this call! :(');
+						messageAdditional = 'You can invite other participants to this call by clicking "+ Add person" in the call menu.';
+					}
 					$('#emptyContentIcon').addClass('icon-contacts-dark');
 					break;
 				case 3:
-					message = t('spreed', 'Waiting for others to join the room …');
+					if (Object.keys(participants).length > 1) {
+						message = t('spreed', 'Waiting for others to join the room …');
+					} else {
+						message = t('spreed', 'No other participants in this call! :(');
+					}
 					messageAdditional = 'Share this link with your friends!';
 					$('#emptyContentIcon').addClass('icon-public');
 
