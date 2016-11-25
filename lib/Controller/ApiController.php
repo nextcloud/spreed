@@ -479,16 +479,8 @@ class ApiController extends Controller {
 		}
 
 		$sessionId = $this->session->get('spreed-session');
-
-		if ($this->userId !== null) {
-			$notification = $this->notificationManager->createNotification();
-			$notification->setApp('spreed')
-				->setUser($this->userId)
-				->setObject('room', (string) $roomId);
-			$this->notificationManager->markProcessed($notification);
-		}
-
 		$room->ping($this->userId, $sessionId, time());
+
 		return new JSONResponse();
 	}
 

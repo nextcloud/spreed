@@ -29,12 +29,12 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
-use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
 
 class PageController extends Controller {
@@ -50,6 +50,8 @@ class PageController extends Controller {
 	private $manager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IManager */
+	private $notificationManager;
 
 	/**
 	 * @param string $appName
@@ -60,6 +62,7 @@ class PageController extends Controller {
 	 * @param IL10N $l10n
 	 * @param Manager $manager
 	 * @param ISecureRandom $secureRandom
+	 * @param IManager $notificationManager
 	 */
 	public function __construct($appName,
 								IRequest $request,
@@ -68,7 +71,8 @@ class PageController extends Controller {
 								IURLGenerator $url,
 								IL10N $l10n,
 								Manager $manager,
-								ISecureRandom $secureRandom) {
+								ISecureRandom $secureRandom,
+								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->dbConnection = $dbConnection;
@@ -76,6 +80,7 @@ class PageController extends Controller {
 		$this->l10n = $l10n;
 		$this->manager = $manager;
 		$this->secureRandom = $secureRandom;
+		$this->notificationManager = $notificationManager;
 	}
 
 	/**
@@ -104,6 +109,14 @@ class PageController extends Controller {
 					// Room not found, redirect to main page
 					$roomId = 0;
 				}
+			}
+
+			if ($this->userId !== null) {
+				$notification = $this->notificationManager->createNotification();
+				$notification->setApp('spreed')
+					->setUser($this->userId)
+					->setObject('room', (string) $roomId);
+				$this->notificationManager->markProcessed($notification);
 			}
 		}
 
