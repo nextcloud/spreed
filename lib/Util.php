@@ -74,7 +74,7 @@ class Util {
 		$turnServer = $config->getAppValue('spreed', 'turn_server', '');
 		$turnServerSecret = $config->getAppValue('spreed', 'turn_server_secret', '');
 		$turnServerProtocols = $config->getAppValue('spreed', 'turn_server_protocols', '');
-		$sessionId = $session->get('spreed-session');
+		$username = base64_encode(random_bytes(20));
 
 		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '' || empty($session)) {
 			return array();
@@ -83,13 +83,13 @@ class Util {
 		$time = $timeFactory->getTime();
 
 		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then
-		$string = sprintf('%d:%s', $time + 86400, $sessionId);
+		$string = sprintf('%d:%s', $time + 86400, $username);
 		$hashedString = hash_hmac('sha1', $string, $turnServerSecret, true);
 		$password = base64_encode($hashedString);
 
 		return array(
 			'server' => $turnServer,
-			'username' => $sessionId,
+			'username' => $username,
 			'password' => $password,
 			'protocols' => $turnServerProtocols,
 		);
