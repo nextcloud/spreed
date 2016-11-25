@@ -164,7 +164,7 @@
 
 			if (this.model.get('active')) {
 				this.addRoomMessage();
-			};
+			}
 		},
 		addPerson: function() {
 			this.ui.menuList.attr('style', 'display: none !important');
@@ -226,7 +226,7 @@
 			var message, messageAdditional;
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById("emptyContentIcon")
+			var emptyContentIcon = document.getElementById("emptyContentIcon");
 			emptyContentIcon.removeAttribute("class");
 			emptyContentIcon.innerHTML = "";
 			$('#shareRoomInput').addClass('hidden');
