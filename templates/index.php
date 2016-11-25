@@ -67,8 +67,10 @@ script(
 			<div id="emptyContentIcon" class="icon-video"></div>
 			<h2><?php p($l->t('Looking great today! :)')) ?></h2>
 			<p class="uploadmessage"><?php p($l->t('Time to call your friends')) ?></p>
-			<input id="shareRoomInput" class="share-room-input hidden" readonly="readonly" type="text"/>
-			<div id="shareRoomClipboardButton" class="shareRoomClipboard icon-clippy hidden" data-clipboard-target="#shareRoomInput"></div>
+			<div id="shareRoomContainer" class="" style="display: inline-flex">
+				<input id="shareRoomInput" class="share-room-input hidden" readonly="readonly" type="text"/>
+				<div id="shareRoomClipboardButton" class="shareRoomClipboard icon-clippy hidden" data-clipboard-target="#shareRoomInput"></div>
+			</div>
 		</div>
 	</div>
 </div>

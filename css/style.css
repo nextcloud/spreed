@@ -184,6 +184,11 @@ video {
 	display: none;
 }
 
+#emptycontent {
+	position: absolute;
+	z-index: 40;
+}
+
 #emptyContentIcon {
 	width: 128px;
 	margin: 0 auto;
