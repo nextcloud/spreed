@@ -128,7 +128,7 @@ class SignallingController extends Controller {
 					$response = [];
 					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
 					if(empty($turnSettings)) {
-						$turnSettings = Util::generateTurnSettings($this->config, $this->session, $this->timeFactory);
+						$turnSettings = Util::generateTurnSettings($this->config, $this->timeFactory);
 					}
 					if (!empty($turnSettings)) {
 						$protocols = explode(",", $turnSettings['protocols']);
