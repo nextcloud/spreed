@@ -415,3 +415,8 @@ video {
 		opacity: 1;
 	}
 }
+
+/* make blue header bar transparent in shared room */
+#body-public #app-content:not(.participants-1) #header.spreed-public {
+	background: transparent;
+}

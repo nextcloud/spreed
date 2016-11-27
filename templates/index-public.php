@@ -27,6 +27,22 @@ script(
 <div id="app" data-roomId="<?php p($_['roomId']) ?>">
 	<div id="app-content" class="participants-1">
 
+		<header>
+			<div id="header" class="spreed-public">
+				<a href="<?php print_unescaped(link_to('', 'index.php')); ?>"
+					 title="" id="nextcloud">
+					<div class="logo-icon svg">
+					</div>
+				</a>
+
+				<div class="header-appname-container">
+					<h1 class="header-appname">
+						<?php p($theme->getName()); ?>
+					</h1>
+				</div>
+			</div>
+		</header>
+
 		<div id="video-speaking">
 
 		</div>
