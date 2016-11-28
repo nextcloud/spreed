@@ -47,12 +47,6 @@ class UtilTest extends TestCase {
 	}
 
 	public function testGenerateTurnSettings() {
-		$session = $this->createMock(ISession::class);
-		$session
-			->expects($this->once())
-			->method('get')
-			->with('spreed-session')
-			->willReturn('thisisalongsessionid');
 		$config = $this->createMock(IConfig::class);
 		$config
 			->expects($this->at(0))
@@ -77,12 +71,9 @@ class UtilTest extends TestCase {
 
 		$this->assertSame(array(
 			'server' => 'turn.example.org',
-			'username' => 'thisisalongsessionid',
-			'password' => '4rx+b/38p1nKK9vf6YAqXObKSco=',
+			'username' => '1479829425',
+			'password' => 'ZY8fZQxAw/24gT0XYnMlcepUFlI=',
 			'protocols' => 'udp,tcp',
-		), $this->util->generateTurnSettings($config, $session, $time));
-
-		// command to calculate this by manually
-		// echo -n "$(($(date +"%s")+3600)):USERNAME" | openssl dgst -sha1 -hmac "SECRET" -binary | base64
+		), $this->util->generateTurnSettings($config, $time));
 	}
 }

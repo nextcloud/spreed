@@ -128,13 +128,14 @@ class SignallingController extends Controller {
 					$response = [];
 					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
 					if(empty($turnSettings)) {
-						$turnSettings = Util::generateTurnSettings($this->config, $this->session, $this->timeFactory);
+						$turnSettings = Util::generateTurnSettings($this->config, $this->timeFactory);
 					}
 					if (!empty($turnSettings)) {
 						$protocols = explode(",", $turnSettings['protocols']);
 						foreach ($protocols as $proto) {
 							array_push($response, [
-								'url' => 'turn:' . $turnSettings['server'] . '?transport=' . $proto,
+								'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+								'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
 								'username' => $turnSettings['username'],
 								'credential' => $turnSettings['password'],
 							]);

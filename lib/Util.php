@@ -65,31 +65,27 @@ class Util {
 	 * Generates a username and password for the TURN server based on the
 	 *
 	 * @param IConfig $config
-	 * @param ISession $session
 	 * @param ITimeFactory $timeFactory
 	 * @return array
 	 */
-    public static function generateTurnSettings(IConfig $config, ISession $session, ITimeFactory $timeFactory) {
+    public static function generateTurnSettings(IConfig $config, ITimeFactory $timeFactory) {
 		// generate from shared secret
 		$turnServer = $config->getAppValue('spreed', 'turn_server', '');
 		$turnServerSecret = $config->getAppValue('spreed', 'turn_server_secret', '');
 		$turnServerProtocols = $config->getAppValue('spreed', 'turn_server_protocols', '');
-		$sessionId = $session->get('spreed-session');
 
-		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '' || empty($session)) {
+		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '') {
 			return array();
 		}
 
-		$time = $timeFactory->getTime();
-
 		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then
-		$string = sprintf('%d:%s', $time + 86400, $sessionId);
-		$hashedString = hash_hmac('sha1', $string, $turnServerSecret, true);
+		$username = $timeFactory->getTime() + 86400;
+		$hashedString = hash_hmac('sha1', $username, $turnServerSecret, true);
 		$password = base64_encode($hashedString);
 
 		return array(
 			'server' => $turnServer,
-			'username' => $sessionId,
+			'username' => (string)$username,
 			'password' => $password,
 			'protocols' => $turnServerProtocols,
 		);
