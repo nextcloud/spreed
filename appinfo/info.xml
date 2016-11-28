@@ -13,7 +13,7 @@
 	<category>multimedia</category>
 	<category>social</category>
 
-	<version>1.0.21</version>
+	<version>1.0.22</version>
 	<dependencies>
 		<nextcloud min-version="11" max-version="11" />
 	</dependencies>
