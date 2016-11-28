@@ -1,4 +1,4 @@
-# Spreed.me App
+# Spreed App
 
 This is a video- and audio-conferencing app for Nextcloud
 
