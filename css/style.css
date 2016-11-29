@@ -279,7 +279,6 @@ video {
 .videoView .nameIndicator {
 	width: 100%;
 	padding: 0;
-	right: 0;
 }
 /* ellipsize name in 1on1 calls */
 .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
