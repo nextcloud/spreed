@@ -106,8 +106,9 @@
     background-size: 16px;
     position: absolute;
     right: 0;
-    bottom: 34px;
+    top: 0;
     padding: 16px;
+	opacity: .5;
 }
 
 
@@ -195,16 +196,24 @@ video {
 	padding-bottom: 20px;
 }
 
-#shareRoomInput {
-	width: 400px;
-}
 
+#shareRoomContainer {
+	position: relative;
+}
+#shareRoomInput {
+	width: 250px;
+	padding-right: 32px;
+	text-overflow: ellipsis;
+}
 #shareRoomClipboardButton {
-	background-size: 23px !important;
-	height: 32px !important;
-	width: 32px !important;
-	margin: 4px auto !important;
-	opacity: 0.8 !important;
+	position: absolute;
+	right: 0;
+	padding: 18px;
+	background-size: 16px !important;
+	height: 16px !important;
+	width: 16px !important;
+	margin: 0 !important;
+	opacity: .8 !important;
 }
 
 .participants-1 #emptycontent {
@@ -238,6 +247,7 @@ video {
 .participants-2 .videoView {
 	position: absolute;
 	width: 33%;
+	min-width: 200px;
 	right: 0;
 	bottom: 0;
 	top: initial;
