@@ -40,13 +40,13 @@
 								'<li>'+
 									'<button class="add-person-button">'+
 										'<span class="icon-add"></span>'+
-										'<span>'+t('spreedme', 'Add person')+'</span>'+
+										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'<li>'+
 									'<button class="share-link-button">'+
 										'<span class="icon-public"></span>'+
-										'<span>'+t('spreedme', 'Share link')+'</span>'+
+										'<span>'+t('spreed', 'Share link')+'</span>'+
 									'</button>'+
 									'<input id="shareInput-{{id}}" class="share-link-input private-room" readonly="readonly" type="text"/>'+
 									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
@@ -55,7 +55,7 @@
 								'<li>'+
 									'<button class="leave-group-button">'+
 										'<span class="icon-close"></span>'+
-										'<span>'+t('spreedme', 'Leave call')+'</span>'+
+										'<span>'+t('spreed', 'Leave call')+'</span>'+
 									'</button>'+
 								'</li>'+
 							'</ul>'+
@@ -103,7 +103,7 @@
 			this.$el.find('.clipboardButton').tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreedme', 'Copy')
+				title: t('spreed', 'Copy')
 			});
 			this.initClipboard();
 
@@ -321,13 +321,13 @@
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
-					.attr('data-original-title', t('spreedme', 'Copied!'))
+					.attr('data-original-title', t('spreed', 'Copied!'))
 					.tooltip('fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreedme', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
@@ -335,11 +335,11 @@
 				var $input = $(e.trigger);
 				var actionMsg = '';
 				if (/iPhone|iPad/i.test(navigator.userAgent)) {
-					actionMsg = t('spreedme', 'Not supported!');
+					actionMsg = t('spreed', 'Not supported!');
 				} else if (/Mac/i.test(navigator.userAgent)) {
-					actionMsg = t('spreedme', 'Press ⌘-C to copy.');
+					actionMsg = t('spreed', 'Press ⌘-C to copy.');
 				} else {
-					actionMsg = t('spreedme', 'Press Ctrl-C to copy.');
+					actionMsg = t('spreed', 'Press Ctrl-C to copy.');
 				}
 
 				$input.tooltip('hide')
@@ -349,7 +349,7 @@
 					.tooltip('show');
 				_.delay(function () {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreedme', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
