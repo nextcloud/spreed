@@ -289,7 +289,6 @@
 					url: OC.generateUrl('/apps/spreed/api/room/') + roomId,
 					type: 'GET',
 					success: function(data) {
-						console.log("data", data);
 						self.showPublicRoomMessage(data.participants);
 					}
 				});
