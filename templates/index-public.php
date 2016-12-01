@@ -64,8 +64,8 @@ script(
 
 
 		<div id="emptycontent">
-			<div id="displayavatar"><div class="avatardiv"></div></div>
-			<h2><?php p($l->t('Waiting for %s to join the call', [$_['shareOwner']])) ?></h2>
+			<div id="emptyContentIcon" class="icon-video"></div>
+			<h2><?php p($l->t('Looking great today! :)')) ?></h2>
 			<p class="uploadmessage"><?php p($l->t('Smile in 3… 2… 1!')) ?></p>
 		</div>
 	</div>

@@ -277,13 +277,64 @@
 			}
 		},
 		syncAndSetActiveRoom: function(roomId) {
+			var self = this;
 			if (oc_current_user) {
 				this._rooms.fetch({
 					success: function() {
 						roomChannel.trigger('active', roomId);
 					}
 				});
+			} else {
+				$.ajax({
+					url: OC.generateUrl('/apps/spreed/api/room/') + roomId,
+					type: 'GET',
+					success: function(data) {
+						console.log("data", data);
+						self.showPublicRoomMessage(data.participants);
+					}
+				});
 			}
+		},
+		showPublicRoomMessage: function(participants) {
+			var message, messageAdditional;
+
+			//Remove previous icon or avatar
+			var emptyContentIcon = document.getElementById("emptyContentIcon");
+			emptyContentIcon.removeAttribute("class");
+			emptyContentIcon.innerHTML = "";
+
+			if (Object.keys(participants).length == 1) {
+				var waitingParticipantId, waitingParticipantName;
+
+				$.each(participants, function(participantId, participantName) {
+					waitingParticipantId = participantId;
+					waitingParticipantName = participantName;
+				});
+
+				// Avatar for username
+				var avatar = document.createElement('div');
+				avatar.className = 'avatar room-avatar';
+
+				$('#emptyContentIcon').append(avatar);
+
+				$('#emptyContentIcon').find('.avatar').each(function () {
+					if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
+						$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
+					} else {
+						$(this).avatar(waitingParticipantId, 128);
+					}
+				});
+
+				message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
+				messageAdditional = '';
+			} else {
+				message = t('spreed', 'Waiting for others to join the room …');
+				messageAdditional = '';
+				$('#emptyContentIcon').addClass('icon-contacts-dark');
+			}
+
+			$('#emptycontent h2').text(message);
+			$('#emptycontent p').text(messageAdditional);
 		},
 		initialize: function() {
 			if (oc_current_user) {
