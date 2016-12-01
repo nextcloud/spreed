@@ -338,20 +338,20 @@
 			$('body').find('.shareRoomClipboard').tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreedme', 'Copy')
+				title: t('spreed', 'Copy')
 			});
 
 			var clipboard = new Clipboard('.shareRoomClipboard');
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
-					.attr('data-original-title', t('spreedme', 'Copied!'))
+					.attr('data-original-title', t('spreed', 'Copied!'))
 					.tooltip('fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreedme', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
@@ -373,7 +373,7 @@
 					.tooltip('show');
 				_.delay(function () {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreedme', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});

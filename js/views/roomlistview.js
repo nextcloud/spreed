@@ -40,22 +40,22 @@
 								'<li>'+
 									'<button class="add-person-button">'+
 										'<span class="icon-add"></span>'+
-										'<span>'+t('spreedme', 'Add person')+'</span>'+
+										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'<li>'+
 									'<button class="share-link-button">'+
 										'<span class="icon-public"></span>'+
-										'<span>'+t('spreedme', 'Share link')+'</span>'+
+										'<span>'+t('spreed', 'Share link')+'</span>'+
 									'</button>'+
-									'<input id="shareInput-{{id}}"class="share-link-input private-room" readonly="readonly" type="text"/>'+
+									'<input id="shareInput-{{id}}" class="share-link-input private-room" readonly="readonly" type="text"/>'+
 									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
 									'<div class="icon-delete private-room"></div>'+
 								'</li>'+
 								'<li>'+
 									'<button class="leave-group-button">'+
 										'<span class="icon-close"></span>'+
-										'<span>'+t('spreedme', 'Leave call')+'</span>'+
+										'<span>'+t('spreed', 'Leave call')+'</span>'+
 									'</button>'+
 								'</li>'+
 							'</ul>'+
@@ -90,10 +90,24 @@
 			});
 		},
 		onRender: function() {
+			var roomURL, completeURL;
+
 			this.initPersonSelector();
 			this.checkSharingStatus();
 
-			this.$el.find('.app-navigation-entry-link').attr('href', OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id'));
+			roomURL = OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id');
+			completeURL = window.location.protocol + '//' + window.location.host + roomURL;
+
+			this.ui.shareLinkInput.attr('value', completeURL);
+			this.$el.find('.clipboardButton').attr('data-clipboard-text', completeURL);
+			this.$el.find('.clipboardButton').tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: t('spreed', 'Copy')
+			});
+			this.initClipboard();
+
+			this.$el.find('.app-navigation-entry-link').attr('href', roomURL);
 
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
@@ -108,7 +122,6 @@
 			}
 
 			this.toggleMenuClass();
-			this.initClipboard();
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
@@ -120,9 +133,8 @@
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
-			'shareInput': '.share-link-input',
-			'shareButton': '.clipboardButton',
 			'menu': '.app-navigation-entry-menu',
+			'shareLinkInput': '.share-link-input',
 			'menuList': '.app-navigation-entry-menu-list',
 			'personSelectorForm' : '.oca-spreedme-add-person',
 			'personSelectorInput': '.add-person-input'
@@ -160,10 +172,6 @@
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-contacts-dark').addClass('icon-public');
 				});
-
-				var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
-				this.ui.shareInput.val(url);
-				this.initClipboard();
 			}
 
 			if (this.model.get('active')) {
@@ -309,23 +317,17 @@
 			});
 		},
 		initClipboard: function () {
-			this.$el.find('.clipboardButton').tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: t('spreedme', 'Copy')
-			});
-
 			var clipboard = new Clipboard('.clipboardButton');
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
-					.attr('data-original-title', t('spreedme', 'Copied!'))
+					.attr('data-original-title', t('spreed', 'Copied!'))
 					.tooltip('fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreedme', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
@@ -333,11 +335,11 @@
 				var $input = $(e.trigger);
 				var actionMsg = '';
 				if (/iPhone|iPad/i.test(navigator.userAgent)) {
-					actionMsg = t('core', 'Not supported!');
+					actionMsg = t('spreed', 'Not supported!');
 				} else if (/Mac/i.test(navigator.userAgent)) {
-					actionMsg = t('core', 'Press ⌘-C to copy.');
+					actionMsg = t('spreed', 'Press ⌘-C to copy.');
 				} else {
-					actionMsg = t('core', 'Press Ctrl-C to copy.');
+					actionMsg = t('spreed', 'Press Ctrl-C to copy.');
 				}
 
 				$input.tooltip('hide')
@@ -347,7 +349,7 @@
 					.tooltip('show');
 				_.delay(function () {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreedme', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
