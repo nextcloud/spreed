@@ -303,7 +303,7 @@
 			emptyContentIcon.removeAttribute("class");
 			emptyContentIcon.innerHTML = "";
 
-			if (Object.keys(participants).length == 1) {
+			if (Object.keys(participants).length === 1) {
 				var waitingParticipantId, waitingParticipantName;
 
 				$.each(participants, function(participantId, participantName) {
@@ -325,10 +325,10 @@
 					}
 				});
 
-				message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
+				message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
 				messageAdditional = '';
 			} else {
-				message = t('spreed', 'Waiting for others to join the room …');
+				message = t('spreed', 'Waiting for others to join the call …');
 				messageAdditional = '';
 				$('#emptyContentIcon').addClass('icon-contacts-dark');
 			}

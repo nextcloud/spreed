@@ -271,12 +271,12 @@
 						}
 					});
 
-					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
+					message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
 					messageAdditional = '';
 					break;
 				case 2:
 					if (Object.keys(participants).length > 1) {
-						message = t('spreed', 'Waiting for others to join the room …');
+						message = t('spreed', 'Waiting for others to join the call …');
 						messageAdditional = '';
 					} else {
 						message = t('spreed', 'No other participants in this call');
@@ -286,7 +286,7 @@
 					break;
 				case 3:
 					if (Object.keys(participants).length > 1) {
-						message = t('spreed', 'Waiting for others to join the room …');
+						message = t('spreed', 'Waiting for others to join the call …');
 					} else {
 						message = t('spreed', 'No other participants in this call');
 					}
