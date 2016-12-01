@@ -334,7 +334,11 @@ var spreedMappingTable = [];
 				// Indicator for username
 				var userIndicator = document.createElement('div');
 				userIndicator.className = 'nameIndicator';
-				userIndicator.textContent = peer.nick;
+				if (peer.nick) {
+					userIndicator.textContent = peer.nick;
+				} else {
+					userIndicator.textContent = t('spreed', 'Guest');
+				}
 
 				// Avatar for username
 				var avatar = document.createElement('div');
