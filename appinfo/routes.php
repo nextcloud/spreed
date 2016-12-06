@@ -88,6 +88,11 @@ return [
 			'verb' => 'POST',
 		],
 		[
+			'name' => 'api#leave',
+			'url' => '/api/leave',
+			'verb' => 'DELETE',
+		],
+		[
 			'name' => 'AppSettings#setSpreedSettings',
 			'url' => '/settings/admin',
 			'verb' => 'POST',
