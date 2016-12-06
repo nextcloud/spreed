@@ -193,6 +193,16 @@ class Manager {
 	}
 
 	/**
+	 * @param string $sessionId
+	 */
+	public function removeSessionFromAllRooms($sessionId) {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('spreedme_room_participants')
+			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)));
+		$query->execute();
+	}
+
+	/**
 	 * @param string $userId
 	 * @return string[]
 	 */

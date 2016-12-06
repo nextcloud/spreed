@@ -97,8 +97,8 @@
 		},
 		leaveAllRooms: function() {
 			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: 0}),
-				method: 'POST',
+				url: OC.generateUrl('/apps/spreed/api/leave'),
+				method: 'DELETE',
 				async: false
 			});
 		},
