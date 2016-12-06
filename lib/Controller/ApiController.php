@@ -507,22 +507,18 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		// Set the session ID for the new room ID
-		$newSessionId = $this->secureRandom->generate(255);
-		$this->session->set('spreed-session', $newSessionId);
-
 		if ($this->userId !== null) {
 			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-
-			$room->enterRoomAsUser($this->userId, $newSessionId);
+			$newSessionId = $room->enterRoomAsUser($this->userId);
 
 			if (!empty($sessionIds)) {
 				$this->manager->deleteMessagesForSessionIds($sessionIds);
 			}
 		} else {
-			$room->enterRoomAsGuest($newSessionId);
+			$newSessionId = $room->enterRoomAsGuest();
 		}
 
+		$this->session->set('spreed-session', $newSessionId);
 		$room->ping($this->userId, $newSessionId, time());
 
 		return new JSONResponse([

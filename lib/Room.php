@@ -28,6 +28,7 @@ namespace OCA\Spreed;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Security\ISecureRandom;
 
 class Room {
 	const ONE_TO_ONE_CALL = 1;
@@ -36,6 +37,8 @@ class Room {
 
 	/** @var IDBConnection */
 	private $db;
+	/** @var ISecureRandom */
+	private $secureRandom;
 
 	/** @var int */
 	private $id;
@@ -48,12 +51,14 @@ class Room {
 	 * Room constructor.
 	 *
 	 * @param IDBConnection $db
+	 * @param ISecureRandom $secureRandom
 	 * @param int $id
 	 * @param int $type
 	 * @param string $name
 	 */
-	public function __construct(IDBConnection $db, $id, $type, $name) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, $id, $type, $name) {
 		$this->db = $db;
+		$this->secureRandom = $secureRandom;
 		$this->id = $id;
 		$this->type = $type;
 		$this->name = $name;
@@ -103,7 +108,7 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($newType, [Room::GROUP_CALL, Room::PUBLIC_CALL])) {
+		if (!in_array($newType, [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			return false;
 		}
 
@@ -159,37 +164,66 @@ class Room {
 
 	/**
 	 * @param string $userId
-	 * @param string $sessionId
+	 * @return string
 	 */
-	public function enterRoomAsUser($userId, $sessionId) {
+	public function enterRoomAsUser($userId) {
 		$query = $this->db->getQueryBuilder();
-
 		$query->update('spreedme_room_participants')
-			->set('sessionId', $query->createNamedParameter($sessionId))
+			->set('sessionId', $query->createParameter('sessionId'))
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
+
+		$sessionId = $this->secureRandom->generate(255);
+		$query->setParameter('sessionId', $sessionId);
 		$query->execute();
 
+		while (!$this->isSessionUnique($sessionId)) {
+			$sessionId = $this->secureRandom->generate(255);
+			$query->setParameter('sessionId', $sessionId);
+			$query->execute();
+		}
+
+		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_room_participants')
 			->set('sessionId', $query->createNamedParameter('0'))
 			->where($query->expr()->neq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
 		$query->execute();
+
+		return $sessionId;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function enterRoomAsGuest() {
+		$sessionId = $this->secureRandom->generate(255);
+		while (!$this->db->insertIfNotExist('*PREFIX*spreedme_room_participants', [
+			'userId' => '',
+			'roomId' => $this->getId(),
+			'lastPing' => 0,
+			'sessionId' => $sessionId,
+		], ['sessionId'])) {
+			$sessionId = $this->secureRandom->generate(255);
+		}
+
+		return $sessionId;
 	}
 
 	/**
 	 * @param string $sessionId
+	 * @return bool
 	 */
-	public function enterRoomAsGuest($sessionId) {
+	protected function isSessionUnique($sessionId) {
 		$query = $this->db->getQueryBuilder();
-		$query->insert('spreedme_room_participants')
-			->values([
-				'userId' => $query->createNamedParameter(''),
-				'roomId' => $query->createNamedParameter($this->getId()),
-				'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
-				'sessionId' => $query->createNamedParameter($sessionId),
-			]);
-		$query->execute();
+		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_sessions')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)));
+		$result = $query->execute();
+		$numSessions = (int) $result->fetchColumn();
+		$result->closeCursor();
+
+		return $numSessions === 1;
 	}
 
 	public function cleanGuestParticipants() {

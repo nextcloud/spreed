@@ -25,19 +25,24 @@ namespace OCA\Spreed;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use OCP\Security\ISecureRandom;
 
 class Manager {
 
 	/** @var IDBConnection */
 	private $db;
+	/** @var ISecureRandom */
+	private $secureRandom;
 
 	/**
 	 * Manager constructor.
 	 *
 	 * @param IDBConnection $db
+	 * @param ISecureRandom $secureRandom
 	 */
-	public function __construct(IDBConnection $db) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom) {
 		$this->db = $db;
+		$this->secureRandom = $secureRandom;
 	}
 
 	/**
@@ -57,7 +62,7 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
-			$rooms[] = new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+			$rooms[] = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
 		}
 		$result->closeCursor();
 
@@ -92,7 +97,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		$room = new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
 
 		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
 			throw new RoomNotFoundException();
@@ -120,7 +125,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
 	}
 
 	/**
@@ -153,7 +158,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, (int) $row['id'], (int) $row['type'], $row['name']);
+		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
 	}
 
 	/**
@@ -178,7 +183,7 @@ class Manager {
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 
-		return new Room($this->db, $roomId, $type, $name);
+		return new Room($this->db, $this->secureRandom, $roomId, $type, $name);
 	}
 
 	/**
