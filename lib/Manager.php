@@ -167,9 +167,13 @@ class Manager {
 	 * @return Room
 	 * @throws \BadMethodCallException
 	 */
-	public function createRoom($type, $name) {
+	public function createRoom($type, $name = '') {
 		if (!in_array($type, [Room::ONE_TO_ONE_CALL, Room::GROUP_CALL, Room::PUBLIC_CALL])) {
 			throw new \BadMethodCallException('Invalid room type');
+		}
+
+		if ($name === '') {
+			$name = $this->secureRandom->generate(12);
 		}
 
 		$query = $this->db->getQueryBuilder();

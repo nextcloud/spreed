@@ -40,7 +40,6 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Notification\IManager;
-use OCP\Security\ISecureRandom;
 
 class ApiController extends Controller {
 	/** @var string */
@@ -51,8 +50,6 @@ class ApiController extends Controller {
 	private $userManager;
 	/** @var IGroupManager */
 	private $groupManager;
-	/** @var ISecureRandom */
-	private $secureRandom;
 	/** @var ISession */
 	private $session;
 	/** @var ILogger */
@@ -69,7 +66,6 @@ class ApiController extends Controller {
 	 * @param IL10N $l10n
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
-	 * @param ISecureRandom $secureRandom
 	 * @param ISession $session
 	 * @param ILogger $logger
 	 * @param Manager $manager
@@ -81,7 +77,6 @@ class ApiController extends Controller {
 								IL10N $l10n,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
-								ISecureRandom $secureRandom,
 								ISession $session,
 								ILogger $logger,
 								Manager $manager,
@@ -91,7 +86,6 @@ class ApiController extends Controller {
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
-		$this->secureRandom = $secureRandom;
 		$this->session = $session;
 		$this->logger = $logger;
 		$this->manager = $manager;
@@ -301,7 +295,7 @@ class ApiController extends Controller {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
 			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
-			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, $this->secureRandom->generate(12));
+			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL);
 			$room->addUser($currentUser);
 
 			$room->addUser($targetUser);
@@ -355,7 +349,7 @@ class ApiController extends Controller {
 		$currentUser = $this->userManager->get($this->userId);
 
 		// Create the room
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL, $this->secureRandom->generate(12));
+		$room = $this->manager->createRoom(Room::PUBLIC_CALL);
 		$room->addUser($currentUser);
 
 		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
