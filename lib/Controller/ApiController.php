@@ -523,6 +523,8 @@ class ApiController extends Controller {
 			$room->enterRoomAsGuest($newSessionId);
 		}
 
+		$room->ping($this->userId, $newSessionId, time());
+
 		return new JSONResponse([
 			'sessionId' => $newSessionId,
 		]);
