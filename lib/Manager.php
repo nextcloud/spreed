@@ -162,16 +162,33 @@ class Manager {
 	}
 
 	/**
+	 * @return Room
+	 */
+	public function createOne2OneRoom() {
+		return $this->createRoom(Room::ONE_TO_ONE_CALL);
+	}
+
+	/**
+	 * @param string $name
+	 * @return Room
+	 */
+	public function createGroupRoom($name = '') {
+		return $this->createRoom(Room::GROUP_CALL, $name);
+	}
+
+	/**
+	 * @return Room
+	 */
+	public function createPublicRoom() {
+		return $this->createRoom(Room::PUBLIC_CALL);
+	}
+
+	/**
 	 * @param int $type
 	 * @param string $name
 	 * @return Room
-	 * @throws \BadMethodCallException
 	 */
-	public function createRoom($type, $name = '') {
-		if (!in_array($type, [Room::ONE_TO_ONE_CALL, Room::GROUP_CALL, Room::PUBLIC_CALL])) {
-			throw new \BadMethodCallException('Invalid room type');
-		}
-
+	private function createRoom($type, $name = '') {
 		if ($name === '') {
 			$name = $this->secureRandom->generate(12);
 		}
