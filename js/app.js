@@ -209,6 +209,33 @@
 					}
 				}
 			});
+
+			$("#guestName").on('click', function() {
+				$('#guestName').addClass('hidden');
+				$("#guestNameInput").removeClass('hidden');
+				$("#guestNameInput").focus();
+			});
+
+			$("#guestNameInput").keyup(function (e) {
+				var hide = false;
+
+				if (e.keyCode === 13) { // send new gues name on "enter"
+					var guestName = $.trim($('#guestNameInput').val());
+					hide = true;
+
+					if (guestName.length > 0) {
+						$('#guestName').text(guestName);
+						OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', guestName);
+					}
+				} else if (e.keyCode === 27) { // hide input filed again in ESC
+					hide = true;
+				}
+
+				if (hide) {
+					$('#guestName').toggleClass('hidden');
+					$("#guestNameInput").toggleClass('hidden');
+				}
+			});
 		},
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({

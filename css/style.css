@@ -435,6 +435,20 @@ video {
     opacity: 1;
 }
 
+#guestName {
+    padding: 7px 30px 6px 10px;
+    cursor: pointer;
+}
+
+#guestName:hover {
+	color: #fff;
+}
+
+#guestNameInput {
+    margin-top: 6px;
+    margin-right: 6px;
+}
+
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
