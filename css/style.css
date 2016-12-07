@@ -425,6 +425,16 @@ video {
 	}
 }
 
+#nextcloud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 5px;
+    padding-bottom: 0;
+    height: 45px;
+    opacity: 1;
+}
+
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
