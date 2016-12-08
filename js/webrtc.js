@@ -97,6 +97,13 @@ var spreedMappingTable = [];
 		'use strict';
 		openEventSource();
 
+		var nick = OC.getCurrentUser()['displayName'];
+
+		//Check if there is some nick saved on local storage for guests
+		if (!nick && OCA.SpreedMe.app.guestNick) {
+			nick = OCA.SpreedMe.app.guestNick;
+		}
+
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
@@ -113,8 +120,9 @@ var spreedMappingTable = [];
 			detectSpeakingEvents: true,
 			connection: OCA.SpreedMe.XhrConnection,
 			enableDataChannels: true,
-			nick: OC.getCurrentUser()['displayName']
-	});
+			nick: nick
+		});
+
 		OCA.SpreedMe.webrtc = webrtc;
 
 		var spreedListofSpeakers = {};
@@ -397,6 +405,16 @@ var spreedMappingTable = [];
 									OCA.SpreedMe.webrtc.emit('audioOff');
 								} else {
 									OCA.SpreedMe.webrtc.emit('audioOn');
+								}
+								if (!OC.getCurrentUser()['uid']) {
+									// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
+									var currentGuestNick = localStorage.getItem("nick");
+									if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
+										if (!currentGuestNick) {
+											currentGuestNick = t('spreed', 'Guest');
+										}
+										OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
+									}
 								}
 								break;
 							case 'disconnected':

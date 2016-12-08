@@ -37,6 +37,7 @@
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		videoDisabled: localStorage.getItem("videoDisabled"),
 		_searchTerm: '',
+		guestNick: null,
 		_registerPageEvents: function() {
 			$('#edit-roomname').select2({
 				ajax: {
@@ -220,12 +221,22 @@
 
 				if (e.keyCode === 13) { // send new gues name on "enter"
 					var guestName = $.trim($('#guestNameInput').val());
+					var lastSavedNick = localStorage.getItem("nick");
 					hide = true;
 
-					if (guestName.length > 0) {
-						$('#guestName').text(guestName);
-						OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', guestName);
+					if (guestName !== lastSavedNick) {
+						if (guestName.length > 0) {
+							$('#guestName').text(guestName);
+							localStorage.setItem("nick", guestName);
+							OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', guestName);
+						} else if (lastSavedNick) {
+							$('#guestName').text(t('spreed', 'Guest'));
+							localStorage.removeItem("nick");
+							OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', t('spreed', 'Guest'));
+						}
 					}
+
+					$('#guestNameInput').val(guestName);
 				} else if (e.keyCode === 27) { // hide input filed again in ESC
 					hide = true;
 				}
@@ -291,6 +302,10 @@
 		onStart: function() {
 			console.log('Starting spreed …');
 			var self = this;
+
+			if (!oc_current_user) {
+				this.initGuestName();
+			}
 
 			OCA.SpreedMe.initWebRTC();
 
@@ -386,6 +401,15 @@
 			OCA.SpreedMe.webrtc.pauseVideo();
 			OCA.SpreedMe.app.hideVideo();
 			OCA.SpreedMe.app.videoDisabled = true;
+		},
+		initGuestName: function() {
+			var nick = localStorage.getItem("nick");
+
+			if (nick) {
+				$('#guestName').text(nick);
+				$('#guestNameInput').val(nick);
+				OCA.SpreedMe.app.guestNick = nick;
+			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({
