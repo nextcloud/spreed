@@ -33,8 +33,10 @@
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
 		_roomsView: null,
-		/** @property {boolean} _videoWasEnabledAtLeastOnce  */
-		_videoWasEnabledAtLeastOnce: false,
+		/** @property {boolean} videoWasEnabledAtLeastOnce  */
+		videoWasEnabledAtLeastOnce: false,
+		audioDisabled: localStorage.getItem("audioDisabled"),
+		videoDisabled: localStorage.getItem("videoDisabled"),
 		_searchTerm: '',
 		_registerPageEvents: function() {
 			$('#edit-roomname').select2({
@@ -154,7 +156,7 @@
 			});
 
 			$('#hideVideo').click(function() {
-				if(!OCA.SpreedMe.app._videoWasEnabledAtLeastOnce) {
+				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
 					// don't allow clicking the video toggle
 					// when no video ever was streamed (that
 					// means that permission wasn't granted
@@ -165,21 +167,19 @@
 				}
 				if ($(this).hasClass('video-disabled')) {
 					OCA.SpreedMe.app.enableVideo();
+					localStorage.removeItem("videoDisabled");
 				} else {
 					OCA.SpreedMe.app.disableVideo();
+					localStorage.setItem("videoDisabled", true);
 				}
 			});
 			$('#mute').click(function() {
 				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
-					OCA.SpreedMe.webrtc.mute();
-					$(this).data('title', 'Enable audio')
-						.addClass('audio-disabled icon-audio-off-white')
-						.removeClass('icon-audio-white');
+					OCA.SpreedMe.app.disableAudio();
+					localStorage.setItem("audioDisabled", true);
 				} else {
-					OCA.SpreedMe.webrtc.unmute();
-					$(this).data('title', 'Mute audio')
-						.removeClass('audio-disabled icon-audio-off-white')
-						.addClass('icon-audio-white');
+					OCA.SpreedMe.app.enableAudio();
+					localStorage.removeItem("audioDisabled");
 				}
 			});
 
@@ -295,18 +295,40 @@
 
 			this._startPing();
 
-			// disable by default and enable once we get a stream from the webcam
-			this.disableVideo();
+			//Show avatar until we receive local video stream and then decide if show video or not.
+			this.hideVideo();
 		},
 		onDocumentClick: function(event) {
 			var uiChannel = Backbone.Radio.channel('ui');
 
 			uiChannel.trigger('document:click', event);
 		},
-		enableVideo: function() {
-			if(!OCA.SpreedMe.app._videoWasEnabledAtLeastOnce) {
-				OCA.SpreedMe.app._videoWasEnabledAtLeastOnce = true;
+		initAudioVideoSettings: function() {
+			if (OCA.SpreedMe.app.audioDisabled) {
+				OCA.SpreedMe.app.disableAudio();
 			}
+
+			if (OCA.SpreedMe.app.videoDisabled) {
+				OCA.SpreedMe.app.disableVideo();
+			}
+		},
+		enableAudio: function() {
+			OCA.SpreedMe.webrtc.unmute();
+			$('#mute').data('title', 'Mute audio')
+				.removeClass('audio-disabled icon-audio-off-white')
+				.addClass('icon-audio-white');
+
+			OCA.SpreedMe.app.audioDisabled = false;
+		},
+		disableAudio: function() {
+			OCA.SpreedMe.webrtc.mute();
+			$('#mute').data('title', 'Enable audio')
+				.addClass('audio-disabled icon-audio-off-white')
+				.removeClass('icon-audio-white');
+
+			OCA.SpreedMe.app.audioDisabled = true;
+		},
+		enableVideo: function() {
 			var $hideVideoButton = $('#hideVideo');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
@@ -317,13 +339,14 @@
 				.addClass('icon-video-white');
 			avatarContainer.hide();
 			localVideo.show();
+
+			OCA.SpreedMe.app.videoDisabled = false;
 		},
-		disableVideo: function() {
+		hideVideo: function() {
 			var $hideVideoButton = $('#hideVideo');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
-			OCA.SpreedMe.webrtc.pauseVideo();
 			$hideVideoButton.data('title', 'Enable video')
 				.addClass('video-disabled icon-video-off-white')
 				.removeClass('icon-video-white');
@@ -331,8 +354,12 @@
 			avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
 			avatarContainer.removeClass('hidden');
 			avatarContainer.show();
-
 			localVideo.hide();
+		},
+		disableVideo: function() {
+			OCA.SpreedMe.webrtc.pauseVideo();
+			OCA.SpreedMe.app.hideVideo();
+			OCA.SpreedMe.app.videoDisabled = true;
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({

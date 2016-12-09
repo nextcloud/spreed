@@ -253,6 +253,10 @@ var spreedMappingTable = [];
 			});
 		});
 
+		OCA.SpreedMe.webrtc.on('localMediaStarted', function () {
+			OCA.SpreedMe.app.initAudioVideoSettings();
+		});
+
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
 			console.log('Access to microphone & camera failed', error);
 			var message, messageAdditional;
@@ -504,8 +508,13 @@ var spreedMappingTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localStream', function() {
-			console.log('localStream event received - let\'s enable video');
-			OCA.SpreedMe.app.enableVideo();
+			if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
+				OCA.SpreedMe.app.videoWasEnabledAtLeastOnce = true;
+			}
+
+			if (!OCA.SpreedMe.app.videoDisabled) {
+				OCA.SpreedMe.app.enableVideo();
+			}
 		});
 	}
 

@@ -14183,6 +14183,7 @@
 			if (err) {
 				self.emit('localMediaError', err);
 			} else {
+				self.emit('localMediaStarted');
 				attachMediaStream(stream, self.getLocalVideoContainer(), self.config.localVideo);
 			}
 		});
