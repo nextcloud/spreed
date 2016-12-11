@@ -45,6 +45,8 @@ $manager->registerNotifier(function() {
 	];
 });
 
-\OCP\Util::connectHook('OC_User', 'post_deleteUser', \OCA\Spreed\Util::class, 'deleteUser');
+\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
+	\OCA\Spreed\Util::deleteUser($user);
+});
 
 \OCP\App::registerPersonal('spreed', 'personal');
