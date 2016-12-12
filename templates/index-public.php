@@ -40,6 +40,7 @@ script(
 				<div id="settings">
 					<div id="guestName"><?php p($l->t('Guest')) ?></div>
 					<input id="guestNameInput" class="hidden" type="text" placeholder="<?php p($l->t('Guest')) ?>">
+					<button id="guestNameConfirm" class="icon-confirm hidden"></button>
 				</div>
 			</div>
 		</header>

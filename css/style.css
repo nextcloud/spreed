@@ -445,8 +445,23 @@ video {
 }
 
 #guestNameInput {
-    margin-top: 6px;
-    margin-right: 6px;
+    margin-top: 7px;
+    margin-right: -10px;
+    padding-right: 22px;
+}
+
+#guestNameConfirm {
+	position: relative;
+	height: 20px;
+	right: 12px;
+	line-height: 14px;
+	background-color: transparent;
+	border: none;
+	opacity: .5;
+}
+
+#guestNameConfirm:hover {
+	opacity: 1;
 }
 
 /* make blue header bar transparent in shared room */
