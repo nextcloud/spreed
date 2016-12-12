@@ -410,7 +410,7 @@
 			var lastSavedNick = localStorage.getItem("nick");
 
 			if (guestName !== lastSavedNick) {
-				if (guestName.length > 0) {
+				if (guestName.length > 0 && guestName.length <= 20) {
 					$('#guestName').text(guestName);
 					localStorage.setItem("nick", guestName);
 					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', guestName);
