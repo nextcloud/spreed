@@ -254,7 +254,7 @@ class Room {
 		}
 
 		$result = $query->execute();
-		$row = $result->fetchAll();
+		$row = $result->fetch();
 		$result->closeCursor();
 
 		return isset($row['num_participants']) ? (int) $row['num_participants'] : 0;
