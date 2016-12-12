@@ -40,7 +40,6 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Notification\IManager;
-use OCP\Security\ISecureRandom;
 
 class ApiController extends Controller {
 	/** @var string */
@@ -51,8 +50,6 @@ class ApiController extends Controller {
 	private $userManager;
 	/** @var IGroupManager */
 	private $groupManager;
-	/** @var ISecureRandom */
-	private $secureRandom;
 	/** @var ISession */
 	private $session;
 	/** @var ILogger */
@@ -69,7 +66,6 @@ class ApiController extends Controller {
 	 * @param IL10N $l10n
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
-	 * @param ISecureRandom $secureRandom
 	 * @param ISession $session
 	 * @param ILogger $logger
 	 * @param Manager $manager
@@ -81,7 +77,6 @@ class ApiController extends Controller {
 								IL10N $l10n,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
-								ISecureRandom $secureRandom,
 								ISession $session,
 								ILogger $logger,
 								Manager $manager,
@@ -91,7 +86,6 @@ class ApiController extends Controller {
 		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
-		$this->secureRandom = $secureRandom;
 		$this->session = $session;
 		$this->logger = $logger;
 		$this->manager = $manager;
@@ -141,6 +135,7 @@ class ApiController extends Controller {
 	 */
 	protected function formatRoom(Room $room) {
 		// Sort by lastPing
+		/** @var array[] $participants */
 		$participants = $room->getParticipants();
 		$sortParticipants = function(array $participant1, array $participant2) {
 			if ($participant1['lastPing'] === $participant2['lastPing']) {
@@ -174,17 +169,17 @@ class ApiController extends Controller {
 			return $data['lastPing'] > time() - 30;
 		});
 
-		$numActiveGuests = sizeof($activeGuests);
-		if ($numActiveGuests !== sizeof($participants['guests'])) {
+		$numActiveGuests = count($activeGuests);
+		if ($numActiveGuests !== count($participants['guests'])) {
 			$room->cleanGuestParticipants();
 		}
 
 		if ($this->userId !== null) {
 			unset($participantList[$this->userId]);
-			$numOtherParticipants = sizeof($participantList);
+			$numOtherParticipants = count($participantList);
 			$numGuestParticipants = $numActiveGuests;
 		} else {
-			$numOtherParticipants = sizeof($participantList);
+			$numOtherParticipants = count($participantList);
 			$numGuestParticipants = $numActiveGuests - 1;
 		}
 
@@ -211,16 +206,16 @@ class ApiController extends Controller {
 				if ($this->userId === null) {
 					$participantList[] = $this->l10n->t('You');
 
-					if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+					if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
 						$participantList[] = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
 					}
 				} else if ($numOtherParticipants === 0) {
 					$participantList = [$this->l10n->t('You')];
 
-					if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+					if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
 						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
 					}
-				} else if ($room->getType() === Room::PUBLIC_CALL && $numGuestParticipants !== 0) {
+				} else if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
 					$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
 				}
 
@@ -252,6 +247,7 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		/** @var array[] $participants */
 		$participants = $room->getParticipants(time() - 30);
 		$result = [];
 		foreach ($participants['users'] as $participant => $data) {
@@ -301,7 +297,7 @@ class ApiController extends Controller {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
 			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
-			$room = $this->manager->createRoom(Room::ONE_TO_ONE_CALL, $this->secureRandom->generate(12));
+			$room = $this->manager->createOne2OneRoom();
 			$room->addUser($currentUser);
 
 			$room->addUser($targetUser);
@@ -329,12 +325,12 @@ class ApiController extends Controller {
 
 		$usersInGroup = $targetGroup->getUsers();
 		// If the user who is creating this call is not part of this group add them
-		if (!($targetGroup->inGroup($currentUser))) {
+		if (!$targetGroup->inGroup($currentUser)) {
 			$usersInGroup[] = $currentUser;
 		}
 
 		// Create the room
-		$room = $this->manager->createRoom(Room::GROUP_CALL, $targetGroup->getGID());
+		$room = $this->manager->createGroupRoom($targetGroup->getGID());
 		foreach ($usersInGroup as $user) {
 			$room->addUser($user);
 
@@ -355,7 +351,7 @@ class ApiController extends Controller {
 		$currentUser = $this->userManager->get($this->userId);
 
 		// Create the room
-		$room = $this->manager->createRoom(Room::PUBLIC_CALL, $this->secureRandom->generate(12));
+		$room = $this->manager->createPublicRoom();
 		$room->addUser($currentUser);
 
 		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
@@ -498,22 +494,18 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		// Set the session ID for the new room ID
-		$newSessionId = $this->secureRandom->generate(255);
-		$this->session->set('spreed-session', $newSessionId);
-
 		if ($this->userId !== null) {
 			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-
-			$room->enterRoomAsUser($this->userId, $newSessionId);
+			$newSessionId = $room->enterRoomAsUser($this->userId);
 
 			if (!empty($sessionIds)) {
 				$this->manager->deleteMessagesForSessionIds($sessionIds);
 			}
 		} else {
-			$room->enterRoomAsGuest($newSessionId);
+			$newSessionId = $room->enterRoomAsGuest();
 		}
 
+		$this->session->set('spreed-session', $newSessionId);
 		$room->ping($this->userId, $newSessionId, time());
 
 		return new JSONResponse([
@@ -546,11 +538,16 @@ class ApiController extends Controller {
 	 */
 	protected function createNotification(IUser $actor, IUser $user, Room $room) {
 		$notification = $this->notificationManager->createNotification();
-		$notification->setApp('spreed')
-			->setUser($user->getUID())
-			->setDateTime(new \DateTime())
-			->setObject('room', $room->getId())
-			->setSubject('invitation', [$actor->getUID()]);
-		$this->notificationManager->notify($notification);
+		try {
+			$notification->setApp('spreed')
+				->setUser($user->getUID())
+				->setDateTime(new \DateTime())
+				->setObject('room', $room->getId())
+				->setSubject('invitation', [$actor->getUID()]);
+			$this->notificationManager->notify($notification);
+		} catch (\InvalidArgumentException $e) {
+			// Error while creating the notification
+			$this->logger->logException($e, ['app' => 'spreed']);
+		}
 	}
 }
