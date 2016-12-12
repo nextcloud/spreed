@@ -12,6 +12,8 @@
 
 	<category>multimedia</category>
 	<category>social</category>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/inviting-people.png</screenshot>
 
 	<version>1.0.22</version>
 	<dependencies>
