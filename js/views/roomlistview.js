@@ -279,7 +279,7 @@
 						message = t('spreed', 'Waiting for others to join the room …');
 						messageAdditional = '';
 					} else {
-						message = t('spreed', 'No other participants in this call :(');
+						message = t('spreed', 'No other participants in this call');
 						messageAdditional = 'You can invite other participants to this call by clicking "+ Add person" in the call menu.';
 					}
 					$('#emptyContentIcon').addClass('icon-contacts-dark');
@@ -288,9 +288,9 @@
 					if (Object.keys(participants).length > 1) {
 						message = t('spreed', 'Waiting for others to join the room …');
 					} else {
-						message = t('spreed', 'No other participants in this call :(');
+						message = t('spreed', 'No other participants in this call');
 					}
-					messageAdditional = 'Share this link with your friends!';
+					messageAdditional = 'Share this link to invite others!';
 					$('#emptyContentIcon').addClass('icon-public');
 
 					//Add link
