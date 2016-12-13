@@ -29,16 +29,18 @@ script(
 
 		<header>
 			<div id="header" class="spreed-public">
-				<a href="<?php print_unescaped(link_to('', 'index.php')); ?>"
-					 title="" id="nextcloud">
-					<div class="logo-icon svg">
-					</div>
+				<a href="<?php print_unescaped(link_to('', 'index.php')); ?>" title="" id="nextcloud">
+					<div class="logo-icon svg"></div>
 				</a>
-
 				<div class="header-appname-container">
 					<h1 class="header-appname">
 						<?php p($theme->getName()); ?>
 					</h1>
+				</div>
+				<div id="settings">
+					<div id="guestName"><?php p($l->t('Guest')) ?></div>
+					<input id="guestNameInput" class="hidden" type="text" maxlength="20" placeholder="<?php p($l->t('Guest')) ?>">
+					<button id="guestNameConfirm" class="icon-confirm hidden"></button>
 				</div>
 			</div>
 		</header>

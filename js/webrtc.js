@@ -97,6 +97,13 @@ var spreedMappingTable = [];
 		'use strict';
 		openEventSource();
 
+		var nick = OC.getCurrentUser()['displayName'];
+
+		//Check if there is some nick saved on local storage for guests
+		if (!nick && OCA.SpreedMe.app.guestNick) {
+			nick = OCA.SpreedMe.app.guestNick;
+		}
+
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
@@ -113,8 +120,9 @@ var spreedMappingTable = [];
 			detectSpeakingEvents: true,
 			connection: OCA.SpreedMe.XhrConnection,
 			enableDataChannels: true,
-			nick: OC.getCurrentUser()['displayName']
-	});
+			nick: nick
+		});
+
 		OCA.SpreedMe.webrtc = webrtc;
 
 		var spreedListofSpeakers = {};
@@ -163,9 +171,16 @@ var spreedMappingTable = [];
 				}
 
 				console.log('promote: promote speaker "' + spreedMappingTable[id] + '"');
-				$('.videoContainer-dummy').remove();
-				// add new user to it
 				newContainer.addClass('promoted');
+				OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
+
+				latestSpeakerId = id;
+			},
+			updateVideoContainerDummy: function(id) {
+				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
+
+				$('.videoContainer-dummy').remove();
+
 				newContainer.after(
 					$('<div>')
 						.addClass('videoContainer videoContainer-dummy')
@@ -174,7 +189,6 @@ var spreedMappingTable = [];
 						.append(newContainer.find('.speakingIndicator').clone())
 					);
 
-				latestSpeakerId = id;
 			},
 			add: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -315,7 +329,7 @@ var spreedMappingTable = [];
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
-		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label) {
+		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label, data) {
 			if(label === 'speaking') {
 				OCA.SpreedMe.speakers.add(peer.id);
 			} else if(label === 'stoppedSpeaking') {
@@ -328,6 +342,8 @@ var spreedMappingTable = [];
 				OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'video'});
 			} else if(label === 'videoOff') {
 				OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
+			} else if (label === 'nickChanged') {
+				OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.type});
 			}
 		});
 
@@ -389,6 +405,16 @@ var spreedMappingTable = [];
 									OCA.SpreedMe.webrtc.emit('audioOff');
 								} else {
 									OCA.SpreedMe.webrtc.emit('audioOn');
+								}
+								if (!OC.getCurrentUser()['uid']) {
+									// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
+									var currentGuestNick = localStorage.getItem("nick");
+									if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
+										if (!currentGuestNick) {
+											currentGuestNick = t('spreed', 'Guest');
+										}
+										OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
+									}
 								}
 								break;
 							case 'disconnected':
@@ -463,6 +489,23 @@ var spreedMappingTable = [];
 		});
 		OCA.SpreedMe.webrtc.on('videoOff', function() {
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOff');
+		});
+
+		// Peer changed nick
+		OCA.SpreedMe.webrtc.on('nick', function(data) {
+			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
+					id: data.id,
+					type: 'type',
+					broadcaster: false
+				}));
+			var $el = $(el);
+
+			var nameIndicator = $el.find('.nameIndicator');
+			nameIndicator.text(data.name);
+
+			if (latestSpeakerId === data.id) {
+				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
+			}
 		});
 
 		// Peer is muted

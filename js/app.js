@@ -26,7 +26,6 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
-	var currentUser = oc_current_user;
 
 	var App = Marionette.Application.extend({
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
@@ -38,6 +37,7 @@
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		videoDisabled: localStorage.getItem("videoDisabled"),
 		_searchTerm: '',
+		guestNick: null,
 		_registerPageEvents: function() {
 			$('#edit-roomname').select2({
 				ajax: {
@@ -209,6 +209,37 @@
 					}
 				}
 			});
+
+			$("#guestName").on('click', function() {
+				$('#guestName').addClass('hidden');
+				$("#guestNameInput").removeClass('hidden');
+				$("#guestNameConfirm").removeClass('hidden');
+				$("#guestNameInput").focus();
+			});
+
+			$('#guestNameConfirm').click(function () {
+				OCA.SpreedMe.app.changeGuestName();
+				$('#guestName').toggleClass('hidden');
+				$("#guestNameInput").toggleClass('hidden');
+				$("#guestNameConfirm").toggleClass('hidden');
+			});
+
+			$("#guestNameInput").keyup(function (e) {
+				var hide = false;
+
+				if (e.keyCode === 13) { // send new gues name on "enter"
+					hide = true;
+					OCA.SpreedMe.app.changeGuestName();
+				} else if (e.keyCode === 27) { // hide input filed again in ESC
+					hide = true;
+				}
+
+				if (hide) {
+					$('#guestName').toggleClass('hidden');
+					$("#guestNameInput").toggleClass('hidden');
+					$("#guestNameConfirm").toggleClass('hidden');
+				}
+			});
 		},
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
@@ -234,19 +265,19 @@
 		 * @param {int} roomId
 		 */
 		_setRoomActive: function(roomId) {
-			if (currentUser) {
+			if (oc_current_user) {
 				this._rooms.forEach(function(room) {
 					room.set('active', room.get('id') === roomId);
 				});
 			}
 		},
 		syncRooms: function() {
-			if (currentUser) {
+			if (oc_current_user) {
 				this._rooms.fetch();
 			}
 		},
 		syncAndSetActiveRoom: function(roomId) {
-			if (currentUser) {
+			if (oc_current_user) {
 				this._rooms.fetch({
 					success: function() {
 						roomChannel.trigger('active', roomId);
@@ -255,7 +286,7 @@
 			}
 		},
 		initialize: function() {
-			if (currentUser) {
+			if (oc_current_user) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
 			}
@@ -266,9 +297,13 @@
 			console.log('Starting spreed …');
 			var self = this;
 
+			if (!oc_current_user) {
+				this.initGuestName();
+			}
+
 			OCA.SpreedMe.initWebRTC();
 
-			if (currentUser) {
+			if (oc_current_user) {
 				OCA.SpreedMe.initRooms();
 				OCA.SpreedMe.Rooms.leaveAllRooms();
 			}
@@ -281,7 +316,7 @@
 			}
 			OCA.SpreedMe.Rooms.showCamera();
 
-			if (currentUser) {
+			if (oc_current_user) {
 				this._showRoomList();
 				this._rooms.fetch({
 					success: function() {
@@ -360,6 +395,33 @@
 			OCA.SpreedMe.webrtc.pauseVideo();
 			OCA.SpreedMe.app.hideVideo();
 			OCA.SpreedMe.app.videoDisabled = true;
+		},
+		initGuestName: function() {
+			var nick = localStorage.getItem("nick");
+
+			if (nick) {
+				$('#guestName').text(nick);
+				$('#guestNameInput').val(nick);
+				OCA.SpreedMe.app.guestNick = nick;
+			}
+		},
+		changeGuestName: function() {
+			var guestName = $.trim($('#guestNameInput').val());
+			var lastSavedNick = localStorage.getItem("nick");
+
+			if (guestName !== lastSavedNick) {
+				if (guestName.length > 0 && guestName.length <= 20) {
+					$('#guestName').text(guestName);
+					localStorage.setItem("nick", guestName);
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', guestName);
+				} else if (lastSavedNick) {
+					$('#guestName').text(t('spreed', 'Guest'));
+					localStorage.removeItem("nick");
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', t('spreed', 'Guest'));
+				}
+			}
+
+			$('#guestNameInput').val(guestName);
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({
