@@ -15,7 +15,7 @@
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/inviting-people.png</screenshot>
 
-	<version>1.0.22</version>
+	<version>1.1.0</version>
 	<dependencies>
 		<nextcloud min-version="11" max-version="11" />
 	</dependencies>
