@@ -39,7 +39,7 @@ appstore: clean install-deps
 	rsync -a \
 	--exclude=bower.json \
 	--exclude=.bowerrc \
-	--exclude=build \
+	--exclude=/build \
 	--exclude=CONTRIBUTING.md \
 	--exclude=docs \
 	--exclude=.drone.yml \
@@ -62,12 +62,11 @@ appstore: clean install-deps
 	--exclude=phpunit*xml \
 	--exclude=README.md \
 	--exclude=run-*lint.sh \
-	--exclude=screenshots \
 	--exclude=.scrutinizer.yml \
 	--exclude=.stylelintrc \
 	--exclude=tests \
 	--exclude=.travis.yml \
-	$(project_dir) $(sign_dir)
+	$(project_dir)/ $(sign_dir)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
 		php ../../occ integrity:sign-app \
