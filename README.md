@@ -1,6 +1,8 @@
-# Spreed App
+# Spreed video calls
 
-This is a video- and audio-conferencing app for Nextcloud
+📞😀 Video- & audio-conferencing app for Nextcloud
+
+![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png)
 
 ## Contribution Guidelines
 
