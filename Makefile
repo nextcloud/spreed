@@ -13,6 +13,12 @@ version+=master
 
 all: appstore
 
+release: appstore create-tag
+
+create-tag:
+	git tag -a v$(version) -m "Tagging the $(version) release."
+	git push origin v$(version)
+
 clean:
 	echo $(version)
 	rm -rf $(build_dir)
