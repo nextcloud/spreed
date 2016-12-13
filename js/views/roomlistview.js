@@ -303,11 +303,11 @@
 					break;
 			}
 
-			$('#emptycontent h2').text(message);
+			$('#emptycontent h2').html(message);
 			$('#emptycontent p').text(messageAdditional);
 		},
 		addTooltip: function () {
-			var htmlstring = this.model.get('displayName').replace(/\, /g, '<br>');
+			var htmlstring = escapeHTML(this.model.get('displayName')).replace(/\, /g, '<br>');
 
 			this.ui.room.tooltip({
 				placement: 'bottom',
