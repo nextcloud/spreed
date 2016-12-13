@@ -1,0 +1,9 @@
+[main]
+host = https://www.transifex.com
+lang_map = ja_JP: ja
+
+[nextcloud.spreed]
+file_filter = <lang>/spreed.po
+source_file = templates/spreed.pot
+source_lang = en
+type = PO
