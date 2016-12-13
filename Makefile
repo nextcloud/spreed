@@ -20,7 +20,6 @@ create-tag:
 	git push origin v$(version)
 
 clean:
-	echo $(version)
 	rm -rf $(build_dir)
 	rm -rf node_modules
 
@@ -66,7 +65,7 @@ appstore: clean install-deps
 	--exclude=.stylelintrc \
 	--exclude=tests \
 	--exclude=.travis.yml \
-	$(project_dir)/ $(sign_dir)
+	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
 		php ../../occ integrity:sign-app \
