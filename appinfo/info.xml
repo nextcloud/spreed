@@ -17,7 +17,7 @@
 
 	<version>1.1.2</version>
 	<dependencies>
-		<nextcloud min-version="11" max-version="11" />
+		<nextcloud min-version="11" max-version="12" />
 	</dependencies>
 	<namespace>Spreed</namespace>
 	<settings>
