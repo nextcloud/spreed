@@ -75,6 +75,12 @@
 			OCA.SpreedMe.webrtc.joinRoom(roomId);
 			OCA.SpreedMe.Rooms.ping();
 		},
+		leaveCurrentRoom: function() {
+			OCA.SpreedMe.webrtc.leaveRoom();
+
+			currentRoomId = 0;
+			OC.Util.History.pushState();
+		},
 		currentRoom: function() {
 			return currentRoomId;
 		},

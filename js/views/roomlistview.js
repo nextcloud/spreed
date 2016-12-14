@@ -216,10 +216,7 @@
 		leaveGroup: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
-				var homeURL = OC.generateUrl('/apps/spreed');
-
-				OCA.SpreedMe.webrtc.leaveRoom();
-				window.location.replace(homeURL);
+				OCA.SpreedMe.Rooms.leaveCurrentRoom();
 			}
 
 			this.$el.slideUp();
