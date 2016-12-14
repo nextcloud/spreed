@@ -4,6 +4,18 @@
 
 ![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png)
 
+## Why is this so awesome?
+
+* :busts_in_silhouette: **1on1 & group calls!** Just invite people, or create a call with a whole group. :)
+* :link: **Public rooms!** You can send a link to anyone to have a call with them!
+* :rocket: **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
+* :see_no_evil: **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
+
+And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
+* :speech_balloon: [Chat integration](https://github.com/nextcloud/spreed/issues/35)
+* :raising_hand: [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
+* :zap: If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
+
 ## Contribution Guidelines
 
 Please read the [Code of Conduct](https://nextcloud.com/community/code-of-conduct/). This document offers some guidance to ensure Nextcloud participants can cooperate effectively in a positive and inspiring atmosphere, and to explain how together we can strengthen and support each other.
