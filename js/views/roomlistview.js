@@ -321,13 +321,13 @@
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
-					.attr('data-original-title', t('spreed', 'Copied!'))
+					.attr('data-original-title', t('core', 'Copied!'))
 					.tooltip('fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy'))
+						.attr('data-original-title', t('core', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
@@ -335,11 +335,11 @@
 				var $input = $(e.trigger);
 				var actionMsg = '';
 				if (/iPhone|iPad/i.test(navigator.userAgent)) {
-					actionMsg = t('spreed', 'Not supported!');
+					actionMsg = t('core', 'Not supported!');
 				} else if (/Mac/i.test(navigator.userAgent)) {
-					actionMsg = t('spreed', 'Press ⌘-C to copy.');
+					actionMsg = t('core', 'Press ⌘-C to copy.');
 				} else {
-					actionMsg = t('spreed', 'Press Ctrl-C to copy.');
+					actionMsg = t('core', 'Press Ctrl-C to copy.');
 				}
 
 				$input.tooltip('hide')

@@ -18,13 +18,13 @@ script('spreed', ['settings-personal']);
         <p>
             <label for="turn_username"><?php p($l->t('Username')) ?></label>
             <input type="text" id="turn_username"
-                   name="turn_username" placeholder="username"
+                   name="turn_username" placeholder="<?php p($l->t('Username')) ?>"
                    value="<?php p($_['turnSettings']['username']) ?>" />
         </p>
         <p>
             <label for="turn_password"><?php p($l->t('Password')) ?></label>
             <input type="text" id="turn_password"
-                   name="turn_password" placeholder="password"
+                   name="turn_password" placeholder="<?php p($l->t('Password')) ?>"
                    value="<?php p($_['turnSettings']['password']) ?>" />
         </p>
         <p>
@@ -32,13 +32,13 @@ script('spreed', ['settings-personal']);
             <select id="turn_protocols" name="turn_protocols">
                 <option value="udp,tcp"
                     <?php p($_['turnSettings']['protocols'] === 'udp,tcp' ? 'selected' : '') ?>>
-                    udp and tcp</option>
+                    <?php p($l->t('udp and tcp')) ?><</option>
                 <option value="udp"
                     <?php p($_['turnSettings']['protocols'] === 'udp' ? 'selected' : '') ?>>
-                    udp only</option>
+                    <?php p($l->t('udp only')) ?><</option>
                 <option value="tcp"
                     <?php p($_['turnSettings']['protocols'] === 'tcp' ? 'selected' : '') ?>>
-                    tcp only</option>
+                    <?php p($l->t('tcp only')) ?><</option>
             </select>
         </p>
     </form>

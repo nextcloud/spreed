@@ -144,7 +144,7 @@ class PageController extends Controller {
 				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException $e) {
-			throw new HintException($this->l10n->t('The room does not exist.'));
+			throw new HintException($this->l10n->t('The call does not exist.'));
 		}
 
 		$newSessionId = $this->secureRandom->generate(255);
