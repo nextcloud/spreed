@@ -113,9 +113,9 @@
 		},
 		showRoomDeletedMessage: function(deleter) {
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById("emptyContentIcon");
-			emptyContentIcon.removeAttribute("class");
-			emptyContentIcon.innerHTML = "";
+			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
@@ -126,7 +126,7 @@
 			} else {
 				$('#emptyContentIcon').addClass('icon-video-off');
 				$('#emptycontent h2').text(t('spreed', 'This call has ended'));
-				$('#emptycontent p').text("");
+				$('#emptycontent p').text('');
 			}
 		}
 	};

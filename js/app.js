@@ -298,9 +298,9 @@
 			var message, messageAdditional;
 
 			//Remove previous icon or avatar
-			var emptyContentIcon = document.getElementById("emptyContentIcon");
-			emptyContentIcon.removeAttribute("class");
-			emptyContentIcon.innerHTML = "";
+			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
 
 			if (Object.keys(participants).length === 1) {
 				var waitingParticipantId, waitingParticipantName;

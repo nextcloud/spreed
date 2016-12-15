@@ -236,9 +236,9 @@
 			var message, messageAdditional, participants;
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById("emptyContentIcon");
-			emptyContentIcon.removeAttribute("class");
-			emptyContentIcon.innerHTML = "";
+			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 

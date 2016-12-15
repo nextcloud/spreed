@@ -293,9 +293,9 @@ var spreedMappingTable = [];
 			}
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById("emptyContentIcon");
-			emptyContentIcon.removeAttribute("class");
-			emptyContentIcon.innerHTML = "";
+			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
@@ -312,9 +312,9 @@ var spreedMappingTable = [];
 			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById("emptyContentIcon");
-			emptyContentIcon.removeAttribute("class");
-			emptyContentIcon.innerHTML = "";
+			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
