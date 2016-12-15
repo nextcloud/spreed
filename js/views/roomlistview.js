@@ -217,6 +217,7 @@
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
+				OCA.SpreedMe.Rooms.showRoomDeletedMessage(true);
 			}
 
 			this.$el.slideUp();

@@ -99,7 +99,10 @@
 				{
 					roomId: OCA.SpreedMe.Rooms.currentRoom()
 				}
-			);
+			).fail(function() {
+				OCA.SpreedMe.Rooms.leaveCurrentRoom();
+				OCA.SpreedMe.Rooms.showRoomDeletedMessage(false);
+			});
 		},
 		leaveAllRooms: function() {
 			$.ajax({
@@ -108,6 +111,28 @@
 				async: false
 			});
 		},
+		showRoomDeletedMessage: function(deleter) {
+			var message, messageAdditional;
+
+			if (deleter) {
+				message = t('spreed', 'You have left the call');
+			} else {
+				message = t('spreed', 'This call has ended');
+			}
+
+			messageAdditional = t('spreed', 'You can start a new call from "Chose person …" on the top left of this window.');
+
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById("emptyContentIcon");
+			emptyContentIcon.removeAttribute("class");
+			emptyContentIcon.innerHTML = "";
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			$('#emptyContentIcon').addClass('icon-video-off');
+			$('#emptycontent h2').text(message);
+			$('#emptycontent p').text(messageAdditional);
+		}
 	};
 
 	OCA.SpreedMe.initRooms = initRooms;
