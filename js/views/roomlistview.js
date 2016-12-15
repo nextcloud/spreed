@@ -477,7 +477,7 @@
 	});
 
 	var NoRoomsView = Marionette.View.extend({
-	  template: Handlebars.compile(EMPTY_TEMPLATE)
+		template: Handlebars.compile(EMPTY_TEMPLATE)
 	});
 
 	var RoomListView = Marionette.CollectionView.extend({
