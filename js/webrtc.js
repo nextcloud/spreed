@@ -519,7 +519,13 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				var avatar = $el.find('.avatar');
-				avatar.avatar(spreedMappingTable[data.id], 128);
+				var userId = spreedMappingTable[data.id];
+
+				if (userId.length) {
+					avatar.avatar(userId, 128);
+				} else {// Guest
+					avatar.avatar(null, 128);
+				}
 
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');
