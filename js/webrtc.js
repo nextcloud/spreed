@@ -293,13 +293,13 @@ var spreedMappingTable = [];
 			}
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			var emptyContentIcon = document.getElementById('emptycontent-icon');
 			emptyContentIcon.removeAttribute('class');
 			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
-			$('#emptyContentIcon').addClass('icon-video-off');
+			$('#emptycontent-icon').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
 		});
@@ -312,13 +312,13 @@ var spreedMappingTable = [];
 			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			var emptyContentIcon = document.getElementById('emptycontent-icon');
 			emptyContentIcon.removeAttribute('class');
 			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
-			$('#emptyContentIcon').addClass('icon-video-off');
+			$('#emptycontent-icon').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
 			$('#emptycontent p').text(messageAdditional);
 		}

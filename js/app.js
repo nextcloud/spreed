@@ -298,7 +298,7 @@
 			var message, messageAdditional;
 
 			//Remove previous icon or avatar
-			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			var emptyContentIcon = document.getElementById('emptycontent-icon');
 			emptyContentIcon.removeAttribute('class');
 			emptyContentIcon.innerHTML = '';
 
@@ -314,9 +314,9 @@
 				var avatar = document.createElement('div');
 				avatar.className = 'avatar room-avatar';
 
-				$('#emptyContentIcon').append(avatar);
+				$('#emptycontent-icon').append(avatar);
 
-				$('#emptyContentIcon').find('.avatar').each(function () {
+				$('#emptycontent-icon').find('.avatar').each(function () {
 					if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
 						$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
 					} else {
@@ -329,7 +329,7 @@
 			} else {
 				message = t('spreed', 'Waiting for others to join the call …');
 				messageAdditional = '';
-				$('#emptyContentIcon').addClass('icon-contacts-dark');
+				$('#emptycontent-icon').addClass('icon-contacts-dark');
 			}
 
 			$('#emptycontent h2').text(message);

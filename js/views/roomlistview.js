@@ -236,7 +236,7 @@
 			var message, messageAdditional, participants;
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptyContentIcon');
+			var emptyContentIcon = document.getElementById('emptycontent-icon');
 			emptyContentIcon.removeAttribute('class');
 			emptyContentIcon.innerHTML = '';
 			$('#shareRoomInput').addClass('hidden');
@@ -259,9 +259,9 @@
 					var avatar = document.createElement('div');
 					avatar.className = 'avatar room-avatar';
 
-					$('#emptyContentIcon').append(avatar);
+					$('#emptycontent-icon').append(avatar);
 
-					$('#emptyContentIcon').find('.avatar').each(function () {
+					$('#emptycontent-icon').find('.avatar').each(function () {
 						if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
 							$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
 						} else {
@@ -280,7 +280,7 @@
 						message = t('spreed', 'No other participants in this call');
 						messageAdditional = 'You can invite other participants to this call by clicking "+ Add person" in the call menu.';
 					}
-					$('#emptyContentIcon').addClass('icon-contacts-dark');
+					$('#emptycontent-icon').addClass('icon-contacts-dark');
 					break;
 				case 3:
 					if (Object.keys(participants).length > 1) {
@@ -289,7 +289,7 @@
 						message = t('spreed', 'No other participants in this call');
 					}
 					messageAdditional = 'Share this link to invite others!';
-					$('#emptyContentIcon').addClass('icon-public');
+					$('#emptycontent-icon').addClass('icon-public');
 
 					//Add link
 					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
