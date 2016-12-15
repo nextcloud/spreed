@@ -12,6 +12,7 @@
 * :see_no_evil: **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
+* :computer: [Screen sharing](https://github.com/nextcloud/spreed/issues/31)
 * :speech_balloon: [Chat integration](https://github.com/nextcloud/spreed/issues/35)
 * :raising_hand: [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 * :zap: If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
