@@ -28,19 +28,9 @@ script(
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
 			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
-			<!-- <button class="icon-confirm" title="<?php p($l->t('Create new room')) ?>"></button> -->
 		</form>
 		<ul id="spreedme-room-list" class="with-icon">
 		</ul>
-		<!--<div id="app-settings">
-			<div id="app-settings-header">
-				<button class="settings-button"
-						data-apps-slide-toggle="#app-settings-content"
-				></button>
-			</div>
-			<div id="app-settings-content">
-			</div>
-		</div>-->
 	</div>
 
 	<div id="app-content" class="participants-1">

@@ -477,20 +477,20 @@
 			$('body').find('.shareRoomClipboard').tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreed', 'Copy')
+				title: t('core', 'Copy')
 			});
 
 			var clipboard = new Clipboard('.shareRoomClipboard');
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
-					.attr('data-original-title', t('spreed', 'Copied!'))
+					.attr('data-original-title', t('core', 'Copied!'))
 					.tooltip('fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy'))
+						.attr('data-original-title', t('core', 'Copy'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});

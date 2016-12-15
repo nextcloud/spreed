@@ -28,7 +28,7 @@
 		'order' => 3,
 		'href' => $g->linkToRoute('spreed.page.index'),
 		'icon' => $g->imagePath('spreed', 'app.svg'),
-		'name' => $l->t('Calls'),
+		'name' => $l->t('Video calls'),
 	];
 });
 
@@ -41,7 +41,7 @@ $manager->registerNotifier(function() {
 
 	return [
 		'id' => 'spreed',
-		'name' => $l->t('Spreed'),
+		'name' => $l->t('Video calls'),
 	];
 });
 
