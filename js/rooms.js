@@ -112,14 +112,6 @@
 			});
 		},
 		showRoomDeletedMessage: function(deleter) {
-			var message;
-
-			if (deleter) {
-				message = t('spreed', 'You have left the call');
-			} else {
-				message = t('spreed', 'This call has ended');
-			}
-
 			//Remove previous icon, avatar or link from emptycontent
 			var emptyContentIcon = document.getElementById("emptyContentIcon");
 			emptyContentIcon.removeAttribute("class");
@@ -127,9 +119,15 @@
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
-			$('#emptyContentIcon').addClass('icon-video-off');
-			$('#emptycontent h2').text(message);
-			$('#emptycontent p').text("");
+			if (deleter) {
+				$('#emptyContentIcon').addClass('icon-video');
+				$('#emptycontent h2').text(t('spreed', 'Looking great today! :)'));
+				$('#emptycontent p').text(t('spreed', 'Time to call your friends'));
+			} else {
+				$('#emptyContentIcon').addClass('icon-video-off');
+				$('#emptycontent h2').text(t('spreed', 'This call has ended'));
+				$('#emptycontent p').text("");
+			}
 		}
 	};
 
