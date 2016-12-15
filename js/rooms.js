@@ -112,15 +112,13 @@
 			});
 		},
 		showRoomDeletedMessage: function(deleter) {
-			var message, messageAdditional;
+			var message;
 
 			if (deleter) {
 				message = t('spreed', 'You have left the call');
 			} else {
 				message = t('spreed', 'This call has ended');
 			}
-
-			messageAdditional = t('spreed', 'You can start a new call from "Chose person …" on the top left of this window.');
 
 			//Remove previous icon, avatar or link from emptycontent
 			var emptyContentIcon = document.getElementById("emptyContentIcon");
@@ -131,7 +129,7 @@
 
 			$('#emptyContentIcon').addClass('icon-video-off');
 			$('#emptycontent h2').text(message);
-			$('#emptycontent p').text(messageAdditional);
+			$('#emptycontent p').text("");
 		}
 	};
 
