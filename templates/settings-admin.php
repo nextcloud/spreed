@@ -33,13 +33,13 @@ style('spreed', ['settings-admin']);
             <select id="turn_server_protocols" name="turn_server_protocols">
                 <option value="udp,tcp"
                     <?php p($_['turnServerProtocols'] === 'udp,tcp' ? 'selected' : '') ?>>
-                    <?php p($l->t('udp and tcp')) ?><</option>
+                    <?php p($l->t('UDP and TCP')) ?><</option>
                 <option value="udp"
                     <?php p($_['turnServerProtocols'] === 'udp' ? 'selected' : '') ?>>
-                    <?php p($l->t('udp only')) ?><</option>
+                    <?php p($l->t('UDP only')) ?><</option>
                 <option value="tcp"
                     <?php p($_['turnServerProtocols'] === 'tcp' ? 'selected' : '') ?>>
-                    <?php p($l->t('tcp only')) ?><</option>
+                    <?php p($l->t('TCP only')) ?><</option>
             </select>
         </p>
         <p>
