@@ -32,13 +32,16 @@ script('spreed', ['settings-personal']);
             <select id="turn_protocols" name="turn_protocols">
                 <option value="udp,tcp"
                     <?php p($_['turnSettings']['protocols'] === 'udp,tcp' ? 'selected' : '') ?>>
-                    <?php p($l->t('udp and tcp')) ?><</option>
+                    <?php p($l->t('UDP and TCP')) ?>
+                </option>
                 <option value="udp"
                     <?php p($_['turnSettings']['protocols'] === 'udp' ? 'selected' : '') ?>>
-                    <?php p($l->t('udp only')) ?><</option>
+                    <?php p($l->t('UDP only')) ?>
+                </option>
                 <option value="tcp"
                     <?php p($_['turnSettings']['protocols'] === 'tcp' ? 'selected' : '') ?>>
-                    <?php p($l->t('tcp only')) ?><</option>
+                    <?php p($l->t('TCP only')) ?>
+                </option>
             </select>
         </p>
     </form>
