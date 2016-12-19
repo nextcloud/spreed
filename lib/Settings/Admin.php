@@ -44,6 +44,7 @@ class Admin implements ISettings {
             'stunServer' => Util::getStunServer($this->config),
 			'turnServer' => $this->config->getAppValue('spreed', 'turn_server', ''),
 			'turnServerSecret' => $this->config->getAppValue('spreed', 'turn_server_secret', ''),
+			'turnServerProtocols' => $this->config->getAppValue('spreed', 'turn_server_protocols', ''),
         ];
 
         return new TemplateResponse('spreed', 'settings-admin', $parameters, '');
