@@ -60,13 +60,25 @@ class Util {
 		}
 	}
 
-    public static function getTurnSettings(IConfig $config, $uid) {
-		$value = $config->getUserValue($uid, 'spreed', 'turn_settings');
-		if (empty($value)) {
-			return array();
-        }
-		return json_decode($value, true);
-    }
+	/**
+	 * @param IConfig $config
+	 * @param string $uid
+	 * @return array
+	 */
+	public static function getTurnSettings(IConfig $config, $uid) {
+		$value = json_decode($config->getUserValue($uid, 'spreed', 'turn_settings'), true);
+
+		if (!is_array($value)) {
+			return [
+				'server' => '',
+				'username' => '',
+				'password' => '',
+				'protocols' => '',
+			];
+		}
+
+		return $value;
+	}
 
 	/**
 	 * Generates a username and password for the TURN server based on the
