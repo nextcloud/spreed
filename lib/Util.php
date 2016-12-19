@@ -94,7 +94,12 @@ class Util {
 		$turnServerProtocols = $config->getAppValue('spreed', 'turn_server_protocols', '');
 
 		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '') {
-			return array();
+			return [
+				'server' => '',
+				'username' => '',
+				'password' => '',
+				'protocols' => '',
+			];
 		}
 
 		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then

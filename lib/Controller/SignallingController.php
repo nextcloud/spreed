@@ -127,11 +127,11 @@ class SignallingController extends Controller {
 				case 'turnservers':
 					$response = [];
 					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
-					if(empty($turnSettings)) {
+					if(empty($turnSettings['server'])) {
 						$turnSettings = Util::generateTurnSettings($this->config, $this->timeFactory);
 					}
-					if (!empty($turnSettings)) {
-						$protocols = explode(",", $turnSettings['protocols']);
+					if (!empty($turnSettings['server'])) {
+						$protocols = explode(',', $turnSettings['protocols']);
 						foreach ($protocols as $proto) {
 							array_push($response, [
 								'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
