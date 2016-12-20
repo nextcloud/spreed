@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Video calls" : "Chiamate video",
     "(group)" : "(gruppo)",
     "New public room" : "Nuova stanza pubblica",
     "Waiting for {participantName} to join the call …" : "In attesa che {participantName} si unisca alla chiamata...",
@@ -19,6 +20,7 @@ OC.L10N.register(
     "Access to microphone & camera is only possible with HTTPS" : "L'accesso a microfono e webcam è possibile solo con HTTPS",
     "Please adjust your configuration" : "Modifica la tua configurazione",
     "Access to microphone & camera was denied" : "L'accesso a microfono e webcam è stato negato",
+    "WebRTC is not supported in your browser" : "WebRTC non è supportato dal tuo browser",
     "Please use a different browser like Firefox or Chrome" : "Utilizza un browser diverso come Firefox o Chrome",
     "Error while accessing microphone & camera" : "Errore durante l'accesso a microfono e webcam",
     "WebRTC is not supported in your browser :-/" : "WebRTC non è supportato dal tuo browser :-/",
@@ -30,6 +32,7 @@ OC.L10N.register(
     "Invalid port specified." : "Porta specificata non valida.",
     "Invalid protocols specified." : "Protocollo specificato non valido.",
     "Saved" : "Salvato",
+    "The call does not exist." : "La chiamata non esiste.",
     "Not logged in." : "Accesso non effettuato.",
     "Invalid format, must be turnserver:port." : "Formato non valido, deve essere serverturn:porta.",
     "All fields have to be filled out." : "Tutti i campi devono essere compilati.",
