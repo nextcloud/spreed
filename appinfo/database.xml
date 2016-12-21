@@ -59,7 +59,8 @@
 			<field>
 				<name>name</name>
 				<type>text</type>
-				<notnull>true</notnull>
+				<default/>
+				<notnull>false</notnull>
 				<length>255</length>
 			</field>
 			<field>
