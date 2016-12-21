@@ -363,6 +363,26 @@ class ApiController extends Controller {
 	 * @NoAdminRequired
 	 *
 	 * @param int $roomId
+	 * @param string $roomName
+	 * @return JSONResponse
+	 */
+	public function renameRoom($roomId, $roomName) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$room->setName($roomName)) {
+			return new JSONResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
+		return new JSONResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
 	 * @param string $newParticipant
 	 * @return JSONResponse
 	 */
