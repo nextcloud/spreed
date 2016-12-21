@@ -107,7 +107,7 @@ class Manager {
 	}
 
 	/**
-	 * @param int $id
+	 * @param int $roomId
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
@@ -189,9 +189,6 @@ class Manager {
 	 * @return Room
 	 */
 	private function createRoom($type, $name = '') {
-		if ($name === '') {
-			$name = $this->secureRandom->generate(12);
-		}
 
 		$query = $this->db->getQueryBuilder();
 		$query->insert('spreedme_rooms')
