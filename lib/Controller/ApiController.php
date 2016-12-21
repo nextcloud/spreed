@@ -202,24 +202,26 @@ class ApiController extends Controller {
 
 			case Room::GROUP_CALL:
 			case Room::PUBLIC_CALL:
-				/// As name of the room use the names of the other participants
-				if ($this->userId === null) {
-					$participantList[] = $this->l10n->t('You');
+				if ($room->getName() === '') {
+					// As name of the room use the names of the other participants
+					if ($this->userId === null) {
+						$participantList[] = $this->l10n->t('You');
 
-					if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-						$participantList[] = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
-					}
-				} else if ($numOtherParticipants === 0) {
-					$participantList = [$this->l10n->t('You')];
+						if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
+							$participantList[] = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
+						}
+					} else if ($numOtherParticipants === 0) {
+						$participantList = [$this->l10n->t('You')];
 
-					if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
+						if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
+							$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+						}
+					} else if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
 						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
 					}
-				} else if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-					$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
-				}
 
-				$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
+					$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
+				}
 				break;
 
 			default:
