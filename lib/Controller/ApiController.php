@@ -373,6 +373,10 @@ class ApiController extends Controller {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if (strlen($roomName) > 200) {
+			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		if (!$room->setName($roomName)) {
 			return new JSONResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
