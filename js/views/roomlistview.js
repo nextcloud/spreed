@@ -305,7 +305,24 @@
 			$('#emptycontent p').text(messageAdditional);
 		},
 		addTooltip: function () {
-			var htmlstring = escapeHTML(this.model.get('displayName')).replace(/\, /g, '<br>');
+			var participants = [];
+			$.each(this.model.get('participants'), function(participantId, participantName) {
+				if (participantId !== oc_current_user) {
+					participants.push(escapeHTML(participantName));
+				}
+			});
+
+			if (this.model.get('guestList') !== '') {
+				participants.push(this.model.get('guestList'));
+			}
+
+			if (participants.length === 0) {
+				participants.push(t('spreed', 'You'));
+			} else {
+				participants.push(t('spreed', 'and you'));
+			}
+
+			var htmlstring = participants.join('<br>');
 
 			this.ui.room.tooltip({
 				placement: 'bottom',

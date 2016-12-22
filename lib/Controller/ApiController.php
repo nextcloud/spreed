@@ -183,6 +183,7 @@ class ApiController extends Controller {
 			$numGuestParticipants = $numActiveGuests - 1;
 		}
 
+		$guestString = '';
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				// As name of the room use the name of the other person participating
@@ -200,24 +201,27 @@ class ApiController extends Controller {
 				}
 				break;
 
-			case Room::GROUP_CALL:
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case Room::PUBLIC_CALL:
+				if ($this->userId === null && $numGuestParticipants) {
+					$guestString = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
+				} else if ($numGuestParticipants) {
+					$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+				}
+
+				// no break;
+
+			case Room::GROUP_CALL:
 				if ($room->getName() === '') {
 					// As name of the room use the names of the other participants
 					if ($this->userId === null) {
 						$participantList[] = $this->l10n->t('You');
-
-						if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-							$participantList[] = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
-						}
 					} else if ($numOtherParticipants === 0) {
 						$participantList = [$this->l10n->t('You')];
+					}
 
-						if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-							$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
-						}
-					} else if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+					if ($guestString !== '') {
+						$participantList[] = $guestString;
 					}
 
 					$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
@@ -232,6 +236,8 @@ class ApiController extends Controller {
 				$room->deleteRoom();
 				throw new RoomNotFoundException();
 		}
+
+		$roomData['guestList'] = $guestString;
 
 		return $roomData;
 	}
