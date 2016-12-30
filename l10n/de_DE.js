@@ -2,7 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Video calls" : "Videoanrufe",
-    "(group)" : "(Gruppen)",
+    "(group)" : "(Gruppe)",
     "New public room" : "Neuer öffentlicher Raum",
     "Waiting for {participantName} to join the call …" : "Warte auf den Anrufer {participantName} ...",
     "Waiting for others to join the call …" : "Warte auf die Teilnahme weiterer Anrufer ...",
