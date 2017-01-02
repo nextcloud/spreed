@@ -15,7 +15,8 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 * :computer: [Screen sharing](https://github.com/nextcloud/spreed/issues/31)
 * :speech_balloon: [Chat integration](https://github.com/nextcloud/spreed/issues/35)
 * :raising_hand: [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
-* :zap: If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
+
+If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
 ## Contribution Guidelines
 
@@ -28,7 +29,7 @@ For more information please review the [guidelines for contributing](https://git
 All contributions to this repository are considered to be licensed under
 the GNU AGPLv3 or any later version.
 
-Contributors to the Spreed.me app retain their copyright. Therefore we recommend
+Contributors to the Spreed app retain their copyright. Therefore we recommend
 to add following line to the header of a file, if you changed it substantially:
 
 ```
