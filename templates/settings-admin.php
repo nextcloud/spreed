@@ -1,4 +1,6 @@
 <?php
+/** @var array $_ */
+/** @var \OCP\IL10N $l */
 script('spreed', ['settings-admin']);
 style('spreed', ['settings-admin']);
 ?>

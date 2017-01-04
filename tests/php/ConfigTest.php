@@ -20,22 +20,17 @@
  */
 namespace OCA\Spreed\Tests\php;
 
-use OCA\Spreed\Util;
+use OCA\Spreed\Config;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
-use OCP\ISession;
 use Test\TestCase;
 
-class UtilTest extends TestCase {
-	/** @var Util */
-	private $util;
-
-	public function setUp() {
-		parent::setUp();
-		$this->util = new Util();
-	}
+class ConfigTest extends TestCase {
 
 	public function testGetStunServer() {
+		/** @var \PHPUnit_Framework_MockObject_MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		/** @var \PHPUnit_Framework_MockObject_MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
 			->expects($this->once())
@@ -43,10 +38,12 @@ class UtilTest extends TestCase {
 			->with('spreed', 'stun_server', 'stun.nextcloud.com:443')
 			->willReturn('88.198.160.129');
 
-		$this->assertSame('88.198.160.129', $this->util->getStunServer($config));
+		$helper = new Config($config, $timeFactory);
+		$this->assertSame('88.198.160.129', $helper->getStunServer());
 	}
 
 	public function testGenerateTurnSettings() {
+		/** @var \PHPUnit_Framework_MockObject_MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
 			->expects($this->at(0))
@@ -63,17 +60,20 @@ class UtilTest extends TestCase {
 			->method('getAppValue')
 			->with('spreed', 'turn_server_protocols', '')
 			->willReturn('udp,tcp');
-		$time = $this->createMock(ITimeFactory::class);
-		$time
+		/** @var \PHPUnit_Framework_MockObject_MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$timeFactory
 			->expects($this->once())
 			->method('getTime')
 			->willReturn(1479743025);
+
+		$helper = new Config($config, $timeFactory);
 
 		$this->assertSame(array(
 			'server' => 'turn.example.org',
 			'username' => '1479829425',
 			'password' => 'ZY8fZQxAw/24gT0XYnMlcepUFlI=',
 			'protocols' => 'udp,tcp',
-		), $this->util->generateTurnSettings($config, $time));
+		), $helper->getTurnSettings());
 	}
 }

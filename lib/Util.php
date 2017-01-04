@@ -21,20 +21,9 @@
 
 namespace OCA\Spreed;
 
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
-use OCP\ISession;
 use OCP\IUser;
 
 class Util {
-
-	/**
-	 * @param IConfig $config
-	 * @return string
-	 */
-	public static function getStunServer(IConfig $config) {
-		return $config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443');
-	}
 
 	/**
 	 * @param IUser $user
@@ -59,40 +48,4 @@ class Util {
 			}
 		}
 	}
-
-	/**
-	 * Generates a username and password for the TURN server based on the
-	 *
-	 * @param IConfig $config
-	 * @param ITimeFactory $timeFactory
-	 * @return array
-	 */
-	public static function getTurnSettings(IConfig $config, ITimeFactory $timeFactory) {
-		// generate from shared secret
-		$turnServer = $config->getAppValue('spreed', 'turn_server', '');
-		$turnServerSecret = $config->getAppValue('spreed', 'turn_server_secret', '');
-		$turnServerProtocols = $config->getAppValue('spreed', 'turn_server_protocols', '');
-
-		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '') {
-			return [
-				'server' => '',
-				'username' => '',
-				'password' => '',
-				'protocols' => '',
-			];
-		}
-
-		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then
-		$username = $timeFactory->getTime() + 86400;
-		$hashedString = hash_hmac('sha1', $username, $turnServerSecret, true);
-		$password = base64_encode($hashedString);
-
-		return array(
-			'server' => $turnServer,
-			'username' => (string)$username,
-			'password' => $password,
-			'protocols' => $turnServerProtocols,
-		);
-	}
-
 }
