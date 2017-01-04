@@ -23,15 +23,23 @@ namespace OCA\Spreed;
 
 use OCP\IUser;
 
-class Util {
+class HookListener {
+
+	/** @var Manager */
+	protected $manager;
+
+	/**
+	 * @param Manager $manager
+	 */
+	public function __construct(Manager $manager) {
+		$this->manager = $manager;
+	}
 
 	/**
 	 * @param IUser $user
 	 */
-	public static function deleteUser(IUser $user) {
-		/** @var Manager $manager */
-		$manager = \OC::$server->query(Manager::class);
-		$rooms = $manager->getRoomsForParticipant($user->getUID());
+	public function deleteUser(IUser $user) {
+		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
 
 		foreach ($rooms as $room) {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
