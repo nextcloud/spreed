@@ -64,7 +64,7 @@ script(
 
 
 		<div id="emptycontent">
-			<div id="emptyContentIcon" class="icon-video"></div>
+			<div id="emptycontent-icon" class="icon-video"></div>
 			<h2><?php p($l->t('Looking great today! :)')) ?></h2>
 			<p class="uploadmessage"><?php p($l->t('Smile in 3… 2… 1!')) ?></p>
 		</div>

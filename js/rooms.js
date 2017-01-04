@@ -75,6 +75,12 @@
 			OCA.SpreedMe.webrtc.joinRoom(roomId);
 			OCA.SpreedMe.Rooms.ping();
 		},
+		leaveCurrentRoom: function() {
+			OCA.SpreedMe.webrtc.leaveRoom();
+
+			currentRoomId = 0;
+			OC.Util.History.pushState();
+		},
 		currentRoom: function() {
 			return currentRoomId;
 		},
@@ -93,7 +99,10 @@
 				{
 					roomId: OCA.SpreedMe.Rooms.currentRoom()
 				}
-			);
+			).fail(function() {
+				OCA.SpreedMe.Rooms.leaveCurrentRoom();
+				OCA.SpreedMe.Rooms.showRoomDeletedMessage(false);
+			});
 		},
 		leaveAllRooms: function() {
 			$.ajax({
@@ -102,6 +111,24 @@
 				async: false
 			});
 		},
+		showRoomDeletedMessage: function(deleter) {
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById('emptycontent-icon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			if (deleter) {
+				$('#emptycontent-icon').addClass('icon-video');
+				$('#emptycontent h2').text(t('spreed', 'Looking great today! :)'));
+				$('#emptycontent p').text(t('spreed', 'Time to call your friends'));
+			} else {
+				$('#emptycontent-icon').addClass('icon-video-off');
+				$('#emptycontent h2').text(t('spreed', 'This call has ended'));
+				$('#emptycontent p').text('');
+			}
+		}
 	};
 
 	OCA.SpreedMe.initRooms = initRooms;
