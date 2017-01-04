@@ -424,12 +424,17 @@
 				}
 			});
 			this.ui.personSelectorInput.on('change', function(e) {
+				var app = OCA.SpreedMe.app;
+
 				$.post(
 				OC.generateUrl('/apps/spreed/api/room/') + _this.model.get('id'),
 					{
 						newParticipant: e.val
 					}
-				);
+				).done(function() {
+					app.syncRooms();
+				});
+
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
