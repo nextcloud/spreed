@@ -61,33 +61,13 @@ class Util {
 	}
 
 	/**
-	 * @param IConfig $config
-	 * @param string $uid
-	 * @return array
-	 */
-	public static function getTurnSettings(IConfig $config, $uid) {
-		$value = json_decode($config->getUserValue($uid, 'spreed', 'turn_settings'), true);
-
-		if (!is_array($value)) {
-			return [
-				'server' => '',
-				'username' => '',
-				'password' => '',
-				'protocols' => '',
-			];
-		}
-
-		return $value;
-	}
-
-	/**
 	 * Generates a username and password for the TURN server based on the
 	 *
 	 * @param IConfig $config
 	 * @param ITimeFactory $timeFactory
 	 * @return array
 	 */
-    public static function generateTurnSettings(IConfig $config, ITimeFactory $timeFactory) {
+	public static function getTurnSettings(IConfig $config, ITimeFactory $timeFactory) {
 		// generate from shared secret
 		$turnServer = $config->getAppValue('spreed', 'turn_server', '');
 		$turnServerSecret = $config->getAppValue('spreed', 'turn_server_secret', '');

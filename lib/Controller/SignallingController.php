@@ -126,10 +126,7 @@ class SignallingController extends Controller {
 					break;
 				case 'turnservers':
 					$response = [];
-					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
-					if(empty($turnSettings['server'])) {
-						$turnSettings = Util::generateTurnSettings($this->config, $this->timeFactory);
-					}
+					$turnSettings = Util::getTurnSettings($this->config, $this->timeFactory);
 					if (!empty($turnSettings['server'])) {
 						$protocols = explode(',', $turnSettings['protocols']);
 						foreach ($protocols as $proto) {
