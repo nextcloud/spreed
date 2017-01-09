@@ -14,6 +14,7 @@ OC.L10N.register(
     "Press Ctrl-C to copy." : "Appuyez sur Ctrl-C pour copier.",
     "Looking great today! :)" : "Excellente journée ! :)",
     "Time to call your friends" : "Temps d'appeler vos amis",
+    "This call has ended" : "Cet appel est terminé",
     "Saving failed" : "L'enregistrement a échoué",
     "Add person" : "Ajouter une personne",
     "Share link" : "Partager le lien",
