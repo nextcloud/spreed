@@ -35,7 +35,7 @@
 
 $manager = \OC::$server->getNotificationManager();
 $manager->registerNotifier(function() {
-	return \OC::$server->query('OCA\Spreed\Notification\Notifier');
+	return \OC::$server->query(\OCA\Spreed\Notification\Notifier::class);
 }, function() {
 	$l = \OC::$server->getL10N('spreed');
 
@@ -46,7 +46,6 @@ $manager->registerNotifier(function() {
 });
 
 \OC::$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
-	\OCA\Spreed\Util::deleteUser($user);
+	$listener = \OC::$server->query(\OCA\Spreed\HookListener::class);
+	$listener->deleteUser($user);
 });
-
-\OCP\App::registerPersonal('spreed', 'personal');

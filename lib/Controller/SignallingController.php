@@ -23,20 +23,18 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
-use OCA\Spreed\Util;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\ISession;
 
 class SignallingController extends Controller {
-	/** @var IConfig */
+	/** @var Config */
 	private $config;
 	/** @var ISession */
 	private $session;
@@ -46,34 +44,29 @@ class SignallingController extends Controller {
 	private $dbConnection;
 	/** @var string */
 	private $userId;
-	/** @var ITimeFactory */
-	private $timeFactory;
 
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
-	 * @param IConfig $config
+	 * @param Config $config
 	 * @param ISession $session
 	 * @param Manager $manager
 	 * @param IDBConnection $connection
 	 * @param string $UserId
-	 * @param ITimeFactory $timeFactory
 	 */
 	public function __construct($appName,
 								IRequest $request,
-								IConfig $config,
+								Config $config,
 								ISession $session,
 								Manager $manager,
 								IDBConnection $connection,
-								$UserId,
-								ITimeFactory $timeFactory) {
+								$UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
 		$this->userId = $UserId;
-		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -117,28 +110,25 @@ class SignallingController extends Controller {
 					break;
 				case 'stunservers':
 					$response = [];
-					$stunServer = Util::getStunServer($this->config);
+					$stunServer = $this->config->getStunServer();
 					if ($stunServer) {
-						array_push($response, [
+						$response[] = [
 							'url' => 'stun:' . $stunServer,
-						]);
+						];
 					}
 					break;
 				case 'turnservers':
 					$response = [];
-					$turnSettings = Util::getTurnSettings($this->config, $this->userId);
-					if(empty($turnSettings)) {
-						$turnSettings = Util::generateTurnSettings($this->config, $this->timeFactory);
-					}
-					if (!empty($turnSettings)) {
-						$protocols = explode(",", $turnSettings['protocols']);
+					$turnSettings = $this->config->getTurnSettings();
+					if (!empty($turnSettings['server'])) {
+						$protocols = explode(',', $turnSettings['protocols']);
 						foreach ($protocols as $proto) {
-							array_push($response, [
+							$response[] = [
 								'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
 								'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
 								'username' => $turnSettings['username'],
 								'credential' => $turnSettings['password'],
-							]);
+							];
 						}
 					}
 					break;
