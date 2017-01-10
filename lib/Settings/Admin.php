@@ -41,7 +41,7 @@ class Admin implements ISettings {
      */
     public function getForm() {
         $parameters = [
-            'stunServer' => Util::getStunServer($this->config),
+			'stunServer' => $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443'),
 			'turnServer' => $this->config->getAppValue('spreed', 'turn_server', ''),
 			'turnServerSecret' => $this->config->getAppValue('spreed', 'turn_server_secret', ''),
 			'turnServerProtocols' => $this->config->getAppValue('spreed', 'turn_server_protocols', ''),
