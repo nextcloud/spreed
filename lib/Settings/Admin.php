@@ -21,51 +21,50 @@
 
 namespace OCA\Spreed\Settings;
 
+
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 
-use OCA\Spreed\Util;
-
 class Admin implements ISettings {
 
-    /** @var IConfig */
-    private $config;
+	/** @var IConfig */
+	private $config;
 
-    public function __construct(IConfig $config) {
-        $this->config = $config;
-    }
+	public function __construct(IConfig $config) {
+		$this->config = $config;
+	}
 
-    /**
-     * @return TemplateResponse
-     */
-    public function getForm() {
-        $parameters = [
+	/**
+	 * @return TemplateResponse
+	 */
+	public function getForm() {
+		$parameters = [
 			'stunServer' => $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443'),
 			'turnServer' => $this->config->getAppValue('spreed', 'turn_server', ''),
 			'turnServerSecret' => $this->config->getAppValue('spreed', 'turn_server_secret', ''),
 			'turnServerProtocols' => $this->config->getAppValue('spreed', 'turn_server_protocols', ''),
-        ];
+		];
 
-        return new TemplateResponse('spreed', 'settings-admin', $parameters, '');
-    }
+		return new TemplateResponse('spreed', 'settings-admin', $parameters, '');
+	}
 
-    /**
-     * @return string the section ID, e.g. 'sharing'
-     */
-    public function getSection() {
-        return 'additional';
-    }
+	/**
+	 * @return string the section ID, e.g. 'sharing'
+	 */
+	public function getSection() {
+		return 'additional';
+	}
 
-    /**
-     * @return int whether the form should be rather on the top or bottom of
-     * the admin section. The forms are arranged in ascending order of the
-     * priority values. It is required to return a value between 0 and 100.
-     *
-     * E.g.: 70
-     */
-    public function getPriority() {
-        return 30;
-    }
+	/**
+	 * @return int whether the form should be rather on the top or bottom of
+	 * the admin section. The forms are arranged in ascending order of the
+	 * priority values. It is required to return a value between 0 and 100.
+	 *
+	 * E.g.: 70
+	 */
+	public function getPriority() {
+		return 30;
+	}
 
 }
