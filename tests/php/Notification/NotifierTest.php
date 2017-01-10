@@ -61,7 +61,7 @@ class NotifierTest extends \Test\TestCase {
 		);
 	}
 
-	public function dataPrepare() {
+	public function dataPrepareOne2One() {
 		return [
 			['admin', 'Admin', 'Admin invited you to a private call'],
 			['test', 'Test user', 'Test user invited you to a private call'],
@@ -69,12 +69,12 @@ class NotifierTest extends \Test\TestCase {
 	}
 
 	/**
-	 * @dataProvider dataPrepare
+	 * @dataProvider dataPrepareOne2One
 	 * @param string $uid
 	 * @param string $displayName
 	 * @param string $parsedSubject
 	 */
-	public function testPrepare($uid, $displayName, $parsedSubject) {
+	public function testPrepareOne2One($uid, $displayName, $parsedSubject) {
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->exactly(2))
@@ -118,6 +118,88 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('setRichSubject')
 			->with('{user} invited you to a private call',[
+				'user' => [
+					'type' => 'user',
+					'id' => $uid,
+					'name' => $displayName,
+				]
+			])
+			->willReturnSelf();
+
+		$n->expects($this->once())
+			->method('getApp')
+			->willReturn('spreed');
+		$n->expects($this->once())
+			->method('getSubject')
+			->willReturn('invitation');
+		$n->expects($this->once())
+			->method('getSubjectParameters')
+			->willReturn([$uid]);
+		$n->expects($this->once())
+			->method('getObjectType')
+			->willReturn('room');
+
+		$this->notifier->prepare($n, 'de');
+	}
+
+	public function dataPrepareGroup() {
+		return [
+			[Room::GROUP_CALL, 'admin', 'Admin', 'Admin invited you to a group call'],
+			[Room::PUBLIC_CALL, 'test', 'Test user', 'Test user invited you to a group call'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataPrepareGroup
+	 * @param int $type
+	 * @param string $uid
+	 * @param string $displayName
+	 * @param string $parsedSubject
+	 */
+	public function testPrepareGroup($type, $uid, $displayName, $parsedSubject) {
+		$n = $this->createMock(INotification::class);
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->exactly(2))
+			->method('t')
+			->will($this->returnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			}));
+
+		$room = $this->createMock(Room::class);
+		$room->expects($this->atLeastOnce())
+			->method('getType')
+			->willReturn($type);
+		$this->manager->expects($this->once())
+			->method('getRoomById')
+			->willReturn($room);
+
+		$this->lFactory->expects($this->once())
+			->method('get')
+			->with('spreed', 'de')
+			->willReturn($l);
+
+		$u = $this->createMock(IUser::class);
+		$u->expects($this->exactly(2))
+			->method('getDisplayName')
+			->willReturn($displayName);
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with($uid)
+			->willReturn($u);
+
+		$n->expects($this->once())
+			->method('setIcon')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setLink')
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setParsedSubject')
+			->with($parsedSubject)
+			->willReturnSelf();
+		$n->expects($this->once())
+			->method('setRichSubject')
+			->with('{user} invited you to a group call',[
 				'user' => [
 					'type' => 'user',
 					'id' => $uid,
