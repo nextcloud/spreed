@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php;
+namespace OCA\Spreed\Tests\php\Notifications;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
