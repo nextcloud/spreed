@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Video calls" : "Видеозвонки",
     "(group)" : "(группа)",
-    "New public room" : "Новая публичная комната",
     "Waiting for {participantName} to join the call …" : "Ждем пока  {participantName} подключится к звонку...",
     "Waiting for others to join the call …" : "Ждем пока другие подключатся к звонку ...",
     "Guest" : "Гость",
@@ -19,7 +18,6 @@ OC.L10N.register(
     "Add person" : "Добавить пользователя",
     "Share link" : "Поделиться ссылкой",
     "Leave call" : "Завершить звонок",
-    "No other participants in this call" : "У этого звонка нет других участников",
     "Access to microphone & camera is only possible with HTTPS" : "Доступ к микрофону и камере возможен только по HTTPS",
     "Please adjust your configuration" : "Пожалуйста, установите свои настройки",
     "Access to microphone & camera was denied" : "Доступ к микрофону и камере был запрещён",
@@ -36,9 +34,6 @@ OC.L10N.register(
     "Invalid protocols specified." : "Указан неверный протокол.",
     "Saved" : "Сохранено",
     "The call does not exist." : "Звонок не существует.",
-    "Not logged in." : "Не вошли в систему.",
-    "Invalid format, must be turnserver:port." : "Неверный формат, должно быть turnserver:port.",
-    "All fields have to be filled out." : "Все поля должны быть заполнены.",
     "%s invited you to a private call" : "%s пригласил вас в приватный звонок",
     "{user} invited you to a private call" : "{user} пригласил вас в приватный звонок",
     "%s invited you to a group call" : "%s пригласил вас в групповой звонок",
@@ -56,11 +51,6 @@ OC.L10N.register(
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "только UDP",
     "TCP only" : "только TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потока данных от участников, находящихся за межсетевым экраном.",
-    "Spreed video calls" : "Видеозвонки Spreed",
-    "The TURN server is used to relay audio/video streams in cases where the participants can't connect directly to each other." : "Сервер TURN используется для пересылки аудио/видео потоков в случае, если между участниками не может быть установлено прямое соединение.",
-    "Username" : "Имя пользователя",
-    "Password" : "Пароль",
-    "Protocols" : "Протоколы"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потока данных от участников, находящихся за межсетевым экраном."
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

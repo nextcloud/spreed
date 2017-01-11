@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Video calls" : "Videó hívások",
     "(group)" : "(csoport)",
-    "New public room" : "Új nyilvános szoba",
     "Waiting for {participantName} to join the call …" : "Várakozunk, hogy {participantName} csatlakozzon a híváshoz...",
     "Waiting for others to join the call …" : "Várakozunk, hogy mások csatlakozzanak a híváshoz...",
     "Guest" : "Vendég",
@@ -17,7 +16,6 @@ OC.L10N.register(
     "Add person" : "Személy hozzáadás",
     "Share link" : "Megosztás hivatkozással",
     "Leave call" : "Hívás elhagyása",
-    "No other participants in this call" : "Nincs több részvevő ebben a beszélgetésben",
     "Access to microphone & camera is only possible with HTTPS" : "A mikrofon és a kamera hozzáférése csak HTTPS-en lehetséges",
     "Please adjust your configuration" : "Kérlek állíts a konfiguráción",
     "Access to microphone & camera was denied" : "A kamera és a mikrofon hozzáférése letiltva",
@@ -34,9 +32,6 @@ OC.L10N.register(
     "Invalid protocols specified." : "A megadott protokollok nem érvényesek.",
     "Saved" : "Elmentve",
     "The call does not exist." : "A hívás nem létezik.",
-    "Not logged in." : "Nincs bejelentkezve.",
-    "Invalid format, must be turnserver:port." : "Érvénytelen formátum, ilyennek kell lennie: turnserver:port.",
-    "All fields have to be filled out." : "Minden mezőt ki kell tölteni.",
     "%s invited you to a private call" : "%s meghívott egy privát beszélgetésre",
     "{user} invited you to a private call" : "{user} meghívott egy privát beszélgetésre",
     "%s invited you to a group call" : "%s meghívott egy csoportos beszélgetésre",
@@ -51,10 +46,6 @@ OC.L10N.register(
     "TURN server protocols" : "TURN kiszolgáló protokollok",
     "UDP and TCP" : "UDP és TCP",
     "UDP only" : "csak UDP",
-    "TCP only" : "csak TCP",
-    "Spreed video calls" : "Spreed videó hívások",
-    "Username" : "Felhasználónév",
-    "Password" : "Jelszó",
-    "Protocols" : "Protokollok"
+    "TCP only" : "csak TCP"
 },
 "nplurals=2; plural=(n != 1);");

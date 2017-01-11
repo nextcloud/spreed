@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Video calls" : "Ligações em vídeo",
     "(group)" : "(grupo)",
-    "New public room" : "Novo espaço público",
     "Waiting for {participantName} to join the call …" : "Esperando por {participantName} para se juntar a chamada …",
     "Waiting for others to join the call …" : "Esperando por outros para se juntarem a chamada ...",
     "Guest" : "Convidado",
@@ -19,7 +18,6 @@ OC.L10N.register(
     "Add person" : "Adicionar uma pessoa",
     "Share link" : "Compartilhar o link",
     "Leave call" : "Deixar a chamada",
-    "No other participants in this call" : "Nenhum outro participante nesta chamada",
     "Access to microphone & camera is only possible with HTTPS" : "O acesso ao microfone e à câmera só é possível com HTTPS",
     "Please adjust your configuration" : "Ajuste sua configuração",
     "Access to microphone & camera was denied" : "O acesso ao microfone e à câmera foi negado",
@@ -36,9 +34,6 @@ OC.L10N.register(
     "Invalid protocols specified." : "Os protocolos especificados são inválidos.",
     "Saved" : "Salvo",
     "The call does not exist." : "A ligação não existe",
-    "Not logged in." : "Não está conectado.",
-    "Invalid format, must be turnserver:port." : "Formato inválido, deve ser turnserver:port.",
-    "All fields have to be filled out." : "Todos os campos têm de ser preenchidos.",
     "%s invited you to a private call" : "%s convidou você para uma chamada particular",
     "{user} invited you to a private call" : "{user} convidou você para uma chamada particular",
     "%s invited you to a group call" : "%s convidou você para uma chamada em grupo",
@@ -56,11 +51,6 @@ OC.L10N.register(
     "UDP and TCP" : "UDP e TCP",
     "UDP only" : "Somente UDP",
     "TCP only" : "Somente TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN é usado para proxy do tráfego de participantes por trás de um firewall.",
-    "Spreed video calls" : "Dar velocidade a chamadas de vídeo",
-    "The TURN server is used to relay audio/video streams in cases where the participants can't connect directly to each other." : "O servidor TURN é usado para retransmitir fluxos de áudio/vídeo nos casos em que os participantes não podem se conectar diretamente entre si.",
-    "Username" : "Nome do Usuário",
-    "Password" : "Senha",
-    "Protocols" : "Protocolos"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN é usado para proxy do tráfego de participantes por trás de um firewall."
 },
 "nplurals=2; plural=(n > 1);");

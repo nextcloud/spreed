@@ -3,7 +3,6 @@ OC.L10N.register(
     {
     "Video calls" : "Videosamtal",
     "(group)" : " (grupp)",
-    "New public room" : "Nytt offentligt rum",
     "Waiting for {participantName} to join the call …" : "Väntar på att {participantName} ansluter sig till samtalet ...",
     "Waiting for others to join the call …" : "Väntar på andra ansluter sig till samtalet ...",
     "Guest" : "Gäst",
@@ -19,7 +18,6 @@ OC.L10N.register(
     "Add person" : "Lägg till person",
     "Share link" : "Dela länk",
     "Leave call" : "Lämna samtalet",
-    "No other participants in this call" : "Inga andra deltagare i detta samtal",
     "Access to microphone & camera is only possible with HTTPS" : "Tillgång till mikrofon och kamera är endast möjligt via HTTPS",
     "Please adjust your configuration" : "Vänligen justera dina inställningar",
     "Access to microphone & camera was denied" : "Tillgång till mikrofon och kamera blev nekad",
@@ -36,9 +34,6 @@ OC.L10N.register(
     "Invalid protocols specified." : "Ogiltigt protokoll angivet.",
     "Saved" : "Sparad",
     "The call does not exist." : "Samtalet finns ej.",
-    "Not logged in." : "Ej inloggad.",
-    "Invalid format, must be turnserver:port." : "Ogiltigt format, måste skrivas turnserver:port.",
-    "All fields have to be filled out." : "Alla fält måste fyllas i.",
     "%s invited you to a private call" : "%s har bjudit in dig till ett privat samtal",
     "{user} invited you to a private call" : "{user} har bjudit in dig till ett privat samtal",
     "%s invited you to a group call" : "%s har bjudit in dig till ett gruppsamtal",
@@ -56,11 +51,6 @@ OC.L10N.register(
     "UDP and TCP" : "UDP och TCP",
     "UDP only" : "UDP endast",
     "TCP only" : "TCP endast",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
-    "Spreed video calls" : "Spreed videosamtal",
-    "The TURN server is used to relay audio/video streams in cases where the participants can't connect directly to each other." : "TURN servern används för att dirigera om ljud/bild i dessa fall då användare inte kan ansluta direkt mot varandra.",
-    "Username" : "Användarnamn",
-    "Password" : "Lösenord",
-    "Protocols" : "Protokoll"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN servern används för att tunnla trafiken för användare som sitter bakom en brandvägg."
 },
 "nplurals=2; plural=(n != 1);");
