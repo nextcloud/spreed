@@ -83,9 +83,9 @@
 
 						//Add custom entry to create a new empty room
 						if (OCA.SpreedMe.app._searchTerm === '') {
-							results.unshift({ id: "create-public-room", displayName: t('spreed', 'New public room'), type: "createPublicRoom"});
+							results.unshift({ id: "create-public-room", displayName: t('spreed', 'New public call'), type: "createPublicRoom"});
 						} else {
-							results.push({ id: "create-public-room", displayName: t('spreed', 'New public room'), type: "createPublicRoom"});
+							results.push({ id: "create-public-room", displayName: t('spreed', 'New public call'), type: "createPublicRoom"});
 						}
 
 						return {
