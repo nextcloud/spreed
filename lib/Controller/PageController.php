@@ -30,20 +30,14 @@ use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
 
 class PageController extends Controller {
 	/** @var string */
 	private $userId;
-	/** @var IDBConnection */
-	private $dbConnection;
-	/** @var IURLGenerator */
-	private $url;
 	/** @var IL10N */
 	private $l10n;
 	/** @var Manager */
@@ -57,8 +51,6 @@ class PageController extends Controller {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param string $UserId
-	 * @param IDBConnection $dbConnection
-	 * @param IURLGenerator $url
 	 * @param IL10N $l10n
 	 * @param Manager $manager
 	 * @param ISecureRandom $secureRandom
@@ -67,16 +59,12 @@ class PageController extends Controller {
 	public function __construct($appName,
 								IRequest $request,
 								$UserId,
-								IDBConnection $dbConnection,
-								IURLGenerator $url,
 								IL10N $l10n,
 								Manager $manager,
 								ISecureRandom $secureRandom,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
-		$this->dbConnection = $dbConnection;
-		$this->url = $url;
 		$this->l10n = $l10n;
 		$this->manager = $manager;
 		$this->secureRandom = $secureRandom;
