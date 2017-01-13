@@ -159,6 +159,7 @@ class ApiController extends Controller {
 			'type' => $room->getType(),
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
+			'isNameEditable' => ($room->getType() !== Room::ONE_TO_ONE_CALL),
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
 			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
@@ -183,6 +184,7 @@ class ApiController extends Controller {
 			$numGuestParticipants = $numActiveGuests - 1;
 		}
 
+		$guestString = '';
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				// As name of the room use the name of the other person participating
@@ -200,26 +202,31 @@ class ApiController extends Controller {
 				}
 				break;
 
-			case Room::GROUP_CALL:
+			/** @noinspection PhpMissingBreakStatementInspection */
 			case Room::PUBLIC_CALL:
-				/// As name of the room use the names of the other participants
-				if ($this->userId === null) {
-					$participantList[] = $this->l10n->t('You');
-
-					if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-						$participantList[] = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
-					}
-				} else if ($numOtherParticipants === 0) {
-					$participantList = [$this->l10n->t('You')];
-
-					if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-						$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
-					}
-				} else if ($numGuestParticipants !== 0 && $room->getType() === Room::PUBLIC_CALL) {
-					$participantList[] = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+				if ($this->userId === null && $numGuestParticipants) {
+					$guestString = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
+				} else if ($numGuestParticipants) {
+					$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
 				}
 
-				$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
+				// no break;
+
+			case Room::GROUP_CALL:
+				if ($room->getName() === '') {
+					// As name of the room use the names of the other participants
+					if ($this->userId === null) {
+						$participantList[] = $this->l10n->t('You');
+					} else if ($numOtherParticipants === 0) {
+						$participantList = [$this->l10n->t('You')];
+					}
+
+					if ($guestString !== '') {
+						$participantList[] = $guestString;
+					}
+
+					$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
+				}
 				break;
 
 			default:
@@ -230,6 +237,8 @@ class ApiController extends Controller {
 				$room->deleteRoom();
 				throw new RoomNotFoundException();
 		}
+
+		$roomData['guestList'] = $guestString;
 
 		return $roomData;
 	}
@@ -355,6 +364,30 @@ class ApiController extends Controller {
 		$room->addUser($currentUser);
 
 		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomId
+	 * @param string $roomName
+	 * @return JSONResponse
+	 */
+	public function renameRoom($roomId, $roomName) {
+		try {
+			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (strlen($roomName) > 200) {
+			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		if (!$room->setName($roomName)) {
+			return new JSONResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+		}
+		return new JSONResponse([]);
 	}
 
 	/**

@@ -43,6 +43,16 @@
 										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
+								'{{#isNameEditable}}'+
+								'<li>'+
+									'<button class="rename-room-button">'+
+										'<span class="icon-rename"></span>'+
+										'<span>'+t('spreed', 'Rename')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
+								'<button class="icon-confirm hidden-important rename-element rename-confirm"></button>'+
+								'{{/isNameEditable}}'+
 								'<li>'+
 									'<button class="share-link-button">'+
 										'<span class="icon-public"></span>'+
@@ -74,6 +84,7 @@
 				this.render();
 			},
 			'change:type': function() {
+				this.render();
 				this.checkSharingStatus();
 			}
 		},
@@ -126,6 +137,8 @@
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
+			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
+			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
 			'click .icon-delete': 'unshareGroup',
@@ -182,6 +195,54 @@
 			this.ui.menuList.attr('style', 'display: none !important');
 			this.ui.personSelectorForm.toggleClass('hidden');
 			this.ui.personSelectorInput.select2('open');
+		},
+		showRenameInput: function() {
+			var currentRoomName = this.model.get('name'),
+				self = this;
+
+			this.$el.find('.rename-element').removeClass('hidden-important');
+			this.$el.find('.rename-room-button').addClass('hidden-important');
+
+			if (currentRoomName) {
+				this.$el.find('.rename-input').val(currentRoomName);
+			}
+
+			this.$el.find('.rename-input').focus();
+			this.$el.keyup(function(e) {
+				if (e.keyCode === 13) {
+					self.confirmRoomRename();
+				} else if (e.keyCode === 27) {
+					self.$el.find('.rename-element').addClass('hidden-important');
+					self.$el.find('.rename-room-button').removeClass('hidden-important');
+				}
+			});
+		},
+		confirmRoomRename: function() {
+			var currentRoomName = this.model.get('name');
+			var newRoomName = $.trim(this.$el.find('.rename-input').val());
+
+			this.$el.find('.rename-element').addClass('hidden-important');
+			this.$el.find('.rename-room-button').removeClass('hidden-important');
+
+			if (currentRoomName !== newRoomName) {
+				console.log('Changing room name to: '+newRoomName+' from: '+currentRoomName);
+				this.renameRoom(newRoomName);
+			}
+		},
+		renameRoom: function(roomName) {
+			var app = OCA.SpreedMe.app;
+
+			// This should be the only case
+			if ((this.model.get('type') !== 1) && (roomName.length <= 200)) {
+				$.ajax({
+					url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
+					type: 'PUT',
+					data: 'roomName='+roomName,
+					success: function() {
+						app.syncRooms();
+					}
+				});
+			}
 		},
 		shareGroup: function() {
 			var app = OCA.SpreedMe.app;
@@ -305,7 +366,24 @@
 			$('#emptycontent p').text(messageAdditional);
 		},
 		addTooltip: function () {
-			var htmlstring = escapeHTML(this.model.get('displayName')).replace(/\, /g, '<br>');
+			var participants = [];
+			$.each(this.model.get('participants'), function(participantId, participantName) {
+				if (participantId !== oc_current_user) {
+					participants.push(escapeHTML(participantName));
+				}
+			});
+
+			if (this.model.get('guestList') !== '') {
+				participants.push(this.model.get('guestList'));
+			}
+
+			if (participants.length === 0) {
+				participants.push(t('spreed', 'You'));
+			} else {
+				participants.push(t('spreed', 'and you'));
+			}
+
+			var htmlstring = participants.join('<br>');
 
 			this.ui.room.tooltip({
 				placement: 'bottom',

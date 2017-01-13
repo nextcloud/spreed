@@ -60,6 +60,12 @@ return [
 			'requirements' => ['roomId' => '\d+'],
 		],
 		[
+			'name' => 'api#renameRoom',
+			'url' => '/api/room/{roomId}',
+			'verb' => 'PUT',
+			'requirements' => ['roomId' => '\d+'],
+		],
+		[
 			'name' => 'api#addParticipantToRoom',
 			'url' => '/api/room/{roomId}',
 			'verb' => 'POST',

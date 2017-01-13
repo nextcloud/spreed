@@ -90,7 +90,8 @@
 	display: block !important;
 }
 
-.private-room {
+.private-room,
+.hidden-important {
 	display: none !important;
 }
 
@@ -109,6 +110,26 @@
     top: 0;
     padding: 16px;
 	opacity: .5;
+}
+
+.rename-input {
+	margin-top: 0px !important;
+	margin-bottom: 4px !important;
+}
+
+.icon-confirm.rename-confirm {
+	background-size: 16px;
+	background-color: transparent;
+	border: none;
+	position: absolute;
+	right: -5px;
+	top: 38px;
+	padding: 16px;
+	opacity: .5;
+}
+
+.icon-confirm.rename-confirm:hover  {
+	opacity: 1;
 }
 
 

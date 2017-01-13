@@ -100,6 +100,28 @@ class Room {
 	}
 
 	/**
+	 * @param string $newName Currently it is only allowed to rename: Room::GROUP_CALL, Room::PUBLIC_CALL
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setName($newName) {
+		if ($newName === $this->getName()) {
+			return true;
+		}
+
+		if ($this->getType() === self::ONE_TO_ONE_CALL) {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_rooms')
+			->set('name', $query->createNamedParameter($newName))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		return true;
+	}
+
+	/**
 	 * @param int $newType Currently it is only allowed to change to: Room::GROUP_CALL, Room::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
