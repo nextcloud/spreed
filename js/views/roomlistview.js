@@ -197,7 +197,8 @@
 			this.ui.personSelectorInput.select2('open');
 		},
 		showRenameInput: function() {
-			var currentRoomName = this.model.get('name');
+			var currentRoomName = this.model.get('name'),
+				self = this;
 
 			this.$el.find('.rename-element').removeClass('hidden-important');
 			this.$el.find('.rename-room-button').addClass('hidden-important');
@@ -207,6 +208,14 @@
 			}
 
 			this.$el.find('.rename-input').focus();
+			this.$el.keyup(function(e) {
+				if (e.keyCode === 13) {
+					self.confirmRoomRename();
+				} else if (e.keyCode === 27) {
+					self.$el.find('.rename-element').addClass('hidden-important');
+					self.$el.find('.rename-room-button').removeClass('hidden-important');
+				}
+			});
 		},
 		confirmRoomRename: function() {
 			var currentRoomName = this.model.get('name');
