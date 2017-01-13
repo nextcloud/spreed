@@ -369,9 +369,13 @@
 			if (oc_current_user) {
 				this._showRoomList();
 				this._rooms.fetch({
-					success: function() {
+					success: function(data) {
 						$('#app-navigation').removeClass('icon-loading');
 						self._roomsView.render();
+
+						if (data.length === 0) {
+							$('#edit-roomname').select2('open');
+						}
 					}
 				});
 
