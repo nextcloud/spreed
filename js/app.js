@@ -282,6 +282,12 @@
 				this._rooms.fetch({
 					success: function() {
 						roomChannel.trigger('active', roomId);
+						// Disable video when entering a room with more than 5 participants.
+						self._rooms.forEach(function(room) {
+							if ((room.get('id') === roomId) && (Object.keys(room.get('participants')).length > 5)) {
+								self.disableVideo();
+							}
+						});
 					}
 				});
 			} else {
