@@ -296,6 +296,9 @@
 					type: 'GET',
 					success: function(data) {
 						self.showPublicRoomMessage(data.participants);
+						if (Object.keys(data.participants).length > 5) {
+							self.disableVideo();
+						}
 					}
 				});
 			}
