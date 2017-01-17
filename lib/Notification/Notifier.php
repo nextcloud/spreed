@@ -138,6 +138,7 @@ class Notifier implements INotifier {
 											'type' => 'call',
 											'id' => $room->getId(),
 											'name' => $room->getName(),
+											'call-type' => $this->getRoomType($room),
 										],
 									]
 								)
@@ -172,5 +173,23 @@ class Notifier implements INotifier {
 		}
 
 		return $notification;
+	}
+
+	/**
+	 * @param Room $room
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function getRoomType(Room $room) {
+		switch ($room->getType()) {
+			case Room::ONE_TO_ONE_CALL:
+				return 'one2one';
+			case Room::GROUP_CALL:
+				return 'group';
+			case Room::PUBLIC_CALL:
+				return 'public';
+			default:
+				throw new \InvalidArgumentException('Unknown room type');
+		}
 	}
 }

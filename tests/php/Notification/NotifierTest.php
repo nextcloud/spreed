@@ -237,6 +237,7 @@ class NotifierTest extends \Test\TestCase {
 						'type' => 'call',
 						'id' => $roomId,
 						'name' => $name,
+						'call-type' => 'public',
 					],
 				])
 				->willReturnSelf();
