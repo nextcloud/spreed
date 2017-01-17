@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <info>
 	<id>spreed</id>
-	<name>Spreed video calls</name>
-	<description><![CDATA[Voice over IP conferencing using WebRTC
+	<name>Video calls</name>
+	<description><![CDATA[Video & voice calls using WebRTC
 
 👥 **1on1 & group calls!** Just invite people, or create a call with a whole group. :)
 
