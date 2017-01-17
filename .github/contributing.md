@@ -18,7 +18,7 @@ Help us to maximize the effort we can spend fixing issues and adding new feature
 
 ## Contributing to Source Code
 
-Thanks for wanting to contribute source code to the Mail app. That's great!
+Thanks for wanting to contribute source code to the Spreed app. That's great!
 
 ## Translations
 Please submit translations via [Transifex](https://www.transifex.com/nextcloud/nextcloud/spreed/).
