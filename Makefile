@@ -39,7 +39,6 @@ appstore: clean install-deps
 	--exclude=bower.json \
 	--exclude=.bowerrc \
 	--exclude=/build \
-	--exclude=CONTRIBUTING.md \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
@@ -48,7 +47,6 @@ appstore: clean install-deps
 	--exclude=.gitattributes \
 	--exclude=.github \
 	--exclude=.gitignore \
-	--exclude=issue_template.md \
 	--exclude=.jscsrc \
 	--exclude=.jshintignore \
 	--exclude=js/tests \
