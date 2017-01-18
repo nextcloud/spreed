@@ -2,6 +2,7 @@
 <info>
 	<id>spreed</id>
 	<name>Video calls</name>
+	<summary><![CDATA[Video & voice calls using WebRTC]]></summary>
 	<description><![CDATA[Video & voice calls using WebRTC
 
 👥 **1on1 & group calls!** Just invite people, or create a call with a whole group. :)
@@ -33,7 +34,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/inviting-people.png</screenshot>
 
-	<version>1.2</version>
+	<version>1.2.0</version>
 	<dependencies>
 		<nextcloud min-version="11" max-version="12" />
 	</dependencies>
