@@ -5360,7 +5360,7 @@
 				self.emit('localStream', stream);
 			} else {
 				// Fallback for users without a camera
-				if (self.config.audioFallback && err.name === 'DevicesNotFoundError' && constraints.video !== false) {
+				if (self.config.audioFallback && (err.name === 'DevicesNotFoundError' || err.name === 'NotFoundError') && constraints.video !== false) {
 					constraints.video = false;
 					self.start(constraints, cb);
 					return;
@@ -14183,7 +14183,7 @@
 			if (err) {
 				self.emit('localMediaError', err);
 			} else {
-				self.emit('localMediaStarted');
+				self.emit('localMediaStarted', self.config.media);
 				attachMediaStream(stream, self.getLocalVideoContainer(), self.config.localVideo);
 			}
 		});
