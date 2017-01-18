@@ -401,12 +401,17 @@
 
 			uiChannel.trigger('document:click', event);
 		},
-		initAudioVideoSettings: function() {
+		initAudioVideoSettings: function(configuration) {
 			if (OCA.SpreedMe.app.audioDisabled) {
 				OCA.SpreedMe.app.disableAudio();
 			}
 
-			if (OCA.SpreedMe.app.videoDisabled) {
+			if (configuration.video !== false) {
+				if (OCA.SpreedMe.app.videoDisabled) {
+					OCA.SpreedMe.app.disableVideo();
+				}
+			} else {
+				OCA.SpreedMe.app.videoWasEnabledAtLeastOnce = false;
 				OCA.SpreedMe.app.disableVideo();
 			}
 		},
