@@ -117,6 +117,7 @@ var spreedMappingTable = [];
 				}
 			},
 			autoAdjustMic: false,
+			audioFallback: true,
 			detectSpeakingEvents: true,
 			connection: OCA.SpreedMe.XhrConnection,
 			enableDataChannels: true,
