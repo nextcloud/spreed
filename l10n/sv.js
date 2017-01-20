@@ -12,7 +12,7 @@ OC.L10N.register(
     "Not supported!" : "Ej kompatibel!",
     "Press ⌘-C to copy." : "Tryck ⌘-C för att kopiera.",
     "Press Ctrl-C to copy." : "Tryck Ctrl-C för att kopiera.",
-    "Looking great today! :)" : "Ser bra ut idag! :)",
+    "Looking great today! :)" : "Du ser bra ut idag! :)",
     "Time to call your friends" : "Dags att ringa dina vänner",
     "This call has ended" : "Samtalet avslutades",
     "Saving failed" : "Lyckades ej att spara",
