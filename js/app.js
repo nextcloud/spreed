@@ -210,6 +210,49 @@
 				}
 			});
 
+			var screensharingStopped = function() {
+				console.log("Screensharing now stopped");
+			};
+
+			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
+				screensharingStopped();
+			});
+
+			$('#toogleScreensharing').click(function() {
+				var webrtc = OCA.SpreedMe.webrtc;
+				if (!webrtc.capabilities.supportScreenSharing) {
+					console.log("Screensharing is not supported");
+					return;
+				}
+
+				if (webrtc.getLocalScreen()) {
+					webrtc.stopScreenShare();
+					screensharingStopped();
+				} else {
+					webrtc.shareScreen(function(err) {
+						if (err) {
+							switch (err.name) {
+								case "HTTPS_REQUIRED":
+									console.log("Need HTTPS for screensharing.");
+									break;
+								case "PERMISSION_DENIED":
+								case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
+									console.log("User cancelled screensharing request.");
+									break;
+								case "EXTENSION_UNAVAILABLE":
+									console.log("Need to install extension to make screensharing work.");
+									break;
+								default:
+									console.log("Could not start screensharing", err.name, err);
+									break;
+							}
+						} else {
+							console.log("Screensharing now started");
+						}
+					});
+				}
+			});
+
 			$("#guestName").on('click', function() {
 				$('#guestName').addClass('hidden');
 				$("#guestNameInput").removeClass('hidden');

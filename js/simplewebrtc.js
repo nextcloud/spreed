@@ -17739,6 +17739,9 @@
 					mLine.iceTransport.addRemoteCandidate({});
 				}
 			});
+		} else if (message.type === 'unshareScreen') {
+			this.parent.emit('unshareScreen', {id: message.from});
+			this.end();
 		}
 	};
 
@@ -18317,7 +18320,11 @@
 		if (this.getLocalScreen()) {
 			this.webrtc.stopScreenShare();
 		}
+		// Notify peers were sending to.
 		this.webrtc.peers.forEach(function (peer) {
+			if (peer.type === 'screen' && peer.sharemyscreen) {
+				peer.send('unshareScreen');
+			}
 			if (peer.broadcaster) {
 				peer.end();
 			}
@@ -18477,6 +18484,17 @@
 				});
 			}
 		});
+
+		this.on('unshareScreen', function(message) {
+			// End peers we were receiving the screensharing stream from.
+			var peers = self.getPeers(message.from, 'screen');
+			peers.forEach(function(peer) {
+				if (!peer.sharemyscreen) {
+					peer.end();
+				}
+			});
+		});
+
 
 		// log events in debug mode
 		if (this.config.debug) {

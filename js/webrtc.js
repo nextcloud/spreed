@@ -350,6 +350,11 @@ var spreedMappingTable = [];
 
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
 			console.log('video added', peer);
+			if (peer.type === 'screen') {
+				OCA.SpreedMe.webrtc.emit('localScreenAdded', video);
+				return;
+			}
+
 			var remotes = document.getElementById('videos');
 			if (remotes) {
 				// Indicator for username
@@ -468,6 +473,14 @@ var spreedMappingTable = [];
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
+			if (video.dataset.screensharing) {
+				// SimpleWebRTC notifies about stopped screensharing through
+				// the generic "videoRemoved" API, but the stream must be
+				// handled differently.
+				OCA.SpreedMe.webrtc.emit('localScreenRemoved', video);
+				return;
+			}
+
 			// a removed peer can't speak anymore ;)
 			OCA.SpreedMe.speakers.remove(peer, true);
 
@@ -490,6 +503,21 @@ var spreedMappingTable = [];
 		});
 		OCA.SpreedMe.webrtc.on('videoOff', function() {
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOff');
+		});
+
+		// Local screen added.
+		OCA.SpreedMe.webrtc.on('localScreenAdded', function (video) {
+			video.onclick = function () {
+				video.style.width = video.videoWidth + 'px';
+				video.style.height = video.videoHeight + 'px';
+			};
+			video.dataset.screensharing = true;
+			document.getElementById('localScreenContainer').appendChild(video);
+		});
+		// Local screen removed.
+		OCA.SpreedMe.webrtc.on('localScreenRemoved', function (video) {
+			document.getElementById('localScreenContainer').removeChild(video);
+			OCA.SpreedMe.webrtc.emit('localScreenStopped');
 		});
 
 		// Peer changed nick
