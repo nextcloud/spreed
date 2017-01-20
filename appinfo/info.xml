@@ -29,6 +29,10 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<author>Lukas Reschke</author>
 	<author>Morris Jobke</author>
 
+	<website>https://github.com/nextcloud/spreed</website>
+	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
+	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
+
 	<category>multimedia</category>
 	<category>social</category>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
