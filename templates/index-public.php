@@ -24,7 +24,7 @@ script(
 );
 ?>
 
-<div id="app" data-roomId="<?php p($_['roomId']) ?>">
+<div id="app" class="nc-enable-screensharing-extension" data-roomId="<?php p($_['roomId']) ?>">
 	<div id="app-content" class="participants-1">
 
 		<header>
