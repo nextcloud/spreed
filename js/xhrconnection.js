@@ -45,7 +45,7 @@ var sessionId = '';
 									result.forEach(function(element) {
 										if(OC.getCurrentUser()['uid'] !== element['userId']) {
 											roomDescription['clients'][element['sessionId']] = {
-												'type': 'video'
+												'video': true
 											};
 										}
 									});

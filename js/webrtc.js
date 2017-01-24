@@ -496,7 +496,7 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('nick', function(data) {
 			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
 					id: data.id,
-					type: 'type',
+					type: 'video',
 					broadcaster: false
 				}));
 			var $el = $(el);
@@ -513,7 +513,7 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('mute', function(data) {
 			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
 					id: data.id,
-					type: 'type',
+					type: 'video',
 					broadcaster: false
 				}));
 			var $el = $(el);
@@ -544,7 +544,7 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('unmute', function(data) {
 			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
 					id: data.id,
-					type: 'type',
+					type: 'video',
 					broadcaster: false
 				}));
 			var $el = $(el);
