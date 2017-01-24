@@ -145,7 +145,10 @@ class SignallingController extends Controller {
 		set_time_limit(0);
 		$eventSource = \OC::$server->createEventSource();
 
-		while(true) {
+		// Avoid having a endless loop on the server. Clients will automatically
+		// reconnect when the connection is lost.
+		$timeout = time() + (5 * 60);
+		while (time() < $timeout) {
 			if ($this->userId === null) {
 				$sessionId = $this->session->get('spreed-session');
 
@@ -220,7 +223,8 @@ class SignallingController extends Controller {
 			$this->dbConnection->close();
 			sleep(1);
 		}
-		exit();
+
+		$eventSource->close();
 	}
 
 	/**
