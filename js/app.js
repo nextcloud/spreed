@@ -211,7 +211,7 @@
 			});
 
 			var screensharingStopped = function() {
-				console.log("Screensharing now stopped");
+				// No need to notify the user.
 			};
 
 			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
@@ -221,7 +221,7 @@
 			$('#toogleScreensharing').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
-					console.log("Screensharing is not supported");
+					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
 					return;
 				}
 
@@ -230,24 +230,28 @@
 					screensharingStopped();
 				} else {
 					webrtc.shareScreen(function(err) {
-						if (err) {
-							switch (err.name) {
-								case "HTTPS_REQUIRED":
-									console.log("Need HTTPS for screensharing.");
-									break;
-								case "PERMISSION_DENIED":
-								case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
-									console.log("User cancelled screensharing request.");
-									break;
-								case "EXTENSION_UNAVAILABLE":
-									console.log("Need to install extension to make screensharing work.");
-									break;
-								default:
-									console.log("Could not start screensharing", err.name, err);
-									break;
-							}
-						} else {
-							console.log("Screensharing now started");
+						if (!err) {
+							OC.Notification.showTemporary(t('spreed', 'Screensharing is about to start…'));
+							return;
+						}
+
+						switch (err.name) {
+							case "HTTPS_REQUIRED":
+								OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
+								break;
+							case "PERMISSION_DENIED":
+							case "NotAllowedError":
+							case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
+								OC.Notification.showTemporary(t('spreed', 'The screensharing request has been cancelled.'));
+								break;
+							case "EXTENSION_UNAVAILABLE":
+								// TODO(fancycode): Show popup with links to Chrome/Firefox extensions.
+								OC.Notification.showTemporary(t('spreed', 'An extension is required to start screensharing.'));
+								break;
+							default:
+								OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
+								console.log("Could not start screensharing", err);
+								break;
 						}
 					});
 				}
