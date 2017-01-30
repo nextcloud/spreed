@@ -211,7 +211,7 @@
 			});
 
 			var screensharingStopped = function() {
-				// No need to notify the user.
+				console.log("Screensharing now stopped");
 			};
 
 			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
