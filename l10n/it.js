@@ -16,6 +16,7 @@ OC.L10N.register(
     "This call has ended" : "Questa chiamata è terminata",
     "Saving failed" : "Salvataggio non riuscito",
     "Add person" : "Aggiungi persona",
+    "Rename" : "Rinomina",
     "Share link" : "Condividi collegamento",
     "Leave call" : "Lascia la chiamata",
     "You" : "Tu",
