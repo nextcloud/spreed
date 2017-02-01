@@ -58,6 +58,10 @@
 	padding: 0;
 }
 
+.app-navigation-entry-menu li {
+	display: block !important;
+}
+
 #app-navigation .avatar,
 #app-navigation .icon-contacts-dark,
 #app-navigation .app-navigation-entry-link .icon-public {
