@@ -208,6 +208,7 @@
 			}
 
 			this.$el.find('.rename-input').focus();
+			this.$el.find('.rename-input').select();
 			this.$el.keyup(function(e) {
 				if (e.keyCode === 13) {
 					self.confirmRoomRename();
