@@ -21,6 +21,11 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 💬 [Chat integration](https://github.com/nextcloud/spreed/issues/35)
 
 ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
+
+**Known issues:**
+
+* [HTTP/2.0 is currently not supported](https://github.com/nextcloud/spreed/issues/225)
+
 	]]></description>
 	<licence>AGPL</licence>
 
