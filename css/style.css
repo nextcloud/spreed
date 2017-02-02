@@ -446,16 +446,6 @@ video {
 	}
 }
 
-#nextcloud {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 5px;
-    padding-bottom: 0;
-    height: 45px;
-    opacity: 1;
-}
-
 #guestName {
     padding: 7px 30px 6px 10px;
     cursor: pointer;
@@ -474,7 +464,7 @@ video {
 #guestNameConfirm {
 	position: relative;
 	height: 20px;
-	right: 12px;
+	right: 16px;
 	line-height: 14px;
 	background-color: transparent;
 	border: none;
