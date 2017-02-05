@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Video calls" : "Chiamate video",
     "(group)" : "(gruppo)",
+    "New public call" : "Nuova chiamata pubblica",
     "Waiting for {participantName} to join the call …" : "In attesa che {participantName} si unisca alla chiamata...",
     "Waiting for others to join the call …" : "In attesa che altri si uniscano alla chiamata...",
     "Guest" : "Ospite",
@@ -19,7 +20,9 @@ OC.L10N.register(
     "Rename" : "Rinomina",
     "Share link" : "Condividi collegamento",
     "Leave call" : "Lascia la chiamata",
+    "No other people in this call" : "Non ci sono altre persone in questa chiamata",
     "You" : "Tu",
+    "and you" : "e tu",
     "Access to microphone & camera is only possible with HTTPS" : "L'accesso a microfono e webcam è possibile solo con HTTPS",
     "Please adjust your configuration" : "Modifica la tua configurazione",
     "Access to microphone & camera was denied" : "L'accesso a microfono e webcam è stato negato",
