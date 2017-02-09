@@ -18074,21 +18074,6 @@
 			// remote ice failure
 		});
 
-
-		// sending mute/unmute to all peers
-		this.webrtc.on('audioOn', function () {
-			self.webrtc.sendToAll('unmute', {name: 'audio'});
-		});
-		this.webrtc.on('audioOff', function () {
-			self.webrtc.sendToAll('mute', {name: 'audio'});
-		});
-		this.webrtc.on('videoOn', function () {
-			self.webrtc.sendToAll('unmute', {name: 'video'});
-		});
-		this.webrtc.on('videoOff', function () {
-			self.webrtc.sendToAll('mute', {name: 'video'});
-		});
-
 		// screensharing events
 		this.webrtc.on('localScreen', function (stream) {
 			var item,
