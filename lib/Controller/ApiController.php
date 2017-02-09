@@ -28,6 +28,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\JSONResponse;
@@ -39,7 +40,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\Notification\IManager;
+use OCP\Notification\IManager as INotificationManager;
 
 class ApiController extends Controller {
 	/** @var string */
@@ -56,8 +57,10 @@ class ApiController extends Controller {
 	private $logger;
 	/** @var Manager */
 	private $manager;
-	/** @var IManager */
+	/** @var INotificationManager */
 	private $notificationManager;
+	/** @var IActivityManager */
+	private $activityManager;
 
 	/**
 	 * @param string $appName
@@ -69,7 +72,8 @@ class ApiController extends Controller {
 	 * @param ISession $session
 	 * @param ILogger $logger
 	 * @param Manager $manager
-	 * @param IManager $notificationManager
+	 * @param INotificationManager $notificationManager
+	 * @param IActivityManager $activityManager
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -80,7 +84,8 @@ class ApiController extends Controller {
 								ISession $session,
 								ILogger $logger,
 								Manager $manager,
-								IManager $notificationManager) {
+								INotificationManager $notificationManager,
+								IActivityManager $activityManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->l10n = $l10n;
@@ -90,6 +95,7 @@ class ApiController extends Controller {
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
+		$this->activityManager = $activityManager;
 	}
 
 	/**
@@ -571,15 +577,38 @@ class ApiController extends Controller {
 	 */
 	protected function createNotification(IUser $actor, IUser $user, Room $room) {
 		$notification = $this->notificationManager->createNotification();
+		$dateTime = new \DateTime();
 		try {
 			$notification->setApp('spreed')
 				->setUser($user->getUID())
-				->setDateTime(new \DateTime())
+				->setDateTime($dateTime)
 				->setObject('room', $room->getId())
 				->setSubject('invitation', [$actor->getUID()]);
 			$this->notificationManager->notify($notification);
 		} catch (\InvalidArgumentException $e) {
 			// Error while creating the notification
+			$this->logger->logException($e, ['app' => 'spreed']);
+		}
+
+		$event = $this->activityManager->generateEvent();
+		try {
+			$event->setApp('spreed')
+				->setType('spreed')
+				->setAuthor($actor->getUID())
+				->setAffectedUser($user->getUID())
+				->setObject('room', $room->getId(), $room->getName())
+				->setTimestamp($dateTime->getTimestamp())
+				->setSubject('invitation', [
+					'user' => $actor->getUID(),
+					'room' => $room->getId(),
+					'name' => $room->getName(),
+				]);
+			$this->activityManager->publish($event);
+		} catch (\InvalidArgumentException $e) {
+			// Error while creating the activity
+			$this->logger->logException($e, ['app' => 'spreed']);
+		} catch (\BadMethodCallException $e) {
+			// Error while sending the activity
 			$this->logger->logException($e, ['app' => 'spreed']);
 		}
 	}

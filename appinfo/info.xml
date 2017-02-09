@@ -56,6 +56,16 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<admin>OCA\Spreed\Settings\Admin</admin>
 	</settings>
 
+	<activity>
+		<settings>
+			<setting>OCA\Spreed\Activity\Setting</setting>
+		</settings>
+
+		<providers>
+			<provider>OCA\Spreed\Activity\Provider</provider>
+		</providers>
+	</activity>
+
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Spreed\Migration\EmptyNameInsteadOfRandom</step>
