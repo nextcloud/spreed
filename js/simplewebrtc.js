@@ -9594,7 +9594,7 @@
 
 	if (window.mozRTCPeerConnection || navigator.mozGetUserMedia) {
 		prefix = 'moz';
-		version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
+		version = navigator.userAgent.match(/Firefox/) && parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
 	} else if (window.webkitRTCPeerConnection || navigator.webkitGetUserMedia) {
 		prefix = 'webkit';
 		version = navigator.userAgent.match(/Chrom(e|ium)/) && parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10);
@@ -17350,7 +17350,7 @@
 
 	if (window.mozRTCPeerConnection || navigator.mozGetUserMedia) {
 		prefix = 'moz';
-		version = parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
+		version = navigator.userAgent.match(/Firefox/) && parseInt(navigator.userAgent.match(/Firefox\/([0-9]+)\./)[1], 10);
 	} else if (window.webkitRTCPeerConnection || navigator.webkitGetUserMedia) {
 		prefix = 'webkit';
 		version = navigator.userAgent.match(/Chrom(e|ium)/) && parseInt(navigator.userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)[2], 10);
