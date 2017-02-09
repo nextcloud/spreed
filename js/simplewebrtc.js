@@ -14301,7 +14301,8 @@
 	};
 
 	TraceablePeerConnection.prototype.close = function () {
-		this.trace('stop');
+		this.trace('stopXXX');
+		console.trace('Stop Trace');
 		if (this.peerconnection.signalingState != 'closed') {
 			this.peerconnection.close();
 		}
@@ -17970,6 +17971,7 @@
 		}
 
 		connection.on('connect', function () {
+			console.warn('CONNECTED');
 			self.emit('connectionReady', connection.getSessionid());
 			self.sessionReady = true;
 			self.testReadiness();
@@ -18068,10 +18070,12 @@
 		});
 
 		this.webrtc.on('iceFailed', function (peer) {
-			// local ice failure
+			// TODO: local ice failure
+			console.error('iceFailed event received');
 		});
 		this.webrtc.on('connectivityError', function (peer) {
-			// remote ice failure
+			// TODO: remote ice failure
+			console.error('connectivityError event received');
 		});
 
 		// screensharing events
