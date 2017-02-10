@@ -3,6 +3,7 @@ OC.L10N.register(
     {
     "Video calls" : "Wideo rozmowy",
     "(group)" : "(grupa)",
+    "New public call" : "Nowa publiczna rozmowa",
     "Waiting for {participantName} to join the call …" : "Oczekiwanie na {participantName} by przyłączyć się do rozmowy ...",
     "Waiting for others to join the call …" : "Czekamy na innych aby przyłączyć się do rozmowy ...",
     "Guest" : "Gość",
@@ -13,11 +14,15 @@ OC.L10N.register(
     "Press Ctrl-C to copy." : "Wciśnij Ctrl-C by skopiować.",
     "Looking great today! :)" : "Wyglądasz dziś świetnie! :)",
     "Time to call your friends" : "Czas zadzwonić do Twoich przyjaciół",
+    "This call has ended" : "Zakończono rozmowę",
     "Saving failed" : "Zapisywanie nie powiodło się",
     "Add person" : "Dodaj osobę",
+    "Rename" : "Zmień nazwę",
     "Share link" : "Udostępnij link",
     "Leave call" : "Opuść połączenie",
+    "No other people in this call" : "W tej rozmowie nie uczestniczą inne osoby",
     "You" : "Ty",
+    "and you" : "i ty",
     "Access to microphone & camera is only possible with HTTPS" : "Dostęp do mikrofonu i kamery możliwe jest tylko za pomocą protokołu HTTPS",
     "Please adjust your configuration" : "Proszę ustawić konfigurację",
     "Access to microphone & camera was denied" : "Dostępu do mikrofonu i kamery został odrzucony",
@@ -45,6 +50,11 @@ OC.L10N.register(
     "STUN server" : "STUN serwer",
     "The STUN server is used to determine the public address of participants behind a router." : "Serwer STUN służy do określenia adresu publicznego uczestników za pomocą routera.",
     "TURN server" : "TURN serwer",
-    "TURN server protocols" : "Protokoły serwera TURN"
+    "TURN server shared secret" : "Wpółdzielony kod serwera TURN",
+    "TURN server protocols" : "Protokoły serwera TURN",
+    "UDP and TCP" : "UDP i TCP",
+    "UDP only" : "Tylko UDP",
+    "TCP only" : "Tylko TCP",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serwer TURN jest używany do przekazywania ruchu od uczestników za firewallem."
 },
 "nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
