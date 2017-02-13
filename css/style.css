@@ -58,6 +58,10 @@
 	padding: 0;
 }
 
+.app-navigation-entry-menu li {
+	display: block !important;
+}
+
 #app-navigation .avatar,
 #app-navigation .icon-contacts-dark,
 #app-navigation .app-navigation-entry-link .icon-public {
@@ -107,7 +111,7 @@
     background-size: 16px;
     position: absolute;
     right: 0;
-    top: 0;
+    top: 4px;
     padding: 16px;
 	opacity: .5;
 }
@@ -122,14 +126,17 @@
 	background-color: transparent;
 	border: none;
 	position: absolute;
-	right: -5px;
-	top: 38px;
+	right: -2px;
+	top: 42px;
 	padding: 16px;
 	opacity: .5;
 }
-
 .icon-confirm.rename-confirm:hover  {
 	opacity: 1;
+}
+
+.icon-clippy.public-room {
+    background-position-y: 8px !important;
 }
 
 
@@ -399,12 +406,14 @@ video {
 	margin: 0;
 	padding: 0;
 	width: 100% !important;
+	min-height: 44px;
 }
 
 #app-navigation .app-navigation-entry-menu input {
 	margin-left: 5px !important;
 	margin-top: -5px;
-	padding-right: 22px;
+	min-width: 150px;
+	padding-right: 26px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
