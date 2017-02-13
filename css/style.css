@@ -131,9 +131,12 @@
 	padding: 16px;
 	opacity: .5;
 }
-
 .icon-confirm.rename-confirm:hover  {
 	opacity: 1;
+}
+
+.icon-clippy.public-room {
+    background-position-y: 8px !important;
 }
 
 
@@ -408,7 +411,7 @@ video {
 #app-navigation .app-navigation-entry-menu input {
 	margin-left: 5px !important;
 	margin-top: -5px;
-	padding-right: 22px;
+	padding-right: 26px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
