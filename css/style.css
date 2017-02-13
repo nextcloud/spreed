@@ -111,7 +111,7 @@
     background-size: 16px;
     position: absolute;
     right: 0;
-    top: 0;
+    top: 4px;
     padding: 16px;
 	opacity: .5;
 }
@@ -127,7 +127,7 @@
 	border: none;
 	position: absolute;
 	right: -2px;
-	top: 34px;
+	top: 42px;
 	padding: 16px;
 	opacity: .5;
 }
@@ -406,11 +406,13 @@ video {
 	margin: 0;
 	padding: 0;
 	width: 100% !important;
+	min-height: 44px;
 }
 
 #app-navigation .app-navigation-entry-menu input {
 	margin-left: 5px !important;
 	margin-top: -5px;
+	min-width: 150px;
 	padding-right: 26px;
 	text-overflow: ellipsis;
 	overflow: hidden;
