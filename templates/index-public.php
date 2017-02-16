@@ -49,6 +49,8 @@ script(
 			</div>
 		</header>
 
+		<button id="video-fullscreen" class="icon-fullscreen-white public" data-title="<?php p($l->t('Fullscreen')) ?>"></button>
+
 		<div id="video-speaking">
 
 		</div>
@@ -61,7 +63,6 @@ script(
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
-					<button id="video-fullscreen" class="icon-fullscreen-white" data-title="<?php p($l->t('Fullscreen')) ?>"></button>
 					<button id="toogleScreensharing" class="icon-view-play" data-title="<?php p($l->t('Toggle screensharing')) ?>"></button>
 				</div>
 			</div>

@@ -323,6 +323,17 @@ video {
 	padding: 12px 35%;
 }
 
+#video-fullscreen {
+	position: absolute;
+	right: 0px;
+	z-index: 90;
+}
+
+#video-fullscreen.public {
+	top: 45px;
+}
+
+#video-fullscreen,
 .nameIndicator button {
 	background-color: transparent;
 	border: none;
