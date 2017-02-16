@@ -341,8 +341,10 @@ video {
 	height: 44px;
 	background-size: 25px;
 }
+
 .nameIndicator button.audio-disabled,
-.nameIndicator button.video-disabled {
+.nameIndicator button.video-disabled,
+.nameIndicator button.screensharing-disabled {
 	opacity: .7;
 }
 

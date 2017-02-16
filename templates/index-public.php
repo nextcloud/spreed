@@ -63,7 +63,7 @@ script(
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
-					<button id="toogleScreensharing" class="icon-view-play" data-title="<?php p($l->t('Toggle screensharing')) ?>"></button>
+					<button id="toogleScreensharing" class="icon-screen-off-white screensharing-disabled" data-title="<?php p($l->t('Toggle screensharing')) ?>"></button>
 				</div>
 			</div>
 		</div>

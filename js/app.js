@@ -212,6 +212,9 @@
 
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
+				$('#toogleScreensharing').data('title', 'Enable screensharing')
+					.addClass('screensharing-disabled icon-screen-off-white')
+					.removeClass('icon-screen-white');
 			};
 
 			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
@@ -232,6 +235,9 @@
 					webrtc.shareScreen(function(err) {
 						if (!err) {
 							OC.Notification.showTemporary(t('spreed', 'Screensharing is about to start…'));
+							$('#toogleScreensharing').data('title', 'Stop screensharing')
+								.removeClass('screensharing-disabled icon-screen-off-white')
+								.addClass('icon-screen-white');
 							return;
 						}
 
