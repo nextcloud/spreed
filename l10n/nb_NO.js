@@ -38,6 +38,7 @@ OC.L10N.register(
     "{user} invited you to a private call" : "{user} inviterte deg til privat samtale",
     "%s invited you to a group call" : "%s inviterte deg til gruppesamtale",
     "{user} invited you to a group call" : "{user} inviterte deg til gruppesamtale",
+    "Mute audio" : "Slå av lyd",
     "Fullscreen" : "Fullskjerm",
     "Smile in 3… 2… 1!" : "Smil i 3... 2... 1!",
     "Choose person …" : "Velg person ...",

@@ -50,7 +50,7 @@ OC.L10N.register(
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public address of participants behind a router." : "STUN server sa používa na zistenie verejnej adresy účastníkov, ktorí sú za routerom.",
     "TURN server" : "TURN server",
-    "TURN server shared secret" : "Zdieľaný tajný kľúč servera TURN",
+    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
     "TURN server protocols" : "Protokoly servera TURN",
     "UDP and TCP" : "UDP aj TCP",
     "UDP only" : "iba UDP",
