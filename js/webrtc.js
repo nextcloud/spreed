@@ -150,7 +150,7 @@ var spreedMappingTable = [];
 			},
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-				return '#container_' + sanitizedId + '_type_incoming';
+				return '#container_' + sanitizedId + '_video_incoming';
 			},
 			switchVideoToId: function(id) {
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
