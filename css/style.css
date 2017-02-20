@@ -201,7 +201,7 @@ video {
 	position: absolute;
 	text-align: center;
 	bottom: 44px;
-	width: 100%;
+	width: 85%;
 }
 .videoContainer .avatar-container .avatar {
 	display: inline-block;
@@ -211,6 +211,10 @@ video {
 }
 .videoContainer.promoted .avatar-container + .nameIndicator {
 	display: none;
+}
+
+.videoView .avatar-container {
+	width: 100%;
 }
 
 #emptycontent {
