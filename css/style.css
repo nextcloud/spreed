@@ -248,6 +248,14 @@ video {
 	display: block !important;
 }
 
+.participants-1 #video-fullscreen {
+	display: none;
+}
+
+.participants-1 #toggleScreensharing {
+	display: none;
+}
+
 /* big speaker video */
 .participants-1 .videoContainer,
 .participants-2 .videoContainer,
