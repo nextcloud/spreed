@@ -207,10 +207,15 @@ video {
 	display: inline-block;
 }
 .videoContainer.promoted .avatar-container {
+	width: 96%;
 	top: 30%;
 }
 .videoContainer.promoted .avatar-container + .nameIndicator {
 	display: none;
+}
+
+.videoContainer.promoted .muteIndicator {
+	display: none !important;
 }
 
 .videoView .avatar-container {
@@ -322,6 +327,15 @@ video {
 	width: 100%;
 	padding: 0;
 }
+
+.participants-2 .videoContainer-dummy .nameIndicator {
+	width: 96%;
+}
+
+.participants-2 .videoContainer-dummy .muteIndicator {
+	width: 96%;
+}
+
 /* ellipsize name in 1on1 calls */
 .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	padding: 12px 35%;
@@ -346,6 +360,14 @@ video {
 	background-size: 22px;
 	padding: 12px;
 	opacity: .7;
+}
+
+.muteIndicator.audio-on {
+	display: none;
+}
+
+.muteIndicator.audio-off {
+	display: block;
 }
 
 #app-content:-webkit-full-screen  {

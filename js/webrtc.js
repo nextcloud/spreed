@@ -371,7 +371,7 @@ var spreedMappingTable = [];
 
 				// Mute indicator
 				var muteIndicator = document.createElement('div');
-				muteIndicator.className = 'muteIndicator icon-audio-off-white hidden';
+				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-on';
 				muteIndicator.textContent = '';
 
 				// Generic container
@@ -534,9 +534,13 @@ var spreedMappingTable = [];
 				$el.find('video').hide();
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
-				muteIndicator.removeClass('hidden');
-				muteIndicator.show();
+				muteIndicator.removeClass('audio-on');
+				muteIndicator.addClass('audio-off');
 				$el.removeClass('speaking');
+			}
+
+			if (latestSpeakerId === data.id) {
+				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
 			}
 		});
 
@@ -553,7 +557,13 @@ var spreedMappingTable = [];
 				$el.find('.avatar-container').hide();
 				$el.find('video').show();
 			} else {
-				$el.find('.muteIndicator').hide();
+				var muteIndicator = $el.find('.muteIndicator');
+				muteIndicator.removeClass('audio-off');
+				muteIndicator.addClass('audio-on');
+			}
+
+			if (latestSpeakerId === data.id) {
+				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
 			}
 		});
 
