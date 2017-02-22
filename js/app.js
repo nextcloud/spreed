@@ -212,7 +212,7 @@
 
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
-				$('#toogleScreensharing').data('title', 'Enable screensharing')
+				$('#toggleScreensharing').data('title', 'Enable screensharing')
 					.addClass('screensharing-disabled icon-screen-off-white')
 					.removeClass('icon-screen-white');
 			};
@@ -221,7 +221,7 @@
 				screensharingStopped();
 			});
 
-			$('#toogleScreensharing').click(function() {
+			$('#toggleScreensharing').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
 					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
@@ -235,7 +235,7 @@
 					webrtc.shareScreen(function(err) {
 						if (!err) {
 							OC.Notification.showTemporary(t('spreed', 'Screensharing is about to start…'));
-							$('#toogleScreensharing').data('title', 'Stop screensharing')
+							$('#toggleScreensharing').data('title', 'Stop screensharing')
 								.removeClass('screensharing-disabled icon-screen-off-white')
 								.addClass('icon-screen-white');
 							return;
