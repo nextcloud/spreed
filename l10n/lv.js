@@ -40,7 +40,7 @@ OC.L10N.register(
     "Choose person …" : "Izvēlieties personas …",
     "STUN server" : "STUN serveris",
     "TURN server" : "TURN serveris",
-    "TURN server shared secret" : "TURN server shared secret",
+    "TURN server shared secret" : "IESLĒGT slepeno servera koplietošanu",
     "TURN server protocols" : "TURN servera protokols",
     "UDP and TCP" : "UDP un TCP",
     "UDP only" : "tikai UDP",
