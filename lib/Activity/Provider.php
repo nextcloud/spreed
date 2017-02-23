@@ -111,6 +111,23 @@ class Provider implements IProvider {
 	}
 
 	/**
+	 * @param IEvent $event
+	 * @param string $subject
+	 * @param array $parameters
+	 * @throws \InvalidArgumentException
+	 */
+	protected function setSubjects(IEvent $event, $subject, array $parameters) {
+		$placeholders = $replacements = [];
+		foreach ($parameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder . '}';
+			$replacements[] = $parameter['name'];
+		}
+
+		$event->setParsedSubject(str_replace($placeholders, $replacements, $subject))
+			->setRichSubject($subject, $parameters);
+	}
+
+	/**
 	 * @param array $parameters
 	 * @param Room $room
 	 * @return array
@@ -126,22 +143,6 @@ class Provider implements IProvider {
 				'call' => $this->getRoom($room),
 			];
 		}
-	}
-
-	/**
-	 * @param IEvent $event
-	 * @param string $subject
-	 * @param array $parameters
-	 */
-	protected function setSubjects(IEvent $event, $subject, array $parameters) {
-		$placeholders = $replacements = [];
-		foreach ($parameters as $placeholder => $parameter) {
-			$placeholders[] = '{' . $placeholder . '}';
-			$replacements[] = $parameter['name'];
-		}
-
-		$event->setParsedSubject(str_replace($placeholders, $replacements, $subject))
-			->setRichSubject($subject, $parameters);
 	}
 
 	/**
