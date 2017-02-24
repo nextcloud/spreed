@@ -139,6 +139,9 @@
     background-position-y: 8px !important;
 }
 
+/**
+ * Video styles
+ */
 
 #videos {
 	position: absolute;
@@ -307,6 +310,22 @@ video {
 #app-content.participants-9,
 #app-content.participants-10 {
 	background-color: #000;
+}
+
+#app-content.screensharing {
+	background-color: #ddd;
+}
+
+#app-content.screensharing .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0 0 0 0;
+}
+
+#app-content.screensharing #localScreenContainer {
+	max-height: calc(100% - 200px);
+	overflow: scroll;
+	background-color: transparent;
 }
 
 .nameIndicator {

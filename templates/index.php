@@ -54,8 +54,7 @@ script(
 			</div>
 		</div>
 
-		<div id="localScreenContainer">
-		</div>
+		<div id="localScreenContainer"></div>
 
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-video"></div>
