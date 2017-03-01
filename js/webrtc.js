@@ -39,6 +39,30 @@ var spreedMappingTable = [];
 				appContentElement.attr('class', '').addClass(participantsClass);
 			}
 
+			//Send shared screen to new participants
+			var webrtc = OCA.SpreedMe.webrtc;
+			if (webrtc.getLocalScreen()) {
+				var newUsers = currentUsersInRoom.diff(previousUsersInRoom);
+				var currentUser = webrtc.connection.getSessionid();
+				newUsers.forEach(function(user) {
+					if (user !== currentUser) {
+						var peer = webrtc.webrtc.createPeer({
+								id: user,
+								type: 'screen',
+								sharemyscreen: true,
+								enableDataChannels: false,
+								receiveMedia: {
+									offerToReceiveAudio: 0,
+									offerToReceiveVideo: 0
+								},
+								broadcaster: currentUser,
+						});
+						webrtc.emit('createdPeer', peer);
+						peer.start();
+					}
+				});
+			}
+
 			var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
 			disconnectedUsers.forEach(function(user) {
 				console.log('XXX Remove peer', user);
