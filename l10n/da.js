@@ -29,6 +29,8 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC er ikke undertøttet i din browser",
     "Please use a different browser like Firefox or Chrome" : "Benyt venligst en anden browser f.eks. Firefox eller Chrome",
     "WebRTC is not supported in your browser :-/" : "WebRTC er ikke undertøttet i din browser :-/",
+    "_%n other guest_::_%n other guests_" : ["%n anden gæst","%n andre gæster"],
+    "_%n guest_::_%n guests_" : ["%n gæst","%n gæster"],
     ", " : ", ",
     "Invalid format, must be stunserver:port." : "Forkert format, skal være stunserver:port.",
     "Invalid port specified." : "Ugyldig port",
@@ -39,12 +41,15 @@ OC.L10N.register(
     "{user} invited you to a private call" : "{user} er inviteret til dit private opkald",
     "%s invited you to a group call" : "%s inviterede dig til et gruppe opkald",
     "{user} invited you to a group call" : "{user} inviterede dig til et gruppe opkald",
+    "Mute audio" : "Mute lyd",
     "Pause video" : "Pause video",
     "Fullscreen" : "Fuldskærm",
     "Smile in 3… 2… 1!" : "Smil om 3... 2... 1!",
     "Choose person …" : "Vælg person ...",
     "STUN server" : "STUN server",
     "TURN server" : "TURN server",
-    "UDP and TCP" : "UDP og TCP"
+    "UDP and TCP" : "UDP og TCP",
+    "UDP only" : "kun UDP",
+    "TCP only" : "kun TCP"
 },
 "nplurals=2; plural=(n != 1);");
