@@ -161,6 +161,12 @@
 		},
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
+
+			// Hide rename input and show button when opening menu
+			if (this.menuShown) {
+				this.$el.find('.rename-element').addClass('hidden-important');
+				this.$el.find('.rename-room-button').removeClass('hidden-important');
+			}
 		},
 		checkSharingStatus: function() {
 			if (this.model.get('type') === 1) { // 1on1
