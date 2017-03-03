@@ -31,6 +31,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
+use OCP\RichObjectStrings\Definitions;
 
 class NotifierTest extends \Test\TestCase {
 
@@ -42,6 +43,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $userManager;
 	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
+	/** @var Definitions|\PHPUnit_Framework_MockObject_MockObject */
+	protected $definitions;
 	/** @var Notifier */
 	protected $notifier;
 
@@ -52,12 +55,14 @@ class NotifierTest extends \Test\TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->definitions = $this->createMock(Definitions::class);
 
 		$this->notifier = new Notifier(
 			$this->lFactory,
 			$this->url,
 			$this->userManager,
-			$this->manager
+			$this->manager,
+			$this->definitions
 		);
 	}
 
@@ -144,8 +149,8 @@ class NotifierTest extends \Test\TestCase {
 
 	public function dataPrepareGroup() {
 		return [
-			[Room::GROUP_CALL, 'admin', 'Admin', 'Admin invited you to a group call'],
-			[Room::PUBLIC_CALL, 'test', 'Test user', 'Test user invited you to a group call'],
+			[Room::GROUP_CALL, 'admin', 'Admin', '', 'Admin invited you to a group call'],
+			[Room::PUBLIC_CALL, 'test', 'Test user', 'Name', 'Test user invited you to a group call: Name'],
 		];
 	}
 
@@ -154,9 +159,11 @@ class NotifierTest extends \Test\TestCase {
 	 * @param int $type
 	 * @param string $uid
 	 * @param string $displayName
+	 * @param string $name
 	 * @param string $parsedSubject
 	 */
-	public function testPrepareGroup($type, $uid, $displayName, $parsedSubject) {
+	public function testPrepareGroup($type, $uid, $displayName, $name, $parsedSubject) {
+		$roomId = $type;
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->exactly(2))
@@ -169,6 +176,9 @@ class NotifierTest extends \Test\TestCase {
 		$room->expects($this->atLeastOnce())
 			->method('getType')
 			->willReturn($type);
+		$room->expects($this->atLeastOnce())
+			->method('getName')
+			->willReturn($name);
 		$this->manager->expects($this->once())
 			->method('getRoomById')
 			->willReturn($room);
@@ -197,16 +207,41 @@ class NotifierTest extends \Test\TestCase {
 			->method('setParsedSubject')
 			->with($parsedSubject)
 			->willReturnSelf();
-		$n->expects($this->once())
-			->method('setRichSubject')
-			->with('{user} invited you to a group call',[
-				'user' => [
-					'type' => 'user',
-					'id' => $uid,
-					'name' => $displayName,
-				]
-			])
-			->willReturnSelf();
+
+		if ($name === '') {
+			$room->expects($this->never())
+				->method('getId');
+			$n->expects($this->once())
+				->method('setRichSubject')
+				->with('{user} invited you to a group call',[
+					'user' => [
+						'type' => 'user',
+						'id' => $uid,
+						'name' => $displayName,
+					]
+				])
+				->willReturnSelf();
+		} else {
+			$room->expects($this->once())
+				->method('getId')
+				->willReturn($roomId);
+			$n->expects($this->once())
+				->method('setRichSubject')
+				->with('{user} invited you to a group call: {call}', [
+					'user' => [
+						'type' => 'user',
+						'id' => $uid,
+						'name' => $displayName,
+					],
+					'call' => [
+						'type' => 'call',
+						'id' => $roomId,
+						'name' => $name,
+						'call-type' => 'public',
+					],
+				])
+				->willReturnSelf();
+		}
 
 		$n->expects($this->once())
 			->method('getApp')

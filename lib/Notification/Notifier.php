@@ -31,6 +31,8 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
+use OCP\RichObjectStrings\Definitions;
+use OCP\RichObjectStrings\InvalidObjectExeption;
 
 class Notifier implements INotifier {
 
@@ -46,17 +48,22 @@ class Notifier implements INotifier {
 	/** @var Manager */
 	protected $manager;
 
+	/** @var Definitions */
+	protected $definitions;
+
 	/**
 	 * @param IFactory $lFactory
 	 * @param IURLGenerator $url
 	 * @param IUserManager $userManager
 	 * @param Manager $manager
+	 * @param Definitions $definitions
 	 */
-	public function __construct(IFactory $lFactory, IURLGenerator $url, IUserManager $userManager, Manager $manager) {
+	public function __construct(IFactory $lFactory, IURLGenerator $url, IUserManager $userManager, Manager $manager, Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->definitions = $definitions;
 	}
 
 	/**
@@ -107,20 +114,51 @@ class Notifier implements INotifier {
 						;
 					} else if ($room->getType() === Room::GROUP_CALL ||
 						$room->getType() === Room::PUBLIC_CALL) {
-						$notification
-							->setParsedSubject(
-								$l->t('%s invited you to a group call', [$user->getDisplayName()])
-							)
-							->setRichSubject(
-								$l->t('{user} invited you to a group call'), [
-									'user' => [
-										'type' => 'user',
-										'id' => $uid,
-										'name' => $user->getDisplayName(),
+						$callTypeIsSupported = false;
+						try {
+							$this->definitions->getDefinition('call');
+							$callTypeIsSupported = true;
+						} catch (InvalidObjectExeption $e) {
+							// Before 11.0.2 this is not supported
+						}
+
+						if ($callTypeIsSupported && $room->getName() !== '') {
+							$notification
+								->setParsedSubject(
+									$l->t('%s invited you to a group call: %s', [$user->getDisplayName(), $room->getName()])
+								)
+								->setRichSubject(
+									$l->t('{user} invited you to a group call: {call}'), [
+										'user' => [
+											'type' => 'user',
+											'id' => $uid,
+											'name' => $user->getDisplayName(),
+										],
+										'call' => [
+											'type' => 'call',
+											'id' => $room->getId(),
+											'name' => $room->getName(),
+											'call-type' => $this->getRoomType($room),
+										],
 									]
-								]
-							)
-						;
+								)
+							;
+						} else {
+							$notification
+								->setParsedSubject(
+									$l->t('%s invited you to a group call', [$user->getDisplayName()])
+								)
+								->setRichSubject(
+									$l->t('{user} invited you to a group call'), [
+										'user' => [
+											'type' => 'user',
+											'id' => $uid,
+											'name' => $user->getDisplayName(),
+										]
+									]
+								)
+							;
+						}
 					} else {
 						throw new \InvalidArgumentException('Unknown room type');
 					}
@@ -135,5 +173,23 @@ class Notifier implements INotifier {
 		}
 
 		return $notification;
+	}
+
+	/**
+	 * @param Room $room
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function getRoomType(Room $room) {
+		switch ($room->getType()) {
+			case Room::ONE_TO_ONE_CALL:
+				return 'one2one';
+			case Room::GROUP_CALL:
+				return 'group';
+			case Room::PUBLIC_CALL:
+				return 'public';
+			default:
+				throw new \InvalidArgumentException('Unknown room type');
+		}
 	}
 }
