@@ -338,7 +338,7 @@ video {
 	text-align: center;
 	font-size: 20px;
 	white-space: nowrap;
-	overflow: hidden;
+	overflow: visible;
 	text-overflow: ellipsis;
 }
 .videoView .nameIndicator {
