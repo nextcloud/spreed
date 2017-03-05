@@ -44,6 +44,8 @@ OC.L10N.register(
     "The call does not exist." : "La llamada no existe.",
     "%s invited you to a private call" : "%s lo invitó a su llamada privada",
     "{user} invited you to a private call" : "{user} lo invitó a su llamada privada",
+    "%s invited you to a group call: %s" : "%s le invitó a una llamada grupal: %s",
+    "{user} invited you to a group call: {call}" : "{user} le invitó a una llamada grupal: {call}",
     "%s invited you to a group call" : "%s lo invitó a una llamada grupal",
     "{user} invited you to a group call" : "{user} lo invitó a una llamada grupal",
     "Mute audio" : "Silenciar audio",

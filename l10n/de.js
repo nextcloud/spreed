@@ -44,6 +44,8 @@ OC.L10N.register(
     "The call does not exist." : "Der Anruf existiert nicht.",
     "%s invited you to a private call" : "%s hat dich zu einem privaten Anruf eingeladen",
     "{user} invited you to a private call" : "{user} hat dich zu einem privaten Anruf eingeladen",
+    "%s invited you to a group call: %s" : "%s hat Sie zu einem Gruppenanruf eingeladen: %s",
+    "{user} invited you to a group call: {call}" : "{user} hat Dich zu einem Gruppenanruf eingeladen: {call}",
     "%s invited you to a group call" : "%s hat dich zu einem Gruppenanruf eingeladen",
     "{user} invited you to a group call" : "{user} hat dich zu einem Gruppenanruf eingeladen",
     "Mute audio" : "Mikrofon stummschalten",

@@ -42,6 +42,8 @@
     "The call does not exist." : "Połączenie nie istnieje.",
     "%s invited you to a private call" : "%s zaprosił Cię do prywatnej rozmowy",
     "{user} invited you to a private call" : "{user} zaprosił Cię do prywatnej rozmowy",
+    "%s invited you to a group call: %s" : "%s zaprosił/-a cię do grupowej rozmowy: %s",
+    "{user} invited you to a group call: {call}" : "{user} zaprosił/-a cię do grupowej rozmowy: {call}",
     "%s invited you to a group call" : "%s zaprosił Cię do grupowej rozmowy",
     "{user} invited you to a group call" : "{user} zaprosił Cię do grupowej rozmowy",
     "Mute audio" : "Wyciszono audio",
