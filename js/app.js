@@ -303,6 +303,22 @@
 				});
 			}
 		},
+		setEmptyContentMessage: function(icon, message, messageAdditional) {
+			//Remove previous icon, avatar or link from emptycontent
+			var emptyContentIcon = document.getElementById('emptycontent-icon');
+			emptyContentIcon.removeAttribute('class');
+			emptyContentIcon.innerHTML = '';
+			$('#shareRoomInput').addClass('hidden');
+			$('#shareRoomClipboardButton').addClass('hidden');
+
+			$('#emptycontent-icon').addClass(icon);
+			$('#emptycontent h2').text(message);
+			if (messageAdditional) {
+				$('#emptycontent p').text(messageAdditional);
+			} else {
+				$('#emptycontent p').text('');
+			}
+		},
 		showPublicRoomMessage: function(participants) {
 			var message, messageAdditional;
 
@@ -353,14 +369,27 @@
 			$(document).on('click', this.onDocumentClick);
 		},
 		onStart: function() {
+			this.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'Waiting for camera and microphone permissions'),
+				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
+			);
+
+			OCA.SpreedMe.initWebRTC();
+		},
+		startSpreed: function () {
 			console.log('Starting spreed …');
 			var self = this;
+
+			this.setEmptyContentMessage(
+				'icon-video',
+				t('spreed', 'Looking great today! :)'),
+				t('spreed', 'Time to call your friends')
+			);
 
 			if (!oc_current_user) {
 				this.initGuestName();
 			}
-
-			OCA.SpreedMe.initWebRTC();
 
 			if (oc_current_user) {
 				OCA.SpreedMe.initRooms();
@@ -369,6 +398,7 @@
 
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
+
 			var roomId = parseInt($('#app').attr('data-roomId'), 10);
 			if (roomId) {
 				OCA.SpreedMe.Rooms.join(roomId);
