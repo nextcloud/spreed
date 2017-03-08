@@ -269,8 +269,7 @@ var spreedMappingTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
-			OCA.SpreedMe.app.initAudioVideoSettings(configuration);
-			OCA.SpreedMe.app.startSpreed();
+			OCA.SpreedMe.app.startSpreed(configuration);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {

@@ -377,7 +377,7 @@
 
 			OCA.SpreedMe.initWebRTC();
 		},
-		startSpreed: function () {
+		startSpreed: function(configuration) {
 			console.log('Starting spreed …');
 			var self = this;
 
@@ -423,8 +423,7 @@
 
 			this._startPing();
 
-			//Show avatar until we receive local video stream and then decide if show video or not.
-			this.hideVideo();
+			this.initAudioVideoSettings(configuration);
 		},
 		onDocumentClick: function(event) {
 			var uiChannel = Backbone.Radio.channel('ui');
