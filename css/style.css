@@ -308,18 +308,15 @@ video {
 #app-content.participants-7,
 #app-content.participants-8,
 #app-content.participants-9,
-#app-content.participants-10 {
-	background-color: #000;
-}
-
+#app-content.participants-10,
 #app-content.screensharing {
-	background-color: #ddd;
+	background-color: #000;
 }
 
 #app-content.screensharing .videoContainer video {
 	max-height: 200px;
 	background-color: transparent;
-	box-shadow: 0 0 0 0;
+	box-shadow: 0;
 }
 
 #app-content.screensharing #localScreenContainer {
