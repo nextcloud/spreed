@@ -2,6 +2,7 @@
 /* global SimpleWebRTC, OC, OCA: false */
 
 var webrtc;
+var spreedEventSource;
 var spreedMappingTable = [];
 
 (function(OCA, OC) {
@@ -14,14 +15,15 @@ var spreedMappingTable = [];
 	 */
 	function openEventSource() {
 		// Connect to the messages endpoint and pull for new messages
-		var messageEventSource = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
+		spreedEventSource = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
 		var previousUsersInRoom = [];
 		Array.prototype.diff = function(a) {
 			return this.filter(function(i) {
 				return a.indexOf(i) < 0;
 			});
 		};
-		messageEventSource.listen('usersInRoom', function(users) {
+
+		spreedEventSource.listen('usersInRoom', function(users) {
 			var currentUsersInRoom = [];
 			users.forEach(function(user) {
 				currentUsersInRoom.push(user['sessionId']);
@@ -48,7 +50,7 @@ var spreedMappingTable = [];
 			previousUsersInRoom = currentUsersInRoom;
 		});
 
-		messageEventSource.listen('message', function(message) {
+		spreedEventSource.listen('message', function(message) {
 			message = JSON.parse(message);
 			var peers = self.webrtc.getPeers(message.from, message.roomType);
 			var peer;
@@ -85,7 +87,7 @@ var spreedMappingTable = [];
 				});
 			}
 		});
-		messageEventSource.listen('__internal__', function(data) {
+		spreedEventSource.listen('__internal__', function(data) {
 			if (data === 'close') {
 				console.log('signaling connection closed - will reopen');
 				setTimeout(openEventSource, 0);
@@ -320,6 +322,8 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
+			spreedEventSource.close();
+			openEventSource();
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
