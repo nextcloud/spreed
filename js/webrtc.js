@@ -269,7 +269,7 @@ var spreedMappingTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
-			OCA.SpreedMe.app.initAudioVideoSettings(configuration);
+			OCA.SpreedMe.app.startSpreed(configuration);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
@@ -293,16 +293,14 @@ var spreedMappingTable = [];
 				messageAdditional = error.message || error.name;
 			}
 
-			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptycontent-icon');
-			emptyContentIcon.removeAttribute('class');
-			emptyContentIcon.innerHTML = '';
-			$('#shareRoomInput').addClass('hidden');
-			$('#shareRoomClipboardButton').addClass('hidden');
+			OCA.SpreedMe.app.setEmptyContentMessage(
+				'icon-video-off',
+				message,
+				messageAdditional
+			);
 
-			$('#emptycontent-icon').addClass('icon-video-off');
-			$('#emptycontent h2').text(message);
-			$('#emptycontent p').text(messageAdditional);
+			// Hide rooms sidebar
+			$('#app-navigation').hide();
 		});
 
 		if(!OCA.SpreedMe.webrtc.capabilities.support) {
@@ -312,16 +310,11 @@ var spreedMappingTable = [];
 			message = t('spreed', 'WebRTC is not supported in your browser :-/');
 			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 
-			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptycontent-icon');
-			emptyContentIcon.removeAttribute('class');
-			emptyContentIcon.innerHTML = '';
-			$('#shareRoomInput').addClass('hidden');
-			$('#shareRoomClipboardButton').addClass('hidden');
-
-			$('#emptycontent-icon').addClass('icon-video-off');
-			$('#emptycontent h2').text(message);
-			$('#emptycontent p').text(messageAdditional);
+			OCA.SpreedMe.app.setEmptyContentMessage(
+				'icon-video-off',
+				message,
+				messageAdditional
+			);
 		}
 
 		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {

@@ -112,21 +112,17 @@
 			});
 		},
 		showRoomDeletedMessage: function(deleter) {
-			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptycontent-icon');
-			emptyContentIcon.removeAttribute('class');
-			emptyContentIcon.innerHTML = '';
-			$('#shareRoomInput').addClass('hidden');
-			$('#shareRoomClipboardButton').addClass('hidden');
-
 			if (deleter) {
-				$('#emptycontent-icon').addClass('icon-video');
-				$('#emptycontent h2').text(t('spreed', 'Looking great today! :)'));
-				$('#emptycontent p').text(t('spreed', 'Time to call your friends'));
+				OCA.SpreedMe.app.setEmptyContentMessage(
+					'icon-video',
+					t('spreed', 'Looking great today! :)'),
+					t('spreed', 'Time to call your friends')
+				);
 			} else {
-				$('#emptycontent-icon').addClass('icon-video-off');
-				$('#emptycontent h2').text(t('spreed', 'This call has ended'));
-				$('#emptycontent p').text('');
+				OCA.SpreedMe.app.setEmptyContentMessage(
+					'icon-video-off',
+					t('spreed', 'This call has ended')
+				);
 			}
 		}
 	};
