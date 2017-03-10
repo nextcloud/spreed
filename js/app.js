@@ -295,7 +295,7 @@
 					url: OC.generateUrl('/apps/spreed/api/room/') + roomId,
 					type: 'GET',
 					success: function(data) {
-						self.showPublicRoomMessage(data.participants);
+						self.setRoomMessageForGuest(data.participants);
 						if (Object.keys(data.participants).length > 5) {
 							self.disableVideo();
 						}
@@ -319,7 +319,7 @@
 				$('#emptycontent p').text('');
 			}
 		},
-		showPublicRoomMessage: function(participants) {
+		setRoomMessageForGuest: function(participants) {
 			var message, messageAdditional;
 
 			//Remove previous icon or avatar
