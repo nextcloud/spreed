@@ -4,6 +4,8 @@
     "New public call" : "Nouvel appel public",
     "Waiting for {participantName} to join the call …" : "En attente que {participantName} rejoigne l'appel...",
     "Waiting for others to join the call …" : "En attente que d'autres personnes rejoignent l'appel...",
+    "Waiting for camera and microphone permissions" : "En attente des autorisations pour la caméra et le microphone",
+    "Please, give your browser access to use your camera and microphone in order to use this app." : "Veuillez donner à votre navigateur l'accès à votre caméra et votre microphone pour pouvoir utiliser l'application.",
     "Looking great today! :)" : "Excellente journée ! :)",
     "Time to call your friends" : "Temps d'appeler vos amis",
     "Guest" : "Invité",

@@ -6,6 +6,8 @@ OC.L10N.register(
     "New public call" : "Nieuwe openbare oproep",
     "Waiting for {participantName} to join the call …" : "Wachten op deelname door {participantName} ...",
     "Waiting for others to join the call …" : "Wachten op deelname door anderen ...",
+    "Waiting for camera and microphone permissions" : "Wacht op camera en microfoon permissies",
+    "Please, give your browser access to use your camera and microphone in order to use this app." : "Geef je browser toegang tot de camera en microfoon om deze app te kunnen te gebruiken.",
     "Looking great today! :)" : "Ziet er goed uit vandaag! :)",
     "Time to call your friends" : "Tijd om je vrienden te bellen",
     "Guest" : "Gast",

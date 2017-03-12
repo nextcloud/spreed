@@ -6,6 +6,8 @@ OC.L10N.register(
     "New public call" : "Nýtt opinbert símtal",
     "Waiting for {participantName} to join the call …" : "Bíð eftir að {participantName} komi inn í símtalið …",
     "Waiting for others to join the call …" : "Bíð eftir að fleiri komi inn í símtalið …",
+    "Waiting for camera and microphone permissions" : "Bíð eftir heimildum fyrir hljóðnema og myndavél",
+    "Please, give your browser access to use your camera and microphone in order to use this app." : "Til að nota þetta forrit, þarftu að gefa vafranum þínum heimild til að nota hljóðnema og myndavél.",
     "Looking great today! :)" : "Lítur vel út í dag! :)",
     "Time to call your friends" : "Tími til að hringja í vinina",
     "Guest" : "Gestur",

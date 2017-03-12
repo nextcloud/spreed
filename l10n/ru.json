@@ -4,6 +4,8 @@
     "New public call" : "Новый общий звонок",
     "Waiting for {participantName} to join the call …" : "Ждем пока  {participantName} подключится к звонку...",
     "Waiting for others to join the call …" : "Ждем пока другие подключатся к звонку ...",
+    "Waiting for camera and microphone permissions" : "Ожидание разрешения доступа к камере и микрофону",
+    "Please, give your browser access to use your camera and microphone in order to use this app." : "Для использования этого приложения разрешите браузеру доступ к камере и мирофону.",
     "Looking great today! :)" : "Отлично выглядите сегодня! :)",
     "Time to call your friends" : "Время позвонить друзьям",
     "Guest" : "Гость",
