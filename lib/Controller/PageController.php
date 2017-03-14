@@ -81,47 +81,44 @@ class PageController extends Controller {
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return TemplateResponse
 	 * @throws HintException
 	 */
-	public function index($roomId = 0) {
+	public function index($token = '') {
 		if ($this->userId === null) {
-			return $this->guestEnterRoom($roomId);
+			return $this->guestEnterRoom($token);
 		}
 
-		if ($roomId !== 0) {
+		if ($token !== '') {
+			$room = null;
 			try {
-				$this->manager->getRoomForParticipant($roomId, $this->userId);
-			} catch (RoomNotFoundException $e) {
-				// Room not found - try if it is a public room
-				try {
-					$room = $this->manager->getRoomById($roomId);
-					if ($room->getType() !== Room::PUBLIC_CALL) {
-						throw new RoomNotFoundException();
+				$room = $this->manager->getRoomByToken($token);
+				if ($this->userId !== null) {
+					$notification = $this->notificationManager->createNotification();
+					try {
+						$notification->setApp('spreed')
+							->setUser($this->userId)
+							->setObject('room', (string) $room->getId());
+						$this->notificationManager->markProcessed($notification);
+					} catch (\InvalidArgumentException $e) {
+						$this->logger->logException($e, ['app' => 'spreed']);
 					}
-				} catch (RoomNotFoundException $e) {
-					// Room not found, redirect to main page
-					$roomId = 0;
 				}
-			}
 
-			if ($this->userId !== null) {
-				$notification = $this->notificationManager->createNotification();
-				try {
-					$notification->setApp('spreed')
-						->setUser($this->userId)
-						->setObject('room', (string) $roomId);
-					$this->notificationManager->markProcessed($notification);
-				} catch (\InvalidArgumentException $e) {
-					$this->logger->logException($e, ['app' => 'spreed']);
+				// If the room is not a public room, check if the user is in the participants
+				if ($room->getType() !== Room::PUBLIC_CALL) {
+					$this->manager->getRoomForParticipant($room->getId(), $this->userId);
 				}
+			} catch (RoomNotFoundException $e) {
+				// Room not found, redirect to main page
+				$token = '';
 			}
 		}
 
 		$params = [
 			'sessionId' => $this->userId,
-			'roomId' => $roomId,
+			'token' => $token,
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
@@ -132,13 +129,13 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @param $roomId
+	 * @param string $token
 	 * @return TemplateResponse
 	 * @throws HintException
 	 */
-	protected function guestEnterRoom($roomId) {
+	protected function guestEnterRoom($token) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomByToken($token);
 			if ($room->getType() !== Room::PUBLIC_CALL) {
 				throw new RoomNotFoundException();
 			}
@@ -149,7 +146,7 @@ class PageController extends Controller {
 		$newSessionId = $this->secureRandom->generate(255);
 		$params = [
 			'sessionId' => $newSessionId,
-			'roomId' => $roomId,
+			'token' => $token,
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();
