@@ -29,7 +29,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-roomId="{{id}}"><div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}</a>'+
+	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}"><div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
 								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
@@ -106,7 +106,7 @@
 			this.initPersonSelector();
 			this.checkSharingStatus();
 
-			roomURL = OC.generateUrl('/apps/spreed') + '?roomId=' + this.model.get('id');
+			roomURL = OC.generateUrl('/apps/spreed') + '?token=' + this.model.get('token');
 			completeURL = window.location.protocol + '//' + window.location.host + roomURL;
 
 			this.ui.shareLinkInput.attr('value', completeURL);
@@ -297,8 +297,8 @@
 		},
 		joinRoom: function(e) {
 			e.preventDefault();
-			var roomId = parseInt(this.ui.room.attr('data-roomId'), 10);
-			OCA.SpreedMe.Rooms.join(roomId);
+			var token = this.ui.room.attr('data-token');
+			OCA.SpreedMe.Rooms.join(token);
 		},
 		addRoomMessage: function() {
 			var message, messageAdditional, participants;
@@ -360,7 +360,7 @@
 					$('#emptycontent-icon').addClass('icon-public');
 
 					//Add link
-					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?roomId=' + this.model.get('id'));
+					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?token=' + this.model.get('token'));
 					$('#shareRoomInput').val(url);
 					$('#shareRoomInput').removeClass('hidden');
 					$('#shareRoomClipboardButton').removeClass('hidden');

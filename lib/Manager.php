@@ -112,6 +112,43 @@ class Manager {
 	}
 
 	/**
+	 * @param string $token
+	 * @param string $participant
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForParticipantByToken($token, $participant) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms', 'r')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token, IQueryBuilder::PARAM_INT)));
+
+		if ($participant !== null) {
+			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
+					$query->expr()->eq('p.roomId', 'r.id')
+				))
+				->andWhere($query->expr()->isNotNull('p.userId'));
+		}
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+
+		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
+			throw new RoomNotFoundException();
+		}
+
+		return $room;
+	}
+
+	/**
 	 * @param int $roomId
 	 * @return Room
 	 * @throws RoomNotFoundException

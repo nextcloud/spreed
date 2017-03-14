@@ -55,9 +55,9 @@ return [
 		],
 		[
 			'name' => 'api#getRoom',
-			'url' => '/api/room/{roomId}',
+			'url' => '/api/room/{token}',
 			'verb' => 'GET',
-			'requirements' => ['roomId' => '\d+'],
+			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
 		],
 		[
 			'name' => 'api#renameRoom',
@@ -79,19 +79,21 @@ return [
 		],
 		[
 			'name' => 'api#getPeersInRoom',
-			'url' => '/api/room/{roomId}/peers',
+			'url' => '/api/room/{token}/peers',
 			'verb' => 'GET',
-			'requirements' => ['roomId' => '\d+'],
+			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
 		],
 		[
 			'name' => 'api#joinRoom',
-			'url' => '/api/room/{roomId}/join',
+			'url' => '/api/room/{token}/join',
 			'verb' => 'POST',
+			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
 		],
 		[
 			'name' => 'api#ping',
 			'url' => '/api/ping',
 			'verb' => 'POST',
+			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
 		],
 		[
 			'name' => 'api#leave',

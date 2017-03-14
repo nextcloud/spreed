@@ -336,12 +336,12 @@
 			}, 5000);
 		},
 		/**
-		 * @param {int} roomId
+		 * @param {string} token
 		 */
-		_setRoomActive: function(roomId) {
+		_setRoomActive: function(token) {
 			if (oc_current_user) {
 				this._rooms.forEach(function(room) {
-					room.set('active', room.get('id') === roomId);
+					room.set('active', room.get('token') === token);
 				});
 			}
 		},
@@ -350,15 +350,15 @@
 				this._rooms.fetch();
 			}
 		},
-		syncAndSetActiveRoom: function(roomId) {
+		syncAndSetActiveRoom: function(token) {
 			var self = this;
 			if (oc_current_user) {
 				this._rooms.fetch({
 					success: function() {
-						roomChannel.trigger('active', roomId);
+						roomChannel.trigger('active', token);
 						// Disable video when entering a room with more than 5 participants.
 						self._rooms.forEach(function(room) {
-							if ((room.get('id') === roomId) && (Object.keys(room.get('participants')).length > 5)) {
+							if ((room.get('token') === token) && (Object.keys(room.get('participants')).length > 5)) {
 								self.disableVideo();
 							}
 						});
@@ -366,7 +366,7 @@
 				});
 			} else {
 				$.ajax({
-					url: OC.generateUrl('/apps/spreed/api/room/') + roomId,
+					url: OC.generateUrl('/apps/spreed/api/room/') + token,
 					type: 'GET',
 					success: function(data) {
 						self.setRoomMessageForGuest(data.participants);
@@ -473,9 +473,9 @@
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 
-			var roomId = parseInt($('#app').attr('data-roomId'), 10);
-			if (roomId) {
-				OCA.SpreedMe.Rooms.join(roomId);
+			var token = $('#app').attr('data-token');
+			if (token) {
+				OCA.SpreedMe.Rooms.join(token);
 			}
 			OCA.SpreedMe.Rooms.showCamera();
 
