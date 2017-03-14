@@ -29,10 +29,12 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
+use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
 
@@ -47,6 +49,8 @@ class PageController extends Controller {
 	private $manager;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IURLGenerator */
+	private $url;
 	/** @var IManager */
 	private $notificationManager;
 
@@ -58,6 +62,7 @@ class PageController extends Controller {
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param ISecureRandom $secureRandom
+	 * @param IURLGenerator $url
 	 * @param IManager $notificationManager
 	 */
 	public function __construct($appName,
@@ -67,6 +72,7 @@ class PageController extends Controller {
 								ILogger $logger,
 								Manager $manager,
 								ISecureRandom $secureRandom,
+								IURLGenerator $url,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
@@ -74,6 +80,7 @@ class PageController extends Controller {
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->secureRandom = $secureRandom;
+		$this->url = $url;
 		$this->notificationManager = $notificationManager;
 	}
 
@@ -130,7 +137,7 @@ class PageController extends Controller {
 
 	/**
 	 * @param string $token
-	 * @return TemplateResponse
+	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
 	protected function guestEnterRoom($token) {
@@ -140,7 +147,9 @@ class PageController extends Controller {
 				throw new RoomNotFoundException();
 			}
 		} catch (RoomNotFoundException $e) {
-			throw new HintException($this->l10n->t('The call does not exist.'));
+			return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
+				'redirect_url' => $this->url->linkToRoute('spreed.page.index', ['token' => $token]),
+			]));
 		}
 
 		$newSessionId = $this->secureRandom->generate(255);
