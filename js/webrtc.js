@@ -153,6 +153,16 @@ var spreedMappingTable = [];
 		var spreedListofSpeakers = {};
 		var latestSpeakerId = null;
 		var screenSharingActive = false;
+
+		window.addEventListener('resize', function() {
+			if (screenSharingActive) {
+				$('#localScreenContainer').children('video').each(function() {
+					$(this).width('100%');
+					$(this).height($('#localScreenContainer').height());
+				});
+			}
+		});
+
 		OCA.SpreedMe.speakers = {
 			showStatus: function() {
 				var data = [];
@@ -544,10 +554,10 @@ var spreedMappingTable = [];
 
 		// Local screen added.
 		OCA.SpreedMe.webrtc.on('localScreenAdded', function (video) {
-			video.onclick = function () {
-				video.style.width = video.videoWidth + 'px';
-				video.style.height = video.videoHeight + 'px';
-			};
+			var initialHeight = $('#app-content').height() - 200;
+
+			video.style.width = '100%';
+			video.style.height = initialHeight + 'px';
 
 			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
 

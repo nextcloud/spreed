@@ -320,7 +320,7 @@ video {
 }
 
 #app-content.screensharing #localScreenContainer {
-	max-height: calc(100% - 200px);
+	height: calc(100% - 200px);
 	overflow: scroll;
 	background-color: transparent;
 }
