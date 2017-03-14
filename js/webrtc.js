@@ -37,8 +37,32 @@ var spreedMappingTable = [];
 
 			var appContentElement = $('#app-content'),
 				participantsClass = 'participants-' + currentUsersNo;
-			if (!appContentElement.hasClass(participantsClass)) {
+			if (!appContentElement.hasClass(participantsClass) && !appContentElement.hasClass('screensharing')) {
 				appContentElement.attr('class', '').addClass(participantsClass);
+			}
+
+			//Send shared screen to new participants
+			var webrtc = OCA.SpreedMe.webrtc;
+			if (webrtc.getLocalScreen()) {
+				var newUsers = currentUsersInRoom.diff(previousUsersInRoom);
+				var currentUser = webrtc.connection.getSessionid();
+				newUsers.forEach(function(user) {
+					if (user !== currentUser) {
+						var peer = webrtc.webrtc.createPeer({
+								id: user,
+								type: 'screen',
+								sharemyscreen: true,
+								enableDataChannels: false,
+								receiveMedia: {
+									offerToReceiveAudio: 0,
+									offerToReceiveVideo: 0
+								},
+								broadcaster: currentUser,
+						});
+						webrtc.emit('createdPeer', peer);
+						peer.start();
+					}
+				});
 			}
 
 			var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
@@ -130,6 +154,17 @@ var spreedMappingTable = [];
 
 		var spreedListofSpeakers = {};
 		var latestSpeakerId = null;
+		var screenSharingActive = false;
+
+		window.addEventListener('resize', function() {
+			if (screenSharingActive) {
+				$('#localScreenContainer').children('video').each(function() {
+					$(this).width('100%');
+					$(this).height($('#localScreenContainer').height());
+				});
+			}
+		});
+
 		OCA.SpreedMe.speakers = {
 			showStatus: function() {
 				var data = [];
@@ -155,6 +190,10 @@ var spreedMappingTable = [];
 				return '#container_' + sanitizedId + '_video_incoming';
 			},
 			switchVideoToId: function(id) {
+				if (screenSharingActive) {
+					return;
+				}
+
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
 				if(newContainer.find('video').length === 0) {
 					console.warn('promote: no video found for ID', id);
@@ -178,6 +217,14 @@ var spreedMappingTable = [];
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
 
 				latestSpeakerId = id;
+			},
+			unpromoteLatestSpeaker: function() {
+				if (latestSpeakerId) {
+					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+					oldContainer.removeClass('promoted');
+					latestSpeakerId = null;
+					$('.videoContainer-dummy').remove();
+				}
 			},
 			updateVideoContainerDummy: function(id) {
 				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
@@ -347,6 +394,11 @@ var spreedMappingTable = [];
 
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
 			console.log('video added', peer);
+			if (peer.type === 'screen') {
+				OCA.SpreedMe.webrtc.emit('localScreenAdded', video);
+				return;
+			}
+
 			var remotes = document.getElementById('videos');
 			if (remotes) {
 				// Indicator for username
@@ -465,6 +517,14 @@ var spreedMappingTable = [];
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
+			if (video.dataset.screensharing) {
+				// SimpleWebRTC notifies about stopped screensharing through
+				// the generic "videoRemoved" API, but the stream must be
+				// handled differently.
+				OCA.SpreedMe.webrtc.emit('localScreenRemoved', video);
+				return;
+			}
+
 			// a removed peer can't speak anymore ;)
 			OCA.SpreedMe.speakers.remove(peer, true);
 
@@ -487,6 +547,32 @@ var spreedMappingTable = [];
 		});
 		OCA.SpreedMe.webrtc.on('videoOff', function() {
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOff');
+		});
+
+		// Local screen added.
+		OCA.SpreedMe.webrtc.on('localScreenAdded', function (video) {
+			var initialHeight = $('#app-content').height() - 200;
+
+			video.style.width = '100%';
+			video.style.height = initialHeight + 'px';
+
+			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
+
+			screenSharingActive = true;
+			$('#app-content').attr('class', '').addClass('screensharing');
+
+			video.dataset.screensharing = true;
+			document.getElementById('localScreenContainer').appendChild(video);
+		});
+		// Local screen removed.
+		OCA.SpreedMe.webrtc.on('localScreenRemoved', function (video) {
+			document.getElementById('localScreenContainer').removeChild(video);
+			OCA.SpreedMe.webrtc.emit('localScreenStopped');
+
+			if (!document.getElementById('localScreenContainer').hasChildNodes()) {
+				screenSharingActive = false;
+				$('#app-content').removeClass('screensharing');
+			}
 		});
 
 		// Peer changed nick

@@ -146,6 +146,9 @@
     background-position-y: 8px !important;
 }
 
+/**
+ * Video styles
+ */
 
 #videos {
 	position: absolute;
@@ -264,6 +267,14 @@ video {
 	display: block !important;
 }
 
+.participants-1 #video-fullscreen {
+	display: none;
+}
+
+.participants-1 #toggleScreensharing {
+	display: none;
+}
+
 /* big speaker video */
 .participants-1 .videoContainer,
 .participants-2 .videoContainer,
@@ -313,8 +324,21 @@ video {
 #app-content.participants-7,
 #app-content.participants-8,
 #app-content.participants-9,
-#app-content.participants-10 {
+#app-content.participants-10,
+#app-content.screensharing {
 	background-color: #000;
+}
+
+#app-content.screensharing .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0;
+}
+
+#app-content.screensharing #localScreenContainer {
+	height: calc(100% - 200px);
+	overflow: scroll;
+	background-color: transparent;
 }
 
 .nameIndicator {
@@ -327,7 +351,7 @@ video {
 	text-align: center;
 	font-size: 20px;
 	white-space: nowrap;
-	overflow: hidden;
+	overflow: visible;
 	text-overflow: ellipsis;
 }
 .videoView .nameIndicator {
@@ -348,6 +372,17 @@ video {
 	padding: 12px 35%;
 }
 
+#video-fullscreen {
+	position: absolute;
+	right: 0px;
+	z-index: 90;
+}
+
+#video-fullscreen.public {
+	top: 45px;
+}
+
+#video-fullscreen,
 .nameIndicator button {
 	background-color: transparent;
 	border: none;
@@ -355,8 +390,10 @@ video {
 	height: 44px;
 	background-size: 25px;
 }
+
 .nameIndicator button.audio-disabled,
-.nameIndicator button.video-disabled {
+.nameIndicator button.video-disabled,
+.nameIndicator button.screensharing-disabled {
 	opacity: .7;
 }
 

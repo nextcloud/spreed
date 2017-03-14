@@ -3971,28 +3971,20 @@
 			var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
 			if (ffver >= 33) {
 				constraints = (hasConstraints && constraints) || {
-						video: {
-							mozMediaSource: 'window',
-							mediaSource: 'window'
-						}
-					};
-				getUserMedia(constraints, function (err, stream) {
-					callback(err, stream);
-					// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1045810
-					if (!err) {
-						var lastTime = stream.currentTime;
-						var polly = window.setInterval(function () {
-							if (!stream) window.clearInterval(polly);
-							if (stream.currentTime == lastTime) {
-								window.clearInterval(polly);
-								if (stream.onended) {
-									stream.onended();
-								}
-							}
-							lastTime = stream.currentTime;
-						}, 500);
+					video: {
+						mozMediaSource: 'window',
+						mediaSource: 'window'
 					}
-				});
+				};
+				// Notify extension to add domain to whitelist and defer actual
+				// getUserMedia call until extension finished adding the domain.
+				var pending = window.setTimeout(function () {
+					error = new Error('NavigatorUserMediaError');
+					error.name = 'EXTENSION_UNAVAILABLE';
+					return callback(error);
+				}, 1000);
+				cache[pending] = [callback, constraints];
+				window.postMessage({ type: 'webrtcStartScreensharing', id: pending }, '*');
 			} else {
 				error = new Error('NavigatorUserMediaError');
 				error.name = 'EXTENSION_UNAVAILABLE'; // does not make much sense but...
@@ -4001,7 +3993,7 @@
 	};
 
 	typeof window !== 'undefined' && window.addEventListener('message', function (event) {
-		if (event.origin != window.location.origin) {
+		if (event.origin != window.location.origin && !event.isTrusted) {
 			return;
 		}
 		if (event.data.type == 'gotScreen' && cache[event.data.id]) {
@@ -4032,6 +4024,33 @@
 			}
 		} else if (event.data.type == 'getScreenPending') {
 			window.clearTimeout(event.data.id);
+		} else if (event.data.type == 'webrtcScreensharingWhitelisted' && cache[event.data.id]) {
+			var data = cache[event.data.id];
+			window.clearTimeout(event.data.id);
+			var constraints = data[1];
+			var callback = data[0];
+			delete cache[event.data.id];
+
+			getUserMedia(constraints, function (err, stream) {
+				// Notify extension to remove domain from whitelist.
+				window.postMessage({ type: 'webrtcStopScreensharing' }, '*');
+				callback(err, stream);
+				if (err) {
+					return;
+				}
+				// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1045810
+				var lastTime = stream.currentTime;
+				var polly = window.setInterval(function () {
+					if (!stream) window.clearInterval(polly);
+					if (stream.currentTime == lastTime) {
+						window.clearInterval(polly);
+						if (stream.onended) {
+							stream.onended();
+						}
+					}
+					lastTime = stream.currentTime;
+				}, 500);
+			});
 		}
 	});
 
@@ -17739,6 +17758,9 @@
 					mLine.iceTransport.addRemoteCandidate({});
 				}
 			});
+		} else if (message.type === 'unshareScreen') {
+			this.parent.emit('unshareScreen', {id: message.from});
+			this.end();
 		}
 	};
 
@@ -18317,7 +18339,11 @@
 		if (this.getLocalScreen()) {
 			this.webrtc.stopScreenShare();
 		}
+		// Notify peers were sending to.
 		this.webrtc.peers.forEach(function (peer) {
+			if (peer.type === 'screen' && peer.sharemyscreen) {
+				peer.send('unshareScreen');
+			}
 			if (peer.broadcaster) {
 				peer.end();
 			}
@@ -18477,6 +18503,17 @@
 				});
 			}
 		});
+
+		this.on('unshareScreen', function(message) {
+			// End peers we were receiving the screensharing stream from.
+			var peers = self.getPeers(message.from, 'screen');
+			peers.forEach(function(peer) {
+				if (!peer.sharemyscreen) {
+					peer.end();
+				}
+			});
+		});
+
 
 		// log events in debug mode
 		if (this.config.debug) {

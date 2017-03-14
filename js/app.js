@@ -155,6 +155,11 @@
 				});
 			});
 
+			// Initialize button tooltips
+			$('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).click(function() {
+				$(this).tooltip('hide');
+			});
+
 			$('#hideVideo').click(function() {
 				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
 					// don't allow clicking the video toggle
@@ -173,6 +178,7 @@
 					localStorage.setItem("videoDisabled", true);
 				}
 			});
+
 			$('#mute').click(function() {
 				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
 					OCA.SpreedMe.app.disableAudio();
@@ -197,6 +203,7 @@
 					} else if (fullscreenElem.msRequestFullscreen) {
 						fullscreenElem.msRequestFullscreen();
 					}
+					$(this).attr('data-original-title', 'Exit fullscreen');
 				} else {
 					if (document.exitFullscreen) {
 						document.exitFullscreen();
@@ -207,6 +214,60 @@
 					} else if (document.msExitFullscreen) {
 						document.msExitFullscreen();
 					}
+					$(this).attr('data-original-title', 'Fullscreen');
+				}
+			});
+
+			var screensharingStopped = function() {
+				console.log("Screensharing now stopped");
+				$('#toggleScreensharing').attr('data-original-title', 'Enable screensharing')
+					.addClass('screensharing-disabled icon-screen-off-white')
+					.removeClass('icon-screen-white');
+			};
+
+			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
+				screensharingStopped();
+			});
+
+			$('#toggleScreensharing').click(function() {
+				var webrtc = OCA.SpreedMe.webrtc;
+				if (!webrtc.capabilities.supportScreenSharing) {
+					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
+					return;
+				}
+
+				if (webrtc.getLocalScreen()) {
+					webrtc.stopScreenShare();
+					screensharingStopped();
+				} else {
+					webrtc.shareScreen(function(err) {
+						if (!err) {
+							OC.Notification.showTemporary(t('spreed', 'Screensharing is about to start…'));
+							$('#toggleScreensharing').attr('data-original-title', 'Stop screensharing')
+								.removeClass('screensharing-disabled icon-screen-off-white')
+								.addClass('icon-screen-white');
+							return;
+						}
+
+						switch (err.name) {
+							case "HTTPS_REQUIRED":
+								OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
+								break;
+							case "PERMISSION_DENIED":
+							case "NotAllowedError":
+							case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
+								OC.Notification.showTemporary(t('spreed', 'The screensharing request has been cancelled.'));
+								break;
+							case "EXTENSION_UNAVAILABLE":
+								// TODO(fancycode): Show popup with links to Chrome/Firefox extensions.
+								OC.Notification.showTemporary(t('spreed', 'An extension is required to start screensharing.'));
+								break;
+							default:
+								OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
+								console.log("Could not start screensharing", err);
+								break;
+						}
+					});
 				}
 			});
 
@@ -446,7 +507,7 @@
 		},
 		enableAudio: function() {
 			OCA.SpreedMe.webrtc.unmute();
-			$('#mute').data('title', 'Mute audio')
+			$('#mute').attr('data-original-title', 'Mute audio')
 				.removeClass('audio-disabled icon-audio-off-white')
 				.addClass('icon-audio-white');
 
@@ -454,7 +515,7 @@
 		},
 		disableAudio: function() {
 			OCA.SpreedMe.webrtc.mute();
-			$('#mute').data('title', 'Enable audio')
+			$('#mute').attr('data-original-title', 'Enable audio')
 				.addClass('audio-disabled icon-audio-off-white')
 				.removeClass('icon-audio-white');
 
@@ -466,9 +527,10 @@
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			OCA.SpreedMe.webrtc.resumeVideo();
-			$hideVideoButton.data('title', 'Disable video')
+			$hideVideoButton.attr('data-original-title', 'Disable video')
 				.removeClass('video-disabled icon-video-off-white')
 				.addClass('icon-video-white');
+
 			avatarContainer.hide();
 			localVideo.show();
 
@@ -479,7 +541,7 @@
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
-			$hideVideoButton.data('title', 'Enable video')
+			$hideVideoButton.attr('data-original-title', 'Enable video')
 				.addClass('video-disabled icon-video-off-white')
 				.removeClass('icon-video-white');
 

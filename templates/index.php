@@ -24,7 +24,7 @@ script(
 );
 ?>
 
-<div id="app" data-roomId="<?php p($_['roomId']) ?>">
+<div id="app" class="nc-enable-screensharing-extension" data-roomId="<?php p($_['roomId']) ?>">
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
 			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
@@ -34,6 +34,8 @@ script(
 	</div>
 
 	<div id="app-content" class="participants-1">
+
+		<button id="video-fullscreen" class="icon-fullscreen-white" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen')) ?>"></button>
 
 		<div id="video-speaking">
 
@@ -45,13 +47,14 @@ script(
 					<div class="avatar"></div>
 				</div>
 				<div class="nameIndicator">
-					<button id="mute" class="icon-audio-white" data-title="<?php p($l->t('Mute audio')) ?>"></button>
-					<button id="hideVideo" class="icon-video-white" data-title="<?php p($l->t('Pause video')) ?>"></button>
-					<button id="video-fullscreen" class="icon-fullscreen-white" data-title="<?php p($l->t('Fullscreen')) ?>"></button>
+					<button id="mute" class="icon-audio-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
+					<button id="hideVideo" class="icon-video-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
+					<button id="toggleScreensharing" class="icon-screen-off-white screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
 				</div>
 			</div>
 		</div>
 
+		<div id="localScreenContainer"></div>
 
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-video"></div>
