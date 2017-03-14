@@ -69,6 +69,13 @@
 	left: 6px;
 	top: 6px;
 }
+
+#app-navigation li > a:first-child img {
+	width: 32px !important;
+	height: 32px !important;
+	margin: 0 !important;
+}
+
 #app-navigation .icon-contacts-dark,
 #app-navigation .app-navigation-entry-link .icon-public,
 .icon-add  {
