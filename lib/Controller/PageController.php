@@ -31,6 +31,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IL10N;
+use OCP\ILogger;
 use OCP\IRequest;
 use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
@@ -40,6 +41,8 @@ class PageController extends Controller {
 	private $userId;
 	/** @var IL10N */
 	private $l10n;
+	/** @var ILogger */
+	private $logger;
 	/** @var Manager */
 	private $manager;
 	/** @var ISecureRandom */
@@ -52,6 +55,7 @@ class PageController extends Controller {
 	 * @param IRequest $request
 	 * @param string $UserId
 	 * @param IL10N $l10n
+	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param ISecureRandom $secureRandom
 	 * @param IManager $notificationManager
@@ -60,12 +64,14 @@ class PageController extends Controller {
 								IRequest $request,
 								$UserId,
 								IL10N $l10n,
+								ILogger $logger,
 								Manager $manager,
 								ISecureRandom $secureRandom,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->l10n = $l10n;
+		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->secureRandom = $secureRandom;
 		$this->notificationManager = $notificationManager;
@@ -77,6 +83,7 @@ class PageController extends Controller {
 	 *
 	 * @param int $roomId
 	 * @return TemplateResponse
+	 * @throws HintException
 	 */
 	public function index($roomId = 0) {
 		if ($this->userId === null) {
@@ -101,10 +108,14 @@ class PageController extends Controller {
 
 			if ($this->userId !== null) {
 				$notification = $this->notificationManager->createNotification();
-				$notification->setApp('spreed')
-					->setUser($this->userId)
-					->setObject('room', (string) $roomId);
-				$this->notificationManager->markProcessed($notification);
+				try {
+					$notification->setApp('spreed')
+						->setUser($this->userId)
+						->setObject('room', (string) $roomId);
+					$this->notificationManager->markProcessed($notification);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->logException($e, ['app' => 'spreed']);
+				}
 			}
 		}
 

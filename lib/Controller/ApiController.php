@@ -165,7 +165,7 @@ class ApiController extends Controller {
 			'type' => $room->getType(),
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
-			'isNameEditable' => ($room->getType() !== Room::ONE_TO_ONE_CALL),
+			'isNameEditable' => $room->getType() !== Room::ONE_TO_ONE_CALL,
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
 			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
