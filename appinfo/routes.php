@@ -104,11 +104,6 @@ return [
 			'verb' => 'POST',
 		],
 		[
-			'name' => 'PersonalSettings#setSpreedSettings',
-			'url' => '/settings/personal',
-			'verb' => 'POST',
-		],
-		[
 			'name' => 'api#createOneToOneRoom',
 			'url' => '/api/oneToOne',
 			'verb' => 'PUT',
