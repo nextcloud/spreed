@@ -67,7 +67,7 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
-			$rooms[] = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
+			$rooms[] = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 		}
 		$result->closeCursor();
 
@@ -121,6 +121,28 @@ class Manager {
 		$query->select('*')
 			->from('spreedme_rooms')
 			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+	}
+
+	/**
+	 * @param string $token
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomByToken($token) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		$result = $query->execute();
 		$row = $result->fetch();
