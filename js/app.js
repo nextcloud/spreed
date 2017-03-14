@@ -358,8 +358,11 @@
 						roomChannel.trigger('active', token);
 						// Disable video when entering a room with more than 5 participants.
 						self._rooms.forEach(function(room) {
-							if ((room.get('token') === token) && (Object.keys(room.get('participants')).length > 5)) {
-								self.disableVideo();
+							if (room.get('token') === token) {
+								if (Object.keys(room.get('participants')).length > 5) {
+									self.disableVideo();
+								}
+								self.setPageTitle(room.get('displayName'));
 							}
 						});
 					}
@@ -370,12 +373,23 @@
 					type: 'GET',
 					success: function(data) {
 						self.setRoomMessageForGuest(data.participants);
+						self.setPageTitle(data.displayName);
 						if (Object.keys(data.participants).length > 5) {
 							self.disableVideo();
 						}
 					}
 				});
 			}
+		},
+		setPageTitle: function(title){
+			if (title) {
+				title += ' - ';
+			} else {
+				title = '';
+			}
+			title += t('spreed', 'Video calls');
+			title += ' - ' + oc_defaults.title;
+			window.document.title = title;
 		},
 		setEmptyContentMessage: function(icon, message, messageAdditional) {
 			//Remove previous icon, avatar or link from emptycontent
