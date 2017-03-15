@@ -24,6 +24,9 @@ script(
 );
 ?>
 
+<div id="notification-container">
+	<div id="notification" style="display: none;"></div>
+</div>
 <div id="app" class="nc-enable-screensharing-extension" data-roomId="<?php p($_['roomId']) ?>">
 	<div id="app-content" class="participants-1">
 
