@@ -337,7 +337,7 @@ video {
 
 #app-content.screensharing #localScreenContainer {
 	height: calc(100% - 200px);
-	overflow: scroll;
+	overflow-y: scroll;
 	background-color: transparent;
 }
 
