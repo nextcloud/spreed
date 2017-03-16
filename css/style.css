@@ -349,12 +349,13 @@ video {
 	text-align: center;
 	font-size: 20px;
 	white-space: nowrap;
-	overflow: visible;
+	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
 .videoView .nameIndicator {
 	padding: 0;
+	overflow: visible;
 }
 
 .participants-1 .videoView .nameIndicator,
