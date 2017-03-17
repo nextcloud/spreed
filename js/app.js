@@ -259,8 +259,21 @@
 								OC.Notification.showTemporary(t('spreed', 'The screensharing request has been cancelled.'));
 								break;
 							case "EXTENSION_UNAVAILABLE":
-								// TODO(fancycode): Show popup with links to Chrome/Firefox extensions.
-								OC.Notification.showTemporary(t('spreed', 'An extension is required to start screensharing.'));
+								var  extensionURL = null;
+								if (typeof InstallTrigger !== 'undefined') {// Firefox
+									extensionURL = 'https://addons.mozilla.org/en-US/firefox/addon/nextcloud-video-calls/';
+								} else if (!!window.chrome && !!window.chrome.webstore) {// Chrome
+									extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
+								}
+
+								if (extensionURL) {
+									var text = t('spreed', 'Screensharing extension is required to share your screen.');
+									var element = $('<a>').attr('href', extensionURL).attr('target','_blank').text(text);
+
+									OC.Notification.showTemporary(element, {isHTML: true});
+								} else {
+									OC.Notification.showTemporary(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'));
+								}
 								break;
 							default:
 								OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
