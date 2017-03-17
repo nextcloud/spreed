@@ -212,13 +212,13 @@ video {
 	position: absolute;
 	text-align: center;
 	bottom: 44px;
-	width: 85%;
+	left: 0;
+	width: 100%;
 }
 .videoContainer .avatar-container .avatar {
 	display: inline-block;
 }
 .videoContainer.promoted .avatar-container {
-	width: 96%;
 	top: 30%;
 }
 .videoContainer.promoted .avatar-container + .nameIndicator {
@@ -227,10 +227,6 @@ video {
 
 .videoContainer.promoted .muteIndicator {
 	display: none !important;
-}
-
-.videoView .avatar-container {
-	width: 100%;
 }
 
 #emptycontent {
@@ -345,27 +341,31 @@ video {
 .nameIndicator {
 	position: absolute;
 	bottom: 0;
+	left: 0;
 	padding: 12px;
 	color: #fff;
 	text-shadow: 3px 3px 10px rgba(0, 0, 0, .5), 3px -3px 10px rgba(0, 0, 0, .5), -3px 3px 10px rgba(0, 0, 0, .5), -3px -3px 10px rgba(0, 0, 0, .5);
-	width: 85%;
+	width: 100%;
 	text-align: center;
 	font-size: 20px;
 	white-space: nowrap;
-	overflow: visible;
+	overflow: hidden;
 	text-overflow: ellipsis;
 }
+
 .videoView .nameIndicator {
-	width: 100%;
 	padding: 0;
+	overflow: visible;
 }
 
-.participants-2 .videoContainer-dummy .nameIndicator {
-	width: 96%;
+.participants-1 .videoView .nameIndicator,
+.participants-2 .videoView .nameIndicator {
+	left: initial;
 }
 
-.participants-2 .videoContainer-dummy .muteIndicator {
-	width: 96%;
+.participants-1 .videoView .avatar-container,
+.participants-2 .videoView .avatar-container {
+	left: initial;
 }
 
 /* ellipsize name in 1on1 calls */
@@ -400,8 +400,9 @@ video {
 
 .muteIndicator {
 	position: absolute;
-	width: 85%;
+	width: 100%;
 	bottom: 44px;
+	left: 0;
 	background-size: 22px;
 	padding: 12px;
 	opacity: .7;
