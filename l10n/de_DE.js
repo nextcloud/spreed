@@ -8,7 +8,6 @@ OC.L10N.register(
     "Screensharing is about to start…" : "Das Teilen des Bildschirms wird gestartet....",
     "Screensharing requires the page to be loaded through HTTPS." : "Das Teilen des Bildschirms erfordert das Laden der Seite über HTTPS.",
     "The screensharing request has been cancelled." : "Die Anfrage zum Teilen des Bildschirms wurde abgebrochen.",
-    "An extension is required to start screensharing." : "Eine Erweiterung zum Teilen des Bildschirms wird benötigt.",
     "An error occurred while starting screensharing." : "Es ist ein Fehler beim Start zum Teilen des Bildschirms aufgetreten.",
     "Waiting for {participantName} to join the call …" : "Warte auf Teilnehmer {participantName} ...",
     "Waiting for others to join the call …" : "Warte auf weitere Teilnehmer ...",

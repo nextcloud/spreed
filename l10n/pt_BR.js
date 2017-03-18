@@ -8,7 +8,6 @@ OC.L10N.register(
     "Screensharing is about to start…" : "Compartilhamento de tela está prestes a começar...",
     "Screensharing requires the page to be loaded through HTTPS." : "O Compartilhamento de Tela requer que a página seja carregada através de HTTPS.",
     "The screensharing request has been cancelled." : "A solicitação de compartilhamento de tela foi cancelada.",
-    "An extension is required to start screensharing." : "É necessária uma extensão para iniciar o compartilhamento de tela.",
     "An error occurred while starting screensharing." : "Ocorreu um erro ao iniciar o compartilhamento de tela.",
     "Waiting for {participantName} to join the call …" : "Esperando por {participantName} para se juntar a chamada …",
     "Waiting for others to join the call …" : "Esperando por outros para se juntarem a chamada ...",
