@@ -6,6 +6,8 @@
     "Screensharing is about to start…" : "Le partage d'écran est en train de commencer...",
     "Screensharing requires the page to be loaded through HTTPS." : "Le partage d'écran nécessite que la page soit chargée en HTTPS.",
     "The screensharing request has been cancelled." : "La requête du partage d'écran a été annulée.",
+    "Screensharing extension is required to share your screen." : "L'extension \"Screensharing\" est requise pour pouvoir partager votre écran.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Veuillez utiliser un autre navigateur comme Firefox ou Chrome pour pouvoir partager votre écran.",
     "An error occurred while starting screensharing." : "Une erreur est survenue lors du démarrage du partage d'écran.",
     "Waiting for {participantName} to join the call …" : "En attente que {participantName} rejoigne l'appel...",
     "Waiting for others to join the call …" : "En attente que d'autres personnes rejoignent l'appel...",
