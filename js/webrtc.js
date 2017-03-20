@@ -581,13 +581,15 @@ var spreedMappingTable = [];
 		// Local screen removed.
 		OCA.SpreedMe.webrtc.on('localScreenRemoved', function (video) {
 			document.getElementById('localScreenContainer').removeChild(video);
-			OCA.SpreedMe.webrtc.emit('localScreenStopped');
 
-			// Remove indicator for screen sharer
 			if (video.id !== 'localScreen') {
+				// Remove indicator for screen sharer
 				var sanitizedId = video.id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
 				var nameIndicator = '#screen_nameIndicator_' + sanitizedId.replace('_screen_incoming', '');
 				$(nameIndicator).remove();
+			} else {
+				// Notify about local screen has been stopped
+				OCA.SpreedMe.webrtc.emit('localScreenStopped');
 			}
 
 			if (!document.getElementById('localScreenContainer').hasChildNodes()) {
