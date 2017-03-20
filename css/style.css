@@ -359,6 +359,14 @@ video {
 	padding: 0;
 }
 
+#localScreenContainer .nameIndicator {
+	bottom: 40px;
+	height: 0px;
+	padding: 0;
+	position: relative;
+	overflow: visible;
+}
+
 .participants-2 .videoContainer-dummy .nameIndicator {
 	width: 96%;
 }

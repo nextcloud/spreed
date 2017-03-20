@@ -563,11 +563,32 @@ var spreedMappingTable = [];
 
 			video.dataset.screensharing = true;
 			document.getElementById('localScreenContainer').appendChild(video);
+
+			// Add indicator for screen sharer
+			if (video.id !== 'localScreen') {
+				var userSessionId = video.id.replace('_screen_incoming', '');
+				var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
+						id: userSessionId,
+						type: 'video',
+						broadcaster: false
+					}));
+
+				var nameIndicator = $(el).find('.nameIndicator').clone();
+				nameIndicator.attr('id', 'screen_nameIndicator_' + userSessionId);
+				$('#localScreenContainer').append(nameIndicator);
+			}
 		});
 		// Local screen removed.
 		OCA.SpreedMe.webrtc.on('localScreenRemoved', function (video) {
 			document.getElementById('localScreenContainer').removeChild(video);
 			OCA.SpreedMe.webrtc.emit('localScreenStopped');
+
+			// Remove indicator for screen sharer
+			if (video.id !== 'localScreen') {
+				var sanitizedId = video.id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+				var nameIndicator = '#screen_nameIndicator_' + sanitizedId.replace('_screen_incoming', '');
+				$(nameIndicator).remove();
+			}
 
 			if (!document.getElementById('localScreenContainer').hasChildNodes()) {
 				screenSharingActive = false;
