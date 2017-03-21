@@ -335,10 +335,19 @@ video {
 	box-shadow: 0;
 }
 
-#app-content.screensharing #localScreenContainer {
+#app-content.screensharing #screens {
+	position: absolute;
+	width: 100%;
 	height: calc(100% - 200px);
 	overflow-y: scroll;
 	background-color: transparent;
+}
+
+#app-content.screensharing .screenContainer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 
 .nameIndicator {
@@ -357,14 +366,6 @@ video {
 .videoView .nameIndicator {
 	width: 100%;
 	padding: 0;
-}
-
-#localScreenContainer .nameIndicator {
-	bottom: 40px;
-	height: 0px;
-	padding: 0;
-	position: relative;
-	overflow: visible;
 }
 
 .participants-2 .videoContainer-dummy .nameIndicator {
