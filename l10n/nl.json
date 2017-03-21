@@ -6,6 +6,8 @@
     "Screensharing is about to start…" : "Schermdelen begint zo...",
     "Screensharing requires the page to be loaded through HTTPS." : "Schermdelen vereist het over HTTPS laden van de pagina.",
     "The screensharing request has been cancelled." : "De schermdelen aanvraag is geannuleerd.",
+    "Screensharing extension is required to share your screen." : "Om je scherm te delen, heb je de schermdelen-extensie nodig.",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Gebruik een andere browser, zoals Firefox of Chrome om je scherm te delen.",
     "An error occurred while starting screensharing." : "Er trad een fout op bij starten schermdelen.",
     "Waiting for {participantName} to join the call …" : "Wachten op deelname door {participantName} ...",
     "Waiting for others to join the call …" : "Wachten op deelname door anderen ...",
