@@ -8,6 +8,8 @@ OC.L10N.register(
     "Screensharing is about to start…" : "Współdzielenie ekranu wystartowało...",
     "Screensharing requires the page to be loaded through HTTPS." : "Współdzielenie ekrany wymaga, aby strona została załadowana przez HTTPS.",
     "The screensharing request has been cancelled." : "Prośba o współdzielenie ekranu została anulowana.",
+    "Screensharing extension is required to share your screen." : "Aby współdzielić ekran wymagane jest rozszerzenie do współdzeielenia ekranu",
+    "Please use a different browser like Firefox or Chrome to share your screen." : "Aby współdzielić ekran proszę użyć innej przeglądarki jak Firefox lub Chrome.",
     "An error occurred while starting screensharing." : "Wystąpił błąd podczas rozpoczynania współdzielenia ekranu.",
     "Waiting for {participantName} to join the call …" : "Oczekiwanie na {participantName} by przyłączyć się do rozmowy ...",
     "Waiting for others to join the call …" : "Czekamy na innych aby przyłączyć się do rozmowy ...",
