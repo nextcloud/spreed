@@ -39,6 +39,7 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Veuillez utiliser un autre navigateur comme Firefox ou Chrome",
     "Error while accessing microphone & camera" : "Erreur lors de l'accès au microphone et à la caméra",
     "WebRTC is not supported in your browser :-/" : "WebRTC n'est pas pris en charge dans votre navigateur :-/",
+    "My screen" : "Mon écran",
     "{actor} invited you to a private call" : "{actor} vous a invité dans un appel privé",
     "{actor} invited you to a group call" : "{actor} vous a invité dans un appel de groupe",
     "{actor} invited you to the call {call}" : "{actor} vous a invité à l'appel {call}",

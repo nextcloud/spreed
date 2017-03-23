@@ -37,6 +37,7 @@
     "Please use a different browser like Firefox or Chrome" : "Por favor, usa un navegador diferente, como Firefox o Chrome.",
     "Error while accessing microphone & camera" : "Error al acceder al micrófono y la cámara.",
     "WebRTC is not supported in your browser :-/" : "WebRTC no esta soportado en su navegador :-/",
+    "My screen" : "Mi pantalla",
     "{actor} invited you to a private call" : "{actor} lo invitó a una llamada privada",
     "{actor} invited you to a group call" : "{actor} lo invitó a una llamada grupal",
     "{actor} invited you to the call {call}" : "{actor} lo invitó a la llamada {call}",
