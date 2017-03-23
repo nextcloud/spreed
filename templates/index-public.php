@@ -9,6 +9,7 @@ style('spreed', 'style');
 script(
 	'spreed',
 	[
+		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
 		'models/room',
