@@ -2,25 +2,19 @@
 <info>
 	<id>spreed</id>
 	<name>Video calls</name>
-	<summary><![CDATA[Video & voice calls using WebRTC]]></summary>
-	<description><![CDATA[Video & voice calls using WebRTC
+	<summary><![CDATA[Video & audio-conferencing using WebRTC]]></summary>
+	<description><![CDATA[Video & audio-conferencing using WebRTC
 
-👥 **1on1 & group calls!** Just invite people, or create a call with a whole group. :)
-
-🔗 **Public rooms!** You can send a link to anyone to have a call with them!
-
-🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
-
-🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
-
+* 👥 **Private, group and public calls!** Just invite people, create a call with a whole group or send a public link to invite to a call :)
+* 💻 **Screen sharing!** ...share your screen with participants of your call.
+* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
+* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
 
-💻 [Screen sharing](https://github.com/nextcloud/spreed/issues/31)
+* 💬 [Chat integration](https://github.com/nextcloud/spreed/issues/35)
 
-💬 [Chat integration](https://github.com/nextcloud/spreed/issues/35)
-
-✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
+* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
 **Known issues:**
 
