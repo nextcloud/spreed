@@ -5,8 +5,8 @@
 	<summary><![CDATA[Video & audio-conferencing using WebRTC]]></summary>
 	<description><![CDATA[Video & audio-conferencing using WebRTC
 
-* 👥 **Private, group and public calls!** Just invite people, create a call with a whole group or send a public link to invite to a call :)
-* 💻 **Screen sharing!** ...share your screen with participants of your call.
+* 👥 **Private, group and public calls!** Just invite somebody, a whole group or send a public link to invite to a call.
+* 💻 **Screen sharing!** Share your screen with participants of your call.
 * 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
 * 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
