@@ -1,18 +1,17 @@
 # Spreed video calls
 
-📞😀 Video- & audio-conferencing app for Nextcloud
+**Video- & audio-conferencing app for Nextcloud**
 
 ![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png)
 
 ## Why is this so awesome?
 
-* :busts_in_silhouette: **1on1 & group calls!** Just invite people, or create a call with a whole group. :)
-* :link: **Public rooms!** You can send a link to anyone to have a call with them!
+* :busts_in_silhouette: **Private, group and public calls!** Just invite somebody, a whole group or send a public link to invite to a call.
+* :computer: **Screen sharing!** Share your screen with participants of your call.
 * :rocket: **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
 * :see_no_evil: **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
-* :computer: [Screen sharing](https://github.com/nextcloud/spreed/issues/31)
 * :speech_balloon: [Chat integration](https://github.com/nextcloud/spreed/issues/35)
 * :raising_hand: [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
