@@ -106,7 +106,7 @@
 			this.initPersonSelector();
 			this.checkSharingStatus();
 
-			roomURL = OC.generateUrl('/apps/spreed') + '?token=' + this.model.get('token');
+			roomURL = OC.generateUrl('/call/' + this.model.get('token'));
 			completeURL = window.location.protocol + '//' + window.location.host + roomURL;
 
 			this.ui.shareLinkInput.attr('value', completeURL);
@@ -360,7 +360,7 @@
 					$('#emptycontent-icon').addClass('icon-public');
 
 					//Add link
-					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/apps/spreed?token=' + this.model.get('token'));
+					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
 					$('#shareRoomInput').val(url);
 					$('#shareRoomInput').removeClass('hidden');
 					$('#shareRoomClipboardButton').removeClass('hidden');
