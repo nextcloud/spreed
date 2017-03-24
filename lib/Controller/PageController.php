@@ -164,4 +164,26 @@ class PageController extends Controller {
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
+
+	/**
+	 * @param string $token
+	 * @return RedirectResponse
+	 */
+	protected function showCall($token) {
+		// These redirects are already done outside of this method
+		if ($this->userId === null) {
+			try {
+				$room = $this->manager->getRoomByToken($token);
+				if ($room->getType() !== Room::PUBLIC_CALL) {
+					throw new RoomNotFoundException();
+				}
+				return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $token]));
+			} catch (RoomNotFoundException $e) {
+				return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
+					'redirect_url' => $this->url->linkToRoute('spreed.page.index', ['token' => $token]),
+				]));
+			}
+		}
+		return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $token]));
+	}
 }
