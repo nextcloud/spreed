@@ -17,6 +17,7 @@ globals:
   _: false
   oc_current_user: false
   Clipboard: false
+  oc_defaults: false
 
 rules:
   curly: error
