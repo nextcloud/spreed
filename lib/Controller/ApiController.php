@@ -311,7 +311,7 @@ class ApiController extends Controller {
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
-			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_OK);
+			return new JSONResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
 			$room->addUser($currentUser);
@@ -319,7 +319,7 @@ class ApiController extends Controller {
 			$room->addUser($targetUser);
 			$this->createNotification($currentUser, $targetUser, $room);
 
-			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+			return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 		}
 	}
 
@@ -355,7 +355,7 @@ class ApiController extends Controller {
 			}
 		}
 
-		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+		return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
@@ -370,7 +370,7 @@ class ApiController extends Controller {
 		$room = $this->manager->createPublicRoom();
 		$room->addUser($currentUser);
 
-		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+		return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
