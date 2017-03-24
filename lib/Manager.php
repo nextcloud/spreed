@@ -121,7 +121,7 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms', 'r')
-			->where($query->expr()->eq('token', $query->createNamedParameter($token, IQueryBuilder::PARAM_INT)));
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		if ($participant !== null) {
 			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
