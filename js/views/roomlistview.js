@@ -286,6 +286,7 @@
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
 				OCA.SpreedMe.Rooms.showRoomDeletedMessage(true);
+				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
 
 			this.$el.slideUp();
@@ -299,6 +300,10 @@
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
 			OCA.SpreedMe.Rooms.join(token);
+
+			OC.Util.History.pushState({
+				token: token
+			}, OC.generateUrl('/call/' + token));
 		},
 		addRoomMessage: function() {
 			var message, messageAdditional, participants;

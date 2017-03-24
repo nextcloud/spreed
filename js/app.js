@@ -20,7 +20,7 @@
  *
  */
 
-(function(OCA, Marionette, Backbone) {
+(function(OCA, Marionette, Backbone, _) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -455,6 +455,7 @@
 			}
 
 			$(document).on('click', this.onDocumentClick);
+			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
 		onStart: function() {
 			this.setEmptyContentMessage(
@@ -512,6 +513,11 @@
 			this._startPing();
 
 			this.initAudioVideoSettings(configuration);
+		},
+		_onPopState: function(params) {
+			if (!_.isUndefined(params.token)) {
+				OCA.SpreedMe.Rooms.join(params.token);
+			}
 		},
 		onDocumentClick: function(event) {
 			var uiChannel = Backbone.Radio.channel('ui');
@@ -656,7 +662,7 @@
 	});
 
 	OCA.SpreedMe.App = App;
-})(OCA, Marionette, Backbone);
+})(OCA, Marionette, Backbone, _);
 
 $(window).unload(function () {
 	OCA.SpreedMe.Rooms.leaveAllRooms();

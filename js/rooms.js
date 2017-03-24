@@ -69,9 +69,6 @@
 			OCA.SpreedMe.webrtc.leaveRoom();
 
 			currentRoom = token;
-			OC.Util.History.pushState({
-				token: token
-			}, OC.generateUrl('/call/' + token));
 			OCA.SpreedMe.webrtc.joinRoom(token);
 			OCA.SpreedMe.Rooms.ping();
 		},
@@ -79,7 +76,6 @@
 			OCA.SpreedMe.webrtc.leaveRoom();
 
 			currentRoom = '';
-			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 		},
 		currentRoom: function() {
 			return currentRoom;
