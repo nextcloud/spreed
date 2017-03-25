@@ -1,0 +1,25 @@
+OC.L10N.register(
+    "spreed",
+    {
+    "Video calls" : "Video klici",
+    "(group)" : "(skupina)",
+    "New public call" : "Nov javni klic",
+    "Time to call your friends" : "Čas, da pokličeš prijatelje",
+    "Guest" : "Gost",
+    "Copy" : "Kopiraj",
+    "Copied!" : "Kopirano!",
+    "Not supported!" : "Ni podprto!",
+    "Press ⌘-C to copy." : "Pritisni ⌘-C za kopiranje.",
+    "Press Ctrl-C to copy." : "Pritisni Ctrl-C za kopiranje.",
+    "This call has ended" : "Ta klic je končan",
+    "Saving failed" : "Shranjevanje spodletelo",
+    "Add person" : "Dodaj osebo",
+    "Rename" : "Preimenuj",
+    "Please adjust your configuration" : "Prosimo prilagodite vaše nastavitve",
+    "Access to microphone & camera was denied" : "Dostop do mikrofona in kamere je bil zavrnjen",
+    "WebRTC is not supported in your browser" : "WebRTC ni podprt v vašem brskalniku ",
+    "Please use a different browser like Firefox or Chrome" : "Prosimo uporabite drug brskalnik kot sta Firefox in Chrome",
+    "Error while accessing microphone & camera" : "Napaka pri dostopu do mikrofona in kamere",
+    "WebRTC is not supported in your browser :-/" : "WebRTC ni podprt v vašem brskalniku :-/"
+},
+"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
