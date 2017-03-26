@@ -37,6 +37,7 @@
     "Please use a different browser like Firefox or Chrome" : "Gebruik een andere browser, zoals Firefox of Chrome",
     "Error while accessing microphone & camera" : "Fout bij benaderen microfoon & camera",
     "WebRTC is not supported in your browser :-/" : "WebRTC wordt niet ondersteund door jouw browser :-/",
+    "My screen" : "Mijn scherm",
     "{actor} invited you to a private call" : "{actor} heeft je uitgenodigd voor een privégesprek",
     "{actor} invited you to a group call" : "{actor} heeft je uitgenodigd voor een groepsgesprek",
     "{actor} invited you to the call {call}" : "{actor} heeft je uitgenodigd voor gesprek {call}",
