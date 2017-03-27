@@ -46,6 +46,14 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</types>
 	<namespace>Spreed</namespace>
 
+	<navigations>
+		<navigation>
+			<name>Video calls</name>
+			<route>spreed.page.index</route>
+			<order>3</order>
+		</navigation>
+	</navigations>
+
 	<settings>
 		<admin>OCA\Spreed\Settings\Admin</admin>
 	</settings>
