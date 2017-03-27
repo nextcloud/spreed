@@ -339,7 +339,7 @@ var spreedMappingTable = [];
 				messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
 			} else {
 				message = t('spreed', 'Error while accessing microphone & camera');
-				messageAdditional = error.message || error.name;
+				console.log('Error while accessing microphone & camera: ', error.message || error.name);
 			}
 
 			OCA.SpreedMe.app.setEmptyContentMessage(
