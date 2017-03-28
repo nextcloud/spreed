@@ -20,7 +20,7 @@
  *
  */
 
-(function(OCA, Marionette, Backbone) {
+(function(OCA, Marionette, Backbone, _) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -336,12 +336,12 @@
 			}, 5000);
 		},
 		/**
-		 * @param {int} roomId
+		 * @param {string} token
 		 */
-		_setRoomActive: function(roomId) {
+		_setRoomActive: function(token) {
 			if (oc_current_user) {
 				this._rooms.forEach(function(room) {
-					room.set('active', room.get('id') === roomId);
+					room.set('active', room.get('token') === token);
 				});
 			}
 		},
@@ -350,32 +350,46 @@
 				this._rooms.fetch();
 			}
 		},
-		syncAndSetActiveRoom: function(roomId) {
+		syncAndSetActiveRoom: function(token) {
 			var self = this;
 			if (oc_current_user) {
 				this._rooms.fetch({
 					success: function() {
-						roomChannel.trigger('active', roomId);
+						roomChannel.trigger('active', token);
 						// Disable video when entering a room with more than 5 participants.
 						self._rooms.forEach(function(room) {
-							if ((room.get('id') === roomId) && (Object.keys(room.get('participants')).length > 5)) {
-								self.disableVideo();
+							if (room.get('token') === token) {
+								if (Object.keys(room.get('participants')).length > 5) {
+									self.disableVideo();
+								}
+								self.setPageTitle(room.get('displayName'));
 							}
 						});
 					}
 				});
 			} else {
 				$.ajax({
-					url: OC.generateUrl('/apps/spreed/api/room/') + roomId,
+					url: OC.generateUrl('/apps/spreed/api/room/') + token,
 					type: 'GET',
 					success: function(data) {
 						self.setRoomMessageForGuest(data.participants);
+						self.setPageTitle(data.displayName);
 						if (Object.keys(data.participants).length > 5) {
 							self.disableVideo();
 						}
 					}
 				});
 			}
+		},
+		setPageTitle: function(title){
+			if (title) {
+				title += ' - ';
+			} else {
+				title = '';
+			}
+			title += t('spreed', 'Video calls');
+			title += ' - ' + oc_defaults.title;
+			window.document.title = title;
 		},
 		setEmptyContentMessage: function(icon, message, messageAdditional) {
 			//Remove previous icon, avatar or link from emptycontent
@@ -441,6 +455,7 @@
 			}
 
 			$(document).on('click', this.onDocumentClick);
+			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
 		onStart: function() {
 			this.setEmptyContentMessage(
@@ -473,9 +488,9 @@
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 
-			var roomId = parseInt($('#app').attr('data-roomId'), 10);
-			if (roomId) {
-				OCA.SpreedMe.Rooms.join(roomId);
+			var token = $('#app').attr('data-token');
+			if (token) {
+				OCA.SpreedMe.Rooms.join(token);
 			}
 			OCA.SpreedMe.Rooms.showCamera();
 
@@ -498,6 +513,11 @@
 			this._startPing();
 
 			this.initAudioVideoSettings(configuration);
+		},
+		_onPopState: function(params) {
+			if (!_.isUndefined(params.token)) {
+				OCA.SpreedMe.Rooms.join(params.token);
+			}
 		},
 		onDocumentClick: function(event) {
 			var uiChannel = Backbone.Radio.channel('ui');
@@ -642,7 +662,7 @@
 	});
 
 	OCA.SpreedMe.App = App;
-})(OCA, Marionette, Backbone);
+})(OCA, Marionette, Backbone, _);
 
 $(window).unload(function () {
 	OCA.SpreedMe.Rooms.leaveAllRooms();

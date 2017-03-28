@@ -64,12 +64,27 @@
 				<length>255</length>
 			</field>
 			<field>
+				<name>token</name>
+				<type>text</type>
+				<default/>
+				<notnull>false</notnull>
+				<length>32</length>
+			</field>
+			<field>
 				<name>type</name>
 				<type>integer</type>
 				<default>0</default>
 				<notnull>true</notnull>
 				<length>4</length>
 			</field>
+
+			<index>
+				<name>unique_token</name>
+				<!-- Cant make it unique because the migration only runs afterwards: <unique>true</unique> -->
+				<field>
+					<name>token</name>
+				</field>
+			</index>
 		</declaration>
 	</table>
 	<table>

@@ -122,12 +122,12 @@ class ApiController extends Controller {
 	/**
 	 * @PublicPage
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return JSONResponse
 	 */
-	public function getRoom($roomId) {
+	public function getRoom($token) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomByToken($token);
 			return new JSONResponse($this->formatRoom($room));
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
@@ -162,10 +162,11 @@ class ApiController extends Controller {
 
 		$roomData = [
 			'id' => $room->getId(),
+			'token' => $room->getToken(),
 			'type' => $room->getType(),
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
-			'isNameEditable' => ($room->getType() !== Room::ONE_TO_ONE_CALL),
+			'isNameEditable' => $room->getType() !== Room::ONE_TO_ONE_CALL,
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
 			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
@@ -252,12 +253,12 @@ class ApiController extends Controller {
 	/**
 	 * @PublicPage
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return JSONResponse
 	 */
-	public function getPeersInRoom($roomId) {
+	public function getPeersInRoom($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -267,13 +268,13 @@ class ApiController extends Controller {
 		$result = [];
 		foreach ($participants['users'] as $participant => $data) {
 			if ($data['sessionId'] === '0') {
-				// Use left the room
+				// User left the room
 				continue;
 			}
 
 			$result[] = [
 				'userId' => $participant,
-				'roomId' => $roomId,
+				'token' => $token,
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],
 			];
@@ -282,7 +283,7 @@ class ApiController extends Controller {
 		foreach ($participants['guests'] as $data) {
 			$result[] = [
 				'userId' => '',
-				'roomId' => $roomId,
+				'token' => $token,
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],
 			];
@@ -310,7 +311,7 @@ class ApiController extends Controller {
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
-			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_OK);
+			return new JSONResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
 			$room->addUser($currentUser);
@@ -318,7 +319,7 @@ class ApiController extends Controller {
 			$room->addUser($targetUser);
 			$this->createNotification($currentUser, $targetUser, $room);
 
-			return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+			return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 		}
 	}
 
@@ -354,7 +355,7 @@ class ApiController extends Controller {
 			}
 		}
 
-		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+		return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
@@ -369,7 +370,7 @@ class ApiController extends Controller {
 		$room = $this->manager->createPublicRoom();
 		$room->addUser($currentUser);
 
-		return new JSONResponse(['roomId' => $room->getId()], Http::STATUS_CREATED);
+		return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
@@ -503,12 +504,12 @@ class ApiController extends Controller {
 	/**
 	 * @PublicPage
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return JSONResponse
 	 */
-	public function ping($roomId) {
+	public function ping($token) {
 		try {
-			$room = $this->manager->getRoomById($roomId);
+			$room = $this->manager->getRoomByToken($token);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -523,12 +524,12 @@ class ApiController extends Controller {
 	 * @PublicPage
 	 * @UseSession
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return JSONResponse
 	 */
-	public function joinRoom($roomId) {
+	public function joinRoom($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new JSONResponse([], Http::STATUS_NOT_FOUND);
 		}

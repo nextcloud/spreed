@@ -37,7 +37,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/inviting-people.png</screenshot>
 
-	<version>1.2.0</version>
+	<version>1.2.1</version>
 	<dependencies>
 		<nextcloud min-version="11" max-version="12" />
 	</dependencies>
@@ -71,6 +71,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Spreed\Migration\EmptyNameInsteadOfRandom</step>
+			<step>OCA\Spreed\Migration\FillRoomTokens</step>
 		</post-migration>
 	</repair-steps>
 </info>

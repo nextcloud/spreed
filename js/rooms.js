@@ -15,7 +15,7 @@
 		});
 	}
 
-	var currentRoomId = 0;
+	var currentRoom = '';
 	Backbone.Radio.channel('rooms');
 
 	OCA.SpreedMe.Rooms = {
@@ -30,7 +30,7 @@
 				type: 'PUT',
 				data: 'targetUserName='+recipientUserId,
 				success: function(data) {
-					self.join(data.roomId);
+					self.join(data.token);
 				}
 			});
 		},
@@ -42,7 +42,7 @@
 				type: 'PUT',
 				data: 'targetGroupName='+groupId,
 				success: function(data) {
-					self.join(data.roomId);
+					self.join(data.token);
 				}
 			});
 		},
@@ -53,12 +53,12 @@
 				url: OC.generateUrl('/apps/spreed/api/public'),
 				type: 'PUT',
 				success: function(data) {
-					self.join(data.roomId);
+					self.join(data.token);
 				}
 			});
 		},
-		join: function(roomId) {
-			if (OCA.SpreedMe.Rooms.currentRoom() === roomId) {
+		join: function(token) {
+			if (OCA.SpreedMe.Rooms.currentRoom() === token) {
 				return;
 			}
 
@@ -68,36 +68,32 @@
 
 			OCA.SpreedMe.webrtc.leaveRoom();
 
-			currentRoomId = roomId;
-			OC.Util.History.pushState({
-				roomId: roomId
-			});
-			OCA.SpreedMe.webrtc.joinRoom(roomId);
+			currentRoom = token;
+			OCA.SpreedMe.webrtc.joinRoom(token);
 			OCA.SpreedMe.Rooms.ping();
 		},
 		leaveCurrentRoom: function() {
 			OCA.SpreedMe.webrtc.leaveRoom();
 
-			currentRoomId = 0;
-			OC.Util.History.pushState();
+			currentRoom = '';
 		},
 		currentRoom: function() {
-			return currentRoomId;
+			return currentRoom;
 		},
-		peers: function(roomId) {
+		peers: function(token) {
 			return $.ajax({
-				url: OC.generateUrl('/apps/spreed/api/room/{roomId}/peers', {roomId: roomId})
+				url: OC.generateUrl('/apps/spreed/api/room/{token}/peers', {token: token})
 			});
 		},
 		ping: function() {
-			if (OCA.SpreedMe.Rooms.currentRoom() === 0) {
+			if (OCA.SpreedMe.Rooms.currentRoom() === '') {
 				return;
 			}
 
 			$.post(
 				OC.generateUrl('/apps/spreed/api/ping'),
 				{
-					roomId: OCA.SpreedMe.Rooms.currentRoom()
+					token: OCA.SpreedMe.Rooms.currentRoom()
 				}
 			).fail(function() {
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
