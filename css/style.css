@@ -264,6 +264,7 @@ video {
 	display: block !important;
 }
 
+/* .participants-1 #video-separateWindow */
 .participants-1 #video-fullscreen {
 	display: none;
 }
@@ -380,6 +381,12 @@ video {
 /* ellipsize name in 1on1 calls */
 .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	padding: 12px 35%;
+}
+
+#video-separateWindow {
+	z-index: 90;
+  position: absolute;
+  left: 0;
 }
 
 #video-fullscreen {
@@ -568,4 +575,32 @@ video {
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
+}
+
+/* New Window VideoCall */
+@media only screen and (max-width: 768px) {
+	.separate-window .icon-menu {
+		display: none;
+	}
+}
+
+.separate-window .avatar-container,
+.separate-window #app-navigation-toggle  {
+	display: none!important;
+}
+
+.separate-window #close-separateWindow {
+	position: absolute;
+	right: 0;
+	z-index: 90;
+}
+
+.separate-window #emptycontent,
+.separate-window .emptycontent {
+	margin-top: 10vh;
+}
+
+.separate-window .participants-1 .videoView,
+.separate-window .participants-2 .videoView {
+	width: 100%;
 }

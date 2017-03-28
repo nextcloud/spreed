@@ -37,6 +37,8 @@ script(
 	<div id="app-content" class="participants-1">
 
 		<button id="video-fullscreen" class="icon-fullscreen-white" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen')) ?>"></button>
+		<button id="video-separateWindow"> POPUP </button>
+		<button id="close-separateWindow" class="hidden"> Close </button>
 
 		<div id="video-speaking">
 

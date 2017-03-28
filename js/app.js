@@ -189,6 +189,40 @@
 				}
 			});
 
+			$('#video-separateWindow').click(function() {
+				var remoteScreen = document.getElementById('app-content');
+				var height = 335;
+				var width = 405;
+				var top = (window.screen.height - height) - 5 ;
+				var left = (window.screen.width - width) - 5;
+				var popStile = 'top='+top+', left='+left+', width='+width+', height='+height+', location=no, status=no, menubar=no, toolbar=no, titlebar=0, scrollbars=no, resizable=no';
+				var roomUrl = window.location.href;
+				var newWindow = window.open(roomUrl, '', popStile);
+
+				setTimeout( function(){
+					populateNewWindow(newWindow);
+				}, 4000);
+				newWindow.focus();
+			});
+
+			function populateNewWindow(newWindow) {
+				var app = newWindow.document.getElementById('app-content');
+				var btnPop = newWindow.document.getElementById('video-separateWindow');
+				var btnClose = newWindow.document.getElementById('close-separateWindow');
+
+				newWindow.document.body.innerHTML = '';
+				newWindow.document.body.append(app);
+				newWindow.document.body.setAttribute('class', 'separate-window');
+
+				$(btnPop).addClass('hidden');
+				$(btnClose).removeClass('hidden');
+				newWindow.addEventListener("blur", window.focus());
+			}
+
+			$('#close-separateWindow').on( 'click', function(evt) {
+				window.close();
+			});
+
 			$('#video-fullscreen').click(function() {
 				var fullscreenElem = document.getElementById('app-content');
 
