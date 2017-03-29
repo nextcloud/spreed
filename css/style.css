@@ -225,7 +225,7 @@ video {
 	display: none;
 }
 
-.videoContainer.promoted .muteIndicator {
+.videoContainer.promoted .mediaIndicator {
 	display: none !important;
 }
 
@@ -407,22 +407,42 @@ video {
 	opacity: .7;
 }
 
-.muteIndicator {
+.mediaIndicator {
 	position: absolute;
 	width: 100%;
 	bottom: 44px;
 	left: 0;
 	background-size: 22px;
-	padding: 12px;
-	opacity: .7;
+	text-align: center;
 }
 
-.muteIndicator.audio-on {
+.muteIndicator,
+.screensharingIndicator {
+	position: relative;
+	background-color: transparent !important;
+	border: none;
+	width: 32px;
+	height: 32px;
+	background-size: 22px;
+}
+
+.muteIndicator.audio-on,
+.screensharingIndicator.screen-off {
 	display: none;
 }
 
 .muteIndicator.audio-off {
-	display: block;
+	opacity: .7;
+	display: inline-block;
+}
+
+.screensharingIndicator.screen-on.screen-visible {
+	animation: pulse 1s;
+	animation-iteration-count: infinite;
+}
+
+.screensharingIndicator.screen-on {
+	display: inline-block;
 }
 
 #app-content:-webkit-full-screen  {

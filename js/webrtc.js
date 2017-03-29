@@ -153,7 +153,9 @@ var spreedMappingTable = [];
 		OCA.SpreedMe.webrtc = webrtc;
 
 		var spreedListofSpeakers = {};
+		var spreedListofSharedScreens = {};
 		var latestSpeakerId = null;
+		var latestScreenId = null;
 		var screenSharingActive = false;
 
 		window.addEventListener('resize', function() {
@@ -235,7 +237,7 @@ var spreedMappingTable = [];
 					$('<div>')
 						.addClass('videoContainer videoContainer-dummy')
 						.append(newContainer.find('.nameIndicator').clone())
-						.append(newContainer.find('.muteIndicator').clone())
+						.append(newContainer.find('.mediaIndicator').clone())
 						.append(newContainer.find('.speakingIndicator').clone())
 					);
 
@@ -307,6 +309,98 @@ var spreedMappingTable = [];
 					$('.videoContainer-dummy').remove();
 				} else {
 					console.log('promoting: no recent speaker to promote - keep "' + spreedMappingTable[id] + '"');
+				}
+			}
+		};
+
+		OCA.SpreedMe.sharedScreens = {
+			getContainerId: function(id) {
+				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
+				if (currentUser === id) {
+					return '#localScreenContainer';
+				} else {
+					var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+					return '#container_' + sanitizedId + '_screen_incoming';
+				}
+			},
+			switchScreenToId: function(id) {
+				var selectedScreen = $(OCA.SpreedMe.sharedScreens.getContainerId(id));
+				if(selectedScreen.find('video').length === 0) {
+					console.warn('promote: no screen video found for ID', id);
+					return;
+				}
+
+				if(latestScreenId === id) {
+					console.log('promote: no need to repromote same screen');
+					return;
+				}
+
+				var screenId = OCA.SpreedMe.sharedScreens.getContainerId(id);
+				for (var currentId in spreedListofSharedScreens) {
+					if (currentId === screenId) {
+						$(currentId).removeClass('hidden');
+					} else {
+						$(currentId).addClass('hidden');
+					}
+				}
+
+				// Add screen visible icon to video container
+				$('#videos').find('.screensharingIndicator').removeClass('screen-visible');
+				$(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator').addClass('screen-visible');
+
+				latestScreenId = id;
+			},
+			add: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var screenContainerId = OCA.SpreedMe.sharedScreens.getContainerId(id);
+				spreedListofSharedScreens[screenContainerId] = (new Date()).getTime();
+
+				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
+				screensharingIndicator.removeClass('screen-off');
+				screensharingIndicator.addClass('screen-on');
+
+				OCA.SpreedMe.sharedScreens.switchScreenToId(id);
+			},
+			remove: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var containerId = OCA.SpreedMe.sharedScreens.getContainerId(id);
+				spreedListofSharedScreens[containerId] = -1;
+
+				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
+				screensharingIndicator.addClass('screen-off');
+				screensharingIndicator.removeClass('screen-on');
+
+				var mostRecentTime = 0,
+					mostRecentId = null;
+				for (var currentId in spreedListofSharedScreens) {
+					// skip loop if the property is from prototype
+					if (!spreedListofSharedScreens.hasOwnProperty(currentId)) {
+						continue;
+					}
+
+					// skip non-string ids
+					if (!(typeof currentId === 'string' || currentId instanceof String)) {
+						continue;
+					}
+
+					var currentTime = spreedListofSharedScreens[currentId];
+					if (currentTime > mostRecentTime && $(OCA.SpreedMe.sharedScreens.getContainerId(currentId.replace('\\', ''))).length > 0) {
+						mostRecentTime = currentTime;
+						mostRecentId = currentId;
+					}
+				}
+
+				if (mostRecentId !== null) {
+					console.log('promoting: change promoted screen from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId]);
+					OCA.SpreedMe.sharedScreens.switchScreenToId(mostRecentId.replace('\\', ''));
+				} else {
+					console.log('promoting: no recent screen to promote - keep "' + spreedMappingTable[id] + '"');
 				}
 			}
 		};
@@ -418,10 +512,25 @@ var spreedMappingTable = [];
 				avatarContainer.className = 'avatar-container hidden';
 				avatarContainer.appendChild(avatar);
 
-				// Mute indicator
-				var muteIndicator = document.createElement('div');
-				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-on';
-				muteIndicator.textContent = '';
+				// Media indicators
+				var mediaIndicator = document.createElement('div');
+				mediaIndicator.className = 'mediaIndicator';
+
+				var muteIndicator = document.createElement('button');
+				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-off';
+				muteIndicator.disabled = true;
+
+				var screenSharingIndicator = document.createElement('button');
+				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
+
+				screenSharingIndicator.onclick = function() {
+					if (!this.classList.contains('screen-visible')) {
+						OCA.SpreedMe.sharedScreens.switchScreenToId(peer.id);
+					}
+				};
+
+				mediaIndicator.appendChild(muteIndicator);
+				mediaIndicator.appendChild(screenSharingIndicator);
 
 				// Generic container
 				var container = document.createElement('div');
@@ -430,7 +539,7 @@ var spreedMappingTable = [];
 				container.appendChild(video);
 				container.appendChild(avatarContainer);
 				container.appendChild(userIndicator);
-				container.appendChild(muteIndicator);
+				container.appendChild(mediaIndicator);
 				video.oncontextmenu = function() {
 					return false;
 				};
@@ -517,11 +626,12 @@ var spreedMappingTable = [];
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
-
 			if (peer) {
 				if (peer.type === 'video') {
 					// a removed peer can't speak anymore ;)
 					OCA.SpreedMe.speakers.remove(peer, true);
+				} else if (peer.type === 'screen') {
+					OCA.SpreedMe.sharedScreens.remove(peer.id);
 				}
 
 				var remotes = document.getElementById(peer.type === 'screen' ? 'screens' : 'videos');
@@ -540,6 +650,8 @@ var spreedMappingTable = [];
 				if (screens && localScreenContainer) {
 					screens.removeChild(localScreenContainer);
 				}
+
+				OCA.SpreedMe.sharedScreens.add(OCA.SpreedMe.webrtc.connection.getSessionid());
 			}
 
 			// Check if there are still some screens
@@ -576,12 +688,12 @@ var spreedMappingTable = [];
 				userIndicator.className = 'nameIndicator';
 				if (peer) {
 					if (peer.nick) {
-						userIndicator.textContent = peer.nick;
+						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: peer.nick});
 					} else {
-						userIndicator.textContent = t('spreed', 'Guest');
+						userIndicator.textContent = t('spreed', "Guest's screen");
 					}
 				} else {
-					userIndicator.textContent = t('spreed', 'My screen');
+					userIndicator.textContent = t('spreed', 'Your screen');
 				}
 
 				// Generic container
@@ -593,6 +705,14 @@ var spreedMappingTable = [];
 				video.oncontextmenu = function() {
 					return false;
 				};
+
+				$(container).prependTo($('#screens'));
+
+				if (peer) {
+					OCA.SpreedMe.sharedScreens.add(peer.id);
+				} else {
+					OCA.SpreedMe.sharedScreens.add(OCA.SpreedMe.webrtc.connection.getSessionid());
+				}
 
 				// show the ice connection state
 				if (peer && peer.pc) {
@@ -634,8 +754,6 @@ var spreedMappingTable = [];
 						}
 					});
 				}
-
-				$(container).prependTo($('#screens'));
 			}
 		});
 
@@ -665,7 +783,7 @@ var spreedMappingTable = [];
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
 			videoNameIndicator.text(data.name);
-			screenNameIndicator.text(data.name);
+			screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
