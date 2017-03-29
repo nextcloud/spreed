@@ -51,7 +51,6 @@ OC.L10N.register(
     "Invalid port specified." : "Porta specificata non valida.",
     "Invalid protocols specified." : "Protocollo specificato non valido.",
     "Saved" : "Salvato",
-    "The call does not exist." : "La chiamata non esiste.",
     "%s invited you to a private call" : "%s ti ha inviato a una chiamata privata",
     "{user} invited you to a private call" : "{user} ti ha inviato a una chiamata privata",
     "%s invited you to a group call: %s" : "%s ti ha inviato a una chiamata di gruppo: %s",

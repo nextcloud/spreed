@@ -32,7 +32,6 @@ OC.L10N.register(
     "_%n guest_::_%n guests_" : ["%n viesi","%n viesi","%n viesi"],
     ", " : ", ",
     "Saved" : "Saglabāts",
-    "The call does not exist." : "Zvans neeksistē.",
     "Fullscreen" : "Pilnekrāna",
     "Mute audio" : "Izslēgt audio",
     "Smile in 3… 2… 1!" : "Smaidi pēc, 3 … 2 … 1!",

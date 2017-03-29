@@ -36,7 +36,6 @@ OC.L10N.register(
     "Invalid port specified." : "Μη έγκυρος καθορισμός πόρτας.",
     "Invalid protocols specified." : "Μη έγκυρος καθορισμός πρωτοκόλλων.",
     "Saved" : "Αποθηκεύτηκαν",
-    "The call does not exist." : "Η κλήση δεν υπάρχει.",
     "%s invited you to a private call" : "Ο %s σας προσκάλεσε σε ιδιωτική κλήση",
     "{user} invited you to a private call" : "Ο {user} σας προσκάλεσε σε ιδιωτική κλήση",
     "%s invited you to a group call" : "Ο %s σας προσκάλεσε σε ομαδική κλήση",

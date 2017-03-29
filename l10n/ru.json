@@ -49,7 +49,6 @@
     "Invalid port specified." : "Указан неверный порт.",
     "Invalid protocols specified." : "Указан неверный протокол.",
     "Saved" : "Сохранено",
-    "The call does not exist." : "Звонок не существует.",
     "%s invited you to a private call" : "%s пригласил вас в приватный звонок",
     "{user} invited you to a private call" : "{user} пригласил вас в приватный звонок",
     "%s invited you to a group call: %s" : "%s пригласил вас в групповой звонок: %s",

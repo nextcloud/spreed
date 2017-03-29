@@ -34,7 +34,6 @@ OC.L10N.register(
     "Invalid port specified." : "Ugyldig port angitt.",
     "Invalid protocols specified." : "Ugyldig protokoll angitt.",
     "Saved" : "Lagret",
-    "The call does not exist." : "Denne samtalen eksisterer ikke.",
     "%s invited you to a private call" : "%s inviterte deg til privat samtale",
     "{user} invited you to a private call" : "{user} inviterte deg til privat samtale",
     "%s invited you to a group call" : "%s inviterte deg til gruppesamtale",

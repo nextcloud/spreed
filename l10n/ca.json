@@ -28,7 +28,6 @@
     "Invalid port specified." : "El port especificat és invàlid",
     "Invalid protocols specified." : "Els Protocols especificats són invàlids",
     "Saved" : "Desat",
-    "The call does not exist." : "La trucada no existeix",
     "%s invited you to a private call" : "%s l'ha invitat a una trucada privada",
     "{user} invited you to a private call" : "{user} l'ha invitat per a una trucada privada",
     "%s invited you to a group call" : "%s l'ha invitat per a una trucada en grup",
