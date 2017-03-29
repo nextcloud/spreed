@@ -51,7 +51,6 @@ OC.L10N.register(
     "Invalid port specified." : "指定的端口无效。",
     "Invalid protocols specified." : "指定的协议无效。",
     "Saved" : "已保存",
-    "The call does not exist." : "通话不存在",
     "%s invited you to a private call" : "%s 邀请你加入私人通话",
     "{user} invited you to a private call" : "{user}  邀请你加入私人通话",
     "%s invited you to a group call: %s" : "%s邀请你加入到一个组通话%s",

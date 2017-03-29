@@ -49,7 +49,6 @@
     "Invalid port specified." : "Specifikován neplatný port.",
     "Invalid protocols specified." : "Specifikovány neplatné protokoly.",
     "Saved" : "Uloženo",
-    "The call does not exist." : "Hovor neexistuje.",
     "%s invited you to a private call" : "%s vás pozval(a) k soukromému hovoru",
     "{user} invited you to a private call" : "{user} vás pozval(a) k soukromému hovoru",
     "%s invited you to a group call: %s" : "%s vás pozval(a) ke skupinovému hovoru: %s",

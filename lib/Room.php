@@ -45,6 +45,8 @@ class Room {
 	/** @var int */
 	private $type;
 	/** @var string */
+	private $token;
+	/** @var string */
 	private $name;
 
 	/**
@@ -54,13 +56,15 @@ class Room {
 	 * @param ISecureRandom $secureRandom
 	 * @param int $id
 	 * @param int $type
+	 * @param string $token
 	 * @param string $name
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, $id, $type, $name) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, $id, $type, $token, $name) {
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
 		$this->id = $id;
 		$this->type = $type;
+		$this->token = $token;
 		$this->name = $name;
 	}
 
@@ -76,6 +80,13 @@ class Room {
 	 */
 	public function getType() {
 		return $this->type;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getToken() {
+		return $this->token;
 	}
 
 	/**

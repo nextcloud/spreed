@@ -41,7 +41,6 @@
     "Invalid port specified." : "Ogiltig port angivet.",
     "Invalid protocols specified." : "Ogiltigt protokoll angivet.",
     "Saved" : "Sparad",
-    "The call does not exist." : "Samtalet finns ej.",
     "%s invited you to a private call" : "%s har bjudit in dig till ett privat samtal",
     "{user} invited you to a private call" : "{user} har bjudit in dig till ett privat samtal",
     "{user} invited you to a group call: {call}" : "{user} bjöd in dig till ett gruppsamtal: {call}",

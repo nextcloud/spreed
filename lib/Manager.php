@@ -24,6 +24,7 @@ namespace OCA\Spreed;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
 
@@ -31,6 +32,8 @@ class Manager {
 
 	/** @var IDBConnection */
 	private $db;
+	/** @var IConfig */
+	private $config;
 	/** @var ISecureRandom */
 	private $secureRandom;
 
@@ -38,10 +41,12 @@ class Manager {
 	 * Manager constructor.
 	 *
 	 * @param IDBConnection $db
+	 * @param IConfig $config
 	 * @param ISecureRandom $secureRandom
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom) {
+	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom) {
 		$this->db = $db;
+		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 	}
 
@@ -62,7 +67,7 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
-			$rooms[] = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
+			$rooms[] = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 		}
 		$result->closeCursor();
 
@@ -97,7 +102,44 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
+		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+
+		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
+			throw new RoomNotFoundException();
+		}
+
+		return $room;
+	}
+
+	/**
+	 * @param string $token
+	 * @param string $participant
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForParticipantByToken($token, $participant) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms', 'r')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+
+		if ($participant !== null) {
+			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
+					$query->expr()->eq('p.roomId', 'r.id')
+				))
+				->andWhere($query->expr()->isNotNull('p.userId'));
+		}
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 
 		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
 			throw new RoomNotFoundException();
@@ -125,7 +167,29 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
+		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+	}
+
+	/**
+	 * @param string $token
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomByToken($token) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms')
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 	}
 
 	/**
@@ -158,7 +222,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['name']);
+		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 	}
 
 	/**
@@ -189,6 +253,7 @@ class Manager {
 	 * @return Room
 	 */
 	private function createRoom($type, $name = '') {
+		$token = $this->getNewToken();
 
 		$query = $this->db->getQueryBuilder();
 		$query->insert('spreedme_rooms')
@@ -196,12 +261,13 @@ class Manager {
 				[
 					'name' => $query->createNamedParameter($name),
 					'type' => $query->createNamedParameter($type, IQueryBuilder::PARAM_INT),
+					'token' => $query->createNamedParameter($token),
 				]
 			);
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 
-		return new Room($this->db, $this->secureRandom, $roomId, $type, $name);
+		return new Room($this->db, $this->secureRandom, $roomId, $type, $token, $name);
 	}
 
 	/**
@@ -262,5 +328,56 @@ class Manager {
 			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
 			->orWhere($query->expr()->in('sender', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		$query->execute();
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function getNewToken() {
+		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
+		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 4);
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('id')
+			->from('spreedme_rooms')
+			->where($query->expr()->eq('token', $query->createParameter('token')));
+
+		$i = 0;
+		while ($i < 1000) {
+			try {
+				return $this->generateNewToken($query, $entropy, $chars);
+			} catch (\OutOfBoundsException $e) {
+				$i++;
+				if ($entropy >= 30 || $i >= 999) {
+					// Max entropy of 30
+					$i = 0;
+				}
+			}
+		}
+
+		$entropy++;
+		$this->config->setAppValue('spreed', 'token_entropy', $entropy);
+		return $this->generateNewToken($query, $entropy, $chars);
+	}
+
+	/**
+	 * @param IQueryBuilder $query
+	 * @param int $entropy
+	 * @param string $chars
+	 * @return string
+	 * @throws \OutOfBoundsException
+	 */
+	protected function generateNewToken(IQueryBuilder $query, $entropy, $chars) {
+		$token = $this->secureRandom->generate($entropy, $chars);
+		$query->setParameter('token', $token);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if (is_array($row)) {
+			// Token already in use
+			throw new \OutOfBoundsException();
+		}
+		return $token;
 	}
 }

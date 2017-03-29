@@ -51,7 +51,6 @@ OC.L10N.register(
     "Invalid port specified." : "Ógild gátt tiltekin.",
     "Invalid protocols specified." : "Ógildir samskiptamátar tilgreindir.",
     "Saved" : "Vistað",
-    "The call does not exist." : "Símtalið er ekki til.",
     "%s invited you to a private call" : "%s bauð þér að taka þátt í einkasímtali",
     "{user} invited you to a private call" : "{user} bauð þér að taka þátt í einkasímtali",
     "%s invited you to a group call: %s" : "%s bauð þér að taka þátt í hópsímtali: %s",

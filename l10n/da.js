@@ -36,7 +36,6 @@ OC.L10N.register(
     "Invalid port specified." : "Ugyldig port",
     "Invalid protocols specified." : "Ugyldig protokol",
     "Saved" : "Gemt",
-    "The call does not exist." : "Opkaldet eksitere ikke.",
     "%s invited you to a private call" : "%s er inviteret til dit private opkald",
     "{user} invited you to a private call" : "{user} er inviteret til dit private opkald",
     "%s invited you to a group call" : "%s inviterede dig til et gruppe opkald",

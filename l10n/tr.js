@@ -51,7 +51,6 @@ OC.L10N.register(
     "Invalid port specified." : "Belirtilen kapı numarası geçersiz.",
     "Invalid protocols specified." : "Belirtilen iletişim kuralı geçersiz.",
     "Saved" : "Kaydedildi",
-    "The call does not exist." : "Görüşme bulunamadı.",
     "%s invited you to a private call" : "%s sizinle özel görüşmek istiyor",
     "{user} invited you to a private call" : "{user} sizinle özel görüşmek istiyor",
     "%s invited you to a group call: %s" : "%s sizi bir grup görüşmesine çağırdı: %s",

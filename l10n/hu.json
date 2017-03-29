@@ -33,7 +33,6 @@
     "Invalid port specified." : "A megadott port érvénytelen",
     "Invalid protocols specified." : "A megadott protokollok nem érvényesek.",
     "Saved" : "Elmentve",
-    "The call does not exist." : "A hívás nem létezik.",
     "%s invited you to a private call" : "%s meghívott egy privát beszélgetésre",
     "{user} invited you to a private call" : "{user} meghívott egy privát beszélgetésre",
     "%s invited you to a group call" : "%s meghívott egy csoportos beszélgetésre",

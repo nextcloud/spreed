@@ -19,7 +19,6 @@ OC.L10N.register(
     "Error while accessing microphone & camera" : "Грешка при достъп до микрофон и камера",
     "My screen" : "Моя екран",
     "Saved" : "Запазено",
-    "The call does not exist." : "Разговорът не съществува.",
     "%s invited you to a private call" : "%s Ви покани на частен разговор",
     "{user} invited you to a private call" : "{user} Ви покани на частен разговор",
     "%s invited you to a group call: %s" : "%s Ви покани на групов разговор: %s",

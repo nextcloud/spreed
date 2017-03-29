@@ -34,7 +34,7 @@ var sessionId = '';
 						// their signalling information.
 						var callback = arguments[2];
 						$.post(
-							OC.generateUrl('/apps/spreed/api/room/{roomId}/join', {roomId: data}),
+							OC.generateUrl('/apps/spreed/api/room/{token}/join', {token: data}),
 							function(sessionData) {
 								sessionId = sessionData.sessionId;
 								OCA.SpreedMe.Rooms.peers(data).then(function(result) {

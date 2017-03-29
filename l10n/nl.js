@@ -51,7 +51,6 @@ OC.L10N.register(
     "Invalid port specified." : "Ongeldige poort opgegeven.",
     "Invalid protocols specified." : "Ongeldige protocollen opgegeven.",
     "Saved" : "Bewaard",
-    "The call does not exist." : "Het gesprek bestaat niet",
     "%s invited you to a private call" : "%s heeft je uitgenodigd voor een privégesprek",
     "{user} invited you to a private call" : "{user} heeft je uitgenodigd voor een privégesprek",
     "%s invited you to a group call: %s" : "%s nodigde je uit voor een groepsgesprek: %s",

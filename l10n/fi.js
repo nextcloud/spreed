@@ -50,7 +50,6 @@ OC.L10N.register(
     "Invalid port specified." : "Porttimääritys on virheellinen.",
     "Invalid protocols specified." : "Protokollamääritykset ovat virheelliset.",
     "Saved" : "Tallennettu",
-    "The call does not exist." : "Puhelua ei ole olemassa.",
     "%s invited you to a private call" : "%s kutsui sinut yksityispuheluun",
     "{user} invited you to a private call" : "{user} kutsui sinut yksityispuheluun",
     "%s invited you to a group call: %s" : "%s kutsui sinut ryhmäpuheluun: %s",

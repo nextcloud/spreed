@@ -33,7 +33,6 @@ OC.L10N.register(
     ", " : ",",
     "Invalid port specified." : "Port i specfikuar në mënyrë të gabuar.",
     "Saved" : "U ruajt",
-    "The call does not exist." : "Thirrja nuk ekziston.",
     "%s invited you to a private call" : "%s ju ftoi në një thirrje private",
     "{user} invited you to a private call" : "{user} ju ftoi në një thirrje private",
     "%s invited you to a group call" : "%s ju ftoi t'i bashkoheni një thirrje në grup",

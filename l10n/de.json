@@ -49,7 +49,6 @@
     "Invalid port specified." : "Ungültigen Port angegeben",
     "Invalid protocols specified." : "Ungültiges Protokoll angegeben",
     "Saved" : "Gespeichert",
-    "The call does not exist." : "Der Anruf existiert nicht.",
     "%s invited you to a private call" : "%s hat dich zu einem privaten Anruf eingeladen",
     "{user} invited you to a private call" : "{user} hat dich zu einem privaten Anruf eingeladen",
     "%s invited you to a group call: %s" : "%s hat Sie zu einem Gruppenanruf eingeladen: %s",
