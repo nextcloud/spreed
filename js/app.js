@@ -464,6 +464,10 @@
 				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
 			);
 
+			if (!oc_current_user) {
+				this.initGuestName();
+			}
+
 			OCA.SpreedMe.initWebRTC();
 		},
 		startSpreed: function(configuration) {
@@ -475,10 +479,6 @@
 				t('spreed', 'Looking great today! :)'),
 				t('spreed', 'Time to call your friends')
 			);
-
-			if (!oc_current_user) {
-				this.initGuestName();
-			}
 
 			if (oc_current_user) {
 				OCA.SpreedMe.initRooms();
