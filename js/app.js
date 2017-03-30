@@ -242,7 +242,6 @@
 				} else {
 					webrtc.shareScreen(function(err) {
 						if (!err) {
-							OC.Notification.showTemporary(t('spreed', 'Screensharing is about to start…'));
 							$('#screensharing-button').attr('data-original-title', 'Screensharing options')
 								.removeClass('screensharing-disabled icon-screen-off-white')
 								.addClass('icon-screen-white');
@@ -256,7 +255,6 @@
 							case "PERMISSION_DENIED":
 							case "NotAllowedError":
 							case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
-								OC.Notification.showTemporary(t('spreed', 'The screensharing request has been cancelled.'));
 								break;
 							case "EXTENSION_UNAVAILABLE":
 								var  extensionURL = null;
