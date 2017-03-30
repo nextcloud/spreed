@@ -15,6 +15,7 @@ script(
 		'models/room',
 		'models/roomcollection',
 		'views/roomlistview',
+		'views/newWindowCall',
 		'simplewebrtc',
 		'webrtc',
 		'xhrconnection',
@@ -37,8 +38,8 @@ script(
 	<div id="app-content" class="participants-1">
 
 		<button id="video-fullscreen" class="icon-fullscreen-white" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen')) ?>"></button>
-		<button id="video-separateWindow"> POPUP </button>
-		<button id="close-separateWindow" class="hidden"> Close </button>
+		<button id="video-separateWindow" class="icon-external-white" data-placement="bottom" data-toggle="popup"></button>
+		<button id="btnCloseWindow" class="close-separateWindow-white" class="icon-view-close" data-placement="bottom" data-toggle="close" style="display: none;"></button>
 
 		<div id="video-speaking">
 
@@ -69,4 +70,6 @@ script(
 			</div>
 		</div>
 	</div>
+
+	<div id="separate-window-message" class="hidden"></div>
 </div>

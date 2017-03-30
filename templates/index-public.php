@@ -15,6 +15,7 @@ script(
 		'models/room',
 		'models/roomcollection',
 		'views/roomlistview',
+		'views/newWindowCall',
 		'simplewebrtc',
 		'webrtc',
 		'xhrconnection',
