@@ -530,12 +530,19 @@ var spreedMappingTable = [];
 
 				var screenSharingIndicator = document.createElement('button');
 				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
+				screenSharingIndicator.setAttribute('data-original-title', 'Show screen');
 
 				screenSharingIndicator.onclick = function() {
 					if (!this.classList.contains('screen-visible')) {
 						OCA.SpreedMe.sharedScreens.switchScreenToId(peer.id);
 					}
+					$(this).tooltip('hide');
 				};
+
+				$(screenSharingIndicator).tooltip({
+					placement: 'top',
+					trigger: 'hover'
+				});
 
 				mediaIndicator.appendChild(muteIndicator);
 				mediaIndicator.appendChild(screenSharingIndicator);
