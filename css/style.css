@@ -268,8 +268,24 @@ video {
 	display: none;
 }
 
-.participants-1 #toggleScreensharing {
+.participants-1 #screensharing-button {
 	display: none;
+}
+
+#screensharing-menu {
+    bottom: 44px;
+    left: calc(50% - 40px);
+    right: initial;
+    color: initial;
+    text-shadow: initial;
+    font-size: 13px;
+}
+
+#screensharing-menu.app-navigation-entry-menu:after {
+    top: 100%;
+    left: calc(50% - 5px);
+    border-top-color: #fff;
+    border-bottom-color: transparent;
 }
 
 /* big speaker video */
@@ -419,6 +435,7 @@ video {
 .muteIndicator,
 .screensharingIndicator {
 	position: relative;
+	display: inline-block;
 	background-color: transparent !important;
 	border: none;
 	width: 32px;
@@ -433,16 +450,6 @@ video {
 
 .muteIndicator.audio-off {
 	opacity: .7;
-	display: inline-block;
-}
-
-.screensharingIndicator.screen-on.screen-visible {
-	animation: pulse 1s;
-	animation-iteration-count: infinite;
-}
-
-.screensharingIndicator.screen-on {
-	display: inline-block;
 }
 
 #app-content:-webkit-full-screen  {

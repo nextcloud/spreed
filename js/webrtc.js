@@ -335,12 +335,23 @@ var spreedMappingTable = [];
 					return;
 				}
 
-				var screenId = OCA.SpreedMe.sharedScreens.getContainerId(id);
+				var screenContainerId = null;
 				for (var currentId in spreedListofSharedScreens) {
-					if (currentId === screenId) {
-						$(currentId).removeClass('hidden');
+					// skip loop if the property is from prototype
+					if (!spreedListofSharedScreens.hasOwnProperty(currentId)) {
+						continue;
+					}
+
+					// skip non-string ids
+					if (!(typeof currentId === 'string' || currentId instanceof String)) {
+						continue;
+					}
+
+					screenContainerId = OCA.SpreedMe.sharedScreens.getContainerId(currentId);
+					if (currentId === id) {
+						$(screenContainerId).removeClass('hidden');
 					} else {
-						$(currentId).addClass('hidden');
+						$(screenContainerId).addClass('hidden');
 					}
 				}
 
@@ -355,8 +366,7 @@ var spreedMappingTable = [];
 					return;
 				}
 
-				var screenContainerId = OCA.SpreedMe.sharedScreens.getContainerId(id);
-				spreedListofSharedScreens[screenContainerId] = (new Date()).getTime();
+				spreedListofSharedScreens[id] = (new Date()).getTime();
 
 				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
 				screensharingIndicator.removeClass('screen-off');
@@ -369,8 +379,7 @@ var spreedMappingTable = [];
 					return;
 				}
 
-				var containerId = OCA.SpreedMe.sharedScreens.getContainerId(id);
-				spreedListofSharedScreens[containerId] = -1;
+				spreedListofSharedScreens[id] = -1;
 
 				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
 				screensharingIndicator.addClass('screen-off');
@@ -390,17 +399,16 @@ var spreedMappingTable = [];
 					}
 
 					var currentTime = spreedListofSharedScreens[currentId];
-					if (currentTime > mostRecentTime && $(OCA.SpreedMe.sharedScreens.getContainerId(currentId.replace('\\', ''))).length > 0) {
+					if (currentTime > mostRecentTime) {
 						mostRecentTime = currentTime;
 						mostRecentId = currentId;
 					}
 				}
 
 				if (mostRecentId !== null) {
-					console.log('promoting: change promoted screen from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId]);
-					OCA.SpreedMe.sharedScreens.switchScreenToId(mostRecentId.replace('\\', ''));
+					OCA.SpreedMe.sharedScreens.switchScreenToId(mostRecentId);
 				} else {
-					console.log('promoting: no recent screen to promote - keep "' + spreedMappingTable[id] + '"');
+					console.log('No screens to promote');
 				}
 			}
 		};
@@ -651,7 +659,7 @@ var spreedMappingTable = [];
 					screens.removeChild(localScreenContainer);
 				}
 
-				OCA.SpreedMe.sharedScreens.add(OCA.SpreedMe.webrtc.connection.getSessionid());
+				OCA.SpreedMe.sharedScreens.remove(OCA.SpreedMe.webrtc.connection.getSessionid());
 			}
 
 			// Check if there are still some screens
