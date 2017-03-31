@@ -544,6 +544,11 @@ var spreedMappingTable = [];
 					trigger: 'hover'
 				});
 
+				// Check if there is a screen from that user already added.
+				if (spreedListofSharedScreens.hasOwnProperty(peer.id)) {
+					$(screenSharingIndicator).removeClass('screen-off').addClass('screen-on');
+				}
+
 				mediaIndicator.appendChild(muteIndicator);
 				mediaIndicator.appendChild(screenSharingIndicator);
 
