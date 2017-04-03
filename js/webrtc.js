@@ -379,7 +379,7 @@ var spreedMappingTable = [];
 					return;
 				}
 
-				spreedListofSharedScreens[id] = -1;
+				delete spreedListofSharedScreens[id];
 
 				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
 				screensharingIndicator.addClass('screen-off');
