@@ -44,6 +44,7 @@
     "You were invited to a <strong>video call</strong>" : "Sinut kutsuttiin <strong>videopuheluun</strong>",
     "_%n other guest_::_%n other guests_" : ["%n muu vieras","%n muuta vierasta"],
     "_%n guest_::_%n guests_" : ["%n vieras","%n vierasta"],
+    ", " : ",",
     "Invalid format, must be stunserver:port." : "Virheellinen muoto, osoitteen tulee olla muodossa stunpalvelin:portti.",
     "Invalid port specified." : "Porttimääritys on virheellinen.",
     "Invalid protocols specified." : "Protokollamääritykset ovat virheelliset.",
