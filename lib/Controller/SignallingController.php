@@ -153,6 +153,7 @@ class SignallingController extends Controller {
 					// User is not active anywhere
 					$eventSource->send('usersInRoom', []);
 					$currentParticipant = false;
+					break;
 				} else {
 					$qb = $this->dbConnection->getQueryBuilder();
 					$qb->select('*')
@@ -220,7 +221,8 @@ class SignallingController extends Controller {
 			$this->dbConnection->close();
 			sleep(1);
 		}
-		exit();
+
+		$eventSource->close();
 	}
 
 	/**
