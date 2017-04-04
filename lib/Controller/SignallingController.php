@@ -223,6 +223,7 @@ class SignallingController extends Controller {
 		}
 
 		$eventSource->close();
+		exit;
 	}
 
 	/**
