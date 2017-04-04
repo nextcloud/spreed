@@ -19,7 +19,19 @@
  *
  */
 
-// For the navigation $l->t('Video calls')
+\OC::$server->getNavigationManager()->add(function() {
+	$l = \OC::$server->getL10N('spreed');
+	$g = \OC::$server->getURLGenerator();
+
+	return [
+		'id' => 'spreed',
+		'order' => 3,
+		'href' => $g->linkToRoute('spreed.page.index'),
+		'icon' => $g->imagePath('spreed', 'app.svg'),
+		'name' => $l->t('Video calls'),
+	];
+});
+
 
 $manager = \OC::$server->getNotificationManager();
 $manager->registerNotifier(function() {
