@@ -313,15 +313,7 @@ video {
 	border-top-right-radius: 3px;
 }
 
-#app-content.participants-2,
-#app-content.participants-3,
-#app-content.participants-4,
-#app-content.participants-5,
-#app-content.participants-6,
-#app-content.participants-7,
-#app-content.participants-8,
-#app-content.participants-9,
-#app-content.participants-10,
+.videoContainer.promoted,
 #app-content.screensharing {
 	background-color: #000;
 }
