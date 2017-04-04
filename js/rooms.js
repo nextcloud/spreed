@@ -25,7 +25,7 @@
 		_createRoomSuccessHandle: function(data) {
 			OC.Util.History.pushState({
 				token: data.token
-			}, OC.generateUrl('/call/' + data.token));
+			}, OC.generateUrl('/apps/spreed?token=' + data.token));
 			this.join(data.token);
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
