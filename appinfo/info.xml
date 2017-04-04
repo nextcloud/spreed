@@ -39,7 +39,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	<version>1.2.1</version>
 	<dependencies>
-		<nextcloud min-version="11" max-version="12" />
+		<nextcloud min-version="12" max-version="12" />
 	</dependencies>
 	<types>
 		<prevent_group_restriction />
