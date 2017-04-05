@@ -31,23 +31,20 @@ var spreedMappingTable = [];
 				spreedMappingTable[user['sessionId']] = user['userId'];
 				var peers = self.webrtc.getPeers(user['sessionId'], 'video');
 				var peer;
-				console.log('peers.length: ' + peers.length);
-				console.log('peers: ' + peers);
 				if (peers.length) {
 					//There should be only one.
 					peer = peers[0];
-					console.log('peer.pc: ' + typeof peer.pc);
 				}
 				if (peer && peer.pc) {
+					console.log('peer.pc.iceConnectionState: ' + typeof peer.pc.iceConnectionState);
+					console.log('peer.pc.iceConnectionState2: ' + peer.pc.iceConnectionState);
 					peerConnectionsTable[user['sessionId']] = peer.pc.iceConnectionState;
 				}
 			});
 
 			OCA.SpreedMe.usersInRoom = currentUsersInRoom;
-			console.log('usersInRoom:');
 			console.log(currentUsersInRoom);
 			OCA.SpreedMe.peerConnectionsTable = peerConnectionsTable;
-			console.log('peerConnectionsTable:');
 			console.log(peerConnectionsTable);
 
 			var currentUsersNo = currentUsersInRoom.length;
