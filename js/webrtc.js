@@ -36,8 +36,8 @@ var spreedMappingTable = [];
 				if (peers.length) {
 					//There should be only one.
 					peer = peers[0];
+					console.log('peer.pc: ' + typeof peer.pc);
 				}
-				console.log('peer.pc: ' + typeof peer.pc);
 				if (peer && peer.pc) {
 					peerConnectionsTable[user['sessionId']] = peer.pc.iceConnectionState;
 				}
