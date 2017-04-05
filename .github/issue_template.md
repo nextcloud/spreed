@@ -27,7 +27,7 @@ Tell us what happens instead
 ```
 Insert your browser log here, this could for example include:
 a) The javascript console log
-b) The network log 
+b) The network log
 c) ...
 ```
 
@@ -43,6 +43,10 @@ c) ...
 
 
 ## Server configuration
+<!--
+You can use the Issue Template application to prefill most of the required information: https://apps.nextcloud.com/apps/issuetemplate
+-->
+
 
 **Operating system**: Ubuntu/RedHat/...
 
@@ -64,13 +68,18 @@ from within your server installation folder
 ```
 </details>
 
-**Config information:**
+**Nextcloud configuration:**
 
 <details>
 ```
 If you have access to your command line run e.g.:
 sudo -u www-data php occ config:list system
-from within your server installation folder
+from within your Nextcloud installation folder
+
+or
+
+Insert your config.php content here
+Make sure to remove all sensitive content such as passwords. (e.g. database password, passwordsalt, secret, smtp password, …)
 ```
 </details>
 
