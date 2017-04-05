@@ -24,10 +24,24 @@ var spreedMappingTable = [];
 
 		messageEventSource.listen('usersInRoom', function(users) {
 			var currentUsersInRoom = [];
+			var peerConnectionsTable = [];
+
 			users.forEach(function(user) {
 				currentUsersInRoom.push(user['sessionId']);
 				spreedMappingTable[user['sessionId']] = user['userId'];
+				var peers = self.webrtc.getPeers(user['sessionId'], 'video');
+				var peer;
+				if (peers.length) {
+					//There should be only one.
+					peer = peers[0];
+				}
+				if (peer && peer.pc) {
+					peerConnectionsTable[user['sessionId']] = peer.pc.iceConnectionState;
+				}
 			});
+
+			OCA.SpreedMe.usersInRoom = currentUsersInRoom;
+			OCA.SpreedMe.peerConnectionsTable = peerConnectionsTable;
 
 			var currentUsersNo = currentUsersInRoom.length;
 			if(currentUsersNo === 0) {
