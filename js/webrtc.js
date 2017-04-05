@@ -24,7 +24,7 @@ var spreedMappingTable = [];
 
 		messageEventSource.listen('usersInRoom', function(users) {
 			var currentUsersInRoom = [];
-			var peerConnectionsTable = [];
+			var peerConnectionsTable = {};
 
 			users.forEach(function(user) {
 				currentUsersInRoom.push(user['sessionId']);
@@ -36,16 +36,17 @@ var spreedMappingTable = [];
 					peer = peers[0];
 				}
 				if (peer && peer.pc) {
-					console.log('peer.pc.iceConnectionState: ' + typeof peer.pc.iceConnectionState);
-					console.log('peer.pc.iceConnectionState2: ' + peer.pc.iceConnectionState);
 					peerConnectionsTable[user['sessionId']] = peer.pc.iceConnectionState;
 				}
 			});
 
 			OCA.SpreedMe.usersInRoom = currentUsersInRoom;
-			console.log(currentUsersInRoom);
 			OCA.SpreedMe.peerConnectionsTable = peerConnectionsTable;
-			console.log(peerConnectionsTable);
+
+			if (currentUsersInRoom.length !== (Object.keys(peerConnectionsTable).length + 1)) {
+				console.log(currentUsersInRoom);
+				console.log(peerConnectionsTable);
+			}
 
 			var currentUsersNo = currentUsersInRoom.length;
 			if(currentUsersNo === 0) {
