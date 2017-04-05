@@ -44,7 +44,7 @@ var spreedMappingTable = [];
 						console.warn('Peer connection failed with peer:', user['sessionId']);
 						console.log('Trying to re-connect.');
 						// First remove existing failed peer.
-						OCA.SpreedMe.webrtc.removePeers(user);
+						OCA.SpreedMe.webrtc.removePeers(user['sessionId']);
 						OCA.SpreedMe.speakers.remove(user, true);
 						// Decide who sends a new offer
 						if (currentUser.localeCompare(user['sessionId']) < 0) {
