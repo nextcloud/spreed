@@ -42,26 +42,26 @@ var spreedMappingTable = [];
 					peerConnectionsTable[user['sessionId']] = iceConnectionState;
 					if (iceConnectionState === 'failed') {
 						console.warn('Peer connection failed with peer:', user['sessionId']);
-						console.log('Trying to re-connect.');
+						// console.log('Trying to re-connect.');
 						// First remove existing failed peer.
-						OCA.SpreedMe.webrtc.removePeers(user['sessionId']);
-						OCA.SpreedMe.speakers.remove(user, true);
-						// Decide who sends a new offer
-						if (currentUser.localeCompare(user['sessionId']) < 0) {
-							console.log('Creating new Peer Connection.');
-							// Create a new Peer Connection
-							peer = webrtc.webrtc.createPeer({
-								id: user['sessionId'],
-								type: 'video',
-								enableDataChannels: webrtc.config.enableDataChannels,
-								receiveMedia: {
-									offerToReceiveAudio: webrtc.config.receiveMedia.offerToReceiveAudio,
-									offerToReceiveVideo: webrtc.config.receiveMedia.offerToReceiveVideo
-								}
-							});
-							webrtc.emit('createdPeer', peer);
-							peer.start();
-						}
+						// OCA.SpreedMe.webrtc.removePeers(user['sessionId']);
+						// OCA.SpreedMe.speakers.remove(user, true);
+						// // Decide who sends a new offer
+						// if (currentUser.localeCompare(user['sessionId']) < 0) {
+						// 	console.log('Creating new Peer Connection.');
+						// 	// Create a new Peer Connection
+						// 	peer = webrtc.webrtc.createPeer({
+						// 		id: user['sessionId'],
+						// 		type: 'video',
+						// 		enableDataChannels: webrtc.config.enableDataChannels,
+						// 		receiveMedia: {
+						// 			offerToReceiveAudio: webrtc.config.receiveMedia.offerToReceiveAudio,
+						// 			offerToReceiveVideo: webrtc.config.receiveMedia.offerToReceiveVideo
+						// 		}
+						// 	});
+						// 	webrtc.emit('createdPeer', peer);
+						// 	peer.start();
+						// }
 					}
 				}
 			});
