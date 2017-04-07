@@ -28,6 +28,7 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Kérlek használj másik böngészőt pl Firefoxot vagy Chrome-ot",
     "Error while accessing microphone & camera" : "Hiba a kamera és a mikrofon hozzáférésekor",
     "WebRTC is not supported in your browser :-/" : "A böngésződ nem támogatja a WebRTC-t :-/",
+    "My screen" : "Képernyőm",
     "_%n other guest_::_%n other guests_" : ["%n további vendég","%n további vendég"],
     "_%n guest_::_%n guests_" : ["%n vendég","%n vendég"],
     ", " : ", ",
