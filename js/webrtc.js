@@ -2,6 +2,7 @@
 /* global SimpleWebRTC, OC, OCA: false */
 
 var webrtc;
+var peerConnectionsTable = {};
 var spreedMappingTable = [];
 
 (function(OCA, OC) {
@@ -24,55 +25,21 @@ var spreedMappingTable = [];
 
 		messageEventSource.listen('usersInRoom', function(users) {
 			var currentUsersInRoom = [];
-			var peerConnectionsTable = {};
 			var webrtc = OCA.SpreedMe.webrtc;
 			var currentUser = webrtc.connection.getSessionid();
 
 			users.forEach(function(user) {
-				currentUsersInRoom.push(user['sessionId']);
-				spreedMappingTable[user['sessionId']] = user['userId'];
-				var peers = self.webrtc.getPeers(user['sessionId'], 'video');
-				var peer;
-				if (peers.length) {
-					//There should be only one.
-					peer = peers[0];
-				}
-				if (peer && peer.pc) {
-					var iceConnectionState = peer.pc.iceConnectionState;
-					peerConnectionsTable[user['sessionId']] = iceConnectionState;
-					if (iceConnectionState === 'failed') {
-						console.warn('Peer connection failed with peer:', user['sessionId']);
-						// console.log('Trying to re-connect.');
-						// First remove existing failed peer.
-						// OCA.SpreedMe.webrtc.removePeers(user['sessionId']);
-						// OCA.SpreedMe.speakers.remove(user, true);
-						// // Decide who sends a new offer
-						// if (currentUser.localeCompare(user['sessionId']) < 0) {
-						// 	console.log('Creating new Peer Connection.');
-						// 	// Create a new Peer Connection
-						// 	peer = webrtc.webrtc.createPeer({
-						// 		id: user['sessionId'],
-						// 		type: 'video',
-						// 		enableDataChannels: webrtc.config.enableDataChannels,
-						// 		receiveMedia: {
-						// 			offerToReceiveAudio: webrtc.config.receiveMedia.offerToReceiveAudio,
-						// 			offerToReceiveVideo: webrtc.config.receiveMedia.offerToReceiveVideo
-						// 		}
-						// 	});
-						// 	webrtc.emit('createdPeer', peer);
-						// 	peer.start();
-						// }
+				var sessionId = user['sessionId'];
+
+				currentUsersInRoom.push(sessionId);
+				spreedMappingTable[sessionId] = user['userId'];
+				if (currentUser !== sessionId) {
+					var el = document.getElementById(OCA.SpreedMe.videos.getContainerId(sessionId));
+					if (!el) {
+						OCA.SpreedMe.videos.add(sessionId, user['userId']);
 					}
 				}
 			});
-
-			OCA.SpreedMe.usersInRoom = currentUsersInRoom;
-			OCA.SpreedMe.peerConnectionsTable = peerConnectionsTable;
-
-			if (currentUsersInRoom.length !== (Object.keys(peerConnectionsTable).length + 1)) {
-				console.log(currentUsersInRoom);
-				console.log(peerConnectionsTable);
-			}
 
 			var currentUsersNo = currentUsersInRoom.length;
 			if(currentUsersNo === 0) {
@@ -112,6 +79,7 @@ var spreedMappingTable = [];
 				console.log('XXX Remove peer', user);
 				OCA.SpreedMe.webrtc.removePeers(user);
 				OCA.SpreedMe.speakers.remove(user, true);
+				OCA.SpreedMe.videos.remove(user);
 			});
 			previousUsersInRoom = currentUsersInRoom;
 		});
@@ -209,6 +177,62 @@ var spreedMappingTable = [];
 				});
 			}
 		});
+
+		OCA.SpreedMe.videos = {
+			getContainerId: function(id) {
+				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
+				return '#container_' + sanitizedId + '_video_incoming';
+			},
+			add: function(id, userName) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				// Indicator for username
+				var userIndicator = document.createElement('div');
+				userIndicator.className = 'nameIndicator';
+				if (userName) {
+					userIndicator.textContent = userName;
+				} else {
+					userIndicator.textContent = t('spreed', 'Guest');
+				}
+				userIndicator.style.backgroundColor = "purple";
+
+				// Avatar for username
+				var avatar = document.createElement('div');
+				avatar.className = 'avatar';
+
+				var avatarContainer = document.createElement('div');
+				avatarContainer.className = 'avatar-container hidden';
+				avatarContainer.appendChild(avatar);
+
+				// Mute indicator
+				var muteIndicator = document.createElement('div');
+				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-on';
+				muteIndicator.textContent = '';
+
+				// Generic container
+				var container = document.createElement('div');
+				container.className = 'videoContainer';
+				container.id = OCA.SpreedMe.videos.getContainerId(id);
+				container.appendChild(avatarContainer);
+				container.appendChild(userIndicator);
+				container.appendChild(muteIndicator);
+
+				$(container).prependTo($('#videos'));
+			},
+			remove: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var videos = document.getElementById('videos');
+				var el = document.getElementById(OCA.SpreedMe.videos.getContainerId(id));
+				if (videos && el) {
+					videos.removeChild(el);
+				}
+			}
+		};
 
 		OCA.SpreedMe.speakers = {
 			showStatus: function() {
@@ -443,9 +467,96 @@ var spreedMappingTable = [];
 		};
 
 		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
-			peer.pc.on('PeerConnectionTrace', function (event) {
-				console.log('trace', event);
-			});
+			console.log('PEER CREATED', peer);
+
+			var videos = document.getElementById('videos');
+			var el = document.getElementById(OCA.SpreedMe.videos.getContainerId(peer.id));
+			var userIndicator = $(el).find('.nameIndicator');
+			if (videos && el) {
+				// Add peer to peerConnection table
+				peerConnectionsTable[peer.id] = peer;
+				userIndicator.css('background-color', 'blue');
+				// show the ice connection state
+				peer.pc.on('iceConnectionStateChange', function () {
+					switch (peer.pc.iceConnectionState) {
+						case 'checking':
+							console.log('Connecting to peer...');
+							userIndicator.css('background-color', 'yellow');
+							break;
+						case 'connected':
+						case 'completed': // on caller side
+							console.log('Connection established.');
+							userIndicator.css('background-color', 'green');
+							// Send the current information about the video and microphone state
+							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
+								OCA.SpreedMe.webrtc.emit('videoOff');
+							} else {
+								OCA.SpreedMe.webrtc.emit('videoOn');
+							}
+							if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
+								OCA.SpreedMe.webrtc.emit('audioOff');
+							} else {
+								OCA.SpreedMe.webrtc.emit('audioOn');
+							}
+							if (!OC.getCurrentUser()['uid']) {
+								// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
+								var currentGuestNick = localStorage.getItem("nick");
+								if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
+									if (!currentGuestNick) {
+										currentGuestNick = t('spreed', 'Guest');
+									}
+									OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
+								}
+							}
+							break;
+						case 'disconnected':
+							// If the peer is still disconnected after 5 seconds
+							// we close the video connection.
+							userIndicator.css('background-color', 'orange');
+							console.log('Disconnected.');
+							break;
+						case 'failed':
+							console.log('Connection failed.');
+							userIndicator.css('background-color', 'red');
+							// If the peer is still disconnected after 5 seconds
+							// we close the video connection.
+							setTimeout(function() {
+								if(peer.pc.iceConnectionState === 'disconnected') {
+									OCA.SpreedMe.webrtc.removePeers(peer.id);
+								}
+							}, 5000);
+							break;
+						case 'closed':
+							console.log('Connection closed.');
+							console.warn('Peer connection has been closed with peer:', peer.id);
+							console.log('Trying to re-connect.');
+							//First remove existing failed peer.
+							OCA.SpreedMe.webrtc.removePeers(peer.id);
+							OCA.SpreedMe.speakers.remove(peer.id, true);
+							// Decide who sends a new offer
+							if (currentUser.localeCompare(peer.id) < 0) {
+								console.log('Creating new Peer Connection.');
+								// Create a new Peer Connection
+								var newPeer = webrtc.webrtc.createPeer({
+									id: peer.id,
+									type: 'video',
+									enableDataChannels: webrtc.config.enableDataChannels,
+									receiveMedia: {
+										offerToReceiveAudio: webrtc.config.receiveMedia.offerToReceiveAudio,
+										offerToReceiveVideo: webrtc.config.receiveMedia.offerToReceiveVideo
+									}
+								});
+								webrtc.emit('createdPeer', newPeer);
+								newPeer.start();
+							}
+							break;
+					}
+				});
+
+				peer.pc.on('PeerConnectionTrace', function (event) {
+					console.log('trace', event);
+				});
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
@@ -522,131 +633,19 @@ var spreedMappingTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
-			console.log('video added', peer);
+			console.log('VIDEO ADDED', peer);
 			if (peer.type === 'screen') {
 				OCA.SpreedMe.webrtc.emit('screenAdded', video, peer);
 				return;
 			}
 
-			var remotes = document.getElementById('videos');
-			if (remotes) {
-				// Indicator for username
-				var userIndicator = document.createElement('div');
-				userIndicator.className = 'nameIndicator';
-				if (peer.nick) {
-					userIndicator.textContent = peer.nick;
-				} else {
-					userIndicator.textContent = t('spreed', 'Guest');
-				}
-
-				// Avatar for username
-				var avatar = document.createElement('div');
-				avatar.className = 'avatar';
-				if (peer.nick) {
-					$(avatar).data('guestName', peer.nick);
-				}
-
-				var avatarContainer = document.createElement('div');
-				avatarContainer.className = 'avatar-container hidden';
-				avatarContainer.appendChild(avatar);
-
-				// Media indicators
-				var mediaIndicator = document.createElement('div');
-				mediaIndicator.className = 'mediaIndicator';
-
-				var muteIndicator = document.createElement('button');
-				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-off';
-				muteIndicator.disabled = true;
-
-				var screenSharingIndicator = document.createElement('button');
-				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
-				screenSharingIndicator.setAttribute('data-original-title', 'Show screen');
-
-				screenSharingIndicator.onclick = function() {
-					if (!this.classList.contains('screen-visible')) {
-						OCA.SpreedMe.sharedScreens.switchScreenToId(peer.id);
-					}
-					$(this).tooltip('hide');
-				};
-
-				$(screenSharingIndicator).tooltip({
-					placement: 'top',
-					trigger: 'hover'
-				});
-
-				// Check if there is a screen from that user already added.
-				if (spreedListofSharedScreens.hasOwnProperty(peer.id)) {
-					$(screenSharingIndicator).removeClass('screen-off').addClass('screen-on');
-				}
-
-				mediaIndicator.appendChild(muteIndicator);
-				mediaIndicator.appendChild(screenSharingIndicator);
-
-				// Generic container
-				var container = document.createElement('div');
-				container.className = 'videoContainer';
-				container.id = 'container_' + OCA.SpreedMe.webrtc.getDomId(peer);
-				container.appendChild(video);
-				container.appendChild(avatarContainer);
-				container.appendChild(userIndicator);
-				container.appendChild(mediaIndicator);
+			var videos = document.getElementById('videos');
+			var el = document.getElementById(OCA.SpreedMe.videos.getContainerId(peer.id));
+			if (videos && el) {
+				$(el).prepend(video);
 				video.oncontextmenu = function() {
 					return false;
 				};
-
-				// show the ice connection state
-				if (peer && peer.pc) {
-					peer.pc.on('iceConnectionStateChange', function () {
-						switch (peer.pc.iceConnectionState) {
-							case 'checking':
-								console.log('Connecting to peer...');
-								break;
-							case 'connected':
-							case 'completed': // on caller side
-								console.log('Connection established.');
-								// Send the current information about the video and microphone state
-								if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
-									OCA.SpreedMe.webrtc.emit('videoOff');
-								} else {
-									OCA.SpreedMe.webrtc.emit('videoOn');
-								}
-								if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
-									OCA.SpreedMe.webrtc.emit('audioOff');
-								} else {
-									OCA.SpreedMe.webrtc.emit('audioOn');
-								}
-								if (!OC.getCurrentUser()['uid']) {
-									// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
-									var currentGuestNick = localStorage.getItem("nick");
-									if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
-										if (!currentGuestNick) {
-											currentGuestNick = t('spreed', 'Guest');
-										}
-										OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
-									}
-								}
-								break;
-							case 'disconnected':
-								// If the peer is still disconnected after 5 seconds
-								// we close the video connection.
-								setTimeout(function() {
-									if(peer.pc.iceConnectionState === 'disconnected') {
-										OCA.SpreedMe.webrtc.removePeers(peer.id);
-									}
-								}, 5000);
-								console.log('Disconnected.');
-								break;
-							case 'failed':
-								console.log('Connection failed.');
-								break;
-							case 'closed':
-								console.log('Connection closed.');
-								break;
-						}
-					});
-				}
-
-				$(container).prependTo($('#videos'));
 			}
 
 			var otherSpeakerPromoted = false;
