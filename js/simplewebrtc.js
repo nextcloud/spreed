@@ -18089,14 +18089,10 @@
 		this.webrtc.on('iceFailed', function (peer) {
 			// TODO: local ice failure
 			console.error('iceFailed event received');
-			console.warn('Peer ended', peer.id);
-			peer.end();
 		});
 		this.webrtc.on('connectivityError', function (peer) {
 			// TODO: remote ice failure
 			console.error('connectivityError event received');
-			console.warn('Peer ended', peer.id);
-			peer.end();
 		});
 
 		// screensharing events
