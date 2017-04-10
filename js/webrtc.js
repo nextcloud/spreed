@@ -527,6 +527,7 @@ var spreedMappingTable = [];
 							}, 5000);
 							break;
 						case 'closed':
+							var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
 							console.log('Connection closed.');
 							console.warn('Peer connection has been closed with peer:', peer.id);
 							console.log('Trying to re-connect.');
