@@ -207,7 +207,6 @@ var spreedMappingTable = [];
 				}
 
 				if (latestSpeakerId !== null) {
-					console.log('promote: unpromote speaker "' + spreedMappingTable[latestSpeakerId] + '"');
 					// move old video to new location
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('promoted');
@@ -253,11 +252,9 @@ var spreedMappingTable = [];
 				$(sanitizedId).addClass('speaking');
 
 				if (latestSpeakerId === id) {
-					console.log('promoting: latest speaker "' + spreedMappingTable[id] + '" is already promoted');
 					return;
 				}
 
-				console.log('promoting: change promoted speaker to "' + spreedMappingTable[id] + '" after speaking');
 				OCA.SpreedMe.speakers.switchVideoToId(id);
 			},
 			remove: function(id, enforce) {
@@ -272,11 +269,8 @@ var spreedMappingTable = [];
 				$(sanitizedId).removeClass('speaking');
 
 				if (latestSpeakerId !== id) {
-					console.log('promoting: stopped speaker "' + spreedMappingTable[id] + '" is not promoted');
 					return;
 				}
-
-				console.log('promoting: try to find better promoted speaker for "' + spreedMappingTable[id] + '"');
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
@@ -299,15 +293,11 @@ var spreedMappingTable = [];
 				}
 
 				if (mostRecentId !== null) {
-					console.log('promoting: change promoted speaker from "' + spreedMappingTable[id] + '" to "' + spreedMappingTable[mostRecentId] + '" after speakingStopped');
 					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId.replace('\\', ''));
 				} else if (enforce === true) {
-					console.log('promoting: no recent speaker to promote - but enforced removal');
 					// if there is no mostRecentId is available there is no user left in call
 					// remove the remaining dummy container then too
 					$('.videoContainer-dummy').remove();
-				} else {
-					console.log('promoting: no recent speaker to promote - keep "' + spreedMappingTable[id] + '"');
 				}
 			}
 		};
@@ -668,7 +658,6 @@ var spreedMappingTable = [];
 			if (!document.getElementById('screens').hasChildNodes()) {
 				screenSharingActive = false;
 				$('#app-content').removeClass('screensharing');
-				console.log(unpromotedSpeakerId);
 				OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
 				unpromotedSpeakerId = null;
 			}
