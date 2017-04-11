@@ -256,11 +256,12 @@
 							case "NotAllowedError":
 							case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
 								break;
+							case "FF52_REQUIRED":
+								OC.Notification.showTemporary(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'));
+								break;
 							case "EXTENSION_UNAVAILABLE":
 								var  extensionURL = null;
-								if (typeof InstallTrigger !== 'undefined') {// Firefox
-									extensionURL = 'https://addons.mozilla.org/en-US/firefox/addon/nextcloud-video-calls/';
-								} else if (!!window.chrome && !!window.chrome.webstore) {// Chrome
+								if (!!window.chrome && !!window.chrome.webstore) {// Chrome
 									extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
 								}
 
