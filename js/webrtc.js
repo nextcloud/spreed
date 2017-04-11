@@ -458,6 +458,14 @@ var spreedMappingTable = [];
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
+
+			if(sessionStorage.windowCounter){
+				sessionStorage.windowCounter = Number(sessionStorage.windowCounter) + 1;
+				alert('windowCounter + 1. user want to open second wind');
+			} else {
+				sessionStorage.windowCounter = 1;
+				alert('windowCounter = 1. user open room for first time');
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label, data) {

@@ -390,17 +390,25 @@ video {
 	padding: 12px 35%;
 }
 
+#video-separateWindow,
 #video-fullscreen {
 	position: absolute;
 	right: 0px;
 	z-index: 90;
 }
 
+#video-separateWindow {
+	right: auto;
+  left: 0;
+}
+
+
 #video-fullscreen.public {
 	top: 45px;
 }
 
 #video-fullscreen,
+#video-separateWindow,
 .nameIndicator button {
 	background-color: transparent;
 	border: none;
@@ -588,3 +596,46 @@ video {
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
 }
+
+/* New Window VideoCall */
+#separate-window-message {
+	background-color: #343a40;
+	color: #929496;
+	width: 100%;
+  height: 100%;
+  text-align: center;
+  padding-top: 50vh;
+}
+
+.participants-1 #video-separateWindow,
+.participants-1 .close-separateWindow {
+	display: none;
+}
+
+@media only screen and (max-width: 768px) {
+	.separate-window .icon-menu {
+		display: none;
+	}
+}
+
+.separate-window .avatar-container,
+.separate-window #app-navigation-toggle  {
+	display: none!important;
+}
+
+.separate-window #close-separateWindow {
+	position: absolute;
+	right: 0;
+	z-index: 90;
+}
+
+.separate-window #emptycontent,
+.separate-window .emptycontent {
+	margin-top: 10vh;
+}
+
+.separate-window .participants-1 .videoView,
+.separate-window .participants-2 .videoView {
+	width: 100%;
+}
+

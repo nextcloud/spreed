@@ -32,6 +32,8 @@
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
 		_roomsView: null,
+		/** @property {OCA.SpreedMe.Views.SeparateWindowCall} _separateWinView  */
+		_separateWinView: null,
 		/** @property {boolean} videoWasEnabledAtLeastOnce  */
 		videoWasEnabledAtLeastOnce: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
@@ -189,6 +191,16 @@
 				}
 			});
 
+			$('#video-separateWindow').on('click', function() {
+				this._separateWinView = new OCA.SpreedMe.Views.SeparateWindowCall({
+					el: '#separate-window-message'
+				});
+				this._separateWinView.render();
+				sessionStorage.windowCounter = Number(sessionStorage.windowCounter) + 1;
+			});
+
+			window.addEventListener("message", this.receiveMessage, false);
+
 			$('#video-fullscreen').click(function() {
 				var fullscreenElem = document.getElementById('app-content');
 
@@ -326,6 +338,14 @@
 				}
 			});
 		},
+
+		receiveMessage: function(event) {
+			var origin = event.origin || event.originalEvent.origin; // For Chrome, the origin property is in the event.originalEvent object.
+		  if (origin !== roomUrl) {
+		    return;
+		  }
+		},
+
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
 				el: '#app-navigation ul',
@@ -676,5 +696,19 @@
 })(OCA, Marionette, Backbone, _);
 
 $(window).unload(function () {
-	OCA.SpreedMe.Rooms.leaveAllRooms();
+	if(sessionStorage.windowCounter === 1) { // user can have just one call at the time
+		// if there is just 1 window open, means user want to close the call
+		// so close all the rooms
+		sessionStorage.windowCounter = 0;
+		alert('windowCounter = 1. user want to close video app');
+		OCA.SpreedMe.Rooms.leaveAllRooms();
+
+	} else {
+		// if there are 2 window open
+		// user can keep one open and navigate with the other.
+		sessionStorage.windowCounter = Number(sessionStorage.windowCounter) - 1;
+		alert('windowCounter - 1. user want to close 1 of the two wind.');
+	}
+
+	//OCA.SpreedMe.Rooms.leaveAllRooms();
 });

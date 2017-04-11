@@ -103,6 +103,8 @@
 				method: 'DELETE',
 				async: false
 			});
+			currentRoom = '';
+			console.log('ajax');
 		},
 		showRoomDeletedMessage: function(deleter) {
 			if (deleter) {
