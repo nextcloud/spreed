@@ -202,7 +202,6 @@ var spreedMappingTable = [];
 				}
 
 				if(latestSpeakerId === id) {
-					console.log('promote: no need to repromote same speaker');
 					return;
 				}
 
@@ -213,7 +212,6 @@ var spreedMappingTable = [];
 					oldContainer.removeClass('promoted');
 				}
 
-				console.log('promote: promote speaker "' + spreedMappingTable[id] + '"');
 				newContainer.addClass('promoted');
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
 
@@ -330,7 +328,6 @@ var spreedMappingTable = [];
 				}
 
 				if(latestScreenId === id) {
-					console.log('promote: no need to repromote same screen');
 					return;
 				}
 
@@ -406,8 +403,6 @@ var spreedMappingTable = [];
 
 				if (mostRecentId !== null) {
 					OCA.SpreedMe.sharedScreens.switchScreenToId(mostRecentId);
-				} else {
-					console.log('No screens to promote');
 				}
 			}
 		};
@@ -629,15 +624,11 @@ var spreedMappingTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
-			console.log('local speaking');
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('speaking');
-
 			$('#localVideoContainer').addClass('speaking');
 		});
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
-			console.log('local stoppedSpeaking');
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('stoppedSpeaking');
-
 			$('#localVideoContainer').removeClass('speaking');
 		});
 
