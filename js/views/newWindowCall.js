@@ -10,19 +10,12 @@
 		'<button class="close-separateWindow"> Back to main screen </button>';
 
 	var SeparateWindowCall = Marionette.View.extend({
-		tagName: '#separate-window-message',
 
 		events: {
 			'click .close-separateWindow': 'closeWindow'
 		},
-		ui: {
 
-		},
 		template: Handlebars.compile(ITEM_TEMPLATE),
-
-		regions: {
-			firstRegion: '#localVideo'
-		},
 
 		initialize: function() {
 			var height = 335;
@@ -36,14 +29,9 @@
 
 		closeWindow: function() {
 			this.newWindow.close();
-			$('#add-content').removeClass('hidden');
-			$('#separate-window-message').addClass('hidden');
+			OCA.SpreedMe.app.trigger('close:window');
 		},
 
-		feedbackScreen: function() {
-			$('#app-content').addClass('hidden');
-			$('#separate-window-message').removeClass('hidden');
-		},
 
 		populateNewWindow: function() {
 			this.newWindow.document.body.append(this.localVideo);
@@ -60,10 +48,6 @@
 		onRender: function() {
 			alert('render');
 			var self = this;
-			this.newWindow.focus();
-			this.feedbackScreen();
-
-			//this.showChildView('localVideo', new OCA.SpreedMe.Views.separateWindowRegion());
 
 			/*
 			setTimeout( function(){

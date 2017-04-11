@@ -192,11 +192,12 @@
 			});
 
 			$('#video-separateWindow').on('click', function() {
-				this._separateWinView = new OCA.SpreedMe.Views.SeparateWindowCall({
+				OCA.SpreedMe.app._separateWinView = new OCA.SpreedMe.Views.SeparateWindowCall({
 					el: '#separate-window-message'
 				});
-				this._separateWinView.render();
+				OCA.SpreedMe.app._separateWinView.render();
 				sessionStorage.windowCounter = Number(sessionStorage.windowCounter) + 1;
+				OCA.SpreedMe.app.feedbacksOnSeparateWindow(true);
 			});
 
 			window.addEventListener("message", this.receiveMessage, false);
@@ -326,6 +327,16 @@
 					$("#guestNameConfirm").toggleClass('hidden');
 				}
 			});
+		},
+
+		feedbacksOnSeparateWindow: function(showFeedback) {
+			if(showFeedback) {
+				$('#app-content').addClass('hidden');
+				$('#separate-window-message').removeClass('hidden');
+			} else {
+				$('#add-content').removeClass('hidden');
+				$('#separate-window-message').addClass('hidden');
+			}
 		},
 
 		receiveMessage: function(event) {
@@ -485,6 +496,13 @@
 			);
 
 			OCA.SpreedMe.initWebRTC();
+
+			// count down windowCounter when popup is closed
+			this.on('close:window', function () {
+			  console.log('window Close');
+			  OCA.SpreedMe.app.feedbacksOnSeparateWindow(false);
+			  sessionStorage.windowCounter = Number(sessionStorage.windowCounter) - 1;
+			});
 		},
 		startSpreed: function(configuration) {
 			console.log('Starting spreed …');
@@ -500,9 +518,11 @@
 				this.initGuestName();
 			}
 
-			if (oc_current_user) {
+			if (oc_current_user && Number(sessionStorage.windowCounter) >= 1) {
 				OCA.SpreedMe.initRooms();
 				OCA.SpreedMe.Rooms.leaveAllRooms();
+			} else {
+				OCA.SpreedMe.initRooms();
 			}
 
 			this._registerPageEvents();
@@ -685,19 +705,30 @@
 })(OCA, Marionette, Backbone, _);
 
 $(window).unload(function () {
-	if(sessionStorage.windowCounter === 1) { // user can have just one call at the time
-		// if there is just 1 window open, means user want to close the call
-		// so close all the rooms
+	// reset if there is something wrong
+	if( Number(sessionStorage.windowCounter) < 0 || Number(sessionStorage.windowCounter) > 2) {
 		sessionStorage.windowCounter = 0;
-		alert('windowCounter = 1. user want to close video app');
 		OCA.SpreedMe.Rooms.leaveAllRooms();
-
-	} else {
-		// if there are 2 window open
-		// user can keep one open and navigate with the other.
-		sessionStorage.windowCounter = Number(sessionStorage.windowCounter) - 1;
-		alert('windowCounter - 1. user want to close 1 of the two wind.');
+		return;
 	}
 
-	//OCA.SpreedMe.Rooms.leaveAllRooms();
+	// user want to close all windows
+	if( Number(sessionStorage.windowCounter) === 1) {
+		// user can have just one call at the time
+		// if there is just 1 window open, means user want to close the call
+		sessionStorage.windowCounter = 0;
+		console.log('windowCounter = 1. user want to close video app');
+		OCA.SpreedMe.Rooms.leaveAllRooms();
+		return;
+	}
+
+	// if there are 2 window open
+	if( Number(sessionStorage.windowCounter) > 1) {
+		// user can keep one open and navigate with the other.
+		sessionStorage.windowCounter = Number(sessionStorage.windowCounter) - 1;
+		console.log('windowCounter - 1. user want to close 1 of the two wind.');
+		return;
+	}
+
+	OCA.SpreedMe.Rooms.leaveAllRooms();
 });

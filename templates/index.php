@@ -16,7 +16,6 @@ script(
 		'models/roomcollection',
 		'views/roomlistview',
 		'views/newWindowCall',
-		'views/newWindowregion',
 		'simplewebrtc',
 		'webrtc',
 		'xhrconnection',
@@ -72,5 +71,5 @@ script(
 		</div>
 	</div>
 
-	<div id="separate-window-message" class="hidden"></div>
+	<div id="separate-window-message" class="hidden">	</div>
 </div>
