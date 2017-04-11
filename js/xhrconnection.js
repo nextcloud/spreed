@@ -56,8 +56,10 @@ var sessionId = '';
 						);
 						break;
 					case 'message':
-						if(data.type === 'answer' || data.type === 'offer') {
-							console.log("ANSWER/OFFER", data);
+						if(data.type === 'answer') {
+							console.log("ANSWER", data);
+						} else if(data.type === 'offer') {
+							console.log("OFFER", data);
 						}
 						spreedArrayConnection.push({
 							ev: fn,
