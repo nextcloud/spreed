@@ -3969,25 +3969,35 @@
 			}
 		} else if (window.navigator.userAgent.match('Firefox')) {
 			var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
-			if (ffver >= 33) {
+			if (ffver >= 52) {
 				constraints = (hasConstraints && constraints) || {
 					video: {
 						mozMediaSource: 'window',
 						mediaSource: 'window'
 					}
 				};
-				// Notify extension to add domain to whitelist and defer actual
-				// getUserMedia call until extension finished adding the domain.
-				var pending = window.setTimeout(function () {
-					error = new Error('NavigatorUserMediaError');
-					error.name = 'EXTENSION_UNAVAILABLE';
-					return callback(error);
-				}, 1000);
-				cache[pending] = [callback, constraints];
-				window.postMessage({ type: 'webrtcStartScreensharing', id: pending }, '*');
+				getUserMedia(constraints, function (err, stream) {
+					callback(err, stream);
+					if (err) {
+						return;
+					}
+					// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1045810
+					var lastTime = stream.currentTime;
+					var polly = window.setInterval(function () {
+						if (!stream) window.clearInterval(polly);
+						if (stream.currentTime == lastTime) {
+							window.clearInterval(polly);
+							if (stream.onended) {
+								stream.onended();
+							}
+						}
+						lastTime = stream.currentTime;
+					}, 500);
+				});
 			} else {
 				error = new Error('NavigatorUserMediaError');
-				error.name = 'EXTENSION_UNAVAILABLE'; // does not make much sense but...
+				error.name = 'FF52_REQUIRED';
+				return callback(error);
 			}
 		}
 	};
@@ -4024,33 +4034,6 @@
 			}
 		} else if (event.data.type == 'getScreenPending') {
 			window.clearTimeout(event.data.id);
-		} else if (event.data.type == 'webrtcScreensharingWhitelisted' && cache[event.data.id]) {
-			var data = cache[event.data.id];
-			window.clearTimeout(event.data.id);
-			var constraints = data[1];
-			var callback = data[0];
-			delete cache[event.data.id];
-
-			getUserMedia(constraints, function (err, stream) {
-				// Notify extension to remove domain from whitelist.
-				window.postMessage({ type: 'webrtcStopScreensharing' }, '*');
-				callback(err, stream);
-				if (err) {
-					return;
-				}
-				// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1045810
-				var lastTime = stream.currentTime;
-				var polly = window.setInterval(function () {
-					if (!stream) window.clearInterval(polly);
-					if (stream.currentTime == lastTime) {
-						window.clearInterval(polly);
-						if (stream.onended) {
-							stream.onended();
-						}
-					}
-					lastTime = stream.currentTime;
-				}, 500);
-			});
 		}
 	});
 
