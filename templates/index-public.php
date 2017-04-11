@@ -68,7 +68,7 @@ script(
 					<button id="mute" class="icon-audio-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
 					<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off-white screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
-		            <div id="screensharing-menu" class="app-navigation-entry-menu">
+					<div id="screensharing-menu" class="app-navigation-entry-menu">
 						<ul>
 							<li>
 								<button id="show-screen-button">
