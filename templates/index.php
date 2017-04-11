@@ -50,7 +50,23 @@ script(
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
-					<button id="toggleScreensharing" class="icon-screen-off-white screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
+					<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off-white screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
+					<div id="screensharing-menu" class="app-navigation-entry-menu">
+						<ul>
+							<li>
+								<button id="show-screen-button">
+									<span class="icon-screen"></span>
+									<span><?php p($l->t('Show your screen'));?></span>
+								</button>
+							</li>
+							<li>
+								<button id="stop-screen-button">
+									<span class="icon-screen-off"></span>
+									<span><?php p($l->t('Stop screensharing'));?></span>
+								</button>
+							</li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>

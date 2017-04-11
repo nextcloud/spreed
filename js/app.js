@@ -220,16 +220,17 @@
 
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
-				$('#toggleScreensharing').attr('data-original-title', 'Enable screensharing')
+				$('#screensharing-button').attr('data-original-title', 'Enable screensharing')
 					.addClass('screensharing-disabled icon-screen-off-white')
 					.removeClass('icon-screen-white');
+				$('#screensharing-menu').toggleClass('open', false);
 			};
 
 			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
 				screensharingStopped();
 			});
 
-			$('#toggleScreensharing').click(function() {
+			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
 					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
@@ -237,13 +238,11 @@
 				}
 
 				if (webrtc.getLocalScreen()) {
-					webrtc.stopScreenShare();
-					screensharingStopped();
+					$('#screensharing-menu').toggleClass('open');
 				} else {
 					webrtc.shareScreen(function(err) {
 						if (!err) {
-							OC.Notification.showTemporary(t('spreed', 'Screensharing is about to start…'));
-							$('#toggleScreensharing').attr('data-original-title', 'Stop screensharing')
+							$('#screensharing-button').attr('data-original-title', 'Screensharing options')
 								.removeClass('screensharing-disabled icon-screen-off-white')
 								.addClass('icon-screen-white');
 							return;
@@ -256,7 +255,6 @@
 							case "PERMISSION_DENIED":
 							case "NotAllowedError":
 							case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
-								OC.Notification.showTemporary(t('spreed', 'The screensharing request has been cancelled.'));
 								break;
 							case "EXTENSION_UNAVAILABLE":
 								var  extensionURL = null;
@@ -282,6 +280,18 @@
 						}
 					});
 				}
+			});
+
+			$("#show-screen-button").on('click', function() {
+				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
+				OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
+
+				$('#screensharing-menu').toggleClass('open', false);
+			});
+
+			$("#stop-screen-button").on('click', function() {
+				OCA.SpreedMe.webrtc.stopScreenShare();
+				screensharingStopped();
 			});
 
 			$("#guestName").on('click', function() {

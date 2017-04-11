@@ -225,7 +225,7 @@ video {
 	display: none;
 }
 
-.videoContainer.promoted .muteIndicator {
+.videoContainer.promoted .mediaIndicator {
 	display: none !important;
 }
 
@@ -268,8 +268,24 @@ video {
 	display: none;
 }
 
-.participants-1 #toggleScreensharing {
+.participants-1 #screensharing-button {
 	display: none;
+}
+
+#screensharing-menu {
+    bottom: 44px;
+    left: calc(50% - 40px);
+    right: initial;
+    color: initial;
+    text-shadow: initial;
+    font-size: 13px;
+}
+
+#screensharing-menu.app-navigation-entry-menu:after {
+    top: 100%;
+    left: calc(50% - 5px);
+    border-top-color: #fff;
+    border-bottom-color: transparent;
 }
 
 /* big speaker video */
@@ -399,22 +415,33 @@ video {
 	opacity: .7;
 }
 
-.muteIndicator {
+.mediaIndicator {
 	position: absolute;
 	width: 100%;
 	bottom: 44px;
 	left: 0;
 	background-size: 22px;
-	padding: 12px;
-	opacity: .7;
+	text-align: center;
 }
 
-.muteIndicator.audio-on {
+.muteIndicator,
+.screensharingIndicator {
+	position: relative;
+	display: inline-block;
+	background-color: transparent !important;
+	border: none;
+	width: 32px;
+	height: 32px;
+	background-size: 22px;
+}
+
+.muteIndicator.audio-on,
+.screensharingIndicator.screen-off {
 	display: none;
 }
 
 .muteIndicator.audio-off {
-	display: block;
+	opacity: .7;
 }
 
 #app-content:-webkit-full-screen  {
