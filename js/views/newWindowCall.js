@@ -20,6 +20,10 @@
 		},
 		template: Handlebars.compile(ITEM_TEMPLATE),
 
+		regions: {
+			firstRegion: '#localVideo'
+		},
+
 		initialize: function() {
 			var height = 335;
 			var width = 405;
@@ -49,21 +53,28 @@
 			$(this.btnClose).removeClass('hidden');
 		},
 
+		onAttach: function() {
+			alert('attach');
+		},
+
 		onRender: function() {
+			alert('render');
 			var self = this;
 			this.newWindow.focus();
 			this.feedbackScreen();
 
+			//this.showChildView('localVideo', new OCA.SpreedMe.Views.separateWindowRegion());
+
+			/*
 			setTimeout( function(){
-				if(self.newWindow.document.body.innerHTML !== ''){
-					//self.appEl = self.newWindow.document.getElementById('app-content');
-					self.localVideo = self.newWindow.document.getElementById('localVideo');
-					self.btnPop = self.newWindow.document.getElementById('video-separateWindow');
-					self.btnClose = self.newWindow.document.getElementById('btnCloseWindow');
-					self.newWindow.document.body.innerHTML = '';
-					self.populateNewWindow();
-				}
-			}, 3000);
+				//self.appEl = self.newWindow.document.getElementById('app-content');
+				self.localVideo = self.newWindow.document.getElementById('localVideo');
+				self.btnPop = self.newWindow.document.getElementById('video-separateWindow');
+				self.btnClose = self.newWindow.document.getElementById('btnCloseWindow');
+				self.newWindow.document.body.innerHTML = '';
+				self.populateNewWindow();
+			}, 4000);
+			*/
 		}
 	});
 

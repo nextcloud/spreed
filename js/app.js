@@ -196,6 +196,7 @@
 					el: '#separate-window-message'
 				});
 				this._separateWinView.render();
+				sessionStorage.windowCounter = Number(sessionStorage.windowCounter) + 1;
 			});
 
 			window.addEventListener("message", this.receiveMessage, false);
@@ -684,5 +685,19 @@
 })(OCA, Marionette, Backbone, _);
 
 $(window).unload(function () {
-	OCA.SpreedMe.Rooms.leaveAllRooms();
+	if(sessionStorage.windowCounter === 1) { // user can have just one call at the time
+		// if there is just 1 window open, means user want to close the call
+		// so close all the rooms
+		sessionStorage.windowCounter = 0;
+		alert('windowCounter = 1. user want to close video app');
+		OCA.SpreedMe.Rooms.leaveAllRooms();
+
+	} else {
+		// if there are 2 window open
+		// user can keep one open and navigate with the other.
+		sessionStorage.windowCounter = Number(sessionStorage.windowCounter) - 1;
+		alert('windowCounter - 1. user want to close 1 of the two wind.');
+	}
+
+	//OCA.SpreedMe.Rooms.leaveAllRooms();
 });
