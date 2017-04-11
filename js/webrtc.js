@@ -154,6 +154,7 @@ var spreedMappingTable = [];
 		var spreedListofSpeakers = {};
 		var spreedListofSharedScreens = {};
 		var latestSpeakerId = null;
+		var unpromotedSpeakerId = null;
 		var latestScreenId = null;
 		var screenSharingActive = false;
 
@@ -223,6 +224,7 @@ var spreedMappingTable = [];
 				if (latestSpeakerId) {
 					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('promoted');
+					unpromotedSpeakerId = latestSpeakerId;
 					latestSpeakerId = null;
 					$('.videoContainer-dummy').remove();
 				}
@@ -675,6 +677,9 @@ var spreedMappingTable = [];
 			if (!document.getElementById('screens').hasChildNodes()) {
 				screenSharingActive = false;
 				$('#app-content').removeClass('screensharing');
+				console.log(unpromotedSpeakerId);
+				OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
+				unpromotedSpeakerId = null;
 			}
 		});
 
