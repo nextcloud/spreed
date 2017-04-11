@@ -658,8 +658,10 @@ var spreedMappingTable = [];
 			if (!document.getElementById('screens').hasChildNodes()) {
 				screenSharingActive = false;
 				$('#app-content').removeClass('screensharing');
-				OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
-				unpromotedSpeakerId = null;
+				if (unpromotedSpeakerId) {
+					OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
+					unpromotedSpeakerId = null;
+				}
 			}
 		});
 
