@@ -22,39 +22,36 @@
 		showCamera: function() {
 			$('.videoView').removeClass('hidden');
 		},
+		_createRoomSuccessHandle: function(data) {
+			OC.Util.History.pushState({
+				token: data.token
+			}, OC.generateUrl('/call/' + data.token));
+			this.join(data.token);
+		},
 		createOneToOneVideoCall: function(recipientUserId) {
-			var self = this;
 			console.log(recipientUserId);
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/oneToOne'),
 				type: 'PUT',
 				data: 'targetUserName='+recipientUserId,
-				success: function(data) {
-					self.join(data.token);
-				}
+				success: _.bind(this._createRoomSuccessHandle, this)
 			});
 		},
 		createGroupVideoCall: function(groupId) {
-			var self = this;
 			console.log(groupId);
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/group'),
 				type: 'PUT',
 				data: 'targetGroupName='+groupId,
-				success: function(data) {
-					self.join(data.token);
-				}
+				success: _.bind(this._createRoomSuccessHandle, this)
 			});
 		},
 		createPublicVideoCall: function() {
-			var self = this;
 			console.log("Creating a new public room.");
 			$.ajax({
 				url: OC.generateUrl('/apps/spreed/api/public'),
 				type: 'PUT',
-				success: function(data) {
-					self.join(data.token);
-				}
+				success: _.bind(this._createRoomSuccessHandle, this)
 			});
 		},
 		join: function(token) {
