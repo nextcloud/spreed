@@ -199,10 +199,25 @@ var spreedMappingTable = [];
 				avatarContainer.className = 'avatar-container hidden';
 				avatarContainer.appendChild(avatar);
 
-				// Mute indicator
-				var muteIndicator = document.createElement('div');
+				// Media indicators
+				var mediaIndicator = document.createElement('div');
+				mediaIndicator.className = 'mediaIndicator';
+
+				var muteIndicator = document.createElement('button');
 				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-on';
-				muteIndicator.textContent = '';
+				muteIndicator.disabled = true;
+
+				var screenSharingIndicator = document.createElement('button');
+				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
+				screenSharingIndicator.setAttribute('data-original-title', 'Show screen');
+
+				$(screenSharingIndicator).tooltip({
+					placement: 'top',
+					trigger: 'hover'
+				});
+
+				mediaIndicator.appendChild(muteIndicator);
+				mediaIndicator.appendChild(screenSharingIndicator);
 
 				// Generic container
 				var container = document.createElement('div');
@@ -210,7 +225,7 @@ var spreedMappingTable = [];
 				container.id = 'container_' + id + '_video_incoming';
 				container.appendChild(avatarContainer);
 				container.appendChild(userIndicator);
-				container.appendChild(muteIndicator);
+				container.appendChild(mediaIndicator);
 
 				$(container).prependTo($('#videos'));
 				return container;
@@ -492,7 +507,7 @@ var spreedMappingTable = [];
 
 				// Add screen visible icon to video container
 				$('#videos').find('.screensharingIndicator').removeClass('screen-visible');
-				$(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator').addClass('screen-visible');
+				$(OCA.SpreedMe.videos.getContainerId(id)).find('.screensharingIndicator').addClass('screen-visible');
 
 				latestScreenId = id;
 			},
@@ -503,9 +518,19 @@ var spreedMappingTable = [];
 
 				spreedListofSharedScreens[id] = (new Date()).getTime();
 
-				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
-				screensharingIndicator.removeClass('screen-off');
-				screensharingIndicator.addClass('screen-on');
+				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
+				if (currentUser !== id) {
+					var screensharingIndicator = $(OCA.SpreedMe.videos.getContainerId(id)).find('.screensharingIndicator');
+					screensharingIndicator.removeClass('screen-off');
+					screensharingIndicator.addClass('screen-on');
+
+					screensharingIndicator.click(function() {
+						if (!this.classList.contains('screen-visible')) {
+							OCA.SpreedMe.sharedScreens.switchScreenToId(id);
+						}
+						$(this).tooltip('hide');
+					});
+				}
 
 				OCA.SpreedMe.sharedScreens.switchScreenToId(id);
 			},
@@ -516,7 +541,7 @@ var spreedMappingTable = [];
 
 				delete spreedListofSharedScreens[id];
 
-				var screensharingIndicator = $(OCA.SpreedMe.speakers.getContainerId(id)).find('.screensharingIndicator');
+				var screensharingIndicator = $(OCA.SpreedMe.videos.getContainerId(id)).find('.screensharingIndicator');
 				screensharingIndicator.addClass('screen-off');
 				screensharingIndicator.removeClass('screen-on');
 
@@ -684,6 +709,8 @@ var spreedMappingTable = [];
 					if (remotes && el) {
 						remotes.removeChild(el);
 					}
+
+					OCA.SpreedMe.sharedScreens.remove(peer.id);
 				}
 			} else if (video.id === 'localScreen') {
 				// SimpleWebRTC notifies about stopped screensharing through
@@ -762,47 +789,6 @@ var spreedMappingTable = [];
 					OCA.SpreedMe.sharedScreens.add(peer.id);
 				} else {
 					OCA.SpreedMe.sharedScreens.add(OCA.SpreedMe.webrtc.connection.getSessionid());
-				}
-
-				// show the ice connection state
-				if (peer && peer.pc) {
-					peer.pc.on('iceConnectionStateChange', function () {
-						switch (peer.pc.iceConnectionState) {
-							case 'checking':
-								console.log('Connecting to peer...');
-								break;
-							case 'connected':
-							case 'completed': // on caller side
-								console.log('Connection established.');
-								if (!OC.getCurrentUser()['uid']) {
-									// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
-									var currentGuestNick = localStorage.getItem("nick");
-									if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
-										if (!currentGuestNick) {
-											currentGuestNick = t('spreed', 'Guest');
-										}
-										OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
-									}
-								}
-								break;
-							case 'disconnected':
-								// If the peer is still disconnected after 5 seconds
-								// we close the video connection.
-								setTimeout(function() {
-									if(peer.pc.iceConnectionState === 'disconnected') {
-										OCA.SpreedMe.webrtc.removePeers(peer.id);
-									}
-								}, 5000);
-								console.log('Disconnected.');
-								break;
-							case 'failed':
-								console.log('Connection failed.');
-								break;
-							case 'closed':
-								console.log('Connection closed.');
-								break;
-						}
-					});
 				}
 			}
 		});
