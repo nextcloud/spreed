@@ -17,7 +17,6 @@ OC.L10N.register(
     "Access to microphone & camera was denied" : "Достъпът до микрофона и камерата е отказан",
     "Please use a different browser like Firefox or Chrome" : "Моля, използвайте друг браузър като Firefox или Chrome",
     "Error while accessing microphone & camera" : "Грешка при достъп до микрофон и камера",
-    "My screen" : "Моя екран",
     "Saved" : "Запазено",
     "%s invited you to a private call" : "%s Ви покани на частен разговор",
     "{user} invited you to a private call" : "{user} Ви покани на частен разговор",
