@@ -27,6 +27,7 @@
     "Please use a different browser like Firefox or Chrome" : "Vennligst bruk en annen nettleser, slik som Firefox eller Chrome",
     "Error while accessing microphone & camera" : "Feil med tilgang til mikrofon og kamera",
     "WebRTC is not supported in your browser :-/" : "WebRTC er ikke støtte av din nettleser :-/",
+    "_%n guest_::_%n guests_" : ["%n gjest","%n gjester"],
     ", " : ", ",
     "Invalid format, must be stunserver:port." : "Ugyldig format, må være stunserver:port.",
     "Invalid port specified." : "Ugyldig port angitt.",
