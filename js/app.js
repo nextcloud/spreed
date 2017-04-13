@@ -240,7 +240,10 @@
 				if (webrtc.getLocalScreen()) {
 					$('#screensharing-menu').toggleClass('open');
 				} else {
+					var screensharingButton = $(this);
+					screensharingButton.prop('disabled', true);
 					webrtc.shareScreen(function(err) {
+						screensharingButton.prop('disabled', false);
 						if (!err) {
 							$('#screensharing-button').attr('data-original-title', 'Screensharing options')
 								.removeClass('screensharing-disabled icon-screen-off-white')
