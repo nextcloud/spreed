@@ -16,7 +16,7 @@ style('spreed', ['settings-admin']);
                    value="<?php p($_['stunServer']) ?>" />
         </p>
         <p>
-            <em><?php p($l->t('The STUN server is used to determine the public address of participants behind a router.')) ?></em>
+            <em><?php p($l->t('The STUN server is used to determine the public IP address of participants behind a router.')) ?></em>
         </p>
         <p>
             <label for="turn_server"><?php p($l->t('TURN server')) ?></label>
