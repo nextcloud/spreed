@@ -61,7 +61,6 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "微笑中3... 2... 1!",
     "Choose person …" : "选择人...",
     "STUN server" : "STUN 服务器",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN服务器是用来决定在路由器后面的参与者的公开地址",
     "TURN server" : "TURN 服务器",
     "TURN server shared secret" : "TURN服务器分享的秘密",
     "TURN server protocols" : "TURN服务器协议",

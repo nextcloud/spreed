@@ -59,7 +59,6 @@
     "Smile in 3… 2… 1!" : "Sorridi tra 3… 2… 1!",
     "Choose person …" : "Scegli persona...",
     "STUN server" : "Server STUN",
-    "The STUN server is used to determine the public address of participants behind a router." : "Il server STUN è utilizzato è utilizzato per determinare l'indirizzo pubblico dei partecipanti che si trovano dietro a un router.",
     "TURN server" : "Server TURN",
     "TURN server shared secret" : "Il segreto condiviso del server TURN",
     "TURN server protocols" : "Protocolli server TURN",

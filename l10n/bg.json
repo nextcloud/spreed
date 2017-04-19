@@ -29,7 +29,6 @@
     "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
     "STUN server" : "STUN сървър",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN сървърът се използва за определяне на публичния адрес на участниците, които стоят зад рутер.",
     "TURN server" : "TURN сървър",
     "TURN server protocols" : "Протоколи на TURN сървър",
     "UDP and TCP" : "UDP и TCP",

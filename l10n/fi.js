@@ -61,7 +61,6 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "Hymyile, 3... 2... 1!",
     "Choose person …" : "Valitse henkilö ...",
     "STUN server" : "STUN-palvelin",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille.",
     "TURN server" : "TURN-palvelin",
     "TURN server shared secret" : "TURN-palvelimen jaettu salausavain",
     "TURN server protocols" : "TURN-palvelimen protokollat",

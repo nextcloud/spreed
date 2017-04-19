@@ -61,7 +61,6 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "Brosa eftir 3… 2… 1!",
     "Choose person …" : "Veldu einstakling …",
     "STUN server" : "STUN-þjónn",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
     "TURN server" : "TURN-þjónn",
     "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni",
     "TURN server protocols" : "Samskiptareglur TURN-þjóns",
