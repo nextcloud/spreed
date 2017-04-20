@@ -67,6 +67,7 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "Gülümse 3... 2 ... 1!",
     "Choose person …" : "Kişiyi seçin ...",
     "STUN server" : "STUN Sunucusu",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
     "TURN server" : "TURN Sunucusu",
     "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
     "TURN server protocols" : "TURN sunucu iletişim kuralları",
