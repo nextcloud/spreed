@@ -75,6 +75,8 @@ class Manager {
 	}
 
 	/**
+	 * Does *not* return public rooms for participants that have not been invited
+	 *
 	 * @param int $roomId
 	 * @param string $participant
 	 * @return Room
@@ -87,6 +89,7 @@ class Manager {
 			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		if ($participant !== null) {
+			// Non guest user
 			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
 					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
 					$query->expr()->eq('p.roomId', 'r.id')
@@ -112,6 +115,9 @@ class Manager {
 	}
 
 	/**
+	 * Also returns public rooms for participants that have not been invited,
+	 * so they can join.
+	 *
 	 * @param string $token
 	 * @param string $participant
 	 * @return Room
@@ -121,14 +127,15 @@ class Manager {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms', 'r')
-			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
+			->where($query->expr()->eq('token', $query->createNamedParameter($token)))
+			->setMaxResults(1);
 
 		if ($participant !== null) {
+			// Non guest user
 			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
 					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
 					$query->expr()->eq('p.roomId', 'r.id')
-				))
-				->andWhere($query->expr()->isNotNull('p.userId'));
+				));
 		}
 
 		$result = $query->execute();
@@ -141,11 +148,15 @@ class Manager {
 
 		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 
-		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
-			throw new RoomNotFoundException();
+		if ($room->getType() === Room::PUBLIC_CALL) {
+			return $room;
 		}
 
-		return $room;
+		if ($participant !== null && $row['userId'] === $participant) {
+			return $room;
+		}
+
+		throw new RoomNotFoundException();
 	}
 
 	/**
