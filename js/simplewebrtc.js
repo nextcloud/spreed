@@ -18064,8 +18064,8 @@
 		}
 
 		connection.on('stunservers', function (args) {
-			// resets/overrides the config
-			self.webrtc.config.peerConnectionConfig.iceServers = args;
+			// appends to the config
+			self.webrtc.config.peerConnectionConfig.iceServers = self.webrtc.config.peerConnectionConfig.iceServers.concat(args);
 			self.emit('stunservers', args);
 		});
 		connection.on('turnservers', function (args) {
@@ -18402,7 +18402,7 @@
 			debug: false,
 			// makes the entire PC config overridable
 			peerConnectionConfig: {
-				iceServers: [{'urls': 'stun:stun.l.google.com:19302'}]
+				iceServers: []
 			},
 			peerConnectionConstraints: {
 				optional: []
