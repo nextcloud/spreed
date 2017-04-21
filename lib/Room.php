@@ -171,14 +171,22 @@ class Room {
 	 * @param IUser $user
 	 */
 	public function addUser(IUser $user) {
+		$this->addParticipant($user->getUID());
+	}
+
+	/**
+	 * @param string $participant
+	 * @param string $sessionId
+	 */
+	public function addParticipant($participant, $sessionId = '0') {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('spreedme_room_participants')
 			->values(
 				[
-					'userId' => $query->createNamedParameter($user->getUID()),
+					'userId' => $query->createNamedParameter($participant),
 					'roomId' => $query->createNamedParameter($this->getId()),
 					'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
-					'sessionId' => $query->createNamedParameter('0'),
+					'sessionId' => $query->createNamedParameter($sessionId),
 				]
 			);
 		$query->execute();
@@ -208,7 +216,12 @@ class Room {
 
 		$sessionId = $this->secureRandom->generate(255);
 		$query->setParameter('sessionId', $sessionId);
-		$query->execute();
+		$result = $query->execute();
+
+		if ($result === 0) {
+			// User joining a public room, without being invited
+			$this->addParticipant($userId, $sessionId);
+		}
 
 		while (!$this->isSessionUnique($sessionId)) {
 			$sessionId = $this->secureRandom->generate(255);
