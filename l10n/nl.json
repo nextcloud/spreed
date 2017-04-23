@@ -65,6 +65,7 @@
     "Smile in 3… 2… 1!" : "Glimlachen over 3... 2... 1!",
     "Choose person …" : "Kies persoon ...",
     "STUN server" : "STUN server",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbareIP-adres van deelnemers achter een router vast te stellen.",
     "TURN server" : "TURN server",
     "TURN server shared secret" : "TURN server gedeeld geheim",
     "TURN server protocols" : "TURN server protocollen",
