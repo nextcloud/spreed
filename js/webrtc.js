@@ -320,6 +320,10 @@ var spreedMappingTable = [];
 							console.log('Connection closed.');
 							break;
 					}
+
+					if (latestSpeakerId === peer.id) {
+						OCA.SpreedMe.speakers.updateVideoContainerDummy(peer.id);
+					}
 				});
 
 				peer.pc.on('PeerConnectionTrace', function (event) {
