@@ -241,7 +241,6 @@ var spreedMappingTable = [];
 				var newContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
 				if (newContainer.length === 0) {
 					newContainer = $(OCA.SpreedMe.videos.add(peer.id));
-					$(newContainer).prependTo($('#videos'));
 				}
 
 				var userIndicator = $(newContainer).find('.nameIndicator');
