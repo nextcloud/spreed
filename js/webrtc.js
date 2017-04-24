@@ -330,47 +330,20 @@ var spreedMappingTable = [];
 		};
 
 		OCA.SpreedMe.speakers = {
-			showStatus: function() {
-				var data = [];
-				for (var currentId in spreedListofSpeakers) {
-					// skip loop if the property is from prototype
-					if (!spreedListofSpeakers.hasOwnProperty(currentId)) {
-						continue;
-					}
-
-					var currentTime = spreedListofSpeakers[currentId];
-					var id = currentId.replace('\\', '');
-					data.push([spreedMappingTable[id], id, currentTime]);
-				}
-				console.log('spreedListofSpeakers');
-				console.table(data);
-				console.log('spreedMappingTable');
-				console.table(spreedMappingTable);
-				console.log('latestSpeakerId');
-				console.log(latestSpeakerId);
-			},
-			getContainerId: function(id) {
-				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-				return '#container_' + sanitizedId + '_video_incoming';
-			},
 			switchVideoToId: function(id) {
-				if (screenSharingActive) {
+				if (screenSharingActive || latestSpeakerId === id) {
 					return;
 				}
 
-				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
+				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
 				if(newContainer.find('video').length === 0) {
 					console.warn('promote: no video found for ID', id);
 					return;
 				}
 
-				if(latestSpeakerId === id) {
-					return;
-				}
-
 				if (latestSpeakerId !== null) {
 					// move old video to new location
-					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+					var oldContainer = $(OCA.SpreedMe.videos.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('promoted');
 				}
 
@@ -381,7 +354,7 @@ var spreedMappingTable = [];
 			},
 			unpromoteLatestSpeaker: function() {
 				if (latestSpeakerId) {
-					var oldContainer = $(OCA.SpreedMe.speakers.getContainerId(latestSpeakerId));
+					var oldContainer = $(OCA.SpreedMe.videos.getContainerId(latestSpeakerId));
 					oldContainer.removeClass('promoted');
 					unpromotedSpeakerId = latestSpeakerId;
 					latestSpeakerId = null;
@@ -389,7 +362,7 @@ var spreedMappingTable = [];
 				}
 			},
 			updateVideoContainerDummy: function(id) {
-				var newContainer = $(OCA.SpreedMe.speakers.getContainerId(id));
+				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
 
 				$('.videoContainer-dummy').remove();
 
@@ -402,16 +375,20 @@ var spreedMappingTable = [];
 					);
 
 			},
-			add: function(id) {
+			add: function(id, notPromote) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
 				}
 
-				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
-				spreedListofSpeakers[sanitizedId] = (new Date()).getTime();
+				if (notPromote) {
+					spreedListofSpeakers[id] = 1;
+					return;
+				}
+
+				spreedListofSpeakers[id] = (new Date()).getTime();
 
 				// set speaking class
-				$(sanitizedId).addClass('speaking');
+				$(OCA.SpreedMe.videos.getContainerId(id)).addClass('speaking');
 
 				if (latestSpeakerId === id) {
 					return;
@@ -424,11 +401,12 @@ var spreedMappingTable = [];
 					return;
 				}
 
-				var sanitizedId = OCA.SpreedMe.speakers.getContainerId(id);
-				spreedListofSpeakers[sanitizedId] = -1;
+				if (enforce) {
+					delete spreedListofSpeakers[id];
+				}
 
 				// remove speaking class
-				$(sanitizedId).removeClass('speaking');
+				$(OCA.SpreedMe.videos.getContainerId(id)).removeClass('speaking');
 
 				if (latestSpeakerId !== id) {
 					return;
@@ -448,14 +426,14 @@ var spreedMappingTable = [];
 					}
 
 					var currentTime = spreedListofSpeakers[currentId];
-					if (currentTime > mostRecentTime && $(OCA.SpreedMe.speakers.getContainerId(currentId.replace('\\', ''))).length > 0) {
+					if (currentTime > mostRecentTime && $(OCA.SpreedMe.videos.getContainerId(currentId)).length > 0) {
 						mostRecentTime = currentTime;
 						mostRecentId = currentId;
 					}
 				}
 
 				if (mostRecentId !== null) {
-					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId.replace('\\', ''));
+					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
 				} else if (enforce === true) {
 					// if there is no mostRecentId is available there is no user left in call
 					// remove the remaining dummy container then too
@@ -672,13 +650,15 @@ var spreedMappingTable = [];
 
 			var otherSpeakerPromoted = false;
 			for (var key in spreedListofSpeakers) {
-				if (spreedListofSpeakers.hasOwnProperty(key) && spreedListofSpeakers[key] > 0) {
+				if (spreedListofSpeakers.hasOwnProperty(key) && spreedListofSpeakers[key] > 1) {
 					otherSpeakerPromoted = true;
 					break;
 				}
 			}
 			if (!otherSpeakerPromoted) {
 				OCA.SpreedMe.speakers.add(peer.id);
+			} else {
+				OCA.SpreedMe.speakers.add(peer.id, true);
 			}
 		});
 
@@ -696,7 +676,7 @@ var spreedMappingTable = [];
 			if (peer) {
 				if (peer.type === 'video') {
 					// a removed peer can't speak anymore ;)
-					OCA.SpreedMe.speakers.remove(peer, true);
+					OCA.SpreedMe.speakers.remove(peer.id, true);
 
 					var videoContainer = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId(peer));
 					var el = document.getElementById(OCA.SpreedMe.webrtc.getDomId(peer));
