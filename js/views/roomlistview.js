@@ -83,6 +83,9 @@
 			'change:displayName': function() {
 				this.render();
 			},
+			'change:participants': function() {
+				this.render();
+			},
 			'change:type': function() {
 				this.render();
 				this.checkSharingStatus();
