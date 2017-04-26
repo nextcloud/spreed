@@ -28,6 +28,7 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
@@ -41,6 +42,8 @@ use OCP\Security\ISecureRandom;
 class PageController extends Controller {
 	/** @var string */
 	private $userId;
+	/** @var ApiController */
+	private $api;
 	/** @var IL10N */
 	private $l10n;
 	/** @var ILogger */
@@ -57,6 +60,7 @@ class PageController extends Controller {
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
+	 * @param ApiController $api
 	 * @param string $UserId
 	 * @param IL10N $l10n
 	 * @param ILogger $logger
@@ -67,6 +71,7 @@ class PageController extends Controller {
 	 */
 	public function __construct($appName,
 								IRequest $request,
+								ApiController $api,
 								$UserId,
 								IL10N $l10n,
 								ILogger $logger,
@@ -76,6 +81,7 @@ class PageController extends Controller {
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
+		$this->api = $api;
 		$this->l10n = $l10n;
 		$this->logger = $logger;
 		$this->manager = $manager;
@@ -89,10 +95,11 @@ class PageController extends Controller {
 	 * @NoCSRFRequired
 	 *
 	 * @param string $token
+	 * @param string $callUser
 	 * @return TemplateResponse
-	 * @throws HintException
+	 * @throws HintException|RedirectResponse
 	 */
-	public function index($token = '') {
+	public function index($token = '', $callUser = '') {
 		if ($this->userId === null) {
 			return $this->guestEnterRoom($token);
 		}
@@ -120,6 +127,12 @@ class PageController extends Controller {
 			} catch (RoomNotFoundException $e) {
 				// Room not found, redirect to main page
 				$token = '';
+			}
+		} else {
+			$response = $this->api->createOneToOneRoom($callUser);
+			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
+				$data = $response->getData();
+				return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $data['token']]));
 			}
 		}
 
