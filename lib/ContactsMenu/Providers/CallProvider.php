@@ -65,6 +65,11 @@ class CallProvider implements IProvider {
 			return;
 		}
 
+		if ($entry->getProperty('isLocalSystemBook') === true) {
+			// Not internal user
+			return;
+		}
+
 		$iconUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('core', 'actions/video.svg'));
 		$callUrl = $this->urlGenerator->getAbsoluteURL('/index.php/apps/spreed/');
 		$action = $this->actionFactory->newLinkAction($iconUrl, $this->l10n->t('Video Call'), $callUrl);
