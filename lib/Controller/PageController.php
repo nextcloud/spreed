@@ -96,8 +96,8 @@ class PageController extends Controller {
 	 *
 	 * @param string $token
 	 * @param string $callUser
-	 * @return TemplateResponse
-	 * @throws HintException|RedirectResponse
+	 * @return TemplateResponse|RedirectResponse
+	 * @throws HintException
 	 */
 	public function index($token = '', $callUser = '') {
 		if ($this->userId === null) {
