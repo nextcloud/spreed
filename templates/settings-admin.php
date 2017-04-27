@@ -8,6 +8,8 @@ style('spreed', ['settings-admin']);
 <div id="spreed" class="section">
     <form id="spreed_settings_form" class="spreed_settings">
         <h2 class="app-name">Spreed video calls</h2>
+        <p class="settings-hint"><?php p($l->t('The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.')); ?></p>
+
         <span id="spreed_settings_msg" class="msg"></span>
         <p>
             <label for="stun_server"><?php p($l->t('STUN server')) ?></label>
