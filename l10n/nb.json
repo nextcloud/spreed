@@ -11,6 +11,7 @@
     "Waiting for {participantName} to join the call …" : "Venter på {participantName} blir med i samtalen ...",
     "Waiting for others to join the call …" : "Venter på at andre blir med i samtalen ...",
     "Waiting for camera and microphone permissions" : "Venter på kamera- og mikrofon-tilganger",
+    "Please, give your browser access to use your camera and microphone in order to use this app." : "Vennllist gi nettleseren tilgang til å bruke kamera og mikrofon for å kunne bruke denne app'en.",
     "Looking great today! :)" : "Ser bra ut i dag! :)",
     "Time to call your friends" : "På tide å ringe dine venner",
     "Guest" : "Gjest",
@@ -70,6 +71,7 @@
     "TURN server protocols" : "TURN tjener protokoller",
     "UDP and TCP" : "UDP og TCP",
     "UDP only" : "kun UDP",
-    "TCP only" : "kun TCP"
+    "TCP only" : "kun TCP",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN- serveren fungerer som proxy for trafikk fra deltakere bak en brannmur."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
