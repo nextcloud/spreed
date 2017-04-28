@@ -37,7 +37,12 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/inviting-people.png</screenshot>
 
-	<version>1.2.1</version>
+	<website>https://github.com/nextcloud/spreed</website>
+	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
+	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
+
+	<version>1.3.0</version>
+
 	<dependencies>
 		<nextcloud min-version="12" max-version="12" />
 	</dependencies>
