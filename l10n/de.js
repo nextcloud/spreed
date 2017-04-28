@@ -45,6 +45,7 @@ OC.L10N.register(
     "{actor} invited you to a group call" : "{actor} hat Dich zu einem Gruppenanruf eingeladen",
     "{actor} invited you to the call {call}" : "{actor} hat Siche zu dem Anruf {call} eingeladen",
     "You were invited to a <strong>video call</strong>" : "Du wurdest zu einem <strong>Videoanruf</strong> eingeladen",
+    "Video call" : "Videoanruf",
     "_%n other guest_::_%n other guests_" : ["ein weiterer Gast","%n weitere Gäste"],
     "_%n guest_::_%n guests_" : ["%n Gast","%n Gäste"],
     ", " : ", ",

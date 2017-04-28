@@ -45,6 +45,7 @@ OC.L10N.register(
     "{actor} invited you to a group call" : "{actor} inviterte deg til gruppesamtale",
     "{actor} invited you to the call {call}" : "{actor} inviterte deg til samtalen {call}",
     "You were invited to a <strong>video call</strong>" : "Du ble invitert til en <strong>videosamtale</strong>",
+    "Video call" : "Videosamtale",
     "_%n other guest_::_%n other guests_" : ["%n annen gjest","%n andre gjester"],
     "_%n guest_::_%n guests_" : ["%n gjest","%n gjester"],
     ", " : ", ",
@@ -74,6 +75,6 @@ OC.L10N.register(
     "UDP and TCP" : "UDP og TCP",
     "UDP only" : "kun UDP",
     "TCP only" : "kun TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN- serveren fungerer som proxy for trafikk fra deltakere bak en brannmur."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-tjeneren fungerer som mellomtjener for trafikk fra deltakere bak en brannmur."
 },
 "nplurals=2; plural=(n != 1);");

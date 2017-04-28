@@ -43,6 +43,7 @@
     "{actor} invited you to a group call" : "{actor} sizi bir grup görüşmesine çağırdı",
     "{actor} invited you to the call {call}" : "{actor} sizi bir {call} görüşmesine çağırdı",
     "You were invited to a <strong>video call</strong>" : "Bir <strong>görüntülü görüşmeye</strong> çağrıldınız",
+    "Video call" : "Görüntülü Arama",
     "_%n other guest_::_%n other guests_" : ["%n diğer ziyaretçi","%n diğer ziyaretçi"],
     "_%n guest_::_%n guests_" : ["%n ziyaretçi","%n ziyaretçi"],
     ", " : ",",

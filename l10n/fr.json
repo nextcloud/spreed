@@ -43,6 +43,7 @@
     "{actor} invited you to a group call" : "{actor} vous a invité dans un appel de groupe",
     "{actor} invited you to the call {call}" : "{actor} vous a invité à l'appel {call}",
     "You were invited to a <strong>video call</strong>" : "Vous êtes invités à un <strong>appel vidéo</strong>",
+    "Video call" : "Appel vidéo",
     "_%n other guest_::_%n other guests_" : ["%n autre invité","%n autres invités"],
     "_%n guest_::_%n guests_" : ["%n invité","%n invités"],
     ", " : ", ",

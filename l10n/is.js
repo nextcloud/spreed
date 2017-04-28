@@ -45,6 +45,7 @@ OC.L10N.register(
     "{actor} invited you to a group call" : "{actor} bauð þér að taka þátt í hópsímtali",
     "{actor} invited you to the call {call}" : "{actor} bauð þér að taka þátt í símtalinu {call}",
     "You were invited to a <strong>video call</strong>" : "Þér var boðið að taka þátt í <strong>myndsímtali</strong>",
+    "Video call" : "Myndsímtal",
     "_%n other guest_::_%n other guests_" : ["%n annar gestur","%n aðrir gestir"],
     "_%n guest_::_%n guests_" : ["%n gestur","%n gestir"],
     ", " : ", ",
