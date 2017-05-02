@@ -38,10 +38,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-screensharing.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-contacts-menu.png</screenshot>
 
-	<website>https://github.com/nextcloud/spreed</website>
-	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
-	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
-
 	<version>2.0.0</version>
 
 	<dependencies>
