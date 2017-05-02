@@ -13,7 +13,6 @@
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
 
 * 💬 [Chat integration](https://github.com/nextcloud/spreed/issues/35)
-
 * ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
 **Known issues:**
@@ -34,10 +33,17 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	<category>multimedia</category>
 	<category>social</category>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/inviting-people.png</screenshot>
 
-	<version>1.2.1</version>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-call.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-screensharing.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-contacts-menu.png</screenshot>
+
+	<website>https://github.com/nextcloud/spreed</website>
+	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
+	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
+
+	<version>2.0.0</version>
+
 	<dependencies>
 		<nextcloud min-version="12" max-version="12" />
 	</dependencies>
