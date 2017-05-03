@@ -18089,10 +18089,16 @@
 		this.webrtc.on('iceFailed', function (peer) {
 			// TODO: local ice failure
 			console.error('iceFailed event received');
+			var pc = peer.pc;
+			console.log('had local relay candidate', pc.hadLocalRelayCandidate);
+			console.log('had remote relay candidate', pc.hadRemoteRelayCandidate);
 		});
 		this.webrtc.on('connectivityError', function (peer) {
 			// TODO: remote ice failure
 			console.error('connectivityError event received');
+			var pc = peer.pc;
+			console.log('had local relay candidate', pc.hadLocalRelayCandidate);
+			console.log('had remote relay candidate', pc.hadRemoteRelayCandidate);
 		});
 
 		// screensharing events
