@@ -776,6 +776,7 @@ var spreedMappingTable = [];
 				}));
 
 			var videoNameIndicator = $(video).find('.nameIndicator');
+			var videoAvatar = $(video).find('.avatar');
 
 			//Screen
 			var screen = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
@@ -786,8 +787,18 @@ var spreedMappingTable = [];
 
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
-			videoNameIndicator.text(data.name);
-			screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
+			if (data.name.length === 0) {
+				var guestName = t('spreed', 'Guest');
+				videoNameIndicator.text(guestName);
+				videoAvatar.avatar(null, 128);
+				videoAvatar.removeData('guestName');
+				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: guestName}));
+			} else {
+				videoNameIndicator.text(data.name);
+				videoAvatar.imageplaceholder(data.name, undefined, 128);
+				videoAvatar.data('guestName', data.name);
+				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
+			}
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
@@ -809,7 +820,9 @@ var spreedMappingTable = [];
 
 				if (userId.length) {
 					avatar.avatar(userId, 128);
-				} else {// Guest
+				} else if (avatar.data('guestName')) {
+					avatar.imageplaceholder(avatar.data('guestName'), undefined, 128);
+				} else {
 					avatar.avatar(null, 128);
 				}
 
