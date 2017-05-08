@@ -499,6 +499,9 @@ var spreedMappingTable = [];
 				// Avatar for username
 				var avatar = document.createElement('div');
 				avatar.className = 'avatar';
+				if (peer.nick) {
+					$(avatar).data('guestName', peer.nick);
+				}
 
 				var avatarContainer = document.createElement('div');
 				avatarContainer.className = 'avatar-container hidden';
