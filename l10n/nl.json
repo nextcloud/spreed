@@ -65,6 +65,7 @@
     "Stop screensharing" : "Stop schemdelen",
     "Smile in 3… 2… 1!" : "Glimlachen over 3... 2... 1!",
     "Choose person …" : "Kies persoon ...",
+    "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig opdat deelnemers met het gesprek kunnen verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbareIP-adres van deelnemers achter een router vast te stellen.",
     "TURN server" : "TURN server",
