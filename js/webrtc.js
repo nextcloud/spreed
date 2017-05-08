@@ -646,6 +646,7 @@ var spreedMappingTable = [];
 
 				if (peer.nick) {
 					videoContainer.find('.nameIndicator').text(peer.nick);
+					videoContainer.find('.avatar').data('guestName', peer.nick);
 				} else {
 					videoContainer.find('.nameIndicator').text(t('spreed', 'Guest'));
 				}
