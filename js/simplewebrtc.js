@@ -7763,11 +7763,23 @@
 // check if all video streams are enabled
 	LocalMedia.prototype.isVideoEnabled = function () {
 		var enabled = true;
+		var hasVideoTracks = false;
 		this.localStreams.forEach(function (stream) {
-			stream.getVideoTracks().forEach(function (track) {
-				enabled = enabled && track.enabled;
-			});
+			var videoTracks = stream.getVideoTracks();
+			if (videoTracks.length > 0) {
+				hasVideoTracks = true;
+				videoTracks.forEach(function (track) {
+					enabled = enabled && track.enabled;
+				});
+			}
 		});
+
+		// If no videoTracks were found, that means there is no camera device.
+		// In that case, isVideoEnabled should return false.
+		if (!hasVideoTracks) {
+			return false;
+		}
+
 		return enabled;
 	};
 
