@@ -554,7 +554,9 @@ var spreedMappingTable = [];
 
 		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
 			console.log('PEER CREATED', peer);
-			OCA.SpreedMe.videos.addPeer(peer);
+			if (peer.type === 'video') {
+				OCA.SpreedMe.videos.addPeer(peer);
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
