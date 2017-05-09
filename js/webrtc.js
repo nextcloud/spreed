@@ -813,10 +813,9 @@ var spreedMappingTable = [];
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
 			if (data.name.length === 0) {
-				var guestName = t('spreed', 'Guest');
-				videoNameIndicator.text(guestName);
+				videoNameIndicator.text(t('spreed', 'Guest'));
 				videoAvatar.avatar(null, 128);
-				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: guestName}));
+				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
 				videoNameIndicator.text(data.name);
 				videoAvatar.imageplaceholder(data.name, undefined, 128);
