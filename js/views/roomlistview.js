@@ -74,6 +74,10 @@
 							'</form>'+
 						'</div>';
 
+	var EMPTY_TEMPLATE = '<div class="emptycontent">' +
+							'<p>'+t('spreed', 'You can start a call by clicking on<br>"Choose person …"<br>on top')+'</p>' +
+							'</div>';
+
 	var RoomItenView = Marionette.View.extend({
 		tagName: 'li',
 		modelEvents: {
@@ -568,9 +572,14 @@
 		}
 	});
 
+	var NoRoomsView = Marionette.View.extend({
+		template: Handlebars.compile(EMPTY_TEMPLATE)
+	});
+
 	var RoomListView = Marionette.CollectionView.extend({
 		tagName: 'ul',
-		childView: RoomItenView
+		childView: RoomItenView,
+		emptyView: NoRoomsView
 	});
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;
