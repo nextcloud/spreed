@@ -653,6 +653,7 @@ var spreedMappingTable = [];
 					nameIndicator.text(peer.nick);
 				} else {
 					avatar.avatar(null, 128);
+					nameIndicator.text(t('spreed', 'Guest'));
 				}
 
 				$(videoContainer).prepend(video);
