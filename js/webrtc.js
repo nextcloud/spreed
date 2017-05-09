@@ -639,17 +639,24 @@ var spreedMappingTable = [];
 
 			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
 			if (videoContainer.length) {
+				var userId = spreedMappingTable[peer.id];
+				var nameIndicator = videoContainer.find('.nameIndicator');
+				var avatar = videoContainer.find('.avatar');
+
+				if (userId.length) {
+					avatar.avatar(userId, 128);
+					nameIndicator.text(peer.nick);
+				} else if (peer.nick) {
+					avatar.imageplaceholder(peer.nick, undefined, 128);
+					nameIndicator.text(peer.nick);
+				} else {
+					avatar.avatar(null, 128);
+				}
+
 				$(videoContainer).prepend(video);
 				video.oncontextmenu = function() {
 					return false;
 				};
-
-				if (peer.nick) {
-					videoContainer.find('.nameIndicator').text(peer.nick);
-					videoContainer.find('.avatar').data('guestName', peer.nick);
-				} else {
-					videoContainer.find('.nameIndicator').text(t('spreed', 'Guest'));
-				}
 			}
 
 			var otherSpeakerPromoted = false;
@@ -807,12 +814,10 @@ var spreedMappingTable = [];
 				var guestName = t('spreed', 'Guest');
 				videoNameIndicator.text(guestName);
 				videoAvatar.avatar(null, 128);
-				videoAvatar.removeData('guestName');
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: guestName}));
 			} else {
 				videoNameIndicator.text(data.name);
 				videoAvatar.imageplaceholder(data.name, undefined, 128);
-				videoAvatar.data('guestName', data.name);
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
 			}
 
@@ -832,16 +837,6 @@ var spreedMappingTable = [];
 
 			if (data.name === 'video') {
 				var avatar = $el.find('.avatar');
-				var userId = spreedMappingTable[data.id];
-
-				if (userId.length) {
-					avatar.avatar(userId, 128);
-				} else if (avatar.data('guestName')) {
-					avatar.imageplaceholder(avatar.data('guestName'), undefined, 128);
-				} else {
-					avatar.avatar(null, 128);
-				}
-
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');
 				avatarContainer.show();
