@@ -330,6 +330,7 @@ video {
 }
 
 .videoContainer.promoted,
+#app-content.incall,
 #app-content.screensharing {
 	background-color: #000;
 }

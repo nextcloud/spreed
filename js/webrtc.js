@@ -48,6 +48,11 @@ var spreedMappingTable = [];
 				participantsClass = 'participants-' + currentUsersNo;
 			if (!appContentElement.hasClass(participantsClass) && !appContentElement.hasClass('screensharing')) {
 				appContentElement.attr('class', '').addClass(participantsClass);
+				if (currentUsersNo > 1) {
+					appContentElement.addClass('incall');
+				} else {
+					appContentElement.removeClass('incall');
+				}
 			}
 
 			//Send shared screen to new participants
