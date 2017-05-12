@@ -205,6 +205,8 @@ var spreedMappingTable = [];
 					$(avatar).avatar(null, 128);
 				}
 
+				$(avatar).css('opacity', '0.5');
+
 				var avatarContainer = document.createElement('div');
 				avatarContainer.className = 'avatar-container';
 				avatarContainer.appendChild(avatar);
@@ -273,6 +275,7 @@ var spreedMappingTable = [];
 						case 'connected':
 						case 'completed': // on caller side
 							console.log('Connection established.');
+							avatar.css('opacity', '1');
 							// Send the current information about the video and microphone state
 							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 								OCA.SpreedMe.webrtc.emit('videoOff');
