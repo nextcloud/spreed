@@ -193,15 +193,20 @@ var spreedMappingTable = [];
 				// Indicator for username
 				var userIndicator = document.createElement('div');
 				userIndicator.className = 'nameIndicator';
-				userIndicator.textContent = t('spreed', 'Unknown');
-				userIndicator.style.backgroundColor = "purple";
 
 				// Avatar for username
 				var avatar = document.createElement('div');
-				avatar.className = 'avatar';
+				avatar.className = 'avatar icon-loading';
+
+				var userId = spreedMappingTable[id];
+				if (userId && userId.length) {
+					$(avatar).avatar(userId, 128);
+				} else {
+					$(avatar).avatar(null, 128);
+				}
 
 				var avatarContainer = document.createElement('div');
-				avatarContainer.className = 'avatar-container hidden';
+				avatarContainer.className = 'avatar-container';
 				avatarContainer.appendChild(avatar);
 
 				// Media indicators
@@ -216,6 +221,10 @@ var spreedMappingTable = [];
 				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
 				screenSharingIndicator.setAttribute('data-original-title', 'Show screen');
 
+				var iceFailedIndicator = document.createElement('button');
+				iceFailedIndicator.className = 'iceFailedIndicator icon-error-color not-failed';
+				iceFailedIndicator.disabled = true;
+
 				$(screenSharingIndicator).tooltip({
 					placement: 'top',
 					trigger: 'hover'
@@ -223,6 +232,7 @@ var spreedMappingTable = [];
 
 				mediaIndicator.appendChild(muteIndicator);
 				mediaIndicator.appendChild(screenSharingIndicator);
+				mediaIndicator.appendChild(iceFailedIndicator);
 
 				// Generic container
 				var container = document.createElement('div');
@@ -248,19 +258,21 @@ var spreedMappingTable = [];
 					newContainer = $(OCA.SpreedMe.videos.add(peer.id));
 				}
 
-				var userIndicator = $(newContainer).find('.nameIndicator');
-				userIndicator.css('background-color', 'blue');
-
 				peer.pc.on('iceConnectionStateChange', function () {
+					var avatar = $(newContainer).find('.avatar');
+					var mediaIndicator = $(newContainer).find('.mediaIndicator');
+
+					avatar.removeClass('icon-loading');
+					mediaIndicator.find('.iceFailedIndicator').addClass('not-failed');
+
 					switch (peer.pc.iceConnectionState) {
 						case 'checking':
+							avatar.addClass('icon-loading');
 							console.log('Connecting to peer...');
-							userIndicator.css('background-color', 'yellow');
 							break;
 						case 'connected':
 						case 'completed': // on caller side
 							console.log('Connection established.');
-							userIndicator.css('background-color', 'green');
 							// Send the current information about the video and microphone state
 							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 								OCA.SpreedMe.webrtc.emit('videoOff');
@@ -284,14 +296,14 @@ var spreedMappingTable = [];
 							}
 							break;
 						case 'disconnected':
-							// If the peer is still disconnected after 5 seconds
-							// we close the video connection.
-							userIndicator.css('background-color', 'orange');
+							avatar.addClass('icon-loading');
 							console.log('Disconnected.');
 							break;
 						case 'failed':
 							console.log('Connection failed.');
-							userIndicator.css('background-color', 'red');
+							mediaIndicator.children().hide();
+							mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
+
 							// If the peer is still disconnected after 5 seconds
 							// we close the video connection.
 							setTimeout(function() {

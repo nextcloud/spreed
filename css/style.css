@@ -426,7 +426,8 @@ video {
 }
 
 .muteIndicator,
-.screensharingIndicator {
+.screensharingIndicator,
+.iceFailedIndicator {
 	position: relative;
 	display: inline-block;
 	background-color: transparent !important;
@@ -437,12 +438,17 @@ video {
 }
 
 .muteIndicator.audio-on,
-.screensharingIndicator.screen-off {
+.screensharingIndicator.screen-off,
+.iceFailedIndicator.not-failed {
 	display: none;
 }
 
 .muteIndicator.audio-off {
 	opacity: .7;
+}
+
+.iceFailedIndicator {
+	opacity: .8 !important;
 }
 
 #app-content:-webkit-full-screen  {
