@@ -224,7 +224,7 @@ var spreedMappingTable = [];
 				screenSharingIndicator.setAttribute('data-original-title', 'Show screen');
 
 				var iceFailedIndicator = document.createElement('button');
-				iceFailedIndicator.className = 'iceFailedIndicator icon-error-color not-failed';
+				iceFailedIndicator.className = 'iceFailedIndicator icon-error-white not-failed';
 				iceFailedIndicator.disabled = true;
 
 				$(screenSharingIndicator).tooltip({
