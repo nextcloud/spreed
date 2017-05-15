@@ -15,7 +15,7 @@ OC.L10N.register(
     "Waiting for camera and microphone permissions" : "En attente des autorisations pour la caméra et le microphone",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Veuillez donner à votre navigateur l'accès à votre caméra et votre microphone pour pouvoir utiliser l'application.",
     "Looking great today! :)" : "Excellente journée ! :)",
-    "Time to call your friends" : "Temps d'appeler vos amis",
+    "Time to call your friends" : "C'est le moment d'appeler vos amis",
     "You can set your name on the top right of this page so other participants can identify you better." : "Vous pouvez renseigner votre nom en haut à droite de cette page pour que les autres participants puissent mieux vous identifer.",
     "Guest" : "Invité",
     "Copy" : "Copier",
