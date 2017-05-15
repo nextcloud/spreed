@@ -719,9 +719,9 @@ var spreedMappingTable = [];
 					}
 				} else if (peer.type === 'screen') {
 					var remotes = document.getElementById('screens');
-					var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId(peer));
-					if (remotes && el) {
-						remotes.removeChild(el);
+					var screenContainer = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId(peer));
+					if (remotes && screenContainer) {
+						remotes.removeChild(screenContainer);
 					}
 
 					OCA.SpreedMe.sharedScreens.remove(peer.id);
@@ -858,7 +858,6 @@ var spreedMappingTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				var avatar = $el.find('.avatar');
 				var avatarContainer = $el.find('.avatar-container');
 				avatarContainer.removeClass('hidden');
 				avatarContainer.show();
