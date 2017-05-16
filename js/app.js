@@ -233,7 +233,11 @@
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
-					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
+					if (window.location.protocol === 'https:') {
+						OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
+					} else {
+						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
+					}
 					return;
 				}
 
