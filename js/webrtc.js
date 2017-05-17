@@ -3,6 +3,7 @@
 
 var webrtc;
 var spreedMappingTable = [];
+var spreedPeerConnectionTable = [];
 
 (function(OCA, OC) {
 	'use strict';
@@ -260,10 +261,12 @@ var spreedMappingTable = [];
 					newContainer = $(OCA.SpreedMe.videos.add(peer.id));
 				}
 
+				// Initialize ice restart counter for peer
+				spreedPeerConnectionTable[peer.id] = 0;
+
 				peer.pc.on('iceConnectionStateChange', function () {
 					var avatar = $(newContainer).find('.avatar');
 					var mediaIndicator = $(newContainer).find('.mediaIndicator');
-
 					avatar.removeClass('icon-loading');
 					mediaIndicator.find('.iceFailedIndicator').addClass('not-failed');
 
@@ -297,44 +300,45 @@ var spreedMappingTable = [];
 									OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
 								}
 							}
+
+							// Reset ice restart counter for peer
+							if (spreedPeerConnectionTable[peer.id] > 0) {
+								spreedPeerConnectionTable[peer.id] = 0;
+							}
+
 							break;
 						case 'disconnected':
-							avatar.addClass('icon-loading');
 							console.log('Disconnected.');
-							break;
-						case 'failed':
-							console.log('Connection failed.');
-							mediaIndicator.children().hide();
-							mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
-
-							// If the peer is still disconnected after 5 seconds
-							// we close the video connection.
+							// If the peer is still disconnected after 5 seconds we try ICE restart.
 							setTimeout(function() {
 								if(peer.pc.iceConnectionState === 'disconnected') {
-									var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-									//First remove existing failed peer.
-									OCA.SpreedMe.webrtc.removePeers(peer.id);
-									OCA.SpreedMe.speakers.remove(peer.id, true);
-									console.warn('Peer connection has been closed with peer:', peer.id);
-									console.log('Trying to re-connect.');
-									// Decide who sends a new offer
-									if (currentUser.localeCompare(peer.id) < 0) {
-										console.log('Creating new Peer Connection.');
-										// Create a new Peer Connection
-										var newPeer = webrtc.webrtc.createPeer({
-											id: peer.id,
-											type: 'video',
-											enableDataChannels: webrtc.config.enableDataChannels,
-											receiveMedia: {
-												offerToReceiveAudio: webrtc.config.receiveMedia.offerToReceiveAudio,
-												offerToReceiveVideo: webrtc.config.receiveMedia.offerToReceiveVideo
-											}
-										});
-										webrtc.emit('createdPeer', newPeer);
-										newPeer.start();
+									avatar.addClass('icon-loading');
+									if (spreedPeerConnectionTable[peer.id] < 5) {
+										if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
+											peer.pc.pc.peerconnection.signalingState === 'stable') {
+											spreedPeerConnectionTable[peer.id] ++;
+											console.log('ICE restart.');
+											peer.icerestart();
+										}
 									}
 								}
 							}, 5000);
+							break;
+						case 'failed':
+							console.log('Connection failed.');
+							if (spreedPeerConnectionTable[peer.id] < 5) {
+								avatar.addClass('icon-loading');
+								if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
+									peer.pc.pc.peerconnection.signalingState === 'stable') {
+									spreedPeerConnectionTable[peer.id] ++;
+									console.log('ICE restart.');
+									peer.icerestart();
+								}
+							} else {
+								console.log('ICE failed after 5 tries.');
+								mediaIndicator.children().hide();
+								iceFailedIndicator.removeClass('not-failed').show();
+							}
 							break;
 						case 'closed':
 							console.log('Connection closed.');

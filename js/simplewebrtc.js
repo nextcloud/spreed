@@ -17845,7 +17845,7 @@
 
 	Peer.prototype.icerestart = function () {
 		var constraints = this.receiveMedia;
-		constraints.mandatory.IceRestart = true;
+		constraints.iceRestart = true;
 		this.pc.offer(constraints, function (err, success) { });
 	};
 
