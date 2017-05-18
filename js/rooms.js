@@ -16,6 +16,7 @@
 	}
 
 	var currentRoom = '';
+	var pingFails = 0;
 	Backbone.Radio.channel('rooms');
 
 	OCA.SpreedMe.Rooms = {
@@ -92,7 +93,14 @@
 				{
 					token: OCA.SpreedMe.Rooms.currentRoom()
 				}
-			).fail(function() {
+			).done(function() {
+				pingFails = 0;
+			}).fail(function(xhr, status, error) {
+				// If there is an error when pinging, retry for 3 times.
+				if (xhr.status !== 404 && pingFails < 3) {
+					pingFails ++;
+					return;
+				}
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
 				OCA.SpreedMe.Rooms.showRoomDeletedMessage(false);
 			});
