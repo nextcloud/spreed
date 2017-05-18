@@ -337,7 +337,7 @@ var spreedPeerConnectionTable = [];
 							} else {
 								console.log('ICE failed after 5 tries.');
 								mediaIndicator.children().hide();
-								iceFailedIndicator.removeClass('not-failed').show();
+								mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
 							}
 							break;
 						case 'closed':
