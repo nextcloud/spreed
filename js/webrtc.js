@@ -203,7 +203,8 @@ var spreedPeerConnectionTable = [];
 				if (userId && userId.length) {
 					$(avatar).avatar(userId, 128);
 				} else {
-					$(avatar).avatar(null, 128);
+					$(avatar).imageplaceholder('?', undefined, 128);
+					$(avatar).css('background-color', '#b9b9b9');
 				}
 
 				$(avatar).css('opacity', '0.5');
@@ -676,7 +677,8 @@ var spreedPeerConnectionTable = [];
 					avatar.imageplaceholder(peer.nick, undefined, 128);
 					nameIndicator.text(peer.nick);
 				} else {
-					avatar.avatar(null, 128);
+					avatar.imageplaceholder('?', undefined, 128);
+					avatar.css('background-color', '#b9b9b9');
 					nameIndicator.text(t('spreed', 'Guest'));
 				}
 
@@ -839,7 +841,8 @@ var spreedPeerConnectionTable = [];
 
 			if (data.name.length === 0) {
 				videoNameIndicator.text(t('spreed', 'Guest'));
-				videoAvatar.avatar(null, 128);
+				videoAvatar.imageplaceholder('?', undefined, 128);
+				videoAvatar.css('background-color', '#b9b9b9');
 				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
 				videoNameIndicator.text(data.name);
