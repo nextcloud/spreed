@@ -71,7 +71,8 @@
 		},
 		leaveCurrentRoom: function() {
 			OCA.SpreedMe.webrtc.leaveRoom();
-
+			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			$('#app-content').removeClass('incall');
 			currentRoom = '';
 		},
 		currentRoom: function() {
