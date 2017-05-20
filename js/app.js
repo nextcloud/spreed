@@ -451,10 +451,10 @@
 					}
 				});
 
-				message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
+				message = t('spreed', 'Waiting for {participantName} to join the call…', {participantName: waitingParticipantName});
 				messageAdditional = '';
 			} else {
-				message = t('spreed', 'Waiting for others to join the call …');
+				message = t('spreed', 'Waiting for others to join the call…');
 				messageAdditional = '';
 				$('#emptycontent-icon').addClass('icon-contacts-dark');
 			}
@@ -485,7 +485,7 @@
 			OCA.SpreedMe.initWebRTC();
 		},
 		startSpreed: function(configuration) {
-			console.log('Starting spreed …');
+			console.log('Starting spreed…');
 			var self = this;
 
 			this.setEmptyContentMessage(
