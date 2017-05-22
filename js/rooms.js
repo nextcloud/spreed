@@ -95,7 +95,7 @@
 				}
 			).done(function() {
 				pingFails = 0;
-			}).fail(function(xhr, status, error) {
+			}).fail(function(xhr) {
 				// If there is an error when pinging, retry for 3 times.
 				if (xhr.status !== 404 && pingFails < 3) {
 					pingFails++;
