@@ -17845,7 +17845,7 @@
 
 	Peer.prototype.icerestart = function () {
 		var constraints = this.receiveMedia;
-		constraints.mandatory.IceRestart = true;
+		constraints.iceRestart = true;
 		this.pc.offer(constraints, function (err, success) { });
 	};
 
@@ -18089,10 +18089,16 @@
 		this.webrtc.on('iceFailed', function (peer) {
 			// TODO: local ice failure
 			console.error('iceFailed event received');
+			var pc = peer.pc;
+			console.log('had local relay candidate', pc.hadLocalRelayCandidate);
+			console.log('had remote relay candidate', pc.hadRemoteRelayCandidate);
 		});
 		this.webrtc.on('connectivityError', function (peer) {
 			// TODO: remote ice failure
 			console.error('connectivityError event received');
+			var pc = peer.pc;
+			console.log('had local relay candidate', pc.hadLocalRelayCandidate);
+			console.log('had remote relay candidate', pc.hadRemoteRelayCandidate);
 		});
 
 		// screensharing events
@@ -18539,6 +18545,7 @@
 // removes peers
 	WebRTC.prototype.removePeers = function (id, type) {
 		this.getPeers(id, type).forEach(function (peer) {
+			console.warn('Peer ended', id);
 			peer.end();
 		});
 	};
