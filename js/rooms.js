@@ -98,7 +98,7 @@
 			}).fail(function(xhr, status, error) {
 				// If there is an error when pinging, retry for 3 times.
 				if (xhr.status !== 404 && pingFails < 3) {
-					pingFails ++;
+					pingFails++;
 					return;
 				}
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
