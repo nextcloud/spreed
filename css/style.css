@@ -568,7 +568,7 @@ video {
 }
 
 #guestName:hover {
-	color: #fff;
+	color: #fff !important;
 }
 
 #guestNameInput {
@@ -594,4 +594,9 @@ video {
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
+}
+
+/* make guest name white because header bar is transparent*/
+#body-public #app-content:not(.participants-1) #guestName {
+    color: rgba(255, 255, 255, 0.7);
 }
