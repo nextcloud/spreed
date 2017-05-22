@@ -34,7 +34,7 @@ script(
 		<header>
 			<div id="header" class="spreed-public">
 				<div id="header-left">
-					<a href="<?php print_unescaped(link_to('', 'index.php')); ?>" title="" id="nextcloud">
+					<a href="<?php print_unescaped(link_to('', 'index.php')); ?>" title="" id="nextcloud" target="_blank">
 						<div class="logo-icon svg"></div>
 					</a>
 					<div class="header-appname-container">
