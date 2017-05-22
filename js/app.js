@@ -233,7 +233,11 @@
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
-					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
+					if (window.location.protocol === 'https:') {
+						OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
+					} else {
+						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
+					}
 					return;
 				}
 
@@ -592,7 +596,17 @@
 				.addClass('video-disabled icon-video-off-white')
 				.removeClass('icon-video-white');
 
-			avatarContainer.find('.avatar').avatar(OC.currentUser, 128);
+			var avatar = avatarContainer.find('.avatar');
+			var guestName = localStorage.getItem("nick");
+			if (oc_current_user) {
+				avatar.avatar(OC.currentUser, 128);
+			} else if (guestName) {
+				avatar.imageplaceholder(guestName, undefined, 128);
+			} else {
+				avatar.avatar(null, 128);
+				OC.Notification.showTemporary(t('spreed', 'You can set your name on the top right of this page so other participants can identify you better.'));
+			}
+
 			avatarContainer.removeClass('hidden');
 			avatarContainer.show();
 			localVideo.hide();
@@ -623,11 +637,19 @@
 				} else if (lastSavedNick) {
 					$('#guestName').text(t('spreed', 'Guest'));
 					localStorage.removeItem("nick");
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', t('spreed', 'Guest'));
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', '');
 				}
 			}
 
 			$('#guestNameInput').val(guestName);
+
+			var avatar = $('#localVideoContainer').find('.avatar');
+			var savedGuestName = localStorage.getItem("nick");
+			if (savedGuestName) {
+				avatar.imageplaceholder(savedGuestName, undefined, 128);
+			} else {
+				avatar.avatar(null, 128);
+			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({

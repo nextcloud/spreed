@@ -7763,11 +7763,23 @@
 // check if all video streams are enabled
 	LocalMedia.prototype.isVideoEnabled = function () {
 		var enabled = true;
+		var hasVideoTracks = false;
 		this.localStreams.forEach(function (stream) {
-			stream.getVideoTracks().forEach(function (track) {
-				enabled = enabled && track.enabled;
-			});
+			var videoTracks = stream.getVideoTracks();
+			if (videoTracks.length > 0) {
+				hasVideoTracks = true;
+				videoTracks.forEach(function (track) {
+					enabled = enabled && track.enabled;
+				});
+			}
 		});
+
+		// If no videoTracks were found, that means there is no camera device.
+		// In that case, isVideoEnabled should return false.
+		if (!hasVideoTracks) {
+			return false;
+		}
+
 		return enabled;
 	};
 
@@ -17833,7 +17845,7 @@
 
 	Peer.prototype.icerestart = function () {
 		var constraints = this.receiveMedia;
-		constraints.mandatory.IceRestart = true;
+		constraints.iceRestart = true;
 		this.pc.offer(constraints, function (err, success) { });
 	};
 
@@ -18077,10 +18089,16 @@
 		this.webrtc.on('iceFailed', function (peer) {
 			// TODO: local ice failure
 			console.error('iceFailed event received');
+			var pc = peer.pc;
+			console.log('had local relay candidate', pc.hadLocalRelayCandidate);
+			console.log('had remote relay candidate', pc.hadRemoteRelayCandidate);
 		});
 		this.webrtc.on('connectivityError', function (peer) {
 			// TODO: remote ice failure
 			console.error('connectivityError event received');
+			var pc = peer.pc;
+			console.log('had local relay candidate', pc.hadLocalRelayCandidate);
+			console.log('had remote relay candidate', pc.hadRemoteRelayCandidate);
 		});
 
 		// screensharing events
@@ -18527,6 +18545,7 @@
 // removes peers
 	WebRTC.prototype.removePeers = function (id, type) {
 		this.getPeers(id, type).forEach(function (peer) {
+			console.warn('Peer ended', id);
 			peer.end();
 		});
 	};

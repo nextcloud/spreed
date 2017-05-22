@@ -330,6 +330,7 @@ video {
 }
 
 .videoContainer.promoted,
+#app-content.incall,
 #app-content.screensharing {
 	background-color: #000;
 }
@@ -425,7 +426,8 @@ video {
 }
 
 .muteIndicator,
-.screensharingIndicator {
+.screensharingIndicator,
+.iceFailedIndicator {
 	position: relative;
 	display: inline-block;
 	background-color: transparent !important;
@@ -436,12 +438,17 @@ video {
 }
 
 .muteIndicator.audio-on,
-.screensharingIndicator.screen-off {
+.screensharingIndicator.screen-off,
+.iceFailedIndicator.not-failed {
 	display: none;
 }
 
 .muteIndicator.audio-off {
 	opacity: .7;
+}
+
+.iceFailedIndicator {
+	opacity: .8 !important;
 }
 
 #app-content:-webkit-full-screen  {
@@ -561,7 +568,7 @@ video {
 }
 
 #guestName:hover {
-	color: #fff;
+	color: #fff !important;
 }
 
 #guestNameInput {
@@ -587,4 +594,9 @@ video {
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
+}
+
+/* make guest name white because header bar is transparent*/
+#body-public #app-content:not(.participants-1) #guestName {
+    color: rgba(255, 255, 255, 0.7);
 }
