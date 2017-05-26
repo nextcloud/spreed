@@ -16,6 +16,7 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Prosíme dejte vašemu prohlížeči přístup ke kameře a mikrofonu, nebo nebude možné tuto aplikaci použít.",
     "Looking great today! :)" : "Dnes vypadáš skvěle! :)",
     "Time to call your friends" : "Je čas zavolat vašim přátelům",
+    "You can set your name on the top right of this page so other participants can identify you better." : "V pravém horním rohu této stránky můžete nastavit své jméno, aby vás ostatní účastníci mohli lépe identifikovat.",
     "Guest" : "Host",
     "Copy" : "Kopírovat",
     "Copied!" : "Zkopírováno!",
