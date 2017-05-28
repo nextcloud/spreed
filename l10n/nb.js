@@ -71,6 +71,7 @@ OC.L10N.register(
     "STUN server" : "STUN-tjener",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter.",
     "TURN server" : "TURN-tjener",
+    "TURN server shared secret" : "TURN-tjeners delte hemmelighet",
     "TURN server protocols" : "TURN-tjenerprotokoller",
     "UDP and TCP" : "UDP og TCP",
     "UDP only" : "kun UDP",
