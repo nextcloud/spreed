@@ -16,6 +16,7 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Vennllist gi nettleseren tilgang til å bruke kamera og mikrofon for å kunne bruke denne app'en.",
     "Looking great today! :)" : "Ser bra ut i dag! :)",
     "Time to call your friends" : "På tide å ringe dine venner",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre på siden slik at andre deltagere har lettere for å identifisere deg.",
     "Guest" : "Gjest",
     "Copy" : "Kopier",
     "Copied!" : "Kopiert!",

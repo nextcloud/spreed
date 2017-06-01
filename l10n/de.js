@@ -70,7 +70,7 @@ OC.L10N.register(
     "Choose person …" : "Teilnehmer auswählen …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Der STUN-Server ist nötig, damit sich alle Teilnehmer mit den Anrufen verbinden können. Der TURN-Server stellt sicher, dass die Verbindung auch durch Firewalls hindurch funktioniert.",
     "STUN server" : "STUN-Server",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Der STUN-Server wird verwendet, um die öffentliche Adresse von Teilnehmern hinter einem Router zu bestimmen.",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Der STUN-Server wird verwendet, um die öffentliche IP-Adresse von Teilnehmern hinter einem Router zu bestimmen.",
     "TURN server" : "TURN-Server",
     "TURN server shared secret" : "TURN-Server Shared Secret",
     "TURN server protocols" : "TURN-Server Protokolle",
