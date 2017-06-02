@@ -24,7 +24,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Trykk ⌘-C for å kopiere.",
     "Press Ctrl-C to copy." : "Trykk Ctrl-C for å kopiere.",
     "This call has ended" : "Denne samtalen er avsluttet",
-    "Saving failed" : "Lagring feilet",
+    "Saving failed" : "Lagring mislyktes",
     "Add person" : "Legg til person",
     "Rename" : "Gi nytt navn",
     "Share link" : "Del lenke",
