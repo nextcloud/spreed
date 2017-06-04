@@ -24,7 +24,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Prema ⌘-C para copiar.",
     "Press Ctrl-C to copy." : "Prema Ctrl-C para copiar.",
     "This call has ended" : "Esta chamada rematou",
-    "Saving failed" : "Produciuse un fallou ao gardar",
+    "Saving failed" : "Produciuse unha falla ao gardar",
     "Add person" : "Engadir unha persoa",
     "Rename" : "Renomear",
     "Share link" : "Compartir ligazón",
