@@ -2,6 +2,8 @@
     "Video calls" : "Telefonata video",
     "(group)" : "(grup)",
     "New public call" : "Thirrje e re publike",
+    "Screensharing is not supported by your browser." : "Ndarja e erkaneve nuk është e mbështetur nga shfletuesi juaj ",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
     "Waiting for {participantName} to join the call …" : "Duke pritur për {participantName} që ti bashkohet telefonatës ...",
     "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",
     "Looking great today! :)" : "Ju dukeni perfekt sot! :)",

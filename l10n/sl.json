@@ -18,6 +18,9 @@
     "WebRTC is not supported in your browser" : "WebRTC ni podprt v vašem brskalniku ",
     "Please use a different browser like Firefox or Chrome" : "Prosimo uporabite drug brskalnik kot sta Firefox in Chrome",
     "Error while accessing microphone & camera" : "Napaka pri dostopu do mikrofona in kamere",
-    "WebRTC is not supported in your browser :-/" : "WebRTC ni podprt v vašem brskalniku :-/"
+    "WebRTC is not supported in your browser :-/" : "WebRTC ni podprt v vašem brskalniku :-/",
+    "Fullscreen" : "Celoten zaslon",
+    "Disable video" : "Onemogoči video posnetek",
+    "Share screen" : "Deli zaslon"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
 }
