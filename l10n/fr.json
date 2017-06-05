@@ -75,6 +75,7 @@
     "UDP and TCP" : "UDP et TCP",
     "UDP only" : "UDP uniquement",
     "TCP only" : "TCP uniquement",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Le serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Le serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
+    "The STUN server is used to determine the public address of participants behind a router." : "Le serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
