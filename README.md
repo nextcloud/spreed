@@ -7,7 +7,7 @@
 ## Why is this so awesome?
 
 * :busts_in_silhouette: **Private, group and public calls!** Just invite somebody, a whole group or send a public link to invite to a call.
-* :computer: **Screen sharing!** Share your screen with participants of your call. You just need the [Firefox add-on](https://addons.mozilla.org/firefox/addon/nextcloud-video-calls/) or [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
+* :computer: **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer) or Chrome with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
 * :rocket: **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
 * :see_no_evil: **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
