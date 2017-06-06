@@ -77,6 +77,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP y TCP",
     "UDP only" : "sólo UDP",
     "TCP only" : "sólo TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
+    "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN se usa para determinar la dirección pública de los participantes detrás de un enrutador. "
 },
 "nplurals=2; plural=(n != 1);");
