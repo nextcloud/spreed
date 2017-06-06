@@ -75,6 +75,7 @@
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "только UDP",
     "TCP only" : "только TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потока данных от участников, находящихся за межсетевым экраном."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потока данных от участников, находящихся за межсетевым экраном.",
+    "The STUN server is used to determine the public address of participants behind a router." : "Сервер STUN используется для определения публичного ip-адреса участников за маршрутизатором."
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }
