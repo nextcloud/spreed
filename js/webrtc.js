@@ -205,9 +205,9 @@ var spreedPeerConnectionTable = [];
 
 				var userId = spreedMappingTable[id];
 				if (userId && userId.length) {
-					$(avatar).avatar(userId, 128);
+					$(avatar).avatar(userId, 256);
 				} else {
-					$(avatar).imageplaceholder('?', undefined, 128);
+					$(avatar).imageplaceholder('?', undefined, 256);
 					$(avatar).css('background-color', '#b9b9b9');
 				}
 
@@ -278,7 +278,7 @@ var spreedPeerConnectionTable = [];
 					switch (peer.pc.iceConnectionState) {
 						case 'checking':
 							avatar.addClass('icon-loading');
-							console.log('Connecting to peer...');
+							console.log('Connecting to peer …');
 							break;
 						case 'connected':
 						case 'completed': // on caller side
@@ -685,13 +685,13 @@ var spreedPeerConnectionTable = [];
 				var avatar = videoContainer.find('.avatar');
 
 				if (userId && userId.length) {
-					avatar.avatar(userId, 128);
+					avatar.avatar(userId, 256);
 					nameIndicator.text(peer.nick);
 				} else if (peer.nick) {
-					avatar.imageplaceholder(peer.nick, undefined, 128);
+					avatar.imageplaceholder(peer.nick, undefined, 256);
 					nameIndicator.text(peer.nick);
 				} else {
-					avatar.imageplaceholder('?', undefined, 128);
+					avatar.imageplaceholder('?', undefined, 256);
 					avatar.css('background-color', '#b9b9b9');
 					nameIndicator.text(t('spreed', 'Guest'));
 				}
@@ -855,12 +855,12 @@ var spreedPeerConnectionTable = [];
 
 			if (data.name.length === 0) {
 				videoNameIndicator.text(t('spreed', 'Guest'));
-				videoAvatar.imageplaceholder('?', undefined, 128);
+				videoAvatar.imageplaceholder('?', undefined, 256);
 				videoAvatar.css('background-color', '#b9b9b9');
 				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
 				videoNameIndicator.text(data.name);
-				videoAvatar.imageplaceholder(data.name, undefined, 128);
+				videoAvatar.imageplaceholder(data.name, undefined, 256);
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
 			}
 

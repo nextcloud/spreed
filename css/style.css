@@ -229,7 +229,7 @@ video {
 	display: inline-block;
 }
 .videoContainer.promoted .avatar-container {
-	top: 30%;
+	top: 20%;
 }
 .videoContainer.promoted .avatar-container + .nameIndicator {
 	display: none;
