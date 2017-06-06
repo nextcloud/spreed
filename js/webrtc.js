@@ -298,7 +298,7 @@ var spreedPeerConnectionTable = [];
 									if (!currentGuestNick) {
 										currentGuestNick = t('spreed', 'Guest');
 									}
-									OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', currentGuestNick);
+									OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', currentGuestNick);
 								}
 							}
 
@@ -639,21 +639,29 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
+		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
+			console.log('%s datachannel is open', channel.label);
+		});
+
 		OCA.SpreedMe.webrtc.on('channelMessage', function (peer, label, data) {
-			if(label === 'speaking') {
-				OCA.SpreedMe.speakers.add(peer.id);
-			} else if(label === 'stoppedSpeaking') {
-				OCA.SpreedMe.speakers.remove(peer.id);
-			} else if(label === 'audioOn') {
-				OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'audio'});
-			} else if(label === 'audioOff') {
-				OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'audio'});
-			} else if(label === 'videoOn') {
-				OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'video'});
-			} else if(label === 'videoOff') {
-				OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
-			} else if (label === 'nickChanged') {
-				OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.type});
+			if (label === 'status') {
+				if(data.type === 'speaking') {
+					OCA.SpreedMe.speakers.add(peer.id);
+				} else if(data.type === 'stoppedSpeaking') {
+					OCA.SpreedMe.speakers.remove(peer.id);
+				} else if(data.type === 'audioOn') {
+					OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'audio'});
+				} else if(data.type === 'audioOff') {
+					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'audio'});
+				} else if(data.type === 'videoOn') {
+					OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'video'});
+				} else if(data.type === 'videoOff') {
+					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
+				} else if (data.type === 'nickChanged') {
+					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
+				}
+			} else {
+				console.log('Uknown message from %s datachannel', label, data);
 			}
 		});
 
@@ -703,11 +711,11 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('speaking');
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'speaking');
 			$('#localVideoContainer').addClass('speaking');
 		});
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('stoppedSpeaking');
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'stoppedSpeaking');
 			$('#localVideoContainer').removeClass('speaking');
 		});
 
@@ -760,16 +768,16 @@ var spreedPeerConnectionTable = [];
 
 		// Send the audio on and off events via data channel
 		OCA.SpreedMe.webrtc.on('audioOn', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('audioOn');
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'audioOn');
 		});
 		OCA.SpreedMe.webrtc.on('audioOff', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('audioOff');
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'audioOff');
 		});
 		OCA.SpreedMe.webrtc.on('videoOn', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOn');
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'videoOn');
 		});
 		OCA.SpreedMe.webrtc.on('videoOff', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('videoOff');
+			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'videoOff');
 		});
 
 		OCA.SpreedMe.webrtc.on('screenAdded', function(video, peer) {

@@ -633,11 +633,11 @@
 				if (guestName.length > 0 && guestName.length <= 20) {
 					$('#guestName').text(guestName);
 					localStorage.setItem("nick", guestName);
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', guestName);
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', guestName);
 				} else if (lastSavedNick) {
 					$('#guestName').text(t('spreed', 'Guest'));
 					localStorage.removeItem("nick");
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('nickChanged', '');
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', '');
 				}
 			}
 
