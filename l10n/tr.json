@@ -75,6 +75,7 @@
     "UDP and TCP" : "UDP ve TCP",
     "UDP only" : "Yalnız UDP",
     "TCP only" : "Yalnız TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN sunucusu bir güvenlik duvarı arkasındaki katılımcının trafiğini aktarmak için vekil sunucu olarak kullanılır."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN sunucusu bir güvenlik duvarı arkasındaki katılımcının trafiğini aktarmak için vekil sunucu olarak kullanılır.",
+    "The STUN server is used to determine the public address of participants behind a router." : "STUN sunucusu bir yönelticinin arkasındaki katılımcının herkese açık adresinin belirlenmesinde kullanılır."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
