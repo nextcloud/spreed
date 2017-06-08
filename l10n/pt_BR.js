@@ -44,7 +44,7 @@ OC.L10N.register(
     "Your screen" : "Sua tela",
     "{actor} invited you to a private call" : "{actor} convidou você para uma chamada privada",
     "{actor} invited you to a group call" : "{actor} convidou você para uma chamada em grupo",
-    "{actor} invited you to the call {call}" : "{actor} convidou você para para a chamada {call}",
+    "{actor} invited you to the call {call}" : "{actor} convidou você para a chamada {call}",
     "You were invited to a <strong>video call</strong>" : "Você foi convidado para uma <strong>chamada de vídeo</strong>",
     "Video call" : "Vídeo chamada",
     "_%n other guest_::_%n other guests_" : ["%n outro convidado","%n outros convidados"],
@@ -78,6 +78,6 @@ OC.L10N.register(
     "UDP only" : "Somente UDP",
     "TCP only" : "Somente TCP",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN é usado para fazer um proxy do tráfego de participantes por trás de um firewall.",
-    "The STUN server is used to determine the public address of participants behind a router." : "O servidor STUN é usado para determinar o endereço público de participantes por detrás de um roteador."
+    "The STUN server is used to determine the public address of participants behind a router." : "O servidor STUN é usado para determinar o endereço público de participantes detrás de um roteador."
 },
 "nplurals=2; plural=(n > 1);");
