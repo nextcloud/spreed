@@ -53,7 +53,7 @@ OC.L10N.register(
     "Invalid format, must be stunserver:port." : "Ongeldig formaat, moet zijn stunserver:port.",
     "Invalid port specified." : "Ongeldige poort opgegeven.",
     "Invalid protocols specified." : "Ongeldige protocollen opgegeven.",
-    "Saved" : "Bewaard",
+    "Saved" : "Opgeslagen",
     "%s invited you to a private call" : "%s heeft je uitgenodigd voor een privégesprek",
     "{user} invited you to a private call" : "{user} heeft je uitgenodigd voor een privégesprek",
     "%s invited you to a group call: %s" : "%s nodigde je uit voor een groepsgesprek: %s",
@@ -68,15 +68,16 @@ OC.L10N.register(
     "Stop screensharing" : "Stop schemdelen",
     "Smile in 3… 2… 1!" : "Glimlachen over 3... 2... 1!",
     "Choose person …" : "Kies persoon ...",
-    "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig opdat deelnemers met het gesprek kunnen verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
+    "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig om deelnemers met gesprekken te verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
     "STUN server" : "STUN server",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbareIP-adres van deelnemers achter een router vast te stellen.",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
     "TURN server" : "TURN server",
     "TURN server shared secret" : "TURN server gedeeld geheim",
     "TURN server protocols" : "TURN server protocollen",
     "UDP and TCP" : "UDP en TCP",
     "UDP only" : "Alleen udp",
     "TCP only" : "Alleen tcp",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "De TURN server wordt gebruikt om verkeer van personen achter een firewall te proxyen."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "De TURN server wordt gebruikt om verkeer van personen achter een firewall te proxyen.",
+    "The STUN server is used to determine the public address of participants behind a router." : "De STUN server wordt gebruikt om het openbare adres van deelnemers achter een router vast te stellen."
 },
 "nplurals=2; plural=(n != 1);");
