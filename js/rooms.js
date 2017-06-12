@@ -23,7 +23,8 @@
 		showCamera: function() {
 			$('.videoView').removeClass('hidden');
 		},
-		_createRoomSuccessHandle: function(data) {
+		_createRoomSuccessHandle: function(ocsResponse) {
+			var data = ocsResponse.ocs.data;
 			OC.Util.History.pushState({
 				token: data.token
 			}, OC.generateUrl('/call/' + data.token));
@@ -32,26 +33,35 @@
 		createOneToOneVideoCall: function(recipientUserId) {
 			console.log(recipientUserId);
 			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/oneToOne'),
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'oneToOne',
 				type: 'PUT',
 				data: 'targetUserName='+recipientUserId,
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
 				success: _.bind(this._createRoomSuccessHandle, this)
 			});
 		},
 		createGroupVideoCall: function(groupId) {
 			console.log(groupId);
 			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/group'),
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'group',
 				type: 'PUT',
 				data: 'targetGroupName='+groupId,
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
 				success: _.bind(this._createRoomSuccessHandle, this)
 			});
 		},
 		createPublicVideoCall: function() {
 			console.log("Creating a new public room.");
 			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/public'),
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'public',
 				type: 'PUT',
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
 				success: _.bind(this._createRoomSuccessHandle, this)
 			});
 		},
@@ -81,7 +91,10 @@
 		},
 		peers: function(token) {
 			return $.ajax({
-				url: OC.generateUrl('/apps/spreed/api/room/{token}/peers', {token: token})
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/peers'
 			});
 		},
 		ping: function() {
@@ -90,7 +103,7 @@
 			}
 
 			$.post(
-				OC.generateUrl('/apps/spreed/api/ping'),
+				OC.linkToOCS('apps/spreed/api/v1', 2) + 'ping',
 				{
 					token: OCA.SpreedMe.Rooms.currentRoom()
 				}
@@ -108,7 +121,7 @@
 		},
 		leaveAllRooms: function() {
 			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/leave'),
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'leave',
 				method: 'DELETE',
 				async: false
 			});

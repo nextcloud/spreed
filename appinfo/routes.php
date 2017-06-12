@@ -39,86 +39,116 @@ return [
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'api#getRooms',
-			'url' => '/api/room',
-			'verb' => 'GET',
-		],
-		[
-			'name' => 'api#makePublic',
-			'url' => '/api/room/public',
-			'verb' => 'POST',
-		],
-		[
-			'name' => 'api#makePrivate',
-			'url' => '/api/room/public',
-			'verb' => 'DELETE',
-		],
-		[
-			'name' => 'api#getRoom',
-			'url' => '/api/room/{token}',
-			'verb' => 'GET',
-			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
-		],
-		[
-			'name' => 'api#renameRoom',
-			'url' => '/api/room/{roomId}',
-			'verb' => 'PUT',
-			'requirements' => ['roomId' => '\d+'],
-		],
-		[
-			'name' => 'api#addParticipantToRoom',
-			'url' => '/api/room/{roomId}',
-			'verb' => 'POST',
-			'requirements' => ['roomId' => '\d+'],
-		],
-		[
-			'name' => 'api#leaveRoom',
-			'url' => '/api/room/{roomId}',
-			'verb' => 'DELETE',
-			'requirements' => ['roomId' => '\d+'],
-		],
-		[
-			'name' => 'api#getPeersInRoom',
-			'url' => '/api/room/{token}/peers',
-			'verb' => 'GET',
-			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
-		],
-		[
-			'name' => 'api#joinRoom',
-			'url' => '/api/room/{token}/join',
-			'verb' => 'POST',
-			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
-		],
-		[
-			'name' => 'api#ping',
-			'url' => '/api/ping',
-			'verb' => 'POST',
-			'requirements' => ['token' => '^[a-z0-9]{4,30}$'],
-		],
-		[
-			'name' => 'api#leave',
-			'url' => '/api/leave',
-			'verb' => 'DELETE',
-		],
-		[
 			'name' => 'AppSettings#setSpreedSettings',
 			'url' => '/settings/admin',
 			'verb' => 'POST',
 		],
+	],
+	'ocs' => [
+		[
+			'name' => 'api#getRooms',
+			'url' => '/api/{apiVersion}/room',
+			'verb' => 'GET',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'api#makePublic',
+			'url' => '/api/{apiVersion}/room/public',
+			'verb' => 'POST',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'api#makePrivate',
+			'url' => '/api/{apiVersion}/room/public',
+			'verb' => 'DELETE',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'api#getRoom',
+			'url' => '/api/{apiVersion}/room/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'api#renameRoom',
+			'url' => '/api/{apiVersion}/room/{roomId}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'roomId' => '\d+'
+			],
+		],
+		[
+			'name' => 'api#addParticipantToRoom',
+			'url' => '/api/{apiVersion}/room/{roomId}',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'roomId' => '\d+'
+			],
+		],
+		[
+			'name' => 'api#leaveRoom',
+			'url' => '/api/{apiVersion}/room/{roomId}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'roomId' => '\d+'
+			],
+		],
+		[
+			'name' => 'api#getPeersInRoom',
+			'url' => '/api/{apiVersion}/room/{token}/peers',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'api#joinRoom',
+			'url' => '/api/{apiVersion}/room/{token}/join',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'api#ping',
+			'url' => '/api/{apiVersion}/ping',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'api#leave',
+			'url' => '/api/{apiVersion}/leave',
+			'verb' => 'DELETE',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
 		[
 			'name' => 'api#createOneToOneRoom',
-			'url' => '/api/oneToOne',
+			'url' => '/api/{apiVersion}/oneToOne',
 			'verb' => 'PUT',
+			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
 			'name' => 'api#createGroupRoom',
-			'url' => '/api/group',
+			'url' => '/api/{apiVersion}/group',
 			'verb' => 'PUT',
+			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
 			'name' => 'api#createPublicRoom',
-			'url' => '/api/public',
+			'url' => '/api/{apiVersion}/public',
 			'verb' => 'PUT',
+			'requirements' => ['apiVersion' => 'v1'],
 		],
 	],
 ];

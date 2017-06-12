@@ -29,9 +29,9 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IManager as IActivityManager;
-use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\JSONResponse;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCSController;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -42,7 +42,7 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Notification\IManager as INotificationManager;
 
-class ApiController extends Controller {
+class ApiController extends OCSController {
 	/** @var string */
 	private $userId;
 	/** @var IL10N */
@@ -103,7 +103,7 @@ class ApiController extends Controller {
 	 *
 	 * @NoAdminRequired
 	 *
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function getRooms() {
 		$rooms = $this->manager->getRoomsForParticipant($this->userId);
@@ -116,21 +116,21 @@ class ApiController extends Controller {
 			}
 		}
 
-		return new JSONResponse($return);
+		return new DataResponse($return);
 	}
 
 	/**
 	 * @PublicPage
 	 *
 	 * @param string $token
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function getRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			return new JSONResponse($this->formatRoom($room));
+			return new DataResponse($this->formatRoom($room));
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 	}
 
@@ -254,13 +254,13 @@ class ApiController extends Controller {
 	 * @PublicPage
 	 *
 	 * @param string $token
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function getPeersInRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		/** @var array[] $participants */
@@ -289,7 +289,7 @@ class ApiController extends Controller {
 			];
 		}
 
-		return new JSONResponse($result);
+		return new DataResponse($result);
 	}
 
 	/**
@@ -298,20 +298,20 @@ class ApiController extends Controller {
 	 * @NoAdminRequired
 	 *
 	 * @param string $targetUserName
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function createOneToOneRoom($targetUserName) {
 		// Get the user
 		$targetUser = $this->userManager->get($targetUserName);
 		$currentUser = $this->userManager->get($this->userId);
 		if(!($targetUser instanceof IUser)) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
-			return new JSONResponse(['token' => $room->getToken()], Http::STATUS_OK);
+			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
 			$room->addUser($currentUser);
@@ -319,7 +319,7 @@ class ApiController extends Controller {
 			$room->addUser($targetUser);
 			$this->createNotification($currentUser, $targetUser, $room);
 
-			return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
+			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 		}
 	}
 
@@ -329,14 +329,14 @@ class ApiController extends Controller {
 	 * @NoAdminRequired
 	 *
 	 * @param string $targetGroupName
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function createGroupRoom($targetGroupName) {
 		$targetGroup = $this->groupManager->get($targetGroupName);
 		$currentUser = $this->userManager->get($this->userId);
 
 		if(!($targetGroup instanceof IGroup)) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$usersInGroup = $targetGroup->getUsers();
@@ -355,13 +355,13 @@ class ApiController extends Controller {
 			}
 		}
 
-		return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
+		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function createPublicRoom() {
 		$currentUser = $this->userManager->get($this->userId);
@@ -370,7 +370,7 @@ class ApiController extends Controller {
 		$room = $this->manager->createPublicRoom();
 		$room->addUser($currentUser);
 
-		return new JSONResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
+		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
 	/**
@@ -378,23 +378,23 @@ class ApiController extends Controller {
 	 *
 	 * @param int $roomId
 	 * @param string $roomName
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function renameRoom($roomId, $roomName) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		if (strlen($roomName) > 200) {
-			return new JSONResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if (!$room->setName($roomName)) {
-			return new JSONResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
+			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
-		return new JSONResponse([]);
+		return new DataResponse([]);
 	}
 
 	/**
@@ -402,24 +402,24 @@ class ApiController extends Controller {
 	 *
 	 * @param int $roomId
 	 * @param string $newParticipant
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function addParticipantToRoom($roomId, $newParticipant) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$participants = $room->getParticipants();
 		if (isset($participants['users'][$newParticipant])) {
-			return new JSONResponse([]);
+			return new DataResponse([]);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
 		$newUser = $this->userManager->get($newParticipant);
 		if (!$newUser instanceof IUser) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
@@ -429,26 +429,26 @@ class ApiController extends Controller {
 			$room->addUser($newUser);
 			$this->createNotification($currentUser, $newUser, $room);
 
-			return new JSONResponse(['type' => $room->getType()]);
+			return new DataResponse(['type' => $room->getType()]);
 		}
 
 		$room->addUser($newUser);
 		$this->createNotification($currentUser, $newUser, $room);
 
-		return new JSONResponse([]);
+		return new DataResponse([]);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 *
 	 * @param int $roomId
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function leaveRoom($roomId) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
@@ -458,66 +458,66 @@ class ApiController extends Controller {
 			$room->removeUser($currentUser);
 		}
 
-		return new JSONResponse([]);
+		return new DataResponse([]);
 	}
 
 	/**
 	 * @NoAdminRequired
 	 *
 	 * @param int $roomId
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function makePublic($roomId) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($room->getType() !== Room::PUBLIC_CALL) {
 			$room->changeType(Room::PUBLIC_CALL);
 		}
 
-		return new JSONResponse();
+		return new DataResponse();
 	}
 
 	/**
 	 * @NoAdminRequired
 	 *
 	 * @param int $roomId
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function makePrivate($roomId) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$room->changeType(Room::GROUP_CALL);
 		}
 
-		return new JSONResponse();
+		return new DataResponse();
 	}
 
 	/**
 	 * @PublicPage
 	 *
 	 * @param string $token
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function ping($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$sessionId = $this->session->get('spreed-session');
 		$room->ping($this->userId, $sessionId, time());
 
-		return new JSONResponse();
+		return new DataResponse();
 	}
 
 	/**
@@ -525,13 +525,13 @@ class ApiController extends Controller {
 	 * @UseSession
 	 *
 	 * @param string $token
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function joinRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([], Http::STATUS_NOT_FOUND);
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		if ($this->userId !== null) {
@@ -548,7 +548,7 @@ class ApiController extends Controller {
 		$this->session->set('spreed-session', $newSessionId);
 		$room->ping($this->userId, $newSessionId, time());
 
-		return new JSONResponse([
+		return new DataResponse([
 			'sessionId' => $newSessionId,
 		]);
 	}
@@ -557,7 +557,7 @@ class ApiController extends Controller {
 	 * @PublicPage
 	 * @UseSession
 	 *
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function leave() {
 		if ($this->userId !== null) {
@@ -568,7 +568,7 @@ class ApiController extends Controller {
 		}
 
 		$this->session->remove('spreed-session');
-		return new JSONResponse();
+		return new DataResponse();
 	}
 
 	/**

@@ -31,7 +31,15 @@
 		comparator: function(model) {
 			return -(model.get('lastPing'));
 		},
-		url: OC.generateUrl('/apps/spreed/api/room')
+		url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+		/**
+		 * @param result
+		 * @param response
+		 * @returns {Array}
+		 */
+		parse: function(result, response) {
+			return result.ocs.data;
+		}
 	});
 
 	OCA.SpreedMe.Models.RoomCollection = RoomCollection;
