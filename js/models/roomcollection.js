@@ -34,10 +34,9 @@
 		url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 		/**
 		 * @param result
-		 * @param response
 		 * @returns {Array}
 		 */
-		parse: function(result, response) {
+		parse: function(result) {
 			return result.ocs.data;
 		}
 	});
