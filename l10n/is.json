@@ -75,6 +75,7 @@
     "UDP and TCP" : "UDP og TCP",
     "UDP only" : "Aðeins UDP",
     "TCP only" : "Aðeins TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-miðlari er notaður sem milliþjónn umferðar þátttakenda á bak við eldvegg.",
+    "The STUN server is used to determine the public address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini."
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }
