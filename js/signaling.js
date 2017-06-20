@@ -48,7 +48,7 @@
 		this.spreedArrayConnection = [];
 		this._openEventSource();
 
-		window.setInterval(function(){
+		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
 		}.bind(this), 500);
 	}
@@ -61,6 +61,10 @@
 		if (this.source) {
 			this.source.close();
 			this.source = null;
+		}
+		if (this.sendInterval) {
+			window.clearInterval(this.sendInterval);
+			this.sendInterval = null;
 		}
 		SignalingBase.prototype.disconnect.apply(this, arguments);
 	};
