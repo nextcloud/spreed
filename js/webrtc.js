@@ -10,12 +10,8 @@ var spreedPeerConnectionTable = [];
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
-	/**
-	 * @private
-	 */
-	function openEventSource() {
-		// Connect to the messages endpoint and pull for new messages
-		var messageEventSource = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
+	function initWebRTC() {
+		'use strict';
 		var previousUsersInRoom = [];
 		Array.prototype.diff = function(a) {
 			return this.filter(function(i) {
@@ -23,7 +19,8 @@ var spreedPeerConnectionTable = [];
 			});
 		};
 
-		messageEventSource.listen('usersInRoom', function(users) {
+		var signaling = OCA.SpreedMe.createSignalingConnection();
+		signaling.on('usersInRoom', function(users) {
 			var currentUsersInRoom = [];
 			var webrtc = OCA.SpreedMe.webrtc;
 			var currentUser = webrtc.connection.getSessionid();
@@ -88,55 +85,6 @@ var spreedPeerConnectionTable = [];
 			previousUsersInRoom = currentUsersInRoom;
 		});
 
-		messageEventSource.listen('message', function(message) {
-			message = JSON.parse(message);
-			var peers = self.webrtc.getPeers(message.from, message.roomType);
-			var peer;
-
-			if (message.type === 'offer') {
-				if (peers.length) {
-					peers.forEach(function(p) {
-						if (p.sid === message.sid) {
-							peer = p;
-						}
-					});
-				}
-				if (!peer) {
-					peer = self.webrtc.createPeer({
-						id: message.from,
-						sid: message.sid,
-						type: message.roomType,
-						enableDataChannels: true,
-						sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
-						broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
-					});
-					OCA.SpreedMe.webrtc.emit('createdPeer', peer);
-				}
-				peer.handleMessage(message);
-			} else if (peers.length) {
-				peers.forEach(function(peer) {
-					if (message.sid) {
-						if (peer.sid === message.sid) {
-							peer.handleMessage(message);
-						}
-					} else {
-						peer.handleMessage(message);
-					}
-				});
-			}
-		});
-		messageEventSource.listen('__internal__', function(data) {
-			if (data === 'close') {
-				console.log('signaling connection closed - will reopen');
-				setTimeout(openEventSource, 0);
-			}
-		});
-	}
-
-	function initWebRTC() {
-		'use strict';
-		openEventSource();
-
 		var nick = OC.getCurrentUser()['displayName'];
 
 		//Check if there is some nick saved on local storage for guests
@@ -159,7 +107,7 @@ var spreedPeerConnectionTable = [];
 			autoAdjustMic: false,
 			audioFallback: true,
 			detectSpeakingEvents: true,
-			connection: OCA.SpreedMe.XhrConnection,
+			connection: signaling,
 			enableDataChannels: true,
 			nick: nick
 		});
