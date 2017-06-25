@@ -75,6 +75,7 @@
     "UDP and TCP" : "UDP 和 TCP",
     "UDP only" : "仅UDP",
     "TCP only" : "仅TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN服务器是用来为防火墙后面的参与者代理流量的"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN服务器是用来为防火墙后面的参与者代理流量的",
+    "The STUN server is used to determine the public address of participants behind a router." : "STUN服务器是用来鉴定位于其他路由器下层的参与者的公网IP的"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
