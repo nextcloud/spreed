@@ -39,8 +39,8 @@ var sessionId = '';
 							beforeSend: function (request) {
 								request.setRequestHeader('Accept', 'application/json');
 							},
-							success: function (sessionData) {
-								sessionId = sessionData.sessionId;
+							success: function (result) {
+								sessionId = result.ocs.data.sessionId;
 								OCA.SpreedMe.Rooms.peers(data).then(function (result) {
 									var roomDescription = {
 										'clients': {}
