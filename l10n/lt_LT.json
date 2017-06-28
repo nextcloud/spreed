@@ -1,0 +1,25 @@
+{ "translations": {
+    "Video calls" : "Vaizdo skambučiai",
+    "(group)" : "(grupė)",
+    "Waiting for {participantName} to join the call …" : "Laukiama kol {participantName} prisijungs prie skambučio …",
+    "Waiting for others to join the call …" : "Laukiama kol kiti prisijungs prie skambučio …",
+    "Guest" : "Svečias",
+    "Copy" : "Kopijuoti",
+    "Copied!" : "Nukopijuota!",
+    "Not supported!" : "Nepalaikoma!",
+    "Press ⌘-C to copy." : "Norėdami nukopijuoti, paspauskite ⌘-C.",
+    "Saving failed" : "Įrašymas nepavyko",
+    "Rename" : "Pervadinti",
+    "WebRTC is not supported in your browser" : "Jūsų naršyklėje WebRTC nėra palaikoma",
+    "WebRTC is not supported in your browser :-/" : "Jūsų naršyklėje WebRTC nėra palaikoma :-/",
+    ", " : ", ",
+    "Saved" : "Įrašyta",
+    "Fullscreen" : "Visas ekranas",
+    "Mute audio" : "Nutildyti garsą",
+    "STUN server" : "STUN serveris",
+    "TURN server" : "TURN serveris",
+    "UDP and TCP" : "UDP ir TCP",
+    "UDP only" : "Tik UDP",
+    "TCP only" : "Tik TCP"
+},"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);"
+}
