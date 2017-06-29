@@ -245,7 +245,7 @@
 			// This should be the only case
 			if ((this.model.get('type') !== 1) && (roomName.length <= 200)) {
 				$.ajax({
-					url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id'),
 					type: 'PUT',
 					data: 'roomName='+roomName,
 					success: function() {
@@ -260,7 +260,7 @@
 			// This should be the only case
 			if (this.model.get('type') !== 3) {
 				$.ajax({
-					url: OC.generateUrl('/apps/spreed/api/room/public'),
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + 'public',
 					type: 'POST',
 					data: 'roomId='+this.model.get('id'),
 					success: function() {
@@ -275,7 +275,7 @@
 			// This should be the only case
 			if (this.model.get('type') === 3) {
 				$.ajax({
-					url: OC.generateUrl('/apps/spreed/api/room/public'),
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + 'public',
 					type: 'DELETE',
 					data: 'roomId='+this.model.get('id'),
 					success: function() {
@@ -295,7 +295,7 @@
 			this.$el.slideUp();
 
 			$.ajax({
-				url: OC.generateUrl('/apps/spreed/api/room/') + this.model.get('id'),
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id'),
 				type: 'DELETE'
 			});
 		},
@@ -520,7 +520,7 @@
 				var app = OCA.SpreedMe.app;
 
 				$.post(
-				OC.generateUrl('/apps/spreed/api/room/') + _this.model.get('id'),
+					OC.linkToOCS('apps/spreed/api/v1/room', 2) + _this.model.get('id'),
 					{
 						newParticipant: e.val
 					}

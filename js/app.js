@@ -387,9 +387,13 @@
 				});
 			} else {
 				$.ajax({
-					url: OC.generateUrl('/apps/spreed/api/room/') + token,
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token,
 					type: 'GET',
-					success: function(data) {
+					beforeSend: function (request) {
+						request.setRequestHeader('Accept', 'application/json');
+					},
+					success: function(result) {
+						var data = result.ocs.data;
 						self.setRoomMessageForGuest(data.participants);
 						self.setPageTitle(data.displayName);
 						if (Object.keys(data.participants).length > 5) {

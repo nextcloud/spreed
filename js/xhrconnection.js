@@ -33,17 +33,21 @@ var sessionId = '';
 						// The clients will then use the message command to exchange
 						// their signalling information.
 						var callback = arguments[2];
-						$.post(
-							OC.generateUrl('/apps/spreed/api/room/{token}/join', {token: data}),
-							function(sessionData) {
-								sessionId = sessionData.sessionId;
-								OCA.SpreedMe.Rooms.peers(data).then(function(result) {
+						$.ajax({
+							url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + data + '/join',
+							type: 'POST',
+							beforeSend: function (request) {
+								request.setRequestHeader('Accept', 'application/json');
+							},
+							success: function (result) {
+								sessionId = result.ocs.data.sessionId;
+								OCA.SpreedMe.Rooms.peers(data).then(function (result) {
 									var roomDescription = {
 										'clients': {}
 									};
 
-									result.forEach(function(element) {
-										if(sessionId !== element['sessionId']) {
+									result.ocs.data.forEach(function (element) {
+										if (sessionId !== element['sessionId']) {
 											roomDescription['clients'][element['sessionId']] = {
 												'video': true
 											};
@@ -53,7 +57,7 @@ var sessionId = '';
 								});
 
 							}
-						);
+						});
 						break;
 					case 'message':
 						if(data.type === 'answer') {
