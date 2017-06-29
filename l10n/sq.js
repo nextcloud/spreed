@@ -33,6 +33,7 @@ OC.L10N.register(
     "Please use a different browser like Firefox or Chrome" : "Ju lutem zgjidhni një shfletues tjetër si Firefox apo Chrome",
     "Error while accessing microphone & camera" : "gabim ",
     "WebRTC is not supported in your browser :-/" : "WebRTC nuk suportohet nga shfletuesi juaj :-/",
+    "Your screen" : "Ekrani juaj",
     "_%n other guest_::_%n other guests_" : ["%n përdorues të tjerë","%n të tjerë"],
     ", " : ",",
     "Invalid port specified." : "Port i specfikuar në mënyrë të gabuar.",
