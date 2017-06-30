@@ -4,6 +4,7 @@
     "New public call" : "Thirrje e re publike",
     "Screensharing is not supported by your browser." : "Ndarja e erkaneve nuk është e mbështetur nga shfletuesi juaj ",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
+    "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",
     "Waiting for {participantName} to join the call …" : "Duke pritur për {participantName} që ti bashkohet telefonatës ...",
     "Waiting for others to join the call …" : "Duke pritur që të tjerët t'i bashkohen thirrjes ...",
     "Waiting for camera and microphone permissions" : "Duke pritur për autorizimin e kameras dhe mikrofonit ",
