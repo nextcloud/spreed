@@ -82,7 +82,11 @@ class Provider implements IProvider {
 
 		$l = $this->languageFactory->get('spreed', $language);
 
-		$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')));
+		if (method_exists($this->activityManager, 'getRequirePNG') && $this->activityManager->getRequirePNG()) {
+			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
+		} else {
+			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
+		}
 
 		try {
 			$parameters = $event->getSubjectParameters();
