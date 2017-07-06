@@ -71,7 +71,7 @@ class CallProvider implements IProvider {
 		}
 
 		$iconUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('core', 'actions/video.svg'));
-		$callUrl = $this->urlGenerator->linkToRouteAbsolute('spreed.page.index') . '?callUser=' . $uid;
+		$callUrl = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $uid;
 		$action = $this->actionFactory->newLinkAction($iconUrl, $this->l10n->t('Video call'), $callUrl);
 		$entry->addAction($action);
 	}

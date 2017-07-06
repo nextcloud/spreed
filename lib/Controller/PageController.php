@@ -42,7 +42,7 @@ use OCP\Security\ISecureRandom;
 class PageController extends Controller {
 	/** @var string */
 	private $userId;
-	/** @var ApiController */
+	/** @var ManagementController */
 	private $api;
 	/** @var IL10N */
 	private $l10n;
@@ -60,7 +60,7 @@ class PageController extends Controller {
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
-	 * @param ApiController $api
+	 * @param ManagementController $api
 	 * @param string $UserId
 	 * @param IL10N $l10n
 	 * @param ILogger $logger
@@ -71,7 +71,7 @@ class PageController extends Controller {
 	 */
 	public function __construct($appName,
 								IRequest $request,
-								ApiController $api,
+								ManagementController $api,
 								$UserId,
 								IL10N $l10n,
 								ILogger $logger,
@@ -132,7 +132,7 @@ class PageController extends Controller {
 			$response = $this->api->createOneToOneRoom($callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
 				$data = $response->getData();
-				return new RedirectResponse($this->url->linkToRoute('spreed.pagecontroller.showCall', ['token' => $data['token']]));
+				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $data['token']]));
 			}
 		}
 
@@ -161,7 +161,7 @@ class PageController extends Controller {
 			}
 		} catch (RoomNotFoundException $e) {
 			return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
-				'redirect_url' => $this->url->linkToRoute('spreed.page.index', ['token' => $token]),
+				'redirect_url' => $this->url->linkToRoute('spreed.Page.index', ['token' => $token]),
 			]));
 		}
 
@@ -190,13 +190,13 @@ class PageController extends Controller {
 				if ($room->getType() !== Room::PUBLIC_CALL) {
 					throw new RoomNotFoundException();
 				}
-				return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $token]));
+				return new RedirectResponse($this->url->linkToRoute('spreed.Page.index', ['token' => $token]));
 			} catch (RoomNotFoundException $e) {
 				return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
-					'redirect_url' => $this->url->linkToRoute('spreed.page.index', ['token' => $token]),
+					'redirect_url' => $this->url->linkToRoute('spreed.Page.index', ['token' => $token]),
 				]));
 			}
 		}
-		return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $token]));
+		return new RedirectResponse($this->url->linkToRoute('spreed.Page.index', ['token' => $token]));
 	}
 }

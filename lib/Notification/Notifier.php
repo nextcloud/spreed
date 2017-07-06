@@ -92,7 +92,7 @@ class Notifier implements INotifier {
 			$uid = $parameters[0];
 			$notification
 				->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
-				->setLink($this->url->linkToRouteAbsolute('spreed.page.index') . '?token=' . $room->getToken());
+				->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
 
 			if ($notification->getObjectType() === 'room') {
 				$user = $this->userManager->get($uid);
