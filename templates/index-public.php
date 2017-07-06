@@ -17,7 +17,7 @@ script(
 		'views/roomlistview',
 		'simplewebrtc',
 		'webrtc',
-		'xhrconnection',
+		'signaling',
 		'rooms',
 		'app',
 		'init',
