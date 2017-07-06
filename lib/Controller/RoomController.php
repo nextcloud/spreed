@@ -238,7 +238,7 @@ class RoomController extends OCSController {
 	 * @param int $roomId
 	 * @return DataResponse
 	 */
-	public function leaveRoom($roomId) {
+	public function removeSelfFromRoom($roomId) {
 		try {
 			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
 		} catch (RoomNotFoundException $e) {
