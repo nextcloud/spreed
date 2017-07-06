@@ -109,7 +109,7 @@
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			method: 'DELETE',
 			async: false,
-			success: function(ocsResponse) {
+			success: function() {
 				this.currentCallId = null;
 				this.currentCallToken = null;
 			}.bind(this)
@@ -265,7 +265,7 @@
 			defer.resolve();
 		}.bind(this));
 		return defer;
-	}
+	};
 
 	InternalSignaling.prototype.setRoomCollection = function(rooms) {
 		this.roomCollection = rooms;
