@@ -24,7 +24,7 @@
 return [
 	'routes' => [
 		[
-			'name' => 'page#index',
+			'name' => 'Page#index',
 			'url' => '/',
 			'verb' => 'GET',
 		],
@@ -46,25 +46,13 @@ return [
 	],
 	'ocs' => [
 		[
-			'name' => 'api#getRooms',
+			'name' => 'Call#getRooms',
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'GET',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'api#makePublic',
-			'url' => '/api/{apiVersion}/room/public',
-			'verb' => 'POST',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'api#makePrivate',
-			'url' => '/api/{apiVersion}/room/public',
-			'verb' => 'DELETE',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'api#getRoom',
+			'name' => 'Call#getRoom',
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'GET',
 			'requirements' => [
@@ -73,34 +61,7 @@ return [
 			],
 		],
 		[
-			'name' => 'api#renameRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
-			'verb' => 'PUT',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'roomId' => '\d+'
-			],
-		],
-		[
-			'name' => 'api#addParticipantToRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
-			'verb' => 'POST',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'roomId' => '\d+'
-			],
-		],
-		[
-			'name' => 'api#leaveRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
-			'verb' => 'DELETE',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'roomId' => '\d+'
-			],
-		],
-		[
-			'name' => 'api#getPeersInRoom',
+			'name' => 'Call#getPeersInRoom',
 			'url' => '/api/{apiVersion}/room/{token}/peers',
 			'verb' => 'GET',
 			'requirements' => [
@@ -109,7 +70,7 @@ return [
 			],
 		],
 		[
-			'name' => 'api#joinRoom',
+			'name' => 'Call#joinRoom',
 			'url' => '/api/{apiVersion}/room/{token}/join',
 			'verb' => 'POST',
 			'requirements' => [
@@ -118,7 +79,7 @@ return [
 			],
 		],
 		[
-			'name' => 'api#ping',
+			'name' => 'Call#ping',
 			'url' => '/api/{apiVersion}/ping',
 			'verb' => 'POST',
 			'requirements' => [
@@ -127,28 +88,68 @@ return [
 			],
 		],
 		[
-			'name' => 'api#leave',
+			'name' => 'Call#leave',
 			'url' => '/api/{apiVersion}/leave',
 			'verb' => 'DELETE',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
+
 		[
-			'name' => 'api#createOneToOneRoom',
+			'name' => 'Room#createOneToOneRoom',
 			'url' => '/api/{apiVersion}/oneToOne',
 			'verb' => 'PUT',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'api#createGroupRoom',
+			'name' => 'Room#createGroupRoom',
 			'url' => '/api/{apiVersion}/group',
 			'verb' => 'PUT',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'api#createPublicRoom',
+			'name' => 'Room#createPublicRoom',
 			'url' => '/api/{apiVersion}/public',
 			'verb' => 'PUT',
 			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'Room#renameRoom',
+			'url' => '/api/{apiVersion}/room/{roomId}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'roomId' => '\d+'
+			],
+		],
+		[
+			'name' => 'Room#makePublic',
+			'url' => '/api/{apiVersion}/room/public',
+			'verb' => 'POST',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'Room#makePrivate',
+			'url' => '/api/{apiVersion}/room/public',
+			'verb' => 'DELETE',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'Room#addParticipantToRoom',
+			'url' => '/api/{apiVersion}/room/{roomId}',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'roomId' => '\d+'
+			],
+		],
+		[
+			'name' => 'Room#leaveRoom',
+			'url' => '/api/{apiVersion}/room/{roomId}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'roomId' => '\d+'
+			],
 		],
 	],
 ];
