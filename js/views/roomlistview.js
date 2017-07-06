@@ -569,16 +569,9 @@
 				}
 			});
 			this.ui.personSelectorInput.on('change', function(e) {
-				var app = OCA.SpreedMe.app;
-
-				$.post(
-					OC.linkToOCS('apps/spreed/api/v1/room', 2) + _this.model.get('token') + '/participants',
-					{
-						newParticipant: e.val
-					}
-				).done(function() {
-					app.syncRooms();
-				});
+				var token = _this.model.get('token');
+				var participant = e.val;
+				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
 
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);

@@ -5,6 +5,7 @@
 
 	function SignalingBase() {
 		this.sessionId = '';
+		this.currentRoom = null;
 		this.handlers = {};
 	}
 
@@ -41,12 +42,99 @@
 		console.log('disconnect');
 	};
 
+	/* Rooms API */
+
+	SignalingBase.prototype.createOneToOneVideoCall = function(recipientUserId) {
+		var defer = $.Deferred();
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+			type: 'POST',
+			data: {
+				invite: recipientUserId,
+				roomType: 1
+			},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function(ocsResponse) {
+				var data = ocsResponse.ocs.data;
+				defer.resolve(data.token);
+			}
+		});
+		return defer;
+	};
+
+	SignalingBase.prototype.createGroupVideoCall = function(groupId) {
+		var defer = $.Deferred();
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+			type: 'POST',
+			data: {
+				invite: groupId,
+				roomType: 2
+			},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function(ocsResponse) {
+				var data = ocsResponse.ocs.data;
+				defer.resolve(data.token);
+			}
+		});
+		return defer;
+	};
+
+	SignalingBase.prototype.createPublicVideoCall = function() {
+		var defer = $.Deferred();
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+			type: 'POST',
+			data: {
+				roomType: 3
+			},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function(ocsResponse) {
+				var data = ocsResponse.ocs.data;
+				defer.resolve(data.token);
+			}
+		});
+		return defer;
+	};
+
+	SignalingBase.prototype.leaveAllRooms = function() {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			method: 'DELETE',
+			async: false,
+			success: function(ocsResponse) {
+				this.currentRoom = null;
+			}.bind(this)
+		});
+	};
+
+	SignalingBase.prototype.addParticipantToRoom = function(token, participant) {
+		var defer = $.Deferred();
+		$.post(
+			OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
+			{
+				newParticipant: participant
+			}
+		).done(function() {
+			defer.resolve();
+		});
+		return defer;
+	}
 
 	// Connection to the internal signaling server provided by the app.
 	function InternalSignaling() {
 		SignalingBase.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
 		this._openEventSource();
+
+		this.pingFails = 0;
+		this.pingInterval = null;
 
 		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
@@ -112,15 +200,18 @@
 				// The clients will then use the message command to exchange
 				// their signalling information.
 				var callback = arguments[2];
+				var token = data;
 				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + data,
+					url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 					type: 'POST',
 					beforeSend: function (request) {
 						request.setRequestHeader('Accept', 'application/json');
 					},
 					success: function (result) {
 						this.sessionId = result.ocs.data.sessionId;
-						OCA.SpreedMe.Rooms.peers(data).then(function(result) {
+						this.currentRoom = token;
+						this._startPingRoom();
+						this._getRoomPeers(token).then(function(result) {
 							var roomDescription = {
 								'clients': {}
 							};
@@ -137,6 +228,10 @@
 					}.bind(this)
 				});
 				break;
+			case 'leave':
+				this._stopPingRoom();
+				this.currentRoom = null;
+				break;
 			case 'message':
 				if(data.type === 'answer') {
 					console.log("ANSWER", data);
@@ -150,6 +245,18 @@
 				});
 				break;
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	InternalSignaling.prototype._getRoomPeers = function(token) {
+		return $.ajax({
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token
+		});
 	};
 
 	/**
@@ -190,6 +297,52 @@
 			messages: JSON.stringify(this.spreedArrayConnection)
 		});
 		this.spreedArrayConnection = [];
+	};
+
+	/**
+	 * @private
+	 */
+	InternalSignaling.prototype._startPingRoom = function() {
+		this._pingRoom();
+		// Send a ping to the server all 5 seconds to ensure that the connection
+		// is still alive.
+		this.pingInterval = window.setInterval(function() {
+			this._pingRoom();
+		}.bind(this), 5000);
+	};
+
+	/**
+	 * @private
+	 */
+	InternalSignaling.prototype._stopPingRoom = function() {
+		if (this.pingInterval) {
+			window.clearInterval(this.pingInterval);
+			this.pingInterval = null;
+		}
+	};
+
+	/**
+	 * @private
+	 */
+	InternalSignaling.prototype._pingRoom = function() {
+		if (!this.currentRoom) {
+			return;
+		}
+
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentRoom + '/ping',
+			method: 'POST'
+		).done(function() {
+			this.pingFails = 0;
+		}.bind(this)).fail(function(xhr) {
+			// If there is an error when pinging, retry for 3 times.
+			if (xhr.status !== 404 && this.pingFails < 3) {
+				this.pingFails++;
+				return;
+			}
+			OCA.SpreedMe.Rooms.leaveCurrentRoom();
+			OCA.SpreedMe.Rooms.showRoomDeletedMessage(false);
+		}.bind(this));
 	};
 
 	OCA.SpreedMe.createSignalingConnection = function() {

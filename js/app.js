@@ -346,13 +346,6 @@
 				self.syncRooms();
 			}, 10000);
 		},
-		_startPing: function() {
-			// Send a ping to the server all 5 seconds to ensure that the connection is
-			// still alive.
-			setInterval(function() {
-				OCA.SpreedMe.Rooms.ping();
-			}, 5000);
-		},
 		/**
 		 * @param {string} token
 		 */
@@ -362,6 +355,12 @@
 					room.set('active', room.get('token') === token);
 				});
 			}
+		},
+		addParticipantToRoom: function(token, participant) {
+			signaling.addParticipantToRoom(token, participant)
+				.then(function() {
+					this.syncRooms();
+				}.bind(this));
 		},
 		syncRooms: function() {
 			if (oc_current_user) {
@@ -492,7 +491,7 @@
 
 			OCA.SpreedMe.initWebRTC();
 		},
-		startSpreed: function(configuration) {
+		startSpreed: function(configuration, signaling) {
 			console.log('Starting spreed …');
 			var self = this;
 
@@ -503,7 +502,7 @@
 			);
 
 			if (oc_current_user) {
-				OCA.SpreedMe.initRooms();
+				OCA.SpreedMe.initRooms(signaling);
 				OCA.SpreedMe.Rooms.leaveAllRooms();
 			}
 
@@ -531,8 +530,6 @@
 
 				this._pollForRoomChanges();
 			}
-
-			this._startPing();
 
 			this.initAudioVideoSettings(configuration);
 		},
