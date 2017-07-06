@@ -29,6 +29,11 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
+	// These constants must match the values in "lib/Room.php".
+	var ROOM_TYPE_ONE_TO_ONE = 1;
+	var ROOM_TYPE_GROUP_CALL = 2;
+	var ROOM_TYPE_PUBLIC_CALL = 3;
+
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}"><div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
@@ -131,7 +136,7 @@
 			}
 
 			//If the room is not a one2one room, we show tooltip.
-			if (this.model.get('type') !== 1) {
+			if (this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE) {
 				this.addTooltip();
 			}
 
@@ -172,7 +177,7 @@
 			}
 		},
 		checkSharingStatus: function() {
-			if (this.model.get('type') === 1) { // 1on1
+			if (this.model.get('type') === ROOM_TYPE_ONE_TO_ONE) { // 1on1
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
@@ -182,13 +187,13 @@
 						$(a).avatar($(a).data('user'), 32);
 					}
 				});
-			} else if (this.model.get('type') === 2) { // Group
+			} else if (this.model.get('type') === ROOM_TYPE_GROUP_CALL) { // Group
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-public').addClass('icon-contacts-dark');
 				});
-			} else if (this.model.get('type') === 3) { // Public room
+			} else if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) { // Public room
 				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
@@ -243,7 +248,7 @@
 			var app = OCA.SpreedMe.app;
 
 			// This should be the only case
-			if ((this.model.get('type') !== 1) && (roomName.length <= 200)) {
+			if ((this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE) && (roomName.length <= 200)) {
 				$.ajax({
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id'),
 					type: 'PUT',
@@ -258,7 +263,7 @@
 			var app = OCA.SpreedMe.app;
 
 			// This should be the only case
-			if (this.model.get('type') !== 3) {
+			if (this.model.get('type') !== ROOM_TYPE_PUBLIC_CALL) {
 				$.ajax({
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + 'public',
 					type: 'POST',
@@ -273,7 +278,7 @@
 			var app = OCA.SpreedMe.app;
 
 			// This should be the only case
-			if (this.model.get('type') === 3) {
+			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
 				$.ajax({
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + 'public',
 					type: 'DELETE',
@@ -321,7 +326,7 @@
 			participants = this.model.get('participants');
 
 			switch(this.model.get('type')) {
-				case 1:
+				case ROOM_TYPE_ONE_TO_ONE:
 					var waitingParticipantId, waitingParticipantName;
 
 					$.each(participants, function(participantId, participantName) {
@@ -348,7 +353,7 @@
 					message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
 					messageAdditional = '';
 					break;
-				case 2:
+				case ROOM_TYPE_GROUP_CALL:
 					if (Object.keys(participants).length > 1) {
 						message = t('spreed', 'Waiting for others to join the call …');
 						messageAdditional = '';
@@ -358,7 +363,7 @@
 					}
 					$('#emptycontent-icon').addClass('icon-contacts-dark');
 					break;
-				case 3:
+				case ROOM_TYPE_PUBLIC_CALL:
 					if (Object.keys(participants).length > 1) {
 						message = t('spreed', 'Waiting for others to join the call …');
 					} else {
@@ -374,6 +379,7 @@
 					$('#shareRoomClipboardButton').removeClass('hidden');
 					break;
 				default:
+					console.log("Unknown room type", this.model.get('type'));
 					break;
 			}
 
