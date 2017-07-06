@@ -112,9 +112,9 @@
 
 			$('#edit-roomname').on("change", function(e) {
 				if (e.added.type === "user") {
-					OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+					OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
 				} else if (e.added.type === "group") {
-					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
+					OCA.SpreedMe.Calls.createGroupVideoCall(e.val);
 				}
 
 				$('.select2-drop').find('.avatar').each(function () {
@@ -140,7 +140,7 @@
 
 			$('#edit-roomname').on("select2-selecting", function(e) {
 				if (e.object.type === "createPublicRoom") {
-					OCA.SpreedMe.Rooms.createPublicVideoCall();
+					OCA.SpreedMe.Calls.createPublicVideoCall();
 				}
 			});
 
@@ -339,13 +339,6 @@
 				collection: this._rooms
 			});
 		},
-		_pollForRoomChanges: function() {
-			// Load the list of rooms all 10 seconds
-			var self = this;
-			setInterval(function() {
-				self.syncRooms();
-			}, 10000);
-		},
 		/**
 		 * @param {string} token
 		 */
@@ -356,22 +349,17 @@
 				});
 			}
 		},
-		addParticipantToRoom: function(token, participant) {
-			signaling.addParticipantToRoom(token, participant)
-				.then(function() {
-					this.syncRooms();
-				}.bind(this));
+		addParticipantToCall: function(token, participant) {
+			return this.signaling.addParticipantToCall(token, participant);
 		},
 		syncRooms: function() {
-			if (oc_current_user) {
-				this._rooms.fetch();
-			}
+			return this.signaling.syncRooms();
 		},
 		syncAndSetActiveRoom: function(token) {
 			var self = this;
 			if (oc_current_user) {
-				this._rooms.fetch({
-					success: function() {
+				this.syncRooms()
+					.then(function() {
 						roomChannel.trigger('active', token);
 						// Disable video when entering a room with more than 5 participants.
 						self._rooms.forEach(function(room) {
@@ -382,8 +370,7 @@
 								self.setPageTitle(room.get('displayName'));
 							}
 						});
-					}
-				});
+					});
 			} else {
 				$.ajax({
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token,
@@ -494,6 +481,7 @@
 		startSpreed: function(configuration, signaling) {
 			console.log('Starting spreed …');
 			var self = this;
+			this.signaling = signaling;
 
 			this.setEmptyContentMessage(
 				'icon-video',
@@ -502,8 +490,7 @@
 			);
 
 			if (oc_current_user) {
-				OCA.SpreedMe.initRooms(signaling);
-				OCA.SpreedMe.Rooms.leaveAllRooms();
+				OCA.SpreedMe.initCalls(signaling);
 			}
 
 			this._registerPageEvents();
@@ -511,31 +498,28 @@
 
 			var token = $('#app').attr('data-token');
 			if (token) {
-				OCA.SpreedMe.Rooms.join(token);
+				OCA.SpreedMe.Calls.join(token);
 			}
-			OCA.SpreedMe.Rooms.showCamera();
+			OCA.SpreedMe.Calls.showCamera();
 
 			if (oc_current_user) {
 				this._showRoomList();
-				this._rooms.fetch({
-					success: function(data) {
+				this.signaling.setRoomCollection(this._rooms)
+					.then(function(data) {
 						$('#app-navigation').removeClass('icon-loading');
 						self._roomsView.render();
 
 						if (data.length === 0) {
 							$('#edit-roomname').select2('open');
 						}
-					}
-				});
-
-				this._pollForRoomChanges();
+					});
 			}
 
 			this.initAudioVideoSettings(configuration);
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
-				OCA.SpreedMe.Rooms.join(params.token);
+				OCA.SpreedMe.Calls.join(params.token);
 			}
 		},
 		onDocumentClick: function(event) {
@@ -702,5 +686,5 @@
 })(OCA, Marionette, Backbone, _);
 
 $(window).unload(function () {
-	OCA.SpreedMe.Rooms.leaveAllRooms();
+	OCA.SpreedMe.Calls.leaveAllRooms();
 });

@@ -8,7 +8,7 @@
 
 	var signaling;
 
-	function initRooms(signaling_connection) {
+	function initCalls(signaling_connection) {
 		signaling = signaling_connection;
 
 		var editRoomname = $('#edit-roomname');
@@ -16,15 +16,17 @@
 			editRoomname.tooltip('hide');
 			editRoomname.removeClass('error');
 		});
+
+		OCA.SpreedMe.Calls.leaveAllRooms();
 	}
 
 	Backbone.Radio.channel('rooms');
 
-	OCA.SpreedMe.Rooms = {
+	OCA.SpreedMe.Calls = {
 		showCamera: function() {
 			$('.videoView').removeClass('hidden');
 		},
-		_createRoomSuccessHandle: function(token) {
+		_createCallSuccessHandle: function(token) {
 			OC.Util.History.pushState({
 				token: token
 			}, OC.generateUrl('/call/' + token));
@@ -33,20 +35,20 @@
 		createOneToOneVideoCall: function(recipientUserId) {
 			console.log("Creating one-to-one video call", recipientUserId);
 			signaling.createOneToOneVideoCall(recipientUserId)
-				.then(_.bind(this._createRoomSuccessHandle, this));
+				.then(_.bind(this._createCallSuccessHandle, this));
 		},
 		createGroupVideoCall: function(groupId) {
 			console.log("Creating group video call", groupId);
 			signaling.createGroupVideoCall(groupId)
-				.then(_.bind(this._createRoomSuccessHandle, this));
+				.then(_.bind(this._createCallSuccessHandle, this));
 		},
 		createPublicVideoCall: function() {
 			console.log("Creating a new public room.");
 			signaling.createPublicVideoCall()
-				.then(_.bind(this._createRoomSuccessHandle, this));
+				.then(_.bind(this._createCallSuccessHandle, this));
 		},
 		join: function(token) {
-			if (signaling.currentRoom === token) {
+			if (signaling.currentCallToken === token) {
 				return;
 			}
 
@@ -57,10 +59,11 @@
 			OCA.SpreedMe.webrtc.leaveRoom();
 			OCA.SpreedMe.webrtc.joinRoom(token);
 		},
-		leaveCurrentRoom: function() {
+		leaveCurrentCall: function(deleter) {
 			OCA.SpreedMe.webrtc.leaveRoom();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
+			this.showRoomDeletedMessage(deleter);
 		},
 		leaveAllRooms: function() {
 			signaling.leaveAllRooms();
@@ -81,6 +84,6 @@
 		}
 	};
 
-	OCA.SpreedMe.initRooms = initRooms;
+	OCA.SpreedMe.initCalls = initCalls;
 
 })(OCA, OC, $);

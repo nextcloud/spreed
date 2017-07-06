@@ -318,17 +318,18 @@
 		leaveRoom: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
-				OCA.SpreedMe.Rooms.leaveCurrentRoom();
-				OCA.SpreedMe.Rooms.showRoomDeletedMessage(true);
+				OCA.SpreedMe.Calls.leaveCurrentCall(true);
 				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			} else {
+				// TODO(fancycode): When does this happen? The user is in a call
+				// where the call is not active?
+				$.ajax({
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
+					type: 'DELETE'
+				});
 			}
 
 			this.$el.slideUp();
-
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
-				type: 'DELETE'
-			});
 		},
 		deleteRoom: function() {
 			if (this.model.get('participantType') !== 1 &&
@@ -353,7 +354,7 @@
 		joinRoom: function(e) {
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
-			OCA.SpreedMe.Rooms.join(token);
+			OCA.SpreedMe.Calls.join(token);
 
 			OC.Util.History.pushState({
 				token: token
@@ -571,7 +572,7 @@
 			this.ui.personSelectorInput.on('change', function(e) {
 				var token = _this.model.get('token');
 				var participant = e.val;
-				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
+				OCA.SpreedMe.app.addParticipantToCall(token, participant);
 
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
