@@ -70,7 +70,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Call#joinRoom',
+			'name' => 'Call#joinCall',
 			'url' => '/api/{apiVersion}/room/{token}/join',
 			'verb' => 'POST',
 			'requirements' => [
@@ -88,7 +88,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Call#leave',
+			'name' => 'Call#leaveCall',
 			'url' => '/api/{apiVersion}/leave',
 			'verb' => 'DELETE',
 			'requirements' => ['apiVersion' => 'v1'],
@@ -143,7 +143,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#leaveRoom',
+			'name' => 'Room#removeSelfFromRoom',
 			'url' => '/api/{apiVersion}/room/{roomId}',
 			'verb' => 'DELETE',
 			'requirements' => [

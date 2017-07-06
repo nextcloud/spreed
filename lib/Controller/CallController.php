@@ -275,31 +275,12 @@ class CallController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
-	public function ping($token) {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$sessionId = $this->session->get('spreed-session');
-		$room->ping($this->userId, $sessionId, time());
-
-		return new DataResponse();
-	}
-
-	/**
-	 * @PublicPage
 	 * @UseSession
 	 *
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function joinRoom($token) {
+	public function joinCall($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
@@ -327,11 +308,30 @@ class CallController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function ping($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$sessionId = $this->session->get('spreed-session');
+		$room->ping($this->userId, $sessionId, time());
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
 	 * @UseSession
 	 *
 	 * @return DataResponse
 	 */
-	public function leave() {
+	public function leaveCall() {
 		if ($this->userId !== null) {
 			$this->manager->disconnectUserFromAllRooms($this->userId);
 		} else {
