@@ -79,7 +79,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Call#ping',
+			'name' => 'Call#pingCall',
 			'url' => '/api/{apiVersion}/ping',
 			'verb' => 'POST',
 			'requirements' => [
