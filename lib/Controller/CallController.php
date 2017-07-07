@@ -125,10 +125,7 @@ class CallController extends OCSController {
 		/** @var array[] $participants */
 		$participants = $room->getParticipants();
 		$sortParticipants = function(array $participant1, array $participant2) {
-			if ($participant1['lastPing'] === $participant2['lastPing']) {
-				return 0;
-			}
-			return ($participant1['lastPing'] > $participant2['lastPing']) ? -1 : 1;
+			return $participant2['lastPing'] - $participant1['lastPing'];
 		};
 		uasort($participants['users'], $sortParticipants);
 		uasort($participants['guests'], $sortParticipants);
@@ -312,7 +309,7 @@ class CallController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function ping($token) {
+	public function pingCall($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
