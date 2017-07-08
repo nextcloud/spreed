@@ -49,6 +49,9 @@ class Room {
 	/** @var string */
 	private $name;
 
+	/** @var Participant */
+	protected $participant;
+
 	/**
 	 * Room constructor.
 	 *
@@ -94,6 +97,40 @@ class Room {
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function setParticipant(Participant $participant) {
+		$this->participant = $participant;
+	}
+
+	/**
+	 * @param string $userId
+	 * @return Participant
+	 * @throws \RuntimeException When the user is not a participant
+	 */
+	public function getParticipant($userId) {
+		if ($this->participant instanceof Participant) {
+			return $this->participant;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId())));
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new \RuntimeException('User is not a participant');
+		}
+
+		$this->participant = new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+		return $this->participant;
 	}
 
 	public function deleteRoom() {

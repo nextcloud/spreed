@@ -354,8 +354,15 @@ class RoomController extends OCSController {
 	public function renameRoom($token, $roomName) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if (strlen($roomName) > 200) {
@@ -378,8 +385,15 @@ class RoomController extends OCSController {
 	public function addParticipantToRoom($token, $newParticipant) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$participants = $room->getParticipants();
@@ -441,8 +455,15 @@ class RoomController extends OCSController {
 	public function makePublic($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($room->getType() !== Room::PUBLIC_CALL) {
@@ -461,8 +482,15 @@ class RoomController extends OCSController {
 	public function makePrivate($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($room->getType() === Room::PUBLIC_CALL) {

@@ -23,9 +23,57 @@
 
 namespace OCA\Spreed;
 
+use OCP\IDBConnection;
+
 class Participant {
 	const OWNER = 1;
 	const MODERATOR = 2;
 	const USER = 3;
 	const GUEST = 4;
+
+	/** @var IDBConnection */
+	protected $db;
+	/** @var Room */
+	protected $room;
+	/** @var string */
+	protected $user;
+	/** @var int */
+	protected $participantType;
+	/** @var int */
+	protected $lastPing;
+	/** @var string */
+	protected $sessionId;
+
+	/**
+	 * @param IDBConnection $db
+	 * @param Room $room
+	 * @param string $user
+	 * @param int $participantType
+	 * @param int $lastPing
+	 * @param string $sessionId
+	 */
+	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId) {
+		$this->db = $db;
+		$this->room = $room;
+		$this->user = $user;
+		$this->participantType = $participantType;
+		$this->lastPing = $lastPing;
+		$this->sessionId = $sessionId;
+	}
+
+	public function getUser() {
+		return $this->user;
+	}
+
+	public function getParticipantType() {
+		return $this->participantType;
+	}
+
+	public function getLastPing() {
+		return $this->lastPing;
+	}
+
+	public function getSessionId() {
+		return $this->sessionId;
+	}
 }
