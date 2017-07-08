@@ -27,6 +27,7 @@ namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Http;
@@ -285,9 +286,9 @@ class RoomController extends OCSController {
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
-			$room->addUser($currentUser);
+			$room->addParticipant($currentUser, Participant::OWNER);
 
-			$room->addUser($targetUser);
+			$room->addParticipant($targetUser, Participant::OWNER);
 			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -310,20 +311,19 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$usersInGroup = $targetGroup->getUsers();
-		// If the user who is creating this call is not part of this group add them
-		if (!$targetGroup->inGroup($currentUser)) {
-			$usersInGroup[] = $currentUser;
-		}
-
 		// Create the room
 		$room = $this->manager->createGroupRoom($targetGroup->getGID());
-		foreach ($usersInGroup as $user) {
-			$room->addUser($user);
+		$room->addParticipant($currentUser, Participant::OWNER);
 
-			if ($currentUser->getUID() !== $user->getUID()) {
-				$this->createNotification($currentUser, $user, $room);
+		$usersInGroup = $targetGroup->getUsers();
+		foreach ($usersInGroup as $user) {
+			if ($currentUser->getUID() === $user->getUID()) {
+				// Owner is already added.
+				continue;
 			}
+
+			$room->addUser($user);
+			$this->createNotification($currentUser, $user, $room);
 		}
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -339,7 +339,7 @@ class RoomController extends OCSController {
 
 		// Create the room
 		$room = $this->manager->createPublicRoom();
-		$room->addUser($currentUser);
+		$room->addParticipant($currentUser, Participant::OWNER);
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}

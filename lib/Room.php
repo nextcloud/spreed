@@ -171,14 +171,15 @@ class Room {
 	 * @param IUser $user
 	 */
 	public function addUser(IUser $user) {
-		$this->addParticipant($user->getUID());
+		$this->addParticipant($user->getUID(), Participant::USER);
 	}
 
 	/**
 	 * @param string $participant
+	 * @param int $participantType
 	 * @param string $sessionId
 	 */
-	public function addParticipant($participant, $sessionId = '0') {
+	public function addParticipant($participant, $participantType, $sessionId = '0') {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('spreedme_room_participants')
 			->values(
@@ -187,6 +188,7 @@ class Room {
 					'roomId' => $query->createNamedParameter($this->getId()),
 					'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
 					'sessionId' => $query->createNamedParameter($sessionId),
+					'participantType' => $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT),
 				]
 			);
 		$query->execute();
@@ -249,6 +251,7 @@ class Room {
 			'roomId' => $this->getId(),
 			'lastPing' => 0,
 			'sessionId' => $sessionId,
+			'participantType' => Participant::GUEST,
 		], ['sessionId'])) {
 			$sessionId = $this->secureRandom->generate(255);
 		}
