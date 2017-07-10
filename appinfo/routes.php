@@ -46,21 +46,6 @@ return [
 	],
 	'ocs' => [
 		[
-			'name' => 'Call#getRooms',
-			'url' => '/api/{apiVersion}/room',
-			'verb' => 'GET',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'Call#getRoom',
-			'url' => '/api/{apiVersion}/room/{token}',
-			'verb' => 'GET',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
 			'name' => 'Call#getPeersInRoom',
 			'url' => '/api/{apiVersion}/room/{token}/peers',
 			'verb' => 'GET',
@@ -94,6 +79,21 @@ return [
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 
+		[
+			'name' => 'Room#getRooms',
+			'url' => '/api/{apiVersion}/room',
+			'verb' => 'GET',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
+			'name' => 'Room#getRoom',
+			'url' => '/api/{apiVersion}/room/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 		[
 			'name' => 'Room#createOneToOneRoom',
 			'url' => '/api/{apiVersion}/oneToOne',
