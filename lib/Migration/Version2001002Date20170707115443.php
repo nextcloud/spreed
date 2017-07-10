@@ -24,10 +24,24 @@ namespace OCA\Spreed\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version2001002Date20170707115443 extends SimpleMigrationStep {
+
+	/** @var IDBConnection */
+	protected $db;
+
+	/**
+	 * @param IDBConnection $db
+	 */
+	public function __construct(IDBConnection $db) {
+		$this->db = $db;
+	}
 
 	/**
 	 * @param IOutput $output
@@ -65,5 +79,52 @@ class Version2001002Date20170707115443 extends SimpleMigrationStep {
 	 * @since 13.0.0
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+		$query = $this->db->getQueryBuilder();
+
+		$query->select('id')
+			->from('spreedme_rooms')
+			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL)));
+		$result = $query->execute();
+
+		$one2oneRooms = [];
+		while ($row = $result->fetch()) {
+			$one2oneRooms[] = (int) $row['id'];
+		}
+		$result->closeCursor();
+
+		$owners = $this->makeOne2OneParticipantsOwners($one2oneRooms);
+		$output->info('Made ' . $owners . ' users owner of their one2one calls');
+
+		$moderators = $this->makeGroupParticipantsModerators($one2oneRooms);
+		$output->info('Made ' . $moderators . ' users moderators in group calls');
+	}
+
+	/**
+	 * @param int[] $one2oneRooms List of one2one room ids
+	 * @return int Number of updated participants
+	 */
+	protected function makeOne2OneParticipantsOwners(array $one2oneRooms) {
+		$update = $this->db->getQueryBuilder();
+
+		$update->update('spreedme_room_participants')
+			->set('participantType', $update->createNamedParameter(Participant::OWNER))
+			->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return $update->execute();
+	}
+
+	/**
+	 * @param int[] $one2oneRooms List of one2one room ids which should not be touched
+	 * @return int Number of updated participants
+	 */
+	protected function makeGroupParticipantsModerators(array $one2oneRooms) {
+		$update = $this->db->getQueryBuilder();
+
+		$update->update('spreedme_room_participants')
+			->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
+			->where($update->expr()->neq('userId', $update->createNamedParameter('')))
+			->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		return $update->execute();
 	}
 }
