@@ -148,6 +148,24 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Room#promoteModerator',
+			'url' => '/api/{apiVersion}/room/{token}/moderators',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#demoteModerator',
+			'url' => '/api/{apiVersion}/room/{token}/moderators',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 	],
 ];
 

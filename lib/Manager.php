@@ -69,7 +69,8 @@ class Manager {
 		while ($row = $result->fetch()) {
 			$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 			if ($participant !== null && isset($row['userId'])) {
-				$room->setParticipant(new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
+				$room->setParticipant($row['userId'],
+					new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
 			}
 			$rooms[] = $room;
 		}
@@ -111,7 +112,8 @@ class Manager {
 
 		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 		if ($participant !== null && isset($row['userId'])) {
-			$room->setParticipant(new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
+			$room->setParticipant($row['userId'],
+				new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
 		}
 
 		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
@@ -155,7 +157,8 @@ class Manager {
 
 		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 		if ($participant !== null && isset($row['userId'])) {
-			$room->setParticipant(new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
+			$room->setParticipant($row['userId'],
+				new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
 		}
 
 		if ($room->getType() === Room::PUBLIC_CALL) {

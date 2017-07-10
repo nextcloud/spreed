@@ -501,6 +501,78 @@ class RoomController extends OCSController {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function promoteModerator($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipant($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($targetParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([''], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$room->setParticipantType($participant, Participant::MODERATOR);
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function demoteModerator($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipant($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($targetParticipant->getParticipantType() !== Participant::MODERATOR) {
+			return new DataResponse([''], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$room->setParticipantType($participant, Participant::USER);
+
+		return new DataResponse();
+	}
+
+	/**
 	 * @param IUser $actor
 	 * @param IUser $user
 	 * @param Room $room

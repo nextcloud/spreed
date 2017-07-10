@@ -49,6 +49,8 @@ class Room {
 	/** @var string */
 	private $name;
 
+	/** @var string */
+	protected $currentUser;
 	/** @var Participant */
 	protected $participant;
 
@@ -100,9 +102,11 @@ class Room {
 	}
 
 	/**
+	 * @param string $userId
 	 * @param Participant $participant
 	 */
-	public function setParticipant(Participant $participant) {
+	public function setParticipant($userId, Participant $participant) {
+		$this->currentUser = $userId;
 		$this->participant = $participant;
 	}
 
@@ -112,7 +116,11 @@ class Room {
 	 * @throws \RuntimeException When the user is not a participant
 	 */
 	public function getParticipant($userId) {
-		if ($this->participant instanceof Participant) {
+		if (!is_string($userId) || $userId === '') {
+			throw new \RuntimeException('Not a user');
+		}
+
+		if ($this->currentUser === $userId && $this->participant instanceof Participant) {
 			return $this->participant;
 		}
 
@@ -129,8 +137,12 @@ class Room {
 			throw new \RuntimeException('User is not a participant');
 		}
 
-		$this->participant = new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
-		return $this->participant;
+		if ($this->currentUser === $userId) {
+			$this->participant = new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+			return $this->participant;
+		}
+
+		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
 	}
 
 	public function deleteRoom() {
@@ -228,6 +240,19 @@ class Room {
 					'participantType' => $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT),
 				]
 			);
+		$query->execute();
+	}
+
+	/**
+	 * @param string $participant
+	 * @param int $participantType
+	 */
+	public function setParticipantType($participant, $participantType) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_room_participants')
+			->set('participantType', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($participant)));
 		$query->execute();
 	}
 
