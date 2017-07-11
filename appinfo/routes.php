@@ -46,7 +46,7 @@ return [
 	],
 	'ocs' => [
 		[
-			'name' => 'Call#getPeersInRoom',
+			'name' => 'Call#getPeersForCall',
 			'url' => '/api/{apiVersion}/room/{token}/peers',
 			'verb' => 'GET',
 			'requirements' => [

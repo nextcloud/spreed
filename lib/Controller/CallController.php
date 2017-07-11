@@ -71,7 +71,7 @@ class CallController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getPeersInRoom($token) {
+	public function getPeersForCall($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
