@@ -32,7 +32,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -42,10 +41,8 @@ use OCP\Security\ISecureRandom;
 class PageController extends Controller {
 	/** @var string */
 	private $userId;
-	/** @var ManagementController */
+	/** @var RoomController */
 	private $api;
-	/** @var IL10N */
-	private $l10n;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -60,9 +57,8 @@ class PageController extends Controller {
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
-	 * @param ManagementController $api
+	 * @param RoomController $api
 	 * @param string $UserId
-	 * @param IL10N $l10n
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param ISecureRandom $secureRandom
@@ -71,9 +67,8 @@ class PageController extends Controller {
 	 */
 	public function __construct($appName,
 								IRequest $request,
-								ManagementController $api,
+								RoomController $api,
 								$UserId,
-								IL10N $l10n,
 								ILogger $logger,
 								Manager $manager,
 								ISecureRandom $secureRandom,
@@ -82,7 +77,6 @@ class PageController extends Controller {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->api = $api;
-		$this->l10n = $l10n;
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->secureRandom = $secureRandom;
