@@ -123,19 +123,19 @@ return [
 		],
 		[
 			'name' => 'Room#makePublic',
-			'url' => '/api/{apiVersion}/room/public',
+			'url' => '/api/{apiVersion}/room/{roomId}/public',
 			'verb' => 'POST',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
 			'name' => 'Room#makePrivate',
-			'url' => '/api/{apiVersion}/room/public',
+			'url' => '/api/{apiVersion}/room/{roomId}/public',
 			'verb' => 'DELETE',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
 			'name' => 'Room#addParticipantToRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
+			'url' => '/api/{apiVersion}/room/{roomId}/participants',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -144,7 +144,7 @@ return [
 		],
 		[
 			'name' => 'Room#removeSelfFromRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
+			'url' => '/api/{apiVersion}/room/{roomId}/participants/self',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',
