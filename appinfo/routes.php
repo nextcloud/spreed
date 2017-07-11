@@ -29,12 +29,12 @@ return [
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'signalling#signalling',
+			'name' => 'Signalling#signalling',
 			'url' => '/signalling',
 			'verb' => 'POST',
 		],
 		[
-			'name' => 'signalling#pullMessages',
+			'name' => 'Signalling#pullMessages',
 			'url' => '/messages',
 			'verb' => 'GET',
 		],
