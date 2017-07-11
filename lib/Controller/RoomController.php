@@ -286,9 +286,9 @@ class RoomController extends OCSController {
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
-			$room->addParticipant($currentUser, Participant::OWNER);
+			$room->addParticipant($currentUser->getUID(), Participant::OWNER);
 
-			$room->addParticipant($targetUser, Participant::OWNER);
+			$room->addParticipant($targetUser->getUID(), Participant::OWNER);
 			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -313,7 +313,7 @@ class RoomController extends OCSController {
 
 		// Create the room
 		$room = $this->manager->createGroupRoom($targetGroup->getGID());
-		$room->addParticipant($currentUser, Participant::OWNER);
+		$room->addParticipant($currentUser->getUID(), Participant::OWNER);
 
 		$usersInGroup = $targetGroup->getUsers();
 		foreach ($usersInGroup as $user) {
@@ -335,11 +335,9 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	protected function createPublicRoom() {
-		$currentUser = $this->userManager->get($this->userId);
-
 		// Create the room
 		$room = $this->manager->createPublicRoom();
-		$room->addParticipant($currentUser, Participant::OWNER);
+		$room->addParticipant($this->userId, Participant::OWNER);
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
