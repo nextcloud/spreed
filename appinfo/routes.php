@@ -47,7 +47,7 @@ return [
 	'ocs' => [
 		[
 			'name' => 'Call#getPeersForCall',
-			'url' => '/api/{apiVersion}/room/{token}/peers',
+			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -56,7 +56,7 @@ return [
 		],
 		[
 			'name' => 'Call#joinCall',
-			'url' => '/api/{apiVersion}/room/{token}/join',
+			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -65,8 +65,8 @@ return [
 		],
 		[
 			'name' => 'Call#pingCall',
-			'url' => '/api/{apiVersion}/ping',
-			'verb' => 'POST',
+			'url' => '/api/{apiVersion}/call/{token}',
+			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
@@ -74,7 +74,7 @@ return [
 		],
 		[
 			'name' => 'Call#leaveCall',
-			'url' => '/api/{apiVersion}/leave',
+			'url' => '/api/{apiVersion}/call',
 			'verb' => 'DELETE',
 			'requirements' => ['apiVersion' => 'v1'],
 		],

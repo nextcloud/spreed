@@ -94,7 +94,7 @@
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/peers'
+				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token
 			});
 		},
 		ping: function() {
@@ -102,12 +102,10 @@
 				return;
 			}
 
-			$.post(
-				OC.linkToOCS('apps/spreed/api/v1', 2) + 'ping',
-				{
-					token: OCA.SpreedMe.Rooms.currentRoom()
-				}
-			).done(function() {
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + OCA.SpreedMe.Rooms.currentRoom(),
+				method: 'PUT'
+			}).done(function() {
 				pingFails = 0;
 			}).fail(function(xhr) {
 				// If there is an error when pinging, retry for 3 times.
@@ -121,7 +119,7 @@
 		},
 		leaveAllRooms: function() {
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'leave',
+				url: OC.linkToOCS('apps/spreed/api/v1/call', 2),
 				method: 'DELETE',
 				async: false
 			});
