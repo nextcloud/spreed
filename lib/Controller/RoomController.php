@@ -425,6 +425,47 @@ class RoomController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function removeParticipantFromRoom($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$room->deleteRoom();
+			return new DataResponse([]);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipant($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($targetParticipant->getParticipantType() === Participant::OWNER) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$targetUser = $this->userManager->get($participant);
+		$room->removeUser($targetUser);
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
 	 * @return DataResponse
 	 */
 	public function removeSelfFromRoom($token) {
@@ -526,7 +567,7 @@ class RoomController extends OCSController {
 		}
 
 		if (!in_array($targetParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
-			return new DataResponse([''], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$room->setParticipantType($participant, Participant::MODERATOR);
@@ -562,7 +603,7 @@ class RoomController extends OCSController {
 		}
 
 		if ($targetParticipant->getParticipantType() !== Participant::MODERATOR) {
-			return new DataResponse([''], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
 		}
 
 		$room->setParticipantType($participant, Participant::USER);

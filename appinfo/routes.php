@@ -140,6 +140,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#removeParticipantFromRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#removeSelfFromRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/self',
 			'verb' => 'DELETE',
