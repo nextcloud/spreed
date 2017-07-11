@@ -246,10 +246,32 @@ class RoomController extends OCSController {
 	 *
 	 * @NoAdminRequired
 	 *
+	 * @param int $roomType
+	 * @param string $invite
+	 * @return DataResponse
+	 */
+	public function createRoom($roomType, $invite = '') {
+		switch ((int) $roomType) {
+			case Room::ONE_TO_ONE_CALL:
+				return $this->createOneToOneRoom($invite);
+			case Room::GROUP_CALL:
+				return $this->createGroupRoom($invite);
+			case Room::PUBLIC_CALL:
+				return $this->createPublicRoom();
+		}
+
+		return new DataResponse([], Http::STATUS_BAD_REQUEST);
+	}
+
+	/**
+	 * Initiates a one-to-one video call from the current user to the recipient
+	 *
+	 * @NoAdminRequired
+	 *
 	 * @param string $targetUserName
 	 * @return DataResponse
 	 */
-	public function createOneToOneRoom($targetUserName) {
+	protected function createOneToOneRoom($targetUserName) {
 		// Get the user
 		$targetUser = $this->userManager->get($targetUserName);
 		$currentUser = $this->userManager->get($this->userId);
@@ -280,7 +302,7 @@ class RoomController extends OCSController {
 	 * @param string $targetGroupName
 	 * @return DataResponse
 	 */
-	public function createGroupRoom($targetGroupName) {
+	protected function createGroupRoom($targetGroupName) {
 		$targetGroup = $this->groupManager->get($targetGroupName);
 		$currentUser = $this->userManager->get($this->userId);
 
@@ -312,7 +334,7 @@ class RoomController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function createPublicRoom() {
+	protected function createPublicRoom() {
 		$currentUser = $this->userManager->get($this->userId);
 
 		// Create the room

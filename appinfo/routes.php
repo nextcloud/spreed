@@ -95,21 +95,9 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#createOneToOneRoom',
-			'url' => '/api/{apiVersion}/oneToOne',
-			'verb' => 'PUT',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'Room#createGroupRoom',
-			'url' => '/api/{apiVersion}/group',
-			'verb' => 'PUT',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'Room#createPublicRoom',
-			'url' => '/api/{apiVersion}/public',
-			'verb' => 'PUT',
+			'name' => 'Room#createRoom',
+			'url' => '/api/{apiVersion}/room',
+			'verb' => 'POST',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[

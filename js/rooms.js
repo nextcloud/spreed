@@ -33,9 +33,12 @@
 		createOneToOneVideoCall: function(recipientUserId) {
 			console.log(recipientUserId);
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'oneToOne',
-				type: 'PUT',
-				data: 'targetUserName='+recipientUserId,
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+				type: 'POST',
+				data: {
+					invite: recipientUserId,
+					roomType: 1
+				},
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
@@ -45,9 +48,12 @@
 		createGroupVideoCall: function(groupId) {
 			console.log(groupId);
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'group',
-				type: 'PUT',
-				data: 'targetGroupName='+groupId,
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+				type: 'POST',
+				data: {
+					invite: groupId,
+					roomType: 2
+				},
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
@@ -57,8 +63,11 @@
 		createPublicVideoCall: function() {
 			console.log("Creating a new public room.");
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'public',
-				type: 'PUT',
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+				type: 'POST',
+				data: {
+					roomType: 3
+				},
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
