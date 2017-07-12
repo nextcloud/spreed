@@ -347,13 +347,13 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @param string $roomName
 	 * @return DataResponse
 	 */
-	public function renameRoom($roomId, $roomName) {
+	public function renameRoom($token, $roomName) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -371,13 +371,13 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
-	public function addParticipantToRoom($roomId, $newParticipant) {
+	public function addParticipantToRoom($token, $newParticipant) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -412,12 +412,12 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function removeSelfFromRoom($roomId) {
+	public function removeSelfFromRoom($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -435,12 +435,12 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function makePublic($roomId) {
+	public function makePublic($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -455,12 +455,12 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function makePrivate($roomId) {
+	public function makePrivate($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}

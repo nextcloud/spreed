@@ -89,6 +89,12 @@ return [
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
+			'name' => 'Room#createRoom',
+			'url' => '/api/{apiVersion}/room',
+			'verb' => 'POST',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+		[
 			'name' => 'Room#getRoom',
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'GET',
@@ -98,48 +104,48 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#createRoom',
-			'url' => '/api/{apiVersion}/room',
-			'verb' => 'POST',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
 			'name' => 'Room#renameRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
+			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'roomId' => '\d+'
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
 			'name' => 'Room#makePublic',
-			'url' => '/api/{apiVersion}/room/{roomId}/public',
-			'verb' => 'POST',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'Room#makePrivate',
-			'url' => '/api/{apiVersion}/room/{roomId}/public',
-			'verb' => 'DELETE',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'Room#addParticipantToRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}/participants',
+			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'roomId' => '\d+'
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#makePrivate',
+			'url' => '/api/{apiVersion}/room/{token}/public',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#addParticipantToRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
 			'name' => 'Room#removeSelfFromRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}/participants/self',
+			'url' => '/api/{apiVersion}/room/{token}/participants/self',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'roomId' => '\d+'
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 	],

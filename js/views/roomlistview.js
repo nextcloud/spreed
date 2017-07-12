@@ -250,7 +250,7 @@
 			// This should be the only case
 			if ((this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE) && (roomName.length <= 200)) {
 				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id'),
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
 					type: 'PUT',
 					data: 'roomName='+roomName,
 					success: function() {
@@ -265,7 +265,7 @@
 			// This should be the only case
 			if (this.model.get('type') !== ROOM_TYPE_PUBLIC_CALL) {
 				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id') + '/public',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
 					type: 'POST',
 					success: function() {
 						app.syncRooms();
@@ -279,7 +279,7 @@
 			// This should be the only case
 			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
 				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id') + '/public',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
 					type: 'DELETE',
 					success: function() {
 						app.syncRooms();
@@ -298,7 +298,7 @@
 			this.$el.slideUp();
 
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('id') + '/participants/self',
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
 				type: 'DELETE'
 			});
 		},
@@ -524,7 +524,7 @@
 				var app = OCA.SpreedMe.app;
 
 				$.post(
-					OC.linkToOCS('apps/spreed/api/v1/room', 2) + _this.model.get('id') + '/participants',
+					OC.linkToOCS('apps/spreed/api/v1/room', 2) + _this.model.get('token') + '/participants',
 					{
 						newParticipant: e.val
 					}
