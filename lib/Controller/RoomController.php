@@ -145,11 +145,21 @@ class RoomController extends OCSController {
 		uasort($participants['guests'], $sortParticipants);
 
 		$participantList = [];
-		foreach ($participants['users'] as $participant => $lastPing) {
+		foreach ($participants['users'] as $participant => $data) {
 			$user = $this->userManager->get($participant);
 			if ($user instanceof IUser) {
-				$participantList[$participant] = $user->getDisplayName();
+				$participantList[$participant] = [
+					'name' => $user->getDisplayName(),
+					'type' => $data['participantType'],
+				];
 			}
+		}
+
+		try {
+			$participant = $room->getParticipant($this->userId);
+			$participantType = $participant->getParticipantType();
+		} catch (\RuntimeException $e) {
+			$participantType = Participant::GUEST;
 		}
 
 		$roomData = [
@@ -162,6 +172,7 @@ class RoomController extends OCSController {
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
 			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
+			'participantType' => $participantType,
 			'participants' => $participantList,
 		];
 
@@ -191,7 +202,7 @@ class RoomController extends OCSController {
 					// Only one other participant
 					reset($participantList);
 					$roomData['name'] = key($participantList);
-					$roomData['displayName'] = $participantList[$roomData['name']];
+					$roomData['displayName'] = $participantList[$roomData['name']]['name'];
 				} else {
 					// Invalid user count, there must be exactly 2 users in each one2one room
 					$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
@@ -214,6 +225,7 @@ class RoomController extends OCSController {
 			case Room::GROUP_CALL:
 				if ($room->getName() === '') {
 					// As name of the room use the names of the other participants
+					$participantList = array_values($participantList);
 					if ($this->userId === null) {
 						$participantList[] = $this->l10n->t('You');
 					} else if ($numOtherParticipants === 0) {

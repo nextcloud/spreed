@@ -327,10 +327,10 @@
 				case ROOM_TYPE_ONE_TO_ONE:
 					var waitingParticipantId, waitingParticipantName;
 
-					$.each(participants, function(participantId, participantName) {
+					$.each(participants, function(participantId, data) {
 						if (oc_current_user !== participantId) {
 							waitingParticipantId = participantId;
-							waitingParticipantName = participantName;
+							waitingParticipantName = data.name;
 						}
 					});
 
@@ -386,9 +386,9 @@
 		},
 		addTooltip: function () {
 			var participants = [];
-			$.each(this.model.get('participants'), function(participantId, participantName) {
+			$.each(this.model.get('participants'), function(participantId, data) {
 				if (participantId !== oc_current_user) {
-					participants.push(escapeHTML(participantName));
+					participants.push(escapeHTML(data.name));
 				}
 			});
 

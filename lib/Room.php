@@ -368,6 +368,7 @@ class Room {
 				$users[$row['userId']] = [
 					'lastPing' => (int) $row['lastPing'],
 					'sessionId' => $row['sessionId'],
+					'participantType' => (int) $row['participantType'],
 				];
 			} else {
 				$guests[] = [
