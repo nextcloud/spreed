@@ -26,7 +26,8 @@
 		showCamera: function() {
 			$('.videoView').removeClass('hidden');
 		},
-		_createCallSuccessHandle: function(token) {
+		_createCallSuccessHandle: function(ocsResponse) {
+			var token = ocsResponse.ocs.data.token;
 			OC.Util.History.pushState({
 				token: token
 			}, OC.generateUrl('/call/' + token));
@@ -34,18 +35,47 @@
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
 			console.log("Creating one-to-one video call", recipientUserId);
-			signaling.createOneToOneVideoCall(recipientUserId)
-				.then(_.bind(this._createCallSuccessHandle, this));
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+				type: 'POST',
+				data: {
+					invite: recipientUserId,
+					roomType: 1
+				},
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: _.bind(this._createCallSuccessHandle, this)
+			});
 		},
 		createGroupVideoCall: function(groupId) {
 			console.log("Creating group video call", groupId);
-			signaling.createGroupVideoCall(groupId)
-				.then(_.bind(this._createCallSuccessHandle, this));
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+				type: 'POST',
+				data: {
+					invite: groupId,
+					roomType: 2
+				},
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: _.bind(this._createCallSuccessHandle, this)
+			});
 		},
 		createPublicVideoCall: function() {
 			console.log("Creating a new public room.");
-			signaling.createPublicVideoCall()
-				.then(_.bind(this._createCallSuccessHandle, this));
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
+				type: 'POST',
+				data: {
+					roomType: 3
+				},
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: _.bind(this._createCallSuccessHandle, this)
+			});
 		},
 		join: function(token) {
 			if (signaling.currentCallToken === token) {
@@ -66,7 +96,9 @@
 			this.showRoomDeletedMessage(deleter);
 		},
 		leaveAllRooms: function() {
-			signaling.leaveAllRooms();
+			if (signaling) {
+				signaling.leaveAllRooms();
+			}
 		},
 		showRoomDeletedMessage: function(deleter) {
 			if (deleter) {

@@ -483,6 +483,11 @@
 			var self = this;
 			this.signaling = signaling;
 
+			$(window).unload(function () {
+				OCA.SpreedMe.Calls.leaveAllRooms();
+				signaling.disconnect();
+			});
+
 			this.setEmptyContentMessage(
 				'icon-video',
 				t('spreed', 'Looking great today! :)'),
@@ -684,7 +689,3 @@
 
 	OCA.SpreedMe.App = App;
 })(OCA, Marionette, Backbone, _);
-
-$(window).unload(function () {
-	OCA.SpreedMe.Calls.leaveAllRooms();
-});

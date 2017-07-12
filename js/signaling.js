@@ -40,80 +40,29 @@
 	};
 
 	SignalingBase.prototype.disconnect = function() {
-		console.log('disconnect');
+		this.sessionId = '';
+		this.currentCallId = null;
+		this.currentCallToken = null;
 	};
 
-	/* Rooms API */
-
-	SignalingBase.prototype.createOneToOneVideoCall = function(recipientUserId) {
-		var defer = $.Deferred();
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
-			type: 'POST',
-			data: {
-				invite: recipientUserId,
-				roomType: 1
-			},
-			beforeSend: function (request) {
-				request.setRequestHeader('Accept', 'application/json');
-			},
-			success: function(ocsResponse) {
-				var data = ocsResponse.ocs.data;
-				defer.resolve(data.token);
-			}
-		});
-		return defer;
-	};
-
-	SignalingBase.prototype.createGroupVideoCall = function(groupId) {
-		var defer = $.Deferred();
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
-			type: 'POST',
-			data: {
-				invite: groupId,
-				roomType: 2
-			},
-			beforeSend: function (request) {
-				request.setRequestHeader('Accept', 'application/json');
-			},
-			success: function(ocsResponse) {
-				var data = ocsResponse.ocs.data;
-				defer.resolve(data.token);
-			}
-		});
-		return defer;
-	};
-
-	SignalingBase.prototype.createPublicVideoCall = function() {
-		var defer = $.Deferred();
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
-			type: 'POST',
-			data: {
-				roomType: 3
-			},
-			beforeSend: function (request) {
-				request.setRequestHeader('Accept', 'application/json');
-			},
-			success: function(ocsResponse) {
-				var data = ocsResponse.ocs.data;
-				defer.resolve(data.token);
-			}
-		});
-		return defer;
+	SignalingBase.prototype.emit = function(ev, data) {
+		switch (ev) {
+			case 'join':
+				var callback = arguments[2];
+				var token = data;
+				this.joinCall(token, callback);
+				break;
+			case 'leave':
+				this.leaveCall();
+				break;
+			case 'message':
+				this.sendCallMessage(data);
+				break;
+		}
 	};
 
 	SignalingBase.prototype.leaveAllRooms = function() {
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-			method: 'DELETE',
-			async: false,
-			success: function() {
-				this.currentCallId = null;
-				this.currentCallToken = null;
-			}.bind(this)
-		});
+		// Override if necessary.
 	};
 
 	// Connection to the internal signaling server provided by the app.
@@ -184,76 +133,84 @@
 		}.bind(this));
 	};
 
-	InternalSignaling.prototype.emit = function(ev, data) {
-		switch (ev) {
-			case 'join':
-				// The client is joining a new room, in this case we need
-				// to do the following:
-				//
-				// 1. Get a list of connected clients to the room
-				// 2. Return the list of connected clients
-				// 3. Connect to the room with the clients as list here
-				//
-				// The clients will then use the message command to exchange
-				// their signalling information.
-				var callback = arguments[2];
-				var token = data;
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-					type: 'POST',
-					beforeSend: function (request) {
-						request.setRequestHeader('Accept', 'application/json');
-					},
-					success: function (result) {
-						console.log("Joined", result);
-						this.sessionId = result.ocs.data.sessionId;
-						this.currentCallId = result.ocs.data.id;
-						this.currentCallToken = token;
-						this._startPingRoom();
-						this._getRoomPeers(token).then(function(result) {
-							var roomDescription = {
-								'clients': {}
-							};
+	InternalSignaling.prototype.joinCall = function(token, callback) {
+		// The client is joining a new room, in this case we need
+		// to do the following:
+		//
+		// 1. Get a list of connected clients to the room
+		// 2. Return the list of connected clients
+		// 3. Connect to the room with the clients as list here
+		//
+		// The clients will then use the message command to exchange
+		// their signalling information.
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			type: 'POST',
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (result) {
+				console.log("Joined", result);
+				this.sessionId = result.ocs.data.sessionId;
+				this.currentCallId = result.ocs.data.id;
+				this.currentCallToken = token;
+				this._startPingRoom();
+				this._getRoomPeers(token).then(function(result) {
+					var roomDescription = {
+						'clients': {}
+					};
 
-							result.ocs.data.forEach(function(element) {
-								if (this.sessionId !== element['sessionId']) {
-									roomDescription['clients'][element['sessionId']] = {
-										'video': true
-									};
-								}
-							}.bind(this));
-							callback('', roomDescription);
-						}.bind(this));
-					}.bind(this)
-				});
-				break;
-			case 'leave':
-				this._stopPingRoom();
-				if (this.currentCallId) {
-					$.ajax({
-						url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.currentCallId + '/participants/self',
-						type: 'DELETE'
-					});
-					this.currentCallId = null;
-				}
-				this.currentCallToken = null;
-				break;
-			case 'message':
-				if(data.type === 'answer') {
-					console.log("ANSWER", data);
-				} else if(data.type === 'offer') {
-					console.log("OFFER", data);
-				}
-				this.spreedArrayConnection.push({
-					ev: ev,
-					fn: JSON.stringify(data),
-					sessionId: this.sessionId
-				});
-				break;
-		}
+					result.ocs.data.forEach(function(element) {
+						if (this.sessionId !== element['sessionId']) {
+							roomDescription['clients'][element['sessionId']] = {
+								'video': true
+							};
+						}
+					}.bind(this));
+					callback('', roomDescription);
+				}.bind(this));
+			}.bind(this)
+		});
 	};
 
-	SignalingBase.prototype.addParticipantToCall = function(token, participant) {
+	InternalSignaling.prototype.leaveCall = function() {
+		this._stopPingRoom();
+		if (this.currentCallId) {
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.currentCallId + '/participants/self',
+				type: 'DELETE'
+			});
+			this.currentCallId = null;
+		}
+		this.currentCallToken = null;
+	};
+
+	InternalSignaling.prototype.leaveAllRooms = function() {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			method: 'DELETE',
+			async: false,
+			success: function() {
+				this.currentCallId = null;
+				this.currentCallToken = null;
+			}.bind(this)
+		});
+	};
+
+	InternalSignaling.prototype.sendCallMessage = function(data) {
+		if(data.type === 'answer') {
+			console.log("ANSWER", data);
+		} else if(data.type === 'offer') {
+			console.log("OFFER", data);
+		}
+		this.spreedArrayConnection.push({
+			ev: "message",
+			fn: JSON.stringify(data),
+			sessionId: this.sessionId
+		});
+	};
+
+	InternalSignaling.prototype.addParticipantToCall = function(token, participant) {
 		var defer = $.Deferred();
 		$.post(
 			OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
