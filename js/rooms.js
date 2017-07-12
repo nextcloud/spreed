@@ -127,8 +127,13 @@
 			});
 		},
 		leaveAllRooms: function() {
+			var token = OCA.SpreedMe.Rooms.currentRoom();
+			if (!token) {
+				return;
+			}
+
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/call', 2),
+				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 				method: 'DELETE',
 				async: false
 			});

@@ -74,9 +74,12 @@ return [
 		],
 		[
 			'name' => 'Call#leaveCall',
-			'url' => '/api/{apiVersion}/call',
+			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'DELETE',
-			'requirements' => ['apiVersion' => 'v1'],
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
 		],
 
 		[

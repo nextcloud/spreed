@@ -163,10 +163,12 @@ class CallController extends OCSController {
 	 * @PublicPage
 	 * @UseSession
 	 *
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function leaveCall() {
+	public function leaveCall($token) {
 		if ($this->userId !== null) {
+			// TODO: Currently we ignore $token, should be fixed at some point
 			$this->manager->disconnectUserFromAllRooms($this->userId);
 		} else {
 			$sessionId = $this->session->get('spreed-session');
