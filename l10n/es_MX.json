@@ -14,7 +14,7 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Favor de dar acceso a su navegador a usar su camara y micrófono poder usar esta aplicaión. ",
     "Looking great today! :)" : "¡Hoy te ves muy bien! :)",
     "Time to call your friends" : "Hora de llamar a tus amigos",
-    "You can set your name on the top right of this page so other participants can identify you better." : "Usted puede establecer su nombre en la parte superior derecha de esta página para que otros participantes lo puedan identificar mejor. ",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Puedes establecer tu nombre en la parte superior derecha de esta página para que otros participantes te puedan identificar mejor. ",
     "Guest" : "Invitado",
     "Copy" : "Copiar",
     "Copied!" : "¡Copiado!",
@@ -64,7 +64,7 @@
     "Share screen" : "Compartir la pantalla",
     "Show your screen" : "Mostrar su pantalla",
     "Stop screensharing" : "Dejar de compartir la pantalla",
-    "Smile in 3… 2… 1!" : "¡Sonría en 3... 2... 1!",
+    "Smile in 3… 2… 1!" : "¡Sonríe en 3... 2... 1!",
     "Choose person …" : "Elegir persona ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
     "STUN server" : "Servidor STUN",
@@ -73,8 +73,8 @@
     "TURN server shared secret" : "Secreto compartido del servidor TURN",
     "TURN server protocols" : "Protocolos del servidor TURN",
     "UDP and TCP" : "UDP y TCP",
-    "UDP only" : "sólo UDP",
-    "TCP only" : "sólo TCP",
+    "UDP only" : "UDP únicamente",
+    "TCP only" : "TCP únicamente",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN se usa para determinar la dirección pública de los participantes detrás de un enrutador. "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
