@@ -319,7 +319,6 @@
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Calls.leaveCurrentCall(true);
-				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			} else {
 				// TODO(fancycode): When does this happen? The user is in a call
 				// where the call is not active?
@@ -327,6 +326,7 @@
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
 					type: 'DELETE'
 				});
+				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
 
 			this.$el.slideUp();
