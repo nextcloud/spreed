@@ -592,6 +592,10 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($this->userId === $participant) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
 		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
