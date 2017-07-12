@@ -32,7 +32,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -42,10 +41,8 @@ use OCP\Security\ISecureRandom;
 class PageController extends Controller {
 	/** @var string */
 	private $userId;
-	/** @var ApiController */
+	/** @var RoomController */
 	private $api;
-	/** @var IL10N */
-	private $l10n;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -60,9 +57,8 @@ class PageController extends Controller {
 	/**
 	 * @param string $appName
 	 * @param IRequest $request
-	 * @param ApiController $api
+	 * @param RoomController $api
 	 * @param string $UserId
-	 * @param IL10N $l10n
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param ISecureRandom $secureRandom
@@ -71,9 +67,8 @@ class PageController extends Controller {
 	 */
 	public function __construct($appName,
 								IRequest $request,
-								ApiController $api,
+								RoomController $api,
 								$UserId,
-								IL10N $l10n,
 								ILogger $logger,
 								Manager $manager,
 								ISecureRandom $secureRandom,
@@ -82,7 +77,6 @@ class PageController extends Controller {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->api = $api;
-		$this->l10n = $l10n;
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->secureRandom = $secureRandom;
@@ -129,10 +123,10 @@ class PageController extends Controller {
 				$token = '';
 			}
 		} else {
-			$response = $this->api->createOneToOneRoom($callUser);
+			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
 				$data = $response->getData();
-				return new RedirectResponse($this->url->linkToRoute('spreed.pagecontroller.showCall', ['token' => $data['token']]));
+				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $data['token']]));
 			}
 		}
 
@@ -161,7 +155,7 @@ class PageController extends Controller {
 			}
 		} catch (RoomNotFoundException $e) {
 			return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
-				'redirect_url' => $this->url->linkToRoute('spreed.page.index', ['token' => $token]),
+				'redirect_url' => $this->url->linkToRoute('spreed.Page.index', ['token' => $token]),
 			]));
 		}
 
@@ -190,13 +184,13 @@ class PageController extends Controller {
 				if ($room->getType() !== Room::PUBLIC_CALL) {
 					throw new RoomNotFoundException();
 				}
-				return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $token]));
+				return new RedirectResponse($this->url->linkToRoute('spreed.Page.index', ['token' => $token]));
 			} catch (RoomNotFoundException $e) {
 				return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
-					'redirect_url' => $this->url->linkToRoute('spreed.page.index', ['token' => $token]),
+					'redirect_url' => $this->url->linkToRoute('spreed.Page.index', ['token' => $token]),
 				]));
 			}
 		}
-		return new RedirectResponse($this->url->linkToRoute('spreed.page.index', ['token' => $token]));
+		return new RedirectResponse($this->url->linkToRoute('spreed.Page.index', ['token' => $token]));
 	}
 }

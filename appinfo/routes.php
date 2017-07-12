@@ -24,17 +24,17 @@
 return [
 	'routes' => [
 		[
-			'name' => 'page#index',
+			'name' => 'Page#index',
 			'url' => '/',
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'signalling#signalling',
+			'name' => 'Signalling#signalling',
 			'url' => '/signalling',
 			'verb' => 'POST',
 		],
 		[
-			'name' => 'signalling#pullMessages',
+			'name' => 'Signalling#pullMessages',
 			'url' => '/messages',
 			'verb' => 'GET',
 		],
@@ -46,25 +46,56 @@ return [
 	],
 	'ocs' => [
 		[
-			'name' => 'api#getRooms',
+			'name' => 'Call#getPeersForCall',
+			'url' => '/api/{apiVersion}/call/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Call#joinCall',
+			'url' => '/api/{apiVersion}/call/{token}',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Call#pingCall',
+			'url' => '/api/{apiVersion}/call/{token}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Call#leaveCall',
+			'url' => '/api/{apiVersion}/call/{token}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+
+		[
+			'name' => 'Room#getRooms',
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'GET',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'api#makePublic',
-			'url' => '/api/{apiVersion}/room/public',
+			'name' => 'Room#createRoom',
+			'url' => '/api/{apiVersion}/room',
 			'verb' => 'POST',
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'api#makePrivate',
-			'url' => '/api/{apiVersion}/room/public',
-			'verb' => 'DELETE',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'api#getRoom',
+			'name' => 'Room#getRoom',
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'GET',
 			'requirements' => [
@@ -73,44 +104,35 @@ return [
 			],
 		],
 		[
-			'name' => 'api#renameRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
+			'name' => 'Room#renameRoom',
+			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'roomId' => '\d+'
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
-			'name' => 'api#addParticipantToRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
+			'name' => 'Room#makePublic',
+			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'roomId' => '\d+'
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
-			'name' => 'api#leaveRoom',
-			'url' => '/api/{apiVersion}/room/{roomId}',
+			'name' => 'Room#makePrivate',
+			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',
-				'roomId' => '\d+'
-			],
-		],
-		[
-			'name' => 'api#getPeersInRoom',
-			'url' => '/api/{apiVersion}/room/{token}/peers',
-			'verb' => 'GET',
-			'requirements' => [
-				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
-			'name' => 'api#joinRoom',
-			'url' => '/api/{apiVersion}/room/{token}/join',
+			'name' => 'Room#addParticipantToRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -118,37 +140,13 @@ return [
 			],
 		],
 		[
-			'name' => 'api#ping',
-			'url' => '/api/{apiVersion}/ping',
-			'verb' => 'POST',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
-			'name' => 'api#leave',
-			'url' => '/api/{apiVersion}/leave',
+			'name' => 'Room#removeSelfFromRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants/self',
 			'verb' => 'DELETE',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'api#createOneToOneRoom',
-			'url' => '/api/{apiVersion}/oneToOne',
-			'verb' => 'PUT',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'api#createGroupRoom',
-			'url' => '/api/{apiVersion}/group',
-			'verb' => 'PUT',
-			'requirements' => ['apiVersion' => 'v1'],
-		],
-		[
-			'name' => 'api#createPublicRoom',
-			'url' => '/api/{apiVersion}/public',
-			'verb' => 'PUT',
-			'requirements' => ['apiVersion' => 'v1'],
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
 		],
 	],
 ];

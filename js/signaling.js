@@ -113,7 +113,7 @@
 				// their signalling information.
 				var callback = arguments[2];
 				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + data + '/join',
+					url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + data,
 					type: 'POST',
 					beforeSend: function (request) {
 						request.setRequestHeader('Accept', 'application/json');

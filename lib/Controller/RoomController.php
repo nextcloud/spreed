@@ -35,24 +35,19 @@ use OCP\AppFramework\OCSController;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
-use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Notification\IManager as INotificationManager;
 
-class ApiController extends OCSController {
+class RoomController extends OCSController {
 	/** @var string */
 	private $userId;
-	/** @var IL10N */
-	private $l10n;
 	/** @var IUserManager */
 	private $userManager;
 	/** @var IGroupManager */
 	private $groupManager;
-	/** @var ISession */
-	private $session;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -61,41 +56,40 @@ class ApiController extends OCSController {
 	private $notificationManager;
 	/** @var IActivityManager */
 	private $activityManager;
+	/** @var IL10N */
+	private $l10n;
 
 	/**
 	 * @param string $appName
 	 * @param string $UserId
 	 * @param IRequest $request
-	 * @param IL10N $l10n
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
-	 * @param ISession $session
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param INotificationManager $notificationManager
 	 * @param IActivityManager $activityManager
+	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
-								IL10N $l10n,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
-								ISession $session,
 								ILogger $logger,
 								Manager $manager,
 								INotificationManager $notificationManager,
-								IActivityManager $activityManager) {
+								IActivityManager $activityManager,
+								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
-		$this->l10n = $l10n;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
-		$this->session = $session;
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
 		$this->activityManager = $activityManager;
+		$this->l10n = $l10n;
 	}
 
 	/**
@@ -144,10 +138,7 @@ class ApiController extends OCSController {
 		/** @var array[] $participants */
 		$participants = $room->getParticipants();
 		$sortParticipants = function(array $participant1, array $participant2) {
-			if ($participant1['lastPing'] === $participant2['lastPing']) {
-				return 0;
-			}
-			return ($participant1['lastPing'] > $participant2['lastPing']) ? -1 : 1;
+			return $participant2['lastPing'] - $participant1['lastPing'];
 		};
 		uasort($participants['users'], $sortParticipants);
 		uasort($participants['guests'], $sortParticipants);
@@ -217,7 +208,7 @@ class ApiController extends OCSController {
 					$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
 				}
 
-				// no break;
+			// no break;
 
 			case Room::GROUP_CALL:
 				if ($room->getName() === '') {
@@ -242,7 +233,7 @@ class ApiController extends OCSController {
 					'app' => 'spreed',
 				]);
 				$room->deleteRoom();
-				throw new RoomNotFoundException();
+				throw new RoomNotFoundException('The room type is unknown');
 		}
 
 		$roomData['guestList'] = $guestString;
@@ -251,45 +242,25 @@ class ApiController extends OCSController {
 	}
 
 	/**
-	 * @PublicPage
+	 * Initiates a one-to-one video call from the current user to the recipient
 	 *
-	 * @param string $token
+	 * @NoAdminRequired
+	 *
+	 * @param int $roomType
+	 * @param string $invite
 	 * @return DataResponse
 	 */
-	public function getPeersInRoom($token) {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+	public function createRoom($roomType, $invite = '') {
+		switch ((int) $roomType) {
+			case Room::ONE_TO_ONE_CALL:
+				return $this->createOneToOneRoom($invite);
+			case Room::GROUP_CALL:
+				return $this->createGroupRoom($invite);
+			case Room::PUBLIC_CALL:
+				return $this->createPublicRoom();
 		}
 
-		/** @var array[] $participants */
-		$participants = $room->getParticipants(time() - 30);
-		$result = [];
-		foreach ($participants['users'] as $participant => $data) {
-			if ($data['sessionId'] === '0') {
-				// User left the room
-				continue;
-			}
-
-			$result[] = [
-				'userId' => $participant,
-				'token' => $token,
-				'lastPing' => $data['lastPing'],
-				'sessionId' => $data['sessionId'],
-			];
-		}
-
-		foreach ($participants['guests'] as $data) {
-			$result[] = [
-				'userId' => '',
-				'token' => $token,
-				'lastPing' => $data['lastPing'],
-				'sessionId' => $data['sessionId'],
-			];
-		}
-
-		return new DataResponse($result);
+		return new DataResponse([], Http::STATUS_BAD_REQUEST);
 	}
 
 	/**
@@ -300,7 +271,7 @@ class ApiController extends OCSController {
 	 * @param string $targetUserName
 	 * @return DataResponse
 	 */
-	public function createOneToOneRoom($targetUserName) {
+	protected function createOneToOneRoom($targetUserName) {
 		// Get the user
 		$targetUser = $this->userManager->get($targetUserName);
 		$currentUser = $this->userManager->get($this->userId);
@@ -331,7 +302,7 @@ class ApiController extends OCSController {
 	 * @param string $targetGroupName
 	 * @return DataResponse
 	 */
-	public function createGroupRoom($targetGroupName) {
+	protected function createGroupRoom($targetGroupName) {
 		$targetGroup = $this->groupManager->get($targetGroupName);
 		$currentUser = $this->userManager->get($this->userId);
 
@@ -363,7 +334,7 @@ class ApiController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function createPublicRoom() {
+	protected function createPublicRoom() {
 		$currentUser = $this->userManager->get($this->userId);
 
 		// Create the room
@@ -376,13 +347,13 @@ class ApiController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @param string $roomName
 	 * @return DataResponse
 	 */
-	public function renameRoom($roomId, $roomName) {
+	public function renameRoom($token, $roomName) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -400,13 +371,13 @@ class ApiController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
-	public function addParticipantToRoom($roomId, $newParticipant) {
+	public function addParticipantToRoom($token, $newParticipant) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -441,12 +412,12 @@ class ApiController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function leaveRoom($roomId) {
+	public function removeSelfFromRoom($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -464,12 +435,12 @@ class ApiController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function makePublic($roomId) {
+	public function makePublic($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -484,12 +455,12 @@ class ApiController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param int $roomId
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function makePrivate($roomId) {
+	public function makePrivate($token) {
 		try {
-			$room = $this->manager->getRoomForParticipant($roomId, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -498,76 +469,6 @@ class ApiController extends OCSController {
 			$room->changeType(Room::GROUP_CALL);
 		}
 
-		return new DataResponse();
-	}
-
-	/**
-	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
-	public function ping($token) {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$sessionId = $this->session->get('spreed-session');
-		$room->ping($this->userId, $sessionId, time());
-
-		return new DataResponse();
-	}
-
-	/**
-	 * @PublicPage
-	 * @UseSession
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
-	public function joinRoom($token) {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($this->userId !== null) {
-			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-			$newSessionId = $room->enterRoomAsUser($this->userId);
-
-			if (!empty($sessionIds)) {
-				$this->manager->deleteMessagesForSessionIds($sessionIds);
-			}
-		} else {
-			$newSessionId = $room->enterRoomAsGuest();
-		}
-
-		$this->session->set('spreed-session', $newSessionId);
-		$room->ping($this->userId, $newSessionId, time());
-
-		return new DataResponse([
-			'sessionId' => $newSessionId,
-		]);
-	}
-
-	/**
-	 * @PublicPage
-	 * @UseSession
-	 *
-	 * @return DataResponse
-	 */
-	public function leave() {
-		if ($this->userId !== null) {
-			$this->manager->disconnectUserFromAllRooms($this->userId);
-		} else {
-			$sessionId = $this->session->get('spreed-session');
-			$this->manager->removeSessionFromAllRooms($sessionId);
-		}
-
-		$this->session->remove('spreed-session');
 		return new DataResponse();
 	}
 
