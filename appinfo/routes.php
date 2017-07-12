@@ -113,6 +113,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#deleteRoom',
+			'url' => '/api/{apiVersion}/room/{token}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#makePublic',
 			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'POST',

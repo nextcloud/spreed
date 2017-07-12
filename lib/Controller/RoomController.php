@@ -162,6 +162,8 @@ class RoomController extends OCSController {
 			$participantType = Participant::GUEST;
 		}
 
+		$canModerate = $participantType === Participant::MODERATOR || $participantType === Participant::OWNER;
+
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -169,10 +171,12 @@ class RoomController extends OCSController {
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
 			'isNameEditable' => $room->getType() !== Room::ONE_TO_ONE_CALL,
+			'isModerator' => $participantType === Participant::MODERATOR,
+			'isOwner' => $participantType === Participant::OWNER,
+			'isDeletable' => $canModerate && (count($participantList) > 2 || !empty($participants['guests'])),
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
 			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
-			'participantType' => $participantType,
 			'participants' => $participantList,
 		];
 
@@ -382,6 +386,31 @@ class RoomController extends OCSController {
 		if (!$room->setName($roomName)) {
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function deleteRoom($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$room->deleteRoom();
+
 		return new DataResponse([]);
 	}
 

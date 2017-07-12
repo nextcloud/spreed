@@ -48,7 +48,7 @@
 										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
-								'{{#isNameEditable}}'+
+								'{{#if isNameEditable}}'+
 								'<li>'+
 									'<button class="rename-room-button">'+
 										'<span class="icon-rename"></span>'+
@@ -57,7 +57,7 @@
 								'</li>'+
 								'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
 								'<button class="icon-confirm hidden-important rename-element rename-confirm"></button>'+
-								'{{/isNameEditable}}'+
+								'{{/if}}'+
 								'<li>'+
 									'<button class="share-link-button">'+
 										'<span class="icon-public"></span>'+
@@ -68,11 +68,19 @@
 									'<div class="icon-delete private-room"></div>'+
 								'</li>'+
 								'<li>'+
-									'<button class="leave-group-button">'+
-										'<span class="icon-close"></span>'+
-										'<span>'+t('spreed', 'Leave call')+'</span>'+
+									'<button class="leave-room-button">'+
+										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
+										'<span>{{#if isDeletable}}'+t('spreed', 'Leave call')+'{{else}}'+t('spreed', 'Delete call')+'{{/if}}</span>'+
 									'</button>'+
 								'</li>'+
+								'{{#if isDeletable}}'+
+								'<li>'+
+									'<button class="delete-room-button">'+
+										'<span class="icon-delete"></span>'+
+										'<span>'+t('spreed', 'Delete call')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'{{/if}}'+
 							'</ul>'+
 							'<form class="oca-spreedme-add-person hidden">'+
 								'<input class="add-person-input" type="text" placeholder="Type name..."/>'+
@@ -148,7 +156,8 @@
 			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
 			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
-			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
+			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
+			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
 			'click .icon-delete': 'unshareGroup',
 			'click .app-navigation-entry-link': 'joinRoom'
 		},
@@ -287,7 +296,7 @@
 				});
 			}
 		},
-		leaveGroup: function() {
+		leaveRoom: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
@@ -299,6 +308,26 @@
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
+				type: 'DELETE'
+			});
+		},
+		deleteRoom: function() {
+			if (this.model.get('participantType') !== 1 &&
+				this.model.get('participantType') !== 2) {
+				return;
+			}
+
+			//If user is in that room, it should leave that room first.
+			if (this.model.get('active')) {
+				OCA.SpreedMe.Rooms.leaveCurrentRoom();
+				OCA.SpreedMe.Rooms.showRoomDeletedMessage(true);
+				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			}
+
+			this.$el.slideUp();
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
 				type: 'DELETE'
 			});
 		},
