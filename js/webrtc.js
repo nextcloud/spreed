@@ -51,6 +51,9 @@ var spreedPeerConnectionTable = [];
 			}
 
 			var peer;
+			// To avoid overloading the user joining a room (who previously called
+			// all the other participants), we decide who calls who by comparing
+			// the session ids of the users: "larger" ids call "smaller" ones.
 			if (sessionId < currentSessionId && !webrtc.webrtc.peers.hasOwnProperty(sessionId)) {
 				console.log("Starting call with", user);
 				peer = webrtc.webrtc.createPeer({
