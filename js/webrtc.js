@@ -33,7 +33,6 @@ var spreedPeerConnectionTable = [];
 	function usersChanged(newUsers, disconnectedSessionIds) {
 		'use strict';
 		var currentSessionId = webrtc.connection.getSessionid();
-		console.log("XXXXXXXXXXXX", newUsers, disconnectedSessionIds);
 
 		newUsers.forEach(function(user) {
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
@@ -124,7 +123,7 @@ var spreedPeerConnectionTable = [];
 			var newSessionIds = currentUsersInRoom.diff(previousUsersInRoom);
 			var disconnectedSessionIds = previousUsersInRoom.diff(currentUsersInRoom);
 			var newUsers = [];
-			newSessionIds.each(function(sessionId) {
+			newSessionIds.forEach(function(sessionId) {
 				newUsers.push(userMapping[sessionId]);
 			});
 			usersChanged(newUsers, disconnectedSessionIds);

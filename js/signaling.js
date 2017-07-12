@@ -5,7 +5,6 @@
 
 	function SignalingBase() {
 		this.sessionId = '';
-		this.currentCallId = null;
 		this.currentCallToken = null;
 		this.handlers = {};
 	}
@@ -41,7 +40,6 @@
 
 	SignalingBase.prototype.disconnect = function() {
 		this.sessionId = '';
-		this.currentCallId = null;
 		this.currentCallToken = null;
 	};
 
@@ -152,7 +150,6 @@
 			success: function (result) {
 				console.log("Joined", result);
 				this.sessionId = result.ocs.data.sessionId;
-				this.currentCallId = result.ocs.data.id;
 				this.currentCallToken = token;
 				this._startPingRoom();
 				this._getRoomPeers(token).then(function(result) {
@@ -175,23 +172,21 @@
 
 	InternalSignaling.prototype.leaveCall = function() {
 		this._stopPingRoom();
-		if (this.currentCallId) {
+		if (this.currentCallToken) {
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.currentCallId + '/participants/self',
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.currentCallToken + '/participants/self',
 				type: 'DELETE'
 			});
-			this.currentCallId = null;
+			this.currentCallToken = null;
 		}
-		this.currentCallToken = null;
 	};
 
 	InternalSignaling.prototype.leaveAllRooms = function() {
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentCallToken,
 			method: 'DELETE',
 			async: false,
 			success: function() {
-				this.currentCallId = null;
 				this.currentCallToken = null;
 			}.bind(this)
 		});
