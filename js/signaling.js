@@ -51,7 +51,7 @@
 				this.joinCall(token, callback);
 				break;
 			case 'leave':
-				this.leaveCall();
+				this.leaveCurrentCall();
 				break;
 			case 'message':
 				this.sendCallMessage(data);
@@ -59,8 +59,34 @@
 		}
 	};
 
+	SignalingBase.prototype.leaveCurrentCall = function() {
+		if (this.currentCallToken) {
+			this.leaveCall(this.currentCallToken);
+			this.currentCallToken = null;
+		}
+	};
+
 	SignalingBase.prototype.leaveAllCalls = function() {
 		// Override if necessary.
+	};
+
+	SignalingBase.prototype.setRoomCollection = function(rooms) {
+		this.roomCollection = rooms;
+		return this.syncRooms();
+	};
+
+	SignalingBase.prototype.syncRooms = function() {
+		var defer = $.Deferred();
+		if (this.roomCollection && oc_current_user) {
+			this.roomCollection.fetch({
+				success: function(data) {
+					defer.resolve(data);
+				}
+			});
+		} else {
+			defer.resolve([]);
+		}
+		return defer;
 	};
 
 	// Connection to the internal signaling server provided by the app.
@@ -132,12 +158,12 @@
 	};
 
 	InternalSignaling.prototype.joinCall = function(token, callback) {
-		// The client is joining a new room, in this case we need
+		// The client is joining a new call, in this case we need
 		// to do the following:
 		//
-		// 1. Get a list of connected clients to the room
-		// 2. Return the list of connected clients
-		// 3. Connect to the room with the clients as list here
+		// 1. Join the call as participant.
+		// 2. Get a list of other connected clients in the call.
+		// 3. Pass information about other clients to the callback.
 		//
 		// The clients will then use the message command to exchange
 		// their signalling information.
@@ -151,49 +177,33 @@
 				console.log("Joined", result);
 				this.sessionId = result.ocs.data.sessionId;
 				this.currentCallToken = token;
-				this._startPingRoom();
-				this._getRoomPeers(token).then(function(result) {
-					var roomDescription = {
+				this._startPingCall();
+				this._getCallPeers(token).then(function(peers) {
+					var callDescription = {
 						'clients': {}
 					};
 
-					result.ocs.data.forEach(function(element) {
+					peers.forEach(function(element) {
 						if (this.sessionId !== element['sessionId']) {
-							roomDescription['clients'][element['sessionId']] = {
+							callDescription['clients'][element['sessionId']] = {
 								'video': true
 							};
 						}
 					}.bind(this));
-					callback('', roomDescription);
+					callback('', callDescription);
 				}.bind(this));
 			}.bind(this)
 		});
 	};
 
-	InternalSignaling.prototype.leaveCall = function() {
-		this._stopPingRoom();
-		if (this.currentCallToken) {
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.currentCallToken + '/participants/self',
-				type: 'DELETE'
-			});
-			this.currentCallToken = null;
+	InternalSignaling.prototype.leaveCall = function(token) {
+		if (token === this.currentCallToken) {
+			this._stopPingCall();
 		}
-	};
-
-	InternalSignaling.prototype.leaveAllCalls = function() {
-		if (!this.currentCallToken) {
-			// Not in a call.
-			return;
-		}
-
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentCallToken,
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			method: 'DELETE',
-			async: false,
-			success: function() {
-				this.currentCallToken = null;
-			}.bind(this)
+			async: false
 		});
 	};
 
@@ -211,23 +221,8 @@
 	};
 
 	InternalSignaling.prototype.setRoomCollection = function(rooms) {
-		this.roomCollection = rooms;
 		this._pollForRoomChanges();
-		return this.syncRooms();
-	};
-
-	InternalSignaling.prototype.syncRooms = function() {
-		var defer = $.Deferred();
-		if (this.roomCollection && oc_current_user) {
-			this.roomCollection.fetch({
-				success: function(data) {
-					defer.resolve(data);
-				}
-			});
-		} else {
-			defer.resolve([]);
-		}
-		return defer;
+		return SignalingBase.prototype.setRoomCollection.apply(this, arguments);
 	};
 
 	InternalSignaling.prototype._pollForRoomChanges = function() {
@@ -242,13 +237,19 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._getRoomPeers = function(token) {
-		return $.ajax({
+	InternalSignaling.prototype._getCallPeers = function(token) {
+		var defer = $.Deferred();
+		$.ajax({
 			beforeSend: function (request) {
 				request.setRequestHeader('Accept', 'application/json');
 			},
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			success: function (result) {
+				var peers = result.ocs.data;
+				defer.resolve(peers);
+			}
 		});
+		return defer;
 	};
 
 	/**
@@ -294,19 +295,19 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._startPingRoom = function() {
-		this._pingRoom();
+	InternalSignaling.prototype._startPingCall = function() {
+		this._pingCall();
 		// Send a ping to the server all 5 seconds to ensure that the connection
 		// is still alive.
 		this.pingInterval = window.setInterval(function() {
-			this._pingRoom();
+			this._pingCall();
 		}.bind(this), 5000);
 	};
 
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._stopPingRoom = function() {
+	InternalSignaling.prototype._stopPingCall = function() {
 		if (this.pingInterval) {
 			window.clearInterval(this.pingInterval);
 			this.pingInterval = null;
@@ -316,7 +317,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._pingRoom = function() {
+	InternalSignaling.prototype._pingCall = function() {
 		if (!this.currentCallToken) {
 			return;
 		}

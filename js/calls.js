@@ -97,7 +97,8 @@
 		},
 		leaveAllCalls: function() {
 			if (signaling) {
-				signaling.leaveAllCalls();
+				// We currently only support a single active call.
+				signaling.leaveCurrentCall();
 			}
 		},
 		showRoomDeletedMessage: function(deleter) {

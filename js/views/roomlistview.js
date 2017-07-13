@@ -316,18 +316,15 @@
 			}
 		},
 		leaveRoom: function() {
-			//If user is in that room, it should leave that room first.
+			// If user is in that room, it should leave the associated call first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Calls.leaveCurrentCall(true);
-			} else {
-				// TODO(fancycode): When does this happen? The user is in a call
-				// where the call is not active?
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
-					type: 'DELETE'
-				});
-				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
+				type: 'DELETE'
+			});
+			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 
 			this.$el.slideUp();
 		},
