@@ -320,13 +320,13 @@
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Calls.leaveCurrentCall(true);
 			}
+
+			this.$el.slideUp();
+
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
 				type: 'DELETE'
 			});
-			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
-
-			this.$el.slideUp();
 		},
 		deleteRoom: function() {
 			if (this.model.get('participantType') !== 1 &&
