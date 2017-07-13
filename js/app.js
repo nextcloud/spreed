@@ -349,8 +349,15 @@
 				});
 			}
 		},
-		addParticipantToCall: function(token, participant) {
-			return this.signaling.addParticipantToCall(token, participant);
+		addParticipantToRoom: function(token, participant) {
+			$.post(
+				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
+				{
+					newParticipant: participant
+				}
+			).done(function() {
+				this.syncRooms();
+			}.bind(this));
 		},
 		syncRooms: function() {
 			return this.signaling.syncRooms();

@@ -572,7 +572,7 @@
 			this.ui.personSelectorInput.on('change', function(e) {
 				var token = _this.model.get('token');
 				var participant = e.val;
-				OCA.SpreedMe.app.addParticipantToCall(token, participant);
+				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
 
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);

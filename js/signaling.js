@@ -205,20 +205,6 @@
 		});
 	};
 
-	InternalSignaling.prototype.addParticipantToCall = function(token, participant) {
-		var defer = $.Deferred();
-		$.post(
-			OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
-			{
-				newParticipant: participant
-			}
-		).done(function() {
-			this.syncRooms();
-			defer.resolve();
-		}.bind(this));
-		return defer;
-	};
-
 	InternalSignaling.prototype.setRoomCollection = function(rooms) {
 		this.roomCollection = rooms;
 		this._pollForRoomChanges();
