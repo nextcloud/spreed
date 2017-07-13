@@ -525,6 +525,10 @@ video {
 	overflow: hidden;
 }
 
+#app-navigation .app-navigation-entry-menu input.first-option {
+	margin-top: 5px;
+}
+
 #app-navigation .app-navigation-entry-menu li span {
 	display: inline-block;
 	height: 36px;

@@ -162,24 +162,6 @@ class RoomController extends OCSController {
 			$participantType = Participant::GUEST;
 		}
 
-		$canModerate = $participantType === Participant::MODERATOR || $participantType === Participant::OWNER;
-
-		$roomData = [
-			'id' => $room->getId(),
-			'token' => $room->getToken(),
-			'type' => $room->getType(),
-			'name' => $room->getName(),
-			'displayName' => $room->getName(),
-			'isNameEditable' => $room->getType() !== Room::ONE_TO_ONE_CALL,
-			'isModerator' => $participantType === Participant::MODERATOR,
-			'isOwner' => $participantType === Participant::OWNER,
-			'isDeletable' => $canModerate && (count($participantList) > 2 || !empty($participants['guests'])),
-			'count' => $room->getNumberOfParticipants(time() - 30),
-			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
-			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
-			'participants' => $participantList,
-		];
-
 		$activeGuests = array_filter($participants['guests'], function($data) {
 			return $data['lastPing'] > time() - 30;
 		});
@@ -188,6 +170,20 @@ class RoomController extends OCSController {
 		if ($numActiveGuests !== count($participants['guests'])) {
 			$room->cleanGuestParticipants();
 		}
+
+		$roomData = [
+			'id' => $room->getId(),
+			'token' => $room->getToken(),
+			'type' => $room->getType(),
+			'name' => $room->getName(),
+			'displayName' => $room->getName(),
+			'participantType' => $participantType,
+			'count' => $room->getNumberOfParticipants(time() - 30),
+			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
+			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
+			'participants' => $participantList,
+			'numGuests' => $numActiveGuests,
+		];
 
 		if ($this->userId !== null) {
 			unset($participantList[$this->userId]);

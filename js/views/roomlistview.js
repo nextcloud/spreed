@@ -42,6 +42,7 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
+								'{{#if canModerate}}'+
 								'<li>'+
 									'<button class="add-person-button">'+
 										'<span class="icon-add"></span>'+
@@ -67,6 +68,13 @@
 									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
 									'<div class="icon-delete private-room"></div>'+
 								'</li>'+
+								'{{/if}}'+
+								'{{#if showShareLink}}'+
+								'<li>'+
+									'<input id="shareInput-{{id}}" class="share-link-input private-room first-option" readonly="readonly" type="text"/>'+
+									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
+								'</li>'+
+								'{{/if}}'+
 								'<li>'+
 									'<button class="leave-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
@@ -82,9 +90,11 @@
 								'</li>'+
 								'{{/if}}'+
 							'</ul>'+
+							'{{#if canModerate}}'+
 							'<form class="oca-spreedme-add-person hidden">'+
 								'<input class="add-person-input" type="text" placeholder="Type name..."/>'+
 							'</form>'+
+							'{{/if}}'+
 						'</div>';
 
 	var RoomItenView = Marionette.View.extend({
@@ -115,6 +125,15 @@
 					this.toggleMenuClass();
 				}
 			});
+		},
+		templateContext: function() {
+			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
+			return {
+				canModerate: canModerate,
+				showShareLink: !canModerate && this.model.get('type') === ROOM_TYPE_PUBLIC_CALL,
+				isNameEditable: canModerate && this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE,
+				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
+			}
 		},
 		onRender: function() {
 			var roomURL, completeURL;
