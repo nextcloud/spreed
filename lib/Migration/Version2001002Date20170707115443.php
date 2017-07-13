@@ -67,6 +67,7 @@ class Version2001002Date20170707115443 extends SimpleMigrationStep {
 		$table->addColumn('participantType', Type::SMALLINT, [
 			'notnull' => true,
 			'length' => 6,
+			'default' => 0,
 		]);
 
 		return $schema;
