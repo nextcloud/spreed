@@ -115,10 +115,15 @@ var spreedPeerConnectionTable = [];
 			usersChanged([], users);
 		});
 		signaling.on('usersInRoom', function(users) {
+			var currentSessionId = webrtc.connection.getSessionid();
 			var currentUsersInRoom = [];
 			var userMapping = {};
 			users.forEach(function(user) {
 				var sessionId = user['sessionId'] || user.sessionid;
+				if (sessionId === currentSessionId) {
+					return;
+				}
+
 				currentUsersInRoom.push(sessionId);
 				userMapping[sessionId] = user;
 			});
@@ -129,7 +134,9 @@ var spreedPeerConnectionTable = [];
 			newSessionIds.forEach(function(sessionId) {
 				newUsers.push(userMapping[sessionId]);
 			});
-			usersChanged(newUsers, disconnectedSessionIds);
+			if (newUsers.length || disconnectedSessionIds.length) {
+				usersChanged(newUsers, disconnectedSessionIds);
+			}
 		});
 
 		var nick = OC.getCurrentUser()['displayName'];
@@ -673,7 +680,7 @@ var spreedPeerConnectionTable = [];
 				var nameIndicator = videoContainer.find('.nameIndicator');
 				var avatar = videoContainer.find('.avatar');
 
-				if (userId.length) {
+				if (userId && userId.length) {
 					avatar.avatar(userId, 128);
 					nameIndicator.text(peer.nick);
 				} else if (peer.nick) {
