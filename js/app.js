@@ -510,7 +510,13 @@
 
 			var token = $('#app').attr('data-token');
 			if (token) {
-				OCA.SpreedMe.Calls.join(token);
+				if (OCA.SpreedMe.webrtc.sessionReady) {
+					OCA.SpreedMe.Calls.join(token);
+				} else {
+					OCA.SpreedMe.webrtc.once('connectionReady', function() {
+						OCA.SpreedMe.Calls.join(token);
+					});
+				}
 			}
 			OCA.SpreedMe.Calls.showCamera();
 
