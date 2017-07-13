@@ -115,6 +115,8 @@ var spreedPeerConnectionTable = [];
 			usersChanged([], users);
 		});
 		signaling.on('usersInRoom', function(users) {
+			// The passed list are the users that are currently in the room,
+			// i.e. that are in the call and should call each other.
 			var currentSessionId = webrtc.connection.getSessionid();
 			var currentUsersInRoom = [];
 			var userMapping = {};
