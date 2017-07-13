@@ -65,8 +65,8 @@ return [
 		],
 		[
 			'name' => 'Call#pingCall',
-			'url' => '/api/{apiVersion}/call/{token}',
-			'verb' => 'PUT',
+			'url' => '/api/{apiVersion}/call/{token}/ping',
+			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
