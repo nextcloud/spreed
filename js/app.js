@@ -491,7 +491,7 @@
 			this.signaling = signaling;
 
 			$(window).unload(function () {
-				OCA.SpreedMe.Calls.leaveAllRooms();
+				OCA.SpreedMe.Calls.leaveAllCalls();
 				signaling.disconnect();
 			});
 

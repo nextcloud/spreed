@@ -59,7 +59,7 @@
 		}
 	};
 
-	SignalingBase.prototype.leaveAllRooms = function() {
+	SignalingBase.prototype.leaveAllCalls = function() {
 		// Override if necessary.
 	};
 
@@ -181,7 +181,12 @@
 		}
 	};
 
-	InternalSignaling.prototype.leaveAllRooms = function() {
+	InternalSignaling.prototype.leaveAllCalls = function() {
+		if (!this.currentCallToken) {
+			// Not in a call.
+			return;
+		}
+
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentCallToken,
 			method: 'DELETE',

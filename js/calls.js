@@ -17,7 +17,7 @@
 			editRoomname.removeClass('error');
 		});
 
-		OCA.SpreedMe.Calls.leaveAllRooms();
+		OCA.SpreedMe.Calls.leaveAllCalls();
 	}
 
 	Backbone.Radio.channel('rooms');
@@ -95,9 +95,9 @@
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
 		},
-		leaveAllRooms: function() {
+		leaveAllCalls: function() {
 			if (signaling) {
-				signaling.leaveAllRooms();
+				signaling.leaveAllCalls();
 			}
 		},
 		showRoomDeletedMessage: function(deleter) {
