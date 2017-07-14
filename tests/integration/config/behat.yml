@@ -1,0 +1,14 @@
+default:
+  autoload:
+    '': %paths.base%/../features/bootstrap
+  suites:
+    default:
+      paths:
+        - %paths.base%/../features
+      contexts:
+        - FeatureContext
+
+  extensions:
+      jarnaiz\JUnitFormatter\JUnitFormatterExtension:
+          filename: report.xml
+          outputDir: %paths.base%/../output/

@@ -6,3 +6,5 @@ node_modules
 coverage
 tests/php/coverage-html
 tests/php/clover.xml
+tests/integration/vendor
+tests/integration/output
