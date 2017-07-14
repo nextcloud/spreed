@@ -325,7 +325,7 @@
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentCallToken + '/ping',
 			method: 'POST'
-		).done(function() {
+		}).done(function() {
 			this.pingFails = 0;
 		}.bind(this)).fail(function(xhr) {
 			// If there is an error when pinging, retry for 3 times.
