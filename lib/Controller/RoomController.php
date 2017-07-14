@@ -225,7 +225,9 @@ class RoomController extends OCSController {
 			case Room::GROUP_CALL:
 				if ($room->getName() === '') {
 					// As name of the room use the names of the other participants
-					$participantList = array_values($participantList);
+					$participantList = array_map(function($participant) {
+						return $participant['name'];
+					}, $participantList);
 					if ($this->userId === null) {
 						$participantList[] = $this->l10n->t('You');
 					} else if ($numOtherParticipants === 0) {
