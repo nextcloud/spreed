@@ -112,8 +112,8 @@
 			}
 
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + OCA.SpreedMe.Rooms.currentRoom(),
-				method: 'PUT'
+				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + OCA.SpreedMe.Rooms.currentRoom() + '/ping',
+				method: 'POST'
 			}).done(function() {
 				pingFails = 0;
 			}).fail(function(xhr) {
