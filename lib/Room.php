@@ -49,6 +49,11 @@ class Room {
 	/** @var string */
 	private $name;
 
+	/** @var string */
+	protected $currentUser;
+	/** @var Participant */
+	protected $participant;
+
 	/**
 	 * Room constructor.
 	 *
@@ -94,6 +99,50 @@ class Room {
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * @param string $userId
+	 * @param Participant $participant
+	 */
+	public function setParticipant($userId, Participant $participant) {
+		$this->currentUser = $userId;
+		$this->participant = $participant;
+	}
+
+	/**
+	 * @param string $userId
+	 * @return Participant
+	 * @throws \RuntimeException When the user is not a participant
+	 */
+	public function getParticipant($userId) {
+		if (!is_string($userId) || $userId === '') {
+			throw new \RuntimeException('Not a user');
+		}
+
+		if ($this->currentUser === $userId && $this->participant instanceof Participant) {
+			return $this->participant;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId())));
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new \RuntimeException('User is not a participant');
+		}
+
+		if ($this->currentUser === $userId) {
+			$this->participant = new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+			return $this->participant;
+		}
+
+		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
 	}
 
 	public function deleteRoom() {
@@ -171,14 +220,15 @@ class Room {
 	 * @param IUser $user
 	 */
 	public function addUser(IUser $user) {
-		$this->addParticipant($user->getUID());
+		$this->addParticipant($user->getUID(), Participant::USER);
 	}
 
 	/**
 	 * @param string $participant
+	 * @param int $participantType
 	 * @param string $sessionId
 	 */
-	public function addParticipant($participant, $sessionId = '0') {
+	public function addParticipant($participant, $participantType, $sessionId = '0') {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('spreedme_room_participants')
 			->values(
@@ -187,8 +237,22 @@ class Room {
 					'roomId' => $query->createNamedParameter($this->getId()),
 					'lastPing' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
 					'sessionId' => $query->createNamedParameter($sessionId),
+					'participantType' => $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT),
 				]
 			);
+		$query->execute();
+	}
+
+	/**
+	 * @param string $participant
+	 * @param int $participantType
+	 */
+	public function setParticipantType($participant, $participantType) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_room_participants')
+			->set('participantType', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($participant)));
 		$query->execute();
 	}
 
@@ -249,6 +313,7 @@ class Room {
 			'roomId' => $this->getId(),
 			'lastPing' => 0,
 			'sessionId' => $sessionId,
+			'participantType' => Participant::GUEST,
 		], ['sessionId'])) {
 			$sessionId = $this->secureRandom->generate(255);
 		}
@@ -303,6 +368,7 @@ class Room {
 				$users[$row['userId']] = [
 					'lastPing' => (int) $row['lastPing'],
 					'sessionId' => $row['sessionId'],
+					'participantType' => (int) $row['participantType'],
 				];
 			} else {
 				$guests[] = [

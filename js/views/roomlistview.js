@@ -42,13 +42,14 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
+								'{{#if canModerate}}'+
 								'<li>'+
 									'<button class="add-person-button">'+
 										'<span class="icon-add"></span>'+
 										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
-								'{{#isNameEditable}}'+
+								'{{#if isNameEditable}}'+
 								'<li>'+
 									'<button class="rename-room-button">'+
 										'<span class="icon-rename"></span>'+
@@ -57,7 +58,7 @@
 								'</li>'+
 								'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
 								'<button class="icon-confirm hidden-important rename-element rename-confirm"></button>'+
-								'{{/isNameEditable}}'+
+								'{{/if}}'+
 								'<li>'+
 									'<button class="share-link-button">'+
 										'<span class="icon-public"></span>'+
@@ -67,16 +68,33 @@
 									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
 									'<div class="icon-delete private-room"></div>'+
 								'</li>'+
+								'{{/if}}'+
+								'{{#if showShareLink}}'+
 								'<li>'+
-									'<button class="leave-group-button">'+
-										'<span class="icon-close"></span>'+
-										'<span>'+t('spreed', 'Leave call')+'</span>'+
+									'<input id="shareInput-{{id}}" class="share-link-input private-room first-option" readonly="readonly" type="text"/>'+
+									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
+								'</li>'+
+								'{{/if}}'+
+								'<li>'+
+									'<button class="leave-room-button">'+
+										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
+										'<span>{{#if isDeletable}}'+t('spreed', 'Leave call')+'{{else}}'+t('spreed', 'Delete call')+'{{/if}}</span>'+
 									'</button>'+
 								'</li>'+
+								'{{#if isDeletable}}'+
+								'<li>'+
+									'<button class="delete-room-button">'+
+										'<span class="icon-delete"></span>'+
+										'<span>'+t('spreed', 'Delete call')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'{{/if}}'+
 							'</ul>'+
+							'{{#if canModerate}}'+
 							'<form class="oca-spreedme-add-person hidden">'+
 								'<input class="add-person-input" type="text" placeholder="Type name..."/>'+
 							'</form>'+
+							'{{/if}}'+
 						'</div>';
 
 	var RoomItenView = Marionette.View.extend({
@@ -107,6 +125,15 @@
 					this.toggleMenuClass();
 				}
 			});
+		},
+		templateContext: function() {
+			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
+			return {
+				canModerate: canModerate,
+				showShareLink: !canModerate && this.model.get('type') === ROOM_TYPE_PUBLIC_CALL,
+				isNameEditable: canModerate && this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE,
+				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
+			};
 		},
 		onRender: function() {
 			var roomURL, completeURL;
@@ -148,7 +175,8 @@
 			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
 			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
-			'click .app-navigation-entry-menu .leave-group-button': 'leaveGroup',
+			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
+			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
 			'click .icon-delete': 'unshareGroup',
 			'click .app-navigation-entry-link': 'joinRoom'
 		},
@@ -287,7 +315,7 @@
 				});
 			}
 		},
-		leaveGroup: function() {
+		leaveRoom: function() {
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Rooms.leaveCurrentRoom();
@@ -299,6 +327,26 @@
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
+				type: 'DELETE'
+			});
+		},
+		deleteRoom: function() {
+			if (this.model.get('participantType') !== 1 &&
+				this.model.get('participantType') !== 2) {
+				return;
+			}
+
+			//If user is in that room, it should leave that room first.
+			if (this.model.get('active')) {
+				OCA.SpreedMe.Rooms.leaveCurrentRoom();
+				OCA.SpreedMe.Rooms.showRoomDeletedMessage(true);
+				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			}
+
+			this.$el.slideUp();
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
 				type: 'DELETE'
 			});
 		},
@@ -327,10 +375,10 @@
 				case ROOM_TYPE_ONE_TO_ONE:
 					var waitingParticipantId, waitingParticipantName;
 
-					$.each(participants, function(participantId, participantName) {
+					$.each(participants, function(participantId, data) {
 						if (oc_current_user !== participantId) {
 							waitingParticipantId = participantId;
-							waitingParticipantName = participantName;
+							waitingParticipantName = data.name;
 						}
 					});
 
@@ -386,9 +434,9 @@
 		},
 		addTooltip: function () {
 			var participants = [];
-			$.each(this.model.get('participants'), function(participantId, participantName) {
+			$.each(this.model.get('participants'), function(participantId, data) {
 				if (participantId !== oc_current_user) {
-					participants.push(escapeHTML(participantName));
+					participants.push(escapeHTML(data.name));
 				}
 			});
 

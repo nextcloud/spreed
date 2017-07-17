@@ -27,6 +27,7 @@ namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Http;
@@ -144,25 +145,22 @@ class RoomController extends OCSController {
 		uasort($participants['guests'], $sortParticipants);
 
 		$participantList = [];
-		foreach ($participants['users'] as $participant => $lastPing) {
+		foreach ($participants['users'] as $participant => $data) {
 			$user = $this->userManager->get($participant);
 			if ($user instanceof IUser) {
-				$participantList[$participant] = $user->getDisplayName();
+				$participantList[$participant] = [
+					'name' => $user->getDisplayName(),
+					'type' => $data['participantType'],
+				];
 			}
 		}
 
-		$roomData = [
-			'id' => $room->getId(),
-			'token' => $room->getToken(),
-			'type' => $room->getType(),
-			'name' => $room->getName(),
-			'displayName' => $room->getName(),
-			'isNameEditable' => $room->getType() !== Room::ONE_TO_ONE_CALL,
-			'count' => $room->getNumberOfParticipants(time() - 30),
-			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
-			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
-			'participants' => $participantList,
-		];
+		try {
+			$participant = $room->getParticipant($this->userId);
+			$participantType = $participant->getParticipantType();
+		} catch (\RuntimeException $e) {
+			$participantType = Participant::GUEST;
+		}
 
 		$activeGuests = array_filter($participants['guests'], function($data) {
 			return $data['lastPing'] > time() - 30;
@@ -172,6 +170,20 @@ class RoomController extends OCSController {
 		if ($numActiveGuests !== count($participants['guests'])) {
 			$room->cleanGuestParticipants();
 		}
+
+		$roomData = [
+			'id' => $room->getId(),
+			'token' => $room->getToken(),
+			'type' => $room->getType(),
+			'name' => $room->getName(),
+			'displayName' => $room->getName(),
+			'participantType' => $participantType,
+			'count' => $room->getNumberOfParticipants(time() - 30),
+			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
+			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
+			'participants' => $participantList,
+			'numGuests' => $numActiveGuests,
+		];
 
 		if ($this->userId !== null) {
 			unset($participantList[$this->userId]);
@@ -190,7 +202,7 @@ class RoomController extends OCSController {
 					// Only one other participant
 					reset($participantList);
 					$roomData['name'] = key($participantList);
-					$roomData['displayName'] = $participantList[$roomData['name']];
+					$roomData['displayName'] = $participantList[$roomData['name']]['name'];
 				} else {
 					// Invalid user count, there must be exactly 2 users in each one2one room
 					$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
@@ -213,6 +225,9 @@ class RoomController extends OCSController {
 			case Room::GROUP_CALL:
 				if ($room->getName() === '') {
 					// As name of the room use the names of the other participants
+					$participantList = array_map(function($participant) {
+						return $participant['name'];
+					}, $participantList);
 					if ($this->userId === null) {
 						$participantList[] = $this->l10n->t('You');
 					} else if ($numOtherParticipants === 0) {
@@ -285,9 +300,9 @@ class RoomController extends OCSController {
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
-			$room->addUser($currentUser);
+			$room->addParticipant($currentUser->getUID(), Participant::OWNER);
 
-			$room->addUser($targetUser);
+			$room->addParticipant($targetUser->getUID(), Participant::OWNER);
 			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -310,20 +325,19 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$usersInGroup = $targetGroup->getUsers();
-		// If the user who is creating this call is not part of this group add them
-		if (!$targetGroup->inGroup($currentUser)) {
-			$usersInGroup[] = $currentUser;
-		}
-
 		// Create the room
 		$room = $this->manager->createGroupRoom($targetGroup->getGID());
-		foreach ($usersInGroup as $user) {
-			$room->addUser($user);
+		$room->addParticipant($currentUser->getUID(), Participant::OWNER);
 
-			if ($currentUser->getUID() !== $user->getUID()) {
-				$this->createNotification($currentUser, $user, $room);
+		$usersInGroup = $targetGroup->getUsers();
+		foreach ($usersInGroup as $user) {
+			if ($currentUser->getUID() === $user->getUID()) {
+				// Owner is already added.
+				continue;
 			}
+
+			$room->addUser($user);
+			$this->createNotification($currentUser, $user, $room);
 		}
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -335,11 +349,9 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	protected function createPublicRoom() {
-		$currentUser = $this->userManager->get($this->userId);
-
 		// Create the room
 		$room = $this->manager->createPublicRoom();
-		$room->addUser($currentUser);
+		$room->addParticipant($this->userId, Participant::OWNER);
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
@@ -354,8 +366,15 @@ class RoomController extends OCSController {
 	public function renameRoom($token, $roomName) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if (strlen($roomName) > 200) {
@@ -372,14 +391,46 @@ class RoomController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function deleteRoom($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$room->deleteRoom();
+
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
 	public function addParticipantToRoom($token, $newParticipant) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$participants = $room->getParticipants();
@@ -406,6 +457,47 @@ class RoomController extends OCSController {
 		$room->addUser($newUser);
 		$this->createNotification($currentUser, $newUser, $room);
 
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function removeParticipantFromRoom($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$room->deleteRoom();
+			return new DataResponse([]);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipant($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($targetParticipant->getParticipantType() === Participant::OWNER) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$targetUser = $this->userManager->get($participant);
+		$room->removeUser($targetUser);
 		return new DataResponse([]);
 	}
 
@@ -441,8 +533,15 @@ class RoomController extends OCSController {
 	public function makePublic($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($room->getType() !== Room::PUBLIC_CALL) {
@@ -461,13 +560,96 @@ class RoomController extends OCSController {
 	public function makePrivate($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$room->changeType(Room::GROUP_CALL);
 		}
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function promoteModerator($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipant($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($targetParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$room->setParticipantType($participant, Participant::MODERATOR);
+
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function demoteModerator($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($this->userId === $participant) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipant($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($targetParticipant->getParticipantType() !== Participant::MODERATOR) {
+			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+		}
+
+		$room->setParticipantType($participant, Participant::USER);
 
 		return new DataResponse();
 	}
