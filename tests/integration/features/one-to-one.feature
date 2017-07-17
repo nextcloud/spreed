@@ -88,3 +88,35 @@ Feature: one-to-one
     Then user "participant3" is participant of the following rooms
       | id    | type | participantType | participants |
       | room7 | 2    | 3               | participant1, participant2, participant3 |
+
+  Scenario: User1 invites user2 to a one2one room and promote user2 to moderator
+    Given user "participant1" creates room "room8"
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room8"
+    And user "participant2" is participant of room "room8"
+    When user "participant1" promotes "participant2" in room "room8" with 412
+
+  Scenario: User1 invites user2 to a one2one room and demote user2 to moderator
+    Given user "participant1" creates room "room9"
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room9"
+    And user "participant2" is participant of room "room9"
+    When user "participant1" demotes "participant2" in room "room9" with 412
+
+  Scenario: User1 invites user2 to a one2one room and promote non-invited user
+    Given user "participant1" creates room "room10"
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room10"
+    And user "participant3" is not participant of room "room10"
+    When user "participant1" promotes "participant3" in room "room10" with 404
+
+  Scenario: User1 invites user2 to a one2one room and demote non-invited user
+    Given user "participant1" creates room "room11"
+      | roomType | 1 |
+      | invite   | participant2 |
+    And user "participant1" is participant of room "room11"
+    And user "participant3" is not participant of room "room11"
+    When user "participant1" demotes "participant3" in room "room11" with 404

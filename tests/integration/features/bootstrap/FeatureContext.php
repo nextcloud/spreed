@@ -232,6 +232,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" (promotes|demotes) "([^"]*)" in room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $isPromotion
+	 * @param string $participant
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userPromoteDemoteInRoom($user, $isPromotion, $participant, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$isPromotion === 'promotes' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/moderators',
+			new \Behat\Gherkin\Node\TableNode([['participant', $participant]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" pings call "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
