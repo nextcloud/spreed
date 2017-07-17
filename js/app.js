@@ -122,12 +122,19 @@
 			});
 
 			$('#edit-roomname').on("select2-selecting", function(e) {
-				if (e.object.type === "user") {
-					OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
-				} else if (e.object.type === "group") {
-					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
-				} else if (e.object.type === "createPublicRoom") {
-					OCA.SpreedMe.Rooms.createPublicVideoCall();
+				switch (e.object.type) {
+					case "user":
+						OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+						break;
+					case "group":
+						OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
+						break;
+					case "createPublicRoom":
+						OCA.SpreedMe.Rooms.createPublicVideoCall();
+						break;
+					default:
+						console.log("Unknown type", e.object.type);
+						break;
 				}
 			});
 
