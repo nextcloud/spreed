@@ -147,6 +147,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" pings room "([^"]*)" (unsuccessfully|successfully)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 */
+	public function userPingsRoom($user, $identifier) {
+		$this->setCurrentUser($user);
+		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	/**
 	 * Parses the xml answer to get the array of users returned.
 	 * @param ResponseInterface $response
 	 * @return array
