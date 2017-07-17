@@ -110,23 +110,6 @@
 				}
 			});
 
-			$('#edit-roomname').on("change", function(e) {
-				if (e.added.type === "user") {
-					OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
-				} else if (e.added.type === "group") {
-					OCA.SpreedMe.Calls.createGroupVideoCall(e.val);
-				}
-
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-
 			$('#edit-roomname').on("click", function() {
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
@@ -139,8 +122,12 @@
 			});
 
 			$('#edit-roomname').on("select2-selecting", function(e) {
-				if (e.object.type === "createPublicRoom") {
-					OCA.SpreedMe.Calls.createPublicVideoCall();
+				if (e.object.type === "user") {
+					OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+				} else if (e.object.type === "group") {
+					OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
+				} else if (e.object.type === "createPublicRoom") {
+					OCA.SpreedMe.Rooms.createPublicVideoCall();
 				}
 			});
 
