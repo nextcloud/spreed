@@ -133,7 +133,7 @@
 				showShareLink: !canModerate && this.model.get('type') === ROOM_TYPE_PUBLIC_CALL,
 				isNameEditable: canModerate && this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
-			}
+			};
 		},
 		onRender: function() {
 			var roomURL, completeURL;
