@@ -67,7 +67,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userIsParticipantOfRooms($user, \Behat\Gherkin\Node\TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendingTo('GET', '/apps/spreed/api/v1/room');
+		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
 		$this->assertStatusCode($this->response, 200);
 
 		$rooms = $this->getDataFromResponse($this->response);
@@ -99,7 +99,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userIsParticipantOfRoom($user, $isParticipant, $identifier) {
 		$this->setCurrentUser($user);
-		$this->sendingTo('GET', '/apps/spreed/api/v1/room');
+		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
 		$this->assertStatusCode($this->response, 200);
 
 		$isParticipant = $isParticipant === 'is';
@@ -129,7 +129,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userCreatesRoom($user, $identifier, \Behat\Gherkin\Node\TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('POST', '/apps/spreed/api/v1/room', $formData);
+		$this->sendRequest('POST', '/apps/spreed/api/v1/room', $formData);
 		$this->assertStatusCode($this->response, 201);
 
 		$response = $this->getDataFromResponse($this->response);
@@ -142,10 +142,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @param string $user
 	 * @param string $identifier
+	 * @param string $statusCode
 	 */
 	public function userLeavesRoom($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants/self');
+		$this->sendRequest('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants/self');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -153,13 +154,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Then /^user "([^"]*)" removes "([^"]*)" from room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
+	 * @param string $toRemove
 	 * @param string $identifier
+	 * @param string $statusCode
 	 */
 	public function userRemovesUserFromRoom($user, $toRemove, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith(
+		$this->sendRequest(
 			'DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants',
-			new \Behat\Gherkin\Node\TableNode([['participant' => $toRemove]])
+			new \Behat\Gherkin\Node\TableNode([['participant', $toRemove]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -169,10 +172,62 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @param string $user
 	 * @param string $identifier
+	 * @param string $statusCode
 	 */
 	public function userDeletesRoom($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" renames room "([^"]*)" to "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $newName
+	 * @param string $statusCode
+	 */
+	public function userRenamesRoom($user, $identifier, $newName, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier],
+			new \Behat\Gherkin\Node\TableNode([['roomName', $newName]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $newType
+	 * @param string $statusCode
+	 */
+	public function userChangesTypeOfTheRoom($user, $identifier, $newType, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			$newType === 'public' ? 'POST' : 'DELETE',
+			'/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/public'
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" adds "([^"]*)" to room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $newUser
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userAddUserToRoom($user, $newUser, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants',
+			new \Behat\Gherkin\Node\TableNode([['newParticipant', $newUser]])
+		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -185,7 +240,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userPingsCall($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier] . '/ping');
+		$this->sendRequest('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier] . '/ping');
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -198,7 +253,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userJoinsCall($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -211,7 +266,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userLeavesCall($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('DELETE', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 
@@ -225,7 +280,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 	public function userSeesPeersInCall($user, $numPeers, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('GET', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
 		$this->assertStatusCode($this->response, $statusCode);
 
 		if ($statusCode === '200') {
@@ -343,22 +398,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 
 	/**
-	 * @When /^sending "([^"]*)" to "([^"]*)"$/
-	 * @param string $verb
-	 * @param string $url
-	 */
-	public function sendingTo($verb, $url) {
-		$this->sendingToWith($verb, $url, null);
-	}
-
-	/**
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
 	 * @param string $verb
 	 * @param string $url
 	 * @param \Behat\Gherkin\Node\TableNode $body
 	 * @param array $headers
 	 */
-	public function sendingToWith($verb, $url, $body = null, array $headers = []) {
+	public function sendRequest($verb, $url, $body = null, array $headers = []) {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$client = new Client();
 		$options = [];
@@ -401,5 +447,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			case 'public':
 				return 3;
 		}
+
+		throw new \RuntimeException('Invalid room type');
 	}
 }
