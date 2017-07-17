@@ -37,7 +37,7 @@ var spreedPeerConnectionTable = [];
 		newUsers.forEach(function(user) {
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 			var sessionId = user.sessionId || user.sessionid;
-			if (!sessionId || sessionId === currentSessionId) {
+			if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.indexOf(sessionId) !== -1) {
 				return;
 			}
 
@@ -54,7 +54,7 @@ var spreedPeerConnectionTable = [];
 			// To avoid overloading the user joining a room (who previously called
 			// all the other participants), we decide who calls who by comparing
 			// the session ids of the users: "larger" ids call "smaller" ones.
-			if (sessionId < currentSessionId && !webrtc.webrtc.peers.hasOwnProperty(sessionId)) {
+			if (sessionId < currentSessionId && !webrtc.webrtc.getPeers(sessionId, 'video').length) {
 				console.log("Starting call with", user);
 				peer = webrtc.webrtc.createPeer({
 					id: sessionId,
@@ -70,7 +70,7 @@ var spreedPeerConnectionTable = [];
 			}
 
 			//Send shared screen to new participants
-			if (webrtc.getLocalScreen()) {
+			if (webrtc.getLocalScreen() && !webrtc.webrtc.getPeers(sessionId, 'screen').length) {
 				peer = webrtc.webrtc.createPeer({
 					id: sessionId,
 					type: 'screen',
