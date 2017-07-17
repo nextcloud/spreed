@@ -65,7 +65,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param \Behat\Gherkin\Node\TableNode|null $formData
 	 */
-	public function userHasRooms($user, \Behat\Gherkin\Node\TableNode $formData = null) {
+	public function userIsParticipantOfRooms($user, \Behat\Gherkin\Node\TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendingTo('GET', '/apps/spreed/api/v1/room');
 		$this->assertStatusCode($this->response, 200);
@@ -91,6 +91,36 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)"$/
+	 *
+	 * @param string $user
+	 * @param string $isParticipant
+	 * @param string $identifier
+	 */
+	public function userIsParticipantOfRoom($user, $isParticipant, $identifier) {
+		$this->setCurrentUser($user);
+		$this->sendingTo('GET', '/apps/spreed/api/v1/room');
+		$this->assertStatusCode($this->response, 200);
+
+		$isParticipant = $isParticipant === 'is';
+
+		$rooms = $this->getDataFromResponse($this->response);
+
+		if ($isParticipant) {
+			PHPUnit_Framework_Assert::assertNotEmpty($rooms);
+		}
+
+		foreach ($rooms as $room) {
+			if (self::$tokenToIdentifier[$room['token']] === $identifier) {
+				PHPUnit_Framework_Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
+				return;
+			}
+		}
+
+		PHPUnit_Framework_Assert::assertEquals($isParticipant, false, 'Room ' . $identifier . ' not found in user´s room list');
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" creates room "([^"]*)"$/
 	 *
 	 * @param string $user
@@ -108,54 +138,102 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" leaves room "([^"]*)"$/
+	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 */
-	public function userLeavesRoom($user, $identifier) {
+	public function userLeavesRoom($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
 		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants/self');
-		$this->assertStatusCode($this->response, 200);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" removes "([^"]*)" from room "([^"]*)"$/
+	 * @Then /^user "([^"]*)" removes "([^"]*)" from room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 */
-	public function userRemovesUserfromRoom($user, $toRemove, $identifier) {
+	public function userRemovesUserFromRoom($user, $toRemove, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
 		$this->sendingToWith(
 			'DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants',
 			new \Behat\Gherkin\Node\TableNode([['participant' => $toRemove]])
 		);
-		$this->assertStatusCode($this->response, 200);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" deletes room "([^"]*)"$/
+	 * @Then /^user "([^"]*)" deletes room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
 	 */
-	public function userDeletesRoom($user, $identifier) {
+	public function userDeletesRoom($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
 		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
-		$this->assertStatusCode($this->response, 200);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" pings room "([^"]*)" (unsuccessfully|successfully)$/
+	 * @Then /^user "([^"]*)" pings call "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
+	 * @param string $statusCode
 	 */
-	public function userPingsRoom($user, $identifier) {
+	public function userPingsCall($user, $identifier, $statusCode) {
 		$this->setCurrentUser($user);
-		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
-		$this->assertStatusCode($this->response, 200);
+		$this->sendingToWith('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier] . '/ping');
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userJoinsCall($user, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendingToWith('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" leaves call "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userLeavesCall($user, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendingToWith('DELETE', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees (\d+) peers in call "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $numPeers
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userSeesPeersInCall($user, $numPeers, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendingToWith('GET', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode === '200') {
+			$response = $this->getDataFromResponse($this->response);
+			PHPUnit_Framework_Assert::assertCount((int) $numPeers, $response);
+		} else {
+			PHPUnit_Framework_Assert::assertEquals((int) $numPeers, 0);
+		}
 	}
 
 	/**
@@ -177,10 +255,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @BeforeSuite
-	 * @AfterSuite
+	 * @BeforeScenario
+	 * @AfterScenario
 	 */
-	public static function resetSpreedAppData() {
+	public function resetSpreedAppData() {
 		$client = new Client();
 		$options = [
 			'auth' => ['admin', 'admin'],
