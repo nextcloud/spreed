@@ -183,14 +183,14 @@ pipeline:
 
 matrix:
   include:
-    #- TESTS: eslint
-    #- TESTS: stylelint
-    #- TESTS: check-app-compatbility
-    #- TESTS: syntax-php5.6
-    #- TESTS: syntax-php7.0
-    #- TESTS: signed-off-check
-    #- TESTS: php5.6
-    #- TESTS: php7.0
-    #- TESTS: php7.1
+    - TESTS: eslint
+    - TESTS: stylelint
+    - TESTS: check-app-compatbility
+    - TESTS: syntax-php5.6
+    - TESTS: syntax-php7.0
+    - TESTS: signed-off-check
+    - TESTS: php5.6
+    - TESTS: php7.0
+    - TESTS: php7.1
     - TESTS: php7.1-integration
-    #- TESTS: jsunit
+    - TESTS: jsunit
