@@ -29,22 +29,28 @@ return [
 			'verb' => 'GET',
 		],
 		[
-			'name' => 'Signalling#signalling',
-			'url' => '/signalling',
-			'verb' => 'POST',
-		],
-		[
-			'name' => 'Signalling#pullMessages',
-			'url' => '/messages',
-			'verb' => 'GET',
-		],
-		[
 			'name' => 'AppSettings#setSpreedSettings',
 			'url' => '/settings/admin',
 			'verb' => 'POST',
 		],
 	],
 	'ocs' => [
+		[
+			'name' => 'Signalling#signalling',
+			'url' => '/api/{apiVersion}/signalling',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'Signalling#pullMessages',
+			'url' => '/api/{apiVersion}/messages',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 		[
 			'name' => 'Call#getPeersForCall',
 			'url' => '/api/{apiVersion}/call/{token}',
