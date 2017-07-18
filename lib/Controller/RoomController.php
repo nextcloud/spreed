@@ -510,7 +510,10 @@ class RoomController extends OCSController {
 	public function removeSelfFromRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$room->getParticipant($this->userId); // Check if the participant is part of the room
 		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
