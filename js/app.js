@@ -501,9 +501,7 @@
 				t('spreed', 'Time to call your friends')
 			);
 
-			if (oc_current_user) {
-				OCA.SpreedMe.initCalls(signaling);
-			}
+			OCA.SpreedMe.initCalls(signaling);
 
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
