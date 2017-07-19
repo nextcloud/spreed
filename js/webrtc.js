@@ -664,6 +664,8 @@ var spreedPeerConnectionTable = [];
 				} else if (data.type === 'nickChanged') {
 					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
 				}
+			} else if (label === 'hark') {
+				// Ignore messages from hark datachannel
 			} else {
 				console.log('Uknown message from %s datachannel', label, data);
 			}
