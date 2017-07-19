@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Yeniden adlandır",
     "Share link" : "Bağlantıyı paylaş",
     "Leave call" : "Görüşmeden ayrıl",
+    "Delete call" : "Çağrıyı sil",
     "No other people in this call" : "Bu görüşmede başka kimse yok",
     "You" : "Siz",
     "and you" : "ve siz",

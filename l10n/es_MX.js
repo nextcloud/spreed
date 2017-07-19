@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Renombrar",
     "Share link" : "Compartir liga",
     "Leave call" : "Dejar la llamada",
+    "Delete call" : "Borrar llamada",
     "No other people in this call" : "No hay más personas en esta llamada",
     "You" : "Tú",
     "and you" : "y tú",
