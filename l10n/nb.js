@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Gi nytt navn",
     "Share link" : "Del lenke",
     "Leave call" : "Forlat samtalen",
+    "Delete call" : "Slett samtale",
     "No other people in this call" : "Ingen andre personer i denne samtalen",
     "You" : "Du",
     "and you" : "og deg",
