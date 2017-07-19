@@ -163,7 +163,7 @@
 		//
 		// 1. Join the call as participant.
 		// 2. Get a list of other connected clients in the call.
-		// 3. Pass information about other clients to the callback.
+		// 3. Pass information about the clients that need to be called by you to the callback.
 		//
 		// The clients will then use the message command to exchange
 		// their signalling information.
@@ -184,7 +184,7 @@
 					};
 
 					peers.forEach(function(element) {
-						if (this.sessionId !== element['sessionId']) {
+						if (element['sessionId'] < this.sessionId) {
 							callDescription['clients'][element['sessionId']] = {
 								'video': true
 							};
