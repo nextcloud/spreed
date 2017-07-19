@@ -220,7 +220,7 @@
 		});
 	};
 
-	InternalSignaling.prototype.setRoomCollection = function(rooms) {
+	InternalSignaling.prototype.setRoomCollection = function(/*rooms*/) {
 		this._pollForRoomChanges();
 		return SignalingBase.prototype.setRoomCollection.apply(this, arguments);
 	};
