@@ -2,7 +2,7 @@
 /* global SimpleWebRTC, OC, OCA: false */
 
 var webrtc;
-var spreedMappingTable = [];
+var spreedMappingTable = {};
 var spreedPeerConnectionTable = [];
 
 (function(OCA, OC) {
@@ -10,9 +10,97 @@ var spreedPeerConnectionTable = [];
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
+	var previousUsersInRoom = [];
+
+	function updateParticipantsUI(currentUsersNo) {
+		'use strict';
+		if (!currentUsersNo) {
+			currentUsersNo = 1;
+		}
+
+		var appContentElement = $('#app-content'),
+			participantsClass = 'participants-' + currentUsersNo;
+		if (!appContentElement.hasClass(participantsClass) && !appContentElement.hasClass('screensharing')) {
+			appContentElement.attr('class', '').addClass(participantsClass);
+			if (currentUsersNo > 1) {
+				appContentElement.addClass('incall');
+			} else {
+				appContentElement.removeClass('incall');
+			}
+		}
+	}
+
+	function usersChanged(newUsers, disconnectedSessionIds) {
+		'use strict';
+		var currentSessionId = webrtc.connection.getSessionid();
+
+		newUsers.forEach(function(user) {
+			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
+			var sessionId = user.sessionId || user.sessionid;
+			if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.indexOf(sessionId) !== -1) {
+				return;
+			}
+
+			previousUsersInRoom.push(sessionId);
+
+			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
+			spreedMappingTable[sessionId] = user.userId || user.userid;
+			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(sessionId));
+			if (videoContainer.length === 0) {
+				OCA.SpreedMe.videos.add(sessionId);
+			}
+
+			var peer;
+			// To avoid overloading the user joining a room (who previously called
+			// all the other participants), we decide who calls who by comparing
+			// the session ids of the users: "larger" ids call "smaller" ones.
+			if (sessionId < currentSessionId && !webrtc.webrtc.getPeers(sessionId, 'video').length) {
+				console.log("Starting call with", user);
+				peer = webrtc.webrtc.createPeer({
+					id: sessionId,
+					type: "video",
+					enableDataChannels: true,
+					receiveMedia: {
+						offerToReceiveAudio: 1,
+						offerToReceiveVideo: 1
+					}
+				});
+				webrtc.emit('createdPeer', peer);
+				peer.start();
+			}
+
+			//Send shared screen to new participants
+			if (webrtc.getLocalScreen() && !webrtc.webrtc.getPeers(sessionId, 'screen').length) {
+				peer = webrtc.webrtc.createPeer({
+					id: sessionId,
+					type: 'screen',
+					sharemyscreen: true,
+					enableDataChannels: false,
+					receiveMedia: {
+						offerToReceiveAudio: 0,
+						offerToReceiveVideo: 0
+					},
+					broadcaster: currentSessionId,
+				});
+				webrtc.emit('createdPeer', peer);
+				peer.start();
+			}
+		});
+
+		disconnectedSessionIds.forEach(function(sessionId) {
+			console.log('XXX Remove peer', sessionId);
+			OCA.SpreedMe.webrtc.removePeers(sessionId);
+			OCA.SpreedMe.speakers.remove(sessionId, true);
+			OCA.SpreedMe.videos.remove(sessionId);
+			delete spreedMappingTable[sessionId];
+		});
+
+		previousUsersInRoom = previousUsersInRoom.diff(disconnectedSessionIds);
+		updateParticipantsUI(previousUsersInRoom.length + 1);
+	}
+
 	function initWebRTC() {
 		'use strict';
-		var previousUsersInRoom = [];
 		Array.prototype.diff = function(a) {
 			return this.filter(function(i) {
 				return a.indexOf(i) < 0;
@@ -20,69 +108,37 @@ var spreedPeerConnectionTable = [];
 		};
 
 		var signaling = OCA.SpreedMe.createSignalingConnection();
+		signaling.on('usersJoined', function(users) {
+			usersChanged(users, []);
+		});
+		signaling.on('usersLeft', function(users) {
+			usersChanged([], users);
+		});
 		signaling.on('usersInRoom', function(users) {
+			// The passed list are the users that are currently in the room,
+			// i.e. that are in the call and should call each other.
+			var currentSessionId = webrtc.connection.getSessionid();
 			var currentUsersInRoom = [];
-			var webrtc = OCA.SpreedMe.webrtc;
-			var currentUser = webrtc.connection.getSessionid();
-
+			var userMapping = {};
 			users.forEach(function(user) {
-				var sessionId = user['sessionId'];
+				var sessionId = user['sessionId'] || user.sessionid;
+				if (sessionId === currentSessionId) {
+					return;
+				}
+
 				currentUsersInRoom.push(sessionId);
-				spreedMappingTable[sessionId] = user['userId'];
-				if (sessionId && currentUser !== sessionId) {
-					var videoContainer = $(OCA.SpreedMe.videos.getContainerId(sessionId));
-					if (videoContainer.length === 0) {
-						OCA.SpreedMe.videos.add(sessionId);
-					}
-				}
+				userMapping[sessionId] = user;
 			});
 
-			var currentUsersNo = currentUsersInRoom.length;
-			if(currentUsersNo === 0) {
-				currentUsersNo = 1;
-			}
-
-			var appContentElement = $('#app-content'),
-				participantsClass = 'participants-' + currentUsersNo;
-			if (!appContentElement.hasClass(participantsClass) && !appContentElement.hasClass('screensharing')) {
-				appContentElement.attr('class', '').addClass(participantsClass);
-				if (currentUsersNo > 1) {
-					appContentElement.addClass('incall');
-				} else {
-					appContentElement.removeClass('incall');
-				}
-			}
-
-			//Send shared screen to new participants
-			if (webrtc.getLocalScreen()) {
-				var newUsers = currentUsersInRoom.diff(previousUsersInRoom);
-				newUsers.forEach(function(user) {
-					if (user !== currentUser) {
-						var peer = webrtc.webrtc.createPeer({
-								id: user,
-								type: 'screen',
-								sharemyscreen: true,
-								enableDataChannels: false,
-								receiveMedia: {
-									offerToReceiveAudio: 0,
-									offerToReceiveVideo: 0
-								},
-								broadcaster: currentUser,
-						});
-						webrtc.emit('createdPeer', peer);
-						peer.start();
-					}
-				});
-			}
-
-			var disconnectedUsers = previousUsersInRoom.diff(currentUsersInRoom);
-			disconnectedUsers.forEach(function(user) {
-				console.log('XXX Remove peer', user);
-				OCA.SpreedMe.webrtc.removePeers(user);
-				OCA.SpreedMe.speakers.remove(user, true);
-				OCA.SpreedMe.videos.remove(user);
+			var newSessionIds = currentUsersInRoom.diff(previousUsersInRoom);
+			var disconnectedSessionIds = previousUsersInRoom.diff(currentUsersInRoom);
+			var newUsers = [];
+			newSessionIds.forEach(function(sessionId) {
+				newUsers.push(userMapping[sessionId]);
 			});
-			previousUsersInRoom = currentUsersInRoom;
+			if (newUsers.length || disconnectedSessionIds.length) {
+				usersChanged(newUsers, disconnectedSessionIds);
+			}
 		});
 
 		var nick = OC.getCurrentUser()['displayName'];
@@ -533,7 +589,7 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
-			OCA.SpreedMe.app.startSpreed(configuration);
+			OCA.SpreedMe.app.startSpreed(configuration, signaling);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
@@ -626,7 +682,7 @@ var spreedPeerConnectionTable = [];
 				var nameIndicator = videoContainer.find('.nameIndicator');
 				var avatar = videoContainer.find('.avatar');
 
-				if (userId.length) {
+				if (userId && userId.length) {
 					avatar.avatar(userId, 128);
 					nameIndicator.text(peer.nick);
 				} else if (peer.nick) {

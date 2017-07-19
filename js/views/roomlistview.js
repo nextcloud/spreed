@@ -316,11 +316,9 @@
 			}
 		},
 		leaveRoom: function() {
-			//If user is in that room, it should leave that room first.
+			// If user is in that room, it should leave the associated call first.
 			if (this.model.get('active')) {
-				OCA.SpreedMe.Rooms.leaveCurrentRoom();
-				OCA.SpreedMe.Rooms.showRoomDeletedMessage(true);
-				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+				OCA.SpreedMe.Calls.leaveCurrentCall(true);
 			}
 
 			this.$el.slideUp();
@@ -353,7 +351,7 @@
 		joinRoom: function(e) {
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
-			OCA.SpreedMe.Rooms.join(token);
+			OCA.SpreedMe.Calls.join(token);
 
 			OC.Util.History.pushState({
 				token: token
@@ -569,16 +567,9 @@
 				}
 			});
 			this.ui.personSelectorInput.on('change', function(e) {
-				var app = OCA.SpreedMe.app;
-
-				$.post(
-					OC.linkToOCS('apps/spreed/api/v1/room', 2) + _this.model.get('token') + '/participants',
-					{
-						newParticipant: e.val
-					}
-				).done(function() {
-					app.syncRooms();
-				});
+				var token = _this.model.get('token');
+				var participant = e.val;
+				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
 
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);

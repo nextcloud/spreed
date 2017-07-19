@@ -18,7 +18,7 @@ script(
 		'simplewebrtc',
 		'webrtc',
 		'signaling',
-		'rooms',
+		'calls',
 		'app',
 		'init',
 	]

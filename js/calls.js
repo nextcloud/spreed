@@ -6,32 +6,35 @@
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
-	function initRooms() {
+	var signaling;
+
+	function initCalls(signaling_connection) {
+		signaling = signaling_connection;
 
 		var editRoomname = $('#edit-roomname');
 		editRoomname.keyup(function () {
 			editRoomname.tooltip('hide');
 			editRoomname.removeClass('error');
 		});
+
+		OCA.SpreedMe.Calls.leaveAllCalls();
 	}
 
-	var currentRoom = '';
-	var pingFails = 0;
 	Backbone.Radio.channel('rooms');
 
-	OCA.SpreedMe.Rooms = {
+	OCA.SpreedMe.Calls = {
 		showCamera: function() {
 			$('.videoView').removeClass('hidden');
 		},
-		_createRoomSuccessHandle: function(ocsResponse) {
-			var data = ocsResponse.ocs.data;
+		_createCallSuccessHandle: function(ocsResponse) {
+			var token = ocsResponse.ocs.data.token;
 			OC.Util.History.pushState({
-				token: data.token
-			}, OC.generateUrl('/call/' + data.token));
-			this.join(data.token);
+				token: token
+			}, OC.generateUrl('/call/' + token));
+			this.join(token);
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
-			console.log(recipientUserId);
+			console.log("Creating one-to-one video call", recipientUserId);
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 				type: 'POST',
@@ -42,11 +45,11 @@
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
-				success: _.bind(this._createRoomSuccessHandle, this)
+				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
 		createGroupVideoCall: function(groupId) {
-			console.log(groupId);
+			console.log("Creating group video call", groupId);
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 				type: 'POST',
@@ -57,7 +60,7 @@
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
-				success: _.bind(this._createRoomSuccessHandle, this)
+				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
 		createPublicVideoCall: function() {
@@ -71,11 +74,11 @@
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
 				},
-				success: _.bind(this._createRoomSuccessHandle, this)
+				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
 		join: function(token) {
-			if (OCA.SpreedMe.Rooms.currentRoom() === token) {
+			if (signaling.currentCallToken === token) {
 				return;
 			}
 
@@ -84,59 +87,19 @@
 			$('#app-content').addClass('icon-loading');
 
 			OCA.SpreedMe.webrtc.leaveRoom();
-
-			currentRoom = token;
 			OCA.SpreedMe.webrtc.joinRoom(token);
-			OCA.SpreedMe.Rooms.ping();
 		},
-		leaveCurrentRoom: function() {
+		leaveCurrentCall: function(deleter) {
 			OCA.SpreedMe.webrtc.leaveRoom();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
-			currentRoom = '';
+			this.showRoomDeletedMessage(deleter);
 		},
-		currentRoom: function() {
-			return currentRoom;
-		},
-		peers: function(token) {
-			return $.ajax({
-				beforeSend: function (request) {
-					request.setRequestHeader('Accept', 'application/json');
-				},
-				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token
-			});
-		},
-		ping: function() {
-			if (OCA.SpreedMe.Rooms.currentRoom() === '') {
-				return;
+		leaveAllCalls: function() {
+			if (signaling) {
+				// We currently only support a single active call.
+				signaling.leaveCurrentCall();
 			}
-
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + OCA.SpreedMe.Rooms.currentRoom() + '/ping',
-				method: 'POST'
-			}).done(function() {
-				pingFails = 0;
-			}).fail(function(xhr) {
-				// If there is an error when pinging, retry for 3 times.
-				if (xhr.status !== 404 && pingFails < 3) {
-					pingFails++;
-					return;
-				}
-				OCA.SpreedMe.Rooms.leaveCurrentRoom();
-				OCA.SpreedMe.Rooms.showRoomDeletedMessage(false);
-			});
-		},
-		leaveAllRooms: function() {
-			var token = OCA.SpreedMe.Rooms.currentRoom();
-			if (!token) {
-				return;
-			}
-
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-				method: 'DELETE',
-				async: false
-			});
 		},
 		showRoomDeletedMessage: function(deleter) {
 			if (deleter) {
@@ -154,6 +117,6 @@
 		}
 	};
 
-	OCA.SpreedMe.initRooms = initRooms;
+	OCA.SpreedMe.initCalls = initCalls;
 
 })(OCA, OC, $);
