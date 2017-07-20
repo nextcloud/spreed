@@ -104,6 +104,21 @@ class BackendController extends Controller {
 	}
 
 	/**
+	 * Return list of userids that are invited to a room.
+	 *
+	 * @param Room $room
+	 * @return array
+	 */
+	private function getRoomUserIds($room) {
+		$participants = $room->getParticipants();
+		$userIds = [];
+		foreach ($participants['users'] as $participant => $data) {
+			array_push($userIds, $participant);
+		}
+		return $userIds;
+	}
+
+	/**
 	 * The given users are now invited to a room.
 	 *
 	 * @param Room $room
@@ -115,6 +130,9 @@ class BackendController extends Controller {
 			'type' => 'invite',
 			'invite' => [
 				'userids' => $userIds,
+				// TODO(fancycode): We should try to get rid of "alluserids" and
+				// find a better way to notify existing users to update the room.
+				'alluserids' => $this->getRoomUserIds($room),
 				'properties' => [
 					'name' => $room->getName(),
 					'type' => $room->getType(),
@@ -135,6 +153,13 @@ class BackendController extends Controller {
 			'type' => 'disinvite',
 			'disinvite' => [
 				'userids' => $userIds,
+				// TODO(fancycode): We should try to get rid of "alluserids" and
+				// find a better way to notify existing users to update the room.
+				'alluserids' => $this->getRoomUserIds($room),
+				'properties' => [
+					'name' => $room->getName(),
+					'type' => $room->getType(),
+				],
 			],
 		]);
 	}
@@ -146,15 +171,10 @@ class BackendController extends Controller {
 	 */
 	public function roomModified($room) {
 		$this->logger->info("Room modified: " . $room->getToken());
-		$participants = $room->getParticipants();
-		$userIds = [];
-		foreach ($participants['users'] as $participant => $data) {
-			array_push($userIds, $participant);
-		}
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'update',
 			'update' => [
-				'userids' => $userIds,
+				'userids' => $this->getRoomUserIds($room),
 				'properties' => [
 					'name' => $room->getName(),
 					'type' => $room->getType(),
@@ -170,15 +190,10 @@ class BackendController extends Controller {
 	 */
 	public function roomDeleted($room) {
 		$this->logger->info("Room deleted: " . $room->getToken());
-		$participants = $room->getParticipants();
-		$userIds = [];
-		foreach ($participants['users'] as $participant => $data) {
-			array_push($userIds, $participant);
-		}
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'delete',
 			'delete' => [
-				'userids' => $userIds,
+				'userids' => $this->getRoomUserIds($room),
 			],
 		]);
 	}
