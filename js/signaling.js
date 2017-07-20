@@ -93,6 +93,7 @@
 	function InternalSignaling() {
 		SignalingBase.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
+		this._startPullingMessages();
 
 		this.pingFails = 0;
 		this.pingInterval = null;
@@ -149,11 +150,18 @@
 		var message = [{
 			ev: ev
 		}];
-		$.post(OC.generateUrl('/apps/spreed/signalling'), {
-			messages: JSON.stringify(message)
-		}, function(data) {
-			this._trigger(ev, [data]);
-		}.bind(this));
+
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signalling',
+			type: 'POST',
+			data: {messages: JSON.stringify(message)},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (result) {
+				this._trigger(ev, [result.ocs.data]);
+			}.bind(this)
+		});
 	};
 
 	InternalSignaling.prototype.joinCall = function(token, callback, password) {
@@ -288,27 +296,35 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._openEventSource = function() {
+	InternalSignaling.prototype._startPullingMessages = function() {
 		// Connect to the messages endpoint and pull for new messages
-		this.source = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
-
-		this.source.listen('usersInRoom', function(users) {
-			this._trigger('usersInRoom', [users]);
-		}.bind(this));
-		this.source.listen('message', function(message) {
-			if (typeof(message) === 'string') {
-				message = JSON.parse(message);
-			}
-			this._trigger('message', [message]);
-		}.bind(this));
-		this.source.listen('__internal__', function(data) {
-			if (data === 'close') {
-				console.log('signaling connection closed - will reopen');
-				setTimeout(function() {
-					this._openEventSource();
-				}.bind(this), 0);
-			}
-		}.bind(this));
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'messages',
+			type: 'GET',
+			dataType: 'json',
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (result) {
+				$.each(result.ocs.data, function(id, message) {
+					switch(message.type) {
+					    case "usersInRoom":
+					        this._trigger('usersInRoom', [message.data]);
+					        break;
+					    case "message":
+					        if (typeof(message.data) === 'string') {
+								message.data = JSON.parse(message.data);
+							}
+							this._trigger('message', [message.data]);
+					        break;
+					    default:
+					        console.log('Uknown Signalling Message');
+					        break;
+					}
+				}.bind(this));
+				this._startPullingMessages();
+			}.bind(this)
+		});
 	};
 
 	/**
@@ -329,9 +345,15 @@
 			return;
 		}
 
-		$.post(OC.generateUrl('/apps/spreed/signalling'), {
-			messages: JSON.stringify(this.spreedArrayConnection)
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signalling',
+			type: 'POST',
+			data: {messages: JSON.stringify(this.spreedArrayConnection)},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			}
 		});
+
 		this.spreedArrayConnection = [];
 	};
 
