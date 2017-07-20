@@ -177,6 +177,7 @@ class Room {
 			->set('name', $query->createNamedParameter($newName))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
+		$this->name = $newName;
 
 		return true;
 	}
