@@ -668,6 +668,16 @@
 	StandaloneSignaling.prototype.joinResponseReceived = function(data, token, callback) {
 		console.log("Joined", data, token);
 		this.currentCallToken = token;
+		if (this.roomCollection) {
+			// The list of rooms is not fetched from the server. Update ping
+			// of joined room so it gets sorted to the top.
+			this.roomCollection.forEach(function(room) {
+				if (room.get('token') === token) {
+					room.set('lastPing', (new Date()).getTime() / 1000);
+				}
+			});
+			this.roomCollection.sort();
+		}
 		if (callback) {
 			var roomDescription = {
 				"clients": {}
@@ -719,9 +729,27 @@
 		}
 	};
 
+	StandaloneSignaling.prototype.setRoomCollection = function(/* rooms */) {
+		SignalingBase.prototype.setRoomCollection.apply(this, arguments);
+		// Retrieve initial list of rooms for this user.
+		return this.internalSyncRooms();
+	};
+
+	StandaloneSignaling.prototype.syncRooms = function() {
+		// Never manually sync rooms, will be done based on notifications
+		// from the signaling server.
+		var defer = $.Deferred();
+		defer.resolve([]);
+		return defer;
+	};
+
+	StandaloneSignaling.prototype.internalSyncRooms = function() {
+		return SignalingBase.prototype.syncRooms.apply(this, arguments);
+	};
+
 	StandaloneSignaling.prototype.processRoomListEvent = function(data) {
 		console.log("Room list event", data);
-		this.syncRooms();
+		this.internalSyncRooms();
 	};
 
 	OCA.SpreedMe.createSignalingConnection = function() {
