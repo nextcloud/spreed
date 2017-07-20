@@ -433,9 +433,9 @@
 			if (Object.keys(participants).length === 1) {
 				var waitingParticipantId, waitingParticipantName;
 
-				$.each(participants, function(participantId, participantName) {
-					waitingParticipantId = participantId;
-					waitingParticipantName = participantName;
+				$.each(participants, function(id, participant) {
+					waitingParticipantId = id;
+					waitingParticipantName = participant.name;
 				});
 
 				// Avatar for username
