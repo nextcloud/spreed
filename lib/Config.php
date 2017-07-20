@@ -123,7 +123,8 @@ class Config {
 	 * @return bool
 	 */
 	public function allowInsecureSignaling() {
-		return ($this->config->getAppValue('spreed', 'signaling_skip_verify_cert', '') != '');
+		$skip_verify = $this->config->getAppValue('spreed', 'signaling_skip_verify_cert', '');
+		return !empty($skip_verify);
 	}
 
 	/**
