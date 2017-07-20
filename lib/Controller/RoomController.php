@@ -63,6 +63,8 @@ class RoomController extends OCSController {
 	private $activityManager;
 	/** @var IL10N */
 	private $l10n;
+	/** @var BackendController */
+	private $backend;
 
 	/**
 	 * @param string $appName
@@ -76,6 +78,7 @@ class RoomController extends OCSController {
 	 * @param INotificationManager $notificationManager
 	 * @param IActivityManager $activityManager
 	 * @param IL10N $l10n
+	 * @param BackendController $backend
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -87,7 +90,8 @@ class RoomController extends OCSController {
 								Manager $manager,
 								INotificationManager $notificationManager,
 								IActivityManager $activityManager,
-								IL10N $l10n) {
+								IL10N $l10n,
+								BackendController $backend) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->userId = $UserId;
@@ -98,6 +102,7 @@ class RoomController extends OCSController {
 		$this->notificationManager = $notificationManager;
 		$this->activityManager = $activityManager;
 		$this->l10n = $l10n;
+		$this->backend = $backend;
 	}
 
 	/**
@@ -350,6 +355,11 @@ class RoomController extends OCSController {
 
 			$this->createNotification($currentUser, $targetUser, $room);
 
+			$this->backend->roomInvited($room, [
+				$currentUser->getUID(),
+				$targetUser->getUID(),
+			]);
+
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 		}
 	}
@@ -419,6 +429,8 @@ class RoomController extends OCSController {
 			'participantType' => Participant::OWNER,
 		]);
 
+		$this->backend->roomInvited($room, [$this->userId]);
+
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
 
@@ -450,6 +462,8 @@ class RoomController extends OCSController {
 		if (!$room->setName($roomName)) {
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
+
+		$this->backend->roomModified($room);
 		return new DataResponse([]);
 	}
 
@@ -473,6 +487,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		$this->backend->roomDeleted($room);
 		$room->deleteRoom();
 
 		return new DataResponse([]);
@@ -561,6 +576,7 @@ class RoomController extends OCSController {
 				'userId' => $newUser->getUID(),
 			]);
 			$this->createNotification($currentUser, $newUser, $room);
+			$this->backend->roomInvited($room, [$newUser->getUID()]);
 
 			return new DataResponse(['type' => $room->getType()]);
 		}
@@ -569,6 +585,7 @@ class RoomController extends OCSController {
 			'userId' => $newUser->getUID(),
 		]);
 		$this->createNotification($currentUser, $newUser, $room);
+		$this->backend->roomInvited($room, [$newUser->getUID()]);
 
 		return new DataResponse([]);
 	}
@@ -596,6 +613,7 @@ class RoomController extends OCSController {
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$room->deleteRoom();
+			$this->backend->roomDeleted($room);
 			return new DataResponse([]);
 		}
 
@@ -615,6 +633,7 @@ class RoomController extends OCSController {
 		}
 
 		$room->removeUser($targetUser);
+		$this->backend->roomsDisinvited($room, [$targetUser->getUID()]);
 		return new DataResponse([]);
 	}
 
@@ -636,6 +655,7 @@ class RoomController extends OCSController {
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
+			$this->backend->roomDeleted($room);
 		} else {
 			$currentUser = $this->userManager->get($this->userId);
 			if (!$currentUser instanceof IUser) {
@@ -643,6 +663,7 @@ class RoomController extends OCSController {
 			}
 
 			$room->removeUser($currentUser);
+			$this->backend->roomsDisinvited($room, [$currentUser->getUID()]);
 		}
 
 		return new DataResponse([]);
