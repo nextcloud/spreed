@@ -93,11 +93,14 @@ class BackendController extends Controller {
 		$headers['Spreed-Signaling-Random'] = $random;
 		$headers['Spreed-Signaling-Checksum'] = $hash;
 
-		$response = $client->post($url, [
+		$params = [
 			'headers' => $headers,
 			'body' => $body,
-			'verify' => false,
-		]);
+		];
+		if ($this->config->allowInsecureSignaling()) {
+			$params['verify'] = false;
+		}
+		$response = $client->post($url, $params);
 	}
 
 	/**

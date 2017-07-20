@@ -120,6 +120,13 @@ class Config {
 	}
 
 	/**
+	 * @return bool
+	 */
+	public function allowInsecureSignaling() {
+		return ($this->config->getAppValue('spreed', 'signaling_skip_verify_cert', '') != '');
+	}
+
+	/**
 	 * @param string $userId
 	 * @return string
 	 */
