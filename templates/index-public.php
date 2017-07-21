@@ -33,7 +33,10 @@ script(
 <div id="notification-container">
 	<div id="notification" style="display: none;"></div>
 </div>
-<div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>" data-signalingServer="<?php p($_['signaling-server']) ?>" data-signalingTicket="<?php p($_['signaling-ticket']) ?>">
+<div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">
+	<script type="text/json" id="signaling-settings">
+	<?php echo json_encode($_['signaling-settings']) ?>
+	</script>
 	<div id="app-content" class="participants-1">
 
 		<header>

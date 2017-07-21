@@ -33,7 +33,10 @@ script(
 );
 ?>
 
-<div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>" data-signalingServer="<?php p($_['signaling-server']) ?>" data-signalingTicket="<?php p($_['signaling-ticket']) ?>">
+<div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">
+	<script type="text/json" id="signaling-settings">
+	<?php echo json_encode($_['signaling-settings']) ?>
+	</script>
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
 			<input id="select-participants" class="select2-offscreen" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
