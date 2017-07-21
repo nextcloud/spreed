@@ -16,6 +16,20 @@
 		} else {
 			this.handlers[ev].push(handler);
 		}
+
+		switch (ev) {
+			case 'stunservers':
+			case 'turnservers':
+				var servers = this.settings[ev] || [];
+				if (servers.length) {
+					// The caller expects the handler to be called when the data
+					// is available, so defer to simulate a delayed response.
+					_.defer(function() {
+						handler(servers);
+					});
+				}
+				break;
+		}
 	};
 
 	SignalingBase.prototype.emit = function(/*ev, data*/) {
@@ -155,13 +169,6 @@
 			case 'connect':
 				// A connection is established if we can perform a request
 				// through it.
-				this._sendMessageWithCallback(ev);
-				break;
-
-			case 'stunservers':
-			case 'turnservers':
-				// Values are not pushed by the server but have to be explicitly
-				// requested.
 				this._sendMessageWithCallback(ev);
 				break;
 		}
@@ -545,17 +552,6 @@
 			this.socket = null;
 		}
 		SignalingBase.prototype.disconnect.apply(this, arguments);
-	};
-
-	StandaloneSignaling.prototype.on = function(ev/*, handler*/) {
-		SignalingBase.prototype.on.apply(this, arguments);
-
-		switch (ev) {
-			case "stunservers":
-			case "turnservers":
-				// TODO(fancycode): Implement getting STUN/TURN settings.
-				break;
-		}
 	};
 
 	StandaloneSignaling.prototype.sendCallMessage = function(data) {

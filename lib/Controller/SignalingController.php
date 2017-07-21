@@ -113,30 +113,6 @@ class SignalingController extends OCSController {
 					$this->messages->addMessage($message['sessionId'], $decodedMessage['to'], json_encode($decodedMessage));
 
 					break;
-				case 'stunservers':
-					$response = [];
-					$stunServer = $this->config->getStunServer();
-					if ($stunServer) {
-						$response[] = [
-							'url' => 'stun:' . $stunServer,
-						];
-					}
-					break;
-				case 'turnservers':
-					$response = [];
-					$turnSettings = $this->config->getTurnSettings();
-					if (!empty($turnSettings['server'])) {
-						$protocols = explode(',', $turnSettings['protocols']);
-						foreach ($protocols as $proto) {
-							$response[] = [
-								'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-								'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-								'username' => $turnSettings['username'],
-								'credential' => $turnSettings['password'],
-							];
-						}
-					}
-					break;
 			}
 		}
 
