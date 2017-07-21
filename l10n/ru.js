@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Переименовать",
     "Share link" : "Поделиться ссылкой",
     "Leave call" : "Завершить звонок",
+    "Delete call" : "Удалить звонок",
     "No other people in this call" : "У этого звонка нет других участников",
     "You" : "Вы",
     "and you" : "и вы",
