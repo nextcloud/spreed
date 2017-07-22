@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Přejmenovat",
     "Share link" : "Sdílet odkaz",
     "Leave call" : "Opustit hovor",
+    "Delete call" : "Smazat hovor",
     "No other people in this call" : "Žádní další lidé v tomto hovoru",
     "You" : "Vy",
     "and you" : "a vy",

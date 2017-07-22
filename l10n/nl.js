@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Hernoemen",
     "Share link" : "Delen link",
     "Leave call" : "Verlaat gesprek",
+    "Delete call" : "Verwijder gesprek",
     "No other people in this call" : "Geen andere deelnemers in het gesprek",
     "You" : "Jij",
     "and you" : "en jij",
