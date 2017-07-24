@@ -207,10 +207,10 @@ class SignallingController extends OCSController {
 			}
 
 			$this->dbConnection->close();
-			if (empty($data) || $seconds <= 2) {
+			if (empty($data)) {
 				$seconds--;
 			} else {
-				$seconds = 2;
+				break;
 			}
 			sleep(1);
 		}
