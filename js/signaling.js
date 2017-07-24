@@ -97,6 +97,7 @@
 
 		this.pingFails = 0;
 		this.pingInterval = null;
+		this.isSendingMessages = false;
 
 		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
@@ -151,17 +152,31 @@
 			ev: ev
 		}];
 
+		this._sendMessages(message).done(function(result) {
+			this._trigger(ev, [result.ocs.data]);
+		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
+			console.log('Sending signalling message with callback has failed.');
+			// TODO: Add error handling
+		});
+	};
+
+	InternalSignaling.prototype._sendMessages = function(messages) {
+		var defer = $.Deferred();
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signalling',
 			type: 'POST',
-			data: {messages: JSON.stringify(message)},
+			data: {messages: JSON.stringify(messages)},
 			beforeSend: function (request) {
 				request.setRequestHeader('Accept', 'application/json');
 			},
 			success: function (result) {
-				this._trigger(ev, [result.ocs.data]);
-			}.bind(this)
+				defer.resolve(result);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				defer.reject(xhr, textStatus, errorThrown);
+			}
 		});
+		return defer;
 	};
 
 	InternalSignaling.prototype.joinCall = function(token, callback, password) {
@@ -341,20 +356,20 @@
 	 * @private
 	 */
 	InternalSignaling.prototype.sendPendingMessages = function() {
-		if (!this.spreedArrayConnection.length) {
+		if (!this.spreedArrayConnection.length || this.isSendingMessages) {
 			return;
 		}
 
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signalling',
-			type: 'POST',
-			data: {messages: JSON.stringify(this.spreedArrayConnection)},
-			beforeSend: function (request) {
-				request.setRequestHeader('Accept', 'application/json');
-			}
-		});
+		var pendingMessagesLength = this.spreedArrayConnection.length;
+		this.isSendingMessages = true;
 
-		this.spreedArrayConnection = [];
+		this._sendMessages(this.spreedArrayConnection).done(function(result) {
+			this.spreedArrayConnection.splice(0, pendingMessagesLength);
+			this.isSendingMessages = false;
+		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
+			console.log('Sending pending signaling messages has failed.');
+			this.isSendingMessages = false;
+		}.bind(this));
 	};
 
 	/**
