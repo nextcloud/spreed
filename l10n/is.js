@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Endurnefna",
     "Share link" : "Deila tengli",
     "Leave call" : "Hætta símtali",
+    "Delete call" : "Eyða símtali",
     "No other people in this call" : "Engir aðrir í þessu símtali",
     "You" : "Þú",
     "and you" : "og þú",
