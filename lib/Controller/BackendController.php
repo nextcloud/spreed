@@ -73,6 +73,8 @@ class BackendController extends Controller {
 			return;
 		}
 
+		// We can use any server of the available backends.
+		$signaling = $signaling[array_rand($signaling)];
 		if (substr($signaling, -1) === '/') {
 			$signaling = substr($signaling, 0, strlen($signaling) - 1);
 		}

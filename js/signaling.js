@@ -439,8 +439,15 @@
 		}.bind(this));
 	};
 
-	function StandaloneSignaling(settings, url) {
+	function StandaloneSignaling(settings, urls) {
 		SignalingBase.prototype.constructor.apply(this, arguments);
+		if (typeof(urls) === "string") {
+			urls = [urls];
+		}
+		// We can connect to any of the servers.
+		var idx = Math.floor(Math.random() * urls.length);
+		// TODO(jojo): Try other server if connection fails.
+		var url = urls[idx];
 		// Make sure we are using websocket urls.
 		if (url.indexOf("https://") === 0) {
 			url = "wss://" + url.substr(8);
@@ -755,9 +762,9 @@
 		} else {
 			settings = {};
 		}
-		var url = settings['server'];
-		if (url)  {
-			return new StandaloneSignaling(settings, url);
+		var urls = settings['server'];
+		if (urls)  {
+			return new StandaloneSignaling(settings, urls);
 		} else {
 			return new InternalSignaling(settings);
 		}

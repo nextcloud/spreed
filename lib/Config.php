@@ -109,7 +109,11 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingServer() {
-		return $this->config->getAppValue('spreed', 'signaling_server', '');
+		$server = $this->config->getAppValue('spreed', 'signaling_server', '');
+		if ($server === '') {
+			return [];
+		}
+		return explode('\n', $server);
 	}
 
 	/**
