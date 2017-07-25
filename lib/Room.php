@@ -209,7 +209,7 @@ class Room {
 			$query = $this->db->getQueryBuilder();
 			$query->delete('spreedme_room_participants')
 				->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($query->expr()->eq('userId', $query->createNamedParameter('')));
+				->andWhere($query->expr()->isEmptyString('userId'));
 			$query->execute();
 		}
 
@@ -341,7 +341,7 @@ class Room {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('spreedme_room_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('userId', $query->createNamedParameter('')))
+			->andWhere($query->expr()->isEmptyString('userId'))
 			->andWhere($query->expr()->lte('lastPing', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 	}
