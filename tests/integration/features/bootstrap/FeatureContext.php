@@ -383,9 +383,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	private function createUser($user) {
-		$previous_user = $this->currentUser;
-		$this->currentUser = "admin";
-
 		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users';
 		$client = new Client();
 		$options = [
@@ -408,8 +405,67 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			],
 		];
 		$client->send($client->createRequest('GET', $userProvisioningUrl . '/' . $user, $options2));
+	}
 
-		$this->currentUser = $previous_user;
+	/**
+	 * @Given /^group "([^"]*)" exists$/
+	 * @param string $group
+	 */
+	public function assureGroupExists($group) {
+		try {
+			$this->groupExists($group);
+		} catch (\GuzzleHttp\Exception\ClientException $ex) {
+			$this->createGroup($group);
+		}
+		$response = $this->groupExists($group);
+		$this->assertStatusCode($response, 200);
+	}
+
+	private function groupExists($group) {
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+		return $client->get($this->baseUrl . 'ocs/v2.php/cloud/groups/' . $group, $options);
+	}
+
+	private function createGroup($group) {
+		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/groups';
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'body' => [
+				'groupid' => $group,
+			],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+		$client->send($client->createRequest('POST', $userProvisioningUrl, $options));
+	}
+
+	/**
+	 * @When /^user "([^"]*)" is member of group "([^"]*)"$/
+	 * @param string $user
+	 * @param string $group
+	 */
+	public function addingUserToGroup($user, $group) {
+		$userProvisioningUrl = $this->baseUrl . "ocs/v2.php/cloud/users/$user/groups";
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'body' => [
+				'groupid' => $group,
+			],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+
+		$this->response = $client->send($client->createRequest('POST', $userProvisioningUrl, $options));
 	}
 
 	/*
@@ -429,7 +485,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$options = [];
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} else {
+		} else if ($this->currentUser !== 'guest') {
 			$options['auth'] = [$this->currentUser, '123456'];
 		}
 		if ($body instanceof \Behat\Gherkin\Node\TableNode) {
