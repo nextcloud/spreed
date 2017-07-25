@@ -206,11 +206,11 @@ class Room {
 		$this->type = (int) $newType;
 
 		if ($oldType === Room::PUBLIC_CALL) {
-			// Kick all guests
+			// Kick all guests and users that were not invited
 			$query = $this->db->getQueryBuilder();
 			$query->delete('spreedme_room_participants')
 				->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-				->andWhere($query->expr()->emptyString('userId'));
+				->andWhere($query->expr()->in('participantType', $query->createNamedParameter([Participant::GUEST, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
 			$query->execute();
 		}
 
@@ -285,7 +285,7 @@ class Room {
 
 		if ($result === 0) {
 			// User joining a public room, without being invited
-			$this->addParticipant($userId, $sessionId);
+			$this->addParticipant($userId, Participant::USER_SELF_JOINED, $sessionId);
 		}
 
 		while (!$this->isSessionUnique($sessionId)) {
