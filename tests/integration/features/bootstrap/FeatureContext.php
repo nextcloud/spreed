@@ -23,7 +23,9 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Message\ResponseInterface;
 
 /**
@@ -42,8 +44,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var ResponseInterface */
 	private $response;
 
-	/** @var \GuzzleHttp\Cookie\CookieJar */
-	private $cookieJar;
+	/** @var CookieJar[] */
+	private $cookieJars;
 
 	/** @var string */
 	protected $baseUrl;
@@ -55,7 +57,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * FeatureContext constructor.
 	 */
 	public function __construct() {
-		$this->cookieJar = new \GuzzleHttp\Cookie\CookieJar();
+		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
 	}
 
@@ -63,9 +65,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Then /^user "([^"]*)" is participant of the following rooms$/
 	 *
 	 * @param string $user
-	 * @param \Behat\Gherkin\Node\TableNode|null $formData
+	 * @param TableNode|null $formData
 	 */
-	public function userIsParticipantOfRooms($user, \Behat\Gherkin\Node\TableNode $formData = null) {
+	public function userIsParticipantOfRooms($user, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
 		$this->assertStatusCode($this->response, 200);
@@ -125,9 +127,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 *
 	 * @param string $user
 	 * @param string $identifier
-	 * @param \Behat\Gherkin\Node\TableNode|null $formData
+	 * @param TableNode|null $formData
 	 */
-	public function userCreatesRoom($user, $identifier, \Behat\Gherkin\Node\TableNode $formData = null) {
+	public function userCreatesRoom($user, $identifier, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/v1/room', $formData);
 		$this->assertStatusCode($this->response, 201);
@@ -162,7 +164,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants',
-			new \Behat\Gherkin\Node\TableNode([['participant', $toRemove]])
+			new TableNode([['participant', $toRemove]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -192,7 +194,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier],
-			new \Behat\Gherkin\Node\TableNode([['roomName', $newName]])
+			new TableNode([['roomName', $newName]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -226,7 +228,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			'POST', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants',
-			new \Behat\Gherkin\Node\TableNode([['newParticipant', $newUser]])
+			new TableNode([['newParticipant', $newUser]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -245,7 +247,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest(
 			$isPromotion === 'promotes' ? 'POST' : 'DELETE',
 			'/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/moderators',
-			new \Behat\Gherkin\Node\TableNode([['participant', $participant]])
+			new TableNode([['participant', $participant]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -476,19 +478,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
 	 * @param string $verb
 	 * @param string $url
-	 * @param \Behat\Gherkin\Node\TableNode $body
+	 * @param TableNode $body
 	 * @param array $headers
 	 */
 	public function sendRequest($verb, $url, $body = null, array $headers = []) {
 		$fullUrl = $this->baseUrl . 'ocs/v2.php' . $url;
 		$client = new Client();
-		$options = [];
+		$options = ['cookies'  => $this->getUserCookieJar($this->currentUser)];
 		if ($this->currentUser === 'admin') {
 			$options['auth'] = ['admin', 'admin'];
-		} else if ($this->currentUser !== 'guest') {
+		} else if (strpos($this->currentUser, 'guest') !== 0) {
 			$options['auth'] = [$this->currentUser, '123456'];
 		}
-		if ($body instanceof \Behat\Gherkin\Node\TableNode) {
+		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();
 			$options['body'] = $fd;
 		}
@@ -503,6 +505,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+	}
+
+	protected function getUserCookieJar($user) {
+		if (!isset($this->cookieJars[$user])) {
+			$this->cookieJars[$user] = new CookieJar();
+		}
+		return $this->cookieJars[$user];
 	}
 
 	/**
