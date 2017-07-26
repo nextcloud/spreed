@@ -124,13 +124,13 @@
 			$('#edit-roomname').on("select2-selecting", function(e) {
 				switch (e.object.type) {
 					case "user":
-						OCA.SpreedMe.Rooms.createOneToOneVideoCall(e.val);
+						OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
 						break;
 					case "group":
-						OCA.SpreedMe.Rooms.createGroupVideoCall(e.val);
+						OCA.SpreedMe.Calls.createGroupVideoCall(e.val);
 						break;
 					case "createPublicRoom":
-						OCA.SpreedMe.Rooms.createPublicVideoCall();
+						OCA.SpreedMe.Calls.createPublicVideoCall();
 						break;
 					default:
 						console.log("Unknown type", e.object.type);
