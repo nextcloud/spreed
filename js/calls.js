@@ -11,10 +11,10 @@
 	function initCalls(signaling_connection) {
 		signaling = signaling_connection;
 
-		var editRoomname = $('#edit-roomname');
-		editRoomname.keyup(function () {
-			editRoomname.tooltip('hide');
-			editRoomname.removeClass('error');
+		var selectParticipants = $('#select-participants');
+		selectParticipants.keyup(function () {
+			selectParticipants.tooltip('hide');
+			selectParticipants.removeClass('error');
 		});
 
 		OCA.SpreedMe.Calls.leaveAllCalls();
