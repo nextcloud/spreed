@@ -28,7 +28,7 @@ script(
 <div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
-			<input id="edit-roomname" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
+			<input id="edit-roomname" class="select2-offscreen" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
 		</form>
 		<ul id="spreedme-room-list" class="with-icon">
 		</ul>
