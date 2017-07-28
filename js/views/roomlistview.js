@@ -174,6 +174,7 @@
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
 			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
 			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
+			'keyup .rename-input': 'renameKeyUp',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
 			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
@@ -239,8 +240,7 @@
 			this.ui.personSelectorInput.select2('open');
 		},
 		showRenameInput: function() {
-			var currentRoomName = this.model.get('name'),
-				self = this;
+			var currentRoomName = this.model.get('name');
 
 			this.$el.find('.rename-element').removeClass('hidden-important');
 			this.$el.find('.rename-room-button').addClass('hidden-important');
@@ -251,25 +251,27 @@
 
 			this.$el.find('.rename-input').focus();
 			this.$el.find('.rename-input').select();
-			this.$el.keyup(function(e) {
-				if (e.keyCode === 13) {
-					self.confirmRoomRename();
-				} else if (e.keyCode === 27) {
-					self.$el.find('.rename-element').addClass('hidden-important');
-					self.$el.find('.rename-room-button').removeClass('hidden-important');
-				}
-			});
+		},
+		hideRenameInput: function() {
+			this.$el.find('.rename-element').addClass('hidden-important');
+			this.$el.find('.rename-room-button').removeClass('hidden-important');
 		},
 		confirmRoomRename: function() {
 			var currentRoomName = this.model.get('name');
 			var newRoomName = $.trim(this.$el.find('.rename-input').val());
 
-			this.$el.find('.rename-element').addClass('hidden-important');
-			this.$el.find('.rename-room-button').removeClass('hidden-important');
-
 			if (currentRoomName !== newRoomName) {
 				console.log('Changing room name to: '+newRoomName+' from: '+currentRoomName);
 				this.renameRoom(newRoomName);
+			}
+
+			this.hideRenameInput();
+		},
+		renameKeyUp: function(e) {
+			if (e.keyCode === 13) {
+				this.confirmRoomRename();
+			} else if (e.keyCode === 27) {
+				this.hideRenameInput();
 			}
 		},
 		renameRoom: function(roomName) {
