@@ -241,7 +241,6 @@
 		},
 		showRenameInput: function() {
 			var currentRoomName = this.model.get('name'),
-				self = this;
 
 			this.$el.find('.rename-element').removeClass('hidden-important');
 			this.$el.find('.rename-room-button').addClass('hidden-important');
@@ -253,24 +252,26 @@
 			this.$el.find('.rename-input').focus();
 			this.$el.find('.rename-input').select();
 		},
+		hideRenameInput: function() {
+			this.$el.find('.rename-element').addClass('hidden-important');
+			this.$el.find('.rename-room-button').removeClass('hidden-important');
+		},
 		confirmRoomRename: function() {
 			var currentRoomName = this.model.get('name');
 			var newRoomName = $.trim(this.$el.find('.rename-input').val());
-
-			this.$el.find('.rename-element').addClass('hidden-important');
-			this.$el.find('.rename-room-button').removeClass('hidden-important');
 
 			if (currentRoomName !== newRoomName) {
 				console.log('Changing room name to: '+newRoomName+' from: '+currentRoomName);
 				this.renameRoom(newRoomName);
 			}
+
+			this.hideRenameInput();
 		},
 		renameKeyUp: function(e) {
 			if (e.keyCode === 13) {
 				this.confirmRoomRename();
 			} else if (e.keyCode === 27) {
-				this.$el.find('.rename-element').addClass('hidden-important');
-				this.$el.find('.rename-room-button').removeClass('hidden-important');
+				this.hideRenameInput();
 			}
 		},
 		renameRoom: function(roomName) {
