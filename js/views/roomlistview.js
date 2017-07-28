@@ -240,7 +240,7 @@
 			this.ui.personSelectorInput.select2('open');
 		},
 		showRenameInput: function() {
-			var currentRoomName = this.model.get('name'),
+			var currentRoomName = this.model.get('name');
 
 			this.$el.find('.rename-element').removeClass('hidden-important');
 			this.$el.find('.rename-room-button').addClass('hidden-important');
