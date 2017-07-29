@@ -5,6 +5,7 @@ OC.L10N.register(
     "(group)" : "(grup)",
     "New public call" : "Thirrje e re publike",
     "Screensharing is not supported by your browser." : "Ndarja e erkaneve nuk është e mbështetur nga shfletuesi juaj ",
+    "Screensharing requires the page to be loaded through HTTPS." : "Ndarja e ekranit kërkon faqen të ngarkohet përmes HTTPS.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Ju lutem përdorni një browser tjetër si Firefox ose Chrome për të ndarë ekranin tuaj.",
     "An error occurred while starting screensharing." : "Ndodhi një gabim gjatë fillimit të ndarjes së ekranit.",
