@@ -39,7 +39,7 @@
 		_searchTerm: '',
 		guestNick: null,
 		_registerPageEvents: function() {
-			$('#edit-roomname').select2({
+			$('#select-participants').select2({
 				ajax: {
 					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
 					dataType: 'json',
@@ -110,7 +110,7 @@
 				}
 			});
 
-			$('#edit-roomname').on("click", function() {
+			$('#select-participants').on("click", function() {
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
@@ -121,7 +121,7 @@
 				});
 			});
 
-			$('#edit-roomname').on("select2-selecting", function(e) {
+			$('#select-participants').on("select2-selecting", function(e) {
 				switch (e.object.type) {
 					case "user":
 						OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
@@ -138,7 +138,7 @@
 				}
 			});
 
-			$('#edit-roomname').on("select2-loaded", function() {
+			$('#select-participants').on("select2-loaded", function() {
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
@@ -520,7 +520,7 @@
 						self._roomsView.render();
 
 						if (data.length === 0) {
-							$('#edit-roomname').select2('open');
+							$('#select-participants').select2('open');
 						}
 					});
 			}
