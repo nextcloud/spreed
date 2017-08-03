@@ -220,13 +220,13 @@
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).removeClass('icon-public').addClass('icon-contacts-dark');
+					$(a).removeClass('icon-public').addClass('icon-contacts');
 				});
 			} else if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) { // Public room
 				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).removeClass('icon-contacts-dark').addClass('icon-public');
+					$(a).removeClass('icon-contacts').addClass('icon-public');
 				});
 			}
 
@@ -406,7 +406,7 @@
 						message = t('spreed', 'No other people in this call');
 						messageAdditional = 'You can invite others by clicking "+ Add person" in the call menu.';
 					}
-					$('#emptycontent-icon').addClass('icon-contacts-dark');
+					$('#emptycontent-icon').addClass('icon-contacts');
 					break;
 				case ROOM_TYPE_PUBLIC_CALL:
 					if (Object.keys(participants).length > 1) {

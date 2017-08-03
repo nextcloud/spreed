@@ -451,7 +451,7 @@
 			} else {
 				message = t('spreed', 'Waiting for others to join the call …');
 				messageAdditional = '';
-				$('#emptycontent-icon').addClass('icon-contacts-dark');
+				$('#emptycontent-icon').addClass('icon-contacts');
 			}
 
 			$('#emptycontent h2').text(message);
