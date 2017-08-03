@@ -92,7 +92,7 @@ class FillRoomTokens implements IRepairStep {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms')
-			->where($query->expr()->isEmptyString('token'));
+			->where($query->expr()->emptyString('token'));
 		$result = $query->execute();
 
 		$output->startProgress();
