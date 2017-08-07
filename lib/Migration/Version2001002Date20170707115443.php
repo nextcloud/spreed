@@ -123,7 +123,7 @@ class Version2001002Date20170707115443 extends SimpleMigrationStep {
 
 		$update->update('spreedme_room_participants')
 			->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
-			->where($update->expr()->neq('userId', $update->createNamedParameter('')))
+			->where($update->expr()->nonEmptyString('userId'))
 			->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
 
 		return $update->execute();
