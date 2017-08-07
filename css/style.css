@@ -610,3 +610,17 @@ video {
 #body-public #app-content:not(.participants-1) #guestName {
     color: rgba(255, 255, 255, 0.7);
 }
+
+/**
+ * Sidebar
+ */
+
+#app-sidebar .detailCallInfoContainer {
+	padding: 15px;
+	clear: both;
+}
+
+.tabHeaders,
+#app-sidebar .icon {
+	display: inline-block;
+}
