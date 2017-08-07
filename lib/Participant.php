@@ -30,6 +30,7 @@ class Participant {
 	const MODERATOR = 2;
 	const USER = 3;
 	const GUEST = 4;
+	const USER_SELF_JOINED = 5;
 
 	/** @var IDBConnection */
 	protected $db;

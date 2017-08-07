@@ -148,6 +148,29 @@ pipeline:
     when:
       matrix:
         TESTS: php7.1
+  php7.1-integration:
+    image: nextcloudci/php7.1:php7.1-3
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # FIXME: Move into Docker image
+      - yum -y install wget
+
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server/
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh
+    when:
+      matrix:
+        TESTS: php7.1-integration
   jsunit:
     image: nextcloudci/jsunit:jsunit-5
     commands:
@@ -169,4 +192,5 @@ matrix:
     - TESTS: php5.6
     - TESTS: php7.0
     - TESTS: php7.1
+    - TESTS: php7.1-integration
     - TESTS: jsunit
