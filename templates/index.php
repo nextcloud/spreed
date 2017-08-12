@@ -56,11 +56,11 @@ script(
 				<div id="shareTabView" class="tab shareTabView">
 					<div class="shareeListView subView">
 						<ul id="shareWithList" class="shareWithList">
-							<li data-share-id="2" data-share-type="0" data-share-with="test1">
+							<li data-share-id="2" data-share-type="0" data-share-with="test1" class="participant-moderator">
 								<div class="avatar " data-username="test1" data-displayname="User One" style="height: 32px; width: 32px; background-color: rgb(213, 231, 116); color: rgb(255, 255, 255); font-weight: normal; text-align: center; line-height: 32px; font-size: 17.6px;">U</div>
 								<span class="username" title="">
 									User One
-									<span class="is-currently-online">*</span>
+									<span class="participant-moderator-indicator">(moderator)</span>
 								</span>
 
 								<span class="sharingOptionsGroup">
@@ -71,7 +71,34 @@ script(
 											<li>
 												<span class="shareOption menuitem">
 													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
-													<label for="canShare-view17-test1">Promote to/Demote from moderator</label>
+													<label for="canShare-view17-test1">Demote from moderator</label>
+												</span>
+											</li>
+											<li>
+												<span class="shareOption menuitem">
+													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
+													<label for="canShare-view17-test1">Remove participant from call</label>
+												</span>
+											</li>
+										</ul>
+									</div>
+								</span>
+							</li>
+							<li data-share-id="2" data-share-type="0" data-share-with="test1" class="participant-offline">
+								<div class="avatar " data-username="test1" data-displayname="User One" style="height: 32px; width: 32px; background-color: rgb(213, 231, 116); color: rgb(255, 255, 255); font-weight: normal; text-align: center; line-height: 32px; font-size: 17.6px;">U</div>
+								<span class="username" title="">
+									User Two
+								</span>
+
+								<span class="sharingOptionsGroup">
+									<a href="#"><span class="icon icon-more"></span></a>
+
+									<div class="popovermenu bubble hidden menu">
+										<ul>
+											<li>
+												<span class="shareOption menuitem">
+													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
+													<label for="canShare-view17-test1">Promote to moderator</label>
 												</span>
 											</li>
 											<li>

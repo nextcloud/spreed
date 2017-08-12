@@ -612,7 +612,7 @@ video {
 }
 
 /**
- * Sidebar
+ * Right sidebar
  */
 
 #app-sidebar .detailCallInfoContainer {
@@ -625,7 +625,11 @@ video {
 	display: inline-block;
 }
 
-#app-sidebar #shareWithList .participant-offline .avatar,
-#app-sidebar #shareWithList .participant-offline .username {
+#app-sidebar #shareWithList .participant-moderator-indicator {
+	opacity: .5;
+	font-weight: 300;
+}
+
+#app-sidebar #shareWithList .participant-offline {
 	opacity: .5;
 }
