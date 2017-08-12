@@ -40,15 +40,6 @@ script(
 			<div class="detailCallInfoContainer">
 				<h3>Call name <span class="icon icon-rename"></span></h3>
 
-				<div class="oneline">
-					<label for="linkText" class="hidden-visually">Link</label>
-					<input id="linkText" class="linkText" readonly value="https://nextcloud13.local/index.php/s/LRDYjaFrAw2oBp7">
-					<a class="clipboardButton icon icon-clippy" data-clipboard-target="#linkText" data-original-title="" title=""></a>
-				</div>
-
-				<input name="shareLink" id="shareLink" class="checkbox" value="1" type="checkbox">
-				<label for="shareLink"><?php p($l->t('Allow guests'));?></label><br>
-
 				<button><?php p($l->t('Start/stop webinary'));?></button>
 			</div>
 
@@ -95,6 +86,17 @@ script(
 							</li>
 						</ul>
 					</div>
+
+					<div class="linkShareView subView">
+						<input name="shareLink" id="shareLink" class="checkbox" value="1" type="checkbox">
+						<label for="shareLink"><?php p($l->t('Share link'));?></label><br>
+						<div class="oneline">
+							<label for="linkText" class="hidden-visually">Link</label>
+							<input id="linkText" class="linkText" type="text" readonly value="https://nextcloud13.local/index.php/s/LRDYjaFrAw2oBp7">
+							<a class="clipboardButton icon icon-clippy" data-clipboard-target="#linkText" data-original-title="" title=""></a>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
