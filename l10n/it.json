@@ -4,6 +4,7 @@
     "New public call" : "Nuova chiamata pubblica",
     "Screensharing is not supported by your browser." : "La condivisione dello schermo non è supportata dal tuo browser.",
     "Screensharing requires the page to be loaded through HTTPS." : "La condivisione dello schermo richiede che la pagina sia caricata tramite HTTPS.",
+    "Sharing your screen only works with Firefox version 52 or newer." : "La condivisione dello schermo funziona solo con la versione 52 o superiore di Firefox.",
     "Screensharing extension is required to share your screen." : "L'estensione di condivisione dello schermo è richiesta per condividere il tuo schermo.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Utilizza un browser diverso come Firefox o Chrome per condividere il tuo schermo.",
     "An error occurred while starting screensharing." : "Si è verificato un errore durante l'avvio della condivisione dello schermo.",
@@ -13,6 +14,7 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Consenti al tuo browser di accedere alla camera e al microfono per utilizzare questa applicazione.",
     "Looking great today! :)" : "Sei in gran forma oggi! :)",
     "Time to call your friends" : "È ora di chiamare i tuoi amici",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Puoi impostare il nome in alto a destra di questa pagina, in modo che gli altri partecipanti possano identificarti meglio.",
     "Guest" : "Ospite",
     "Copy" : "Copia",
     "Copied!" : "Copiato!",
@@ -25,6 +27,7 @@
     "Rename" : "Rinomina",
     "Share link" : "Condividi collegamento",
     "Leave call" : "Lascia la chiamata",
+    "Delete call" : "Elimina chiamata",
     "No other people in this call" : "Non ci sono altre persone in questa chiamata",
     "You" : "Tu",
     "and you" : "e tu",
@@ -64,13 +67,16 @@
     "Stop screensharing" : "Ferma la condivisione dello schermo",
     "Smile in 3… 2… 1!" : "Sorridi tra 3… 2… 1!",
     "Choose person …" : "Scegli persona...",
+    "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Il server STUN è necessario affinché i partecipanti possano connettersi alle chiamate. Il server TURN assicura che le connessioni funzionino anche attraverso firewall.",
     "STUN server" : "Server STUN",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Il server STUN è utilizzato è utilizzato per determinare l'indirizzo pubblico dei partecipanti che si trovano dietro a un router.",
     "TURN server" : "Server TURN",
     "TURN server shared secret" : "Il segreto condiviso del server TURN",
     "TURN server protocols" : "Protocolli server TURN",
     "UDP and TCP" : "UDP e TCP",
     "UDP only" : "Solo UDP",
     "TCP only" : "Solo TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Il server TURN è utilizzato come proxy per il traffico generato da partecipanti dietro un firewall."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "Il server TURN è utilizzato come proxy per il traffico generato da partecipanti dietro un firewall.",
+    "The STUN server is used to determine the public address of participants behind a router." : "Il server STUN è utilizzato è utilizzato per determinare l'indirizzo pubblico dei partecipanti che si trovano dietro a un router."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
