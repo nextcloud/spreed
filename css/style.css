@@ -624,3 +624,8 @@ video {
 #app-sidebar .icon {
 	display: inline-block;
 }
+
+#app-sidebar #shareWithList .participant-offline .avatar,
+#app-sidebar #shareWithList .participant-offline .username {
+	opacity: .5;
+}
