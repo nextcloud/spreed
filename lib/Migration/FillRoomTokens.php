@@ -82,7 +82,7 @@ class FillRoomTokens implements IRepairStep {
 		}
 
 		$chars = str_replace(['l', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
-		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 4);
+		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('spreedme_rooms')

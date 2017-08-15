@@ -359,7 +359,8 @@ class Manager {
 	 */
 	protected function getNewToken() {
 		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
-		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 4);
+		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
+		$entropy = min(8, $entropy); // For update cases
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')
