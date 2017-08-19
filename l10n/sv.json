@@ -27,6 +27,7 @@
     "Rename" : "Byt namn",
     "Share link" : "Dela länk",
     "Leave call" : "Lämna samtalet",
+    "Delete call" : "Ta bort samtal",
     "No other people in this call" : "Inga andra personer i detta samtal",
     "You" : "Du",
     "and you" : "och du",
@@ -66,13 +67,16 @@
     "Stop screensharing" : "Stoppa skärmdelning",
     "Smile in 3… 2… 1!" : "Le om 3... 2... 1!",
     "Choose person …" : "Välj person ...",
+    "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-servern krävs för att deltagare kan ansluta till samtal. TURN-servern säkerställer att anslutningar fungerar genom brandväggar.",
     "STUN server" : "STUN server",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
     "TURN server" : "TURN server",
     "TURN server shared secret" : "TURN server delade hemlighet",
     "TURN server protocols" : "TURN server protokoll",
     "UDP and TCP" : "UDP och TCP",
     "UDP only" : "UDP endast",
     "TCP only" : "TCP endast",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN servern används för att tunnla trafiken för användare som sitter bakom en brandvägg."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
+    "The STUN server is used to determine the public address of participants behind a router." : "STUN-servern används för att bestämma den publika adressen av deltagare bakom en router."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
