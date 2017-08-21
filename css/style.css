@@ -322,6 +322,12 @@ video {
 	left: initial;
 	z-index: 10;
 }
+@media only screen and (max-width: 768px) {
+	.participants-1 .videoView,
+	.participants-2 .videoView {
+		max-height: 35%;
+	}
+}
 .participants-1 .videoView video,
 .participants-2 .videoView video {
 	position: absolute;
