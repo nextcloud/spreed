@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Renomar",
     "Share link" : "Compartir enllaz",
     "Leave call" : "Dexar llamada",
+    "Delete call" : "Desaniciar llamada",
     "No other people in this call" : "Nun hai más xente nesta llamada",
     "You" : "Tu",
     "and you" : "y tu",
@@ -77,6 +78,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP y TCP",
     "UDP only" : "Namái UDP",
     "TCP only" : "Namái TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El sirvidor TURN úsase pa unviar al proxy el tráficu de los participantes darrera de tornafueos.",
+    "The STUN server is used to determine the public address of participants behind a router." : "El sirvidor STUN úsase pa determinar la direición pública de los participantes darrera d'un router."
 },
 "nplurals=2; plural=(n != 1);");
