@@ -416,6 +416,45 @@ class RoomController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function getParticipants($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participants = $room->getParticipants();
+		$results = [];
+
+		foreach ($participants['user'] as $userId => $participant) {
+			$user = $this->userManager->get($userId);
+			if (!$user instanceof IUser) {
+				continue;
+			}
+
+			$results[] = array_merge($participant, [
+				'userId' => $userId,
+				'displayName' => $user->getDisplayName(),
+			]);
+		}
+
+		foreach ($participants['guests'] as $participant) {
+			$results[] = array_merge($participant, [
+				'participantType' => Participant::GUEST,
+				'userId' => '',
+				'displayName' => '',
+			]);
+		}
+
+		return new DataResponse($results);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
