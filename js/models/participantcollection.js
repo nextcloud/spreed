@@ -27,20 +27,30 @@
 	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
 
 	OCA.SpreedMe.Models.ParticipantCollection = Backbone.Collection.extend({
-		room: undefined,
-		initialise: function(models, options) {
-			this.room = options.room;
+		initialize: function() {
+			console.log("initialize");
+			console.log(arguments);
 		},
 		model: OCA.SpreedMe.Models.Participant,
+		room: undefined,
+
+		/**
+		 * @param {OCA.SpreedMe.Models.Room} room
+		 * @returns {Array}
+		 */
+		setRoom: function(room) {
+			this.room = room;
+			this.url = OC.linkToOCS('apps/spreed/api/v1/room', 2) + '/' + this.room.get('token') + 'participants';
+		},
 		// comparator: function(model) {
 		// 	return -(model.get('lastPing'));
 		// },
-		url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + '/' + this.room.get('token') + 'participants',
 		/**
 		 * @param result
 		 * @returns {Array}
 		 */
 		parse: function(result) {
+			console.log(result);
 			return result.ocs.data;
 		}
 	});
