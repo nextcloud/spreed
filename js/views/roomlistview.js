@@ -354,6 +354,17 @@
 			var token = this.ui.room.attr('data-token');
 			OCA.SpreedMe.Calls.join(token);
 
+			if (!_.isUndefined(this.model)) {
+				console.log("participants");
+				var participantCollection = new OCA.SpreedMe.Models.ParticipantCollection();
+				participantCollection.setRoom(this.model);
+
+				var participantView = new OCA.SpreedMe.Views.ParticipantView({
+					el: '#app-navigation ul',
+					collection: participantCollection
+				});
+			}
+
 			OC.Util.History.pushState({
 				token: token
 			}, OC.generateUrl('/call/' + token));
