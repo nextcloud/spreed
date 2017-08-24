@@ -74,9 +74,9 @@
     "TURN server shared secret" : "TURN server delade hemlighet",
     "TURN server protocols" : "TURN server protokoll",
     "UDP and TCP" : "UDP och TCP",
-    "UDP only" : "UDP endast",
-    "TCP only" : "TCP endast",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
+    "UDP only" : "endast UDP",
+    "TCP only" : "endast TCP",
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
     "The STUN server is used to determine the public address of participants behind a router." : "STUN-servern används för att bestämma den publika adressen av deltagare bakom en router."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
