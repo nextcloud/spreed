@@ -81,8 +81,7 @@ class FileSharingController extends OCSController {
 			// This will never happen, this is not a public page -> user account is required
 			return new DataResponse(array('error' => $e->getMessage()));
 		} catch (NotFoundException $e) {
-			// TODO(leon): Handle this
-			return new DataResponse(array('error' => 'File not found', 'u' => $this->userId, 'l' => $path));
+			return new DataResponse(array('error' => 'File not found'));
 		}
 		$userId = $this->userId;
 		$manager = $this->shareManager;
