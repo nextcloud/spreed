@@ -19,6 +19,7 @@ OC.L10N.register(
     "Rename" : "Átnevez",
     "Share link" : "Megosztás hivatkozással",
     "Leave call" : "Hívás elhagyása",
+    "Delete call" : "Hívás törlése",
     "You" : "Te",
     "and you" : "és te",
     "Access to microphone & camera is only possible with HTTPS" : "A mikrofon és a kamera hozzáférése csak HTTPS-en lehetséges",
