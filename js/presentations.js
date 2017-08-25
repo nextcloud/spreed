@@ -11,32 +11,31 @@
 		this.url = url;
 		this.data = null;
 		this.elem = null;
-		// TODO(leon): Rename to "pages"
-		this.numSlides = 0;
-		this.curSlide = 1;
+		this.numPages = 0;
+		this.curPage = 1;
 		this.scale = 1;
 		this.e = $({});
 	};
 	Presentation.prototype.isLoaded = function() {
 		throw new Exception('isLoaded not implemented yet');
 	};
-	Presentation.prototype.nextSlide = function() {
-		this.exactSlide(this.curSlide + 1);
+	Presentation.prototype.nextPage = function() {
+		this.exactPage(this.curPage + 1);
 	};
-	Presentation.prototype.previousSlide = function() {
-		this.exactSlide(this.curSlide - 1);
+	Presentation.prototype.previousPage = function() {
+		this.exactPage(this.curPage - 1);
 	};
-	Presentation.prototype.exactSlide = function(num) {
-		if (this.curSlide === num || num <= 0 || num >= this.numSlides) {
+	Presentation.prototype.exactPage = function(num) {
+		if (this.curPage === num || num <= 0 || num >= this.numPages) {
 			return;
 		}
-		this.curSlide = num;
-		this.e.trigger("slideUpdated", this.curSlide);
+		this.curPage = num;
+		this.e.trigger("pageUpdated", this.curPage);
 	};
 
 	var PDFPresentation = function(id, url) {
 		Presentation.call(this, id, url);
-		this.e.on("load slideUpdated", _.bind(this.render, this));
+		this.e.on("load pageUpdated", _.bind(this.render, this));
 	};
 	PDFPresentation.prototype = Object.create(Presentation.prototype);
 	PDFPresentation.prototype.isLoaded = function() {
@@ -45,7 +44,7 @@
 	PDFPresentation.prototype.load = function() {
 		PDFJS.getDocument(this.url).then(_.bind(function (doc) {
 			this.doc = doc;
-			this.numSlides = this.doc.numPages;
+			this.numPages = this.doc.numPages;
 			this.e.trigger("load");
 		}, this));
 	};
@@ -55,8 +54,8 @@
 			console.log("Not loaded yet");
 			return;
 		}
-		console.log("Showing page", this.curSlide);
-		this.doc.getPage(this.curSlide).then(_.bind(function(page) {
+		console.log("Showing page", this.curPage);
+		this.doc.getPage(this.curPage).then(_.bind(function(page) {
 			var viewport = page.getViewport(this.scale);
 			this.elem.height = viewport.height;
 			this.elem.width = viewport.width;
@@ -147,12 +146,12 @@
 				break;
 			case 'next_page':
 				sharedPresentations.withActive(function(p) {
-					p.nextSlide();
+					p.nextPage();
 				});
 				break;
 			case 'previous_page':
 				sharedPresentations.withActive(function(p) {
-					p.previousSlide();
+					p.previousPage();
 				});
 				break;
 			default:
