@@ -213,8 +213,6 @@
 			});
 
 			$('#presentation-button').click(function() {
-				// Copied from directives/presentation.js
-				// Keep in sync with $allowed_file_extensions
 				var SUPPORTED_DOCUMENT_TYPES = {
 					// rendered by pdfcanvas directive
 					"application/pdf": "pdf",
