@@ -32,7 +32,6 @@ use OCP\AppFramework\OCSController;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
-use OCP\ILogger;
 use OCP\Share\IManager as IShareManager;
 use OC\User\NoUserException;
 
@@ -44,23 +43,19 @@ class FileSharingController extends OCSController {
 	/** @var IShareManager */
 	private $shareManager;
 
-	// TODO(leon): Remove
-	private $logger;
-
 	/**
 	 * @param string $appName
 	 * @param string $userId
 	 * @param IRootFolder $rootFolder
 	 * @param IShareManager $shareManager
 	 */
-	public function __construct($appName, $userId, IRootFolder $rootFolder, IShareManager $shareManager, ILogger $logger) {
+	public function __construct($appName, $userId, IRootFolder $rootFolder, IShareManager $shareManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $userId;
 		try {
 			$this->userFolder = $rootFolder->getUserFolder($userId);
 		} catch (\Exception $e) { /* Silently ignore error */}
 		$this->shareManager = $shareManager;
-		$this->logger = $logger;
 	}
 
 	private function getUserFolder() {
