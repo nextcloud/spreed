@@ -212,6 +212,65 @@
 				}
 			});
 
+			$('#presentation-button').click(function() {
+				// Copied from directives/presentation.js
+				// Keep in sync with $allowed_file_extensions
+				var SUPPORTED_DOCUMENT_TYPES = {
+					// rendered by pdfcanvas directive
+					"application/pdf": "pdf",
+					// rendered by odfcanvas directive
+					// TODO(fancycode): check which formats really work, allow all odf for now
+					"application/vnd.oasis.opendocument.text": "odf",
+					"application/vnd.oasis.opendocument.spreadsheet": "odf",
+					"application/vnd.oasis.opendocument.presentation": "odf",
+					"application/vnd.oasis.opendocument.graphics": "odf",
+					"application/vnd.oasis.opendocument.chart": "odf",
+					"application/vnd.oasis.opendocument.formula": "odf",
+					"application/vnd.oasis.opendocument.image": "odf",
+					"application/vnd.oasis.opendocument.text-master": "odf"
+				};
+				var allowedFileTypes = null;
+				if (SUPPORTED_DOCUMENT_TYPES) {
+					allowedFileTypes = [];
+					for (var type in SUPPORTED_DOCUMENT_TYPES) {
+						allowedFileTypes.push(type);
+					}
+				}
+
+				var shareSelected = function(file) {
+					// TODO(leon): There might be an existing API endpoint which we can use instead
+					// This would make things simpler
+					$.ajax({
+						url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'share',
+						type: 'POST',
+						data: {
+							path: file,
+						},
+						beforeSend: function (req) {
+							req.setRequestHeader('Accept', 'application/json');
+						},
+						success: function(res) {
+							var token = res.ocs.data.token;
+							console.log("GOT token", token);
+							var url = OC.generateUrl("s/" + token + "/download");
+							console.log("Share url", url);
+							OCA.SpreedMe.presentations.newEvent('added', {token: token});
+						},
+					});
+				};
+
+				var title = t('spreed', 'Please select the file(s) you want to share');
+				var config = {
+					title: title,
+					allowMultiSelect: false, // TODO(leon): Add support for this
+					filterByMIME: allowedFileTypes,
+				};
+				OC.dialogs.filepicker(config.title, function(file) {
+					console.log("Selected file", file);
+					shareSelected(file);
+				}, config.allowMultiSelect, config.filterByMIME);
+			});
+
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
 				$('#screensharing-button').attr('data-original-title', 'Enable screensharing')

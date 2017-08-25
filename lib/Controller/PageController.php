@@ -23,7 +23,6 @@
 
 namespace OCA\Spreed\Controller;
 
-use OC\HintException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
@@ -37,6 +36,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
+use OC\HintException;
 
 class PageController extends Controller {
 	/** @var string */
@@ -136,6 +136,7 @@ class PageController extends Controller {
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
 		$response->setContentSecurityPolicy($csp);
@@ -166,6 +167,7 @@ class PageController extends Controller {
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
 		$response->setContentSecurityPolicy($csp);

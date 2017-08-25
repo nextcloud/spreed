@@ -12,6 +12,7 @@ script(
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'vendor/pdfjs-dist/build/pdf.min',
 		'models/room',
 		'models/roomcollection',
 		'views/roomlistview',
@@ -89,6 +90,9 @@ script(
 		</div>
 
 		<div id="screens"></div>
+
+		<!-- TODO(leon): Load presentations inside sandboxed Iframe -->
+		<div id="presentations"></div>
 
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-video"></div>
