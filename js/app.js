@@ -251,7 +251,7 @@
 							console.log("GOT token", token);
 							var url = OC.generateUrl("s/" + token + "/download");
 							console.log("Share url", url);
-							OCA.SpreedMe.presentations.newEvent('added', {token: token});
+							OCA.SpreedMe.Presentations.newEvent('added', {token: token});
 						},
 					});
 				};
