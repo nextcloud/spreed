@@ -20,28 +20,6 @@
 	Presentation.prototype.isLoaded = function() {
 		return this.data !== null;
 	};
-	// Presentation.prototype.load = function(cb) {
-	// 	if (this.isLoaded()) {
-	// 		// Already loaded, call callback
-	// 		cb(this.data);
-	// 		return;
-	// 	}
-	// 	// Need to be old-fashioned for blobs
-	// 	var xhr = new XMLHttpRequest();
-	// 	var that = this;
-	// 	xhr.onload = function() {
-	// 		if (this.status !== 200) {
-	// 			// TODO(leon): Handle error
-	// 			return;
-	// 		}
-	// 		that.data = window.URL.createObjectURL(this.response);
-	// 		cb(that.data);
-	// 		that.e.trigger("load", that.data);
-	// 	};
-	// 	xhr.open('GET', this.url);
-	// 	xhr.responseType = 'blob';
-	// 	xhr.send();
-	// };
 	Presentation.prototype.nextSlide = function() {
 		this.exactSlide(this.curSlide + 1);
 	};
