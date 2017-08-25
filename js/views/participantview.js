@@ -29,18 +29,17 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<li data-session-id="{{sessionId}}" data-participant="{{participantId}}" class="participant {{#if pariticipantIsOffline}}participant-offline{{/if}}">' +
-		'<div class="avatar " data-username="test1" data-displayname="User One" style="height: 32px; width: 32px; background-color: rgb(213, 231, 116); color: rgb(255, 255, 255); font-weight: normal; text-align: center; line-height: 32px; font-size: 17.6px;">U</div>' +
-		'<!--div class="avatar" data-username="{{participantId}}" data-displayname="{{participantDisplayName}}"></div-->' +
+	var ITEM_TEMPLATE = '<li data-session-id="{{sessionId}}" data-participant="{{userId}}" class="participant {{#if pariticipantIsOffline}}participant-offline{{/if}}">' +
+		'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
 		'<span class="username" title="">' +
-			'{{username}}' +
+			'{{displayName}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'owner') + ')</span>{{/if}}' +
 			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 		'</span>' +
 		'{{#if canModerate}}' +
 			'<span class="actionOptionsGroup">' +
 				'<a href="#"><span class="icon icon-more"></span></a>' +
-				'<div class="popovermenu bubble hidden menu">' +
+				'<div class="popovermenu bubble menu">' +
 				'<ul>' +
 					'{{#if participantIsModerator}}' +
 					'<li>' +
@@ -49,7 +48,7 @@
 						'</a>' +
 					'</li>' +
 					'{{else}}' +
-						'{{if participantIsUser}}' +
+						'{{#if participantIsUser}}' +
 						'<li>' +
 							'<a href="#" class="menuitem action action-promote permanent">' +
 								'<span class="icon icon-rename"></span><span>' + t('spreed', 'Promote to moderator') + '</span>' +
@@ -93,7 +92,7 @@
 					if (!this.$el.is(target.closest('.participant'))) {
 						// Click was not triggered by this element -> close menu
 						this.menuShown = false;
-						this.toggleMenuClass();
+						//this.toggleMenuClass();
 					}
 				});
 			},
@@ -109,11 +108,17 @@
 				};
 			},
 			onRender: function() {
-				// TODO ?
-				// var roomURL, completeURL;
-				// this.initPersonSelector();
+				this.$el.find('.avatar').each(function() {
+					var element = $(this);
+					if (element.data('displayname')) {
+						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
+					} else {
+						element.avatar(element.data('user-id'), 32);
+					}
+				});
 			},
 			events: {
+				'click .actionOptionsGroup .icon-more': 'toggleMenu',
 				'click .actionOptionsGroup .action-promote': 'promoteToModerator',
 				'click .actionOptionsGroup .action-demote': 'demoteFromModerator',
 				'click .actionOptionsGroup .action-remove': 'removeParticipant'
@@ -130,6 +135,8 @@
 				this.toggleMenuClass();
 			},
 			toggleMenuClass: function() {
+				console.log(this.ui.participant.data('participant'));
+				console.log(this.menuShown);
 				this.ui.menu.toggleClass('open', this.menuShown);
 			},
 			promoteToModerator: function() {

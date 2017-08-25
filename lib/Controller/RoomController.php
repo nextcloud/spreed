@@ -428,7 +428,7 @@ class RoomController extends OCSController {
 		$participants = $room->getParticipants();
 		$results = [];
 
-		foreach ($participants['user'] as $userId => $participant) {
+		foreach ($participants['users'] as $userId => $participant) {
 			$user = $this->userManager->get($userId);
 			if (!$user instanceof IUser) {
 				continue;

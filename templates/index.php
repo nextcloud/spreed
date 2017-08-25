@@ -56,9 +56,9 @@ script(
 			</ul>
 
 			<div class="tabsContainer">
-				<div id="shareTabView" class="tab shareTabView">
-					<div class="shareeListView subView">
-						<ul id="shareWithList" class="shareWithList">
+				<div id="participantTabView" class="tab participantTabView">
+					<div class="participantListView subView">
+						<ul id="participantWithList" class="participantWithList">
 							<li data-share-id="2" data-share-type="0" data-share-with="test1" class="participant-moderator">
 								<div class="avatar " data-username="test1" data-displayname="User One" style="height: 32px; width: 32px; background-color: rgb(213, 231, 116); color: rgb(255, 255, 255); font-weight: normal; text-align: center; line-height: 32px; font-size: 17.6px;">U</div>
 								<span class="username" title="">

@@ -40,7 +40,7 @@
 		 */
 		setRoom: function(room) {
 			this.room = room;
-			this.url = OC.linkToOCS('apps/spreed/api/v1/room', 2) + '/' + this.room.get('token') + 'participants';
+			this.url = OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.room.get('token') + '/participants';
 		},
 		// comparator: function(model) {
 		// 	return -(model.get('lastPing'));
