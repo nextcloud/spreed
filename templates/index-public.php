@@ -12,7 +12,7 @@ script(
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
-		'vendor/pdfjs-dist/build/pdf.min',
+		'vendor/pdfjs-dist/build/pdf.combined',
 		'models/room',
 		'models/roomcollection',
 		'views/roomlistview',
