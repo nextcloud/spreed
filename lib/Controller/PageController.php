@@ -159,6 +159,7 @@ class PageController extends Controller {
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
 		$response->setContentSecurityPolicy($csp);
@@ -197,6 +198,7 @@ class PageController extends Controller {
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
 		$response->setContentSecurityPolicy($csp);

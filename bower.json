@@ -19,6 +19,7 @@
   "dependencies": {
     "backbone": "1.2.3",
     "backbone.marionette": "3.0.0",
-    "jquery": "^2.0"
+    "jquery": "^2.0",
+    "pdfjs-dist": "^1.9.476"
   }
 }

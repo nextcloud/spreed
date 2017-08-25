@@ -231,6 +231,13 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'FileSharing#shareAtPath',
+			'url' => '/api/{apiVersion}/share',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];
-

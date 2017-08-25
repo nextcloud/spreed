@@ -416,7 +416,8 @@ video {
 
 .nameIndicator button.audio-disabled,
 .nameIndicator button.video-disabled,
-.nameIndicator button.screensharing-disabled {
+.nameIndicator button.screensharing-disabled,
+.nameIndicator button.presentation-disabled {
 	opacity: .7;
 }
 
@@ -609,6 +610,13 @@ video {
 #videos .videoContainer.videoView.speaking .nameIndicator .icon-audio-white {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;
+}
+
+#presentations canvas {
+	width: 100%;
+	height: 100%;
+	position: relative;
+	z-index: 1;
 }
 
 @keyframes pulse {
