@@ -18,7 +18,7 @@
 		this.e = $({});
 	};
 	Presentation.prototype.isLoaded = function() {
-		return this.data !== null;
+		throw new Exception('isLoaded not implemented yet');
 	};
 	Presentation.prototype.nextSlide = function() {
 		this.exactSlide(this.curSlide + 1);
@@ -39,6 +39,9 @@
 		this.e.on("load slideUpdated", _.bind(this.render, this));
 	};
 	PDFPresentation.prototype = Object.create(Presentation.prototype);
+	PDFPresentation.prototype.isLoaded = function() {
+		return !!this.doc;
+	};
 	PDFPresentation.prototype.load = function() {
 		PDFJS.getDocument(this.url).then(_.bind(function (doc) {
 			this.doc = doc;
@@ -47,6 +50,11 @@
 		}, this));
 	};
 	PDFPresentation.prototype.render = function() {
+		if (!this.isLoaded()) {
+			// TODO(leon): Maybe defer rendering
+			console.log("Not loaded yet");
+			return;
+		}
 		console.log("Showing page", this.curSlide);
 		this.doc.getPage(this.curSlide).then(_.bind(function(page) {
 			var viewport = page.getViewport(this.scale);
