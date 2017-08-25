@@ -226,7 +226,7 @@
 				}
 			});
 
-			$('#presentation-button').click(function() {
+			var presentation = (function() {
 				var SUPPORTED_DOCUMENT_TYPES = {
 					// rendered by pdfcanvas directive
 					"application/pdf": "pdf",
@@ -248,7 +248,6 @@
 						allowedFileTypes.push(type);
 					}
 				}
-
 				var shareSelected = function(file) {
 					// TODO(leon): There might be an existing API endpoint which we can use instead
 					// This would make things simpler
@@ -270,17 +269,26 @@
 						},
 					});
 				};
-
 				var title = t('spreed', 'Please select the file(s) you want to share');
 				var config = {
 					title: title,
 					allowMultiSelect: false, // TODO(leon): Add support for this
 					filterByMIME: allowedFileTypes,
 				};
-				OC.dialogs.filepicker(config.title, function(file) {
-					console.log("Selected file", file);
-					shareSelected(file);
-				}, config.allowMultiSelect, config.filterByMIME);
+				var exports = {};
+
+				exports.openPicker = function() {
+					OC.dialogs.filepicker(config.title, function(file) {
+						console.log("Selected file", file);
+						shareSelected(file);
+					}, config.allowMultiSelect, config.filterByMIME);
+				};
+
+				return exports;
+			})();
+
+			$('#presentation-button').click(function() {
+				presentation.openPicker();
 			});
 
 			var screensharingStopped = function() {
