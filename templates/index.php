@@ -27,6 +27,7 @@ script(
 		'webrtc',
 		'signaling',
 		'calls',
+		'presentations',
 		'app',
 		'init',
 	]
