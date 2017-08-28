@@ -47,12 +47,16 @@
 			cb();
 			return;
 		}
-		PDFJS.getDocument(this.url).then(_.bind(function (doc) {
-			this.doc = doc;
-			this.numPages = this.doc.numPages;
-			this.e.trigger("load");
-			cb();
-		}, this));
+		try {
+			PDFJS.getDocument(this.url).then(_.bind(function (doc) {
+				this.doc = doc;
+				this.numPages = this.doc.numPages;
+				this.e.trigger("load");
+				cb();
+			}, this));
+		} catch (e) {
+			// TODO(leon): Handle this.
+		}
 	};
 	PDFPresentation.prototype.render = function() {
 		if (!this.isLoaded()) {
