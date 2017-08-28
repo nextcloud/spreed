@@ -131,6 +131,9 @@
 				if (!this.byId[id]) {
 					// We don't have this presentation yet
 					this.init(id, p);
+				} else {
+					// Reuse existing presentation
+					p = this.byId[id];
 				}
 				// TODO(leon): Remove 'true' and add presentation selector instead
 				if (true || !this.active) {
