@@ -92,6 +92,7 @@
 						exports.newEvent("previous_page");
 					}
 				}, true);
+				this.hide(p);
 				rootElem.appendChild(c);
 			},
 			add: function(id, p) {
@@ -120,7 +121,17 @@
 				}
 			},
 			show: function(p) {
+				if (this.active) {
+					this.hide(this.active);
+				}
+				if (!p.isLoaded()) {
+					p.load(); // TODO(leon): Make this return a promise, might be useful in the future
+				}
 				this.active = p;
+				this.active.elem.classList.remove("hidden");
+			},
+			hide: function(p) {
+				p.elem.classList.add("hidden");
 			},
 		};
 		var isSanitizedToken = function(token) {
@@ -168,7 +179,6 @@
 			var url = makeDownloadUrl(token);
 			var p = new PDFPresentation(token, url);
 			sharedPresentations.add(token, p);
-			p.load();
 		};
 
 		return exports;
