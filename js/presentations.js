@@ -131,7 +131,8 @@
 					// We don't have this presentation yet
 					this.init(id, p);
 				}
-				if (!this.active) {
+				// TODO(leon): Remove 'true' and add presentation selector instead
+				if (true || !this.active) {
 					this.show(p);
 				}
 			},
