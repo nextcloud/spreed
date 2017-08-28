@@ -86,17 +86,6 @@
 			NEXT_PAGE: "next_page",
 			PREVIOUS_PAGE: "previous_page",
 		};
-		document.addEventListener("keydown", function(e) {
-			var kc = e.keyCode;
-			switch (e.keyCode) {
-			case 37: // Left arrow
-				exports.newEvent(EVENT_TYPE.PREVIOUS_PAGE);
-				break;
-			case 39: // Right arrow
-				exports.newEvent(EVENT_TYPE.NEXT_PAGE);
-				break;
-			}
-		}, false);
 
 		var sharedPresentations = {
 			active: null,
@@ -177,6 +166,22 @@
 		var makeDownloadUrl = function(token) {
 			return OC.generateUrl("s/" + token + "/download");
 		};
+
+		document.addEventListener("keydown", function(e) {
+			// Only do something if we have an active presentation
+			if (!sharedPresentations.active) {
+				return;
+			}
+			var kc = e.keyCode;
+			switch (e.keyCode) {
+			case 37: // Left arrow
+				exports.newEvent(EVENT_TYPE.PREVIOUS_PAGE);
+				break;
+			case 39: // Right arrow
+				exports.newEvent(EVENT_TYPE.NEXT_PAGE);
+				break;
+			}
+		}, true);
 
 		exports.newEvent = function(type, payload) {
 			// Inform self
