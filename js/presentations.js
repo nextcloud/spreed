@@ -227,6 +227,7 @@
 			case EVENT_TYPE.PRESENTATION_SWITCH:
 				sharedPresentations.showById(data.payload);
 				break;
+			// TODO(leon): Ensure to pass in exact page number to avoid desynchronization
 			case EVENT_TYPE.PAGE_NEXT:
 				sharedPresentations.withActive(function(p) {
 					p.nextPage();
