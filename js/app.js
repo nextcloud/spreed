@@ -255,7 +255,7 @@
 				var title = t('spreed', 'Please select the file(s) you want to share');
 				var config = {
 					title: title,
-					allowMultiSelect: false, // TODO(leon): Add support for this
+					allowMultiSelect: false, // TODO(leon): Add support for this, ensure order somehow
 					filterByMIME: allowedFileTypes,
 				};
 				var exports = {};
