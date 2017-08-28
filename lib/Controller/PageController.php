@@ -162,6 +162,7 @@ class PageController extends Controller {
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedFontDomain('data:');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -201,6 +202,7 @@ class PageController extends Controller {
 		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedFontDomain('data:');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
