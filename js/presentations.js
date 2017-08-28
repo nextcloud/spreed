@@ -9,7 +9,7 @@
 	var Presentation = function(id, url) {
 		this.id = id;
 		this.url = url;
-		this.data = null;
+		this.data = null; // TODO(leon): Do we need maybe this for webodf? Else remove.
 		this.elem = null;
 		this.numPages = 0;
 		this.curPage = 1;
