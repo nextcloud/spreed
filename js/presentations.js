@@ -97,6 +97,7 @@
 		var EVENT_TYPE = exports.EVENT_TYPE = {
 			PRESENTATION_ADDED: "added",
 			PRESENTATION_REMOVED: "removed",
+			PRESENTATION_SWITCH: "switch",
 			PAGE_NEXT: "page_next",
 			PAGE_PREVIOUS: "page_previous",
 		};
@@ -171,6 +172,13 @@
 					this.active.elem.classList.remove("hidden");
 				}, this));
 			},
+			showById: function(id) {
+				if (!this.byId.hasOwnProperty(id)) {
+					// TODO(leon): Handle error
+					return;
+				}
+				this.show(this.byId[id]);
+			},
 			hide: function(p) {
 				p.elem.classList.add("hidden");
 			},
@@ -212,6 +220,9 @@
 				break;
 			case EVENT_TYPE.PRESENTATION_REMOVED:
 				self.remove(data.payload);
+				break;
+			case EVENT_TYPE.PRESENTATION_SWITCH:
+				sharedPresentations.showById(data.payload);
 				break;
 			case EVENT_TYPE.PAGE_NEXT:
 				sharedPresentations.withActive(function(p) {
