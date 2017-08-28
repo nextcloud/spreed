@@ -146,6 +146,9 @@
 					return;
 				}
 				var p = this.byId[id];
+				if (p === this.active) {
+					p.hide();
+				}
 				p.elem.parentNode.removeChild(p.elem);
 				delete this.byId[id];
 			},
@@ -183,6 +186,10 @@
 				this.show(this.byId[id]);
 			},
 			hide: function(p) {
+				if (p === this.active) {
+					// TODO(leon): We should simply show one of the next presentation
+					this.active = null;
+				}
 				p.elem.classList.add("hidden");
 			},
 		};
