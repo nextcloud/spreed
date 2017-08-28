@@ -189,6 +189,11 @@ video {
 	vertical-align: top; /* fix white line below video */
 }
 
+#screens video {
+	-webkit-filter: none;
+	filter: none;
+}
+
 #videos .videoContainer video {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
