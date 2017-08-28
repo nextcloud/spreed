@@ -35,6 +35,7 @@
 
 	var PDFPresentation = function(id, url) {
 		Presentation.call(this, id, url);
+		this.isRendering = false;
 		this.e.on("load pageUpdated", _.bind(this.render, this));
 	};
 	PDFPresentation.prototype = Object.create(Presentation.prototype);
@@ -64,15 +65,28 @@
 			console.log("Not loaded yet");
 			return;
 		}
+		// Don't try to render if we're already rendering
+		if (this.isRendering) {
+			// TODO(leon): _IMPORTANT_: Rendering should be deferred only!
+			console.log("Already rendering.. Deferring work");
+			return;
+		}
+
 		console.log("Showing page", this.curPage);
+		var setRenderingFunc = _.bind(function(r) {
+			return _.bind(function() {
+				this.isRendering = r;
+			}, this);
+		}, this);
 		this.doc.getPage(this.curPage).then(_.bind(function(page) {
 			var viewport = page.getViewport(this.scale);
 			this.elem.height = viewport.height;
 			this.elem.width = viewport.width;
+			setRenderingFunc(true)();
 			page.render({
 				canvasContext: this.elem.getContext('2d'),
 				viewport: viewport,
-			});
+			}).then(setRenderingFunc(false), setRenderingFunc(false));
 		}, this));
 	};
 
