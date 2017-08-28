@@ -164,6 +164,7 @@
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('presentation', type, payload);
 		};
 		exports.handleEvent = function(data, from) {
+			// TODO(leon): We might want to check if 'from' has permissions to emit the event
 			switch (data.type) {
 			case 'added':
 				self.add(data.payload.token);
