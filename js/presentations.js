@@ -97,8 +97,8 @@
 		var EVENT_TYPE = {
 			PRESENTATION_ADDED: "added",
 			PRESENTATION_REMOVED: "removed",
-			NEXT_PAGE: "next_page",
-			PREVIOUS_PAGE: "previous_page",
+			PAGE_NEXT: "page_next",
+			PAGE_PREVIOUS: "page_previous",
 		};
 
 		var sharedPresentations = {
@@ -118,9 +118,9 @@
 				p.elem.addEventListener("click", function(e) {
 					var half = (p.elem.offsetWidth / 2);
 					if (e.offsetX > half) {
-						exports.newEvent(EVENT_TYPE.NEXT_PAGE);
+						exports.newEvent(EVENT_TYPE.PAGE_NEXT);
 					} else {
-						exports.newEvent(EVENT_TYPE.PREVIOUS_PAGE);
+						exports.newEvent(EVENT_TYPE.PAGE_PREVIOUS);
 					}
 				}, true);
 				this.hide(p);
@@ -189,10 +189,10 @@
 			var kc = e.keyCode;
 			switch (e.keyCode) {
 			case 37: // Left arrow
-				exports.newEvent(EVENT_TYPE.PREVIOUS_PAGE);
+				exports.newEvent(EVENT_TYPE.PAGE_PREVIOUS);
 				break;
 			case 39: // Right arrow
-				exports.newEvent(EVENT_TYPE.NEXT_PAGE);
+				exports.newEvent(EVENT_TYPE.PAGE_NEXT);
 				break;
 			}
 		}, true);
@@ -212,12 +212,12 @@
 			case EVENT_TYPE.PRESENTATION_REMOVED:
 				self.remove(data.payload);
 				break;
-			case EVENT_TYPE.NEXT_PAGE:
+			case EVENT_TYPE.PAGE_NEXT:
 				sharedPresentations.withActive(function(p) {
 					p.nextPage();
 				});
 				break;
-			case EVENT_TYPE.PREVIOUS_PAGE:
+			case EVENT_TYPE.PAGE_PREVIOUS:
 				sharedPresentations.withActive(function(p) {
 					p.previousPage();
 				});
