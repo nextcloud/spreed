@@ -41,11 +41,17 @@
 	PDFPresentation.prototype.isLoaded = function() {
 		return !!this.doc;
 	};
-	PDFPresentation.prototype.load = function() {
+	PDFPresentation.prototype.load = function(cb) {
+		if (this.isLoaded()) {
+			// Immediately call callback
+			cb();
+			return;
+		}
 		PDFJS.getDocument(this.url).then(_.bind(function (doc) {
 			this.doc = doc;
 			this.numPages = this.doc.numPages;
 			this.e.trigger("load");
+			cb();
 		}, this));
 	};
 	PDFPresentation.prototype.render = function() {
@@ -73,6 +79,7 @@
 
 		var sharedPresentations = {
 			active: null,
+			staging: null,
 			byId: {},
 			withActive: function(cb) {
 				if (this.active) {
@@ -121,14 +128,23 @@
 				}
 			},
 			show: function(p) {
-				if (this.active) {
-					this.hide(this.active);
+				if (p === this.active) {
+					// Presentation is already active, do nothing
+					return;
 				}
-				if (!p.isLoaded()) {
-					p.load(); // TODO(leon): Make this return a promise, might be useful in the future
-				}
-				this.active = p;
-				this.active.elem.classList.remove("hidden");
+				this.staging = p;
+				p.load(_.bind(function() {
+					// Check if we still want to show this presentation, migth have changed since
+					if (this.staging !== p) {
+						return;
+					}
+					this.staging = null;
+					if (this.active) {
+						this.hide(this.active);
+					}
+					this.active = p;
+					this.active.elem.classList.remove("hidden");
+				}, this));
 			},
 			hide: function(p) {
 				p.elem.classList.add("hidden");
