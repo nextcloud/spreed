@@ -80,6 +80,23 @@
 		var exports = {};
 		var self = exports;
 		var rootElem = document.getElementById("presentations");
+		var EVENT_TYPE = {
+			PRESENTATION_ADDED: "added",
+			PRESENTATION_REMOVED: "removed",
+			NEXT_PAGE: "next_page",
+			PREVIOUS_PAGE: "previous_page",
+		};
+		document.addEventListener("keydown", function(e) {
+			var kc = e.keyCode;
+			switch (e.keyCode) {
+			case 37: // Left arrow
+				exports.newEvent(EVENT_TYPE.PREVIOUS_PAGE);
+				break;
+			case 39: // Right arrow
+				exports.newEvent(EVENT_TYPE.NEXT_PAGE);
+				break;
+			}
+		}, false);
 
 		var sharedPresentations = {
 			active: null,
@@ -98,9 +115,9 @@
 				p.elem.addEventListener("click", function(e) {
 					var half = (p.elem.offsetWidth / 2);
 					if (e.offsetX > half) {
-						exports.newEvent("next_page");
+						exports.newEvent(EVENT_TYPE.NEXT_PAGE);
 					} else {
-						exports.newEvent("previous_page");
+						exports.newEvent(EVENT_TYPE.PREVIOUS_PAGE);
 					}
 				}, true);
 				this.hide(p);
@@ -170,18 +187,18 @@
 		exports.handleEvent = function(data, from) {
 			// TODO(leon): We might want to check if 'from' has permissions to emit the event
 			switch (data.type) {
-			case 'added':
+			case EVENT_TYPE.PRESENTATION_ADDED:
 				self.add(data.payload.token);
 				break;
-			case 'removed':
+			case EVENT_TYPE.PRESENTATION_REMOVED:
 				self.remove(data.payload);
 				break;
-			case 'next_page':
+			case EVENT_TYPE.NEXT_PAGE:
 				sharedPresentations.withActive(function(p) {
 					p.nextPage();
 				});
 				break;
-			case 'previous_page':
+			case EVENT_TYPE.PREVIOUS_PAGE:
 				sharedPresentations.withActive(function(p) {
 					p.previousPage();
 				});
