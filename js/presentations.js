@@ -93,7 +93,7 @@
 			init: function(id, p) {
 				this.byId[id] = p;
 				var c = document.createElement("canvas");
-				c.id = id;
+				c.id = "presentation_" + id;
 				p.elem = c;
 				p.elem.addEventListener("click", function(e) {
 					var half = (p.elem.offsetWidth / 2);
