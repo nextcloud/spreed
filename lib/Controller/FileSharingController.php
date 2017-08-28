@@ -67,10 +67,8 @@ class FileSharingController extends OCSController {
 
 	/**
 	 * Share a file and return the share's token
-	 * TODO(leon): Re-enable CSRF support
 	 *
 	 * @NoAdminRequired
-	 * @NoCSRFRequired
 	 *
 	 * @return DataResponse
 	 */
