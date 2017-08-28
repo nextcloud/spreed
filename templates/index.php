@@ -52,7 +52,7 @@ script(
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
-					<button id="presentation-button" class="app-navigation-entry-utils-menu-button icon-upload-white screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share presentation')) ?>"></button>
+					<button id="presentation-button" class="app-navigation-entry-utils-menu-button icon-upload-white presentation-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share presentation')) ?>"></button>
 					<div id="presentation-menu" class="app-navigation-entry-menu">
 						<ul>
 							<li>
