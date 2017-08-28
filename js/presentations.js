@@ -19,12 +19,6 @@
 	Presentation.prototype.isLoaded = function() {
 		throw new Exception('isLoaded not implemented yet');
 	};
-	Presentation.prototype.nextPage = function() {
-		this.exactPage(this.curPage + 1);
-	};
-	Presentation.prototype.previousPage = function() {
-		this.exactPage(this.curPage - 1);
-	};
 	Presentation.prototype.exactPage = function(num) {
 		if (this.curPage === num || num <= 0 || num >= this.numPages) {
 			return;
@@ -98,8 +92,15 @@
 			PRESENTATION_ADDED: "added",
 			PRESENTATION_REMOVED: "removed",
 			PRESENTATION_SWITCH: "switch",
-			PAGE_NEXT: "page_next",
-			PAGE_PREVIOUS: "page_previous",
+			PAGE: "page",
+		};
+		var EVENTS = {
+			PAGE_NEXT: function(p) {
+				exports.newEvent(EVENT_TYPE.PAGE, p.curPage + 1);
+			},
+			PAGE_PREVIOUS: function(p) {
+				exports.newEvent(EVENT_TYPE.PAGE, p.curPage - 1);
+			},
 		};
 
 		var sharedPresentations = {
@@ -119,9 +120,9 @@
 				p.elem.addEventListener("click", function(e) {
 					var half = (p.elem.offsetWidth / 2);
 					if (e.offsetX > half) {
-						exports.newEvent(EVENT_TYPE.PAGE_NEXT);
+						EVENTS.PAGE_NEXT(p);
 					} else {
-						exports.newEvent(EVENT_TYPE.PAGE_PREVIOUS);
+						EVENTS.PAGE_PREVIOUS(p);
 					}
 				}, true);
 				this.hide(p);
@@ -205,13 +206,13 @@
 			if (!sharedPresentations.active) {
 				return;
 			}
-			var kc = e.keyCode;
+			var p = sharedPresentations.active;
 			switch (e.keyCode) {
 			case 37: // Left arrow
-				exports.newEvent(EVENT_TYPE.PAGE_PREVIOUS);
+				EVENTS.PAGE_PREVIOUS(p);
 				break;
 			case 39: // Right arrow
-				exports.newEvent(EVENT_TYPE.PAGE_NEXT);
+				EVENTS.PAGE_NEXT(p);
 				break;
 			}
 		}, true);
@@ -234,15 +235,9 @@
 			case EVENT_TYPE.PRESENTATION_SWITCH:
 				sharedPresentations.showById(data.payload);
 				break;
-			// TODO(leon): Ensure to pass in exact page number to avoid desynchronization
-			case EVENT_TYPE.PAGE_NEXT:
+			case EVENT_TYPE.PAGE:
 				sharedPresentations.withActive(function(p) {
-					p.nextPage();
-				});
-				break;
-			case EVENT_TYPE.PAGE_PREVIOUS:
-				sharedPresentations.withActive(function(p) {
-					p.previousPage();
+					p.exactPage(data.payload);
 				});
 				break;
 			default:
