@@ -262,7 +262,10 @@
 						},
 						success: function(res) {
 							var token = res.ocs.data.token;
-							OCA.SpreedMe.Presentations.newEvent('added', {token: token});
+							OCA.SpreedMe.Presentations.newEvent(
+								OCA.SpreedMe.Presentations.EVENT_TYPE.PRESENTATION_ADDED,
+								{token: token}
+							);
 						},
 					});
 				};
