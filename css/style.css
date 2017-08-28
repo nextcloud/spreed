@@ -352,7 +352,8 @@ video {
 	box-shadow: 0;
 }
 
-#app-content.screensharing #screens {
+#app-content.screensharing #screens,
+#app-content #presentations {
 	position: absolute;
 	width: 100%;
 	height: calc(100% - 200px);
@@ -566,8 +567,13 @@ video {
 	animation-iteration-count: infinite;
 }
 
+#presentations {
+	text-align: center;
+}
+
 #presentations canvas {
-	width: 100%;
+	width: auto;
+	max-width: 100%;
 	height: 100%;
 	position: relative;
 	z-index: 1;
