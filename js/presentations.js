@@ -94,7 +94,7 @@
 		var exports = {};
 		var self = exports;
 		var rootElem = document.getElementById("presentations");
-		var EVENT_TYPE = {
+		var EVENT_TYPE = exports.EVENT_TYPE = {
 			PRESENTATION_ADDED: "added",
 			PRESENTATION_REMOVED: "removed",
 			PAGE_NEXT: "page_next",
