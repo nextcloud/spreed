@@ -232,10 +232,10 @@
 
 		document.addEventListener("keydown", function(e) {
 			// Only do something if we have an active presentation
-			if (!sharedPresentations.active) {
+			var p = sharedPresentations.active;
+			if (!p) {
 				return;
 			}
-			var p = sharedPresentations.active;
 			switch (e.keyCode) {
 			case 37: // Left arrow
 				EVENTS.PAGE_PREVIOUS(p);
