@@ -14,22 +14,28 @@
 		this.curPage = 1;
 		this.scale = 1;
 		this.e = $({});
+		this.e.byName = {
+			LOAD: "load",
+			PAGE_UPDATED: "page.updated",
+			RENDERING_DONE: "rendering.done"
+		};
 	};
 	Presentation.prototype.isLoaded = function() {
-		throw new Exception('isLoaded not implemented yet');
+		throw 'isLoaded not implemented yet';
 	};
 	Presentation.prototype.exactPage = function(num) {
 		if (this.curPage === num || num <= 0 || num >= this.numPages) {
 			return;
 		}
 		this.curPage = num;
-		this.e.trigger("pageUpdated", this.curPage);
+		this.e.trigger(this.e.byName.PAGE_UPDATED, this.curPage);
 	};
 
 	var PDFPresentation = function(id, url) {
 		Presentation.call(this, id, url);
 		this.isRendering = false;
-		this.e.on("load pageUpdated", _.bind(this.render, this));
+		var evs = [this.e.byName.LOAD, this.e.byName.PAGE_UPDATED];
+		this.e.on(evs.join(" "), _.bind(this.render, this));
 	};
 	PDFPresentation.prototype = Object.create(Presentation.prototype);
 	PDFPresentation.prototype.isLoaded = function() {
@@ -45,7 +51,7 @@
 			PDFJS.getDocument(this.url).then(_.bind(function (doc) {
 				this.doc = doc;
 				this.numPages = this.doc.numPages;
-				this.e.trigger("load", this.curPage);
+				this.e.trigger(this.e.byName.LOAD, this.curPage);
 				cb();
 			}, this));
 		} catch (e) {
@@ -57,7 +63,7 @@
 			console.log("Not loaded yet");
 			return;
 		}
-		var renderingDoneEventName = "rendering.done";
+		var renderingDoneEventName = this.e.byName.RENDERING_DONE;
 		// Defer rendering if we're already rendering
 		if (this.isRendering) {
 			var rerenderJobEventName = renderingDoneEventName + ".rerenderJob";
