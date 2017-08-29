@@ -55,7 +55,6 @@
 	};
 	PDFPresentation.prototype.render = function(page) {
 		if (!this.isLoaded()) {
-			// TODO(leon): Maybe defer rendering
 			console.log("Not loaded yet");
 			return;
 		}
