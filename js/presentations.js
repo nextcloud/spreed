@@ -58,7 +58,7 @@
 			// TODO(leon): Handle this.
 		}
 	};
-	PDFPresentation.prototype.render = function(page) {
+	PDFPresentation.prototype.render = function(e, page) {
 		if (!this.isLoaded()) {
 			console.log("Not loaded yet");
 			return;
@@ -66,11 +66,14 @@
 		var renderingDoneEventName = this.e.byName.RENDERING_DONE;
 		// Defer rendering if we're already rendering
 		if (this.isRendering) {
+			console.log("Deferring rendering job for page", page);
 			var rerenderJobEventName = renderingDoneEventName + ".rerenderJob";
+			var args = Array.prototype.slice.call(arguments);
 			this.e
 			.unbind(rerenderJobEventName)
 			.one(rerenderJobEventName, _.bind(function() {
-				this.render.apply(this, Array.prototype.slice.call(arguments));
+				console.log("Running deferred rendering job for page", page);
+				this.render.apply(this, args);
 			}, this));
 			return;
 		}
