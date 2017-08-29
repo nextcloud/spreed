@@ -144,7 +144,7 @@
 				rootElem.appendChild(c);
 			},
 			add: function(id, p) {
-				if (!this.byId[id]) {
+				if (!this.byId.hasOwnProperty(id)) {
 					// We don't have this presentation yet
 					this.init(id, p);
 				} else {
@@ -157,7 +157,7 @@
 				}
 			},
 			remove: function(id) {
-				if (!this.byId[id]) {
+				if (!this.byId.hasOwnProperty(id)) {
 					console.log("Remove: Unknown ID", id);
 					return;
 				}
