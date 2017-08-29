@@ -46,23 +46,28 @@
 			PDFJS.getDocument(this.url).then(_.bind(function (doc) {
 				this.doc = doc;
 				this.numPages = this.doc.numPages;
-				this.e.trigger("load");
+				this.e.trigger("load", this.curPage);
 				cb();
 			}, this));
 		} catch (e) {
 			// TODO(leon): Handle this.
 		}
 	};
-	PDFPresentation.prototype.render = function() {
+	PDFPresentation.prototype.render = function(page) {
 		if (!this.isLoaded()) {
 			// TODO(leon): Maybe defer rendering
 			console.log("Not loaded yet");
 			return;
 		}
-		// Don't try to render if we're already rendering
+		var renderingDoneEventName = "rendering.done";
+		// Defer rendering if we're already rendering
 		if (this.isRendering) {
-			// TODO(leon): _IMPORTANT_: Rendering should be deferred only!
-			console.log("Already rendering.. Deferring work");
+			var rerenderJobEventName = renderingDoneEventName + ".rerenderJob";
+			this.e
+			.unbind(rerenderJobEventName)
+			.one(rerenderJobEventName, _.bind(function() {
+				this.render.apply(this, Array.prototype.slice.call(arguments));
+			}, this));
 			return;
 		}
 
@@ -70,6 +75,9 @@
 		var setRenderingFunc = _.bind(function(r) {
 			return _.bind(function() {
 				this.isRendering = r;
+				if (!r) {
+					this.e.trigger(renderingDoneEventName);
+				}
 			}, this);
 		}, this);
 		this.doc.getPage(this.curPage).then(_.bind(function(page) {
