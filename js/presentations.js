@@ -86,7 +86,7 @@
 			page.render({
 				canvasContext: this.elem.getContext('2d'),
 				viewport: viewport,
-			}).then(setRenderingFunc(false), setRenderingFunc(false));
+			}).then(setRenderingFunc(false)).catch(setRenderingFunc(false));
 		}, this));
 	};
 
