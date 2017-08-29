@@ -37,6 +37,11 @@
 	 * "read" is the only synchronization method allowed; chat messages can not
 	 * be edited nor deleted, and to send a new message a standalone ChatMessage
 	 * should be used instead.
+	 *
+	 * To get the messages from the server "receiveMessages" should be used. It
+	 * will enable polling to the server and automatically update the collection
+	 * when new messages are received. Once enabled, the polling will go on
+	 * indefinitely.
 	 */
 	var ChatMessageCollection = Backbone.Collection.extend({
 
@@ -50,6 +55,8 @@
 			this.token = options.token;
 
 			this.url = OC.linkToOCS('apps/spreed/api/v1/chat', 2) + this.token;
+
+			this.offset = 0;
 		},
 
 		parse: function(result) {
@@ -86,6 +93,39 @@
 			}
 
 			return Backbone.Collection.prototype.set.call(this, models, options);
+		},
+
+		receiveMessages: function() {
+			this.fetch({
+				data: {
+					// The notOlderThan parameter could be used to limit the
+					// messages to those shown since the user opened the chat
+					// window. However, it can not be used as a way to keep
+					// track of the last message received. For example, even if
+					// unlikely, if two messages were sent at the same time and
+					// received the same timestamp in two different PHP
+					// processes, it could happen that one of them was committed
+					// to the database and read by another process waiting for
+					// new messages while the second message was not committed
+					// yet and thus not returned. Then, when the reading process
+					// checks the messages again, it would miss the second one
+					// due to its timestamp being the same as the last one it
+					// received.
+					offset: this.offset
+				},
+				success: _.bind(this._successfulFetch, this),
+				error: _.bind(this._failedFetch, this)
+			});
+		},
+
+		_successfulFetch: function(collection, response) {
+			this.offset += response.ocs.data.length;
+
+			this.receiveMessages();
+		},
+
+		_failedFetch: function() {
+			this.receiveMessages();
 		}
 
 	});
