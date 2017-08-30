@@ -6,8 +6,9 @@
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
-	var Presentation = function(id, url) {
+	var Presentation = function(id, token, url) {
 		this.id = id;
+		this.token = token;
 		this.url = url;
 		this.elem = null;
 		this.numPages = 0;
@@ -35,8 +36,8 @@
 		this.e.trigger(this.e.byName.PAGE_UPDATED, this.curPage);
 	};
 
-	var PDFPresentation = function(id, url) {
-		Presentation.call(this, id, url);
+	var PDFPresentation = function(id, token, url) {
+		Presentation.call(this, id, token, url);
 		this.isRendering = false;
 		var evs = [this.e.byName.LOAD, this.e.byName.PAGE_UPDATED];
 		this.e.on(evs.join(" "), _.bind(this.render, this));
@@ -107,11 +108,13 @@
 		var exports = {};
 		var self = exports;
 		var rootElem = document.getElementById("presentations");
+		var DATACHANNEL_NAMESPACE = 'presentation';
 		var EVENT_TYPE = exports.EVENT_TYPE = {
-			PRESENTATION_ADDED: "added",
-			PRESENTATION_REMOVED: "removed",
-			PRESENTATION_SWITCH: "switch",
-			PAGE: "page",
+			PRESENTATION_CURRENT: "current", // Issued to inform new participants about current presentation / page
+			PRESENTATION_ADDED: "added", // Indicates that a new presentation was added
+			PRESENTATION_REMOVED: "removed", // Indicates that a presentation was removed
+			PRESENTATION_SWITCH: "switch", // Indicates that we switched presentations
+			PAGE: "page", // Indicates that the page changed
 		};
 		var EVENTS = {
 			PAGE_NEXT: function(p) {
@@ -258,11 +261,16 @@
 			// Inform self
 			self.handleEvent({type: type, payload: payload}, null); // TODO(leon): Replace null by own Peer object
 			// Then inform others
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('presentation', type, payload);
+			OCA.SpreedMe.webrtc.sendDirectlyToAll(DATACHANNEL_NAMESPACE, type, payload);
 		};
 		exports.handleEvent = function(data, from) {
 			// TODO(leon): We might want to check if 'from' has permissions to emit the event
 			switch (data.type) {
+			case EVENT_TYPE.PRESENTATION_CURRENT:
+				self.add(data.payload.token, from).then(function(p) {
+					p.exactPage(data.payload.page);
+				}); // TODO(leon): Might want to catch as well
+				break;
 			case EVENT_TYPE.PRESENTATION_ADDED:
 				self.add(data.payload.token, from);
 				break;
@@ -288,12 +296,15 @@
 				console.log("Invalid token received", token);
 				return;
 			}
+			var deferred = $.Deferred();
 			var url = makeDownloadUrl(token);
-			var p = new PDFPresentation(token, url);
+			var p = new PDFPresentation(/* id */token, token, url);
 			// TODO(leon): from === null means the event is from ourself
 			// This should change, see other comment: "Replace null by own Peer object"
 			p.allowControl(from === null);
 			sharedPresentations.add(token, p);
+			deferred.resolve(p); // TODO(leon): Make the sharedPresentations.add return a promise instead
+			return deferred.promise();
 		};
 
 		var shareSelectedFiles = function(file) {
@@ -332,6 +343,28 @@
 				console.log("Selected file", file);
 				shareSelectedFiles(file);
 			}, config.allowMultiSelect, config.filterByMIME);
+		};
+
+		var keepPosted = function(peers) {
+			var type = EVENT_TYPE.PRESENTATION_CURRENT;
+			var payload = {};
+			sharedPresentations.withActive(function(p) {
+				payload.token = p.token;
+				payload.page = p.curPage;
+			});
+			peers.forEach(function(peer, i) {
+				console.log("Informing directly", peer, payload);
+				peer.sendDirectly(DATACHANNEL_NAMESPACE, type, payload);
+			});
+		};
+		exports.init = function(signaling) {
+			this.signaling = signaling;
+			this.signaling.on('usersJoined', function(users) {
+				users.forEach(function(user, i) {
+					var peers = OCA.SpreedMe.webrtc.getPeers(user.sessionId);
+					keepPosted(peers);
+				});
+			});
 		};
 
 		return exports;
