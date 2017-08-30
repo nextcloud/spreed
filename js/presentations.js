@@ -122,14 +122,14 @@
 			"application/pdf": "pdf",
 			// rendered by odfcanvas directive
 			// TODO(fancycode): check which formats really work, allow all odf for now
-			"application/vnd.oasis.opendocument.text": "odf",
-			"application/vnd.oasis.opendocument.spreadsheet": "odf",
-			"application/vnd.oasis.opendocument.presentation": "odf",
-			"application/vnd.oasis.opendocument.graphics": "odf",
-			"application/vnd.oasis.opendocument.chart": "odf",
-			"application/vnd.oasis.opendocument.formula": "odf",
-			"application/vnd.oasis.opendocument.image": "odf",
-			"application/vnd.oasis.opendocument.text-master": "odf"
+			//"application/vnd.oasis.opendocument.text": "odf",
+			//"application/vnd.oasis.opendocument.spreadsheet": "odf",
+			//"application/vnd.oasis.opendocument.presentation": "odf",
+			//"application/vnd.oasis.opendocument.graphics": "odf",
+			//"application/vnd.oasis.opendocument.chart": "odf",
+			//"application/vnd.oasis.opendocument.formula": "odf",
+			//"application/vnd.oasis.opendocument.image": "odf",
+			//"application/vnd.oasis.opendocument.text-master": "odf"
 		};
 
 		var sharedPresentations = {
