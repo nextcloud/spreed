@@ -13,6 +13,7 @@
 		this.numPages = 0;
 		this.curPage = 1;
 		this.scale = 1;
+		this.isController = false;
 		this.e = $({});
 		this.e.byName = {
 			LOAD: "load",
@@ -22,6 +23,9 @@
 	};
 	Presentation.prototype.isLoaded = function() {
 		throw 'isLoaded not implemented yet';
+	};
+	Presentation.prototype.allowControl = function(allow) {
+		this.isController = allow;
 	};
 	Presentation.prototype.exactPage = function(num) {
 		if (this.curPage === num || num <= 0 || num >= this.numPages) {
@@ -111,10 +115,14 @@
 		};
 		var EVENTS = {
 			PAGE_NEXT: function(p) {
-				exports.newEvent(EVENT_TYPE.PAGE, p.curPage + 1);
+				if (p.isController) {
+					exports.newEvent(EVENT_TYPE.PAGE, p.curPage + 1);
+				}
 			},
 			PAGE_PREVIOUS: function(p) {
-				exports.newEvent(EVENT_TYPE.PAGE, p.curPage - 1);
+				if (p.isController) {
+					exports.newEvent(EVENT_TYPE.PAGE, p.curPage - 1);
+				}
 			},
 		};
 		var SUPPORTED_DOCUMENT_TYPES = {
@@ -248,7 +256,7 @@
 
 		exports.newEvent = function(type, payload) {
 			// Inform self
-			self.handleEvent({type: type, payload: payload});
+			self.handleEvent({type: type, payload: payload}, null); // TODO(leon): Replace null by own Peer object
 			// Then inform others
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('presentation', type, payload);
 		};
@@ -256,10 +264,10 @@
 			// TODO(leon): We might want to check if 'from' has permissions to emit the event
 			switch (data.type) {
 			case EVENT_TYPE.PRESENTATION_ADDED:
-				self.add(data.payload.token);
+				self.add(data.payload.token, from);
 				break;
 			case EVENT_TYPE.PRESENTATION_REMOVED:
-				self.remove(data.payload);
+				self.remove(data.payload, from);
 				break;
 			case EVENT_TYPE.PRESENTATION_SWITCH:
 				sharedPresentations.showById(data.payload);
@@ -274,7 +282,7 @@
 			}
 		};
 
-		exports.add = function(token) {
+		exports.add = function(token, from) {
 			if (!isSanitizedToken(token)) {
 				// TODO(leon): Handle error
 				console.log("Invalid token received", token);
@@ -282,6 +290,9 @@
 			}
 			var url = makeDownloadUrl(token);
 			var p = new PDFPresentation(token, url);
+			// TODO(leon): from === null means the event is from ourself
+			// This should change, see other comment: "Replace null by own Peer object"
+			p.allowControl(from === null);
 			sharedPresentations.add(token, p);
 		};
 
