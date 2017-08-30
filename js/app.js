@@ -500,6 +500,7 @@
 			);
 
 			OCA.SpreedMe.initCalls(signaling);
+			OCA.SpreedMe.Presentations.init(signaling);
 
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
