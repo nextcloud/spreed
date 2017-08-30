@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Zmień nazwę",
     "Share link" : "Udostępnij link",
     "Leave call" : "Opuść połączenie",
+    "Delete call" : "Usuń rozmowę",
     "No other people in this call" : "W tej rozmowie nie uczestniczą inne osoby",
     "You" : "Ty",
     "and you" : "i ty",
