@@ -189,8 +189,8 @@
 					p.curPage = page;
 				}); // TODO(leon): Might want to catch as well
 			}, this),
-			remove: _.bind(function() {
-				throw 'not implemented yet'; // TODO(leon): Implement
+			remove: _.bind(function(id) {
+				this.removeById(id);
 			}, this),
 			switchTo: _.bind(function(id) {
 				this.showById(id);
