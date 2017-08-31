@@ -1,6 +1,7 @@
-# Exclude npm deps
+# Exclude npm stuff
 build
 node_modules
+package-lock.json
 
 # Karma/jasmine coverage data
 coverage
