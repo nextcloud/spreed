@@ -328,7 +328,20 @@
 				},
 			});
 		};
-		exports.openFilePicker = function() {
+
+		var keepPosted = function(peers) {
+			var type = EVENT_TYPE.PRESENTATION_CURRENT;
+			var payload = {};
+			sharedPresentations.withActive(function(p) {
+				payload.token = p.token;
+				payload.page = p.curPage;
+			});
+			peers.forEach(function(peer, i) {
+				console.log("Informing directly", peer, payload);
+				peer.sendDirectly(DATACHANNEL_NAMESPACE, type, payload);
+			});
+		};
+		var openFilePicker = function() {
 			var title = t('spreed', 'Please select the file(s) you want to share');
 			var allowedFileTypes = [];
 			for (var type in SUPPORTED_DOCUMENT_TYPES) {
@@ -344,19 +357,6 @@
 				shareSelectedFiles(file);
 			}, config.allowMultiSelect, config.filterByMIME);
 		};
-
-		var keepPosted = function(peers) {
-			var type = EVENT_TYPE.PRESENTATION_CURRENT;
-			var payload = {};
-			sharedPresentations.withActive(function(p) {
-				payload.token = p.token;
-				payload.page = p.curPage;
-			});
-			peers.forEach(function(peer, i) {
-				console.log("Informing directly", peer, payload);
-				peer.sendDirectly(DATACHANNEL_NAMESPACE, type, payload);
-			});
-		};
 		exports.init = function(signaling) {
 			this.signaling = signaling;
 			this.signaling.on('usersJoined', function(users) {
@@ -364,6 +364,9 @@
 					var peers = OCA.SpreedMe.webrtc.getPeers(user.sessionId);
 					keepPosted(peers);
 				});
+			});
+			$('#presentation-button').click(function() {
+				openFilePicker();
 			});
 		};
 

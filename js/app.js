@@ -212,10 +212,6 @@
 				}
 			});
 
-			$('#presentation-button').click(function() {
-				OCA.SpreedMe.Presentations.openFilePicker();
-			});
-
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
 				$('#screensharing-button').attr('data-original-title', 'Enable screensharing')
