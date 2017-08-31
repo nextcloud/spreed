@@ -29,6 +29,7 @@ use OCA\Spreed\Manager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\IRequest;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotFoundException;
@@ -46,10 +47,11 @@ class FileSharingController extends OCSController {
 	/**
 	 * @param string $appName
 	 * @param string $userId
+	 * @param IRequest $request
 	 * @param IRootFolder $rootFolder
 	 * @param IShareManager $shareManager
 	 */
-	public function __construct($appName, $userId, IRootFolder $rootFolder, IShareManager $shareManager) {
+	public function __construct($appName, $userId, IRequest $request, IRootFolder $rootFolder, IShareManager $shareManager) {
 		parent::__construct($appName, $request);
 		$this->userId = $userId;
 		try {
