@@ -242,22 +242,6 @@
 			return OC.generateUrl("s/" + token + "/download");
 		};
 
-		document.addEventListener("keydown", function(e) {
-			// Only do something if we have an active presentation
-			var p = sharedPresentations.active;
-			if (!p) {
-				return;
-			}
-			switch (e.keyCode) {
-			case 37: // Left arrow
-				EVENTS.PAGE_PREVIOUS(p);
-				break;
-			case 39: // Right arrow
-				EVENTS.PAGE_NEXT(p);
-				break;
-			}
-		}, true);
-
 		exports.newEvent = function(type, payload) {
 			// Inform self
 			self.handleEvent({type: type, payload: payload}, null); // TODO(leon): Replace null by own Peer object
@@ -366,9 +350,31 @@
 					keepPosted(peers);
 				});
 			});
-			$('#presentation-button').click(function() {
-				openFilePicker();
-			});
+
+			// Bind some event handlers
+			(function() {
+				var evt = 'click.presentations';
+				$('#presentation-button').off(evt).on(evt, function() {
+					openFilePicker();
+				});
+			})();
+			(function() {
+				var evt = 'keydown.presentations';
+				$(document).off(evt).on(evt, function(e) {
+					var p = sharedPresentations.active;
+					if (!p) {
+						return;
+					}
+					switch (e.keyCode) {
+					case 37: // Left arrow
+						EVENTS.PAGE_PREVIOUS(p);
+						break;
+					case 39: // Right arrow
+						EVENTS.PAGE_NEXT(p);
+						break;
+					}
+				});
+			})();
 		};
 
 		return exports;
