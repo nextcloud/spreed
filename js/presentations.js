@@ -108,7 +108,7 @@
 		var exports = {};
 		var self = exports;
 		var rootElem = document.getElementById("presentations");
-		var DATACHANNEL_NAMESPACE = 'presentation';
+		var DATACHANNEL_NAMESPACE = exports.DATACHANNEL_NAMESPACE = 'presentation';
 		var EVENT_TYPE = exports.EVENT_TYPE = {
 			PRESENTATION_CURRENT: "current", // Issued to inform new participants about current presentation / page
 			PRESENTATION_ADDED: "added", // Indicates that a new presentation was added
