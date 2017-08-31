@@ -162,7 +162,7 @@
 		this.EVENT_HANDLERS = {
 			add: _.bind(function(token, from) {
 				if (!isSanitizedToken(token)) {
-					// TODO(leon): Handle error
+					// This will never happen unless someone tries to manually inject bogus tokens
 					console.log("Invalid token received", token);
 					return;
 				}
