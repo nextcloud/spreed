@@ -33,10 +33,6 @@
 		}
 	};
 
-	SignalingBase.prototype.emit = function(/*ev, data*/) {
-		// Override in subclasses.
-	};
-
 	SignalingBase.prototype._trigger = function(ev, args) {
 		var handlers = this.handlers[ev];
 		if (!handlers) {
