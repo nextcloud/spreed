@@ -8,6 +8,7 @@
 		this.sessionId = '';
 		this.currentCallToken = null;
 		this.handlers = {};
+		this.features = {};
 	}
 
 	SignalingBase.prototype.on = function(ev, handler) {
@@ -56,6 +57,10 @@
 	SignalingBase.prototype.disconnect = function() {
 		this.sessionId = '';
 		this.currentCallToken = null;
+	};
+
+	SignalingBase.prototype.hasFeature = function(feature) {
+		return this.features && this.features[feature];
 	};
 
 	SignalingBase.prototype.emit = function(ev, data) {
@@ -642,10 +647,18 @@
 		this.connected = true;
 		this.sessionId = data.hello.sessionid;
 		this.resumeId = data.hello.resumeid;
+		this.features = {};
+		var i;
+		if (data.hello.server && data.hello.server.features) {
+			var features = data.hello.server.features;
+			for (i = 0; i < features.length; i++) {
+				this.features[features[i]] = true;
+			}
+		}
 
 		var messages = this.pendingMessages;
 		this.pendingMessages = [];
-		for (var i = 0; i < messages.length; i++) {
+		for (i = 0; i < messages.length; i++) {
 			var msg = messages[i][0];
 			var callback = messages[i][1];
 			this.doSend(msg, callback);
