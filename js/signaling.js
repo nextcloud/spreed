@@ -462,6 +462,7 @@
 		this.initialReconnectIntervalMs = 1000;
 		this.maxReconnectIntervalMs = 16000;
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs;
+		this.joinedUsers = {};
 		this.connect();
 	}
 
@@ -477,6 +478,7 @@
 		// simultaneously in case the server connection is interrupted.
 		var interval = this.reconnectIntervalMs - (this.reconnectIntervalMs / 2) + (this.reconnectIntervalMs * Math.random());
 		console.log("Reconnect in", interval);
+		this.reconnected = true;
 		this.reconnectTimer = window.setTimeout(function() {
 			this.reconnectTimer = null;
 			this.connect();
@@ -708,6 +710,7 @@
 			}
 		}, function(data) {
 			console.log("Left", data);
+			this.joinedUsers = {};
 			this.currentCallToken = null;
 		}.bind(this));
 	};
@@ -727,14 +730,39 @@
 	};
 
 	StandaloneSignaling.prototype.processRoomEvent = function(data) {
+		var i;
 		switch (data.event.type) {
 			case "join":
-				console.log("Users joined", data.event.join);
-				this._trigger("usersJoined", [data.event.join]);
+				var joinedUsers = data.event.join || [];
+				if (joinedUsers.length) {
+					console.log("Users joined", joinedUsers);
+					var leftUsers = {};
+					if (this.reconnected) {
+						this.reconnected = false;
+						// The browser reconnected, some of the previous sessions
+						// may now no longer exist.
+						leftUsers = _.extend({}, this.joinedUsers);
+					}
+					for (i = 0; i < joinedUsers.length; i++) {
+						this.joinedUsers[joinedUsers[i].sessionid] = true;
+						delete leftUsers[joinedUsers[i].sessionid];
+					}
+					leftUsers = _.keys(leftUsers);
+					if (leftUsers.length) {
+						this._trigger("usersLeft", [leftUsers]);
+					}
+					this._trigger("usersJoined", [joinedUsers]);
+				}
 				break;
 			case "leave":
-				console.log("Users left", data.event.leave);
-				this._trigger("usersLeft", [data.event.leave]);
+				var leftSessionIds = data.event.leave || [];
+				if (leftSessionIds.length) {
+					console.log("Users left", leftSessionIds);
+					for (i = 0; i < leftSessionIds.length; i++) {
+						delete this.joinedUsers[leftSessionIds[i]];
+					}
+					this._trigger("usersLeft", [leftSessionIds]);
+				}
 				break;
 			default:
 				console.log("Unknown room event", data);
