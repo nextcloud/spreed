@@ -136,9 +136,44 @@ class PageController extends Controller {
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
-		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$response->setContentSecurityPolicy($csp);
+		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return TemplateResponse|RedirectResponse
+	 * @throws HintException
+	 */
+	public function presentationsSandbox() {
+		// TODO(leon): ..
+		// Dear reviewer, please let me know how to properly handle this. I honestly don't know how :(
+		$rootDir = '../../../../';
+		$appDir = $rootDir . 'apps/spreed/';
+		$cssDir = $appDir . 'css/';
+		$jsDir = $appDir . 'js/';
+		$params = array(
+			'cssfiles' => array(
+				$cssDir . 'presentation/sandbox.css',
+			),
+			'jsfiles' => array(
+				$rootDir . 'core/vendor/underscore/underscore.js',
+				$rootDir . 'core/vendor/jquery/dist/jquery.min.js',
+				$jsDir . 'vendor/pdfjs-dist/build/pdf.combined.js',
+				$jsDir . 'postmessage.js',
+				$jsDir . 'presentation/consts.js',
+				$jsDir . 'presentation/type-base.js',
+				$jsDir . 'presentation/type-pdf.js',
+				$jsDir . 'presentation/sandbox.js',
+			),
+		);
+		$response = new TemplateResponse($this->appName, 'sandbox-presentations', $params, 'blank');
+		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedFontDomain('data:');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
@@ -168,10 +203,8 @@ class PageController extends Controller {
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();
-		$csp->addAllowedConnectDomain('blob:');
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
-		$csp->addAllowedFontDomain('data:');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}

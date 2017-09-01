@@ -29,6 +29,11 @@ return [
 			'verb' => 'GET',
 		],
 		[
+			'name' => 'Page#presentationsSandbox',
+			'url' => '/sandbox/presentations',
+			'verb' => 'GET',
+		],
+		[
 			'name' => 'Signalling#signalling',
 			'url' => '/signalling',
 			'verb' => 'POST',

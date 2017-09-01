@@ -5,14 +5,19 @@
 vendor_script('select2/select2');
 vendor_style('select2/select2');
 
-style('spreed', 'style');
+style(
+	'spreed',
+	[
+		'style',
+		'presentation/presentation',
+	]
+);
 script(
 	'spreed',
 	[
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
-		'vendor/pdfjs-dist/build/pdf.combined',
 		'models/room',
 		'models/roomcollection',
 		'views/roomlistview',
@@ -20,7 +25,11 @@ script(
 		'webrtc',
 		'signaling',
 		'calls',
-		'presentations',
+		'postmessage',
+		'presentation/consts',
+		'presentation/type-base',
+		'presentation/type-pdf',
+		'presentation/manager',
 		'app',
 		'init',
 	]
@@ -98,7 +107,6 @@ script(
 
 		<div id="screens"></div>
 
-		<!-- TODO(leon): Load presentations inside sandboxed Iframe -->
 		<div id="presentations"></div>
 
 		<div id="emptycontent">
