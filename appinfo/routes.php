@@ -28,6 +28,11 @@ return [
 			'url' => '/',
 			'verb' => 'GET',
 		],
+		[
+			'name' => 'Page#presentationsSandbox',
+			'url' => '/sandbox/presentations',
+			'verb' => 'GET',
+		],
 	],
 	'ocs' => [
 		[
