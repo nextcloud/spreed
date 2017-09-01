@@ -29,43 +29,47 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<li data-session-id="{{sessionId}}" data-participant="{{userId}}" class="participant {{#if pariticipantIsOffline}}participant-offline{{/if}}">' +
-		'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
-		'<span class="username" title="">' +
-			'{{displayName}}' +
-			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'owner') + ')</span>{{/if}}' +
+	var ITEM_TEMPLATE = '' +
+		'<a class="participant-entry-link" href="#{{sessionId}}" data-token="{{token}}">' +
+			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
+			' {{displayName}}' +
+			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
-		'</span>' +
+		'</a>'+
 		'{{#if canModerate}}' +
-			'<span class="actionOptionsGroup">' +
-				'<a href="#"><span class="icon icon-more"></span></a>' +
-				'<div class="popovermenu bubble menu">' +
-				'<ul>' +
+			'<div class="participant-entry-utils">'+
+				'<ul>'+
+					'<li class="participant-entry-utils-menu-button"><button></button></li>'+
+				'</ul>'+
+			'</div>'+
+			'<div class="popovermenu bubble menu">'+
+				'<ul class="popovermenu-list">'+
 					'{{#if participantIsModerator}}' +
 					'<li>' +
-						'<a href="#" class="menuitem action action-demote permanent">' +
-							'<span class="icon icon-star"></span><span>' + t('spreed', 'Demote from moderator') + '</span>' +
-						'</a>' +
+						'<button class="demote-moderator">' +
+							'<span class="icon icon-star"></span>' +
+							'<span>' + t('spreed', 'Demote from moderator') + '</span>' +
+						'</button>' +
 					'</li>' +
 					'{{else}}' +
 						'{{#if participantIsUser}}' +
 						'<li>' +
-							'<a href="#" class="menuitem action action-promote permanent">' +
-								'<span class="icon icon-rename"></span><span>' + t('spreed', 'Promote to moderator') + '</span>' +
-							'</a>' +
+							'<button class="promote-moderator">' +
+								'<span class="icon icon-rename"></span>' +
+								'<span>' + t('spreed', 'Promote to moderator') + '</span>' +
+							'</button>' +
 						'</li>' +
 						'{{/if}}' +
 					'{{/if}}' +
 					'<li>' +
-						'<a href="#" class="menuitem action action-remove permanent">' +
-							'<span class="icon icon-delete"></span><span>' + t('spreed', 'Remove participant') + '</span>' +
-						'</a>' +
+						'<button class="remove-participant">' +
+							'<span class="icon icon-delete"></span>' +
+							'<span>' + t('spreed', 'Remove participant') + '</span>' +
+						'</button>' +
 					'</li>' +
 				'</ul>' +
-				'</div>' +
-			'</span>' +
-		'{{/if}}' +
-	'</li>';
+			'</div>' +
+		'{{/if}}';
 
 	OCA.SpreedMe.Views.ParticipantView = Marionette.CollectionView.extend({
 		tagName: 'ul',
@@ -92,7 +96,7 @@
 					if (!this.$el.is(target.closest('.participant'))) {
 						// Click was not triggered by this element -> close menu
 						this.menuShown = false;
-						//this.toggleMenuClass();
+						this.toggleMenuClass();
 					}
 				});
 			},
@@ -116,16 +120,25 @@
 						element.avatar(element.data('user-id'), 32);
 					}
 				});
+
+				this.$el.attr('data-session-id', this.model.get('sessionId'));
+				this.$el.attr('data-participant', this.model.get('userId'));
+				this.$el.addClass('participant');
+				if (this.model.get('pariticipantIsOffline')) {
+					this.$el.addClass('participant-offline');
+				}
+
+				this.toggleMenuClass();
 			},
 			events: {
-				'click .actionOptionsGroup .icon-more': 'toggleMenu',
-				'click .actionOptionsGroup .action-promote': 'promoteToModerator',
-				'click .actionOptionsGroup .action-demote': 'demoteFromModerator',
-				'click .actionOptionsGroup .action-remove': 'removeParticipant'
+				'click .participant-entry-utils-menu-button button': 'toggleMenu',
+				'click .popovermenu .promote-moderator': 'promoteToModerator',
+				'click .popovermenu .demote-moderator': 'demoteFromModerator',
+				'click .popovermenu .remove-participant': 'removeParticipant'
 			},
 			ui: {
 				'participant': 'li.participant',
-				'menu': 'li.participant .actionOptionsGroup .menu'
+				'menu': '.popovermenu'
 			},
 			template: Handlebars.compile(ITEM_TEMPLATE),
 			menuShown: false,
@@ -135,8 +148,6 @@
 				this.toggleMenuClass();
 			},
 			toggleMenuClass: function() {
-				console.log(this.ui.participant.data('participant'));
-				console.log(this.menuShown);
 				this.ui.menu.toggleClass('open', this.menuShown);
 			},
 			promoteToModerator: function() {

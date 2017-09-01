@@ -44,6 +44,14 @@ script(
 				<h3>Call name <span class="icon icon-rename"></span></h3>
 
 				<button><?php p($l->t('Start/stop webinary'));?></button>
+
+				<input name="shareLink" id="shareLink" class="checkbox" value="1" type="checkbox">
+				<label for="shareLink"><?php p($l->t('Share link'));?></label><br>
+				<div class="oneline">
+					<label for="linkText" class="hidden-visually">Link</label>
+					<input id="linkText" class="linkText" type="text" readonly value="https://nextcloud13.local/index.php/s/LRDYjaFrAw2oBp7">
+					<a class="clipboardButton icon icon-clippy" data-clipboard-target="#linkText" data-original-title="" title=""></a>
+				</div>
 			</div>
 
 			<ul class="tabHeaders">
@@ -58,75 +66,9 @@ script(
 			<div class="tabsContainer">
 				<div id="participantTabView" class="tab participantTabView">
 					<div class="participantListView subView">
-						<ul id="participantWithList" class="participantWithList">
-							<li data-share-id="2" data-share-type="0" data-share-with="test1" class="participant-moderator">
-								<div class="avatar " data-username="test1" data-displayname="User One" style="height: 32px; width: 32px; background-color: rgb(213, 231, 116); color: rgb(255, 255, 255); font-weight: normal; text-align: center; line-height: 32px; font-size: 17.6px;">U</div>
-								<span class="username" title="">
-									User One
-									<span class="participant-moderator-indicator">(moderator)</span>
-								</span>
-
-								<span class="sharingOptionsGroup">
-									<a href="#"><span class="icon icon-more"></span></a>
-
-									<div class="popovermenu bubble hidden menu">
-										<ul>
-											<li>
-												<span class="shareOption menuitem">
-													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
-													<label for="canShare-view17-test1">Demote from moderator</label>
-												</span>
-											</li>
-											<li>
-												<span class="shareOption menuitem">
-													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
-													<label for="canShare-view17-test1">Remove participant from call</label>
-												</span>
-											</li>
-										</ul>
-									</div>
-								</span>
-							</li>
-							<li data-share-id="2" data-share-type="0" data-share-with="test1" class="participant-offline">
-								<div class="avatar " data-username="test1" data-displayname="User One" style="height: 32px; width: 32px; background-color: rgb(213, 231, 116); color: rgb(255, 255, 255); font-weight: normal; text-align: center; line-height: 32px; font-size: 17.6px;">U</div>
-								<span class="username" title="">
-									User Two
-								</span>
-
-								<span class="sharingOptionsGroup">
-									<a href="#"><span class="icon icon-more"></span></a>
-
-									<div class="popovermenu bubble hidden menu">
-										<ul>
-											<li>
-												<span class="shareOption menuitem">
-													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
-													<label for="canShare-view17-test1">Promote to moderator</label>
-												</span>
-											</li>
-											<li>
-												<span class="shareOption menuitem">
-													<input id="canShare-view17-test1" name="share" class="permissions checkbox" checked="checked" data-permissions="16" type="checkbox">
-													<label for="canShare-view17-test1">Remove participant from call</label>
-												</span>
-											</li>
-										</ul>
-									</div>
-								</span>
-							</li>
+						<ul id="participantWithList" class="participantWithList with-icon">
 						</ul>
 					</div>
-
-					<div class="linkShareView subView">
-						<input name="shareLink" id="shareLink" class="checkbox" value="1" type="checkbox">
-						<label for="shareLink"><?php p($l->t('Share link'));?></label><br>
-						<div class="oneline">
-							<label for="linkText" class="hidden-visually">Link</label>
-							<input id="linkText" class="linkText" type="text" readonly value="https://nextcloud13.local/index.php/s/LRDYjaFrAw2oBp7">
-							<a class="clipboardButton icon icon-clippy" data-clipboard-target="#linkText" data-original-title="" title=""></a>
-						</div>
-					</div>
-
 				</div>
 			</div>
 		</div>
