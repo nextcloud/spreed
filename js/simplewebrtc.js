@@ -18145,25 +18145,8 @@
 
 			self.emit('localScreenAdded', el);
 			self.connection.emit('shareScreen');
-
-			self.webrtc.peers.forEach(function (existingPeer) {
-				var peer;
-				if (existingPeer.type === 'video') {
-					peer = self.webrtc.createPeer({
-						id: existingPeer.id,
-						type: 'screen',
-						sharemyscreen: true,
-						enableDataChannels: false,
-						receiveMedia: {
-							offerToReceiveAudio: 0,
-							offerToReceiveVideo: 0
-						},
-						broadcaster: self.connection.getSessionid(),
-					});
-					self.emit('createdPeer', peer);
-					peer.start();
-				}
-			});
+			// NOTE: we don't create screen peers for existing video peers here,
+			// this is done by the application code in "webrtc.js".
 		});
 		this.webrtc.on('localScreenStopped', function (stream) {
 			if (self.getLocalScreen()) {
