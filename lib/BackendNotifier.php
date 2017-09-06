@@ -21,17 +21,18 @@
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Spreed;
 
 use OCA\Spreed\Config;
 use OCA\Spreed\Room;
-use OCP\AppFramework\Controller;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\Security\ISecureRandom;
 
-class BackendController extends Controller {
+class BackendNotifier{
+	/** @var Manager */
+	private $manager;
 	/** @var Config */
 	private $config;
 	/** @var ILogger */
@@ -42,19 +43,18 @@ class BackendController extends Controller {
 	private $secureRandom;
 
 	/**
-	 * @param string $appName
-	 * @param IRequest $request
+	 * @param Manager $manager
 	 * @param IConfig $config
 	 * @param ILogger $logger
 	 * @param IClientService $clientService
+	 * @param ISecureRandom $secureRandom
 	 */
-	public function __construct($appName,
-								IRequest $request,
+	public function __construct(Manager $manager,
 								Config $config,
 								ILogger $logger,
 								IClientService $clientService,
 								ISecureRandom $secureRandom) {
-		parent::__construct($appName, $request);
+		$this->manager = $manager;
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->clientService = $clientService;

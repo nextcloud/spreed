@@ -220,7 +220,6 @@ class Room {
 
 	public function deleteRoom() {
 		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', new GenericEvent($this));
-
 		$query = $this->db->getQueryBuilder();
 
 		// Delete all participants
@@ -241,7 +240,8 @@ class Room {
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setName($newName) {
-		if ($newName === $this->getName()) {
+		$oldName = $this->getName();
+		if ($newName === $oldName) {
 			return true;
 		}
 
@@ -351,6 +351,7 @@ class Room {
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function changeType($newType) {
+		$newType = (int) $newType;
 		if ($newType === $this->getType()) {
 			return true;
 		}
@@ -372,7 +373,7 @@ class Room {
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		$this->type = (int) $newType;
+		$this->type = $newType;
 
 		if ($oldType === self::PUBLIC_CALL) {
 			// Kick all guests and users that were not invited
