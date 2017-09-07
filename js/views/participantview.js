@@ -107,8 +107,7 @@
 					canModerate: canModerate,
 					participantIsUser: this.model.get('participantType') === 3,
 					participantIsModerator: this.model.get('participantType') === 2,
-					participantIsOwner: this.model.get('participantType') === 1,
-					participantIsOffline: this.model.get('sessionId') !== ''
+					participantIsOwner: this.model.get('participantType') === 1
 				};
 			},
 			onRender: function() {
@@ -124,6 +123,7 @@
 				this.$el.attr('data-session-id', this.model.get('sessionId'));
 				this.$el.attr('data-participant', this.model.get('userId'));
 				this.$el.addClass('participant');
+
 				if (!this.model.isOnline()) {
 					this.$el.addClass('participant-offline');
 				}

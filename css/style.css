@@ -634,7 +634,7 @@ video {
 	padding-left: 5px;
 }
 
-#participantTabView .participant-offline {
+#participantTabView .participant-offline > a {
 	opacity: .5;
 }
 
@@ -661,7 +661,6 @@ video {
 	box-sizing: border-box;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	opacity: 0.57;
 }
 
 

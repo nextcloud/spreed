@@ -36,7 +36,7 @@
 		},
 
 		isOnline: function() {
-			return this.get('lastPing') >= moment().format('X') - 60;
+			return this.get('sessionId') !== '';
 		}
 	});
 
