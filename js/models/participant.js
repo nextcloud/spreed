@@ -33,6 +33,10 @@
 			sessionId: '',
 			participantType: 4,
 			lastPing: 0
+		},
+
+		isOnline: function() {
+			return this.get('lastPing') >= moment().format('X') - 60;
 		}
 	});
 

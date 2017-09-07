@@ -27,10 +27,6 @@
 	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
 
 	OCA.SpreedMe.Models.ParticipantCollection = Backbone.Collection.extend({
-		initialize: function() {
-			console.log("initialize");
-			console.log(arguments);
-		},
 		model: OCA.SpreedMe.Models.Participant,
 		room: undefined,
 
@@ -50,7 +46,6 @@
 		 * @returns {Array}
 		 */
 		parse: function(result) {
-			console.log(result);
 			return result.ocs.data;
 		}
 	});

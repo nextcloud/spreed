@@ -30,7 +30,7 @@
 	var uiChannel = Backbone.Radio.channel('ui');
 
 	var ITEM_TEMPLATE = '' +
-		'<a class="participant-entry-link" href="#{{sessionId}}" data-token="{{token}}">' +
+		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#{{sessionId}}" data-token="{{token}}">' +
 			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
 			' {{displayName}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
@@ -124,7 +124,7 @@
 				this.$el.attr('data-session-id', this.model.get('sessionId'));
 				this.$el.attr('data-participant', this.model.get('userId'));
 				this.$el.addClass('participant');
-				if (this.model.get('pariticipantIsOffline')) {
+				if (!this.model.isOnline()) {
 					this.$el.addClass('participant-offline');
 				}
 
