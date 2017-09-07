@@ -32,6 +32,10 @@
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
 		_roomsView: null,
+		/** @property {OCA.SpreedMe.Models.ParticipantCollection} _participants  */
+		_participants: null,
+		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
+		_participantsView: null,
 		/** @property {boolean} videoWasEnabledAtLeastOnce  */
 		videoWasEnabledAtLeastOnce: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
@@ -333,6 +337,13 @@
 				collection: this._rooms
 			});
 		},
+		_showParticipantList: function() {
+			this._participants = new OCA.SpreedMe.Models.ParticipantCollection();
+			this._participantsView = new OCA.SpreedMe.Views.ParticipantView({
+				el: 'ul#participantWithList',
+				collection: this._participants
+			});
+		},
 		/**
 		 * @param {string} token
 		 */
@@ -523,6 +534,8 @@
 							$('#select-participants').select2('open');
 						}
 					});
+
+				this._showParticipantList();
 			}
 
 			this.initAudioVideoSettings(configuration);

@@ -158,6 +158,11 @@
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
 				this.addRoomMessage();
+				if (!_.isUndefined(this.model)) {
+					OCA.SpreedMe.app._participants.setRoom(this.model);
+					OCA.SpreedMe.app._participants.fetch();
+					OCA.SpreedMe.app._participantsView.render();
+				}
 			} else {
 				this.$el.removeClass('active');
 			}
@@ -353,20 +358,6 @@
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
 			OCA.SpreedMe.Calls.join(token);
-
-			console.log("joinRoom");
-			if (!_.isUndefined(this.model)) {
-				console.log("participants");
-				var participantCollection = new OCA.SpreedMe.Models.ParticipantCollection();
-				participantCollection.setRoom(this.model);
-
-				var participantView = new OCA.SpreedMe.Views.ParticipantView({
-					el: '#participantTabView ul',
-					collection: participantCollection
-				});
-				participantCollection.fetch();
-				participantView.render();
-			}
 
 			OC.Util.History.pushState({
 				token: token
