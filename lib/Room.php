@@ -430,7 +430,7 @@ class Room {
 	 * @param int $participantType
 	 */
 	public function setParticipantType($participant, $participantType) {
-		$this->dispatcher->dispatch(self::class . '::preChangeParticipantType', new GenericEvent($this, [
+		$this->dispatcher->dispatch(self::class . '::preSetParticipantType', new GenericEvent($this, [
 			'user' => $participant,
 			'newType' => $participantType,
 		]));
@@ -442,7 +442,7 @@ class Room {
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($participant)));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postChangeParticipantType', new GenericEvent($this, [
+		$this->dispatcher->dispatch(self::class . '::postSetParticipantType', new GenericEvent($this, [
 			'user' => $participant,
 			'newType' => $participantType,
 		]));

@@ -105,6 +105,15 @@ class Application extends App {
 			$room = $event->getSubject();
 			$notifier->roomModified($room);
 		});
+		$dispatcher->addListener(Room::class . '::postSetParticipantType', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			// The type of a participant has changed, notify all participants
+			// so they can update the room properties.
+			$notifier->roomModified($room);
+		});
 		$dispatcher->addListener(Room::class . '::preDeleteRoom', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
 			$notifier = $this->getContainer()->query(BackendNotifier::class);
