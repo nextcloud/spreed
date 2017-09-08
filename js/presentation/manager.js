@@ -118,28 +118,22 @@
 		}
 		return instance;
 	};
-	exports.init = function(rootElem, signaling) {
+	exports.init = function(rootElem, webrtc) {
 		if (instance) {
 			return instance;
 		}
 		var pm = instance = new PresentationManager(rootElem);
 
-		var keepPosted = function(peers) {
+		var keepPosted = function(peer) {
 			var type = consts.EVENT_TYPES.PRESENTATION_CURRENT;
 			pm.getCurrentState(function(state) {
-				peers.forEach(function(peer, i) {
-					peer.sendDirectly(consts.DATACHANNEL_NAMESPACE, type, state);
-				});
+				peer.sendDirectly(consts.DATACHANNEL_NAMESPACE, type, state);
 			});
 		};
 
 		// TODO(leon): Only listen for this if we're a moderator
-		signaling.on('usersJoined', function(users) {
-			// TODO(leon): users.map(user => users[0])
-			users.forEach(function(user, i) {
-				var peers = OCA.SpreedMe.webrtc.getPeers(user.sessionId);
-				keepPosted(peers);
-			});
+		webrtc.on('createdPeer', function(peer) {
+			keepPosted(peer);
 		});
 
 		return instance;
