@@ -30,7 +30,7 @@
 	var uiChannel = Backbone.Radio.channel('ui');
 
 	var ITEM_TEMPLATE = '' +
-		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#{{sessionId}}" data-token="{{token}}">' +
+		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#" data-sessionId="{{sessionId}}">' +
 			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
 			' {{displayName}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
@@ -101,8 +101,14 @@
 				});
 			},
 			templateContext: function() {
-				// FIXME this is checking the wrong user
-				var canModerate = OCA.SpreedMe.app.activeRoom.get('participantType') === 1 || OCA.SpreedMe.app.activeRoom.get('participantType') === 2;
+				console.log(this.model.get('userId'));
+				console.log(this.model.get('participantType') !== 1);
+				console.log(this.model.get('userId') !== oc_current_user);
+				var canModerate = this.model.get('participantType') !== 1 &&       // can not moderate owners
+					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
+					(OCA.SpreedMe.app.activeRoom.get('participantType') === 1 ||   // current user must be owner
+						OCA.SpreedMe.app.activeRoom.get('participantType') === 2); // or moderator.
+
 				return {
 					canModerate: canModerate,
 					participantIsUser: this.model.get('participantType') === 3,
