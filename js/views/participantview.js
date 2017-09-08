@@ -102,7 +102,7 @@
 			},
 			templateContext: function() {
 				// FIXME this is checking the wrong user
-				var canModerate = true;//this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
+				var canModerate = OCA.SpreedMe.app.activeRoom.get('participantType') === 1 || OCA.SpreedMe.app.activeRoom.get('participantType') === 2;
 				return {
 					canModerate: canModerate,
 					participantIsUser: this.model.get('participantType') === 3,
@@ -155,12 +155,12 @@
 					return;
 				}
 
-				var participantId = this.ui.participant.attr('data-participant'),
+				var participantId = this.model.get('userId'),
 					self = this;
 
 				$.ajax({
 					type: 'POST',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + '/' + token + '/moderators',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/moderators',
 					data: {
 						participant: participantId
 					},
@@ -177,12 +177,12 @@
 					return;
 				}
 
-				var participantId = this.ui.participant.attr('data-participant'),
+				var participantId = this.model.get('userId'),
 					self = this;
 
 				$.ajax({
 					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + '/' + token + '/moderators',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/moderators',
 					data: {
 						participant: participantId
 					},
@@ -199,12 +199,17 @@
 					return;
 				}
 
-				var participantId = this.ui.participant.attr('data-participant'),
+				if (this.model.get('userId') === '') {
+					console.log('Guests can currently not be deleted');
+					return;
+				}
+
+				var participantId = this.model.get('userId'),
 					self = this;
 
 				$.ajax({
 					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + '/' + token + '/participants',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/participants',
 					data: {
 						participant: participantId
 					},

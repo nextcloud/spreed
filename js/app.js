@@ -34,6 +34,9 @@
 		GUEST: 4,
 		USERSELFJOINED: 5,
 
+		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
+		activeRoom: null,
+
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
@@ -382,6 +385,7 @@
 						// Disable video when entering a room with more than 5 participants.
 						self._rooms.forEach(function(room) {
 							if (room.get('token') === token) {
+								self.activeRoom = room;
 								if (Object.keys(room.get('participants')).length > 5) {
 									self.disableVideo();
 								}
