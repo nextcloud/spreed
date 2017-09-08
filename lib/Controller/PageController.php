@@ -138,6 +138,7 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'"); // Used for sandboxed presentations
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -205,6 +206,7 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'"); // Used for sandboxed presentations
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
