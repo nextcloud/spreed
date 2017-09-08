@@ -323,18 +323,18 @@
 			success: function (result) {
 				$.each(result.ocs.data, function(id, message) {
 					switch(message.type) {
-					    case "usersInRoom":
-					        this._trigger('usersInRoom', [message.data]);
-					        break;
-					    case "message":
-					        if (typeof(message.data) === 'string') {
+						case "usersInRoom":
+							this._trigger('usersInRoom', [message.data]);
+							break;
+						case "message":
+							if (typeof(message.data) === 'string') {
 								message.data = JSON.parse(message.data);
 							}
 							this._trigger('message', [message.data]);
-					        break;
-					    default:
-					        console.log('Uknown Signalling Message');
-					        break;
+							break;
+						default:
+							console.log('Uknown Signalling Message');
+							break;
 					}
 				}.bind(this));
 				this._startPullingMessages();
@@ -363,7 +363,7 @@
 		var pendingMessagesLength = this.spreedArrayConnection.length;
 		this.isSendingMessages = true;
 
-		this._sendMessages(this.spreedArrayConnection).done(function(result) {
+		this._sendMessages(this.spreedArrayConnection).done(function(/*result*/) {
 			this.spreedArrayConnection.splice(0, pendingMessagesLength);
 			this.isSendingMessages = false;
 		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
