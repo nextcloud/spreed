@@ -548,7 +548,7 @@
 			// Init presentations
 			_.bind(function() {
 				var rootElem = document.getElementById('presentations');
-				this.presentations = OCA.SpreedMe.Presentation.init(rootElem, signaling);
+				this.presentations = OCA.SpreedMe.Presentation.init(rootElem, OCA.SpreedMe.webrtc);
 				$('#presentation-button')
 				.on('click', _.bind(this.presentations.chooseFromPicker, this.presentations));
 			}, this)();
