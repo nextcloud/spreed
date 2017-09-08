@@ -37,10 +37,12 @@ script(
 		</ul>
 	</div>
 
-	<div id="app-content" class="participants-1 with-app-sidebar">
+	<div id="app-content" class="participants-1">
 
-		<div id="app-sidebar" class="detailsView scroll-container">
+		<div id="app-sidebar" class="detailsView scroll-container hidden">
 			<div class="detailCallInfoContainer">
+				<h3><span class="room-name">Name</span></h3>
+				<!--
 				<h3>Call name <span class="icon icon-rename"></span></h3>
 
 				<button><?php p($l->t('Start/stop webinary'));?></button>
@@ -52,15 +54,16 @@ script(
 					<input id="linkText" class="linkText" type="text" readonly value="https://nextcloud13.local/index.php/s/LRDYjaFrAw2oBp7">
 					<a class="clipboardButton icon icon-clippy" data-clipboard-target="#linkText" data-original-title="" title=""></a>
 				</div>
+				-->
 			</div>
 
 			<ul class="tabHeaders">
 				<li class="tabHeader selected" data-tabid="participantTabView" data-tabindex="0">
 					<a href="#"><?php p($l->t('Participants'));?></a>
 				</li>
-				<li class="tabHeader" data-tabid="schedulingTabView" data-tabindex="1">
+				<!--<li class="tabHeader" data-tabid="schedulingTabView" data-tabindex="1">
 					<a href="#"><?php p($l->t('Scheduling'));?></a>
-				</li>
+				</li>-->
 			</ul>
 
 			<div class="tabsContainer">

@@ -628,6 +628,10 @@ video {
 	display: inline-block;
 }
 
+#app-sidebar.hidden {
+	display: none !important;
+}
+
 #participantTabView .participant-moderator-indicator {
 	opacity: .5;
 	font-weight: 300;
