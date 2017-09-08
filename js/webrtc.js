@@ -136,11 +136,8 @@ var spreedPeerConnectionTable = [];
 			newSessionIds.forEach(function(sessionId) {
 				newUsers.push(userMapping[sessionId]);
 			});
-			if (disconnectedSessionIds.length) {
-				signaling._trigger('usersLeft', [disconnectedSessionIds]);
-			}
-			if (newUsers.length) {
-				signaling._trigger('usersJoined', [newUsers]);
+			if (newUsers.length || disconnectedSessionIds.length) {
+				usersChanged(newUsers, disconnectedSessionIds);
 			}
 		});
 
