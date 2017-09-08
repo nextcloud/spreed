@@ -28,6 +28,12 @@
 	var roomChannel = Backbone.Radio.channel('rooms');
 
 	var App = Marionette.Application.extend({
+		OWNER: 1,
+		MODERATOR: 2,
+		USER: 3,
+		GUEST: 4,
+		USERSELFJOINED: 5,
+
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */

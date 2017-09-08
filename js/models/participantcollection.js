@@ -38,15 +38,48 @@
 			this.room = room;
 			this.url = OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.room.get('token') + '/participants';
 		},
-		// comparator: function(model) {
-		// 	return -(model.get('lastPing'));
-		// },
+
 		/**
 		 * @param result
 		 * @returns {Array}
 		 */
 		parse: function(result) {
 			return result.ocs.data;
+		},
+
+		/**
+		 * Sort participants:
+		 * - Moderators first
+		 * - Online status
+		 * - Alphabetic
+		 *
+		 * @param modelA
+		 * @param modelB
+		 * @returns {*}
+		 */
+		comparator: function(modelA, modelB) {
+			var onlineA = modelA.get('sessionId') !== '' && modelA.get('sessionId') !== '0',
+				onlineB = modelB.get('sessionId') !== '' && modelB.get('sessionId') !== '0',
+				moderateA = modelA.get('participantType') === OCA.SpreedMe.app.OWNER ||
+					modelA.get('participantType') === OCA.SpreedMe.app.MODERATOR,
+				moderateB = modelB.get('participantType') === OCA.SpreedMe.app.OWNER ||
+					modelB.get('participantType') === OCA.SpreedMe.app.MODERATOR,
+				guestA = modelA.get('participantType') === OCA.SpreedMe.app.GUEST,
+				guestB = modelB.get('participantType') === OCA.SpreedMe.app.GUEST;
+
+			if (moderateA !== moderateB) {
+				return moderateB - moderateA;
+			}
+
+			if (onlineA !== onlineB) {
+				return onlineB - onlineA;
+			}
+
+			if (guestA !== guestB) {
+				return guestA - guestB;
+			}
+
+			return modelA.get('displayName') > modelB.get('displayName');
 		}
 	});
 
