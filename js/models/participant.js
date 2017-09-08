@@ -36,7 +36,7 @@
 		},
 
 		isOnline: function() {
-			return this.get('sessionId') !== '';
+			return this.get('sessionId') !== '' && this.get('sessionId') !== '0';
 		}
 	});
 
