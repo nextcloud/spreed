@@ -60,7 +60,7 @@ class Manager {
 	 * @return Room
 	 */
 	protected function createRoomObject(array $row) {
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password']);
 	}
 
 	/**
@@ -358,6 +358,7 @@ class Manager {
 			'type' => $type,
 			'token' => $token,
 			'name' => $name,
+			'password' => '',
 		]);
 	}
 

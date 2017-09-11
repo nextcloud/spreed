@@ -25,6 +25,7 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Signalling\Messages;
@@ -118,24 +119,29 @@ class CallController extends OCSController {
 	 * @UseSession
 	 *
 	 * @param string $token
+	 * @param string $password
 	 * @return DataResponse
 	 */
-	public function joinCall($token) {
+	public function joinCall($token, $password) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->userId !== null) {
-			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-			$newSessionId = $room->enterRoomAsUser($this->userId);
+		try {
+			if ($this->userId !== null) {
+				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
+				$newSessionId = $room->enterRoomAsUser($this->userId, $password);
 
-			if (!empty($sessionIds)) {
-				$this->messages->deleteMessages($sessionIds);
+				if (!empty($sessionIds)) {
+					$this->messages->deleteMessages($sessionIds);
+				}
+			} else {
+				$newSessionId = $room->enterRoomAsGuest($password);
 			}
-		} else {
-			$newSessionId = $room->enterRoomAsGuest();
+		} catch (InvalidPasswordException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$this->session->set('spreed-session', $newSessionId);
