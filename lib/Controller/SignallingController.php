@@ -28,6 +28,7 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signalling\Messages;
+use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
@@ -45,7 +46,7 @@ class SignallingController extends OCSController {
 	private $dbConnection;
 	/** @var Messages */
 	private $messages;
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 
 	/**
@@ -136,74 +137,35 @@ class SignallingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function pullMessages() {
-		set_time_limit(0);
 		$data = [];
 		$seconds = 30;
 
 		while ($seconds > 0) {
-			// Guest
 			if ($this->userId === null) {
 				$sessionId = $this->session->get('spreed-session');
-
-				if ($sessionId === null) {
-					// User is not active anywhere;
-					$data[] = ['type' => 'usersInRoom', 'data' => []];
-					break;
-				}
-
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->select('*')
-					->from('spreedme_room_participants')
-					->where($qb->expr()->eq('sessionId', $qb->createNamedParameter($sessionId)))
-					->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string)$this->userId)));
-				$result = $qb->execute();
-				$currentParticipant = $result->fetch();
-				$result->closeCursor();
-
-			// Logged in user
 			} else {
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->select('*')
-					->from('spreedme_room_participants')
-					->where($qb->expr()->neq('sessionId', $qb->createNamedParameter('0')))
-					->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string)$this->userId)))
-					->orderBy('lastPing', 'DESC')
-					->setMaxResults(1);
-				$result = $qb->execute();
-				$currentParticipant = $result->fetch();
-				$result->closeCursor();
-
-				if ($currentParticipant === false) {
-					$sessionId = null;
-				} else {
-					$sessionId = $currentParticipant['sessionId'];
-				}
+				$sessionId = $this->manager->getCurrentSessionId($this->userId);
 			}
 
 			if ($sessionId === null) {
 				// User is not active anywhere
-				$data[] = ['type' => 'usersInRoom', 'data' => []];
-				break;
+				return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 			}
 
-			// Check if the connection is still active, if not: Kill all existing
-			// messages and end the event source
-			if ($currentParticipant) {
+			// Query all messages and send them to the user
+			$data = $this->messages->getAndDeleteMessages($sessionId);
+			$messageCount = count($data);
+			$data = array_filter($data, function($message) {
+				return $message['data'] !== 'refresh-participant-list';
+			});
+
+			if ($messageCount !== count($data)) {
 				try {
-					$room = $this->manager->getRoomForParticipant($currentParticipant['roomId'], $this->userId);
+					$room = $this->manager->getRoomForSession($this->userId, $sessionId);
 					$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
 				} catch (RoomNotFoundException $e) {
-					$data[] = ['type' => 'usersInRoom', 'data' => []];
-					break;
+					return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 				}
-			} else {
-				$data[] = ['type' => 'usersInRoom', 'data' => []];
-				break;
-			}
-
-			$messages = $this->messages->getAndDeleteMessages($sessionId);
-			foreach ($messages as $row) {
-				$data[] = ['type' => 'message', 'data' => $row['data']];
 			}
 
 			$this->dbConnection->close();
