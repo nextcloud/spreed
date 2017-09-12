@@ -338,6 +338,12 @@
 					}
 				}.bind(this));
 				this._startPullingMessages();
+			}.bind(this),
+			error: function (/*jqXHR, textStatus, errorThrown*/) {
+				//Retry to pull messages after 5 seconds
+				window.setTimeout(function() {
+					this._startPullingMessages();
+				}.bind(this), 5000);
 			}.bind(this)
 		});
 	};
