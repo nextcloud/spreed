@@ -31,7 +31,7 @@ use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
-class Version2001002Date20170707115443 extends SimpleMigrationStep {
+class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 	/** @var IDBConnection */
 	protected $db;
@@ -64,11 +64,13 @@ class Version2001002Date20170707115443 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 		$table = $schema->getTable('spreedme_room_participants');
 
-		$table->addColumn('participantType', Type::SMALLINT, [
-			'notnull' => true,
-			'length' => 6,
-			'default' => 0,
-		]);
+		if (!$table->hasColumn('participantType')) {
+			$table->addColumn('participantType', Type::SMALLINT, [
+				'notnull' => true,
+				'length' => 6,
+				'default' => 0,
+			]);
+		}
 
 		return $schema;
 	}
