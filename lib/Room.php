@@ -29,6 +29,8 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Room {
 	const ONE_TO_ONE_CALL = 1;
@@ -39,6 +41,8 @@ class Room {
 	private $db;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
 
 	/** @var int */
 	private $id;
@@ -59,14 +63,16 @@ class Room {
 	 *
 	 * @param IDBConnection $db
 	 * @param ISecureRandom $secureRandom
+	 * @param EventDispatcherInterface $dispatcher
 	 * @param int $id
 	 * @param int $type
 	 * @param string $token
 	 * @param string $name
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, $id, $type, $token, $name) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, $id, $type, $token, $name) {
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
+		$this->dispatcher = $dispatcher;
 		$this->id = $id;
 		$this->type = $type;
 		$this->token = $token;
@@ -273,6 +279,8 @@ class Room {
 	 * @return string
 	 */
 	public function enterRoomAsUser($userId) {
+		$this->dispatcher->dispatch(self::class . '::preUserEnterRoom', new GenericEvent($this));
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_room_participants')
 			->set('sessionId', $query->createParameter('sessionId'))
@@ -301,6 +309,8 @@ class Room {
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
 		$query->execute();
 
+		$this->dispatcher->dispatch(self::class . '::postUserEnterRoom', new GenericEvent($this));
+
 		return $sessionId;
 	}
 
@@ -308,6 +318,8 @@ class Room {
 	 * @return string
 	 */
 	public function enterRoomAsGuest() {
+		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
+
 		$sessionId = $this->secureRandom->generate(255);
 		while (!$this->db->insertIfNotExist('*PREFIX*spreedme_room_participants', [
 			'userId' => '',
@@ -318,6 +330,8 @@ class Room {
 		], ['sessionId'])) {
 			$sessionId = $this->secureRandom->generate(255);
 		}
+
+		$this->dispatcher->dispatch(self::class . '::postGuestEnterRoom', new GenericEvent($this));
 
 		return $sessionId;
 	}
