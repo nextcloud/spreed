@@ -19,6 +19,9 @@
  *
  */
 
+$app = new \OCA\Spreed\AppInfo\Application();
+$app->registerHooks();
+
 // For the navigation $l->t('Video calls')
 
 $manager = \OC::$server->getNotificationManager();
