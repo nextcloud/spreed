@@ -27,6 +27,7 @@ namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Signalling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -42,6 +43,8 @@ class CallController extends OCSController {
 	private $session;
 	/** @var Manager */
 	private $manager;
+	/** @var Messages */
+	private $messages;
 
 	/**
 	 * @param string $appName
@@ -51,6 +54,7 @@ class CallController extends OCSController {
 	 * @param ISession $session
 	 * @param ILogger $logger
 	 * @param Manager $manager
+	 * @param Messages $messages
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -58,11 +62,13 @@ class CallController extends OCSController {
 								IUserManager $userManager,
 								ISession $session,
 								ILogger $logger,
-								Manager $manager) {
+								Manager $manager,
+								Messages $messages) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->session = $session;
 		$this->manager = $manager;
+		$this->messages = $messages;
 	}
 
 	/**
@@ -126,7 +132,7 @@ class CallController extends OCSController {
 			$newSessionId = $room->enterRoomAsUser($this->userId);
 
 			if (!empty($sessionIds)) {
-				$this->manager->deleteMessagesForSessionIds($sessionIds);
+				$this->messages->deleteMessages($sessionIds);
 			}
 		} else {
 			$newSessionId = $room->enterRoomAsGuest();

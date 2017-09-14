@@ -27,6 +27,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCA\Spreed\Signalling\Messages;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
@@ -42,6 +43,8 @@ class SignallingController extends Controller {
 	private $manager;
 	/** @var IDBConnection */
 	private $dbConnection;
+	/** @var Messages */
+	private $messages;
 	/** @var string */
 	private $userId;
 
@@ -52,6 +55,7 @@ class SignallingController extends Controller {
 	 * @param ISession $session
 	 * @param Manager $manager
 	 * @param IDBConnection $connection
+	 * @param Messages $messages
 	 * @param string $UserId
 	 */
 	public function __construct($appName,
@@ -60,12 +64,14 @@ class SignallingController extends Controller {
 								ISession $session,
 								Manager $manager,
 								IDBConnection $connection,
+								Messages $messages,
 								$UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
+		$this->messages = $messages;
 		$this->userId = $UserId;
 	}
 
@@ -91,20 +97,8 @@ class SignallingController extends Controller {
 						break;
 					}
 					$decodedMessage['from'] = $message['sessionId'];
-					$this->dbConnection->beginTransaction();
-					$qb = $this->dbConnection->getQueryBuilder();
-					$qb->insert('videocalls_signalling')
-						->values(
-							[
-								'sender' => $qb->createNamedParameter($message['sessionId']),
-								'recipient' => $qb->createNamedParameter($decodedMessage['to']),
-								'timestamp' => $qb->createNamedParameter(time()),
-								'message' => $qb->createNamedParameter(json_encode($decodedMessage)),
-							]
-						)
-						->execute();
-					$this->dbConnection->commit();
-					$this->dbConnection->close();
+
+					$this->messages->addMessage($message['sessionId'], $decodedMessage['to'], json_encode($decodedMessage));
 
 					break;
 				case 'stunservers':
@@ -199,26 +193,9 @@ class SignallingController extends Controller {
 					$eventSource->send('usersInRoom', []);
 				}
 
-				$time = time();
-
-				// Query all messages and send them to the user
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->select('*')
-					->from('videocalls_signalling')
-					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
-					->andWhere($qb->expr()->lt('timestamp', $time));
-				$result = $qb->execute();
-				$rows = $result->fetchAll();
-				$result->closeCursor();
-
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->delete('videocalls_signalling')
-					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
-					->andWhere($qb->expr()->lt('timestamp', $time));
-				$qb->execute();
-
-				foreach ($rows as $row) {
-					$eventSource->send('message', $row['message']);
+				$messages = $this->messages->getAndDeleteMessages($sessionId);
+				foreach ($messages as $row) {
+					$eventSource->send('message', $row['data']);
 				}
 			}
 
