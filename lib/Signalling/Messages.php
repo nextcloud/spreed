@@ -22,6 +22,7 @@
 namespace OCA\Spreed\Signalling;
 
 
+use OCA\Spreed\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -71,6 +72,29 @@ class Messages {
 				]
 			);
 		$query->execute();
+	}
+
+	/**
+	 * @param Room $room
+	 * @param string $message
+	 */
+	public function addMessageForAllParticipants(Room $room, $message) {
+		$query = $this->db->getQueryBuilder();
+		$query->insert('videocalls_signalling')
+			->values(
+				[
+					'sender' => $query->createParameter('sender'),
+					'recipient' => $query->createParameter('recipient'),
+					'timestamp' => $query->createNamedParameter($this->time->getTime()),
+					'message' => $query->createNamedParameter($message),
+				]
+			);
+
+		foreach ($room->getActiveSessions() as $sessionId) {
+			$query->setParameter('sender', $sessionId)
+				->setParameter('recipient', $sessionId)
+				->execute();
+		}
 	}
 
 	/**
