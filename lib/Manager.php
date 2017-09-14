@@ -27,6 +27,7 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Security\ISecureRandom;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Manager {
 
@@ -36,6 +37,8 @@ class Manager {
 	private $config;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
 
 	/**
 	 * Manager constructor.
@@ -43,11 +46,13 @@ class Manager {
 	 * @param IDBConnection $db
 	 * @param IConfig $config
 	 * @param ISecureRandom $secureRandom
+	 * @param EventDispatcherInterface $dispatcher
 	 */
-	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom) {
+	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -67,7 +72,7 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
-			$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+			$room = new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 			if ($participant !== null && isset($row['userId'])) {
 				$room->setParticipant($row['userId'],
 					new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
@@ -110,7 +115,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		$room = new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 		if ($participant !== null && isset($row['userId'])) {
 			$room->setParticipant($row['userId'],
 				new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
@@ -155,7 +160,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		$room = new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		$room = new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 		if ($participant !== null && isset($row['userId'])) {
 			$room->setParticipant($row['userId'],
 				new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
@@ -191,7 +196,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 	}
 
 	/**
@@ -213,7 +218,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 	}
 
 	/**
@@ -246,7 +251,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
 	}
 
 	/**
@@ -291,7 +296,7 @@ class Manager {
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 
-		return new Room($this->db, $this->secureRandom, $roomId, $type, $token, $name);
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, $roomId, $type, $token, $name);
 	}
 
 	/**
