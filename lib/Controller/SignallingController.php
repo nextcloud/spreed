@@ -93,14 +93,13 @@ class SignallingController extends Controller {
 					$decodedMessage['from'] = $message['sessionId'];
 					$this->dbConnection->beginTransaction();
 					$qb = $this->dbConnection->getQueryBuilder();
-					$qb->insert('spreedme_messages')
+					$qb->insert('videocalls_signalling')
 						->values(
 							[
 								'sender' => $qb->createNamedParameter($message['sessionId']),
 								'recipient' => $qb->createNamedParameter($decodedMessage['to']),
 								'timestamp' => $qb->createNamedParameter(time()),
-								'object' => $qb->createNamedParameter(json_encode($decodedMessage)),
-								'sessionId' => $qb->createNamedParameter($message['sessionId']),
+								'message' => $qb->createNamedParameter(json_encode($decodedMessage)),
 							]
 						)
 						->execute();
@@ -200,21 +199,26 @@ class SignallingController extends Controller {
 					$eventSource->send('usersInRoom', []);
 				}
 
+				$time = time();
+
 				// Query all messages and send them to the user
 				$qb = $this->dbConnection->getQueryBuilder();
 				$qb->select('*')
-					->from('spreedme_messages')
-					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)));
+					->from('videocalls_signalling')
+					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
+					->andWhere($qb->expr()->lt('timestamp', $time));
 				$result = $qb->execute();
 				$rows = $result->fetchAll();
 				$result->closeCursor();
 
-				foreach($rows as $row) {
-					$qb = $this->dbConnection->getQueryBuilder();
-					$qb->delete('spreedme_messages')
-						->where($qb->expr()->eq('id', $qb->createNamedParameter($row['id'])));
-					$qb->execute();
-					$eventSource->send('message', $row['object']);
+				$qb = $this->dbConnection->getQueryBuilder();
+				$qb->delete('videocalls_signalling')
+					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)))
+					->andWhere($qb->expr()->lt('timestamp', $time));
+				$qb->execute();
+
+				foreach ($rows as $row) {
+					$eventSource->send('message', $row['message']);
 				}
 			}
 
