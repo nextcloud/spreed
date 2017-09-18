@@ -27,6 +27,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCA\Spreed\Signalling\Messages;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IDBConnection;
@@ -42,6 +43,8 @@ class SignallingController extends Controller {
 	private $manager;
 	/** @var IDBConnection */
 	private $dbConnection;
+	/** @var Messages */
+	private $messages;
 	/** @var string */
 	private $userId;
 
@@ -52,6 +55,7 @@ class SignallingController extends Controller {
 	 * @param ISession $session
 	 * @param Manager $manager
 	 * @param IDBConnection $connection
+	 * @param Messages $messages
 	 * @param string $UserId
 	 */
 	public function __construct($appName,
@@ -60,12 +64,14 @@ class SignallingController extends Controller {
 								ISession $session,
 								Manager $manager,
 								IDBConnection $connection,
+								Messages $messages,
 								$UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->session = $session;
 		$this->dbConnection = $connection;
 		$this->manager = $manager;
+		$this->messages = $messages;
 		$this->userId = $UserId;
 	}
 
@@ -91,21 +97,8 @@ class SignallingController extends Controller {
 						break;
 					}
 					$decodedMessage['from'] = $message['sessionId'];
-					$this->dbConnection->beginTransaction();
-					$qb = $this->dbConnection->getQueryBuilder();
-					$qb->insert('spreedme_messages')
-						->values(
-							[
-								'sender' => $qb->createNamedParameter($message['sessionId']),
-								'recipient' => $qb->createNamedParameter($decodedMessage['to']),
-								'timestamp' => $qb->createNamedParameter(time()),
-								'object' => $qb->createNamedParameter(json_encode($decodedMessage)),
-								'sessionId' => $qb->createNamedParameter($message['sessionId']),
-							]
-						)
-						->execute();
-					$this->dbConnection->commit();
-					$this->dbConnection->close();
+
+					$this->messages->addMessage($message['sessionId'], $decodedMessage['to'], json_encode($decodedMessage));
 
 					break;
 				case 'stunservers':
@@ -200,21 +193,9 @@ class SignallingController extends Controller {
 					$eventSource->send('usersInRoom', []);
 				}
 
-				// Query all messages and send them to the user
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->select('*')
-					->from('spreedme_messages')
-					->where($qb->expr()->eq('recipient', $qb->createNamedParameter($sessionId)));
-				$result = $qb->execute();
-				$rows = $result->fetchAll();
-				$result->closeCursor();
-
-				foreach($rows as $row) {
-					$qb = $this->dbConnection->getQueryBuilder();
-					$qb->delete('spreedme_messages')
-						->where($qb->expr()->eq('id', $qb->createNamedParameter($row['id'])));
-					$qb->execute();
-					$eventSource->send('message', $row['object']);
+				$messages = $this->messages->getAndDeleteMessages($sessionId);
+				foreach ($messages as $row) {
+					$eventSource->send('message', $row['data']);
 				}
 			}
 

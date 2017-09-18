@@ -349,17 +349,6 @@ class Manager {
 	}
 
 	/**
-	 * @param string[] $sessionIds
-	 */
-	public function deleteMessagesForSessionIds($sessionIds) {
-		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_messages')
-			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
-			->orWhere($query->expr()->in('sender', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
-		$query->execute();
-	}
-
-	/**
 	 * @return string
 	 */
 	protected function getNewToken() {
