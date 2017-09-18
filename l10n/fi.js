@@ -29,6 +29,7 @@ OC.L10N.register(
     "Rename" : "Nimeä uudelleen",
     "Share link" : "Jaa linkki",
     "Leave call" : "Poistu puhelusta",
+    "Delete call" : "Poista puhelu",
     "No other people in this call" : "Ei muita henkilöitä tässä puhelussa",
     "You" : "Sinä",
     "and you" : "ja sinä",
