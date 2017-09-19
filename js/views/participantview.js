@@ -32,7 +32,7 @@
 	var ITEM_TEMPLATE = '' +
 		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#" data-sessionId="{{sessionId}}">' +
 			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
-			' {{displayName}}' +
+			' {{name}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 		'</a>'+
@@ -101,9 +101,6 @@
 				});
 			},
 			templateContext: function() {
-				console.log(this.model.get('userId'));
-				console.log(this.model.get('participantType') !== 1);
-				console.log(this.model.get('userId') !== oc_current_user);
 				var canModerate = this.model.get('participantType') !== 1 &&       // can not moderate owners
 					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
 					(OCA.SpreedMe.app.activeRoom.get('participantType') === 1 ||   // current user must be owner
@@ -111,6 +108,7 @@
 
 				return {
 					canModerate: canModerate,
+					name: this.model.get('userId').length ? this.model.get('displayName') : t('spreed', 'Guest'),
 					participantIsUser: this.model.get('participantType') === 3,
 					participantIsModerator: this.model.get('participantType') === 2,
 					participantIsOwner: this.model.get('participantType') === 1
@@ -119,10 +117,10 @@
 			onRender: function() {
 				this.$el.find('.avatar').each(function() {
 					var element = $(this);
-					if (element.data('displayname')) {
+					if (element.data('displayname').length) {
 						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
 					} else {
-						element.avatar(element.data('user-id'), 32);
+						element.avatar(null, 32);
 					}
 				});
 
