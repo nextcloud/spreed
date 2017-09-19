@@ -28,10 +28,23 @@
 	var roomChannel = Backbone.Radio.channel('rooms');
 
 	var App = Marionette.Application.extend({
+		OWNER: 1,
+		MODERATOR: 2,
+		USER: 3,
+		GUEST: 4,
+		USERSELFJOINED: 5,
+
+		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
+		activeRoom: null,
+
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
 		_roomsView: null,
+		/** @property {OCA.SpreedMe.Models.ParticipantCollection} _participants  */
+		_participants: null,
+		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
+		_participantsView: null,
 		/** @property {boolean} videoWasEnabledAtLeastOnce  */
 		videoWasEnabledAtLeastOnce: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
@@ -333,6 +346,13 @@
 				collection: this._rooms
 			});
 		},
+		_showParticipantList: function() {
+			this._participants = new OCA.SpreedMe.Models.ParticipantCollection();
+			this._participantsView = new OCA.SpreedMe.Views.ParticipantView({
+				el: 'ul#participantWithList',
+				collection: this._participants
+			});
+		},
 		/**
 		 * @param {string} token
 		 */
@@ -365,6 +385,7 @@
 						// Disable video when entering a room with more than 5 participants.
 						self._rooms.forEach(function(room) {
 							if (room.get('token') === token) {
+								self.activeRoom = room;
 								if (Object.keys(room.get('participants')).length > 5) {
 									self.disableVideo();
 								}
@@ -523,6 +544,8 @@
 							$('#select-participants').select2('open');
 						}
 					});
+
+				this._showParticipantList();
 			}
 
 			this.initAudioVideoSettings(configuration);
