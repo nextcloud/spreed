@@ -80,16 +80,33 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 
 		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
-		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($room) {
+		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($room, $expectedRoom) {
+			$participantNames = array_map(function($participant) {
+				return $participant['name'];
+			}, $room['participants']);
+
+			// When participants have the same last ping the order in which they
+			// are returned from the server is undefined. That is the most
+			// common case during the tests, so by default the list of
+			// participants returned by the server is sorted alphabetically. In
+			// order to check the exact order of participants returned by the
+			// server " [exact order]" can be appended in the test definition to
+			// the list of expected participants of the room.
+			if (strpos($expectedRoom['participants'], ' [exact order]') === false) {
+				sort($participantNames);
+			} else {
+				// Append " [exact order]" to the last participant so the
+				// imploded string is the same as the expected one.
+				$participantNames[end(array_keys($participantNames))] .= ' [exact order]';
+			}
+
 			return [
 				'id' => self::$tokenToIdentifier[$room['token']],
 				'type' => (string) $room['type'],
 				'participantType' => (string) $room['participantType'],
-				'participants' => implode(', ', array_map(function($participant) {
-					return $participant['name'];
-				}, $room['participants'])),
+				'participants' => implode(', ', $participantNames),
 			];
-		}, $rooms));
+		}, $rooms, $formData->getHash()));
 	}
 
 	/**
