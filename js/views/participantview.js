@@ -120,7 +120,8 @@
 					if (element.data('displayname').length) {
 						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
 					} else {
-						element.avatar(null, 32);
+						element.imageplaceholder('?', undefined, 32);
+						element.css('background-color', '#b9b9b9');
 					}
 				});
 
