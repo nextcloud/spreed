@@ -75,6 +75,7 @@
 
 		// Bind some event handlers
 		(_.bind(function() {
+			// TODO(leon): Listen for 'keyup' instead
 			var evt = 'keydown.' + consts.EVENT_NAMESPACE;
 			$(document).off(evt).on(evt, _.bind(function(e) {
 				switch (e.keyCode) {

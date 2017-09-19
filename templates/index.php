@@ -12,6 +12,7 @@ style(
 		'presentation/presentation',
 	]
 );
+// TODO(leon): Determine which presentation scripts are really required now that presentations run in an Iframe
 script(
 	'spreed',
 	[
