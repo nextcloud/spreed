@@ -176,7 +176,7 @@
 					error: function() {
 						console.log('Error while promoting user to moderator');
 					}
-				})
+				});
 			},
 			demoteFromModerator: function() {
 				if (this.model.get('participantType') !== 2) {
@@ -198,7 +198,7 @@
 					error: function() {
 						console.log('Error while demoting moderator');
 					}
-				})
+				});
 			},
 			removeParticipant: function() {
 				if (this.model.get('participantType') === 1) {
@@ -225,7 +225,7 @@
 					error: function() {
 						console.log('Error while removing user from room');
 					}
-				})
+				});
 			}
 		})
 	});
