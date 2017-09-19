@@ -517,6 +517,7 @@ video {
 #app-navigation .app-navigation-entry-menu li {
 	width: auto !important;
 	float: inherit;
+	position: relative;
 }
 
 #app-navigation .app-navigation-entry-menu li button {
