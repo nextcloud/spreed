@@ -621,7 +621,8 @@
 			} else if (guestName) {
 				avatar.imageplaceholder(guestName, undefined, 128);
 			} else {
-				avatar.avatar(null, 128);
+				avatar.imageplaceholder('?', undefined, 128);
+				avatar.css('background-color', '#b9b9b9');
 				OC.Notification.showTemporary(t('spreed', 'You can set your name on the top right of this page so other participants can identify you better.'));
 			}
 
@@ -666,7 +667,8 @@
 			if (savedGuestName) {
 				avatar.imageplaceholder(savedGuestName, undefined, 128);
 			} else {
-				avatar.avatar(null, 128);
+				avatar.imageplaceholder('?', undefined, 128);
+				avatar.css('background-color', '#b9b9b9');
 			}
 		},
 		initShareRoomClipboard: function () {
