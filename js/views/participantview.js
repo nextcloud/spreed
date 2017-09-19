@@ -101,17 +101,17 @@
 				});
 			},
 			templateContext: function() {
-				var canModerate = this.model.get('participantType') !== 1 &&       // can not moderate owners
+				var canModerate = this.model.get('participantType') !== OCA.SpreedMe.app.OWNER &&       // can not moderate owners
 					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
-					(OCA.SpreedMe.app.activeRoom.get('participantType') === 1 ||   // current user must be owner
-						OCA.SpreedMe.app.activeRoom.get('participantType') === 2); // or moderator.
+					(OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||   // current user must be owner
+						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR); // or moderator.
 
 				return {
 					canModerate: canModerate,
 					name: this.model.get('userId').length ? this.model.get('displayName') : t('spreed', 'Guest'),
-					participantIsUser: this.model.get('participantType') === 3,
-					participantIsModerator: this.model.get('participantType') === 2,
-					participantIsOwner: this.model.get('participantType') === 1
+					participantIsUser: this.model.get('participantType') === OCA.SpreedMe.app.USER,
+					participantIsModerator: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR,
+					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER
 				};
 			},
 			onRender: function() {
@@ -155,7 +155,7 @@
 				this.ui.menu.toggleClass('open', this.menuShown);
 			},
 			promoteToModerator: function() {
-				if (this.model.get('participantType') !== 3) {
+				if (this.model.get('participantType') !== OCA.SpreedMe.app.USER) {
 					return;
 				}
 
@@ -177,7 +177,7 @@
 				});
 			},
 			demoteFromModerator: function() {
-				if (this.model.get('participantType') !== 2) {
+				if (this.model.get('participantType') !== OCA.SpreedMe.app.MODERATOR) {
 					return;
 				}
 
@@ -199,7 +199,7 @@
 				});
 			},
 			removeParticipant: function() {
-				if (this.model.get('participantType') === 1) {
+				if (this.model.get('participantType') === OCA.SpreedMe.app.OWNER) {
 					return;
 				}
 
