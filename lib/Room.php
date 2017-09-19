@@ -151,6 +151,32 @@ class Room {
 		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
 	}
 
+	/**
+	 * @param string $sessionId
+	 * @return Participant
+	 * @throws \RuntimeException When the user is not a participant
+	 */
+	public function getParticipantBySession($sessionId) {
+		if (!is_string($sessionId) || $sessionId === '') {
+			throw new \RuntimeException('Not a user');
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)))
+			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId())));
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new \RuntimeException('User is not a participant');
+		}
+
+		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+	}
+
 	public function deleteRoom() {
 		$query = $this->db->getQueryBuilder();
 
@@ -271,6 +297,17 @@ class Room {
 		$query->delete('spreedme_room_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($user->getUID())));
+		$query->execute();
+	}
+
+	/**
+	 * @param Participant $participant
+	 */
+	public function removeParticipantBySession(Participant $participant) {
+		$query = $this->db->getQueryBuilder();
+		$query->delete('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('sessionId', $query->createNamedParameter($participant->getSessionId())));
 		$query->execute();
 	}
 

@@ -203,17 +203,18 @@
 					return;
 				}
 
-				if (this.model.get('userId') === '') {
-					console.log('Guests can currently not be deleted');
-					return;
-				}
+				var self = this,
+					participantId = this.model.get('userId'),
+					endpoint = '/participants';
 
-				var participantId = this.model.get('userId'),
-					self = this;
+				if (this.model.get('participantType') === OCA.SpreedMe.app.GUEST) {
+					participantId = this.model.get('sessionId');
+					endpoint += '/guests';
+				}
 
 				$.ajax({
 					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/participants',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + endpoint,
 					data: {
 						participant: participantId
 					},
