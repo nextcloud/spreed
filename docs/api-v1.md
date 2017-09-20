@@ -62,7 +62,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
 
-### Get room by token (also for guests)
+### Get single room (also for guests)
 
 * Method: `GET`
 * Endpoint: `/room/{token}`
@@ -73,3 +73,22 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the room could not be found for the participant
 
     - Data: See array definition in `Get user´s rooms`
+
+### Rename a room
+
+* Method: `PUT`
+* Endpoint: `/room/{token}`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `roomName` | string | New name for the room (1-200 characters)
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `400 Bad Request` When the name is too long
+        + `403 Forbidden` When the current user is not a moderator/owner
+        + `404 Not Found` When the room could not be found for the participant
+        + `405 Method Not Allowed` When the room is a one to one room
+
