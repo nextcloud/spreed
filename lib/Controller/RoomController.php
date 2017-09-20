@@ -679,6 +679,35 @@ class RoomController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $token
+	 * @param string $password
+	 * @return DataResponse
+	 */
+	public function setPassword($token, $password) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($room->getType() !== Room::PUBLIC_CALL) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$room->setPassword($password);
+		return new DataResponse();
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
 	 * @param string $participant
 	 * @return DataResponse
 	 */
