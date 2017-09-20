@@ -1,8 +1,26 @@
 # API v1 Documentation
 
+- [Constants](#constants)
+  * [Room types](#room-types)
+  * [Participant types](#participant-types)
+- [Room management](#room-management)
+  * [Creating a new room](#creating-a-new-room)
+  * [Get user´s rooms](#get-user-s-rooms)
+  * [Get single room (also for guests)](#get-single-room--also-for-guests-)
+  * [Rename a room](#rename-a-room)
+  * [Delete a room](#delete-a-room)
+  * [Allow guests in a room (public room)](#allow-guests-in-a-room--public-room-)
+  * [Disallow guests in a room (group room)](#disallow-guests-in-a-room--group-room-)
+- [Participant management](#participant-management)
+  * [Get list of participants in a room](#get-list-of-participants-in-a-room)
+  * [Add a participant to a room](#add-a-participant-to-a-room)
+  * [Delete a participant from a room](#delete-a-participant-from-a-room)
+  * [Remove yourself from a room](#remove-yourself-from-a-room)
+  * [Promote a user to a moderator](#promote-a-user-to-a-moderator)
+  * [Demote a moderator to a user](#demote-a-moderator-to-a-user)
+
+
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
-
-
 
 ## Constants
 
