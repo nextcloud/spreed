@@ -93,7 +93,6 @@
 	function InternalSignaling() {
 		SignalingBase.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
-		this._openEventSource();
 
 		this.pingFails = 0;
 		this.pingInterval = null;
@@ -178,6 +177,7 @@
 				this.sessionId = result.ocs.data.sessionId;
 				this.currentCallToken = token;
 				this._startPingCall();
+				this._openEventSource();
 				this._getCallPeers(token).then(function(peers) {
 					var callDescription = {
 						'clients': {}
@@ -192,6 +192,10 @@
 					}.bind(this));
 					callback('', callDescription);
 				}.bind(this));
+			}.bind(this),
+			error: function (result) {
+				// TODO request password and try again...
+				console.log("error", result);
 			}.bind(this)
 		});
 	};
@@ -199,6 +203,7 @@
 	InternalSignaling.prototype.leaveCall = function(token) {
 		if (token === this.currentCallToken) {
 			this._stopPingCall();
+			this._closeEventSource();
 		}
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
@@ -281,6 +286,16 @@
 	/**
 	 * @private
 	 */
+	InternalSignaling.prototype._closeEventSource = function() {
+		if (this.source) {
+			this.source.close();
+			this.source = null;
+		}
+	};
+
+	/**
+	 * @private
+	 */
 	InternalSignaling.prototype.sendPendingMessages = function() {
 		if (!this.spreedArrayConnection.length) {
 			return;
@@ -297,6 +312,7 @@
 	 */
 	InternalSignaling.prototype._startPingCall = function() {
 		this._pingCall();
+
 		// Send a ping to the server all 5 seconds to ensure that the connection
 		// is still alive.
 		this.pingInterval = window.setInterval(function() {
