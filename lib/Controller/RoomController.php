@@ -570,6 +570,41 @@ class RoomController extends OCSController {
 	 * @NoAdminRequired
 	 *
 	 * @param string $token
+	 * @param string $participant
+	 * @return DataResponse
+	 */
+	public function removeGuestFromRoom($token, $participant) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!in_array($currentParticipant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		try {
+			$targetParticipant = $room->getParticipantBySession($participant);
+		} catch (\RuntimeException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if ($targetParticipant->getParticipantType() !== Participant::GUEST) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$room->removeParticipantBySession($targetParticipant);
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
 	 * @return DataResponse
 	 */
 	public function makePublic($token) {

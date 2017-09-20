@@ -32,7 +32,7 @@
 	var ITEM_TEMPLATE = '' +
 		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#" data-sessionId="{{sessionId}}">' +
 			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
-			' {{displayName}}' +
+			' {{name}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 		'</a>'+
@@ -101,28 +101,27 @@
 				});
 			},
 			templateContext: function() {
-				console.log(this.model.get('userId'));
-				console.log(this.model.get('participantType') !== 1);
-				console.log(this.model.get('userId') !== oc_current_user);
-				var canModerate = this.model.get('participantType') !== 1 &&       // can not moderate owners
+				var canModerate = this.model.get('participantType') !== OCA.SpreedMe.app.OWNER &&       // can not moderate owners
 					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
-					(OCA.SpreedMe.app.activeRoom.get('participantType') === 1 ||   // current user must be owner
-						OCA.SpreedMe.app.activeRoom.get('participantType') === 2); // or moderator.
+					(OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||   // current user must be owner
+						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR); // or moderator.
 
 				return {
 					canModerate: canModerate,
-					participantIsUser: this.model.get('participantType') === 3,
-					participantIsModerator: this.model.get('participantType') === 2,
-					participantIsOwner: this.model.get('participantType') === 1
+					name: this.model.get('userId').length ? this.model.get('displayName') : t('spreed', 'Guest'),
+					participantIsUser: this.model.get('participantType') === OCA.SpreedMe.app.USER,
+					participantIsModerator: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR,
+					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER
 				};
 			},
 			onRender: function() {
 				this.$el.find('.avatar').each(function() {
 					var element = $(this);
-					if (element.data('displayname')) {
+					if (element.data('displayname').length) {
 						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
 					} else {
-						element.avatar(element.data('user-id'), 32);
+						element.imageplaceholder('?', undefined, 32);
+						element.css('background-color', '#b9b9b9');
 					}
 				});
 
@@ -157,7 +156,7 @@
 				this.ui.menu.toggleClass('open', this.menuShown);
 			},
 			promoteToModerator: function() {
-				if (this.model.get('participantType') !== 3) {
+				if (this.model.get('participantType') !== OCA.SpreedMe.app.USER) {
 					return;
 				}
 
@@ -179,7 +178,7 @@
 				});
 			},
 			demoteFromModerator: function() {
-				if (this.model.get('participantType') !== 2) {
+				if (this.model.get('participantType') !== OCA.SpreedMe.app.MODERATOR) {
 					return;
 				}
 
@@ -201,21 +200,22 @@
 				});
 			},
 			removeParticipant: function() {
-				if (this.model.get('participantType') === 1) {
+				if (this.model.get('participantType') === OCA.SpreedMe.app.OWNER) {
 					return;
 				}
 
-				if (this.model.get('userId') === '') {
-					console.log('Guests can currently not be deleted');
-					return;
-				}
+				var self = this,
+					participantId = this.model.get('userId'),
+					endpoint = '/participants';
 
-				var participantId = this.model.get('userId'),
-					self = this;
+				if (this.model.get('participantType') === OCA.SpreedMe.app.GUEST) {
+					participantId = this.model.get('sessionId');
+					endpoint += '/guests';
+				}
 
 				$.ajax({
 					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/participants',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + endpoint,
 					data: {
 						participant: participantId
 					},
