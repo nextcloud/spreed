@@ -18,6 +18,12 @@
   * [Remove yourself from a room](#remove-yourself-from-a-room)
   * [Promote a user to a moderator](#promote-a-user-to-a-moderator)
   * [Demote a moderator to a user](#demote-a-moderator-to-a-user)
+- [Call management](#call-management)
+  * [Get list of connected participants](#get-list-of-connected-participants)
+  * [Join a call](#join-a-call)
+  * [Send ping to keep the call alive](#send-ping-to-keep-the-call-alive)
+  * [Leave a call (but staying in the room for future calls)](#leave-a-call--but-staying-in-the-room-for-future-calls-)
+- [Signalling](#signalling)
 
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
@@ -262,3 +268,66 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
         + `412 Precondition Failed` When the participant to demote is not a moderator (type `2`)
+
+
+
+## Call management
+
+### Get list of connected participants
+
+* Method: `GET`
+* Endpoint: `/call/{token}`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+    - Data:
+        Array of participants, each participant has at least:
+
+        field | type | Description
+        ------|------|------------
+        `userId` | string | Is empty for guests
+        `lastPing` | int | Timestamp of the last ping of the user (should be used for sorting)
+        `sessionId` | string | 512 character long string
+
+### Join a call
+
+* Method: `POST`
+* Endpoint: `/call/{token}`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+    - Data:
+
+        field | type | Description
+        ------|------|------------
+        `sessionId` | string | 512 character long string
+
+### Send ping to keep the call alive
+
+* Method: `POST`
+* Endpoint: `/call/{token}/ping`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+### Leave a call (but staying in the room for future calls)
+
+* Method: `DELETE`
+* Endpoint: `/call/{token}`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+## Signalling
+
+To be defined
