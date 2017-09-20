@@ -157,6 +157,23 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the room could not be found for the participant
 
+### Set room password
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/password`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `password` | string | Set a new password for the room
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator/owner
+        + `403 Forbidden` When the room is not a public room
+        + `404 Not Found` When the room could not be found for the participant
+
 
 ## Participant management
 
