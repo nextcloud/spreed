@@ -156,7 +156,7 @@
 		}.bind(this));
 	};
 
-	InternalSignaling.prototype.joinCall = function(token, callback) {
+	InternalSignaling.prototype.joinCall = function(token, callback, password) {
 		// The client is joining a new call, in this case we need
 		// to do the following:
 		//
@@ -171,6 +171,9 @@
 			type: 'POST',
 			beforeSend: function (request) {
 				request.setRequestHeader('Accept', 'application/json');
+			},
+			data: {
+				password: password
 			},
 			success: function (result) {
 				console.log("Joined", result);
@@ -194,8 +197,33 @@
 				}.bind(this));
 			}.bind(this),
 			error: function (result) {
-				// TODO request password and try again...
-				console.log("error", result);
+				if (result.status === 404 || result.status === 503) {
+					// Room not found or maintenance mode
+					OC.redirect(OC.generateUrl('apps/spreed'))
+				}
+
+				if (result.status === 403) {
+					// Invalid password
+					OC.dialogs.prompt(
+						t('spreed', 'Please enter the password for this call'),
+						t('spreed','Password required'),
+						function (result, password) {
+							if (result && password !== '') {
+								this.joinCall(token, callback, password);
+							}
+						}.bind(this),
+						true,
+						t('spreed','Password'),
+						true
+					).then(function() {
+						var $dialog = $('.oc-dialog:visible');
+						$dialog.find('.ui-icon').remove();
+
+						var $buttons = $dialog.find('button');
+						$buttons.eq(0).text(t('core', 'Cancel'));
+						$buttons.eq(1).text(t('core', 'Submit'));
+					});
+				}
 			}.bind(this)
 		});
 	};
