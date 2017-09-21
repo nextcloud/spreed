@@ -45,7 +45,7 @@ return [
 		],
 		[
 			'name' => 'Signaling#pullMessages',
-			'url' => '/api/{apiVersion}/messages',
+			'url' => '/api/{apiVersion}/signaling',
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',

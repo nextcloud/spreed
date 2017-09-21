@@ -314,7 +314,7 @@
 	InternalSignaling.prototype._startPullingMessages = function() {
 		// Connect to the messages endpoint and pull for new messages
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'messages',
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
 			type: 'GET',
 			dataType: 'json',
 			beforeSend: function (request) {
