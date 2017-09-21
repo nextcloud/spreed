@@ -30,6 +30,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -45,6 +46,8 @@ class Room {
 	private $secureRandom;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var IHasher */
+	private $hasher;
 
 	/** @var int */
 	private $id;
@@ -68,16 +71,18 @@ class Room {
 	 * @param IDBConnection $db
 	 * @param ISecureRandom $secureRandom
 	 * @param EventDispatcherInterface $dispatcher
+	 * @param IHasher $hasher
 	 * @param int $id
 	 * @param int $type
 	 * @param string $token
 	 * @param string $name
 	 * @param string $password
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, $id, $type, $token, $name, $password) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password) {
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
+		$this->hasher = $hasher;
 		$this->id = $id;
 		$this->type = $type;
 		$this->token = $token;
@@ -114,10 +119,10 @@ class Room {
 	}
 
 	/**
-	 * @return string
+	 * @return bool
 	 */
-	public function getPassword() {
-		return $this->password;
+	public function hasPassword() {
+		return $this->password !== '';
 	}
 
 	/**
@@ -232,20 +237,18 @@ class Room {
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setPassword($password) {
-		if ($password === $this->getPassword()) {
-			return true;
-		}
-
 		if ($this->getType() !== self::PUBLIC_CALL) {
 			return false;
 		}
 
+		$hash = $this->hasher->hash($password);
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_rooms')
-			->set('password', $query->createNamedParameter($password))
+			->set('password', $query->createNamedParameter($hash))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
-		$this->password = $password;
+		$this->password = $hash;
 
 		return true;
 	}
@@ -367,7 +370,7 @@ class Room {
 		$result = $query->execute();
 
 		if ($result === 0) {
-			if ($this->getPassword() !== '' && $this->getPassword() !== $password) {
+			if ($this->hasPassword() && $this->hasher->verify($password, $this->password)) {
 				throw new InvalidPasswordException();
 			}
 
@@ -401,7 +404,7 @@ class Room {
 	public function enterRoomAsGuest($password) {
 		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
 
-		if ($this->getPassword() !== '' && $this->getPassword() !== $password) {
+		if ($this->hasPassword() && $this->hasher->verify($password, $this->password)) {
 			throw new InvalidPasswordException();
 		}
 

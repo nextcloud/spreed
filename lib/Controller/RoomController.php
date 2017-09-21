@@ -184,7 +184,7 @@ class RoomController extends OCSController {
 			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
 			'participants' => $participantList,
 			'numGuests' => $numActiveGuests,
-			'hasPassword' => $room->getPassword() !== '',
+			'hasPassword' => $room->hasPassword(),
 		];
 
 		if ($this->userId !== null) {

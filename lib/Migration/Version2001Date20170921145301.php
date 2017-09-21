@@ -27,7 +27,7 @@ use Doctrine\DBAL\Types\Type;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
-class Version2001003Date20170911145301 extends SimpleMigrationStep {
+class Version2001Date20170921145301 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -52,7 +52,7 @@ class Version2001003Date20170911145301 extends SimpleMigrationStep {
 		$table = $schema->getTable('spreedme_rooms');
 		$table->addColumn('password', Type::STRING, [
 			'notnull' => false,
-			'length' => 64,
+			'length' => 255,
 			'default' => '',
 		]);
 
