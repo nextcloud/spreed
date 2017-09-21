@@ -69,6 +69,7 @@ OC.L10N.register(
     "Stop screensharing" : "Detenga el compartir pantalla",
     "Smile in 3… 2… 1!" : "¡Sonríe en 3... 2... 1!",
     "Choose person …" : "Persona elegida ...",
+    "Participants" : "Participantes",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN es necesario para que los participantes puedan conectarse a las llamadas. El servidor TURN asegura que la conexión funciona incluso a través de cortafuegos.",
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN esta usado para determinar la dirección IP pública de los participantes detrás de un router.",
