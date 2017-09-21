@@ -313,10 +313,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 * Method: `POST`
 * Endpoint: `/call/{token}`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the room has `hasPassword` set to true.
 
 * Response:
     - Header:
         + `200 OK`
+        + `403 Forbidden` When the password is required and didn't match
         + `404 Not Found` When the room could not be found for the participant
 
     - Data:
