@@ -126,21 +126,24 @@
 	opacity: .5;
 }
 
+.password-input,
 .rename-input {
 	margin-top: 0px !important;
 	margin-bottom: 4px !important;
 }
 
+.icon-confirm.password-confirm,
 .icon-confirm.rename-confirm {
 	background-size: 16px;
 	background-color: transparent;
 	border: none;
 	position: absolute;
-	right: -2px;
-	top: 42px;
+	right: 0;
+	bottom: 3px;
 	padding: 16px;
 	opacity: .5;
 }
+.icon-confirm.password-confirm:hover,
 .icon-confirm.rename-confirm:hover  {
 	opacity: 1;
 }

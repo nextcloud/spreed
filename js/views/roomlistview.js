@@ -55,9 +55,9 @@
 										'<span class="icon-rename"></span>'+
 										'<span>'+t('spreed', 'Rename')+'</span>'+
 									'</button>'+
+									'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
+									'<div class="icon-confirm hidden-important rename-element rename-confirm"></div>'+
 								'</li>'+
-								'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
-								'<button class="icon-confirm hidden-important rename-element rename-confirm"></button>'+
 								'{{/if}}'+
 								'<li>'+
 									'<button class="share-link-button">'+
@@ -67,6 +67,14 @@
 									'<input id="shareInput-{{id}}" class="share-link-input private-room" readonly="readonly" type="text"/>'+
 									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
 									'<div class="icon-delete private-room"></div>'+
+								'</li>'+
+								'<li>'+
+									'<button class="password-room-button">'+
+										'<span class="icon-password"></span>'+
+										'<span>{{#if hasPassword}}'+t('spreed', 'Change password')+'{{else}}'+t('spreed', 'Set password')+'{{/if}}</span>'+
+									'</button>'+
+									'<input class="hidden-important password-element password-input" maxlength="200" type="text"/>'+
+									'<div class="icon-confirm hidden-important password-element password-confirm"></div>'+
 								'</li>'+
 								'{{/if}}'+
 								'{{#if showShareLink}}'+
@@ -198,6 +206,9 @@
 			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
 			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
 			'keyup .rename-input': 'renameKeyUp',
+			'click .app-navigation-entry-menu .password-room-button': 'showPasswordInput',
+			'click .app-navigation-entry-menu .password-confirm': 'confirmRoomPassword',
+			'keyup .password-input': 'passwordKeyUp',
 			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
 			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
@@ -222,10 +233,12 @@
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
 
-			// Hide rename input and show button when opening menu
+			// Hide rename and password input and show button when opening menu
 			if (this.menuShown) {
 				this.$el.find('.rename-element').addClass('hidden-important');
 				this.$el.find('.rename-room-button').removeClass('hidden-important');
+				this.$el.find('.password-element').addClass('hidden-important');
+				this.$el.find('.password-room-button').removeClass('hidden-important');
 			}
 		},
 		checkSharingStatus: function() {
@@ -306,6 +319,43 @@
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
 					type: 'PUT',
 					data: 'roomName='+roomName,
+					success: function() {
+						app.syncRooms();
+					}
+				});
+			}
+		},
+		showPasswordInput: function() {
+			this.$el.find('.password-element').removeClass('hidden-important');
+			this.$el.find('.password-room-button').addClass('hidden-important');
+
+			this.$el.find('.password-input').focus();
+			this.$el.find('.password-input').select();
+		},
+		hidePasswordInput: function() {
+			this.$el.find('.password-element').addClass('hidden-important');
+			this.$el.find('.password-room-button').removeClass('hidden-important');
+		},
+		confirmRoomPassword: function() {
+			var newRoomPassword = $.trim(this.$el.find('.password-input').val());
+			this.passwordRoom(newRoomPassword);
+			this.hidePasswordInput();
+		},
+		passwordKeyUp: function(e) {
+			if (e.keyCode === 13) {
+				this.confirmRoomPassword();
+			} else if (e.keyCode === 27) {
+				this.hidePasswordInput();
+			}
+		},
+		passwordRoom: function(roomPassword) {
+			var app = OCA.SpreedMe.app;
+
+			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
+				$.ajax({
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
+					type: 'PUT',
+					data: 'password='+roomPassword,
 					success: function() {
 						app.syncRooms();
 					}
