@@ -95,9 +95,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			if (strpos($expectedRoom['participants'], ' [exact order]') === false) {
 				sort($participantNames);
 			} else {
+				// "end(array_keys(..." would generate the Strict Standards
+				// error "Only variables should be passed by reference".
+				$participantNamesKeys = array_keys($participantNames);
+				$lastParticipantKey = end($participantNamesKeys);
+
 				// Append " [exact order]" to the last participant so the
 				// imploded string is the same as the expected one.
-				$participantNames[end(array_keys($participantNames))] .= ' [exact order]';
+				$participantNames[$lastParticipantKey] .= ' [exact order]';
 			}
 
 			return [
