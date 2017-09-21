@@ -22,7 +22,7 @@
 namespace OCA\Spreed\AppInfo;
 
 use OCA\Spreed\Room;
-use OCA\Spreed\Signalling\Messages;
+use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

@@ -17760,7 +17760,7 @@
 		}
 	};
 
-// send via signalling channel
+// send via signaling channel
 	Peer.prototype.send = function (messageType, payload) {
 		var message = {
 			to: this.id,

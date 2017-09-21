@@ -27,7 +27,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
-use OCA\Spreed\Signalling\Messages;
+use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -35,7 +35,7 @@ use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\ISession;
 
-class SignallingController extends OCSController {
+class SignalingController extends OCSController {
 	/** @var Config */
 	private $config;
 	/** @var ISession */
@@ -82,7 +82,7 @@ class SignallingController extends OCSController {
 	 * @param string $messages
 	 * @return DataResponse
 	 */
-	public function signalling($messages) {
+	public function signaling($messages) {
 		$response = [];
 		$messages = json_decode($messages, true);
 		foreach($messages as $message) {

@@ -155,7 +155,7 @@
 		this._sendMessages(message).done(function(result) {
 			this._trigger(ev, [result.ocs.data]);
 		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
-			console.log('Sending signalling message with callback has failed.');
+			console.log('Sending signaling message with callback has failed.');
 			// TODO: Add error handling
 		});
 	};
@@ -163,7 +163,7 @@
 	InternalSignaling.prototype._sendMessages = function(messages) {
 		var defer = $.Deferred();
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signalling',
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
 			type: 'POST',
 			data: {messages: JSON.stringify(messages)},
 			beforeSend: function (request) {
@@ -188,7 +188,7 @@
 		// 3. Pass information about the clients that need to be called by you to the callback.
 		//
 		// The clients will then use the message command to exchange
-		// their signalling information.
+		// their signaling information.
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			type: 'POST',
@@ -333,7 +333,7 @@
 							this._trigger('message', [message.data]);
 							break;
 						default:
-							console.log('Uknown Signalling Message');
+							console.log('Unknown Signaling Message');
 							break;
 					}
 				}.bind(this));

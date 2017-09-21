@@ -31,8 +31,8 @@ class Version2001Date20170913104501 extends SimpleMigrationStep {
 		/** @var Schema $schema */
 		$schema = $schemaClosure();
 
-		if (!$schema->hasTable('videocalls_signalling')) {
-			$table = $schema->createTable('videocalls_signalling');
+		if (!$schema->hasTable('videocalls_signaling')) {
+			$table = $schema->createTable('videocalls_signaling');
 
 			$table->addColumn('sender', Type::STRING, [
 				'notnull' => true,

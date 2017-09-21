@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Spreed\Signalling;
+namespace OCA\Spreed\Signaling;
 
 
 use OCA\Spreed\Room;
@@ -49,7 +49,7 @@ class Messages {
 	 */
 	public function deleteMessages(array $sessionIds) {
 		$query = $this->db->getQueryBuilder();
-		$query->delete('videocalls_signalling')
+		$query->delete('videocalls_signaling')
 			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
 			->orWhere($query->expr()->in('sender', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		$query->execute();
@@ -62,7 +62,7 @@ class Messages {
 	 */
 	public function addMessage($senderSessionId, $recipientSessionId, $message) {
 		$query = $this->db->getQueryBuilder();
-		$query->insert('videocalls_signalling')
+		$query->insert('videocalls_signaling')
 			->values(
 				[
 					'sender' => $query->createNamedParameter($senderSessionId),
@@ -80,7 +80,7 @@ class Messages {
 	 */
 	public function addMessageForAllParticipants(Room $room, $message) {
 		$query = $this->db->getQueryBuilder();
-		$query->insert('videocalls_signalling')
+		$query->insert('videocalls_signaling')
 			->values(
 				[
 					'sender' => $query->createParameter('sender'),
@@ -114,7 +114,7 @@ class Messages {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('videocalls_signalling')
+			->from('videocalls_signaling')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)));
 		$result = $query->execute();
@@ -125,7 +125,7 @@ class Messages {
 		$result->closeCursor();
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('videocalls_signalling')
+		$query->delete('videocalls_signaling')
 			->where($query->expr()->eq('recipient', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->lte('timestamp', $query->createNamedParameter($time)));
 		$query->execute();

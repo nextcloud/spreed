@@ -36,15 +36,15 @@ return [
 	],
 	'ocs' => [
 		[
-			'name' => 'Signalling#signalling',
-			'url' => '/api/{apiVersion}/signalling',
+			'name' => 'Signaling#signaling',
+			'url' => '/api/{apiVersion}/signaling',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
 			],
 		],
 		[
-			'name' => 'Signalling#pullMessages',
+			'name' => 'Signaling#pullMessages',
 			'url' => '/api/{apiVersion}/messages',
 			'verb' => 'GET',
 			'requirements' => [

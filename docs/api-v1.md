@@ -23,7 +23,7 @@
   * [Join a call](#join-a-call)
   * [Send ping to keep the call alive](#send-ping-to-keep-the-call-alive)
   * [Leave a call (but staying in the room for future calls)](#leave-a-call--but-staying-in-the-room-for-future-calls-)
-- [Signalling](#signalling)
+- [Signaling](#signaling)
 
 
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
@@ -351,6 +351,6 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `404 Not Found` When the room could not be found for the participant
 
-## Signalling
+## Signaling
 
-To be defined
+See the [Draft](https://github.com/nextcloud/spreed/wiki/Signaling-API) in the wiki…
