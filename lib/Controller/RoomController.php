@@ -37,6 +37,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
@@ -46,6 +47,8 @@ use OCP\Notification\IManager as INotificationManager;
 class RoomController extends OCSController {
 	/** @var string */
 	private $userId;
+	/** @var ISession */
+	private $session;
 	/** @var IUserManager */
 	private $userManager;
 	/** @var IGroupManager */
@@ -65,6 +68,7 @@ class RoomController extends OCSController {
 	 * @param string $appName
 	 * @param string $UserId
 	 * @param IRequest $request
+	 * @param ISession $session
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param ILogger $logger
@@ -76,6 +80,7 @@ class RoomController extends OCSController {
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
+								ISession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								ILogger $logger,
@@ -84,6 +89,7 @@ class RoomController extends OCSController {
 								IActivityManager $activityManager,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
+		$this->session = $session;
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
@@ -107,8 +113,9 @@ class RoomController extends OCSController {
 		$return = [];
 		foreach ($rooms as $room) {
 			try {
-				$return[] = $this->formatRoom($room);
+				$return[] = $this->formatRoom($room, $room->getParticipant($this->userId));
 			} catch (RoomNotFoundException $e) {
+			} catch (\RuntimeException $e) {
 			}
 		}
 
@@ -124,7 +131,18 @@ class RoomController extends OCSController {
 	public function getRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			return new DataResponse($this->formatRoom($room));
+
+			$participant = null;
+			try {
+				$participant = $room->getParticipant($this->userId);
+			} catch (ParticipantNotFoundException $e) {
+				try {
+					$participant = $room->getParticipantBySession($this->session->get('spreed-session'));
+				} catch (ParticipantNotFoundException $e) {
+				}
+			}
+
+			return new DataResponse($this->formatRoom($room, $participant));
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -132,10 +150,42 @@ class RoomController extends OCSController {
 
 	/**
 	 * @param Room $room
+	 * @param Participant $participant
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room) {
+	protected function formatRoom(Room $room, Participant $participant = null) {
+
+		if ($participant instanceof Participant) {
+			$participantType = $participant->getParticipantType();
+		} else {
+			$participantType = Participant::GUEST;
+		}
+
+		$roomData = [
+			'id' => $room->getId(),
+			'token' => $room->getToken(),
+			'type' => $room->getType(),
+			'name' => $room->getName(),
+			'displayName' => $room->getName(),
+			'participantType' => $participantType,
+			'count' => $room->getNumberOfParticipants(time() - 30),
+			'hasPassword' => $room->hasPassword(),
+		];
+
+		if (!$participant instanceof Participant) {
+			// Unauthenticated user without a session (didn't enter password)
+			$roomData = array_merge($roomData, [
+				'lastPing' => 0,
+				'sessionId' => '0',
+				'participants' => [],
+				'numGuests' => 0,
+				'guestList' => '',
+			]);
+
+			return $roomData;
+		}
+
 		// Sort by lastPing
 		/** @var array[] $participants */
 		$participants = $room->getParticipants();
@@ -146,21 +196,14 @@ class RoomController extends OCSController {
 		uasort($participants['guests'], $sortParticipants);
 
 		$participantList = [];
-		foreach ($participants['users'] as $participant => $data) {
-			$user = $this->userManager->get($participant);
+		foreach ($participants['users'] as $userId => $data) {
+			$user = $this->userManager->get($userId);
 			if ($user instanceof IUser) {
-				$participantList[$participant] = [
+				$participantList[$user->getUID()] = [
 					'name' => $user->getDisplayName(),
 					'type' => $data['participantType'],
 				];
 			}
-		}
-
-		try {
-			$participant = $room->getParticipant($this->userId);
-			$participantType = $participant->getParticipantType();
-		} catch (ParticipantNotFoundException $e) {
-			$participantType = Participant::GUEST;
 		}
 
 		$activeGuests = array_filter($participants['guests'], function($data) {
@@ -172,20 +215,12 @@ class RoomController extends OCSController {
 			$room->cleanGuestParticipants();
 		}
 
-		$roomData = [
-			'id' => $room->getId(),
-			'token' => $room->getToken(),
-			'type' => $room->getType(),
-			'name' => $room->getName(),
-			'displayName' => $room->getName(),
-			'participantType' => $participantType,
-			'count' => $room->getNumberOfParticipants(time() - 30),
-			'lastPing' => isset($participants['users'][$this->userId]['lastPing']) ? $participants['users'][$this->userId]['lastPing'] : 0,
-			'sessionId' => isset($participants['users'][$this->userId]['sessionId']) ? $participants['users'][$this->userId]['sessionId'] : '0',
+		$roomData = array_merge($roomData, [
+			'lastPing' => $participant->getLastPing(),
+			'sessionId' => $participant->getSessionId(),
 			'participants' => $participantList,
 			'numGuests' => $numActiveGuests,
-			'hasPassword' => $room->hasPassword(),
-		];
+		]);
 
 		if ($this->userId !== null) {
 			unset($participantList[$this->userId]);

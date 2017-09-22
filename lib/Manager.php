@@ -268,7 +268,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		if ($userId !== $row['userId']) {
+		if ((string) $userId !== $row['userId']) {
 			throw new RoomNotFoundException();
 		}
 
