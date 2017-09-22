@@ -247,7 +247,7 @@ class Manager {
 	 * @throws RoomNotFoundException
 	 */
 	public function getRoomForSession($userId, $sessionId) {
-		if ($sessionId === '' || $sessionId === '0') {
+		if ((string) $sessionId === '' || $sessionId === '0') {
 			throw new RoomNotFoundException();
 		}
 

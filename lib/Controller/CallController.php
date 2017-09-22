@@ -79,14 +79,19 @@ class CallController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getPeersForCall($token) {
-		if (!$this->session->exists('spreed-session')) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
 		try {
 			$room = $this->manager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
 		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+			if ($this->userId === null) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			// For logged in users we search for rooms where they are real participants
+			try {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			} catch (RoomNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
 		}
 
 		if ($room->getToken() !== $token) {
