@@ -25,6 +25,7 @@
 
 namespace OCA\Spreed;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -119,11 +120,11 @@ class Room {
 	/**
 	 * @param string $userId
 	 * @return Participant
-	 * @throws \RuntimeException When the user is not a participant
+	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
 	public function getParticipant($userId) {
 		if (!is_string($userId) || $userId === '') {
-			throw new \RuntimeException('Not a user');
+			throw new ParticipantNotFoundException('Not a user');
 		}
 
 		if ($this->currentUser === $userId && $this->participant instanceof Participant) {
@@ -140,7 +141,7 @@ class Room {
 		$result->closeCursor();
 
 		if ($row === false) {
-			throw new \RuntimeException('User is not a participant');
+			throw new ParticipantNotFoundException('User is not a participant');
 		}
 
 		if ($this->currentUser === $userId) {
@@ -154,11 +155,11 @@ class Room {
 	/**
 	 * @param string $sessionId
 	 * @return Participant
-	 * @throws \RuntimeException When the user is not a participant
+	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
 	public function getParticipantBySession($sessionId) {
 		if (!is_string($sessionId) || $sessionId === '') {
-			throw new \RuntimeException('Not a user');
+			throw new ParticipantNotFoundException('Not a user');
 		}
 
 		$query = $this->db->getQueryBuilder();
@@ -171,7 +172,7 @@ class Room {
 		$result->closeCursor();
 
 		if ($row === false) {
-			throw new \RuntimeException('User is not a participant');
+			throw new ParticipantNotFoundException('User is not a participant');
 		}
 
 		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
