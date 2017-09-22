@@ -199,7 +199,7 @@
 			error: function (result) {
 				if (result.status === 404 || result.status === 503) {
 					// Room not found or maintenance mode
-					OC.redirect(OC.generateUrl('apps/spreed'))
+					OC.redirect(OC.generateUrl('apps/spreed'));
 				}
 
 				if (result.status === 403) {
