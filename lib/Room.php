@@ -438,6 +438,26 @@ class Room {
 	}
 
 	/**
+	 * @return string[]
+	 */
+	public function getActiveSessions() {
+		$query = $this->db->getQueryBuilder();
+		$query->select('sessionId')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')));
+		$result = $query->execute();
+
+		$sessions = [];
+		while ($row = $result->fetch()) {
+			$sessions[] = $row['sessionId'];
+		}
+		$result->closeCursor();
+
+		return $sessions;
+	}
+
+	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return int
 	 */
