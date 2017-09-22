@@ -288,10 +288,13 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	protected function createOneToOneRoom($targetUserName) {
-		// Get the user
-		$targetUser = $this->userManager->get($targetUserName);
 		$currentUser = $this->userManager->get($this->userId);
-		if(!($targetUser instanceof IUser)) {
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$targetUser = $this->userManager->get($targetUserName);
+		if (!$targetUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -322,7 +325,11 @@ class RoomController extends OCSController {
 		$targetGroup = $this->groupManager->get($targetGroupName);
 		$currentUser = $this->userManager->get($this->userId);
 
-		if(!($targetGroup instanceof IGroup)) {
+		if (!$targetGroup instanceof IGroup) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -479,6 +486,10 @@ class RoomController extends OCSController {
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$newUser = $this->userManager->get($newParticipant);
 		if (!$newUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -537,6 +548,10 @@ class RoomController extends OCSController {
 		}
 
 		$targetUser = $this->userManager->get($participant);
+		if (!$targetUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		$room->removeUser($targetUser);
 		return new DataResponse([]);
 	}
@@ -561,6 +576,10 @@ class RoomController extends OCSController {
 			$room->deleteRoom();
 		} else {
 			$currentUser = $this->userManager->get($this->userId);
+			if (!$currentUser instanceof IUser) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
 			$room->removeUser($currentUser);
 		}
 
