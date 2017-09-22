@@ -25,6 +25,7 @@ OC.L10N.register(
     "Press Ctrl-C to copy." : "Pro zkopírování stiskněte Ctrl-C.",
     "This call has ended" : "Tento hovor zkončil",
     "Saving failed" : "Ukládání selhalo",
+    "moderator" : "moderátor",
     "Add person" : "Přidat osobu",
     "Rename" : "Přejmenovat",
     "Share link" : "Sdílet odkaz",
