@@ -26,6 +26,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Exceptions\InvalidPasswordException;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
@@ -90,7 +91,10 @@ class CallController extends OCSController {
 			// For logged in users we search for rooms where they are real participants
 			try {
 				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$room->getParticipant($this->userId);
 			} catch (RoomNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 		}
