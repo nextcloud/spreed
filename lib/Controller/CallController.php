@@ -28,6 +28,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Signalling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -197,7 +198,18 @@ class CallController extends OCSController {
 	 */
 	public function leaveCall($token) {
 		if ($this->userId !== null) {
-			// TODO: Currently we ignore $token, should be fixed at some point
+			try {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$participant = $room->getParticipant($this->userId);
+
+				if ($participant->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$room->removeParticipantBySession($participant);
+				}
+			} catch (RoomNotFoundException $e) {
+			} catch (\RuntimeException $e) {
+			}
+
+			// As a pre-caution we simply disconnect the user from all rooms
 			$this->manager->disconnectUserFromAllRooms($this->userId);
 		} else {
 			$sessionId = $this->session->get('spreed-session');
