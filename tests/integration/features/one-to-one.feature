@@ -15,10 +15,10 @@ Feature: one-to-one
       | invite   | participant2 |
     Then user "participant1" is participant of the following rooms
       | id    | type | participantType | participants |
-      | room1 | 1    | 1               | participant1, participant2 |
+      | room1 | 1    | 1               | participant1-displayname, participant2-displayname |
     And user "participant2" is participant of the following rooms
       | id    | type | participantType | participants |
-      | room1 | 1    | 1               | participant1, participant2 |
+      | room1 | 1    | 1               | participant1-displayname, participant2-displayname |
     And user "participant3" is participant of the following rooms
     And user "participant1" is participant of room "room1"
     And user "participant2" is participant of room "room1"
@@ -71,7 +71,7 @@ Feature: one-to-one
     When user "participant1" makes room "room6" public with 200
     Then user "participant1" is participant of the following rooms
       | id    | type | participantType | participants |
-      | room6 | 3    | 1               | participant1, participant2 |
+      | room6 | 3    | 1               | participant1-displayname, participant2-displayname |
 
   Scenario: User1 invites user2 to a one2one room and invites user3
     Given user "participant1" creates room "room7"
@@ -83,11 +83,11 @@ Feature: one-to-one
     When user "participant1" adds "participant3" to room "room7" with 200
     Then user "participant1" is participant of the following rooms
       | id    | type | participantType | participants |
-      | room7 | 2    | 1               | participant1, participant2, participant3 |
+      | room7 | 2    | 1               | participant1-displayname, participant2-displayname, participant3-displayname |
     And user "participant3" is participant of room "room7"
     Then user "participant3" is participant of the following rooms
       | id    | type | participantType | participants |
-      | room7 | 2    | 3               | participant1, participant2, participant3 |
+      | room7 | 2    | 3               | participant1-displayname, participant2-displayname, participant3-displayname |
 
   Scenario: User1 invites user2 to a one2one room and promote user2 to moderator
     Given user "participant1" creates room "room8"

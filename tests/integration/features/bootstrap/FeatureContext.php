@@ -390,6 +390,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			$this->userExists($user);
 		} catch (\GuzzleHttp\Exception\ClientException $ex) {
 			$this->createUser($user);
+			// Set a display name different than the user ID to be able to
+			// ensure in the tests that the right value was returned.
+			$this->setUserDisplayName($user);
 		}
 		$response = $this->userExists($user);
 		$this->assertStatusCode($response, 200);
@@ -429,6 +432,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			],
 		];
 		$client->send($client->createRequest('GET', $userProvisioningUrl . '/' . $user, $options2));
+	}
+
+	private function setUserDisplayName($user) {
+		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users/' . $user;
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'body' => [
+				'key' => 'displayname',
+				'value' => $user . '-displayname'
+			],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+		$client->send($client->createRequest('PUT', $userProvisioningUrl, $options));
 	}
 
 	/**
