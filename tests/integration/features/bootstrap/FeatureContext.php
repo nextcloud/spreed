@@ -222,6 +222,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sets password "([^"]*)" for room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $password
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userSetsTheRoomPassword($user, $password, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/password',
+			new TableNode([['password', $password]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+)$/
 	 *
 	 * @param string $user
