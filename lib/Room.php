@@ -370,7 +370,7 @@ class Room {
 		$result = $query->execute();
 
 		if ($result === 0) {
-			if ($this->hasPassword() && $this->hasher->verify($password, $this->password)) {
+			if ($this->hasPassword() && !$this->hasher->verify($password, $this->password)) {
 				throw new InvalidPasswordException();
 			}
 
@@ -404,7 +404,7 @@ class Room {
 	public function enterRoomAsGuest($password) {
 		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
 
-		if ($this->hasPassword() && $this->hasher->verify($password, $this->password)) {
+		if ($this->hasPassword() && !$this->hasher->verify($password, $this->password)) {
 			throw new InvalidPasswordException();
 		}
 
