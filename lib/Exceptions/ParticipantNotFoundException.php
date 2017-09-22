@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
+ * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -22,6 +22,6 @@
 
 namespace OCA\Spreed\Exceptions;
 
-class RoomNotFoundException extends \OutOfBoundsException {
+class ParticipantNotFoundException extends \OutOfBoundsException {
 
 }

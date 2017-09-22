@@ -25,6 +25,7 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
@@ -158,7 +159,7 @@ class RoomController extends OCSController {
 		try {
 			$participant = $room->getParticipant($this->userId);
 			$participantType = $participant->getParticipantType();
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			$participantType = Participant::GUEST;
 		}
 
@@ -369,7 +370,7 @@ class RoomController extends OCSController {
 			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -399,7 +400,7 @@ class RoomController extends OCSController {
 			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -464,7 +465,7 @@ class RoomController extends OCSController {
 			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -512,7 +513,7 @@ class RoomController extends OCSController {
 			$currentParticipant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -527,7 +528,7 @@ class RoomController extends OCSController {
 
 		try {
 			$targetParticipant = $room->getParticipant($participant);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -552,7 +553,7 @@ class RoomController extends OCSController {
 			$room->getParticipant($this->userId); // Check if the participant is part of the room
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -579,7 +580,7 @@ class RoomController extends OCSController {
 			$currentParticipant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -589,7 +590,7 @@ class RoomController extends OCSController {
 
 		try {
 			$targetParticipant = $room->getParticipantBySession($participant);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -613,7 +614,7 @@ class RoomController extends OCSController {
 			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -640,7 +641,7 @@ class RoomController extends OCSController {
 			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -668,7 +669,7 @@ class RoomController extends OCSController {
 			$currentParticipant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -678,7 +679,7 @@ class RoomController extends OCSController {
 
 		try {
 			$targetParticipant = $room->getParticipant($participant);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -704,7 +705,7 @@ class RoomController extends OCSController {
 			$currentParticipant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -718,7 +719,7 @@ class RoomController extends OCSController {
 
 		try {
 			$targetParticipant = $room->getParticipant($participant);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
