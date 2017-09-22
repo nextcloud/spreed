@@ -56,6 +56,23 @@ class Manager {
 	}
 
 	/**
+	 * @param array $row
+	 * @return Room
+	 */
+	protected function createRoomObject(array $row) {
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+	}
+
+	/**
+	 * @param Room $room
+	 * @param array $row
+	 * @return Participant
+	 */
+	protected function createParticipantObject(Room $room, array $row) {
+		return new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+	}
+
+	/**
 	 * @param string $participant
 	 * @return Room[]
 	 */
@@ -72,10 +89,9 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
-			$room = new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+			$room = $this->createRoomObject($row);
 			if ($participant !== null && isset($row['userId'])) {
-				$room->setParticipant($row['userId'],
-					new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
+				$room->setParticipant($row['userId'], $this->createParticipantObject($room, $row));
 			}
 			$rooms[] = $room;
 		}
@@ -115,10 +131,9 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		$room = new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		$room = $this->createRoomObject($row);
 		if ($participant !== null && isset($row['userId'])) {
-			$room->setParticipant($row['userId'],
-				new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
+			$room->setParticipant($row['userId'], $this->createParticipantObject($room, $row));
 		}
 
 		if ($participant === null && $room->getType() !== Room::PUBLIC_CALL) {
@@ -160,10 +175,9 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		$room = new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		$room = $this->createRoomObject($row);
 		if ($participant !== null && isset($row['userId'])) {
-			$room->setParticipant($row['userId'],
-				new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']));
+			$room->setParticipant($row['userId'], $this->createParticipantObject($room, $row));
 		}
 
 		if ($room->getType() === Room::PUBLIC_CALL) {
@@ -196,7 +210,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return $this->createRoomObject($row);
 	}
 
 	/**
@@ -218,7 +232,50 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return $this->createRoomObject($row);
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $sessionId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomForSession($userId, $sessionId) {
+		if ($sessionId === '' || $sessionId === '0') {
+			throw new RoomNotFoundException();
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_rooms', 'r')
+			->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+				$query->expr()->eq('p.sessionId', $query->createNamedParameter($sessionId)),
+				$query->expr()->eq('p.roomId', 'r.id')
+			))
+			->setMaxResults(1);
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($userId !== $row['userId']) {
+			throw new RoomNotFoundException();
+		}
+
+		$room = $this->createRoomObject($row);
+		$participant = $this->createParticipantObject($room, $row);
+		$room->setParticipant($row['userId'], $participant);
+
+		if ($room->getType() === Room::PUBLIC_CALL || !in_array($participant->getParticipantType(), [Participant::GUEST, Participant::USER_SELF_JOINED], true)) {
+			return $room;
+		}
+
+		throw new RoomNotFoundException();
 	}
 
 	/**
@@ -251,7 +308,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return $this->createRoomObject($row);
 	}
 
 	/**
@@ -296,7 +353,39 @@ class Manager {
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, $roomId, $type, $token, $name);
+		return $this->createRoomObject([
+			'id' => $roomId,
+			'type' => $type,
+			'token' => $token,
+			'name' => $name,
+		]);
+	}
+
+	/**
+	 * @param string $userId
+	 * @return string
+	 */
+	public function getCurrentSessionId($userId) {
+		if (empty($userId)) {
+			return null;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')))
+			->orderBy('lastPing', 'DESC')
+			->setMaxResults(1);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			return null;
+		}
+
+		return $row['sessionId'];
 	}
 
 	/**
