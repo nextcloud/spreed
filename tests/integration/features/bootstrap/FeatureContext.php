@@ -222,6 +222,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sets password "([^"]*)" for room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $password
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param TableNode
+	 */
+	public function userSetsTheRoomPassword($user, $password, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/password',
+			new TableNode([['password', $password]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+)$/
 	 *
 	 * @param string $user
@@ -293,10 +311,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 * @param string $identifier
 	 * @param string $statusCode
+	 * @param TableNode|null $formData
 	 */
-	public function userJoinsCall($user, $identifier, $statusCode) {
+	public function userJoinsCall($user, $identifier, $statusCode, TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier],
+			$formData
+		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
 

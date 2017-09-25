@@ -25,8 +25,11 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Exceptions\InvalidPasswordException;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Signalling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -79,8 +82,24 @@ class CallController extends OCSController {
 	 */
 	public function getPeersForCall($token) {
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$room = $this->manager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
 		} catch (RoomNotFoundException $e) {
+			if ($this->userId === null) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			// For logged in users we search for rooms where they are real participants
+			try {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$room->getParticipant($this->userId);
+			} catch (RoomNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		}
+
+		if ($room->getToken() !== $token) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -118,24 +137,29 @@ class CallController extends OCSController {
 	 * @UseSession
 	 *
 	 * @param string $token
+	 * @param string $password
 	 * @return DataResponse
 	 */
-	public function joinCall($token) {
+	public function joinCall($token, $password) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->userId !== null) {
-			$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-			$newSessionId = $room->enterRoomAsUser($this->userId);
+		try {
+			if ($this->userId !== null) {
+				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
+				$newSessionId = $room->enterRoomAsUser($this->userId, $password);
 
-			if (!empty($sessionIds)) {
-				$this->messages->deleteMessages($sessionIds);
+				if (!empty($sessionIds)) {
+					$this->messages->deleteMessages($sessionIds);
+				}
+			} else {
+				$newSessionId = $room->enterRoomAsGuest($password);
 			}
-		} else {
-			$newSessionId = $room->enterRoomAsGuest();
+		} catch (InvalidPasswordException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$this->session->set('spreed-session', $newSessionId);
@@ -153,6 +177,10 @@ class CallController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function pingCall($token) {
+		if (!$this->session->exists('spreed-session')) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
@@ -174,7 +202,18 @@ class CallController extends OCSController {
 	 */
 	public function leaveCall($token) {
 		if ($this->userId !== null) {
-			// TODO: Currently we ignore $token, should be fixed at some point
+			try {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$participant = $room->getParticipant($this->userId);
+
+				if ($participant->getParticipantType() === Participant::USER_SELF_JOINED) {
+					$room->removeParticipantBySession($participant);
+				}
+			} catch (RoomNotFoundException $e) {
+			} catch (\RuntimeException $e) {
+			}
+
+			// As a pre-caution we simply disconnect the user from all rooms
 			$this->manager->disconnectUserFromAllRooms($this->userId);
 		} else {
 			$sessionId = $this->session->get('spreed-session');

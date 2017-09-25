@@ -26,6 +26,7 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -39,6 +40,8 @@ class Manager {
 	private $secureRandom;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var IHasher */
+	private $hasher;
 
 	/**
 	 * Manager constructor.
@@ -47,12 +50,14 @@ class Manager {
 	 * @param IConfig $config
 	 * @param ISecureRandom $secureRandom
 	 * @param EventDispatcherInterface $dispatcher
+	 * @param IHasher $hasher
 	 */
-	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher) {
+	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
+		$this->hasher = $hasher;
 	}
 
 	/**
@@ -60,7 +65,7 @@ class Manager {
 	 * @return Room
 	 */
 	protected function createRoomObject(array $row) {
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name']);
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password']);
 	}
 
 	/**
@@ -242,7 +247,7 @@ class Manager {
 	 * @throws RoomNotFoundException
 	 */
 	public function getRoomForSession($userId, $sessionId) {
-		if ($sessionId === '' || $sessionId === '0') {
+		if ((string) $sessionId === '' || $sessionId === '0') {
 			throw new RoomNotFoundException();
 		}
 
@@ -263,7 +268,7 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
-		if ($userId !== $row['userId']) {
+		if ((string) $userId !== $row['userId']) {
 			throw new RoomNotFoundException();
 		}
 
@@ -358,6 +363,7 @@ class Manager {
 			'type' => $type,
 			'token' => $token,
 			'name' => $name,
+			'password' => '',
 		]);
 	}
 

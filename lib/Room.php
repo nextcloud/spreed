@@ -25,10 +25,12 @@
 
 namespace OCA\Spreed;
 
+use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
+use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -44,6 +46,8 @@ class Room {
 	private $secureRandom;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var IHasher */
+	private $hasher;
 
 	/** @var int */
 	private $id;
@@ -53,6 +57,8 @@ class Room {
 	private $token;
 	/** @var string */
 	private $name;
+	/** @var string */
+	private $password;
 
 	/** @var string */
 	protected $currentUser;
@@ -65,19 +71,23 @@ class Room {
 	 * @param IDBConnection $db
 	 * @param ISecureRandom $secureRandom
 	 * @param EventDispatcherInterface $dispatcher
+	 * @param IHasher $hasher
 	 * @param int $id
 	 * @param int $type
 	 * @param string $token
 	 * @param string $name
+	 * @param string $password
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, $id, $type, $token, $name) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password) {
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
+		$this->hasher = $hasher;
 		$this->id = $id;
 		$this->type = $type;
 		$this->token = $token;
 		$this->name = $name;
+		$this->password = $password;
 	}
 
 	/**
@@ -106,6 +116,13 @@ class Room {
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasPassword() {
+		return $this->password !== '';
 	}
 
 	/**
@@ -216,6 +233,27 @@ class Room {
 	}
 
 	/**
+	 * @param string $password Currently it is only allowed to have a password for Room::PUBLIC_CALL
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setPassword($password) {
+		if ($this->getType() !== self::PUBLIC_CALL) {
+			return false;
+		}
+
+		$hash = $this->hasher->hash($password);
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_rooms')
+			->set('password', $query->createNamedParameter($hash))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+		$this->password = $hash;
+
+		return true;
+	}
+
+	/**
 	 * @param int $newType Currently it is only allowed to change to: Room::GROUP_CALL, Room::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
@@ -314,9 +352,11 @@ class Room {
 
 	/**
 	 * @param string $userId
+	 * @param string $password
 	 * @return string
+	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsUser($userId) {
+	public function enterRoomAsUser($userId, $password) {
 		$this->dispatcher->dispatch(self::class . '::preUserEnterRoom', new GenericEvent($this));
 
 		$query = $this->db->getQueryBuilder();
@@ -330,6 +370,10 @@ class Room {
 		$result = $query->execute();
 
 		if ($result === 0) {
+			if ($this->hasPassword() && !$this->hasher->verify($password, $this->password)) {
+				throw new InvalidPasswordException();
+			}
+
 			// User joining a public room, without being invited
 			$this->addParticipant($userId, Participant::USER_SELF_JOINED, $sessionId);
 		}
@@ -353,10 +397,16 @@ class Room {
 	}
 
 	/**
+	 * @param string $password
 	 * @return string
+	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsGuest() {
+	public function enterRoomAsGuest($password) {
 		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
+
+		if ($this->hasPassword() && !$this->hasher->verify($password, $this->password)) {
+			throw new InvalidPasswordException();
+		}
 
 		$sessionId = $this->secureRandom->generate(255);
 		while (!$this->db->insertIfNotExist('*PREFIX*spreedme_room_participants', [

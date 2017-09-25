@@ -93,7 +93,6 @@
 	function InternalSignaling() {
 		SignalingBase.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
-		this._openEventSource();
 
 		this.pingFails = 0;
 		this.pingInterval = null;
@@ -157,7 +156,7 @@
 		}.bind(this));
 	};
 
-	InternalSignaling.prototype.joinCall = function(token, callback) {
+	InternalSignaling.prototype.joinCall = function(token, callback, password) {
 		// The client is joining a new call, in this case we need
 		// to do the following:
 		//
@@ -173,11 +172,15 @@
 			beforeSend: function (request) {
 				request.setRequestHeader('Accept', 'application/json');
 			},
+			data: {
+				password: password
+			},
 			success: function (result) {
 				console.log("Joined", result);
 				this.sessionId = result.ocs.data.sessionId;
 				this.currentCallToken = token;
 				this._startPingCall();
+				this._openEventSource();
 				this._getCallPeers(token).then(function(peers) {
 					var callDescription = {
 						'clients': {}
@@ -192,6 +195,35 @@
 					}.bind(this));
 					callback('', callDescription);
 				}.bind(this));
+			}.bind(this),
+			error: function (result) {
+				if (result.status === 404 || result.status === 503) {
+					// Room not found or maintenance mode
+					OC.redirect(OC.generateUrl('apps/spreed'));
+				}
+
+				if (result.status === 403) {
+					// Invalid password
+					OC.dialogs.prompt(
+						t('spreed', 'Please enter the password for this call'),
+						t('spreed','Password required'),
+						function (result, password) {
+							if (result && password !== '') {
+								this.joinCall(token, callback, password);
+							}
+						}.bind(this),
+						true,
+						t('spreed','Password'),
+						true
+					).then(function() {
+						var $dialog = $('.oc-dialog:visible');
+						$dialog.find('.ui-icon').remove();
+
+						var $buttons = $dialog.find('button');
+						$buttons.eq(0).text(t('core', 'Cancel'));
+						$buttons.eq(1).text(t('core', 'Submit'));
+					});
+				}
 			}.bind(this)
 		});
 	};
@@ -199,6 +231,7 @@
 	InternalSignaling.prototype.leaveCall = function(token) {
 		if (token === this.currentCallToken) {
 			this._stopPingCall();
+			this._closeEventSource();
 		}
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
@@ -281,6 +314,16 @@
 	/**
 	 * @private
 	 */
+	InternalSignaling.prototype._closeEventSource = function() {
+		if (this.source) {
+			this.source.close();
+			this.source = null;
+		}
+	};
+
+	/**
+	 * @private
+	 */
 	InternalSignaling.prototype.sendPendingMessages = function() {
 		if (!this.spreedArrayConnection.length) {
 			return;
@@ -297,6 +340,7 @@
 	 */
 	InternalSignaling.prototype._startPingCall = function() {
 		this._pingCall();
+
 		// Send a ping to the server all 5 seconds to ensure that the connection
 		// is still alive.
 		this.pingInterval = window.setInterval(function() {

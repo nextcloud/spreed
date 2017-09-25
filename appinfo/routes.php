@@ -140,6 +140,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setPassword',
+			'url' => '/api/{apiVersion}/room/{token}/password',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#getParticipants',
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'GET',
