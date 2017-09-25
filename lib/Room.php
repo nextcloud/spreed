@@ -214,7 +214,7 @@ class Room {
 	}
 
 	/**
-	 * @param string $newName Currently it is only allowed to rename: Room::GROUP_CALL, Room::PUBLIC_CALL
+	 * @param string $newName Currently it is only allowed to rename: self::GROUP_CALL, self::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setName($newName) {
@@ -270,7 +270,7 @@ class Room {
 	}
 
 	/**
-	 * @param int $newType Currently it is only allowed to change to: Room::GROUP_CALL, Room::PUBLIC_CALL
+	 * @param int $newType Currently it is only allowed to change to: self::GROUP_CALL, self::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function changeType($newType) {
@@ -278,7 +278,7 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($newType, [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		if (!in_array($newType, [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
 			return false;
 		}
 
@@ -297,7 +297,7 @@ class Room {
 
 		$this->type = (int) $newType;
 
-		if ($oldType === Room::PUBLIC_CALL) {
+		if ($oldType === self::PUBLIC_CALL) {
 			// Kick all guests and users that were not invited
 			$query = $this->db->getQueryBuilder();
 			$query->delete('spreedme_room_participants')
