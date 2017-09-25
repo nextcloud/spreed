@@ -196,6 +196,8 @@ class Room {
 	}
 
 	public function deleteRoom() {
+		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', new GenericEvent($this));
+
 		$query = $this->db->getQueryBuilder();
 
 		// Delete all participants
@@ -207,6 +209,8 @@ class Room {
 		$query->delete('spreedme_rooms')
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postDeleteRoom', new GenericEvent($this));
 	}
 
 	/**
@@ -222,12 +226,24 @@ class Room {
 			return false;
 		}
 
+		$oldName = $this->getName();
+
+		$this->dispatcher->dispatch(self::class . '::preSetName', new GenericEvent($this, [
+			'newName' => $newName,
+			'oldName' => $oldName,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_rooms')
 			->set('name', $query->createNamedParameter($newName))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 		$this->name = $newName;
+
+		$this->dispatcher->dispatch(self::class . '::postSetName', new GenericEvent($this, [
+			'newName' => $newName,
+			'oldName' => $oldName,
+		]));
 
 		return true;
 	}
@@ -268,6 +284,11 @@ class Room {
 
 		$oldType = $this->getType();
 
+		$this->dispatcher->dispatch(self::class . '::preChangeType', new GenericEvent($this, [
+			'newType' => $newType,
+			'oldType' => $oldType,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_rooms')
 			->set('type', $query->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
@@ -284,6 +305,11 @@ class Room {
 				->andWhere($query->expr()->in('participantType', $query->createNamedParameter([Participant::GUEST, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
 			$query->execute();
 		}
+
+		$this->dispatcher->dispatch(self::class . '::postChangeType', new GenericEvent($this, [
+			'newType' => $newType,
+			'oldType' => $oldType,
+		]));
 
 		return true;
 	}
@@ -332,22 +358,38 @@ class Room {
 	 * @param IUser $user
 	 */
 	public function removeUser(IUser $user) {
+		$this->dispatcher->dispatch(self::class . '::preRemoveUser', new GenericEvent($this, [
+			'user' => $user,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->delete('spreedme_room_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($user->getUID())));
 		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postRemoveUser', new GenericEvent($this, [
+			'user' => $user,
+		]));
 	}
 
 	/**
 	 * @param Participant $participant
 	 */
 	public function removeParticipantBySession(Participant $participant) {
+		$this->dispatcher->dispatch(self::class . '::preRemoveBySession', new GenericEvent($this, [
+			'participant' => $participant,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->delete('spreedme_room_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('sessionId', $query->createNamedParameter($participant->getSessionId())));
 		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postRemoveBySession', new GenericEvent($this, [
+			'participant' => $participant,
+		]));
 	}
 
 	/**
