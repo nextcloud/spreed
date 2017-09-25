@@ -201,26 +201,23 @@ class CallController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function leaveCall($token) {
-		if ($this->userId !== null) {
-			try {
-				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$sessionId = $this->session->get('spreed-session');
+		$this->session->remove('spreed-session');
+
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+
+			if ($this->userId === null) {
+				$participant = $room->getParticipantBySession($sessionId);
+				$room->removeParticipantBySession($participant);
+			} else {
 				$participant = $room->getParticipant($this->userId);
-
-				if ($participant->getParticipantType() === Participant::USER_SELF_JOINED) {
-					$room->removeParticipantBySession($participant);
-				}
-			} catch (RoomNotFoundException $e) {
-			} catch (\RuntimeException $e) {
+				$room->disconnectUserFromAllRooms($participant->getUser());
 			}
-
-			// As a pre-caution we simply disconnect the user from all rooms
-			$this->manager->disconnectUserFromAllRooms($this->userId);
-		} else {
-			$sessionId = $this->session->get('spreed-session');
-			$this->manager->removeSessionFromAllRooms($sessionId);
+		} catch (RoomNotFoundException $e) {
+		} catch (ParticipantNotFoundException $e) {
 		}
 
-		$this->session->remove('spreed-session');
 		return new DataResponse();
 	}
 

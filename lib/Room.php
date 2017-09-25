@@ -407,6 +407,8 @@ class Room {
 	public function enterRoomAsUser($userId, $password) {
 		$this->dispatcher->dispatch(self::class . '::preUserEnterRoom', new GenericEvent($this));
 
+		$this->disconnectUserFromAllRooms($userId);
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_room_participants')
 			->set('sessionId', $query->createParameter('sessionId'))
@@ -436,16 +438,33 @@ class Room {
 			$query->execute();
 		}
 
-		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_room_participants')
-			->set('sessionId', $query->createNamedParameter('0'))
-			->where($query->expr()->neq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
-		$query->execute();
-
 		$this->dispatcher->dispatch(self::class . '::postUserEnterRoom', new GenericEvent($this));
 
 		return $sessionId;
+	}
+
+	/**
+	 * @param string $userId
+	 */
+	public function disconnectUserFromAllRooms($userId) {
+		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this));
+
+		// Reset sessions on all normal rooms
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_room_participants')
+			->set('sessionId', $query->createNamedParameter('0'))
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->neq('participantType', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		// And kill session on all self joined rooms
+		$query = $this->db->getQueryBuilder();
+		$query->delete('spreedme_room_participants')
+			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('participantType', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this));
 	}
 
 	/**
