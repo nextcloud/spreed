@@ -582,15 +582,15 @@ class Room {
 	}
 
 	/**
-	 * @param string $participant
+	 * @param string $userId
 	 * @param string $sessionId
 	 * @param int $timestamp
 	 */
-	public function ping($participant, $sessionId, $timestamp) {
+	public function ping($userId, $sessionId, $timestamp) {
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_room_participants')
 			->set('lastPing', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('userId', $query->createNamedParameter((string) $participant)))
+			->where($query->expr()->eq('userId', $query->createNamedParameter((string) $userId)))
 			->andWhere($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 
