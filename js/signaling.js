@@ -93,7 +93,6 @@
 	function InternalSignaling() {
 		SignalingBase.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
-		this._startPullingMessages();
 
 		this.pingFails = 0;
 		this.pingInterval = null;
@@ -203,7 +202,7 @@
 				this.sessionId = result.ocs.data.sessionId;
 				this.currentCallToken = token;
 				this._startPingCall();
-				this._openEventSource();
+				this._startPullingMessages();
 				this._getCallPeers(token).then(function(peers) {
 					var callDescription = {
 						'clients': {}
