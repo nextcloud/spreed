@@ -45,5 +45,8 @@ class Application extends App {
 		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
 		$dispatcher->addListener(Room::class . '::postUserEnterRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$dispatcher->addListener(Room::class . '::postPostUserDisconnectRoom', $listener);
 	}
 }
