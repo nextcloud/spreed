@@ -97,11 +97,6 @@ pipeline:
       # Run phpunit tests
       - cd tests/php/
       - phpunit --configuration phpunit.xml
-
-      # Create coverage report
-      - wget https://codecov.io/bash -O codecov.sh
-      - sh -c "if [ '$DRONE_BUILD_EVENT' = 'pull_request' ]; then bash codecov.sh -B $DRONE_BRANCH -C $DRONE_COMMIT -P $DRONE_PULL_REQUEST -t 5315d2c6-105e-4462-91d9-d9e7d4a0cf17 -f clover.xml; fi"
-      - sh -c "if [ '$DRONE_BUILD_EVENT' != 'pull_request' ]; then bash codecov.sh -B $DRONE_BRANCH -C $DRONE_COMMIT -t 5315d2c6-105e-4462-91d9-d9e7d4a0cf17 -f clover.xml; fi"
     when:
       matrix:
         TESTS: php5.6
