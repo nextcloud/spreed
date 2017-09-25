@@ -241,7 +241,7 @@ class Manager {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @param string $sessionId
 	 * @return Room
 	 * @throws RoomNotFoundException
