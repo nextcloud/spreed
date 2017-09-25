@@ -3,28 +3,28 @@
 
 	// TODO(leon): Make answerRequest only call affected handler
 
-	var intReqId = "__int_pm_id";
-	var PostMessageAPI = function(config) {
-		// Bind polyfill
-		if (!Function.prototype.bind) {
-			Function.prototype.bind = function(that) {
-				var context = this;
-				var s = Array.prototype.slice;
-				var sc = s.call(arguments, 1);
-				return function() {
-					return context.apply(that, sc.concat(s.call(arguments)));
-				}
-			};
-		}
-
-		var IN_IFRAME = (function() {
-			try {
-				return window.self !== window.top;
-			} catch (e) {
-				return true;
+	// Bind polyfill
+	if (!Function.prototype.bind) {
+		Function.prototype.bind = function(that) {
+			var context = this;
+			var s = Array.prototype.slice;
+			var sc = s.call(arguments, 1);
+			return function() {
+				return context.apply(that, sc.concat(s.call(arguments)));
 			}
-		})();
+		};
+	}
 
+	var INTERNAL_REQ_ID = "__int_pm_id";
+	var IN_IFRAME = (function() {
+		try {
+			return window.self !== window.top;
+		} catch (e) {
+			return true;
+		}
+	})();
+
+	var PostMessageAPI = function(config) {
 		this.parent = IN_IFRAME ? config.parent : null;
 		this.iframe = config.iframe;
 		this.popup = config.popup;
@@ -73,12 +73,12 @@
 		}
 	};
 	PostMessageAPI.prototype.requestResponse = function(data, cb) {
-		data[intReqId] = data.type + ":" + (new Date()).getTime();
+		data[INTERNAL_REQ_ID] = data.type + ":" + (new Date()).getTime();
 
 		var listener = function(event) {
-			if (event.data[intReqId] === data[intReqId]) {
+			if (event.data[INTERNAL_REQ_ID] === data[INTERNAL_REQ_ID]) {
 				this.unbind(listener);
-				delete event.data[intReqId];
+				delete event.data[INTERNAL_REQ_ID];
 				cb(event.data);
 			}
 		}.bind(this);
@@ -88,7 +88,7 @@
 	PostMessageAPI.prototype.answerRequest = function(request, data) {
 		// Create clone
 		request = request.data;
-		data[intReqId] = request[intReqId];
+		data[INTERNAL_REQ_ID] = request[INTERNAL_REQ_ID];
 		this.post(data);
 	};
 	PostMessageAPI.prototype.getPartnerWindow = function() {
@@ -117,8 +117,11 @@
 			this.partnerOrigin = event.origin;
 		}
 		this.log("Received event", event);
-		for (var i = 0, l = this.listeners.length; i < l; i++) {
-			var listener = this.listeners[i];
+		// Create copy of listeners array to avoid issues on initial
+		// event as listeners array is modified while looping
+		var listeners = this.listeners.slice();
+		for (var i = 0, l = listeners.length; i < l; i++) {
+			var listener = listeners[i];
 			if (listener) {
 				listener(event);
 			}
