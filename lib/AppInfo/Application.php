@@ -47,6 +47,6 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
-		$dispatcher->addListener(Room::class . '::postPostUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 	}
 }
