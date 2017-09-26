@@ -139,6 +139,7 @@ class SignalingController extends OCSController {
 	public function pullMessages() {
 		$data = [];
 		$seconds = 30;
+		$sessionId = '';
 
 		while ($seconds > 0) {
 			if ($this->userId === null) {
@@ -175,6 +176,13 @@ class SignalingController extends OCSController {
 				break;
 			}
 			sleep(1);
+		}
+
+		try {
+			// Add an update of the room participants at the end of the waiting
+			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
+		} catch (RoomNotFoundException $e) {
 		}
 
 		return new DataResponse($data);
