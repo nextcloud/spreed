@@ -357,8 +357,10 @@ video {
 	box-shadow: 0;
 }
 
-#app-content.screensharing #screens {
+#app-content.screensharing #screens,
+#app-content #presentations {
 	position: absolute;
+	z-index: 1;
 	width: 100%;
 	height: calc(100% - 200px);
 	overflow-y: scroll;
@@ -428,7 +430,8 @@ video {
 
 .nameIndicator button.audio-disabled,
 .nameIndicator button.video-disabled,
-.nameIndicator button.screensharing-disabled {
+.nameIndicator button.screensharing-disabled,
+.nameIndicator button.presentation-disabled {
 	opacity: .7;
 }
 

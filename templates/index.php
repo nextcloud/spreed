@@ -5,7 +5,14 @@
 vendor_script('select2/select2');
 vendor_style('select2/select2');
 
-style('spreed', 'style');
+style(
+	'spreed',
+	[
+		'style',
+		'presentation/presentation',
+	]
+);
+// TODO(leon): Determine which presentation scripts are really required now that presentations run in an Iframe
 script(
 	'spreed',
 	[
@@ -22,6 +29,11 @@ script(
 		'webrtc',
 		'signaling',
 		'calls',
+		'postmessage',
+		'presentation/consts',
+		'presentation/type-base',
+		'presentation/type-pdf',
+		'presentation/manager',
 		'app',
 		'init',
 	]
@@ -91,6 +103,29 @@ script(
 				<div class="nameIndicator">
 					<button id="mute" class="icon-audio-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
 					<button id="hideVideo" class="icon-video-white" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
+					<button id="presentation-button" class="app-navigation-entry-utils-menu-button icon-upload-white presentation-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share presentation')) ?>"></button>
+					<div id="presentation-menu" class="app-navigation-entry-menu">
+						<ul>
+							<li>
+								<button id="presentation-next-page-button">
+									<span class="icon-screen"></span>
+									<span><?php p($l->t('Show next page')); ?></span>
+								</button>
+							</li>
+							<li>
+								<button id="presentation-previous-page-button">
+									<span class="icon-screen"></span>
+									<span><?php p($l->t('Show previous page')); ?></span>
+								</button>
+							</li>
+							<li>
+								<button id="stop-presentation-button">
+									<span class="icon-screen-off"></span>
+									<span><?php p($l->t('Close presentation')); ?></span>
+								</button>
+							</li>
+						</ul>
+					</div>
 					<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off-white screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
 					<div id="screensharing-menu" class="app-navigation-entry-menu">
 						<ul>
@@ -113,6 +148,8 @@ script(
 		</div>
 
 		<div id="screens"></div>
+
+		<div id="presentations"></div>
 
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-video"></div>

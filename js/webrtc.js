@@ -666,6 +666,12 @@ var spreedPeerConnectionTable = [];
 				}
 			} else if (label === 'hark') {
 				// Ignore messages from hark datachannel
+			} else if (label === OCA.SpreedMe.Presentation.consts.DATACHANNEL_NAMESPACE) {
+				try {
+					OCA.SpreedMe.Presentation.instance().handleEvent(data, peer);
+				} catch(e) {
+					console.log("Presentation instance could not handle event", e);
+				}
 			} else {
 				console.log('Uknown message from %s datachannel', label, data);
 			}

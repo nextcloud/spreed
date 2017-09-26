@@ -29,6 +29,11 @@ return [
 			'verb' => 'GET',
 		],
 		[
+			'name' => 'Page#presentationsSandbox',
+			'url' => '/sandbox/presentations',
+			'verb' => 'GET',
+		],
+		[
 			'name' => 'Signalling#signalling',
 			'url' => '/signalling',
 			'verb' => 'POST',
@@ -211,6 +216,13 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'FileSharing#shareAtPath',
+			'url' => '/api/{apiVersion}/share',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];
-

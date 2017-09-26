@@ -23,7 +23,6 @@
 
 namespace OCA\Spreed\Controller;
 
-use OC\HintException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
@@ -37,6 +36,7 @@ use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 use OCP\Security\ISecureRandom;
+use OC\HintException;
 
 class PageController extends Controller {
 	/** @var string */
@@ -138,6 +138,44 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'"); // Used for sandboxed presentations
+		$response->setContentSecurityPolicy($csp);
+		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @return TemplateResponse|RedirectResponse
+	 * @throws HintException
+	 */
+	public function presentationsSandbox() {
+		// TODO(leon): ..
+		// Dear reviewer, please let me know how to properly handle this. I honestly don't know how :(
+		$rootDir = '../../../../';
+		$appDir = $rootDir . 'apps/spreed/';
+		$cssDir = $appDir . 'css/';
+		$jsDir = $appDir . 'js/';
+		$params = array(
+			'cssfiles' => array(
+				$cssDir . 'presentation/sandbox.css',
+			),
+			'jsfiles' => array(
+				$rootDir . 'core/vendor/underscore/underscore.js',
+				$rootDir . 'core/vendor/jquery/dist/jquery.min.js',
+				$jsDir . 'vendor/pdfjs-dist/build/pdf.combined.js',
+				$jsDir . 'postmessage.js',
+				$jsDir . 'presentation/consts.js',
+				$jsDir . 'presentation/type-base.js',
+				$jsDir . 'presentation/type-pdf.js',
+				$jsDir . 'presentation/sandbox.js',
+			),
+		);
+		$response = new TemplateResponse($this->appName, 'sandbox-presentations', $params, 'blank');
+		$csp = new ContentSecurityPolicy();
+		$csp->addAllowedConnectDomain('blob:');
+		$csp->addAllowedFontDomain('data:');
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -168,6 +206,7 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
+		$csp->addAllowedFrameDomain("'self'"); // Used for sandboxed presentations
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}

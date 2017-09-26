@@ -518,6 +518,14 @@
 
 			OCA.SpreedMe.initCalls(signaling);
 
+			// Init presentations
+			_.bind(function() {
+				var rootElem = document.getElementById('presentations');
+				this.presentations = OCA.SpreedMe.Presentation.init(rootElem, OCA.SpreedMe.webrtc);
+				$('#presentation-button')
+				.on('click', _.bind(this.presentations.chooseFromPicker, this.presentations));
+			}, this)();
+
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 

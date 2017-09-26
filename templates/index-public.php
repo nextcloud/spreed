@@ -5,7 +5,14 @@
 vendor_script('select2/select2');
 vendor_style('select2/select2');
 
-style('spreed', 'style');
+style(
+	'spreed',
+	[
+		'style',
+		'presentation/presentation',
+	]
+);
+// TODO(leon): Determine which presentation scripts are really required now that presentations run in an Iframe
 script(
 	'spreed',
 	[
@@ -19,6 +26,11 @@ script(
 		'webrtc',
 		'signaling',
 		'calls',
+		'postmessage',
+		'presentation/consts',
+		'presentation/type-base',
+		'presentation/type-pdf',
+		'presentation/manager',
 		'app',
 		'init',
 	]
@@ -89,6 +101,8 @@ script(
 		</div>
 
 		<div id="screens"></div>
+
+		<div id="presentations"></div>
 
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-video"></div>
