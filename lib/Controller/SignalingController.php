@@ -27,14 +27,15 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
-use OCA\Spreed\Signalling\Messages;
-use OCP\AppFramework\Controller;
-use OCP\AppFramework\Http\JSONResponse;
+use OCA\Spreed\Signaling\Messages;
+use OCP\AppFramework\Http;
+use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\ISession;
 
-class SignallingController extends Controller {
+class SignalingController extends OCSController {
 	/** @var Config */
 	private $config;
 	/** @var ISession */
@@ -45,7 +46,7 @@ class SignallingController extends Controller {
 	private $dbConnection;
 	/** @var Messages */
 	private $messages;
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 
 	/**
@@ -79,9 +80,9 @@ class SignallingController extends Controller {
 	 * @PublicPage
 	 *
 	 * @param string $messages
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
-	public function signalling($messages) {
+	public function signaling($messages) {
 		$response = [];
 		$messages = json_decode($messages, true);
 		foreach($messages as $message) {
@@ -128,83 +129,63 @@ class SignallingController extends Controller {
 			}
 		}
 
-		return new JSONResponse($response);
+		return new DataResponse($response);
 	}
 
 	/**
 	 * @PublicPage
+	 * @return DataResponse
 	 */
 	public function pullMessages() {
-		set_time_limit(0);
-		$eventSource = \OC::$server->createEventSource();
+		$data = [];
+		$seconds = 30;
+		$sessionId = '';
 
-		while(true) {
+		while ($seconds > 0) {
 			if ($this->userId === null) {
 				$sessionId = $this->session->get('spreed-session');
-
-				if (empty($sessionId)) {
-					// User is not active anywhere
-					$eventSource->send('usersInRoom', []);
-					$currentParticipant = false;
-					break;
-				} else {
-					$qb = $this->dbConnection->getQueryBuilder();
-					$qb->select('*')
-						->from('spreedme_room_participants')
-						->where($qb->expr()->eq('sessionId', $qb->createNamedParameter($sessionId)))
-						->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string)$this->userId)));
-					$result = $qb->execute();
-					$currentParticipant = $result->fetch();
-					$result->closeCursor();
-				}
 			} else {
-				$qb = $this->dbConnection->getQueryBuilder();
-				$qb->select('*')
-					->from('spreedme_room_participants')
-					->where($qb->expr()->neq('sessionId', $qb->createNamedParameter('0')))
-					->andWhere($qb->expr()->eq('userId', $qb->createNamedParameter((string)$this->userId)))
-					->orderBy('lastPing', 'DESC')
-					->setMaxResults(1);
-				$result = $qb->execute();
-				$currentParticipant = $result->fetch();
-				$result->closeCursor();
-
-				if ($currentParticipant === false) {
-					$sessionId = null;
-				} else {
-					$sessionId = $currentParticipant['sessionId'];
-				}
+				$sessionId = $this->manager->getCurrentSessionId($this->userId);
 			}
 
 			if ($sessionId === null) {
 				// User is not active anywhere
-				$eventSource->send('usersInRoom', []);
-			} else {
-				// Check if the connection is still active, if not: Kill all existing
-				// messages and end the event source
-				if ($currentParticipant) {
-					try {
-						$room = $this->manager->getRoomForParticipant($currentParticipant['roomId'], $this->userId);
-						$eventSource->send('usersInRoom', $this->getUsersInRoom($room));
-					} catch (RoomNotFoundException $e) {
-						$eventSource->send('usersInRoom', []);
-					}
-				} else {
-					$eventSource->send('usersInRoom', []);
-				}
+				return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
+			}
 
-				$messages = $this->messages->getAndDeleteMessages($sessionId);
-				foreach ($messages as $row) {
-					$eventSource->send('message', $row['data']);
+			// Query all messages and send them to the user
+			$data = $this->messages->getAndDeleteMessages($sessionId);
+			$messageCount = count($data);
+			$data = array_filter($data, function($message) {
+				return $message['data'] !== 'refresh-participant-list';
+			});
+
+			if ($messageCount !== count($data)) {
+				try {
+					$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+					$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
+				} catch (RoomNotFoundException $e) {
+					return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 				}
 			}
 
 			$this->dbConnection->close();
+			if (empty($data)) {
+				$seconds--;
+			} else {
+				break;
+			}
 			sleep(1);
 		}
 
-		$eventSource->close();
-		exit;
+		try {
+			// Add an update of the room participants at the end of the waiting
+			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
+		} catch (RoomNotFoundException $e) {
+		}
+
+		return new DataResponse($data);
 	}
 
 	/**

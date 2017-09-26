@@ -340,9 +340,14 @@ class RoomController extends OCSController {
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
-			$room->addParticipant($currentUser->getUID(), Participant::OWNER);
+			$room->addUsers([
+				'userId' => $currentUser->getUID(),
+				'participantType' => Participant::OWNER,
+			], [
+				'userId' => $targetUser->getUID(),
+				'participantType' => Participant::OWNER,
+			]);
 
-			$room->addParticipant($targetUser->getUID(), Participant::OWNER);
 			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -371,18 +376,26 @@ class RoomController extends OCSController {
 
 		// Create the room
 		$room = $this->manager->createGroupRoom($targetGroup->getGID());
-		$room->addParticipant($currentUser->getUID(), Participant::OWNER);
+		$room->addUsers([
+			'userId' => $currentUser->getUID(),
+			'participantType' => Participant::OWNER,
+		]);
 
 		$usersInGroup = $targetGroup->getUsers();
+		$participants = [];
 		foreach ($usersInGroup as $user) {
 			if ($currentUser->getUID() === $user->getUID()) {
 				// Owner is already added.
 				continue;
 			}
 
-			$room->addUser($user);
+			$participants[] = [
+				'userId' => $user->getUID(),
+			];
 			$this->createNotification($currentUser, $user, $room);
 		}
+
+		call_user_func_array([$room, 'addUsers'], $participants);
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
@@ -393,9 +406,18 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	protected function createPublicRoom() {
+		$currentUser = $this->userManager->get($this->userId);
+
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
 		// Create the room
 		$room = $this->manager->createPublicRoom();
-		$room->addParticipant($this->userId, Participant::OWNER);
+		$room->addUsers([
+			'userId' => $currentUser->getUID(),
+			'participantType' => Participant::OWNER,
+		]);
 
 		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 	}
@@ -535,13 +557,17 @@ class RoomController extends OCSController {
 			// In case a user is added to a one2one call, we change the call to a group call
 			$room->changeType(Room::GROUP_CALL);
 
-			$room->addUser($newUser);
+			$room->addUsers([
+				'userId' => $newUser->getUID(),
+			]);
 			$this->createNotification($currentUser, $newUser, $room);
 
 			return new DataResponse(['type' => $room->getType()]);
 		}
 
-		$room->addUser($newUser);
+		$room->addUsers([
+			'userId' => $newUser->getUID(),
+		]);
 		$this->createNotification($currentUser, $newUser, $room);
 
 		return new DataResponse([]);

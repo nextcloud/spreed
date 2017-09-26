@@ -21,7 +21,10 @@
 
 namespace OCA\Spreed\AppInfo;
 
+use OCA\Spreed\Room;
+use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Application extends App {
 
@@ -29,4 +32,21 @@ class Application extends App {
 		parent::__construct('spreed', $urlParams);
 	}
 
+	public function registerHooks() {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var Messages $messages */
+			$messages = $this->getContainer()->query(Messages::class);
+			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
+		};
+
+		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
+		$dispatcher->addListener(Room::class . '::postUserEnterRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+	}
 }

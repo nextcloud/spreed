@@ -96,6 +96,7 @@
 
 		this.pingFails = 0;
 		this.pingInterval = null;
+		this.isSendingMessages = false;
 
 		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
@@ -149,11 +150,32 @@
 		var message = [{
 			ev: ev
 		}];
-		$.post(OC.generateUrl('/apps/spreed/signalling'), {
-			messages: JSON.stringify(message)
-		}, function(data) {
-			this._trigger(ev, [data]);
-		}.bind(this));
+
+		this._sendMessages(message).done(function(result) {
+			this._trigger(ev, [result.ocs.data]);
+		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
+			console.log('Sending signaling message with callback has failed.');
+			// TODO: Add error handling
+		});
+	};
+
+	InternalSignaling.prototype._sendMessages = function(messages) {
+		var defer = $.Deferred();
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
+			type: 'POST',
+			data: {messages: JSON.stringify(messages)},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (result) {
+				defer.resolve(result);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				defer.reject(xhr, textStatus, errorThrown);
+			}
+		});
+		return defer;
 	};
 
 	InternalSignaling.prototype.joinCall = function(token, callback, password) {
@@ -165,7 +187,7 @@
 		// 3. Pass information about the clients that need to be called by you to the callback.
 		//
 		// The clients will then use the message command to exchange
-		// their signalling information.
+		// their signaling information.
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			type: 'POST',
@@ -180,7 +202,7 @@
 				this.sessionId = result.ocs.data.sessionId;
 				this.currentCallToken = token;
 				this._startPingCall();
-				this._openEventSource();
+				this._startPullingMessages();
 				this._getCallPeers(token).then(function(peers) {
 					var callDescription = {
 						'clients': {}
@@ -288,27 +310,41 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._openEventSource = function() {
+	InternalSignaling.prototype._startPullingMessages = function() {
 		// Connect to the messages endpoint and pull for new messages
-		this.source = new OC.EventSource(OC.generateUrl('/apps/spreed/messages'));
-
-		this.source.listen('usersInRoom', function(users) {
-			this._trigger('usersInRoom', [users]);
-		}.bind(this));
-		this.source.listen('message', function(message) {
-			if (typeof(message) === 'string') {
-				message = JSON.parse(message);
-			}
-			this._trigger('message', [message]);
-		}.bind(this));
-		this.source.listen('__internal__', function(data) {
-			if (data === 'close') {
-				console.log('signaling connection closed - will reopen');
-				setTimeout(function() {
-					this._openEventSource();
-				}.bind(this), 0);
-			}
-		}.bind(this));
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
+			type: 'GET',
+			dataType: 'json',
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (result) {
+				$.each(result.ocs.data, function(id, message) {
+					switch(message.type) {
+						case "usersInRoom":
+							this._trigger('usersInRoom', [message.data]);
+							break;
+						case "message":
+							if (typeof(message.data) === 'string') {
+								message.data = JSON.parse(message.data);
+							}
+							this._trigger('message', [message.data]);
+							break;
+						default:
+							console.log('Unknown Signaling Message');
+							break;
+					}
+				}.bind(this));
+				this._startPullingMessages();
+			}.bind(this),
+			error: function (/*jqXHR, textStatus, errorThrown*/) {
+				//Retry to pull messages after 5 seconds
+				window.setTimeout(function() {
+					this._startPullingMessages();
+				}.bind(this), 5000);
+			}.bind(this)
+		});
 	};
 
 	/**
@@ -325,14 +361,20 @@
 	 * @private
 	 */
 	InternalSignaling.prototype.sendPendingMessages = function() {
-		if (!this.spreedArrayConnection.length) {
+		if (!this.spreedArrayConnection.length || this.isSendingMessages) {
 			return;
 		}
 
-		$.post(OC.generateUrl('/apps/spreed/signalling'), {
-			messages: JSON.stringify(this.spreedArrayConnection)
-		});
-		this.spreedArrayConnection = [];
+		var pendingMessagesLength = this.spreedArrayConnection.length;
+		this.isSendingMessages = true;
+
+		this._sendMessages(this.spreedArrayConnection).done(function(/*result*/) {
+			this.spreedArrayConnection.splice(0, pendingMessagesLength);
+			this.isSendingMessages = false;
+		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
+			console.log('Sending pending signaling messages has failed.');
+			this.isSendingMessages = false;
+		}.bind(this));
 	};
 
 	/**

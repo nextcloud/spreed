@@ -241,7 +241,7 @@ class Manager {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @param string $sessionId
 	 * @return Room
 	 * @throws RoomNotFoundException
@@ -392,27 +392,6 @@ class Manager {
 		}
 
 		return $row['sessionId'];
-	}
-
-	/**
-	 * @param string $userId
-	 */
-	public function disconnectUserFromAllRooms($userId) {
-		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_room_participants')
-			->set('sessionId', $query->createNamedParameter('0'))
-			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)));
-		$query->execute();
-	}
-
-	/**
-	 * @param string $sessionId
-	 */
-	public function removeSessionFromAllRooms($sessionId) {
-		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_room_participants')
-			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)));
-		$query->execute();
 	}
 
 	/**
