@@ -1,0 +1,19 @@
+.videocalls.section {
+	input {
+		width: 300px;
+	}
+
+	.icon-delete,
+	div.stun-server:last-child .icon-add {
+		display: inline-block;
+	}
+
+	.error {
+		border-color: $color-error;
+	}
+
+	label {
+		min-width: 200px;
+		display: inline-block;
+	}
+}

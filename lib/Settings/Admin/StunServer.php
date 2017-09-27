@@ -1,6 +1,8 @@
 <?php
 /**
- * @author Joachim Bauch <mail@joachim-bauch.de>
+ * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
+ *
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -19,14 +21,15 @@
  *
  */
 
-namespace OCA\Spreed\Settings;
+
+namespace OCA\Spreed\Settings\Admin;
 
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 
-class Admin implements ISettings {
+class StunServer implements ISettings {
 
 	/** @var IConfig */
 	private $config;
@@ -41,19 +44,16 @@ class Admin implements ISettings {
 	public function getForm() {
 		$parameters = [
 			'stunServer' => $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443'),
-			'turnServer' => $this->config->getAppValue('spreed', 'turn_server', ''),
-			'turnServerSecret' => $this->config->getAppValue('spreed', 'turn_server_secret', ''),
-			'turnServerProtocols' => $this->config->getAppValue('spreed', 'turn_server_protocols', ''),
 		];
 
-		return new TemplateResponse('spreed', 'settings-admin', $parameters, '');
+		return new TemplateResponse('spreed', 'settings/admin/stun-server', $parameters, '');
 	}
 
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection() {
-		return 'videocalls';
+		return 'stun_server';
 	}
 
 	/**
@@ -64,7 +64,7 @@ class Admin implements ISettings {
 	 * E.g.: 70
 	 */
 	public function getPriority() {
-		return 70;
+		return 65;
 	}
 
 }

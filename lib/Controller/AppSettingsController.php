@@ -49,46 +49,14 @@ class AppSettingsController extends Controller {
 	}
 
 	/**
-	 * Configure the settings of the Spreed app. The STUN server must be passed
-	 * in the form "stunserver:port", e.g. "stun.domain.invalid:1234".
+	 * Configure the settings of the Spreed app.
 	 *
-	 * @param string $stun_server
 	 * @param string $turn_server
 	 * @param string $turn_server_secret
+	 * @param string $turn_server_protocols
+	 * @return array
 	 */
-	public function setSpreedSettings($stun_server, $turn_server, $turn_server_secret, $turn_server_protocols) {
-		$stun_server = trim($stun_server);
-		if ($stun_server !== "") {
-			if (substr($stun_server, 0, 5) === "stun:") {
-				$stun_server = substr($stun_server, 5);
-			}
-
-			$parts = explode(":", $stun_server);
-			if (count($parts) > 2) {
-				return array('data' =>
-					array('message' =>
-						(string) $this->l10n->t('Invalid format, must be stunserver:port.')
-					),
-					'status' => 'error'
-				);
-			}
-
-			$options = array(
-				'options' => array(
-					'default' => 0,
-					'max_range' => 65535,
-					'min_range' => 1,
-				),
-			);
-			if (count($parts) === 2 && !filter_var($parts[1], FILTER_VALIDATE_INT, $options)) {
-				return array('data' =>
-					array('message' =>
-						(string) $this->l10n->t('Invalid port specified.')
-					),
-					'status' => 'error'
-				);
-			}
-		}
+	public function setSpreedSettings($turn_server, $turn_server_secret, $turn_server_protocols) {
 		if ($turn_server_protocols !== '') {
 			if (!in_array($turn_server_protocols, array('udp,tcp', 'tcp', 'udp'))) {
 				return array('data' =>

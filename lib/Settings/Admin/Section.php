@@ -19,14 +19,14 @@
  *
  */
 
-namespace OCA\Spreed\Settings;
+namespace OCA\Spreed\Settings\Admin;
 
 
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\Settings\IIconSection;
 
-class AdminSection implements IIconSection {
+class Section implements IIconSection {
 
 	/** @var IL10N */
 	private $l;

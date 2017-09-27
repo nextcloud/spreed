@@ -47,7 +47,18 @@ class Config {
 	 * @return string
 	 */
 	public function getStunServer() {
-		return $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443');
+		$config = $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443');
+		$servers = json_decode($config);
+
+		if ($servers === null) {
+			return $config ?: 'stun.nextcloud.com:443';
+		}
+
+		if (is_array($servers) && !empty($servers)) {
+			return $servers[mt_rand(0, count($servers) - 1)];
+		}
+
+		return 'stun.nextcloud.com:443';
 	}
 
 	/**
