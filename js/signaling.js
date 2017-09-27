@@ -179,15 +179,6 @@
 	};
 
 	InternalSignaling.prototype.joinCall = function(token, callback, password) {
-		// The client is joining a new call, in this case we need
-		// to do the following:
-		//
-		// 1. Join the call as participant.
-		// 2. Get a list of other connected clients in the call.
-		// 3. Pass information about the clients that need to be called by you to the callback.
-		//
-		// The clients will then use the message command to exchange
-		// their signaling information.
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			type: 'POST',
@@ -203,20 +194,11 @@
 				this.currentCallToken = token;
 				this._startPingCall();
 				this._startPullingMessages();
-				this._getCallPeers(token).then(function(peers) {
-					var callDescription = {
-						'clients': {}
-					};
-
-					peers.forEach(function(element) {
-						if (element['sessionId'] < this.sessionId) {
-							callDescription['clients'][element['sessionId']] = {
-								'video': true
-							};
-						}
-					}.bind(this));
-					callback('', callDescription);
-				}.bind(this));
+				// We send an empty call description to simplewebrtc since
+				// usersChanged (webrtc.js) will create/remove peer connections
+				// with call participants
+				var callDescription = {'clients': {}};
+				callback('', callDescription);
 			}.bind(this),
 			error: function (result) {
 				if (result.status === 404 || result.status === 503) {
