@@ -55,6 +55,7 @@ class Config {
 		}
 
 		if (is_array($servers) && !empty($servers)) {
+			// For now we use a random server from the list
 			return $servers[mt_rand(0, count($servers) - 1)];
 		}
 
@@ -67,12 +68,10 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnSettings() {
-		// generate from shared secret
-		$turnServer = $this->config->getAppValue('spreed', 'turn_server', '');
-		$turnServerSecret = $this->config->getAppValue('spreed', 'turn_server_secret', '');
-		$turnServerProtocols = $this->config->getAppValue('spreed', 'turn_server_protocols', '');
+		$config = $this->config->getAppValue('spreed', 'stun_server');
+		$servers = json_decode($config);
 
-		if ($turnServer === '' || $turnServerSecret === '' || $turnServerProtocols === '') {
+		if ($servers === null || !empty($servers) || !is_array($servers)) {
 			return [
 				'server' => '',
 				'username' => '',
@@ -81,16 +80,19 @@ class Config {
 			];
 		}
 
-		// the credentials are valid for 24h - FIXME add the TTL to the response and properly reconnect then
+		// For now we use a random server from the list
+		$server = $servers[mt_rand(0, count($servers) - 1)];
+
+		// Credentials are valid for 24h
+		// FIXME add the TTL to the response and properly reconnect then
 		$username = $this->timeFactory->getTime() + 86400;
-		$hashedString = hash_hmac('sha1', $username, $turnServerSecret, true);
-		$password = base64_encode($hashedString);
+		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
 
 		return array(
-			'server' => $turnServer,
-			'username' => (string)$username,
+			'server' => $server['server'],
+			'username' => (string) $username,
 			'password' => $password,
-			'protocols' => $turnServerProtocols,
+			'protocols' => $server['protocols'],
 		);
 	}
 
