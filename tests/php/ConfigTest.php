@@ -28,6 +28,11 @@ use Test\TestCase;
 class ConfigTest extends TestCase {
 
 	public function testGetStunServer() {
+		$servers = [
+			'stun1.example.com:443',
+			'stun2.example.com:129',
+		];
+
 		/** @var \PHPUnit_Framework_MockObject_MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		/** @var \PHPUnit_Framework_MockObject_MockObject|IConfig $config */
@@ -35,31 +40,35 @@ class ConfigTest extends TestCase {
 		$config
 			->expects($this->once())
 			->method('getAppValue')
-			->with('spreed', 'stun_server', 'stun.nextcloud.com:443')
-			->willReturn('88.198.160.129');
+			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
+			->willReturn(json_encode($servers));
 
 		$helper = new Config($config, $timeFactory);
-		$this->assertSame('88.198.160.129', $helper->getStunServer());
+
+		$this->assertTrue(in_array($helper->getStunServer(), $servers, true));
 	}
 
 	public function testGenerateTurnSettings() {
+
 		/** @var \PHPUnit_Framework_MockObject_MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
-			->expects($this->at(0))
+			->expects($this->once())
 			->method('getAppValue')
-			->with('spreed', 'turn_server', '')
-			->willReturn('turn.example.org');
-		$config
-			->expects($this->at(1))
-			->method('getAppValue')
-			->with('spreed', 'turn_server_secret', '')
-			->willReturn('thisisasupersecretsecret');
-		$config
-			->expects($this->at(2))
-			->method('getAppValue')
-			->with('spreed', 'turn_server_protocols', '')
-			->willReturn('udp,tcp');
+			->with('spreed', 'turn_servers', '')
+			->willReturn(json_encode([
+				[
+					'server' => 'turn.example.org',
+					'secret' => 'thisisasupersecretsecret',
+					'protocols' => 'udp,tcp',
+				],
+				[
+					'server' => 'turn2.example.com',
+					'secret' => 'ThisIsAlsoSuperSecret',
+					'protocols' => 'tcp',
+				],
+			]));
+
 		/** @var \PHPUnit_Framework_MockObject_MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$timeFactory
@@ -69,11 +78,22 @@ class ConfigTest extends TestCase {
 
 		$helper = new Config($config, $timeFactory);
 
-		$this->assertSame(array(
-			'server' => 'turn.example.org',
-			'username' => '1479829425',
-			'password' => 'ZY8fZQxAw/24gT0XYnMlcepUFlI=',
-			'protocols' => 'udp,tcp',
-		), $helper->getTurnSettings());
+		//
+		$server = $helper->getTurnSettings();
+		if ($server['server'] === 'turn.example.org') {
+			$this->assertSame([
+				'server' => 'turn.example.org',
+				'username' => '1479829425',
+				'password' => 'ZY8fZQxAw/24gT0XYnMlcepUFlI=',
+				'protocols' => 'udp,tcp',
+			], $server);
+		} else {
+			$this->assertSame([
+				'server' => 'turn2.example.com',
+				'username' => '1479829425',
+				'password' => 'VoqRpE4ktQ85TqFps8Qt+scEEvE=',
+				'protocols' => 'tcp',
+			], $server);
+		}
 	}
 }

@@ -19,17 +19,17 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Settings;
+namespace OCA\Spreed\Tests\php\Settings\Admin;
 
-use OCA\Spreed\Settings\Admin;
+use OCA\Spreed\Settings\Admin\StunServer;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 
-class AdminTest extends \Test\TestCase {
+class StunServerTest extends \Test\TestCase {
 
 	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
 	protected $config;
-	/** @var Admin */
+	/** @var StunServer */
 	protected $admin;
 
 	public function setUp() {
@@ -37,7 +37,7 @@ class AdminTest extends \Test\TestCase {
 
 		$this->config = $this->createMock(IConfig::class);
 
-		$this->admin = new Admin($this->config);
+		$this->admin = new StunServer($this->config);
 	}
 
 	public function testGetSection() {
@@ -57,8 +57,5 @@ class AdminTest extends \Test\TestCase {
 
 		$params = $form->getParams();
 		$this->assertArrayHasKey('stunServer', $params);
-		$this->assertArrayHasKey('turnServer', $params);
-		$this->assertArrayHasKey('turnServerSecret', $params);
-		$this->assertArrayHasKey('turnServerProtocols', $params);
 	}
 }
