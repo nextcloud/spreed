@@ -40,7 +40,7 @@ class TurnServer implements ISettings {
 	 */
 	public function getForm() {
 		$parameters = [
-			'turnServer' => $this->config->getAppValue('spreed', 'turn_server'),
+			'turnServer' => $this->config->getAppValue('spreed', 'turn_servers'),
 		];
 
 		return new TemplateResponse('spreed', 'settings/admin/turn-server', $parameters, '');

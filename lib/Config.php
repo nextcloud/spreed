@@ -47,7 +47,7 @@ class Config {
 	 * @return string
 	 */
 	public function getStunServer() {
-		$config = $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443');
+		$config = $this->config->getAppValue('spreed', 'stun_servers', 'stun.nextcloud.com:443');
 		$servers = json_decode($config);
 
 		if ($servers === null) {
@@ -68,7 +68,7 @@ class Config {
 	 * @return array
 	 */
 	public function getTurnSettings() {
-		$config = $this->config->getAppValue('spreed', 'stun_server');
+		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config);
 
 		if ($servers === null || !empty($servers) || !is_array($servers)) {

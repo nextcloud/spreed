@@ -43,7 +43,7 @@ class StunServer implements ISettings {
 	 */
 	public function getForm() {
 		$parameters = [
-			'stunServer' => $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443'),
+			'stunServer' => $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443'])),
 		];
 
 		return new TemplateResponse('spreed', 'settings/admin/stun-server', $parameters, '');
