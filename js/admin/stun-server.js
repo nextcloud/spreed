@@ -1,6 +1,6 @@
-/* global OC, OCP, OCA, $, _ */
+/* global OC, OCP, OCA, $, _, Handlebars */
 
-(function(OC, OCP, OCA, $, _) {
+(function(OC, OCP, OCA, $, _, Handlebars) {
 	'use strict';
 
 	OCA.VideoCalls = OCA.VideoCalls || {};
@@ -93,7 +93,7 @@
 	};
 
 
-})(OC, OCP, OCA, $, _);
+})(OC, OCP, OCA, $, _, Handlebars);
 
 $(document).ready(function(){
 	OCA.VideoCalls.Admin.StunServer.init();
