@@ -41,7 +41,8 @@
 	 * To get the messages from the server "receiveMessages" should be used. It
 	 * will enable polling to the server and automatically update the collection
 	 * when new messages are received. Once enabled, the polling will go on
-	 * indefinitely.
+	 * indefinitely. Due to this "stopReceivingMessages" must be called once
+	 * the ChatMessageCollection is no longer needed.
 	 */
 	var ChatMessageCollection = Backbone.Collection.extend({
 
@@ -96,6 +97,8 @@
 		},
 
 		receiveMessages: function() {
+			this.receiveMessagesAgain = true;
+
 			this.fetch({
 				data: {
 					// The notOlderThan parameter could be used to limit the
@@ -118,14 +121,22 @@
 			});
 		},
 
+		stopReceivingMessages: function() {
+			this.receiveMessagesAgain = false;
+		},
+
 		_successfulFetch: function(collection, response) {
 			this.offset += response.ocs.data.length;
 
-			this.receiveMessages();
+			if (this.receiveMessagesAgain) {
+				this.receiveMessages();
+			}
 		},
 
 		_failedFetch: function() {
-			this.receiveMessages();
+			if (this.receiveMessagesAgain) {
+				this.receiveMessages();
+			}
 		}
 
 	});
