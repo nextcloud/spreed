@@ -54,6 +54,38 @@
 
 		parse: function(result) {
 			return result.ocs.data;
+		},
+
+		set: function(models, options) {
+			// The server returns the messages sorted from newest to oldest,
+			// which causes some issues with the default implementation of
+			// collections. If several messages were received at once they would
+			// be added to the collection in that same order, so the newest
+			// message would be the first one added and the oldest message would
+			// be the last one added (and the model id of the newest one would
+			// be lower than the model id of the oldest one). If another group
+			// of messages were received now then the newest message would be
+			// added to the collection after the oldest message from the
+			// previous group. Therefore, the models in the collection would not
+			// follow an absolute order from the newest message to the oldest
+			// one, but a local order for each group of messages fetched.
+			//
+			// Just sorting the collection is not a solution either. Setting
+			// "sort: true" as a fetch option would keep the collection sorted
+			// (although the ids of the models would still have the same problem
+			// described above), but the "add" events would be triggered anyway
+			// in the original order of the messages passed to "set".
+			//
+			// The best solution, besides changing the server to return the
+			// messages sorted from oldest to newest, is to sort the models
+			// passed to "set" from oldest to newest.
+			if (models !== undefined && models !== null && models.ocs !== undefined && models.ocs.data !== undefined) {
+				models.ocs.data = _.sortBy(models.ocs.data, function(model) {
+					return model.timestamp;
+				});
+			}
+
+			return Backbone.Collection.prototype.set.call(this, models, options);
 		}
 
 	});
