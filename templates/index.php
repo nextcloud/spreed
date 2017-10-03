@@ -6,17 +6,21 @@ vendor_script('select2/select2');
 vendor_style('select2/select2');
 
 style('spreed', 'style');
+style('spreed', 'comments');
 script(
 	'spreed',
 	[
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'models/chatmessage',
+		'models/chatmessagecollection',
 		'models/room',
 		'models/roomcollection',
 		'models/participant',
 		'models/participantcollection',
 		'views/callinfoview',
+		'views/chatview',
 		'views/editabletextlabel',
 		'views/participantlistview',
 		'views/participantview',
