@@ -47,6 +47,7 @@
 		_participantsView: null,
 		/** @property {boolean} videoWasEnabledAtLeastOnce  */
 		videoWasEnabledAtLeastOnce: false,
+		displayedGuestNameHint: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		videoDisabled: localStorage.getItem("videoDisabled"),
 		_searchTerm: '',
@@ -620,10 +621,11 @@
 				avatar.avatar(OC.currentUser, 128);
 			} else if (guestName) {
 				avatar.imageplaceholder(guestName, undefined, 128);
-			} else {
+			} else if (OCA.SpreedMe.app.displayedGuestNameHint === false) {
 				avatar.imageplaceholder('?', undefined, 128);
 				avatar.css('background-color', '#b9b9b9');
 				OC.Notification.showTemporary(t('spreed', 'You can set your name on the top right of this page so other participants can identify you better.'));
+				OCA.SpreedMe.app.displayedGuestNameHint = true;
 			}
 
 			avatarContainer.removeClass('hidden');
