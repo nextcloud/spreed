@@ -53,7 +53,7 @@ class StunServer implements ISettings {
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection() {
-		return 'stun_server';
+		return 'videocalls';
 	}
 
 	/**
