@@ -11,6 +11,7 @@
 		'	<input type="text" name="stun_server" placeholder="stunserver:port" value="{{server}}" />' +
 		'	<a class="icon icon-delete" title="' + t('spreed', 'Delete server') + '"></a>' +
 		'	<a class="icon icon-add" title="' + t('spreed', 'Add new server') + '"></a>' +
+		'	<span class="icon icon-checkmark-color hidden" title="' + t('spreed', 'Saved') + '"></span>' +
 		'</div>',
 		$list: undefined,
 		template: undefined,
@@ -36,10 +37,10 @@
 		},
 
 		addNewTemplate: function(server) {
-			server = server || '';
-			this.$list.append(
-				this.renderServer(server)
-			);
+			server = _.isString(server) ? server : '';
+			var $server = this.renderServer(server);
+			this.$list.append($server);
+			return $server;
 		},
 
 		deleteServer: function(e) {
@@ -51,13 +52,20 @@
 			this.saveServers();
 
 			if (this.$list.find('div.stun-server').length === 0) {
-				this.addNewTemplate('stun.nextcloud.com:443');
+				var $newServer = this.addNewTemplate('stun.nextcloud.com:443');
+				this.temporaryShowSuccess($newServer);
 			}
 
 		},
 
 		saveServers: function() {
-			var servers = [];
+			var servers = [],
+				$error = [],
+				$success = [],
+				self = this;
+
+			this.$list.find('input').removeClass('error');
+			this.$list.find('.icon-checkmark-color').addClass('hidden');
 
 			this.$list.find('input').each(function() {
 				var server = this.value,
@@ -67,15 +75,32 @@
 				} else {
 					if (parts[1].match(/^([1-9]\d{0,4})$/) === null ||
 						parseInt(parts[1]) > Math.pow(2, 16)) { //65536
-						$(this).addClass('error');
+						$error.push($(this));
 					} else {
 						servers.push(this.value);
-						$(this).removeClass('error');
+						$success.push($(this).parent('div.stun-server'));
 					}
 				}
 			});
 
-			OCP.AppConfig.setValue('spreed', 'stun_server', JSON.stringify(servers));
+			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
+				success: function() {
+					_.each($error, function($server) {
+						$server.addClass('error');
+					});
+					_.each($success, function($server) {
+						self.temporaryShowSuccess($server);
+					});
+				}
+			});
+		},
+
+		temporaryShowSuccess: function($server) {
+			var $icon = $server.find('.icon-checkmark-color');
+			$icon.removeClass('hidden');
+			setTimeout(function() {
+				$icon.addClass('hidden');
+			}, 2000);
 		},
 
 		renderServer: function(server) {

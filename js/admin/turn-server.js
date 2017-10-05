@@ -19,6 +19,7 @@
 		'	</select>' +
 		'	<a class="icon icon-delete" title="' + t('spreed', 'Delete server') + '"></a>' +
 		'	<a class="icon icon-add" title="' + t('spreed', 'Add new server') + '"></a>' +
+		'	<span class="icon icon-checkmark-color hidden" title="' + t('spreed', 'Saved') + '"></span>' +
 		'</div>',
 		$list: undefined,
 		template: undefined,
@@ -52,9 +53,9 @@
 		},
 
 		addNewTemplate: function() {
-			this.$list.append(
-				this.renderServer({})
-			);
+			var $server = this.renderServer({});
+			this.$list.append($server);
+			return $server;
 		},
 
 		deleteServer: function(e) {
@@ -66,14 +67,20 @@
 			this.saveServers();
 
 			if (this.$list.find('div.turn-server').length === 0) {
-				this.addNewTemplate();
+				var $newServer = this.addNewTemplate();
+				this.temporaryShowSuccess($newServer);
 			}
 		},
 
 		saveServers: function() {
-			var servers = [];
+			var servers = [],
+				$error = [],
+				$success = [],
+				self = this;
 
 			this.$list.find('input').removeClass('error');
+			this.$list.find('.icon-checkmark-color').addClass('hidden');
+
 			this.$list.find('div.turn-server').each(function() {
 				var $row = $(this),
 					$server = $row.find('input.server'),
@@ -85,15 +92,39 @@
 						protocols: $protocols.val()
 					};
 				if (data.server === '') {
-					$server.addClass('error');
+					$error.push($server);
+					if (data.secret === '') {
+						$error.push($secret);
+					}
+					return;
 				}
 				if (data.secret === '') {
-					$secret.addClass('error');
+					$error.push($secret);
+					return;
 				}
+
+				$success.push($(this));
 				servers.push(data);
 			});
 
-			OCP.AppConfig.setValue('spreed', 'turn_server', JSON.stringify(servers));
+			OCP.AppConfig.setValue('spreed', 'turn_servers', JSON.stringify(servers), {
+				success: function() {
+					_.each($error, function($input) {
+						$input.addClass('error');
+					});
+					_.each($success, function($server) {
+						self.temporaryShowSuccess($server);
+					});
+				}
+			});
+		},
+
+		temporaryShowSuccess: function($server) {
+			var $icon = $server.find('.icon-checkmark-color');
+			$icon.removeClass('hidden');
+			setTimeout(function() {
+				$icon.addClass('hidden');
+			}, 2000);
 		},
 
 		renderServer: function(server) {
