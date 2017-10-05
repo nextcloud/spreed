@@ -36,7 +36,6 @@ use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
-use OCP\Security\ISecureRandom;
 
 class PageController extends Controller {
 	/** @var string */
@@ -47,8 +46,6 @@ class PageController extends Controller {
 	private $logger;
 	/** @var Manager */
 	private $manager;
-	/** @var ISecureRandom */
-	private $secureRandom;
 	/** @var IURLGenerator */
 	private $url;
 	/** @var IManager */
@@ -61,7 +58,6 @@ class PageController extends Controller {
 	 * @param string $UserId
 	 * @param ILogger $logger
 	 * @param Manager $manager
-	 * @param ISecureRandom $secureRandom
 	 * @param IURLGenerator $url
 	 * @param IManager $notificationManager
 	 */
@@ -71,7 +67,6 @@ class PageController extends Controller {
 								$UserId,
 								ILogger $logger,
 								Manager $manager,
-								ISecureRandom $secureRandom,
 								IURLGenerator $url,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
@@ -79,7 +74,6 @@ class PageController extends Controller {
 		$this->api = $api;
 		$this->logger = $logger;
 		$this->manager = $manager;
-		$this->secureRandom = $secureRandom;
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
 	}
@@ -131,7 +125,6 @@ class PageController extends Controller {
 		}
 
 		$params = [
-			'sessionId' => $this->userId,
 			'token' => $token,
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
@@ -159,9 +152,7 @@ class PageController extends Controller {
 			]));
 		}
 
-		$newSessionId = $this->secureRandom->generate(255);
 		$params = [
-			'sessionId' => $newSessionId,
 			'token' => $token,
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
