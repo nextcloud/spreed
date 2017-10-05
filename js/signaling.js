@@ -207,7 +207,8 @@
 				}
 
 				if (result.status === 403) {
-					// Invalid password
+					// This should not happen anymore since we ask for the password before
+					// even trying to join the call, but let's keep it for now.
 					OC.dialogs.prompt(
 						t('spreed', 'Please enter the password for this call'),
 						t('spreed','Password required'),

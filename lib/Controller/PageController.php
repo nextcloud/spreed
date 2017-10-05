@@ -24,8 +24,10 @@
 namespace OCA\Spreed\Controller;
 
 use OC\HintException;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -34,6 +36,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\ILogger;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 
@@ -42,6 +45,8 @@ class PageController extends Controller {
 	private $userId;
 	/** @var RoomController */
 	private $api;
+	/** @var ISession */
+	private $session;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -55,6 +60,7 @@ class PageController extends Controller {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param RoomController $api
+	 * @param ISession $session
 	 * @param string $UserId
 	 * @param ILogger $logger
 	 * @param Manager $manager
@@ -64,14 +70,16 @@ class PageController extends Controller {
 	public function __construct($appName,
 								IRequest $request,
 								RoomController $api,
+								ISession $session,
 								$UserId,
 								ILogger $logger,
 								Manager $manager,
 								IURLGenerator $url,
 								IManager $notificationManager) {
 		parent::__construct($appName, $request);
-		$this->userId = $UserId;
 		$this->api = $api;
+		$this->session = $session;
+		$this->userId = $UserId;
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->url = $url;
@@ -81,15 +89,17 @@ class PageController extends Controller {
 	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
+	 * @UseSession
 	 *
 	 * @param string $token
 	 * @param string $callUser
+	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	public function index($token = '', $callUser = '') {
+	public function index($token = '', $callUser = '', $password = '') {
 		if ($this->userId === null) {
-			return $this->guestEnterRoom($token);
+			return $this->guestEnterRoom($token, $password);
 		}
 
 		if ($token !== '') {
@@ -116,6 +126,26 @@ class PageController extends Controller {
 				// Room not found, redirect to main page
 				$token = '';
 			}
+
+			$this->session->remove('spreed-password');
+
+			if ($room->hasPassword()) {
+				// If the user joined themselves or is not found, they need the password.
+				try {
+					$participant = $room->getParticipant($this->userId);
+					$requirePassword = $participant->getParticipantType() === Participant::USER_SELF_JOINED;
+				} catch (ParticipantNotFoundException $e) {
+					$requirePassword = true;
+				}
+
+				if ($requirePassword) {
+					if ($password !== '' && $room->verifyPassword($password)) {
+						$this->session->set('spreed-password', $token);
+					} else {
+						return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+					}
+				}
+			}
 		} else {
 			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
@@ -137,10 +167,11 @@ class PageController extends Controller {
 
 	/**
 	 * @param string $token
+	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	protected function guestEnterRoom($token) {
+	protected function guestEnterRoom($token, $password) {
 		try {
 			$room = $this->manager->getRoomByToken($token);
 			if ($room->getType() !== Room::PUBLIC_CALL) {
@@ -150,6 +181,15 @@ class PageController extends Controller {
 			return new RedirectResponse($this->url->linkToRoute('core.login.showLoginForm', [
 				'redirect_url' => $this->url->linkToRoute('spreed.Page.index', ['token' => $token]),
 			]));
+		}
+
+		$this->session->remove('spreed-password');
+		if ($room->hasPassword()) {
+			if ($password !== '' && $room->verifyPassword($password)) {
+				$this->session->set('spreed-password', $token);
+			} else {
+				return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+			}
 		}
 
 		$params = [
