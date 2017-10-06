@@ -19,14 +19,14 @@
  *
  */
 
-namespace OCA\Spreed\Settings;
+namespace OCA\Spreed\Settings\Admin;
 
 
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 
-class Admin implements ISettings {
+class TurnServer implements ISettings {
 
 	/** @var IConfig */
 	private $config;
@@ -40,20 +40,17 @@ class Admin implements ISettings {
 	 */
 	public function getForm() {
 		$parameters = [
-			'stunServer' => $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443'),
-			'turnServer' => $this->config->getAppValue('spreed', 'turn_server', ''),
-			'turnServerSecret' => $this->config->getAppValue('spreed', 'turn_server_secret', ''),
-			'turnServerProtocols' => $this->config->getAppValue('spreed', 'turn_server_protocols', ''),
+			'turnServer' => $this->config->getAppValue('spreed', 'turn_servers'),
 		];
 
-		return new TemplateResponse('spreed', 'settings-admin', $parameters, '');
+		return new TemplateResponse('spreed', 'settings/admin/turn-server', $parameters, '');
 	}
 
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection() {
-		return 'additional';
+		return 'videocalls';
 	}
 
 	/**
@@ -64,7 +61,7 @@ class Admin implements ISettings {
 	 * E.g.: 70
 	 */
 	public function getPriority() {
-		return 30;
+		return 70;
 	}
 
 }

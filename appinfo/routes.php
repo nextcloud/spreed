@@ -28,11 +28,6 @@ return [
 			'url' => '/',
 			'verb' => 'GET',
 		],
-		[
-			'name' => 'AppSettings#setSpreedSettings',
-			'url' => '/settings/admin',
-			'verb' => 'POST',
-		],
 	],
 	'ocs' => [
 		[

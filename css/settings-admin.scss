@@ -1,0 +1,25 @@
+.videocalls.section {
+	input {
+		width: 300px;
+	}
+
+	.icon-delete,
+	.icon-checkmark-color,
+	div.stun-server:last-child .icon-add,
+	div.turn-server:last-child .icon-add {
+		display: inline-block;
+	}
+
+	.icon-checkmark-color.hidden {
+		display: none;
+	}
+
+	.error {
+		border-color: $color-error;
+	}
+
+	label {
+		min-width: 200px;
+		display: inline-block;
+	}
+}
