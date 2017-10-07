@@ -1,5 +1,10 @@
 { "translations": {
     "Video calls" : "Videó hívások",
+    "Saved" : "Elmentve",
+    "TURN server protocols" : "TURN kiszolgáló protokollok",
+    "UDP and TCP" : "UDP és TCP",
+    "UDP only" : "csak UDP",
+    "TCP only" : "csak TCP",
     "(group)" : "(csoport)",
     "New public call" : "Új nyilvános hívás",
     "Waiting for {participantName} to join the call …" : "Várakozunk, hogy {participantName} csatlakozzon a híváshoz...",
@@ -12,7 +17,6 @@
     "Press ⌘-C to copy." : "Nyomj ⌘-C-t a másoláshoz.",
     "Press Ctrl-C to copy." : "Nyomj Ctrl-C-t a másoláshoz.",
     "This call has ended" : "A hívás véget ért",
-    "Saving failed" : "Mentés sikertelen",
     "Add person" : "Személy hozzáadás",
     "Rename" : "Átnevez",
     "Share link" : "Megosztás hivatkozással",
@@ -27,10 +31,6 @@
     "Please use a different browser like Firefox or Chrome" : "Kérlek használj másik böngészőt pl Firefoxot vagy Chrome-ot",
     "Error while accessing microphone & camera" : "Hiba a kamera és a mikrofon hozzáférésekor",
     "WebRTC is not supported in your browser :-/" : "A böngésződ nem támogatja a WebRTC-t :-/",
-    "Invalid format, must be stunserver:port." : "Érvénytelen formátum, ilyennek kell lennie: stunserver:port.",
-    "Invalid port specified." : "A megadott port érvénytelen",
-    "Invalid protocols specified." : "A megadott protokollok nem érvényesek.",
-    "Saved" : "Elmentve",
     "_%n other guest_::_%n other guests_" : ["%n további vendég","%n további vendég"],
     "_%n guest_::_%n guests_" : ["%n vendég","%n vendég"],
     ", " : ", ",
@@ -42,11 +42,11 @@
     "Mute audio" : "Hang némítása",
     "Smile in 3… 2… 1!" : "3… 2… 1... mosolyogj!",
     "Choose person …" : "Válassz valakit ...",
-    "STUN server" : "STUN kiszolgáló",
     "TURN server" : "TURN kiszolgáló",
-    "TURN server protocols" : "TURN kiszolgáló protokollok",
-    "UDP and TCP" : "UDP és TCP",
-    "UDP only" : "csak UDP",
-    "TCP only" : "csak TCP"
+    "Saving failed" : "Mentés sikertelen",
+    "Invalid format, must be stunserver:port." : "Érvénytelen formátum, ilyennek kell lennie: stunserver:port.",
+    "Invalid port specified." : "A megadott port érvénytelen",
+    "Invalid protocols specified." : "A megadott protokollok nem érvényesek.",
+    "STUN server" : "STUN kiszolgáló"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
