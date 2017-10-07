@@ -1,6 +1,11 @@
 OC.L10N.register(
     "spreed",
     {
+    "Saved" : "Запазено",
+    "TURN server protocols" : "Протоколи на TURN сървър",
+    "UDP and TCP" : "UDP и TCP",
+    "UDP only" : "само UDP",
+    "TCP only" : "само TCP",
     "(group)" : "(група)",
     "Guest" : "Гост",
     "Copy" : "Копиране",
@@ -17,7 +22,6 @@ OC.L10N.register(
     "Access to microphone & camera was denied" : "Достъпът до микрофона и камерата е отказан",
     "Please use a different browser like Firefox or Chrome" : "Моля, използвайте друг браузър като Firefox или Chrome",
     "Error while accessing microphone & camera" : "Грешка при достъп до микрофон и камера",
-    "Saved" : "Запазено",
     "%s invited you to a private call" : "%s Ви покани на частен разговор",
     "{user} invited you to a private call" : "{user} Ви покани на частен разговор",
     "%s invited you to a group call: %s" : "%s Ви покани на групов разговор: %s",
@@ -30,12 +34,8 @@ OC.L10N.register(
     "Share screen" : "Споделяне на екран",
     "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
-    "STUN server" : "STUN сървър",
     "TURN server" : "TURN сървър",
-    "TURN server protocols" : "Протоколи на TURN сървър",
-    "UDP and TCP" : "UDP и TCP",
-    "UDP only" : "само UDP",
-    "TCP only" : "само TCP",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сървърът се използва като прокси сървър за трафика, идващ от участници стоящи зад защитна стена."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сървърът се използва като прокси сървър за трафика, идващ от участници стоящи зад защитна стена.",
+    "STUN server" : "STUN сървър"
 },
 "nplurals=2; plural=(n != 1);");

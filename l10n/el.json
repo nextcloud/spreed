@@ -1,5 +1,10 @@
 { "translations": {
     "Video calls" : "Κλήσεις βίντεο",
+    "Saved" : "Αποθηκεύτηκαν",
+    "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
+    "UDP and TCP" : "UDP και TCP",
+    "UDP only" : "Μόνο UDP",
+    "TCP only" : "Μόνο TCP",
     "(group)" : "(ομάδα)",
     "New public call" : "Νέα δημόσια κλήση",
     "Screensharing is not supported by your browser." : "Ο διαμοιρασμός της οθόνης δεν υποστηρίζεται από τον φυλλομετρητή σας.",
@@ -21,7 +26,6 @@
     "Press ⌘-C to copy." : "Για αντιγραφή πατήστε ⌘-C.",
     "Press Ctrl-C to copy." : "Για αντιγραφή πατήστε Ctrl-C.",
     "This call has ended" : "Αυτή η κλήση τερματίστηκε",
-    "Saving failed" : "Αποτυχία αποθήκευσης",
     "Add person" : "Προσθήκη ατόμου",
     "Rename" : "Μετονομασία",
     "Share link" : "Διαμοιρασμός συνδέσμου",
@@ -40,10 +44,6 @@
     "Your screen" : "Η οθόνη σας",
     "You were invited to a <strong>video call</strong>" : "Έχετε προσκληθεί σε <strong>κλήση βίντεο</strong>",
     "Video call" : "Κλήση βίντεο",
-    "Invalid format, must be stunserver:port." : "Μη έγκυρη μορφή, πρέπει να έχει τη μορφή stunserver:port.",
-    "Invalid port specified." : "Μη έγκυρος καθορισμός θύρας.",
-    "Invalid protocols specified." : "Μη έγκυρος καθορισμός πρωτοκόλλων.",
-    "Saved" : "Αποθηκεύτηκαν",
     "_%n other guest_::_%n other guests_" : ["%n επισκέπτης","%n επισκέπτες"],
     "_%n guest_::_%n guests_" : ["%n επισκέπτης","%n επισκέπτες"],
     ", " : ", ",
@@ -59,11 +59,11 @@
     "Stop screensharing" : "Διακόψτε την κοινή χρήση της οθόνης",
     "Smile in 3… 2… 1!" : "Χαμογελάστε σε 3… 2… 1!",
     "Choose person …" : "Επιλογή ατόμου ...",
-    "STUN server" : "Διακομιστής STUN",
     "TURN server" : "Διακομιστής TURN",
-    "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
-    "UDP and TCP" : "UDP και TCP",
-    "UDP only" : "Μόνο UDP",
-    "TCP only" : "Μόνο TCP"
+    "Saving failed" : "Αποτυχία αποθήκευσης",
+    "Invalid format, must be stunserver:port." : "Μη έγκυρη μορφή, πρέπει να έχει τη μορφή stunserver:port.",
+    "Invalid port specified." : "Μη έγκυρος καθορισμός θύρας.",
+    "Invalid protocols specified." : "Μη έγκυρος καθορισμός πρωτοκόλλων.",
+    "STUN server" : "Διακομιστής STUN"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
