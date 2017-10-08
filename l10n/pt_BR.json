@@ -1,6 +1,9 @@
 { "translations": {
     "Video calls" : "Vídeo chamadas",
+    "Delete server" : "Excluir servidor",
+    "Add new server" : "Adicionar novo servidor",
     "Saved" : "Salvo",
+    "Shared secret" : "Segredo compartilhado",
     "TURN server protocols" : "Protocolos do servidor TURN",
     "UDP and TCP" : "UDP e TCP",
     "UDP only" : "Somente UDP",
@@ -81,6 +84,8 @@
     "Start/stop webinary" : "Iniciar/parar webinário",
     "Participants" : "Participantes",
     "Scheduling" : "Agendamento",
+    "STUN servers" : "Servidores STUN",
+    "A STUN server is used to determine the public IP address of participants behind a router." : "Um servidor STUN é usado para determinar o endereço IP público dos participantes por detrás de um roteador.",
     "TURN server" : "Servidor STUN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "O servidor TURN é usado para fazer um proxy do tráfego de participantes por trás de um firewall.",
     "Saving failed" : "Erro ao salvar",
