@@ -1,6 +1,9 @@
 { "translations": {
     "Video calls" : "Videosamtaler",
+    "Delete server" : "Slett tjener",
+    "Add new server" : "Legg til ny tjener",
     "Saved" : "Lagret",
+    "Shared secret" : "Delt hemmelighet",
     "TURN server protocols" : "TURN-tjenerprotokoller",
     "UDP and TCP" : "UDP og TCP",
     "UDP only" : "kun UDP",
@@ -81,6 +84,8 @@
     "Start/stop webinary" : "Start/stopp webinary",
     "Participants" : "Deltakere",
     "Scheduling" : "Planlegge",
+    "STUN servers" : "STUN-tjener",
+    "A STUN server is used to determine the public IP address of participants behind a router." : "En STUN-tjener brukes til å fastsette den offentlige IP-adressen for deltagere bak en ruter.",
     "TURN server" : "TURN-tjener",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-tjeneren fungerer som mellomtjener for trafikk fra deltakere bak en brannmur.",
     "Saving failed" : "Lagring mislyktes",

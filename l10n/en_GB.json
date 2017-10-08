@@ -1,6 +1,9 @@
 { "translations": {
     "Video calls" : "Video calls",
+    "Delete server" : "Delete server",
+    "Add new server" : "Add new server",
     "Saved" : "Saved",
+    "Shared secret" : "Shared secret",
     "TURN server protocols" : "TURN server protocols",
     "UDP and TCP" : "UDP and TCP",
     "UDP only" : "UDP only",
@@ -81,6 +84,8 @@
     "Start/stop webinary" : "Start/stop webinary",
     "Participants" : "Participants",
     "Scheduling" : "Scheduling",
+    "STUN servers" : "STUN servers",
+    "A STUN server is used to determine the public IP address of participants behind a router." : "A STUN server is used to determine the public IP address of participants behind a router.",
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "The TURN server is used to proxy the traffic from participants behind a firewall.",
     "Saving failed" : "Saving failed",
