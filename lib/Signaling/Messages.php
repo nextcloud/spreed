@@ -105,7 +105,7 @@ class Messages {
 	 * immediately, but the next polling is only 1 second later and will get the
 	 * "new" message.
 	 *
-	 * @param $sessionId
+	 * @param string $sessionId
 	 * @return array
 	 */
 	public function getAndDeleteMessages($sessionId) {
@@ -131,5 +131,19 @@ class Messages {
 		$query->execute();
 
 		return $messages;
+	}
+
+	/**
+	 * Expires all signaling messages that are too old or invalid
+	 *
+	 * @param int $olderThan
+	 */
+	public function expireOlderThan($olderThan) {
+		$time = $this->time->getTime() - $olderThan;
+
+		$query = $this->db->getQueryBuilder();
+		$query->delete('videocalls_signaling')
+			->where($query->expr()->lt('timestamp', $query->createNamedParameter($time)));
+		$query->execute();
 	}
 }
