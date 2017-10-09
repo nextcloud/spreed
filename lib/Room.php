@@ -530,12 +530,16 @@ class Room {
 	}
 
 	public function cleanGuestParticipants() {
+		$this->dispatcher->dispatch(self::class . '::preCleanGuests', new GenericEvent($this));
+
 		$query = $this->db->getQueryBuilder();
 		$query->delete('spreedme_room_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->emptyString('userId'))
 			->andWhere($query->expr()->lte('lastPing', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
 		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postCleanGuests', new GenericEvent($this));
 	}
 
 	/**
