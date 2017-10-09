@@ -82,7 +82,12 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 			<step>OCA\Spreed\Migration\FillRoomTokens</step>
 		</post-migration>
 	</repair-steps>
+
 	<contactsmenu>
 		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>
 	</contactsmenu>
+
+	<background-jobs>
+		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
+	</background-jobs>
 </info>
