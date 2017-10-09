@@ -259,12 +259,20 @@ class Room {
 
 		$hash = $this->hasher->hash($password);
 
+		$this->dispatcher->dispatch(self::class . '::preSetPassword', new GenericEvent($this, [
+			'password' => $password,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_rooms')
 			->set('password', $query->createNamedParameter($hash))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 		$this->password = $hash;
+
+		$this->dispatcher->dispatch(self::class . '::postSetPassword', new GenericEvent($this, [
+			'password' => $password,
+		]));
 
 		return true;
 	}
@@ -352,12 +360,22 @@ class Room {
 	 * @param int $participantType
 	 */
 	public function setParticipantType($participant, $participantType) {
+		$this->dispatcher->dispatch(self::class . '::preChangeParticipantType', new GenericEvent($this, [
+			'user' => $participant,
+			'newType' => $participantType,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_room_participants')
 			->set('participantType', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($participant)));
 		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postChangeParticipantType', new GenericEvent($this, [
+			'user' => $participant,
+			'newType' => $participantType,
+		]));
 	}
 
 	/**
@@ -512,12 +530,16 @@ class Room {
 	}
 
 	public function cleanGuestParticipants() {
+		$this->dispatcher->dispatch(self::class . '::preCleanGuests', new GenericEvent($this));
+
 		$query = $this->db->getQueryBuilder();
 		$query->delete('spreedme_room_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->emptyString('userId'))
 			->andWhere($query->expr()->lte('lastPing', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
 		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postCleanGuests', new GenericEvent($this));
 	}
 
 	/**
