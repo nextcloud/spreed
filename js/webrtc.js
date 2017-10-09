@@ -18,14 +18,19 @@ var spreedPeerConnectionTable = [];
 			currentUsersNo = 1;
 		}
 
-		var appContentElement = $('#app-content'),
-			participantsClass = 'participants-' + currentUsersNo;
-		if (!appContentElement.hasClass(participantsClass) && !appContentElement.hasClass('screensharing')) {
-			appContentElement.attr('class', '').addClass(participantsClass);
+		var $appContentElement = $('#app-content'),
+			participantsClass = 'participants-' + currentUsersNo,
+			hadSidebar = $appContentElement.hasClass('with-app-sidebar');
+		if (!$appContentElement.hasClass(participantsClass) && !$appContentElement.hasClass('screensharing')) {
+			$appContentElement.attr('class', '').addClass(participantsClass);
 			if (currentUsersNo > 1) {
-				appContentElement.addClass('incall');
+				$appContentElement.addClass('incall');
 			} else {
-				appContentElement.removeClass('incall');
+				$appContentElement.removeClass('incall');
+			}
+
+			if (hadSidebar) {
+				$appContentElement.addClass('with-app-sidebar');
 			}
 		}
 	}
