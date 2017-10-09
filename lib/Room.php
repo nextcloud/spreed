@@ -259,12 +259,20 @@ class Room {
 
 		$hash = $this->hasher->hash($password);
 
+		$this->dispatcher->dispatch(self::class . '::preSetPassword', new GenericEvent($this, [
+			'password' => $password,
+		]));
+
 		$query = $this->db->getQueryBuilder();
 		$query->update('spreedme_rooms')
 			->set('password', $query->createNamedParameter($hash))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 		$this->password = $hash;
+
+		$this->dispatcher->dispatch(self::class . '::postSetPassword', new GenericEvent($this, [
+			'password' => $password,
+		]));
 
 		return true;
 	}

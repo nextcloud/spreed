@@ -124,6 +124,22 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the room could not be found for the participant
         + `405 Method Not Allowed` When the room is a one to one room
 
+### Set password for a room
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/password`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `password` | string | New password for the room
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator/owner or the room is not a public room
+        + `404 Not Found` When the room could not be found for the participant
+
 ### Delete a room
 
 * Method: `DELETE`
