@@ -59,6 +59,10 @@ class Room {
 	private $name;
 	/** @var string */
 	private $password;
+	/** @var int */
+	private $activeGuests;
+	/** @var \DateTime|null */
+	private $activeSince;
 
 	/** @var string */
 	protected $currentUser;
@@ -77,8 +81,10 @@ class Room {
 	 * @param string $token
 	 * @param string $name
 	 * @param string $password
+	 * @param int $activeGuests
+	 * @param \DateTime|null $activeSince
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password) {
+	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null) {
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
@@ -88,6 +94,8 @@ class Room {
 		$this->token = $token;
 		$this->name = $name;
 		$this->password = $password;
+		$this->activeGuests = $activeGuests;
+		$this->activeSince = $activeSince;
 	}
 
 	/**
@@ -116,6 +124,20 @@ class Room {
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getActiveGuests() {
+		return $this->activeGuests;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getActiveSince() {
+		return $this->activeSince;
 	}
 
 	/**
@@ -275,6 +297,52 @@ class Room {
 		]));
 
 		return true;
+	}
+
+	/**
+	 * @param \DateTime $since
+	 * @param bool $isGuest
+	 * @return bool
+	 */
+	public function setActiveSince(\DateTime $since, $isGuest) {
+
+		if ($isGuest && $this->getType() === self::PUBLIC_CALL) {
+			$query = $this->db->getQueryBuilder();
+			$query->update('spreedme_rooms')
+				->set('activeGuests', $query->createFunction($query->getColumnName('activeGuests') . ' + 1'))
+				->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+			$query->execute();
+
+			$this->activeGuests++;
+		}
+
+		if ($this->activeSince instanceof \DateTime) {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_rooms')
+			->set('activeSince', $query->createNamedParameter($since, 'datetime'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->isNull('activeSince'));
+		$query->execute();
+
+		$this->activeSince = $since;
+
+		return true;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function resetActiveSince() {
+		$query = $this->db->getQueryBuilder();
+		$query->update('spreedme_rooms')
+			->set('activeGuests', $query->createNamedParameter(0))
+			->set('activeSince', $query->createNamedParameter(null, 'datetime'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
 	}
 
 	/**
@@ -599,6 +667,23 @@ class Room {
 		$result->closeCursor();
 
 		return $sessions;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function hasActiveSessions() {
+		$query = $this->db->getQueryBuilder();
+		$query->select('sessionId')
+			->from('spreedme_room_participants')
+			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')))
+			->setMaxResults(1);
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return (bool) $row;
 	}
 
 	/**

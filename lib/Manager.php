@@ -65,7 +65,12 @@ class Manager {
 	 * @return Room
 	 */
 	protected function createRoomObject(array $row) {
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password']);
+		$activeSince = null;
+		if (!empty($row['activeSince'])) {
+			$activeSince = new \DateTime($row['activeSince']);
+		}
+
+		return new Room($this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['activeGuests'], $activeSince);
 	}
 
 	/**
@@ -358,13 +363,7 @@ class Manager {
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 
-		return $this->createRoomObject([
-			'id' => $roomId,
-			'type' => $type,
-			'token' => $token,
-			'name' => $name,
-			'password' => '',
-		]);
+		return $this->getRoomById($roomId);
 	}
 
 	/**
