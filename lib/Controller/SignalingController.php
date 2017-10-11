@@ -215,7 +215,7 @@ class SignalingController extends OCSController {
 		return $usersInRoom;
 	}
 
-	/*
+	/**
 	 * Check if the current request is coming from an allowed backend.
 	 *
 	 * The backends are sending the custom header "Spreed-Signaling-Random"
@@ -249,7 +249,6 @@ class SignalingController extends OCSController {
 	 * @NoCSRFRequired
 	 * @PublicPage
 	 *
-	 * @param string $message
 	 * @return JSONResponse
 	 */
 	public function backend() {

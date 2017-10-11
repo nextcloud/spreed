@@ -106,13 +106,19 @@ class Config {
 	}
 
 	/**
-	 * @return string
+	 * @return array
 	 */
 	public function getSignalingServer() {
-		$server = $this->config->getAppValue('spreed', 'signaling_server', '');
-		if ($server === '') {
+		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$signaling = json_decode($config, true);
+
+		if (!is_array($signaling)) {
 			return [];
 		}
+
+		// For now we use a random server from the list
+		$server = $signaling['servers'][mt_rand(0, count($servers) - 1)];
+
 		return explode('\n', $server);
 	}
 
@@ -120,15 +126,14 @@ class Config {
 	 * @return string
 	 */
 	public function getSignalingSecret() {
-		return $this->config->getAppValue('spreed', 'signaling_secret', '');
-	}
+		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$signaling = json_decode($config, true);
 
-	/**
-	 * @return bool
-	 */
-	public function allowInsecureSignaling() {
-		$skip_verify = $this->config->getAppValue('spreed', 'signaling_skip_verify_cert', '');
-		return !empty($skip_verify);
+		if (!is_array($signaling)) {
+			return '';
+		}
+
+		return $signaling['secret'];
 	}
 
 	/**
@@ -137,9 +142,9 @@ class Config {
 	 */
 	public function getSignalingTicket($userId) {
 		if (empty($userId)) {
-			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret', '');
+			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {
-			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret', '');
+			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
 		if (empty($secret)) {
 			// Create secret lazily on first access.
@@ -168,24 +173,24 @@ class Config {
 	 */
 	public function validateSignalingTicket($userId, $ticket) {
 		if (empty($userId)) {
-			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret', '');
+			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {
-			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret', '');
+			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
 		}
 		if (empty($secret)) {
 			return false;
 		}
 
-		$lastcolon = strrpos($ticket, ':');
-		if ($lastcolon === false) {
+		$lastColon = strrpos($ticket, ':');
+		if ($lastColon === false) {
 			// Immediately reject invalid formats.
 			return false;
 		}
 
 		// TODO(fancycode): Should we reject tickets that are too old?
-		$data = substr($ticket, 0, $lastcolon);
+		$data = substr($ticket, 0, $lastColon);
 		$hash = hash_hmac('sha256', $data, $secret);
-		return hash_equals($hash, substr($ticket, $lastcolon + 1));
+		return hash_equals($hash, substr($ticket, $lastColon + 1));
 	}
 
 }

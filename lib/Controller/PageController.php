@@ -116,8 +116,14 @@ class PageController extends Controller {
 				];
 			}
 		}
+
+		$signaling = $this->config->getSignalingServer();
+		if (!empty($signaling)) {
+			$signaling = $signaling['server'];
+		}
+
 		return [
-			'server' => $this->config->getSignalingServer(),
+			'server' => $signaling,
 			'ticket' => $this->config->getSignalingTicket($this->userId),
 			'stunservers' => $stun,
 			'turnservers' => $turn,

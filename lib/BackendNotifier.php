@@ -74,11 +74,8 @@ class BackendNotifier{
 		}
 
 		// We can use any server of the available backends.
-		$signaling = $signaling[array_rand($signaling)];
-		if (substr($signaling, -1) === '/') {
-			$signaling = substr($signaling, 0, strlen($signaling) - 1);
-		}
-		$url = $signaling . $url;
+		$signaling['server'] = rtrim($signaling['server'], '/');
+		$url = rtrim($signaling['server'], '/') . $url;
 		if (substr($url, 0, 6) === 'wss://') {
 			$url = 'https://' . substr($url, 6);
 		} else if (substr($url, 0, 5) === 'ws://') {
@@ -99,10 +96,10 @@ class BackendNotifier{
 			'headers' => $headers,
 			'body' => $body,
 		];
-		if ($this->config->allowInsecureSignaling()) {
+		if (!$signaling['verify']) {
 			$params['verify'] = false;
 		}
-		$response = $client->post($url, $params);
+		$client->post($url, $params);
 	}
 
 	/**

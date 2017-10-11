@@ -40,9 +40,7 @@ class SignalingServer implements ISettings {
 	 */
 	public function getForm() {
 		$parameters = [
-			'signalingServer' => $this->config->getAppValue('spreed', 'signaling_server'),
-			'signalingSecret' => $this->config->getAppValue('spreed', 'signaling_secret'),
-			'signalingSkipVerifyCert' => $this->config->getAppValue('spreed', 'signaling_skip_verify_cert'),
+			'signalingServers' => $this->config->getAppValue('spreed', 'signaling_servers'),
 		];
 
 		return new TemplateResponse('spreed', 'settings/admin/signaling-server', $parameters, '');
