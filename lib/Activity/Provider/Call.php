@@ -38,20 +38,23 @@ class Call extends Base {
 	 */
 	public function parse($language, IEvent $event, IEvent $previousEvent = null) {
 		$event = parent::preParse($event);
-		$l = $this->languageFactory->get('spreed', $language);
 
-		try {
+		if ($event->getSubject() === 'call') {
+			$l = $this->languageFactory->get('spreed', $language);
 			$parameters = $event->getSubjectParameters();
-			$room = $this->manager->getRoomById((int) $parameters['room']);
 
-			if ($event->getSubject() === 'call') {
-				$result = $this->parseCall($event, $l, $room);
-				$result['subject'] .= ' ' . $this->getDuration($l, $parameters['duration']);
-				$this->setSubjects($event, $result['subject'], $result['params']);
-			} else {
-				throw new \InvalidArgumentException();
-			}
-		} catch (RoomNotFoundException $e) {
+//			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
+//			try {
+//				$room = $this->manager->getRoomById((int) $parameters['room']);
+//				$roomParameter = $this->getRoom($l, $room);
+//			} catch (RoomNotFoundException $e) {
+//			}
+
+			$result = $this->parseCall($event, $l);
+			$result['subject'] .= ' ' . $this->getDuration($l, $parameters['duration']);
+//			$result['params']['call'] = $roomParameter;
+			$this->setSubjects($event, $result['subject'], $result['params']);
+		} else {
 			throw new \InvalidArgumentException();
 		}
 
@@ -73,7 +76,7 @@ class Call extends Base {
 		return $l->t('(Duration %s)', $duration);
 	}
 
-	protected function parseCall(IEvent $event, IL10N $l, Room $room) {
+	protected function parseCall(IEvent $event, IL10N $l) {
 		$parameters = $event->getSubjectParameters();
 
 		$currentUser = array_search($this->activityManager->getCurrentUserId(), $parameters['users'], true);
@@ -83,63 +86,48 @@ class Call extends Base {
 		unset($parameters['users'][$currentUser]);
 		sort($parameters['users']);
 
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$otherUser = array_pop($parameters['users']);
-
-			if ($otherUser === '') {
-				throw new \InvalidArgumentException('Unknown case');
-			}
-
-			return [
-				'subject' => $l->t('You had a private call with {user}'),
-				'params' => [
-					'user' => $this->getUser($otherUser),
-				],
-			];
-		}
-
 		$numUsers = count($parameters['users']);
 		$displayedUsers = $numUsers;
 		switch ($numUsers) {
 			case 0:
-				$subject = $l->t('You had a call with {user1}');
+				$subject = $l->t('You attended a call with {user1}');
 				$subject = str_replace('{user1}', $l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				break;
 			case 1:
 				if ($parameters['guests'] === 0) {
-					$subject = $l->t('You had a call with {user1}');
+					$subject = $l->t('You attended a call with {user1}');
 				} else {
-					$subject = $l->t('You had a call with {user1} and {user2}');
+					$subject = $l->t('You attended a call with {user1} and {user2}');
 					$subject = str_replace('{user2}', $l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 2:
 				if ($parameters['guests'] === 0) {
-					$subject = $l->t('You had a call with {user1} and {user2}');
+					$subject = $l->t('You attended a call with {user1} and {user2}');
 				} else {
-					$subject = $l->t('You had a call with {user1}, {user2} and {user3}');
+					$subject = $l->t('You attended a call with {user1}, {user2} and {user3}');
 					$subject = str_replace('{user3}', $l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 3:
 				if ($parameters['guests'] === 0) {
-					$subject = $l->t('You had a call with {user1}, {user2} and {user3}');
+					$subject = $l->t('You attended a call with {user1}, {user2} and {user3}');
 				} else {
-					$subject = $l->t('You had a call with {user1}, {user2}, {user3} and {user4}');
+					$subject = $l->t('You attended a call with {user1}, {user2}, {user3} and {user4}');
 					$subject = str_replace('{user4}', $l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 4:
 				if ($parameters['guests'] === 0) {
-					$subject = $l->t('You had a call with {user1}, {user2}, {user3} and {user4}');
+					$subject = $l->t('You attended a call with {user1}, {user2}, {user3} and {user4}');
 				} else {
-					$subject = $l->t('You had a call with {user1}, {user2}, {user3}, {user4} and {user5}');
+					$subject = $l->t('You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}');
 					$subject = str_replace('{user5}', $l->n('%n guest', '%n guests', $parameters['guests']), $subject);
 				}
 				break;
 			case 5:
 			default:
-				$subject = $l->t('You had a call with {user1}, {user2}, {user3}, {user4} and {user5}');
+				$subject = $l->t('You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}');
 				if ($numUsers === 5 && $parameters['guests'] === 0) {
 					$displayedUsers = 5;
 				} else {

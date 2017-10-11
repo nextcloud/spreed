@@ -36,6 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Room {
+	const UNKNOWN_CALL = -1;
 	const ONE_TO_ONE_CALL = 1;
 	const GROUP_CALL = 2;
 	const PUBLIC_CALL = 3;

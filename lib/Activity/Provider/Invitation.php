@@ -22,9 +22,7 @@
 namespace OCA\Spreed\Activity\Provider;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
-use OCP\IL10N;
 
 class Invitation extends Base {
 
@@ -40,62 +38,25 @@ class Invitation extends Base {
 		$event = parent::preParse($event);
 
 		if ($event->getSubject() === 'invitation') {
+			$l = $this->languageFactory->get('spreed', $language);
 			$parameters = $event->getSubjectParameters();
+
+			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
 			try {
 				$room = $this->manager->getRoomById((int) $parameters['room']);
+				$roomParameter = $this->getRoom($l, $room);
 			} catch (RoomNotFoundException $e) {
-				throw new \InvalidArgumentException();
 			}
 
-			$l = $this->languageFactory->get('spreed', $language);
-
-			$result = $this->parseInvitation($event, $l, $room);
-			$this->setSubjects($event, $result['subject'], $result['params']);
+			$this->setSubjects($event, $l->t('{actor} invited you to {call}'), [
+				'actor' => $this->getUser($parameters['user']),
+				'call' => $roomParameter,
+			]);
 		} else {
 			throw new \InvalidArgumentException();
 		}
 
 		return $event;
-	}
-
-	protected function parseInvitation(IEvent $event, IL10N $l, Room $room) {
-		$parameters = $event->getSubjectParameters();
-
-		if ($room->getName() === '') {
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$subject = $l->t('{actor} invited you to a private call');
-			} else {
-				$subject = $l->t('{actor} invited you to a group call');
-			}
-
-			return [
-				'subject' => $subject,
-				'params' => $this->getParameters($parameters),
-			];
-		}
-
-		return [
-			'subject' => $l->t('{actor} invited you to the call {call}'),
-			'params' => $this->getParameters($parameters, $room),
-		];
-	}
-
-	/**
-	 * @param array $parameters
-	 * @param Room $room
-	 * @return array
-	 */
-	protected function getParameters(array $parameters, Room $room = null) {
-		if ($room === null) {
-			return [
-				'actor' => $this->getUser($parameters['user']),
-			];
-		}
-
-		return [
-			'actor' => $this->getUser($parameters['user']),
-			'call' => $this->getRoom($room),
-		];
 	}
 
 }

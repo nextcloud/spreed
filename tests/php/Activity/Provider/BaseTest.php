@@ -27,6 +27,7 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -166,9 +167,12 @@ class BaseTest extends TestCase {
 
 	public function dataGetRoom() {
 		return [
-			[Room::ONE_TO_ONE_CALL, 23, 'private-call', 'one2one'],
-			[Room::GROUP_CALL, 42, 'group-call', 'group'],
-			[Room::PUBLIC_CALL, 128, 'public-call', 'public'],
+			[Room::ONE_TO_ONE_CALL, 23, 'private-call', 'private-call', 'one2one'],
+			[Room::GROUP_CALL, 42, 'group-call', 'group-call', 'group'],
+			[Room::PUBLIC_CALL, 128, 'public-call', 'public-call', 'public'],
+			[Room::ONE_TO_ONE_CALL, 23, '', 'a call', 'one2one'],
+			[Room::GROUP_CALL, 42, '', 'a call', 'group'],
+			[Room::PUBLIC_CALL, 128, '', 'a call', 'public'],
 		];
 	}
 
@@ -178,9 +182,10 @@ class BaseTest extends TestCase {
 	 * @param int $type
 	 * @param int $id
 	 * @param string $name
+	 * @param string $expectedName
 	 * @param string $expectedType
 	 */
-	public function testGetRoom($type, $id, $name, $expectedType) {
+	public function testGetRoom($type, $id, $name, $expectedName, $expectedType) {
 		$provider = $this->getProvider();
 
 		$room = $this->createMock(Room::class);
@@ -194,12 +199,19 @@ class BaseTest extends TestCase {
 			->method('getName')
 			->willReturn($name);
 
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
 		$this->assertEquals([
 			'type' => 'call',
 			'id' => $id,
-			'name' => $name,
+			'name' => $expectedName,
 			'call-type' => $expectedType,
-		], self::invokePrivate($provider, 'getRoom', [$room]));
+		], self::invokePrivate($provider, 'getRoom', [$l, $room]));
 	}
 
 	public function dataGetUser() {

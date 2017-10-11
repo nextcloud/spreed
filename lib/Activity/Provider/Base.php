@@ -27,6 +27,7 @@ use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -104,10 +105,11 @@ abstract class Base implements IProvider {
 	}
 
 	/**
+	 * @param IL10N $l
 	 * @param Room $room
 	 * @return array
 	 */
-	protected function getRoom(Room $room) {
+	protected function getRoom(IL10N $l, Room $room) {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				$stringType = 'one2one';
@@ -124,8 +126,22 @@ abstract class Base implements IProvider {
 		return [
 			'type' => 'call',
 			'id' => $room->getId(),
-			'name' => $room->getName(),
+			'name' => $room->getName() ?: $l->t('a call'),
 			'call-type' => $stringType,
+		];
+	}
+
+	/**
+	 * @param IL10N $l
+	 * @param int $roomId
+	 * @return array
+	 */
+	protected function getFormerRoom(IL10N $l, $roomId) {
+		return [
+			'type' => 'call',
+			'id' => $roomId,
+			'name' => $l->t('a call'),
+			'call-type' => Room::UNKNOWN_CALL,
 		];
 	}
 

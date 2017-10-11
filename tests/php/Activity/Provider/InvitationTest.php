@@ -89,21 +89,10 @@ class InvitationTest extends TestCase {
 		);
 	}
 
-	public function dataParseThrows() {
-		return [
-			['call', null],
-			['invitation', true],
-		];
-	}
-
 	/**
-	 * @dataProvider dataParseThrows
-	 *
-	 * @param string $subject
-	 * @param bool|null $roomNotFound
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testParseThrows($subject, $roomNotFound) {
+	public function testParseThrowsWrongSubject() {
 		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
@@ -111,20 +100,16 @@ class InvitationTest extends TestCase {
 			->willReturn('spreed');
 		$event->expects($this->once())
 			->method('getSubject')
-			->willReturn($subject);
-
-		$this->manager->expects($roomNotFound === null ? $this->never() : $this->once())
-			->method('getRoomById')
-			->willThrowException(new RoomNotFoundException());
+			->willReturn('call');
 
 		$provider = $this->getProvider();
-		$provider->parse('en', $event, null);
+		$provider->parse('en', $event);
 	}
 
 	public function dataParse() {
 		return [
-			['en', ['room' => 23], ['subject' => 'Subject1', 'params' => ['Params1']]],
-			['de', ['room' => 42], ['subject' => 'Subject2', 'params' => ['Params2']]],
+			['en', true, ['room' => 23, 'user' => 'test1'], ['actor' => ['actor-data'], 'call' => ['call-data']]],
+			['de', false, ['room' => 42, 'user' => 'test2'], ['actor' => ['actor-data'], 'call' => ['call-unknown']]],
 		];
 	}
 
@@ -132,10 +117,21 @@ class InvitationTest extends TestCase {
 	 * @dataProvider dataParse
 	 *
 	 * @param string $lang
+	 * @param bool $roomExists
 	 * @param array $params
-	 * @param array $result
+	 * @param array $expectedParams
 	 */
-	public function testParse($lang, array $params, array $result) {
+	public function testParse($lang, $roomExists, array $params, array $expectedParams) {
+		$provider = $this->getProvider(['parseInvitation', 'setSubjects', 'getUser', 'getRoom', 'getFormerRoom']);
+
+		/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
 		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
@@ -148,69 +144,51 @@ class InvitationTest extends TestCase {
 			->method('getSubjectParameters')
 			->willReturn($params);
 
-		/** @var Room|\PHPUnit_Framework_MockObject_MockObject $room */
-		$room = $this->createMock(Room::class);
+		if ($roomExists) {
+			/** @var Room|\PHPUnit_Framework_MockObject_MockObject $room */
+			$room = $this->createMock(Room::class);
 
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with($params['room'])
-			->willReturn($room);
+			$this->manager->expects($this->once())
+				->method('getRoomById')
+				->with($params['room'])
+				->willReturn($room);
 
-		/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject $l */
-		$l = $this->createMock(IL10N::class);
+			$provider->expects($this->once())
+				->method('getRoom')
+				->with($l, $room)
+				->willReturn(['call-data']);
+		} else {
+			$this->manager->expects($this->once())
+				->method('getRoomById')
+				->with($params['room'])
+				->willThrowException(new RoomNotFoundException());
+
+			$provider->expects($this->never())
+				->method('getRoom');
+		}
 
 		$this->l10nFactory->expects($this->once())
 			->method('get')
 			->with('spreed', $lang)
 			->willReturn($l);
 
-		$provider = $this->getProvider(['parseInvitation', 'setSubjects']);
-		$provider->expects($this->once())
-			->method('parseInvitation')
-			->with($event, $l, $room)
-			->willReturn($result);
-		$provider->expects($this->once())
-			->method('setSubjects')
-			->with($event, $result['subject'], $result['params']);
-
-		$provider->parse($lang, $event);
-	}
-
-	public function dataGetParameters() {
-		return [
-			['test', true, ['actor' => 'array(user)', 'call' => 'array(room)']],
-			['admin', false, ['actor' => 'array(user)']],
-		];
-	}
-
-	/**
-	 * @dataProvider dataGetParameters
-	 *
-	 * @param string $user
-	 * @param bool $isRoom
-	 * @param array $expected
-	 */
-	public function testGetParameters($user, $isRoom, array $expected) {
-		$provider = $this->getProvider(['getUser', 'getRoom']);
-
 		$provider->expects($this->once())
 			->method('getUser')
-			->with($user)
-			->willReturn('array(user)');
+			->with($params['user'])
+			->willReturn(['actor-data']);
+		$provider->expects($this->once())
+			->method('setSubjects')
+			->with($event, '{actor} invited you to {call}', $expectedParams);
+		$provider->expects($this->once())
+			->method('getUser')
+			->with($params['user'])
+			->willReturn(['actor-data']);
+		$provider->expects($this->once())
+			->method('getFormerRoom')
+			->with($l, $params['room'])
+			->willReturn(['call-unknown']);
 
-		if ($isRoom) {
-			$room = $this->createMock(Room::class);
-			$provider->expects($this->once())
-				->method('getRoom')
-				->with($room)
-				->willReturn('array(room)');
-		} else {
-			$room = null;
-			$provider->expects($this->never())
-				->method('getRoom');
-		}
-
-		$this->assertEquals($expected, self::invokePrivate($provider, 'getParameters', [['user' => $user], $room]));
+		$provider->parse($lang, $event);
 	}
 
 }
