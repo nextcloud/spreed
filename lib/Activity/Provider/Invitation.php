@@ -38,19 +38,20 @@ class Invitation extends Base {
 	 */
 	public function parse($language, IEvent $event, IEvent $previousEvent = null) {
 		$event = parent::preParse($event);
-		$l = $this->languageFactory->get('spreed', $language);
 
-		try {
+		if ($event->getSubject() === 'invitation') {
 			$parameters = $event->getSubjectParameters();
-			$room = $this->manager->getRoomById((int) $parameters['room']);
-
-			if ($event->getSubject() === 'invitation') {
-				$result = $this->parseInvitation($event, $l, $room);
-				$this->setSubjects($event, $result['subject'], $result['params']);
-			} else {
+			try {
+				$room = $this->manager->getRoomById((int) $parameters['room']);
+			} catch (RoomNotFoundException $e) {
 				throw new \InvalidArgumentException();
 			}
-		} catch (RoomNotFoundException $e) {
+
+			$l = $this->languageFactory->get('spreed', $language);
+
+			$result = $this->parseInvitation($event, $l, $room);
+			$this->setSubjects($event, $result['subject'], $result['params']);
+		} else {
 			throw new \InvalidArgumentException();
 		}
 

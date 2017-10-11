@@ -23,10 +23,12 @@ namespace OCA\Spreed\Tests\php\Activity\Provider;
 
 
 use OCA\Spreed\Activity\Provider\Invitation;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -87,17 +89,91 @@ class InvitationTest extends TestCase {
 		);
 	}
 
+	public function dataParseThrows() {
+		return [
+			['call', null],
+			['invitation', true],
+		];
+	}
+
 	/**
+	 * @dataProvider dataParseThrows
+	 *
+	 * @param string $subject
+	 * @param bool|null $roomNotFound
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testParseThrows() {
+	public function testParseThrows($subject, $roomNotFound) {
 		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
-			->willReturn('activity');
+			->willReturn('spreed');
+		$event->expects($this->once())
+			->method('getSubject')
+			->willReturn($subject);
+
+		$this->manager->expects($roomNotFound === null ? $this->never() : $this->once())
+			->method('getRoomById')
+			->willThrowException(new RoomNotFoundException());
+
 		$provider = $this->getProvider();
 		$provider->parse('en', $event, null);
+	}
+
+	public function dataParse() {
+		return [
+			['en', ['room' => 23], ['subject' => 'Subject1', 'params' => ['Params1']]],
+			['de', ['room' => 42], ['subject' => 'Subject2', 'params' => ['Params2']]],
+		];
+	}
+
+	/**
+	 * @dataProvider dataParse
+	 *
+	 * @param string $lang
+	 * @param array $params
+	 * @param array $result
+	 */
+	public function testParse($lang, array $params, array $result) {
+		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+		$event = $this->createMock(IEvent::class);
+		$event->expects($this->once())
+			->method('getApp')
+			->willReturn('spreed');
+		$event->expects($this->once())
+			->method('getSubject')
+			->willReturn('invitation');
+		$event->expects($this->once())
+			->method('getSubjectParameters')
+			->willReturn($params);
+
+		/** @var Room|\PHPUnit_Framework_MockObject_MockObject $room */
+		$room = $this->createMock(Room::class);
+
+		$this->manager->expects($this->once())
+			->method('getRoomById')
+			->with($params['room'])
+			->willReturn($room);
+
+		/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject $l */
+		$l = $this->createMock(IL10N::class);
+
+		$this->l10nFactory->expects($this->once())
+			->method('get')
+			->with('spreed', $lang)
+			->willReturn($l);
+
+		$provider = $this->getProvider(['parseInvitation', 'setSubjects']);
+		$provider->expects($this->once())
+			->method('parseInvitation')
+			->with($event, $l, $room)
+			->willReturn($result);
+		$provider->expects($this->once())
+			->method('setSubjects')
+			->with($event, $result['subject'], $result['params']);
+
+		$provider->parse($lang, $event);
 	}
 
 	public function dataGetParameters() {
