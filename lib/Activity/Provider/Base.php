@@ -76,6 +76,7 @@ abstract class Base implements IProvider {
 		if ($event->getApp() !== 'spreed') {
 			throw new \InvalidArgumentException();
 		}
+
 		if ($this->activityManager->getRequirePNG()) {
 			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
 		} else {
