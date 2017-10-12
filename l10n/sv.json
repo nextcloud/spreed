@@ -1,5 +1,7 @@
 { "translations": {
     "Video calls" : "Videosamtal",
+    "Delete server" : "Ta bort server",
+    "Add new server" : "Lägg till ny server",
     "Saved" : "Sparad",
     "TURN server protocols" : "TURN server protokoll",
     "UDP and TCP" : "UDP och TCP",
@@ -81,6 +83,7 @@
     "Start/stop webinary" : "Starta/avsluta webinar",
     "Participants" : "Deltagare",
     "Scheduling" : "Schemalägger",
+    "STUN servers" : "STUN-servrar",
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
     "Saving failed" : "Lyckades ej att spara",
