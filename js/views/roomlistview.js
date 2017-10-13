@@ -184,8 +184,6 @@
 
 			$sidebar.find('.room-name').text(this.model.get('displayName'));
 
-			OCA.SpreedMe.app._participants.setRoom(this.model);
-
 			if (!$content.hasClass('with-app-sidebar')) {
 				$content.addClass('with-app-sidebar');
 				$sidebar.removeClass('hidden');

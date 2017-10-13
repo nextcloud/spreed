@@ -353,6 +353,12 @@
 				el: 'ul#participantWithList',
 				collection: this._participants
 			});
+
+			this._participants.listenTo(this._rooms, 'change:active', function(model, active) {
+				if (active) {
+					this.setRoom(model);
+				}
+			});
 		},
 		/**
 		 * @param {string} token
