@@ -186,7 +186,6 @@
 
 			OCA.SpreedMe.app._participants.setRoom(this.model);
 			OCA.SpreedMe.app._participants.fetch();
-			OCA.SpreedMe.app._participantsView.render();
 
 			if (!$content.hasClass('with-app-sidebar')) {
 				$content.addClass('with-app-sidebar');
