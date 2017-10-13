@@ -20,7 +20,7 @@
 		OCA.SpreedMe.Calls.leaveAllCalls();
 	}
 
-	Backbone.Radio.channel('rooms');
+	var roomsChannel = Backbone.Radio.channel('rooms');
 
 	OCA.SpreedMe.Calls = {
 		showCamera: function() {
@@ -94,6 +94,7 @@
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
+			roomsChannel.trigger('leaveCurrentCall');
 		},
 		leaveAllCalls: function() {
 			if (signaling) {

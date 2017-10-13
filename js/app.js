@@ -350,7 +350,6 @@
 		_showParticipantList: function() {
 			this._participants = new OCA.SpreedMe.Models.ParticipantCollection();
 			this._participantsView = new OCA.SpreedMe.Views.ParticipantView({
-				el: 'ul#participantWithList',
 				collection: this._participants
 			});
 
@@ -359,6 +358,8 @@
 					this.setRoom(model);
 				}
 			});
+
+			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants') }, this._participantsView);
 		},
 		/**
 		 * @param {string} token
@@ -486,10 +487,28 @@
 			$('#emptycontent p').text(messageAdditional);
 		},
 		initialize: function() {
+			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
+			$('#app-content').append(this._sidebarView.$el);
+
 			if (oc_current_user) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
+
+				this._sidebarView.listenTo(this._rooms, 'change:active', function(model, active) {
+					if (active) {
+						this.enable();
+
+						var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
+							model: model,
+						});
+						this.setCallInfoView(callInfoView);
+					}
+				});
 			}
+
+			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
+				this.disable();
+			});
 
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
