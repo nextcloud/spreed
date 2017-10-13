@@ -33,6 +33,10 @@
 		'	<div class="large-inner-left-triangle"/>' +
 		'</div>' +
 		'<div id="app-sidebar" class="detailsView scroll-container">' +
+		'	<div class="detailCallInfoContainer">' +
+		'	</div>' +
+		'	<div class="tabs">' +
+		'	</div>' +
 		'	<a class="close icon-close" href="#"><span class="hidden-visually">{{closeLabel}}</span></a>' +
 		'</div>';
 
@@ -40,7 +44,10 @@
 	 * View for the right sidebar.
 	 *
 	 * The right sidebar is an area that can be shown or hidden from the right
-	 * border of the document.
+	 * border of the document. It contains a view intended to provide details of
+	 * the current call at the top and a TabView to which different sections can
+	 * be added as needed. The call details view can be set through
+	 * "setCallInfoView()" while new tabs can be added through "addTab()".
 	 *
 	 * The SidebarView can be shown or hidden programatically using "show()" and
 	 * "hide()". It will delegate on "OC.Apps.showAppSidebar()" and
@@ -66,6 +73,11 @@
 			sidebar: '#app-sidebar',
 		},
 
+		regions: {
+			callInfoView: '@ui.sidebar .detailCallInfoContainer',
+			tabView: '@ui.sidebar .tabs'
+		},
+
 		events: {
 			'click @ui.trigger': 'open',
 			'click @ui.sidebar a.close': 'close',
@@ -80,7 +92,16 @@
 		initialize: function() {
 			this._enabled = false;
 
+			this._callInfoView = null;
+
+			this._tabView = new OCA.SpreedMe.Views.TabView();
+
+			// In Marionette 3.0 the view is not rendered automatically if
+			// needed when showing a child view, so it must be rendered
+			// explicitly to ensure that the DOM element in which the child view
+			// will be appended exists.
 			this.render();
+			this.showChildView('tabView', this._tabView, { replaceElement: true } );
 
 			this.getUI('trigger').hide();
 			this.getUI('sidebar').hide();
@@ -116,6 +137,42 @@
 
 		close: function() {
 			OC.Apps.hideAppSidebar();
+		},
+
+		/**
+		 * Sets a new call info view.
+		 *
+		 * Once set, the Sidebar takes ownership of the view, and it will
+		 * destroy it if a new one is set.
+		 *
+		 * @param Marionette.View callInfoView the view to set.
+		 */
+		setCallInfoView: function(callInfoView) {
+			this._callInfoView = callInfoView;
+
+			this.showChildView('callInfoView', this._callInfoView);
+		},
+
+		/**
+		 * Adds a new tab.
+		 *
+		 * The tabHeaderOptions must provide a 'label' string which will be
+		 * rendered as the tab header; if needed, it can provide other values
+		 * that will override the default TabHeaderView properties (for example,
+		 * it can provide an 'onRender' function to extend the default rendering
+		 * of the header).
+		 *
+		 * The Sidebar takes ownership of the given content view, and it will
+		 * destroy it when the Sidebar is destroyed.
+		 *
+		 * @param string tabId the ID of the tab.
+		 * @param Object tabHeaderOptions the options for the constructor of the
+		 *        TabHeaderView that will be added as the header of the tab.
+		 * @param Marionette.View tabContentView the View to be shown when the
+		 *        tab is selected.
+		 */
+		addTab: function(tabId, tabHeaderOptions, tabContentView) {
+			this._tabView.addTab(tabId, tabHeaderOptions, tabContentView);
 		},
 
 	});
