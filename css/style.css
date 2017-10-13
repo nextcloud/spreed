@@ -63,7 +63,7 @@
 	display: block !important;
 }
 
-#participantTabView .avatar,
+.participantWithList .avatar,
 #app-navigation .avatar,
 #app-navigation .icon-contacts-dark,
 #app-navigation .app-navigation-entry-link .icon-public {
@@ -72,7 +72,7 @@
 	top: 6px;
 }
 
-#participantTabView li > a:first-child img,
+.participantWithList li > a:first-child img,
 #app-navigation li > a:first-child img {
 	width: 32px !important;
 	height: 32px !important;
@@ -501,7 +501,7 @@ video {
 	display: none;
 }
 
-#participantTabView li > a,
+.participantWithList li > a,
 #app-navigation li > a {
     padding-right: 44px !important;
 }
@@ -692,39 +692,35 @@ video {
 	display: none !important;
 }
 
-#participantTabView .participant-moderator-indicator {
+.participantWithList .participant-moderator-indicator {
 	opacity: .5;
 	font-weight: 300;
 	padding-left: 5px;
 }
 
-#participantTabView .participant-offline > a {
+.participantWithList .participant-offline > a {
 	opacity: .5;
 }
 
-#participantTabView li {
+.participantWithList li {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-#participantTabView .with-icon a, #participantTabView a {
-	padding-left: 44px;
-	background-size: 16px 16px;
-	background-position: 14px center;
-	background-repeat: no-repeat;
-}
-
-#participantTabView li > a {
+.participantWithList li > a {
 	display: block;
 	width: 100%;
 	line-height: 44px;
 	min-height: 44px;
-	padding: 0 12px;
 	overflow: hidden;
 	box-sizing: border-box;
 	white-space: nowrap;
 	text-overflow: ellipsis;
+	padding-left: 44px;
+	background-size: 16px 16px;
+	background-position: 14px center;
+	background-repeat: no-repeat;
 }
 
 
@@ -732,25 +728,25 @@ video {
 /**
  * App navigation utils, buttons and counters for drop down menu
  */
-#participantTabView .participant-entry-utils {
+.participantWithList .participant-entry-utils {
 	position: absolute;
 	top: 0;
 	right: 0;
 	z-index: 105;
 }
 
-#participantTabView .active > .participant-entry-utils li {
+.participantWithList .active > .participant-entry-utils li {
 	display: inline-block;
 }
 
-#participantTabView .participant-entry-utils button {
+.participantWithList .participant-entry-utils button {
 	height: 100%;
 	width: 100%;
 	margin: 0;
 	box-shadow: none;
 }
 
-#participantTabView .participant-entry-utils-menu-button button {
+.participantWithList .participant-entry-utils-menu-button button {
 	border: 0;
 	opacity: .5;
 	background-color: transparent;

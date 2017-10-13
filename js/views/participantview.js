@@ -73,6 +73,7 @@
 
 	OCA.SpreedMe.Views.ParticipantView = Marionette.CollectionView.extend({
 		tagName: 'ul',
+		className: 'participantWithList',
 		childView: Marionette.View.extend({
 			tagName: 'li',
 			modelEvents: {
