@@ -181,6 +181,7 @@ class PageController extends Controller {
 		$cssDir = $appDir . 'css/';
 		$jsDir = $appDir . 'js/';
 		$params = array(
+			'printcssfiles' => array(), // Avoid errors getting logged
 			'cssfiles' => array(
 				$cssDir . 'presentation/sandbox.css',
 			),
