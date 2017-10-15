@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete server" : "Supprimer le serveur",
     "Add new server" : "Ajouter un nouveau serveur",
     "Saved" : "Sauvegardé",
+    "Shared secret" : "Secret partagé",
     "TURN server protocols" : "Protocoles du serveur TURN",
     "UDP and TCP" : "UDP et TCP",
     "UDP only" : "UDP uniquement",
