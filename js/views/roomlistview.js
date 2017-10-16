@@ -60,27 +60,12 @@
 								'</li>'+
 								'{{/if}}'+
 								'<li>'+
-									'<button class="share-link-button">'+
-										'<span class="icon-public"></span>'+
-										'<span>'+t('spreed', 'Share link')+'</span>'+
-									'</button>'+
-									'<input id="shareInput-{{id}}" class="share-link-input private-room" readonly="readonly" type="text"/>'+
-									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
-									'<div class="icon-delete private-room"></div>'+
-								'</li>'+
-								'<li>'+
 									'<button class="password-room-button">'+
 										'<span class="icon-password"></span>'+
 										'<span>{{#if hasPassword}}'+t('spreed', 'Change password')+'{{else}}'+t('spreed', 'Set password')+'{{/if}}</span>'+
 									'</button>'+
 									'<input class="hidden-important password-element password-input" maxlength="200" type="text"/>'+
 									'<div class="icon-confirm hidden-important password-element password-confirm"></div>'+
-								'</li>'+
-								'{{/if}}'+
-								'{{#if showShareLink}}'+
-								'<li>'+
-									'<input id="shareInput-{{id}}" class="share-link-input private-room first-option" readonly="readonly" type="text"/>'+
-									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
 								'</li>'+
 								'{{/if}}'+
 								'<li>'+
@@ -105,7 +90,7 @@
 							'{{/if}}'+
 						'</div>';
 
-	var RoomItenView = Marionette.View.extend({
+	var RoomItemView = Marionette.View.extend({
 		tagName: 'li',
 		modelEvents: {
 			'change:active': function() {
@@ -119,7 +104,6 @@
 			},
 			'change:type': function() {
 				this.render();
-				this.checkSharingStatus();
 			}
 		},
 		initialize: function() {
@@ -144,23 +128,12 @@
 			};
 		},
 		onRender: function() {
-			var roomURL, completeURL;
+			var roomURL;
 
 			this.initPersonSelector();
 			this.checkSharingStatus();
 
 			roomURL = OC.generateUrl('/call/' + this.model.get('token'));
-			completeURL = window.location.protocol + '//' + window.location.host + roomURL;
-
-			this.ui.shareLinkInput.attr('value', completeURL);
-			this.$el.find('.clipboardButton').attr('data-clipboard-text', completeURL);
-			this.$el.find('.clipboardButton').tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: t('spreed', 'Copy')
-			});
-			this.initClipboard();
-
 			this.$el.find('.app-navigation-entry-link').attr('href', roomURL);
 
 			if (this.model.get('active')) {
@@ -186,16 +159,13 @@
 			'click .app-navigation-entry-menu .password-room-button': 'showPasswordInput',
 			'click .app-navigation-entry-menu .password-confirm': 'confirmRoomPassword',
 			'keyup .password-input': 'passwordKeyUp',
-			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
 			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
 			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
-			'click .icon-delete': 'unshareGroup',
 			'click .app-navigation-entry-link': 'joinRoom'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
 			'menu': '.app-navigation-entry-menu',
-			'shareLinkInput': '.share-link-input',
 			'menuList': '.app-navigation-entry-menu-list',
 			'personSelectorForm' : '.oca-spreedme-add-person',
 			'personSelectorInput': '.add-person-input'
@@ -333,34 +303,6 @@
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
 					type: 'PUT',
 					data: 'password='+roomPassword,
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
-		},
-		shareGroup: function() {
-			var app = OCA.SpreedMe.app;
-
-			// This should be the only case
-			if (this.model.get('type') !== ROOM_TYPE_PUBLIC_CALL) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-					type: 'POST',
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
-		},
-		unshareGroup: function() {
-			var app = OCA.SpreedMe.app;
-
-			// This should be the only case
-			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-					type: 'DELETE',
 					success: function() {
 						app.syncRooms();
 					}
@@ -508,44 +450,6 @@
 				title: htmlstring
 			});
 		},
-		initClipboard: function () {
-			var clipboard = new Clipboard('.clipboardButton');
-			clipboard.on('success', function(e) {
-				var $input = $(e.trigger);
-				$input.tooltip('hide')
-					.attr('data-original-title', t('core', 'Copied!'))
-					.tooltip('fixTitle')
-					.tooltip({placement: 'bottom', trigger: 'manual'})
-					.tooltip('show');
-				_.delay(function() {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('core', 'Copy'))
-						.tooltip('fixTitle');
-				}, 3000);
-			});
-			clipboard.on('error', function (e) {
-				var $input = $(e.trigger);
-				var actionMsg = '';
-				if (/iPhone|iPad/i.test(navigator.userAgent)) {
-					actionMsg = t('core', 'Not supported!');
-				} else if (/Mac/i.test(navigator.userAgent)) {
-					actionMsg = t('core', 'Press ⌘-C to copy.');
-				} else {
-					actionMsg = t('core', 'Press Ctrl-C to copy.');
-				}
-
-				$input.tooltip('hide')
-					.attr('data-original-title', actionMsg)
-					.tooltip('fixTitle')
-					.tooltip({placement: 'bottom', trigger: 'manual'})
-					.tooltip('show');
-				_.delay(function () {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy'))
-						.tooltip('fixTitle');
-				}, 3000);
-			});
-		},
 		initPersonSelector: function() {
 			var _this = this;
 
@@ -664,7 +568,7 @@
 
 	var RoomListView = Marionette.CollectionView.extend({
 		tagName: 'ul',
-		childView: RoomItenView
+		childView: RoomItemView
 	});
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;

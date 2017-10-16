@@ -754,3 +754,25 @@ video {
 	background-position: center;
 	background-image: url('../../../core/img/actions/more.svg?v=1');
 }
+
+/**
+ * Sidebar details view
+ */
+
+.detailCallInfoContainer h3 {
+	max-width: calc(100% - 72px);
+	display: inline-block;
+}
+
+.detailCallInfoContainer .clipboardButton,
+.detailCallInfoContainer .renameButton {
+	display: inline-block;
+}
+
+.detailCallInfoContainer .clipboardButton .icon,
+.detailCallInfoContainer .renameButton .icon {
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	margin: -2px 10px;
+}
