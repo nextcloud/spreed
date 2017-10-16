@@ -166,7 +166,6 @@
 			if (this.model.get('active')) {
 				this.$el.addClass('active');
 				this.addRoomMessage();
-				this.updateSidebar();
 			} else {
 				this.$el.removeClass('active');
 			}
@@ -177,28 +176,6 @@
 			}
 
 			this.toggleMenuClass();
-		},
-		updateSidebar: function() {
-			var $content = $('#app-content'),
-				$sidebar = $content.find('#app-sidebar');
-
-			$sidebar.find('.room-name').text(this.model.get('displayName'));
-
-			OCA.SpreedMe.app._participants.setRoom(this.model);
-			OCA.SpreedMe.app._participants.fetch();
-			OCA.SpreedMe.app._participantsView.render();
-
-			if (!$content.hasClass('with-app-sidebar')) {
-				$content.addClass('with-app-sidebar');
-				$sidebar.removeClass('hidden');
-			}
-		},
-		hideSidebar: function() {
-			var $content = $('#app-content'),
-				$sidebar = $content.find('#app-sidebar');
-
-			$content.removeClass('with-app-sidebar');
-			$sidebar.addClass('hidden');
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
@@ -394,7 +371,6 @@
 			// If user is in that room, it should leave the associated call first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Calls.leaveCurrentCall(true);
-				this.hideSidebar();
 			}
 
 			this.$el.slideUp();
@@ -413,7 +389,6 @@
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
 				OCA.SpreedMe.Calls.leaveCurrentCall(true);
-				this.hideSidebar();
 				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
 

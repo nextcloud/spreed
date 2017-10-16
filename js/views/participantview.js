@@ -73,6 +73,21 @@
 
 	OCA.SpreedMe.Views.ParticipantView = Marionette.CollectionView.extend({
 		tagName: 'ul',
+		className: 'participantWithList',
+		collectionEvents: {
+			'update': function() {
+				this.render();
+			},
+			'reset': function() {
+				this.render();
+			},
+			'sort': function() {
+				this.render();
+			},
+			'sync': function() {
+				this.render();
+			}
+		},
 		childView: Marionette.View.extend({
 			tagName: 'li',
 			modelEvents: {
