@@ -1,0 +1,27 @@
+{ "translations": {
+    "Video calls" : "Vaizdo skambučiai",
+    "Saved" : "Įrašyta",
+    "UDP and TCP" : "UDP ir TCP",
+    "UDP only" : "Tik UDP",
+    "TCP only" : "Tik TCP",
+    "(group)" : "(grupė)",
+    "Waiting for {participantName} to join the call …" : "Laukiama kol {participantName} prisijungs prie skambučio …",
+    "Waiting for others to join the call …" : "Laukiama kol kiti prisijungs prie skambučio …",
+    "Please, give your browser access to use your camera and microphone in order to use this app." : "Norėdami naudoti šią programėlę, suteikite savo naršyklei prieigą naudoti jūsų kamerą ir mikrofoną.",
+    "Guest" : "Svečias",
+    "Copy" : "Kopijuoti",
+    "Copied!" : "Nukopijuota!",
+    "Not supported!" : "Nepalaikoma!",
+    "Press ⌘-C to copy." : "Norėdami nukopijuoti, paspauskite ⌘-C.",
+    "Rename" : "Pervadinti",
+    "WebRTC is not supported in your browser" : "Jūsų naršyklėje WebRTC nėra palaikoma",
+    "WebRTC is not supported in your browser :-/" : "Jūsų naršyklėje WebRTC nėra palaikoma :-/",
+    "{actor} invited you to a private call" : "{actor} pakvietė jus į privatų skambutį",
+    ", " : ", ",
+    "Fullscreen" : "Visas ekranas",
+    "Mute audio" : "Nutildyti garsą",
+    "TURN server" : "TURN serveris",
+    "Saving failed" : "Įrašymas nepavyko",
+    "STUN server" : "STUN serveris"
+},"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);"
+}
