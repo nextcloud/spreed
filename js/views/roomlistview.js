@@ -49,14 +49,6 @@
 										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
-								'<li>'+
-									'<button class="password-room-button">'+
-										'<span class="icon-password"></span>'+
-										'<span>{{#if hasPassword}}'+t('spreed', 'Change password')+'{{else}}'+t('spreed', 'Set password')+'{{/if}}</span>'+
-									'</button>'+
-									'<input class="hidden-important password-element password-input" maxlength="200" type="text"/>'+
-									'<div class="icon-confirm hidden-important password-element password-confirm"></div>'+
-								'</li>'+
 								'{{/if}}'+
 								'<li>'+
 									'<button class="leave-room-button">'+
@@ -141,9 +133,6 @@
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
-			'click .app-navigation-entry-menu .password-room-button': 'showPasswordInput',
-			'click .app-navigation-entry-menu .password-confirm': 'confirmRoomPassword',
-			'keyup .password-input': 'passwordKeyUp',
 			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
 			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
 			'click .app-navigation-entry-link': 'joinRoom'
@@ -164,12 +153,6 @@
 		},
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
-
-			// Hide rename and password input and show button when opening menu
-			if (this.menuShown) {
-				this.$el.find('.password-element').addClass('hidden-important');
-				this.$el.find('.password-room-button').removeClass('hidden-important');
-			}
 		},
 		checkSharingStatus: function() {
 			if (this.model.get('type') === ROOM_TYPE_ONE_TO_ONE) { // 1on1
@@ -204,43 +187,6 @@
 			this.ui.menuList.attr('style', 'display: none !important');
 			this.ui.personSelectorForm.toggleClass('hidden');
 			this.ui.personSelectorInput.select2('open');
-		},
-		showPasswordInput: function() {
-			this.$el.find('.password-element').removeClass('hidden-important');
-			this.$el.find('.password-room-button').addClass('hidden-important');
-
-			this.$el.find('.password-input').focus();
-			this.$el.find('.password-input').select();
-		},
-		hidePasswordInput: function() {
-			this.$el.find('.password-element').addClass('hidden-important');
-			this.$el.find('.password-room-button').removeClass('hidden-important');
-		},
-		confirmRoomPassword: function() {
-			var newRoomPassword = $.trim(this.$el.find('.password-input').val());
-			this.passwordRoom(newRoomPassword);
-			this.hidePasswordInput();
-		},
-		passwordKeyUp: function(e) {
-			if (e.keyCode === 13) {
-				this.confirmRoomPassword();
-			} else if (e.keyCode === 27) {
-				this.hidePasswordInput();
-			}
-		},
-		passwordRoom: function(roomPassword) {
-			var app = OCA.SpreedMe.app;
-
-			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
-					type: 'PUT',
-					data: 'password='+roomPassword,
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
 		},
 		leaveRoom: function() {
 			// If user is in that room, it should leave the associated call first.

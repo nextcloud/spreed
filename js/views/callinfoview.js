@@ -35,7 +35,7 @@
 		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div class="rename-option hidden-important">' +
-		'		<input class="rename-input" maxlength="200" type="text" value="{{displayName}}">'+
+		'		<input class="rename-input" maxlength="200" type="text" value="{{displayName}}" placeholder="' + t('spreed', 'Name') + '">'+
 		'		<div class="icon icon-confirm rename-confirm"></div>'+
 		'	</div>' +
 		'	<div class="rename-button"><span class="icon icon-rename" title="' + t('spreed', 'Rename') + '"></span></div>' +
@@ -46,6 +46,11 @@
 		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
+		'			<div class="password-option">' +
+		'				<input class="password-input" maxlength="200" type="password"' +
+		'				  placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
+		'				<div class="icon icon-confirm password-confirm"></div>'+
+		'			</div>' +
 		'		{{/if}}' +
 		'	</div>' +
 		'{{/if}}';
@@ -75,18 +80,29 @@
 			'renameButton': '.rename-button',
 			'renameOption': '.rename-option',
 			'renameInput': '.rename-input',
-			'renameConfirm': '.rename-confirm'
+			'renameConfirm': '.rename-confirm',
+
+			'passwordOption': '.password-option',
+			'passwordInput': '.password-input',
+			'passwordConfirm': '.password-confirm'
 		},
 
 		events: {
+			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
+
 			'click @ui.renameButton': 'showRenameInput',
-			'keyup @ui.renameInput': 'renameKeyUp',
+			'keyup @ui.renameInput': 'keyUpRename',
 			'click @ui.renameConfirm': 'confirmRename',
-			'change @ui.linkCheckbox': 'toggleLinkCheckbox'
+
+			'keyup @ui.passwordInput': 'keyUpPassword',
+			'click @ui.passwordConfirm': 'confirmPassword'
 		},
 
 		modelEvents: {
 			'change:displayName': function() {
+				this.render();
+			},
+			'change:hasPassword': function() {
 				this.render();
 			},
 			'change:type': function() {
@@ -108,18 +124,9 @@
 			this.initClipboard();
 		},
 
-		toggleLinkCheckbox: function() {
-			var shareLink = this.ui.linkCheckbox.attr('checked') === 'checked';
-
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-				type: shareLink ? 'POST' : 'DELETE',
-				success: function() {
-					OCA.SpreedMe.app.syncRooms();
-				}
-			});
-		},
-
+		/**
+		 * Rename
+		 */
 		showRenameInput: function() {
 			this.ui.renameOption.removeClass('hidden-important');
 			this.ui.roomName.addClass('hidden-important');
@@ -158,7 +165,7 @@
 			console.log('.rename-option');
 		},
 
-		renameKeyUp: function(e) {
+		keyUpRename: function(e) {
 			if (e.keyCode === 13) {
 				// Enter
 				this.confirmRename();
@@ -169,6 +176,57 @@
 			}
 		},
 
+		/**
+		 * Share link
+		 */
+		toggleLinkCheckbox: function() {
+			var shareLink = this.ui.linkCheckbox.attr('checked') === 'checked';
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
+				type: shareLink ? 'POST' : 'DELETE',
+				success: function() {
+					OCA.SpreedMe.app.syncRooms();
+				}
+			});
+		},
+
+		/**
+		 * Password
+		 */
+		confirmPassword: function() {
+			var newPassword = this.ui.passwordInput.val().trim();
+
+			console.log('Setting room password to "' + newPassword + '".');
+			console.log('Setting room password to "' + this.model.get('hasPassword') + '".');
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
+				type: 'PUT',
+				data: {
+					password: newPassword
+				},
+				success: function() {
+					OCA.SpreedMe.app.syncRooms();
+				}.bind(this)
+			});
+
+			console.log('.rename-option');
+		},
+
+		keyUpPassword: function(e) {
+			if (e.keyCode === 13) {
+				// Enter
+				this.confirmPassword();
+			} else if (e.keyCode === 27) {
+				// ESC
+				this.ui.passwordInput.val('');
+			}
+		},
+
+		/**
+		 * Clipboard
+		 */
 		initClipboard: function() {
 			var clipboard = new Clipboard('.clipboard-button');
 			clipboard.on('success', function(e) {

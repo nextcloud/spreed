@@ -781,12 +781,14 @@ video {
 	margin: -2px 10px;
 }
 
-.detailCallInfoContainer .rename-option {
+.detailCallInfoContainer .rename-option,
+.detailCallInfoContainer .password-option {
 	position: relative;
 	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
-.detailCallInfoContainer .rename-input {
+.detailCallInfoContainer .rename-input,
+.detailCallInfoContainer .password-input {
 	width: 100%;
 }
