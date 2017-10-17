@@ -140,7 +140,7 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('sendMessage')
 			->with('testToken',
 				   'guests',
-				   'testSpreedSession',
+				   sha1('testSpreedSession'),
 				   'testMessage',
 				   $this->newMessageDateTimeConstraint
 			);

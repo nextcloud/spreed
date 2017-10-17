@@ -325,7 +325,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$response = $this->getDataFromResponse($this->response);
 		if (array_key_exists('sessionId', $response)) {
-			self::$sessionIdToUser[$response['sessionId']] = $user;
+			// In the chat guest users are identified by their sessionId. The
+			// sessionId is larger than the size of the actorId column in the
+			// database, though, so the ID stored in the database and returned
+			// in chat messages is a hashed version instead.
+			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
 		}
 	}
 

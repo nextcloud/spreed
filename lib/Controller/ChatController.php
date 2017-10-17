@@ -99,6 +99,12 @@ class ChatController extends OCSController {
 		if ($this->userId === null) {
 			$actorType = 'guests';
 			$actorId = $this->session->get('spreed-session');
+			// The character limit for actorId is 64, but the spreed-session is
+			// 256 characters long, so it has to be hashed to get an ID that
+			// fits (except if there is no session, as the actorId should be
+			// empty in that case but sha1('') would generate a hash too
+			// instead of returning an empty string).
+			$actorId = $actorId? sha1($actorId): $actorId;
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;
