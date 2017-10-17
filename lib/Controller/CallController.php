@@ -29,7 +29,6 @@ use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -150,18 +149,19 @@ class CallController extends OCSController {
 		try {
 			if ($this->userId !== null) {
 				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-				$newSessionId = $room->enterRoomAsUser($this->userId, $password);
+				$newSessionId = $room->enterRoomAsUser($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
 
 				if (!empty($sessionIds)) {
 					$this->messages->deleteMessages($sessionIds);
 				}
 			} else {
-				$newSessionId = $room->enterRoomAsGuest($password);
+				$newSessionId = $room->enterRoomAsGuest($password, $this->session->get('spreed-password') === $room->getToken());
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		$this->session->remove('spreed-password');
 		$this->session->set('spreed-session', $newSessionId);
 		$room->ping($this->userId, $newSessionId, time());
 

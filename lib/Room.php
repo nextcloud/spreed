@@ -419,10 +419,11 @@ class Room {
 	/**
 	 * @param string $userId
 	 * @param string $password
+	 * @param bool $passedPasswordProtection
 	 * @return string
 	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsUser($userId, $password) {
+	public function enterRoomAsUser($userId, $password, $passedPasswordProtection = false) {
 		$this->dispatcher->dispatch(self::class . '::preUserEnterRoom', new GenericEvent($this));
 
 		$this->disconnectUserFromAllRooms($userId);
@@ -438,7 +439,7 @@ class Room {
 		$result = $query->execute();
 
 		if ($result === 0) {
-			if ($this->hasPassword() && !$this->hasher->verify($password, $this->password)) {
+			if (!$passedPasswordProtection && !$this->verifyPassword($password)) {
 				throw new InvalidPasswordException();
 			}
 
@@ -487,13 +488,14 @@ class Room {
 
 	/**
 	 * @param string $password
+	 * @param bool $passedPasswordProtection
 	 * @return string
 	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsGuest($password) {
+	public function enterRoomAsGuest($password, $passedPasswordProtection = false) {
 		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
 
-		if ($this->hasPassword() && !$this->hasher->verify($password, $this->password)) {
+		if (!$passedPasswordProtection && !$this->verifyPassword($password)) {
 			throw new InvalidPasswordException();
 		}
 
@@ -511,6 +513,14 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postGuestEnterRoom', new GenericEvent($this));
 
 		return $sessionId;
+	}
+
+	/**
+	 * @param string $password
+	 * @return bool
+	 */
+	public function verifyPassword($password) {
+		return !$this->hasPassword() || $this->hasher->verify($password, $this->password);
 	}
 
 	/**
