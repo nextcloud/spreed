@@ -257,7 +257,7 @@ class Room {
 			return false;
 		}
 
-		$hash = $this->hasher->hash($password);
+		$hash = $password !== '' ? $this->hasher->hash($password) : '';
 
 		$this->dispatcher->dispatch(self::class . '::preSetPassword', new GenericEvent($this, [
 			'password' => $password,
