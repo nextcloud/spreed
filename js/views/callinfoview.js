@@ -31,14 +31,21 @@
 	var TEMPLATE =
 		'<h3 class="room-name">{{displayName}}</h3>' +
 		'{{#if showShareLink}}' +
-		'	<div class="clipboardButton"><span class="icon icon-clippy"></span></div>' +
+		'	<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
+		'{{/if}}' +
+		'{{#if canModerate}}' +
+		'	<div class="rename-option hidden-important">' +
+		'		<input class="rename-input" maxlength="200" type="text" value="{{displayName}}">'+
+		'		<div class="icon icon-confirm rename-confirm"></div>'+
+		'	</div>' +
+		'	<div class="rename-button"><span class="icon icon-rename" title="' + t('spreed', 'Rename') + '"></span></div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div>' +
-		'		<input name="linkCheckbox" id="linkCheckbox" class="checkbox linkCheckbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
-		'		<label for="linkCheckbox">' + t('spreed', 'Share link') + '</label>' +
+		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
+		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
-		'			<div class="clipboardButton"><span class="icon icon-clippy"></span></div>' +
+		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
 		'		{{/if}}' +
 		'	</div>' +
 		'{{/if}}';
@@ -61,12 +68,20 @@
 		},
 
 		ui: {
-			'clipboardButton': '.clipboardButton',
-			'renameButton': '.renameButton',
-			'linkCheckbox': '.linkCheckbox'
+			'roomName': 'h3.room-name',
+			'clipboardButton': '.clipboard-button',
+			'linkCheckbox': '.link-checkbox',
+
+			'renameButton': '.rename-button',
+			'renameOption': '.rename-option',
+			'renameInput': '.rename-input',
+			'renameConfirm': '.rename-confirm'
 		},
 
 		events: {
+			'click @ui.renameButton': 'showRenameInput',
+			'keyup @ui.renameInput': 'renameKeyUp',
+			'click @ui.renameConfirm': 'confirmRename',
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox'
 		},
 
@@ -105,8 +120,57 @@
 			});
 		},
 
+		showRenameInput: function() {
+			this.ui.renameOption.removeClass('hidden-important');
+			this.ui.roomName.addClass('hidden-important');
+			this.ui.renameButton.addClass('hidden-important');
+		},
+
+		hideRenameInput: function() {
+			this.ui.renameOption.addClass('hidden-important');
+			this.ui.roomName.removeClass('hidden-important');
+			this.ui.renameButton.removeClass('hidden-important');
+		},
+
+		confirmRename: function() {
+			var newRoomName = this.ui.renameInput.val().trim();
+
+			if (newRoomName === this.model.get('name')) {
+				this.hideRenameInput();
+				return;
+			}
+
+			console.log('Changing room name from "' + this.model.get('name') + '" to "' + newRoomName + '".');
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
+				type: 'PUT',
+				data: {
+					roomName: newRoomName
+				},
+				success: function() {
+					this.ui.roomName.text(newRoomName);
+					this.hideRenameInput();
+					OCA.SpreedMe.app.syncRooms();
+				}.bind(this)
+			});
+
+			console.log('.rename-option');
+		},
+
+		renameKeyUp: function(e) {
+			if (e.keyCode === 13) {
+				// Enter
+				this.confirmRename();
+			} else if (e.keyCode === 27) {
+				// ESC
+				this.hideRenameInput();
+				this.ui.renameInput.val(this.model.get('name'));
+			}
+		},
+
 		initClipboard: function() {
-			var clipboard = new Clipboard('.clipboardButton');
+			var clipboard = new Clipboard('.clipboard-button');
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')

@@ -49,16 +49,6 @@
 										'<span>'+t('spreed', 'Add person')+'</span>'+
 									'</button>'+
 								'</li>'+
-								'{{#if isNameEditable}}'+
-								'<li>'+
-									'<button class="rename-room-button">'+
-										'<span class="icon-rename"></span>'+
-										'<span>'+t('spreed', 'Rename')+'</span>'+
-									'</button>'+
-									'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
-									'<div class="icon-confirm hidden-important rename-element rename-confirm"></div>'+
-								'</li>'+
-								'{{/if}}'+
 								'<li>'+
 									'<button class="password-room-button">'+
 										'<span class="icon-password"></span>'+
@@ -122,8 +112,6 @@
 			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
 			return {
 				canModerate: canModerate,
-				showShareLink: !canModerate && this.model.get('type') === ROOM_TYPE_PUBLIC_CALL,
-				isNameEditable: canModerate && this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			};
 		},
@@ -153,9 +141,6 @@
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
-			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
-			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
-			'keyup .rename-input': 'renameKeyUp',
 			'click .app-navigation-entry-menu .password-room-button': 'showPasswordInput',
 			'click .app-navigation-entry-menu .password-confirm': 'confirmRoomPassword',
 			'keyup .password-input': 'passwordKeyUp',
@@ -182,8 +167,6 @@
 
 			// Hide rename and password input and show button when opening menu
 			if (this.menuShown) {
-				this.$el.find('.rename-element').addClass('hidden-important');
-				this.$el.find('.rename-room-button').removeClass('hidden-important');
 				this.$el.find('.password-element').addClass('hidden-important');
 				this.$el.find('.password-room-button').removeClass('hidden-important');
 			}
@@ -221,56 +204,6 @@
 			this.ui.menuList.attr('style', 'display: none !important');
 			this.ui.personSelectorForm.toggleClass('hidden');
 			this.ui.personSelectorInput.select2('open');
-		},
-		showRenameInput: function() {
-			var currentRoomName = this.model.get('name');
-
-			this.$el.find('.rename-element').removeClass('hidden-important');
-			this.$el.find('.rename-room-button').addClass('hidden-important');
-
-			if (currentRoomName) {
-				this.$el.find('.rename-input').val(currentRoomName);
-			}
-
-			this.$el.find('.rename-input').focus();
-			this.$el.find('.rename-input').select();
-		},
-		hideRenameInput: function() {
-			this.$el.find('.rename-element').addClass('hidden-important');
-			this.$el.find('.rename-room-button').removeClass('hidden-important');
-		},
-		confirmRoomRename: function() {
-			var currentRoomName = this.model.get('name');
-			var newRoomName = $.trim(this.$el.find('.rename-input').val());
-
-			if (currentRoomName !== newRoomName) {
-				console.log('Changing room name to: '+newRoomName+' from: '+currentRoomName);
-				this.renameRoom(newRoomName);
-			}
-
-			this.hideRenameInput();
-		},
-		renameKeyUp: function(e) {
-			if (e.keyCode === 13) {
-				this.confirmRoomRename();
-			} else if (e.keyCode === 27) {
-				this.hideRenameInput();
-			}
-		},
-		renameRoom: function(roomName) {
-			var app = OCA.SpreedMe.app;
-
-			// This should be the only case
-			if ((this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE) && (roomName.length <= 200)) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
-					type: 'PUT',
-					data: 'roomName='+roomName,
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
 		},
 		showPasswordInput: function() {
 			this.$el.find('.password-element').removeClass('hidden-important');

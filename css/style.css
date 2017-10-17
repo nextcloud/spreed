@@ -128,7 +128,7 @@
 
 .password-input,
 .rename-input {
-	margin-top: 0px !important;
+	margin-top: 0 !important;
 	margin-bottom: 4px !important;
 }
 
@@ -409,7 +409,7 @@ video {
 
 #video-fullscreen {
 	position: absolute;
-	right: 0px;
+	right: 0;
 	z-index: 90;
 }
 
@@ -764,15 +764,29 @@ video {
 	display: inline-block;
 }
 
-.detailCallInfoContainer .clipboardButton,
-.detailCallInfoContainer .renameButton {
+.detailCallInfoContainer .rename-button {
+	display: none;
+}
+
+.detailCallInfoContainer .clipboard-button,
+.detailCallInfoContainer:hover .rename-button {
 	display: inline-block;
 }
 
-.detailCallInfoContainer .clipboardButton .icon,
-.detailCallInfoContainer .renameButton .icon {
+.detailCallInfoContainer .clipboard-button .icon,
+.detailCallInfoContainer .rename-button .icon {
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
 	margin: -2px 10px;
+}
+
+.detailCallInfoContainer .rename-option {
+	position: relative;
+	max-width: calc(100% - 72px);
+	display: inline-block;
+}
+
+.detailCallInfoContainer .rename-input {
+	width: 100%;
 }
