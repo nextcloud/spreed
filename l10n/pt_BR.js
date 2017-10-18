@@ -52,6 +52,7 @@ OC.L10N.register(
     "No other people in this call" : "Não há outras pessoas nesta chamada",
     "You" : "Você",
     "and you" : "e você",
+    "Close" : "Fechar",
     "Access to microphone & camera is only possible with HTTPS" : "O acesso ao microfone e à câmera só é possível com HTTPS",
     "Please adjust your configuration" : "Por favor, ajuste sua configuração",
     "Access to microphone & camera was denied" : "O acesso ao microfone e à câmera foi negado",

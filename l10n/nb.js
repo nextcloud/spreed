@@ -52,6 +52,7 @@ OC.L10N.register(
     "No other people in this call" : "Ingen andre personer i denne samtalen",
     "You" : "Du",
     "and you" : "og deg",
+    "Close" : "Lukk",
     "Access to microphone & camera is only possible with HTTPS" : "Tilgang til mikrofon og kamera er kun mulig via HTTPS",
     "Please adjust your configuration" : "Juster oppsettet ditt",
     "Access to microphone & camera was denied" : "Tilgang til mikrofon og kamera var avvist",
