@@ -61,6 +61,8 @@
 
 		template: Handlebars.compile(TEMPLATE),
 
+		renderTimeout: undefined,
+
 		templateContext: function() {
 			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
 			return $.extend(this.model.toJSON(), {
@@ -100,17 +102,37 @@
 
 		modelEvents: {
 			'change:displayName': function() {
-				this.render();
+				this.renderWhenInactive();
 			},
 			'change:hasPassword': function() {
+				this.renderWhenInactive();
+			},
+			'change:participantType': function() {
+				// User permission change, refresh even when typing, because the
+				// action will fail in the future anyway.
 				this.render();
 			},
 			'change:type': function() {
-				this.render();
+				this.renderWhenInactive();
 			}
 		},
 
+		renderWhenInactive: function() {
+			if (!this.ui.renameInput.is(':visible') &&
+				this.ui.passwordInput.val() === '') {
+				this.render();
+				return;
+			}
+
+			this.renderTimeout = setTimeout(_.bind(this.renderWhenInactive, this), 500);
+		},
+
 		onRender: function() {
+			if (!_.isUndefined(this.renderTimeout)) {
+				clearTimeout(this.renderTimeout);
+				this.renderTimeout = undefined;
+			}
+
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
 
