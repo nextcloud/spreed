@@ -42,7 +42,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
 
-	<version>2.1.6</version>
+	<version>2.1.7</version>
 
 	<dependencies>
 		<nextcloud min-version="13" max-version="13" />
@@ -72,7 +72,8 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		</settings>
 
 		<providers>
-			<provider>OCA\Spreed\Activity\Provider</provider>
+			<provider>OCA\Spreed\Activity\Provider\Invitation</provider>
+			<provider>OCA\Spreed\Activity\Provider\Call</provider>
 		</providers>
 	</activity>
 

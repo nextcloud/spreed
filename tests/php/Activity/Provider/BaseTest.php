@@ -19,14 +19,15 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Activity;
+namespace OCA\Spreed\Tests\php\Activity\Provider;
 
 
-use OCA\Spreed\Activity\Provider;
+use OCA\Spreed\Activity\Provider\Base;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -34,11 +35,11 @@ use OCP\L10N\IFactory;
 use Test\TestCase;
 
 /**
- * Class ProviderTest
+ * Class BaseTest
  *
  * @package OCA\Spreed\Tests\php\Activity
  */
-class ProviderTest extends TestCase {
+class BaseTest extends TestCase {
 
 	/** @var IFactory|\PHPUnit_Framework_MockObject_MockObject */
 	protected $l10nFactory;
@@ -63,41 +64,74 @@ class ProviderTest extends TestCase {
 
 	/**
 	 * @param string[] $methods
-	 * @return Provider|\PHPUnit_Framework_MockObject_MockObject
+	 * @return Base|\PHPUnit_Framework_MockObject_MockObject
 	 */
 	protected function getProvider(array $methods = []) {
-		if (!empty($methods)) {
-			return $this->getMockBuilder(Provider::class)
-				->setConstructorArgs([
-					$this->l10nFactory,
-					$this->url,
-					$this->activityManager,
-					$this->userManager,
-					$this->manager,
-				])
-				->setMethods($methods)
-				->getMock();
-		}
-		return new Provider(
-			$this->l10nFactory,
-			$this->url,
-			$this->activityManager,
-			$this->userManager,
-			$this->manager
-		);
+		$methods[] = 'parse';
+		return $this->getMockBuilder(Base::class)
+			->setConstructorArgs([
+				$this->l10nFactory,
+				$this->url,
+				$this->activityManager,
+				$this->userManager,
+				$this->manager,
+			])
+			->setMethods($methods)
+			->getMock();
+	}
+
+
+	public function dataPreParse() {
+		return [
+			[true, 'app-dark.png'],
+			[false, 'app-dark.svg'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataPreParse
+	 *
+	 */
+	public function testPreParse($png, $imagePath) {
+		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+		$event = $this->createMock(IEvent::class);
+		$event->expects($this->once())
+			->method('getApp')
+			->willReturn('spreed');
+
+		$this->activityManager->expects($this->once())
+			->method('getRequirePNG')
+			->willReturn($png);
+
+		$this->url->expects($this->once())
+			->method('imagePath')
+			->with('spreed', $imagePath)
+			->willReturn('imagePath');
+		$this->url->expects($this->once())
+			->method('getAbsoluteURL')
+			->with('imagePath')
+			->willReturn('getAbsoluteURL');
+
+		$event->expects($this->once())
+			->method('setIcon')
+			->with('getAbsoluteURL')
+			->willReturnSelf();
+
+		$provider = $this->getProvider();
+		$this->assertSame($event, static::invokePrivate($provider, 'preParse', [$event]));
 	}
 
 	/**
 	 * @expectedException \InvalidArgumentException
 	 */
-	public function testParseThrows() {
+	public function testPreParseThrows() {
 		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
 			->willReturn('activity');
 		$provider = $this->getProvider();
-		$provider->parse('en', $event, null);
+		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 
 	public function dataSetSubject() {
@@ -131,48 +165,14 @@ class ProviderTest extends TestCase {
 		self::invokePrivate($provider, 'setSubjects', [$event, $subject, $parameters]);
 	}
 
-	public function dataGetParameters() {
-		return [
-			['test', true, ['actor' => 'array(user)', 'call' => 'array(room)']],
-			['admin', false, ['actor' => 'array(user)']],
-		];
-	}
-
-	/**
-	 * @dataProvider dataGetParameters
-	 *
-	 * @param string $user
-	 * @param bool $isRoom
-	 * @param array $expected
-	 */
-	public function testGetParameters($user, $isRoom, array $expected) {
-		$provider = $this->getProvider(['getUser', 'getRoom']);
-
-		$provider->expects($this->once())
-			->method('getUser')
-			->with($user)
-			->willReturn('array(user)');
-
-		if ($isRoom) {
-			$room = $this->createMock(Room::class);
-			$provider->expects($this->once())
-				->method('getRoom')
-				->with($room)
-				->willReturn('array(room)');
-		} else {
-			$room = null;
-			$provider->expects($this->never())
-				->method('getRoom');
-		}
-
-		$this->assertEquals($expected, self::invokePrivate($provider, 'getParameters', [['user' => $user], $room]));
-	}
-
 	public function dataGetRoom() {
 		return [
-			[Room::ONE_TO_ONE_CALL, 23, 'private-call', 'one2one'],
-			[Room::GROUP_CALL, 42, 'group-call', 'group'],
-			[Room::PUBLIC_CALL, 128, 'public-call', 'public'],
+			[Room::ONE_TO_ONE_CALL, 23, 'private-call', 'private-call', 'one2one'],
+			[Room::GROUP_CALL, 42, 'group-call', 'group-call', 'group'],
+			[Room::PUBLIC_CALL, 128, 'public-call', 'public-call', 'public'],
+			[Room::ONE_TO_ONE_CALL, 23, '', 'a call', 'one2one'],
+			[Room::GROUP_CALL, 42, '', 'a call', 'group'],
+			[Room::PUBLIC_CALL, 128, '', 'a call', 'public'],
 		];
 	}
 
@@ -182,9 +182,10 @@ class ProviderTest extends TestCase {
 	 * @param int $type
 	 * @param int $id
 	 * @param string $name
+	 * @param string $expectedName
 	 * @param string $expectedType
 	 */
-	public function testGetRoom($type, $id, $name, $expectedType) {
+	public function testGetRoom($type, $id, $name, $expectedName, $expectedType) {
 		$provider = $this->getProvider();
 
 		$room = $this->createMock(Room::class);
@@ -198,12 +199,19 @@ class ProviderTest extends TestCase {
 			->method('getName')
 			->willReturn($name);
 
+		$l = $this->createMock(IL10N::class);
+		$l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
 		$this->assertEquals([
 			'type' => 'call',
 			'id' => $id,
-			'name' => $name,
+			'name' => $expectedName,
 			'call-type' => $expectedType,
-		], self::invokePrivate($provider, 'getRoom', [$room]));
+		], self::invokePrivate($provider, 'getRoom', [$l, $room]));
 	}
 
 	public function dataGetUser() {

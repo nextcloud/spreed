@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Spreed\Activity;
+namespace OCA\Spreed\Activity\Provider;
 
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
@@ -27,12 +27,13 @@ use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
 
-class Provider implements IProvider {
+abstract class Base implements IProvider {
 
 	/** @var IFactory */
 	protected $languageFactory;
@@ -68,48 +69,20 @@ class Provider implements IProvider {
 	}
 
 	/**
-	 * @param string $language
 	 * @param IEvent $event
-	 * @param IEvent|null $previousEvent
 	 * @return IEvent
 	 * @throws \InvalidArgumentException
-	 * @since 11.0.0
 	 */
-	public function parse($language, IEvent $event, IEvent $previousEvent = null) {
+	public function preParse(IEvent $event) {
 		if ($event->getApp() !== 'spreed') {
 			throw new \InvalidArgumentException();
 		}
 
-		$l = $this->languageFactory->get('spreed', $language);
-
-		if (method_exists($this->activityManager, 'getRequirePNG') && $this->activityManager->getRequirePNG()) {
+		if ($this->activityManager->getRequirePNG()) {
 			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.png')));
 		} else {
 			$event->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')));
 		}
-
-		try {
-			$parameters = $event->getSubjectParameters();
-			$room = $this->manager->getRoomById((int) $parameters['room']);
-
-			if ($room->getName() === '') {
-				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-					$parsedParameters = $this->getParameters($parameters);
-					$subject = $l->t('{actor} invited you to a private call');
-				} else {
-					$parsedParameters = $this->getParameters($parameters);
-					$subject = $l->t('{actor} invited you to a group call');
-				}
-			} else {
-				$parsedParameters = $this->getParameters($parameters, $room);
-				$subject = $l->t('{actor} invited you to the call {call}');
-			}
-		} catch (RoomNotFoundException $e) {
-			throw new \InvalidArgumentException();
-		}
-
-
-		$this->setSubjects($event, $subject, $parsedParameters);
 
 		return $event;
 	}
@@ -132,28 +105,11 @@ class Provider implements IProvider {
 	}
 
 	/**
-	 * @param array $parameters
+	 * @param IL10N $l
 	 * @param Room $room
 	 * @return array
 	 */
-	protected function getParameters(array $parameters, Room $room = null) {
-		if ($room === null) {
-			return [
-				'actor' => $this->getUser($parameters['user']),
-			];
-		} else {
-			return [
-				'actor' => $this->getUser($parameters['user']),
-				'call' => $this->getRoom($room),
-			];
-		}
-	}
-
-	/**
-	 * @param Room $room
-	 * @return array
-	 */
-	protected function getRoom(Room $room) {
+	protected function getRoom(IL10N $l, Room $room) {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				$stringType = 'one2one';
@@ -170,8 +126,22 @@ class Provider implements IProvider {
 		return [
 			'type' => 'call',
 			'id' => $room->getId(),
-			'name' => $room->getName(),
+			'name' => $room->getName() ?: $l->t('a call'),
 			'call-type' => $stringType,
+		];
+	}
+
+	/**
+	 * @param IL10N $l
+	 * @param int $roomId
+	 * @return array
+	 */
+	protected function getFormerRoom(IL10N $l, $roomId) {
+		return [
+			'type' => 'call',
+			'id' => $roomId,
+			'name' => $l->t('a call'),
+			'call-type' => Room::UNKNOWN_CALL,
 		];
 	}
 
@@ -199,8 +169,7 @@ class Provider implements IProvider {
 		$user = $this->userManager->get($uid);
 		if ($user instanceof IUser) {
 			return $user->getDisplayName();
-		} else {
-			return $uid;
 		}
+		return $uid;
 	}
 }
