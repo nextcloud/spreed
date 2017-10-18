@@ -53,21 +53,21 @@
 								'<li>'+
 									'<button class="leave-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>{{#if isDeletable}}'+t('spreed', 'Leave call')+'{{else}}'+t('spreed', 'Delete call')+'{{/if}}</span>'+
+										'<span>'+t('spreed', 'Leave room')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{#if isDeletable}}'+
 								'<li>'+
 									'<button class="delete-room-button">'+
 										'<span class="icon-delete"></span>'+
-										'<span>'+t('spreed', 'Delete call')+'</span>'+
+										'<span>'+t('spreed', 'Delete room')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{/if}}'+
 							'</ul>'+
 							'{{#if canModerate}}'+
 							'<form class="oca-spreedme-add-person hidden">'+
-								'<input class="add-person-input" type="text" placeholder="Type name..."/>'+
+								'<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Type name…')+'"/>'+
 							'</form>'+
 							'{{/if}}'+
 						'</div>';
