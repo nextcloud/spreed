@@ -116,7 +116,7 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$this->chatManager->sendMessage($token, $actorType, $actorId, $message, $creationDateTime);
+		$this->chatManager->sendMessage(strval($room->getId()), $actorType, $actorId, $message, $creationDateTime);
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
@@ -172,7 +172,7 @@ class ChatController extends OCSController {
 			$timeout = $maximumTimeout;
 		}
 
-		$comments = $this->chatManager->receiveMessages($token, $timeout, $offset, $notOlderThan);
+		$comments = $this->chatManager->receiveMessages(strval($room->getId()), $timeout, $offset, $notOlderThan);
 
 		$userManager = $this->userManager;
 

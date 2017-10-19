@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Controller\ChatController;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\IComment;
@@ -51,6 +52,9 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var \OCA\Spreed\Chat\ChatManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $chatManager;
 
+	/** @var \OCA\Spreed\Room|\PHPUnit_Framework_MockObject_MockObject */
+	protected $room;
+
 	/** @var \OCA\Spreed\Controller\ChatController */
 	private $controller;
 
@@ -65,6 +69,8 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->session = $this->createMock(ISession::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+
+		$this->room = $this->createMock(Room::class);
 
 		$this->recreateChatController();
 
@@ -103,14 +109,19 @@ class ChatControllerTest extends \Test\TestCase {
 	public function testSendMessageByUser() {
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
 
 		$this->session->expects($this->never())
 			->method('get');
 
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
-			->with('testToken',
+			->with('1234',
 				   'users',
 				   $this->userId,
 				   'testMessage',
@@ -129,7 +140,12 @@ class ChatControllerTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
 
 		$this->session->expects($this->once())
 			->method('get')
@@ -138,7 +154,7 @@ class ChatControllerTest extends \Test\TestCase {
 
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
-			->with('testToken',
+			->with('1234',
 				   'guests',
 				   sha1('testSpreedSession'),
 				   'testMessage',
@@ -157,7 +173,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
 
 		$this->session->expects($this->once())
 			->method('get')
@@ -194,7 +211,12 @@ class ChatControllerTest extends \Test\TestCase {
 	public function testReceiveMessagesByUser() {
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
 
 		$this->session->expects($this->never())
 			->method('get');
@@ -204,7 +226,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('testToken', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -239,7 +261,12 @@ class ChatControllerTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
 
 		$this->session->expects($this->never())
 			->method('get');
@@ -249,7 +276,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('testToken', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -281,7 +308,12 @@ class ChatControllerTest extends \Test\TestCase {
 	public function testReceiveMessagesTimeoutExpired() {
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
 
 		$this->session->expects($this->never())
 			->method('get');
@@ -291,7 +323,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('testToken', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([]);
 
 		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
@@ -303,7 +335,12 @@ class ChatControllerTest extends \Test\TestCase {
 	public function testReceiveMessagesTimeoutTooLarge() {
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId);
+			->with('testToken', $this->userId)
+			->willReturn($this->room);
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
 
 		$this->session->expects($this->never())
 			->method('get');
@@ -314,7 +351,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('testToken', $maximumTimeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $maximumTimeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([]);
 
 		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
