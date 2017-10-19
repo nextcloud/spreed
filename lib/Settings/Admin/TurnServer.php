@@ -50,7 +50,7 @@ class TurnServer implements ISettings {
 	 * @return string the section ID, e.g. 'sharing'
 	 */
 	public function getSection() {
-		return 'videocalls';
+		return 'talk';
 	}
 
 	/**
