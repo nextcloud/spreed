@@ -150,7 +150,7 @@ class PageController extends Controller {
 			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
 				$data = $response->getData();
-				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $data['token']]));
+				return $this->showCall($data['token']);
 			}
 		}
 
