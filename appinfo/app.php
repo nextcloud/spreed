@@ -20,23 +20,5 @@
  */
 
 $app = new \OCA\Spreed\AppInfo\Application();
-$app->registerHooks();
-
 // For the navigation $l->t('Talk')
-
-$manager = \OC::$server->getNotificationManager();
-$manager->registerNotifier(function() {
-	return \OC::$server->query(\OCA\Spreed\Notification\Notifier::class);
-}, function() {
-	$l = \OC::$server->getL10N('spreed');
-
-	return [
-		'id' => 'spreed',
-		'name' => $l->t('Video calls'),
-	];
-});
-
-\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
-	$listener = \OC::$server->query(\OCA\Spreed\HookListener::class);
-	$listener->deleteUser($user);
-});
+$app->register();

@@ -22,9 +22,12 @@
 namespace OCA\Spreed\AppInfo;
 
 use OCA\Spreed\Activity\Hooks;
+use OCA\Spreed\HookListener;
+use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
+use OCP\IServerContainer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -34,7 +37,38 @@ class Application extends App {
 		parent::__construct('spreed', $urlParams);
 	}
 
-	public function registerHooks() {
+	public function register() {
+		$server = $this->getContainer()->getServer();
+
+		$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
+			/** @var HookListener $listener */
+			$listener = \OC::$server->query(HookListener::class);
+			$listener->deleteUser($user);
+		});
+
+
+		$dispatcher = $server->getEventDispatcher();
+		$this->registerSignalingHooks($dispatcher);
+		$this->registerActivityHooks($dispatcher);
+	}
+
+	protected function registerNotifier(IServerContainer $server) {
+
+		$manager = $server->getNotificationManager();
+		$manager->registerNotifier(function() use ($server) {
+			return $server->query(Notifier::class);
+		}, function() use ($server) {
+			$l = $server->getL10N('spreed');
+
+			return [
+				'id' => 'spreed',
+				'name' => $l->t('Talk'),
+			];
+		});
+
+	}
+
+	protected function registerSignalingHooks(EventDispatcherInterface $dispatcher) {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -44,14 +78,11 @@ class Application extends App {
 			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
 		};
 
-		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
 		$dispatcher->addListener(Room::class . '::postUserEnterRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
-
-		$this->registerActivityHooks($dispatcher);
 	}
 
 	protected function registerActivityHooks(EventDispatcherInterface $dispatcher) {
