@@ -22,7 +22,7 @@
 $app = new \OCA\Spreed\AppInfo\Application();
 $app->registerHooks();
 
-// For the navigation $l->t('Video calls')
+// For the navigation $l->t('Talk')
 
 $manager = \OC::$server->getNotificationManager();
 $manager->registerNotifier(function() {

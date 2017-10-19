@@ -54,7 +54,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	<navigations>
 		<navigation>
-			<name>Video calls</name>
+			<name>Talk</name>
 			<route>spreed.Page.index</route>
 			<order>3</order>
 		</navigation>
