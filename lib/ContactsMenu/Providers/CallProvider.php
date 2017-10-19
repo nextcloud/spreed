@@ -30,9 +30,6 @@ use OCP\Contacts\ContactsMenu\IProvider;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 
-/**
- * @todo move to contacts app
- */
 class CallProvider implements IProvider {
 
 	/** @var IActionFactory */
@@ -47,6 +44,7 @@ class CallProvider implements IProvider {
 	/**
 	 * @param IActionFactory $actionFactory
 	 * @param IURLGenerator $urlGenerator
+	 * @param IL10N $l10n
 	 */
 	public function __construct(IActionFactory $actionFactory, IURLGenerator $urlGenerator, IL10N $l10n) {
 		$this->actionFactory = $actionFactory;
@@ -60,7 +58,7 @@ class CallProvider implements IProvider {
 	public function process(IEntry $entry) {
 		$uid = $entry->getProperty('UID');
 
-		if (is_null($uid)) {
+		if ($uid === null) {
 			// Nothing to do
 			return;
 		}
