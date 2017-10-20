@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCP\AppFramework\Http;
@@ -76,6 +77,39 @@ class ChatController extends OCSController {
 	}
 
 	/**
+	 * Returns the Room for the current user.
+	 *
+	 * If the user is currently not joined to a room then the room with the
+	 * given token is returned (provided that the current user is a participant
+	 * of that room).
+	 *
+	 * @param string $token the token for the Room.
+	 * @return \OCA\Spreed\Room|null the Room, or null if none was found.
+	 */
+	private function getRoom($token) {
+		try {
+			$room = $this->manager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
+		} catch (RoomNotFoundException $exception) {
+			if ($this->userId === null) {
+				return null;
+			}
+
+			// For logged in users we search for rooms where they are real
+			// participants.
+			try {
+				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+				$room->getParticipant($this->userId);
+			} catch (RoomNotFoundException $exception) {
+				return null;
+			} catch (ParticipantNotFoundException $exception) {
+				return null;
+			}
+		}
+
+		return $room;
+	}
+
+	/**
 	 * @PublicPage
 	 *
 	 * Sends a new chat message to the given room.
@@ -90,9 +124,8 @@ class ChatController extends OCSController {
 	 *         found".
 	 */
 	public function sendMessage($token, $message) {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $exception) {
+		$room = $this->getRoom($token);
+		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -154,9 +187,8 @@ class ChatController extends OCSController {
 	 *         'message'.
 	 */
 	public function receiveMessages($token, $offset = 0, $notOlderThanTimestamp = 0, $timeout = 30) {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $exception) {
+		$room = $this->getRoom($token);
+		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
