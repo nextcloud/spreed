@@ -52,6 +52,7 @@ OC.L10N.register(
     "No other people in this call" : "Bu görüşmede başka kimse yok",
     "You" : "Siz",
     "and you" : "ve siz",
+    "Close" : "Kapat",
     "Access to microphone & camera is only possible with HTTPS" : "Kamera ve mikrofona yalnız HTTPS üzerinden erişilebilir",
     "Please adjust your configuration" : "Lütfen yapılandırmanızı ayarlayın",
     "Access to microphone & camera was denied" : "Mikrofon ve kameraya erişim izni reddedildi",
