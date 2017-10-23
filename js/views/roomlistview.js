@@ -42,14 +42,6 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
-								'{{#if canModerate}}'+
-								'<li>'+
-									'<button class="add-person-button">'+
-										'<span class="icon-add"></span>'+
-										'<span>'+t('spreed', 'Add person')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
 								'<li>'+
 									'<button class="leave-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
@@ -65,11 +57,6 @@
 								'</li>'+
 								'{{/if}}'+
 							'</ul>'+
-							'{{#if canModerate}}'+
-							'<form class="oca-spreedme-add-person hidden">'+
-								'<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Type name…')+'"/>'+
-							'</form>'+
-							'{{/if}}'+
 						'</div>';
 
 	var RoomItemView = Marionette.View.extend({
@@ -101,16 +88,14 @@
 			});
 		},
 		templateContext: function() {
-			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
 			return {
-				canModerate: canModerate,
-				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
+				isDeletable: (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
+					(Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			};
 		},
 		onRender: function() {
 			var roomURL;
 
-			this.initPersonSelector();
 			this.checkSharingStatus();
 
 			roomURL = OC.generateUrl('/call/' + this.model.get('token'));
@@ -132,7 +117,6 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
-			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
 			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
 			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
 			'click .app-navigation-entry-link': 'joinRoom'
@@ -140,9 +124,7 @@
 		ui: {
 			'room': '.app-navigation-entry-link',
 			'menu': '.app-navigation-entry-menu',
-			'menuList': '.app-navigation-entry-menu-list',
-			'personSelectorForm' : '.oca-spreedme-add-person',
-			'personSelectorInput': '.add-person-input'
+			'menuList': '.app-navigation-entry-menu-list'
 		},
 		template: Handlebars.compile(ITEM_TEMPLATE),
 		menuShown: false,
@@ -182,11 +164,6 @@
 			if (this.model.get('active')) {
 				this.addRoomMessage();
 			}
-		},
-		addPerson: function() {
-			this.ui.menuList.attr('style', 'display: none !important');
-			this.ui.personSelectorForm.toggleClass('hidden');
-			this.ui.personSelectorInput.select2('open');
 		},
 		leaveRoom: function() {
 			// If user is in that room, it should leave the associated call first.
@@ -327,120 +304,6 @@
 				trigger: 'hover',
 				html: 'true',
 				title: htmlstring
-			});
-		},
-		initPersonSelector: function() {
-			var _this = this;
-
-			this.ui.personSelectorInput.select2({
-				ajax: {
-					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
-					dataType: 'json',
-					quietMillis: 100,
-					data: function (term) {
-						return {
-							format: 'json',
-							search: term,
-							perPage: 200,
-							itemType: 'call'
-						};
-					},
-					results: function (response) {
-						// TODO improve error case
-						if (response.ocs.data === undefined) {
-							console.error('Failure happened', response);
-							return;
-						}
-
-						var results = [],
-							participants = _this.model.get('participants');
-
-						$.each(response.ocs.data.exact.users, function(id, user) {
-							var isExactUserInGroup = false;
-
-							$.each(participants, function(participantId) {
-								if (participantId === user.value.shareWith) {
-									isExactUserInGroup = true;
-								}
-							});
-
-							if (!isExactUserInGroup) {
-								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-							}
-						});
-
-						$.each(response.ocs.data.users, function(id, user) {
-							var isUserInGroup = false;
-
-							$.each(participants, function(participantId) {
-								if (participantId === user.value.shareWith) {
-									isUserInGroup = true;
-								}
-							});
-
-							if (!isUserInGroup) {
-								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-							}
-						});
-
-						return {
-							results: results,
-							more: false
-						};
-					}
-				},
-				initSelection: function (element, callback) {
-					console.log(element);
-					callback({id: element.val()});
-				},
-				formatResult: function (element) {
-					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
-				},
-				formatSelection: function () {
-					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
-				}
-			});
-			this.ui.personSelectorInput.on('change', function(e) {
-				var token = _this.model.get('token');
-				var participant = e.val;
-				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
-
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-			this.ui.personSelectorInput.on('click', function() {
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-
-			this.ui.personSelectorInput.on('select2-loaded', function() {
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-
-			this.ui.personSelectorInput.on('select2-close', function () {
-				_this.ui.menuList.attr('style', 'display: block !important');
-				_this.ui.personSelectorForm.toggleClass('hidden');
-				_this.menuShown = false;
-				_this.toggleMenuClass();
 			});
 		}
 	});

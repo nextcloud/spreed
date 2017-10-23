@@ -27,11 +27,10 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
-	var TEMPLATE =
-		'<button class="add-person-button">' +
-			'<span class="icon-add"></span>' +
-			'<span>' + t('spreed', 'Add person') + '</span>' +
-		'</button>' +
+	var TEMPLATE = ''+
+		'<form class="oca-spreedme-add-person">'+
+		'	<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Add participant')+'"/>'+
+		'</form>'+
 		'<ul class="participantWithList">' +
 		'</ul>';
 
@@ -40,7 +39,7 @@
 		tagName: 'div',
 
 		ui: {
-			addButton: '.add-person-button',
+			addParticipantInput: '.add-person-input',
 			participantList: '.participantWithList'
 		},
 
@@ -51,6 +50,8 @@
 		template: Handlebars.compile(TEMPLATE),
 
 		initialize: function(options) {
+			this.room = options.room;
+			this.collection = options.collection;
 			this._participantListView = new OCA.SpreedMe.Views.ParticipantListView({ collection: options.collection });
 
 			// In Marionette 3.0 the view is not rendered automatically if
@@ -59,6 +60,123 @@
 			// will be appended exists.
 			this.render();
 			this.showChildView('participantList', this._participantListView, { replaceElement: true } );
+		},
+
+		/**
+		 * @param {OCA.SpreedMe.Models.Room} room
+		 * @returns {Array}
+		 */
+		setRoom: function(room) {
+			this.room = room;
+			this.collection.setRoom(room);
+		},
+
+		onRender: function() {
+			this.initAddParticipantSelector();
+		},
+
+		initAddParticipantSelector: function() {
+			this.ui.addParticipantInput.select2({
+				ajax: {
+					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
+					dataType: 'json',
+					quietMillis: 100,
+					data: function (term) {
+						return {
+							format: 'json',
+							search: term,
+							perPage: 200,
+							itemType: 'call'
+						};
+					},
+					results: function (response) {
+						// TODO improve error case
+						if (_.isUndefined(response.ocs.data)) {
+							return;
+						}
+
+						var results = [],
+							participants = this.room.get('participants');
+
+						$.each(response.ocs.data.exact.users, function(id, user) {
+							var isExactUserInGroup = false;
+
+							$.each(participants, function(participantId) {
+								if (participantId === user.value.shareWith) {
+									isExactUserInGroup = true;
+								}
+							});
+
+							if (!isExactUserInGroup) {
+								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+							}
+						});
+
+						$.each(response.ocs.data.users, function(id, user) {
+							var isUserInGroup = false;
+
+							$.each(participants, function(participantId) {
+								if (participantId === user.value.shareWith) {
+									isUserInGroup = true;
+								}
+							});
+
+							if (!isUserInGroup) {
+								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+							}
+						});
+
+						return {
+							results: results,
+							more: false
+						};
+					}.bind(this)
+				},
+				initSelection: function (element, callback) {
+					callback({id: element.val()});
+				},
+				formatResult: function (element) {
+					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
+				},
+				formatSelection: function () {
+					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
+				}
+			});
+			this.ui.addParticipantInput.on('change', function(e) {
+				var token = this.room.get('token');
+				var participant = e.val;
+				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
+
+				$('.select2-drop').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 32);
+					}
+				});
+			}.bind(this));
+			this.ui.addParticipantInput.on('click', function() {
+				$('.select2-drop').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 32);
+					}
+				});
+			});
+
+			this.ui.addParticipantInput.on('select2-loaded', function() {
+				$('.select2-drop').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 32);
+					}
+				});
+			});
 		}
 
 	});

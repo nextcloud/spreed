@@ -20,9 +20,8 @@
 }
 
 .oca-spreedme-add-person {
-	width: 225px;
-	top: 0;
-	border-bottom: 1px solid #eee;
+	width: 100%;
+	border: 1px solid #eee;
 }
 
 /**
@@ -87,17 +86,6 @@
 	border-radius: 0;
 	width: 32px;
 	height: 32px;
-}
-
-#oca-spreedme-add-room button {
-	position: absolute;
-	background-color: transparent;
-	border: none;
-	right: 0;
-	top: 0;
-	padding: 23px;
-	margin: 0;
-	opacity: .3;
 }
 
 .public-room {
