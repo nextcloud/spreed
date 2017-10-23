@@ -7,7 +7,6 @@
 
 	// Import list
 	// This will hopefully go away once we support AMD
-	var PDFPresentation = OCA.SpreedMe.Presentation.PDFPresentation;
 	var consts = OCA.SpreedMe.Presentation.consts;
 
 	var exports = {};
