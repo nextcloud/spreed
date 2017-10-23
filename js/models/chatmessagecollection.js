@@ -58,6 +58,8 @@
 			this.url = OC.linkToOCS('apps/spreed/api/v1/chat', 2) + this.token;
 
 			this.offset = 0;
+
+			this._waitTimeUntilRetry = 1;
 		},
 
 		parse: function(result) {
@@ -128,6 +130,8 @@
 		_successfulFetch: function(collection, response) {
 			this.offset += response.ocs.data.length;
 
+			this._waitTimeUntilRetry = 1;
+
 			if (this.receiveMessagesAgain) {
 				this.receiveMessages();
 			}
@@ -135,7 +139,12 @@
 
 		_failedFetch: function() {
 			if (this.receiveMessagesAgain) {
-				this.receiveMessages();
+				_.delay(_.bind(this.receiveMessages, this), this._waitTimeUntilRetry * 1000);
+
+				// Increase the wait time until retry to at most 64 seconds.
+				if (this._waitTimeUntilRetry < 64) {
+					this._waitTimeUntilRetry *= 2;
+				}
 			}
 		}
 
