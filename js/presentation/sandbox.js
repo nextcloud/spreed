@@ -32,6 +32,7 @@
 		this.EVENT_HANDLERS = {
 			add: _.bind(function(token, url, from) {
 				var deferred = $.Deferred();
+				// TODO(leon): Create presentation based on mime type once we support types other than application/pdf
 				var p = new PDFPresentation(/* id */token, token, url);
 				// TODO(leon): from === null means the event is from ourself, see other comment
 				// This should change, see other comment: "Replace null by own Peer object"
