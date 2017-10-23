@@ -32,7 +32,11 @@
 	 *
 	 * The ChatMessageCollection gives read access to all the chat messages from
 	 * a specific chat room. The room token must be provided in the constructor
-	 * options (as "token").
+	 * options (as "token"), either as an actual room token or as null. It is
+	 * possible to change the room of a ChatMessageCollection at any time by
+	 * calling "setRoomToken". In any case, although null is supported as a
+	 * temporal or reset value, note that an actual room token must be set
+	 * before synchronizing the collection.
 	 *
 	 * "read" is the only synchronization method allowed; chat messages can not
 	 * be edited nor deleted, and to send a new message a standalone ChatMessage
@@ -53,13 +57,9 @@
 				throw 'Missing parameter token';
 			}
 
-			this.token = options.token;
+			this._lastFetch = null;
 
-			this.url = OC.linkToOCS('apps/spreed/api/v1/chat', 2) + this.token;
-
-			this.offset = 0;
-
-			this._waitTimeUntilRetry = 1;
+			this.setRoomToken(options.token);
 		},
 
 		parse: function(result) {
@@ -98,10 +98,41 @@
 			return Backbone.Collection.prototype.set.call(this, models, options);
 		},
 
+		/**
+		 * Changes the room that this ChatMessageCollection gets its messages
+		 * from.
+		 *
+		 * When a token is set this collection is reset, so the messages from
+		 * the previous room are removed.
+		 *
+		 * If polling was currently being done to the previous room it will be
+		 * automatically stopped. Note, however, that "receiveMessages" must be
+		 * explicitly called if needed.
+		 *
+		 * @param string|null token the token of the room.
+		 */
+		setRoomToken: function(token) {
+			this.stopReceivingMessages();
+
+			this.token = token;
+
+			this.offset = 0;
+
+			this._waitTimeUntilRetry = 1;
+
+			if (token !== null) {
+				this.url = OC.linkToOCS('apps/spreed/api/v1/chat', 2) + token;
+			} else {
+				this.url = null;
+			}
+
+			this.reset();
+		},
+
 		receiveMessages: function() {
 			this.receiveMessagesAgain = true;
 
-			this.fetch({
+			this._lastFetch = this.fetch({
 				data: {
 					// The notOlderThan parameter could be used to limit the
 					// messages to those shown since the user opened the chat
@@ -125,10 +156,16 @@
 
 		stopReceivingMessages: function() {
 			this.receiveMessagesAgain = false;
+
+			if (this._lastFetch !== null) {
+				this._lastFetch.abort();
+			}
 		},
 
 		_successfulFetch: function(collection, response) {
 			this.offset += response.ocs.data.length;
+
+			this._lastFetch = null;
 
 			this._waitTimeUntilRetry = 1;
 
@@ -138,6 +175,8 @@
 		},
 
 		_failedFetch: function() {
+			this._lastFetch = null;
+
 			if (this.receiveMessagesAgain) {
 				_.delay(_.bind(this.receiveMessages, this), this._waitTimeUntilRetry * 1000);
 
