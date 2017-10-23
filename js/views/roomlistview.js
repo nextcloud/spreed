@@ -117,9 +117,9 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
-			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
-			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
-			'click .app-navigation-entry-link': 'joinRoom'
+			'click @ui.menu .leave-room-button': 'leaveRoom',
+			'click @ui.menu .delete-room-button': 'deleteRoom',
+			'click @ui.room': 'joinRoom'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
