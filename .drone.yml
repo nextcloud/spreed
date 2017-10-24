@@ -186,6 +186,20 @@ pipeline:
       matrix:
         TESTS: jsunit
 
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=oc_autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=oc_autotest
+    tmpfs:
+      - /var/lib/mysql
+    when:
+      matrix:
+        DB: mysql
+
 matrix:
   include:
     - TESTS: eslint
@@ -196,7 +210,11 @@ matrix:
     - TESTS: syntax-php7.1
     - TESTS: signed-off-check
     - TESTS: php5.6
+      DB: mysql
     - TESTS: php7.0
+      DB: mysql
     - TESTS: php7.1
+      DB: mysql
     - TESTS: php7.1-integration
+      DB: mysql
     - TESTS: jsunit
