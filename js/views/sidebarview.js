@@ -157,10 +157,15 @@
 		 * Adds a new tab.
 		 *
 		 * The tabHeaderOptions must provide a 'label' string which will be
-		 * rendered as the tab header; if needed, it can provide other values
-		 * that will override the default TabHeaderView properties (for example,
-		 * it can provide an 'onRender' function to extend the default rendering
-		 * of the header).
+		 * rendered as the tab header. Optionally, it can provide a 'priority'
+		 * integer to set the order of the tab header with respect to the other
+		 * tab headers (tabs with higher priorities appear before tabs with
+		 * lower priorities; tabs with the same priority are sorted based on
+		 * their insertion order); if it is not explicitly set the value 0 is
+		 * used. If needed, the tabHeaderOptions can provide other values that
+		 * will override the default TabHeaderView properties (for example, it
+		 * can provide an 'onRender' function to extend the default rendering of
+		 * the header).
 		 *
 		 * The Sidebar takes ownership of the given content view, and it will
 		 * destroy it when the Sidebar is destroyed.
