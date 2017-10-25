@@ -216,6 +216,7 @@ services:
     commands:
       - echo $PATH
       - export PATH=$PATH:/usr/local/mysql/bin
+      - find / -name 'mysql'
     tmpfs:
       - /var/lib/mysql
     when:
