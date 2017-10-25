@@ -7,9 +7,6 @@ services:
       - MYSQL_USER=oc_autotest
       - MYSQL_PASSWORD=owncloud
       - MYSQL_DATABASE=oc_autotest
-    commands:
-      - echo $PATH
-      - find / -name 'mysql'
     tmpfs:
       - /var/lib/mysql
     when:
@@ -163,9 +160,6 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - sleep 60
-      - find / -name 'mysql'
-
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
