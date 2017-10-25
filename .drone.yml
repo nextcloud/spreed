@@ -115,6 +115,7 @@ pipeline:
       - phpunit --configuration phpunit.xml
     when:
       matrix:
+        DB: mysql
         TESTS: php5.6
   php7.0:
     image: nextcloudci/php7.0:php7.0-16
@@ -135,6 +136,7 @@ pipeline:
       - phpunit --configuration phpunit.xml
     when:
       matrix:
+        DB: mysql
         TESTS: php7.0
   php7.1:
     image: nextcloudci/php7.1:php7.1-15
@@ -143,7 +145,7 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - echo $PATH
+      - sleep 60
       - find / -name 'mysql'
 
       # Pre-setup steps
@@ -158,6 +160,7 @@ pipeline:
       - phpunit --configuration phpunit.xml
     when:
       matrix:
+        DB: mysql
         TESTS: php7.1
   php7.1-integration:
     image: nextcloudci/php7.1:php7.1-15
@@ -178,6 +181,7 @@ pipeline:
       - bash run.sh
     when:
       matrix:
+        DB: mysql
         TESTS: php7.1-integration
   jsunit:
     image: nextcloudci/jsunit:jsunit-5
