@@ -1,3 +1,21 @@
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=oc_autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=oc_autotest
+    commands:
+      - echo $PATH
+      - find / -name 'mysql'
+    tmpfs:
+      - /var/lib/mysql
+    when:
+      matrix:
+        DB: mysql
+
 pipeline:
   eslint:
     image: nextcloudci/eslint:eslint-1
@@ -211,20 +229,3 @@ matrix:
     - TESTS: php7.1-integration
       DB: mysql
     - TESTS: jsunit
-
-services:
-  mysql:
-    image: mysql:5.7
-    environment:
-      - MYSQL_ROOT_PASSWORD=owncloud
-      - MYSQL_USER=oc_autotest
-      - MYSQL_PASSWORD=owncloud
-      - MYSQL_DATABASE=oc_autotest
-    commands:
-      - echo $PATH
-      - find / -name 'mysql'
-    tmpfs:
-      - /var/lib/mysql
-    when:
-      matrix:
-        DB: mysql
