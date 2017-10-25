@@ -1,7 +1,7 @@
-
-services:
+pipeline:
   mysql:
     image: mysql:5.7
+    detach: true
     environment:
       - MYSQL_ROOT_PASSWORD=owncloud
       - MYSQL_USER=oc_autotest
@@ -13,7 +13,6 @@ services:
       matrix:
         DB: mysql
 
-pipeline:
   eslint:
     image: nextcloudci/eslint:eslint-1
     commands:
