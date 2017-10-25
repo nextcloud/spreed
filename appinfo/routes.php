@@ -84,6 +84,25 @@ return [
 		],
 
 		[
+			'name' => 'Chat#receiveMessages',
+			'url' => '/api/{apiVersion}/chat/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Chat#sendMessage',
+			'url' => '/api/{apiVersion}/chat/{token}',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+
+		[
 			'name' => 'Room#getRooms',
 			'url' => '/api/{apiVersion}/room',
 			'verb' => 'GET',
