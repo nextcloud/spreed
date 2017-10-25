@@ -115,9 +115,7 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - sleep 60
-
-      - apt update && apt-get -y install php5-xdebug
+      - apt update && apt-get -y install php5-xdebug mysql-community-client
 
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
