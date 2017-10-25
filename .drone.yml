@@ -143,6 +143,9 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
+      - echo $PATH
+      - find / -name 'mysql'
+
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
@@ -215,7 +218,6 @@ services:
       - MYSQL_DATABASE=oc_autotest
     commands:
       - echo $PATH
-      - export PATH=$PATH:/usr/local/mysql/bin
       - find / -name 'mysql'
     tmpfs:
       - /var/lib/mysql
