@@ -89,16 +89,64 @@
 			// "click:tabHeader" events.
 			tabHeaderOptions.tabId = tabId;
 
+			tabHeaderOptions.priority = tabHeaderOptions.priority || 0;
+
 			var tabHeaderView = new TabHeaderView(tabHeaderOptions);
+
+			var tabHeaderIndex = this._getIndexForTabHeaderPriority(tabHeaderOptions.priority);
 
 			// When adding a region and showing a view on it the target element
 			// of the region must exist in the parent view. Therefore, a dummy
 			// target element, which will be replaced with the tab header
 			// itself, has to be added to the parent view.
-			this.$el.append('<div id="' + tabHeaderId + '"/>');
+			var dummyElement = '<div id="' + tabHeaderId + '"/>';
+			if (tabHeaderIndex === 0) {
+				this.$el.prepend(dummyElement);
+			} else {
+				// When two tab headers have the same priority the new one is
+				// added after the existing one.
+				this.$el.children().eq(tabHeaderIndex-1).after(dummyElement);
+			}
 
 			this.addRegion(tabId, { el: '#' + tabHeaderId, replaceElement: true });
 			this.showChildView(tabId, tabHeaderView);
+		},
+
+		/**
+		 * Return the insertion index for a tab header based on its priority.
+		 *
+		 * Tab headers with higher priorities go before tab headers with lower
+		 * priorities; if the priority is the same as one or more of the current
+		 * tab headers the new tab header goes after the last of them.
+		 *
+		 * @param int priority the priority to get its insertion index.
+		 * @return int the insertion index.
+		 */
+		_getIndexForTabHeaderPriority: function(priority) {
+			// this.getRegions() returns an object that acts as a map, but it
+			// has no "length" property; _.map creates an array, thus ensuring
+			// that there is a "length" property to know the current number of
+			// tab headers.
+			var currentPriorities = _.map(this.getRegions(), function(region) {
+				return region.currentView.getOption('priority');
+			});
+
+			// By default sort() converts the values to strings and sorts them
+			// in ascending order using their Unicode value; a custom function
+			// must be used to sort them by their numerical value instead.
+			currentPriorities.sort(function(a, b) {
+				return a - b;
+			}).reverse();
+
+			var index = _.findIndex(currentPriorities, function(currentPriority) {
+				return priority > currentPriority;
+			});
+
+			if (index === -1) {
+				return currentPriorities.length;
+			}
+
+			return index;
 		},
 
 		selectTabHeader: function(tabId) {
@@ -149,10 +197,15 @@
 		 * Adds a new tab.
 		 *
 		 * The tabHeaderOptions must provide a 'label' string which will be
-		 * rendered as the tab header; if needed, it can provide other values
-		 * that will override the default TabHeaderView properties (for example,
-		 * it can provide an 'onRender' function to extend the default rendering
-		 * of the header).
+		 * rendered as the tab header. Optionally, it can provide a 'priority'
+		 * integer to set the order of the tab header with respect to the other
+		 * tab headers (tabs with higher priorities appear before tabs with
+		 * lower priorities; tabs with the same priority are sorted based on
+		 * their insertion order); if it is not explicitly set the value 0 is
+		 * used. If needed, the tabHeaderOptions can provide other values that
+		 * will override the default TabHeaderView properties (for example, it
+		 * can provide an 'onRender' function to extend the default rendering of
+		 * the header).
 		 *
 		 * The TabView takes ownership of the given content view, and it will
 		 * destroy it when the TabView is destroyed.
