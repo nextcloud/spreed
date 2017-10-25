@@ -2,6 +2,8 @@ OC.L10N.register(
     "spreed",
     {
     "Video calls" : "Κλήσεις βίντεο",
+    "Delete server" : "Διαγραφή διακομιστή",
+    "Add new server" : "Προσθήκη νέου διακομιστή",
     "Saved" : "Αποθηκεύτηκαν",
     "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
     "UDP and TCP" : "UDP και TCP",
