@@ -42,70 +42,24 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
-								'{{#if canModerate}}'+
-								'<li>'+
-									'<button class="add-person-button">'+
-										'<span class="icon-add"></span>'+
-										'<span>'+t('spreed', 'Add person')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{#if isNameEditable}}'+
-								'<li>'+
-									'<button class="rename-room-button">'+
-										'<span class="icon-rename"></span>'+
-										'<span>'+t('spreed', 'Rename')+'</span>'+
-									'</button>'+
-									'<input class="hidden-important rename-element rename-input" maxlength="200" type="text"/>'+
-									'<div class="icon-confirm hidden-important rename-element rename-confirm"></div>'+
-								'</li>'+
-								'{{/if}}'+
-								'<li>'+
-									'<button class="share-link-button">'+
-										'<span class="icon-public"></span>'+
-										'<span>'+t('spreed', 'Share link')+'</span>'+
-									'</button>'+
-									'<input id="shareInput-{{id}}" class="share-link-input private-room" readonly="readonly" type="text"/>'+
-									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
-									'<div class="icon-delete private-room"></div>'+
-								'</li>'+
-								'<li>'+
-									'<button class="password-room-button">'+
-										'<span class="icon-password"></span>'+
-										'<span>{{#if hasPassword}}'+t('spreed', 'Change password')+'{{else}}'+t('spreed', 'Set password')+'{{/if}}</span>'+
-									'</button>'+
-									'<input class="hidden-important password-element password-input" maxlength="200" type="text"/>'+
-									'<div class="icon-confirm hidden-important password-element password-confirm"></div>'+
-								'</li>'+
-								'{{/if}}'+
-								'{{#if showShareLink}}'+
-								'<li>'+
-									'<input id="shareInput-{{id}}" class="share-link-input private-room first-option" readonly="readonly" type="text"/>'+
-									'<div class="clipboardButton icon-clippy private-room" data-clipboard-target="#shareInput-{{id}}"></div>'+
-								'</li>'+
-								'{{/if}}'+
 								'<li>'+
 									'<button class="leave-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>{{#if isDeletable}}'+t('spreed', 'Leave call')+'{{else}}'+t('spreed', 'Delete call')+'{{/if}}</span>'+
+										'<span>'+t('spreed', 'Leave room')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{#if isDeletable}}'+
 								'<li>'+
 									'<button class="delete-room-button">'+
 										'<span class="icon-delete"></span>'+
-										'<span>'+t('spreed', 'Delete call')+'</span>'+
+										'<span>'+t('spreed', 'Delete room')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{/if}}'+
 							'</ul>'+
-							'{{#if canModerate}}'+
-							'<form class="oca-spreedme-add-person hidden">'+
-								'<input class="add-person-input" type="text" placeholder="Type name..."/>'+
-							'</form>'+
-							'{{/if}}'+
 						'</div>';
 
-	var RoomItenView = Marionette.View.extend({
+	var RoomItemView = Marionette.View.extend({
 		tagName: 'li',
 		modelEvents: {
 			'change:active': function() {
@@ -119,7 +73,6 @@
 			},
 			'change:type': function() {
 				this.render();
-				this.checkSharingStatus();
 			}
 		},
 		initialize: function() {
@@ -135,32 +88,17 @@
 			});
 		},
 		templateContext: function() {
-			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
 			return {
-				canModerate: canModerate,
-				showShareLink: !canModerate && this.model.get('type') === ROOM_TYPE_PUBLIC_CALL,
-				isNameEditable: canModerate && this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE,
-				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
+				isDeletable: (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
+					(Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			};
 		},
 		onRender: function() {
-			var roomURL, completeURL;
+			var roomURL;
 
-			this.initPersonSelector();
 			this.checkSharingStatus();
 
 			roomURL = OC.generateUrl('/call/' + this.model.get('token'));
-			completeURL = window.location.protocol + '//' + window.location.host + roomURL;
-
-			this.ui.shareLinkInput.attr('value', completeURL);
-			this.$el.find('.clipboardButton').attr('data-clipboard-text', completeURL);
-			this.$el.find('.clipboardButton').tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: t('spreed', 'Copy')
-			});
-			this.initClipboard();
-
 			this.$el.find('.app-navigation-entry-link').attr('href', roomURL);
 
 			if (this.model.get('active')) {
@@ -179,26 +117,14 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
-			'click .app-navigation-entry-menu .add-person-button': 'addPerson',
-			'click .app-navigation-entry-menu .rename-room-button': 'showRenameInput',
-			'click .app-navigation-entry-menu .rename-confirm': 'confirmRoomRename',
-			'keyup .rename-input': 'renameKeyUp',
-			'click .app-navigation-entry-menu .password-room-button': 'showPasswordInput',
-			'click .app-navigation-entry-menu .password-confirm': 'confirmRoomPassword',
-			'keyup .password-input': 'passwordKeyUp',
-			'click .app-navigation-entry-menu .share-link-button': 'shareGroup',
-			'click .app-navigation-entry-menu .leave-room-button': 'leaveRoom',
-			'click .app-navigation-entry-menu .delete-room-button': 'deleteRoom',
-			'click .icon-delete': 'unshareGroup',
-			'click .app-navigation-entry-link': 'joinRoom'
+			'click @ui.menu .leave-room-button': 'leaveRoom',
+			'click @ui.menu .delete-room-button': 'deleteRoom',
+			'click @ui.room': 'joinRoom'
 		},
 		ui: {
 			'room': '.app-navigation-entry-link',
 			'menu': '.app-navigation-entry-menu',
-			'shareLinkInput': '.share-link-input',
-			'menuList': '.app-navigation-entry-menu-list',
-			'personSelectorForm' : '.oca-spreedme-add-person',
-			'personSelectorInput': '.add-person-input'
+			'menuList': '.app-navigation-entry-menu-list'
 		},
 		template: Handlebars.compile(ITEM_TEMPLATE),
 		menuShown: false,
@@ -209,14 +135,6 @@
 		},
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
-
-			// Hide rename and password input and show button when opening menu
-			if (this.menuShown) {
-				this.$el.find('.rename-element').addClass('hidden-important');
-				this.$el.find('.rename-room-button').removeClass('hidden-important');
-				this.$el.find('.password-element').addClass('hidden-important');
-				this.$el.find('.password-room-button').removeClass('hidden-important');
-			}
 		},
 		checkSharingStatus: function() {
 			if (this.model.get('type') === ROOM_TYPE_ONE_TO_ONE) { // 1on1
@@ -245,126 +163,6 @@
 
 			if (this.model.get('active')) {
 				this.addRoomMessage();
-			}
-		},
-		addPerson: function() {
-			this.ui.menuList.attr('style', 'display: none !important');
-			this.ui.personSelectorForm.toggleClass('hidden');
-			this.ui.personSelectorInput.select2('open');
-		},
-		showRenameInput: function() {
-			var currentRoomName = this.model.get('name');
-
-			this.$el.find('.rename-element').removeClass('hidden-important');
-			this.$el.find('.rename-room-button').addClass('hidden-important');
-
-			if (currentRoomName) {
-				this.$el.find('.rename-input').val(currentRoomName);
-			}
-
-			this.$el.find('.rename-input').focus();
-			this.$el.find('.rename-input').select();
-		},
-		hideRenameInput: function() {
-			this.$el.find('.rename-element').addClass('hidden-important');
-			this.$el.find('.rename-room-button').removeClass('hidden-important');
-		},
-		confirmRoomRename: function() {
-			var currentRoomName = this.model.get('name');
-			var newRoomName = $.trim(this.$el.find('.rename-input').val());
-
-			if (currentRoomName !== newRoomName) {
-				console.log('Changing room name to: '+newRoomName+' from: '+currentRoomName);
-				this.renameRoom(newRoomName);
-			}
-
-			this.hideRenameInput();
-		},
-		renameKeyUp: function(e) {
-			if (e.keyCode === 13) {
-				this.confirmRoomRename();
-			} else if (e.keyCode === 27) {
-				this.hideRenameInput();
-			}
-		},
-		renameRoom: function(roomName) {
-			var app = OCA.SpreedMe.app;
-
-			// This should be the only case
-			if ((this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE) && (roomName.length <= 200)) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
-					type: 'PUT',
-					data: 'roomName='+roomName,
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
-		},
-		showPasswordInput: function() {
-			this.$el.find('.password-element').removeClass('hidden-important');
-			this.$el.find('.password-room-button').addClass('hidden-important');
-
-			this.$el.find('.password-input').focus();
-			this.$el.find('.password-input').select();
-		},
-		hidePasswordInput: function() {
-			this.$el.find('.password-element').addClass('hidden-important');
-			this.$el.find('.password-room-button').removeClass('hidden-important');
-		},
-		confirmRoomPassword: function() {
-			var newRoomPassword = $.trim(this.$el.find('.password-input').val());
-			this.passwordRoom(newRoomPassword);
-			this.hidePasswordInput();
-		},
-		passwordKeyUp: function(e) {
-			if (e.keyCode === 13) {
-				this.confirmRoomPassword();
-			} else if (e.keyCode === 27) {
-				this.hidePasswordInput();
-			}
-		},
-		passwordRoom: function(roomPassword) {
-			var app = OCA.SpreedMe.app;
-
-			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
-					type: 'PUT',
-					data: 'password='+roomPassword,
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
-		},
-		shareGroup: function() {
-			var app = OCA.SpreedMe.app;
-
-			// This should be the only case
-			if (this.model.get('type') !== ROOM_TYPE_PUBLIC_CALL) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-					type: 'POST',
-					success: function() {
-						app.syncRooms();
-					}
-				});
-			}
-		},
-		unshareGroup: function() {
-			var app = OCA.SpreedMe.app;
-
-			// This should be the only case
-			if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-					type: 'DELETE',
-					success: function() {
-						app.syncRooms();
-					}
-				});
 			}
 		},
 		leaveRoom: function() {
@@ -507,164 +305,12 @@
 				html: 'true',
 				title: htmlstring
 			});
-		},
-		initClipboard: function () {
-			var clipboard = new Clipboard('.clipboardButton');
-			clipboard.on('success', function(e) {
-				var $input = $(e.trigger);
-				$input.tooltip('hide')
-					.attr('data-original-title', t('core', 'Copied!'))
-					.tooltip('fixTitle')
-					.tooltip({placement: 'bottom', trigger: 'manual'})
-					.tooltip('show');
-				_.delay(function() {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('core', 'Copy'))
-						.tooltip('fixTitle');
-				}, 3000);
-			});
-			clipboard.on('error', function (e) {
-				var $input = $(e.trigger);
-				var actionMsg = '';
-				if (/iPhone|iPad/i.test(navigator.userAgent)) {
-					actionMsg = t('core', 'Not supported!');
-				} else if (/Mac/i.test(navigator.userAgent)) {
-					actionMsg = t('core', 'Press ⌘-C to copy.');
-				} else {
-					actionMsg = t('core', 'Press Ctrl-C to copy.');
-				}
-
-				$input.tooltip('hide')
-					.attr('data-original-title', actionMsg)
-					.tooltip('fixTitle')
-					.tooltip({placement: 'bottom', trigger: 'manual'})
-					.tooltip('show');
-				_.delay(function () {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy'))
-						.tooltip('fixTitle');
-				}, 3000);
-			});
-		},
-		initPersonSelector: function() {
-			var _this = this;
-
-			this.ui.personSelectorInput.select2({
-				ajax: {
-					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
-					dataType: 'json',
-					quietMillis: 100,
-					data: function (term) {
-						return {
-							format: 'json',
-							search: term,
-							perPage: 200,
-							itemType: 'call'
-						};
-					},
-					results: function (response) {
-						// TODO improve error case
-						if (response.ocs.data === undefined) {
-							console.error('Failure happened', response);
-							return;
-						}
-
-						var results = [],
-							participants = _this.model.get('participants');
-
-						$.each(response.ocs.data.exact.users, function(id, user) {
-							var isExactUserInGroup = false;
-
-							$.each(participants, function(participantId) {
-								if (participantId === user.value.shareWith) {
-									isExactUserInGroup = true;
-								}
-							});
-
-							if (!isExactUserInGroup) {
-								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-							}
-						});
-
-						$.each(response.ocs.data.users, function(id, user) {
-							var isUserInGroup = false;
-
-							$.each(participants, function(participantId) {
-								if (participantId === user.value.shareWith) {
-									isUserInGroup = true;
-								}
-							});
-
-							if (!isUserInGroup) {
-								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-							}
-						});
-
-						return {
-							results: results,
-							more: false
-						};
-					}
-				},
-				initSelection: function (element, callback) {
-					console.log(element);
-					callback({id: element.val()});
-				},
-				formatResult: function (element) {
-					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
-				},
-				formatSelection: function () {
-					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
-				}
-			});
-			this.ui.personSelectorInput.on('change', function(e) {
-				var token = _this.model.get('token');
-				var participant = e.val;
-				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
-
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-			this.ui.personSelectorInput.on('click', function() {
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-
-			this.ui.personSelectorInput.on('select2-loaded', function() {
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-
-			this.ui.personSelectorInput.on('select2-close', function () {
-				_this.ui.menuList.attr('style', 'display: block !important');
-				_this.ui.personSelectorForm.toggleClass('hidden');
-				_this.menuShown = false;
-				_this.toggleMenuClass();
-			});
 		}
 	});
 
 	var RoomListView = Marionette.CollectionView.extend({
 		tagName: 'ul',
-		childView: RoomItenView
+		childView: RoomItemView
 	});
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;

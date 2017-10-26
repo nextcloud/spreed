@@ -350,10 +350,11 @@
 		_showParticipantList: function() {
 			this._participants = new OCA.SpreedMe.Models.ParticipantCollection();
 			this._participantsView = new OCA.SpreedMe.Views.ParticipantView({
+				room: this.activeRoom,
 				collection: this._participants
 			});
 
-			this._participants.listenTo(this._rooms, 'change:active', function(model, active) {
+			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
 				if (active) {
 					this.setRoom(model);
 				}
