@@ -115,7 +115,7 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - apt update && apt-get -y install php5-xdebug mysql-community-client
+      - apt update && apt-get -y install php5-xdebug mysql-client
 
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -138,7 +138,7 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - sleep 60
+      - apt update && apt-get -y install mysql-client
 
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -161,7 +161,7 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - sleep 60
+      - apt update && apt-get -y install mysql-client
 
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -184,7 +184,7 @@ pipeline:
       - CORE_BRANCH=master
       - DB=mysql
     commands:
-      - sleep 60
+      - apt update && apt-get -y install mysql-client
 
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
