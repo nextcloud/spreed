@@ -46,6 +46,7 @@ class Application extends App {
 			$listener->deleteUser($user);
 		});
 
+		$this->registerNotifier($server);
 
 		$dispatcher = $server->getEventDispatcher();
 		$this->registerSignalingHooks($dispatcher);
