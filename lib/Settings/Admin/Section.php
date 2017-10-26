@@ -62,7 +62,7 @@ class Section implements IIconSection {
 	 * @since 9.1
 	 */
 	public function getID() {
-		return 'videocalls';
+		return 'talk';
 	}
 
 	/**
@@ -73,7 +73,7 @@ class Section implements IIconSection {
 	 * @since 9.1
 	 */
 	public function getName() {
-		return $this->l->t('Video calls');
+		return $this->l->t('Talk');
 	}
 
 	/**
