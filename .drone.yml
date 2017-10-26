@@ -1,4 +1,18 @@
 pipeline:
+  mysql:
+    image: mysql:5.7
+    detach: true
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=oc_autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=oc_autotest
+    tmpfs:
+      - /var/lib/mysql
+    when:
+      matrix:
+        DB: mysql
+
   eslint:
     image: nextcloudci/eslint:eslint-1
     commands:
@@ -32,7 +46,7 @@ pipeline:
       matrix:
         TESTS: check-app-compatbility
   syntax-php5.6:
-    image: nextcloudci/php5.6:php5.6-3
+    image: nextcloudci/php5.6:php5.6-8
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -48,7 +62,7 @@ pipeline:
       matrix:
         TESTS: syntax-php5.6
   syntax-php7.0:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-16
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -63,8 +77,24 @@ pipeline:
     when:
       matrix:
         TESTS: syntax-php7.0
+  syntax-php7.1:
+    image: nextcloudci/php7.1:php7.1-15
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server
+      - composer install
+      - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
+    when:
+      matrix:
+        TESTS: syntax-php7.1
   signed-off-check:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-16
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -79,13 +109,13 @@ pipeline:
       matrix:
         TESTS: signed-off-check
   php5.6:
-    image: nextcloudci/php5.6:php5.6-3
+    image: nextcloudci/php5.6:php5.6-8
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
-      - DB=sqlite
+      - DB=mysql
     commands:
-      - apt update && apt-get -y install php5-xdebug
+      - apt update && apt-get -y install php5-xdebug mysql-client
 
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -99,14 +129,17 @@ pipeline:
       - phpunit --configuration phpunit.xml
     when:
       matrix:
+        DB: mysql
         TESTS: php5.6
   php7.0:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-16
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
-      - DB=sqlite
+      - DB=mysql
     commands:
+      - apt update && apt-get -y install mysql-client
+
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
@@ -119,14 +152,17 @@ pipeline:
       - phpunit --configuration phpunit.xml
     when:
       matrix:
+        DB: mysql
         TESTS: php7.0
   php7.1:
     image: nextcloudci/php7.1:php7.1-15
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
-      - DB=sqlite
+      - DB=mysql
     commands:
+      - apt update && apt-get -y install mysql-client
+
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
@@ -139,14 +175,17 @@ pipeline:
       - phpunit --configuration phpunit.xml
     when:
       matrix:
+        DB: mysql
         TESTS: php7.1
   php7.1-integration:
     image: nextcloudci/php7.1:php7.1-15
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
-      - DB=sqlite
+      - DB=mysql
     commands:
+      - apt update && apt-get -y install mysql-client
+
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
@@ -159,6 +198,7 @@ pipeline:
       - bash run.sh
     when:
       matrix:
+        DB: mysql
         TESTS: php7.1-integration
   jsunit:
     image: nextcloudci/jsunit:jsunit-5
@@ -177,9 +217,14 @@ matrix:
     - TESTS: check-app-compatbility
     - TESTS: syntax-php5.6
     - TESTS: syntax-php7.0
+    - TESTS: syntax-php7.1
     - TESTS: signed-off-check
     - TESTS: php5.6
+      DB: mysql
     - TESTS: php7.0
+      DB: mysql
     - TESTS: php7.1
+      DB: mysql
     - TESTS: php7.1-integration
+      DB: mysql
     - TESTS: jsunit
