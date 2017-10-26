@@ -191,7 +191,7 @@ class SignalingController extends OCSController {
 
 		foreach ($participants['users'] as $participant => $data) {
 			if ($data['sessionId'] === '0') {
-				// Use left the room
+				// User is not active
 				continue;
 			}
 
@@ -200,6 +200,7 @@ class SignalingController extends OCSController {
 				'roomId' => $room->getId(),
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],
+				'inCall' => $data['inCall'],
 			];
 		}
 
@@ -209,6 +210,7 @@ class SignalingController extends OCSController {
 				'roomId' => $room->getId(),
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],
+				'inCall' => $data['inCall'],
 			];
 		}
 

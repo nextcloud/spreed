@@ -547,6 +547,7 @@ class Room {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('sessionId', $query->createNamedParameter('0'))
+			->set('inCall', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->neq('participantType', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
@@ -588,6 +589,39 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postGuestEnterRoom', new GenericEvent($this));
 
 		return $sessionId;
+	}
+
+	/**
+	 * @param string $sessionId
+	 * @param bool $active
+	 */
+	public function changeInCall($sessionId, $active) {
+		if ($active) {
+			$this->dispatcher->dispatch(self::class . '::preSessionJoinCall', new GenericEvent($this, [
+				'sessionId' => $sessionId,
+			]));
+		} else {
+			$this->dispatcher->dispatch(self::class . '::preSessionLeaveCall', new GenericEvent($this, [
+				'sessionId' => $sessionId,
+			]));
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_participants')
+			->set('inCall', $query->createNamedParameter((int) $active, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)))
+			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		if ($active) {
+			$this->dispatcher->dispatch(self::class . '::postSessionJoinCall', new GenericEvent($this, [
+				'sessionId' => $sessionId,
+			]));
+		} else {
+			$this->dispatcher->dispatch(self::class . '::postSessionLeaveCall', new GenericEvent($this, [
+				'sessionId' => $sessionId,
+			]));
+		}
 	}
 
 	/**
@@ -647,12 +681,14 @@ class Room {
 		while ($row = $result->fetch()) {
 			if ($row['userId'] !== '' && $row['userId'] !== null) {
 				$users[$row['userId']] = [
+					'inCall' => (bool) $row['inCall'],
 					'lastPing' => (int) $row['lastPing'],
 					'sessionId' => $row['sessionId'],
 					'participantType' => (int) $row['participantType'],
 				];
 			} else {
 				$guests[] = [
+					'inCall' => (bool) $row['inCall'],
 					'lastPing' => (int) $row['lastPing'],
 					'sessionId' => $row['sessionId'],
 				];
