@@ -255,6 +255,24 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
 
+### Remove a guest from a room
+
+* Method: `DELETE`
+* Endpoint: `/room/{token}/participants/guests`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `participant` | string | Session ID of the guest to remove
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator/owner
+        + `403 Forbidden` When the target participant is not a guest
+        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the target participant could not be found
+
 ### Remove yourself from a room
 
 * Method: `DELETE`
