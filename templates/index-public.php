@@ -47,13 +47,12 @@ script(
 			<div id="header" class="spreed-public">
 				<div id="header-left">
 					<a href="<?php print_unescaped(link_to('', 'index.php')); ?>" title="" id="nextcloud" target="_blank">
-						<div class="logo logo-icon svg"></div>
+						<div class="logo logo-icon svg">
+							<h1 class="hidden-visually">
+								<?php p($theme->getName() . ' ' . $l->t('Talk')); ?>
+							</h1>
+						</div>
 					</a>
-					<div class="header-appname-container">
-						<h1 class="header-appname">
-							<?php p($theme->getName()); ?>
-						</h1>
-					</div>
 				</div>
 				<div id="header-right">
 				</div>
