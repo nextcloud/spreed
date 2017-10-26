@@ -20,18 +20,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 namespace OCA\Spreed\Migration;
-
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
+use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
-use OCP\Migration\IRepairStep;
 
-class EmptyNameInsteadOfRandom implements IRepairStep {
+/**
+ * Auto-generated migration step: Please modify to your needs!
+ */
+class Version2000Date20171026140256 extends SimpleMigrationStep {
 
 	/** @var IDBConnection */
 	protected $connection;
@@ -54,24 +55,13 @@ class EmptyNameInsteadOfRandom implements IRepairStep {
 	}
 
 	/**
-	 * Returns the step's name
-	 *
-	 * @return string
-	 * @since 9.1.0
-	 */
-	public function getName() {
-		return 'Remove random call names';
-	}
-
-	/**
-	 * Run repair step.
-	 * Must throw exception on error.
-	 *
-	 * @since 9.1.0
 	 * @param IOutput $output
-	 * @throws \Exception in case of failure
+	 * @param \Closure $schemaClosure The `\Closure` returns a `Schema`
+	 * @param array $options
+	 * @since 13.0.0
 	 */
-	public function run(IOutput $output) {
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+
 		if (!version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '1.1.4', '<')) {
 			return;
 		}
@@ -98,5 +88,6 @@ class EmptyNameInsteadOfRandom implements IRepairStep {
 				->execute();
 		}
 		$output->finishProgress();
+
 	}
 }
