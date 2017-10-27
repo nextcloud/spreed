@@ -518,6 +518,35 @@ video {
 	top: 0;
 }
 
+/* In the public page the header is inside the app-content, so it has to be
+   hidden explicitly. */
+#app-content:-webkit-full-screen #header {
+	display: none !important;
+}
+#app-content:-moz-full-screen #header {
+	display: none !important;
+}
+#app-content:-ms-fullscreen #header {
+	display: none !important;
+}
+#app-content:fullscreen #header {
+	display: none !important;
+}
+
+/* As there is no header the fullscreen button can be moved to the top. */
+#app-content:-webkit-full-screen #video-fullscreen.public {
+	top: 0;
+}
+#app-content:-moz-full-screen #video-fullscreen.public {
+	top: 0;
+}
+#app-content:-ms-fullscreen #video-fullscreen.public {
+	top: 0;
+}
+#app-content:fullscreen #video-fullscreen.public {
+	top: 0;
+}
+
 .localmediaerror h2 {
 	color: red;
 	font-weight: bold;
