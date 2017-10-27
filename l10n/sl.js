@@ -1,7 +1,6 @@
 OC.L10N.register(
     "spreed",
     {
-    "Video calls" : "Video klici",
     "Delete server" : "Odstrani strežnik",
     "Add new server" : "Dodaj nov strežnik",
     "Saved" : "Shranjeno",
@@ -10,6 +9,7 @@ OC.L10N.register(
     "TCP only" : "Samo TCP",
     "(group)" : "(skupina)",
     "New public call" : "Nov javni klic",
+    "Video calls" : "Video klici",
     "Time to call your friends" : "Čas, da pokličeš prijatelje",
     "Guest" : "Gost",
     "Copy" : "Kopiraj",
@@ -22,12 +22,9 @@ OC.L10N.register(
     "Password required" : "Zahtevano je geslo",
     "Password" : "Geslo",
     "Cancel" : "Prekinitev",
-    "Add person" : "Dodaj osebo",
     "Rename" : "Preimenuj",
     "Change password" : "Spremeni geslo",
     "Set password" : "Nastavi geslo",
-    "Leave call" : "Zapusti klic",
-    "Delete call" : "Izbriši klic",
     "You" : "Jaz",
     "and you" : "In jaz",
     "Please adjust your configuration" : "Prosimo prilagodite vaše nastavitve",
@@ -43,6 +40,8 @@ OC.L10N.register(
     "Disable video" : "Onemogoči video posnetek",
     "Share screen" : "Deli zaslon",
     "Smile in 3… 2… 1!" : "Nasmehni se 3... 2... 1!",
-    "Saving failed" : "Shranjevanje spodletelo"
+    "Saving failed" : "Shranjevanje spodletelo",
+    "Add person" : "Dodaj osebo",
+    "Leave call" : "Zapusti klic"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
