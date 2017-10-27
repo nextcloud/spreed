@@ -1,7 +1,6 @@
 OC.L10N.register(
     "spreed",
     {
-    "Video calls" : "Videozvani",
     "Saved" : "Saglabāts",
     "TURN server protocols" : "TURN servera protokols",
     "UDP and TCP" : "UDP un TCP",
@@ -9,6 +8,7 @@ OC.L10N.register(
     "TCP only" : "tikai TCP",
     "(group)" : "(grupa)",
     "New public call" : "Jauns zvans",
+    "Video calls" : "Videozvani",
     "Waiting for {participantName} to join the call …" : "Gaida {participantName} kad pievienosies zvanam …",
     "Waiting for others to join the call …" : "Gaidot citus pievienoties zvanam …",
     "Looking great today! :)" : "Šodien izskatāties lieliski :)!",
@@ -20,10 +20,8 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Spied ⌘-C lai kopētu.",
     "Press Ctrl-C to copy." : "Spied Ctrl-C lai kopētu.",
     "This call has ended" : "Šis zvans ir pabeigts",
-    "Add person" : "Pievienot personu",
     "Rename" : "Pārsaukt",
     "Share link" : "Koplietot saiti",
-    "Leave call" : "Pamest zvanu",
     "You" : "Jūs",
     "and you" : "un jūs",
     "Access to microphone & camera is only possible with HTTPS" : "Piekļuve mikrofonam un kamerai ir iespējama izmantojot tikai HTTPS",
@@ -41,6 +39,8 @@ OC.L10N.register(
     "Choose person …" : "Izvēlieties personas …",
     "TURN server" : "TURN serveris",
     "Saving failed" : "Saglabāšana neizdevās",
+    "Add person" : "Pievienot personu",
+    "Leave call" : "Pamest zvanu",
     "STUN server" : "STUN serveris",
     "TURN server shared secret" : "IESLĒGT slepeno servera koplietošanu"
 },
