@@ -71,7 +71,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				'length' => 11,
 			]);
 
-			$table->addIndex(['recipient', 'timestamp'], 'vcsig_recipient');
+			$table->addIndex(['recipient', 'timestamp'], 'ts_recipient_time');
 		}
 
 		if (!$schema->hasTable('talk_rooms')) {
@@ -112,7 +112,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			]);
 
 			$table->setPrimaryKey(['id']);
-			$table->addUniqueIndex(['token'], 'unique_token');
+			$table->addUniqueIndex(['token'], 'tr_room_token');
 		}
 
 		if (!$schema->hasTable('talk_participants')) {
