@@ -22,6 +22,7 @@
  */
 namespace OCA\Spreed\Migration;
 
+use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -251,7 +252,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->where($query->expr()->eq('app', $query->createNamedParameter('spreed')))
 			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter('room')));
 
-		$result = $query->execute();
+		try {
+			$result = $query->execute();
+		} catch (TableNotFoundException $e) {
+			return;
+		}
+
 		while ($row = $result->fetch()) {
 			if (!isset($roomIdMap[(int) $row['object_id']])) {
 				$delete
@@ -293,7 +299,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->andWhere($query->expr()->eq('type', $query->createNamedParameter('spreed')))
 			->andWhere($query->expr()->eq('object_type', $query->createNamedParameter('room')));
 
-		$result = $query->execute();
+		try {
+			$result = $query->execute();
+		} catch (TableNotFoundException $e) {
+			return;
+		}
+
 		while ($row = $result->fetch()) {
 			if (!isset($roomIdMap[(int) $row['object_id']])) {
 				$delete
@@ -346,7 +357,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			->where($query->expr()->eq('amq_appid', $query->createNamedParameter('spreed')))
 			->andWhere($query->expr()->eq('amq_type', $query->createNamedParameter('spreed')));
 
-		$result = $query->execute();
+		try {
+			$result = $query->execute();
+		} catch (TableNotFoundException $e) {
+			return;
+		}
+
 		while ($row = $result->fetch()) {
 			$params = json_decode($row['subjectparams'], true);
 
