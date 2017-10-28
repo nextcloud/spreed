@@ -120,4 +120,13 @@ class ChatManager {
 		return $comments;
 	}
 
+	/**
+	 * Deletes all the messages for the given chat.
+	 *
+	 * @param string $chatId
+	 */
+	public function deleteMessages($chatId) {
+		$this->commentsManager->deleteCommentsAtObject('chat', $chatId);
+	}
+
 }
