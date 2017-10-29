@@ -26,6 +26,13 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
 
+	/**
+	 * Model for rooms.
+	 *
+	 * Room can be used as the model of a RoomCollection or as a standalone
+	 * model. When used as a standalone model the token must be provided in the
+	 * constructor options.
+	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
 			name: '',
@@ -33,6 +40,16 @@
 			count: 0,
 			active: false,
 			lastPing: 0
+		},
+		url: function() {
+			return OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.get('token');
+		},
+		parse: function(result) {
+			// When the model is created by a RoomCollection "Room.parse" will
+			// be called with the result already parsed by
+			// "RoomCollection.parse", so the given result is already the
+			// attributes hash to be set on the model.
+			return (result.ocs === undefined)? result : result.ocs.data;
 		}
 	});
 

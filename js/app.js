@@ -387,38 +387,30 @@
 		},
 		syncAndSetActiveRoom: function(token) {
 			var self = this;
-			if (oc_current_user) {
-				this.syncRooms()
-					.then(function() {
+			this.syncRooms()
+				.then(function() {
+					if (oc_current_user) {
 						roomChannel.trigger('active', token);
-						// Disable video when entering a room with more than 5 participants.
+
 						self._rooms.forEach(function(room) {
 							if (room.get('token') === token) {
 								self.activeRoom = room;
-								if (Object.keys(room.get('participants')).length > 5) {
-									self.disableVideo();
-								}
-								self.setPageTitle(room.get('displayName'));
 							}
 						});
-					});
-			} else {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token,
-					type: 'GET',
-					beforeSend: function (request) {
-						request.setRequestHeader('Accept', 'application/json');
-					},
-					success: function(result) {
-						var data = result.ocs.data;
-						self.setRoomMessageForGuest(data.participants);
-						self.setPageTitle(data.displayName);
-						if (Object.keys(data.participants).length > 5) {
-							self.disableVideo();
-						}
+					} else {
+						// The public page supports only a single room, so the
+						// active room is already the room for the given token.
+
+						self.setRoomMessageForGuest(self.activeRoom.get('participants'));
 					}
+
+					// Disable video when entering a room with more than 5 participants.
+					if (Object.keys(self.activeRoom.get('participants')).length > 5) {
+						self.disableVideo();
+					}
+
+					self.setPageTitle(self.activeRoom.get('displayName'));
 				});
-			}
 		},
 		setPageTitle: function(title){
 			if (title) {
@@ -573,6 +565,10 @@
 					});
 
 				this._showParticipantList();
+			} else {
+				// The token is always defined in the public page.
+				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: token });
+				this.signaling.setRoom(this.activeRoom);
 			}
 
 			this.initAudioVideoSettings(configuration);
