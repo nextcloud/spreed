@@ -164,12 +164,12 @@
 		confirmRename: function() {
 			var newRoomName = this.ui.renameInput.val().trim();
 
-			if (newRoomName === this.model.get('name')) {
+			if (newRoomName === this.model.get('displayName')) {
 				this.hideRenameInput();
 				return;
 			}
 
-			console.log('Changing room name from "' + this.model.get('name') + '" to "' + newRoomName + '".');
+			console.log('Changing room name from "' + this.model.get('displayName') + '" to "' + newRoomName + '".');
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
@@ -194,7 +194,7 @@
 			} else if (e.keyCode === 27) {
 				// ESC
 				this.hideRenameInput();
-				this.ui.renameInput.val(this.model.get('name'));
+				this.ui.renameInput.val(this.model.get('displayName'));
 			}
 		},
 
