@@ -171,16 +171,22 @@
 
 			console.log('Changing room name from "' + this.model.get('displayName') + '" to "' + newRoomName + '".');
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
-				type: 'PUT',
-				data: {
-					roomName: newRoomName
-				},
+			this.model.save('displayName', newRoomName, {
+				patch: true,
 				success: function() {
+					// Saving the "displayName" will have triggered a
+					// "change:displayName" event. However, as the input was
+					// still shown the rendering will have been enqueued until
+					// the input is hidden, so the room name text has to be
+					// explicitly set before hiding the input to prevent briefly
+					// showing the old value.
 					this.ui.roomName.text(newRoomName);
 					this.hideRenameInput();
-					OCA.SpreedMe.app.syncRooms();
+
+					// Renaming a room by setting "displayName" causes "name" to
+					// change too in the server, so the model has to be fetched
+					// again to get the changes.
+					this.model.fetch();
 				}.bind(this)
 			});
 
