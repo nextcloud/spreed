@@ -17,6 +17,7 @@ script(
 		'models/participant',
 		'models/participantcollection',
 		'views/callinfoview',
+		'views/editabletextlabel',
 		'views/participantlistview',
 		'views/participantview',
 		'views/roomlistview',

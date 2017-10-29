@@ -15,6 +15,7 @@ script(
 		'models/room',
 		'models/roomcollection',
 		'views/callinfoview',
+		'views/editabletextlabel',
 		'views/roomlistview',
 		'views/sidebarview',
 		'views/tabview',

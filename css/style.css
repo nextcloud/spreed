@@ -115,13 +115,13 @@
 }
 
 .password-input,
-.rename-input {
+.room-name input {
 	margin-top: 0 !important;
 	margin-bottom: 4px !important;
 }
 
 .icon-confirm.password-confirm,
-.icon-confirm.rename-confirm {
+.icon-confirm.confirm-button {
 	background-size: 16px;
 	background-color: transparent;
 	border: none;
@@ -132,7 +132,7 @@
 	opacity: .5;
 }
 .icon-confirm.password-confirm:hover,
-.icon-confirm.rename-confirm:hover  {
+.icon-confirm.confirm-button:hover  {
 	opacity: 1;
 }
 
@@ -752,31 +752,31 @@ video {
 	display: inline-block;
 }
 
-.detailCallInfoContainer .rename-button {
+.detailCallInfoContainer .room-name .edit-button {
 	display: none;
 }
 
 .detailCallInfoContainer .clipboard-button,
-.detailCallInfoContainer:hover .rename-button {
+.detailCallInfoContainer:hover .room-name .edit-button {
 	display: inline-block;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
-.detailCallInfoContainer .rename-button .icon {
+.detailCallInfoContainer .room-name .edit-button .icon {
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
 	margin: -2px 10px;
 }
 
-.detailCallInfoContainer .rename-option,
+.detailCallInfoContainer .room-name .input-wrapper,
 .detailCallInfoContainer .password-option {
 	position: relative;
 	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
-.detailCallInfoContainer .rename-input,
+.detailCallInfoContainer .room-name input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
 }
