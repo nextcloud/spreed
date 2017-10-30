@@ -36,7 +36,7 @@
 		'</div>' +
 		'{{#if editionEnabled}}' +
 		'	<div class="input-wrapper hidden-important">' +
-		'		<input {{#if inputMaxLength}} maxlength="{{inputMaxLength}}" {{/if}} type="text" value="{{text}}" {{#if inputPlaceholder}} placeholder="{{inputPlaceholder}}" {{/if}}>'+
+		'		<input {{#if inputMaxLength}} maxlength="{{inputMaxLength}}" {{/if}} type="text" value="{{inputValue}}" {{#if inputPlaceholder}} placeholder="{{inputPlaceholder}}" {{/if}}>'+
 		'		<div class="icon icon-confirm confirm-button"></div>'+
 		'	</div>' +
 		'{{/if}}';
@@ -59,8 +59,9 @@
 	 * (the first is the Backbone model to get the attribute from, the second is
 	 * the name of the attribute). The "modelSaveOptions" option can be set if
 	 * needed to control the options passed to "Model.save", and
-	 * "extraClassNames", "labelTagName", "inputMaxLength", "inputPlaceholder"
-	 * and "buttonTitle" can be used to customize some elements of the view.
+	 * "extraClassNames", "labelTagName", "labelPlaceholder", "inputMaxLength",
+	 * "inputPlaceholder" and "buttonTitle" can be used to customize some
+	 * elements of the view.
 	 */
 	var EditableTextLabel = Marionette.View.extend({
 
@@ -98,12 +99,15 @@
 
 		templateContext: function() {
 			return {
-				text: this.model.get(this.modelAttribute),
+				text: this._getText(),
 
 				editionEnabled: this._editionEnabled,
 
 				labelTagName: this.getOption('labelTagName'),
 				inputMaxLength: this.getOption('inputMaxLength'),
+				// The text of the label is not used as input value as it could
+				// contain a placeholder text.
+				inputValue: this.model.get(this.modelAttribute),
 				inputPlaceholder: this.getOption('inputPlaceholder'),
 				buttonTitle: this.getOption('buttonTitle')
 			};
@@ -135,8 +139,12 @@
 			this.render();
 		},
 
+		_getText: function() {
+			return this.model.get(this.modelAttribute) || this.getOption('labelPlaceholder') || '';
+		},
+
 		updateText: function() {
-			this.getUI('label').text(this.model.get(this.modelAttribute));
+			this.getUI('label').text(this._getText());
 		},
 
 		showInput: function() {
