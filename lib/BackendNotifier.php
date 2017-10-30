@@ -122,10 +122,14 @@ class BackendNotifier{
 	 * The given users are now invited to a room.
 	 *
 	 * @param Room $room
-	 * @param array $userIds
+	 * @param array $users
 	 */
-	public function roomInvited($room, $userIds) {
-		$this->logger->info("Now invited to " . $room->getToken() . ": " + print_r($userIds, true));
+	public function roomInvited($room, $users) {
+		$this->logger->info("Now invited to " . $room->getToken() . ": " + print_r($users, true));
+		$userIds = [];
+		foreach ($users as $user) {
+			array_push($userIds, $user["userId"]);
+		}
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'invite',
 			'invite' => [
