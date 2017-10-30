@@ -92,7 +92,7 @@
 					$verify = $row.find('input.verify'),
 					data = {
 						server: $server.val().trim(),
-						verify: $verify.val() === '1'
+						verify: !!$verify.prop('checked')
 					};
 
 				if (data.server === '') {
