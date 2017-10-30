@@ -33,6 +33,9 @@
 		'{{#if showShareLink}}' +
 		'	<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
 		'{{/if}}' +
+		'{{#if isGuest}}' +
+		'	<div class="guest-name"></div>' +
+		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div>' +
 		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
@@ -59,6 +62,7 @@
 		templateContext: function() {
 			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
+				isGuest: this.model.get('participantType') === 4,
 				canModerate: canModerate,
 				isPublic: this.model.get('type') === 3,
 				showShareLink: !canModerate && this.model.get('type') === 3,
@@ -71,13 +75,16 @@
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 
+			'guestName': 'div.guest-name',
+
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm'
 		},
 
 		regions: {
-			'roomName': '@ui.roomName'
+			'roomName': '@ui.roomName',
+			'guestName': '@ui.guestName'
 		},
 
 		events: {
@@ -127,6 +134,18 @@
 			});
 
 			this._updateNameEditability();
+
+			this._guestNameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
+				model: this.getOption('guestNameModel'),
+				modelAttribute: 'nick',
+
+				extraClassNames: 'guest-name',
+				labelTagName: 'p',
+				labelPlaceholder: t('spreed', 'Guest'),
+				inputMaxLength: '20',
+				inputPlaceholder: t('spreed', 'Name'),
+				buttonTitle: t('spreed', 'Rename')
+			});
 		},
 
 		renderWhenInactive: function() {
@@ -149,6 +168,7 @@
 			// rendered, as the element of the region does not exist yet at that
 			// time and without that option the call would fail otherwise.
 			this.getRegion('roomName').reset({ preventDestroy: true, allowMissingEl: true });
+			this.getRegion('guestName').reset({ preventDestroy: true, allowMissingEl: true });
 		},
 
 		onRender: function() {
@@ -160,6 +180,7 @@
 			// Attach the child view again (or for the first time) after the
 			// template has been rendered.
 			this.showChildView('roomName', this._nameEditableTextLabel, { replaceElement: true } );
+			this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;

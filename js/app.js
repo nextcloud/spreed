@@ -309,37 +309,6 @@
 				OCA.SpreedMe.webrtc.stopScreenShare();
 				screensharingStopped();
 			});
-
-			$("#guestName").on('click', function() {
-				$('#guestName').addClass('hidden');
-				$("#guestNameInput").removeClass('hidden');
-				$("#guestNameConfirm").removeClass('hidden');
-				$("#guestNameInput").focus();
-			});
-
-			$('#guestNameConfirm').click(function () {
-				OCA.SpreedMe.app.changeGuestName();
-				$('#guestName').toggleClass('hidden');
-				$("#guestNameInput").toggleClass('hidden');
-				$("#guestNameConfirm").toggleClass('hidden');
-			});
-
-			$("#guestNameInput").keyup(function (e) {
-				var hide = false;
-
-				if (e.keyCode === 13) { // send new gues name on "enter"
-					hide = true;
-					OCA.SpreedMe.app.changeGuestName();
-				} else if (e.keyCode === 27) { // hide input filed again in ESC
-					hide = true;
-				}
-
-				if (hide) {
-					$('#guestName').toggleClass('hidden');
-					$("#guestNameInput").toggleClass('hidden');
-					$("#guestNameConfirm").toggleClass('hidden');
-				}
-			});
 		},
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
@@ -646,7 +615,7 @@
 			} else if (OCA.SpreedMe.app.displayedGuestNameHint === false) {
 				avatar.imageplaceholder('?', undefined, 128);
 				avatar.css('background-color', '#b9b9b9');
-				OC.Notification.showTemporary(t('spreed', 'You can set your name on the top right of this page so other participants can identify you better.'));
+				OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
 				OCA.SpreedMe.app.displayedGuestNameHint = true;
 			}
 
@@ -665,12 +634,8 @@
 				var avatar = $('#localVideoContainer').find('.avatar');
 
 				if (value) {
-					$('#guestName').text(value);
-
 					avatar.imageplaceholder(value, undefined, 128);
 				} else {
-					$('#guestName').text(t('spreed', 'Guest'));
-
 					avatar.imageplaceholder('?', undefined, 128);
 					avatar.css('background-color', '#b9b9b9');
 				}
@@ -683,20 +648,8 @@
 			var nick = this._localStorageModel.get('nick');
 
 			if (nick) {
-				$('#guestName').text(nick);
-				$('#guestNameInput').val(nick);
 				OCA.SpreedMe.app.guestNick = nick;
 			}
-		},
-		changeGuestName: function() {
-			var guestName = $.trim($('#guestNameInput').val());
-			var lastSavedNick = this._localStorageModel.get('nick');
-
-			if (guestName !== lastSavedNick) {
-				this._localStorageModel.save('nick', guestName);
-			}
-
-			$('#guestNameInput').val(guestName);
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({

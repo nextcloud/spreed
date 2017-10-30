@@ -115,7 +115,7 @@
 }
 
 .password-input,
-.room-name input {
+.editable-text-label input {
 	margin-top: 0 !important;
 	margin-bottom: 4px !important;
 }
@@ -623,43 +623,9 @@ video {
 	}
 }
 
-#guestName {
-    padding: 7px 30px 6px 10px;
-    cursor: pointer;
-}
-
-#guestName:hover {
-	color: #fff !important;
-}
-
-#guestNameInput {
-    margin-top: 7px;
-    margin-right: -10px;
-    padding-right: 22px;
-}
-
-#guestNameConfirm {
-	position: relative;
-	height: 20px;
-	right: 16px;
-	line-height: 14px;
-	background-color: transparent;
-	border: none;
-	opacity: .5;
-}
-
-#guestNameConfirm:hover {
-	opacity: 1;
-}
-
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
-}
-
-/* make guest name white because header bar is transparent*/
-#body-public #app-content:not(.participants-1) #guestName {
-    color: rgba(255, 255, 255, 0.7);
 }
 
 /**
@@ -747,36 +713,37 @@ video {
  * Sidebar details view
  */
 
-.detailCallInfoContainer h3 {
+.detailCallInfoContainer h3,
+.detailCallInfoContainer .guest-name p {
 	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
-.detailCallInfoContainer .room-name .edit-button {
+.detailCallInfoContainer .editable-text-label .edit-button {
 	display: none;
 }
 
 .detailCallInfoContainer .clipboard-button,
-.detailCallInfoContainer:hover .room-name .edit-button {
+.detailCallInfoContainer:hover .editable-text-label .edit-button {
 	display: inline-block;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
-.detailCallInfoContainer .room-name .edit-button .icon {
+.detailCallInfoContainer .editable-text-label .edit-button .icon {
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
 	margin: -2px 10px;
 }
 
-.detailCallInfoContainer .room-name .input-wrapper,
+.detailCallInfoContainer .editable-text-label .input-wrapper,
 .detailCallInfoContainer .password-option {
 	position: relative;
 	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
-.detailCallInfoContainer .room-name input,
+.detailCallInfoContainer .editable-text-label input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
 }
