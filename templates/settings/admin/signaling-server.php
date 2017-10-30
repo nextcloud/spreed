@@ -15,7 +15,6 @@ style('spreed', ['settings-admin']);
 	<p class="hidden">
 		<label for="signaling_secret"><?php p($l->t('Shared secret')) ?></label>
 		<input type="text" id="signaling_secret"
-			   name="signaling_secret" placeholder="<?php p($l->t('Shared secret')) ?>"
-			   value="<?php p($_['signalingSecret']) ?>" />
+			   name="signaling_secret" placeholder="<?php p($l->t('Shared secret')) ?>" />
 	</p>
 </div>
