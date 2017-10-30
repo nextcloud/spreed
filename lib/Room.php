@@ -219,7 +219,10 @@ class Room {
 	}
 
 	public function deleteRoom() {
-		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', new GenericEvent($this));
+		$participants = $this->getParticipants();
+		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', new GenericEvent($this, [
+			'participants' => $participants,
+		]));
 		$query = $this->db->getQueryBuilder();
 
 		// Delete all participants
@@ -232,7 +235,9 @@ class Room {
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postDeleteRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postDeleteRoom', new GenericEvent($this, [
+			'participants' => $participants,
+		]));
 	}
 
 	/**

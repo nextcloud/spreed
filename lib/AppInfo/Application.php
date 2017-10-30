@@ -112,12 +112,13 @@ class Application extends App {
 			// so they can update the room properties.
 			$notifier->roomModified($room);
 		});
-		$dispatcher->addListener(Room::class . '::preDeleteRoom', function(GenericEvent $event) {
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
 			$notifier = $this->getContainer()->query(BackendNotifier::class);
 
 			$room = $event->getSubject();
-			$notifier->roomDeleted($room);
+			$participants = $event->getArgument('participants');
+			$notifier->roomDeleted($room, $participants);
 		});
 		$dispatcher->addListener(Room::class . '::postRemoveUser', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */

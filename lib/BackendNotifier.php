@@ -192,12 +192,16 @@ class BackendNotifier{
 	 *
 	 * @param Room $room
 	 */
-	public function roomDeleted($room) {
+	public function roomDeleted($room, $participants) {
 		$this->logger->info("Room deleted: " . $room->getToken());
+		$userIds = [];
+		foreach ($participants['users'] as $participant => $data) {
+			array_push($userIds, $participant);
+		}
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'delete',
 			'delete' => [
-				'userids' => $this->getRoomUserIds($room),
+				'userids' => $userIds,
 			],
 		]);
 	}
