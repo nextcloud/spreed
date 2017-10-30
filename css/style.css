@@ -480,6 +480,44 @@ video {
 	display: none !important;
 }
 
+/**
+ * Different browsers handle fullscreen elements with a margin in different
+ * ways: Firefox ignores the margin and uses the full width, while Chromium uses
+ * a strange mix which is neither the full width nor the full margin. Due to
+ * this the margin is removed to unify the appearance across browsers; visually,
+ * this causes the sidebar to slide on the content instead of "pushing" it to
+ * the left.
+ */
+#app-content:-webkit-full-screen {
+	margin-right: 0;
+}
+#app-content:-moz-full-screen {
+	margin-right: 0;
+}
+#app-content:-ms-fullscreen {
+	margin-right: 0;
+}
+#app-content:fullscreen {
+	margin-right: 0;
+}
+
+/**
+ * In fullscreen mode there is no header, so the sidebar has to be moved to the
+ * top.
+ */
+#app-content:-webkit-full-screen #app-sidebar {
+	top: 0;
+}
+#app-content:-moz-full-screen #app-sidebar {
+	top: 0;
+}
+#app-content:-ms-fullscreen #app-sidebar {
+	top: 0;
+}
+#app-content:fullscreen #app-sidebar {
+	top: 0;
+}
+
 .localmediaerror h2 {
 	color: red;
 	font-weight: bold;
