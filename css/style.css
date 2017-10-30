@@ -721,9 +721,12 @@ video {
  * Sidebar details view
  */
 
+.detailCallInfoContainer .room-name {
+	display: inline-block;
+}
+
 .detailCallInfoContainer h3,
 .detailCallInfoContainer .guest-name p {
-	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
@@ -747,7 +750,6 @@ video {
 .detailCallInfoContainer .editable-text-label .input-wrapper,
 .detailCallInfoContainer .password-option {
 	position: relative;
-	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
