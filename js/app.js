@@ -379,7 +379,18 @@
 					}
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
+
+					self.updateSidebarWithActiveRoom();
 				});
+		},
+		updateSidebarWithActiveRoom: function() {
+			this._sidebarView.enable();
+
+			var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
+				model: this.activeRoom,
+				guestNameModel: this._localStorageModel
+			});
+			this._sidebarView.setCallInfoView(callInfoView);
 		},
 		setPageTitle: function(title){
 			if (title) {
@@ -455,17 +466,6 @@
 			if (oc_current_user) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
-
-				this._sidebarView.listenTo(this._rooms, 'change:active', function(model, active) {
-					if (active) {
-						this.enable();
-
-						var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
-							model: model,
-						});
-						this.setCallInfoView(callInfoView);
-					}
-				});
 			}
 
 			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
