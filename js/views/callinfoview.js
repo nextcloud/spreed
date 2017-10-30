@@ -229,6 +229,8 @@
 					password: newPassword
 				},
 				success: function() {
+					this.ui.passwordInput.val('');
+
 					OCA.SpreedMe.app.syncRooms();
 				}.bind(this)
 			});
