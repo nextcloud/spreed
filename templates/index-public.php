@@ -12,6 +12,7 @@ script(
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'models/localstoragemodel',
 		'models/room',
 		'models/roomcollection',
 		'views/callinfoview',

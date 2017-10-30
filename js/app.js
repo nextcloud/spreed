@@ -513,11 +513,11 @@
 				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
 			);
 
+			OCA.SpreedMe.initWebRTC();
+
 			if (!oc_current_user) {
 				this.initGuestName();
 			}
-
-			OCA.SpreedMe.initWebRTC();
 		},
 		startSpreed: function(configuration, signaling) {
 			console.log('Starting spreed …');
@@ -660,7 +660,27 @@
 			OCA.SpreedMe.app.videoDisabled = true;
 		},
 		initGuestName: function() {
-			var nick = localStorage.getItem("nick");
+			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
+			this._localStorageModel.on('change:nick', function(model, value) {
+				var avatar = $('#localVideoContainer').find('.avatar');
+
+				if (value) {
+					$('#guestName').text(value);
+
+					avatar.imageplaceholder(value, undefined, 128);
+				} else {
+					$('#guestName').text(t('spreed', 'Guest'));
+
+					avatar.imageplaceholder('?', undefined, 128);
+					avatar.css('background-color', '#b9b9b9');
+				}
+
+				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
+			});
+
+			this._localStorageModel.fetch();
+
+			var nick = this._localStorageModel.get('nick');
 
 			if (nick) {
 				$('#guestName').text(nick);
@@ -670,30 +690,13 @@
 		},
 		changeGuestName: function() {
 			var guestName = $.trim($('#guestNameInput').val());
-			var lastSavedNick = localStorage.getItem("nick");
+			var lastSavedNick = this._localStorageModel.get('nick');
 
 			if (guestName !== lastSavedNick) {
-				if (guestName.length > 0 && guestName.length <= 20) {
-					$('#guestName').text(guestName);
-					localStorage.setItem("nick", guestName);
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', guestName);
-				} else if (lastSavedNick) {
-					$('#guestName').text(t('spreed', 'Guest'));
-					localStorage.removeItem("nick");
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', '');
-				}
+				this._localStorageModel.save('nick', guestName);
 			}
 
 			$('#guestNameInput').val(guestName);
-
-			var avatar = $('#localVideoContainer').find('.avatar');
-			var savedGuestName = localStorage.getItem("nick");
-			if (savedGuestName) {
-				avatar.imageplaceholder(savedGuestName, undefined, 128);
-			} else {
-				avatar.imageplaceholder('?', undefined, 128);
-				avatar.css('background-color', '#b9b9b9');
-			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({
