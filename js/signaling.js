@@ -667,6 +667,11 @@
 		}
 
 		this._trigger("connect");
+		if (this.reconnected) {
+			// The list of rooms might have changed while we were not connected,
+			// so perform resync once.
+			this.internalSyncRooms();
+		}
 		if (!resumedSession && this.currentCallToken) {
 			this.joinCall(this.currentCallToken);
 		}
