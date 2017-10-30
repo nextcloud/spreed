@@ -801,7 +801,7 @@
 			settings = {};
 		}
 		var urls = settings['server'];
-		if (urls)  {
+		if (urls && urls.length) {
 			return new StandaloneSignaling(settings, urls);
 		} else {
 			return new InternalSignaling(settings);
