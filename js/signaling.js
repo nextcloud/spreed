@@ -534,7 +534,11 @@
 					}
 					break;
 				case "room":
-					// No special processing required for now.
+					if (this.currentCallToken && data.room.roomid != this.currentCallToken) {
+						this._trigger('roomChanged', [this.currentCallToken, data.room.roomid]);
+						this.joinedUsers = {};
+						this.currentCallToken = null;
+					}
 					break;
 				case "event":
 					this.processEvent(data);
