@@ -106,20 +106,19 @@ class Config {
 	}
 
 	/**
+	 * Returns list of signaling servers. Each entry contains the URL of the
+	 * server and a flag whether the certificate should be verified.
+	 *
 	 * @return array
 	 */
-	public function getSignalingServer() {
+	public function getSignalingServers() {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
-
 		if (!is_array($signaling)) {
 			return [];
 		}
 
-		// For now we use a random server from the list
-		$server = $signaling['servers'][mt_rand(0, count($servers) - 1)];
-
-		return explode('\n', $server);
+		return $signaling['servers'];
 	}
 
 	/**

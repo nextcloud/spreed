@@ -117,8 +117,9 @@ class PageController extends Controller {
 			}
 		}
 
-		$signaling = $this->config->getSignalingServer();
-		if (!empty($signaling)) {
+		$servers = $this->config->getSignalingServers();
+		if (!empty($servers)) {
+			$signaling = $servers[mt_rand(0, count($servers) - 1)];
 			$signaling = $signaling['server'];
 		}
 

@@ -68,12 +68,13 @@ class BackendNotifier{
 	 * @param array $data
 	 */
 	private function backendRequest($url, $data) {
-		$signaling = $this->config->getSignalingServer();
-		if (empty($signaling)) {
+		$servers = $this->config->getSignalingServers();
+		if (empty($servers)) {
 			return;
 		}
 
 		// We can use any server of the available backends.
+		$signaling = $servers[mt_rand(0, count($servers) - 1)];
 		$signaling['server'] = rtrim($signaling['server'], '/');
 		$url = rtrim($signaling['server'], '/') . $url;
 		if (substr($url, 0, 6) === 'wss://') {

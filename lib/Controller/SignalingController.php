@@ -90,7 +90,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function signaling($messages) {
-		$signaling = $this->config->getSignalingServer();
+		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
@@ -125,7 +125,7 @@ class SignalingController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function pullMessages() {
-		$signaling = $this->config->getSignalingServer();
+		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}

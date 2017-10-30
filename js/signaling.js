@@ -607,7 +607,7 @@
 			};
 		} else {
 			var user = OC.getCurrentUser();
-			var url = OC.generateUrl("/apps/spreed/signalling/backend");
+			var url = OC.generateUrl("/ocs/v2.php/apps/spreed/api/v1/signaling/backend");
 			msg = {
 				"type": "hello",
 				"hello": {
