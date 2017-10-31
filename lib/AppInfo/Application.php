@@ -22,6 +22,7 @@
 namespace OCA\Spreed\AppInfo;
 
 use OCA\Spreed\Activity\Hooks;
+use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Room;
@@ -51,6 +52,7 @@ class Application extends App {
 		$dispatcher = $server->getEventDispatcher();
 		$this->registerSignalingHooks($dispatcher);
 		$this->registerActivityHooks($dispatcher);
+		$this->registerChatHooks($dispatcher);
 	}
 
 	protected function registerNotifier(IServerContainer $server) {
@@ -109,5 +111,17 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+	}
+
+	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {
+		$listener = function(GenericEvent $event, $eventName) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var ChatManager $chatManager */
+			$chatManager = $this->getContainer()->query(ChatManager::class);
+			$chatManager->deleteMessages((string) $room->getId());
+		};
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 }

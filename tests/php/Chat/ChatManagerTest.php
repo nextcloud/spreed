@@ -185,4 +185,12 @@ class ChatManagerTest extends \Test\TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
+	public function testDeleteMessages() {
+		$this->commentsManager->expects($this->once())
+			->method('deleteCommentsAtObject')
+			->with('chat', 'testChatId');
+
+		$this->chatManager->deleteMessages('testChatId');
+	}
+
 }
