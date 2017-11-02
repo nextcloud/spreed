@@ -89,8 +89,8 @@ class Manager {
 	public function getRoomsForParticipant($participant) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms', 'r')
-			->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
 				$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
 				$query->expr()->eq('p.roomId', 'r.id')
 			))
@@ -121,12 +121,12 @@ class Manager {
 	public function getRoomForParticipant($roomId, $participant) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms', 'r')
+			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		if ($participant !== null) {
 			// Non guest user
-			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+			$query->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
 					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
 					$query->expr()->eq('p.roomId', 'r.id')
 				))
@@ -165,13 +165,13 @@ class Manager {
 	public function getRoomForParticipantByToken($token, $participant) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms', 'r')
+			->from('talk_rooms', 'r')
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)))
 			->setMaxResults(1);
 
 		if ($participant !== null) {
 			// Non guest user
-			$query->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+			$query->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
 					$query->expr()->eq('p.userId', $query->createNamedParameter($participant)),
 					$query->expr()->eq('p.roomId', 'r.id')
 				));
@@ -209,7 +209,7 @@ class Manager {
 	public function getRoomById($roomId) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms')
+			->from('talk_rooms')
 			->where($query->expr()->eq('id', $query->createNamedParameter($roomId, IQueryBuilder::PARAM_INT)));
 
 		$result = $query->execute();
@@ -231,7 +231,7 @@ class Manager {
 	public function getRoomByToken($token) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms')
+			->from('talk_rooms')
 			->where($query->expr()->eq('token', $query->createNamedParameter($token)));
 
 		$result = $query->execute();
@@ -258,8 +258,8 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms', 'r')
-			->leftJoin('r', 'spreedme_room_participants', 'p', $query->expr()->andX(
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
 				$query->expr()->eq('p.sessionId', $query->createNamedParameter($sessionId)),
 				$query->expr()->eq('p.roomId', 'r.id')
 			))
@@ -297,12 +297,12 @@ class Manager {
 	public function getOne2OneRoom($participant1, $participant2) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_rooms', 'r1')
-			->leftJoin('r1', 'spreedme_room_participants', 'p1', $query->expr()->andX(
+			->from('talk_rooms', 'r1')
+			->leftJoin('r1', 'talk_participants', 'p1', $query->expr()->andX(
 				$query->expr()->eq('p1.userId', $query->createNamedParameter($participant1)),
 				$query->expr()->eq('p1.roomId', 'r1.id')
 			))
-			->leftJoin('r1', 'spreedme_room_participants', 'p2', $query->expr()->andX(
+			->leftJoin('r1', 'talk_participants', 'p2', $query->expr()->andX(
 				$query->expr()->eq('p2.userId', $query->createNamedParameter($participant2)),
 				$query->expr()->eq('p2.roomId', 'r1.id')
 			))
@@ -352,7 +352,7 @@ class Manager {
 		$token = $this->getNewToken();
 
 		$query = $this->db->getQueryBuilder();
-		$query->insert('spreedme_rooms')
+		$query->insert('talk_rooms')
 			->values(
 				[
 					'name' => $query->createNamedParameter($name),
@@ -377,7 +377,7 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')))
 			->orderBy('lastPing', 'DESC')
@@ -406,7 +406,7 @@ class Manager {
 		// Delete all messages from or to the current user
 		$query = $this->db->getQueryBuilder();
 		$query->select('sessionId')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)));
 		$result = $query->execute();
 
@@ -431,7 +431,7 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('id')
-			->from('spreedme_rooms')
+			->from('talk_rooms')
 			->where($query->expr()->eq('token', $query->createParameter('token')));
 
 		$i = 0;

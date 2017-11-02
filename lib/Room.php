@@ -173,7 +173,7 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId())));
 		$result = $query->execute();
@@ -204,7 +204,7 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('roomId', $query->createNamedParameter($this->getId())));
 		$result = $query->execute();
@@ -226,12 +226,12 @@ class Room {
 		$query = $this->db->getQueryBuilder();
 
 		// Delete all participants
-		$query->delete('spreedme_room_participants')
+		$query->delete('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
 		// Delete room
-		$query->delete('spreedme_rooms')
+		$query->delete('talk_rooms')
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
@@ -262,7 +262,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_rooms')
+		$query->update('talk_rooms')
 			->set('name', $query->createNamedParameter($newName))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
@@ -292,7 +292,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_rooms')
+		$query->update('talk_rooms')
 			->set('password', $query->createNamedParameter($hash))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
@@ -314,7 +314,7 @@ class Room {
 
 		if ($isGuest && $this->getType() === self::PUBLIC_CALL) {
 			$query = $this->db->getQueryBuilder();
-			$query->update('spreedme_rooms')
+			$query->update('talk_rooms')
 				->set('activeGuests', $query->createFunction($query->getColumnName('activeGuests') . ' + 1'))
 				->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 			$query->execute();
@@ -327,7 +327,7 @@ class Room {
 		}
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_rooms')
+		$query->update('talk_rooms')
 			->set('activeSince', $query->createNamedParameter($since, 'datetime'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->isNull('activeSince'));
@@ -343,7 +343,7 @@ class Room {
 	 */
 	public function resetActiveSince() {
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_rooms')
+		$query->update('talk_rooms')
 			->set('activeGuests', $query->createNamedParameter(0))
 			->set('activeSince', $query->createNamedParameter(null, 'datetime'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
@@ -373,7 +373,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_rooms')
+		$query->update('talk_rooms')
 			->set('type', $query->createNamedParameter($newType, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
@@ -383,7 +383,7 @@ class Room {
 		if ($oldType === self::PUBLIC_CALL) {
 			// Kick all guests and users that were not invited
 			$query = $this->db->getQueryBuilder();
-			$query->delete('spreedme_room_participants')
+			$query->delete('talk_participants')
 				->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 				->andWhere($query->expr()->in('participantType', $query->createNamedParameter([Participant::GUEST, Participant::USER_SELF_JOINED], IQueryBuilder::PARAM_INT_ARRAY)));
 			$query->execute();
@@ -406,7 +406,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->insert('spreedme_room_participants')
+		$query->insert('talk_participants')
 			->values(
 				[
 					'userId' => $query->createParameter('userId'),
@@ -441,7 +441,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_room_participants')
+		$query->update('talk_participants')
 			->set('participantType', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($participant)));
@@ -462,7 +462,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_room_participants')
+		$query->delete('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($user->getUID())));
 		$query->execute();
@@ -481,7 +481,7 @@ class Room {
 		]));
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_room_participants')
+		$query->delete('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('sessionId', $query->createNamedParameter($participant->getSessionId())));
 		$query->execute();
@@ -504,7 +504,7 @@ class Room {
 		$this->disconnectUserFromAllRooms($userId);
 
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_room_participants')
+		$query->update('talk_participants')
 			->set('sessionId', $query->createParameter('sessionId'))
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('userId', $query->createNamedParameter($userId)));
@@ -545,7 +545,7 @@ class Room {
 
 		// Reset sessions on all normal rooms
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_room_participants')
+		$query->update('talk_participants')
 			->set('sessionId', $query->createNamedParameter('0'))
 			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->neq('participantType', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
@@ -553,7 +553,7 @@ class Room {
 
 		// And kill session on all self joined rooms
 		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_room_participants')
+		$query->delete('talk_participants')
 			->where($query->expr()->eq('userId', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('participantType', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
@@ -575,7 +575,7 @@ class Room {
 		}
 
 		$sessionId = $this->secureRandom->generate(255);
-		while (!$this->db->insertIfNotExist('*PREFIX*spreedme_room_participants', [
+		while (!$this->db->insertIfNotExist('*PREFIX*talk_participants', [
 			'userId' => '',
 			'roomId' => $this->getId(),
 			'lastPing' => 0,
@@ -605,7 +605,7 @@ class Room {
 	protected function isSessionUnique($sessionId) {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_sessions')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)));
 		$result = $query->execute();
 		$numSessions = (int) $result->fetchColumn();
@@ -618,7 +618,7 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::preCleanGuests', new GenericEvent($this));
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_room_participants')
+		$query->delete('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->emptyString('userId'))
 			->andWhere($query->expr()->lte('lastPing', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
@@ -634,7 +634,7 @@ class Room {
 	public function getParticipants($lastPing = 0) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 
 		if ($lastPing > 0) {
@@ -672,7 +672,7 @@ class Room {
 	public function getActiveSessions() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('sessionId')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')));
 		$result = $query->execute();
@@ -692,7 +692,7 @@ class Room {
 	public function hasActiveSessions() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('sessionId')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')))
 			->setMaxResults(1);
@@ -710,7 +710,7 @@ class Room {
 	public function getNumberOfParticipants($lastPing = 0) {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_participants')
-			->from('spreedme_room_participants')
+			->from('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 
 		if ($lastPing > 0) {
@@ -731,7 +731,7 @@ class Room {
 	 */
 	public function ping($userId, $sessionId, $timestamp) {
 		$query = $this->db->getQueryBuilder();
-		$query->update('spreedme_room_participants')
+		$query->update('talk_participants')
 			->set('lastPing', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('userId', $query->createNamedParameter((string) $userId)))
 			->andWhere($query->expr()->eq('sessionId', $query->createNamedParameter($sessionId)))

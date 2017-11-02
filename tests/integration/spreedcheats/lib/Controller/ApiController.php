@@ -51,13 +51,13 @@ class ApiController extends OCSController {
 	public function resetSpreed() {
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('videocalls_signaling')->execute();
+		$query->delete('talk_signaling')->execute();
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_rooms')->execute();
+		$query->delete('talk_rooms')->execute();
 
 		$query = $this->db->getQueryBuilder();
-		$query->delete('spreedme_room_participants')->execute();
+		$query->delete('talk_participants')->execute();
 
 		return new DataResponse();
 	}
