@@ -347,7 +347,6 @@ class RoomController extends OCSController {
 				'userId' => $targetUser->getUID(),
 				'participantType' => Participant::OWNER,
 			]);
-
 			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -450,6 +449,7 @@ class RoomController extends OCSController {
 		if (!$room->setName($roomName)) {
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
+
 		return new DataResponse([]);
 	}
 

@@ -23,6 +23,8 @@ namespace OCA\Spreed;
 
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IUser;
+use OCP\Security\ISecureRandom;
 
 class Config {
 
@@ -32,14 +34,21 @@ class Config {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
+	/** @var ISecureRandom */
+	private $secureRandom;
+
 	/**
 	 * Config constructor.
 	 *
 	 * @param IConfig $config
+	 * @param ISecureRandom $secureRandom
 	 * @param ITimeFactory $timeFactory
 	 */
-	public function __construct(IConfig $config, ITimeFactory $timeFactory) {
+	public function __construct(IConfig $config,
+								ISecureRandom $secureRandom,
+								ITimeFactory $timeFactory) {
 		$this->config = $config;
+		$this->secureRandom = $secureRandom;
 		$this->timeFactory = $timeFactory;
 	}
 
@@ -94,6 +103,93 @@ class Config {
 			'password' => $password,
 			'protocols' => $server['protocols'],
 		);
+	}
+
+	/**
+	 * Returns list of signaling servers. Each entry contains the URL of the
+	 * server and a flag whether the certificate should be verified.
+	 *
+	 * @return array
+	 */
+	public function getSignalingServers() {
+		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$signaling = json_decode($config, true);
+		if (!is_array($signaling)) {
+			return [];
+		}
+
+		return $signaling['servers'];
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSignalingSecret() {
+		$config = $this->config->getAppValue('spreed', 'signaling_servers');
+		$signaling = json_decode($config, true);
+
+		if (!is_array($signaling)) {
+			return '';
+		}
+
+		return $signaling['secret'];
+	}
+
+	/**
+	 * @param string $userId
+	 * @return string
+	 */
+	public function getSignalingTicket($userId) {
+		if (empty($userId)) {
+			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
+		} else {
+			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
+		}
+		if (empty($secret)) {
+			// Create secret lazily on first access.
+			// TODO(fancycode): Is there a possibility for a race condition?
+			$secret = $this->secureRandom->generate(255);
+			if (empty($userId)) {
+				$this->config->setAppValue('spreed', 'signaling_ticket_secret', $secret);
+			} else {
+				$this->config->setUserValue($userId, 'spreed', 'signaling_ticket_secret', $secret);
+			}
+		}
+
+		// Format is "random:timestamp:userid:checksum" and "checksum" is the
+		// SHA256-HMAC of "random:timestamp:userid" with the per-user secret.
+		$random = $this->secureRandom->generate(16);
+		$timestamp = $this->timeFactory->getTime();
+		$data = $random . ':' . $timestamp . ':' . $userId;
+		$hash = hash_hmac('sha256', $data, $secret);
+		return $data . ':' . $hash;
+	}
+
+	/**
+	 * @param string $userId
+	 * @param string $ticket
+	 * @return bool
+	 */
+	public function validateSignalingTicket($userId, $ticket) {
+		if (empty($userId)) {
+			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
+		} else {
+			$secret = $this->config->getUserValue($userId, 'spreed', 'signaling_ticket_secret');
+		}
+		if (empty($secret)) {
+			return false;
+		}
+
+		$lastColon = strrpos($ticket, ':');
+		if ($lastColon === false) {
+			// Immediately reject invalid formats.
+			return false;
+		}
+
+		// TODO(fancycode): Should we reject tickets that are too old?
+		$data = substr($ticket, 0, $lastColon);
+		$hash = hash_hmac('sha256', $data, $secret);
+		return hash_equals($hash, substr($ticket, $lastColon + 1));
 	}
 
 }

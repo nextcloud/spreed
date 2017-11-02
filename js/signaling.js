@@ -3,10 +3,12 @@
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
-	function SignalingBase() {
+	function SignalingBase(settings) {
+		this.settings = settings;
 		this.sessionId = '';
 		this.currentCallToken = null;
 		this.handlers = {};
+		this.features = {};
 	}
 
 	SignalingBase.prototype.on = function(ev, handler) {
@@ -15,10 +17,20 @@
 		} else {
 			this.handlers[ev].push(handler);
 		}
-	};
 
-	SignalingBase.prototype.emit = function(/*ev, data*/) {
-		// Override in subclasses.
+		switch (ev) {
+			case 'stunservers':
+			case 'turnservers':
+				var servers = this.settings[ev] || [];
+				if (servers.length) {
+					// The caller expects the handler to be called when the data
+					// is available, so defer to simulate a delayed response.
+					_.defer(function() {
+						handler(servers);
+					});
+				}
+				break;
+		}
 	};
 
 	SignalingBase.prototype._trigger = function(ev, args) {
@@ -41,6 +53,10 @@
 	SignalingBase.prototype.disconnect = function() {
 		this.sessionId = '';
 		this.currentCallToken = null;
+	};
+
+	SignalingBase.prototype.hasFeature = function(feature) {
+		return this.features && this.features[feature];
 	};
 
 	SignalingBase.prototype.emit = function(ev, data) {
@@ -110,7 +126,7 @@
 	};
 
 	// Connection to the internal signaling server provided by the app.
-	function InternalSignaling() {
+	function InternalSignaling(/*settings*/) {
 		SignalingBase.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
 
@@ -154,13 +170,6 @@
 			case 'connect':
 				// A connection is established if we can perform a request
 				// through it.
-				this._sendMessageWithCallback(ev);
-				break;
-
-			case 'stunservers':
-			case 'turnservers':
-				// Values are not pushed by the server but have to be explicitly
-				// requested.
 				this._sendMessageWithCallback(ev);
 				break;
 		}
@@ -431,10 +440,381 @@
 		}.bind(this));
 	};
 
+	function StandaloneSignaling(settings, urls) {
+		SignalingBase.prototype.constructor.apply(this, arguments);
+		if (typeof(urls) === "string") {
+			urls = [urls];
+		}
+		// We can connect to any of the servers.
+		var idx = Math.floor(Math.random() * urls.length);
+		// TODO(jojo): Try other server if connection fails.
+		var url = urls[idx];
+		// Make sure we are using websocket urls.
+		if (url.indexOf("https://") === 0) {
+			url = "wss://" + url.substr(8);
+		} else if (url.indexOf("http://") === 0) {
+			url = "ws://" + url.substr(7);
+		}
+		if (url[url.length - 1] === "/") {
+			url = url.substr(0, url.length - 1);
+		}
+		this.url = url + "/spreed";
+		this.initialReconnectIntervalMs = 1000;
+		this.maxReconnectIntervalMs = 16000;
+		this.reconnectIntervalMs = this.initialReconnectIntervalMs;
+		this.joinedUsers = {};
+		this.connect();
+	}
+
+	StandaloneSignaling.prototype = new SignalingBase();
+	StandaloneSignaling.prototype.constructor = StandaloneSignaling;
+
+	StandaloneSignaling.prototype.reconnect = function() {
+		if (this.reconnectTimer) {
+			return;
+		}
+
+		// Wiggle interval a little bit to prevent all clients from connecting
+		// simultaneously in case the server connection is interrupted.
+		var interval = this.reconnectIntervalMs - (this.reconnectIntervalMs / 2) + (this.reconnectIntervalMs * Math.random());
+		console.log("Reconnect in", interval);
+		this.reconnected = true;
+		this.reconnectTimer = window.setTimeout(function() {
+			this.reconnectTimer = null;
+			this.connect();
+		}.bind(this), interval);
+		this.reconnectIntervalMs = this.reconnectIntervalMs * 2;
+		if (this.reconnectIntervalMs > this.maxReconnectIntervalMs) {
+			this.reconnectIntervalMs = this.maxReconnectIntervalMs;
+		}
+		if (this.socket) {
+			this.socket.close();
+			this.socket = null;
+		}
+	};
+
+	StandaloneSignaling.prototype.connect = function() {
+		console.log("Connecting to", this.url);
+		this.callbacks = {};
+		this.id = 1;
+		this.pendingMessages = [];
+		this.connected = false;
+		this.socket = new WebSocket(this.url);
+		window.signalingSocket = this.socket;
+		this.socket.onopen = function(event) {
+			console.log("Connected", event);
+			this.reconnectIntervalMs = this.initialReconnectIntervalMs;
+			this.sendHello();
+		}.bind(this);
+		this.socket.onerror = function(event) {
+			console.log("Error", event);
+			this.reconnect();
+		}.bind(this);
+		this.socket.onclose = function(event) {
+			console.log("Close", event);
+			this.reconnect();
+		}.bind(this);
+		this.socket.onmessage = function(event) {
+			var data = event.data;
+			if (typeof(data) === "string") {
+				data = JSON.parse(data);
+			}
+			console.log("Received", data);
+			var id = data.id;
+			if (id && this.callbacks.hasOwnProperty(id)) {
+				var cb = this.callbacks[id];
+					delete this.callbacks[id];
+				cb(data);
+			}
+			switch (data.type) {
+				case "hello":
+					if (!id) {
+						// Only process if not received as result of our "hello".
+						this.helloResponseReceived(data);
+					}
+					break;
+				case "room":
+					if (this.currentCallToken && data.room.roomid !== this.currentCallToken) {
+						this._trigger('roomChanged', [this.currentCallToken, data.room.roomid]);
+						this.joinedUsers = {};
+						this.currentCallToken = null;
+					}
+					break;
+				case "event":
+					this.processEvent(data);
+					break;
+				case "message":
+					data.message.data.from = data.message.sender.sessionid;
+					this._trigger("message", [data.message.data]);
+					break;
+				default:
+					if (!id) {
+						console.log("Ignore unknown event", data);
+					}
+					break;
+			}
+		}.bind(this);
+	};
+
+	StandaloneSignaling.prototype.disconnect = function() {
+		if (this.socket) {
+			this.doSend({
+				"type": "bye",
+				"bye": {}
+			});
+			this.socket.close();
+			this.socket = null;
+		}
+		SignalingBase.prototype.disconnect.apply(this, arguments);
+	};
+
+	StandaloneSignaling.prototype.sendCallMessage = function(data) {
+		this.doSend({
+			"type": "message",
+			"message": {
+				"recipient": {
+					"type": "session",
+					"sessionid": data.to
+				},
+				"data": data
+			}
+		});
+	};
+
+	StandaloneSignaling.prototype.doSend = function(msg, callback) {
+		if (!this.connected && msg.type !== "hello") {
+			// Defer sending any messages until the hello rsponse has been
+			// received.
+			this.pendingMessages.push([msg, callback]);
+			return;
+		}
+
+		if (callback) {
+			var id = this.id++;
+			this.callbacks[id] = callback;
+			msg["id"] = ""+id;
+		}
+		console.log("Sending", msg);
+		this.socket.send(JSON.stringify(msg));
+	};
+
+	StandaloneSignaling.prototype.sendHello = function() {
+		var msg;
+		if (this.resumeId) {
+			console.log("Trying to resume session", this.sessionId);
+			msg = {
+				"type": "hello",
+				"hello": {
+					"version": "1.0",
+					"resumeid": this.resumeId
+				}
+			};
+		} else {
+			var user = OC.getCurrentUser();
+			var url = OC.generateUrl("/ocs/v2.php/apps/spreed/api/v1/signaling/backend");
+			msg = {
+				"type": "hello",
+				"hello": {
+					"version": "1.0",
+					"auth": {
+						"url": OC.getProtocol() + "://" + OC.getHost() + url,
+						"params": {
+							"userid": user.uid,
+							"ticket": this.settings.ticket
+						}
+					}
+				}
+			};
+		}
+		this.doSend(msg, this.helloResponseReceived.bind(this));
+	};
+
+	StandaloneSignaling.prototype.helloResponseReceived = function(data) {
+		console.log("Hello response received", data);
+		if (data.type !== "hello") {
+			if (this.resumeId) {
+				// Resuming the session failed, reconnect as new session.
+				this.resumeId = '';
+				this.sendHello();
+				return;
+			}
+
+			// TODO(fancycode): How should this be handled better?
+			console.error("Could not connect to server", data);
+			this.reconnect();
+			return;
+		}
+
+		var resumedSession = !!this.resumeId;
+		this.connected = true;
+		this.sessionId = data.hello.sessionid;
+		this.resumeId = data.hello.resumeid;
+		this.features = {};
+		var i;
+		if (data.hello.server && data.hello.server.features) {
+			var features = data.hello.server.features;
+			for (i = 0; i < features.length; i++) {
+				this.features[features[i]] = true;
+			}
+		}
+
+		var messages = this.pendingMessages;
+		this.pendingMessages = [];
+		for (i = 0; i < messages.length; i++) {
+			var msg = messages[i][0];
+			var callback = messages[i][1];
+			this.doSend(msg, callback);
+		}
+
+		this._trigger("connect");
+		if (this.reconnected) {
+			// The list of rooms might have changed while we were not connected,
+			// so perform resync once.
+			this.internalSyncRooms();
+		}
+		if (!resumedSession && this.currentCallToken) {
+			this.joinCall(this.currentCallToken);
+		}
+	};
+
+	StandaloneSignaling.prototype.joinCall = function(token, callback) {
+		console.log("Join call", token);
+		this.doSend({
+			"type": "room",
+			"room": {
+				"roomid": token
+			}
+		}, function(data) {
+			this.joinResponseReceived(data, token, callback);
+		}.bind(this));
+	};
+
+	StandaloneSignaling.prototype.joinResponseReceived = function(data, token, callback) {
+		console.log("Joined", data, token);
+		this.currentCallToken = token;
+		if (this.roomCollection) {
+			// The list of rooms is not fetched from the server. Update ping
+			// of joined room so it gets sorted to the top.
+			this.roomCollection.forEach(function(room) {
+				if (room.get('token') === token) {
+					room.set('lastPing', (new Date()).getTime() / 1000);
+				}
+			});
+			this.roomCollection.sort();
+		}
+		if (callback) {
+			var roomDescription = {
+				"clients": {}
+			};
+			callback('', roomDescription);
+		}
+	};
+
+	StandaloneSignaling.prototype.leaveCall = function(token) {
+		console.log("Leave call", token);
+		this.doSend({
+			"type": "room",
+			"room": {
+				"roomid": ""
+			}
+		}, function(data) {
+			console.log("Left", data);
+			this.joinedUsers = {};
+			this.currentCallToken = null;
+		}.bind(this));
+	};
+
+	StandaloneSignaling.prototype.processEvent = function(data) {
+		switch (data.event.target) {
+			case "room":
+				this.processRoomEvent(data);
+				break;
+			case "roomlist":
+				this.processRoomListEvent(data);
+				break;
+			default:
+				console.log("Unsupported event target", data);
+				break;
+		}
+	};
+
+	StandaloneSignaling.prototype.processRoomEvent = function(data) {
+		var i;
+		switch (data.event.type) {
+			case "join":
+				var joinedUsers = data.event.join || [];
+				if (joinedUsers.length) {
+					console.log("Users joined", joinedUsers);
+					var leftUsers = {};
+					if (this.reconnected) {
+						this.reconnected = false;
+						// The browser reconnected, some of the previous sessions
+						// may now no longer exist.
+						leftUsers = _.extend({}, this.joinedUsers);
+					}
+					for (i = 0; i < joinedUsers.length; i++) {
+						this.joinedUsers[joinedUsers[i].sessionid] = true;
+						delete leftUsers[joinedUsers[i].sessionid];
+					}
+					leftUsers = _.keys(leftUsers);
+					if (leftUsers.length) {
+						this._trigger("usersLeft", [leftUsers]);
+					}
+					this._trigger("usersJoined", [joinedUsers]);
+				}
+				break;
+			case "leave":
+				var leftSessionIds = data.event.leave || [];
+				if (leftSessionIds.length) {
+					console.log("Users left", leftSessionIds);
+					for (i = 0; i < leftSessionIds.length; i++) {
+						delete this.joinedUsers[leftSessionIds[i]];
+					}
+					this._trigger("usersLeft", [leftSessionIds]);
+				}
+				break;
+			default:
+				console.log("Unknown room event", data);
+				break;
+		}
+	};
+
+	StandaloneSignaling.prototype.setRoomCollection = function(/* rooms */) {
+		SignalingBase.prototype.setRoomCollection.apply(this, arguments);
+		// Retrieve initial list of rooms for this user.
+		return this.internalSyncRooms();
+	};
+
+	StandaloneSignaling.prototype.syncRooms = function() {
+		// Never manually sync rooms, will be done based on notifications
+		// from the signaling server.
+		var defer = $.Deferred();
+		defer.resolve([]);
+		return defer;
+	};
+
+	StandaloneSignaling.prototype.internalSyncRooms = function() {
+		return SignalingBase.prototype.syncRooms.apply(this, arguments);
+	};
+
+	StandaloneSignaling.prototype.processRoomListEvent = function(data) {
+		console.log("Room list event", data);
+		this.internalSyncRooms();
+	};
+
 	OCA.SpreedMe.createSignalingConnection = function() {
-		// TODO(fancycode): Create different type of signaling connection
-		// depending on configuration.
-		return new InternalSignaling();
+		var settings = $("#app #signaling-settings").text();
+		if (settings) {
+			settings = JSON.parse(settings);
+		} else {
+			settings = {};
+		}
+		var urls = settings['server'];
+		if (urls && urls.length) {
+			return new StandaloneSignaling(settings, urls);
+		} else {
+			return new InternalSignaling(settings);
+		}
 	};
 
 })(OCA, OC);

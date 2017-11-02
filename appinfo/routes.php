@@ -47,6 +47,14 @@ return [
 			],
 		],
 		[
+			'name' => 'Signaling#backend',
+			'url' => '/api/{apiVersion}/signaling/backend',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
 			'name' => 'Call#getPeersForCall',
 			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'GET',

@@ -17,6 +17,10 @@
 			selectParticipants.removeClass('error');
 		});
 
+		signaling.on('roomChanged', function() {
+			OCA.SpreedMe.Calls.leaveCurrentCall(false);
+		});
+
 		OCA.SpreedMe.Calls.leaveAllCalls();
 	}
 
