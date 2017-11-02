@@ -534,7 +534,7 @@
 					}
 					break;
 				case "room":
-					if (this.currentCallToken && data.room.roomid != this.currentCallToken) {
+					if (this.currentCallToken && data.room.roomid !== this.currentCallToken) {
 						this._trigger('roomChanged', [this.currentCallToken, data.room.roomid]);
 						this.joinedUsers = {};
 						this.currentCallToken = null;
