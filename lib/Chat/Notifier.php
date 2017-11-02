@@ -134,7 +134,59 @@ class Notifier {
 				])
 			->setDateTime($comment->getCreationDateTime());
 
+		$notificationMessage = $this->getNotificationMessage($comment, $mentionedUserId);
+		if (count($notificationMessage) === 1) {
+			$notification->setMessage($notificationMessage[0]);
+		} else {
+			$notification->setMessage($notificationMessage[0], $notificationMessage[1]);
+		}
+
 		return $notification;
+	}
+
+	/**
+	 * Returns the message for a notification from the message of the comment.
+	 *
+	 * The message is returned as an array; the first element is the message
+	 * itself, and the second element is another array that contains the
+	 * parameters for the message. If no parameters are needed then the returned
+	 * array has a single element.
+	 *
+	 * The message of a comment can be much longer than the maximum allowed
+	 * length for the message of a notification so, if needed, the comment
+	 * message is trimmed around the first mention to the user. In that case
+	 * the "ellipsisStart" and/or "ellipsisEnd" (depending on the case) are
+	 * returned as the parameters.
+	 *
+	 * @param IComment $comment
+	 * @param string $mentionedUserId
+	 * @return array the first element is a message suitable to be stored in a
+	 *         notification, and the second are the parameters, if any.
+	 */
+	private function getNotificationMessage(IComment $comment, $mentionedUserId) {
+		$maximumLength = 64;
+
+		$message = $comment->getMessage();
+
+		$messageLength = strlen($message);
+		if ($messageLength <= $maximumLength) {
+			return [$message];
+		}
+
+		$mention = '@' . $mentionedUserId;
+		$mentionLength = strlen($mention);
+		// Only the first mention is taken into account
+		$mentionMiddleIndex = strpos($message, $mention) + $mentionLength / 2;
+
+		if ($mentionMiddleIndex <= $maximumLength / 2) {
+			return [substr($message, 0, $maximumLength), ['ellipsisEnd']];
+		}
+
+		if ($mentionMiddleIndex >= ($messageLength - $maximumLength / 2)) {
+			return [substr($message, -$maximumLength), ['ellipsisStart']];
+		}
+
+		return [substr($message, $mentionMiddleIndex - ($maximumLength / 2), $maximumLength), ['ellipsisStart', 'ellipsisEnd']];
 	}
 
 	private function shouldUserBeNotified($userId, IComment $comment) {

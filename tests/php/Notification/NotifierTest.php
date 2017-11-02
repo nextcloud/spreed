@@ -262,97 +262,104 @@ class NotifierTest extends \Test\TestCase {
 	public function dataPrepareMention() {
 		return [
 			[
-				Room::ONE_TO_ONE_CALL, ['userType' => 'users', 'userId' => 'testUser'],           'Test user', '',
+				Room::ONE_TO_ONE_CALL, ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], 'Test user', '',
 				'Test user mentioned you in a private chat',
 				['{user} mentioned you in a private chat',
 					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
-				]
+				],
+				'… message …'
 			],
 			// If the user is deleted in a one to one chat the chat is also
 			// deleted, and that in turn would delete the pending notification.
 			[
-				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           'Test user', '',
+				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           [], 'Test user', '',
 				'Test user mentioned you in a group chat',
 				['{user} mentioned you in a group chat',
 					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
-				]
+				],
+				'message'
 			],
 			[
-				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           null,        '',
+				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart'], null,        '',
 				'A (now) deleted user mentioned you in a group chat',
 				['A (now) deleted user mentioned you in a group chat',
 					[]
 				],
-				true
-			],
+				'… message',
+				true],
 			[
-				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           'Test user', 'Room name',
+				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisEnd'], 'Test user', 'Room name',
 				'Test user mentioned you in a group chat: Room name',
 				['{user} mentioned you in a group chat: {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
 					]
-				]
+				],
+				'message …'
 			],
 			[
-				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           null,        'Room name',
+				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], null,        'Room name',
 				'A (now) deleted user mentioned you in a group chat: Room name',
 				['A (now) deleted user mentioned you in a group chat: {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
 					]
 				],
-				true
-			],
+				'… message …',
+				true],
 			[
-				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           'Test user', '',
+				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           [], 'Test user', '',
 				'Test user mentioned you in a group chat',
 				['{user} mentioned you in a group chat',
 					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
-				]
+				],
+				'message'
 			],
 			[
-				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           null,        '',
+				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart'], null,        '',
 				'A (now) deleted user mentioned you in a group chat',
 				['A (now) deleted user mentioned you in a group chat',
 					[]
 				],
-				true
-			],
+				'… message',
+				true],
 			[
-				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,        '',
+				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], ['ellipsisEnd'], null,        '',
 				'A guest mentioned you in a group chat',
 				['A guest mentioned you in a group chat',
 					[]
-				]
+				],
+				'message …'
 			],
 			[
-				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           'Test user', 'Room name',
+				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], 'Test user', 'Room name',
 				'Test user mentioned you in a group chat: Room name',
 				['{user} mentioned you in a group chat: {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
 					]
-				]
+				],
+				'… message …'
 			],
 			[
-				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           null,    'Room name',
+				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           [], null,    'Room name',
 				'A (now) deleted user mentioned you in a group chat: Room name',
 				['A (now) deleted user mentioned you in a group chat: {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
 					]
 				],
-				true
-			],
+				'message',
+				true],
 			[
-				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
+				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], ['ellipsisStart', 'ellipsisEnd'], null,    'Room name',
 				'A guest mentioned you in a group chat: Room name',
 				['A guest mentioned you in a group chat: {call}',
 					['call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']]
-				]
+				],
+				'… message …'
 			]
 		];
 	}
@@ -361,16 +368,18 @@ class NotifierTest extends \Test\TestCase {
 	 * @dataProvider dataPrepareMention
 	 * @param int $roomType
 	 * @param array $subjectParameters
+	 * @param array $messageParameters
 	 * @param string $displayName
 	 * @param string $roomName
 	 * @param string $parsedSubject
 	 * @param array $richSubject
+	 * @param string $parsedMessage
 	 * @param bool $deletedUser
 	 */
-	public function testPrepareMention($roomType, $subjectParameters, $displayName, $roomName, $parsedSubject, $richSubject, $deletedUser = false) {
+	public function testPrepareMention($roomType, $subjectParameters, $messageParameters, $displayName, $roomName, $parsedSubject, $richSubject, $parsedMessage, $deletedUser = false) {
 		$notification = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
-		$l->expects($this->exactly(2))
+		$l->expects($this->atLeast(2))
 			->method('t')
 			->will($this->returnCallback(function($text, $parameters = []) {
 				return vsprintf($text, $parameters);
@@ -434,6 +443,10 @@ class NotifierTest extends \Test\TestCase {
 			->method('setRichSubject')
 			->with($richSubject[0], $richSubject[1])
 			->willReturnSelf();
+		$notification->expects($this->once())
+			->method('setParsedMessage')
+			->with($parsedMessage)
+			->willReturnSelf();
 
 		$notification->expects($this->once())
 			->method('getApp')
@@ -447,6 +460,12 @@ class NotifierTest extends \Test\TestCase {
 		$notification->expects($this->once())
 			->method('getObjectType')
 			->willReturn('room');
+		$notification->expects($this->once())
+			->method('getMessage')
+			->willReturn('message');
+		$notification->expects($this->once())
+			->method('getMessageParameters')
+			->willReturn($messageParameters);
 
 		$this->assertEquals($notification, $this->notifier->prepare($notification, 'de'));
 	}

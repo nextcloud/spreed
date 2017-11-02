@@ -147,6 +147,18 @@ class Notifier implements INotifier {
 			];
 		}
 
+		$messageParameters = $notification->getMessageParameters();
+
+		$parsedMessage = $notification->getMessage();
+		if (in_array('ellipsisStart', $messageParameters) && !in_array('ellipsisEnd', $messageParameters)) {
+			$parsedMessage = $l->t('… %s', $parsedMessage);
+		} else if (!in_array('ellipsisStart', $messageParameters) && in_array('ellipsisEnd', $messageParameters)) {
+			$parsedMessage = $l->t('%s …', $parsedMessage);
+		} else if (in_array('ellipsisStart', $messageParameters) && in_array('ellipsisEnd', $messageParameters)) {
+			$parsedMessage = $l->t('… %s …', $parsedMessage);
+		}
+		$notification->setParsedMessage($parsedMessage);
+
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$notification
 				->setParsedSubject(

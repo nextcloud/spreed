@@ -125,6 +125,11 @@ class NotifierTest extends \Test\TestCase {
 			->with('anotherUser')
 			->willReturnSelf();
 
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with($comment->getMessage())
+			->willReturnSelf();
+
 		$this->notificationManager->expects($this->once())
 			->method('notify')
 			->with($notification);
@@ -144,6 +149,92 @@ class NotifierTest extends \Test\TestCase {
 		$notification->expects($this->once())
 			->method('setUser')
 			->with('anotherUser')
+			->willReturnSelf();
+
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with($comment->getMessage())
+			->willReturnSelf();
+
+		$this->notificationManager->expects($this->once())
+			->method('notify')
+			->with($notification);
+
+		$this->notifier->notifyMentionedUsers($comment);
+	}
+
+	public function testNotifyMentionedUsersWithLongMessageStartMention() {
+		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
+			'123456789 @anotherUserWithOddLengthName 123456789-123456789-123456789-123456789-123456789-123456789');
+
+		$notification = $this->newNotification($comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
+
+		$notification->expects($this->once())
+			->method('setUser')
+			->with('anotherUserWithOddLengthName')
+			->willReturnSelf();
+
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with('123456789 @anotherUserWithOddLengthName 123456789-123456789-1234', ['ellipsisEnd'])
+			->willReturnSelf();
+
+		$this->notificationManager->expects($this->once())
+			->method('notify')
+			->with($notification);
+
+		$this->notifier->notifyMentionedUsers($comment);
+	}
+
+	public function testNotifyMentionedUsersWithLongMessageMiddleMention() {
+		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
+			'123456789-123456789-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-123456789-123456789');
+
+		$notification = $this->newNotification($comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
+
+		$notification->expects($this->once())
+			->method('setUser')
+			->with('anotherUserWithOddLengthName')
+			->willReturnSelf();
+
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with('89-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-1', ['ellipsisStart', 'ellipsisEnd'])
+			->willReturnSelf();
+
+		$this->notificationManager->expects($this->once())
+			->method('notify')
+			->with($notification);
+
+		$this->notifier->notifyMentionedUsers($comment);
+	}
+
+	public function testNotifyMentionedUsersWithLongMessageEndMention() {
+		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016),
+			'123456789-123456789-123456789-123456789-123456789-123456789 @anotherUserWithOddLengthName 123456789');
+
+		$notification = $this->newNotification($comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
+
+		$notification->expects($this->once())
+			->method('setUser')
+			->with('anotherUserWithOddLengthName')
+			->willReturnSelf();
+
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with('6789-123456789-123456789 @anotherUserWithOddLengthName 123456789', ['ellipsisStart'])
 			->willReturnSelf();
 
 		$this->notificationManager->expects($this->once())
@@ -207,9 +298,19 @@ class NotifierTest extends \Test\TestCase {
 			->with('anotherUser')
 			->willReturnSelf();
 
+		$anotherUserNotification->expects($this->once())
+			->method('setMessage')
+			->with('Mention @anotherUser, and @unknownUser, and @testUser, and @user')
+			->willReturnSelf();
+
 		$userAbleToJoinNotification->expects($this->once())
 			->method('setUser')
 			->with('userAbleToJoin')
+			->willReturnSelf();
+
+		$userAbleToJoinNotification->expects($this->once())
+			->method('setMessage')
+			->with('notherUser, and @unknownUser, and @testUser, and @userAbleToJoin')
 			->willReturnSelf();
 
 		$this->notificationManager->expects($this->exactly(2))
