@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Tests\php\Chat;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\Notifier;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 
@@ -31,6 +32,9 @@ class ChatManagerTest extends \Test\TestCase {
 
 	/** @var OCP\Comments\ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $commentsManager;
+
+	/** @var \OCA\Spreed\Chat\Notifier|\PHPUnit_Framework_MockObject_MockObject */
+	protected $notifier;
 
 	/** @var \OCA\Spreed\Chat\ChatManager */
 	protected $chatManager;
@@ -40,7 +44,10 @@ class ChatManagerTest extends \Test\TestCase {
 
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 
-		$this->chatManager = new ChatManager($this->commentsManager);
+		$this->notifier = $this->createMock(Notifier::class);
+
+		$this->chatManager = new ChatManager($this->commentsManager,
+											 $this->notifier);
 	}
 
 	private function newComment($id, $actorType, $actorId, $creationDateTime, $message) {
@@ -85,6 +92,10 @@ class ChatManagerTest extends \Test\TestCase {
 
 		$this->commentsManager->expects($this->once())
 			->method('save')
+			->with($comment);
+
+		$this->notifier->expects($this->once())
+			->method('notifyMentionedUsers')
 			->with($comment);
 
 		$this->chatManager->sendMessage('testChatId', 'users', 'testUser', 'testMessage', $creationDateTime);
@@ -189,6 +200,10 @@ class ChatManagerTest extends \Test\TestCase {
 		$this->commentsManager->expects($this->once())
 			->method('deleteCommentsAtObject')
 			->with('chat', 'testChatId');
+
+		$this->notifier->expects($this->once())
+			->method('removePendingNotificationsForRoom')
+			->with('testChatId');
 
 		$this->chatManager->deleteMessages('testChatId');
 	}

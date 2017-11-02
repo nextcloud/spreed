@@ -31,17 +31,26 @@ use OCP\Comments\ICommentsManager;
  * sendMessage() saves a comment using the ICommentsManager, while
  * receiveMessages() tries to read comments from ICommentsManager (with a little
  * wait between reads) until comments are found or until the timeout expires.
+ *
+ * When a message is saved the mentioned users are notified as needed, and
+ * pending notifications are removed if the messages are deleted.
  */
 class ChatManager {
 
 	/** @var ICommentsManager */
 	private $commentsManager;
 
+	/** @var Notifier */
+	private $notifier;
+
 	/**
 	 * @param ICommentsManager $commentsManager
+	 * @param Notifier $notifier
 	 */
-	public function __construct(ICommentsManager $commentsManager) {
+	public function __construct(ICommentsManager $commentsManager,
+								Notifier $notifier) {
 		$this->commentsManager = $commentsManager;
+		$this->notifier = $notifier;
 	}
 
 	/**
@@ -62,6 +71,8 @@ class ChatManager {
 		$comment->setVerb('comment');
 
 		$this->commentsManager->save($comment);
+
+		$this->notifier->notifyMentionedUsers($comment);
 	}
 
 	/**
@@ -127,6 +138,8 @@ class ChatManager {
 	 */
 	public function deleteMessages($chatId) {
 		$this->commentsManager->deleteCommentsAtObject('chat', $chatId);
+
+		$this->notifier->removePendingNotificationsForRoom($chatId);
 	}
 
 }
