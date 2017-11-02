@@ -528,10 +528,10 @@
 			var token = $('#app').attr('data-token');
 			if (token) {
 				if (OCA.SpreedMe.webrtc.sessionReady) {
-					OCA.SpreedMe.Calls.join(token);
+					OCA.SpreedMe.Calls.joinRoom(token);
 				} else {
 					OCA.SpreedMe.webrtc.once('connectionReady', function() {
-						OCA.SpreedMe.Calls.join(token);
+						OCA.SpreedMe.Calls.joinRoom(token);
 					});
 				}
 			}
@@ -560,7 +560,7 @@
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
-				OCA.SpreedMe.Calls.join(params.token);
+				OCA.SpreedMe.Calls.joinRoom(params.token);
 			}
 		},
 		onDocumentClick: function(event) {
