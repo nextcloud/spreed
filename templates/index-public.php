@@ -12,9 +12,11 @@ script(
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'models/localstoragemodel',
 		'models/room',
 		'models/roomcollection',
 		'views/callinfoview',
+		'views/editabletextlabel',
 		'views/roomlistview',
 		'views/sidebarview',
 		'views/tabview',
@@ -47,11 +49,6 @@ script(
 					</div>
 				</div>
 				<div id="header-right">
-					<div id="settings">
-						<div id="guestName"><?php p($l->t('Guest')) ?></div>
-						<input id="guestNameInput" class="hidden" type="text" maxlength="20" placeholder="<?php p($l->t('Guest')) ?>">
-						<button id="guestNameConfirm" class="icon-confirm hidden"></button>
-					</div>
 				</div>
 			</div>
 		</header>

@@ -115,13 +115,13 @@
 }
 
 .password-input,
-.rename-input {
+.editable-text-label input {
 	margin-top: 0 !important;
 	margin-bottom: 4px !important;
 }
 
 .icon-confirm.password-confirm,
-.icon-confirm.rename-confirm {
+.icon-confirm.confirm-button {
 	background-size: 16px;
 	background-color: transparent;
 	border: none;
@@ -132,7 +132,7 @@
 	opacity: .5;
 }
 .icon-confirm.password-confirm:hover,
-.icon-confirm.rename-confirm:hover  {
+.icon-confirm.confirm-button:hover  {
 	opacity: 1;
 }
 
@@ -661,43 +661,17 @@ video {
 	}
 }
 
-#guestName {
-    padding: 7px 30px 6px 10px;
-    cursor: pointer;
-}
-
-#guestName:hover {
-	color: #fff !important;
-}
-
-#guestNameInput {
-    margin-top: 7px;
-    margin-right: -10px;
-    padding-right: 22px;
-}
-
-#guestNameConfirm {
-	position: relative;
-	height: 20px;
-	right: 16px;
-	line-height: 14px;
-	background-color: transparent;
-	border: none;
-	opacity: .5;
-}
-
-#guestNameConfirm:hover {
-	opacity: 1;
-}
-
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
 }
 
-/* make guest name white because header bar is transparent*/
-#body-public #app-content:not(.participants-1) #guestName {
-    color: rgba(255, 255, 255, 0.7);
+/* As the header is hidden (except for the logo), move the fullscreen button and
+ * sidebar to the top during calls */
+#body-public #app-content:not(.participants-1) #app-sidebar,
+#body-public #app-content:not(.participants-1) #video-fullscreen {
+	top: 0;
+	z-index: 3000;
 }
 
 /**
@@ -785,36 +759,39 @@ video {
  * Sidebar details view
  */
 
-.detailCallInfoContainer h3 {
-	max-width: calc(100% - 72px);
+.detailCallInfoContainer .room-name {
 	display: inline-block;
 }
 
-.detailCallInfoContainer .rename-button {
+.detailCallInfoContainer h3,
+.detailCallInfoContainer .guest-name p {
+	display: inline-block;
+}
+
+.detailCallInfoContainer .editable-text-label .edit-button {
 	display: none;
 }
 
 .detailCallInfoContainer .clipboard-button,
-.detailCallInfoContainer:hover .rename-button {
+.detailCallInfoContainer:hover .editable-text-label .edit-button {
 	display: inline-block;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
-.detailCallInfoContainer .rename-button .icon {
+.detailCallInfoContainer .editable-text-label .edit-button .icon {
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
 	margin: -2px 10px;
 }
 
-.detailCallInfoContainer .rename-option,
+.detailCallInfoContainer .editable-text-label .input-wrapper,
 .detailCallInfoContainer .password-option {
 	position: relative;
-	max-width: calc(100% - 72px);
 	display: inline-block;
 }
 
-.detailCallInfoContainer .rename-input,
+.detailCallInfoContainer .editable-text-label input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
 }

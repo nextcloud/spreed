@@ -29,16 +29,12 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var TEMPLATE =
-		'<h3 class="room-name">{{displayName}}</h3>' +
+		'<div class="room-name"></div>' +
 		'{{#if showShareLink}}' +
 		'	<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
 		'{{/if}}' +
-		'{{#if canModerate}}' +
-		'	<div class="rename-option hidden-important">' +
-		'		<input class="rename-input" maxlength="200" type="text" value="{{displayName}}" placeholder="' + t('spreed', 'Name') + '">'+
-		'		<div class="icon icon-confirm rename-confirm"></div>'+
-		'	</div>' +
-		'	<div class="rename-button"><span class="icon icon-rename" title="' + t('spreed', 'Rename') + '"></span></div>' +
+		'{{#if isGuest}}' +
+		'	<div class="guest-name"></div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div>' +
@@ -64,62 +60,96 @@
 		renderTimeout: undefined,
 
 		templateContext: function() {
-			var canModerate = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
+			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
+				isGuest: this.model.get('participantType') === 4,
 				canModerate: canModerate,
 				isPublic: this.model.get('type') === 3,
 				showShareLink: !canModerate && this.model.get('type') === 3,
-				isNameEditable: canModerate && this.model.get('type') !== 1,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			});
 		},
 
 		ui: {
-			'roomName': 'h3.room-name',
+			'roomName': 'div.room-name',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 
-			'renameButton': '.rename-button',
-			'renameOption': '.rename-option',
-			'renameInput': '.rename-input',
-			'renameConfirm': '.rename-confirm',
+			'guestName': 'div.guest-name',
 
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm'
 		},
 
+		regions: {
+			'roomName': '@ui.roomName',
+			'guestName': '@ui.guestName'
+		},
+
 		events: {
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
-
-			'click @ui.renameButton': 'showRenameInput',
-			'keyup @ui.renameInput': 'keyUpRename',
-			'click @ui.renameConfirm': 'confirmRename',
 
 			'keyup @ui.passwordInput': 'keyUpPassword',
 			'click @ui.passwordConfirm': 'confirmPassword'
 		},
 
 		modelEvents: {
-			'change:displayName': function() {
-				this.renderWhenInactive();
-			},
 			'change:hasPassword': function() {
 				this.renderWhenInactive();
 			},
 			'change:participantType': function() {
+				this._updateNameEditability();
+
 				// User permission change, refresh even when typing, because the
 				// action will fail in the future anyway.
 				this.render();
 			},
 			'change:type': function() {
+				this._updateNameEditability();
+
 				this.renderWhenInactive();
 			}
 		},
 
+		initialize: function() {
+			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
+				model: this.model,
+				modelAttribute: 'displayName',
+				modelSaveOptions: {
+					patch: true,
+					success: function() {
+						// Renaming a room by setting "displayName" causes "name" to
+						// change too in the server, so the model has to be fetched
+						// again to get the changes.
+						this.model.fetch();
+					}
+				},
+
+				extraClassNames: 'room-name',
+				labelTagName: 'h3',
+				inputMaxLength: '200',
+				inputPlaceholder: t('spreed', 'Name'),
+				buttonTitle: t('spreed', 'Rename')
+			});
+
+			this._updateNameEditability();
+
+			this._guestNameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
+				model: this.getOption('guestNameModel'),
+				modelAttribute: 'nick',
+
+				extraClassNames: 'guest-name',
+				labelTagName: 'p',
+				labelPlaceholder: t('spreed', 'Your name …'),
+				inputMaxLength: '20',
+				inputPlaceholder: t('spreed', 'Name'),
+				buttonTitle: t('spreed', 'Rename')
+			});
+		},
+
 		renderWhenInactive: function() {
-			if (!this.ui.renameInput.is(':visible') &&
-				this.ui.passwordInput.val() === '') {
+			if (this.ui.passwordInput.val() === '') {
 				this.render();
 				return;
 			}
@@ -127,11 +157,30 @@
 			this.renderTimeout = setTimeout(_.bind(this.renderWhenInactive, this), 500);
 		},
 
+		onBeforeRender: function() {
+			// During the rendering the regions of this view are reset, which
+			// destroys its child views. If a child view has to be detached
+			// instead so it can be attached back after the rendering of the
+			// template finishes it is necessary to call "reset" with the
+			// "preventDestroy" option (in later Marionette versions a public
+			// "detachView" function was introduced instead).
+			// "allowMissingEl" is needed for the first time this view is
+			// rendered, as the element of the region does not exist yet at that
+			// time and without that option the call would fail otherwise.
+			this.getRegion('roomName').reset({ preventDestroy: true, allowMissingEl: true });
+			this.getRegion('guestName').reset({ preventDestroy: true, allowMissingEl: true });
+		},
+
 		onRender: function() {
 			if (!_.isUndefined(this.renderTimeout)) {
 				clearTimeout(this.renderTimeout);
 				this.renderTimeout = undefined;
 			}
+
+			// Attach the child view again (or for the first time) after the
+			// template has been rendered.
+			this.showChildView('roomName', this._nameEditableTextLabel, { replaceElement: true } );
+			this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
@@ -146,55 +195,15 @@
 			this.initClipboard();
 		},
 
-		/**
-		 * Rename
-		 */
-		showRenameInput: function() {
-			this.ui.renameOption.removeClass('hidden-important');
-			this.ui.roomName.addClass('hidden-important');
-			this.ui.renameButton.addClass('hidden-important');
+		_canModerate: function() {
+			return this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
 		},
 
-		hideRenameInput: function() {
-			this.ui.renameOption.addClass('hidden-important');
-			this.ui.roomName.removeClass('hidden-important');
-			this.ui.renameButton.removeClass('hidden-important');
-		},
-
-		confirmRename: function() {
-			var newRoomName = this.ui.renameInput.val().trim();
-
-			if (newRoomName === this.model.get('name')) {
-				this.hideRenameInput();
-				return;
-			}
-
-			console.log('Changing room name from "' + this.model.get('name') + '" to "' + newRoomName + '".');
-
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
-				type: 'PUT',
-				data: {
-					roomName: newRoomName
-				},
-				success: function() {
-					this.ui.roomName.text(newRoomName);
-					this.hideRenameInput();
-					OCA.SpreedMe.app.syncRooms();
-				}.bind(this)
-			});
-
-			console.log('.rename-option');
-		},
-
-		keyUpRename: function(e) {
-			if (e.keyCode === 13) {
-				// Enter
-				this.confirmRename();
-			} else if (e.keyCode === 27) {
-				// ESC
-				this.hideRenameInput();
-				this.ui.renameInput.val(this.model.get('name'));
+		_updateNameEditability: function() {
+			if (this._canModerate() && this.model.get('type') !== 1) {
+				this._nameEditableTextLabel.enableEdition();
+			} else {
+				this._nameEditableTextLabel.disableEdition();
 			}
 		},
 

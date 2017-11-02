@@ -75,10 +75,30 @@
 		return this.syncRooms();
 	};
 
+	/**
+	 * Sets a single room to be synced.
+	 *
+	 * If there is a RoomCollection set the synchronization will be performed on
+	 * the RoomCollection instead and the given room will be ignored; setting a
+	 * single room is intended to be used only on public pages.
+	 *
+	 * @param OCA.SpreedMe.Models.Room room the room to sync.
+	 */
+	SignalingBase.prototype.setRoom = function(room) {
+		this.room = room;
+		return this.syncRooms();
+	};
+
 	SignalingBase.prototype.syncRooms = function() {
 		var defer = $.Deferred();
 		if (this.roomCollection && oc_current_user) {
 			this.roomCollection.fetch({
+				success: function(data) {
+					defer.resolve(data);
+				}
+			});
+		} else if (this.room) {
+			this.room.fetch({
 				success: function(data) {
 					defer.resolve(data);
 				}
@@ -261,6 +281,11 @@
 	InternalSignaling.prototype.setRoomCollection = function(/*rooms*/) {
 		this._pollForRoomChanges();
 		return SignalingBase.prototype.setRoomCollection.apply(this, arguments);
+	};
+
+	InternalSignaling.prototype.setRoom = function(/*room*/) {
+		this._pollForRoomChanges();
+		return SignalingBase.prototype.setRoom.apply(this, arguments);
 	};
 
 	InternalSignaling.prototype._pollForRoomChanges = function() {

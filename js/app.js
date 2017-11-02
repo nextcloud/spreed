@@ -309,37 +309,6 @@
 				OCA.SpreedMe.webrtc.stopScreenShare();
 				screensharingStopped();
 			});
-
-			$("#guestName").on('click', function() {
-				$('#guestName').addClass('hidden');
-				$("#guestNameInput").removeClass('hidden');
-				$("#guestNameConfirm").removeClass('hidden');
-				$("#guestNameInput").focus();
-			});
-
-			$('#guestNameConfirm').click(function () {
-				OCA.SpreedMe.app.changeGuestName();
-				$('#guestName').toggleClass('hidden');
-				$("#guestNameInput").toggleClass('hidden');
-				$("#guestNameConfirm").toggleClass('hidden');
-			});
-
-			$("#guestNameInput").keyup(function (e) {
-				var hide = false;
-
-				if (e.keyCode === 13) { // send new gues name on "enter"
-					hide = true;
-					OCA.SpreedMe.app.changeGuestName();
-				} else if (e.keyCode === 27) { // hide input filed again in ESC
-					hide = true;
-				}
-
-				if (hide) {
-					$('#guestName').toggleClass('hidden');
-					$("#guestNameInput").toggleClass('hidden');
-					$("#guestNameConfirm").toggleClass('hidden');
-				}
-			});
 		},
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
@@ -387,38 +356,41 @@
 		},
 		syncAndSetActiveRoom: function(token) {
 			var self = this;
-			if (oc_current_user) {
-				this.syncRooms()
-					.then(function() {
+			this.syncRooms()
+				.then(function() {
+					if (oc_current_user) {
 						roomChannel.trigger('active', token);
-						// Disable video when entering a room with more than 5 participants.
+
 						self._rooms.forEach(function(room) {
 							if (room.get('token') === token) {
 								self.activeRoom = room;
-								if (Object.keys(room.get('participants')).length > 5) {
-									self.disableVideo();
-								}
-								self.setPageTitle(room.get('displayName'));
 							}
 						});
-					});
-			} else {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token,
-					type: 'GET',
-					beforeSend: function (request) {
-						request.setRequestHeader('Accept', 'application/json');
-					},
-					success: function(result) {
-						var data = result.ocs.data;
-						self.setRoomMessageForGuest(data.participants);
-						self.setPageTitle(data.displayName);
-						if (Object.keys(data.participants).length > 5) {
-							self.disableVideo();
-						}
+					} else {
+						// The public page supports only a single room, so the
+						// active room is already the room for the given token.
+
+						self.setRoomMessageForGuest(self.activeRoom.get('participants'));
 					}
+
+					// Disable video when entering a room with more than 5 participants.
+					if (Object.keys(self.activeRoom.get('participants')).length > 5) {
+						self.disableVideo();
+					}
+
+					self.setPageTitle(self.activeRoom.get('displayName'));
+
+					self.updateSidebarWithActiveRoom();
 				});
-			}
+		},
+		updateSidebarWithActiveRoom: function() {
+			this._sidebarView.enable();
+
+			var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
+				model: this.activeRoom,
+				guestNameModel: this._localStorageModel
+			});
+			this._sidebarView.setCallInfoView(callInfoView);
 		},
 		setPageTitle: function(title){
 			if (title) {
@@ -494,17 +466,6 @@
 			if (oc_current_user) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
-
-				this._sidebarView.listenTo(this._rooms, 'change:active', function(model, active) {
-					if (active) {
-						this.enable();
-
-						var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
-							model: model,
-						});
-						this.setCallInfoView(callInfoView);
-					}
-				});
 			}
 
 			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
@@ -521,11 +482,11 @@
 				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
 			);
 
+			OCA.SpreedMe.initWebRTC();
+
 			if (!oc_current_user) {
 				this.initGuestName();
 			}
-
-			OCA.SpreedMe.initWebRTC();
 		},
 		startSpreed: function(configuration, signaling) {
 			console.log('Starting spreed …');
@@ -573,6 +534,10 @@
 					});
 
 				this._showParticipantList();
+			} else {
+				// The token is always defined in the public page.
+				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: token });
+				this.signaling.setRoom(this.activeRoom);
 			}
 
 			this.initAudioVideoSettings(configuration);
@@ -650,7 +615,7 @@
 			} else if (OCA.SpreedMe.app.displayedGuestNameHint === false) {
 				avatar.imageplaceholder('?', undefined, 128);
 				avatar.css('background-color', '#b9b9b9');
-				OC.Notification.showTemporary(t('spreed', 'You can set your name on the top right of this page so other participants can identify you better.'));
+				OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
 				OCA.SpreedMe.app.displayedGuestNameHint = true;
 			}
 
@@ -664,39 +629,26 @@
 			OCA.SpreedMe.app.videoDisabled = true;
 		},
 		initGuestName: function() {
-			var nick = localStorage.getItem("nick");
+			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
+			this._localStorageModel.on('change:nick', function(model, value) {
+				var avatar = $('#localVideoContainer').find('.avatar');
+
+				if (value) {
+					avatar.imageplaceholder(value, undefined, 128);
+				} else {
+					avatar.imageplaceholder('?', undefined, 128);
+					avatar.css('background-color', '#b9b9b9');
+				}
+
+				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
+			});
+
+			this._localStorageModel.fetch();
+
+			var nick = this._localStorageModel.get('nick');
 
 			if (nick) {
-				$('#guestName').text(nick);
-				$('#guestNameInput').val(nick);
 				OCA.SpreedMe.app.guestNick = nick;
-			}
-		},
-		changeGuestName: function() {
-			var guestName = $.trim($('#guestNameInput').val());
-			var lastSavedNick = localStorage.getItem("nick");
-
-			if (guestName !== lastSavedNick) {
-				if (guestName.length > 0 && guestName.length <= 20) {
-					$('#guestName').text(guestName);
-					localStorage.setItem("nick", guestName);
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', guestName);
-				} else if (lastSavedNick) {
-					$('#guestName').text(t('spreed', 'Guest'));
-					localStorage.removeItem("nick");
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', '');
-				}
-			}
-
-			$('#guestNameInput').val(guestName);
-
-			var avatar = $('#localVideoContainer').find('.avatar');
-			var savedGuestName = localStorage.getItem("nick");
-			if (savedGuestName) {
-				avatar.imageplaceholder(savedGuestName, undefined, 128);
-			} else {
-				avatar.imageplaceholder('?', undefined, 128);
-				avatar.css('background-color', '#b9b9b9');
 			}
 		},
 		initShareRoomClipboard: function () {
