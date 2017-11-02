@@ -23,6 +23,9 @@
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
@@ -43,14 +46,20 @@ class Notifier {
 	/** @var IUserManager */
 	private $userManager;
 
+	/** @var Manager */
+	private $manager;
+
 	/**
 	 * @param INotificationManager $notificationManager
 	 * @param IUserManager $userManager
+	 * @param Manager $manager
 	 */
 	public function __construct(INotificationManager $notificationManager,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								Manager $manager) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
+		$this->manager = $manager;
 	}
 
 	/**
@@ -58,6 +67,9 @@ class Notifier {
 	 *
 	 * The comment must be a chat message comment. That is, its "objectId" must
 	 * be the room ID.
+	 *
+	 * Not every user mentioned in the message is notified, but only those that
+	 * are able to participate in the room.
 	 *
 	 * @param IComment $comment
 	 */
@@ -196,6 +208,45 @@ class Notifier {
 		}
 
 		if (!$this->userManager->userExists($userId)) {
+			return false;
+		}
+
+		$roomId = $comment->getObjectId();
+		if (!$this->isUserAbleToParticipateInRoom($userId, $roomId)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Returns whether the user with the given ID can participate in the room
+	 * with the given ID or not.
+	 *
+	 * A user can participate in a one to one or a group room if she is a
+	 * participant already. For public rooms, a user can participate if the room
+	 * has no password, or if it has a password and the user is a participant
+	 * already.
+	 *
+	 * @param string $userId
+	 * @param int $roomId
+	 * @return bool true if the user is active in the room, false otherwise.
+	 */
+	private function isUserAbleToParticipateInRoom($userId, $roomId) {
+		$room = $this->manager->getRoomById($roomId);
+
+		$roomType = $room->getType();
+		if ($roomType === Room::UNKNOWN_CALL) {
+			return false;
+		}
+
+		if ($roomType === Room::PUBLIC_CALL && !$room->hasPassword()) {
+			return true;
+		}
+
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $exception) {
 			return false;
 		}
 
