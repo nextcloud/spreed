@@ -141,7 +141,7 @@
 
 				extraClassNames: 'guest-name',
 				labelTagName: 'p',
-				labelPlaceholder: t('spreed', 'Guest'),
+				labelPlaceholder: t('spreed', 'Your name …'),
 				inputMaxLength: '20',
 				inputPlaceholder: t('spreed', 'Name'),
 				buttonTitle: t('spreed', 'Rename')
