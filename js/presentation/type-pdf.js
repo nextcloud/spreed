@@ -11,8 +11,8 @@
 
 	var exports = {};
 
-	var PDFPresentation = exports.PDFPresentation = function(id, token, url) {
-		Presentation.call(this, id, token, url);
+	var PDFPresentation = exports.PDFPresentation = function(id, name, token, url) {
+		Presentation.call(this, id, name, token, url);
 		this.isRendering = false;
 		var evs = [this.e.byName.LOAD, this.e.byName.PAGE_UPDATED];
 		this.e.on(evs.join(" "), _.bind(this.render, this));
@@ -28,7 +28,7 @@
 			return;
 		}
 		try {
-			PDFJS.getDocument(this.url).then(_.bind(function (doc) {
+			PDFJS.getDocument(this.url).then(_.bind(function(doc) {
 				this.doc = doc;
 				this.numPages = this.doc.numPages;
 				// this.curPage might already be set to something != 1
@@ -39,7 +39,12 @@
 					this.curPage = 1;
 				}
 				this.e.trigger(this.e.byName.LOAD, this.curPage);
-				cb();
+				doc.getDownloadInfo().then(_.bind(function(info) {
+					this.size = info.length;
+				}, this)).catch(function() {}).then(function() {
+					// Finally
+					cb();
+				});
 			}, this));
 		} catch (e) {
 			// TODO(leon): Handle this.

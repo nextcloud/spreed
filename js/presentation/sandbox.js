@@ -27,13 +27,17 @@
 					this.postMessage.post({type: consts.EVENT_TYPES.PAGE, payload: next});
 				}
 			}, this),
+			MODEL_CHANGE: _.bind(function(p) {
+				var info = this.getPresentationInfo(p);
+				this.postMessage.post({type: consts.EVENT_TYPES.MODEL_CHANGE, payload: info});
+			}, this),
 		};
 
 		this.EVENT_HANDLERS = {
-			add: _.bind(function(token, url, from) {
+			add: _.bind(function(token, name, url, from) {
 				var deferred = $.Deferred();
 				// TODO(leon): Create presentation based on mime type once we support types other than application/pdf
-				var p = new PDFPresentation(/* id */token, token, url);
+				var p = new PDFPresentation(/* id */token, name, token, url);
 				// TODO(leon): from === null means the event is from ourself, see other comment
 				// This should change, see other comment: "Replace null by own Peer object"
 				p.allowControl(from === null);
@@ -43,14 +47,14 @@
 			}, this),
 			current: _.bind(function() {
 				var receivedCurrent = false;
-				return _.bind(function(token, url, page, from) {
+				return _.bind(function(token, name, url, page, from) {
 					if (receivedCurrent) {
 						// Ignore duplicate current event
 						console.log("Ignoring 'current' event as we have already processed it");
 						return;
 					}
 					receivedCurrent = true;
-					_.bind(this.EVENT_HANDLERS.add, this)(token, url, from).then(function(p) {
+					_.bind(this.EVENT_HANDLERS.add, this)(token, name, url, from).then(function(p) {
 						// TODO(leon): This is bad. We should use 'exactPage' instead
 						// See other comment »this.curPage might already be set to something != 1«
 						p.curPage = page;
@@ -114,6 +118,12 @@
 					this.postMessage.answerRequest(event, state);
 				}
 				break;
+			case consts.EVENT_TYPES.POSTMESSAGE_REQ_ALL_AVAILABLE:
+				var all = this.getAllAvailable();
+				if (!_.isEmpty(all)) {
+					this.postMessage.answerRequest(event, all);
+				}
+				break;
 			default:
 				this.handleEvent(data, from);
 			}
@@ -150,8 +160,7 @@
 			// Reuse existing presentation
 			p = this.byId[id];
 		}
-		// TODO(leon): Remove 'true' and add presentation selector instead
-		if (true || !this.active) {
+		if (!this.active) {
 			console.log("Showing presentation", p);
 			this.show(p);
 		}
@@ -182,7 +191,8 @@
 		}
 		this.staging = p;
 		p.load(_.bind(function() {
-			// Check if we still want to show this presentation, migth have changed since
+			this.EVENTS.MODEL_CHANGE(p);
+			// Check if we still want to show this presentation, might have changed since
 			if (this.staging !== p) {
 				return;
 			}
@@ -217,10 +227,13 @@
 
 		switch (data.type) {
 		case consts.EVENT_TYPES.PRESENTATION_CURRENT:
-			callHandler(this.EVENT_HANDLERS.current, data.payload.token, data.payload.url, data.payload.page, from);
+			callHandler(this.EVENT_HANDLERS.current, data.payload.token, data.payload.name, data.payload.url, data.payload.page, from);
 			break;
-		case consts.EVENT_TYPES.PRESENTATION_ADDED:
-			callHandler(this.EVENT_HANDLERS.add, data.payload.token, data.payload.url, from);
+		case consts.EVENT_TYPES.PRESENTATION_ALL_AVAILABLE:
+			// Ignore
+			break;
+	case consts.EVENT_TYPES.PRESENTATION_ADDED:
+			callHandler(this.EVENT_HANDLERS.add, data.payload.token, data.payload.name, data.payload.url, from);
 			break;
 		case consts.EVENT_TYPES.PRESENTATION_REMOVED:
 			callHandler(this.EVENT_HANDLERS.remove, data.payload, from);
@@ -239,11 +252,27 @@
 		var payload = null;
 		this.withActive(function(p) {
 			payload = {
+				id: p.id,
+				name: p.name,
 				token: p.token,
 				page: p.curPage,
 			};
 		});
 		return payload;
+	};
+	PresentationManager.prototype.getPresentationInfo = function(p) {
+		return {
+			id: p.id,
+			name: p.name,
+			size: p.size,
+			token: p.token,
+			page: p.curPage,
+		};
+	};
+	PresentationManager.prototype.getAllAvailable = function() {
+		return _.mapObject(this.byId, function(p, k) {
+			return getPresentationInfo(p);
+		});
 	};
 
 	var rootElem = document.getElementById("presentations");

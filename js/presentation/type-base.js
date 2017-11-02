@@ -7,8 +7,10 @@
 
 	var exports = {};
 
-	var Presentation = exports.Presentation = function(id, token, url) {
+	var Presentation = exports.Presentation = function(id, name, token, url) {
 		this.id = id;
+		this.name = name;
+		this.size = 0;
 		this.token = token;
 		this.url = url;
 		this.elem = null;

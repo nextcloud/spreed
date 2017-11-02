@@ -19,7 +19,9 @@
 		return OC.generateUrl("s/" + token + "/download");
 	};
 
-	var PresentationManager = function(rootElem) {
+	var PresentationManager = function(rootElem, channel) {
+		this.channel = channel;
+
 		var iframe = document.createElement("iframe");
 		iframe.setAttribute("sandbox", "allow-scripts allow-same-origin"); // TODO(leon): Remove 'allow-same-origin'
 		rootElem.appendChild(iframe);
@@ -30,13 +32,20 @@
 		this.postMessage.bind(_.bind(function(event) {
 			switch (event.data.type) {
 			case consts.EVENT_TYPES.PAGE:
-				this.newEvent(consts.EVENT_TYPES.PAGE, event.data.payload);
+				this.newEvent(event.data.type, event.data.payload);
+				break;
+			case consts.EVENT_TYPES.MODEL_CHANGE:
+				this.channel.trigger(event.data.type, event.data);
 				break;
 			default:
 				console.log("Got unknown event from child via postMessage", event);
 			}
 		}, this));
 		iframe.src = OC.generateUrl("apps/spreed/sandbox/presentations");
+
+		this.channel.on('activate', _.bind(function(id) {
+			this.newEvent(consts.EVENT_TYPES.PRESENTATION_SWITCH, id);
+		}, this));
 	};
 	PresentationManager.prototype.newEvent = function(type, payload) {
 		// Inform self
@@ -52,25 +61,46 @@
 		} else {
 			data.from = null;
 		}
-		// Some events need special care
-		switch (data.type) {
-		case consts.EVENT_TYPES.PRESENTATION_ADDED:
-		case consts.EVENT_TYPES.PRESENTATION_CURRENT:
+
+		var add = _.bind(function(data) {
 			var token = data.payload.token;
 			if (!isSanitizedToken(token)) {
 				// This will never happen unless someone tries to manually inject bogus tokens
 				console.log("Invalid token '%s' received, ignoring", token);
-				break;
+				return;
 			}
 			data.payload.url = makeDownloadUrl(token);
 			this.postMessage.post(data);
+		}, this);
+		// Some events need special care
+		switch (data.type) {
+		case consts.EVENT_TYPES.PRESENTATION_ADDED:
+		case consts.EVENT_TYPES.PRESENTATION_CURRENT:
+			add(data);
+			break
+		case consts.EVENT_TYPES.PRESENTATION_ALL_AVAILABLE:
+			_.mapObject(data.payload, _.bind(function(p, k) {
+				// TODO(leon): This is soooo ugly
+				var fakeData = _.clone(data);
+				fakeData.type = consts.EVENT_TYPES.PRESENTATION_ADDED;
+				fakeData.payload = p;
+				// TODO(leon): Might want to properly set 'from'
+				fakeData.from = 'myself'; // Avoid privilege escalation by setting to non-null value
+				add(fakeData);
+				this.channel.trigger(fakeData.type, fakeData);
+			}, this));
 			break;
 		default:
 			this.postMessage.post(data);
 		}
+
+		// Pass event on presentation channel
+		this.channel.trigger(data.type, data);
 	};
 	PresentationManager.prototype.chooseFromPicker = function() {
 		var shareSelectedFiles = _.bind(function(file) {
+			var split = file.split('/');
+			var name = split[split.length-1];
 			// TODO(leon): There might be an existing API endpoint which we can use instead
 			// This would make things simpler
 			$.ajax({
@@ -85,8 +115,10 @@
 				success: _.bind(function(res) {
 					var token = res.ocs.data.token;
 					this.newEvent(
-						consts.EVENT_TYPES.PRESENTATION_ADDED,
-						{token: token}
+						consts.EVENT_TYPES.PRESENTATION_ADDED, {
+							name: name,
+							token: token,
+						},
 					);
 				}, this),
 			});
@@ -109,6 +141,9 @@
 	PresentationManager.prototype.getCurrentState = function(cb) {
 		this.postMessage.requestResponse({type: consts.EVENT_TYPES.POSTMESSAGE_REQ_CURRENT}, cb);
 	};
+	PresentationManager.prototype.getAllAvailable = function(cb) {
+		this.postMessage.requestResponse({type: consts.EVENT_TYPES.POSTMESSAGE_REQ_ALL_AVAILABLE}, cb);
+	};
 
 	var instance = null;
 	exports.instance = function() {
@@ -117,15 +152,22 @@
 		}
 		return instance;
 	};
-	exports.init = function(rootElem, webrtc) {
+	exports.init = function(rootElem, webrtc, channel) {
 		if (instance) {
 			return instance;
 		}
-		var pm = instance = new PresentationManager(rootElem);
+		var pm = instance = new PresentationManager(rootElem, channel);
 
 		var keepPosted = function(peer) {
-			var type = consts.EVENT_TYPES.PRESENTATION_CURRENT;
+			// Notify about all presentations
+			pm.getAllAvailable(function(state) {
+				var type = consts.EVENT_TYPES.PRESENTATION_ALL_AVAILABLE;
+				peer.sendDirectly(consts.DATACHANNEL_NAMESPACE, type, state);
+			});
+
+			// Notify about current presentation
 			pm.getCurrentState(function(state) {
+				var type = consts.EVENT_TYPES.PRESENTATION_CURRENT;
 				peer.sendDirectly(consts.DATACHANNEL_NAMESPACE, type, state);
 			});
 		};

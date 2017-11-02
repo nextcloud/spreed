@@ -26,6 +26,7 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
+	var presentationChannel = Backbone.Radio.channel('presentations');
 
 	var App = Marionette.Application.extend({
 		OWNER: 1,
@@ -45,6 +46,10 @@
 		_participants: null,
 		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
 		_participantsView: null,
+		/** @property {OCA.SpreedMe.Models.PresentationCollection} _presentations  */
+		_presentations: null,
+		/** @property {OCA.SpreedMe.ModelsViews.PresentationSidebarView} _presentationSidebarView  */
+		_presentationSidebarView: null,
 		/** @property {boolean} videoWasEnabledAtLeastOnce  */
 		videoWasEnabledAtLeastOnce: false,
 		displayedGuestNameHint: false,
@@ -360,7 +365,18 @@
 				}
 			});
 
-			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants') }, this._participantsView);
+			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), priority: 10 }, this._participantsView);
+		},
+		_showPresentationList: function() {
+			this._presentations = new OCA.SpreedMe.Models.PresentationCollection();
+			this._presentationSidebarView = new OCA.SpreedMe.Views.PresentationSidebarView({
+				collection: this._presentations,
+				channels: {
+					'presentations': presentationChannel,
+				},
+			});
+
+			this._sidebarView.addTab('presentations', { label: t('spreed', 'Presentations'), priority: 5 }, this._presentationSidebarView);
 		},
 		/**
 		 * @param {string} token
@@ -545,14 +561,6 @@
 
 			OCA.SpreedMe.initCalls(signaling);
 
-			// Init presentations
-			_.bind(function() {
-				var rootElem = document.getElementById('presentations');
-				this.presentations = OCA.SpreedMe.Presentation.init(rootElem, OCA.SpreedMe.webrtc);
-				$('#presentation-button')
-				.on('click', _.bind(this.presentations.chooseFromPicker, this.presentations));
-			}, this)();
-
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 
@@ -581,7 +589,21 @@
 					});
 
 				this._showParticipantList();
+				this._showPresentationList();
 			}
+
+			// Init presentations
+			_.bind(function() {
+				var rootElem = document.getElementById('presentations');
+				var p = this.presentationsManager = OCA.SpreedMe.Presentation.init(
+					rootElem,
+					OCA.SpreedMe.webrtc,
+					presentationChannel,
+				);
+				$('#presentation-button')
+					.on('click', _.bind(p.chooseFromPicker, p))
+				;
+			}, this)();
 
 			this.initAudioVideoSettings(configuration);
 		},

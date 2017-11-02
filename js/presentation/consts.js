@@ -29,11 +29,14 @@ var OCA = OCA || {}; // Required for our sandbox, this will hopefully go away on
 			},
 			EVENT_TYPES: {
 				PRESENTATION_CURRENT: "current", // Issued to inform new participants about current presentation / page
+				PRESENTATION_ALL_AVAILABLE: "all_available", // Issued to inform new participants about all available presentations
 				PRESENTATION_ADDED: "added", // Indicates that a new presentation was added
 				PRESENTATION_REMOVED: "removed", // Indicates that a presentation was removed
 				PRESENTATION_SWITCH: "switch", // Indicates that we switched presentations
 				PAGE: "page", // Indicates that the page changed
+				MODEL_CHANGE: "model_change", // Indicates that a presentation model changed
 				POSTMESSAGE_REQ_CURRENT: "pm_req_current", // This kind of message is used to request the 'current' state via postmessage
+				POSTMESSAGE_REQ_ALL_AVAILABLE: "pm_req_all_available", // This kind of message is used to request all currently available presentations via postmessage
 			},
 		},
 	};

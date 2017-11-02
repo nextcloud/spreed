@@ -3,3 +3,26 @@ div#presentations iframe {
 	height: 100%;
 	margin-bottom: -5px;
 }
+
+ul.presentationSidebarWithList {
+	text-align: center;
+}
+
+ul.presentationSidebarWithList > li {
+	display: inline-block;
+	margin: 6px;
+	cursor: pointer;
+}
+
+ul.presentationSidebarWithList > li .presentation {
+	width: 76px;
+	max-width: 76px;
+}
+
+ul.presentationSidebarWithList > li .presentation.active {
+	color: #f22;
+}
+
+ul.presentationSidebarWithList .presentation .filetype {
+	font-size: 7em;
+}
