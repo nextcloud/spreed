@@ -38,7 +38,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
 
-	<version>2.1.7</version>
+	<version>2.1.8</version>
 
 	<dependencies>
 		<nextcloud min-version="13" max-version="13" />
