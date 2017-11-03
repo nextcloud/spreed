@@ -222,6 +222,24 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#joinRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants/active',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#exitRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants/active',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#promoteModerator',
 			'url' => '/api/{apiVersion}/room/{token}/moderators',
 			'verb' => 'POST',

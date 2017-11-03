@@ -87,6 +87,8 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
 
 		$dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */

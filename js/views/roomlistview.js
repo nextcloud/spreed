@@ -200,7 +200,7 @@
 		joinRoom: function(e) {
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
-			OCA.SpreedMe.Calls.join(token);
+			OCA.SpreedMe.Calls.joinRoom(token);
 
 			OC.Util.History.pushState({
 				token: token

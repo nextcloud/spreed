@@ -36,6 +36,15 @@
 		'{{#if isGuest}}' +
 		'	<div class="guest-name"></div>' +
 		'{{/if}}' +
+		'{{#if participantInCall}}' +
+		'	<div>' +
+		'		<button class="leave-call">' + t('spreed', 'Leave call') + '</button>' +
+		'	</div>' +
+		'{{else}}' +
+		'	<div>' +
+		'		<button class="join-call">' + t('spreed', 'Join call') + '</button>' +
+		'	</div>' +
+		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div>' +
 		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
@@ -76,6 +85,8 @@
 			'linkCheckbox': '.link-checkbox',
 
 			'guestName': 'div.guest-name',
+			'joinCallButton': 'button.join-call',
+			'leaveCallButton': 'button.leave-call',
 
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
@@ -91,11 +102,16 @@
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
 
 			'keyup @ui.passwordInput': 'keyUpPassword',
-			'click @ui.passwordConfirm': 'confirmPassword'
+			'click @ui.passwordConfirm': 'confirmPassword',
+			'click @ui.joinCallButton': 'joinCall',
+			'click @ui.leaveCallButton': 'leaveCall'
 		},
 
 		modelEvents: {
 			'change:hasPassword': function() {
+				this.renderWhenInactive();
+			},
+			'change:participantInCall': function() {
 				this.renderWhenInactive();
 			},
 			'change:participantType': function() {
@@ -220,6 +236,14 @@
 					OCA.SpreedMe.app.syncRooms();
 				}
 			});
+		},
+
+		joinCall: function() {
+			OCA.SpreedMe.Calls.joinCall(this.model.get('token'));
+		},
+
+		leaveCall: function() {
+			OCA.SpreedMe.Calls.leaveCall(this.model.get('token'));
 		},
 
 		/**

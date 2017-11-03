@@ -35,7 +35,7 @@
 			OC.Util.History.pushState({
 				token: token
 			}, OC.generateUrl('/call/' + token));
-			this.join(token);
+			this.joinRoom(token);
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
 			console.log("Creating one-to-one video call", recipientUserId);
@@ -81,7 +81,15 @@
 				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
-		join: function(token) {
+		joinRoom: function(token) {
+			if (signaling.currentRoomToken === token) {
+				return;
+			}
+
+			OCA.SpreedMe.webrtc.leaveRoom();
+			OCA.SpreedMe.webrtc.joinRoom(token);
+		},
+		joinCall: function(token) {
 			if (signaling.currentCallToken === token) {
 				return;
 			}
@@ -90,8 +98,12 @@
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
 
-			OCA.SpreedMe.webrtc.leaveRoom();
-			OCA.SpreedMe.webrtc.joinRoom(token);
+			OCA.SpreedMe.webrtc.leaveCall();
+			OCA.SpreedMe.webrtc.joinCall(token);
+		},
+		leaveCall: function(token) {
+			$('#app-content').removeClass('incall');
+			OCA.SpreedMe.webrtc.leaveCall();
 		},
 		leaveCurrentCall: function(deleter) {
 			OCA.SpreedMe.webrtc.leaveRoom();

@@ -18185,14 +18185,22 @@
 
 	SimpleWebRTC.prototype.leaveRoom = function () {
 		if (this.roomName) {
-			this.connection.emit('leave');
+			this.connection.emit('leaveRoom');
+			this.emit('leftRoom', this.roomName);
+			this.roomName = undefined;
+		}
+	};
+
+	SimpleWebRTC.prototype.leaveCall = function () {
+		if (this.roomName) {
+			this.connection.emit('leaveCall');
 			while (this.webrtc.peers.length) {
 				this.webrtc.peers[0].end();
 			}
 			if (this.getLocalScreen()) {
 				this.stopScreenShare();
 			}
-			this.emit('leftRoom', this.roomName);
+			this.emit('leftCall', this.roomName);
 			this.roomName = undefined;
 		}
 	};
@@ -18249,10 +18257,16 @@
 		});
 	};
 
-	SimpleWebRTC.prototype.joinRoom = function (name, cb) {
+	SimpleWebRTC.prototype.joinRoom = function (name) {
+		this.connection.emit('joinRoom', name);
+		this.roomName = name;
+		this.emit('joinedRoom', name);
+	};
+
+	SimpleWebRTC.prototype.joinCall = function (name, cb) {
 		var self = this;
 		this.roomName = name;
-		this.connection.emit('join', name, function (err, roomDescription) {
+		this.connection.emit('joinCall', name, function (err, roomDescription) {
 			console.log('join CB', err, roomDescription);
 			if (err) {
 				self.emit('error', err);
@@ -18282,7 +18296,7 @@
 			}
 
 			if (cb) cb(err, roomDescription);
-			self.emit('joinedRoom', name);
+			self.emit('joinedCall', name);
 		});
 	};
 

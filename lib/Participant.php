@@ -44,6 +44,8 @@ class Participant {
 	protected $lastPing;
 	/** @var string */
 	protected $sessionId;
+	/** @var bool */
+	protected $inCall;
 
 	/**
 	 * @param IDBConnection $db
@@ -52,14 +54,16 @@ class Participant {
 	 * @param int $participantType
 	 * @param int $lastPing
 	 * @param string $sessionId
+	 * @param bool $inCall
 	 */
-	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId) {
+	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
 		$this->participantType = $participantType;
 		$this->lastPing = $lastPing;
 		$this->sessionId = $sessionId;
+		$this->inCall = $inCall;
 	}
 
 	public function getUser() {
@@ -76,5 +80,9 @@ class Participant {
 
 	public function getSessionId() {
 		return $this->sessionId;
+	}
+
+	public function isInCall() {
+		return $this->inCall;
 	}
 }

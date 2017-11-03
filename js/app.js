@@ -372,7 +372,6 @@
 
 						self.setRoomMessageForGuest(self.activeRoom.get('participants'));
 					}
-
 					// Disable video when entering a room with more than 5 participants.
 					if (Object.keys(self.activeRoom.get('participants')).length > 5) {
 						self.disableVideo();
@@ -525,17 +524,9 @@
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 
-			var token = $('#app').attr('data-token');
-			if (token) {
-				if (OCA.SpreedMe.webrtc.sessionReady) {
-					OCA.SpreedMe.Calls.join(token);
-				} else {
-					OCA.SpreedMe.webrtc.once('connectionReady', function() {
-						OCA.SpreedMe.Calls.join(token);
-					});
-				}
-			}
 			OCA.SpreedMe.Calls.showCamera();
+
+			var token = $('#app').attr('data-token');
 
 			if (oc_current_user) {
 				this._showRoomList();
@@ -557,10 +548,20 @@
 			}
 
 			this.initAudioVideoSettings(configuration);
+
+			if (token) {
+				if (OCA.SpreedMe.webrtc.sessionReady) {
+					OCA.SpreedMe.Calls.joinRoom(token);
+				} else {
+					OCA.SpreedMe.webrtc.once('connectionReady', function() {
+						OCA.SpreedMe.Calls.joinRoom(token);
+					});
+				}
+			}
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
-				OCA.SpreedMe.Calls.join(params.token);
+				OCA.SpreedMe.Calls.joinRoom(params.token);
 			}
 		},
 		onDocumentClick: function(event) {

@@ -6,6 +6,7 @@
 	function SignalingBase(settings) {
 		this.settings = settings;
 		this.sessionId = '';
+		this.currentRoomToken = null;
 		this.currentCallToken = null;
 		this.handlers = {};
 		this.features = {};
@@ -61,17 +62,28 @@
 
 	SignalingBase.prototype.emit = function(ev, data) {
 		switch (ev) {
-			case 'join':
-				var callback = arguments[2];
-				var token = data;
-				this.joinCall(token, callback);
+			case 'joinRoom':
+				this.joinRoom(data);
 				break;
-			case 'leave':
+			case 'joinCall':
+				this.joinCall(data, arguments[2]);
+				break;
+			case 'leaveRoom':
+				this.leaveCurrentRoom();
+				break;
+			case 'leaveCall':
 				this.leaveCurrentCall();
 				break;
 			case 'message':
 				this.sendCallMessage(data);
 				break;
+		}
+	};
+
+	SignalingBase.prototype.leaveCurrentRoom = function() {
+		if (this.currentCallToken) {
+			this.leaveRoom(this.currentCallToken);
+			this.currentCallToken = null;
 		}
 	};
 
@@ -207,9 +219,9 @@
 		return defer;
 	};
 
-	InternalSignaling.prototype.joinCall = function(token, callback, password) {
+	InternalSignaling.prototype.joinRoom = function(token, password) {
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
 			type: 'POST',
 			beforeSend: function (request) {
 				request.setRequestHeader('Accept', 'application/json');
@@ -220,14 +232,9 @@
 			success: function (result) {
 				console.log("Joined", result);
 				this.sessionId = result.ocs.data.sessionId;
-				this.currentCallToken = token;
+				this.currentRoomToken = token;
 				this._startPingCall();
 				this._startPullingMessages();
-				// We send an empty call description to simplewebrtc since
-				// usersChanged (webrtc.js) will create/remove peer connections
-				// with call participants
-				var callDescription = {'clients': {}};
-				callback('', callDescription);
 			}.bind(this),
 			error: function (result) {
 				if (result.status === 404 || result.status === 503) {
@@ -243,7 +250,7 @@
 						t('spreed','Password required'),
 						function (result, password) {
 							if (result && password !== '') {
-								this.joinCall(token, callback, password);
+								this.joinRoom(token, password);
 							}
 						}.bind(this),
 						true,
@@ -262,11 +269,46 @@
 		});
 	};
 
-	InternalSignaling.prototype.leaveCall = function(token) {
-		if (token === this.currentCallToken) {
+	InternalSignaling.prototype.leaveRoom = function(token) {
+		if (this.currentCallToken) {
+			this.leaveCall();
+		}
+
+		if (token === this.currentRoomToken) {
 			this._stopPingCall();
 			this._closeEventSource();
 		}
+
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
+			method: 'DELETE',
+			async: false
+		});
+	};
+
+	InternalSignaling.prototype.joinCall = function(token, callback) {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			type: 'POST',
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function () {
+				this.currentCallToken = token;
+				// We send an empty call description to simplewebrtc since
+				// usersChanged (webrtc.js) will create/remove peer connections
+				// with call participants
+				var callDescription = {'clients': {}};
+				callback('', callDescription);
+			}.bind(this),
+			error: function () {
+				// Room not found or maintenance mode
+				OC.redirect(OC.generateUrl('apps/spreed'));
+			}.bind(this)
+		});
+	};
+
+	InternalSignaling.prototype.leaveCall = function(token) {
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			method: 'DELETE',
