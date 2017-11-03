@@ -391,6 +391,9 @@
 				guestNameModel: this._localStorageModel
 			});
 			this._sidebarView.setCallInfoView(callInfoView);
+
+			this._messageCollection.setRoomToken(this.activeRoom.get('token'));
+			this._messageCollection.receiveMessages();
 		},
 		setPageTitle: function(title){
 			if (title) {
@@ -470,6 +473,19 @@
 
 			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
 				this.disable();
+			});
+
+			this._messageCollection = new OCA.SpreedMe.Models.ChatMessageCollection(null, {token: null});
+			this._chatView = new OCA.SpreedMe.Views.ChatView({
+				collection: this._messageCollection,
+				id: 'commentsTabView',
+				className: 'chat tab'
+			});
+
+			this._sidebarView.addTab('chat', { label: t('spreed', 'Chat') }, this._chatView);
+
+			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
+				this.stopReceivingMessages();
 			});
 
 			$(document).on('click', this.onDocumentClick);
