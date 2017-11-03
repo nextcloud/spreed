@@ -101,6 +101,10 @@
 			OCA.SpreedMe.webrtc.leaveCall();
 			OCA.SpreedMe.webrtc.joinCall(token);
 		},
+		leaveCall: function(token) {
+			$('#app-content').removeClass('incall');
+			OCA.SpreedMe.webrtc.leaveCall();
+		},
 		leaveCurrentCall: function(deleter) {
 			OCA.SpreedMe.webrtc.leaveRoom();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
