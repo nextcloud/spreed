@@ -19,6 +19,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Spied ⌘-C lai kopētu.",
     "Press Ctrl-C to copy." : "Spied Ctrl-C lai kopētu.",
     "This call has ended" : "Šis zvans ir pabeigts",
+    "Leave call" : "Pamest zvanu",
     "Share link" : "Koplietot saiti",
     "Rename" : "Pārsaukt",
     "Guest" : "Viesis",
@@ -40,7 +41,6 @@ OC.L10N.register(
     "TURN server" : "TURN serveris",
     "Saving failed" : "Saglabāšana neizdevās",
     "Add person" : "Pievienot personu",
-    "Leave call" : "Pamest zvanu",
     "STUN server" : "STUN serveris",
     "TURN server shared secret" : "IESLĒGT slepeno servera koplietošanu"
 },
