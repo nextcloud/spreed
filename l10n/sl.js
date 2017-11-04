@@ -21,6 +21,7 @@ OC.L10N.register(
     "Password required" : "Zahtevano je geslo",
     "Password" : "Geslo",
     "Cancel" : "Prekinitev",
+    "Leave call" : "Zapusti klic",
     "Change password" : "Spremeni geslo",
     "Set password" : "Nastavi geslo",
     "Rename" : "Preimenuj",
@@ -41,7 +42,6 @@ OC.L10N.register(
     "Share screen" : "Deli zaslon",
     "Smile in 3… 2… 1!" : "Nasmehni se 3... 2... 1!",
     "Saving failed" : "Shranjevanje spodletelo",
-    "Add person" : "Dodaj osebo",
-    "Leave call" : "Zapusti klic"
+    "Add person" : "Dodaj osebo"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
