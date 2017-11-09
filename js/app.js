@@ -50,6 +50,8 @@
 		displayedGuestNameHint: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		videoDisabled: localStorage.getItem("videoDisabled"),
+		audioAvailable: localStorage.getItem("audioAvailable"),
+		videoAvailable: localStorage.getItem("videoAvailable"),
 		_searchTerm: '',
 		guestNick: null,
 		_registerPageEvents: function() {
@@ -175,7 +177,9 @@
 					// means that permission wasn't granted
 					// yet or there is no video available at
 					// all)
-					console.log('video can not be enabled - there was no stream available before');
+					console.log('video can not be enabled - there was no stream available before or no camera can be found');
+					// OCA.SpreedMe.app.availableVideo();
+					// localStorage.setItem("availableVideo", false);
 					return;
 				}
 				if ($(this).hasClass('video-disabled')) {
@@ -597,9 +601,34 @@
 				}
 			} else {
 				OCA.SpreedMe.app.videoWasEnabledAtLeastOnce = false;
-				OCA.SpreedMe.app.disableVideo();
+				// OCA.SpreedMe.app.availableAudio();
+				OCA.SpreedMe.app.availableVideo();
 			}
 		},
+		//// INFO: Not needed: no microphone results in an access denied failure
+		// availableAudio: function() {
+		// 	navigator.getUserMedia = navigator.getUserMedia ||
+		// 										 navigator.webkitGetUserMedia ||
+		// 										 navigator.mozGetUserMedia;
+		//
+		// 	if (navigator.getUserMedia !== null) {
+		// 		navigator.getUserMedia({ audio: true },
+		// 			function() {
+		// 				OCA.SpreedMe.app.enableAudio();
+		// 				localStorage.removeItem("audioDisabled");
+		// 				OCA.SpreedMe.app.audioAvailable = true;
+		// 			},
+		// 			function(err) {
+		// 				OCA.SpreedMe.webrtc.mute();
+		// 				$('#mute').attr('data-original-title', 'No audio')
+		// 					.removeClass('audio-disabled icon-audio-off-white')
+		// 					.addClass('audio-available icon-audio-off-white');
+		//
+		// 				OCA.SpreedMe.app.audioAvailable = false;
+		// 			}
+		// 		);
+		// 	}
+		// },
 		enableAudio: function() {
 			OCA.SpreedMe.webrtc.unmute();
 			$('#mute').attr('data-original-title', 'Mute audio')
@@ -615,6 +644,30 @@
 				.removeClass('icon-audio-white');
 
 			OCA.SpreedMe.app.audioDisabled = true;
+		},
+		availableVideo: function() {
+			var $hideVideoButton = $('#hideVideo');
+
+			navigator.getUserMedia = navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia;
+
+			if (navigator.getUserMedia !== null) {
+				navigator.getUserMedia({ video: true },
+					function() {
+						OCA.SpreedMe.app.enableVideo();
+						localStorage.removeItem("videoDisabled");
+						OCA.SpreedMe.app.videoAvailable = true;
+					},
+		      function(err) {
+						$hideVideoButton.attr('data-original-title', 'No Camera')
+							.removeClass('video-disabled icon-video-off-white')
+							.addClass('video-available icon-video-off-white');
+
+						OCA.SpreedMe.app.videoAvailable = false;
+		      }
+				);
+			}
 		},
 		enableVideo: function() {
 			var $hideVideoButton = $('#hideVideo');

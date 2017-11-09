@@ -432,6 +432,18 @@ video {
 	opacity: .7;
 }
 
+.nameIndicator button.audio-available,
+.nameIndicator button.video-available {
+	opacity: .7;
+	cursor: not-allowed;
+	/*setting `pointer-events` with `none` results with no tooltip on hover*/
+	/*pointer-events: none;*/
+}
+.nameIndicator button.audio-available:active,
+.nameIndicator button.video-available:active {
+	background-color: transparent;
+}
+
 .mediaIndicator {
 	position: absolute;
 	width: 100%;
