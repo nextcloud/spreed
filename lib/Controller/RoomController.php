@@ -25,11 +25,13 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
+use OCA\Spreed\Signaling\Messages;
 use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -57,6 +59,8 @@ class RoomController extends OCSController {
 	private $logger;
 	/** @var Manager */
 	private $manager;
+	/** @var Messages */
+	private $messages;
 	/** @var INotificationManager */
 	private $notificationManager;
 	/** @var IActivityManager */
@@ -73,6 +77,7 @@ class RoomController extends OCSController {
 	 * @param IGroupManager $groupManager
 	 * @param ILogger $logger
 	 * @param Manager $manager
+	 * @param Messages $messages
 	 * @param INotificationManager $notificationManager
 	 * @param IActivityManager $activityManager
 	 * @param IL10N $l10n
@@ -85,6 +90,7 @@ class RoomController extends OCSController {
 								IGroupManager $groupManager,
 								ILogger $logger,
 								Manager $manager,
+								Messages $messages,
 								INotificationManager $notificationManager,
 								IActivityManager $activityManager,
 								IL10N $l10n) {
@@ -95,6 +101,7 @@ class RoomController extends OCSController {
 		$this->groupManager = $groupManager;
 		$this->logger = $logger;
 		$this->manager = $manager;
+		$this->messages = $messages;
 		$this->notificationManager = $notificationManager;
 		$this->activityManager = $activityManager;
 		$this->l10n = $l10n;
@@ -158,8 +165,10 @@ class RoomController extends OCSController {
 
 		if ($participant instanceof Participant) {
 			$participantType = $participant->getParticipantType();
+			$participantInCall = $participant->isInCall();
 		} else {
 			$participantType = Participant::GUEST;
+			$participantInCall = false;
 		}
 
 		$roomData = [
@@ -169,6 +178,7 @@ class RoomController extends OCSController {
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
 			'participantType' => $participantType,
+			'participantInCall' => $participantInCall,
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'hasPassword' => $room->hasPassword(),
 		];
@@ -347,7 +357,6 @@ class RoomController extends OCSController {
 				'userId' => $targetUser->getUID(),
 				'participantType' => Participant::OWNER,
 			]);
-
 			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
@@ -450,6 +459,7 @@ class RoomController extends OCSController {
 		if (!$room->setName($roomName)) {
 			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
 		}
+
 		return new DataResponse([]);
 	}
 
@@ -763,6 +773,73 @@ class RoomController extends OCSController {
 		}
 
 		$room->setPassword($password);
+		return new DataResponse();
+	}
+
+	/**
+	 * @PublicPage
+	 * @UseSession
+	 *
+	 * @param string $token
+	 * @param string $password
+	 * @return DataResponse
+	 */
+	public function joinRoom($token, $password) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			if ($this->userId !== null) {
+				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
+				$newSessionId = $room->enterRoomAsUser($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
+
+				if (!empty($sessionIds)) {
+					$this->messages->deleteMessages($sessionIds);
+				}
+			} else {
+				$newSessionId = $room->enterRoomAsGuest($password, $this->session->get('spreed-password') === $room->getToken());
+			}
+		} catch (InvalidPasswordException $e) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$this->session->remove('spreed-password');
+		$this->session->set('spreed-session', $newSessionId);
+		$room->ping($this->userId, $newSessionId, time());
+
+		return new DataResponse([
+			'sessionId' => $newSessionId,
+		]);
+	}
+
+	/**
+	 * @PublicPage
+	 * @UseSession
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function exitRoom($token) {
+		$sessionId = $this->session->get('spreed-session');
+		$this->session->remove('spreed-session');
+
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+
+			if ($this->userId === null) {
+				$participant = $room->getParticipantBySession($sessionId);
+				$room->removeParticipantBySession($participant);
+			} else {
+				$participant = $room->getParticipant($this->userId);
+				$room->disconnectUserFromAllRooms($participant->getUser());
+			}
+		} catch (RoomNotFoundException $e) {
+		} catch (ParticipantNotFoundException $e) {
+		}
+
 		return new DataResponse();
 	}
 

@@ -47,6 +47,14 @@ return [
 			],
 		],
 		[
+			'name' => 'Signaling#backend',
+			'url' => '/api/{apiVersion}/signaling/backend',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
 			'name' => 'Call#getPeersForCall',
 			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'GET',
@@ -77,6 +85,25 @@ return [
 			'name' => 'Call#leaveCall',
 			'url' => '/api/{apiVersion}/call/{token}',
 			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+
+		[
+			'name' => 'Chat#receiveMessages',
+			'url' => '/api/{apiVersion}/chat/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Chat#sendMessage',
+			'url' => '/api/{apiVersion}/chat/{token}',
+			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',
@@ -188,6 +215,24 @@ return [
 		[
 			'name' => 'Room#removeGuestFromRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/guests',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#joinRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants/active',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#exitRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',

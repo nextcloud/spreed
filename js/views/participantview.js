@@ -1,7 +1,8 @@
 /* global Marionette, Handlebars */
 
 /**
- * @author Christoph Wurst <christoph@winzerhof-wurst.at>
+ *
+ * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -20,229 +21,164 @@
  *
  */
 
-
 (function(OC, OCA, Marionette, Handlebars) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
-	var uiChannel = Backbone.Radio.channel('ui');
+	var TEMPLATE = ''+
+		'<form class="oca-spreedme-add-person">'+
+		'	<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Add participant')+'"/>'+
+		'</form>'+
+		'<ul class="participantWithList">' +
+		'</ul>';
 
-	var ITEM_TEMPLATE = '' +
-		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#" data-sessionId="{{sessionId}}">' +
-			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
-			' {{name}}' +
-			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
-			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
-		'</a>'+
-		'{{#if canModerate}}' +
-			'<div class="participant-entry-utils">'+
-				'<ul>'+
-					'<li class="participant-entry-utils-menu-button"><button></button></li>'+
-				'</ul>'+
-			'</div>'+
-			'<div class="popovermenu bubble menu">'+
-				'<ul class="popovermenu-list">'+
-					'{{#if participantIsModerator}}' +
-					'<li>' +
-						'<button class="demote-moderator">' +
-							'<span class="icon icon-star"></span>' +
-							'<span>' + t('spreed', 'Demote from moderator') + '</span>' +
-						'</button>' +
-					'</li>' +
-					'{{else}}' +
-						'{{#if participantIsUser}}' +
-						'<li>' +
-							'<button class="promote-moderator">' +
-								'<span class="icon icon-rename"></span>' +
-								'<span>' + t('spreed', 'Promote to moderator') + '</span>' +
-							'</button>' +
-						'</li>' +
-						'{{/if}}' +
-					'{{/if}}' +
-					'<li>' +
-						'<button class="remove-participant">' +
-							'<span class="icon icon-delete"></span>' +
-							'<span>' + t('spreed', 'Remove participant') + '</span>' +
-						'</button>' +
-					'</li>' +
-				'</ul>' +
-			'</div>' +
-		'{{/if}}';
+	OCA.SpreedMe.Views.ParticipantView = Marionette.View.extend({
 
-	OCA.SpreedMe.Views.ParticipantView = Marionette.CollectionView.extend({
-		tagName: 'ul',
-		className: 'participantWithList',
-		collectionEvents: {
-			'update': function() {
-				this.render();
-			},
-			'reset': function() {
-				this.render();
-			},
-			'sort': function() {
-				this.render();
-			},
-			'sync': function() {
-				this.render();
-			}
+		tagName: 'div',
+
+		ui: {
+			addParticipantInput: '.add-person-input',
+			participantList: '.participantWithList'
 		},
-		childView: Marionette.View.extend({
-			tagName: 'li',
-			modelEvents: {
-				'change:active': function() {
-					this.render();
-				},
-				'change:displayName': function() {
-					this.render();
-				},
-				'change:participants': function() {
-					this.render();
-				},
-				'change:type': function() {
-					this.render();
-					this.checkSharingStatus();
-				}
-			},
-			initialize: function() {
-				this.listenTo(uiChannel, 'document:click', function(event) {
-					var target = $(event.target);
-					if (!this.$el.is(target.closest('.participant'))) {
-						// Click was not triggered by this element -> close menu
-						this.menuShown = false;
-						this.toggleMenuClass();
-					}
-				});
-			},
-			templateContext: function() {
-				var canModerate = this.model.get('participantType') !== OCA.SpreedMe.app.OWNER &&       // can not moderate owners
-					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
-					(OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||   // current user must be owner
-						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR); // or moderator.
 
-				return {
-					canModerate: canModerate,
-					name: this.model.get('userId').length ? this.model.get('displayName') : t('spreed', 'Guest'),
-					participantIsUser: this.model.get('participantType') === OCA.SpreedMe.app.USER,
-					participantIsModerator: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR,
-					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER
-				};
-			},
-			onRender: function() {
-				this.$el.find('.avatar').each(function() {
+		regions: {
+			participantList: '@ui.participantList'
+		},
+
+		template: Handlebars.compile(TEMPLATE),
+
+		initialize: function(options) {
+			this.room = options.room;
+			this.collection = options.collection;
+			this._participantListView = new OCA.SpreedMe.Views.ParticipantListView({ collection: options.collection });
+
+			// In Marionette 3.0 the view is not rendered automatically if
+			// needed when showing a child view, so it must be rendered
+			// explicitly to ensure that the DOM element in which the child view
+			// will be appended exists.
+			this.render();
+			this.showChildView('participantList', this._participantListView, { replaceElement: true } );
+		},
+
+		/**
+		 * @param {OCA.SpreedMe.Models.Room} room
+		 * @returns {Array}
+		 */
+		setRoom: function(room) {
+			this.room = room;
+			this.collection.setRoom(room);
+		},
+
+		onRender: function() {
+			this.initAddParticipantSelector();
+		},
+
+		initAddParticipantSelector: function() {
+			this.ui.addParticipantInput.select2({
+				ajax: {
+					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
+					dataType: 'json',
+					quietMillis: 100,
+					data: function (term) {
+						return {
+							format: 'json',
+							search: term,
+							perPage: 200,
+							itemType: 'call'
+						};
+					},
+					results: function (response) {
+						// TODO improve error case
+						if (_.isUndefined(response.ocs.data)) {
+							return;
+						}
+
+						var results = [],
+							participants = this.room.get('participants');
+
+						$.each(response.ocs.data.exact.users, function(id, user) {
+							var isExactUserInGroup = false;
+
+							$.each(participants, function(participantId) {
+								if (participantId === user.value.shareWith) {
+									isExactUserInGroup = true;
+								}
+							});
+
+							if (!isExactUserInGroup) {
+								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+							}
+						});
+
+						$.each(response.ocs.data.users, function(id, user) {
+							var isUserInGroup = false;
+
+							$.each(participants, function(participantId) {
+								if (participantId === user.value.shareWith) {
+									isUserInGroup = true;
+								}
+							});
+
+							if (!isUserInGroup) {
+								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+							}
+						});
+
+						return {
+							results: results,
+							more: false
+						};
+					}.bind(this)
+				},
+				initSelection: function (element, callback) {
+					callback({id: element.val()});
+				},
+				formatResult: function (element) {
+					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
+				},
+				formatSelection: function () {
+					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
+				}
+			});
+			this.ui.addParticipantInput.on('change', function(e) {
+				var token = this.room.get('token');
+				var participant = e.val;
+				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
+
+				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
-					if (element.data('displayname').length) {
-						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
 					} else {
-						element.imageplaceholder('?', undefined, 32);
-						element.css('background-color', '#b9b9b9');
+						element.avatar(element.data('user'), 32);
 					}
 				});
-
-				this.$el.attr('data-session-id', this.model.get('sessionId'));
-				this.$el.attr('data-participant', this.model.get('userId'));
-				this.$el.addClass('participant');
-
-				if (!this.model.isOnline()) {
-					this.$el.addClass('participant-offline');
-				}
-
-				this.toggleMenuClass();
-			},
-			events: {
-				'click .participant-entry-utils-menu-button button': 'toggleMenu',
-				'click .popovermenu .promote-moderator': 'promoteToModerator',
-				'click .popovermenu .demote-moderator': 'demoteFromModerator',
-				'click .popovermenu .remove-participant': 'removeParticipant'
-			},
-			ui: {
-				'participant': 'li.participant',
-				'menu': '.popovermenu'
-			},
-			template: Handlebars.compile(ITEM_TEMPLATE),
-			menuShown: false,
-			toggleMenu: function(e) {
-				e.preventDefault();
-				this.menuShown = !this.menuShown;
-				this.toggleMenuClass();
-			},
-			toggleMenuClass: function() {
-				this.ui.menu.toggleClass('open', this.menuShown);
-			},
-			promoteToModerator: function() {
-				if (this.model.get('participantType') !== OCA.SpreedMe.app.USER) {
-					return;
-				}
-
-				var participantId = this.model.get('userId'),
-					self = this;
-
-				$.ajax({
-					type: 'POST',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/moderators',
-					data: {
-						participant: participantId
-					},
-					success: function() {
-						self.render();
-					},
-					error: function() {
-						console.log('Error while promoting user to moderator');
+			}.bind(this));
+			this.ui.addParticipantInput.on('click', function() {
+				$('.select2-drop').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 32);
 					}
 				});
-			},
-			demoteFromModerator: function() {
-				if (this.model.get('participantType') !== OCA.SpreedMe.app.MODERATOR) {
-					return;
-				}
+			});
 
-				var participantId = this.model.get('userId'),
-					self = this;
-
-				$.ajax({
-					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/moderators',
-					data: {
-						participant: participantId
-					},
-					success: function() {
-						self.render();
-					},
-					error: function() {
-						console.log('Error while demoting moderator');
+			this.ui.addParticipantInput.on('select2-loaded', function() {
+				$('.select2-drop').find('.avatar').each(function () {
+					var element = $(this);
+					if (element.data('user-display-name')) {
+						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
+					} else {
+						element.avatar(element.data('user'), 32);
 					}
 				});
-			},
-			removeParticipant: function() {
-				if (this.model.get('participantType') === OCA.SpreedMe.app.OWNER) {
-					return;
-				}
+			});
+		}
 
-				var self = this,
-					participantId = this.model.get('userId'),
-					endpoint = '/participants';
-
-				if (this.model.get('participantType') === OCA.SpreedMe.app.GUEST) {
-					participantId = this.model.get('sessionId');
-					endpoint += '/guests';
-				}
-
-				$.ajax({
-					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + endpoint,
-					data: {
-						participant: participantId
-					},
-					success: function() {
-						self.render();
-					},
-					error: function() {
-						console.log('Error while removing user from room');
-					}
-				});
-			}
-		})
 	});
 
 })(OC, OCA, Marionette, Handlebars);

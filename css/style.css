@@ -20,9 +20,8 @@
 }
 
 .oca-spreedme-add-person {
-	width: 225px;
-	top: 0;
-	border-bottom: 1px solid #eee;
+	width: 100%;
+	border: 1px solid #eee;
 }
 
 /**
@@ -89,17 +88,6 @@
 	height: 32px;
 }
 
-#oca-spreedme-add-room button {
-	position: absolute;
-	background-color: transparent;
-	border: none;
-	right: 0;
-	top: 0;
-	padding: 23px;
-	margin: 0;
-	opacity: .3;
-}
-
 .public-room {
 	display: block !important;
 }
@@ -127,13 +115,13 @@
 }
 
 .password-input,
-.rename-input {
-	margin-top: 0px !important;
+.editable-text-label input {
+	margin-top: 0 !important;
 	margin-bottom: 4px !important;
 }
 
 .icon-confirm.password-confirm,
-.icon-confirm.rename-confirm {
+.icon-confirm.confirm-button {
 	background-size: 16px;
 	background-color: transparent;
 	border: none;
@@ -144,7 +132,7 @@
 	opacity: .5;
 }
 .icon-confirm.password-confirm:hover,
-.icon-confirm.rename-confirm:hover  {
+.icon-confirm.confirm-button:hover  {
 	opacity: 1;
 }
 
@@ -409,7 +397,7 @@ video {
 
 #video-fullscreen {
 	position: absolute;
-	right: 0px;
+	right: 0;
 	z-index: 90;
 }
 
@@ -502,6 +490,44 @@ video {
 }
 #app-content:fullscreen #app-navigation-toggle {
 	display: none !important;
+}
+
+/**
+ * Different browsers handle fullscreen elements with a margin in different
+ * ways: Firefox ignores the margin and uses the full width, while Chromium uses
+ * a strange mix which is neither the full width nor the full margin. Due to
+ * this the margin is removed to unify the appearance across browsers; visually,
+ * this causes the sidebar to slide on the content instead of "pushing" it to
+ * the left.
+ */
+#app-content:-webkit-full-screen {
+	margin-right: 0;
+}
+#app-content:-moz-full-screen {
+	margin-right: 0;
+}
+#app-content:-ms-fullscreen {
+	margin-right: 0;
+}
+#app-content:fullscreen {
+	margin-right: 0;
+}
+
+/**
+ * In fullscreen mode there is no header, so the sidebar has to be moved to the
+ * top.
+ */
+#app-content:-webkit-full-screen #app-sidebar {
+	top: 0;
+}
+#app-content:-moz-full-screen #app-sidebar {
+	top: 0;
+}
+#app-content:-ms-fullscreen #app-sidebar {
+	top: 0;
+}
+#app-content:fullscreen #app-sidebar {
+	top: 0;
 }
 
 .localmediaerror h2 {
@@ -647,43 +673,17 @@ video {
 	}
 }
 
-#guestName {
-    padding: 7px 30px 6px 10px;
-    cursor: pointer;
-}
-
-#guestName:hover {
-	color: #fff !important;
-}
-
-#guestNameInput {
-    margin-top: 7px;
-    margin-right: -10px;
-    padding-right: 22px;
-}
-
-#guestNameConfirm {
-	position: relative;
-	height: 20px;
-	right: 16px;
-	line-height: 14px;
-	background-color: transparent;
-	border: none;
-	opacity: .5;
-}
-
-#guestNameConfirm:hover {
-	opacity: 1;
-}
-
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
 }
 
-/* make guest name white because header bar is transparent*/
-#body-public #app-content:not(.participants-1) #guestName {
-    color: rgba(255, 255, 255, 0.7);
+/* As the header is hidden (except for the logo), move the fullscreen button and
+ * sidebar to the top during calls */
+#body-public #app-content:not(.participants-1) #app-sidebar,
+#body-public #app-content:not(.participants-1) #video-fullscreen {
+	top: 0;
+	z-index: 3000;
 }
 
 /**
@@ -765,4 +765,45 @@ video {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-image: url('../../../core/img/actions/more.svg?v=1');
+}
+
+/**
+ * Sidebar details view
+ */
+
+.detailCallInfoContainer .room-name {
+	display: inline-block;
+}
+
+.detailCallInfoContainer h3,
+.detailCallInfoContainer .guest-name p {
+	display: inline-block;
+}
+
+.detailCallInfoContainer .editable-text-label .edit-button {
+	display: none;
+}
+
+.detailCallInfoContainer .clipboard-button,
+.detailCallInfoContainer:hover .editable-text-label .edit-button {
+	display: inline-block;
+}
+
+.detailCallInfoContainer .clipboard-button .icon,
+.detailCallInfoContainer .editable-text-label .edit-button .icon {
+	cursor: pointer;
+	width: 16px;
+	height: 16px;
+	margin: -2px 10px;
+}
+
+.detailCallInfoContainer .editable-text-label .input-wrapper,
+.detailCallInfoContainer .password-option {
+	position: relative;
+	display: inline-block;
+}
+
+.detailCallInfoContainer .editable-text-label input,
+.detailCallInfoContainer .password-input {
+	width: 100%;
 }

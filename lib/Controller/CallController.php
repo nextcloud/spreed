@@ -106,8 +106,8 @@ class CallController extends OCSController {
 		$participants = $room->getParticipants(time() - 30);
 		$result = [];
 		foreach ($participants['users'] as $participant => $data) {
-			if ($data['sessionId'] === '0') {
-				// User left the room
+			if ($data['sessionId'] === '0' || !$data['inCall']) {
+				// User is not active in call
 				continue;
 			}
 
@@ -136,38 +136,36 @@ class CallController extends OCSController {
 	 * @UseSession
 	 *
 	 * @param string $token
-	 * @param string $password
 	 * @return DataResponse
 	 */
-	public function joinCall($token, $password) {
+	public function joinCall($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		try {
-			if ($this->userId !== null) {
-				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-				$newSessionId = $room->enterRoomAsUser($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
-
-				if (!empty($sessionIds)) {
-					$this->messages->deleteMessages($sessionIds);
-				}
-			} else {
-				$newSessionId = $room->enterRoomAsGuest($password, $this->session->get('spreed-password') === $room->getToken());
+		if ($this->userId !== null) {
+			if (!$this->session->exists('spreed-session')) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
-		} catch (InvalidPasswordException $e) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
+			$sessionId = $this->session->get('spreed-session');
+		} else {
+			try {
+				$participant = $room->getParticipant($this->userId);
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$sessionId = $participant->getSessionId();
+			if ($sessionId === '0') {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
 		}
 
-		$this->session->remove('spreed-password');
-		$this->session->set('spreed-session', $newSessionId);
-		$room->ping($this->userId, $newSessionId, time());
+		$room->changeInCall($sessionId, true);
 
-		return new DataResponse([
-			'sessionId' => $newSessionId,
-		]);
+		return new DataResponse();
 	}
 
 	/**
@@ -201,22 +199,31 @@ class CallController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function leaveCall($token) {
-		$sessionId = $this->session->get('spreed-session');
-		$this->session->remove('spreed-session');
-
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-
-			if ($this->userId === null) {
-				$participant = $room->getParticipantBySession($sessionId);
-				$room->removeParticipantBySession($participant);
-			} else {
-				$participant = $room->getParticipant($this->userId);
-				$room->disconnectUserFromAllRooms($participant->getUser());
-			}
 		} catch (RoomNotFoundException $e) {
-		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
+
+		if ($this->userId !== null) {
+			if (!$this->session->exists('spreed-session')) {
+				return new DataResponse();
+			}
+			$sessionId = $this->session->get('spreed-session');
+		} else {
+			try {
+				$participant = $room->getParticipant($this->userId);
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$sessionId = $participant->getSessionId();
+			if ($sessionId === '0') {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		}
+
+		$room->changeInCall($sessionId, false);
 
 		return new DataResponse();
 	}

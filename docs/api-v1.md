@@ -255,10 +255,60 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
 
+### Remove a guest from a room
+
+* Method: `DELETE`
+* Endpoint: `/room/{token}/participants/guests`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `participant` | string | Session ID of the guest to remove
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `403 Forbidden` When the current user is not a moderator/owner
+        + `403 Forbidden` When the target participant is not a guest
+        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the target participant could not be found
+
 ### Remove yourself from a room
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/self`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+### Join a room (available for call and chat)
+
+* Method: `POST`
+* Endpoint: `/room/{token}/participants/active`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the room has `hasPassword` set to true.
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `403 Forbidden` When the password is required and didn't match
+        + `404 Not Found` When the room could not be found for the participant
+
+    - Data:
+
+        field | type | Description
+        ------|------|------------
+        `sessionId` | string | 512 character long string
+
+### Leave a room (not available for call and chat anymore)
+
+* Method: `DELETE`
+* Endpoint: `/room/{token}/participants/active`
 
 * Response:
     - Header:
@@ -329,23 +379,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 * Method: `POST`
 * Endpoint: `/call/{token}`
-* Data:
-
-    field | type | Description
-    ------|------|------------
-    `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the room has `hasPassword` set to true.
 
 * Response:
     - Header:
         + `200 OK`
-        + `403 Forbidden` When the password is required and didn't match
         + `404 Not Found` When the room could not be found for the participant
-
-    - Data:
-
-        field | type | Description
-        ------|------|------------
-        `sessionId` | string | 512 character long string
 
 ### Send ping to keep the call alive
 
@@ -357,7 +395,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `404 Not Found` When the room could not be found for the participant
 
-### Leave a call (but staying in the room for future calls)
+### Leave a call (but staying in the room for future calls and chat)
 
 * Method: `DELETE`
 * Endpoint: `/call/{token}`

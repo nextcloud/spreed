@@ -6,15 +6,21 @@ vendor_script('select2/select2');
 vendor_style('select2/select2');
 
 style('spreed', 'style');
+style('spreed', 'comments');
 script(
 	'spreed',
 	[
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'models/chatmessage',
+		'models/chatmessagecollection',
+		'models/localstoragemodel',
 		'models/room',
 		'models/roomcollection',
 		'views/callinfoview',
+		'views/chatview',
+		'views/editabletextlabel',
 		'views/roomlistview',
 		'views/sidebarview',
 		'views/tabview',
@@ -32,6 +38,9 @@ script(
 	<div id="notification" style="display: none;"></div>
 </div>
 <div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">
+	<script type="text/json" id="signaling-settings">
+	<?php echo json_encode($_['signaling-settings']) ?>
+	</script>
 	<div id="app-content" class="participants-1">
 
 		<header>
@@ -47,11 +56,6 @@ script(
 					</div>
 				</div>
 				<div id="header-right">
-					<div id="settings">
-						<div id="guestName"><?php p($l->t('Guest')) ?></div>
-						<input id="guestNameInput" class="hidden" type="text" maxlength="20" placeholder="<?php p($l->t('Guest')) ?>">
-						<button id="guestNameConfirm" class="icon-confirm hidden"></button>
-					</div>
 				</div>
 			</div>
 		</header>

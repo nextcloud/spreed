@@ -6,17 +6,23 @@ vendor_script('select2/select2');
 vendor_style('select2/select2');
 
 style('spreed', 'style');
+style('spreed', 'comments');
 script(
 	'spreed',
 	[
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'models/chatmessage',
+		'models/chatmessagecollection',
 		'models/room',
 		'models/roomcollection',
 		'models/participant',
 		'models/participantcollection',
 		'views/callinfoview',
+		'views/chatview',
+		'views/editabletextlabel',
+		'views/participantlistview',
 		'views/participantview',
 		'views/roomlistview',
 		'views/sidebarview',
@@ -32,6 +38,9 @@ script(
 ?>
 
 <div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">
+	<script type="text/json" id="signaling-settings">
+	<?php echo json_encode($_['signaling-settings']) ?>
+	</script>
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
 			<input id="select-participants" class="select2-offscreen" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>

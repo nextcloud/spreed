@@ -22,9 +22,14 @@
 namespace OCA\Spreed\AppInfo;
 
 use OCA\Spreed\Activity\Hooks;
+use OCA\Spreed\BackendNotifier;
+use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\HookListener;
+use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
+use OCP\IServerContainer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -34,7 +39,40 @@ class Application extends App {
 		parent::__construct('spreed', $urlParams);
 	}
 
-	public function registerHooks() {
+	public function register() {
+		$server = $this->getContainer()->getServer();
+
+		$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
+			/** @var HookListener $listener */
+			$listener = \OC::$server->query(HookListener::class);
+			$listener->deleteUser($user);
+		});
+
+		$this->registerNotifier($server);
+
+		$dispatcher = $server->getEventDispatcher();
+		$this->registerSignalingHooks($dispatcher);
+		$this->registerActivityHooks($dispatcher);
+		$this->registerChatHooks($dispatcher);
+	}
+
+	protected function registerNotifier(IServerContainer $server) {
+
+		$manager = $server->getNotificationManager();
+		$manager->registerNotifier(function() use ($server) {
+			return $server->query(Notifier::class);
+		}, function() use ($server) {
+			$l = $server->getL10N('spreed');
+
+			return [
+				'id' => 'spreed',
+				'name' => $l->t('Talk'),
+			];
+		});
+
+	}
+
+	protected function registerSignalingHooks(EventDispatcherInterface $dispatcher) {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -44,14 +82,54 @@ class Application extends App {
 			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
 		};
 
-		$dispatcher = $this->getContainer()->getServer()->getEventDispatcher();
 		$dispatcher->addListener(Room::class . '::postUserEnterRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
 
-		$this->registerActivityHooks($dispatcher);
+		$dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$participants= $event->getArgument('users');
+			$notifier->roomInvited($room, $participants);
+		});
+		$dispatcher->addListener(Room::class . '::postSetName', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$notifier->roomModified($room);
+		});
+		$dispatcher->addListener(Room::class . '::postSetParticipantType', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			// The type of a participant has changed, notify all participants
+			// so they can update the room properties.
+			$notifier->roomModified($room);
+		});
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$participants = $event->getArgument('participants');
+			$notifier->roomDeleted($room, $participants);
+		});
+		$dispatcher->addListener(Room::class . '::postRemoveUser', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$user = $event->getArgument('user');
+			$notifier->roomsDisinvited($room, [$user->getUID()]);
+		});
 	}
 
 	protected function registerActivityHooks(EventDispatcherInterface $dispatcher) {
@@ -77,5 +155,17 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+	}
+
+	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {
+		$listener = function(GenericEvent $event, $eventName) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var ChatManager $chatManager */
+			$chatManager = $this->getContainer()->query(ChatManager::class);
+			$chatManager->deleteMessages((string) $room->getId());
+		};
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 }

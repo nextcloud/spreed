@@ -53,7 +53,7 @@ class SectionTest extends \Test\TestCase {
 	public function testGetName() {
 		$this->l->expects($this->exactly(2))
 			->method('t')
-			->with('Video calls')
+			->with('Talk')
 			->willReturnArgument(0);
 		$this->assertInternalType('string', $this->admin->getName());
 		$this->assertNotEmpty($this->admin->getName());

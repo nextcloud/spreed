@@ -26,6 +26,7 @@ namespace OCA\Spreed\Controller;
 use OC\HintException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -55,6 +56,8 @@ class PageController extends Controller {
 	private $url;
 	/** @var IManager */
 	private $notificationManager;
+	/** @var Config */
+	private $config;
 
 	/**
 	 * @param string $appName
@@ -66,6 +69,7 @@ class PageController extends Controller {
 	 * @param Manager $manager
 	 * @param IURLGenerator $url
 	 * @param IManager $notificationManager
+	 * @param Config $config
 	 */
 	public function __construct($appName,
 								IRequest $request,
@@ -75,7 +79,8 @@ class PageController extends Controller {
 								ILogger $logger,
 								Manager $manager,
 								IURLGenerator $url,
-								IManager $notificationManager) {
+								IManager $notificationManager,
+								Config $config) {
 		parent::__construct($appName, $request);
 		$this->api = $api;
 		$this->session = $session;
@@ -84,6 +89,46 @@ class PageController extends Controller {
 		$this->manager = $manager;
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
+		$this->config = $config;
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getSignalingSettings() {
+		$stun = [];
+		$stunServer = $this->config->getStunServer();
+		if ($stunServer) {
+			$stun[] = [
+				'url' => 'stun:' . $stunServer,
+			];
+		}
+		$turn = [];
+		$turnSettings = $this->config->getTurnSettings();
+		if (!empty($turnSettings['server'])) {
+			$protocols = explode(',', $turnSettings['protocols']);
+			foreach ($protocols as $proto) {
+				$turn[] = [
+					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'username' => $turnSettings['username'],
+					'credential' => $turnSettings['password'],
+				];
+			}
+		}
+
+		$servers = $this->config->getSignalingServers();
+		if (!empty($servers)) {
+			$signaling = $servers[mt_rand(0, count($servers) - 1)];
+			$signaling = $signaling['server'];
+		}
+
+		return [
+			'server' => $signaling,
+			'ticket' => $this->config->getSignalingTicket($this->userId),
+			'stunservers' => $stun,
+			'turnservers' => $turn,
+		];
 	}
 
 	/**
@@ -150,12 +195,13 @@ class PageController extends Controller {
 			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
 				$data = $response->getData();
-				return new RedirectResponse($this->url->linkToRoute('spreed.Page.showCall', ['token' => $data['token']]));
+				return $this->showCall($data['token']);
 			}
 		}
 
 		$params = [
 			'token' => $token,
+			'signaling-settings' => $this->getSignalingSettings(),
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
@@ -194,6 +240,7 @@ class PageController extends Controller {
 
 		$params = [
 			'token' => $token,
+			'signaling-settings' => $this->getSignalingSettings(),
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();

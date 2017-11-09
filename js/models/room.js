@@ -26,6 +26,18 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Models = OCA.SpreedMe.Models || {};
 
+	/**
+	 * Model for rooms.
+	 *
+	 * Room can be used as the model of a RoomCollection or as a standalone
+	 * model. When used as a standalone model the token must be provided in the
+	 * constructor options.
+	 *
+	 * Besides fetching the data from the server it supports renaming the room
+	 * by calling "save('displayName', nameToSet, options)"; in this case the
+	 * options must contain, at least, "patch: true" (it may contain other
+	 * options like a success callback too if needed).
+	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
 			name: '',
@@ -33,6 +45,36 @@
 			count: 0,
 			active: false,
 			lastPing: 0
+		},
+		url: function() {
+			return OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.get('token');
+		},
+		parse: function(result) {
+			// When the model is created by a RoomCollection "Room.parse" will
+			// be called with the result already parsed by
+			// "RoomCollection.parse", so the given result is already the
+			// attributes hash to be set on the model.
+			return (result.ocs === undefined)? result : result.ocs.data;
+		},
+		sync: function(method, model, options) {
+			// When saving a model "Backbone.Model.save" calls "sync" with an
+			// "update" method, which by default sends a "PUT" request that
+			// contains all the attributes of the model. In order to send only
+			// the attributes to be saved "patch: true" must be set in the
+			// options. However, this causes a "PATCH" request instead of a
+			// "PUT" request to be sent, so the "method" must be changed from
+			// "patch" to "update", as the backend expects a "PUT" request.
+			// Moreover, the endpoint to rename a room expects the name to be
+			// provided in a "roomName" attribute instead of a "displayName"
+			// attribute, so that has to be changed too.
+			if (method === 'patch' && options.attrs.displayName) {
+				method = 'update';
+
+				options.attrs.roomName = options.attrs.displayName;
+				delete options.attrs.displayName;
+			}
+
+			return Backbone.Model.prototype.sync.call(this, method, model, options);
 		}
 	});
 

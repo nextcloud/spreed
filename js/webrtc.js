@@ -40,6 +40,10 @@ var spreedPeerConnectionTable = [];
 		var currentSessionId = webrtc.connection.getSessionid();
 
 		newUsers.forEach(function(user) {
+			if (!user.inCall) {
+				return;
+			}
+
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 			var sessionId = user.sessionId || user.sessionid;
 			if (!sessionId || sessionId === currentSessionId || previousUsersInRoom.indexOf(sessionId) !== -1) {
@@ -125,15 +129,25 @@ var spreedPeerConnectionTable = [];
 			var currentSessionId = webrtc.connection.getSessionid();
 			var currentUsersInRoom = [];
 			var userMapping = {};
+			var selfInCall = false;
 			users.forEach(function(user) {
+				if (!user['inCall']) {
+					return;
+				}
+
 				var sessionId = user['sessionId'] || user.sessionid;
 				if (sessionId === currentSessionId) {
+					selfInCall = true;
 					return;
 				}
 
 				currentUsersInRoom.push(sessionId);
 				userMapping[sessionId] = user;
 			});
+
+			if (!selfInCall) {
+				return;
+			}
 
 			var newSessionIds = currentUsersInRoom.diff(previousUsersInRoom);
 			var disconnectedSessionIds = previousUsersInRoom.diff(currentUsersInRoom);
@@ -643,9 +657,12 @@ var spreedPeerConnectionTable = [];
 		}
 
 		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
+			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
+		});
+
+		OCA.SpreedMe.webrtc.on('joinedCall', function() {
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
-			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
 		});
 
 		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
