@@ -164,6 +164,32 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 * @param TableNode|null $formData
+	 */
+	public function userJoinsRoom($user, $identifier, $statusCode, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants/active',
+			$formData
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$response = $this->getDataFromResponse($this->response);
+		if (array_key_exists('sessionId', $response)) {
+			// In the chat guest users are identified by their sessionId. The
+			// sessionId is larger than the size of the actorId column in the
+			// database, though, so the ID stored in the database and returned
+			// in chat messages is a hashed version instead.
+			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
