@@ -289,17 +289,6 @@ var spreedPeerConnectionTable = [];
 						case 'completed': // on caller side
 							console.log('Connection established.');
 							avatar.css('opacity', '1');
-							// Send the current information about the video and microphone state
-							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
-								OCA.SpreedMe.webrtc.emit('videoOff');
-							} else {
-								OCA.SpreedMe.webrtc.emit('videoOn');
-							}
-							if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
-								OCA.SpreedMe.webrtc.emit('audioOff');
-							} else {
-								OCA.SpreedMe.webrtc.emit('audioOn');
-							}
 							if (!OC.getCurrentUser()['uid']) {
 								// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
 								var currentGuestNick = localStorage.getItem("nick");
@@ -593,6 +582,178 @@ var spreedPeerConnectionTable = [];
 			}
 		});
 
+		// Update statistics for each peer once per second.
+		var peerIntervalTime = 100;
+		// Calculate statistics from the last 1 second.
+		var peerStatsDuration = 1000;
+		var peerStatsCount = Math.round(peerStatsDuration / peerIntervalTime);
+		var minPeerStatsDuration = 500;
+		// Minimum bandwidths are in bytes per second. We are sending silence
+		// or a black video for muted tracks, so these values can't be set to 0.
+		var minAudioBandwidth = 1300;
+		var minVideoBandwidth = 4000;
+
+		var peerStats = {};
+
+		var BandwidthCalculator = function() {
+			this.values = [];
+			this.times = [];
+		};
+
+		BandwidthCalculator.prototype.add = function(value) {
+			if (typeof(value) === "string") {
+				value = parseInt(value, 10);
+			}
+			this.values.push(value);
+			this.times.push(new Date());
+			if (this.values.length > peerStatsCount) {
+				this.values.splice(0, 1);
+				this.times.splice(0, 1);
+			}
+			return this.getBandwidth();
+		};
+
+		// Returns the bandwidth in bytes per second.
+		BandwidthCalculator.prototype.getBandwidth = function() {
+			var count = this.values.length;
+			if (count < 2) {
+				return -1;
+			}
+			var duration = this.times[count-1] - this.times[0];
+			if (duration < minPeerStatsDuration) {
+				return -1;
+			}
+
+			var value = this.values[count-1] - this.values[0];
+			return Math.round(value / (duration / 1000));
+		};
+
+		var PeerStatistics = function(peer) {
+			this.peer = peer;
+			this.setAudio(!!peer.stream.getAudioTracks().length);
+			this.setVideo(!!peer.stream.getVideoTracks().length);
+			this.audioBandwidth = new BandwidthCalculator();
+			this.videoBandwidth = new BandwidthCalculator();
+			var that = this;
+			this.interval = setInterval(function() {
+				that.updatePeerStatistics();
+			}, peerIntervalTime);
+		};
+
+		PeerStatistics.prototype.stop = function() {
+			if (!this.interval) {
+				return;
+			}
+			clearInterval(this.interval);
+			this.interval = null;
+		};
+
+		PeerStatistics.prototype.setAudio = function(enabled) {
+			if (enabled === this.hasAudio) {
+				return;
+			} else if (!enabled) {
+				console.log("Peer has stopped sending audio", this.peer.id);
+				OCA.SpreedMe.webrtc.emit('mute', {id: this.peer.id, name:'audio'});
+				this.hasAudio = false;
+			} else {
+				console.log("Peer is now sending audio", this.peer.id);
+				OCA.SpreedMe.webrtc.emit('unmute', {id: this.peer.id, name:'audio'});
+				this.hasAudio = true;
+			}
+		};
+
+		PeerStatistics.prototype.setVideo = function(enabled) {
+			if (enabled === this.hasVideo) {
+				return;
+			} else if (!enabled) {
+				console.log("Peer has stopped sending video", this.peer.id);
+				OCA.SpreedMe.webrtc.emit('mute', {id: this.peer.id, name:'video'});
+				this.hasVideo = false;
+			} else {
+				console.log("Peer is now sending video", this.peer.id);
+				OCA.SpreedMe.webrtc.emit('unmute', {id: this.peer.id, name:'video'});
+				this.hasVideo = true;
+			}
+		};
+
+		PeerStatistics.prototype.updatePeerStatistics = function() {
+			var audio_tracks = this.peer.stream.getAudioTracks();
+			var that = this;
+			// We check if a remote peer is sending (enough) data on the
+			// audio/video tracks to determine if he has muted/unmuted the
+			// corresponding device.
+			if (audio_tracks.length) {
+				this.peer.pc.pc.getStats(audio_tracks[0], function(stats) {
+					var addedAudio = false;
+					Object.keys(stats).forEach(function(key) {
+						var value = stats[key];
+						if (addedAudio || !value || value.mediaType !== 'audio' || !value.hasOwnProperty('bytesReceived')) {
+							return;
+						}
+
+						addedAudio = true;
+						var bw = that.audioBandwidth.add(value.bytesReceived);
+						//console.log("Audio bandwidth", that.peer.id, bw, value.bytesReceived);
+						if (bw < 0) {
+							return;
+						} else if (bw < minAudioBandwidth) {
+							that.setAudio(false);
+						} else {
+							that.setAudio(true);
+						}
+					});
+				});
+			} else if (this.hasAudio) {
+				this.setAudio(false);
+			}
+
+			var video_tracks = this.peer.stream.getVideoTracks();
+			if (video_tracks.length) {
+				this.peer.pc.pc.getStats(video_tracks[0], function(stats) {
+					var addedVideo = false;
+					Object.keys(stats).forEach(function(key) {
+						var value = stats[key];
+						if (addedVideo || !value || value.mediaType !== 'video' || !value.hasOwnProperty('bytesReceived')) {
+							return;
+						}
+
+						addedVideo = true;
+						var bw = that.videoBandwidth.add(value.bytesReceived);
+						//console.log("Video bandwidth", that.peer.id, bw, value.bytesReceived);
+						if (bw < 0) {
+							return;
+						} else if (bw < minVideoBandwidth) {
+							that.setVideo(false);
+						} else {
+							that.setVideo(true);
+						}
+					});
+				});
+			} else if (this.hasVideo) {
+				this.setVideo(false);
+			}
+		};
+
+		OCA.SpreedMe.webrtc.on('peerStreamAdded', function(peer) {
+			var id = peer.id;
+			if (peerStats.hasOwnProperty(id)) {
+				return;
+			}
+
+			peerStats[id] = new PeerStatistics(peer);
+		});
+
+		OCA.SpreedMe.webrtc.on('peerStreamRemoved', function(peer) {
+			var id = peer.id;
+			if (!peerStats.hasOwnProperty(id)) {
+				return;
+			}
+
+			var stats = peerStats[id];
+			stats.stop();
+			delete peerStats[id];
+		});
+
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
 			OCA.SpreedMe.app.startSpreed(configuration, signaling);
 		});
@@ -658,14 +819,6 @@ var spreedPeerConnectionTable = [];
 					OCA.SpreedMe.speakers.add(peer.id);
 				} else if(data.type === 'stoppedSpeaking') {
 					OCA.SpreedMe.speakers.remove(peer.id);
-				} else if(data.type === 'audioOn') {
-					OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'audio'});
-				} else if(data.type === 'audioOff') {
-					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'audio'});
-				} else if(data.type === 'videoOn') {
-					OCA.SpreedMe.webrtc.emit('unmute', {id: peer.id, name:'video'});
-				} else if(data.type === 'videoOff') {
-					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 				} else if (data.type === 'nickChanged') {
 					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
 				}
@@ -775,20 +928,6 @@ var spreedPeerConnectionTable = [];
 					unpromotedSpeakerId = null;
 				}
 			}
-		});
-
-		// Send the audio on and off events via data channel
-		OCA.SpreedMe.webrtc.on('audioOn', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'audioOn');
-		});
-		OCA.SpreedMe.webrtc.on('audioOff', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'audioOff');
-		});
-		OCA.SpreedMe.webrtc.on('videoOn', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'videoOn');
-		});
-		OCA.SpreedMe.webrtc.on('videoOff', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'videoOff');
 		});
 
 		OCA.SpreedMe.webrtc.on('screenAdded', function(video, peer) {
