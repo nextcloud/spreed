@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Validate SSL certificate" : "Bekreft SSL-sertifikat",
     "Delete server" : "Slett tjener",
     "Add new server" : "Legg til ny tjener",
     "Saved" : "Lagret",
@@ -40,11 +41,14 @@ OC.L10N.register(
     "Share link" : "Del lenke",
     "Change password" : "Endre passord",
     "Set password" : "Velg passord",
+    "Name" : "Navn",
     "Rename" : "Gi nytt navn",
+    "Your name …" : "Ditt navn…",
     "New message…" : "Ny melding…",
     "Send" : "Send",
     "No messages yet, start the conversation!" : "Ingen meldinger enda, start samtalen!",
     "[Unknown user name]" : "[Ukjent brukernavn]",
+    "Error occurred while sending message" : "Feil oppstod under foresendelse av melding",
     "Edit" : "Rediger",
     "moderator" : "moderator",
     "Demote from moderator" : "Fjern moderatorstatus",
