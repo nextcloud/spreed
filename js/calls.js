@@ -101,7 +101,7 @@
 			OCA.SpreedMe.webrtc.leaveCall();
 			OCA.SpreedMe.webrtc.joinCall(token);
 		},
-		leaveCall: function(token) {
+		leaveCall: function() {
 			$('#app-content').removeClass('incall');
 			OCA.SpreedMe.webrtc.leaveCall();
 		},
