@@ -145,22 +145,27 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->userId !== null) {
+		if ($this->userId === null) {
 			if (!$this->session->exists('spreed-session')) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
-			$sessionId = $this->session->get('spreed-session');
+
+			try {
+				$participant = $room->getParticipantBySession($this->session->get('spreed-session'));
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
 		} else {
 			try {
 				$participant = $room->getParticipant($this->userId);
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
+		}
 
-			$sessionId = $participant->getSessionId();
-			if ($sessionId === '0') {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
+		$sessionId = $participant->getSessionId();
+		if ($sessionId === '0') {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$room->changeInCall($sessionId, true);
@@ -205,22 +210,27 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($this->userId !== null) {
+		if ($this->userId === null) {
 			if (!$this->session->exists('spreed-session')) {
 				return new DataResponse();
 			}
-			$sessionId = $this->session->get('spreed-session');
+
+			try {
+				$participant = $room->getParticipantBySession($this->session->get('spreed-session'));
+			} catch (ParticipantNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
 		} else {
 			try {
 				$participant = $room->getParticipant($this->userId);
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
+		}
 
-			$sessionId = $participant->getSessionId();
-			if ($sessionId === '0') {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
+		$sessionId = $participant->getSessionId();
+		if ($sessionId === '0') {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$room->changeInCall($sessionId, false);
