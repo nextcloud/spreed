@@ -64,13 +64,13 @@ class Manager {
 	 * @param array $row
 	 * @return Room
 	 */
-	protected function createRoomObject(array $row) {
+	public function createRoomObject(array $row) {
 		$activeSince = null;
 		if (!empty($row['activeSince'])) {
 			$activeSince = new \DateTime($row['activeSince']);
 		}
 
-		return new Room($this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['activeGuests'], $activeSince);
+		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['activeGuests'], $activeSince);
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Manager {
 	 * @param array $row
 	 * @return Participant
 	 */
-	protected function createParticipantObject(Room $room, array $row) {
+	public function createParticipantObject(Room $room, array $row) {
 		return new Participant($this->db, $room, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId'], (bool) $row['inCall']);
 	}
 
