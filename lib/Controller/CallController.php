@@ -120,6 +120,11 @@ class CallController extends OCSController {
 		}
 
 		foreach ($participants['guests'] as $data) {
+			if (!$data['inCall']) {
+				// User is not active in call
+				continue;
+			}
+
 			$result[] = [
 				'userId' => '',
 				'token' => $token,
