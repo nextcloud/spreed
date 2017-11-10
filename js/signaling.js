@@ -761,6 +761,11 @@
 			}
 		}, function(data) {
 			console.log("Left", data);
+			// Any users we previously had in the room also "left" for us.
+			var leftUsers = _.keys(this.joinedUsers);
+			if (leftUsers.length) {
+				this._trigger("usersLeft", [leftUsers]);
+			}
 			this.joinedUsers = {};
 			this.currentCallToken = null;
 		}.bind(this));
