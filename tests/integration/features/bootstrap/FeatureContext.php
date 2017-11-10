@@ -190,6 +190,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" exits room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userExitsRoom($user, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('DELETE', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/participants/active');
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user

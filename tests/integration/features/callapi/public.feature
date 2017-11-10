@@ -17,7 +17,13 @@ Feature: callapi/public
     And user "participant2" is participant of room "room"
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
+    Then user "participant1" joins room "room" with 200
+    Then user "participant1" sees 0 peers in call "room" with 200
+    And user "participant2" sees 0 peers in call "room" with 200
     Then user "participant1" joins call "room" with 200
+    Then user "participant1" sees 1 peers in call "room" with 200
+    And user "participant2" sees 1 peers in call "room" with 200
+    Then user "participant2" joins room "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
     And user "participant2" joins call "room" with 200
@@ -28,7 +34,13 @@ Feature: callapi/public
     Then user "participant1" leaves call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
+    Then user "participant1" exits room "room" with 200
+    Then user "participant1" sees 1 peers in call "room" with 200
+    And user "participant2" sees 1 peers in call "room" with 200
     Then user "participant2" leaves call "room" with 200
+    Then user "participant1" sees 0 peers in call "room" with 200
+    And user "participant2" sees 0 peers in call "room" with 200
+    Then user "participant2" exits room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant2" sees 0 peers in call "room" with 200
 
@@ -39,9 +51,15 @@ Feature: callapi/public
     Then user "participant1" is participant of room "room"
     Then user "participant3" is not participant of room "room"
     And user "participant3" sees 0 peers in call "room" with 404
+    Then user "participant1" joins room "room" with 200
+    Then user "participant1" sees 0 peers in call "room" with 200
+    And user "participant2" sees 0 peers in call "room" with 200
     Then user "participant1" joins call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
+    Then user "participant3" joins room "room" with 200
+    Then user "participant1" sees 1 peers in call "room" with 200
+    And user "participant3" sees 1 peers in call "room" with 200
     And user "participant3" joins call "room" with 200
     Then user "participant1" sees 2 peers in call "room" with 200
     And user "participant3" sees 2 peers in call "room" with 200
@@ -50,8 +68,14 @@ Feature: callapi/public
     And user "participant3" sees 2 peers in call "room" with 200
     Then user "participant3" leaves call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
+    And user "participant3" sees 1 peers in call "room" with 200
+    Then user "participant3" exits room "room" with 200
+    Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
     Then user "participant1" leaves call "room" with 200
+    Then user "participant1" sees 0 peers in call "room" with 200
+    And user "participant3" sees 0 peers in call "room" with 404
+    Then user "participant1" exits room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
 
@@ -61,9 +85,15 @@ Feature: callapi/public
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of room "room"
     And user "guest" sees 0 peers in call "room" with 404
+    Then user "participant1" joins room "room" with 200
+    Then user "participant1" sees 0 peers in call "room" with 200
+    And user "participant2" sees 0 peers in call "room" with 200
     Then user "participant1" joins call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
+    Then user "guest" joins room "room" with 200
+    Then user "participant1" sees 1 peers in call "room" with 200
+    And user "guest" sees 1 peers in call "room" with 200
     And user "guest" joins call "room" with 200
     Then user "participant1" sees 2 peers in call "room" with 200
     And user "guest" sees 2 peers in call "room" with 200
@@ -72,7 +102,13 @@ Feature: callapi/public
     And user "guest" sees 2 peers in call "room" with 200
     Then user "guest" leaves call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
+    And user "guest" sees 1 peers in call "room" with 200
+    Then user "guest" exits room "room" with 200
+    Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
     Then user "participant1" leaves call "room" with 200
+    Then user "participant1" sees 0 peers in call "room" with 200
+    And user "guest" sees 0 peers in call "room" with 404
+    Then user "participant1" exits room "room" with 200
     Then user "participant1" sees 0 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
