@@ -41,6 +41,8 @@ class Room {
 	const GROUP_CALL = 2;
 	const PUBLIC_CALL = 3;
 
+	/** @var Manager */
+	private $manager;
 	/** @var IDBConnection */
 	private $db;
 	/** @var ISecureRandom */
@@ -73,6 +75,7 @@ class Room {
 	/**
 	 * Room constructor.
 	 *
+	 * @param Manager $manager
 	 * @param IDBConnection $db
 	 * @param ISecureRandom $secureRandom
 	 * @param EventDispatcherInterface $dispatcher
@@ -85,7 +88,8 @@ class Room {
 	 * @param int $activeGuests
 	 * @param \DateTime|null $activeSince
 	 */
-	public function __construct(IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null) {
+	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null) {
+		$this->manager = $manager;
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
@@ -185,11 +189,11 @@ class Room {
 		}
 
 		if ($this->currentUser === $userId) {
-			$this->participant = new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+			$this->participant = $this->manager->createParticipantObject($this, $row);
 			return $this->participant;
 		}
 
-		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+		return $this->manager->createParticipantObject($this, $row);
 	}
 
 	/**
@@ -215,7 +219,7 @@ class Room {
 			throw new ParticipantNotFoundException('User is not a participant');
 		}
 
-		return new Participant($this->db, $this, $row['userId'], (int) $row['participantType'], (int) $row['lastPing'], $row['sessionId']);
+		return $this->manager->createParticipantObject($this, $row);
 	}
 
 	public function deleteRoom() {
