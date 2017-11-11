@@ -49,20 +49,20 @@
 	 * be added as needed. The call details view can be set through
 	 * "setCallInfoView()" while new tabs can be added through "addTab()".
 	 *
-	 * The SidebarView can be shown or hidden programatically using "show()" and
-	 * "hide()". It will delegate on "OC.Apps.showAppSidebar()" and
+	 * The SidebarView can be opened or closed programatically using "open()"
+	 * and "close()". It will delegate on "OC.Apps.showAppSidebar()" and
 	 * "OC.Apps.hideAppSidebar()", so it must be used along an "#app-content"
 	 * that takes into account the "with-app-sidebar" CSS class.
 	 *
-	 * In order for the user to be able to show the sidebar when it is hidden,
+	 * In order for the user to be able to open the sidebar when it is closed,
 	 * the SidebarView shows a small icon ("#app-sidebar-trigger") on the right
-	 * border of the document that shows the sidebar when clicked. When the
-	 * sidebar is shown the icon is hidden.
+	 * border of the document that opens the sidebar when clicked. When the
+	 * sidebar is open the icon is hidden.
 	 *
-	 * By default the sidebar is disabled, that is, it is hidden and can not be
-	 * shown, neither by the user nor programatically. Calling "enable()" will
-	 * make possible for the sidebar to be shown, and calling "disable()" will
-	 * prevent it again (also hidden it if it was shown).
+	 * By default the sidebar is disabled, that is, it is closed and can not be
+	 * opened, neither by the user nor programatically. Calling "enable()" will
+	 * make possible for the sidebar to be opened, and calling "disable()" will
+	 * prevent it again (also closing it if it was open).
 	 */
 	var SidebarView = Marionette.View.extend({
 
@@ -142,7 +142,7 @@
 		/**
 		 * Sets a new call info view.
 		 *
-		 * Once set, the Sidebar takes ownership of the view, and it will
+		 * Once set, the SidebarView takes ownership of the view, and it will
 		 * destroy it if a new one is set.
 		 *
 		 * @param Marionette.View callInfoView the view to set.
@@ -167,8 +167,8 @@
 		 * can provide an 'onRender' function to extend the default rendering of
 		 * the header).
 		 *
-		 * The Sidebar takes ownership of the given content view, and it will
-		 * destroy it when the Sidebar is destroyed.
+		 * The SidebarView takes ownership of the given content view, and it
+		 * will destroy it when the SidebarView is destroyed.
 		 *
 		 * @param string tabId the ID of the tab.
 		 * @param Object tabHeaderOptions the options for the constructor of the
