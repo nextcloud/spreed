@@ -129,20 +129,11 @@
 		 * @return int the insertion index.
 		 */
 		_getIndexForTabHeaderPriority: function(priority) {
-			// this.getRegions() returns an object that acts as a map, but it
-			// has no "length" property; _.map creates an array, thus ensuring
-			// that there is a "length" property to know the current number of
-			// tab headers.
-			var currentPriorities = _.map(this.getRegions(), function(region) {
-				return region.currentView.getOption('priority');
-			});
-
-			// By default sort() converts the values to strings and sorts them
-			// in ascending order using their Unicode value; a custom function
-			// must be used to sort them by their numerical value instead.
-			currentPriorities.sort(function(a, b) {
-				return a - b;
-			}).reverse();
+			// _.map creates an array, so "currentPriorities" will contain a
+			// "length" property.
+			var currentPriorities = _.map(this._tabIds, _.bind(function(tabId) {
+				return this.getRegion(tabId).currentView.getOption('priority');
+			}, this));
 
 			var index = _.findIndex(currentPriorities, function(currentPriority) {
 				return priority > currentPriority;
