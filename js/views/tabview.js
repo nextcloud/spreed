@@ -76,9 +76,8 @@
 		// nothing to be rendered with a template.
 		template: _.noop,
 
-		childViewTriggers: {
-			// Propagate the event to the parent view.
-			'click:tabHeader': 'click:tabHeader'
+		childViewEvents: {
+			'click:tabHeader': 'selectTabHeader'
 		},
 
 		addTabHeader: function(tabId, tabHeaderOptions) {
@@ -157,6 +156,8 @@
 			this._currentTabId = tabId;
 
 			this.getChildView(this._currentTabId).setSelected(true);
+
+			this.triggerMethod('select:tabHeader', tabId);
 		}
 
 	});
@@ -231,10 +232,6 @@
 			}
 		},
 
-		onChildviewClickTabHeader: function(tabId) {
-			this.selectTab(tabId);
-		},
-
 		/**
 		 * Select the tab associated to the given tabId.
 		 *
@@ -246,7 +243,16 @@
 			}
 
 			this._tabHeadersView.selectTabHeader(tabId);
+		},
 
+		/**
+		 * Shows the content view associated to the selected tab header.
+		 *
+		 * Only for internal use as an event handler.
+		 *
+		 * @param string tabId the ID of the selected tab.
+		 */
+		onChildviewSelectTabHeader: function(tabId) {
 			// With Marionette 3.1 "this.detachChildView('tabContent')" would be
 			// used instead of the "preventDestroy" option.
 			this.showChildView('tabContent', this._tabContentViews[tabId], { preventDestroy: true } );
