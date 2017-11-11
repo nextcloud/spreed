@@ -46,8 +46,9 @@
 	 * The right sidebar is an area that can be shown or hidden from the right
 	 * border of the document. It contains a view intended to provide details of
 	 * the current call at the top and a TabView to which different sections can
-	 * be added as needed. The call details view can be set through
-	 * "setCallInfoView()" while new tabs can be added through "addTab()".
+	 * be added and removed as needed. The call details view can be set through
+	 * "setCallInfoView()" while new tabs can be added through "addTab()" and
+	 * removed through "removeTab()".
 	 *
 	 * The SidebarView can be opened or closed programatically using "open()"
 	 * and "close()". It will delegate on "OC.Apps.showAppSidebar()" and
@@ -168,7 +169,8 @@
 		 * the header).
 		 *
 		 * The SidebarView takes ownership of the given content view, and it
-		 * will destroy it when the SidebarView is destroyed.
+		 * will destroy it when the SidebarView is destroyed, except if the
+		 * content view is removed first.
 		 *
 		 * @param string tabId the ID of the tab.
 		 * @param Object tabHeaderOptions the options for the constructor of the
@@ -179,6 +181,27 @@
 		addTab: function(tabId, tabHeaderOptions, tabContentView) {
 			this._tabView.addTab(tabId, tabHeaderOptions, tabContentView);
 		},
+
+		/**
+		 * Removes the tab for the given tabId.
+		 *
+		 * If the tab to be removed is the one currently selected and there are
+		 * other tabs the next one (in priority and then insertion order) is
+		 * automatically selected; if the tab to be removed is the last one,
+		 * then the previous one is selected instead. If there are no other tabs
+		 * then the TabView is simply emptied.
+		 *
+		 * In any case the content view given when the tab was added is
+		 * returned; this SidebarView will no longer have ownership of the
+		 * content view, and thus the content view must be explicitly destroyed
+		 * when no longer needed.
+		 *
+		 * @param string tabId the ID of the tab to remove.
+		 * @return Marionette.View the content view of the removed tab.
+		 */
+		removeTab: function(tabId) {
+			return this._tabView.removeTab(tabId);
+		}
 
 	});
 
