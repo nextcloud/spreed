@@ -24,7 +24,7 @@ Feature: chat/public
   Scenario: not invited but joined user can send and receive chat messages to and from public room
     Given user "participant1" creates room "public room"
       | roomType | 3 |
-    And user "participant3" joins call "public room" with 200
+    And user "participant3" joins room "public room" with 200
     When user "participant3" sends message "Message 1" to room "public room" with 201
     Then user "participant3" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message   |
@@ -40,7 +40,7 @@ Feature: chat/public
   Scenario: joined guest can send and receive chat messages to and from public room
     Given user "participant1" creates room "public room"
       | roomType | 3 |
-    And user "guest" joins call "public room" with 200
+    And user "guest" joins room "public room" with 200
     When user "guest" sends message "Message 1" to room "public room" with 201
     Then user "guest" sees the following messages in room "public room" with 200
       | room        | actorType | actorId | actorDisplayName | message   |
@@ -57,7 +57,7 @@ Feature: chat/public
     Given user "participant1" creates room "public room"
       | roomType | 3 |
     And user "participant1" adds "participant2" to room "public room" with 200
-    And user "guest" joins call "public room" with 200
+    And user "guest" joins room "public room" with 200
     When user "participant1" sends message "Message 1" to room "public room" with 201
     And user "participant2" sends message "Message 2" to room "public room" with 201
     And user "guest" sends message "Message 3" to room "public room" with 201
