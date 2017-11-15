@@ -400,7 +400,7 @@
 			} else {
 				title = '';
 			}
-			title += t('spreed', 'Video calls');
+			title += t('spreed', 'Talk');
 			title += ' - ' + oc_defaults.title;
 			window.document.title = title;
 		},
