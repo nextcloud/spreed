@@ -165,7 +165,7 @@
 		},
 
 		renderWhenInactive: function() {
-			if (this.ui.passwordInput.val() === '') {
+			if (this.ui.passwordInput.length === 0 || this.ui.passwordInput.val() === '') {
 				this.render();
 				return;
 			}
