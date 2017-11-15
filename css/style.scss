@@ -900,3 +900,48 @@ video {
 	display: inline-block;
 	padding: 12px 0;
 }
+
+/**
+ * Cascade parent element height to the chat view in the sidebar to limit the
+ * vertical scroll bar only to the list of messages. Otherwise, the vertical
+ * scroll bar would be shown for the whole sidebar and everything would be
+ * moved when scrolling to see overflown messages.
+ *
+ * The list of messages should stretch to fill the available space at the bottom
+ * of the right sidebar, so the height is cascaded using flex boxes.
+ *
+ * It is horrible, I know (but better than using JavaScript ;-) ). Please
+ * improve it if you know how :-)
+ */
+#app-sidebar {
+	display: flex;
+	flex-direction: column;
+}
+
+#app-sidebar .tabs {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#app-sidebar .tabsContainer {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#app-sidebar .tab {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#app-sidebar #commentsTabView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#app-sidebar .comments {
+	overflow-y: auto;
+}
