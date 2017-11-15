@@ -164,9 +164,13 @@ class Application extends App {
 			/** @var Room $room */
 			$room = $event->getSubject();
 
-			/** @var Hooks $hooks */
-			$hooks = $this->getContainer()->query(Hooks::class);
-			$hooks->generateInvitationActivity($room, $event->getArgument('users'));
+			/** @var Hooks $activityHooks */
+			$activityHooks = $this->getContainer()->query(Hooks::class);
+			$activityHooks->generateInvitationActivity($room, $event->getArgument('users'));
+
+			/** @var \OCA\Spreed\Notification\Hooks $notificationHooks */
+			$notificationHooks = $this->getContainer()->query(\OCA\Spreed\Notification\Hooks::class);
+			$notificationHooks->generateInvitation($room, $event->getArgument('users'));
 		};
 		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
 
