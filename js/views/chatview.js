@@ -154,6 +154,17 @@
 				$el.next().addClass('grouped');
 			}
 
+			// PHP timestamp is second-based; JavaScript timestamp is
+			// millisecond based.
+			model.set('date', new Date(model.get('timestamp') * 1000));
+
+			if (this._lastAddedMessageModel && !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
+				// 'LL' formats a localized date including day of month, month
+				// name and year
+				$el.next().attr('data-date', OC.Util.formatDate(this._lastAddedMessageModel.get('date'), 'LL'));
+				$el.next().addClass('showDate');
+			}
+
 			// Keeping the model for the last added message is not only
 			// practical, but needed, as the models for previous messages are
 			// removed from the collection each time a new set of messages is
@@ -182,6 +193,14 @@
 			}
 
 			return Math.abs(model1.get('timestamp') - model2.get('timestamp')) <= secondsThreshold;
+		},
+
+		_modelsHaveSameDate: function(model1, model2) {
+			if (!model1 || !model2) {
+				return false;
+			}
+
+			return model1.get('date').toDateString() === model2.get('date').toDateString();
 		},
 
 		_postRenderItem: function($el) {
