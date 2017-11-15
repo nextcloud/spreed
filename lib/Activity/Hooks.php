@@ -46,7 +46,7 @@ class Hooks {
 		$room->setActiveSince(new \DateTime(), $isGuest);
 	}
 
-	public function generateActivity(Room $room) {
+	public function generateCallActivity(Room $room) {
 		$activeSince = $room->getActiveSince();
 		if (!$activeSince instanceof \DateTime || $room->hasActiveSessions()) {
 			return false;
