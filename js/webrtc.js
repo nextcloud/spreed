@@ -661,8 +661,14 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('joinedCall', function() {
+			OCA.SpreedMe.app.syncRooms();
+
 			$('#app-content').removeClass('icon-loading');
 			$('.videoView').removeClass('hidden');
+		});
+
+		OCA.SpreedMe.webrtc.on('leftCall', function() {
+			OCA.SpreedMe.app.syncRooms();
 		});
 
 		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
