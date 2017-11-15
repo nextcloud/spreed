@@ -182,3 +182,11 @@
 .app-files .action-comment {
 	padding: 16px 14px;
 }
+
+#commentsTabView .comment.grouped .authorRow {
+	display: none;
+}
+
+#commentsTabView .comment.grouped {
+	margin-top: -20px;
+}
