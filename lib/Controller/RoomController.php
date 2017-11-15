@@ -938,27 +938,5 @@ class RoomController extends OCSController {
 			// Error while creating the notification
 			$this->logger->logException($e, ['app' => 'spreed']);
 		}
-
-		$event = $this->activityManager->generateEvent();
-		try {
-			$event->setApp('spreed')
-				->setType('spreed')
-				->setAuthor($actor->getUID())
-				->setAffectedUser($user->getUID())
-				->setObject('room', $room->getId(), $room->getName())
-				->setTimestamp($dateTime->getTimestamp())
-				->setSubject('invitation', [
-					'user' => $actor->getUID(),
-					'room' => $room->getId(),
-					'name' => $room->getName(),
-				]);
-			$this->activityManager->publish($event);
-		} catch (\InvalidArgumentException $e) {
-			// Error while creating the activity
-			$this->logger->logException($e, ['app' => 'spreed']);
-		} catch (\BadMethodCallException $e) {
-			// Error while sending the activity
-			$this->logger->logException($e, ['app' => 'spreed']);
-		}
 	}
 }
