@@ -60,6 +60,7 @@ class BackendNotifier{
 	 *
 	 * @param string $url
 	 * @param array $data
+	 * @throws \Exception
 	 */
 	private function backendRequest($url, $data) {
 		$servers = $this->config->getSignalingServers();
@@ -71,9 +72,9 @@ class BackendNotifier{
 		$signaling = $servers[mt_rand(0, count($servers) - 1)];
 		$signaling['server'] = rtrim($signaling['server'], '/');
 		$url = rtrim($signaling['server'], '/') . $url;
-		if (substr($url, 0, 6) === 'wss://') {
+		if (strpos($url, 'wss://') === 0) {
 			$url = 'https://' . substr($url, 6);
-		} else if (substr($url, 0, 5) === 'ws://') {
+		} else if (strpos($url, 'ws://') === 0) {
 			$url = 'http://' . substr($url, 5);
 		}
 		$client = $this->clientService->newClient();
@@ -105,11 +106,7 @@ class BackendNotifier{
 	 */
 	private function getRoomUserIds($room) {
 		$participants = $room->getParticipants();
-		$userIds = [];
-		foreach ($participants['users'] as $participant => $data) {
-			array_push($userIds, $participant);
-		}
-		return $userIds;
+		return array_keys($participants['users']);
 	}
 
 	/**
@@ -117,18 +114,19 @@ class BackendNotifier{
 	 *
 	 * @param Room $room
 	 * @param array $users
+	 * @throws \Exception
 	 */
 	public function roomInvited($room, $users) {
-		$this->logger->info("Now invited to " . $room->getToken() . ": " + print_r($users, true));
+		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
 		$userIds = [];
 		foreach ($users as $user) {
-			array_push($userIds, $user["userId"]);
+			$userIds[] = $user['userId'];
 		}
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'invite',
 			'invite' => [
 				'userids' => $userIds,
-				// TODO(fancycode): We should try to get rid of "alluserids" and
+				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $this->getRoomUserIds($room),
 				'properties' => [
@@ -144,14 +142,15 @@ class BackendNotifier{
 	 *
 	 * @param Room $room
 	 * @param array $userIds
+	 * @throws \Exception
 	 */
 	public function roomsDisinvited($room, $userIds) {
-		$this->logger->info("No longer invited to " . $room->getToken() . ": " + print_r($userIds, true));
+		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true));
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'disinvite',
 			'disinvite' => [
 				'userids' => $userIds,
-				// TODO(fancycode): We should try to get rid of "alluserids" and
+				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $this->getRoomUserIds($room),
 				'properties' => [
@@ -166,9 +165,10 @@ class BackendNotifier{
 	 * The given room has been modified.
 	 *
 	 * @param Room $room
+	 * @throws \Exception
 	 */
 	public function roomModified($room) {
-		$this->logger->info("Room modified: " . $room->getToken());
+		$this->logger->info('Room modified: ' . $room->getToken());
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'update',
 			'update' => [
@@ -185,13 +185,11 @@ class BackendNotifier{
 	 * The given room has been deleted.
 	 *
 	 * @param Room $room
+	 * @throws \Exception
 	 */
 	public function roomDeleted($room, $participants) {
-		$this->logger->info("Room deleted: " . $room->getToken());
-		$userIds = [];
-		foreach ($participants['users'] as $participant => $data) {
-			array_push($userIds, $participant);
-		}
+		$this->logger->info('Room deleted: ' . $room->getToken());
+		$userIds = array_keys($participants['users']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'delete',
 			'delete' => [
