@@ -25,6 +25,7 @@ namespace OCA\Spreed\Notification;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -87,145 +88,18 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Invalid room');
 		}
 
+		$notification
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
+			->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
+
 		if ($notification->getSubject() === 'invitation') {
-			$parameters = $notification->getSubjectParameters();
-			$uid = $parameters[0];
-			$notification
-				->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
-				->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
-
-			if ($notification->getObjectType() === 'room') {
-				$user = $this->userManager->get($uid);
-				if ($user instanceof IUser) {
-					if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-						$notification
-							->setParsedSubject(
-								$l->t('%s invited you to a private call', [$user->getDisplayName()])
-							)
-							->setRichSubject(
-								$l->t('{user} invited you to a private call'), [
-									'user' => [
-										'type' => 'user',
-										'id' => $uid,
-										'name' => $user->getDisplayName(),
-									]
-								]
-							);
-					} else if ($room->getType() === Room::GROUP_CALL ||
-						$room->getType() === Room::PUBLIC_CALL) {
-						$callTypeIsSupported = false;
-						try {
-							$this->definitions->getDefinition('call');
-							$callTypeIsSupported = true;
-						} catch (InvalidObjectExeption $e) {
-							// Before 11.0.2 this is not supported
-						}
-
-						if ($callTypeIsSupported && $room->getName() !== '') {
-							$notification
-								->setParsedSubject(
-									$l->t('%s invited you to a group call: %s', [$user->getDisplayName(), $room->getName()])
-								)
-								->setRichSubject(
-									$l->t('{user} invited you to a group call: {call}'), [
-										'user' => [
-											'type' => 'user',
-											'id' => $uid,
-											'name' => $user->getDisplayName(),
-										],
-										'call' => [
-											'type' => 'call',
-											'id' => $room->getId(),
-											'name' => $room->getName(),
-											'call-type' => $this->getRoomType($room),
-										],
-									]
-								);
-						} else {
-							$notification
-								->setParsedSubject(
-									$l->t('%s invited you to a group call', [$user->getDisplayName()])
-								)
-								->setRichSubject(
-									$l->t('{user} invited you to a group call'), [
-										'user' => [
-											'type' => 'user',
-											'id' => $uid,
-											'name' => $user->getDisplayName(),
-										]
-									]
-								);
-						}
-					} else {
-						throw new \InvalidArgumentException('Unknown room type');
-					}
-				} else {
-					throw new \InvalidArgumentException('Calling user does not exist anymore');
-				}
-			} else {
-				throw new \InvalidArgumentException('Unknown object type');
-			}
-		} else if ($notification->getSubject() === 'call') {
-			$parameters = $notification->getSubjectParameters();
-			$uid = $parameters[0];
-			$notification
-				->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
-				->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
-
-			if ($notification->getObjectType() === 'room') {
-				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-					$user = $this->userManager->get($uid);
-					if ($user instanceof IUser) {
-						$notification
-							->setParsedSubject(
-								str_replace('{user}', $user->getDisplayName(), $l->t('{user} wants to talk with you'))
-							)
-							->setRichSubject(
-								$l->t('{user} wants to talk with you'), [
-									'user' => [
-										'type' => 'user',
-										'id' => $uid,
-										'name' => $user->getDisplayName(),
-									]
-								]
-							);
-					} else {
-						throw new \InvalidArgumentException('Calling user does not exist anymore');
-					}
-				} else if ($room->getType() === Room::GROUP_CALL ||
-					$room->getType() === Room::PUBLIC_CALL) {
-
-					if ($room->getName() !== '') {
-						$notification
-							->setParsedSubject(
-								str_replace('{call}', $room->getName(), $l->t('A group call has started in {call}'))
-							)
-							->setRichSubject(
-								$l->t('A group call has started in {call}'), [
-									'call' => [
-										'type' => 'call',
-										'id' => $room->getId(),
-										'name' => $room->getName(),
-										'call-type' => $this->getRoomType($room),
-									],
-								]
-							);
-					} else {
-						$notification
-							->setParsedSubject($l->t('A group call has started'))
-							->setRichSubject($l->t('A group call has started'));
-					}
-				} else {
-					throw new \InvalidArgumentException('Unknown room type');
-				}
-			} else {
-				throw new \InvalidArgumentException('Unknown object type');
-			}
-		} else {
-			throw new \InvalidArgumentException('Unknown subject');
+			return $this->parseInvitation($notification, $room, $l);
+		}
+		if ($notification->getSubject() === 'call') {
+			return $this->parseCall($notification, $room, $l);
 		}
 
-		return $notification;
+		throw new \InvalidArgumentException('Unknown subject');
 	}
 
 	/**
@@ -244,5 +118,147 @@ class Notifier implements INotifier {
 			default:
 				throw new \InvalidArgumentException('Unknown room type');
 		}
+	}
+
+	/**
+	 * @param INotification $notification
+	 * @param Room $room
+	 * @param IL10N $l
+	 * @return INotification
+	 * @throws \InvalidArgumentException
+	 */
+	protected function parseInvitation(INotification $notification, Room $room, IL10N $l) {
+		$parameters = $notification->getSubjectParameters();
+		$uid = $parameters[0];
+
+		if ($notification->getObjectType() !== 'room') {
+			throw new \InvalidArgumentException('Unknown object type');
+		}
+
+		$user = $this->userManager->get($uid);
+		if (!$user instanceof IUser) {
+			throw new \InvalidArgumentException('Calling user does not exist anymore');
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$notification
+				->setParsedSubject(
+					$l->t('%s invited you to a private call', [$user->getDisplayName()])
+				)
+				->setRichSubject(
+					$l->t('{user} invited you to a private call'), [
+						'user' => [
+							'type' => 'user',
+							'id' => $uid,
+							'name' => $user->getDisplayName(),
+						]
+					]
+				);
+
+		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+			if ($room->getName() !== '') {
+				$notification
+					->setParsedSubject(
+						$l->t('%s invited you to a group call: %s', [$user->getDisplayName(), $room->getName()])
+					)
+					->setRichSubject(
+						$l->t('{user} invited you to a group call: {call}'), [
+							'user' => [
+								'type' => 'user',
+								'id' => $uid,
+								'name' => $user->getDisplayName(),
+							],
+							'call' => [
+								'type' => 'call',
+								'id' => $room->getId(),
+								'name' => $room->getName(),
+								'call-type' => $this->getRoomType($room),
+							],
+						]
+					);
+			} else {
+				$notification
+					->setParsedSubject(
+						$l->t('%s invited you to a group call', [$user->getDisplayName()])
+					)
+					->setRichSubject(
+						$l->t('{user} invited you to a group call'), [
+							'user' => [
+								'type' => 'user',
+								'id' => $uid,
+								'name' => $user->getDisplayName(),
+							]
+						]
+					);
+			}
+		} else {
+			throw new \InvalidArgumentException('Unknown room type');
+		}
+
+		return $notification;
+	}
+
+	/**
+	 * @param INotification $notification
+	 * @param Room $room
+	 * @param IL10N $l
+	 * @return INotification
+	 * @throws \InvalidArgumentException
+	 */
+	protected function parseCall(INotification $notification, Room $room, IL10N $l) {
+		$parameters = $notification->getSubjectParameters();
+		$uid = $parameters[0];
+
+		if ($notification->getObjectType() !== 'room') {
+			throw new \InvalidArgumentException('Unknown object type');
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$user = $this->userManager->get($uid);
+			if ($user instanceof IUser) {
+				$notification
+					->setParsedSubject(
+						str_replace('{user}', $user->getDisplayName(), $l->t('{user} wants to talk with you'))
+					)
+					->setRichSubject(
+						$l->t('{user} wants to talk with you'), [
+							'user' => [
+								'type' => 'user',
+								'id' => $uid,
+								'name' => $user->getDisplayName(),
+							]
+						]
+					);
+			} else {
+				throw new \InvalidArgumentException('Calling user does not exist anymore');
+			}
+
+		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+			if ($room->getName() !== '') {
+				$notification
+					->setParsedSubject(
+						str_replace('{call}', $room->getName(), $l->t('A group call has started in {call}'))
+					)
+					->setRichSubject(
+						$l->t('A group call has started in {call}'), [
+							'call' => [
+								'type' => 'call',
+								'id' => $room->getId(),
+								'name' => $room->getName(),
+								'call-type' => $this->getRoomType($room),
+							],
+						]
+					);
+			} else {
+				$notification
+					->setParsedSubject($l->t('A group call has started'))
+					->setRichSubject($l->t('A group call has started'));
+			}
+
+		} else {
+			throw new \InvalidArgumentException('Unknown room type');
+		}
+
+		return $notification;
 	}
 }
