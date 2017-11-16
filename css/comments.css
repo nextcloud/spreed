@@ -182,3 +182,36 @@
 .app-files .action-comment {
 	padding: 16px 14px;
 }
+
+#commentsTabView .comment.grouped .authorRow {
+	display: none;
+}
+
+#commentsTabView .comment.grouped {
+	margin-top: -20px;
+}
+
+#commentsTabView .comment.showDate {
+	margin-top: 40px;
+	border-top: 1px solid #dbdbdb;
+	padding-top: 10px;
+}
+
+#commentsTabView .comment.showDate:before {
+	content: attr(data-date);
+
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	padding: 0 7px 0 7px;
+
+	text-align: center;
+
+	color: #878787;
+	background-color: #fff;
+}
+
+#commentsTabView .comment.showDate .authorRow {
+	display: block;
+}

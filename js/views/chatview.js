@@ -97,6 +97,8 @@
 		},
 
 		render: function() {
+			delete this._lastAddedMessageModel;
+
 			this.$el.html(this.template({
 				emptyResultLabel: t('spreed', 'No messages yet, start the conversation!')
 			}));
@@ -147,7 +149,58 @@
 				this.$container.prepend($el);
 			}
 
+			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
+					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model)) {
+				$el.next().addClass('grouped');
+			}
+
+			// PHP timestamp is second-based; JavaScript timestamp is
+			// millisecond based.
+			model.set('date', new Date(model.get('timestamp') * 1000));
+
+			if (this._lastAddedMessageModel && !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
+				// 'LL' formats a localized date including day of month, month
+				// name and year
+				$el.next().attr('data-date', OC.Util.formatDate(this._lastAddedMessageModel.get('date'), 'LL'));
+				$el.next().addClass('showDate');
+			}
+
+			// Keeping the model for the last added message is not only
+			// practical, but needed, as the models for previous messages are
+			// removed from the collection each time a new set of messages is
+			// received.
+			this._lastAddedMessageModel = model;
+
 			this._postRenderItem($el);
+		},
+
+		_modelsHaveSameActor: function(model1, model2) {
+			if (!model1 || !model2) {
+				return false;
+			}
+
+			return model1.get('actorId') === model2.get('actorId') &&
+				model1.get('actorType') === model2.get('actorType');
+		},
+
+		_modelsAreTemporaryNear: function(model1, model2, secondsThreshold) {
+			if (!model1 || !model2) {
+				return false;
+			}
+
+			if (_.isUndefined(secondsThreshold)) {
+				secondsThreshold = 120;
+			}
+
+			return Math.abs(model1.get('timestamp') - model2.get('timestamp')) <= secondsThreshold;
+		},
+
+		_modelsHaveSameDate: function(model1, model2) {
+			if (!model1 || !model2) {
+				return false;
+			}
+
+			return model1.get('date').toDateString() === model2.get('date').toDateString();
 		},
 
 		_postRenderItem: function($el) {
