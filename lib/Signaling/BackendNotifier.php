@@ -21,7 +21,7 @@
  *
  */
 
-namespace OCA\Spreed;
+namespace OCA\Spreed\Signaling;
 
 use OCA\Spreed\Config;
 use OCA\Spreed\Room;

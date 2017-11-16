@@ -22,11 +22,11 @@
 namespace OCA\Spreed\AppInfo;
 
 use OCA\Spreed\Activity\Hooks;
-use OCA\Spreed\BackendNotifier;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Room;
+use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
 use OCP\IServerContainer;
