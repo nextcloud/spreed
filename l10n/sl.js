@@ -9,7 +9,6 @@ OC.L10N.register(
     "TCP only" : "Samo TCP",
     "(group)" : "(skupina)",
     "New public call" : "Nov javni klic",
-    "Video calls" : "Video klici",
     "Time to call your friends" : "Čas, da pokličeš prijatelje",
     "Copy" : "Kopiraj",
     "Copied!" : "Kopirano!",
@@ -41,6 +40,7 @@ OC.L10N.register(
     "Disable video" : "Onemogoči video posnetek",
     "Share screen" : "Deli zaslon",
     "Smile in 3… 2… 1!" : "Nasmehni se 3... 2... 1!",
+    "Video calls" : "Video klici",
     "Saving failed" : "Shranjevanje spodletelo",
     "Add person" : "Dodaj osebo"
 },

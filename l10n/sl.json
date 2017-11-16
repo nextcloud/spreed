@@ -7,7 +7,6 @@
     "TCP only" : "Samo TCP",
     "(group)" : "(skupina)",
     "New public call" : "Nov javni klic",
-    "Video calls" : "Video klici",
     "Time to call your friends" : "Čas, da pokličeš prijatelje",
     "Copy" : "Kopiraj",
     "Copied!" : "Kopirano!",
@@ -39,6 +38,7 @@
     "Disable video" : "Onemogoči video posnetek",
     "Share screen" : "Deli zaslon",
     "Smile in 3… 2… 1!" : "Nasmehni se 3... 2... 1!",
+    "Video calls" : "Video klici",
     "Saving failed" : "Shranjevanje spodletelo",
     "Add person" : "Dodaj osebo"
 },"pluralForm" :"nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);"
