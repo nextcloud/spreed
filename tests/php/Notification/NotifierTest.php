@@ -264,7 +264,7 @@ class NotifierTest extends \Test\TestCase {
 			['Incorrect app', 'invalid-app', null, null, null, null],
 			['Invalid room', 'spreed', false, null, null, null],
 			['Unknown subject', 'spreed', true, 'invalid-subject', null, null],
-			['Unknown object type', 'spreed', true, 'invitation', ['admin'], 'invalid-object-type'],
+			['Unknown object type', 'spreed', true, 'invitation', null, 'invalid-object-type'],
 			['Calling user does not exist anymore', 'spreed', true, 'invitation', ['admin'], 'room'],
 		];
 	}
@@ -306,10 +306,10 @@ class NotifierTest extends \Test\TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
-		$n->expects($params === null ? $this->never() : $this->once())
+		$n->expects($validRoom !== true ? $this->never() : $this->once())
 			->method('setIcon')
 			->willReturnSelf();
-		$n->expects($params === null ? $this->never() : $this->once())
+		$n->expects($validRoom !== true ? $this->never() : $this->once())
 			->method('setLink')
 			->willReturnSelf();
 
