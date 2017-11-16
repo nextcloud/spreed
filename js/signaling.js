@@ -81,9 +81,9 @@
 	};
 
 	SignalingBase.prototype.leaveCurrentRoom = function() {
-		if (this.currentCallToken) {
-			this.leaveRoom(this.currentCallToken);
-			this.currentCallToken = null;
+		if (this.currentRoomToken) {
+			this.leaveRoom(this.currentRoomToken);
+			this.currentRoomToken = null;
 		}
 	};
 
