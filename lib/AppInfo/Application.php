@@ -135,16 +135,15 @@ class Application extends App {
 	}
 
 	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher) {
-		$listener = function(GenericEvent $event, $eventName) {
+		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
 
 			/** @var Hooks $hooks */
 			$hooks = $this->getContainer()->query(Hooks::class);
-			$hooks->setActive($room, $eventName === Room::class . '::postGuestEnterRoom');
+			$hooks->setActive($room);
 		};
-		$dispatcher->addListener(Room::class . '::postUserEnterRoom', $listener);
-		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
@@ -156,7 +155,7 @@ class Application extends App {
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
 	}
 
 	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {
