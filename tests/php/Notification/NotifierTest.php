@@ -316,7 +316,7 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getApp')
 			->willReturn($app);
-		$n->expects($subject === null ? $this->never() : $this->once())
+		$n->expects($subject === null ? $this->never() : $this->atLeastOnce())
 			->method('getSubject')
 			->willReturn($subject);
 		$n->expects($params === null ? $this->never() : $this->once())
