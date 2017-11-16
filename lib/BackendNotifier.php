@@ -27,12 +27,9 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Room;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
-use OCP\IRequest;
 use OCP\Security\ISecureRandom;
 
 class BackendNotifier{
-	/** @var Manager */
-	private $manager;
 	/** @var Config */
 	private $config;
 	/** @var ILogger */
@@ -43,18 +40,15 @@ class BackendNotifier{
 	private $secureRandom;
 
 	/**
-	 * @param Manager $manager
 	 * @param Config $config
 	 * @param ILogger $logger
 	 * @param IClientService $clientService
 	 * @param ISecureRandom $secureRandom
 	 */
-	public function __construct(Manager $manager,
-								Config $config,
+	public function __construct(Config $config,
 								ILogger $logger,
 								IClientService $clientService,
 								ISecureRandom $secureRandom) {
-		$this->manager = $manager;
 		$this->config = $config;
 		$this->logger = $logger;
 		$this->clientService = $clientService;
