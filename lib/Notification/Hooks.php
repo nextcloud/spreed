@@ -50,7 +50,7 @@ class Hooks {
 	}
 
 	/**
-	 * Invitation activity: "{actor} invited you to {call}"
+	 * Room invitation: "{actor} invited you to {call}"
 	 *
 	 * @param Room $room
 	 * @param array[] $participants
@@ -83,6 +83,51 @@ class Hooks {
 
 			try {
 				$notification->setUser($participant['userId']);
+				$this->notificationManager->notify($notification);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->logException($e, ['app' => 'spreed']);
+			}
+		}
+	}
+
+	/**
+	 * Call notification: "{user} wants to talk with you"
+	 *
+	 * @param Room $room
+	 */
+	public function generateCallNotifications(Room $room) {
+		if ($room->getActiveSince() instanceof \DateTime) {
+			// Call already active => No new notifications
+			return;
+		}
+
+		$actor = $this->userSession->getUser();
+		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
+
+		$notification = $this->notificationManager->createNotification();
+		$dateTime = new \DateTime();
+		try {
+			$notification->setApp('spreed')
+				->setObject('room', $room->getId());
+
+			// Remove all old notifications for this room
+			$this->notificationManager->markProcessed($notification);
+
+			$notification->setSubject('call', [$actorId])
+				->setDateTime($dateTime);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->logException($e, ['app' => 'spreed']);
+			return;
+		}
+
+		$userIds = $room->getInactiveUserIds();
+		foreach ($userIds as $userId) {
+			if ($actorId === $userId) {
+				continue;
+			}
+
+			try {
+				$notification->setUser($userId);
 				$this->notificationManager->notify($notification);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->logException($e, ['app' => 'spreed']);
