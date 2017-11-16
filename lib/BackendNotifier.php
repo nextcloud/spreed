@@ -44,7 +44,7 @@ class BackendNotifier{
 
 	/**
 	 * @param Manager $manager
-	 * @param IConfig $config
+	 * @param Config $config
 	 * @param ILogger $logger
 	 * @param IClientService $clientService
 	 * @param ISecureRandom $secureRandom
