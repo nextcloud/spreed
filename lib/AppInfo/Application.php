@@ -54,7 +54,7 @@ class Application extends App {
 		$this->registerInternalSignalingHooks($dispatcher);
 		$this->registerSignalingBackendHooks($dispatcher);
 		$this->registerCallActivityHooks($dispatcher);
-		$this->registerCallInvitationHooks($dispatcher);
+		$this->registerRoomInvitationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
 	}
 
@@ -159,7 +159,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 	}
 
-	protected function registerCallInvitationHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -173,7 +173,6 @@ class Application extends App {
 			$notificationHooks->generateInvitation($room, $event->getArgument('users'));
 		};
 		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
-
 	}
 
 	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {
