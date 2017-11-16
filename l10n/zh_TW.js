@@ -11,7 +11,6 @@ OC.L10N.register(
     "(group)" : "(群組)",
     "Screensharing is not supported by your browser." : "您的瀏覽器並不支援螢幕分享",
     "Participants" : "參與者",
-    "Video calls" : "視訊通話",
     "Chat" : "聊天",
     "Copy" : "複製",
     "Copied!" : "已複製！",
@@ -32,6 +31,7 @@ OC.L10N.register(
     "Guest" : "訪客",
     "Close" : "關閉",
     "Share screen" : "分享螢幕",
+    "Video calls" : "視訊通話",
     "STUN server" : "STUN伺服器"
 },
 "nplurals=1; plural=0;");
