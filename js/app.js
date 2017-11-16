@@ -211,7 +211,7 @@
 					} else if (fullscreenElem.msRequestFullscreen) {
 						fullscreenElem.msRequestFullscreen();
 					}
-					$(this).attr('data-original-title', 'Exit fullscreen');
+					$(this).attr('data-original-title', t('spreed', 'Exit fullscreen'));
 				} else {
 					if (document.exitFullscreen) {
 						document.exitFullscreen();
@@ -222,13 +222,13 @@
 					} else if (document.msExitFullscreen) {
 						document.msExitFullscreen();
 					}
-					$(this).attr('data-original-title', 'Fullscreen');
+					$(this).attr('data-original-title', t('spreed', 'Fullscreen'));
 				}
 			});
 
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
-				$('#screensharing-button').attr('data-original-title', 'Enable screensharing')
+				$('#screensharing-button').attr('data-original-title', t('spreed', 'Enable screensharing'))
 					.addClass('screensharing-disabled icon-screen-off-white')
 					.removeClass('icon-screen-white');
 				$('#screensharing-menu').toggleClass('open', false);
@@ -257,7 +257,7 @@
 					webrtc.shareScreen(function(err) {
 						screensharingButton.prop('disabled', false);
 						if (!err) {
-							$('#screensharing-button').attr('data-original-title', 'Screensharing options')
+							$('#screensharing-button').attr('data-original-title', t('spreed', 'Screensharing options'))
 								.removeClass('screensharing-disabled icon-screen-off-white')
 								.addClass('icon-screen-white');
 							return;
@@ -585,7 +585,7 @@
 		},
 		enableAudio: function() {
 			OCA.SpreedMe.webrtc.unmute();
-			$('#mute').attr('data-original-title', 'Mute audio')
+			$('#mute').attr('data-original-title', t('spreed', 'Mute audio'))
 				.removeClass('audio-disabled icon-audio-off-white')
 				.addClass('icon-audio-white');
 
@@ -593,7 +593,7 @@
 		},
 		disableAudio: function() {
 			OCA.SpreedMe.webrtc.mute();
-			$('#mute').attr('data-original-title', 'Enable audio')
+			$('#mute').attr('data-original-title', t('spreed', 'Enable audio'))
 				.addClass('audio-disabled icon-audio-off-white')
 				.removeClass('icon-audio-white');
 
@@ -605,7 +605,7 @@
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			OCA.SpreedMe.webrtc.resumeVideo();
-			$hideVideoButton.attr('data-original-title', 'Disable video')
+			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
 				.removeClass('video-disabled icon-video-off-white')
 				.addClass('icon-video-white');
 
@@ -619,7 +619,7 @@
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
-			$hideVideoButton.attr('data-original-title', 'Enable video')
+			$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
 				.addClass('video-disabled icon-video-off-white')
 				.removeClass('icon-video-white');
 
