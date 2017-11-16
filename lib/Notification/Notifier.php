@@ -128,12 +128,12 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function parseInvitation(INotification $notification, Room $room, IL10N $l) {
-		$parameters = $notification->getSubjectParameters();
-		$uid = $parameters[0];
-
 		if ($notification->getObjectType() !== 'room') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
+
+		$parameters = $notification->getSubjectParameters();
+		$uid = isset($parameters['actorId']) ? $parameters['actorId'] : $parameters[0];
 
 		$user = $this->userManager->get($uid);
 		if (!$user instanceof IUser) {
@@ -206,15 +206,14 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function parseCall(INotification $notification, Room $room, IL10N $l) {
-		$parameters = $notification->getSubjectParameters();
-		$uid = $parameters[0];
-
 		if ($notification->getObjectType() !== 'room') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$user = $this->userManager->get($uid);
+			$parameters = $notification->getSubjectParameters();
+			$calleeId = $parameters['callee'];
+			$user = $this->userManager->get($calleeId);
 			if ($user instanceof IUser) {
 				$notification
 					->setParsedSubject(
@@ -224,7 +223,7 @@ class Notifier implements INotifier {
 						$l->t('{user} wants to talk with you'), [
 							'user' => [
 								'type' => 'user',
-								'id' => $uid,
+								'id' => $calleeId,
 								'name' => $user->getDisplayName(),
 							]
 						]

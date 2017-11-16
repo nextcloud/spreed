@@ -69,7 +69,9 @@ class Hooks {
 			$notification->setApp('spreed')
 				->setDateTime($dateTime)
 				->setObject('room', $room->getId())
-				->setSubject('invitation', [$actor->getUID()]);
+				->setSubject('invitation', [
+					'actorId' => $actor->getUID(),
+				]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e, ['app' => 'spreed']);
 			return;
@@ -113,7 +115,9 @@ class Hooks {
 			// Remove all old notifications for this room
 			$this->notificationManager->markProcessed($notification);
 
-			$notification->setSubject('call', [$actorId])
+			$notification->setSubject('call', [
+					'callee' => $actorId,
+				])
 				->setDateTime($dateTime);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e, ['app' => 'spreed']);
