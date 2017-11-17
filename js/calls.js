@@ -116,6 +116,7 @@
 			if (signaling) {
 				// We currently only support a single active call.
 				signaling.leaveCurrentCall();
+				signaling.leaveCurrentRoom();
 			}
 		},
 		showRoomDeletedMessage: function(deleter) {
