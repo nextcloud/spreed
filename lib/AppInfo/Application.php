@@ -55,6 +55,7 @@ class Application extends App {
 		$this->registerSignalingBackendHooks($dispatcher);
 		$this->registerCallActivityHooks($dispatcher);
 		$this->registerRoomInvitationHook($dispatcher);
+		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
 	}
 
@@ -172,6 +173,18 @@ class Application extends App {
 			$notificationHooks->generateInvitation($room, $event->getArgument('users'));
 		};
 		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+	}
+
+	protected function registerCallNotificationHook(EventDispatcherInterface $dispatcher) {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var \OCA\Spreed\Notification\Hooks $notificationHooks */
+			$notificationHooks = $this->getContainer()->query(\OCA\Spreed\Notification\Hooks::class);
+			$notificationHooks->generateCallNotifications($room);
+		};
+		$dispatcher->addListener(Room::class . '::preSessionJoinCall', $listener);
 	}
 
 	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {
