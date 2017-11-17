@@ -59,10 +59,9 @@ class Hooks {
 	 * Mark the user as (in)active for a call
 	 *
 	 * @param Room $room
-	 * @param bool $isGuest
 	 */
-	public function setActive(Room $room, $isGuest) {
-		$room->setActiveSince(new \DateTime(), $isGuest);
+	public function setActive(Room $room) {
+		$room->setActiveSince(new \DateTime(), !$this->userSession->isLoggedIn());
 	}
 
 	/**
@@ -73,7 +72,7 @@ class Hooks {
 	 */
 	public function generateCallActivity(Room $room) {
 		$activeSince = $room->getActiveSince();
-		if (!$activeSince instanceof \DateTime || $room->hasActiveSessions()) {
+		if (!$activeSince instanceof \DateTime || $room->hasSessionsInCall()) {
 			return false;
 		}
 

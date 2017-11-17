@@ -729,12 +729,12 @@ class Room {
 	/**
 	 * @return bool
 	 */
-	public function hasActiveSessions() {
+	public function hasSessionsInCall() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('sessionId')
 			->from('talk_participants')
 			->where($query->expr()->eq('roomId', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('sessionId', $query->createNamedParameter('0')))
+			->andWhere($query->expr()->eq('inCall', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $query->execute();
 		$row = $result->fetch();
