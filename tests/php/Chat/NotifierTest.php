@@ -26,6 +26,7 @@ namespace OCA\Spreed\Tests\php\Chat;
 use OCA\Spreed\Chat\Notifier;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Notification\IManager as INotificationManager;
@@ -146,18 +147,48 @@ class NotifierTest extends \Test\TestCase {
 			->with('roomId')
 			->willReturn($room);
 
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::ONE_TO_ONE_CALL);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('getSessionId')
+			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with('anotherUser')
-			->willReturn(true);
+			->willReturn($participant);
 
 		$this->notificationManager->expects($this->once())
 			->method('notify')
 			->with($notification);
+
+		$this->notifier->notifyMentionedUsers($comment);
+	}
+
+	public function testNotifyMentionedUsersActive() {
+		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
+
+		$this->notificationManager->expects($this->never())
+			->method('createNotification');
+
+		$this->notificationManager->expects($this->never())
+			->method('notify');
+
+
+		$room = $this->createMock(Room::class);
+		$this->manager->expects($this->once())
+			->method('getRoomById')
+			->with('roomId')
+			->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('getSessionId')
+			->willReturn('1');
+
+		$room->expects($this->once())
+			->method('getParticipant')
+			->with('anotherUser')
+			->willReturn($participant);
 
 		$this->notifier->notifyMentionedUsers($comment);
 	}
@@ -187,13 +218,15 @@ class NotifierTest extends \Test\TestCase {
 			->with('roomId')
 			->willReturn($room);
 
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::PUBLIC_CALL);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('getSessionId')
+			->willReturn('0');
 
 		$room->expects($this->once())
-			->method('hasPassword')
-			->willReturn(false);
+			->method('getParticipant')
+			->with('anotherUser')
+			->willReturn($participant);
 
 		$this->notificationManager->expects($this->once())
 			->method('notify')
@@ -228,14 +261,15 @@ class NotifierTest extends \Test\TestCase {
 			->with('roomId')
 			->willReturn($room);
 
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::GROUP_CALL);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('getSessionId')
+			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with('anotherUserWithOddLengthName')
-			->willReturn(true);
+			->willReturn($participant);
 
 		$this->notificationManager->expects($this->once())
 			->method('notify')
@@ -270,14 +304,15 @@ class NotifierTest extends \Test\TestCase {
 			->with('roomId')
 			->willReturn($room);
 
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::GROUP_CALL);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('getSessionId')
+			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with('anotherUserWithOddLengthName')
-			->willReturn(true);
+			->willReturn($participant);
 
 		$this->notificationManager->expects($this->once())
 			->method('notify')
@@ -312,14 +347,15 @@ class NotifierTest extends \Test\TestCase {
 			->with('roomId')
 			->willReturn($room);
 
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::GROUP_CALL);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->once())
+			->method('getSessionId')
+			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
 			->with('anotherUserWithOddLengthName')
-			->willReturn(true);
+			->willReturn($participant);
 
 		$this->notificationManager->expects($this->once())
 			->method('notify')
@@ -352,7 +388,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->notifier->notifyMentionedUsers($comment);
 	}
 
-	public function testNotifyMentionedUsersToUserNotInvitedToPrivateChat() {
+	public function testNotifyMentionedUsersToUserNotInvitedToChat() {
 		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @userNotInOneToOneChat');
 
 		$this->notificationManager->expects($this->never())
@@ -365,10 +401,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::ONE_TO_ONE_CALL);
-
-		$room->expects($this->once())
 			->method('getParticipant')
 			->with('userNotInOneToOneChat')
 			->will($this->throwException(new ParticipantNotFoundException()));
@@ -378,82 +410,6 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->notificationManager->expects($this->never())
 			->method('notify');
-
-		$this->notifier->notifyMentionedUsers($comment);
-	}
-
-	public function testNotifyMentionedUsersToUserNotInvitedToPasswordProtectedPublicChat() {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @userNotInvitedToPasswordProtectedPublicChat');
-
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
-
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with('roomId')
-			->willReturn($room);
-
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::PUBLIC_CALL);
-
-		$room->expects($this->once())
-			->method('hasPassword')
-			->willReturn(true);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('userNotInvitedToPasswordProtectedPublicChat')
-			->will($this->throwException(new ParticipantNotFoundException()));
-
-		$this->notificationManager->expects($this->never())
-			->method('notify');
-
-		$this->notifier->notifyMentionedUsers($comment);
-	}
-
-	public function testNotifyMentionedUsersToUserInvitedToPasswordProtectedPublicChat() {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @userInvitedToPasswordProtectedPublicChat');
-
-		$notification = $this->newNotification($comment);
-
-		$this->notificationManager->expects($this->once())
-			->method('createNotification')
-			->willReturn($notification);
-
-		$notification->expects($this->once())
-			->method('setUser')
-			->with('userInvitedToPasswordProtectedPublicChat')
-			->willReturnSelf();
-
-		$notification->expects($this->once())
-			->method('setMessage')
-			->with($comment->getMessage())
-			->willReturnSelf();
-
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with('roomId')
-			->willReturn($room);
-
-		$room->expects($this->once())
-			->method('getType')
-			->willReturn(Room::PUBLIC_CALL);
-
-		$room->expects($this->once())
-			->method('hasPassword')
-			->willReturn(true);
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('userInvitedToPasswordProtectedPublicChat')
-			->willReturn(true);
-
-		$this->notificationManager->expects($this->once())
-			->method('notify')
-			->with($notification);
 
 		$this->notifier->notifyMentionedUsers($comment);
 	}
@@ -509,13 +465,15 @@ class NotifierTest extends \Test\TestCase {
 			->with('roomId')
 			->willReturn($room);
 
-		$room->expects($this->exactly(2))
-			->method('getType')
-			->willReturn(Room::PUBLIC_CALL);
+		$participant = $this->createMock(Participant::class);
+		$participant->expects($this->exactly(2))
+			->method('getSessionId')
+			->willReturn('0');
 
 		$room->expects($this->exactly(2))
-			->method('hasPassword')
-			->willReturn(false);
+			->method('getParticipant')
+			->withConsecutive(['anotherUser'], ['userAbleToJoin'])
+			->willReturn($participant);
 
 		$this->notificationManager->expects($this->exactly(2))
 			->method('notify')

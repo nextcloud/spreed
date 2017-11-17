@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Chat;
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
@@ -201,9 +202,21 @@ class Notifier {
 		return [substr($message, $mentionMiddleIndex - ($maximumLength / 2), $maximumLength), ['ellipsisStart', 'ellipsisEnd']];
 	}
 
+	/**
+	 * Determinates whether a user should be notified about the mention:
+	 *
+	 * 1. The user did not mention themself
+	 * 2. The user must exist
+	 * 3. The user must be a participant of the room
+	 * 4. The user must not be active in the room
+	 *
+	 * @param string $userId
+	 * @param IComment $comment
+	 * @return bool
+	 */
 	private function shouldUserBeNotified($userId, IComment $comment) {
 		if ($userId === $comment->getActorId()) {
-			// Do not notify the user if she mentioned herself
+			// Do not notify the user if they mentioned themself
 			return false;
 		}
 
@@ -211,46 +224,15 @@ class Notifier {
 			return false;
 		}
 
-		$roomId = $comment->getObjectId();
-		if (!$this->isUserAbleToParticipateInRoom($userId, $roomId)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Returns whether the user with the given ID can participate in the room
-	 * with the given ID or not.
-	 *
-	 * A user can participate in a one to one or a group room if she is a
-	 * participant already. For public rooms, a user can participate if the room
-	 * has no password, or if it has a password and the user is a participant
-	 * already.
-	 *
-	 * @param string $userId
-	 * @param int $roomId
-	 * @return bool true if the user is active in the room, false otherwise.
-	 */
-	private function isUserAbleToParticipateInRoom($userId, $roomId) {
-		$room = $this->manager->getRoomById($roomId);
-
-		$roomType = $room->getType();
-		if ($roomType === Room::UNKNOWN_CALL) {
-			return false;
-		}
-
-		if ($roomType === Room::PUBLIC_CALL && !$room->hasPassword()) {
-			return true;
-		}
-
 		try {
-			$room->getParticipant($userId);
-		} catch (ParticipantNotFoundException $exception) {
+			$room = $this->manager->getRoomById($comment->getObjectId());
+			$participant = $room->getParticipant($userId);
+		} catch (RoomNotFoundException $e) {
+			return false;
+		} catch (ParticipantNotFoundException $e) {
 			return false;
 		}
 
-		return true;
+		return $participant->getSessionId() === '0';
 	}
-
 }
