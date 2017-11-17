@@ -24,29 +24,54 @@ namespace OCA\Spreed\Activity;
 use OCA\Spreed\Room;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\ILogger;
+use OCP\IUser;
+use OCP\IUserSession;
 
 class Hooks {
 
 	/** @var IManager */
 	protected $activityManager;
 
+	/** @var IUserSession */
+	protected $userSession;
+
+	/** @var ILogger */
+	protected $logger;
+
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
 	/**
 	 * @param IManager $activityManager
+	 * @param IUserSession $userSession
+	 * @param ILogger $logger
 	 * @param ITimeFactory $timeFactory
 	 */
-	public function __construct(IManager $activityManager, ITimeFactory $timeFactory) {
+	public function __construct(IManager $activityManager, IUserSession $userSession, ILogger $logger, ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
+		$this->userSession = $userSession;
+		$this->logger = $logger;
 		$this->timeFactory = $timeFactory;
 	}
 
+	/**
+	 * Mark the user as (in)active for a call
+	 *
+	 * @param Room $room
+	 * @param bool $isGuest
+	 */
 	public function setActive(Room $room, $isGuest) {
 		$room->setActiveSince(new \DateTime(), $isGuest);
 	}
 
-	public function generateActivity(Room $room) {
+	/**
+	 * Call activity: "You attended a call with {user1} and {user2}"
+	 *
+	 * @param Room $room
+	 * @return bool True if activity was generated, false otherwise
+	 */
+	public function generateCallActivity(Room $room) {
 		$activeSince = $room->getActiveSince();
 		if (!$activeSince instanceof \DateTime || $room->hasActiveSessions()) {
 			return false;
@@ -63,24 +88,82 @@ class Hooks {
 		}
 
 		$event = $this->activityManager->generateEvent();
-		$event->setApp('spreed')
-			->setType('spreed')
-			->setAuthor('')
-			->setObject('room', $room->getId(), $room->getName())
-			->setTimestamp(time())
-			->setSubject('call', [
-				'room' => $room->getId(),
-				'users' => $userIds,
-				'guests' => $room->getActiveGuests(),
-				'duration' => $duration,
-			]);
+		try {
+			$event->setApp('spreed')
+				->setType('spreed')
+				->setAuthor('')
+				->setObject('room', $room->getId(), $room->getName())
+				->setTimestamp($this->timeFactory->getTime())
+				->setSubject('call', [
+					'room' => $room->getId(),
+					'users' => $userIds,
+					'guests' => $room->getActiveGuests(),
+					'duration' => $duration,
+				]);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->logException($e, ['app' => 'spreed']);
+			return false;
+		}
 
 		foreach ($userIds as $userId) {
-			$event->setAffectedUser($userId);
-			$this->activityManager->publish($event);
+			try {
+				$event->setAffectedUser($userId);
+				$this->activityManager->publish($event);
+			} catch (\BadMethodCallException $e) {
+				$this->logger->logException($e, ['app' => 'spreed']);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->logException($e, ['app' => 'spreed']);
+			}
 		}
 
 		$room->resetActiveSince();
+		return true;
 	}
 
+	/**
+	 * Invitation activity: "{actor} invited you to {call}"
+	 *
+	 * @param Room $room
+	 * @param array[] $participants
+	 */
+	public function generateInvitationActivity(Room $room, array $participants) {
+		$actor = $this->userSession->getUser();
+		if (!$actor instanceof IUser) {
+			return;
+		}
+		$actorId = $actor->getUID();
+
+		$event = $this->activityManager->generateEvent();
+		try {
+			$event->setApp('spreed')
+				->setType('spreed')
+				->setAuthor($actorId)
+				->setObject('room', $room->getId(), $room->getName())
+				->setTimestamp($this->timeFactory->getTime())
+				->setSubject('invitation', [
+					'user' => $actor->getUID(),
+					'room' => $room->getId(),
+					'name' => $room->getName(),
+				]);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->logException($e, ['app' => 'spreed']);
+			return;
+		}
+
+		foreach ($participants as $participant) {
+			if ($actorId === $participant['userId']) {
+				// No activity for self-joining and the creator
+				continue;
+			}
+
+			try {
+				$event->setAffectedUser($participant['userId']);
+				$this->activityManager->publish($event);
+			} catch (\InvalidArgumentException $e) {
+				$this->logger->logException($e, ['app' => 'spreed']);
+			} catch (\BadMethodCallException $e) {
+				$this->logger->logException($e, ['app' => 'spreed']);
+			}
+		}
+	}
 }

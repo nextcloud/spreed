@@ -51,13 +51,14 @@ class Application extends App {
 		$this->registerNotifier($server);
 
 		$dispatcher = $server->getEventDispatcher();
-		$this->registerSignalingHooks($dispatcher);
-		$this->registerActivityHooks($dispatcher);
+		$this->registerInternalSignalingHooks($dispatcher);
+		$this->registerSignalingBackendHooks($dispatcher);
+		$this->registerCallActivityHooks($dispatcher);
+		$this->registerRoomInvitationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
 	}
 
 	protected function registerNotifier(IServerContainer $server) {
-
 		$manager = $server->getNotificationManager();
 		$manager->registerNotifier(function() use ($server) {
 			return $server->query(Notifier::class);
@@ -69,10 +70,9 @@ class Application extends App {
 				'name' => $l->t('Talk'),
 			];
 		});
-
 	}
 
-	protected function registerSignalingHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerInternalSignalingHooks(EventDispatcherInterface $dispatcher) {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -89,7 +89,9 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
+	}
 
+	protected function registerSignalingBackendHooks(EventDispatcherInterface $dispatcher) {
 		$dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
 			$notifier = $this->getContainer()->query(BackendNotifier::class);
@@ -132,7 +134,7 @@ class Application extends App {
 		});
 	}
 
-	protected function registerActivityHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher) {
 		$listener = function(GenericEvent $event, $eventName) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -150,15 +152,31 @@ class Application extends App {
 
 			/** @var Hooks $hooks */
 			$hooks = $this->getContainer()->query(Hooks::class);
-			$hooks->generateActivity($room);
+			$hooks->generateCallActivity($room);
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 	}
 
+	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var Hooks $activityHooks */
+			$activityHooks = $this->getContainer()->query(Hooks::class);
+			$activityHooks->generateInvitationActivity($room, $event->getArgument('users'));
+
+			/** @var \OCA\Spreed\Notification\Hooks $notificationHooks */
+			$notificationHooks = $this->getContainer()->query(\OCA\Spreed\Notification\Hooks::class);
+			$notificationHooks->generateInvitation($room, $event->getArgument('users'));
+		};
+		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+	}
+
 	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {
-		$listener = function(GenericEvent $event, $eventName) {
+		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
 

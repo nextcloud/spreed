@@ -32,7 +32,6 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
-use OCP\Activity\IManager as IActivityManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -44,7 +43,6 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\Notification\IManager as INotificationManager;
 
 class RoomController extends OCSController {
 	/** @var string */
@@ -61,10 +59,6 @@ class RoomController extends OCSController {
 	private $manager;
 	/** @var Messages */
 	private $messages;
-	/** @var INotificationManager */
-	private $notificationManager;
-	/** @var IActivityManager */
-	private $activityManager;
 	/** @var IL10N */
 	private $l10n;
 
@@ -78,8 +72,6 @@ class RoomController extends OCSController {
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param Messages $messages
-	 * @param INotificationManager $notificationManager
-	 * @param IActivityManager $activityManager
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -91,8 +83,6 @@ class RoomController extends OCSController {
 								ILogger $logger,
 								Manager $manager,
 								Messages $messages,
-								INotificationManager $notificationManager,
-								IActivityManager $activityManager,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -102,8 +92,6 @@ class RoomController extends OCSController {
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->messages = $messages;
-		$this->notificationManager = $notificationManager;
-		$this->activityManager = $activityManager;
 		$this->l10n = $l10n;
 	}
 
@@ -357,7 +345,6 @@ class RoomController extends OCSController {
 				'userId' => $targetUser->getUID(),
 				'participantType' => Participant::OWNER,
 			]);
-			$this->createNotification($currentUser, $targetUser, $room);
 
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
 		}
@@ -401,7 +388,6 @@ class RoomController extends OCSController {
 			$participants[] = [
 				'userId' => $user->getUID(),
 			];
-			$this->createNotification($currentUser, $user, $room);
 		}
 
 		call_user_func_array([$room, 'addUsers'], $participants);
@@ -563,24 +549,19 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$data = [];
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			// In case a user is added to a one2one call, we change the call to a group call
 			$room->changeType(Room::GROUP_CALL);
 
-			$room->addUsers([
-				'userId' => $newUser->getUID(),
-			]);
-			$this->createNotification($currentUser, $newUser, $room);
-
-			return new DataResponse(['type' => $room->getType()]);
+			$data = ['type' => $room->getType()];
 		}
 
 		$room->addUsers([
 			'userId' => $newUser->getUID(),
 		]);
-		$this->createNotification($currentUser, $newUser, $room);
 
-		return new DataResponse([]);
+		return new DataResponse($data);
 	}
 
 	/**
@@ -917,48 +898,5 @@ class RoomController extends OCSController {
 		$room->setParticipantType($participant, Participant::USER);
 
 		return new DataResponse();
-	}
-
-	/**
-	 * @param IUser $actor
-	 * @param IUser $user
-	 * @param Room $room
-	 */
-	protected function createNotification(IUser $actor, IUser $user, Room $room) {
-		$notification = $this->notificationManager->createNotification();
-		$dateTime = new \DateTime();
-		try {
-			$notification->setApp('spreed')
-				->setUser($user->getUID())
-				->setDateTime($dateTime)
-				->setObject('room', $room->getId())
-				->setSubject('invitation', [$actor->getUID()]);
-			$this->notificationManager->notify($notification);
-		} catch (\InvalidArgumentException $e) {
-			// Error while creating the notification
-			$this->logger->logException($e, ['app' => 'spreed']);
-		}
-
-		$event = $this->activityManager->generateEvent();
-		try {
-			$event->setApp('spreed')
-				->setType('spreed')
-				->setAuthor($actor->getUID())
-				->setAffectedUser($user->getUID())
-				->setObject('room', $room->getId(), $room->getName())
-				->setTimestamp($dateTime->getTimestamp())
-				->setSubject('invitation', [
-					'user' => $actor->getUID(),
-					'room' => $room->getId(),
-					'name' => $room->getName(),
-				]);
-			$this->activityManager->publish($event);
-		} catch (\InvalidArgumentException $e) {
-			// Error while creating the activity
-			$this->logger->logException($e, ['app' => 'spreed']);
-		} catch (\BadMethodCallException $e) {
-			// Error while sending the activity
-			$this->logger->logException($e, ['app' => 'spreed']);
-		}
 	}
 }
