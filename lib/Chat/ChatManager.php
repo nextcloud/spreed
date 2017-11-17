@@ -23,6 +23,7 @@
 
 namespace OCA\Spreed\Chat;
 
+use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 
 /**
