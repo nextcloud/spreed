@@ -125,7 +125,7 @@ class BackendNotifier{
 	 * @param array $users
 	 */
 	public function roomInvited($room, $users) {
-		$this->logger->info("Now invited to " . $room->getToken() . ": " + print_r($users, true));
+		$this->logger->info("Now invited to " . $room->getToken() . ": " . print_r($users, true));
 		$userIds = [];
 		foreach ($users as $user) {
 			array_push($userIds, $user["userId"]);
@@ -152,7 +152,7 @@ class BackendNotifier{
 	 * @param array $userIds
 	 */
 	public function roomsDisinvited($room, $userIds) {
-		$this->logger->info("No longer invited to " . $room->getToken() . ": " + print_r($userIds, true));
+		$this->logger->info("No longer invited to " . $room->getToken() . ": " . print_r($userIds, true));
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'disinvite',
 			'disinvite' => [

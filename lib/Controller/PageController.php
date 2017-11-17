@@ -121,6 +121,8 @@ class PageController extends Controller {
 		if (!empty($servers)) {
 			$signaling = $servers[mt_rand(0, count($servers) - 1)];
 			$signaling = $signaling['server'];
+		} else {
+			$signaling = [];
 		}
 
 		return [
