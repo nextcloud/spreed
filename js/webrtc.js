@@ -246,7 +246,7 @@ var spreedPeerConnectionTable = [];
 
 				var screenSharingIndicator = document.createElement('button');
 				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
-				screenSharingIndicator.setAttribute('data-original-title', 'Show screen');
+				screenSharingIndicator.setAttribute('data-original-title', t('spreed', 'Show screen'));
 
 				var iceFailedIndicator = document.createElement('button');
 				iceFailedIndicator.className = 'iceFailedIndicator icon-error-white not-failed';

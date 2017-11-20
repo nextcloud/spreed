@@ -252,7 +252,7 @@
 						messageAdditional = '';
 					} else {
 						message = t('spreed', 'No other people in this call');
-						messageAdditional = 'You can invite others by clicking "+ Add person" in the call menu.';
+						messageAdditional = t('spreed', 'You can invite others by clicking "+ Add person" in the call menu.');
 					}
 					$('#emptycontent-icon').addClass('icon-contacts-dark');
 					break;
@@ -262,7 +262,7 @@
 					} else {
 						message = t('spreed', 'No other people in this call');
 					}
-					messageAdditional = 'Share this link to invite others!';
+					messageAdditional = t('spreed', 'Share this link to invite others!');
 					$('#emptycontent-icon').addClass('icon-public');
 
 					//Add link
