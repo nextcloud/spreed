@@ -133,6 +133,22 @@ class Application extends App {
 			$user = $event->getArgument('user');
 			$notifier->roomsDisinvited($room, [$user->getUID()]);
 		});
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$sessionId = $event->getArgument('sessionId');
+			$notifier->roomInCallChanged($room, true, [$sessionId]);
+		});
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getContainer()->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$sessionId = $event->getArgument('sessionId');
+			$notifier->roomInCallChanged($room, false, [$sessionId]);
+		});
 	}
 
 	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher) {
