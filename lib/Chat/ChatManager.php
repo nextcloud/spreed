@@ -90,6 +90,7 @@ class ChatManager {
 	 * maximum time to wait must be set using the $timeout parameter.
 	 *
 	 * @param string $chatId
+	 * @param string $userId
 	 * @param int $timeout the maximum number of seconds to wait for messages
 	 * @param int $offset optional, starting point
 	 * @param \DateTime|null $notOlderThan optional, the date and time of the
@@ -98,7 +99,7 @@ class ChatManager {
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function receiveMessages($chatId, $timeout, $offset = 0, \DateTime $notOlderThan = null) {
+	public function receiveMessages($chatId, $userId, $timeout, $offset = 0, \DateTime $notOlderThan = null) {
 		$comments = [];
 
 		$commentsFound = false;
@@ -113,6 +114,8 @@ class ChatManager {
 				$elapsedTime++;
 			}
 		}
+
+		$this->notifier->markMentionNotificationsRead($chatId, $userId);
 
 		if ($commentsFound) {
 			// The limit and offset of getForObject can not be based on the

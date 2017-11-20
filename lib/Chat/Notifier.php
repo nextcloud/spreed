@@ -105,6 +105,29 @@ class Notifier {
 	}
 
 	/**
+	 * Removes all the pending mention notifications for the room
+	 *
+	 * @param string $roomId
+	 * @param string $userId
+	 */
+	public function markMentionNotificationsRead($roomId, $userId) {
+
+		if ($userId === null || $userId === '') {
+			return;
+		}
+
+		$notification = $this->notificationManager->createNotification();
+
+		$notification
+			->setApp('spreed')
+			->setObject('room', $roomId)
+			->setSubject('mention')
+			->setUser($userId);
+
+		$this->notificationManager->markProcessed($notification);
+	}
+
+	/**
 	 * Returns the IDs of the users mentioned in the given comment.
 	 *
 	 * @param IComment $comment

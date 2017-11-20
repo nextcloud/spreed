@@ -121,8 +121,12 @@ class ChatManagerTest extends \Test\TestCase {
 				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
 			]);
 
+		$this->notifier->expects($this->once())
+			->method('markMentionNotificationsRead')
+			->with('testChatId', 'userId');
+
 		$timeout = 42;
-		$comments = $this->chatManager->receiveMessages('testChatId', $timeout, $offset, $notOlderThan);
+		$comments = $this->chatManager->receiveMessages('testChatId', 'userId', $timeout, $offset, $notOlderThan);
 		$expected = [
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
 				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2')
@@ -154,8 +158,12 @@ class ChatManagerTest extends \Test\TestCase {
 				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
 			]);
 
+		$this->notifier->expects($this->once())
+			->method('markMentionNotificationsRead')
+			->with('testChatId', 'userId');
+
 		$timeout = 42;
-		$comments = $this->chatManager->receiveMessages('testChatId', $timeout, $offset, $notOlderThan);
+		$comments = $this->chatManager->receiveMessages('testChatId', 'userId', $timeout, $offset, $notOlderThan);
 		$expected = [
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000108), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
@@ -185,8 +193,12 @@ class ChatManagerTest extends \Test\TestCase {
 				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
 			]);
 
+		$this->notifier->expects($this->once())
+			->method('markMentionNotificationsRead')
+			->with('testChatId', 'userId');
+
 		$timeout = 42;
-		$comments = $this->chatManager->receiveMessages('testChatId', $timeout, $offset, $notOlderThan);
+		$comments = $this->chatManager->receiveMessages('testChatId', 'userId', $timeout, $offset, $notOlderThan);
 		$expected = [
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
 				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),

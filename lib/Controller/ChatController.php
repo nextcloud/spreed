@@ -206,7 +206,7 @@ class ChatController extends OCSController {
 			$timeout = $maximumTimeout;
 		}
 
-		$comments = $this->chatManager->receiveMessages((string) $room->getId(), $timeout, $offset, $notOlderThan);
+		$comments = $this->chatManager->receiveMessages((string) $room->getId(), $this->userId, $timeout, $offset, $notOlderThan);
 
 		return new DataResponse(array_map(function(IComment $comment) use ($token) {
 			$displayName = null;
