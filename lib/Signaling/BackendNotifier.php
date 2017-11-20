@@ -198,4 +198,23 @@ class BackendNotifier{
 		]);
 	}
 
+	/**
+	 * The "in-call" status of the given session ids has changed..
+	 *
+	 * @param Room $room
+	 * @param bool $inCall
+	 * @param array $sessionids
+	 * @throws \Exception
+	 */
+	public function roomInCallChanged($room, $inCall, $sessionIds) {
+		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $inCall . ' ' . print_r($sessionIds, true));
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'incall',
+			'incall' => [
+				'incall' => $inCall,
+				'sessionids' => $sessionIds,
+			],
+		]);
+	}
+
 }
