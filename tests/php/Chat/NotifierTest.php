@@ -148,9 +148,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getSessionId')
-			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -160,35 +157,6 @@ class NotifierTest extends \Test\TestCase {
 		$this->notificationManager->expects($this->once())
 			->method('notify')
 			->with($notification);
-
-		$this->notifier->notifyMentionedUsers($comment);
-	}
-
-	public function testNotifyMentionedUsersActive() {
-		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
-
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
-
-		$this->notificationManager->expects($this->never())
-			->method('notify');
-
-
-		$room = $this->createMock(Room::class);
-		$this->manager->expects($this->once())
-			->method('getRoomById')
-			->with('roomId')
-			->willReturn($room);
-
-		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getSessionId')
-			->willReturn('1');
-
-		$room->expects($this->once())
-			->method('getParticipant')
-			->with('anotherUser')
-			->willReturn($participant);
 
 		$this->notifier->notifyMentionedUsers($comment);
 	}
@@ -219,9 +187,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getSessionId')
-			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -262,9 +227,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getSessionId')
-			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -305,9 +267,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getSessionId')
-			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -348,9 +307,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->once())
-			->method('getSessionId')
-			->willReturn('0');
 
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -466,9 +422,6 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
-		$participant->expects($this->exactly(2))
-			->method('getSessionId')
-			->willReturn('0');
 
 		$room->expects($this->exactly(2))
 			->method('getParticipant')

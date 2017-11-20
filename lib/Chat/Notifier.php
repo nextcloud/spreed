@@ -226,13 +226,13 @@ class Notifier {
 
 		try {
 			$room = $this->manager->getRoomById($comment->getObjectId());
-			$participant = $room->getParticipant($userId);
+			$room->getParticipant($userId);
 		} catch (RoomNotFoundException $e) {
 			return false;
 		} catch (ParticipantNotFoundException $e) {
 			return false;
 		}
 
-		return $participant->getSessionId() === '0';
+		return true;
 	}
 }
