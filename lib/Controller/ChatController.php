@@ -30,8 +30,10 @@ use OCA\Spreed\Manager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\ISession;
+use OCP\IUser;
 use OCP\IUserManager;
 
 class ChatController extends OCSController {
@@ -137,7 +139,7 @@ class ChatController extends OCSController {
 			// fits (except if there is no session, as the actorId should be
 			// empty in that case but sha1('') would generate a hash too
 			// instead of returning an empty string).
-			$actorId = $actorId? sha1($actorId): $actorId;
+			$actorId = $actorId ? sha1($actorId) : $actorId;
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;
@@ -149,7 +151,7 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$this->chatManager->sendMessage(strval($room->getId()), $actorType, $actorId, $message, $creationDateTime);
+		$this->chatManager->sendMessage((string) $room->getId(), $actorType, $actorId, $message, $creationDateTime);
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
@@ -175,10 +177,10 @@ class ChatController extends OCSController {
 	 * sent.
 	 *
 	 * @param string $token the room token
-	 * @param int offset optional, the first N messages to ignore
-	 * @param int notOlderThanTimestamp optional, timestamp in seconds and UTC
+	 * @param int $offset optional, the first N messages to ignore
+	 * @param int $notOlderThanTimestamp optional, timestamp in seconds and UTC
 	 *        time zone
-	 * @param int timeout optional, the number of seconds to wait for new
+	 * @param int $timeout optional, the number of seconds to wait for new
 	 *        messages (30 by default, 60 at most)
 	 * @return DataResponse an array of chat messages, or "404 Not found" if the
 	 *         room token was not valid; each chat message is an array with
@@ -196,7 +198,7 @@ class ChatController extends OCSController {
 		if ($notOlderThanTimestamp > 0) {
 			$notOlderThan = new \DateTime();
 			$notOlderThan->setTimestamp($notOlderThanTimestamp);
-			$notOlderThan->setTimeZone(new \DateTimeZone('UTC'));
+			$notOlderThan->setTimezone(new \DateTimeZone('UTC'));
 		}
 
 		$maximumTimeout = 60;
@@ -204,15 +206,13 @@ class ChatController extends OCSController {
 			$timeout = $maximumTimeout;
 		}
 
-		$comments = $this->chatManager->receiveMessages(strval($room->getId()), $timeout, $offset, $notOlderThan);
+		$comments = $this->chatManager->receiveMessages((string) $room->getId(), $timeout, $offset, $notOlderThan);
 
-		$userManager = $this->userManager;
-
-		return new DataResponse(array_map(function($comment) use ($token, $userManager) {
+		return new DataResponse(array_map(function(IComment $comment) use ($token) {
 			$displayName = null;
 			if ($comment->getActorType() === 'users') {
-				$user = $userManager->get($comment->getActorId());
-				$displayName = is_null($user) ? null : $user->getDisplayName();
+				$user = $this->userManager->get($comment->getActorId());
+				$displayName = $user instanceof IUser ? $user->getDisplayName() : null;
 			}
 
 			return [
