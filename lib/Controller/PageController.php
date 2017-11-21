@@ -157,7 +157,9 @@ class PageController extends Controller {
 					try {
 						$notification->setApp('spreed')
 							->setUser($this->userId)
-							->setObject('room', (string) $room->getId());
+							->setObject('room', $room->getId());
+						$this->notificationManager->markProcessed($notification);
+						$notification->setObject('call', $room->getId());
 						$this->notificationManager->markProcessed($notification);
 					} catch (\InvalidArgumentException $e) {
 						$this->logger->logException($e, ['app' => 'spreed']);

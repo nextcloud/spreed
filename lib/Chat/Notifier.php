@@ -97,10 +97,16 @@ class Notifier {
 	public function removePendingNotificationsForRoom($roomId) {
 		$notification = $this->notificationManager->createNotification();
 
-		$notification
-			->setApp('spreed')
-			->setObject('room', $roomId);
+		// @todo this should be in the Notifications\Hooks
+		$notification->setApp('spreed');
 
+		$notification->setObject('chat', $roomId);
+		$this->notificationManager->markProcessed($notification);
+
+		$notification->setObject('room', $roomId);
+		$this->notificationManager->markProcessed($notification);
+
+		$notification->setObject('call', $roomId);
 		$this->notificationManager->markProcessed($notification);
 	}
 
@@ -120,8 +126,7 @@ class Notifier {
 
 		$notification
 			->setApp('spreed')
-			->setObject('room', $roomId)
-			->setSubject('mention')
+			->setObject('chat', $roomId)
 			->setUser($userId);
 
 		$this->notificationManager->markProcessed($notification);
@@ -162,7 +167,7 @@ class Notifier {
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp('spreed')
-			->setObject('room', $comment->getObjectId())
+			->setObject('chat', $comment->getObjectId())
 			->setUser($mentionedUserId)
 			->setSubject('mention', [
 				'userType' => $comment->getActorType(),

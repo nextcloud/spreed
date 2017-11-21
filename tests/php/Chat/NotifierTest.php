@@ -103,7 +103,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$notification->expects($this->once())
 			->method('setObject')
-			->with('room', $comment->getObjectId())
+			->with('chat', $comment->getObjectId())
 			->willReturnSelf();
 
 		$notification->expects($this->once())
@@ -450,12 +450,16 @@ class NotifierTest extends \Test\TestCase {
 			->with('spreed')
 			->willReturnSelf();
 
-		$notification->expects($this->once())
+		$notification->expects($this->exactly(3))
 			->method('setObject')
-			->with('room', 'testChatId')
+			->withConsecutive(
+				['chat', 'testChatId'],
+				['room', 'testChatId'],
+				['call', 'testChatId']
+			)
 			->willReturnSelf();
 
-		$this->notificationManager->expects($this->once())
+		$this->notificationManager->expects($this->exactly(3))
 			->method('markProcessed')
 			->with($notification);
 
