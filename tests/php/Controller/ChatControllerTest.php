@@ -319,7 +319,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $this->userId, $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -377,7 +377,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $this->userId, $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -465,7 +465,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', null, $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -546,7 +546,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('1234', $timeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $this->userId, $timeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([]);
 
 		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
@@ -579,7 +579,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timestamp = 1000000000;
 		$this->chatManager->expects($this->once())
 			->method('receiveMessages')
-			->with('1234', $maximumTimeout, $offset, new \DateTime('@' . $timestamp))
+			->with('1234', $this->userId, $maximumTimeout, $offset, new \DateTime('@' . $timestamp))
 			->willReturn([]);
 
 		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);

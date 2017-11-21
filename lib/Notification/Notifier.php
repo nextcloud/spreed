@@ -89,17 +89,151 @@ class Notifier implements INotifier {
 		}
 
 		$notification
-			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app.svg')))
+			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')))
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
 
-		if ($notification->getSubject() === 'invitation') {
+		$subject = $notification->getSubject();
+		if ($subject === 'invitation') {
 			return $this->parseInvitation($notification, $room, $l);
 		}
-		if ($notification->getSubject() === 'call') {
+		if ($subject === 'call') {
 			return $this->parseCall($notification, $room, $l);
+		}
+		if ($subject === 'mention') {
+			return $this->parseMention($notification, $room, $l);
 		}
 
 		throw new \InvalidArgumentException('Unknown subject');
+	}
+
+	/**
+	 * @param INotification $notification
+	 * @param Room $room
+	 * @param IL10N $l
+	 * @return INotification
+	 * @throws \InvalidArgumentException
+	 */
+	protected function parseMention(INotification $notification, Room $room, IL10N $l) {
+		if ($notification->getObjectType() !== 'room') {
+			throw new \InvalidArgumentException('Unknown object type');
+		}
+
+		$subjectParameters = $notification->getSubjectParameters();
+
+		$richSubjectUser = null;
+		$isGuest = false;
+		if ($subjectParameters['userType'] === 'users') {
+			$userId = $subjectParameters['userId'];
+			$user = $this->userManager->get($userId);
+
+			if ($user instanceof IUser) {
+				$richSubjectUser = [
+					'type' => 'user',
+					'id' => $userId,
+					'name' => $user->getDisplayName(),
+				];
+			}
+		} else {
+			$isGuest = true;
+		}
+
+		$richSubjectCall = null;
+		if ($room->getName() !== '') {
+			$richSubjectCall = [
+				'type' => 'call',
+				'id' => $room->getId(),
+				'name' => $room->getName(),
+				'call-type' => $this->getRoomType($room),
+			];
+		}
+
+		$messageParameters = $notification->getMessageParameters();
+
+		$parsedMessage = $notification->getMessage();
+		if (in_array('ellipsisStart', $messageParameters) && !in_array('ellipsisEnd', $messageParameters)) {
+			$parsedMessage = $l->t('… %s', $parsedMessage);
+		} else if (!in_array('ellipsisStart', $messageParameters) && in_array('ellipsisEnd', $messageParameters)) {
+			$parsedMessage = $l->t('%s …', $parsedMessage);
+		} else if (in_array('ellipsisStart', $messageParameters) && in_array('ellipsisEnd', $messageParameters)) {
+			$parsedMessage = $l->t('… %s …', $parsedMessage);
+		}
+		$notification->setParsedMessage($parsedMessage);
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$notification
+				->setParsedSubject(
+					$l->t('%s mentioned you in a private chat', [$user->getDisplayName()])
+				)
+				->setRichSubject(
+					$l->t('{user} mentioned you in a private chat'), [
+						'user' => $richSubjectUser
+					]
+				);
+
+		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+			if ($richSubjectUser && $richSubjectCall) {
+				$notification
+					->setParsedSubject(
+						$l->t('%s mentioned you in a group chat: %s', [$user->getDisplayName(), $room->getName()])
+					)
+					->setRichSubject(
+						$l->t('{user} mentioned you in a group chat: {call}'), [
+							'user' => $richSubjectUser,
+							'call' => $richSubjectCall
+						]
+					);
+			} else if ($richSubjectUser && !$richSubjectCall) {
+				$notification
+					->setParsedSubject(
+						$l->t('%s mentioned you in a group chat', [$user->getDisplayName()])
+					)
+					->setRichSubject(
+						$l->t('{user} mentioned you in a group chat'), [
+							'user' => $richSubjectUser
+						]
+					);
+			} else if (!$richSubjectUser && !$isGuest && $richSubjectCall) {
+				$notification
+					->setParsedSubject(
+						$l->t('A (now) deleted user mentioned you in a group chat: %s', [$room->getName()])
+					)
+					->setRichSubject(
+						$l->t('A (now) deleted user mentioned you in a group chat: {call}'), [
+							'call' => $richSubjectCall
+						]
+					);
+			} else if (!$richSubjectUser && !$isGuest && !$richSubjectCall) {
+				$notification
+					->setParsedSubject(
+						$l->t('A (now) deleted user mentioned you in a group chat')
+					)
+					->setRichSubject(
+						$l->t('A (now) deleted user mentioned you in a group chat')
+					);
+			} else if (!$richSubjectUser && $isGuest && $richSubjectCall) {
+				$notification
+					->setParsedSubject(
+						$l->t('A guest mentioned you in a group chat: %s', [$room->getName()])
+					)
+					->setRichSubject(
+						$l->t('A guest mentioned you in a group chat: {call}'), [
+							'call' => $richSubjectCall
+						]
+					);
+			} else if (!$richSubjectUser && $isGuest && !$richSubjectCall) {
+				$notification
+					->setParsedSubject(
+						$l->t('A guest mentioned you in a group chat')
+					)
+					->setRichSubject(
+						$l->t('A guest mentioned you in a group chat')
+					);
+			}
+		} else {
+			throw new \InvalidArgumentException('Unknown room type');
+		}
+
+		return $notification;
 	}
 
 	/**
