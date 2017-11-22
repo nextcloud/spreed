@@ -114,7 +114,7 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function parseMention(INotification $notification, Room $room, IL10N $l) {
-		if ($notification->getObjectType() !== 'room') {
+		if ($notification->getObjectType() !== 'chat') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
@@ -340,7 +340,7 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function parseCall(INotification $notification, Room $room, IL10N $l) {
-		if ($notification->getObjectType() !== 'room') {
+		if ($notification->getObjectType() !== 'call') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 

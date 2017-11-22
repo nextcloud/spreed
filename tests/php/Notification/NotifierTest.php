@@ -459,7 +459,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($subjectParameters);
 		$notification->expects($this->once())
 			->method('getObjectType')
-			->willReturn('room');
+			->willReturn('chat');
 		$notification->expects($this->once())
 			->method('getMessage')
 			->willReturn('message');

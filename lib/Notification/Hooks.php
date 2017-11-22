@@ -109,10 +109,12 @@ class Hooks {
 		$notification = $this->notificationManager->createNotification();
 		$dateTime = new \DateTime();
 		try {
+			// Remove all old notifications for this room
 			$notification->setApp('spreed')
 				->setObject('room', $room->getId());
+			$this->notificationManager->markProcessed($notification);
 
-			// Remove all old notifications for this room
+			$notification->setObject('call', $room->getId());
 			$this->notificationManager->markProcessed($notification);
 
 			$notification->setSubject('call', [
