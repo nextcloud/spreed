@@ -463,12 +463,12 @@
 	 * @private
 	 */
 	InternalSignaling.prototype._pingCall = function() {
-		if (!this.currentCallToken) {
+		if (!this.currentRoomToken) {
 			return;
 		}
 
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentCallToken + '/ping',
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentRoomToken + '/ping',
 			method: 'POST'
 		}).done(function() {
 			this.pingFails = 0;
