@@ -131,7 +131,7 @@
 		initialize: function() {
 			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.model,
-				modelAttribute: 'displayName',
+				modelAttribute: 'name',
 				modelSaveOptions: {
 					patch: true,
 					success: function() {
@@ -146,6 +146,7 @@
 				labelTagName: 'h3',
 				inputMaxLength: '200',
 				inputPlaceholder: t('spreed', 'Name'),
+				labelPlaceholder: t('spreed', 'Room information'),
 				buttonTitle: t('spreed', 'Rename')
 			});
 
