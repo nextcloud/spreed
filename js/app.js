@@ -20,7 +20,7 @@
  *
  */
 
-(function(OCA, Marionette, Backbone, _) {
+(function(OC, OCA, Marionette, Backbone, _, $) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -715,4 +715,4 @@
 	});
 
 	OCA.SpreedMe.App = App;
-})(OCA, Marionette, Backbone, _);
+})(OC, OCA, Marionette, Backbone, _, $);

@@ -21,7 +21,7 @@
  */
 
 
-(function(OC, OCA, Marionette, Handlebars) {
+(function(OC, OCA, Marionette, Handlebars, _, $) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -69,6 +69,15 @@
 				this.render();
 			},
 			'change:participants': function() {
+				this.render();
+			},
+			'change:hasCall': function() {
+				this.render();
+			},
+			'change:participantInCall': function() {
+				this.render();
+			},
+			'change:participantType': function() {
 				this.render();
 			},
 			'change:type': function() {
@@ -217,12 +226,15 @@
 			$('#shareRoomClipboardButton').addClass('hidden');
 
 			participants = this.model.get('participants');
+			var hasCall = this.model.get('hasCall'),
+				isInCall = this.model.get('participantInCall');
 
 			switch(this.model.get('type')) {
 				case ROOM_TYPE_ONE_TO_ONE:
-					var waitingParticipantId, waitingParticipantName;
+					var waitingParticipantId = '',
+						waitingParticipantName = '';
 
-					$.each(participants, function(participantId, data) {
+					_.each(participants, function(data, participantId) {
 						if (oc_current_user !== participantId) {
 							waitingParticipantId = participantId;
 							waitingParticipantName = data.name;
@@ -243,33 +255,63 @@
 						}
 					});
 
-					message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
+					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
+					if (hasCall) {
+						if (isInCall) {
+							message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
+						} else {
+							message = t('spreed', '{participantName} is waiting for you to join the call …', {participantName: waitingParticipantName});
+						}
+					}
 					messageAdditional = '';
 					break;
+				case ROOM_TYPE_PUBLIC_CALL:
 				case ROOM_TYPE_GROUP_CALL:
 					if (Object.keys(participants).length > 1) {
-						message = t('spreed', 'Waiting for others to join the call …');
+						message = t('spreed', 'Waiting for others to join the room …');
 						messageAdditional = '';
+						if (hasCall) {
+							if (isInCall) {
+								message = t('spreed', 'Waiting for others to join the call …');
+							} else {
+
+								var others = [];
+								_.each(participants, function(data) {
+									if (data.call) {
+										others.push(data.name);
+									}
+								});
+
+								if (others.length === 1) {
+									message = t('spreed', '{participantName} is waiting for you to join the call …', {participantName: others[0]});
+								} else if (others.length > 0) {
+									message = t('spreed', 'Others are waiting for you to join the call …', {participantName: waitingParticipantName});
+									if (others.length > 6) {
+										messageAdditional = others.slice(0, 5).join(', ') + ', …';
+									} else {
+										messageAdditional = others.join(', ');
+									}
+								}
+							}
+						}
 					} else {
 						message = t('spreed', 'No other people in this call');
-						messageAdditional = t('spreed', 'You can invite others by clicking "+ Add person" in the call menu.');
+						messageAdditional = '';
+						if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
+							messageAdditional = t('spreed', 'Share this link to invite others!');
+							$('#emptycontent-icon').addClass('icon-public');
+
+							//Add link
+							var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
+							$('#shareRoomInput').val(url);
+							$('#shareRoomInput').removeClass('hidden');
+							$('#shareRoomClipboardButton').removeClass('hidden');
+
+						} else if (this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
+							messageAdditional = t('spreed', 'You can invite others by clicking "+ Add person" in the call menu.');
+						}
 					}
 					$('#emptycontent-icon').addClass('icon-contacts-dark');
-					break;
-				case ROOM_TYPE_PUBLIC_CALL:
-					if (Object.keys(participants).length > 1) {
-						message = t('spreed', 'Waiting for others to join the call …');
-					} else {
-						message = t('spreed', 'No other people in this call');
-					}
-					messageAdditional = t('spreed', 'Share this link to invite others!');
-					$('#emptycontent-icon').addClass('icon-public');
-
-					//Add link
-					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
-					$('#shareRoomInput').val(url);
-					$('#shareRoomInput').removeClass('hidden');
-					$('#shareRoomClipboardButton').removeClass('hidden');
 					break;
 				default:
 					console.log("Unknown room type", this.model.get('type'));
@@ -315,4 +357,4 @@
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;
 
-})(OC, OCA, Marionette, Handlebars);
+})(OC, OCA, Marionette, Handlebars, _, $);

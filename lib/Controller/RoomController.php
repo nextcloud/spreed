@@ -169,6 +169,7 @@ class RoomController extends OCSController {
 			'participantInCall' => $participantInCall,
 			'count' => $room->getNumberOfParticipants(time() - 30),
 			'hasPassword' => $room->hasPassword(),
+			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 		];
 
 		if (!$participant instanceof Participant) {
@@ -178,6 +179,7 @@ class RoomController extends OCSController {
 				'sessionId' => '0',
 				'participants' => [],
 				'numGuests' => 0,
+				'hasCall' => false,
 				'guestList' => '',
 			]);
 
@@ -200,6 +202,7 @@ class RoomController extends OCSController {
 				$participantList[$user->getUID()] = [
 					'name' => $user->getDisplayName(),
 					'type' => $data['participantType'],
+					'call' => $data['inCall'],
 				];
 			}
 		}
