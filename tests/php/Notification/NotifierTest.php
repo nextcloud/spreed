@@ -281,8 +281,8 @@ class NotifierTest extends \Test\TestCase {
 			],
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart'], null,        '',
-				'A (now) deleted user mentioned you in a group chat',
-				['A (now) deleted user mentioned you in a group chat',
+				'You were mentioned in a group chat by a user that has since been deleted',
+				['You were mentioned in a group chat by a user that has since been deleted',
 					[]
 				],
 				'… message',
@@ -300,8 +300,8 @@ class NotifierTest extends \Test\TestCase {
 			],
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], null,        'Room name',
-				'A (now) deleted user mentioned you in a group chat: Room name',
-				['A (now) deleted user mentioned you in a group chat: {call}',
+				'You were mentioned in a group chat by a user that has since been deleted: Room name',
+				['You were mentioned in a group chat by a user that has since been deleted: {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
 					]
@@ -318,8 +318,8 @@ class NotifierTest extends \Test\TestCase {
 			],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart'], null,        '',
-				'A (now) deleted user mentioned you in a group chat',
-				['A (now) deleted user mentioned you in a group chat',
+				'You were mentioned in a group chat by a user that has since been deleted',
+				['You were mentioned in a group chat by a user that has since been deleted',
 					[]
 				],
 				'… message',
@@ -345,8 +345,8 @@ class NotifierTest extends \Test\TestCase {
 			],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           [], null,    'Room name',
-				'A (now) deleted user mentioned you in a group chat: Room name',
-				['A (now) deleted user mentioned you in a group chat: {call}',
+				'You were mentioned in a group chat by a user that has since been deleted: Room name',
+				['You were mentioned in a group chat by a user that has since been deleted: {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
 					]
