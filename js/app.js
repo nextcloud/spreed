@@ -629,7 +629,7 @@
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
-			if (!$hideVideoButton.hasClass('video-available')) {
+			if (!$hideVideoButton.hasClass('no-video-available')) {
 				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
 				 .addClass('video-disabled icon-video-off-white')
 				 .removeClass('icon-video-white');
