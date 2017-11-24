@@ -53,6 +53,7 @@ OC.L10N.register(
     "Change password" : "Jelszó módosítása",
     "Set password" : "Jelszó beállítása",
     "Name" : "Név",
+    "Room information" : "Szoba információ",
     "Rename" : "Átnevez",
     "Your name …" : "A te neved …",
     "New message…" : "Új üzenet…",
