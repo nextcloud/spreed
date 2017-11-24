@@ -803,6 +803,80 @@ var spreedPeerConnectionTable = [];
 			}
 		});
 
+		function checkPeerMedia(peer, track, mediaType) {
+			var defer = $.Deferred();
+			peer.pc.pc.getStats(track, function(stats) {
+				var result = false;
+				Object.keys(stats).forEach(function(key) {
+					var value = stats[key];
+					if (!result && !value || value.mediaType !== mediaType || !value.hasOwnProperty('bytesReceived')) {
+						return;
+					}
+
+					if (value.bytesReceived > 0) {
+						OCA.SpreedMe.webrtc.emit('unmute', {
+							id: peer.id,
+							name: mediaType
+						});
+						result = true;
+					}
+				});
+				if (result) {
+					defer.resolve();
+				} else {
+					defer.reject();
+				}
+			});
+			return defer;
+		}
+
+		function stopPeerCheckMedia(peer) {
+			if (peer.check_audio_interval) {
+				clearInterval(peer.check_audio_interval);
+				peer.check_audio_interval = null;
+			}
+			if (peer.check_video_interval) {
+				clearInterval(peer.check_video_interval);
+				peer.check_video_interval = null;
+			}
+		}
+
+		function startPeerCheckMedia(peer, stream) {
+			stopPeerCheckMedia(peer);
+			peer.check_video_interval = setInterval(function() {
+				stream.getVideoTracks().forEach(function(video) {
+					checkPeerMedia(peer, video, 'video').then(function() {
+						clearInterval(peer.check_video_interval);
+						peer.check_video_interval = null;
+					});
+				});
+			}, 1000);
+			peer.check_audio_interval = setInterval(function() {
+				stream.getAudioTracks().forEach(function(audio) {
+					checkPeerMedia(peer, audio, 'audio').then(function() {
+						clearInterval(peer.check_audio_interval);
+						peer.check_audio_interval = null;
+					});
+				});
+			}, 1000);
+		}
+
+		OCA.SpreedMe.webrtc.on('peerStreamAdded', function (peer) {
+			// With the MCU, a newly subscribed stream might not get the
+			// "audioOn"/"videoOn" messages as they are only sent when
+			// a user starts publishing. Instead wait for initial data
+			// and trigger events locally.
+			if (!signaling.hasFeature("mcu")) {
+				return;
+			}
+
+			startPeerCheckMedia(peer, peer.stream);
+		});
+
+		OCA.SpreedMe.webrtc.on('peerStreamRemoved', function (peer) {
+			stopPeerCheckMedia(peer);
+		});
+
 		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
 			app.disableScreensharingButton();
 		});
