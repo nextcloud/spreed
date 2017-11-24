@@ -53,6 +53,7 @@ OC.L10N.register(
     "Change password" : "Alterar a senha",
     "Set password" : "Definir a senha",
     "Name" : "Nome",
+    "Room information" : "Informação de espaço",
     "Rename" : "Renomear",
     "Your name …" : "Seu nome...",
     "New message…" : "Nova mensagem...",
