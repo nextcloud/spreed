@@ -53,6 +53,7 @@ OC.L10N.register(
     "Change password" : "პაროლის შეცვლა",
     "Set password" : "პაროლის დაყენება",
     "Name" : "სახელი",
+    "Room information" : "ოთახის ინფორმაცია",
     "Rename" : "სახელის შეცვლა",
     "Your name …" : "თქვენი სახელი …",
     "New message…" : "თქვენი წერილი …",
