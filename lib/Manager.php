@@ -258,18 +258,16 @@ class Manager {
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_rooms', 'r')
-			->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
-				$query->expr()->eq('p.sessionId', $query->createNamedParameter($sessionId)),
-				$query->expr()->eq('p.roomId', 'r.id')
-			))
+			->from('talk_participants', 'p')
+			->leftJoin('p', 'talk_rooms', 'r', $query->expr()->eq('p.roomId', 'r.id'))
+			->where($query->expr()->eq('p.sessionId', $query->createNamedParameter($sessionId)))
 			->setMaxResults(1);
 
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		if ($row === false) {
+		if ($row === false || !$row['id']) {
 			throw new RoomNotFoundException();
 		}
 
