@@ -29,6 +29,7 @@ use OCP\IDBConnection;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Manager {
 
@@ -458,7 +459,21 @@ class Manager {
 	 * @throws \OutOfBoundsException
 	 */
 	protected function generateNewToken(IQueryBuilder $query, $entropy, $chars) {
-		$token = $this->secureRandom->generate($entropy, $chars);
+		$event = new GenericEvent(null, [
+			'entropy' => $entropy,
+			'chars' => $chars,
+		]);
+		$this->dispatcher->dispatch(self::class . '::generateNewToken', $event);
+		try {
+			$token = $event->getArgument('token');
+			if (empty($token)) {
+				// Will generate default token below.
+				throw new \InvalidArgumentException('token may not be empty');
+			}
+		} catch (\InvalidArgumentException $e) {
+			$token = $this->secureRandom->generate($entropy, $chars);
+		}
+
 		$query->setParameter('token', $token);
 		$result = $query->execute();
 		$row = $result->fetch();
