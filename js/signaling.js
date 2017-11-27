@@ -455,6 +455,10 @@
 		}
 	};
 
+	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(/* newSession */) {
+		console.error("Forced reconnects are not supported with the internal signaling.");
+	};
+
 	OCA.Talk.Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		var message = [{
 			ev: ev
@@ -719,6 +723,7 @@
 		this.id = 1;
 		this.pendingMessages = [];
 		this.connected = false;
+		this._forceReconnect = false;
 		this.socket = new WebSocket(this.url);
 		window.signalingSocket = this.socket;
 		this.socket.onopen = function(event) {
@@ -779,16 +784,44 @@
 		}.bind(this);
 	};
 
-	OCA.Talk.Signaling.Standalone.prototype.disconnect = function() {
-		if (this.socket) {
+	OCA.Talk.Signaling.Standalone.prototype.sendBye = function() {
+		if (this.connected) {
 			this.doSend({
 				"type": "bye",
 				"bye": {}
 			});
+		}
+		this.resumeId = null;
+	};
+
+	OCA.Talk.Signaling.Standalone.prototype.disconnect = function() {
+		this.sendBye();
+		if (this.socket) {
 			this.socket.close();
 			this.socket = null;
 		}
 		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments);
+	};
+
+	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession) {
+		if (!this.connected) {
+			if (!newSession) {
+				// Not connected, will do reconnect anyway.
+				return;
+			}
+
+			this._forceReconnect = true;
+			return;
+		}
+
+		this._forceReconnect = false;
+		if (newSession) {
+			this.sendBye();
+		}
+		if (this.socket) {
+			// Trigger reconnect.
+			this.socket.close();
+		}
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.sendCallMessage = function(data) {
@@ -850,6 +883,8 @@
 				}
 			};
 		} else {
+			// Already reconnected with a new session.
+			this._forceReconnect = false;
 			var user = OC.getCurrentUser();
 			var url = OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'backend';
 			msg = {
@@ -887,6 +922,11 @@
 
 		var resumedSession = !!this.resumeId;
 		this.connected = true;
+		if (this._forceReconnect && resumedSession) {
+			console.log("Perform pending forced reconnect");
+			this.forceReconnect(true);
+			return;
+		}
 		this.sessionId = data.hello.sessionid;
 		this.resumeId = data.hello.resumeid;
 		this.features = {};
