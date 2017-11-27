@@ -99,7 +99,7 @@ var spreedPeerConnectionTable = [];
 		var currentSessionId = webrtc.connection.getSessionid();
 
 		var useMcu = signaling.hasFeature("mcu");
-		if (useMcu && !webrtc.webrtc.getPeers(currentSessionId, 'video').length) {
+		if (useMcu && newUsers.length && !webrtc.webrtc.getPeers(currentSessionId, 'video').length) {
 			if (ownPeer) {
 				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
 				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
@@ -518,39 +518,46 @@ var spreedPeerConnectionTable = [];
 							if (spreedPeerConnectionTable[peer.id] > 0) {
 								spreedPeerConnectionTable[peer.id] = 0;
 							}
-
 							break;
 						case 'disconnected':
 							console.log('Disconnected.');
-							// If the peer is still disconnected after 5 seconds we try ICE restart.
-							setTimeout(function() {
-								if(peer.pc.iceConnectionState === 'disconnected') {
-									avatar.addClass('icon-loading');
-									if (spreedPeerConnectionTable[peer.id] < 5) {
-										if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-											peer.pc.pc.peerconnection.signalingState === 'stable') {
-											spreedPeerConnectionTable[peer.id] ++;
-											console.log('ICE restart.');
-											peer.icerestart();
+							if (!signaling.hasFeature("mcu")) {
+								// ICE failures will be handled in "iceFailed"
+								// below for MCU installations.
+								setTimeout(function() {
+									// If the peer is still disconnected after 5 seconds we try ICE restart.
+									if(peer.pc.iceConnectionState === 'disconnected') {
+										avatar.addClass('icon-loading');
+										if (spreedPeerConnectionTable[peer.id] < 5) {
+											if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
+												peer.pc.pc.peerconnection.signalingState === 'stable') {
+												spreedPeerConnectionTable[peer.id] ++;
+												console.log('ICE restart.');
+												peer.icerestart();
+											}
 										}
 									}
-								}
-							}, 5000);
+								}, 5000);
+							}
 							break;
 						case 'failed':
 							console.log('Connection failed.');
-							if (spreedPeerConnectionTable[peer.id] < 5) {
-								avatar.addClass('icon-loading');
-								if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-									peer.pc.pc.peerconnection.signalingState === 'stable') {
-									spreedPeerConnectionTable[peer.id] ++;
-									console.log('ICE restart.');
-									peer.icerestart();
+							if (!signaling.hasFeature("mcu")) {
+								// ICE failures will be handled in "iceFailed"
+								// below for MCU installations.
+								if (spreedPeerConnectionTable[peer.id] < 5) {
+									avatar.addClass('icon-loading');
+									if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
+										peer.pc.pc.peerconnection.signalingState === 'stable') {
+										spreedPeerConnectionTable[peer.id] ++;
+										console.log('ICE restart.');
+										peer.icerestart();
+									}
+								} else {
+									console.log('ICE failed after 5 tries.');
+									mediaIndicator.children().hide();
+									mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
 								}
-							} else {
-								console.log('ICE failed after 5 tries.');
-								mediaIndicator.children().hide();
-								mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
 							}
 							break;
 						case 'closed':
@@ -887,6 +894,30 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
 			app.disableScreensharingButton();
+		});
+
+		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
+			if (!signaling.hasFeature("mcu")) {
+				// ICE restarts will be handled by "iceConnectionStateChange"
+				// above.
+				return;
+			}
+
+			// For now assume the connection to the MCU is interrupted on ICE
+			// failures and force a reconnection of all streams.
+			if (ownPeer) {
+				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
+				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+				OCA.SpreedMe.videos.remove(ownPeer.id);
+				delete spreedMappingTable[ownPeer.id];
+				ownPeer.end();
+				ownPeer = null;
+			}
+			usersChanged(signaling, [], previousUsersInRoom);
+			// Reconnects with a new session id will trigger "usersChanged"
+			// with the users in the room and that will re-establish the
+			// peerconnection streams.
+			signaling.forceReconnect(true);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
