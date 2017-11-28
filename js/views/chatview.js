@@ -1,4 +1,4 @@
-/* global autosize, Backbone, Handlebars, OC, OCA */
+/* global autosize, Marionette, Handlebars, OC, OCA */
 
 /**
  *
@@ -21,7 +21,7 @@
  *
  */
 
-(function(OCA, OC, Backbone, Handlebars, autosize) {
+(function(OCA, OC, Marionette, Handlebars, autosize) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -57,7 +57,7 @@
 		'    <div class="message">{{{formattedMessage}}}</div>' +
 		'</li>';
 
-	var ChatView = Backbone.View.extend({
+	var ChatView = Marionette.View.extend({
 
 		events: {
 			'submit .newCommentForm': '_onSubmitComment',
@@ -68,11 +68,9 @@
 			this.listenTo(this.collection, 'add', this._onAddModel);
 		},
 
-		template: function(params) {
-			if (!this._template) {
-				this._template = Handlebars.compile(TEMPLATE);
-			}
-			return this._template(params);
+		template: Handlebars.compile(TEMPLATE),
+		templateContext: {
+			emptyResultLabel: t('spreed', 'No messages yet, start the conversation!')
 		},
 
 		addCommentTemplate: function(params) {
@@ -96,12 +94,9 @@
 			return this._commentTemplate(params);
 		},
 
-		render: function() {
+		onRender: function() {
 			delete this._lastAddedMessageModel;
 
-			this.$el.html(this.template({
-				emptyResultLabel: t('spreed', 'No messages yet, start the conversation!')
-			}));
 			this.$el.find('.comments').before(this.addCommentTemplate({}));
 			this.$el.find('.has-tooltip').tooltip();
 			this.$container = this.$el.find('ul.comments');
@@ -111,8 +106,6 @@
 			this.$el.find('.message').on('keydown input change', this._onTypeComment);
 
 			autosize(this.$el.find('.newCommentRow .message'));
-
-			return this;
 		},
 
 		_formatItem: function(commentModel) {
@@ -319,4 +312,4 @@
 
 	OCA.SpreedMe.Views.ChatView = ChatView;
 
-})(OCA, OC, Backbone, Handlebars, autosize);
+})(OCA, OC, Marionette, Handlebars, autosize);
