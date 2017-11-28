@@ -38,7 +38,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-screensharing.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-contacts-menu.png</screenshot>
 
-	<version>2.0.1</version>
+	<version>2.0.2</version>
 
 	<dependencies>
 		<nextcloud min-version="12" max-version="12" />

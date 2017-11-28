@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.0.2 – 2017-11-28
+### Fixed
+ - Re-send data channels messages when they could not be sent.
+  [#335](https://github.com/nextcloud/spreed/pull/335)
+
 ## 2.0.1 – 2017-05-22
 ### Added
  - Display the connection state in the interface and try to reconnect in case of an issue
