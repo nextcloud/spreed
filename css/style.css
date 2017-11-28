@@ -141,6 +141,30 @@
 }
 
 /**
+ * Main view chat styles
+ */
+#app-content-wrapper {
+	height: 100%;
+}
+
+#app-content-wrapper #commentsTabView {
+	width: 100%;
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+}
+
+#app-content-wrapper #commentsTabView .comments {
+	overflow-y: auto;
+}
+
+/* Hide all siblings of the chat view when shown as the main view */
+#app-content-wrapper #commentsTabView ~ * {
+	display: none !important;
+}
+
+/**
  * Video styles
  */
 
