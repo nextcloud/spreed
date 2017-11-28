@@ -224,8 +224,8 @@
 
 			//Remove previous icon, avatar or link from emptycontent
 			var $emptyContentIcon = $('#emptycontent-icon');
-			$emptyContentIcon.attr('class', '');
-			$emptyContentIcon.innerHTML = '';
+			$emptyContentIcon.attr('class', '')
+				.empty();
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
