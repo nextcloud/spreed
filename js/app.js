@@ -509,7 +509,7 @@
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
 				id: 'commentsTabView',
-				className: 'chat tab'
+				className: 'chat'
 			});
 
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
