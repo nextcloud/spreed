@@ -59,47 +59,49 @@ script(
 			</div>
 		</header>
 
-		<button id="video-fullscreen" class="icon-fullscreen icon-white icon-shadow public" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen')) ?>"></button>
+		<div id="app-content-wrapper">
+			<button id="video-fullscreen" class="icon-fullscreen icon-white icon-shadow public" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen')) ?>"></button>
 
-		<div id="video-speaking">
+			<div id="video-speaking">
 
-		</div>
-		<div id="videos">
-			<div class="videoView videoContainer hidden" id="localVideoContainer">
-				<video id="localVideo"></video>
-				<div class="avatar-container hidden">
-					<div class="avatar"></div>
-				</div>
-				<div class="nameIndicator">
-					<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
-					<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
-					<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
-					<div id="screensharing-menu" class="app-navigation-entry-menu">
-						<ul>
-							<li>
-								<button id="show-screen-button">
-									<span class="icon-screen"></span>
-									<span><?php p($l->t('Show your screen'));?></span>
-								</button>
-							</li>
-							<li>
-								<button id="stop-screen-button">
-									<span class="icon-screen-off"></span>
-									<span><?php p($l->t('Stop screensharing'));?></span>
-								</button>
-							</li>
-						</ul>
+			</div>
+			<div id="videos">
+				<div class="videoView videoContainer hidden" id="localVideoContainer">
+					<video id="localVideo"></video>
+					<div class="avatar-container hidden">
+						<div class="avatar"></div>
+					</div>
+					<div class="nameIndicator">
+						<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio')) ?>"></button>
+						<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video')) ?>"></button>
+						<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
+						<div id="screensharing-menu" class="app-navigation-entry-menu">
+							<ul>
+								<li>
+									<button id="show-screen-button">
+										<span class="icon-screen"></span>
+										<span><?php p($l->t('Show your screen'));?></span>
+									</button>
+								</li>
+								<li>
+									<button id="stop-screen-button">
+										<span class="icon-screen-off"></span>
+										<span><?php p($l->t('Stop screensharing'));?></span>
+									</button>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 
-		<div id="screens"></div>
+			<div id="screens"></div>
 
-		<div id="emptycontent">
-			<div id="emptycontent-icon" class="icon-video"></div>
-			<h2><?php p($l->t('Looking great today! :)')) ?></h2>
-			<p class="uploadmessage"><?php p($l->t('Smile in 3… 2… 1!')) ?></p>
+			<div id="emptycontent">
+				<div id="emptycontent-icon" class="icon-video"></div>
+				<h2><?php p($l->t('Looking great today! :)')) ?></h2>
+				<p class="uploadmessage"><?php p($l->t('Smile in 3… 2… 1!')) ?></p>
+			</div>
 		</div>
 	</div>
 </div>
