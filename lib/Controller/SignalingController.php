@@ -84,6 +84,18 @@ class SignalingController extends OCSController {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 *
+	 * Only available for logged in users because guests can not use the apps
+	 * right now.
+	 *
+	 * @return DataResponse
+	 */
+	public function getSettings() {
+		return new DataResponse($this->config->getSettings($this->userId));
+	}
+
+	/**
 	 * @PublicPage
 	 *
 	 * @param string $messages
