@@ -93,46 +93,6 @@ class PageController extends Controller {
 	}
 
 	/**
-	 * @return array
-	 */
-	private function getSignalingSettings() {
-		$stun = [];
-		$stunServer = $this->config->getStunServer();
-		if ($stunServer) {
-			$stun[] = [
-				'url' => 'stun:' . $stunServer,
-			];
-		}
-		$turn = [];
-		$turnSettings = $this->config->getTurnSettings();
-		if (!empty($turnSettings['server'])) {
-			$protocols = explode(',', $turnSettings['protocols']);
-			foreach ($protocols as $proto) {
-				$turn[] = [
-					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
-					'username' => $turnSettings['username'],
-					'credential' => $turnSettings['password'],
-				];
-			}
-		}
-
-		$signaling = [];
-		$servers = $this->config->getSignalingServers();
-		if (!empty($servers)) {
-			$signaling = $servers[mt_rand(0, count($servers) - 1)];
-			$signaling = $signaling['server'];
-		}
-
-		return [
-			'server' => $signaling,
-			'ticket' => $this->config->getSignalingTicket($this->userId),
-			'stunservers' => $stun,
-			'turnservers' => $turn,
-		];
-	}
-
-	/**
 	 * @PublicPage
 	 * @NoCSRFRequired
 	 * @UseSession
@@ -204,7 +164,7 @@ class PageController extends Controller {
 
 		$params = [
 			'token' => $token,
-			'signaling-settings' => $this->getSignalingSettings(),
+			'signaling-settings' => $this->config->getSettings($this->userId),
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();
@@ -243,7 +203,7 @@ class PageController extends Controller {
 
 		$params = [
 			'token' => $token,
-			'signaling-settings' => $this->getSignalingSettings(),
+			'signaling-settings' => $this->config->getSettings($this->userId),
 		];
 		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
 		$csp = new ContentSecurityPolicy();

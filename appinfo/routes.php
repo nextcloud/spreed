@@ -47,6 +47,14 @@ return [
 			],
 		],
 		[
+			'name' => 'Signaling#getSettings',
+			'url' => '/api/{apiVersion}/signaling/settings',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
 			'name' => 'Signaling#backend',
 			'url' => '/api/{apiVersion}/signaling/backend',
 			'verb' => 'POST',

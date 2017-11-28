@@ -52,6 +52,43 @@ class Config {
 		$this->timeFactory = $timeFactory;
 	}
 
+	public function getSettings($userId) {
+		$stun = [];
+		$stunServer = $this->getStunServer();
+		if ($stunServer) {
+			$stun[] = [
+				'url' => 'stun:' . $stunServer,
+			];
+		}
+		$turn = [];
+		$turnSettings = $this->getTurnSettings();
+		if (!empty($turnSettings['server'])) {
+			$protocols = explode(',', $turnSettings['protocols']);
+			foreach ($protocols as $proto) {
+				$turn[] = [
+					'url' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'urls' => ['turn:' . $turnSettings['server'] . '?transport=' . $proto],
+					'username' => $turnSettings['username'],
+					'credential' => $turnSettings['password'],
+				];
+			}
+		}
+
+		$signaling = [];
+		$servers = $this->getSignalingServers();
+		if (!empty($servers)) {
+			$signaling = $servers[mt_rand(0, count($servers) - 1)];
+			$signaling = $signaling['server'];
+		}
+
+		return [
+			'server' => $signaling,
+			'ticket' => $this->getSignalingTicket($userId),
+			'stunservers' => $stun,
+			'turnservers' => $turn,
+		];
+	}
+
 	/**
 	 * @return string
 	 */
