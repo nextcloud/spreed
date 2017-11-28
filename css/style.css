@@ -690,6 +690,13 @@ video {
 	}
 }
 
+/* The header element contains the header div; as the header div uses a fixed
+   position the header element has no height, so it must be explicitly set to
+   prevent #app-content-wrapper from overlapping with the header element */
+#body-public header {
+	height: 45px;
+}
+
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
