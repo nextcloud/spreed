@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<info>
+<info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
+	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>spreed</id>
 	<name>Talk</name>
 	<summary><![CDATA[Video & audio-conferencing using WebRTC]]></summary>
@@ -16,41 +17,39 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 * ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
 	]]></description>
-	<licence>AGPL</licence>
+
+	<version>2.1.10</version>
+	<licence>agpl</licence>
 
 	<author>Ivan Sein</author>
 	<author>Jan-Christoph Borchardt</author>
 	<author>Lukas Reschke</author>
 	<author>Morris Jobke</author>
 
-	<website>https://github.com/nextcloud/spreed</website>
-	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
-	<repository type="git">https://github.com/nextcloud/spreed.git</repository>
+	<namespace>Spreed</namespace>
+
+	<types>
+		<prevent_group_restriction />
+	</types>
 
 	<category>multimedia</category>
 	<category>social</category>
+
+	<website>https://github.com/nextcloud/spreed</website>
+	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
+	<repository>https://github.com/nextcloud/spreed.git</repository>
 
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-call.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-screensharing.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-contacts-menu.png</screenshot>
 
-	<version>2.1.10</version>
-
 	<dependencies>
 		<nextcloud min-version="13" max-version="13" />
 	</dependencies>
-	<types>
-		<prevent_group_restriction />
-	</types>
-	<namespace>Spreed</namespace>
 
-	<navigations>
-		<navigation>
-			<name>Talk</name>
-			<route>spreed.Page.index</route>
-			<order>3</order>
-		</navigation>
-	</navigations>
+	<background-jobs>
+		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
+	</background-jobs>
 
 	<settings>
 		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
@@ -70,11 +69,15 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		</providers>
 	</activity>
 
+	<navigations>
+		<navigation>
+			<name>Talk</name>
+			<route>spreed.Page.index</route>
+			<order>3</order>
+		</navigation>
+	</navigations>
+
 	<contactsmenu>
 		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>
 	</contactsmenu>
-
-	<background-jobs>
-		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
-	</background-jobs>
 </info>
