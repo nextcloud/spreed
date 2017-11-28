@@ -153,10 +153,25 @@
 
 	display: flex;
 	flex-direction: column;
+
+	padding-top: 15px;
+}
+
+/* The lateral padding is set for each child instead of for the chat view as a
+   whole to prevent showing the scroll bar padded from the border of the chat
+   view (which could be fixed by using a negative margin and a positive padding
+   in the list of messages) and to ensure that the contacts menu is not clipped
+   due to overflowing the chat view on its left (much harder to fix). */
+#app-content-wrapper #commentsTabView .newCommentRow {
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 #app-content-wrapper #commentsTabView .comments {
 	overflow-y: auto;
+
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 /* Hide all siblings of the chat view when shown as the main view */
