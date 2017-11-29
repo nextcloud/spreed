@@ -945,3 +945,26 @@ video {
 #app-sidebar .comments {
 	overflow-y: auto;
 }
+
+/**
+ * Place the scroll bar of the message list on the right edge of the sidebar,
+ * but keeping the padding of the tab view.
+ *
+ * The padding must be set on the left too to ensure that the contacts menu
+ * shown when clicking on an author name does not overflow the tab (as it would
+ * be hidden).
+ *
+ * The bottom padding is removed to extend the chat view to the bottom edge of
+ * the sidebar.
+ */
+#app-sidebar .tab-chat {
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 0px;
+}
+
+#app-sidebar #commentsTabView .newCommentRow,
+#app-sidebar #commentsTabView .comments {
+	padding-left: 15px;
+	padding-right: 15px;
+}
