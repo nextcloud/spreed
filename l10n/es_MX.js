@@ -71,6 +71,7 @@ OC.L10N.register(
     "Leave room" : "Salir del cuarto",
     "Delete room" : "Eliminar cuarto",
     "No other people in this call" : "No hay más personas en esta llamada",
+    "You can invite others by clicking \"+ Add person\" in the call menu." : "Puedes invitar a otros haciendo click en \"+ Agregar persona\" en el menú de llamada",
     "Share this link to invite others!" : "¡Comparte esta liga para invitar a otras personas!",
     "You" : "Tú",
     "and you" : "y tú",
