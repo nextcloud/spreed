@@ -30,7 +30,7 @@
 	var TEMPLATE =
 		'<div id="app-sidebar-trigger" class="icon-menu-people icon-white icon-shadow">' +
 		'</div>' +
-		'<div id="app-sidebar" class="detailsView scroll-container">' +
+		'<div id="app-sidebar" class="detailsView">' +
 		'	<div class="detailCallInfoContainer">' +
 		'	</div>' +
 		'	<div class="tabs">' +
