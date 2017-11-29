@@ -76,9 +76,13 @@
 		// nothing to be rendered with a template.
 		template: _.noop,
 
-		childViewTriggers: {
-			// Propagate the event to the parent view.
-			'click:tabHeader': 'click:tabHeader'
+		childViewEvents: {
+			'click:tabHeader': 'selectTabHeader'
+		},
+
+		initialize: function() {
+			// The tabIds in priority and then insertion order.
+			this._tabIds = [];
 		},
 
 		addTabHeader: function(tabId, tabHeaderOptions) {
@@ -94,6 +98,8 @@
 			var tabHeaderView = new TabHeaderView(tabHeaderOptions);
 
 			var tabHeaderIndex = this._getIndexForTabHeaderPriority(tabHeaderOptions.priority);
+
+			this._tabIds.splice(tabHeaderIndex, 0, tabId);
 
 			// When adding a region and showing a view on it the target element
 			// of the region must exist in the parent view. Therefore, a dummy
@@ -123,20 +129,11 @@
 		 * @return int the insertion index.
 		 */
 		_getIndexForTabHeaderPriority: function(priority) {
-			// this.getRegions() returns an object that acts as a map, but it
-			// has no "length" property; _.map creates an array, thus ensuring
-			// that there is a "length" property to know the current number of
-			// tab headers.
-			var currentPriorities = _.map(this.getRegions(), function(region) {
-				return region.currentView.getOption('priority');
-			});
-
-			// By default sort() converts the values to strings and sorts them
-			// in ascending order using their Unicode value; a custom function
-			// must be used to sort them by their numerical value instead.
-			currentPriorities.sort(function(a, b) {
-				return a - b;
-			}).reverse();
+			// _.map creates an array, so "currentPriorities" will contain a
+			// "length" property.
+			var currentPriorities = _.map(this._tabIds, _.bind(function(tabId) {
+				return this.getRegion(tabId).currentView.getOption('priority');
+			}, this));
 
 			var index = _.findIndex(currentPriorities, function(currentPriority) {
 				return priority > currentPriority;
@@ -149,6 +146,41 @@
 			return index;
 		},
 
+		/**
+		 * Removes the tab header for the given tabId.
+		 *
+		 * If the tab header to be removed is the one currently selected and
+		 * there are other tab headers the next one (in priority and then
+		 * insertion order) is automatically selected; if the tab header to be
+		 * removed is the last one, then the previous one is selected instead.
+		 *
+		 * @param string tabId the ID of the tab.
+		 */
+		removeTabHeader: function(tabId) {
+			var tabIdIndex = _.indexOf(this._tabIds, tabId);
+
+			// If the tab header to be removed is the one currently selected
+			// then select the next tab header or, if it is the last tab header,
+			// the previous one (or none if there are no other tab headers).
+			if (this._currentTabId === tabId) {
+				if (this._tabIds.length <= 1) {
+					delete this._currentTabId;
+				} else if (tabIdIndex === (this._tabIds.length - 1)) {
+					this.selectTabHeader(this._tabIds[tabIdIndex - 1]);
+				} else {
+					this.selectTabHeader(this._tabIds[tabIdIndex + 1]);
+				}
+			}
+
+			this._tabIds.splice(tabIdIndex, 1);
+
+			var removedRegion = this.removeRegion(tabId);
+			// Remove the dummy target element that was replaced by the view
+			// when it was shown and that is restored back when the region is
+			// removed.
+			removedRegion.el.remove();
+		},
+
 		selectTabHeader: function(tabId) {
 			if (this._currentTabId !== undefined) {
 				this.getChildView(this._currentTabId).setSelected(false);
@@ -157,6 +189,8 @@
 			this._currentTabId = tabId;
 
 			this.getChildView(this._currentTabId).setSelected(true);
+
+			this.triggerMethod('select:tabHeader', tabId);
 		}
 
 	});
@@ -208,7 +242,8 @@
 		 * the header).
 		 *
 		 * The TabView takes ownership of the given content view, and it will
-		 * destroy it when the TabView is destroyed.
+		 * destroy it when the TabView is destroyed, except if the content view
+		 * is removed first.
 		 *
 		 * @param string tabId the ID of the tab.
 		 * @param Object tabHeaderOptions the options for the constructor of the
@@ -231,8 +266,43 @@
 			}
 		},
 
-		onChildviewClickTabHeader: function(tabId) {
-			this.selectTab(tabId);
+		/**
+		 * Removes the tab for the given tabId.
+		 *
+		 * If the tab to be removed is the one currently selected and there are
+		 * other tabs the next one (in priority and then insertion order) is
+		 * automatically selected; if the tab to be removed is the last one,
+		 * then the previous one is selected instead. If there are no other tabs
+		 * then this TabView is simply emptied.
+		 *
+		 * In any case the content view given when the tab was added is
+		 * returned; this TabView will no longer have ownership of the content
+		 * view, and thus the content view must be explicitly destroyed when no
+		 * longer needed.
+		 *
+		 * @param string tabId the ID of the tab to remove.
+		 * @return Marionette.View the content view of the removed tab.
+		 */
+		removeTab: function(tabId) {
+			if (!this._tabContentViews.hasOwnProperty(tabId)) {
+				return undefined;
+			}
+
+			var removedTabContentView = this._tabContentViews[tabId];
+
+			this._tabHeadersView.removeTabHeader(tabId);
+
+			delete this._tabContentViews[tabId];
+
+			// Removing the tab header selects a new tab header, which in turn
+			// changes the content view, except when there are no other tabs. In
+			// that case the content view would be being shown in the region and
+			// thus would have to be removed from there.
+			if (Object.keys(this._tabContentViews).length === 0) {
+				this.getRegion('tabContent').empty({preventDestroy: true});
+			}
+
+			return removedTabContentView;
 		},
 
 		/**
@@ -246,7 +316,16 @@
 			}
 
 			this._tabHeadersView.selectTabHeader(tabId);
+		},
 
+		/**
+		 * Shows the content view associated to the selected tab header.
+		 *
+		 * Only for internal use as an event handler.
+		 *
+		 * @param string tabId the ID of the selected tab.
+		 */
+		onChildviewSelectTabHeader: function(tabId) {
 			// With Marionette 3.1 "this.detachChildView('tabContent')" would be
 			// used instead of the "preventDestroy" option.
 			this.showChildView('tabContent', this._tabContentViews[tabId], { preventDestroy: true } );
