@@ -629,9 +629,11 @@
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
-			$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
-				.addClass('video-disabled icon-video-off-white')
-				.removeClass('icon-video-white');
+			if (!$hideVideoButton.hasClass('video-available')) {
+				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
+				 .addClass('video-disabled icon-video-off-white')
+				 .removeClass('icon-video-white');
+			}
 
 			var avatar = avatarContainer.find('.avatar');
 			var guestName = localStorage.getItem("nick");

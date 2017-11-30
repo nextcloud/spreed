@@ -954,6 +954,14 @@ var spreedPeerConnectionTable = [];
 			if (!OCA.SpreedMe.app.videoDisabled) {
 				OCA.SpreedMe.app.enableVideo();
 			}
+
+			var availableStream = $(OCA.SpreedMe.webrtc.webrtc.localStream.getVideoTracks());
+			var $hideVideoButton = $('#hideVideo');
+			if(availableStream.length < 1 || availableStream.length == undefined) {
+				$hideVideoButton.removeClass('video-disabled icon-video-off-white')
+				.addClass('video-available icon-video-off-white')
+				.attr('data-original-title', t('spreed', 'No Camera'));
+			}
 		});
 	}
 

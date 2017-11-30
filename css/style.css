@@ -420,6 +420,15 @@ video {
 	opacity: .7;
 }
 
+.nameIndicator button.video-available {
+	opacity: .7;
+	cursor: not-allowed;
+ }
+
+.nameIndicator button.video-available:active {
+	background-color: transparent;
+}
+
 .mediaIndicator {
 	position: absolute;
 	width: 100%;
