@@ -956,8 +956,8 @@ var spreedPeerConnectionTable = [];
 			}
 
 			var $hideVideoButton = $('#hideVideo');
-			if(OCA.SpreedMe.webrtc.webrtc.localStream.getVideoTracks() < 1) {
-				$hideVideoButton.removeClass('video-disabled icon-video-off-white')
+			if(OCA.SpreedMe.webrtc.webrtc.localStream.getVideoTracks().length < 1) {
+				$hideVideoButton.removeClass('video-disabled')
 				.addClass('no-video-available icon-video-off-white')
 				.attr('data-original-title', t('spreed', 'No Camera'));
 			}
