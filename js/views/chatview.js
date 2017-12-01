@@ -275,7 +275,7 @@
 				return false;
 			}
 
-			$commentField.prop('disabled', true);
+			$commentField.prop('contenteditable', false);
 			$submit.addClass('hidden');
 			$loading.removeClass('hidden');
 
@@ -300,7 +300,7 @@
 		_onSubmitSuccess: function(model, $form) {
 			$form.find('.submit').removeClass('hidden');
 			$form.find('.submitLoading').addClass('hidden');
-			$form.find('.message').text('').prop('disabled', false);
+			$form.find('.message').text('').prop('contenteditable', true);
 
 			// The new message does not need to be explicitly added to the list
 			// of messages; it will be automatically fetched from the server
@@ -310,7 +310,7 @@
 		_onSubmitError: function($form) {
 			$form.find('.submit').removeClass('hidden');
 			$form.find('.submitLoading').addClass('hidden');
-			$form.find('.message').prop('disabled', false);
+			$form.find('.message').prop('contenteditable', true);
 
 			OC.Notification.show(t('spreed', 'Error occurred while sending message'), {type: 'error'});
 		},
