@@ -98,7 +98,7 @@
 			delete this._lastAddedMessageModel;
 
 			this.$el.find('.comments').before(this.addCommentTemplate({}));
-			this.$el.find('.has-tooltip').tooltip();
+			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			this.$container = this.$el.find('ul.comments');
 			// FIXME handle guest users
 			this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32);
@@ -106,6 +106,27 @@
 			this.$el.find('.message').on('keydown input change', this._onTypeComment);
 
 			autosize(this.$el.find('.newCommentRow .message'));
+		},
+
+		/**
+		 * Set the tooltip container.
+		 *
+		 * Depending on the parent elements of the chat view the tooltips may
+		 * need to be appended to a specific element to be properly shown (due
+		 * to how CSS overflows, clipping areas and positioning contexts work).
+		 * If no specific container is ever set, or if it is set to "undefined",
+		 * the tooltip elements will be appended as siblings of the element for
+		 * which they are shown.
+		 *
+		 * @param jQuery tooltipContainer the element to append the tooltip
+		 *        elements to
+		 */
+		setTooltipContainer: function(tooltipContainer) {
+			this._tooltipContainer = tooltipContainer;
+
+			// Update tooltips
+			this.$el.find('.has-tooltip').tooltip('destroy');
+			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 		},
 
 		_formatItem: function(commentModel) {
@@ -197,7 +218,7 @@
 		},
 
 		_postRenderItem: function($el) {
-			$el.find('.has-tooltip').tooltip();
+			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			$el.find('.avatar').each(function() {
 				var $this = $(this);
 				$this.avatar($this.attr('data-username'), 32);
