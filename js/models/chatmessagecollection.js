@@ -90,8 +90,16 @@
 			// messages sorted from oldest to newest, is to sort the models
 			// passed to "set" from oldest to newest.
 			if (models !== undefined && models !== null && models.ocs !== undefined && models.ocs.data !== undefined) {
-				models.ocs.data = _.sortBy(models.ocs.data, function(model) {
-					return model.timestamp;
+				models.ocs.data = _.sortBy(models.ocs.data, function(model, index) {
+					// The timestamp is in seconds, so when sent extremely fast
+					// two or more messages can have the same timestamp. The ID
+					// is a string, and although currently it contains an
+					// integer which is always incremented from the previous
+					// message that is an internal implementation detail that
+					// can not be relied on. Due to all that the sorting is
+					// based on the reversed position of the model in the set
+					// returned by the server.
+					return (models.ocs.data.length - 1 - index);
 				});
 			}
 
