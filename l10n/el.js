@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Validate SSL certificate" : "Επικυρώστε το πιστοποιητικό SSL",
     "Delete server" : "Διαγραφή διακομιστή",
     "Add new server" : "Προσθήκη νέου διακομιστή",
     "Saved" : "Αποθηκεύτηκαν",

@@ -103,6 +103,8 @@ OC.L10N.register(
     "… %s" : "… %s",
     "%s …" : "%s …",
     "… %s …" : "… %s …",
+    "%s mentioned you in a private chat" : "%svous a mentionné⋅e dans une discussion privée",
+    "{user} mentioned you in a private chat" : "{user} vous a mentionné⋅e dans une discussion privée",
     "%s invited you to a private call" : "%s vous a invité dans un appel privé",
     "{user} invited you to a private call" : "{user} vous a invité dans un appel privé",
     "%s invited you to a group call: %s" : "%s vous a invité dans un appel de groupe : %s",
