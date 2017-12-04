@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete server" : "Διαγραφή διακομιστή",
     "Add new server" : "Προσθήκη νέου διακομιστή",
     "Saved" : "Αποθηκεύτηκαν",
+    "Shared secret" : "Διαμοιρασμένο μυστικό",
     "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
     "UDP and TCP" : "UDP και TCP",
     "UDP only" : "Μόνο UDP",
