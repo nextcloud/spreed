@@ -12,8 +12,8 @@ Feature: chat/group
       | invite   | attendees1 |
     When user "participant1" sends message "Message 1" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message   |
-      | group room | users     | participant1 | participant1-displayname | Message 1 |
+      | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from group room
     Given user "participant1" creates room "group room"
@@ -21,8 +21,8 @@ Feature: chat/group
       | invite   | attendees1 |
     When user "participant2" sends message "Message 1" to room "group room" with 201
     Then user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message   |
-      | group room | users     | participant2 | participant2-displayname | Message 1 |
+      | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | group room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to nor from group room
     Given user "participant1" creates room "group room"
@@ -48,10 +48,10 @@ Feature: chat/group
     When user "participant1" sends message "Message 1" to room "group room" with 201
     And user "participant2" sends message "Message 2" to room "group room" with 201
     Then user "participant1" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message   |
-      | group room | users     | participant2 | participant2-displayname | Message 2 |
-      | group room | users     | participant1 | participant1-displayname | Message 1 |
+      | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | group room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | group room | users     | participant1 | participant1-displayname | Message 1 | []                |
     And user "participant2" sees the following messages in room "group room" with 200
-      | room       | actorType | actorId      | actorDisplayName         | message   |
-      | group room | users     | participant2 | participant2-displayname | Message 2 |
-      | group room | users     | participant1 | participant1-displayname | Message 1 |
+      | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | group room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | group room | users     | participant1 | participant1-displayname | Message 1 | []                |
