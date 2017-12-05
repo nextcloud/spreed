@@ -469,7 +469,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `actorId` | string | User id of the message author
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
-        `message` | string | Message in plain text
+        `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
+        `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
 
 ### Sending a new chat message
 
