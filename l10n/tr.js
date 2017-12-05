@@ -53,6 +53,7 @@ OC.L10N.register(
     "Change password" : "Parolayı değiştir",
     "Set password" : "Parolayı ayarla",
     "Name" : "Ad",
+    "Room information" : "Oda bilgileri",
     "Rename" : "Yeniden adlandır",
     "Your name …" : "Adınız …",
     "New message…" : "Yeni ileti…",
