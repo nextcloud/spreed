@@ -385,6 +385,16 @@
 		updateSidebarWithActiveRoom: function() {
 			this._sidebarView.enable();
 
+			// The sidebar has a width of 27% of the window width and a minimum
+			// width of 300px. Therefore, when the window is 1111px wide or
+			// narrower the sidebar will always be 300px wide, and when that
+			// happens it will overlap with the content area (the narrower the
+			// window the larger the overlap). Due to this the sidebar is opened
+			// automatically only if it will not overlap with the content area.
+			if ($(window).width() > 1111) {
+				this._sidebarView.open();
+			}
+
 			var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
 				model: this.activeRoom,
 				guestNameModel: this._localStorageModel
