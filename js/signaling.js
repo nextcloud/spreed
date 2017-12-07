@@ -146,6 +146,8 @@
 		this.pingInterval = null;
 		this.isSendingMessages = false;
 
+		this.pullMessagesRequest = null;
+
 		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
 		}.bind(this), 500);
@@ -370,7 +372,13 @@
 	 * @private
 	 */
 	InternalSignaling.prototype._startPullingMessages = function() {
+		// Abort ongoing request
+		if (this.pullMessagesRequest !== null) {
+			this.pullMessagesRequest.abort();
+		}
+
 		// Connect to the messages endpoint and pull for new messages
+		this.pullMessagesRequest =
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
 			type: 'GET',
@@ -397,11 +405,15 @@
 				}.bind(this));
 				this._startPullingMessages();
 			}.bind(this),
-			error: function (/*jqXHR, textStatus, errorThrown*/) {
-				//Retry to pull messages after 5 seconds
-				window.setTimeout(function() {
-					this._startPullingMessages();
-				}.bind(this), 5000);
+			error: function (jqXHR, textStatus/*, errorThrown*/) {
+				if (jqXHR.status === 0 && textStatus === 'abort') {
+					// Resquest has been aborted. Ignore.
+				} else {
+					//Retry to pull messages after 5 seconds
+					window.setTimeout(function() {
+						this._startPullingMessages();
+					}.bind(this), 5000);
+				}
 			}.bind(this)
 		});
 	};
