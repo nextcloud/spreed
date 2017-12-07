@@ -65,13 +65,13 @@
 			// "PUT" request to be sent, so the "method" must be changed from
 			// "patch" to "update", as the backend expects a "PUT" request.
 			// Moreover, the endpoint to rename a room expects the name to be
-			// provided in a "roomName" attribute instead of a "displayName"
+			// provided in a "roomName" attribute instead of a "name"
 			// attribute, so that has to be changed too.
-			if (method === 'patch' && options.attrs.displayName) {
+			if (method === 'patch' && options.attrs.name) {
 				method = 'update';
 
-				options.attrs.roomName = options.attrs.displayName;
-				delete options.attrs.displayName;
+				options.attrs.roomName = options.attrs.name;
+				delete options.attrs.name;
 			}
 
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
