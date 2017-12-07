@@ -67,7 +67,7 @@
 			// Moreover, the endpoint to rename a room expects the name to be
 			// provided in a "roomName" attribute instead of a "name"
 			// attribute, so that has to be changed too.
-			if (method === 'patch' && options.attrs.name) {
+			if (method === 'patch' && options.attrs.name !== undefined) {
 				method = 'update';
 
 				options.attrs.roomName = options.attrs.name;
