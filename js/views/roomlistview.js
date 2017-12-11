@@ -21,7 +21,7 @@
  */
 
 
-(function(OC, OCA, Marionette, Handlebars) {
+(function(OC, OCA, Marionette, Handlebars, _, $) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -69,6 +69,15 @@
 				this.render();
 			},
 			'change:participants': function() {
+				this.render();
+			},
+			'change:hasCall': function() {
+				this.render();
+			},
+			'change:participantInCall': function() {
+				this.render();
+			},
+			'change:participantType': function() {
 				this.render();
 			},
 			'change:type': function() {
@@ -207,23 +216,27 @@
 			}, OC.generateUrl('/call/' + token));
 		},
 		addRoomMessage: function() {
-			var message, messageAdditional, participants;
+			var message = '',
+				messageAdditional = '',
+				participants = this.model.get('participants'),
+				hasCall = this.model.get('hasCall'),
+				isInCall = this.model.get('participantInCall');
 
 			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptycontent-icon');
-			emptyContentIcon.removeAttribute('class');
-			emptyContentIcon.innerHTML = '';
+			var $emptyContentIcon = $('#emptycontent-icon');
+			$emptyContentIcon.attr('class', '')
+				.empty();
 			$('#shareRoomInput').addClass('hidden');
 			$('#shareRoomClipboardButton').addClass('hidden');
 
-			participants = this.model.get('participants');
 
 			switch(this.model.get('type')) {
 				case ROOM_TYPE_ONE_TO_ONE:
-					var waitingParticipantId, waitingParticipantName;
+					var waitingParticipantId = '',
+						waitingParticipantName = '';
 
-					$.each(participants, function(participantId, data) {
-						if (oc_current_user !== participantId) {
+					_.each(participants, function(data, participantId) {
+						if (OC.getCurrentUser().uid !== participantId) {
 							waitingParticipantId = participantId;
 							waitingParticipantName = data.name;
 						}
@@ -233,9 +246,9 @@
 					var avatar = document.createElement('div');
 					avatar.className = 'avatar room-avatar';
 
-					$('#emptycontent-icon').append(avatar);
+					$emptyContentIcon.append(avatar);
 
-					$('#emptycontent-icon').find('.avatar').each(function () {
+					$emptyContentIcon.find('.avatar').each(function () {
 						if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
 							$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
 						} else {
@@ -243,33 +256,105 @@
 						}
 					});
 
-					message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
-					messageAdditional = '';
-					break;
-				case ROOM_TYPE_GROUP_CALL:
-					if (Object.keys(participants).length > 1) {
-						message = t('spreed', 'Waiting for others to join the call …');
-						messageAdditional = '';
-					} else {
-						message = t('spreed', 'No other people in this call');
-						messageAdditional = t('spreed', 'You can invite others by clicking "+ Add person" in the call menu.');
+					message = t('spreed', 'Waiting for {participantName} to join the room …', {participantName: waitingParticipantName});
+					if (hasCall) {
+						if (isInCall) {
+							message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
+						} else {
+							message = t('spreed', '{participantName} is waiting for you to join the call …', {participantName: waitingParticipantName});
+						}
 					}
-					$('#emptycontent-icon').addClass('icon-contacts-dark');
 					break;
 				case ROOM_TYPE_PUBLIC_CALL:
-					if (Object.keys(participants).length > 1) {
-						message = t('spreed', 'Waiting for others to join the call …');
-					} else {
-						message = t('spreed', 'No other people in this call');
-					}
-					messageAdditional = t('spreed', 'Share this link to invite others!');
-					$('#emptycontent-icon').addClass('icon-public');
+				case ROOM_TYPE_GROUP_CALL:
+					message = t('spreed', 'Waiting for others to join the room …');
 
-					//Add link
-					var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
-					$('#shareRoomInput').val(url);
-					$('#shareRoomInput').removeClass('hidden');
-					$('#shareRoomClipboardButton').removeClass('hidden');
+					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
+						message = t('spreed', 'No other people in this call');
+						if (this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
+							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
+						}
+					}
+
+					if (hasCall) {
+						$emptyContentIcon.addClass('icon-video');
+						if (isInCall) {
+							message = t('spreed', 'Waiting for others to join the call …');
+
+						} else {
+							var others = [];
+							_.each(participants, function(data) {
+								if (data.call) {
+									others.push(data.name);
+								}
+							});
+
+							if (others.length === 1) {
+								message = t('spreed', '{participantName} is waiting for you to join the call …', {participantName: others[0]});
+							} else {
+								message = t('spreed', 'Call in progress …');
+								switch (others.length) {
+									case 0:
+										break;
+									case 2:
+										messageAdditional = t('spreed', 'Join {participant1} and {participant2}', {
+											participant1: others[0],
+											participant2: others[1]
+										});
+										break;
+									case 3:
+										messageAdditional = t('spreed', 'Join {participant1}, {participant2} and {participant3}', {
+											participant1: others[0],
+											participant2: others[1],
+											participant3: others[2]
+										});
+										break;
+									case 4:
+										messageAdditional = t('spreed', 'Join {participant1}, {participant2}, {participant3} and {participant4}', {
+											participant1: others[0],
+											participant2: others[1],
+											participant3: others[2],
+											participant4: others[3]
+										});
+										break;
+									case 5:
+										messageAdditional = t('spreed', 'Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}', {
+											participant1: others[0],
+											participant2: others[1],
+											participant3: others[2],
+											participant4: others[3],
+											participant5: others[4]
+										});
+										break;
+									default:
+										messageAdditional = t('spreed', 'Join {participant1}, {participant2}, {participant3}, {participant4}, …', {
+											participant1: others[0],
+											participant2: others[1],
+											participant3: others[2],
+											participant4: others[3]
+										});
+										break;
+								}
+							}
+						}
+					} else {
+						if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
+							$emptyContentIcon.addClass('icon-public');
+						} else {
+							$emptyContentIcon.addClass('icon-contacts-dark');
+						}
+					}
+
+					if (messageAdditional === '' && this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
+						messageAdditional = t('spreed', 'Share this link to invite others!');
+
+						//Add link
+						var url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
+						$('#shareRoomInput').val(url);
+						$('#shareRoomInput').removeClass('hidden');
+						$('#shareRoomClipboardButton').removeClass('hidden');
+
+					}
 					break;
 				default:
 					console.log("Unknown room type", this.model.get('type'));
@@ -315,4 +400,4 @@
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;
 
-})(OC, OCA, Marionette, Handlebars);
+})(OC, OCA, Marionette, Handlebars, _, $);
