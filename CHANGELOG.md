@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 2.9.0 – 2017-12-12
+### Beta release
+ - Beta release of Nextcloud 13 features for early testers.
+
 ## 2.0.2 – 2017-11-28
 ### Fixed
  - Re-send data channels messages when they could not be sent.
