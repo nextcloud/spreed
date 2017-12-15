@@ -57,7 +57,6 @@
     "Guest's screen" : "Pantalla dels hostes",
     "Your screen" : "La vostra pantalla",
     "_%n guest_::_%n guests_" : ["%n invitat","%n invitats"],
-    "Video call" : "Videotrucada",
     "_%n other guest_::_%n other guests_" : ["%n altre invitat","%n altres invitats"],
     ", " : ",",
     "%s invited you to a private call" : "%s l'ha invitat a una trucada privada",
@@ -87,6 +86,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN s'utilitza per determinar l'adreça pública dels participants darrere d'un enrutador.",
     "TURN server shared secret" : "El servidor TURN comparteix secreta.....",
     "You can set your name on the top right of this page so other participants can identify you better." : "Podeu configurar el vostre nom a la part superior dreta d'aquesta pàgina perquè els altres participants us identifiquin millor.",
+    "Video call" : "Videotrucada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN és necessari perquè els participants puguin connectar-se a les trucades. El servidor TURN assegura que la connexió funciona a través de tallafocs.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN s'utilitza per determinar l'adreça IP pública dels participants darrere d'un enrutador."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

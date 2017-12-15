@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Opuść pokój",
     "Delete room" : "Usuń pokój",
     "No other people in this call" : "W tej rozmowie nie uczestniczą inne osoby",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Możesz zapraszać innych klikając \"+ Dodaj osobę\" w menu rozmów.",
     "Share this link to invite others!" : "Udostępniaj ten link aby zapraszać innych!",
     "You" : "Ty",
     "and you" : "i ty",
@@ -97,7 +96,6 @@ OC.L10N.register(
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Próbowałeś(aś) rozmowy z {user1}, {user2}, {user3}, {user4} i {user5}",
     "{actor} invited you to {call}" : "{actor} zaprosił Cię do {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Zostałeś zaproszony/-a do pokoju <strong>rozmów</strong> lub masz <strong>rozmowę</strong>",
-    "Video call" : "Rozmowa wideo",
     "_%n other guest_::_%n other guests_" : ["%n inny gość","%n inni goście","%n inni goście","%n inni goście"],
     ", " : ",",
     "… %s" : "... %s",
@@ -151,6 +149,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
     "TURN server shared secret" : "Wpółdzielony kod serwera TURN",
     "You can set your name on the top right of this page so other participants can identify you better." : "Możesz ustawić swoje imię w prawym górnym rogu tej strony, tak aby inni uczestnicy mogli lepiej Cię poznać.",
+    "Video call" : "Rozmowa wideo",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Serwer STUN jest niezbędny aby umożliwić uczestnikom połączenie się do rozmów. Serwer TURN zapewnia, że połączenie będzie działać niezależnie od ustawień zapór sieciowych.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem."
 },

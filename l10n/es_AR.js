@@ -47,7 +47,6 @@ OC.L10N.register(
     "Guest's screen" : "Pantalla del invitado",
     "Your screen" : "Su pantalla",
     "_%n guest_::_%n guests_" : ["%n inivitado","%n inivitados"],
-    "Video call" : "Video llamada",
     "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
     ", " : ",",
     "%s invited you to a private call" : "%s lo ha invitado a una llamada privada",
@@ -77,6 +76,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN se usa para determinar la dirección pública de los participantes detrás de un enrutador. ",
     "TURN server shared secret" : "Secreto compartido del servidor TURN",
     "You can set your name on the top right of this page so other participants can identify you better." : "Usted puede establecer su nombre en la parte superior derecha de esta página para que otros participantes lo puedan identificar mejor. ",
+    "Video call" : "Video llamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. "
 },

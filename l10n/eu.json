@@ -87,7 +87,6 @@
     "_%n other_::_%n others_" : ["beste %n ","beste %n "],
     "{actor} invited you to {call}" : "{actor} {call} deira gonbidatu zaitu",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong> hitzaldi </strong> bat edo <strong>dei</strong> bat duzu",
-    "Video call" : "Bideo deia",
     "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
     ", " : ", ",
     "%s invited you to a private call" : "%s- dei pribatu batera gonbidatu zaitu",
@@ -123,6 +122,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "STUN zerbitzariak router baten atzean dauden partaideen helbide publikoak jakiteko erabiltzen da",
     "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
     "You can set your name on the top right of this page so other participants can identify you better." : "Pantailaren goi eskubian zure izena jar dezakezu, beste partaideek hobeto identifikatzeko.",
+    "Video call" : "Bideo deia",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

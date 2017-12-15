@@ -69,7 +69,6 @@
     "Leave room" : "Abandonar habitación",
     "Delete room" : "Borrar habitación",
     "No other people in this call" : "No hay más gente en esta llamada",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Puedes invitar a otros pulsando \"+Añadir persona\" en el menú de llamada.",
     "Share this link to invite others!" : "Comparte este enlace para invitar a otras personas.",
     "You" : "Usted",
     "and you" : "y uste",
@@ -96,7 +95,6 @@
     "_%n other_::_%n others_" : ["%n otro","%n otros"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Has sido invitado a una sala de <strong>conversación</strong> o has tenido una <strong>llamada</strong>",
-    "Video call" : "Videollamada",
     "_%n other guest_::_%n other guests_" : ["%n otro invitado","%n otros invitados"],
     ", " : ", ",
     "… %s" : "…%s",
@@ -150,6 +148,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN se usa para determinar la dirección pública de los participantes tras un router.",
     "TURN server shared secret" : "Servidor TURN compartido en secreto",
     "You can set your name on the top right of this page so other participants can identify you better." : "Puedes configurar tu nombre en la parte superior derecha de esta página para que otros participantes puedan identificarte mejor.",
+    "Video call" : "Videollamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN es necesario para que los participantes puedan conectarse a las llamadas. El servidor TURN asegura que la conexión funciona incluso a través de cortafuegos.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN esta usado para determinar la dirección IP pública de los participantes detrás de un router."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

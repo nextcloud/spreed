@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Szoba elhagyása",
     "Delete room" : "Szoba törlése",
     "No other people in this call" : "Nincs más ebben a hívásban",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Meghívhatsz másokat a \"+ Személy hozzáadás\" gombbal a menüben.",
     "Share this link to invite others!" : "Oszd meg ezt a linket mások meghívásához!",
     "You" : "Te",
     "and you" : "és te",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["még %n","még %n"],
     "{actor} invited you to {call}" : "{actor} meghívott ide: {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Meghívtak egy <strong>beszélgető </strong> szobába vagy volt egy <strong>hívásod</strong>",
-    "Video call" : "Videóhívás",
     "_%n other guest_::_%n other guests_" : ["%n további vendég","%n további vendég"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők nyilvános címének megállapítására.",
     "TURN server shared secret" : "TURN szerver megosztott titok",
     "You can set your name on the top right of this page so other participants can identify you better." : "A jelenlegi oldal jobb felső sarkában állíthatod be a neved a könnyebb azonosíthatóság érdekében.",
+    "Video call" : "Videóhívás",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására."
 },
