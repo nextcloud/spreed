@@ -69,7 +69,6 @@
     "Leave room" : "Sair da sala",
     "Delete room" : "Excluir sala",
     "No other people in this call" : "Não há outras pessoas nesta chamada",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Você pode convidar outros clicando em \"+ Adicionar pessoa\" no menu de chamada.",
     "Share this link to invite others!" : "Compartilhe este link para convidar outros!",
     "You" : "Você",
     "and you" : "e você",
@@ -96,7 +95,6 @@
     "_%n other_::_%n others_" : ["%n outro","%n outros"],
     "{actor} invited you to {call}" : "{actor} convidou você para {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Você foi convidado para uma sala<strong>de conversa</strong> ou teve uma <strong>chamada</strong>",
-    "Video call" : "Vídeo chamada",
     "_%n other guest_::_%n other guests_" : ["%n outro convidado","%n outros convidados"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -150,6 +148,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "O servidor STUN é usado para determinar o endereço público de participantes detrás de um roteador.",
     "TURN server shared secret" : "Turn server compartilhado secreto",
     "You can set your name on the top right of this page so other participants can identify you better." : "Você pode definir seu nome no topo direito desta página. Desta maneira outros participantes podem identificar melhor você.",
+    "Video call" : "Vídeo chamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "O servidor STUN é necessário para que os participantes possam conectar-se a chamadas. O servidor STUN garante que a conexão funcione até mesmo por trás de firewalls.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "O servidor STUN é usado para determinar o endereço IP público dos participantes atrás de um roteador."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"

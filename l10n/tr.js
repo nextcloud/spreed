@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Odadan ayrıl",
     "Delete room" : "Odayı sil",
     "No other people in this call" : "Bu görüşmede başka kimse yok",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Diğer kişileri eklemek için çağrı menüsünden \"+ Kişi ekle\" üzerine tıklayın.",
     "Share this link to invite others!" : "Diğer kişileri çağırmak için bu bağlantıyı paylaşın!",
     "You" : "Siz",
     "and you" : "ve siz",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n diğer","%n diğer"],
     "{actor} invited you to {call}" : "{actor} sizi {call} görüşmesine çağırdı",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Bir <strong>sohbet</strong> odasına çağrıldınız ya da bir <strong>görüşme çağrısı</strong> aldınız",
-    "Video call" : "Görüntülü Arama",
     "_%n other guest_::_%n other guests_" : ["%n diğer ziyaretçi","%n diğer konuk"],
     ", " : ",",
     "… %s" : "… %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "STUN sunucusu bir yönelticinin arkasındaki katılımcının herkese açık adresinin belirlenmesinde kullanılır.",
     "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
     "You can set your name on the top right of this page so other participants can identify you better." : "Diğer kullanıcıların sizi daha iyi tanıyabilmesi için bu sayfanın sağ üst köşesinden adınızı ayarlayabilirsiniz.",
+    "Video call" : "Görüntülü Arama",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN sunucusu katılımcı çağrılarının bağlanabilmesi için gereklidir. TURN sunucusu bağlantının güvenlik duvarları arkasından çalışabilmesini sağlar.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında."
 },

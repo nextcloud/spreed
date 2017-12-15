@@ -56,7 +56,6 @@ OC.L10N.register(
     "Guest's screen" : "Η οθόνη του επισκέπτη",
     "Your screen" : "Η οθόνη σας",
     "_%n guest_::_%n guests_" : ["%n επισκέπτης","%n επισκέπτες"],
-    "Video call" : "Κλήση βίντεο",
     "_%n other guest_::_%n other guests_" : ["%n επισκέπτης","%n επισκέπτες"],
     ", " : ", ",
     "%s invited you to a private call" : "Ο %s σας προσκάλεσε σε ιδιωτική κλήση",
@@ -76,6 +75,7 @@ OC.L10N.register(
     "Invalid format, must be stunserver:port." : "Μη έγκυρη μορφή, πρέπει να έχει τη μορφή stunserver:port.",
     "Invalid port specified." : "Μη έγκυρος καθορισμός θύρας.",
     "Invalid protocols specified." : "Μη έγκυρος καθορισμός πρωτοκόλλων.",
-    "STUN server" : "Διακομιστής STUN"
+    "STUN server" : "Διακομιστής STUN",
+    "Video call" : "Κλήση βίντεο"
 },
 "nplurals=2; plural=(n != 1);");

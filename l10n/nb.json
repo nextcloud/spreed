@@ -69,7 +69,6 @@
     "Leave room" : "Forlat rom",
     "Delete room" : "Slett rom",
     "No other people in this call" : "Ingen andre personer i denne samtalen",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Du kan invitere andre ved å klikke \"+ Legg til person\" i anropsmenyen",
     "Share this link to invite others!" : "Klikk denne lenken for å invitere andre.",
     "You" : "Du",
     "and you" : "og deg",
@@ -96,7 +95,6 @@
     "_%n other_::_%n others_" : ["én annen person","%n andre"],
     "{actor} invited you to {call}" : "{actor} inviterte deg til {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Du ble invitert til et <strong>samtale</strong>-rom, eller fikk et <strong>anrop</strong>",
-    "Video call" : "Videosamtale",
     "_%n other guest_::_%n other guests_" : ["%n annen gjest","%n andre gjester"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -150,6 +148,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig adresse til deltagere bak en ruter.",
     "TURN server shared secret" : "TURN-tjeners delte hemmelighet",
     "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre på siden slik at andre deltagere har lettere for å identifisere deg.",
+    "Video call" : "Videosamtale",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN- tjeneren er nødvendig for at deltakere kan koble til samtaler. TURN- tjeneren sørger for at koblingen fungerer selv gjennom brannmurer.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Opustit místnost",
     "Delete room" : "Smazat místnost",
     "No other people in this call" : "Žádní další lidé v tomto hovoru",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Stiskem \"+ Add person\" v nabídce hovoru můžete pozvat další lidi.",
     "Share this link to invite others!" : "Pro pozvání dalších lidí sdílejte tento odkaz!",
     "You" : "Vy",
     "and you" : "a vy",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n dalším","%n dalšími","%n dalšími"],
     "{actor} invited you to {call}" : "{actor} vás pozval/a do {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Byli jste pozváni ke <strong>konverzaci</strong> nebo vám někdo <strong>volal</strong>",
-    "Video call" : "Video hovor",
     "_%n other guest_::_%n other guests_" : ["%n jiný host","%n jiní hosté","%n jiných hostů"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "STUN server je používán k určení veřejné adresy účastníků za routerem.",
     "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
     "You can set your name on the top right of this page so other participants can identify you better." : "V pravém horním rohu této stránky můžete nastavit své jméno, aby vás ostatní účastníci mohli lépe identifikovat.",
+    "Video call" : "Video hovor",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN server je potřebný, aby se mohli účastníci připojit k hovorům. TURN server zajišťuje, že bude spojení fungovat i skrz firewally.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem."
 },

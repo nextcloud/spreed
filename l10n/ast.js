@@ -47,7 +47,6 @@ OC.L10N.register(
     "Guest's screen" : "Pantalla de convidáu/ada",
     "Your screen" : "La to pantalla",
     "_%n guest_::_%n guests_" : ["%n convidáu/ada","%n convidaos/es"],
-    "Video call" : "Videollamada",
     "_%n other guest_::_%n other guests_" : ["%n convidáu/ada más","%n convidaos/es más"],
     ", " : ", ",
     "%s invited you to a private call" : "%s convidóte a una llamada privada",
@@ -77,6 +76,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "El sirvidor STUN úsase pa determinar la direición pública de los participantes darrera d'un router.",
     "TURN server shared secret" : "Secretu compartíu del sirvidor TURN",
     "You can set your name on the top right of this page so other participants can identify you better." : "Pues afitar el to nome no cimero a la drecha d'esta páxina pa qu'asina los otros participantes puean identificate meyor.",
+    "Video call" : "Videollamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Precísase'l sirvidor STUN pa qu'asina los participantes puean xunise a les llamaes. El sirvidor TURN asegúrase de que la conexón funciona pente tornafueos.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El sirvidor STUN úsase pa determinar la direición IP pública de los participantes darrera d'un router."
 },
