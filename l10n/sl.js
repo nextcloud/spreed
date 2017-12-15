@@ -37,11 +37,11 @@ OC.L10N.register(
     "Error while accessing microphone & camera" : "Napaka pri dostopu do mikrofona in kamere",
     "WebRTC is not supported in your browser :-/" : "WebRTC ni podprt v vašem brskalniku :-/",
     "Your screen" : "Tvoj zaslon",
-    "Video call" : "Video klic",
     "Share screen" : "Deli zaslon",
     "Smile in 3… 2… 1!" : "Nasmehni se 3... 2... 1!",
     "Video calls" : "Video klici",
     "Saving failed" : "Shranjevanje spodletelo",
-    "Add person" : "Dodaj osebo"
+    "Add person" : "Dodaj osebo",
+    "Video call" : "Video klic"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

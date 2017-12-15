@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Raum verlassen",
     "Delete room" : "Raum löschen",
     "No other people in this call" : "Niemand anderes in diesem Anruf",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Sie können andere Personen durch ein Klick auf \"+ Teilnehmer hinzufügen\" im Anruf-Menü einladen.",
     "Share this link to invite others!" : "Teile diesen Link um andere Personen einzuladen!",
     "You" : "Sie",
     "and you" : "und Sie",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n weiterer","%n weitere"],
     "{actor} invited you to {call}" : "{actor} hat Sie zu {call} eingeladen",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Sie wurden in ein <strong>Gespräch</strong>szimmer eingeladen oder hatten einen <strong>Anruf</strong>",
-    "Video call" : "Videoanruf",
     "_%n other guest_::_%n other guests_" : ["ein weiterer Gast","%n weitere Gäste"],
     ", " : ", ",
     "… %s" : "... %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "Der STUN-Server wird verwendet, um die öffentliche Adresse von Teilnehmern hinter einem Router zu bestimmen.",
     "TURN server shared secret" : "TURN-Server Shared Secret",
     "You can set your name on the top right of this page so other participants can identify you better." : "Sie können Ihren Namen oben rechts auf dieser Seite setzen, damit andere Teilnehmer Sie besser erkennen können.",
+    "Video call" : "Videoanruf",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Der STUN-Server ist nötig, damit sich alle Teilnehmer mit den Anrufen verbinden können. Der TURN-Server stellt sicher, dass die Verbindung auch durch Firewalls hindurch funktioniert.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Der STUN-Server wird verwendet, um die öffentliche IP-Adresse von Teilnehmern hinter einem Router zu bestimmen."
 },

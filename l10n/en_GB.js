@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Leave room",
     "Delete room" : "Delete room",
     "No other people in this call" : "No other people in this call",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "You can invite others by clicking \"+ Add person\" in the call menu.",
     "Share this link to invite others!" : "Share this link to invite others!",
     "You" : "You",
     "and you" : "and you",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n other","%n others"],
     "{actor} invited you to {call}" : "{actor} invited you to {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>",
-    "Video call" : "Video call",
     "_%n other guest_::_%n other guests_" : ["%n other guest","%n other guests"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "The STUN server is used to determine the public address of participants behind a router.",
     "TURN server shared secret" : "TURN server shared secret",
     "You can set your name on the top right of this page so other participants can identify you better." : "You can set your name on the top right of this page so other participants can identify you better.",
+    "Video call" : "Video call",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router."
 },

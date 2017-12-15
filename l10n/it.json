@@ -69,7 +69,6 @@
     "Leave room" : "Abbandona stanza",
     "Delete room" : "Elimina stanza",
     "No other people in this call" : "Non ci sono altre persone in questa chiamata",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Puoi invitare gli altri facendo clic su \"+ Aggiungi persona\" nel menu della chiamata.",
     "Share this link to invite others!" : "Condividi questo collegamento per invitare altri!",
     "You" : "Tu",
     "and you" : "e tu",
@@ -96,7 +95,6 @@
     "_%n other_::_%n others_" : ["%n altro","%n altri"],
     "{actor} invited you to {call}" : "{actor} ti ha invitato alla {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Sei stato invitato a una stanza di <strong>conversazione</strong> o hai ricevuto una <strong>chiamata</strong>",
-    "Video call" : "Chiamata video",
     "_%n other guest_::_%n other guests_" : ["%n altro ospite","%n altri ospiti"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -150,6 +148,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "Il server STUN è utilizzato è utilizzato per determinare l'indirizzo pubblico dei partecipanti che si trovano dietro a un router.",
     "TURN server shared secret" : "Il segreto condiviso del server TURN",
     "You can set your name on the top right of this page so other participants can identify you better." : "Puoi impostare il nome in alto a destra di questa pagina, in modo che gli altri partecipanti possano identificarti meglio.",
+    "Video call" : "Chiamata video",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Il server STUN è necessario affinché i partecipanti possano connettersi alle chiamate. Il server TURN assicura che le connessioni funzionino anche attraverso firewall.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Il server STUN è utilizzato è utilizzato per determinare l'indirizzo pubblico dei partecipanti che si trovano dietro a un router."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

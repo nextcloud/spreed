@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Quitter le salon de discussion",
     "Delete room" : "Supprimer le salon de discussion",
     "No other people in this call" : "Pas d'autres personnes dans cet appel",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Vous pouvez inviter d'autres participants en cliquant sur \"+ Ajouter une personne\" dans le menu d'appel.",
     "Share this link to invite others!" : "Partagez ce lien pour inviter les autres !",
     "You" : "Vous",
     "and you" : "et vous",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n autre","%n autres"],
     "{actor} invited you to {call}" : "{actor} vous a invité à {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Vous êtes invités à un salon de <strong>discussion</strong> ou avez un <strong>appel</strong>",
-    "Video call" : "Appel vidéo",
     "_%n other guest_::_%n other guests_" : ["%n autre invité","%n autres invités"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "Le serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur.",
     "TURN server shared secret" : "Le secret partagé du serveur TURN",
     "You can set your name on the top right of this page so other participants can identify you better." : "Vous pouvez renseigner votre nom en haut à droite de cette page pour que les autres participants puissent mieux vous identifer.",
+    "Video call" : "Appel vidéo",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Le serveur STUN est nécessaire pour que les participants puisse se connecter aux appels. Le serveur TURN s'assure que la connexion fonctionne même avec la présence de pare-feu.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Le serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur."
 },

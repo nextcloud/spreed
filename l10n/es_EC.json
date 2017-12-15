@@ -69,7 +69,6 @@
     "Leave room" : "Salir del cuarto",
     "Delete room" : "Eliminar cuarto",
     "No other people in this call" : "No hay más personas en esta llamada",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Puedes invitar a otros haciendo click en \"+ Agregar persona\" en el menú de llamada",
     "Share this link to invite others!" : "¡Comparte esta liga para invitar a otras personas!",
     "You" : "Tú",
     "and you" : "y tú",
@@ -96,7 +95,6 @@
     "_%n other_::_%n others_" : ["%n otro","otros %n"],
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Te invitaron a un cuarto de <strong>conversación</strong> o tuviste una <strong>llamada</strong>",
-    "Video call" : "Video llamada",
     "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
     ", " : ",",
     "… %s" : "... %s",
@@ -150,6 +148,7 @@
     "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN se usa para determinar la dirección pública de los participantes detrás de un enrutador. ",
     "TURN server shared secret" : "Secreto compartido del servidor TURN",
     "You can set your name on the top right of this page so other participants can identify you better." : "Puedes establecer tu nombre en la parte superior derecha de esta página para que otros participantes te puedan identificar mejor. ",
+    "Video call" : "Video llamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

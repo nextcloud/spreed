@@ -71,7 +71,6 @@ OC.L10N.register(
     "Leave room" : "Forlad rum",
     "Delete room" : "Slet rum",
     "No other people in this call" : "Ingen andre deltager i dette opkald",
-    "You can invite others by clicking \"+ Add person\" in the call menu." : "Du kan inviterer andre ved at klikke \"+ Tilføj person\" i opkalds menuen.",
     "Share this link to invite others!" : "Del dette link for at invitere andre!",
     "You" : "Dig",
     "and you" : "og dif",
@@ -98,7 +97,6 @@ OC.L10N.register(
     "_%n other_::_%n others_" : ["%n andre","%n andre"],
     "{actor} invited you to {call}" : "{actor} inviterede dig til {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Du var inviteret til et <strong>snakke</strong> rum eller fik et <strong>opkald</strong>",
-    "Video call" : "Video opkald",
     "_%n other guest_::_%n other guests_" : ["%n anden gæst","%n andre gæster"],
     ", " : ", ",
     "… %s" : "… %s",
@@ -152,6 +150,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public address of participants behind a router." : "STUN serveren bliver brugt til at bestemme den offentlige IP adresse for deltagere bagved en router.",
     "TURN server shared secret" : "TURN server delte hemmelighed",
     "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sætte dit navn i det øverste højre hjørne af denne side, så andre deltagere bedre kan identificere dig.",
+    "Video call" : "Video opkald",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN serveren er nødvendig for at deltagerne kan forbinde til opkaldene. TURN serveren sikre at forbindelsen virker, selv gennem firewalls.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN serveren bliver brugt til at bestemme den offentlige IP adresse for deltagerne bagved en router."
 },

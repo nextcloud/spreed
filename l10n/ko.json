@@ -45,7 +45,6 @@
     "Guest's screen" : "손님의 화면",
     "Your screen" : "내 화면",
     "_%n guest_::_%n guests_" : ["손님 %n명"],
-    "Video call" : "영상 통화",
     "_%n other guest_::_%n other guests_" : ["다른 손님 %n명"],
     ", " : ",",
     "%s invited you to a private call" : "%s 님이 개인 통화에 초대함",
@@ -73,6 +72,7 @@
     "Invalid protocols specified." : "프로토콜이 잘못되었습니다.",
     "STUN server" : "STUN 서버",
     "TURN server shared secret" : "TURN 서버 공유 비밀 키",
+    "Video call" : "영상 통화",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "참가자가 통화에 연결하려면 STUN 서버를 설정해야 합니다. TURN 서버는 방화벽 뒤에 있는 사람도 연결할 수 있도록 합니다.",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다."
 },"pluralForm" :"nplurals=1; plural=0;"
