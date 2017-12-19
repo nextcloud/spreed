@@ -74,6 +74,7 @@ OC.L10N.register(
     "{participantName} is waiting for you to join the call …" : "{participantName} várja, hogy csatlakozz a híváshoz ...",
     "Waiting for others to join the room …" : "Várakozunk, hogy mások csatlakozzanak a szobához ...",
     "No other people in this call" : "Nincs más ebben a hívásban",
+    "You can invite others in the participant tab of the sidebar" : "Az oldalsávon található „közreműködő” fülön lehet másokat meghívni",
     "Call in progress …" : "Hívás folyamatban ...",
     "Share this link to invite others!" : "Oszd meg ezt a linket mások meghívásához!",
     "You" : "Te",
