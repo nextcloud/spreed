@@ -74,6 +74,7 @@ OC.L10N.register(
     "{participantName} is waiting for you to join the call …" : "{participantName} wartet auf dich ...",
     "Waiting for others to join the room …" : "Warte auf weitere Teilnehmer...",
     "No other people in this call" : "Niemand anderes in diesem Anruf",
+    "You can invite others in the participant tab of the sidebar" : "Du kannst andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste einladen",
     "Call in progress …" : "Anruf ist aktiv ...",
     "Join {participant1} and {participant2}" : "{participant1} und {participant2} beigetreten",
     "Join {participant1}, {participant2} and {participant3}" : "{participant1}, {participant2} und {participant3} beigetreten",
