@@ -133,6 +133,7 @@
 			$template.find('a.icon-add').on('click', this.addNewTemplate.bind(this));
 			$template.find('a.icon-delete').on('click', this.deleteServer.bind(this));
 			$template.find('input').on('change', this.saveServers.bind(this));
+			$template.find('select').on('change', this.saveServers.bind(this));
 
 			return $template;
 		}
