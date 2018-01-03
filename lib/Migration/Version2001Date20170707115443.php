@@ -95,8 +95,10 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 
-		$owners = $this->makeOne2OneParticipantsOwners($one2oneRooms);
-		$output->info('Made ' . $owners . ' users owner of their one2one calls');
+		if (!empty($one2oneRooms)) {
+			$owners = $this->makeOne2OneParticipantsOwners($one2oneRooms);
+			$output->info('Made ' . $owners . ' users owner of their one2one calls');
+		}
 
 		$moderators = $this->makeGroupParticipantsModerators($one2oneRooms);
 		$output->info('Made ' . $moderators . ' users moderators in group calls');
@@ -125,8 +127,11 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 
 		$update->update('spreedme_room_participants')
 			->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
-			->where($update->expr()->nonEmptyString('userId'))
-			->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+			->where($update->expr()->nonEmptyString('userId'));
+
+		if (!empty($one2oneRooms)) {
+			$update->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		}
 
 		return $update->execute();
 	}
