@@ -47,15 +47,6 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @param IOutput $output
 	 * @param \Closure $schemaClosure The `\Closure` returns a `Schema`
 	 * @param array $options
-	 * @since 13.0.0
-	 */
-	public function preSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
-	}
-
-	/**
-	 * @param IOutput $output
-	 * @param \Closure $schemaClosure The `\Closure` returns a `Schema`
-	 * @param array $options
 	 * @return null|Schema
 	 * @since 13.0.0
 	 */
