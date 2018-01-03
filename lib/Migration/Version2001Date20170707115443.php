@@ -84,6 +84,17 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 		$query = $this->db->getQueryBuilder();
 
+		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_rooms')
+			->from('spreedme_rooms');
+		$result = $query->execute();
+		$return = (int) $result->fetch();
+		$result->closeCursor();
+		$numRooms = (int) $return['num_rooms'];
+
+		if ($numRooms === 0) {
+			return;
+		}
+
 		$query->select('id')
 			->from('spreedme_rooms')
 			->where($query->expr()->eq('type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL)));
@@ -100,8 +111,10 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 			$output->info('Made ' . $owners . ' users owner of their one2one calls');
 		}
 
-		$moderators = $this->makeGroupParticipantsModerators($one2oneRooms);
-		$output->info('Made ' . $moderators . ' users moderators in group calls');
+		if (count($one2oneRooms) !== $numRooms) {
+			$moderators = $this->makeGroupParticipantsModerators($one2oneRooms);
+			$output->info('Made ' . $moderators . ' users moderators in group calls');
+		}
 	}
 
 	/**
