@@ -77,19 +77,25 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			$table->addColumn('room_id', Type::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
+				'default' => 0,
+				'unsigned' => true,
 			]);
 			$table->addColumn('last_ping', Type::INTEGER, [
 				'notnull' => true,
 				'length' => 11,
+				'default' => 0,
+				'unsigned' => true,
 			]);
 			$table->addColumn('session_id', Type::STRING, [
 				'notnull' => true,
 				'length' => 255,
+				'default' => '',
 			]);
 			$table->addColumn('participant_type', Type::SMALLINT, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 0,
+				'unsigned' => true,
 			]);
 			$table->addColumn('in_call', Type::BOOLEAN, [
 				'default' => 0,
