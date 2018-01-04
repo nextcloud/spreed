@@ -29,9 +29,6 @@ use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 use OCP\Security\ISecureRandom;
 
-/**
- * Auto-generated migration step: Please modify to your needs!
- */
 class Version2000Date20171026140257 extends SimpleMigrationStep {
 
 	/** @var IDBConnection */

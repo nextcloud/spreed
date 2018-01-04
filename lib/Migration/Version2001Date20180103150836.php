@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -26,7 +26,7 @@ use Doctrine\DBAL\Schema\Schema;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
-class Version2001Date20171026141336 extends SimpleMigrationStep {
+class Version2001Date20180103150836 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -39,16 +39,20 @@ class Version2001Date20171026141336 extends SimpleMigrationStep {
 		/** @var Schema $schema */
 		$schema = $schemaClosure();
 
-		if ($schema->hasTable('videocalls_signaling')) {
-			$schema->dropTable('videocalls_signaling');
+		$table = $schema->getTable('talk_rooms');
+		if ($table->hasColumn('activeSince')) {
+			$table->dropColumn('activeSince');
+			$table->dropColumn('activeGuests');
 		}
 
-		if ($schema->hasTable('spreedme_rooms')) {
-			$schema->dropTable('spreedme_rooms');
-		}
-
-		if ($schema->hasTable('spreedme_room_participants')) {
-			$schema->dropTable('spreedme_room_participants');
+		$table = $schema->getTable('talk_participants');
+		if ($table->hasColumn('userId')) {
+			$table->dropColumn('userId');
+			$table->dropColumn('roomId');
+			$table->dropColumn('lastPing');
+			$table->dropColumn('sessionId');
+			$table->dropColumn('participantType');
+			$table->dropColumn('inCall');
 		}
 
 		return $schema;
