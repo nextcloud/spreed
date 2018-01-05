@@ -29,6 +29,7 @@ use OCP\Contacts\ContactsMenu\IEntry;
 use OCP\Contacts\ContactsMenu\IProvider;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use OCP\IUser;
 use OCP\IUserManager;
 
 class CallProvider implements IProvider {
@@ -63,12 +64,6 @@ class CallProvider implements IProvider {
 	 */
 	public function process(IEntry $entry) {
 		$uid = $entry->getProperty('UID');
-		$user = $this->userManager->get($uid);
-		$talkAction = $this->l10n->t('Talk');
-
-		if ($user !== null) {
-			$talkAction = $this->l10n->t('Talk to %s', [$user->getDisplayName()]);
-		}
 
 		if ($uid === null) {
 			// Nothing to do
@@ -80,8 +75,15 @@ class CallProvider implements IProvider {
 			return;
 		}
 
+		$user = $this->userManager->get($uid);
+		$talkAction = $this->l10n->t('Talk');
+
+		if ($user instanceof IUser) {
+			$talkAction = $this->l10n->t('Talk to %s', [$user->getDisplayName()]);
+		}
+
 		$iconUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
-		$callUrl = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $uid;
+		$callUrl = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $user->getUID();
 		$action = $this->actionFactory->newLinkAction($iconUrl, $talkAction, $callUrl);
 		$entry->addAction($action);
 	}
