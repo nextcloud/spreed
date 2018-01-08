@@ -241,15 +241,15 @@ var spreedPeerConnectionTable = [];
 				mediaIndicator.className = 'mediaIndicator';
 
 				var muteIndicator = document.createElement('button');
-				muteIndicator.className = 'muteIndicator icon-audio-off-white audio-on';
+				muteIndicator.className = 'muteIndicator icon-white icon-shadow icon-audio-off audio-on';
 				muteIndicator.disabled = true;
 
 				var screenSharingIndicator = document.createElement('button');
-				screenSharingIndicator.className = 'screensharingIndicator icon-screen-white screen-off';
+				screenSharingIndicator.className = 'screensharingIndicator icon-white icon-shadow icon-screen screen-off';
 				screenSharingIndicator.setAttribute('data-original-title', t('spreed', 'Show screen'));
 
 				var iceFailedIndicator = document.createElement('button');
-				iceFailedIndicator.className = 'iceFailedIndicator icon-error-white not-failed';
+				iceFailedIndicator.className = 'iceFailedIndicator icon-white icon-shadow icon-error not-failed';
 				iceFailedIndicator.disabled = true;
 
 				$(screenSharingIndicator).tooltip({
@@ -956,10 +956,10 @@ var spreedPeerConnectionTable = [];
 			}
 
 			var $hideVideoButton = $('#hideVideo');
-			if(OCA.SpreedMe.webrtc.webrtc.localStream.getVideoTracks().length < 1) {
-				$hideVideoButton.removeClass('video-disabled')
-				.addClass('no-video-available icon-video-off-white')
-				.attr('data-original-title', t('spreed', 'No Camera'));
+			if (OCA.SpreedMe.webrtc.webrtc.localStream.getVideoTracks().length === 0) {
+				$hideVideoButton.removeClass('video-disabled icon-video')
+					.addClass('no-video-available icon-video-off')
+					.attr('data-original-title', t('spreed', 'No Camera'));
 			}
 		});
 	}

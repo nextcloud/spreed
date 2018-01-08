@@ -229,8 +229,8 @@
 			var screensharingStopped = function() {
 				console.log("Screensharing now stopped");
 				$('#screensharing-button').attr('data-original-title', t('spreed', 'Enable screensharing'))
-					.addClass('screensharing-disabled icon-screen-off-white')
-					.removeClass('icon-screen-white');
+					.addClass('screensharing-disabled icon-screen-off')
+					.removeClass('icon-screen');
 				$('#screensharing-menu').toggleClass('open', false);
 			};
 
@@ -258,8 +258,8 @@
 						screensharingButton.prop('disabled', false);
 						if (!err) {
 							$('#screensharing-button').attr('data-original-title', t('spreed', 'Screensharing options'))
-								.removeClass('screensharing-disabled icon-screen-off-white')
-								.addClass('icon-screen-white');
+								.removeClass('screensharing-disabled icon-screen-off')
+								.addClass('icon-screen');
 							return;
 						}
 
@@ -596,16 +596,16 @@
 		enableAudio: function() {
 			OCA.SpreedMe.webrtc.unmute();
 			$('#mute').attr('data-original-title', t('spreed', 'Mute audio'))
-				.removeClass('audio-disabled icon-audio-off-white')
-				.addClass('icon-audio-white');
+				.removeClass('audio-disabled icon-audio-off')
+				.addClass('icon-audio');
 
 			OCA.SpreedMe.app.audioDisabled = false;
 		},
 		disableAudio: function() {
 			OCA.SpreedMe.webrtc.mute();
 			$('#mute').attr('data-original-title', t('spreed', 'Enable audio'))
-				.addClass('audio-disabled icon-audio-off-white')
-				.removeClass('icon-audio-white');
+				.addClass('audio-disabled icon-audio-off')
+				.removeClass('icon-audio');
 
 			OCA.SpreedMe.app.audioDisabled = true;
 		},
@@ -616,8 +616,8 @@
 
 			OCA.SpreedMe.webrtc.resumeVideo();
 			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
-				.removeClass('video-disabled icon-video-off-white')
-				.addClass('icon-video-white');
+				.removeClass('video-disabled icon-video-off')
+				.addClass('icon-video');
 
 			avatarContainer.hide();
 			localVideo.show();
@@ -631,8 +631,8 @@
 
 			if (!$hideVideoButton.hasClass('no-video-available')) {
 				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
-					.addClass('video-disabled icon-video-off-white')
-					.removeClass('icon-video-white');
+					.addClass('video-disabled icon-video-off')
+					.removeClass('icon-video');
 			}
 
 			var avatar = avatarContainer.find('.avatar');
