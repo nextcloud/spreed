@@ -420,6 +420,15 @@ video {
 	opacity: .7;
 }
 
+.nameIndicator button.no-video-available {
+	opacity: .7;
+	cursor: not-allowed;
+ }
+
+.nameIndicator button.no-video-available:active {
+	background-color: transparent;
+}
+
 .mediaIndicator {
 	position: absolute;
 	width: 100%;
@@ -673,7 +682,7 @@ video {
 }
 
 #videos .videoContainer.speaking:not(.videoView) .nameIndicator,
-#videos .videoContainer.videoView.speaking .nameIndicator .icon-audio-white {
+#videos .videoContainer.videoView.speaking .nameIndicator .icon-audio {
 	animation: pulse 1s;
 	animation-iteration-count: infinite;
 }
