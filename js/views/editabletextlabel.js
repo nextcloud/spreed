@@ -62,6 +62,10 @@
 	 * "extraClassNames", "labelTagName", "labelPlaceholder", "inputMaxLength",
 	 * "inputPlaceholder" and "buttonTitle" can be used to customize some
 	 * elements of the view.
+	 *
+	 * After initialization, and once the view has been rendered, the
+	 * "modelAttribute" and "labelPlaceholder" options can be updated using the
+	 * "setModelAttribute" and "setLabelPlaceholder" methods.
 	 */
 	var EditableTextLabel = Marionette.View.extend({
 
@@ -114,9 +118,36 @@
 		},
 
 		initialize: function(options) {
-			this.mergeOptions(options, ['model', 'modelAttribute', 'modelSaveOptions']);
+			this.mergeOptions(options, ['model', 'modelAttribute', 'modelSaveOptions', 'labelPlaceholder']);
 
 			this._editionEnabled = true;
+		},
+
+		setModelAttribute: function(modelAttribute) {
+			if (this.modelAttribute === modelAttribute) {
+				return;
+			}
+
+			var modelEvents = _.result(this, 'modelEvents');
+			this.unbindEvents(this.model, modelEvents);
+
+			this.modelAttribute = modelAttribute;
+
+			modelEvents = _.result(this, 'modelEvents');
+			this.bindEvents(this.model, modelEvents);
+
+			this.updateText();
+			this.hideInput();
+		},
+
+		setLabelPlaceholder: function(labelPlaceholder) {
+			if (this.labelPlaceholder === labelPlaceholder) {
+				return;
+			}
+
+			this.labelPlaceholder = labelPlaceholder;
+
+			this.updateText();
 		},
 
 		enableEdition: function() {
@@ -140,7 +171,7 @@
 		},
 
 		_getText: function() {
-			return this.model.get(this.modelAttribute) || this.getOption('labelPlaceholder') || '';
+			return this.model.get(this.modelAttribute) || this.labelPlaceholder || '';
 		},
 
 		updateText: function() {
