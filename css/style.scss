@@ -379,18 +379,21 @@ video {
 }
 
 /* Use dark icons when not in a call (= white background) */
-#app-content:not(.incall) {
-	.icon-white.icon-shadow {
+#app-content:not(.incall) .icon-white.icon-shadow {
+	/* Still use white icons outside of calls when local video shows */
+	&#hideVideo.video-disabled,
+	&#mute.video-disabled {
 		filter: none;
+	}
 
-		&.icon-menu-people,
-		&.icon-fullscreen {
-			opacity: .5;
+	&.icon-menu-people,
+	&.icon-fullscreen {
+		filter: none;
+		opacity: .5;
 
-			&:hover,
-			&:focus {
-				opacity: 1;
-			}
+		&:hover,
+		&:focus {
+			opacity: 1;
 		}
 	}
 }
