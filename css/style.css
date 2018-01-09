@@ -751,6 +751,34 @@ video {
 	display: inline-block;
 }
 
+/* START: move padding fixes and icons-for-tabs capability into core */
+.tabHeaders .tabHeader {
+	padding: 12px;
+	padding-left: 32px;
+	background-position: 12px;
+	background-repeat: no-repeat;
+	opacity: .5;
+}
+
+.tabHeaders .tabHeader a {
+	color: #000;
+}
+
+.tabHeaders .tabHeader.selected,
+.tabHeaders .tabHeader:hover,
+.tabHeaders .tabHeader:focus {
+	opacity: 1;
+}
+
+#tabHeaderChat {
+	background-image: url('../../../core/img/actions/comment.svg?v=1');
+}
+
+#tabHeaderParticipants {
+	background-image: url('../../../core/img/places/contacts-dark.svg?v=1');
+}
+/* END: move padding fixes and icons-for-tabs capability into core */
+
 #app-sidebar.hidden {
 	display: none !important;
 }
