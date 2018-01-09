@@ -968,3 +968,53 @@ video {
 	padding-left: 15px;
 	padding-right: 15px;
 }
+
+/**
+ * Limiting the scroll bar in the sidebar to the list of chat messages causes
+ * the scroll bar to be removed from the whole sidebar in other tabs too.
+ * Therefore, the scroll bars must be explicitly enabled in the other tab
+ * contents that need them.
+ */
+#app-sidebar #participantsTabView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#app-sidebar .participantWithList {
+	overflow-y: auto;
+}
+
+/**
+ * Place the scroll bar of the participants list on the right edge of the
+ * sidebar, but keeping the padding of the tab view.
+ *
+ * The bottom padding is removed to extend the participant view to the bottom
+ * edge of the sidebar.
+ */
+#app-sidebar .tab-participants {
+	padding-right: 0px;
+	padding-bottom: 0px;
+}
+
+#app-sidebar #participantsTabView form,
+#app-sidebar #participantsTabView .participantWithList {
+	padding-right: 15px;
+}
+
+/**
+ * Add a little margin so the participants do not "touch" the form when they are
+ * scrolled, in the same way that the chat messages do not disappear directly
+ * below the new message input.
+ */
+#app-sidebar #participantsTabView form {
+	margin-bottom: 15px;
+}
+
+/**
+ * Add a little margin to the last participant so the list is nicely framed with
+ * the sides when fully scrolled to the bottom.
+ */
+#app-sidebar #participantsTabView .participant:last-child {
+	margin-bottom: 15px;
+}

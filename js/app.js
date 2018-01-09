@@ -320,7 +320,8 @@
 			this._participants = new OCA.SpreedMe.Models.ParticipantCollection();
 			this._participantsView = new OCA.SpreedMe.Views.ParticipantView({
 				room: this.activeRoom,
-				collection: this._participants
+				collection: this._participants,
+				id: 'participantsTabView'
 			});
 
 			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
