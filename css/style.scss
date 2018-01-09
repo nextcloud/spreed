@@ -648,7 +648,7 @@ video {
 	top: 0;
 	right: 0;
 	border-width: 24px;
-	border-color: #ebebeb;
+	border-color: $color-border;
 	border-style: solid;
 	border-left-color: transparent;
 	border-top-color: transparent;
@@ -661,7 +661,7 @@ video {
 	top: 2px;
 	right: 0;
 	border-width: 22px;
-	border-color: #fff;
+	border-color: $color-primary;
 	border-style: solid;
 	border-left-color: transparent;
 	border-top-color: transparent;
