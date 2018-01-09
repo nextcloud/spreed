@@ -454,12 +454,13 @@ video {
 
 #video-fullscreen {
 	position: absolute;
+	top: 44px;
 	right: 0;
 	z-index: 90;
 }
 
 #video-fullscreen.public {
-	top: 45px;
+	top: 89px;
 }
 
 #video-fullscreen,
@@ -601,18 +602,30 @@ video {
 	display: none !important;
 }
 
-/* As there is no header the fullscreen button can be moved to the top. */
-#app-content:-webkit-full-screen #video-fullscreen.public {
+/* As there is no header in fullscreen the buttons can be moved to the top. */
+#app-content:-webkit-full-screen #app-sidebar-trigger {
 	top: 0;
 }
-#app-content:-moz-full-screen #video-fullscreen.public {
+#app-content:-moz-full-screen #app-sidebar-trigger {
 	top: 0;
 }
-#app-content:-ms-fullscreen #video-fullscreen.public {
+#app-content:-ms-fullscreen #app-sidebar-trigger {
 	top: 0;
 }
-#app-content:fullscreen #video-fullscreen.public {
+#app-content:fullscreen #app-sidebar-trigger {
 	top: 0;
+}
+#app-content:-webkit-full-screen #video-fullscreen {
+	top: 44px;
+}
+#app-content:-moz-full-screen #video-fullscreen {
+	top: 44px;
+}
+#app-content:-ms-fullscreen #video-fullscreen {
+	top: 44px;
+}
+#app-content:fullscreen #video-fullscreen {
+	top: 44px;
 }
 
 .localmediaerror h2 {
@@ -690,11 +703,7 @@ video {
 
 #app-sidebar-trigger {
 	position: fixed;
-	/* Although it would be desirable due to their complementary behaviour, the
-	 * trigger can not be placed at the same position as the close button
-	 * (top: 45px) due to the "Switch to fullscreen" icon shown during calls.
-	 * Set to 45px (header) + 44px (fullscreen icon). */
-	top: 89px;
+	top: 45px;
 	right: 0;
 	/* Higher than the z-index of the emptycontent */
 	z-index: 50;
@@ -750,9 +759,13 @@ video {
 /* As the header is hidden (except for the logo), move the fullscreen button and
  * sidebar to the top during calls */
 #body-public #app-content:not(.participants-1) #app-sidebar,
+#body-public #app-content:not(.participants-1) #app-sidebar-trigger,
 #body-public #app-content:not(.participants-1) #video-fullscreen {
 	top: 0;
 	z-index: 3000;
+}
+#body-public #app-content:not(.participants-1) #video-fullscreen {
+	top: 44px;
 }
 
 /**
