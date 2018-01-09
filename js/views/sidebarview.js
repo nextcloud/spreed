@@ -28,9 +28,7 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var TEMPLATE =
-		'<div id="app-sidebar-trigger">' +
-		'	<div class="large-outer-left-triangle"/>' +
-		'	<div class="large-inner-left-triangle"/>' +
+		'<div id="app-sidebar-trigger" class="icon-menu-people icon-white icon-shadow">' +
 		'</div>' +
 		'<div id="app-sidebar" class="detailsView scroll-container">' +
 		'	<div class="detailCallInfoContainer">' +
