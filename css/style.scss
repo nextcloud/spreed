@@ -970,24 +970,32 @@ video {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar .tabsContainer {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar .tab {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar #commentsTabView {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar .comments {
