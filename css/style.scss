@@ -378,6 +378,14 @@ video {
 	background-color: #000;
 }
 
+/* Use dark icons when not in a call (= white background) */
+#app-content:not(.incall),
+#app-content:not(.screensharing) {
+	.icon-white.icon-shadow {
+		filter: none;
+	}
+}
+
 #app-content.screensharing .videoContainer video {
 	max-height: 200px;
 	background-color: transparent;
