@@ -524,18 +524,51 @@ video {
 	opacity: .8 !important;
 }
 
-#app-content:-webkit-full-screen  {
+
+/* Fullscreen handling */
+
+/**
+ * Different browsers handle fullscreen elements with a margin in different
+ * ways: Firefox ignores the margin and uses the full width, while Chromium uses
+ * a strange mix which is neither the full width nor the full margin. Due to
+ * this the margin is removed to unify the appearance across browsers; visually,
+ * this causes the sidebar to slide on the content instead of "pushing" it to
+ * the left.
+ */
+#app-content:-webkit-full-screen {
 	width: 100%;
+	margin-right: 0;
+
+	&.participants-1 {
+		background: #fff;
+	}
 }
 #app-content:-moz-full-screen {
 	width: 100%;
+	margin-right: 0;
+
+	&.participants-1 {
+		background: #fff;
+	}
 }
 #app-content:-ms-fullscreen {
 	width: 100%;
+	margin-right: 0;
+
+	&.participants-1 {
+		background: #fff;
+	}
 }
 #app-content:fullscreen {
 	width: 100%;
+	margin-right: 0;
+
+	&.participants-1 {
+		background: #fff;
+	}
 }
+
+/* No switching between rooms in fullscreen, focus on the current call. */
 #app-content:-webkit-full-screen #app-navigation-toggle {
 	display: none !important;
 }
@@ -547,27 +580,6 @@ video {
 }
 #app-content:fullscreen #app-navigation-toggle {
 	display: none !important;
-}
-
-/**
- * Different browsers handle fullscreen elements with a margin in different
- * ways: Firefox ignores the margin and uses the full width, while Chromium uses
- * a strange mix which is neither the full width nor the full margin. Due to
- * this the margin is removed to unify the appearance across browsers; visually,
- * this causes the sidebar to slide on the content instead of "pushing" it to
- * the left.
- */
-#app-content:-webkit-full-screen {
-	margin-right: 0;
-}
-#app-content:-moz-full-screen {
-	margin-right: 0;
-}
-#app-content:-ms-fullscreen {
-	margin-right: 0;
-}
-#app-content:fullscreen {
-	margin-right: 0;
 }
 
 /**
@@ -627,6 +639,7 @@ video {
 #app-content:fullscreen #video-fullscreen {
 	top: 44px;
 }
+
 
 .localmediaerror h2 {
 	color: red;
