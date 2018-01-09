@@ -290,13 +290,13 @@
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
-					.attr('data-original-title', t('core', 'Copied!'))
+					.attr('data-original-title', t('core', 'Link copied!'))
 					.tooltip('fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('core', 'Copy'))
+						.attr('data-original-title', t('core', 'Copy link'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});
