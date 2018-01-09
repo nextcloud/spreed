@@ -38,11 +38,11 @@
 		'{{/if}}' +
 		'{{#if participantInCall}}' +
 		'	<div>' +
-		'		<button class="leave-call">' + t('spreed', 'Leave call') + '</button>' +
+		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
 		'	</div>' +
 		'{{else}}' +
 		'	<div>' +
-		'		<button class="join-call">' + t('spreed', 'Join call') + '</button>' +
+		'		<button class="join-call primary">' + t('spreed', 'Join call') + '</button>' +
 		'	</div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
@@ -146,7 +146,7 @@
 				labelTagName: 'h3',
 				inputMaxLength: '200',
 				inputPlaceholder: t('spreed', 'Name'),
-				labelPlaceholder: t('spreed', 'Room information'),
+				labelPlaceholder: t('spreed', 'Room name'),
 				buttonTitle: t('spreed', 'Rename')
 			});
 
