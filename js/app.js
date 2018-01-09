@@ -358,6 +358,8 @@
 			var self = this;
 			this.syncRooms()
 				.then(function() {
+					self.stopListening(self.activeRoom, 'change:participantInCall');
+
 					if (oc_current_user) {
 						roomChannel.trigger('active', token);
 
@@ -379,8 +381,29 @@
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
 
+					self.updateChatViewPlacement();
+					self.listenTo(self.activeRoom, 'change:participantInCall', self.updateChatViewPlacement);
+
 					self.updateSidebarWithActiveRoom();
 				});
+		},
+		updateChatViewPlacement: function() {
+			if (!this.activeRoom) {
+				// This should never happen, but just in case
+				return;
+			}
+
+			if (this.activeRoom.get('participantInCall') && this._chatViewInMainView === true) {
+				this._chatView.$el.detach();
+				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat') }, this._chatView);
+				this._chatView.setTooltipContainer(undefined);
+				this._chatViewInMainView = false;
+			} else if (!this.activeRoom.get('participantInCall') && !this._chatViewInMainView) {
+				this._sidebarView.removeTab('chat');
+				this._chatView.$el.prependTo('#app-content-wrapper');
+				this._chatView.setTooltipContainer($('#app'));
+				this._chatViewInMainView = true;
+			}
 		},
 		updateSidebarWithActiveRoom: function() {
 			this._sidebarView.enable();
@@ -488,10 +511,8 @@
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
 				id: 'commentsTabView',
-				className: 'chat tab'
+				className: 'chat'
 			});
-
-			this._sidebarView.addTab('chat', { label: t('spreed', 'Chat') }, this._chatView);
 
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
 				this.stopReceivingMessages();
