@@ -811,7 +811,7 @@ video {
 }
 
 .detailCallInfoContainer .clipboard-button,
-.detailCallInfoContainer:hover .editable-text-label .edit-button {
+.detailCallInfoContainer .editable-text-label:hover .edit-button {
 	display: inline-block;
 }
 
@@ -832,4 +832,9 @@ video {
 .detailCallInfoContainer .editable-text-label input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
+}
+
+.detailCallInfoContainer #link-checkbox+label {
+	display: inline-block;
+	padding: 12px 0;
 }
