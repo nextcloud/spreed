@@ -146,7 +146,7 @@
 				labelTagName: 'h3',
 				inputMaxLength: '200',
 				inputPlaceholder: t('spreed', 'Name'),
-				labelPlaceholder: t('spreed', 'Room information'),
+				labelPlaceholder: t('spreed', 'Room name'),
 				buttonTitle: t('spreed', 'Rename')
 			});
 
