@@ -178,6 +178,12 @@
 		 */
 		addTab: function(tabId, tabHeaderOptions, tabContentView) {
 			this._tabView.addTab(tabId, tabHeaderOptions, tabContentView);
+
+			var elementExpanderButton = new OCA.SpreedMe.Views.ElementExpanderButton({
+				$expandableElement: tabContentView.$el,
+				$container: this.$el
+			});
+			tabContentView.elementExpanderButton = elementExpanderButton;
 		},
 
 		/**
@@ -198,7 +204,14 @@
 		 * @return Marionette.View the content view of the removed tab.
 		 */
 		removeTab: function(tabId) {
-			return this._tabView.removeTab(tabId);
+			var contentView = this._tabView.removeTab(tabId);
+
+			if (typeof contentView !== 'undefined') {
+				contentView.elementExpanderButton.remove();
+				delete contentView.elementExpanderButton;
+			}
+
+			return contentView;
 		}
 
 	});

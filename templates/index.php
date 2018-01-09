@@ -22,6 +22,7 @@ script(
 		'views/callinfoview',
 		'views/chatview',
 		'views/editabletextlabel',
+		'views/elementexpanderbutton',
 		'views/participantlistview',
 		'views/participantview',
 		'views/roomlistview',

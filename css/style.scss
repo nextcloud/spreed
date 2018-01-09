@@ -947,6 +947,18 @@ video {
 	padding: 12px 0;
 }
 
+.elementExpanderButton {
+	width: 44px;
+	height: 44px;
+	opacity: 0.5;
+	cursor: pointer;
+}
+
+.elementExpanderButton:hover,
+.elementExpanderButton:focus {
+	opacity: 1;
+}
+
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the
  * vertical scroll bar only to the list of messages. Otherwise, the vertical
@@ -1063,4 +1075,29 @@ video {
  */
 #app-sidebar #participantsTabView .participant:last-child {
 	margin-bottom: 15px;
+}
+
+/**
+ * Place the expander button of tabs to the right border of the sidebar,
+ * "floating" over the tab contents.
+ */
+#app-sidebar .tab .elementExpanderButton {
+	position: absolute;
+	right: 0;
+	z-index: 5;
+
+	/* The tab header has some margin that can be used to move the expander
+	   button away from the tab contents, as it should not look like part of the
+	   contents nor interfere with its use. */
+	margin-top: -22px;
+}
+
+#app-sidebar .expanded {
+	margin-top: 15px;
+}
+
+#app-sidebar .expanded .elementExpanderButton {
+	/* Ignore the margin of the expanded element and place the button in the top
+	   right corner at the same place of the close button (now hidden). */
+	margin-top: -15px;
 }

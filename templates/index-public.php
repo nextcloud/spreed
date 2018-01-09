@@ -21,6 +21,7 @@ script(
 		'views/callinfoview',
 		'views/chatview',
 		'views/editabletextlabel',
+		'views/elementexpanderbutton',
 		'views/roomlistview',
 		'views/sidebarview',
 		'views/tabview',
