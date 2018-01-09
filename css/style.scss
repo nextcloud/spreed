@@ -445,12 +445,14 @@ video {
 }
 
 #video-fullscreen,
-.nameIndicator button {
+.nameIndicator button,
+#app-sidebar-trigger {
 	background-color: transparent;
 	border: none;
+	margin: 0;
 	width: 44px;
 	height: 44px;
-	background-size: 25px;
+	background-size: 24px;
 }
 
 .nameIndicator button.audio-disabled,
@@ -672,40 +674,17 @@ video {
 	position: fixed;
 	/* Although it would be desirable due to their complementary behaviour, the
 	 * trigger can not be placed at the same position as the close button
-	 * (top: 45px) due to the "Switch to fullscreen" icon shown during calls. */
-	top: 150px;
+	 * (top: 45px) due to the "Switch to fullscreen" icon shown during calls.
+	 * Set to 45px (header) + 44px (fullscreen icon). */
+	top: 89px;
 	right: 0;
-	width: 48px;
-	height: 48px;
 	/* Higher than the z-index of the emptycontent */
 	z-index: 50;
 	cursor: pointer;
 }
 
-#app-sidebar-trigger .large-outer-left-triangle {
-	position: absolute;
-	top: 0;
-	right: 0;
-	border-width: 24px;
-	border-color: #ebebeb;
-	border-style: solid;
-	border-left-color: transparent;
-	border-top-color: transparent;
-	border-bottom-color: transparent;
-	cursor: pointer;
-}
-
-#app-sidebar-trigger .large-inner-left-triangle {
-	position: absolute;
-	top: 2px;
-	right: 0;
-	border-width: 22px;
-	border-color: #fff;
-	border-style: solid;
-	border-left-color: transparent;
-	border-top-color: transparent;
-	border-bottom-color: transparent;
-	cursor: pointer;
+.icon-menu-people {
+	background-image: url('../img/menu-people.svg?v=1');
 }
 
 #app-sidebar .close {
@@ -771,6 +750,38 @@ video {
 #app-sidebar .icon {
 	display: inline-block;
 }
+
+/* START: move padding fixes and icons-for-tabs capability into core */
+.tabHeaders {
+	margin-top: 0;
+}
+
+.tabHeaders .tabHeader {
+	padding: 12px;
+	padding-left: 32px;
+	background-position: 12px;
+	background-repeat: no-repeat;
+	opacity: .5;
+}
+
+.tabHeaders .tabHeader a {
+	color: $color-main-text;
+}
+
+.tabHeaders .tabHeader.selected,
+.tabHeaders .tabHeader:hover,
+.tabHeaders .tabHeader:focus {
+	opacity: 1;
+}
+
+#tabHeaderChat {
+	background-image: url('../../../core/img/actions/comment.svg?v=1');
+}
+
+#tabHeaderParticipants {
+	background-image: url('../../../core/img/places/contacts-dark.svg?v=1');
+}
+/* END: move padding fixes and icons-for-tabs capability into core */
 
 #app-sidebar.hidden {
 	display: none !important;
@@ -850,6 +861,10 @@ video {
 .detailCallInfoContainer h3,
 .detailCallInfoContainer .guest-name p {
 	display: inline-block;
+}
+
+.detailCallInfoContainer .guest-name p {
+    padding: 9px 0;
 }
 
 .detailCallInfoContainer .editable-text-label .edit-button {
