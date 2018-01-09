@@ -752,6 +752,10 @@ video {
 }
 
 /* START: move padding fixes and icons-for-tabs capability into core */
+.tabHeaders {
+	margin-top: 0;
+}
+
 .tabHeaders .tabHeader {
 	padding: 12px;
 	padding-left: 32px;
