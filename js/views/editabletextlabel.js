@@ -148,6 +148,8 @@
 		},
 
 		showInput: function() {
+			this.getUI('input').val(this.model.get(this.modelAttribute));
+
 			this.getUI('inputWrapper').removeClass('hidden-important');
 			this.getUI('labelWrapper').addClass('hidden-important');
 
@@ -165,7 +167,7 @@
 				this.confirmEdit();
 			} else if (event.keyCode === 27) {
 				// ESC
-				this.discardEdit();
+				this.hideInput();
 			}
 		},
 
@@ -189,11 +191,6 @@
 
 			this.model.save(this.modelAttribute, newText, options);
 		},
-
-		discardEdit: function() {
-			this.hideInput();
-			this.getUI('input').val(this.model.get(this.modelAttribute));
-		}
 
 	});
 
