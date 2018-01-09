@@ -383,6 +383,16 @@ video {
 #app-content:not(.screensharing) {
 	.icon-white.icon-shadow {
 		filter: none;
+
+		&.icon-menu-people,
+		&.icon-fullscreen {
+			opacity: .5;
+
+			&:hover,
+			&:focus {
+				opacity: 1;
+			}
+		}
 	}
 }
 
