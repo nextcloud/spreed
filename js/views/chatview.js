@@ -302,6 +302,8 @@
 			$form.find('.submitLoading').addClass('hidden');
 			$form.find('.message').text('').prop('contenteditable', true);
 
+			$form.find('.message').focus();
+
 			// The new message does not need to be explicitly added to the list
 			// of messages; it will be automatically fetched from the server
 			// thanks to the auto-refresh of the list.
@@ -311,6 +313,8 @@
 			$form.find('.submit').removeClass('hidden');
 			$form.find('.submitLoading').addClass('hidden');
 			$form.find('.message').prop('contenteditable', true);
+
+			$form.find('.message').focus();
 
 			OC.Notification.show(t('spreed', 'Error occurred while sending message'), {type: 'error'});
 		},
