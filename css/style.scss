@@ -929,6 +929,21 @@ video {
     padding: 9px 0;
 }
 
+.detailCallInfoContainer .container-call-link {
+	display: flex;
+}
+.detailCallInfoContainer .container-call,
+.detailCallInfoContainer .container-link {
+	flex-grow: 1;
+	flex-basis: 50%;
+}
+
+.detailCallInfoContainer .join-call,
+.detailCallInfoContainer .leaveCall {
+	width: calc(100% - 12px);
+}
+
+
 .detailCallInfoContainer .editable-text-label .edit-button {
 	display: none;
 }
@@ -958,11 +973,14 @@ video {
 	vertical-align: middle;
 }
 
-.detailCallInfoContainer .editable-text-label .input-wrapper,
-.detailCallInfoContainer .password-option {
+.detailCallInfoContainer .editable-text-label .input-wrapper {
 	position: relative;
 	display: inline-block;
 	width: 100%;
+}
+
+.detailCallInfoContainer .password-option {
+	position: relative;
 }
 
 .detailCallInfoContainer .editable-text-label input,
