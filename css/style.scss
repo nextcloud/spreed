@@ -126,9 +126,9 @@
 	background-color: transparent;
 	border: none;
 	position: absolute;
-	right: 0;
-	bottom: 3px;
-	padding: 16px;
+	right: -6px;
+	top: -5px;
+	padding: 22px;
 	opacity: .5;
 }
 .icon-confirm.password-confirm:hover,
@@ -904,15 +904,25 @@ video {
  */
 
 .detailCallInfoContainer .room-name {
-	display: inline-block;
+	display: block;
+	width: calc(100% - 29px); /* 44px close button - 15px container padding */
 }
 
-.detailCallInfoContainer h3,
-.detailCallInfoContainer .guest-name p {
+.detailCallInfoContainer h3 {
 	display: inline-block;
+	width: 100%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+.detailCallInfoContainer .room-name:hover h3,
+.detailCallInfoContainer .room-name:focus h3 {
+	width: calc(100% - 44px); /* minus the edit button */
 }
 
 .detailCallInfoContainer .guest-name p {
+	display: inline-block;
     padding: 9px 0;
 }
 
@@ -929,20 +939,45 @@ video {
 .detailCallInfoContainer .editable-text-label .edit-button .icon {
 	cursor: pointer;
 	padding: 22px;
-	vertical-align: middle;
 	margin-left: -5px;
 	margin-top: -5px;
+	opacity: .5;
+}
+
+.detailCallInfoContainer .clipboard-button .icon:hover,
+.detailCallInfoContainer .clipboard-button .icon:focus,
+.detailCallInfoContainer .editable-text-label .edit-button .icon:hover,
+.detailCallInfoContainer .editable-text-label .edit-button .icon:focus {
+	opacity: 1;
+}
+
+.detailCallInfoContainer .clipboard-button .icon {
+	vertical-align: middle;
 }
 
 .detailCallInfoContainer .editable-text-label .input-wrapper,
 .detailCallInfoContainer .password-option {
 	position: relative;
 	display: inline-block;
+	width: 100%;
 }
 
 .detailCallInfoContainer .editable-text-label input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
+	padding-right: 38px; /* 44px for submit button - 6px neg. margin overhang */
+	text-overflow: ellipsis;
+}
+
+/* Adjust styles to fit h3 and prevent jumping */
+.detailCallInfoContainer .editable-text-label input {
+	margin: 3px 0 10px !important;
+	font-size: 15px;
+	font-weight: 300;
+}
+.detailCallInfoContainer .editable-text-label input + .icon-confirm.confirm-button {
+	top: 0;
+	right: -3px;
 }
 
 .detailCallInfoContainer #link-checkbox+label {
