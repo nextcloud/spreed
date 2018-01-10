@@ -153,7 +153,9 @@
 
 	display: flex;
 	flex-direction: column;
+}
 
+#app-content-wrapper #commentsTabView .comment:first-child {
 	padding-top: 15px;
 }
 
@@ -760,10 +762,11 @@ video {
 }
 
 /* The header element contains the header div; as the header div uses a fixed
-   position the header element has no height, so it must be explicitly set to
-   prevent #app-content-wrapper from overlapping with the header element */
-#body-public header {
-	height: 45px;
+   position the header element has no height, and as #app-content-wrapper uses a
+   "100%" height its contents must be padded to prevent them from overlapping
+   with the header element */
+#body-public #app-content-wrapper {
+	padding-top: 45px;
 }
 
 /* make blue header bar transparent in shared room */
@@ -968,24 +971,32 @@ video {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar .tabsContainer {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar .tab {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar #commentsTabView {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #app-sidebar .comments {
