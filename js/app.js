@@ -396,7 +396,7 @@
 
 			if (this.activeRoom.get('participantInCall') && this._chatViewInMainView === true) {
 				this._chatView.$el.detach();
-				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat') }, this._chatView);
+				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), priority: 100 }, this._chatView);
 				this._sidebarView.selectTab('chat');
 				this._chatView.setTooltipContainer(this._chatView.$el);
 				this._chatViewInMainView = false;
