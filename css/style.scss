@@ -954,6 +954,7 @@ video {
 .detailCallInfoContainer .clipboard-button,
 .detailCallInfoContainer .editable-text-label:hover .edit-button {
 	display: inline-block;
+	vertical-align: top;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
@@ -994,14 +995,15 @@ video {
 }
 
 /* Adjust styles to fit h3 and prevent jumping */
-.detailCallInfoContainer .editable-text-label input {
+.detailCallInfoContainer .editable-text-label.room-name input {
 	margin: 3px 0 10px !important;
 	font-size: 15px;
 	font-weight: 300;
-}
-.detailCallInfoContainer .editable-text-label input + .icon-confirm.confirm-button {
-	top: 0;
-	right: -3px;
+
+	+ .icon-confirm.confirm-button {
+		top: 0;
+		right: -3px;
+	}
 }
 
 .detailCallInfoContainer #link-checkbox+label {
