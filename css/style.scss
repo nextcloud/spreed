@@ -937,6 +937,9 @@ video {
 	flex-grow: 1;
 	flex-basis: 50%;
 }
+.detailCallInfoContainer .container-call {
+	flex-grow: 0;
+}
 
 .detailCallInfoContainer .join-call,
 .detailCallInfoContainer .leaveCall {
