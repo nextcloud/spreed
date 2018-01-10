@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 3.0.0 – 2017-MM-DD
+## 3.0.0 – 2018-01-10
 ### Added
  - Added simple text chat
   [#429](https://github.com/nextcloud/spreed/pull/429)
