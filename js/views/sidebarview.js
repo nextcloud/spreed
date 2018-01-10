@@ -181,6 +181,15 @@
 		},
 
 		/**
+		 * Select the tab associated to the given tabId.
+		 *
+		 * @param string tabId the ID of the tab to select.
+		 */
+		selectTab: function(tabId) {
+			this._tabView.selectTab(tabId);
+		},
+
+		/**
 		 * Removes the tab for the given tabId.
 		 *
 		 * If the tab to be removed is the one currently selected and there are
