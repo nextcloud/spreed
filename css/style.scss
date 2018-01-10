@@ -735,12 +735,14 @@ video {
 	position: absolute;
 	top: 0;
 	right: 0;
-	/* The app uses border-box sizing, so the padding is 15px like in the Files
-	 * app plus 8px of half the size of the icon */
-	padding: 23px;
-	opacity: 0.5;
+	padding: 22px;
+	opacity: .5;
 	/* Higher index than the trigger to hide it when the sidebar is open */
 	z-index: 20;
+}
+#app-sidebar .close:hover,
+#app-sidebar .close:focus {
+	opacity: 1;
 }
 
 #videos .videoContainer.speaking:not(.videoView) .nameIndicator,
