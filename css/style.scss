@@ -172,6 +172,11 @@
 #app-content-wrapper #commentsTabView .comments {
 	overflow-y: auto;
 
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+
 	padding-left: 15px;
 	padding-right: 15px;
 }
@@ -1001,6 +1006,11 @@ video {
 
 #app-sidebar .comments {
 	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
 }
 
 /**

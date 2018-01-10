@@ -166,6 +166,23 @@
 		_onAddModel: function(model, collection, options) {
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
+			var scrollToNew = false;
+			var scrollBack = false;
+			if (this._oldestOnTopLayout) {
+				var $newestComment = this.$container.children('.comment').last();
+				var scrollToNew = $newestComment.length > 0 && $newestComment.position().top < this.$container.outerHeight(true);
+			} else {
+				var $firstComment = this.$container.children('.comment').first();
+				var scrollBack = $firstComment.length > 0 && ($firstComment.position().top + $firstComment.outerHeight()) < 0;
+			}
+
+			if (scrollBack) {
+				var $firstVisibleComment = this.$container.children('.comment').filter(function() {
+						return $(this).position().top > 0;
+				}).first();
+				var firstVisibleCommentTop = Math.round($firstVisibleComment.position().top);
+			}
+
 			var $el = $(this.commentTemplate(this._formatItem(model)));
 			if (!_.isUndefined(options.at) && collection.length > 1) {
 				this.$container.find('li').eq(options.at).before($el);
@@ -207,6 +224,19 @@
 			this._lastAddedMessageModel = model;
 
 			this._postRenderItem($el);
+
+			if (scrollToNew) {
+				var newestCommentHiddenHeight = ($newestComment.position().top + $newestComment.outerHeight(true)) - this.$container.outerHeight(true);
+				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight + $el.outerHeight(true));
+			} else if (scrollBack) {
+				var newFirstVisibleCommentTop = Math.round($firstVisibleComment.position().top);
+
+				// It is not enough to just add the outer height of the added
+				// element, as the height of other elements could change too
+				// (for example, if the previous last message was grouped with
+				// the new one).
+				this.$container.scrollTop(this.$container.scrollTop() + (newFirstVisibleCommentTop - firstVisibleCommentTop));
+			}
 		},
 
 		_modelsHaveSameActor: function(model1, model2) {
