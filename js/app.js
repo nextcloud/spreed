@@ -632,6 +632,7 @@
 		},
 		enableVideo: function() {
 			var $hideVideoButton = $('#hideVideo');
+			var $audioMuteButton = $('#mute');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
@@ -639,6 +640,7 @@
 			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
 				.removeClass('video-disabled icon-video-off')
 				.addClass('icon-video');
+			$audioMuteButton.removeClass('video-disabled');
 
 			avatarContainer.hide();
 			localVideo.show();
@@ -647,6 +649,7 @@
 		},
 		hideVideo: function() {
 			var $hideVideoButton = $('#hideVideo');
+			var $audioMuteButton = $('#mute');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
@@ -654,6 +657,7 @@
 				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
 					.addClass('video-disabled icon-video-off')
 					.removeClass('icon-video');
+				$audioMuteButton.addClass('video-disabled');
 			}
 
 			var avatar = avatarContainer.find('.avatar');
