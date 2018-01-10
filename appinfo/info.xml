@@ -18,13 +18,13 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>2.9.1</version>
+	<version>3.0.0</version>
 	<licence>agpl</licence>
 
+	<author>Daniel Calviño Sánchez</author>
 	<author>Ivan Sein</author>
 	<author>Jan-Christoph Borchardt</author>
-	<author>Lukas Reschke</author>
-	<author>Morris Jobke</author>
+	<author>Joas Schilling</author>
 
 	<namespace>Spreed</namespace>
 
@@ -39,9 +39,10 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<bugs>https://github.com/nextcloud/spreed/issues</bugs>
 	<repository>https://github.com/nextcloud/spreed.git</repository>
 
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-call.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-screensharing.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-contacts-menu.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/chat.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/screensharing.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/contacts-menu.png</screenshot>
 
 	<dependencies>
 		<nextcloud min-version="13" max-version="13" />

@@ -1,9 +1,38 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 2.9.0 – 2017-12-12
-### Beta release
- - Beta release of Nextcloud 13 features for early testers.
+## 3.0.0 – 2017-MM-DD
+### Added
+ - Added simple text chat
+  [#429](https://github.com/nextcloud/spreed/pull/429)
+ - Added activities for calls: "You had a call with ABC (Duration: 15:20)"
+  [#438](https://github.com/nextcloud/spreed/pull/438)
+ - Introduced different participant permission levels: owner, moderator and user
+  [#353](https://github.com/nextcloud/spreed/pull/353)
+ - Added support for room passwords on public shared rooms
+  [#402](https://github.com/nextcloud/spreed/pull/402)
+ - Added option to run an external signaling backend
+  [#366](https://github.com/nextcloud/spreed/pull/366)
+
+### Changed
+ - Rename the app to "Talk" since it now contains chat, voice and video calls
+  [#444](https://github.com/nextcloud/spreed/pull/444)
+ - Moved admin settings to separate category and allowed to configure multiple STUN and TURN servers
+  [#427](https://github.com/nextcloud/spreed/pull/427)
+ - Moved signaling from EventSource to long polling for compatibility with HTTP2
+  [#363](https://github.com/nextcloud/spreed/pull/363)
+ - Moved room API to OCS so apps and 3rd party tools can use it
+  [#342](https://github.com/nextcloud/spreed/pull/342)
+
+### Fixed
+ - Fixed compatibility with Postgres
+  [#537](https://github.com/nextcloud/spreed/pull/537)
+ - Fixed compatibility with Oracle
+  [#371](https://github.com/nextcloud/spreed/pull/505)
+ - Fixed compatibility with Oracle
+  [#371](https://github.com/nextcloud/spreed/pull/371)
+ - Compatibility with Nextcloud 13
+
 
 ## 2.0.2 – 2017-11-28
 ### Fixed
@@ -42,6 +71,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
  - Fix error when response of TURN and STUN server arrive in the wrong order
   [#295](https://github.com/nextcloud/spreed/pull/295)
+
 
 ## 1.2.0 – 2017-01-18
 ### Added

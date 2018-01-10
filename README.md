@@ -2,17 +2,17 @@
 
 **Video- & audio-conferencing app for Nextcloud**
 
-![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/spreed-in-action.png)
+![](https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.png)
 
 ## Why is this so awesome?
 
+* :speech_balloon: **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.
 * :busts_in_silhouette: **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
 * :computer: **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer) or Chrome with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
 * :rocket: **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
 * :see_no_evil: **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
-* :speech_balloon: [Chat integration](https://github.com/nextcloud/spreed/issues/35)
 * :raising_hand: [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
