@@ -209,7 +209,7 @@
 			this.ui.clipboardButton.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreed', 'Copy')
+				title: t('spreed', 'Copy link')
 			});
 			this.initClipboard();
 		},

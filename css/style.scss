@@ -907,8 +907,8 @@ video {
  */
 
 .detailCallInfoContainer .room-name {
-	display: block;
-	width: calc(100% - 29px); /* 44px close button - 15px container padding */
+	display: inline-block;
+	width: calc(100% - 73px); /* 44px rename/copy + 44px close - 15px padding */
 }
 
 .detailCallInfoContainer h3 {
@@ -919,14 +919,15 @@ video {
 	overflow: hidden;
 }
 
-.detailCallInfoContainer .room-name:hover h3,
-.detailCallInfoContainer .room-name:focus h3 {
-	width: calc(100% - 44px); /* minus the edit button */
-}
+.detailCallInfoContainer .guest-name {
+	.label {
+		display: inline-block;
+	    padding: 9px 0;
+	}
 
-.detailCallInfoContainer .guest-name p {
-	display: inline-block;
-    padding: 9px 0;
+	.edit-button {
+		height: 0;
+	}
 }
 
 .detailCallInfoContainer .container-call-link {
@@ -962,7 +963,6 @@ video {
 	cursor: pointer;
 	padding: 22px;
 	margin-left: -5px;
-	margin-top: -5px;
 	opacity: .5;
 }
 
@@ -994,15 +994,24 @@ video {
 	text-overflow: ellipsis;
 }
 
-/* Adjust styles to fit h3 and prevent jumping */
-.detailCallInfoContainer .editable-text-label.room-name input {
-	margin: 3px 0 10px !important;
-	font-size: 15px;
-	font-weight: 300;
+/* Fit to h3 and prevent jumping. TODO: convert HTML to be flexbox-capable */
+.detailCallInfoContainer .editable-text-label.room-name {
+	.edit-button {
+		position: absolute;
+		right: 44px;
+		top: 16px;
+	}
 
-	+ .icon-confirm.confirm-button {
-		top: 0;
-		right: -3px;
+	input {
+		width: calc(100% + 44px);
+		margin: 3px 0 10px !important;
+		font-size: 15px;
+		font-weight: 300;
+
+		+ .icon-confirm.confirm-button {
+			top: 0;
+			right: -47px;
+		}
 	}
 }
 
