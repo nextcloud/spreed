@@ -326,9 +326,16 @@
 		 * @param string tabId the ID of the selected tab.
 		 */
 		onChildviewSelectTabHeader: function(tabId) {
+			if (this._selectedTabExtraClass) {
+				this.getRegion('tabContent').$el.removeClass(this._selectedTabExtraClass);
+			}
+
 			// With Marionette 3.1 "this.detachChildView('tabContent')" would be
 			// used instead of the "preventDestroy" option.
 			this.showChildView('tabContent', this._tabContentViews[tabId], { preventDestroy: true } );
+
+			this._selectedTabExtraClass = 'tab-' + tabId;
+			this.getRegion('tabContent').$el.addClass(this._selectedTabExtraClass);
 		}
 
 	});
