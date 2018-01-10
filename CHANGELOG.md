@@ -28,8 +28,6 @@ All notable changes to this project will be documented in this file.
  - Fixed compatibility with Postgres
   [#537](https://github.com/nextcloud/spreed/pull/537)
  - Fixed compatibility with Oracle
-  [#371](https://github.com/nextcloud/spreed/pull/505)
- - Fixed compatibility with Oracle
   [#371](https://github.com/nextcloud/spreed/pull/371)
  - Compatibility with Nextcloud 13
 
