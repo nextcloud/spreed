@@ -222,6 +222,21 @@
 			} else {
 				this._nameEditableTextLabel.disableEdition();
 			}
+
+			// This if-case should be removed when we fix room model for
+			// oneToOne calls. OneToOne calls should not have userId set as room
+			// name by default. We use it now for avatars, but a new attribute
+			// should be added to the room model for displaying room images.
+			// This has to be added below the "enable/disableEdition" calls as
+			// those calls render the view if needed, while the setters expect
+			// the view to be already rendered.
+			if (this.model.get('type') === 1) {
+				this._nameEditableTextLabel.setModelAttribute(undefined);
+				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation with {name}', {name: this.model.get('displayName')}));
+			} else {
+				this._nameEditableTextLabel.setModelAttribute('name');
+				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Room name'));
+			}
 		},
 
 		/**
