@@ -802,32 +802,39 @@ video {
 
 /* START: move padding fixes and icons-for-tabs capability into core */
 .tabHeaders {
+	display: flex;
 	margin-top: 0;
+	margin-bottom: 10px;
 }
 
 .tabHeaders .tabHeader {
+	flex-basis: 50%;
+	flex-grow: 0;
 	padding: 12px;
-	padding-left: 32px;
-	background-position: 12px;
-	background-repeat: no-repeat;
-	opacity: .5;
+	text-align: center;
+	border-bottom: 1px solid $color-border;
+	margin-bottom: 0;
+
+	a {
+		padding-left: 32px;
+		background-position: 12px;
+		background-repeat: no-repeat;
+		color: $color-main-text;
+		opacity: .5;
+	}
 }
 
-.tabHeaders .tabHeader a {
-	color: $color-main-text;
-}
-
-.tabHeaders .tabHeader.selected,
-.tabHeaders .tabHeader:hover,
-.tabHeaders .tabHeader:focus {
+.tabHeaders .tabHeader.selected a,
+.tabHeaders .tabHeader:hover a,
+.tabHeaders .tabHeader:focus a {
 	opacity: 1;
 }
 
-#tabHeaderChat {
+#tabHeaderChat a {
 	background-image: url('../../../core/img/actions/comment.svg?v=1');
 }
 
-#tabHeaderParticipants {
+#tabHeaderParticipants a {
 	background-image: url('../../../core/img/places/contacts-dark.svg?v=1');
 }
 /* END: move padding fixes and icons-for-tabs capability into core */
