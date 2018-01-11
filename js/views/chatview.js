@@ -170,10 +170,10 @@
 			var scrollBack = false;
 			if (this._oldestOnTopLayout) {
 				var $newestComment = this.$container.children('.comment').last();
-				var scrollToNew = $newestComment.length > 0 && $newestComment.position().top < this.$container.outerHeight(true);
+				scrollToNew = $newestComment.length > 0 && $newestComment.position().top < this.$container.outerHeight(true);
 			} else {
 				var $firstComment = this.$container.children('.comment').first();
-				var scrollBack = $firstComment.length > 0 && ($firstComment.position().top + $firstComment.outerHeight()) < 0;
+				scrollBack = $firstComment.length > 0 && ($firstComment.position().top + $firstComment.outerHeight()) < 0;
 			}
 
 			if (scrollBack) {
