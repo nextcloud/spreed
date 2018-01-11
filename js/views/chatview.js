@@ -1,4 +1,4 @@
-/* global autosize, Marionette, Handlebars, OC, OCA */
+/* global autosize, Marionette, Handlebars, OC, OCA, OCP */
 
 /**
  *
@@ -21,7 +21,7 @@
  *
  */
 
-(function(OCA, OC, Marionette, Handlebars, autosize) {
+(function(OCA, OC, OCP, Marionette, Handlebars, autosize) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -153,12 +153,15 @@
 				actorDisplayName = t('spreed', '[Unknown user name]');
 			}
 
+			var formattedMessage = escapeHTML(commentModel.get('message')).replace(/\n/g, '<br/>');
+			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
+
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
 				timestamp: timestamp,
 				date: OC.Util.relativeModifiedDate(timestamp),
 				altDate: OC.Util.formatDate(timestamp, 'LL LTS'),
-				formattedMessage: escapeHTML(commentModel.get('message')).replace(/\n/g, '<br/>')
+				formattedMessage: formattedMessage
 			});
 			return data;
 		},
@@ -388,4 +391,4 @@
 
 	OCA.SpreedMe.Views.ChatView = ChatView;
 
-})(OCA, OC, Marionette, Handlebars, autosize);
+})(OCA, OC, OCP, Marionette, Handlebars, autosize);
