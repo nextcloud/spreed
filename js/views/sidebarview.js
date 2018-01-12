@@ -55,8 +55,7 @@
 	 *
 	 * In order for the user to be able to open the sidebar when it is closed,
 	 * the SidebarView shows a small icon ("#app-sidebar-trigger") on the right
-	 * border of the document that opens the sidebar when clicked. When the
-	 * sidebar is open the icon is hidden.
+	 * border of the document that opens the sidebar when clicked.
 	 *
 	 * By default the sidebar is disabled, that is, it is closed and can not be
 	 * opened, neither by the user nor programatically. Calling "enable()" will
