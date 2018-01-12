@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.0.1 – 2018-01-12
+### Added
+- Added capabilities so the mobile files apps can link to the mobile talk apps
+  [#585](https://github.com/nextcloud/spreed/pull/585)
+
+### Fixed
+- Fixed issues when updating with Postgres and versions before 2.0.0
+  [#584](https://github.com/nextcloud/spreed/pull/584)
+
 ## 3.0.0 – 2018-01-10
 ### Added
  - Added simple text chat
