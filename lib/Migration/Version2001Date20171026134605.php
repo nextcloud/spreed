@@ -23,6 +23,7 @@
 namespace OCA\Spreed\Migration;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -212,14 +213,25 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	protected function copyParticipants(array $roomIdMap) {
 
 		$insert = $this->connection->getQueryBuilder();
-		$insert->insert('talk_participants')
-			->values([
-				'userId' => $insert->createParameter('userId'),
-				'roomId' => $insert->createParameter('roomId'),
-				'lastPing' => $insert->createParameter('lastPing'),
-				'sessionId' => $insert->createParameter('sessionId'),
-				'participantType' => $insert->createParameter('participantType'),
-			]);
+		if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			$insert->insert('talk_participants')
+				->values([
+					'userId' => $insert->createParameter('userId'),
+					'roomId' => $insert->createParameter('roomId'),
+					'lastPing' => $insert->createParameter('lastPing'),
+					'sessionId' => $insert->createParameter('sessionId'),
+					'participantType' => $insert->createParameter('participantType'),
+				]);
+		} else {
+			$insert->insert('talk_participants')
+				->values([
+					'userid' => $insert->createParameter('userId'),
+					'roomid' => $insert->createParameter('roomId'),
+					'lastping' => $insert->createParameter('lastPing'),
+					'sessionid' => $insert->createParameter('sessionId'),
+					'participanttype' => $insert->createParameter('participantType'),
+				]);
+		}
 
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
@@ -236,8 +248,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 				->setParameter('roomId', $roomIdMap[(int) $row['roomId']], IQueryBuilder::PARAM_INT)
 				->setParameter('lastPing', (int) $row['lastPing'], IQueryBuilder::PARAM_INT)
 				->setParameter('sessionId', $row['sessionId'])
-				->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT)
 			;
+			if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+				$insert->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT);
+			} else {
+				$insert->setParameter('participanType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);
+			}
 			$insert->execute();
 		}
 		$result->closeCursor();

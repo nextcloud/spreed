@@ -22,6 +22,7 @@
  */
 namespace OCA\Spreed\Migration;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCP\IConfig;
@@ -123,21 +124,39 @@ class Version2001Date20180103144447 extends SimpleMigrationStep {
 			return;
 		}
 
-		$update = $this->connection->getQueryBuilder();
-		$update->update('talk_rooms')
-			->set('active_since', 'activeSince')
-			->set('active_guests', 'activeGuests');
-		$update->execute();
+		if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			$update = $this->connection->getQueryBuilder();
+			$update->update('talk_rooms')
+				->set('active_since', 'activeSince')
+				->set('active_guests', 'activeGuests');
+			$update->execute();
 
-		$update = $this->connection->getQueryBuilder();
-		$update->update('talk_participants')
-			->set('user_id', 'userId')
-			->set('room_id', 'roomId')
-			->set('last_ping', 'lastPing')
-			->set('session_id', 'sessionId')
-			->set('participant_type', 'participantType')
-			->set('in_call', 'inCall');
-		$update->execute();
+			$update = $this->connection->getQueryBuilder();
+			$update->update('talk_participants')
+				->set('user_id', 'userId')
+				->set('room_id', 'roomId')
+				->set('last_ping', 'lastPing')
+				->set('session_id', 'sessionId')
+				->set('participant_type', 'participantType')
+				->set('in_call', 'inCall');
+			$update->execute();
+		} else {
+			$update = $this->connection->getQueryBuilder();
+			$update->update('talk_rooms')
+				->set('active_since', 'activesince')
+				->set('active_guests', 'activeguests');
+			$update->execute();
+
+			$update = $this->connection->getQueryBuilder();
+			$update->update('talk_participants')
+				->set('user_id', 'userid')
+				->set('room_id', 'roomid')
+				->set('last_ping', 'lastping')
+				->set('session_id', 'sessionid')
+				->set('participant_type', 'participanttype')
+				->set('in_call', 'incall');
+			$update->execute();
+		}
 
 	}
 }

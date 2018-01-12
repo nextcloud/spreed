@@ -22,6 +22,7 @@
  */
 namespace OCA\Spreed\Migration;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCA\Spreed\Participant;
@@ -127,9 +128,15 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	protected function makeOne2OneParticipantsOwners(array $one2oneRooms) {
 		$update = $this->db->getQueryBuilder();
 
-		$update->update('spreedme_room_participants')
-			->set('participantType', $update->createNamedParameter(Participant::OWNER))
-			->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			$update->update('spreedme_room_participants')
+				->set('participantType', $update->createNamedParameter(Participant::OWNER))
+				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		} else {
+			$update->update('spreedme_room_participants')
+				->set('participanttype', $update->createNamedParameter(Participant::OWNER))
+				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		}
 
 		return $update->execute();
 	}
@@ -141,9 +148,15 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	protected function makeGroupParticipantsModerators(array $one2oneRooms) {
 		$update = $this->db->getQueryBuilder();
 
-		$update->update('spreedme_room_participants')
-			->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
-			->where($update->expr()->nonEmptyString('userId'));
+		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			$update->update('spreedme_room_participants')
+				->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
+				->where($update->expr()->nonEmptyString('userId'));
+		} else {
+			$update->update('spreedme_room_participants')
+				->set('participanttype', $update->createNamedParameter(Participant::MODERATOR))
+				->where($update->expr()->nonEmptyString('userId'));
+		}
 
 		if (!empty($one2oneRooms)) {
 			$update->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
