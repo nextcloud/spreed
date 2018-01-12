@@ -81,7 +81,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 
-		if (!version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
+		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0
 			return;
 		}
