@@ -22,11 +22,13 @@
  */
 namespace OCA\Spreed\Migration;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -36,11 +38,16 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	/** @var IDBConnection */
 	protected $db;
 
+	/** @var IConfig */
+	protected $config;
+
 	/**
 	 * @param IDBConnection $db
+	 * @param IConfig $config
 	 */
-	public function __construct(IDBConnection $db) {
+	public function __construct(IDBConnection $db, IConfig $config) {
 		$this->db = $db;
+		$this->config = $config;
 	}
 
 	/**
@@ -73,6 +80,12 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @since 13.0.0
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+
+		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
+			// Migrations only work after 2.0.0
+			return;
+		}
+
 		$query = $this->db->getQueryBuilder();
 
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_rooms')
@@ -115,9 +128,15 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	protected function makeOne2OneParticipantsOwners(array $one2oneRooms) {
 		$update = $this->db->getQueryBuilder();
 
-		$update->update('spreedme_room_participants')
-			->set('participantType', $update->createNamedParameter(Participant::OWNER))
-			->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			$update->update('spreedme_room_participants')
+				->set('participantType', $update->createNamedParameter(Participant::OWNER))
+				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		} else {
+			$update->update('spreedme_room_participants')
+				->set('participanttype', $update->createNamedParameter(Participant::OWNER))
+				->where($update->expr()->in('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));
+		}
 
 		return $update->execute();
 	}
@@ -129,9 +148,15 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	protected function makeGroupParticipantsModerators(array $one2oneRooms) {
 		$update = $this->db->getQueryBuilder();
 
-		$update->update('spreedme_room_participants')
-			->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
-			->where($update->expr()->nonEmptyString('userId'));
+		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			$update->update('spreedme_room_participants')
+				->set('participantType', $update->createNamedParameter(Participant::MODERATOR))
+				->where($update->expr()->nonEmptyString('userId'));
+		} else {
+			$update->update('spreedme_room_participants')
+				->set('participanttype', $update->createNamedParameter(Participant::MODERATOR))
+				->where($update->expr()->nonEmptyString('userId'));
+		}
 
 		if (!empty($one2oneRooms)) {
 			$update->andWhere($update->expr()->notIn('roomId', $update->createNamedParameter($one2oneRooms, IQueryBuilder::PARAM_INT_ARRAY)));

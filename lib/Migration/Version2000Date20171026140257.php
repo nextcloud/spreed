@@ -63,6 +63,11 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 
+		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
+			// Migrations only work after 2.0.0
+			return;
+		}
+
 		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
 
