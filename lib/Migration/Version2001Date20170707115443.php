@@ -22,6 +22,7 @@
  */
 namespace OCA\Spreed\Migration;
 
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCA\Spreed\Participant;
@@ -73,6 +74,12 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @since 13.0.0
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+
+		if ($this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			// Couldn't install prior anyway, so we can skip this update step as well
+			return;
+		}
+
 		$query = $this->db->getQueryBuilder();
 
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_rooms')

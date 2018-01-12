@@ -23,6 +23,7 @@
 namespace OCA\Spreed\Migration;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -152,6 +153,12 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 * @since 13.0.0
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+
+		if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
+			// Couldn't install prior anyway, so we can skip this update step as well
+			return;
+		}
+
 		$roomIdMap = $this->copyRooms();
 		$this->copyParticipants($roomIdMap);
 		$this->fixNotifications($roomIdMap);
