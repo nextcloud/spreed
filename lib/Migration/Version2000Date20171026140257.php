@@ -22,7 +22,6 @@
  */
 namespace OCA\Spreed\Migration;
 
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -64,8 +63,8 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 
-		if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
-			// Couldn't install prior anyway, so we can skip this update step as well
+		if (!version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
+			// Migrations only work after 2.0.0
 			return;
 		}
 

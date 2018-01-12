@@ -23,10 +23,10 @@
 namespace OCA\Spreed\Migration;
 
 use Doctrine\DBAL\Exception\TableNotFoundException;
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
@@ -36,11 +36,16 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/** @var IDBConnection */
 	protected $connection;
 
+	/** @var IConfig */
+	protected $config;
+
 	/**
 	 * @param IDBConnection $connection
+	 * @param IConfig $config
 	 */
-	public function __construct(IDBConnection $connection) {
+	public function __construct(IDBConnection $connection, IConfig $config) {
 		$this->connection = $connection;
+		$this->config = $config;
 	}
 
 	/**
@@ -154,8 +159,8 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 */
 	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
 
-		if ($this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
-			// Couldn't install prior anyway, so we can skip this update step as well
+		if (!version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
+			// Migrations only work after 2.0.0
 			return;
 		}
 
