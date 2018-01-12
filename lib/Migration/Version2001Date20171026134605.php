@@ -252,7 +252,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
 				$insert->setParameter('participantType', (int) $row['participantType'], IQueryBuilder::PARAM_INT);
 			} else {
-				$insert->setParameter('participanType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);
+				$insert->setParameter('participantType', (int) $row['participanttype'], IQueryBuilder::PARAM_INT);
 			}
 			$insert->execute();
 		}
