@@ -39,7 +39,7 @@
 		'{{#if canModerate}}' +
 			'<div class="participant-entry-utils">'+
 				'<ul>'+
-					'<li class="participant-entry-utils-menu-button"><button></button></li>'+
+					'<li class="participant-entry-utils-menu-button"><button class="icon icon-more"></button></li>'+
 				'</ul>'+
 			'</div>'+
 			'<div class="popovermenu bubble menu">'+
