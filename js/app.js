@@ -144,7 +144,7 @@
 						OCA.SpreedMe.Calls.createGroupVideoCall(e.val);
 						break;
 					case "createPublicRoom":
-						OCA.SpreedMe.Calls.createPublicVideoCall();
+						OCA.SpreedMe.Calls.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
 						console.log("Unknown type", e.object.type);
