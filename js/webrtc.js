@@ -162,11 +162,6 @@ var spreedPeerConnectionTable = [];
 
 		var nick = OC.getCurrentUser()['displayName'];
 
-		//Check if there is some nick saved on local storage for guests
-		if (!nick && OCA.SpreedMe.app.guestNick) {
-			nick = OCA.SpreedMe.app.guestNick;
-		}
-
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
@@ -315,14 +310,8 @@ var spreedPeerConnectionTable = [];
 								OCA.SpreedMe.webrtc.emit('audioOn');
 							}
 							if (!OC.getCurrentUser()['uid']) {
-								// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
 								var currentGuestNick = localStorage.getItem("nick");
-								if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
-									if (!currentGuestNick) {
-										currentGuestNick = t('spreed', 'Guest');
-									}
-									OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', currentGuestNick);
-								}
+								OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', currentGuestNick);
 							}
 
 							// Reset ice restart counter for peer
