@@ -835,14 +835,6 @@ video {
 .tabHeaders .tabHeader:focus a {
 	opacity: 1;
 }
-
-#tabHeaderChat a {
-	background-image: url('../../../core/img/actions/comment.svg?v=1');
-}
-
-#tabHeaderParticipants a {
-	background-image: url('../../../core/img/places/contacts-dark.svg?v=1');
-}
 /* END: move padding fixes and icons-for-tabs capability into core */
 
 #app-sidebar.hidden {
@@ -906,10 +898,6 @@ video {
 .participantWithList .participant-entry-utils-menu-button button {
 	border: 0;
 	opacity: .5;
-	background-color: transparent;
-	background-repeat: no-repeat;
-	background-position: center;
-	background-image: url('../../../core/img/actions/more.svg?v=1');
 }
 
 /**

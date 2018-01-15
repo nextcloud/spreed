@@ -29,7 +29,7 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var TEMPLATE_TAB_HEADER_VIEW =
-		'<a href="#">{{label}}</a>';
+		'<a href="#" class="{{icon}}">{{label}}</a>';
 
 	var TEMPLATE_TAB_VIEW =
 		'<div class="tabHeaders">' +
@@ -47,7 +47,8 @@
 		template: Handlebars.compile(TEMPLATE_TAB_HEADER_VIEW),
 		templateContext: function() {
 			return {
-				label: this.getOption('label')
+				label: this.getOption('label'),
+				icon: this.getOption('icon')
 			};
 		},
 
