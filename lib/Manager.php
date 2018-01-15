@@ -336,10 +336,11 @@ class Manager {
 	}
 
 	/**
+	 * @param string $name
 	 * @return Room
 	 */
-	public function createPublicRoom() {
-		return $this->createRoom(Room::PUBLIC_CALL);
+	public function createPublicRoom($name = '') {
+		return $this->createRoom(Room::PUBLIC_CALL, $name);
 	}
 
 	/**

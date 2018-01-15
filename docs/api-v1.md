@@ -56,6 +56,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     ------|------|------------
     `roomType` | int |
     `invite` | string | user id (`roomType = 1`), group id (`roomType = 2`)
+    `roomName` | string | room name (Only available for `roomType = 3`)
 
 * Response:
     - Header:

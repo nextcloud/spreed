@@ -301,16 +301,17 @@ class RoomController extends OCSController {
 	 *
 	 * @param int $roomType
 	 * @param string $invite
+	 * @param string $roomName
 	 * @return DataResponse
 	 */
-	public function createRoom($roomType, $invite = '') {
+	public function createRoom($roomType, $invite = '', $roomName = '') {
 		switch ((int) $roomType) {
 			case Room::ONE_TO_ONE_CALL:
 				return $this->createOneToOneRoom($invite);
 			case Room::GROUP_CALL:
 				return $this->createGroupRoom($invite);
 			case Room::PUBLIC_CALL:
-				return $this->createPublicRoom();
+				return $this->createPublicRoom($roomName);
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -401,9 +402,10 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
+	 * @param string
 	 * @return DataResponse
 	 */
-	protected function createPublicRoom() {
+	protected function createPublicRoom($roomName) {
 		$currentUser = $this->userManager->get($this->userId);
 
 		if (!$currentUser instanceof IUser) {
@@ -411,7 +413,7 @@ class RoomController extends OCSController {
 		}
 
 		// Create the room
-		$room = $this->manager->createPublicRoom();
+		$room = $this->manager->createPublicRoom($roomName);
 		$room->addUsers([
 			'userId' => $currentUser->getUID(),
 			'participantType' => Participant::OWNER,
