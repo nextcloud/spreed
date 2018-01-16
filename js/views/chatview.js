@@ -159,8 +159,8 @@
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
 				timestamp: timestamp,
-				date: OC.Util.relativeModifiedDate(timestamp),
-				altDate: OC.Util.formatDate(timestamp, 'LL LTS'),
+				date: moment(timestamp, 'x').diff(moment()) > -86400000 ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LT'),
+				altDate: OC.Util.formatDate(timestamp),
 				formattedMessage: formattedMessage
 			});
 			return data;
