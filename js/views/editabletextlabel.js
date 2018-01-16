@@ -215,7 +215,7 @@
 			options.success = _.bind(function() {
 				this.hideInput();
 
-				if (_.isFunction(this.modelSaveOptions.success)) {
+				if (this.modelSaveOptions && _.isFunction(this.modelSaveOptions.success)) {
 					this.modelSaveOptions.success.apply(this, arguments);
 				}
 			}, this);

@@ -2,6 +2,7 @@
 /* global SimpleWebRTC, OC, OCA: false */
 
 var webrtc;
+var guestNamesTable = {};
 var spreedMappingTable = {};
 var spreedPeerConnectionTable = [];
 
@@ -102,6 +103,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.remove(sessionId, true);
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete spreedMappingTable[sessionId];
+			delete guestNamesTable[sessionId];
 		});
 
 		previousUsersInRoom = previousUsersInRoom.diff(disconnectedSessionIds);
@@ -161,11 +163,6 @@ var spreedPeerConnectionTable = [];
 		});
 
 		var nick = OC.getCurrentUser()['displayName'];
-
-		//Check if there is some nick saved on local storage for guests
-		if (!nick && OCA.SpreedMe.app.guestNick) {
-			nick = OCA.SpreedMe.app.guestNick;
-		}
 
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
@@ -315,14 +312,8 @@ var spreedPeerConnectionTable = [];
 								OCA.SpreedMe.webrtc.emit('audioOn');
 							}
 							if (!OC.getCurrentUser()['uid']) {
-								// If we are a guest, send updated nick if it is different from the one we initialize SimpleWebRTC (OCA.SpreedMe.app.guestNick)
 								var currentGuestNick = localStorage.getItem("nick");
-								if (OCA.SpreedMe.app.guestNick !== currentGuestNick) {
-									if (!currentGuestNick) {
-										currentGuestNick = t('spreed', 'Guest');
-									}
-									OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', currentGuestNick);
-								}
+								OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', currentGuestNick);
 							}
 
 							// Reset ice restart counter for peer
@@ -709,6 +700,7 @@ var spreedPeerConnectionTable = [];
 			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
 			if (videoContainer.length) {
 				var userId = spreedMappingTable[peer.id];
+				var guestName = guestNamesTable[peer.id];
 				var nameIndicator = videoContainer.find('.nameIndicator');
 				var avatar = videoContainer.find('.avatar');
 
@@ -718,6 +710,9 @@ var spreedPeerConnectionTable = [];
 				} else if (peer.nick) {
 					avatar.imageplaceholder(peer.nick, undefined, 128);
 					nameIndicator.text(peer.nick);
+				} else if (guestName && guestName.length > 0) {
+					avatar.imageplaceholder(guestName, undefined, 128);
+					nameIndicator.text(guestName);
 				} else {
 					avatar.imageplaceholder('?', undefined, 128);
 					avatar.css('background-color', '#b9b9b9');
@@ -826,8 +821,11 @@ var spreedPeerConnectionTable = [];
 				var userIndicator = document.createElement('div');
 				userIndicator.className = 'nameIndicator';
 				if (peer) {
+					var guestName = guestNamesTable[peer.id];
 					if (peer.nick) {
 						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: peer.nick});
+					} else if (guestName && guestName.length > 0) {
+						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: guestName});
 					} else {
 						userIndicator.textContent = t('spreed', "Guest's screen");
 					}
@@ -881,7 +879,7 @@ var spreedPeerConnectionTable = [];
 
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
-			if (data.name.length === 0) {
+			if (!data.name) {
 				videoNameIndicator.text(t('spreed', 'Guest'));
 				videoAvatar.imageplaceholder('?', undefined, 128);
 				videoAvatar.css('background-color', '#b9b9b9');
@@ -890,6 +888,7 @@ var spreedPeerConnectionTable = [];
 				videoNameIndicator.text(data.name);
 				videoAvatar.imageplaceholder(data.name, undefined, 128);
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
+				guestNamesTable[data.id] = data.name;
 			}
 
 			if (latestSpeakerId === data.id) {

@@ -700,12 +700,6 @@
 			});
 
 			this._localStorageModel.fetch();
-
-			var nick = this._localStorageModel.get('nick');
-
-			if (nick) {
-				OCA.SpreedMe.app.guestNick = nick;
-			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({
