@@ -208,11 +208,11 @@
 			// millisecond based.
 			model.set('date', new Date(model.get('timestamp') * 1000));
 
-			if (this._lastAddedMessageModel && !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
+			if (!this._lastAddedMessageModel || !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
 				if (this._oldestOnTopLayout) {
 					$el.attr('data-date', this._getDateSeparator(model.get('date')));
 					$el.addClass('showDate');
-				} else {
+				} else if (this._lastAddedMessageModel) {
 					$el.next().attr('data-date', this._getDateSeparator(this._lastAddedMessageModel.get('date')));
 					$el.next().addClass('showDate');
 				}
