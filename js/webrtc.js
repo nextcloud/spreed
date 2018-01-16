@@ -879,7 +879,7 @@ var spreedPeerConnectionTable = [];
 
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
-			if (!data.name || data.name.length === 0) {
+			if (!data.name) {
 				videoNameIndicator.text(t('spreed', 'Guest'));
 				videoAvatar.imageplaceholder('?', undefined, 128);
 				videoAvatar.css('background-color', '#b9b9b9');
