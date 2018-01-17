@@ -52,7 +52,7 @@
 		'    <div class="authorRow">' +
 		'        <div class="avatar" {{#if actorId}}data-username="{{actorId}}"{{/if}}> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
-		'        <div class="date has-tooltip live-relative-timestamp" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
+		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
 		'    <div class="message">{{{formattedMessage}}}</div>' +
 		'</li>';
@@ -142,7 +142,8 @@
 		_formatItem: function(commentModel) {
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			var timestamp = commentModel.get('timestamp') * 1000;
+			var timestamp = commentModel.get('timestamp') * 1000,
+				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
 			if (commentModel.attributes.actorType === 'guests') {
@@ -159,7 +160,8 @@
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
 				timestamp: timestamp,
-				date: moment(timestamp, 'x').diff(moment()) > -86400000 ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LT'),
+				date: relativeDate ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LTS'),
+				relativeDate: relativeDate,
 				altDate: OC.Util.formatDate(timestamp),
 				formattedMessage: formattedMessage
 			});
