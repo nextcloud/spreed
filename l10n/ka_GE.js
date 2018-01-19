@@ -167,6 +167,9 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "გვერდის ზედა მარჯვენა მხარეს შეგიძლიათ დააყენოთ სახელი, მონაწილეები უკეთ ამოგიცნობენ.",
     "Video call" : "ვიდეო ზარი",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "მონაწილეების ზარზე დასაკავშირებლად აუცილებელია STUN სერვერი. TURN სერვერი კავშირს უზრუნველყოფს ფაირვოლის გამოყენების შემთხვევაშიც.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
+    "Today" : "დღეს",
+    "Yesterday" : "გუშინ",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },
 "nplurals=1; plural=0;");
