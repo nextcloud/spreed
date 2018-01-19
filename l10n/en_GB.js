@@ -167,6 +167,9 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "You can set your name on the top right of this page so other participants can identify you better.",
     "Video call" : "Video call",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
+    "Today" : "Today",
+    "Yesterday" : "Yesterday",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },
 "nplurals=2; plural=(n != 1);");
