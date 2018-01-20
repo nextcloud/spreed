@@ -165,6 +165,9 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "A jelenlegi oldal jobb felső sarkában állíthatod be a neved a könnyebb azonosíthatóság érdekében.",
     "Video call" : "Videóhívás",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
+    "Today" : "Ma",
+    "Yesterday" : "Tegnap",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
