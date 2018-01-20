@@ -167,6 +167,9 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Diğer kullanıcıların sizi daha iyi tanıyabilmesi için bu sayfanın sağ üst köşesinden adınızı ayarlayabilirsiniz.",
     "Video call" : "Görüntülü Arama",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN sunucusu katılımcı çağrılarının bağlanabilmesi için gereklidir. TURN sunucusu bağlantının güvenlik duvarları arkasından çalışabilmesini sağlar.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
+    "Today" : "Bugün",
+    "Yesterday" : "Dün",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },
 "nplurals=2; plural=(n > 1);");
