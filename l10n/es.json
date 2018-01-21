@@ -165,6 +165,9 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "Puedes configurar tu nombre en la parte superior derecha de esta página para que otros participantes puedan identificarte mejor.",
     "Video call" : "Videollamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN es necesario para que los participantes puedan conectarse a las llamadas. El servidor TURN asegura que la conexión funciona incluso a través de cortafuegos.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN esta usado para determinar la dirección IP pública de los participantes detrás de un router."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN esta usado para determinar la dirección IP pública de los participantes detrás de un router.",
+    "Today" : "Hoy",
+    "Yesterday" : "Ayer",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
