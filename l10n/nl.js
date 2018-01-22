@@ -55,6 +55,8 @@ OC.L10N.register(
     "Name" : "Naam",
     "Rename" : "Hernoemen",
     "Your name …" : "Je naam ...",
+    "Link copied!" : "Link gekopieerd!",
+    "Copy link" : "Link kopiëren",
     "No messages yet, start the conversation!" : "Nog geen berichten, start de discussie!",
     "New message…" : "Nieuw bericht...",
     "Send" : "Verzend",
@@ -95,6 +97,7 @@ OC.L10N.register(
     "{participantName}'s screen" : "{participantName}'s schermen",
     "Guest's screen" : "Gast scherm",
     "Your screen" : "Mijn scherm",
+    "No Camera" : "Geen camera",
     "a call" : "een gesprek",
     "(Duration %s)" : "(Duur %s)",
     "You attended a call with {user1}" : "Je nam deel aan een gesprek met {user1}",
@@ -162,6 +165,9 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Je kan je naam rechts boven aan deze pagina instellen zodat de overige deelnemers je beter herkennen.",
     "Video call" : "Videogesprek",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig om deelnemers met gesprekken te verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
+    "Today" : "Vandaag",
+    "Yesterday" : "Gisteren",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },
 "nplurals=2; plural=(n != 1);");
