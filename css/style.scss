@@ -928,11 +928,13 @@ video {
 }
 
 .detailCallInfoContainer .clipboard-button,
+.detailCallInfoContainer .password-button,
 .detailCallInfoContainer .editable-text-label:hover .edit-button {
 	display: inline-block;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
+.detailCallInfoContainer .password-button .icon,
 .detailCallInfoContainer .editable-text-label .edit-button .icon {
 	cursor: pointer;
 	padding: 22px;
