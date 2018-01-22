@@ -79,7 +79,8 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms')
-			->where($query->expr()->emptyString('token'));
+			->where($query->expr()->emptyString('token'))
+			->orWhere($query->expr()->isNull('token'));
 		$result = $query->execute();
 
 		$output->startProgress();
