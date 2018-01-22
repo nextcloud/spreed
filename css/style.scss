@@ -386,7 +386,7 @@ video {
 }
 
 /* Use dark icons when not in a call (= white background) */
-#app-content:not(.incall) .icon-white.icon-shadow {
+#app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow {
 	/* Still use white icons outside of calls when local video shows */
 	&#hideVideo.video-disabled,
 	&#mute.video-disabled {
