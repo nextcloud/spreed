@@ -53,8 +53,12 @@ OC.L10N.register(
     "Change password" : "Промени лозинку",
     "Set password" : "Постави лозинку",
     "Name" : "Име",
+    "Room name" : "Име собе",
     "Rename" : "Преименуј",
     "Your name …" : "Ваше име…",
+    "Conversation with {name}" : "Разговор са корисником {name}",
+    "Link copied!" : "Веза ископирана!",
+    "Copy link" : "Копирај везу",
     "No messages yet, start the conversation!" : "Још нема порука, започните разговор!",
     "New message…" : "Нова порука…",
     "Send" : "Пошаљи",
@@ -95,6 +99,7 @@ OC.L10N.register(
     "{participantName}'s screen" : "Екран корисника {participantName}",
     "Guest's screen" : "Екран госта",
     "Your screen" : "Ваш екран",
+    "No Camera" : "Нема камере",
     "a call" : "позив",
     "(Duration %s)" : "(трајање %s)",
     "You attended a call with {user1}" : "Били сте на разговору са корисником {user1}",
@@ -162,6 +167,9 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Можете подесити име у горњем десном углу стране, да се боље представите учесницима разговора.",
     "Video call" : "Видео позив",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN сервер је неопходан да би учесници могли да се повежу у разговор. TURN сервер се стара да конекција може да се успостави чак и кроз фајервол.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера.",
+    "Today" : "Данас",
+    "Yesterday" : "Јуче",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
