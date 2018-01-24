@@ -167,6 +167,9 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "이 페이지 오른쪽 위에 이름을 입력하여 다른 참가자들과 구별할 수 있습니다.",
     "Video call" : "영상 통화",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "참가자가 통화에 연결하려면 STUN 서버를 설정해야 합니다. TURN 서버는 방화벽 뒤에 있는 사람도 연결할 수 있도록 합니다.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
+    "Today" : "오늘",
+    "Yesterday" : "어제",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
 },
 "nplurals=1; plural=0;");
