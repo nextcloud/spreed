@@ -206,7 +206,8 @@
 	align-items: flex-end;
 }
 
-.videoContainer {
+.videoContainer,
+#app-content.screensharing .videoContainer {
 	position: relative;
 	width: 100%;
     padding: 0 2%;
@@ -218,6 +219,10 @@
 	z-index: 2;
 }
 
+#app-content.screensharing .videoContainer {
+	max-height: 200px;
+}
+
 video {
 	width: 100%;
 	z-index: 0;
@@ -226,6 +231,12 @@ video {
 	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
 	filter: contrast(1.1) saturate(1.1) sepia(.1);
 	vertical-align: top; /* fix white line below video */
+}
+
+#app-content.screensharing .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0;
 }
 
 #screens video {
@@ -403,12 +414,6 @@ video {
 			opacity: 1;
 		}
 	}
-}
-
-#app-content.screensharing .videoContainer video {
-	max-height: 200px;
-	background-color: transparent;
-	box-shadow: 0;
 }
 
 #app-content.screensharing #screens {
