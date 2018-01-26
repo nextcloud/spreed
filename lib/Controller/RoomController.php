@@ -770,7 +770,7 @@ class RoomController extends OCSController {
 	 * @param string $password
 	 * @return DataResponse
 	 */
-	public function joinRoom($token, $password) {
+	public function joinRoom($token, $password = '') {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
