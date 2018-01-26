@@ -57,7 +57,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
-	 * @param \Closure $schemaClosure The `\Closure` returns a `Schema`
+	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
 	 * @param array $options
 	 * @since 13.0.0
 	 */
@@ -79,7 +79,8 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('spreedme_rooms')
-			->where($query->expr()->emptyString('token'));
+			->where($query->expr()->emptyString('token'))
+			->orWhere($query->expr()->isNull('token'));
 		$result = $query->execute();
 
 		$output->startProgress();

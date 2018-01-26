@@ -1,4 +1,4 @@
-/* global autosize, Marionette, Handlebars, OC, OCA, OCP */
+/* global autosize, Handlebars, Marionette, moment, OC, OCA, OCP */
 
 /**
  *
@@ -21,7 +21,7 @@
  *
  */
 
-(function(OCA, OC, OCP, Marionette, Handlebars, autosize) {
+(function(OCA, OC, OCP, Marionette, Handlebars, autosize, moment) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -52,7 +52,7 @@
 		'    <div class="authorRow">' +
 		'        <div class="avatar" {{#if actorId}}data-username="{{actorId}}"{{/if}}> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
-		'        <div class="date has-tooltip live-relative-timestamp" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
+		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
 		'    <div class="message">{{{formattedMessage}}}</div>' +
 		'</li>';
@@ -142,7 +142,8 @@
 		_formatItem: function(commentModel) {
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			var timestamp = commentModel.get('timestamp') * 1000;
+			var timestamp = commentModel.get('timestamp') * 1000,
+				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
 			if (commentModel.attributes.actorType === 'guests') {
@@ -159,8 +160,9 @@
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
 				timestamp: timestamp,
-				date: OC.Util.relativeModifiedDate(timestamp),
-				altDate: OC.Util.formatDate(timestamp, 'LL LTS'),
+				date: relativeDate ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LTS'),
+				relativeDate: relativeDate,
+				altDate: OC.Util.formatDate(timestamp),
 				formattedMessage: formattedMessage
 			});
 			return data;
@@ -208,14 +210,12 @@
 			// millisecond based.
 			model.set('date', new Date(model.get('timestamp') * 1000));
 
-			if (this._lastAddedMessageModel && !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
-				// 'LL' formats a localized date including day of month, month
-				// name and year
+			if (!this._lastAddedMessageModel || !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
 				if (this._oldestOnTopLayout) {
-					$el.attr('data-date', OC.Util.formatDate(model.get('date'), 'LL'));
+					$el.attr('data-date', this._getDateSeparator(model.get('date')));
 					$el.addClass('showDate');
-				} else {
-					$el.next().attr('data-date', OC.Util.formatDate(this._lastAddedMessageModel.get('date'), 'LL'));
+				} else if (this._lastAddedMessageModel) {
+					$el.next().attr('data-date', this._getDateSeparator(this._lastAddedMessageModel.get('date')));
 					$el.next().addClass('showDate');
 				}
 			}
@@ -240,6 +240,33 @@
 				// the new one).
 				this.$container.scrollTop(this.$container.scrollTop() + (newFirstVisibleCommentTop - firstVisibleCommentTop));
 			}
+		},
+
+		_getDateSeparator: function(timestamp) {
+			var date = moment(timestamp, 'x'),
+				today = moment(),
+				dayOfYear = OC.Util.formatDate(date, 'YYYY-DDD'),
+				dayOfYearToday = OC.Util.formatDate(today, 'YYYY-DDD');
+
+			var relativePrefix = '';
+			if (dayOfYear === dayOfYearToday) {
+				relativePrefix = t('spreed', 'Today');
+			} else {
+				var yesterday = OC.Util.formatDate(today.subtract(1, 'd'), 'YYYY-DDD');
+
+				if (dayOfYear === yesterday) {
+					relativePrefix = t('spreed', 'Yesterday');
+				} else {
+					relativePrefix = date.fromNow();
+				}
+			}
+
+			return t('spreed', '{relativeDate}, {absoluteDate}', {
+				relativeDate: relativePrefix,
+				// 'LL' formats a localized date including day of month, month
+				// name and year
+				absoluteDate: OC.Util.formatDate(timestamp, 'LL')
+			});
 		},
 
 		_modelsHaveSameActor: function(model1, model2) {
@@ -391,4 +418,4 @@
 
 	OCA.SpreedMe.Views.ChatView = ChatView;
 
-})(OCA, OC, OCP, Marionette, Handlebars, autosize);
+})(OCA, OC, OCP, Marionette, Handlebars, autosize, moment);

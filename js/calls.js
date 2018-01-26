@@ -67,13 +67,14 @@
 				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
-		createPublicVideoCall: function() {
+		createPublicVideoCall: function(roomName) {
 			console.log("Creating a new public room.");
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 				type: 'POST',
 				data: {
-					roomType: 3
+					roomType: 3,
+					roomName: roomName
 				},
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');

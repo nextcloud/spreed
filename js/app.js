@@ -144,7 +144,7 @@
 						OCA.SpreedMe.Calls.createGroupVideoCall(e.val);
 						break;
 					case "createPublicRoom":
-						OCA.SpreedMe.Calls.createPublicVideoCall();
+						OCA.SpreedMe.Calls.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
 						console.log("Unknown type", e.object.type);
@@ -330,7 +330,7 @@
 				}
 			});
 
-			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants') }, this._participantsView);
+			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), icon: 'icon-contacts-dark' }, this._participantsView);
 		},
 		/**
 		 * @param {string} token
@@ -396,7 +396,7 @@
 
 			if (this.activeRoom.get('participantInCall') && this._chatViewInMainView === true) {
 				this._chatView.$el.detach();
-				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), priority: 100 }, this._chatView);
+				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
 				this._sidebarView.selectTab('chat');
 				this._chatView.setTooltipContainer(this._chatView.$el);
 				this._chatViewInMainView = false;
@@ -700,12 +700,6 @@
 			});
 
 			this._localStorageModel.fetch();
-
-			var nick = this._localStorageModel.get('nick');
-
-			if (nick) {
-				OCA.SpreedMe.app.guestNick = nick;
-			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({
