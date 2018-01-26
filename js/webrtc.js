@@ -813,7 +813,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
 
 			screenSharingActive = true;
-			$('#app-content').attr('class', '').addClass('screensharing');
+			$('#app-content').addClass('screensharing');
 
 			var screens = document.getElementById('screens');
 			if (screens) {
