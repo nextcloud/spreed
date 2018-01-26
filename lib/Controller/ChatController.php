@@ -184,7 +184,7 @@ class ChatController extends OCSController {
 	 *        messages (30 by default, 60 at most)
 	 * @return DataResponse an array of chat messages, or "404 Not found" if the
 	 *         room token was not valid; each chat message is an array with
-	 *         fields 'id', 'token', 'actoryType', 'actorId',
+	 *         fields 'id', 'token', 'actorType', 'actorId',
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
