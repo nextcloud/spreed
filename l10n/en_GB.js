@@ -63,6 +63,9 @@ OC.L10N.register(
     "New message…" : "New message…",
     "Send" : "Send",
     "[Unknown user name]" : "[Unknown user name]",
+    "Today" : "Today",
+    "Yesterday" : "Yesterday",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "Error occurred while sending message",
     "Edit" : "Edit",
     "moderator" : "moderator",
@@ -167,9 +170,6 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "You can set your name on the top right of this page so other participants can identify you better.",
     "Video call" : "Video call",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
-    "Today" : "Today",
-    "Yesterday" : "Yesterday",
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router."
 },
 "nplurals=2; plural=(n != 1);");
