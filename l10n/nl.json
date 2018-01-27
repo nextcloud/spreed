@@ -61,6 +61,9 @@
     "New message…" : "Nieuw bericht...",
     "Send" : "Verzend",
     "[Unknown user name]" : "[Onbekende gebruikersnaam]",
+    "Today" : "Vandaag",
+    "Yesterday" : "Gisteren",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "Fout tijdens verzenden van bericht",
     "Edit" : "Bewerk",
     "moderator" : "moderator",
@@ -165,9 +168,6 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "Je kan je naam rechts boven aan deze pagina instellen zodat de overige deelnemers je beter herkennen.",
     "Video call" : "Videogesprek",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig om deelnemers met gesprekken te verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
-    "Today" : "Vandaag",
-    "Yesterday" : "Gisteren",
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

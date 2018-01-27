@@ -63,6 +63,9 @@ OC.L10N.register(
     "New message…" : "Создать сообщение...",
     "Send" : "Отправить",
     "[Unknown user name]" : "[Неизвестный пользователь]",
+    "Today" : "Сегодня",
+    "Yesterday" : "Вчера",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "При отправке сообщения возникла ошибка",
     "Edit" : "Редактировать",
     "moderator" : "модератор",
@@ -167,9 +170,6 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Вы можете указать свое имя в правом верхнем углу этой страницы, чтобы другие участники могли лучше вас идентифицировать.",
     "Video call" : "Видеозвонок",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Сервер STUN необходим, чтобы участники могли подключиться к вызовам. Сервер TURN гарантирует, что соединение работает даже через межсетевые экраны.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
-    "Today" : "Сегодня",
-    "Yesterday" : "Вчера",
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором."
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");
