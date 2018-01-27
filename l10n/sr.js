@@ -63,6 +63,9 @@ OC.L10N.register(
     "New message…" : "Нова порука…",
     "Send" : "Пошаљи",
     "[Unknown user name]" : "[непознато корисничко име]",
+    "Today" : "Данас",
+    "Yesterday" : "Јуче",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "Грешка приликом слања поруке",
     "Edit" : "Измени",
     "moderator" : "модератор",
@@ -167,9 +170,6 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Можете подесити име у горњем десном углу стране, да се боље представите учесницима разговора.",
     "Video call" : "Видео позив",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN сервер је неопходан да би учесници могли да се повежу у разговор. TURN сервер се стара да конекција може да се успостави чак и кроз фајервол.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера.",
-    "Today" : "Данас",
-    "Yesterday" : "Јуче",
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера."
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");
