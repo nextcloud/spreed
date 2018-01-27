@@ -63,6 +63,9 @@ OC.L10N.register(
     "New message…" : "Ny melding…",
     "Send" : "Send",
     "[Unknown user name]" : "[Ukjent brukernavn]",
+    "Today" : "I dag",
+    "Yesterday" : "I går",
+    "{relativeDate}, {absoluteDate}" : "{relativData}, {abosluttData}",
     "Error occurred while sending message" : "Feil oppstod under foresendelse av melding",
     "Edit" : "Rediger",
     "moderator" : "moderator",
@@ -167,9 +170,6 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre på siden slik at andre deltagere har lettere for å identifisere deg.",
     "Video call" : "Videosamtale",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN- tjeneren er nødvendig for at deltakere kan koble til samtaler. TURN- tjeneren sørger for at koblingen fungerer selv gjennom brannmurer.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter.",
-    "Today" : "I dag",
-    "Yesterday" : "I går",
-    "{relativeDate}, {absoluteDate}" : "{relativData}, {abosluttData}"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter."
 },
 "nplurals=2; plural=(n != 1);");

@@ -63,6 +63,9 @@ OC.L10N.register(
     "New message…" : "Mensaje nuevo...",
     "Send" : "Enviar",
     "[Unknown user name]" : "[Nombre de usuario desconocido]",
+    "Today" : "Hoy",
+    "Yesterday" : "Ayer",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "Se presentó un error al enviar el mensaje",
     "Edit" : "Editar",
     "moderator" : "moderador",
@@ -167,9 +170,6 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Puedes establecer tu nombre en la parte superior derecha de esta página para que otros participantes te puedan identificar mejor. ",
     "Video call" : "Video llamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
-    "Today" : "Hoy",
-    "Yesterday" : "Ayer",
-    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. "
 },
 "nplurals=2; plural=(n != 1);");
