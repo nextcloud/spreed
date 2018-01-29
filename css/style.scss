@@ -244,16 +244,11 @@ video {
 	filter: none;
 }
 
-#videos .videoContainer video {
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-	background-color: #000;
+#videos .videoContainer:not(.promoted) video {
+    max-height: 200px;
+	background-color: transparent;
 }
-#videos .videoContainer.promoted video {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-#videos .videoContainer video,
+
 #videos .videoContainer .avatar {
 	box-shadow: 0 0 15px rgba(0, 0, 0, .5);
 }
@@ -386,6 +381,7 @@ video {
 .participants-1 .videoView video,
 .participants-2 .videoView video {
 	position: absolute;
+	max-height: 100% !important;
 	bottom: 0;
 	border-top-right-radius: 3px;
 }
