@@ -625,6 +625,9 @@
 						this._trigger('roomChanged', [this.currentRoomToken, data.room.roomid]);
 						this.joinedUsers = {};
 						this.currentRoomToken = null;
+					} else {
+						// TODO(fancycode): Only fetch properties of room that was modified.
+						this.internalSyncRooms();
 					}
 					break;
 				case "event":
