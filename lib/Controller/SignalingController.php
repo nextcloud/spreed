@@ -243,6 +243,10 @@ class SignalingController extends OCSController {
 	 * @return bool
 	 */
 	private function validateBackendRequest($data) {
+		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM']) ||
+			!isset($_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
+			return false;
+		}
 		$random = $_SERVER['HTTP_SPREED_SIGNALING_RANDOM'];
 		if (empty($random) || strlen($random) < 32) {
 			return false;
@@ -253,6 +257,16 @@ class SignalingController extends OCSController {
 		}
 		$hash = hash_hmac('sha256', $random . $data, $this->config->getSignalingSecret());
 		return hash_equals($hash, strtolower($checksum));
+	}
+
+	/**
+	 * Return the body of the backend request. This can be overridden in
+	 * tests.
+	 *
+	 * @return string
+	 */
+	protected function getInputStream() {
+		return file_get_contents('php://input');
 	}
 
 	/**
@@ -268,7 +282,7 @@ class SignalingController extends OCSController {
 	 * @return JSONResponse
 	 */
 	public function backend() {
-		$json = file_get_contents('php://input');
+		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
 			return new JSONResponse([
 				'type' => 'error',
@@ -280,7 +294,7 @@ class SignalingController extends OCSController {
 		}
 
 		$message = json_decode($json, true);
-		switch ($message['type']) {
+		switch (isset($message['type']) ? $message['type'] : "") {
 			case 'auth':
 				// Query authentication information about a user.
 				return $this->backendAuth($message['auth']);
@@ -295,7 +309,7 @@ class SignalingController extends OCSController {
 					'type' => 'error',
 					'error' => [
 						'code' => 'unknown_type',
-						'message' => 'The given type ' . print_r($message, true) . ' is not supported.',
+						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
 					],
 				]);
 		}
