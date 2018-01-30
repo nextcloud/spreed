@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Signaling;
 
 use OCA\Spreed\Config;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
@@ -56,6 +57,20 @@ class BackendNotifier{
 	}
 
 	/**
+	 * Perform actual network request to the signaling backend.
+	 * This can be overridden in tests.
+	 */
+	protected function doRequest($url, $params) {
+		if (defined('PHPUNIT_RUN')) {
+			// Don't perform network requests when running tests.
+			return;
+		}
+
+		$client = $this->clientService->newClient();
+		$client->post($url, $params);
+	}
+
+	/**
 	 * Perform a request to the signaling backend.
 	 *
 	 * @param string $url
@@ -77,7 +92,6 @@ class BackendNotifier{
 		} else if (strpos($url, 'ws://') === 0) {
 			$url = 'http://' . substr($url, 5);
 		}
-		$client = $this->clientService->newClient();
 		$body = json_encode($data);
 		$headers = [
 			'Content-Type' => 'application/json',
@@ -92,10 +106,10 @@ class BackendNotifier{
 			'headers' => $headers,
 			'body' => $body,
 		];
-		if (!$signaling['verify']) {
+		if (!empty($signaling['verify'])) {
 			$params['verify'] = false;
 		}
-		$client->post($url, $params);
+		$this->doRequest($url, $params);
 	}
 
 	/**
@@ -221,6 +235,9 @@ class BackendNotifier{
 			}
 		}
 		foreach ($participants['guests'] as $participant) {
+			if (!isset($participant['participantType'])) {
+				$participant['participantType'] = Participant::GUEST;
+			}
 			if ($participant['inCall']) {
 				$users[] = $participant;
 			}
