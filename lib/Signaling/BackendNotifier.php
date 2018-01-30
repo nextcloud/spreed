@@ -106,7 +106,7 @@ class BackendNotifier{
 			'headers' => $headers,
 			'body' => $body,
 		];
-		if (!empty($signaling['verify'])) {
+		if (empty($signaling['verify'])) {
 			$params['verify'] = false;
 		}
 		$this->doRequest($url, $params);
