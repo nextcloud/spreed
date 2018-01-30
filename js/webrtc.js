@@ -209,6 +209,8 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc = webrtc;
 
+		OCA.SpreedMe.app.startSpreed(signaling);
+
 		var spreedListofSpeakers = {};
 		var spreedListofSharedScreens = {};
 		var latestSpeakerId = null;
@@ -622,7 +624,7 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
-			OCA.SpreedMe.app.startSpreed(configuration, signaling);
+			OCA.SpreedMe.app.startLocalMedia(configuration);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
