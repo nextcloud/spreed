@@ -701,13 +701,13 @@
 			};
 		} else {
 			var user = OC.getCurrentUser();
-			var url = OC.generateUrl("/ocs/v2.php/apps/spreed/api/v1/signaling/backend");
+			var url = OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'backend';
 			msg = {
 				"type": "hello",
 				"hello": {
 					"version": "1.0",
 					"auth": {
-						"url": OC.getProtocol() + "://" + OC.getHost() + url,
+						"url": url,
 						"params": {
 							"userid": user.uid,
 							"ticket": this.settings.ticket
