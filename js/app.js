@@ -63,7 +63,7 @@
 						return {
 							format: 'json',
 							search: term,
-							perPage: 200,
+							perPage: 20,
 							itemType: 'call'
 						};
 					},
