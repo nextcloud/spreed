@@ -40,7 +40,7 @@ var spreedPeerConnectionTable = [];
 	}
 
 	function createScreensharingPeer(signaling, sessionId) {
-		var currentSessionId = webrtc.connection.getSessionid();
+		var currentSessionId = signaling.getSessionid();
 		var useMcu = signaling.hasFeature("mcu");
 
 		if (useMcu && !webrtc.webrtc.getPeers(currentSessionId, 'screen').length) {
@@ -96,7 +96,7 @@ var spreedPeerConnectionTable = [];
 
 	function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		'use strict';
-		var currentSessionId = webrtc.connection.getSessionid();
+		var currentSessionId = signaling.getSessionid();
 
 		var useMcu = signaling.hasFeature("mcu");
 		if (useMcu && newUsers.length && !webrtc.webrtc.getPeers(currentSessionId, 'video').length) {
@@ -185,10 +185,10 @@ var spreedPeerConnectionTable = [];
 		updateParticipantsUI(previousUsersInRoom.length + 1);
 	}
 
-	function usersInCallChanged(users) {
+	function usersInCallChanged(signaling, users) {
 		// The passed list are the users that are currently in the room,
 		// i.e. that are in the call and should call each other.
-		var currentSessionId = webrtc.connection.getSessionid();
+		var currentSessionId = signaling.getSessionid();
 		var currentUsersInRoom = [];
 		var userMapping = {};
 		var selfInCall = false;
@@ -213,7 +213,7 @@ var spreedPeerConnectionTable = [];
 
 		if (!selfInCall) {
 			// Own session is no longer in the call, disconnect from all others.
-			usersChanged([], previousUsersInRoom);
+			usersChanged(signaling, [], previousUsersInRoom);
 			return;
 		}
 
@@ -224,7 +224,7 @@ var spreedPeerConnectionTable = [];
 			newUsers.push(userMapping[sessionId]);
 		});
 		if (newUsers.length || disconnectedSessionIds.length) {
-			usersChanged(newUsers, disconnectedSessionIds);
+			usersChanged(signaling, newUsers, disconnectedSessionIds);
 		}
 	}
 
@@ -242,14 +242,14 @@ var spreedPeerConnectionTable = [];
 			users.forEach(function(user) {
 				delete usersInCallMapping[user];
 			});
-			usersChanged([], users);
+			usersChanged(signaling, [], users);
 		});
 		app.signaling.on('usersChanged', function(users) {
 			users.forEach(function(user) {
 				var sessionId = user.sessionId || user.sessionid;
 				usersInCallMapping[sessionId] = user;
 			});
-			usersInCallChanged(usersInCallMapping);
+			usersInCallChanged(signaling, usersInCallMapping);
 		});
 		app.signaling.on('usersInRoom', function(users) {
 			usersInCallMapping = {};
@@ -257,7 +257,7 @@ var spreedPeerConnectionTable = [];
 				var sessionId = user.sessionId || user.sessionid;
 				usersInCallMapping[sessionId] = user;
 			});
-			usersInCallChanged(usersInCallMapping);
+			usersInCallChanged(signaling, usersInCallMapping);
 		});
 		app.signaling.on('leaveCall', function () {
 			webrtc.leaveCall();
