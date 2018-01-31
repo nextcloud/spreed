@@ -1205,7 +1205,7 @@
 
 		if (typeof(sessionid) !== "string") {
 			// Got a user object.
-			sessionid = sessionid.sessionid;
+			sessionid = sessionid.sessionId || sessionid.sessionid;
 		}
 		console.log("Request offer from", sessionid);
 		this.doSend({
@@ -1234,7 +1234,7 @@
 
 		if (typeof(sessionid) !== "string") {
 			// Got a user object.
-			sessionid = sessionid.sessionid;
+			sessionid = sessionid.sessionId || sessionid.sessionid;
 		}
 		console.log("Send offer to", sessionid);
 		this.doSend({
