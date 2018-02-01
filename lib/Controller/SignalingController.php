@@ -32,7 +32,6 @@ use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
 use OCP\IRequest;
@@ -279,12 +278,12 @@ class SignalingController extends OCSController {
 	 * @NoCSRFRequired
 	 * @PublicPage
 	 *
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function backend() {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'invalid_request',
@@ -305,7 +304,7 @@ class SignalingController extends OCSController {
 				// Ping sessions connected to a room.
 				return $this->backendPing($message['ping']);
 			default:
-				return new JSONResponse([
+				return new DataResponse([
 					'type' => 'error',
 					'error' => [
 						'code' => 'unknown_type',
@@ -319,7 +318,7 @@ class SignalingController extends OCSController {
 		$params = $auth['params'];
 		$userId = $params['userid'];
 		if (!$this->config->validateSignalingTicket($userId, $params['ticket'])) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'invalid_ticket',
@@ -331,7 +330,7 @@ class SignalingController extends OCSController {
 		if (!empty($userId)) {
 			$user = $this->userManager->get($userId);
 			if (!$user instanceof IUser) {
-				return new JSONResponse([
+				return new DataResponse([
 					'type' => 'error',
 					'error' => [
 						'code' => 'no_such_user',
@@ -353,7 +352,7 @@ class SignalingController extends OCSController {
 				'displayname' => $user->getDisplayName(),
 			];
 		}
-		return new JSONResponse($response);
+		return new DataResponse($response);
 	}
 
 	private function backendRoom($roomRequest) {
@@ -364,7 +363,7 @@ class SignalingController extends OCSController {
 		try {
 			$room = $this->manager->getRoomByToken($roomId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'no_such_room',
@@ -389,7 +388,7 @@ class SignalingController extends OCSController {
 				$participant = $room->getParticipantBySession($sessionId);
 			} catch (ParticipantNotFoundException $e) {
 				// Return generic error to avoid leaking which rooms exist.
-				return new JSONResponse([
+				return new DataResponse([
 					'type' => 'error',
 					'error' => [
 						'code' => 'no_such_room',
@@ -414,14 +413,14 @@ class SignalingController extends OCSController {
 				],
 			],
 		];
-		return new JSONResponse($response);
+		return new DataResponse($response);
 	}
 
 	private function backendPing($request) {
 		try {
 			$room = $this->manager->getRoomByToken($request['roomid']);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'no_such_room',
@@ -446,7 +445,7 @@ class SignalingController extends OCSController {
 				'roomid' => $room->getToken(),
 			],
 		];
-		return new JSONResponse($response);
+		return new DataResponse($response);
 	}
 
 }
