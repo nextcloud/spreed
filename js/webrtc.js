@@ -914,6 +914,8 @@ var spreedPeerConnectionTable = [];
 				ownPeer = null;
 			}
 			usersChanged(signaling, [], previousUsersInRoom);
+			usersInCallMapping = {};
+			previousUsersInRoom = [];
 			// Reconnects with a new session id will trigger "usersChanged"
 			// with the users in the room and that will re-establish the
 			// peerconnection streams.
