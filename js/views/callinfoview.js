@@ -51,7 +51,7 @@
 		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
-		'			<div class="password-button"><span class="icon icon-password"></span></div>' +
+		'			<div class="password-button"><span class="icon {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span></div>' +
 		'			<div class="password-option">' +
 		'				<input class="password-input" maxlength="200" type="password"' +
 		'				  placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
