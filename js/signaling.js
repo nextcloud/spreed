@@ -1184,7 +1184,7 @@
 	OCA.Talk.Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
 		switch (data.event.type) {
 			case "update":
-				this._trigger("usersChanged", [data.event.update.users]);
+				this._trigger("usersChanged", [data.event.update.users || []]);
 				this._trigger("participantListChanged");
 				this.internalSyncRooms();
 				break;
