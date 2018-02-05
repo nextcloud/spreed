@@ -28,6 +28,8 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
+	var uiChannel = Backbone.Radio.channel('ui');
+
 	var TEMPLATE =
 		'<div class="room-name"></div>' +
 		'{{#if showShareLink}}' +
@@ -46,16 +48,22 @@
 		'	</div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
-		'	<div>' +
+		'	<div class="share-link-options">' +
 		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
 		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
-		'			<div class="password-button"><span class="icon {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span></div>' +
-		'			<div class="password-option">' +
-		'				<input class="password-input" maxlength="200" type="password"' +
-		'				  placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
-		'				<div class="icon icon-confirm password-confirm"></div>'+
+		'			<div class="app-navigation-entry-utils password-button"><span class="icon {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span></div>' +
+		'			<div class="app-navigation-entry-menu">' +
+		'				<ul class="app-navigation-entry-menu-list">' +
+		'					<li>' +
+		'						<div class="password-option">' +
+		'							<input class="password-input" maxlength="200" type="password"' +
+		'				  				placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
+		'							<div class="icon icon-confirm password-confirm"></div>'+
+		'						</div>' +
+		'					</li>' +
+		'				</ul>' +
 		'			</div>' +
 		'		{{/if}}' +
 		'	</div>' +
@@ -82,6 +90,7 @@
 
 		ui: {
 			'roomName': 'div.room-name',
+			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 
@@ -92,7 +101,9 @@
 			'passwordButton': '.password-button',
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
-			'passwordConfirm': '.password-confirm'
+			'passwordConfirm': '.password-confirm',
+
+			'menu': '.app-navigation-entry-menu',
 		},
 
 		regions: {
@@ -107,7 +118,9 @@
 			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'click @ui.joinCallButton': 'joinCall',
-			'click @ui.leaveCallButton': 'leaveCall'
+			'click @ui.leaveCallButton': 'leaveCall',
+
+			'click .password-button': 'toggleMenu'
 		},
 
 		modelEvents: {
@@ -166,6 +179,30 @@
 				inputPlaceholder: t('spreed', 'Name'),
 				buttonTitle: t('spreed', 'Rename')
 			});
+
+			this.listenTo(uiChannel, 'document:click', function(event) {
+				var target = $(event.target);
+				if (!this.ui.shareLinkOptions.is(target.closest('.share-link-options'))) {
+					// Click was not triggered by this element -> close menu
+					this.menuShown = false;
+					this.toggleMenuClass();
+				}
+			});
+		},
+
+		menuShown: false,
+
+		toggleMenu: function(e) {
+			e.preventDefault();
+			this.menuShown = !this.menuShown;
+			this.toggleMenuClass();
+		},
+
+		toggleMenuClass: function() {
+			this.ui.menu.toggleClass('open', this.menuShown);
+			if (this.menuShown) {
+				this.ui.passwordInput.focus();
+			}
 		},
 
 		renderWhenInactive: function() {
@@ -214,13 +251,13 @@
 			});
 			this.initClipboard();
 
-			this.ui.passwordOption.hide();
 			this.ui.passwordButton.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
 				title: (this.model.get('hasPassword')) ? t('spreed', 'Change password') : t('spreed', 'Set password')
 			});
 
+			this.toggleMenuClass();
 		},
 
 		_canModerate: function() {
@@ -276,12 +313,6 @@
 		/**
 		 * Password
 		 */
-		showPasswordInput: function() {
-			this.ui.passwordButton.hide();
-			this.ui.passwordOption.show();
-			this.ui.passwordInput.focus();
-		},
-
 		confirmPassword: function() {
 			var newPassword = this.ui.passwordInput.val().trim();
 			$.ajax({
@@ -292,8 +323,8 @@
 				},
 				success: function() {
 					this.ui.passwordInput.val('');
-					this.ui.passwordOption.hide();
-					this.ui.passwordButton.show();
+					this.menuShown = false;
+					this.toggleMenuClass();
 					OCA.SpreedMe.app.syncRooms();
 				}.bind(this),
 				error: function() {
@@ -308,9 +339,8 @@
 				this.confirmPassword();
 			} else if (e.keyCode === 27) {
 				// ESC
-				this.ui.passwordInput.val('');
-				this.ui.passwordOption.hide();
-				this.ui.passwordButton.show();
+				this.menuShown = false;
+				this.toggleMenuClass();
 			}
 		},
 
