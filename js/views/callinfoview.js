@@ -296,13 +296,14 @@
 				},
 				success: function() {
 					this.ui.passwordInput.val('');
-
+					this.ui.passwordOption.hide();
+					this.ui.passwordButton.show();
 					OCA.SpreedMe.app.syncRooms();
-				}.bind(this)
+				}.bind(this),
+				error: function() {
+					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
+				}
 			});
-
-			this.ui.passwordOption.hide();
-			this.ui.passwordButton.show();
 
 			console.log('.rename-option');
 		},
