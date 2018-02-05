@@ -284,10 +284,6 @@
 
 		confirmPassword: function() {
 			var newPassword = this.ui.passwordInput.val().trim();
-
-			console.log('Setting room password to "' + newPassword + '".');
-			console.log('Setting room password to "' + this.model.get('hasPassword') + '".');
-
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
 				type: 'PUT',
@@ -304,8 +300,6 @@
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
 				}
 			});
-
-			console.log('.rename-option');
 		},
 
 		keyUpPassword: function(e) {
