@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Signaling;
 
 use OCA\Spreed\Config;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
@@ -56,6 +57,20 @@ class BackendNotifier{
 	}
 
 	/**
+	 * Perform actual network request to the signaling backend.
+	 * This can be overridden in tests.
+	 */
+	protected function doRequest($url, $params) {
+		if (defined('PHPUNIT_RUN')) {
+			// Don't perform network requests when running tests.
+			return;
+		}
+
+		$client = $this->clientService->newClient();
+		$client->post($url, $params);
+	}
+
+	/**
 	 * Perform a request to the signaling backend.
 	 *
 	 * @param string $url
@@ -77,7 +92,6 @@ class BackendNotifier{
 		} else if (strpos($url, 'ws://') === 0) {
 			$url = 'http://' . substr($url, 5);
 		}
-		$client = $this->clientService->newClient();
 		$body = json_encode($data);
 		$headers = [
 			'Content-Type' => 'application/json',
@@ -92,10 +106,10 @@ class BackendNotifier{
 			'headers' => $headers,
 			'body' => $body,
 		];
-		if (!$signaling['verify']) {
+		if (empty($signaling['verify'])) {
 			$params['verify'] = false;
 		}
-		$client->post($url, $params);
+		$this->doRequest($url, $params);
 	}
 
 	/**
@@ -194,6 +208,50 @@ class BackendNotifier{
 			'type' => 'delete',
 			'delete' => [
 				'userids' => $userIds,
+			],
+		]);
+	}
+
+	/**
+	 * The "in-call" status of the given session ids has changed..
+	 *
+	 * @param Room $room
+	 * @param bool $inCall
+	 * @param array $sessionids
+	 * @throws \Exception
+	 */
+	public function roomInCallChanged($room, $inCall, $sessionIds) {
+		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $inCall . ' ' . print_r($sessionIds, true));
+		$changed = [];
+		$users = [];
+		$participants = $room->getParticipants();
+		foreach ($participants['users'] as $userId => $participant) {
+			if ($participant['inCall']) {
+				$users[] = $participant;
+			}
+			if (in_array($participant['sessionId'], $sessionIds)) {
+				$participant['userId'] = $userId;
+				$changed[] = $participant;
+			}
+		}
+		foreach ($participants['guests'] as $participant) {
+			if (!isset($participant['participantType'])) {
+				$participant['participantType'] = Participant::GUEST;
+			}
+			if ($participant['inCall']) {
+				$users[] = $participant;
+			}
+			if (in_array($participant['sessionId'], $sessionIds)) {
+				$changed[] = $participant;
+			}
+		}
+
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'incall',
+			'incall' => [
+				'incall' => $inCall,
+				'changed' => $changed,
+				'users' => $users
 			],
 		]);
 	}

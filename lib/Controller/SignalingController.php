@@ -25,12 +25,13 @@ namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
 use OCP\IRequest;
@@ -241,6 +242,10 @@ class SignalingController extends OCSController {
 	 * @return bool
 	 */
 	private function validateBackendRequest($data) {
+		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM']) ||
+			!isset($_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
+			return false;
+		}
 		$random = $_SERVER['HTTP_SPREED_SIGNALING_RANDOM'];
 		if (empty($random) || strlen($random) < 32) {
 			return false;
@@ -254,6 +259,16 @@ class SignalingController extends OCSController {
 	}
 
 	/**
+	 * Return the body of the backend request. This can be overridden in
+	 * tests.
+	 *
+	 * @return string
+	 */
+	protected function getInputStream() {
+		return file_get_contents('php://input');
+	}
+
+	/**
 	 * Backend API to query information required for standalone signaling
 	 * servers.
 	 *
@@ -263,12 +278,12 @@ class SignalingController extends OCSController {
 	 * @NoCSRFRequired
 	 * @PublicPage
 	 *
-	 * @return JSONResponse
+	 * @return DataResponse
 	 */
 	public function backend() {
-		$json = file_get_contents('php://input');
+		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'invalid_request',
@@ -278,19 +293,22 @@ class SignalingController extends OCSController {
 		}
 
 		$message = json_decode($json, true);
-		switch ($message['type']) {
+		switch (isset($message['type']) ? $message['type'] : "") {
 			case 'auth':
 				// Query authentication information about a user.
 				return $this->backendAuth($message['auth']);
 			case 'room':
 				// Query information about a room.
 				return $this->backendRoom($message['room']);
+			case 'ping':
+				// Ping sessions connected to a room.
+				return $this->backendPing($message['ping']);
 			default:
-				return new JSONResponse([
+				return new DataResponse([
 					'type' => 'error',
 					'error' => [
 						'code' => 'unknown_type',
-						'message' => 'The given type ' . print_r($message, true) . ' is not supported.',
+						'message' => 'The given type ' . json_encode($message) . ' is not supported.',
 					],
 				]);
 		}
@@ -300,7 +318,7 @@ class SignalingController extends OCSController {
 		$params = $auth['params'];
 		$userId = $params['userid'];
 		if (!$this->config->validateSignalingTicket($userId, $params['ticket'])) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'invalid_ticket',
@@ -312,7 +330,7 @@ class SignalingController extends OCSController {
 		if (!empty($userId)) {
 			$user = $this->userManager->get($userId);
 			if (!$user instanceof IUser) {
-				return new JSONResponse([
+				return new DataResponse([
 					'type' => 'error',
 					'error' => [
 						'code' => 'no_such_user',
@@ -334,16 +352,18 @@ class SignalingController extends OCSController {
 				'displayname' => $user->getDisplayName(),
 			];
 		}
-		return new JSONResponse($response);
+		return new DataResponse($response);
 	}
 
-	private function backendRoom($room) {
-		$roomId = $room['roomid'];
-		$userId = $room['userid'];
+	private function backendRoom($roomRequest) {
+		$roomId = $roomRequest['roomid'];
+		$userId = $roomRequest['userid'];
+		$sessionId = $roomRequest['sessionid'];
+
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($roomId, $userId);
+			$room = $this->manager->getRoomByToken($roomId);
 		} catch (RoomNotFoundException $e) {
-			return new JSONResponse([
+			return new DataResponse([
 				'type' => 'error',
 				'error' => [
 					'code' => 'no_such_room',
@@ -352,11 +372,35 @@ class SignalingController extends OCSController {
 			]);
 		}
 
+		$participant = null;
 		if (!empty($userId)) {
-			// Rooms get sorted by last ping time for users, so make sure to
-			// update when a user joins a room.
-			$room->ping($userId, '0', time());
+			// User trying to join room.
+			try {
+				$participant = $room->getParticipant($userId);
+			} catch (ParticipantNotFoundException $e) {
+				// Ignore, will check for public rooms below.
+			}
 		}
+
+		if (empty($participant)) {
+			// User was not invited to the room, check for access to public room.
+			try {
+				$participant = $room->getParticipantBySession($sessionId);
+			} catch (ParticipantNotFoundException $e) {
+				// Return generic error to avoid leaking which rooms exist.
+				return new DataResponse([
+					'type' => 'error',
+					'error' => [
+						'code' => 'no_such_room',
+						'message' => 'The user is not invited to this room.',
+					],
+				]);
+			}
+		}
+
+		// Rooms get sorted by last ping time for users, so make sure to
+		// update when a user joins a room.
+		$room->ping($userId, $sessionId, time());
 
 		$response = [
 			'type' => 'room',
@@ -369,7 +413,39 @@ class SignalingController extends OCSController {
 				],
 			],
 		];
-		return new JSONResponse($response);
+		return new DataResponse($response);
+	}
+
+	private function backendPing($request) {
+		try {
+			$room = $this->manager->getRoomByToken($request['roomid']);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([
+				'type' => 'error',
+				'error' => [
+					'code' => 'no_such_room',
+					'message' => 'No such room.',
+				],
+			]);
+		}
+
+		$now = time();
+		foreach ($request['entries'] as $entry) {
+			if (array_key_exists('userid', $entry)) {
+				$room->ping($entry['userid'], $entry['sessionid'], $now);
+			} else {
+				$room->ping('', $entry['sessionid'], $now);
+			}
+		}
+
+		$response = [
+			'type' => 'room',
+			'room' => [
+				'version' => '1.0',
+				'roomid' => $room->getToken(),
+			],
+		];
+		return new DataResponse($response);
 	}
 
 }
