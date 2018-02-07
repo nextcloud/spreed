@@ -309,9 +309,12 @@ class RoomController extends OCSController {
 			case Room::ONE_TO_ONE_CALL:
 				return $this->createOneToOneRoom($invite);
 			case Room::GROUP_CALL:
+				if ($invite === '') {
+					return $this->createEmptyRoom($roomName, false);
+				}
 				return $this->createGroupRoom($invite);
 			case Room::PUBLIC_CALL:
-				return $this->createPublicRoom($roomName);
+				return $this->createEmptyRoom($roomName);
 		}
 
 		return new DataResponse([], Http::STATUS_BAD_REQUEST);
@@ -402,10 +405,11 @@ class RoomController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * @param string
+	 * @param string $roomName
+	 * @param bool $public
 	 * @return DataResponse
 	 */
-	protected function createPublicRoom($roomName) {
+	protected function createEmptyRoom($roomName, $public = true) {
 		$currentUser = $this->userManager->get($this->userId);
 
 		if (!$currentUser instanceof IUser) {
@@ -413,7 +417,11 @@ class RoomController extends OCSController {
 		}
 
 		// Create the room
-		$room = $this->manager->createPublicRoom($roomName);
+		if ($public) {
+			$room = $this->manager->createPublicRoom($roomName);
+		} else {
+			$room = $this->manager->createGroupRoom($roomName);
+		}
 		$room->addUsers([
 			'userId' => $currentUser->getUID(),
 			'participantType' => Participant::OWNER,
