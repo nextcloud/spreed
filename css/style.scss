@@ -255,7 +255,7 @@ video {
 }
 
 #videos .videoContainer .avatar {
-	box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+	box-shadow: 0 0 15px $color-box-shadow;
 }
 
 .participants-1 #videos .videoContainer video,
