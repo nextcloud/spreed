@@ -37,6 +37,7 @@ class CapabilitiesTest extends TestCase {
 					'audio',
 					'video',
 					'chat',
+					'guest-signaling',
 				],
 			],
 		], $capabilities->getCapabilities());
