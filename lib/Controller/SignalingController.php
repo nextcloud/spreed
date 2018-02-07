@@ -85,7 +85,7 @@ class SignalingController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
 	 *
 	 * Only available for logged in users because guests can not use the apps
 	 * right now.
@@ -275,7 +275,6 @@ class SignalingController extends OCSController {
 	 * See sections "Backend validation" in
 	 * https://github.com/nextcloud/spreed/wiki/Spreed-Signaling-API
 	 *
-	 * @NoCSRFRequired
 	 * @PublicPage
 	 *
 	 * @return DataResponse
