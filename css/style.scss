@@ -217,6 +217,9 @@
 	-ms-flex: auto;
 	flex: auto;
 	z-index: 2;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
 }
 
 #app-content.screensharing .videoContainer {
@@ -224,7 +227,6 @@
 }
 
 video {
-	width: 100%;
 	z-index: 0;
 	max-height: 100%;
 	/* default filter for slightly better look */
