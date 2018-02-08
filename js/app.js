@@ -143,13 +143,13 @@
 						OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
 						break;
 					case "group":
-						OCA.SpreedMe.Calls.createGroupVideoCall(e.val, null);
+						OCA.SpreedMe.Calls.createGroupVideoCall(e.val, "");
 						break;
 					case "createPublicRoom":
 						OCA.SpreedMe.Calls.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
 						break;
 					case "createGroupRoom":
-						OCA.SpreedMe.Calls.createGroupVideoCall(null, OCA.SpreedMe.app._searchTerm);
+						OCA.SpreedMe.Calls.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
 						console.log("Unknown type", e.object.type);
