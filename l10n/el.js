@@ -72,10 +72,10 @@ OC.L10N.register(
     "Saving failed" : "Αποτυχία αποθήκευσης",
     "Add person" : "Προσθήκη ατόμου",
     "You were invited to a <strong>video call</strong>" : "Έχετε προσκληθεί σε <strong>κλήση βίντεο</strong>",
+    "Video call" : "Κλήση βίντεο",
     "Invalid format, must be stunserver:port." : "Μη έγκυρη μορφή, πρέπει να έχει τη μορφή stunserver:port.",
     "Invalid port specified." : "Μη έγκυρος καθορισμός θύρας.",
     "Invalid protocols specified." : "Μη έγκυρος καθορισμός πρωτοκόλλων.",
-    "STUN server" : "Διακομιστής STUN",
-    "Video call" : "Κλήση βίντεο"
+    "STUN server" : "Διακομιστής STUN"
 },
 "nplurals=2; plural=(n != 1);");

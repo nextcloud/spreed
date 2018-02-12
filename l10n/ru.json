@@ -153,21 +153,20 @@
     "TURN server" : "Сервер TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потока данных от участников, находящихся за межсетевым экраном.",
     "Video calls" : "Видеозвонки",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Вы можете указать свое имя в правом верхнем углу этой страницы, чтобы другие участники могли лучше вас идентифицировать.",
     "Saving failed" : "Сбой при сохранении",
     "Add person" : "Добавить пользователя",
     "{actor} invited you to a private call" : "{actor} пригласил(а) вас в приватный звонок",
     "{actor} invited you to a group call" : "{actor} пригласил(а) вас в групповой звонок",
     "{actor} invited you to the call {call}" : "{actor} пригласил(а) вас в звонок {call}",
     "You were invited to a <strong>video call</strong>" : "Вы были приглашены в <strong>видео звонок</strong>",
+    "Video call" : "Видеозвонок",
     "Invalid format, must be stunserver:port." : "Неверный формат, должно быть stunserver:port.",
     "Invalid port specified." : "Указан неверный порт.",
     "Invalid protocols specified." : "Указан неверный протокол.",
-    "STUN server" : "Сервер STUN",
-    "The STUN server is used to determine the public address of participants behind a router." : "Сервер STUN используется для определения публичного ip-адреса участников за маршрутизатором.",
-    "TURN server shared secret" : "Общая секретная фраза сервера TURN",
-    "You can set your name on the top right of this page so other participants can identify you better." : "Вы можете указать свое имя в правом верхнем углу этой страницы, чтобы другие участники могли лучше вас идентифицировать.",
-    "Video call" : "Видеозвонок",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Сервер STUN необходим, чтобы участники могли подключиться к вызовам. Сервер TURN гарантирует, что соединение работает даже через межсетевые экраны.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором."
+    "STUN server" : "Сервер STUN",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
+    "TURN server shared secret" : "Общая секретная фраза сервера TURN"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

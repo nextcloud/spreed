@@ -97,11 +97,11 @@
     "{actor} invited you to a group call" : "{actor} vás pozval na skupinový hovor",
     "{actor} invited you to the call {call}" : "{actor} vás pozval na hovor {call}",
     "You were invited to a <strong>video call</strong>" : "Boli ste pozvaný na <strong>video hovor</strong>",
+    "Video call" : "Video hovor",
     "Invalid format, must be stunserver:port." : "Neplatný formát, musí byť stunserver:port.",
     "Invalid port specified." : "Bol zadaný neplatný port.",
     "Invalid protocols specified." : "Boli zadané neplatné protokoly.",
     "STUN server" : "STUN server",
-    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
-    "Video call" : "Video hovor"
+    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN"
 },"pluralForm" :"nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;"
 }

@@ -153,21 +153,20 @@
     "TURN server" : "TURN-tjener",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-tjeneren fungerer som mellomtjener for trafikk fra deltakere bak en brannmur.",
     "Video calls" : "Videosamtaler",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre på siden slik at andre deltagere har lettere for å identifisere deg.",
     "Saving failed" : "Lagring mislyktes",
     "Add person" : "Legg til person",
     "{actor} invited you to a private call" : "{actor} inviterte deg til en privat samtale",
     "{actor} invited you to a group call" : "{actor} inviterte deg til gruppesamtale",
     "{actor} invited you to the call {call}" : "{actor} inviterte deg til samtalen {call}",
     "You were invited to a <strong>video call</strong>" : "Du ble invitert til en <strong>videosamtale</strong>",
+    "Video call" : "Videosamtale",
     "Invalid format, must be stunserver:port." : "Ugyldig format, må være stunserver:port.",
     "Invalid port specified." : "Ugyldig port angitt.",
     "Invalid protocols specified." : "Ugyldig protokoll angitt.",
-    "STUN server" : "STUN-tjener",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig adresse til deltagere bak en ruter.",
-    "TURN server shared secret" : "TURN-tjeners delte hemmelighet",
-    "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre på siden slik at andre deltagere har lettere for å identifisere deg.",
-    "Video call" : "Videosamtale",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN- tjeneren er nødvendig for at deltakere kan koble til samtaler. TURN- tjeneren sørger for at koblingen fungerer selv gjennom brannmurer.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter."
+    "STUN server" : "STUN-tjener",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter.",
+    "TURN server shared secret" : "TURN-tjeners delte hemmelighet"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -153,21 +153,20 @@
     "TURN server" : "TURN kiszolgáló",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "A TURN szervert használjuk a proxyként a tűzfal mögötti felhasználókhoz.",
     "Video calls" : "Videó hívások",
+    "You can set your name on the top right of this page so other participants can identify you better." : "A jelenlegi oldal jobb felső sarkában állíthatod be a neved a könnyebb azonosíthatóság érdekében.",
     "Saving failed" : "Mentés sikertelen",
     "Add person" : "Személy hozzáadás",
     "{actor} invited you to a private call" : "{actor} meghívott egy privát beszélgetésbe",
     "{actor} invited you to a group call" : "{actor} meghívott egy csoportos beszélgetésbe",
     "{actor} invited you to the call {call}" : "{actor} meghívott a(z) {call} beszélgetésbe",
     "You were invited to a <strong>video call</strong>" : "Meghívtak egy <strong>videó hívásba</strong>",
+    "Video call" : "Videóhívás",
     "Invalid format, must be stunserver:port." : "Érvénytelen formátum, ilyennek kell lennie: stunserver:port.",
     "Invalid port specified." : "A megadott port érvénytelen",
     "Invalid protocols specified." : "A megadott protokollok nem érvényesek.",
-    "STUN server" : "STUN kiszolgáló",
-    "The STUN server is used to determine the public address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők nyilvános címének megállapítására.",
-    "TURN server shared secret" : "TURN szerver megosztott titok",
-    "You can set your name on the top right of this page so other participants can identify you better." : "A jelenlegi oldal jobb felső sarkában állíthatod be a neved a könnyebb azonosíthatóság érdekében.",
-    "Video call" : "Videóhívás",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására."
+    "STUN server" : "STUN kiszolgáló",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
+    "TURN server shared secret" : "TURN szerver megosztott titok"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
