@@ -131,21 +131,20 @@
     "TURN server" : "TURN 服务器",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN服务器是用来为防火墙后面的参与者代理流量的",
     "Video calls" : "视频通话",
+    "You can set your name on the top right of this page so other participants can identify you better." : "您可以在此页面的右上角设置您的姓名，以便其他参与者更好地识别您。",
     "Saving failed" : "保存失败",
     "Add person" : "增加成员",
     "{actor} invited you to a private call" : "{actor}邀请你加入一个私人通话",
     "{actor} invited you to a group call" : "{actor}邀请你加入一个组通话",
     "{actor} invited you to the call {call}" : "{actor} 邀请你加入这个通话 {call}",
     "You were invited to a <strong>video call</strong>" : "你被邀请加入一个视频通话",
+    "Video call" : "视频通话",
     "Invalid format, must be stunserver:port." : "无效格式，必须是stun服务器：端口",
     "Invalid port specified." : "指定的端口无效。",
     "Invalid protocols specified." : "指定的协议无效。",
-    "STUN server" : "STUN 服务器",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN服务器是用来鉴定位于其他路由器下层的参与者的公网IP的",
-    "TURN server shared secret" : "TURN服务器分享的秘密",
-    "You can set your name on the top right of this page so other participants can identify you better." : "您可以在此页面的右上角设置您的姓名，以便其他参与者更好地识别您。",
-    "Video call" : "视频通话",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。"
+    "STUN server" : "STUN 服务器",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
+    "TURN server shared secret" : "TURN服务器分享的秘密"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

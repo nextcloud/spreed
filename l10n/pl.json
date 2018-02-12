@@ -133,21 +133,20 @@
     "TURN server" : "TURN serwer",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serwer TURN jest używany do przekazywania ruchu od uczestników za firewallem.",
     "Video calls" : "Wideo rozmowy",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Możesz ustawić swoje imię w prawym górnym rogu tej strony, tak aby inni uczestnicy mogli lepiej Cię poznać.",
     "Saving failed" : "Zapisywanie nie powiodło się",
     "Add person" : "Dodaj osobę",
     "{actor} invited you to a private call" : "{actor} zaprosił/-a cię na prywatną rozmowę",
     "{actor} invited you to a group call" : "{actor} zaprosił/-a cię do rozmowy grupowej",
     "{actor} invited you to the call {call}" : "{actor} zaprosił/-a cię do rozmowy {call}",
     "You were invited to a <strong>video call</strong>" : "Zostałeś zaproszony/-a do <strong> rozmowy wideo</string>",
+    "Video call" : "Rozmowa wideo",
     "Invalid format, must be stunserver:port." : "Nieprawidłowy format musi być stunserver:port.",
     "Invalid port specified." : "Podano nieprawidłowy port.",
     "Invalid protocols specified." : "Podano nieprawidłowy protokół.",
-    "STUN server" : "STUN serwer",
-    "The STUN server is used to determine the public address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
-    "TURN server shared secret" : "Wpółdzielony kod serwera TURN",
-    "You can set your name on the top right of this page so other participants can identify you better." : "Możesz ustawić swoje imię w prawym górnym rogu tej strony, tak aby inni uczestnicy mogli lepiej Cię poznać.",
-    "Video call" : "Rozmowa wideo",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Serwer STUN jest niezbędny aby umożliwić uczestnikom połączenie się do rozmów. Serwer TURN zapewnia, że połączenie będzie działać niezależnie od ustawień zapór sieciowych.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem."
+    "STUN server" : "STUN serwer",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
+    "TURN server shared secret" : "Wpółdzielony kod serwera TURN"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }
