@@ -145,21 +145,20 @@
     "TURN server" : "Servidor TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
     "Video calls" : "Video llamadas",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Puedes establecer tu nombre en la parte superior derecha de esta página para que otros participantes te puedan identificar mejor. ",
     "Saving failed" : "Se presentó una falla al guardar",
     "Add person" : "Agregar persona",
     "{actor} invited you to a private call" : "{actor} te ha invitado a una llamada privada",
     "{actor} invited you to a group call" : "{actor} te ha invitado a una llamada en grupo",
     "{actor} invited you to the call {call}" : "{actor} te ha invitado a la llamada {call}",
     "You were invited to a <strong>video call</strong>" : "Has sido invitado a una <strong>video llamada</strong>",
+    "Video call" : "Video llamada",
     "Invalid format, must be stunserver:port." : "El formato es inválido, debes usar servidorstun:puerto.",
     "Invalid port specified." : "Se ha especificado un puerto inválido.",
     "Invalid protocols specified." : "Se han especificado protocolos inválidos. ",
-    "STUN server" : "Servidor STUN",
-    "The STUN server is used to determine the public address of participants behind a router." : "El servidor STUN se usa para determinar la dirección pública de los participantes detrás de un enrutador. ",
-    "TURN server shared secret" : "Secreto compartido del servidor TURN",
-    "You can set your name on the top right of this page so other participants can identify you better." : "Puedes establecer tu nombre en la parte superior derecha de esta página para que otros participantes te puedan identificar mejor. ",
-    "Video call" : "Video llamada",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. "
+    "STUN server" : "Servidor STUN",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
+    "TURN server shared secret" : "Secreto compartido del servidor TURN"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

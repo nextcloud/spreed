@@ -109,21 +109,20 @@
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzariak  firewall baten atzean dauden partehartzaileen trafikoa proxy bidez eramateko erabiltzen da",
     "Video calls" : "Bideo deiak",
+    "You can set your name on the top right of this page so other participants can identify you better." : "Pantailaren goi eskubian zure izena jar dezakezu, beste partaideek hobeto identifikatzeko.",
     "Saving failed" : "Gordetzean errorea",
     "Add person" : "Pertsona gehitu",
     "{actor} invited you to a private call" : "{actor} dei pribatu batera gonbidatu zaitu",
     "{actor} invited you to a group call" : "{actor} dei publiko batera gonbidatu zaitu",
     "{actor} invited you to the call {call}" : "{actor} {call } deira gonbidatu zaitu",
     "You were invited to a <strong>video call</strong>" : "<strong>bideo deia </strong> gonbidatua izan zara",
+    "Video call" : "Bideo deia",
     "Invalid format, must be stunserver:port." : "Formatu desegokia, stunzerb:portua izan behar du",
     "Invalid port specified." : "Portu ezegokia jarri da",
     "Invalid protocols specified." : "Protokolo ezegokiak jarri dira",
-    "STUN server" : "STUN zerbitzaria",
-    "The STUN server is used to determine the public address of participants behind a router." : "STUN zerbitzariak router baten atzean dauden partaideen helbide publikoak jakiteko erabiltzen da",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
-    "You can set your name on the top right of this page so other participants can identify you better." : "Pantailaren goi eskubian zure izena jar dezakezu, beste partaideek hobeto identifikatzeko.",
-    "Video call" : "Bideo deia",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du"
+    "STUN server" : "STUN zerbitzaria",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

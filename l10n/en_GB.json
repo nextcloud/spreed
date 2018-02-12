@@ -153,21 +153,20 @@
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "The TURN server is used to proxy the traffic from participants behind a firewall.",
     "Video calls" : "Video calls",
+    "You can set your name on the top right of this page so other participants can identify you better." : "You can set your name on the top right of this page so other participants can identify you better.",
     "Saving failed" : "Saving failed",
     "Add person" : "Add person",
     "{actor} invited you to a private call" : "{actor} invited you to a private call",
     "{actor} invited you to a group call" : "{actor} invited you to a group call",
     "{actor} invited you to the call {call}" : "{actor} invited you to the call {call}",
     "You were invited to a <strong>video call</strong>" : "You were invited to a <strong>video call</strong>",
+    "Video call" : "Video call",
     "Invalid format, must be stunserver:port." : "Invalid format, must be stunserver:port.",
     "Invalid port specified." : "Invalid port specified.",
     "Invalid protocols specified." : "Invalid protocols specified.",
-    "STUN server" : "STUN server",
-    "The STUN server is used to determine the public address of participants behind a router." : "The STUN server is used to determine the public address of participants behind a router.",
-    "TURN server shared secret" : "TURN server shared secret",
-    "You can set your name on the top right of this page so other participants can identify you better." : "You can set your name on the top right of this page so other participants can identify you better.",
-    "Video call" : "Video call",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router."
+    "STUN server" : "STUN server",
+    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
+    "TURN server shared secret" : "TURN server shared secret"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
