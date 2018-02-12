@@ -44,6 +44,7 @@ class Capabilities implements ICapability {
 					'audio',
 					'video',
 					'chat',
+					'guest-signaling',
 				],
 			],
 		];
