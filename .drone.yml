@@ -127,7 +127,6 @@ pipeline:
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
-      - DB=sqlite
     commands:
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -163,4 +162,5 @@ matrix:
     - TESTS: php7.1
     - TESTS: php7.2
     - TESTS: php7.1-integration
+      DB: sqlite
     - TESTS: jsunit
