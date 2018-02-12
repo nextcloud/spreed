@@ -166,6 +166,9 @@ matrix:
     - TESTS: php7.1-integration
       DB: mysql
       DATABASEHOST: mysql-5.7
+    - TESTS: php7.1-integration
+      DB: pgsql
+      DATABASEHOST: postgres-10
     - TESTS: jsunit
 
 services:
@@ -179,3 +182,11 @@ services:
     when:
       matrix:
         DATABASEHOST: mysql-5.7
+  postgres-10:
+    image: postgres:10
+    environment:
+      - POSTGRES_USER=oc_autotest
+      - POSTGRES_PASSWORD=
+    when:
+      matrix:
+        DATABASEHOST: postgres-10
