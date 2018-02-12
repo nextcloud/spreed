@@ -52,7 +52,7 @@ appstore: clean install-deps
 	--exclude=js/tests \
 	--exclude=karma.conf.js \
 	--exclude=l10n/no-php \
-	--exclude=l10n/.tx \
+	--exclude=.tx \
 	--exclude=Makefile \
 	--exclude=node_modules \
 	--exclude=package.json \
