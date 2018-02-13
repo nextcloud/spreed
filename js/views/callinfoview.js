@@ -36,17 +36,18 @@
 		'{{#if isGuest}}' +
 		'	<div class="guest-name"></div>' +
 		'{{/if}}' +
+		'	<div class="container-call-link">' +
 		'{{#if participantInCall}}' +
-		'	<div>' +
+		'	<div class="container-call">' +
 		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
 		'	</div>' +
 		'{{else}}' +
-		'	<div>' +
+		'	<div class="container-call">' +
 		'		<button class="join-call primary">' + t('spreed', 'Join call') + '</button>' +
 		'	</div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
-		'	<div>' +
+		'	<div class="container-link">' +
 		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
 		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
@@ -58,7 +59,8 @@
 		'			</div>' +
 		'		{{/if}}' +
 		'	</div>' +
-		'{{/if}}';
+		'{{/if}}' +
+		'</div>';
 
 	var CallInfoView  = Marionette.View.extend({
 
@@ -207,7 +209,7 @@
 			this.ui.clipboardButton.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreed', 'Copy')
+				title: t('spreed', 'Copy link')
 			});
 			this.initClipboard();
 		},

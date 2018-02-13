@@ -16,12 +16,13 @@
 	position: absolute;
 	width: 249px;
 	top: 0;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid $color-border;
 }
 
 .oca-spreedme-add-person {
 	width: 100%;
-	border: 1px solid #eee;
+	border: 1px solid $color-border;
+	border-radius: $border-radius;
 }
 
 /**
@@ -126,9 +127,9 @@
 	background-color: transparent;
 	border: none;
 	position: absolute;
-	right: 0;
-	bottom: 3px;
-	padding: 16px;
+	right: -6px;
+	top: -5px;
+	padding: 22px;
 	opacity: .5;
 }
 .icon-confirm.password-confirm:hover,
@@ -746,12 +747,14 @@ video {
 	position: absolute;
 	top: 0;
 	right: 0;
-	/* The app uses border-box sizing, so the padding is 15px like in the Files
-	 * app plus 8px of half the size of the icon */
-	padding: 23px;
-	opacity: 0.5;
+	padding: 22px;
+	opacity: .3;
 	/* Higher index than the trigger to hide it when the sidebar is open */
 	z-index: 20;
+}
+#app-sidebar .close:hover,
+#app-sidebar .close:focus {
+	opacity: 1;
 }
 
 #videos .videoContainer.speaking:not(.videoView) .nameIndicator,
@@ -912,16 +915,45 @@ video {
 
 .detailCallInfoContainer .room-name {
 	display: inline-block;
+	width: calc(100% - 73px); /* 44px rename/copy + 44px close - 15px padding */
 }
 
-.detailCallInfoContainer h3,
-.detailCallInfoContainer .guest-name p {
+.detailCallInfoContainer h3 {
 	display: inline-block;
+	width: 100%;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
 }
 
-.detailCallInfoContainer .guest-name p {
-    padding: 9px 0;
+.detailCallInfoContainer .guest-name {
+	.label {
+		display: inline-block;
+	    padding: 9px 0;
+	}
+
+	.edit-button {
+		height: 0;
+	}
 }
+
+.detailCallInfoContainer .container-call-link {
+	display: flex;
+}
+.detailCallInfoContainer .container-call,
+.detailCallInfoContainer .container-link {
+	flex-grow: 1;
+	flex-basis: 50%;
+}
+.detailCallInfoContainer .container-call {
+	flex-grow: 0;
+}
+
+.detailCallInfoContainer .join-call,
+.detailCallInfoContainer .leaveCall {
+	width: calc(100% - 12px);
+}
+
 
 .detailCallInfoContainer .editable-text-label .edit-button {
 	display: none;
@@ -930,26 +962,64 @@ video {
 .detailCallInfoContainer .clipboard-button,
 .detailCallInfoContainer .editable-text-label:hover .edit-button {
 	display: inline-block;
+	vertical-align: top;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
 .detailCallInfoContainer .editable-text-label .edit-button .icon {
 	cursor: pointer;
 	padding: 22px;
-	vertical-align: middle;
 	margin-left: -5px;
-	margin-top: -5px;
+	opacity: .5;
 }
 
-.detailCallInfoContainer .editable-text-label .input-wrapper,
-.detailCallInfoContainer .password-option {
+.detailCallInfoContainer .clipboard-button .icon:hover,
+.detailCallInfoContainer .clipboard-button .icon:focus,
+.detailCallInfoContainer .editable-text-label .edit-button .icon:hover,
+.detailCallInfoContainer .editable-text-label .edit-button .icon:focus {
+	opacity: 1;
+}
+
+.detailCallInfoContainer .clipboard-button .icon {
+	vertical-align: middle;
+}
+
+.detailCallInfoContainer .editable-text-label .input-wrapper {
 	position: relative;
 	display: inline-block;
+	width: 100%;
+}
+
+.detailCallInfoContainer .password-option {
+	position: relative;
 }
 
 .detailCallInfoContainer .editable-text-label input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
+	padding-right: 38px; /* 44px for submit button - 6px neg. margin overhang */
+	text-overflow: ellipsis;
+}
+
+/* Fit to h3 and prevent jumping. TODO: convert HTML to be flexbox-capable */
+.detailCallInfoContainer .editable-text-label.room-name {
+	.edit-button {
+		position: absolute;
+		right: 44px;
+		top: 16px;
+	}
+
+	input {
+		width: calc(100% + 44px);
+		margin: 3px 0 10px !important;
+		font-size: 15px;
+		font-weight: 300;
+
+		+ .icon-confirm.confirm-button {
+			top: 0;
+			right: -47px;
+		}
+	}
 }
 
 .detailCallInfoContainer #link-checkbox+label {
@@ -1077,7 +1147,7 @@ video {
  * below the new message input.
  */
 #app-sidebar #participantsTabView form {
-	margin-bottom: 15px;
+	margin-bottom: 10px;
 }
 
 /**
