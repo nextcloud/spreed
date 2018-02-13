@@ -51,6 +51,7 @@
 		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
+		'			<div class="password-button"><span class="icon {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span></div>' +
 		'			<div class="password-option">' +
 		'				<input class="password-input" maxlength="200" type="password"' +
 		'				  placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
@@ -88,6 +89,7 @@
 			'joinCallButton': 'button.join-call',
 			'leaveCallButton': 'button.leave-call',
 
+			'passwordButton': '.password-button',
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm'
@@ -102,6 +104,7 @@
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
 
 			'keyup @ui.passwordInput': 'keyUpPassword',
+			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'click @ui.joinCallButton': 'joinCall',
 			'click @ui.leaveCallButton': 'leaveCall'
@@ -210,6 +213,14 @@
 				title: t('spreed', 'Copy')
 			});
 			this.initClipboard();
+
+			this.ui.passwordOption.hide();
+			this.ui.passwordButton.tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: (this.model.get('hasPassword')) ? t('spreed', 'Change password') : t('spreed', 'Set password')
+			});
+
 		},
 
 		_canModerate: function() {
@@ -265,12 +276,14 @@
 		/**
 		 * Password
 		 */
+		showPasswordInput: function() {
+			this.ui.passwordButton.hide();
+			this.ui.passwordOption.show();
+			this.ui.passwordInput.focus();
+		},
+
 		confirmPassword: function() {
 			var newPassword = this.ui.passwordInput.val().trim();
-
-			console.log('Setting room password to "' + newPassword + '".');
-			console.log('Setting room password to "' + this.model.get('hasPassword') + '".');
-
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
 				type: 'PUT',
@@ -279,12 +292,14 @@
 				},
 				success: function() {
 					this.ui.passwordInput.val('');
-
+					this.ui.passwordOption.hide();
+					this.ui.passwordButton.show();
 					OCA.SpreedMe.app.syncRooms();
-				}.bind(this)
+				}.bind(this),
+				error: function() {
+					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
+				}
 			});
-
-			console.log('.rename-option');
 		},
 
 		keyUpPassword: function(e) {
@@ -294,6 +309,8 @@
 			} else if (e.keyCode === 27) {
 				// ESC
 				this.ui.passwordInput.val('');
+				this.ui.passwordOption.hide();
+				this.ui.passwordButton.show();
 			}
 		},
 
