@@ -22,6 +22,7 @@
 namespace OCA\Spreed\AppInfo;
 
 use OCA\Spreed\Activity\Hooks;
+use OCA\Spreed\Capabilities;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
@@ -49,6 +50,7 @@ class Application extends App {
 		});
 
 		$this->registerNotifier($server);
+		$this->getContainer()->registerCapability(Capabilities::class);
 
 		$dispatcher = $server->getEventDispatcher();
 		$this->registerInternalSignalingHooks($dispatcher);

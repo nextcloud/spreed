@@ -23,14 +23,14 @@
 
 namespace OCA\Spreed;
 
-use OCP\Capabilities\ICapability;
+use OCP\Capabilities\IPublicCapability;
 
 /**
  * Class Capabilities
  *
  * @package OCA\Notifications
  */
-class Capabilities implements ICapability {
+class Capabilities implements IPublicCapability {
 
 	/**
 	 * Return this classes capabilities
