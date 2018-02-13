@@ -95,10 +95,12 @@
 							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
 						});
 
-						//Add custom entry to create a new empty room
+						//Add custom entry to create a new empty group or public room
 						if (OCA.SpreedMe.app._searchTerm === '') {
 							results.unshift({ id: "create-public-room", displayName: t('spreed', 'New public call'), type: "createPublicRoom"});
+							results.unshift({ id: "create-group-room", displayName: t('spreed', 'New group call'), type: "createGroupRoom"});
 						} else {
+							results.push({ id: "create-group-room", displayName: t('spreed', 'New group call'), type: "createGroupRoom"});
 							results.push({ id: "create-public-room", displayName: t('spreed', 'New public call'), type: "createPublicRoom"});
 						}
 
@@ -113,7 +115,7 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
-					if (element.type === "createPublicRoom") {
+					if ((element.type === "createGroupRoom") || (element.type === "createPublicRoom")) {
 						return '<span><div class="avatar icon-add"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
@@ -141,10 +143,13 @@
 						OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
 						break;
 					case "group":
-						OCA.SpreedMe.Calls.createGroupVideoCall(e.val);
+						OCA.SpreedMe.Calls.createGroupVideoCall(e.val, "");
 						break;
 					case "createPublicRoom":
 						OCA.SpreedMe.Calls.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
+						break;
+					case "createGroupRoom":
+						OCA.SpreedMe.Calls.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
 						console.log("Unknown type", e.object.type);

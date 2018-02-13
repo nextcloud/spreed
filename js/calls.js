@@ -52,14 +52,15 @@
 				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
-		createGroupVideoCall: function(groupId) {
+		createGroupVideoCall: function(groupId, roomName) {
 			console.log("Creating group video call", groupId);
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 				type: 'POST',
 				data: {
 					invite: groupId,
-					roomType: 2
+					roomType: 2,
+					roomName: roomName
 				},
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
