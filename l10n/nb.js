@@ -12,6 +12,7 @@ OC.L10N.register(
     "TCP only" : "kun TCP",
     "(group)" : "(gruppe)",
     "New public call" : "Ny offentlig samtale",
+    "New group call" : "Ny gruppesamtale",
     "Exit fullscreen" : "Avslutt fullskjermsvisning",
     "Fullscreen" : "Fullskjerm",
     "Enable screensharing" : "Skru på skjermdeling",
