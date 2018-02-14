@@ -9,7 +9,7 @@ Feature: one-to-one
     Then user "participant2" is participant of the following rooms
     Then user "participant3" is participant of the following rooms
 
-  Scenario: User1 invites user1 ... that should not work ...
+  Scenario: User1 invites themself to a one2one room
     When user "participant1" tries to create room with 403
       | roomType | 1 |
       | invite   | participant1 |
