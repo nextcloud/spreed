@@ -339,6 +339,10 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($this->userId === $targetUserName) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
