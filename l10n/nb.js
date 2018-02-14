@@ -58,6 +58,7 @@ OC.L10N.register(
     "Rename" : "Gi nytt navn",
     "Your name …" : "Ditt navn…",
     "Conversation with {name}" : "Samtale med {name}",
+    "Error occurred while setting password" : "Feil oppstod ved setting av passord",
     "Link copied!" : "Lenke kopiert!",
     "Copy link" : "Kopier lenke",
     "No messages yet, start the conversation!" : "Ingen meldinger enda, start samtalen!",
