@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Delete server" : "Desaniciar sirvidor",
     "Saved" : "Guardóse",
     "TURN server protocols" : "Protocolos del sirvidor TURN",
     "UDP and TCP" : "UDP y TCP",
@@ -8,7 +9,9 @@ OC.L10N.register(
     "TCP only" : "Namái TCP",
     "(group)" : "(grupu)",
     "New public call" : "Llamada pública nueva",
+    "Exit fullscreen" : "Colar de la pantalla completa",
     "Fullscreen" : "Pantalla completa",
+    "Enable screensharing" : "Activar compartición de pantalla",
     "Screensharing is not supported by your browser." : "El to restolador nun sofita la compartición de pantalla.",
     "Screensharing requires the page to be loaded through HTTPS." : "La compartición de pantalla rique que les páxines carguen pente HTTPS.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la to pantalla namái funciona con Firefox 52 o más mayor.",
