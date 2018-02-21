@@ -22,6 +22,7 @@
  */
 namespace OCA\Spreed\Migration;
 
+use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Types\Type;
@@ -331,6 +332,8 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 			$result = $query->execute();
 		} catch (TableNotFoundException $e) {
 			return;
+		} catch (InvalidFieldNameException $e) {
+			return;
 		}
 
 		while ($row = $result->fetch()) {
@@ -388,6 +391,8 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 		try {
 			$result = $query->execute();
 		} catch (TableNotFoundException $e) {
+			return;
+		} catch (InvalidFieldNameException $e) {
 			return;
 		}
 
