@@ -98,6 +98,7 @@ OC.L10N.register(
     "{participantName}'s screen" : "{participantName}'s skärm",
     "Guest's screen" : "Gästskärm",
     "Your screen" : "Din skärm",
+    "No Camera" : "Ingen kamera",
     "a call" : "ett samtal",
     "(Duration %s)" : "(Varaktighet%s)",
     "You attended a call with {user1}" : "Du deltog i ett samtal med {user1}",
