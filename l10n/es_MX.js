@@ -12,6 +12,7 @@ OC.L10N.register(
     "TCP only" : "TCP únicamente",
     "(group)" : "(grupo)",
     "New public call" : "Llamada pública nueva",
+    "New group call" : "Nueva llamada en grupo",
     "Exit fullscreen" : "Salir de la pantalla completa",
     "Fullscreen" : "Pantalla completa",
     "Enable screensharing" : "Habilitar compartir pantalla",
