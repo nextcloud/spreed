@@ -58,6 +58,7 @@ OC.L10N.register(
     "Rename" : "Renombrar",
     "Your name …" : "Tu nombre",
     "Conversation with {name}" : "Conversación con {name}",
+    "Error occurred while setting password" : "Se presentó un error al establecer al contraseña",
     "Link copied!" : "¡Liga copiada!",
     "Copy link" : "Copiar liga",
     "No messages yet, start the conversation!" : "Aún no hay mensajes. ¡!Inicia la conversación!",
