@@ -8,7 +8,7 @@
 	OCA.VideoCalls.Admin.TurnServer = {
 
 		TEMPLATE: '<div class="turn-server">' +
-		'	<input type="text" class="server" placeholder="https://turn.example.org" value="{{server}}">' +
+		'	<input type="text" class="server" placeholder="turn.example.org" value="{{server}}">' +
 		'	<input type="text" class="secret" placeholder="' + t('spreed', 'Shared secret') + '" value="{{secret}}">' +
 		'	<select class="protocols" title="' + t('spreed', 'TURN server protocols') + '">' +
 		'	{{#select protocols}}' +
