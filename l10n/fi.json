@@ -104,6 +104,7 @@
     "You attended a call with {user1}, {user2} and {user3}" : "Osallistuit puheluun käyttäjien {user1}, {user2} ja {user3} kanssa",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Osallistuit puheluun käyttäjien {user1}, {user2}, {user3} ja {user4} kanssa",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Osallistuit puheluun käyttäjien {user1}, {user2}, {user3}, {user4} ja {user5} kanssa",
+    "_%n other_::_%n others_" : ["%n muu","%n muuta"],
     "{actor} invited you to {call}" : "{actor} kutsui sinut puheluun {call}",
     "_%n other guest_::_%n other guests_" : ["%n muu vieras","%n muuta vierasta"],
     ", " : ",",
