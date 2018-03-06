@@ -90,7 +90,7 @@ OC.L10N.register(
     "Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}" : "Unir a {participant1}, {participant2}, {participant3}. {participant4} y {participant5}",
     "Join {participant1}, {participant2}, {participant3}, {participant4}, …" : "Unir a {participant1}, {participant2}, {participant3}, {participant4}....",
     "Share this link to invite others!" : "Comparte este enlace para invitar a otras personas.",
-    "You" : "Usted",
+    "You" : "Tú",
     "and you" : "y uste",
     "Close" : "Cerrar",
     "Show screen" : "Mostrar pantalla",
