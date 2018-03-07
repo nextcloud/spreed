@@ -76,12 +76,12 @@ class CallProvider implements IProvider {
 		}
 
 		$user = $this->userManager->get($uid);
-		$talkAction = $this->l10n->t('Talk');
-
-		if ($user instanceof IUser) {
-			$talkAction = $this->l10n->t('Talk to %s', [$user->getDisplayName()]);
+		if(!$user instanceof IUser) {
+			// No valid user object
+			return;
 		}
 
+		$talkAction = $this->l10n->t('Talk to %s', [$user->getDisplayName()]);
 		$iconUrl = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
 		$callUrl = $this->urlGenerator->linkToRouteAbsolute('spreed.Page.index') . '?callUser=' . $user->getUID();
 		$action = $this->actionFactory->newLinkAction($iconUrl, $talkAction, $callUrl);
