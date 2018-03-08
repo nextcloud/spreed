@@ -98,6 +98,14 @@
 					}
 					return;
 				}
+				
+				// remove HTTP/HTTPS prefix if provided
+				if (data.server.startsWith('https://')) {
+					data.server = data.server.substr(8);
+				} else if (data.server.startsWith('http://')) {
+					data.server = data.server.substr(7);
+				}
+				
 				if (data.secret === '') {
 					$error.push($secret);
 					return;
