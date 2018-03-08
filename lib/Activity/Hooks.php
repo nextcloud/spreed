@@ -78,7 +78,7 @@ class Hooks {
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$participants = $room->getParticipants($activeSince->getTimestamp());
-		$userIds = array_keys($participants['users']);
+		$userIds = array_map('strval', array_keys($participants['users']));
 
 		if (empty($userIds) || (count($userIds) === 1 && $room->getActiveGuests() === 0)) {
 			// Single user pinged or guests only => no activity
