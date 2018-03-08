@@ -74,7 +74,7 @@
 				if (server.startsWith('https://')) {
 					server = server.substr(8);
 				} else if (server.startsWith('http://')) {
-					server = data.server.substr(7);
+					server = server.substr(7);
 				}
 				
 				var parts = server.split(':');
