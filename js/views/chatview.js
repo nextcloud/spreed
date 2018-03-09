@@ -83,8 +83,12 @@
 			if (!this._addCommentTemplate) {
 				this._addCommentTemplate = Handlebars.compile(ADD_COMMENT_TEMPLATE);
 			}
-			// FIXME handle guest users
+
 			var currentUser = OC.getCurrentUser();
+			if (currentUser.uid === null) {
+				currentUser.displayName = OCA.SpreedMe.app.guestNick || '';
+			}
+
 			return this._addCommentTemplate(_.extend({
 				actorId: currentUser.uid,
 				actorDisplayName: currentUser.displayName,
