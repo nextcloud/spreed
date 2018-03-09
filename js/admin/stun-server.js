@@ -68,8 +68,17 @@
 			this.$list.find('.icon-checkmark-color').addClass('hidden');
 
 			this.$list.find('input').each(function() {
-				var server = this.value,
-					parts = server.split(':');
+				var server = this.value;
+				
+				// Remove HTTP or HTTPS protocol, if provided
+				if (server.startsWith('https://')) {
+					server = server.substr(8);
+				} else if (server.startsWith('http://')) {
+					server = server.substr(7);
+				}
+				
+				var parts = server.split(':');
+				
 				if (parts.length !== 2) {
 					$(this).addClass('error');
 				} else {
