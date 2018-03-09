@@ -167,7 +167,7 @@ class RoomController extends OCSController {
 			'displayName' => $room->getName(),
 			'participantType' => $participantType,
 			'participantInCall' => $participantInCall,
-			'count' => $room->getNumberOfParticipants(time() - 30),
+			'count' => $room->getNumberOfParticipants(false, time() - 30),
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 		];
