@@ -49,6 +49,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	<background-jobs>
 		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
+		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
 	</background-jobs>
 
 	<settings>
