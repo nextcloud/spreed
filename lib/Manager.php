@@ -61,6 +61,19 @@ class Manager {
 		$this->hasher = $hasher;
 	}
 
+	public function forAllRooms(\Closure $callback) {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms');
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$room = $this->createRoomObject($row);
+			$callback($room);
+		}
+		$result->closeCursor();
+	}
+
 	/**
 	 * @param array $row
 	 * @return Room
