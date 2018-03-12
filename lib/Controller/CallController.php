@@ -111,7 +111,7 @@ class CallController extends OCSController {
 			}
 
 			$result[] = [
-				'userId' => $participant,
+				'userId' => (string) $participant,
 				'token' => $token,
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],
