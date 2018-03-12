@@ -26,7 +26,6 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\ILogger;
 
 /**
  * Class ResetInCallFlags
@@ -54,7 +53,7 @@ class ResetInCallFlags extends TimedJob {
 		$this->manager->forAllRooms([$this, 'callback']);
 	}
 
-	protected function callback(Room $room) {
+	public function callback(Room $room) {
 		if (!$room->hasSessionsInCall()) {
 			return;
 		}
@@ -67,8 +66,11 @@ class ResetInCallFlags extends TimedJob {
 				continue;
 			}
 
-			if ($participant->isInCall() && $participant->getLastPing() < $this->timeout) {
-				$room->changeInCall($session, false);
+			if ($participant->getLastPing() < $this->timeout) {
+				// TODO reset session too
+				if ($participant->isInCall()) {
+					$room->changeInCall($session, false);
+				}
 			}
 		}
 	}
