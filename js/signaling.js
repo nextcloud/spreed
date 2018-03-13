@@ -544,7 +544,8 @@
 				this.pingFails++;
 				return;
 			}
-			OCA.SpreedMe.Calls.leaveCurrentCall(false);
+			// FIXME this sounds wrong…
+			OCA.SpreedMe.app.connection.leaveCurrentCall(false);
 		}.bind(this));
 	};
 

@@ -188,6 +188,12 @@ var spreedPeerConnectionTable = [];
 
 		var nick = OC.getCurrentUser().displayName;
 
+		app.setEmptyContentMessage(
+			'icon-video-off',
+			t('spreed', 'Waiting for camera and microphone permissions'),
+			t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
+		);
+
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
@@ -769,6 +775,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'speaking');
 			$('#localVideoContainer').addClass('speaking');
 		});
+
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'stoppedSpeaking');
 			$('#localVideoContainer').removeClass('speaking');
