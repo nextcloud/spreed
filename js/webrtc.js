@@ -154,21 +154,23 @@ var spreedPeerConnectionTable = [];
 		}
 	}
 
-	function initWebRTC(signaling) {
-		'use strict';
+	/**
+	 * @param {OCA.Talk.Application} app
+	 */
+	function initWebRTC(app) {
 		Array.prototype.diff = function(a) {
 			return this.filter(function(i) {
 				return a.indexOf(i) < 0;
 			});
 		};
 
-		signaling.on('usersLeft', function(users) {
+		app.signaling.on('usersLeft', function(users) {
 			users.forEach(function(user) {
 				delete usersInCallMapping[user];
 			});
 			usersChanged([], users);
 		});
-		signaling.on('usersChanged', function(users) {
+		app.signaling.on('usersChanged', function(users) {
 			users.forEach(function(user) {
 				var sessionId = user.sessionId || user.sessionid;
 				usersInCallMapping[sessionId] = user;
@@ -184,7 +186,7 @@ var spreedPeerConnectionTable = [];
 			usersInCallChanged(usersInCallMapping);
 		});
 
-		var nick = OC.getCurrentUser()['displayName'];
+		var nick = OC.getCurrentUser().displayName;
 
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
@@ -201,14 +203,14 @@ var spreedPeerConnectionTable = [];
 			autoAdjustMic: false,
 			audioFallback: true,
 			detectSpeakingEvents: true,
-			connection: signaling,
+			connection: app.signaling,
 			enableDataChannels: true,
 			nick: nick
 		});
 
 		OCA.SpreedMe.webrtc = webrtc;
 
-		OCA.SpreedMe.app.startSpreed(signaling);
+		app.startSpreed();
 
 		var spreedListofSpeakers = {};
 		var spreedListofSharedScreens = {};

@@ -37,6 +37,9 @@
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 
+		/** @property {OCA.Talk.Signaling.base} signaling  */
+		signaling: null,
+
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */
@@ -529,8 +532,7 @@
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
 		onStart: function() {
-			var signaling = OCA.Talk.Signaling.createConnection();
-			//this.signaling = signaling;
+			this.signaling = OCA.Talk.Signaling.createConnection();
 
 			this.setEmptyContentMessage(
 				'icon-video-off',
@@ -538,21 +540,20 @@
 				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
 			);
 
-			OCA.SpreedMe.initWebRTC(signaling);
+			OCA.SpreedMe.initWebRTC(this);
 
 			if (!oc_current_user) {
 				this.initGuestName();
 			}
 		},
-		startSpreed: function(signaling) {
+		startSpreed: function() {
 			console.log('Starting spreed …');
 			var self = this;
-			this.signaling = signaling;
 
 			$(window).unload(function () {
 				OCA.SpreedMe.Calls.leaveAllCalls();
-				signaling.disconnect();
-			});
+				this.signaling.disconnect();
+			}.bind(this));
 
 			this.setEmptyContentMessage(
 				'icon-video',
@@ -560,7 +561,7 @@
 				t('spreed', 'Time to call your friends')
 			);
 
-			OCA.SpreedMe.initCalls(signaling);
+			OCA.SpreedMe.initCalls(this.signaling);
 
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
