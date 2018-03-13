@@ -131,8 +131,10 @@
 			},
 			onRender: function() {
 				this.$el.find('.avatar').each(function() {
-					var element = $(this);
-					if (element.data('displayname').length) {
+					var element = $(this),
+						userId = '' + element.data('user-id'); // Make sure it's a string
+
+					if (userId.length) {
 						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
 					} else {
 						element.imageplaceholder('?', undefined, 32);

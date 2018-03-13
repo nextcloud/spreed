@@ -199,7 +199,7 @@ class RoomController extends OCSController {
 		foreach ($participants['users'] as $userId => $data) {
 			$user = $this->userManager->get($userId);
 			if ($user instanceof IUser) {
-				$participantList[$user->getUID()] = [
+				$participantList[(string) $user->getUID()] = [
 					'name' => $user->getDisplayName(),
 					'type' => $data['participantType'],
 					'call' => $data['inCall'],
@@ -508,14 +508,14 @@ class RoomController extends OCSController {
 		$results = [];
 
 		foreach ($participants['users'] as $userId => $participant) {
-			$user = $this->userManager->get($userId);
+			$user = $this->userManager->get((string) $userId);
 			if (!$user instanceof IUser) {
 				continue;
 			}
 
 			$results[] = array_merge($participant, [
-				'userId' => $userId,
-				'displayName' => $user->getDisplayName(),
+				'userId' => (string) $userId,
+				'displayName' => (string) $user->getDisplayName(),
 			]);
 		}
 
