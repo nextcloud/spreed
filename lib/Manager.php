@@ -61,7 +61,7 @@ class Manager {
 		$this->hasher = $hasher;
 	}
 
-	public function forAllRooms(\Closure $callback) {
+	public function forAllRooms(callable $callback) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms');

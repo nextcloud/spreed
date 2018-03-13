@@ -22,51 +22,56 @@
 namespace OCA\Spreed\BackgroundJob;
 
 use OC\BackgroundJob\TimedJob;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
-use OCP\ILogger;
+use OCP\AppFramework\Utility\ITimeFactory;
 
 /**
- * Class RemoveEmptyRooms
+ * Class ResetInCallFlags
  *
  * @package OCA\Spreed\BackgroundJob
  */
-class RemoveEmptyRooms extends TimedJob {
+class ResetInCallFlags extends TimedJob {
 
 	/** @var Manager */
 	protected $manager;
 
-	/** @var ILogger */
-	protected $logger;
+	/** @var int */
+	protected $timeout;
 
-	protected $numDeletedRooms = 0;
-
-	public function __construct(Manager $manager, ILogger $logger) {
+	public function __construct(Manager $manager, ITimeFactory $timeFactory) {
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
 
 		$this->manager = $manager;
-		$this->logger = $logger;
+		$this->timeout = $timeFactory->getTime() - 5 * 60;
 	}
+
 
 	protected function run($argument) {
 		$this->manager->forAllRooms([$this, 'callback']);
-
-		if ($this->numDeletedRooms) {
-			$this->logger->info('Deleted {numDeletedRooms} rooms because they were empty', [
-				'numDeletedRooms' => $this->numDeletedRooms,
-				'app' => 'spreed',
-			]);
-		}
 	}
 
 	public function callback(Room $room) {
-		if ($room->getType() === Room::ONE_TO_ONE_CALL && $room->getNumberOfParticipants(false) <= 1) {
-			$room->deleteRoom();
-			$this->numDeletedRooms++;
-		} else if ($room->getNumberOfParticipants(false) === 0) {
-			$room->deleteRoom();
-			$this->numDeletedRooms++;
+		if (!$room->hasSessionsInCall()) {
+			return;
+		}
+
+		foreach ($room->getActiveSessions() as $session) {
+			try {
+				$participant = $room->getParticipantBySession($session);
+			} catch (ParticipantNotFoundException $e) {
+				// Participant was just deleted, ignore …
+				continue;
+			}
+
+			if ($participant->getLastPing() < $this->timeout) {
+				// TODO reset session too
+				if ($participant->isInCall()) {
+					$room->changeInCall($session, false);
+				}
+			}
 		}
 	}
 }
