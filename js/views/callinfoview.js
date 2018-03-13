@@ -266,11 +266,11 @@
 		},
 
 		joinCall: function() {
-			OCA.SpreedMe.Calls.joinCall(this.model.get('token'));
+			OCA.SpreedMe.app.connection.joinCall(this.model.get('token'));
 		},
 
 		leaveCall: function() {
-			OCA.SpreedMe.Calls.leaveCall(this.model.get('token'));
+			OCA.SpreedMe.app.connection.leaveCall(this.model.get('token'));
 		},
 
 		/**

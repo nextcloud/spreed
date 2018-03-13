@@ -30,7 +30,7 @@ script(
 		'simplewebrtc',
 		'webrtc',
 		'signaling',
-		'calls',
+		'connection',
 		'app',
 		'init',
 	]

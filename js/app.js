@@ -37,6 +37,9 @@
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 
+		/** @property {OCA.Talk.Connection} connection  */
+		connection: null,
+
 		/** @property {OCA.Talk.Signaling.base} signaling  */
 		signaling: null,
 
@@ -143,16 +146,16 @@
 			$('#select-participants').on("select2-selecting", function(e) {
 				switch (e.object.type) {
 					case "user":
-						OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
+						this.connection.createOneToOneVideoCall(e.val);
 						break;
 					case "group":
-						OCA.SpreedMe.Calls.createGroupVideoCall(e.val, "");
+						this.connection.createGroupVideoCall(e.val, "");
 						break;
 					case "createPublicRoom":
-						OCA.SpreedMe.Calls.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
+						this.connection.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
 						break;
 					case "createGroupRoom":
-						OCA.SpreedMe.Calls.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
+						this.connection.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
 						console.log("Unknown type", e.object.type);
@@ -533,25 +536,16 @@
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
-
-			this.setEmptyContentMessage(
-				'icon-video-off',
-				t('spreed', 'Waiting for camera and microphone permissions'),
-				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
-			);
+			this.connection = new OCA.Talk.Connection(this);
 
 			OCA.SpreedMe.initWebRTC(this);
 
-			if (!oc_current_user) {
+			if (!OC.getCurrentUser().uid) {
 				this.initGuestName();
 			}
-		},
-		startSpreed: function() {
-			console.log('Starting spreed …');
-			var self = this;
 
 			$(window).unload(function () {
-				OCA.SpreedMe.Calls.leaveAllCalls();
+				this.connection.leaveAllCalls();
 				this.signaling.disconnect();
 			}.bind(this));
 
@@ -561,24 +555,17 @@
 				t('spreed', 'Time to call your friends')
 			);
 
-			OCA.SpreedMe.initCalls(this.signaling);
-
-			this._registerPageEvents();
-			this.initShareRoomClipboard();
-
-			var token = $('#app').attr('data-token');
-
-			if (oc_current_user) {
+			if (OC.getCurrentUser().uid) {
 				this._showRoomList();
 				this.signaling.setRoomCollection(this._rooms)
 					.then(function(data) {
 						$('#app-navigation').removeClass('icon-loading');
-						self._roomsView.render();
+						this._roomsView.render();
 
 						if (data.length === 0) {
 							$('#select-participants').select2('open');
 						}
-					});
+					}.bind(this));
 
 				this._showParticipantList();
 			} else {
@@ -586,24 +573,32 @@
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: token });
 				this.signaling.setRoom(this.activeRoom);
 			}
+		},
+		startSpreed: function() {
+			console.log('Starting spreed …');
+
+			this._registerPageEvents();
+			this.initShareRoomClipboard();
+
+			var token = $('#app').attr('data-token');
 
 			if (token) {
 				if (OCA.SpreedMe.webrtc.sessionReady) {
-					OCA.SpreedMe.Calls.joinRoom(token);
+					this.connection.joinRoom(token);
 				} else {
 					OCA.SpreedMe.webrtc.once('connectionReady', function() {
-						OCA.SpreedMe.Calls.joinRoom(token);
+						this.connection.joinRoom(token);
 					});
 				}
 			}
 		},
 		startLocalMedia: function(configuration) {
-			OCA.SpreedMe.Calls.showCamera();
+			this.connection.showCamera();
 			this.initAudioVideoSettings(configuration);
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
-				OCA.SpreedMe.Calls.joinRoom(params.token);
+				this.connection.joinRoom(params.token);
 			}
 		},
 		onDocumentClick: function(event) {
