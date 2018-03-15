@@ -261,6 +261,13 @@
 	};
 
 	OCA.Talk.Signaling.Base.prototype.leaveCall = function(token) {
+
+		if (!token) {
+			return;
+		}
+
+		this._trigger('leaveCall', [token]);
+
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			method: 'DELETE',
@@ -366,10 +373,16 @@
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
+		if (!token) {
+			return;
+		}
+
 		if (token === this.currentRoomToken) {
 			this._stopPingCall();
 			this._closeEventSource();
 		}
+
+		this._trigger('leaveRoom', [token]);
 	};
 
 	OCA.Talk.Signaling.Internal.prototype.sendCallMessage = function(data) {

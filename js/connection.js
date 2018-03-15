@@ -93,11 +93,11 @@
 				return;
 			}
 
-			OCA.SpreedMe.webrtc.leaveRoom();
+			this.app.signaling.leaveRoom(this.app.signaling.currentRoomToken);
 			OCA.SpreedMe.webrtc.joinRoom(token);
 		},
 		joinCall: function(token) {
-			if (this.signaling.currentCallToken === token) {
+			if (this.app.signaling.currentCallToken === token) {
 				return;
 			}
 
@@ -105,15 +105,19 @@
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
 
-			OCA.SpreedMe.webrtc.leaveCall();
+			this.app.signaling.leaveCall();
 			OCA.SpreedMe.webrtc.joinCall(token);
 		},
-		leaveCall: function() {
+		leaveCall: function(token) {
+			if (this.app.signaling.currentCallToken !== token) {
+				return;
+			}
+
+			this.app.signaling.leaveCall(this.app.signaling.currentCallToken);
 			$('#app-content').removeClass('incall');
-			OCA.SpreedMe.webrtc.leaveCall();
 		},
 		leaveCurrentCall: function(deleter) {
-			OCA.SpreedMe.webrtc.leaveRoom();
+			this.app.signaling.leaveRoom();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);

@@ -37,6 +37,9 @@
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 
+		/** @property {String} token  */
+		token: null,
+
 		/** @property {OCA.Talk.Connection} connection  */
 		connection: null,
 
@@ -537,6 +540,7 @@
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
+			this.token = $('#app').attr('data-token');
 
 			OCA.SpreedMe.initWebRTC(this);
 
@@ -570,7 +574,7 @@
 				this._showParticipantList();
 			} else {
 				// The token is always defined in the public page.
-				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: token });
+				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
 			}
 		},
@@ -580,15 +584,13 @@
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 
-			var token = $('#app').attr('data-token');
-
-			if (token) {
+			if (this.token) {
 				if (OCA.SpreedMe.webrtc.sessionReady) {
-					this.connection.joinRoom(token);
+					this.connection.joinRoom(this.token);
 				} else {
 					OCA.SpreedMe.webrtc.once('connectionReady', function() {
-						this.connection.joinRoom(token);
-					});
+						this.connection.joinRoom(this.token);
+					}.bind(this));
 				}
 			}
 		},

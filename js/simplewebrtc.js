@@ -18185,7 +18185,6 @@
 
 	SimpleWebRTC.prototype.leaveRoom = function () {
 		if (this.roomName) {
-			this.connection.emit('leaveRoom');
 			this.emit('leftRoom', this.roomName);
 			this.roomName = undefined;
 		}
@@ -18193,7 +18192,6 @@
 
 	SimpleWebRTC.prototype.leaveCall = function () {
 		if (this.roomName) {
-			this.connection.emit('leaveCall');
 			while (this.webrtc.peers.length) {
 				this.webrtc.peers[0].end();
 			}

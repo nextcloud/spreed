@@ -177,13 +177,19 @@ var spreedPeerConnectionTable = [];
 			});
 			usersInCallChanged(usersInCallMapping);
 		});
-		signaling.on('usersInRoom', function(users) {
+		app.signaling.on('usersInRoom', function(users) {
 			usersInCallMapping = {};
 			users.forEach(function(user) {
 				var sessionId = user.sessionId || user.sessionid;
 				usersInCallMapping[sessionId] = user;
 			});
 			usersInCallChanged(usersInCallMapping);
+		});
+		app.signaling.on('leaveCall', function () {
+			webrtc.leaveCall();
+		});
+		app.signaling.on('leaveRoom', function () {
+			webrtc.leaveRoom();
 		});
 
 		var nick = OC.getCurrentUser().displayName;
