@@ -23,11 +23,11 @@
 (function(OC, OCA, Marionette, Backbone, _, $) {
 	'use strict';
 
-	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
 
-	var App = Marionette.Application.extend({
+	OCA.Talk.Application = Marionette.Application.extend({
 		OWNER: 1,
 		MODERATOR: 2,
 		USER: 3,
@@ -529,13 +529,16 @@
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
 		onStart: function() {
+			var signaling = OCA.Talk.Signaling.createConnection();
+			//this.signaling = signaling;
+
 			this.setEmptyContentMessage(
 				'icon-video-off',
 				t('spreed', 'Waiting for camera and microphone permissions'),
 				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
 			);
 
-			OCA.SpreedMe.initWebRTC();
+			OCA.SpreedMe.initWebRTC(signaling);
 
 			if (!oc_current_user) {
 				this.initGuestName();
@@ -752,5 +755,4 @@
 		}
 	});
 
-	OCA.SpreedMe.App = App;
 })(OC, OCA, Marionette, Backbone, _, $);
