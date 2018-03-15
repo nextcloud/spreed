@@ -248,10 +248,6 @@
 				$('#screensharing-menu').toggleClass('open', false);
 			};
 
-			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
-				screensharingStopped();
-			});
-
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
@@ -542,8 +538,6 @@
 			this.connection = new OCA.Talk.Connection(this);
 			this.token = $('#app').attr('data-token');
 
-			OCA.SpreedMe.initWebRTC(this);
-
 			if (!OC.getCurrentUser().uid) {
 				this.initGuestName();
 			}
@@ -577,21 +571,17 @@
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
 			}
-		},
-		startSpreed: function() {
-			console.log('Starting spreed …');
 
 			this._registerPageEvents();
 			this.initShareRoomClipboard();
 
 			if (this.token) {
-				if (OCA.SpreedMe.webrtc.sessionReady) {
-					this.connection.joinRoom(this.token);
-				} else {
-					OCA.SpreedMe.webrtc.once('connectionReady', function() {
-						this.connection.joinRoom(this.token);
-					}.bind(this));
-				}
+				this.connection.joinRoom(this.token);
+			}
+		},
+		setupWebRTC: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				OCA.SpreedMe.initWebRTC(this);
 			}
 		},
 		startLocalMedia: function(configuration) {
@@ -674,11 +664,11 @@
 				avatar.avatar(OC.currentUser, 128);
 			} else if (guestName) {
 				avatar.imageplaceholder(guestName, undefined, 128);
-			} else if (OCA.SpreedMe.app.displayedGuestNameHint === false) {
+			} else if (this.displayedGuestNameHint === false) {
 				avatar.imageplaceholder('?', undefined, 128);
 				avatar.css('background-color', '#b9b9b9');
 				OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
-				OCA.SpreedMe.app.displayedGuestNameHint = true;
+				this.displayedGuestNameHint = true;
 			}
 
 			avatarContainer.removeClass('hidden');
@@ -687,8 +677,8 @@
 		},
 		disableVideo: function() {
 			OCA.SpreedMe.webrtc.pauseVideo();
-			OCA.SpreedMe.app.hideVideo();
-			OCA.SpreedMe.app.videoDisabled = true;
+			this.hideVideo();
+			this.videoDisabled = true;
 		},
 		initGuestName: function() {
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
@@ -702,7 +692,9 @@
 					avatar.css('background-color', '#b9b9b9');
 				}
 
-				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
+				if (OCA.SpreedMe.webrtc) {
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
+				}
 			});
 
 			this._localStorageModel.fetch();

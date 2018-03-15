@@ -226,9 +226,12 @@ var spreedPeerConnectionTable = [];
 			nick: nick
 		});
 
-		OCA.SpreedMe.webrtc = webrtc;
 
-		app.startSpreed();
+		webrtc.on('localScreenStopped', function() {
+			app.screensharingStopped();
+		});
+
+		OCA.SpreedMe.webrtc = webrtc;
 
 		var spreedListofSpeakers = {};
 		var spreedListofSharedScreens = {};
@@ -643,7 +646,7 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
-			OCA.SpreedMe.app.startLocalMedia(configuration);
+			app.startLocalMedia(configuration);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
@@ -667,7 +670,7 @@ var spreedPeerConnectionTable = [];
 				console.log('Error while accessing microphone & camera: ', error.message || error.name);
 			}
 
-			OCA.SpreedMe.app.setEmptyContentMessage(
+			app.setEmptyContentMessage(
 				'icon-video-off',
 				message,
 				messageAdditional
@@ -690,21 +693,6 @@ var spreedPeerConnectionTable = [];
 				messageAdditional
 			);
 		}
-
-		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
-			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
-		});
-
-		OCA.SpreedMe.webrtc.on('joinedCall', function() {
-			OCA.SpreedMe.app.syncRooms();
-
-			$('#app-content').removeClass('icon-loading');
-			$('.videoView').removeClass('hidden');
-		});
-
-		OCA.SpreedMe.webrtc.on('leftCall', function() {
-			OCA.SpreedMe.app.syncRooms();
-		});
 
 		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
 			console.log('%s datachannel is open', channel.label);
