@@ -154,7 +154,7 @@ var spreedPeerConnectionTable = [];
 		}
 	}
 
-	function initWebRTC() {
+	function initWebRTC(signaling) {
 		'use strict';
 		Array.prototype.diff = function(a) {
 			return this.filter(function(i) {
@@ -162,7 +162,6 @@ var spreedPeerConnectionTable = [];
 			});
 		};
 
-		var signaling = OCA.SpreedMe.createSignalingConnection();
 		signaling.on('usersLeft', function(users) {
 			users.forEach(function(user) {
 				delete usersInCallMapping[user];
