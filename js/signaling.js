@@ -298,8 +298,9 @@
 		}.bind(this), 500);
 	}
 
-	OCA.Talk.Signaling.Internal.prototype = new OCA.Talk.Signaling.Base();
-	OCA.Talk.Signaling.Internal.prototype.constructor = Internal;
+	Internal.prototype = new OCA.Talk.Signaling.Base();
+	Internal.prototype.constructor = Internal;
+	OCA.Talk.Signaling.Internal = Internal;
 
 	OCA.Talk.Signaling.Internal.prototype.disconnect = function() {
 		this.spreedArrayConnection = [];
@@ -587,8 +588,9 @@
 		this.connect();
 	}
 
-	OCA.Talk.Signaling.Standalone.prototype = new OCA.Talk.Signaling.Base();
-	OCA.Talk.Signaling.Standalone.prototype.constructor = Standalone;
+	Standalone.prototype = new OCA.Talk.Signaling.Base();
+	Standalone.prototype.constructor = Standalone;
+	OCA.Talk.Signaling.Standalone = Standalone;
 
 	OCA.Talk.Signaling.Standalone.prototype.reconnect = function() {
 		if (this.reconnectTimer) {
