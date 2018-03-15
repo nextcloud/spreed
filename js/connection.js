@@ -95,18 +95,20 @@
 
 			this.app.signaling.leaveCurrentRoom();
 			this.app.signaling.joinRoom(token);
+			this.app.syncAndSetActiveRoom(token);
 		},
 		joinCall: function(token) {
 			if (this.app.signaling.currentCallToken === token) {
 				return;
 			}
 
-			$('#emptycontent').hide();
-			$('.videoView').addClass('hidden');
-			$('#app-content').addClass('icon-loading');
-
 			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.joinCall(token);
+			this.app.syncRooms();
+
+			this.app.setupWebRTC();
+
+			$('#emptycontent').hide();
 		},
 		leaveCall: function(token) {
 			if (this.app.signaling.currentCallToken !== token) {
@@ -114,6 +116,7 @@
 			}
 
 			this.app.signaling.leaveCurrentCall();
+			this.app.syncRooms();
 			$('#app-content').removeClass('incall');
 		},
 		leaveCurrentCall: function(deleter) {
