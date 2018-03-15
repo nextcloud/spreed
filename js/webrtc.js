@@ -191,6 +191,12 @@ var spreedPeerConnectionTable = [];
 		app.signaling.on('leaveRoom', function () {
 			webrtc.leaveRoom();
 		});
+		app.signaling.on('joinCall', function (token) {
+			webrtc.joinCall(token);
+		});
+		app.signaling.on('joinRoom', function (token) {
+			webrtc.joinRoom(token);
+		});
 
 		var nick = OC.getCurrentUser().displayName;
 

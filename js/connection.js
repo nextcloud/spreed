@@ -93,8 +93,8 @@
 				return;
 			}
 
-			this.app.signaling.leaveRoom(this.app.signaling.currentRoomToken);
-			OCA.SpreedMe.webrtc.joinRoom(token);
+			this.app.signaling.leaveCurrentRoom();
+			this.app.signaling.joinRoom(token);
 		},
 		joinCall: function(token) {
 			if (this.app.signaling.currentCallToken === token) {
@@ -105,15 +105,15 @@
 			$('.videoView').addClass('hidden');
 			$('#app-content').addClass('icon-loading');
 
-			this.app.signaling.leaveCall();
-			OCA.SpreedMe.webrtc.joinCall(token);
+			this.app.signaling.leaveCurrentCall();
+			this.app.signaling.joinCall(token);
 		},
 		leaveCall: function(token) {
 			if (this.app.signaling.currentCallToken !== token) {
 				return;
 			}
 
-			this.app.signaling.leaveCall(this.app.signaling.currentCallToken);
+			this.app.signaling.leaveCurrentCall();
 			$('#app-content').removeClass('incall');
 		},
 		leaveCurrentCall: function(deleter) {
