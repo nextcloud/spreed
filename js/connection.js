@@ -104,7 +104,7 @@
 
 			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.joinCall(token);
-			this.app.syncRooms();
+			this.app.signaling.syncRooms();
 
 			this.app.setupWebRTC();
 
@@ -116,7 +116,7 @@
 			}
 
 			this.app.signaling.leaveCurrentCall();
-			this.app.syncRooms();
+			this.app.signaling.syncRooms();
 			$('#app-content').removeClass('incall');
 		},
 		leaveCurrentCall: function(deleter) {
