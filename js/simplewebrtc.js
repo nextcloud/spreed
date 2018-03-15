@@ -18256,46 +18256,13 @@
 	};
 
 	SimpleWebRTC.prototype.joinRoom = function (name) {
-		this.connection.emit('joinRoom', name);
 		this.roomName = name;
 		this.emit('joinedRoom', name);
 	};
 
-	SimpleWebRTC.prototype.joinCall = function (name, cb) {
-		var self = this;
+	SimpleWebRTC.prototype.joinCall = function (name) {
 		this.roomName = name;
-		this.connection.emit('joinCall', name, function (err, roomDescription) {
-			console.log('join CB', err, roomDescription);
-			if (err) {
-				self.emit('error', err);
-			} else {
-				var id,
-					client,
-					type,
-					peer;
-				for (id in roomDescription.clients) {
-					client = roomDescription.clients[id];
-					for (type in client) {
-						if (client[type]) {
-							peer = self.webrtc.createPeer({
-								id: id,
-								type: type,
-								enableDataChannels: self.config.enableDataChannels && type !== 'screen',
-								receiveMedia: {
-									offerToReceiveAudio: type !== 'screen' && self.config.receiveMedia.offerToReceiveAudio ? 1 : 0,
-									offerToReceiveVideo: self.config.receiveMedia.offerToReceiveVideo
-								}
-							});
-							self.emit('createdPeer', peer);
-							peer.start();
-						}
-					}
-				}
-			}
-
-			if (cb) cb(err, roomDescription);
-			self.emit('joinedCall', name);
-		});
+		this.emit('joinedCall', name);
 	};
 
 	SimpleWebRTC.prototype.getEl = function (idOrEl) {

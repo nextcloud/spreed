@@ -172,6 +172,7 @@
 			success: function (result) {
 				console.log("Joined", result);
 				this.currentRoomToken = token;
+				this._trigger('joinRoom', [token]);
 				this._joinRoomSuccess(token, result.ocs.data.sessionId);
 			}.bind(this),
 			error: function (result) {
@@ -213,6 +214,8 @@
 
 	OCA.Talk.Signaling.Base.prototype.leaveRoom = function(token) {
 		this.leaveCurrentCall();
+
+		this._trigger('leaveRoom', [token]);
 		this._doLeaveRoom(token);
 
 		$.ajax({
@@ -233,7 +236,7 @@
 		// Override in subclasses if necessary.
 	};
 
-	OCA.Talk.Signaling.Base.prototype.joinCall = function(token, callback) {
+	OCA.Talk.Signaling.Base.prototype.joinCall = function(token) {
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			type: 'POST',
@@ -242,12 +245,8 @@
 			},
 			success: function () {
 				this.currentCallToken = token;
+				this._trigger('joinCall', [token]);
 				this._joinCallSuccess(token);
-				// We send an empty call description to simplewebrtc since
-				// usersChanged (webrtc.js) will create/remove peer connections
-				// with call participants
-				var callDescription = {'clients': {}};
-				callback('', callDescription);
 			}.bind(this),
 			error: function () {
 				// Room not found or maintenance mode
@@ -273,6 +272,7 @@
 			method: 'DELETE',
 			async: false,
 			success: function () {
+				this._trigger('leaveCall', [token]);
 				this._leaveCallSuccess(token);
 				// We left the current call.
 				if (token === this.currentCallToken) {
@@ -381,8 +381,6 @@
 			this._stopPingCall();
 			this._closeEventSource();
 		}
-
-		this._trigger('leaveRoom', [token]);
 	};
 
 	OCA.Talk.Signaling.Internal.prototype.sendCallMessage = function(data) {
@@ -558,7 +556,7 @@
 				return;
 			}
 			// FIXME this sounds wrong…
-			OCA.SpreedMe.app.connection.leaveCurrentCall(false);
+			this.leaveCurrentCall(false);
 		}.bind(this));
 	};
 
