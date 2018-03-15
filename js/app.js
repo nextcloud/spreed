@@ -359,15 +359,12 @@
 					newParticipant: participant
 				}
 			).done(function() {
-				this.syncRooms();
+				this.signaling.syncRooms();
 			}.bind(this));
-		},
-		syncRooms: function() {
-			return this.signaling.syncRooms();
 		},
 		syncAndSetActiveRoom: function(token) {
 			var self = this;
-			this.syncRooms()
+			this.signaling.syncRooms()
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:participantInCall');
 

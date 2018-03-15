@@ -260,7 +260,7 @@
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
 				type: shareLink ? 'POST' : 'DELETE',
 				success: function() {
-					OCA.SpreedMe.app.syncRooms();
+					OCA.SpreedMe.app.signaling.syncRooms();
 				}
 			});
 		},
@@ -294,7 +294,7 @@
 					this.ui.passwordInput.val('');
 					this.ui.passwordOption.hide();
 					this.ui.passwordButton.show();
-					OCA.SpreedMe.app.syncRooms();
+					OCA.SpreedMe.app.signaling.syncRooms();
 				}.bind(this),
 				error: function() {
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
