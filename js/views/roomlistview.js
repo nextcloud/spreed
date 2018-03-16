@@ -177,7 +177,7 @@
 		leaveRoom: function() {
 			// If user is in that room, it should leave the associated call first.
 			if (this.model.get('active')) {
-				OCA.SpreedMe.Calls.leaveCurrentCall(true);
+				OCA.SpreedMe.app.connection.leaveCurrentCall(true);
 			}
 
 			this.$el.slideUp();
@@ -195,7 +195,7 @@
 
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
-				OCA.SpreedMe.Calls.leaveCurrentCall(true);
+				OCA.SpreedMe.app.connection.leaveCurrentCall(true);
 				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
 
@@ -209,7 +209,7 @@
 		joinRoom: function(e) {
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
-			OCA.SpreedMe.Calls.joinRoom(token);
+			OCA.SpreedMe.app.connection.joinRoom(token);
 
 			OC.Util.History.pushState({
 				token: token

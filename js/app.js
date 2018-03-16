@@ -23,11 +23,11 @@
 (function(OC, OCA, Marionette, Backbone, _, $) {
 	'use strict';
 
-	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
 
-	var App = Marionette.Application.extend({
+	OCA.Talk.Application = Marionette.Application.extend({
 		OWNER: 1,
 		MODERATOR: 2,
 		USER: 3,
@@ -36,6 +36,15 @@
 
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
+
+		/** @property {String} token  */
+		token: null,
+
+		/** @property {OCA.Talk.Connection} connection  */
+		connection: null,
+
+		/** @property {OCA.Talk.Signaling.base} signaling  */
+		signaling: null,
 
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
@@ -140,16 +149,16 @@
 			$('#select-participants').on("select2-selecting", function(e) {
 				switch (e.object.type) {
 					case "user":
-						OCA.SpreedMe.Calls.createOneToOneVideoCall(e.val);
+						this.connection.createOneToOneVideoCall(e.val);
 						break;
 					case "group":
-						OCA.SpreedMe.Calls.createGroupVideoCall(e.val, "");
+						this.connection.createGroupVideoCall(e.val, "");
 						break;
 					case "createPublicRoom":
-						OCA.SpreedMe.Calls.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
+						this.connection.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
 						break;
 					case "createGroupRoom":
-						OCA.SpreedMe.Calls.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
+						this.connection.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
 						console.log("Unknown type", e.object.type);
@@ -238,10 +247,6 @@
 					.removeClass('icon-screen');
 				$('#screensharing-menu').toggleClass('open', false);
 			};
-
-			OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
-				screensharingStopped();
-			});
 
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
@@ -354,15 +359,12 @@
 					newParticipant: participant
 				}
 			).done(function() {
-				this.syncRooms();
+				this.signaling.syncRooms();
 			}.bind(this));
-		},
-		syncRooms: function() {
-			return this.signaling.syncRooms();
 		},
 		syncAndSetActiveRoom: function(token) {
 			var self = this;
-			this.syncRooms()
+			this.signaling.syncRooms()
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:participantInCall');
 
@@ -529,77 +531,62 @@
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
 		onStart: function() {
-			this.setEmptyContentMessage(
-				'icon-video-off',
-				t('spreed', 'Waiting for camera and microphone permissions'),
-				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
-			);
+			this.signaling = OCA.Talk.Signaling.createConnection();
+			this.connection = new OCA.Talk.Connection(this);
+			this.token = $('#app').attr('data-token');
 
-			OCA.SpreedMe.initWebRTC();
-
-			if (!oc_current_user) {
+			if (!OC.getCurrentUser().uid) {
 				this.initGuestName();
 			}
-		},
-		startSpreed: function(configuration, signaling) {
-			console.log('Starting spreed …');
-			var self = this;
-			this.signaling = signaling;
 
 			$(window).unload(function () {
-				OCA.SpreedMe.Calls.leaveAllCalls();
-				signaling.disconnect();
-			});
+				this.connection.leaveAllCalls();
+				this.signaling.disconnect();
+			}.bind(this));
 
-			this.setEmptyContentMessage(
-				'icon-video',
-				t('spreed', 'Looking great today! :)'),
-				t('spreed', 'Time to call your friends')
-			);
-
-			OCA.SpreedMe.initCalls(signaling);
-
-			this._registerPageEvents();
-			this.initShareRoomClipboard();
-
-			OCA.SpreedMe.Calls.showCamera();
-
-			var token = $('#app').attr('data-token');
-
-			if (oc_current_user) {
+			if (OC.getCurrentUser().uid) {
 				this._showRoomList();
 				this.signaling.setRoomCollection(this._rooms)
 					.then(function(data) {
 						$('#app-navigation').removeClass('icon-loading');
-						self._roomsView.render();
+						this._roomsView.render();
 
 						if (data.length === 0) {
 							$('#select-participants').select2('open');
 						}
-					});
+					}.bind(this));
 
 				this._showParticipantList();
 			} else {
 				// The token is always defined in the public page.
-				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: token });
+				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
 			}
 
+			this._registerPageEvents();
+			this.initShareRoomClipboard();
+
+			if (this.token) {
+				this.connection.joinRoom(this.token);
+			}
+		},
+		setupWebRTC: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				OCA.SpreedMe.initWebRTC(this);
+			}
+		},
+		startLocalMedia: function(configuration) {
+			this.connection.showCamera();
 			this.initAudioVideoSettings(configuration);
 
-			if (token) {
-				if (OCA.SpreedMe.webrtc.sessionReady) {
-					OCA.SpreedMe.Calls.joinRoom(token);
-				} else {
-					OCA.SpreedMe.webrtc.once('connectionReady', function() {
-						OCA.SpreedMe.Calls.joinRoom(token);
-					});
-				}
-			}
+			this.setEmptyContentMessage(
+				'icon-video',
+				t('spreed', 'Waiting for others to join the call …')
+			);
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
-				OCA.SpreedMe.Calls.joinRoom(params.token);
+				this.connection.joinRoom(params.token);
 			}
 		},
 		onDocumentClick: function(event) {
@@ -673,11 +660,11 @@
 				avatar.avatar(OC.currentUser, 128);
 			} else if (guestName) {
 				avatar.imageplaceholder(guestName, undefined, 128);
-			} else if (OCA.SpreedMe.app.displayedGuestNameHint === false) {
+			} else if (this.displayedGuestNameHint === false) {
 				avatar.imageplaceholder('?', undefined, 128);
 				avatar.css('background-color', '#b9b9b9');
 				OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
-				OCA.SpreedMe.app.displayedGuestNameHint = true;
+				this.displayedGuestNameHint = true;
 			}
 
 			avatarContainer.removeClass('hidden');
@@ -686,8 +673,8 @@
 		},
 		disableVideo: function() {
 			OCA.SpreedMe.webrtc.pauseVideo();
-			OCA.SpreedMe.app.hideVideo();
-			OCA.SpreedMe.app.videoDisabled = true;
+			this.hideVideo();
+			this.videoDisabled = true;
 		},
 		initGuestName: function() {
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
@@ -701,7 +688,9 @@
 					avatar.css('background-color', '#b9b9b9');
 				}
 
-				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
+				if (OCA.SpreedMe.webrtc) {
+					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
+				}
 			});
 
 			this._localStorageModel.fetch();
@@ -752,5 +741,4 @@
 		}
 	});
 
-	OCA.SpreedMe.App = App;
 })(OC, OCA, Marionette, Backbone, _, $);
