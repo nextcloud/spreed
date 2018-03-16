@@ -18,7 +18,7 @@
  *
  */
 
-(function(OCA, $) {
+(function(OCA) {
 	OCA.SpreedMe.app = new OCA.Talk.Application();
 	OCA.SpreedMe.app.start();
-})(OCA, $);
+})(OCA);
