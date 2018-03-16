@@ -137,8 +137,7 @@
 			if (deleter) {
 				this.app.setEmptyContentMessage(
 					'icon-video',
-					t('spreed', 'Looking great today! :)'),
-					t('spreed', 'Time to call your friends')
+					t('spreed', 'Join a conversation or start a new one')
 				);
 			} else {
 				this.app.setEmptyContentMessage(

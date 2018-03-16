@@ -99,8 +99,8 @@ script(
 
 			<div id="emptycontent">
 				<div id="emptycontent-icon" class="icon-video"></div>
-				<h2><?php p($l->t('Looking great today! :)')) ?></h2>
-				<p class="uploadmessage"><?php p($l->t('Smile in 3… 2… 1!')) ?></p>
+				<h2><?php p($l->t('Join a conversation or start a new one')) ?></h2>
+				<p class="uploadmessage"></p>
 			</div>
 		</div>
 	</div>

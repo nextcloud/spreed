@@ -544,12 +544,6 @@
 				this.signaling.disconnect();
 			}.bind(this));
 
-			this.setEmptyContentMessage(
-				'icon-video',
-				t('spreed', 'Looking great today! :)'),
-				t('spreed', 'Time to call your friends')
-			);
-
 			if (OC.getCurrentUser().uid) {
 				this._showRoomList();
 				this.signaling.setRoomCollection(this._rooms)
@@ -584,6 +578,11 @@
 		startLocalMedia: function(configuration) {
 			this.connection.showCamera();
 			this.initAudioVideoSettings(configuration);
+
+			this.setEmptyContentMessage(
+				'icon-video',
+				t('spreed', 'Waiting for others to join the call …')
+			);
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
