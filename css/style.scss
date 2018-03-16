@@ -222,6 +222,11 @@
 	align-items: flex-end;
 }
 
+.videoContainer.hidden,
+#app-content.screensharing .videoContainer.hidden {
+	display: none;
+}
+
 #app-content.screensharing .videoContainer {
 	max-height: 200px;
 }
