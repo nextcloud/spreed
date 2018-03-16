@@ -35,7 +35,7 @@
 		'<div class="loading hidden" style="height: 50px"></div>';
 
 	var ADD_COMMENT_TEMPLATE =
-		'<div class="newCommentRow comment" data-id="{{id}}">' +
+		'<div class="newCommentRow comment">' +
 		'    <div class="authorRow">' +
 		'        <div class="avatar" data-username="{{actorId}}"></div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
@@ -50,7 +50,7 @@
 	var COMMENT_TEMPLATE =
 		'<li class="comment" data-id="{{id}}">' +
 		'    <div class="authorRow">' +
-		'        <div class="avatar" {{#if actorId}}data-username="{{actorId}}"{{/if}}> </div>' +
+		'        <div class="avatar" {{#if actorId}}data-user-id="{{actorId}}"{{/if}} {{#if actorId}}data-displayname="{{actorDisplayName}}"{{/if}}> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
@@ -83,12 +83,20 @@
 			if (!this._addCommentTemplate) {
 				this._addCommentTemplate = Handlebars.compile(ADD_COMMENT_TEMPLATE);
 			}
-			// FIXME handle guest users
-			var currentUser = OC.getCurrentUser();
+
+			if (OC.getCurrentUser().uid) {
+				return this._addCommentTemplate(_.extend({
+					actorId: OC.getCurrentUser().uid,
+					actorDisplayName: OC.getCurrentUser().displayName,
+					newMessagePlaceholder: t('spreed', 'New message …'),
+					submitText: t('spreed', 'Send')
+				}, params));
+			}
+
 			return this._addCommentTemplate(_.extend({
-				actorId: currentUser.uid,
-				actorDisplayName: currentUser.displayName,
-				newMessagePlaceholder: t('spreed', 'New message…'),
+				actorId: '',
+				actorDisplayName: t('spreed', 'You'),
+				newMessagePlaceholder: t('spreed', 'New message …'),
 				submitText: t('spreed', 'Send')
 			}, params));
 		},
@@ -110,8 +118,14 @@
 			}
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			this.$container = this.$el.find('ul.comments');
-			// FIXME handle guest users
-			this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32);
+
+			if (OC.getCurrentUser().uid) {
+				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
+			} else {
+				this.$el.find('.avatar').imageplaceholder('?', undefined, 32);
+				this.$el.find('.avatar').css('background-color', '#b9b9b9');
+			}
+
 			this.delegateEvents();
 			this.$el.find('.message').on('keydown input change', this._onTypeComment);
 
@@ -148,7 +162,7 @@
 			var actorDisplayName = commentModel.get('actorDisplayName');
 			if (commentModel.attributes.actorType === 'guests') {
 				// FIXME get guest name from WebRTC or something like that
-				actorDisplayName = 'Guest';
+				actorDisplayName = t('spreed', 'Guest');
 			}
 			if (actorDisplayName == null) {
 				actorDisplayName = t('spreed', '[Unknown user name]');
@@ -226,7 +240,7 @@
 			// received.
 			this._lastAddedMessageModel = model;
 
-			this._postRenderItem($el);
+			this._postRenderItem(model, $el);
 
 			if (scrollToNew) {
 				var newestCommentHiddenHeight = ($newestComment.position().top + $newestComment.outerHeight(true)) - this.$container.outerHeight(true);
@@ -298,16 +312,22 @@
 			return model1.get('date').toDateString() === model2.get('date').toDateString();
 		},
 
-		_postRenderItem: function($el) {
+		_postRenderItem: function(model, $el) {
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			$el.find('.avatar').each(function() {
 				var $this = $(this);
-				$this.avatar($this.attr('data-username'), 32);
+				if (model.get('actorType') === 'users') {
+					$this.avatar($this.data('user-id'), 32, undefined, false, undefined, $this.data('displayname'));
+				} else {
+					$this.imageplaceholder('?', undefined, 32);
+					$this.css('background-color', '#b9b9b9');
+				}
 			});
 
-			// FIXME do not show contacts menu for guest users
-			var username = $el.find('.avatar').data('username');
-			if (username !== oc_current_user) {
+			var username = $el.find('.avatar').data('user-id');
+			if (OC.getCurrentUser().uid &&
+				model.get('actorType') === 'users' &&
+				username !== OC.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
 					username, 0, $el.find('.authorRow'));
 			}
