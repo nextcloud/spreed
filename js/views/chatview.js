@@ -54,7 +54,7 @@
 	var COMMENT_TEMPLATE =
 		'<li class="comment" data-id="{{id}}">' +
 		'    <div class="authorRow">' +
-		'        <div class="avatar" {{#if actorId}}data-user-id="{{actorId}}"{{/if}} {{#if actorId}}data-displayname="{{actorDisplayName}}"{{/if}}> </div>' +
+		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +

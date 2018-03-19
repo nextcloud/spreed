@@ -137,6 +137,10 @@
 			this.reset();
 		},
 
+		updateGuestName: function(sessionId, newDisplayName) {
+			this.invoke('updateGuestName', {sessionId: sessionId, displayName: newDisplayName});
+		},
+
 		receiveMessages: function() {
 			this.receiveMessagesAgain = true;
 
