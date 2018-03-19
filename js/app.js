@@ -68,7 +68,7 @@
 					dataType: 'json',
 					quietMillis: 100,
 					data: function (term) {
-						OCA.SpreedMe.app._searchTerm = term;
+						this._searchTerm = term;
 						return {
 							format: 'json',
 							search: term,
@@ -164,7 +164,7 @@
 						console.log("Unknown type", e.object.type);
 						break;
 				}
-			});
+			}.bind(this));
 
 			$('#select-participants').on("select2-loaded", function() {
 				$('.select2-drop').find('.avatar').each(function () {
