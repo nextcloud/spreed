@@ -339,7 +339,11 @@
 				if (model.get('actorType') === 'users') {
 					$this.avatar($this.data('user-id'), 32, undefined, false, undefined, $this.data('displayname'));
 				} else {
-					$this.imageplaceholder('?', undefined, 32);
+					if (model.get('actorDisplayName')) {
+						$this.imageplaceholder(model.get('actorDisplayName')[0], undefined, 32);
+					} else {
+						$this.imageplaceholder('?', undefined, 32);
+					}
 					$this.css('background-color', '#b9b9b9');
 				}
 			});
