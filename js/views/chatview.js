@@ -38,7 +38,11 @@
 		'<div class="newCommentRow comment">' +
 		'    <div class="authorRow">' +
 		'        <div class="avatar" data-username="{{actorId}}"></div>' +
-		'        <div class="author">{{actorDisplayName}}</div>' +
+		'        {{#if actorId}}' +
+		'            <div class="author">{{actorDisplayName}}</div>' +
+		'        {{else}}' +
+		'            <div class="guest-name"></div>' +
+		'        {{/if}}' +
 		'    </div>' +
 		'    <form class="newCommentForm">' +
 		'        <div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>' +
@@ -63,6 +67,14 @@
 			return 'chat' + (this._oldestOnTopLayout? ' oldestOnTopLayout': '');
 		},
 
+		ui: {
+			'guestName': 'div.guest-name'
+		},
+
+		regions: {
+			'guestName': '@ui.guestName'
+		},
+
 		events: {
 			'submit .newCommentForm': '_onSubmitComment',
 		},
@@ -72,6 +84,18 @@
 
 			this.listenTo(this.collection, 'reset', this.render);
 			this.listenTo(this.collection, 'add', this._onAddModel);
+
+			this._guestNameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
+				model: this.getOption('guestNameModel'),
+				modelAttribute: 'nick',
+
+				extraClassNames: 'guest-name',
+				labelTagName: 'p',
+				labelPlaceholder: t('spreed', 'You'),
+				inputMaxLength: '20',
+				inputPlaceholder: t('spreed', 'Name'),
+				buttonTitle: t('spreed', 'Rename')
+			});
 		},
 
 		template: Handlebars.compile(TEMPLATE),
@@ -84,19 +108,9 @@
 				this._addCommentTemplate = Handlebars.compile(ADD_COMMENT_TEMPLATE);
 			}
 
-			if (OC.getCurrentUser().uid) {
-				return this._addCommentTemplate(_.extend({
-					actorId: OC.getCurrentUser().uid,
-					actorDisplayName: OC.getCurrentUser().displayName,
-					newMessagePlaceholder: t('spreed', 'New message …'),
-					submitText: t('spreed', 'Send')
-				}, params));
-			}
-
-			var guestNick = OCA.SpreedMe.app._localStorageModel.get('nick');
 			return this._addCommentTemplate(_.extend({
-				actorId: '',
-				actorDisplayName: guestNick ? guestNick : t('spreed', 'You'),
+				actorId: OC.getCurrentUser().uid,
+				actorDisplayName: OC.getCurrentUser().displayName,
 				newMessagePlaceholder: t('spreed', 'New message …'),
 				submitText: t('spreed', 'Send')
 			}, params));
@@ -107,6 +121,10 @@
 				this._commentTemplate = Handlebars.compile(COMMENT_TEMPLATE);
 			}
 			return this._commentTemplate(params);
+		},
+
+		onBeforeRender: function() {
+			this.getRegion('guestName').reset({ preventDestroy: true, allowMissingEl: true });
 		},
 
 		onRender: function() {
@@ -125,6 +143,7 @@
 			} else {
 				this.$el.find('.avatar').imageplaceholder('?', undefined, 32);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
+				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
 
 			this.delegateEvents();

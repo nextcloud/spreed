@@ -507,9 +507,11 @@
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
 			$('#app-content').append(this._sidebarView.$el);
 
-			if (oc_current_user) {
+			if (OC.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
+			} else {
+				this.initGuestName();
 			}
 
 			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
@@ -520,7 +522,8 @@
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
 				id: 'commentsTabView',
-				oldestOnTopLayout: true
+				oldestOnTopLayout: true,
+				guestNameModel: this._localStorageModel
 			});
 
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
@@ -534,10 +537,6 @@
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
 			this.token = $('#app').attr('data-token');
-
-			if (!OC.getCurrentUser().uid) {
-				this.initGuestName();
-			}
 
 			$(window).unload(function () {
 				this.connection.leaveAllCalls();
