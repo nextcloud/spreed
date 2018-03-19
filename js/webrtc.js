@@ -714,6 +714,7 @@ var spreedPeerConnectionTable = [];
 					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 				} else if (data.type === 'nickChanged') {
 					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
+					app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
 				}
 			} else if (label === 'hark') {
 				// Ignore messages from hark datachannel
