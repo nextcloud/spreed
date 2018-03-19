@@ -93,9 +93,10 @@
 				}, params));
 			}
 
+			var guestNick = OCA.SpreedMe.app._localStorageModel.get('nick');
 			return this._addCommentTemplate(_.extend({
 				actorId: '',
-				actorDisplayName: t('spreed', 'You'),
+				actorDisplayName: guestNick ? guestNick : t('spreed', 'You'),
 				newMessagePlaceholder: t('spreed', 'New message …'),
 				submitText: t('spreed', 'Send')
 			}, params));
@@ -160,8 +161,8 @@
 				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
-			if (commentModel.attributes.actorType === 'guests') {
-				// FIXME get guest name from WebRTC or something like that
+			if (commentModel.get('actorType') === 'guests' &&
+				actorDisplayName === null) {
 				actorDisplayName = t('spreed', 'Guest');
 			}
 			if (actorDisplayName == null) {
@@ -380,7 +381,6 @@
 		_onSubmitComment: function(e) {
 			var self = this;
 			var $form = $(e.target);
-			var comment = null;
 			var $submit = $form.find('.submit');
 			var $loading = $form.find('.submitLoading');
 			var $commentField = $form.find('.message');
@@ -395,11 +395,19 @@
 			$loading.removeClass('hidden');
 
 			message = this._commentBodyHTML2Plain($commentField);
-
-			comment = new OCA.SpreedMe.Models.ChatMessage({
+			var data = {
 				token: this.collection.token,
 				message: message
-			});
+			};
+
+			if (!OC.getCurrentUser().uid) {
+				var guestNick = OCA.SpreedMe.app._localStorageModel.get('nick');
+				if (guestNick) {
+					data.actorDisplayName = guestNick;
+				}
+			}
+
+			var comment = new OCA.SpreedMe.Models.ChatMessage(data);
 			comment.save({}, {
 				success: function(model) {
 					self._onSubmitSuccess(model, $form);
