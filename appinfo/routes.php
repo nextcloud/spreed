@@ -265,6 +265,14 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Guest#setDisplayName',
+			'url' => '/api/{apiVersion}/guest/name',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
 	],
 ];
 

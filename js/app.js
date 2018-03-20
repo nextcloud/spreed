@@ -677,22 +677,37 @@
 		},
 		initGuestName: function() {
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
-			this._localStorageModel.on('change:nick', function(model, value) {
-				var avatar = $('#localVideoContainer').find('.avatar');
-
-				if (value) {
-					avatar.imageplaceholder(value, undefined, 128);
-				} else {
-					avatar.imageplaceholder('?', undefined, 128);
-					avatar.css('background-color', '#b9b9b9');
-				}
-
-				if (OCA.SpreedMe.webrtc) {
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
-				}
+			this._localStorageModel.on('change:nick', function(model, newDisplayName) {
+				$.ajax({
+					url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + 'name',
+					type: 'POST',
+					data: {
+						displayName: newDisplayName
+					},
+					beforeSend: function (request) {
+						request.setRequestHeader('Accept', 'application/json');
+					},
+					success: function() {
+						this._onChangeGuestName(newDisplayName);
+					}.bind(this)
+				});
 			});
 
 			this._localStorageModel.fetch();
+		},
+		_onChangeGuestName: function(newDisplayName) {
+			var avatar = $('#localVideoContainer').find('.avatar');
+
+			if (newDisplayName) {
+				avatar.imageplaceholder(value, undefined, 128);
+			} else {
+				avatar.imageplaceholder('?', undefined, 128);
+				avatar.css('background-color', '#b9b9b9');
+			}
+
+			if (this.webrtc) {
+				this.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);
+			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({

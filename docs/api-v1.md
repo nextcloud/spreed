@@ -459,7 +459,26 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `201 Created`
         + `404 Not Found` When the room could not be found for the participant
+        
+## Guests
 
+### Set display name
+
+* Method: `POST`
+* Endpoint: `/geust/name`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `displayName` | string | The new display name
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the guest is not found or has no session
+        + `403 Forbidden` When the user is logged in
+        
+        
 ## Signaling
 
 See the [Draft](https://github.com/nextcloud/spreed/wiki/Signaling-API) in the wiki…
