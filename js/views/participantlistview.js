@@ -117,7 +117,7 @@
 			},
 			templateContext: function() {
 				var canModerate = this.model.get('participantType') !== OCA.SpreedMe.app.OWNER &&       // can not moderate owners
-					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
+					this.model.get('userId') !== OC.getCurrentUser().uid &&                // can not moderate yourself
 					(OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||   // current user must be owner
 						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR), // or moderator.
 					name = '';

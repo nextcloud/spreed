@@ -367,7 +367,7 @@
 		addTooltip: function () {
 			var participants = [];
 			$.each(this.model.get('participants'), function(participantId, data) {
-				if (participantId !== oc_current_user) {
+				if (participantId !== OC.getCurrentUser().uid) {
 					participants.push(escapeHTML(data.name));
 				}
 			});
