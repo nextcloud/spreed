@@ -25,7 +25,6 @@
 
 namespace OCA\Spreed\Controller;
 
-use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
