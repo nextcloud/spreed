@@ -53,7 +53,7 @@
 		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
 		'			<div class="password-button"><span class="icon {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span></div>' +
 		'			<div class="password-option">' +
-		'				<input class="password-input" maxlength="200" type="password"' +
+		'				<input class="password-input" maxlength="200" type="password" autocomplete="new-password"' +
 		'				  placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
 		'				<div class="icon icon-confirm password-confirm"></div>'+
 		'			</div>' +
@@ -68,6 +68,7 @@
 		template: Handlebars.compile(TEMPLATE),
 
 		renderTimeout: undefined,
+		passwordInputIsShown: false,
 
 		templateContext: function() {
 			var canModerate = this._canModerate();
@@ -169,7 +170,7 @@
 		},
 
 		renderWhenInactive: function() {
-			if (this.ui.passwordInput.length === 0 || this.ui.passwordInput.val() === '') {
+			if (this.ui.passwordInput.length === 0 || !this.passwordInputIsShown || this.ui.passwordInput.val() === '') {
 				this.render();
 				return;
 			}
@@ -277,6 +278,7 @@
 		 * Password
 		 */
 		showPasswordInput: function() {
+			this.passwordInputIsShown = true;
 			this.ui.passwordButton.hide();
 			this.ui.passwordOption.show();
 			this.ui.passwordInput.focus();
@@ -291,6 +293,7 @@
 					password: newPassword
 				},
 				success: function() {
+					this.passwordInputIsShown = false;
 					this.ui.passwordInput.val('');
 					this.ui.passwordOption.hide();
 					this.ui.passwordButton.show();
@@ -308,6 +311,7 @@
 				this.confirmPassword();
 			} else if (e.keyCode === 27) {
 				// ESC
+				this.passwordInputIsShown = false;
 				this.ui.passwordInput.val('');
 				this.ui.passwordOption.hide();
 				this.ui.passwordButton.show();
