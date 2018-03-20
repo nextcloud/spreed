@@ -145,11 +145,7 @@
 					if (model.get('participantType') !== OCA.SpreedMe.app.GUEST) {
 						$element.avatar(model.get('userId'), 32, undefined, false, undefined, model.get('displayName'));
 					} else {
-						if (model.get('displayName')) {
-							$element.imageplaceholder(model.get('displayName')[0], undefined, 32);
-						} else {
-							$element.imageplaceholder('?', undefined, 32);
-						}
+						$element.imageplaceholder('?', model.get('displayName'), 32);
 						$element.css('background-color', '#b9b9b9');
 					}
 				});

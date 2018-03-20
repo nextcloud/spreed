@@ -716,13 +716,13 @@
 			var guestName = localStorage.getItem("nick");
 			if (OC.getCurrentUser().uid) {
 				avatar.avatar(OC.getCurrentUser().uid, 128);
-			} else if (guestName) {
-				avatar.imageplaceholder(guestName, undefined, 128);
-			} else if (this.displayedGuestNameHint === false) {
-				avatar.imageplaceholder('?', undefined, 128);
+			} else {
+				avatar.imageplaceholder('?', guestName, 128);
 				avatar.css('background-color', '#b9b9b9');
-				OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
-				this.displayedGuestNameHint = true;
+				if (this.displayedGuestNameHint === false) {
+					OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
+					this.displayedGuestNameHint = true;
+				}
 			}
 
 			avatarContainer.removeClass('hidden');
@@ -735,6 +735,7 @@
 			this.videoDisabled = true;
 		},
 		initGuestName: function() {
+			var self = this;
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
 			this._localStorageModel.on('change:nick', function(model, newDisplayName) {
 				$.ajax({
@@ -747,8 +748,8 @@
 						request.setRequestHeader('Accept', 'application/json');
 					},
 					success: function() {
-						this._onChangeGuestName(newDisplayName);
-					}.bind(this)
+						self._onChangeGuestName(newDisplayName);
+					}
 				});
 			});
 
@@ -757,15 +758,15 @@
 		_onChangeGuestName: function(newDisplayName) {
 			var avatar = $('#localVideoContainer').find('.avatar');
 
-			if (newDisplayName) {
-				avatar.imageplaceholder(value, undefined, 128);
-			} else {
-				avatar.imageplaceholder('?', undefined, 128);
-				avatar.css('background-color', '#b9b9b9');
-			}
+			avatar.imageplaceholder('?', newDisplayName, 128);
+			avatar.css('background-color', '#b9b9b9');
 
-			if (this.webrtc) {
-				this.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);
+			console.log('_onChangeGuestName');
+			console.log(this);
+			console.log(this.webrtc);
+			if (OCA.SpreedMe.webrtc) {
+				console.log('_onChangeGuestName.webrtc');
+				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);
 			}
 		},
 		initShareRoomClipboard: function () {
