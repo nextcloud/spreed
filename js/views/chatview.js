@@ -141,11 +141,7 @@
 			if (OC.getCurrentUser().uid) {
 				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
 			} else {
-				if (this.getOption('guestNameModel').get('nick')) {
-					this.$el.find('.avatar').imageplaceholder(this.getOption('guestNameModel').get('nick')[0], undefined, 32);
-				} else {
-					this.$el.find('.avatar').imageplaceholder('?', undefined, 32);
-				}
+				this.$el.find('.avatar').imageplaceholder('?', this.getOption('guestNameModel').get('nick'), 128);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
 				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
@@ -343,11 +339,7 @@
 				if (model.get('actorType') === 'users') {
 					$this.avatar($this.data('user-id'), 32, undefined, false, undefined, $this.data('displayname'));
 				} else {
-					if (model.get('actorDisplayName')) {
-						$this.imageplaceholder(model.get('actorDisplayName')[0], undefined, 32);
-					} else {
-						$this.imageplaceholder('?', undefined, 32);
-					}
+					$this.imageplaceholder('?', model.get('actorDisplayName'), 32);
 					$this.css('background-color', '#b9b9b9');
 				}
 			});
