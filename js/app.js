@@ -86,7 +86,7 @@
 						var results = [];
 
 						$.each(response.ocs.data.exact.users, function(id, user) {
-							if (oc_current_user === user.value.shareWith) {
+							if (OC.getCurrentUser().uid === user.value.shareWith) {
 								return;
 							}
 							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
@@ -95,7 +95,7 @@
 							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
 						});
 						$.each(response.ocs.data.users, function(id, user) {
-							if (oc_current_user === user.value.shareWith) {
+							if (OC.getCurrentUser().uid === user.value.shareWith) {
 								return;
 							}
 							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
@@ -346,7 +346,7 @@
 		 * @param {string} token
 		 */
 		_setRoomActive: function(token) {
-			if (oc_current_user) {
+			if (OC.getCurrentUser().uid) {
 				this._rooms.forEach(function(room) {
 					room.set('active', room.get('token') === token);
 				});
@@ -368,7 +368,7 @@
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:participantInCall');
 
-					if (oc_current_user) {
+					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
 
 						self._rooms.forEach(function(room) {
@@ -655,8 +655,8 @@
 
 			var avatar = avatarContainer.find('.avatar');
 			var guestName = localStorage.getItem("nick");
-			if (oc_current_user) {
-				avatar.avatar(OC.currentUser, 128);
+			if (OC.getCurrentUser().uid) {
+				avatar.avatar(OC.getCurrentUser().uid, 128);
 			} else if (guestName) {
 				avatar.imageplaceholder(guestName, undefined, 128);
 			} else if (this.displayedGuestNameHint === false) {
