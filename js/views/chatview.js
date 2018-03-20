@@ -141,7 +141,11 @@
 			if (OC.getCurrentUser().uid) {
 				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
 			} else {
-				this.$el.find('.avatar').imageplaceholder('?', undefined, 32);
+				if (this.getOption('guestNameModel').get('nick')) {
+					this.$el.find('.avatar').imageplaceholder(this.getOption('guestNameModel').get('nick')[0], undefined, 32);
+				} else {
+					this.$el.find('.avatar').imageplaceholder('?', undefined, 32);
+				}
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
 				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
