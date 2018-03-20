@@ -454,6 +454,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `message` | string | The message the user wants to say
+    `actorDisplayName` | string | Guest display name (ignored for logged in users)
 
 * Response:
     - Header:
