@@ -133,7 +133,7 @@ class ChatController extends OCSController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
-	public function sendMessage($token, $message, $actorDisplayName) {
+	public function sendMessage($token, $message, $actorDisplayName = '') {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
