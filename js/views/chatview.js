@@ -114,6 +114,7 @@
 			this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32);
 			this.delegateEvents();
 			var $message = this.$el.find('.message');
+			$message.blur().focus();
 			$message.on('keydown input change', this._onTypeComment);
 
 			/**
@@ -127,6 +128,10 @@
 			});
 
 			autosize(this.$el.find('.newCommentRow .message'));
+		},
+
+		focusChatInput: function() {
+			this.$el.find('.message').blur().focus();
 		},
 
 		/**

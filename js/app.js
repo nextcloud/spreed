@@ -411,6 +411,7 @@
 				this._sidebarView.removeTab('chat');
 				this._chatView.$el.prependTo('#app-content-wrapper');
 				this._chatView.setTooltipContainer($('#app'));
+				this._chatView.focusChatInput();
 				this._chatViewInMainView = true;
 			}
 		},
