@@ -113,7 +113,18 @@
 			// FIXME handle guest users
 			this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32);
 			this.delegateEvents();
-			this.$el.find('.message').on('keydown input change', this._onTypeComment);
+			var $message = this.$el.find('.message');
+			$message.on('keydown input change', this._onTypeComment);
+
+			/**
+			 * Make sure we focus the actual content part not the placeholder.
+			 * Firefox is a bit buggy there: https://stackoverflow.com/a/42170494
+			 */
+			$message.on("keydown click", function(){
+				if(!$message.text().trim().length){
+					$message.blur().focus();
+				}
+			});
 
 			autosize(this.$el.find('.newCommentRow .message'));
 		},
