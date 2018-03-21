@@ -144,7 +144,7 @@
 		 * Once set, the SidebarView takes ownership of the view, and it will
 		 * destroy it if a new one is set.
 		 *
-		 * @param Marionette.View callInfoView the view to set.
+		 * @param {Marionette.View} callInfoView the view to set.
 		 */
 		setCallInfoView: function(callInfoView) {
 			this._callInfoView = callInfoView;
@@ -170,10 +170,10 @@
 		 * will destroy it when the SidebarView is destroyed, except if the
 		 * content view is removed first.
 		 *
-		 * @param string tabId the ID of the tab.
-		 * @param Object tabHeaderOptions the options for the constructor of the
+		 * @param {string} tabId the ID of the tab.
+		 * @param {Object} tabHeaderOptions the options for the constructor of the
 		 *        TabHeaderView that will be added as the header of the tab.
-		 * @param Marionette.View tabContentView the View to be shown when the
+		 * @param {Marionette.View} tabContentView the View to be shown when the
 		 *        tab is selected.
 		 */
 		addTab: function(tabId, tabHeaderOptions, tabContentView) {
@@ -183,7 +183,7 @@
 		/**
 		 * Select the tab associated to the given tabId.
 		 *
-		 * @param string tabId the ID of the tab to select.
+		 * @param {string} tabId the ID of the tab to select.
 		 */
 		selectTab: function(tabId) {
 			this._tabView.selectTab(tabId);
@@ -203,8 +203,8 @@
 		 * content view, and thus the content view must be explicitly destroyed
 		 * when no longer needed.
 		 *
-		 * @param string tabId the ID of the tab to remove.
-		 * @return Marionette.View the content view of the removed tab.
+		 * @param {string} tabId the ID of the tab to remove.
+		 * @return {Marionette.View} the content view of the removed tab.
 		 */
 		removeTab: function(tabId) {
 			return this._tabView.removeTab(tabId);
