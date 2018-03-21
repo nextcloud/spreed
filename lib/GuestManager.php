@@ -24,36 +24,47 @@ namespace OCA\Spreed;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class GuestManager {
 
 	/** @var IDBConnection */
 	protected $connection;
 
-	public function __construct(IDBConnection $connection) {
+	/** @var EventDispatcherInterface */
+	protected $dispatcher;
+
+	public function __construct(IDBConnection $connection, EventDispatcherInterface $dispatcher) {
 		$this->connection = $connection;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
-	 * @param string $sessionHash
+	 * @param Room $room
+	 * @param string $sessionId
 	 * @param string $displayName
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
-	public function updateName($sessionHash, $displayName) {
+	public function updateName(Room $room, $sessionId, $displayName) {
+		$sessionHash = sha1($sessionId);
 		$result = $this->connection->insertIfNotExist('*PREFIX*talk_guests', [
 			'session_hash' => $sessionHash,
 			'display_name' => $displayName,
 		], ['session_hash']);
 
-		if ($result === 1) {
-			return;
+		if ($result === 0) {
+			$query = $this->connection->getQueryBuilder();
+			$query->update('talk_guests')
+				->set('display_name', $query->createNamedParameter($displayName))
+				->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
+			$query->execute();
 		}
 
-		$query = $this->connection->getQueryBuilder();
-		$query->update('talk_guests')
-			->set('display_name', $query->createNamedParameter($displayName))
-			->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
-		$query->execute();
+		$this->dispatcher->dispatch(self::class . '::updateName', new GenericEvent($room, [
+			'sessionId' => $sessionId,
+			'newName' => $displayName,
+		]));
 	}
 
 	/**

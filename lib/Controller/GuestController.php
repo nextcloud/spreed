@@ -24,7 +24,9 @@
 namespace OCA\Spreed\Controller;
 
 use Doctrine\DBAL\DBALException;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
+use OCA\Spreed\Manager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -39,6 +41,9 @@ class GuestController extends OCSController {
 	/** @var ISession */
 	private $session;
 
+	/** @var Manager */
+	private $roomManager;
+
 	/** @var GuestManager */
 	private $guestManager;
 
@@ -47,17 +52,20 @@ class GuestController extends OCSController {
 	 * @param string $UserId
 	 * @param IRequest $request
 	 * @param ISession $session
+	 * @param Manager $roomManager
 	 * @param GuestManager $guestManager
 	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
 								ISession $session,
+								Manager $roomManager,
 								GuestManager $guestManager) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
 		$this->session = $session;
+		$this->roomManager = $roomManager;
 		$this->guestManager = $guestManager;
 	}
 
@@ -65,23 +73,25 @@ class GuestController extends OCSController {
 	 * @PublicPage
 	 *
 	 *
+	 * @param string $token
 	 * @param string $displayName
 	 * @return DataResponse
 	 */
-	public function setDisplayName($displayName) {
+	public function setDisplayName($token, $displayName) {
 		if ($this->userId) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$sessionId = $this->session->get('spreed-session');
-		$sessionId = $sessionId ? sha1($sessionId) : $sessionId;
 
-		if (!$sessionId) {
+		try {
+			$room = $this->roomManager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
+		} catch (RoomNotFoundException $exception) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		try {
-			$this->guestManager->updateName($sessionId, $displayName);
+			$this->guestManager->updateName($room, $sessionId, $displayName);
 		} catch (DBALException $e) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
