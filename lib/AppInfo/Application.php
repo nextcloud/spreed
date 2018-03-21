@@ -24,6 +24,7 @@ namespace OCA\Spreed\AppInfo;
 use OCA\Spreed\Activity\Hooks;
 use OCA\Spreed\Capabilities;
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Room;
@@ -92,6 +93,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
+		$dispatcher->addListener(GuestManager::class . '::updateName', $listener);
 	}
 
 	protected function getBackendNotifier() {

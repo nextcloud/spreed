@@ -267,10 +267,11 @@ return [
 		],
 		[
 			'name' => 'Guest#setDisplayName',
-			'url' => '/api/{apiVersion}/guest/name',
+			'url' => '/api/{apiVersion}/guest/{token}/name',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 	],

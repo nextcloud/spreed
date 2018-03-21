@@ -334,6 +334,11 @@
 				id: 'participantsTabView'
 			});
 
+			this.signaling.on('usersInRoom', function() {
+				// Also refresh the participant list when the users change
+				this._participants.fetch();
+			}.bind(this));
+
 			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
 				if (active) {
 					this.setRoom(model);
@@ -680,7 +685,7 @@
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
 			this._localStorageModel.on('change:nick', function(model, newDisplayName) {
 				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + 'name',
+					url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + this.token + '/name',
 					type: 'POST',
 					data: {
 						displayName: newDisplayName
@@ -692,7 +697,7 @@
 						self._onChangeGuestName(newDisplayName);
 					}
 				});
-			});
+			}.bind(this));
 
 			this._localStorageModel.fetch();
 		},
@@ -702,9 +707,6 @@
 			avatar.imageplaceholder('?', newDisplayName, 128);
 			avatar.css('background-color', '#b9b9b9');
 
-			console.log('_onChangeGuestName');
-			console.log(this);
-			console.log(this.webrtc);
 			if (OCA.SpreedMe.webrtc) {
 				console.log('_onChangeGuestName.webrtc');
 				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);

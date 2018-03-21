@@ -466,7 +466,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### Set display name
 
 * Method: `POST`
-* Endpoint: `/geust/name`
+* Endpoint: `/guest/{token}/name`
 * Data:
 
     field | type | Description
@@ -476,7 +476,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the guest is not found or has no session
+        + `404 Not Found` When the room is not found or the session does not exist in the room
         + `403 Forbidden` When the user is logged in
         
         
