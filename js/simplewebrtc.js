@@ -18172,8 +18172,6 @@
 				self.emit('remoteVolumeChange', peer, data.volume);
 			}
 		});
-
-		if (this.config.autoRequestMedia) this.startLocalVideo();
 	}
 
 
@@ -18183,13 +18181,6 @@
 		}
 	});
 
-	SimpleWebRTC.prototype.leaveRoom = function () {
-		if (this.roomName) {
-			this.emit('leftRoom', this.roomName);
-			this.roomName = undefined;
-		}
-	};
-
 	SimpleWebRTC.prototype.leaveCall = function () {
 		if (this.roomName) {
 			while (this.webrtc.peers.length) {
@@ -18198,7 +18189,8 @@
 			if (this.getLocalScreen()) {
 				this.stopScreenShare();
 			}
-			this.emit('leftCall', this.roomName);
+			this.emit('leftRoom', this.roomName);
+			this.stopLocalVideo();
 			this.roomName = undefined;
 		}
 	};
@@ -18255,14 +18247,10 @@
 		});
 	};
 
-	SimpleWebRTC.prototype.joinRoom = function (name) {
+	SimpleWebRTC.prototype.joinCall = function (name) {
+		if (this.config.autoRequestMedia) this.startLocalVideo();
 		this.roomName = name;
 		this.emit('joinedRoom', name);
-	};
-
-	SimpleWebRTC.prototype.joinCall = function (name) {
-		this.roomName = name;
-		this.emit('joinedCall', name);
 	};
 
 	SimpleWebRTC.prototype.getEl = function (idOrEl) {
@@ -18275,6 +18263,7 @@
 
 	SimpleWebRTC.prototype.startLocalVideo = function () {
 		var self = this;
+		console.log('startLocalVideo');
 		this.webrtc.startLocalMedia(this.config.media, function (err, stream) {
 			if (err) {
 				self.emit('localMediaError', err);

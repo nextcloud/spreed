@@ -265,8 +265,6 @@
 			return;
 		}
 
-		this._trigger('leaveCall', [token]);
-
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			method: 'DELETE',
