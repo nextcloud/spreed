@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Controller\ChatController;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Http;
@@ -41,19 +42,22 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var string */
 	private $userId;
 
-	/** @var \OCP\IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
 
-	/** @var \OCP\ISession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISession|\PHPUnit_Framework_MockObject_MockObject */
 	private $session;
 
-	/** @var \OCA\Spreed\Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
 
-	/** @var \OCA\Spreed\Chat\ChatManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ChatManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $chatManager;
 
-	/** @var \OCA\Spreed\Room|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var GuestManager|\PHPUnit_Framework_MockObject_MockObject */
+	protected $guestManager;
+
+	/** @var Room|\PHPUnit_Framework_MockObject_MockObject */
 	protected $room;
 
 	/** @var \OCA\Spreed\Controller\ChatController */
@@ -70,6 +74,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->session = $this->createMock(ISession::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->guestManager = $this->createMock(GuestManager::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -91,7 +96,8 @@ class ChatControllerTest extends \Test\TestCase {
 			$this->userManager,
 			$this->session,
 			$this->manager,
-			$this->chatManager
+			$this->chatManager,
+			$this->guestManager
 		);
 	}
 

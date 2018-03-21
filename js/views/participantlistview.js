@@ -31,7 +31,7 @@
 
 	var ITEM_TEMPLATE = '' +
 		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#" data-sessionId="{{sessionId}}">' +
-			'<div class="avatar" data-user-id="{{userId}}" data-displayname="{{displayName}}"></div>' +
+			'<div class="avatar"></div>' +
 			' {{name}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
@@ -117,28 +117,36 @@
 			},
 			templateContext: function() {
 				var canModerate = this.model.get('participantType') !== OCA.SpreedMe.app.OWNER &&       // can not moderate owners
-					this.model.get('userId') !== oc_current_user &&                // can not moderate yourself
+					this.model.get('userId') !== OC.getCurrentUser().uid &&                // can not moderate yourself
 					(OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||   // current user must be owner
-						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR); // or moderator.
+						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR), // or moderator.
+					name = '';
+
+
+				if (this.model.get('userId').length || this.model.get('displayName').length) {
+					name = this.model.get('displayName');
+				} else {
+					name = t('spreed', 'Guest');
+				}
 
 				return {
 					canModerate: canModerate,
-					name: this.model.get('userId').length ? this.model.get('displayName') : t('spreed', 'Guest'),
+					name: name,
 					participantIsUser: this.model.get('participantType') === OCA.SpreedMe.app.USER,
 					participantIsModerator: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR,
 					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER
 				};
 			},
 			onRender: function() {
+				var model = this.model;
 				this.$el.find('.avatar').each(function() {
-					var element = $(this),
-						userId = '' + element.data('user-id'); // Make sure it's a string
+					var $element = $(this);
 
-					if (userId.length) {
-						element.avatar(element.data('user-id'), 32, undefined, false, undefined, element.data('displayname'));
+					if (model.get('participantType') !== OCA.SpreedMe.app.GUEST) {
+						$element.avatar(model.get('userId'), 32, undefined, false, undefined, model.get('displayName'));
 					} else {
-						element.imageplaceholder('?', undefined, 32);
-						element.css('background-color', '#b9b9b9');
+						$element.imageplaceholder('?', model.get('displayName'), 32);
+						$element.css('background-color', '#b9b9b9');
 					}
 				});
 

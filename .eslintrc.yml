@@ -15,9 +15,9 @@ globals:
   t: false
   Backbone: false
   _: false
-  oc_current_user: false
   Clipboard: false
   oc_defaults: false
+  Hashes: false
 
 rules:
   curly: error

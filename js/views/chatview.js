@@ -38,7 +38,11 @@
 		'<div class="newCommentRow comment">' +
 		'    <div class="authorRow">' +
 		'        <div class="avatar" data-username="{{actorId}}"></div>' +
-		'        <div class="author">{{actorDisplayName}}</div>' +
+		'        {{#if actorId}}' +
+		'            <div class="author">{{actorDisplayName}}</div>' +
+		'        {{else}}' +
+		'            <div class="guest-name"></div>' +
+		'        {{/if}}' +
 		'    </div>' +
 		'    <form class="newCommentForm">' +
 		'        <div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>' +
@@ -50,7 +54,7 @@
 	var COMMENT_TEMPLATE =
 		'<li class="comment" data-id="{{id}}">' +
 		'    <div class="authorRow">' +
-		'        <div class="avatar" {{#if actorId}}data-user-id="{{actorId}}"{{/if}} {{#if actorId}}data-displayname="{{actorDisplayName}}"{{/if}}> </div>' +
+		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
@@ -63,6 +67,14 @@
 			return 'chat' + (this._oldestOnTopLayout? ' oldestOnTopLayout': '');
 		},
 
+		ui: {
+			'guestName': 'div.guest-name'
+		},
+
+		regions: {
+			'guestName': '@ui.guestName'
+		},
+
 		events: {
 			'submit .newCommentForm': '_onSubmitComment',
 		},
@@ -72,6 +84,18 @@
 
 			this.listenTo(this.collection, 'reset', this.render);
 			this.listenTo(this.collection, 'add', this._onAddModel);
+
+			this._guestNameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
+				model: this.getOption('guestNameModel'),
+				modelAttribute: 'nick',
+
+				extraClassNames: 'guest-name',
+				labelTagName: 'p',
+				labelPlaceholder: t('spreed', 'You'),
+				inputMaxLength: '20',
+				inputPlaceholder: t('spreed', 'Name'),
+				buttonTitle: t('spreed', 'Rename')
+			});
 		},
 
 		template: Handlebars.compile(TEMPLATE),
@@ -84,18 +108,9 @@
 				this._addCommentTemplate = Handlebars.compile(ADD_COMMENT_TEMPLATE);
 			}
 
-			if (OC.getCurrentUser().uid) {
-				return this._addCommentTemplate(_.extend({
-					actorId: OC.getCurrentUser().uid,
-					actorDisplayName: OC.getCurrentUser().displayName,
-					newMessagePlaceholder: t('spreed', 'New message …'),
-					submitText: t('spreed', 'Send')
-				}, params));
-			}
-
 			return this._addCommentTemplate(_.extend({
-				actorId: '',
-				actorDisplayName: t('spreed', 'You'),
+				actorId: OC.getCurrentUser().uid,
+				actorDisplayName: OC.getCurrentUser().displayName,
 				newMessagePlaceholder: t('spreed', 'New message …'),
 				submitText: t('spreed', 'Send')
 			}, params));
@@ -106,6 +121,10 @@
 				this._commentTemplate = Handlebars.compile(COMMENT_TEMPLATE);
 			}
 			return this._commentTemplate(params);
+		},
+
+		onBeforeRender: function() {
+			this.getRegion('guestName').reset({ preventDestroy: true, allowMissingEl: true });
 		},
 
 		onRender: function() {
@@ -122,8 +141,9 @@
 			if (OC.getCurrentUser().uid) {
 				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
 			} else {
-				this.$el.find('.avatar').imageplaceholder('?', undefined, 32);
+				this.$el.find('.avatar').imageplaceholder('?', this.getOption('guestNameModel').get('nick'), 128);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
+				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
 
 			this.delegateEvents();
@@ -160,8 +180,8 @@
 				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
-			if (commentModel.attributes.actorType === 'guests') {
-				// FIXME get guest name from WebRTC or something like that
+			if (commentModel.get('actorType') === 'guests' &&
+				actorDisplayName === null) {
 				actorDisplayName = t('spreed', 'Guest');
 			}
 			if (actorDisplayName == null) {
@@ -319,7 +339,7 @@
 				if (model.get('actorType') === 'users') {
 					$this.avatar($this.data('user-id'), 32, undefined, false, undefined, $this.data('displayname'));
 				} else {
-					$this.imageplaceholder('?', undefined, 32);
+					$this.imageplaceholder('?', model.get('actorDisplayName'), 32);
 					$this.css('background-color', '#b9b9b9');
 				}
 			});
@@ -380,7 +400,6 @@
 		_onSubmitComment: function(e) {
 			var self = this;
 			var $form = $(e.target);
-			var comment = null;
 			var $submit = $form.find('.submit');
 			var $loading = $form.find('.submitLoading');
 			var $commentField = $form.find('.message');
@@ -395,11 +414,19 @@
 			$loading.removeClass('hidden');
 
 			message = this._commentBodyHTML2Plain($commentField);
-
-			comment = new OCA.SpreedMe.Models.ChatMessage({
+			var data = {
 				token: this.collection.token,
 				message: message
-			});
+			};
+
+			if (!OC.getCurrentUser().uid) {
+				var guestNick = OCA.SpreedMe.app._localStorageModel.get('nick');
+				if (guestNick) {
+					data.actorDisplayName = guestNick;
+				}
+			}
+
+			var comment = new OCA.SpreedMe.Models.ChatMessage(data);
 			comment.save({}, {
 				success: function(model) {
 					self._onSubmitSuccess(model, $form);
