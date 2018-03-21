@@ -65,8 +65,8 @@
 		 * - Online status
 		 * - Alphabetic
 		 *
-		 * @param modelA
-		 * @param modelB
+		 * @param {OCA.SpreedMe.Models.Participant} modelA
+		 * @param {OCA.SpreedMe.Models.Participant} modelB
 		 * @returns {*}
 		 */
 		comparator: function(modelA, modelB) {

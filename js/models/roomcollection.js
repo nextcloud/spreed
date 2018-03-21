@@ -33,7 +33,7 @@
 		},
 		url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 		/**
-		 * @param result
+		 * @param {Array} result
 		 * @returns {Array}
 		 */
 		parse: function(result) {

@@ -162,7 +162,7 @@
 		 * the tooltip elements will be appended as siblings of the element for
 		 * which they are shown.
 		 *
-		 * @param jQuery tooltipContainer the element to append the tooltip
+		 * @param {jQuery} tooltipContainer the element to append the tooltip
 		 *        elements to
 		 */
 		setTooltipContainer: function(tooltipContainer) {
