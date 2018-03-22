@@ -242,14 +242,6 @@
 				}
 			});
 
-			var screensharingStopped = function() {
-				console.log("Screensharing now stopped");
-				$('#screensharing-button').attr('data-original-title', t('spreed', 'Enable screensharing'))
-					.addClass('screensharing-disabled icon-screen-off')
-					.removeClass('icon-screen');
-				$('#screensharing-menu').toggleClass('open', false);
-			};
-
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (!webrtc.capabilities.supportScreenSharing) {
@@ -319,7 +311,6 @@
 
 			$("#stop-screen-button").on('click', function() {
 				OCA.SpreedMe.webrtc.stopScreenShare();
-				screensharingStopped();
 			});
 
 			$(document).keyup(this._onKeyUp.bind(this));
@@ -749,6 +740,12 @@
 			OCA.SpreedMe.webrtc.pauseVideo();
 			this.hideVideo();
 			this.videoDisabled = true;
+		},
+		disableScreensharingButton: function() {
+			$('#screensharing-button').attr('data-original-title', t('spreed', 'Enable screensharing'))
+					.addClass('screensharing-disabled icon-screen-off')
+					.removeClass('icon-screen');
+			$('#screensharing-menu').toggleClass('open', false);
 		},
 		initGuestName: function() {
 			var self = this;
