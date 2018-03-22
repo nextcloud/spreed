@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>3.1.0</version>
+	<version>3.1.90</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -49,6 +49,8 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	<background-jobs>
 		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
+		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
+		<job>OCA\Spreed\BackgroundJob\ResetInCallFlags</job>
 	</background-jobs>
 
 	<settings>
