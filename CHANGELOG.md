@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.0 – 2018-MM-DD
+### Added
+- Shortcuts have been added when a call is active: (a)udio, (v)ideo, (c)hat and (p)articipant list
+  [#730](https://github.com/nextcloud/spreed/pull/730)
+- Guest names are now handled better in chat and the participant list
+  [#733](https://github.com/nextcloud/spreed/pull/733)
+
+### Changed
+- Chat does now not require Media permissions anymore
+  [#711](https://github.com/nextcloud/spreed/pull/711)
+- Leaving a call will free up the Media permissions
+  [#735](https://github.com/nextcloud/spreed/pull/735)
+
+
+### Fixed
+- Correctly catch the input on the chat in firefox (instead of writing to the placeholder)
+  [#737](https://github.com/nextcloud/spreed/pull/737)
+- Delete rooms when the last logged in user leaves
+  [#727](https://github.com/nextcloud/spreed/pull/727)
+- Various layout fixes with videos and screensharing
+  [#702](https://github.com/nextcloud/spreed/pull/702)
+  [#712](https://github.com/nextcloud/spreed/pull/712)
+  [#713](https://github.com/nextcloud/spreed/pull/713)
+- Fix issues with users that have a numerical name or id
+  [#694](https://github.com/nextcloud/spreed/pull/694)
+- Fix contacts menu entry when no user was found
+  [#686](https://github.com/nextcloud/spreed/pull/686)
+
 ## 3.1.0 – 2018-02-14
 ### Added
 - Finish support for go-based external signaling backend
