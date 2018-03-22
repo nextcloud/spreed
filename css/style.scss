@@ -321,15 +321,11 @@ video {
 	opacity: .8 !important;
 }
 
-.participants-1 #emptycontent {
+.participants-1:not(.screensharing) #emptycontent {
 	display: block !important;
 }
 
 .participants-1 #video-fullscreen {
-	display: none;
-}
-
-.participants-1 #screensharing-button {
 	display: none;
 }
 
