@@ -195,6 +195,7 @@
 
 			//If user is in that room, it should leave that room first.
 			if (this.model.get('active')) {
+				OCA.SpreedMe.app._chatView.$el.detach();
 				OCA.SpreedMe.app.connection.leaveCurrentCall(true);
 				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
