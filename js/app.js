@@ -319,7 +319,50 @@
 				OCA.SpreedMe.webrtc.stopScreenShare();
 				screensharingStopped();
 			});
+
+			$(document).keyup(this._onKeyUp.bind(this));
 		},
+
+		_onKeyUp: function(event) {
+			// Define which objects to check for the event properties.
+			var key = event.which;
+
+			// Trigger the event only if no input or textarea is focused
+			// and the CTRL key is not pressed
+			if ($('input:focus').length === 0 &&
+				$('textarea:focus').length === 0 &&
+				!event.ctrlKey) {
+
+				// Actual shortcut handling
+				switch (key) {
+					case 86: // 'v'
+						event.preventDefault();
+						if (this.videoDisabled) {
+							this.enableVideo();
+						} else {
+							this.disableVideo();
+						}
+						break;
+					case 65: // 'a'
+						event.preventDefault();
+						if (this.audioDisabled) {
+							this.enableAudio();
+						} else {
+							this.disableAudio();
+						}
+						break;
+					case 67: // 'c'
+						event.preventDefault();
+						this._sidebarView.selectTab('chat');
+						break;
+					case 80: // 'p'
+						event.preventDefault();
+						this._sidebarView.selectTab('participants');
+						break;
+				}
+			}
+		},
+
 		_showRoomList: function() {
 			this._roomsView = new OCA.SpreedMe.Views.RoomListView({
 				el: '#app-navigation ul',
@@ -614,6 +657,10 @@
 			}
 		},
 		enableAudio: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				return;
+			}
+
 			OCA.SpreedMe.webrtc.unmute();
 			$('#mute').attr('data-original-title', t('spreed', 'Mute audio'))
 				.removeClass('audio-disabled icon-audio-off')
@@ -622,6 +669,10 @@
 			OCA.SpreedMe.app.audioDisabled = false;
 		},
 		disableAudio: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				return;
+			}
+
 			OCA.SpreedMe.webrtc.mute();
 			$('#mute').attr('data-original-title', t('spreed', 'Enable audio'))
 				.addClass('audio-disabled icon-audio-off')
@@ -630,6 +681,10 @@
 			OCA.SpreedMe.app.audioDisabled = true;
 		},
 		enableVideo: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				return;
+			}
+
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
@@ -647,6 +702,10 @@
 			OCA.SpreedMe.app.videoDisabled = false;
 		},
 		hideVideo: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				return;
+			}
+
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
