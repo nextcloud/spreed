@@ -117,7 +117,7 @@
 		 * automatically stopped. Note, however, that "receiveMessages" must be
 		 * explicitly called if needed.
 		 *
-		 * @param string|null token the token of the room.
+		 * @param {?string} token the token of the room.
 		 */
 		setRoomToken: function(token) {
 			this.stopReceivingMessages();
@@ -135,6 +135,10 @@
 			}
 
 			this.reset();
+		},
+
+		updateGuestName: function(sessionId, newDisplayName) {
+			this.invoke('updateGuestName', {sessionId: sessionId, displayName: newDisplayName});
 		},
 
 		receiveMessages: function() {

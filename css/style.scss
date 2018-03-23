@@ -4,7 +4,7 @@
 
 .app-spreed #app-content,
 #body-public #app-content {
-    overflow: hidden;
+	overflow: hidden;
 }
 
 .app-spreed #app-navigation {
@@ -40,7 +40,7 @@
 }
 #oca-spreedme-add-room .select2-container .select2-choice,
 .oca-spreedme-add-person .select2-container .select2-choice {
-    border: none;
+	border: none;
 }
 #oca-spreedme-add-room .select2-arrow,
 .oca-spreedme-add-person .select2-arrow {
@@ -98,29 +98,24 @@
 }
 
 .icon-clippy.public-room {
-    background-size: 16px;
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    padding: 16px;
+	background-size: 16px;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	padding: 16px;
 }
 
 .icon-delete.public-room {
-    background-size: 16px;
-    position: absolute;
-    right: 0;
-    top: 4px;
-    padding: 16px;
+	background-size: 16px;
+	position: absolute;
+	right: 0;
+	top: 4px;
+	padding: 16px;
 	opacity: .5;
 }
 
-.editable-text-label input {
-	margin-top: 0 !important;
-	margin-bottom: 4px !important;
-}
-
 .icon-clippy.public-room {
-    background-position-y: 8px !important;
+	background-position-y: 8px !important;
 }
 
 /**
@@ -189,20 +184,32 @@
 	align-items: flex-end;
 }
 
-.videoContainer {
+.videoContainer,
+#app-content.screensharing .videoContainer {
 	position: relative;
 	width: 100%;
-    padding: 0 2%;
+	padding: 0 2%;
 	-webkit-box-flex: auto;
 	-moz-box-flex: auto;
 	-webkit-flex: auto;
 	-ms-flex: auto;
 	flex: auto;
 	z-index: 2;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+}
+
+.videoContainer.hidden,
+#app-content.screensharing .videoContainer.hidden {
+	display: none;
+}
+
+#app-content.screensharing .videoContainer {
+	max-height: 200px;
 }
 
 video {
-	width: 100%;
 	z-index: 0;
 	max-height: 100%;
 	/* default filter for slightly better look */
@@ -211,23 +218,28 @@ video {
 	vertical-align: top; /* fix white line below video */
 }
 
+#app-content.screensharing .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0;
+}
+
 #screens video {
+	width: 100%;
 	-webkit-filter: none;
 	filter: none;
 }
 
-#videos .videoContainer video {
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-	background-color: #000;
+#videos .videoContainer:not(.promoted) video {
+	max-height: 200px;
+	max-width: 100%;
+	background-color: transparent;
+	border-radius: $border-radius $border-radius 0 0;
+	box-shadow: 0 0 15px $color-box-shadow;
 }
-#videos .videoContainer.promoted video {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-}
-#videos .videoContainer video,
+
 #videos .videoContainer .avatar {
-	box-shadow: 0 0 15px rgba(0, 0, 0, .5);
+	box-shadow: 0 0 15px $color-box-shadow;
 }
 
 .participants-1 #videos .videoContainer video,
@@ -300,19 +312,19 @@ video {
 }
 
 #screensharing-menu {
-    bottom: 44px;
-    left: calc(50% - 40px);
-    right: initial;
-    color: initial;
-    text-shadow: initial;
-    font-size: 13px;
+	bottom: 44px;
+	left: calc(50% - 40px);
+	right: initial;
+	color: initial;
+	text-shadow: initial;
+	font-size: 13px;
 }
 
 #screensharing-menu.app-navigation-entry-menu:after {
-    top: 100%;
-    left: calc(50% - 5px);
-    border-top-color: #fff;
-    border-bottom-color: transparent;
+	top: 100%;
+	left: calc(50% - 5px);
+	border-top-color: #fff;
+	border-bottom-color: transparent;
 }
 
 /* big speaker video */
@@ -343,6 +355,7 @@ video {
 	position: absolute;
 	width: 33%;
 	min-width: 200px;
+	overflow:visible;
 	right: 0;
 	bottom: 0;
 	top: initial;
@@ -358,6 +371,7 @@ video {
 .participants-1 .videoView video,
 .participants-2 .videoView video {
 	position: absolute;
+	max-height: 100% !important;
 	bottom: 0;
 	border-top-right-radius: 3px;
 }
@@ -386,12 +400,6 @@ video {
 			opacity: 1;
 		}
 	}
-}
-
-#app-content.screensharing .videoContainer video {
-	max-height: 200px;
-	background-color: transparent;
-	box-shadow: 0;
 }
 
 #app-content.screensharing #screens {
@@ -645,7 +653,7 @@ video {
 
 .participantWithList li > a,
 #app-navigation li > a {
-    padding-right: 44px !important;
+	padding-right: 44px !important;
 }
 #app-navigation .utils {
 	padding: 0;
@@ -659,7 +667,7 @@ video {
 
 .bubble,
 #app-navigation .app-navigation-entry-menu {
-    right: 4px;
+	right: 4px;
 }
 
 #app-navigation .app-navigation-entry-menu li {
@@ -890,8 +898,8 @@ video {
 /**
  * Sidebar details view
  */
-
-.detailCallInfoContainer {
+.detailCallInfoContainer,
+.authorRow {
 	.room-name {
 		display: inline-block;
 	}
@@ -900,11 +908,20 @@ video {
 		padding: 9px 0;
 	}
 	.editable-text-label {
-		.edit-button {
-			display: none;
+		.label-wrapper {
+			display: flex;
+			align-items: center;
+			.edit-button {
+				margin-left: 5px;
+				display: none;
+			}
+			&:hover .edit-button {
+				display: block;
+			}
 		}
-		&:hover .edit-button {
-			display: block;
+		.input-wrapper {
+			display: flex;
+			align-items: center;
 		}
 	}
 	.share-link-options {
@@ -924,7 +941,6 @@ video {
 		}
 	}
 }
-
 
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the

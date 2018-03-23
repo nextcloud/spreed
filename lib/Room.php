@@ -766,10 +766,11 @@ class Room {
 	}
 
 	/**
+	 * @param bool $ignoreGuests
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return int
 	 */
-	public function getNumberOfParticipants($lastPing = 0) {
+	public function getNumberOfParticipants($ignoreGuests = true, $lastPing = 0) {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_participants')
 			->from('talk_participants')
@@ -777,6 +778,13 @@ class Room {
 
 		if ($lastPing > 0) {
 			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
+		}
+
+		if ($ignoreGuests) {
+			$query->andWhere($query->expr()->notIn('participant_type', $query->createNamedParameter([
+				Participant::GUEST,
+				Participant::USER_SELF_JOINED,
+			], IQueryBuilder::PARAM_INT_ARRAY)));
 		}
 
 		$result = $query->execute();

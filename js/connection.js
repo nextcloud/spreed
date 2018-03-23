@@ -4,29 +4,34 @@
 (function(OCA, OC, $) {
 	'use strict';
 
-	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 
-	var signaling;
+	var roomsChannel = Backbone.Radio.channel('rooms');
 
-	function initCalls(signaling_connection) {
-		signaling = signaling_connection;
 
+	function Connection(app) {
+		this.app = app;
+
+		// Todo this should not be here
 		var selectParticipants = $('#select-participants');
 		selectParticipants.keyup(function () {
 			selectParticipants.tooltip('hide');
 			selectParticipants.removeClass('error');
 		});
 
-		signaling.on('roomChanged', function() {
-			OCA.SpreedMe.Calls.leaveCurrentCall(false);
-		});
+		this.app.signaling.on('roomChanged', function() {
+			this.leaveCurrentCall(false);
+		}.bind(this));
 
-		OCA.SpreedMe.Calls.leaveAllCalls();
+		// Todo this blocks multi room support
+		this.leaveAllCalls();
 	}
 
-	var roomsChannel = Backbone.Radio.channel('rooms');
+	OCA.Talk.Connection = Connection;
+	OCA.Talk.Connection.prototype = {
+		/** @property {OCA.Talk.Application} app */
+		app: null,
 
-	OCA.SpreedMe.Calls = {
 		showCamera: function() {
 			$('.videoView').removeClass('hidden');
 		},
@@ -52,14 +57,15 @@
 				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
-		createGroupVideoCall: function(groupId) {
+		createGroupVideoCall: function(groupId, roomName) {
 			console.log("Creating group video call", groupId);
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 				type: 'POST',
 				data: {
 					invite: groupId,
-					roomType: 2
+					roomType: 2,
+					roomName: roomName
 				},
 				beforeSend: function (request) {
 					request.setRequestHeader('Accept', 'application/json');
@@ -83,59 +89,63 @@
 			});
 		},
 		joinRoom: function(token) {
-			if (signaling.currentRoomToken === token) {
+			if (this.app.signaling.currentRoomToken === token) {
 				return;
 			}
 
-			OCA.SpreedMe.webrtc.leaveRoom();
-			OCA.SpreedMe.webrtc.joinRoom(token);
+			this.app.signaling.leaveCurrentRoom();
+			this.app.signaling.joinRoom(token);
+			this.app.syncAndSetActiveRoom(token);
 		},
 		joinCall: function(token) {
-			if (signaling.currentCallToken === token) {
+			if (this.app.signaling.currentCallToken === token) {
 				return;
 			}
 
-			$('#emptycontent').hide();
-			$('.videoView').addClass('hidden');
-			$('#app-content').addClass('icon-loading');
+			this.app.signaling.leaveCurrentCall();
+			this.app.signaling.joinCall(token);
+			this.app.signaling.syncRooms();
 
-			OCA.SpreedMe.webrtc.leaveCall();
-			OCA.SpreedMe.webrtc.joinCall(token);
+			this.app.setupWebRTC();
+
+			$('#emptycontent').hide();
 		},
-		leaveCall: function() {
+		leaveCall: function(token) {
+			if (this.app.signaling.currentCallToken !== token) {
+				return;
+			}
+
+			this.app.signaling.leaveCurrentCall();
+			this.app.signaling.syncRooms();
 			$('#app-content').removeClass('incall');
-			OCA.SpreedMe.webrtc.leaveCall();
 		},
 		leaveCurrentCall: function(deleter) {
-			OCA.SpreedMe.webrtc.leaveRoom();
+			this.app.signaling.leaveCall();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
 			roomsChannel.trigger('leaveCurrentCall');
 		},
 		leaveAllCalls: function() {
-			if (signaling) {
+			if (this.app.signaling) {
 				// We currently only support a single active call.
-				signaling.leaveCurrentCall();
-				signaling.leaveCurrentRoom();
+				this.app.signaling.leaveCurrentCall();
+				this.app.signaling.leaveCurrentRoom();
 			}
 		},
 		showRoomDeletedMessage: function(deleter) {
 			if (deleter) {
-				OCA.SpreedMe.app.setEmptyContentMessage(
+				this.app.setEmptyContentMessage(
 					'icon-video',
-					t('spreed', 'Looking great today! :)'),
-					t('spreed', 'Time to call your friends')
+					t('spreed', 'Join a conversation or start a new one')
 				);
 			} else {
-				OCA.SpreedMe.app.setEmptyContentMessage(
+				this.app.setEmptyContentMessage(
 					'icon-video-off',
 					t('spreed', 'This call has ended')
 				);
 			}
 		}
 	};
-
-	OCA.SpreedMe.initCalls = initCalls;
 
 })(OCA, OC, $);

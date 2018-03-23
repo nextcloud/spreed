@@ -6,11 +6,11 @@
 - [Room management](#room-management)
   * [Creating a new room](#creating-a-new-room)
   * [Get user´s rooms](#get-user-s-rooms)
-  * [Get single room (also for guests)](#get-single-room--also-for-guests-)
+  * [Get single room (also for guests)](#get-single-room-also-for-guests)
   * [Rename a room](#rename-a-room)
   * [Delete a room](#delete-a-room)
-  * [Allow guests in a room (public room)](#allow-guests-in-a-room--public-room-)
-  * [Disallow guests in a room (group room)](#disallow-guests-in-a-room--group-room-)
+  * [Allow guests in a room (public room)](#allow-guests-in-a-room-public-room)
+  * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
 - [Participant management](#participant-management)
   * [Get list of participants in a room](#get-list-of-participants-in-a-room)
   * [Add a participant to a room](#add-a-participant-to-a-room)
@@ -22,7 +22,10 @@
   * [Get list of connected participants](#get-list-of-connected-participants)
   * [Join a call](#join-a-call)
   * [Send ping to keep the call alive](#send-ping-to-keep-the-call-alive)
-  * [Leave a call (but staying in the room for future calls)](#leave-a-call--but-staying-in-the-room-for-future-calls-)
+  * [Leave a call (but staying in the room for future calls)](#leave-a-call-but-staying-in-the-room-for-future-calls)
+- [Chat](#chat)
+  * [Receive chat messages of a room](#receive-chat-messages-of-a-room)
+  * [Sending a new chat message](#sending-a-new-chat-message)
 - [Signaling](#signaling)
 
 
@@ -55,8 +58,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `roomType` | int |
-    `invite` | string | user id (`roomType = 1`), group id (`roomType = 2`)
-    `roomName` | string | room name (Only available for `roomType = 3`)
+    `invite` | string | user id (`roomType = 1`), group id (`roomType = 2` - optional)
+    `roomName` | string | room name (Not available for `roomType = 1`)
 
 * Response:
     - Header:
@@ -92,8 +95,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `name` | string | Name of the room (can also be empty)
         `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
         `participantType` | int | Permissions level of the current user
+        `participantInCall` | bool | Flag if the current user is in the call
+        `count` | int | Number of active users
+        `numGuests` | int | Number of active guests
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
+        `hasPassword` | bool | Flag if the room has a password
+        `hasCall` | bool | Flag if the room has an active call
 
 ### Get single room (also for guests)
 
@@ -406,6 +414,72 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `404 Not Found` When the room could not be found for the participant
 
+## Chat
+
+### Receive chat messages of a room
+
+* Method: `GET`
+* Endpoint: `/chat/{token}`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `offset` | int | Ignores the first N messages
+    `notOlderThanTimestamp` | int | Timestamp in seconds and UTC time zone
+    `timeout` | int | Number of seconds to wait for new messages (30 by default, 60 at most)
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+    - Data:
+        Array of messages, each message has at least:
+
+        field | type | Description
+        ------|------|------------
+        `id` | int | ID of the comment
+        `actorType` | string | `guests` or `users`
+        `actorId` | string | User id of the message author
+        `actorDisplayName` | string | Display name of the message author
+        `timestamp` | int | Timestamp in seconds and UTC time zone
+        `message` | string | Message in plain text
+
+### Sending a new chat message
+
+* Method: `POST`
+* Endpoint: `/chat/{token}`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `message` | string | The message the user wants to say
+    `actorDisplayName` | string | Guest display name (ignored for logged in users)
+
+* Response:
+    - Header:
+        + `201 Created`
+        + `404 Not Found` When the room could not be found for the participant
+        
+## Guests
+
+### Set display name
+
+* Method: `POST`
+* Endpoint: `/guest/{token}/name`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `displayName` | string | The new display name
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room is not found or the session does not exist in the room
+        + `403 Forbidden` When the user is logged in
+        
+        
 ## Signaling
 
 See the [Draft](https://github.com/nextcloud/spreed/wiki/Signaling-API) in the wiki…

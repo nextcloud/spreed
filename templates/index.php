@@ -13,6 +13,7 @@ script(
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'vendor/jshashes/hashes.min',
 		'models/chatmessage',
 		'models/chatmessagecollection',
 		'models/room',
@@ -30,7 +31,7 @@ script(
 		'simplewebrtc',
 		'webrtc',
 		'signaling',
-		'calls',
+		'connection',
 		'app',
 		'init',
 	]
@@ -91,8 +92,8 @@ script(
 
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-video"></div>
-			<h2><?php p($l->t('Looking great today! :)')) ?></h2>
-			<p class="uploadmessage"><?php p($l->t('Time to call your friends')) ?></p>
+			<h2><?php p($l->t('Join a conversation or start a new one')) ?></h2>
+			<p class="uploadmessage"></p>
 			<div id="shareRoomContainer" class="" style="display: inline-flex">
 				<input id="shareRoomInput" class="share-room-input hidden" readonly="readonly" type="text"/>
 				<div id="shareRoomClipboardButton" class="shareRoomClipboard icon-clippy hidden" data-clipboard-target="#shareRoomInput"></div>

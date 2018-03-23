@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Tests\Unit;
 
 use OCA\Spreed\Capabilities;
+use OCP\Capabilities\IPublicCapability;
 use Test\TestCase;
 
 class CapabilitiesTest extends TestCase {
@@ -31,12 +32,15 @@ class CapabilitiesTest extends TestCase {
 	public function testGetCapabilities() {
 		$capabilities = new Capabilities();
 
+		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
 			'spreed' => [
 				'features' => [
 					'audio',
 					'video',
 					'chat',
+					'guest-signaling',
+					'empty-group-room',
 				],
 			],
 		], $capabilities->getCapabilities());

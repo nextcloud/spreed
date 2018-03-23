@@ -12,6 +12,7 @@ var spreedPeerConnectionTable = [];
 	OCA.SpreedMe = OCA.SpreedMe || {};
 
 	var previousUsersInRoom = [];
+	var usersInCallMapping = {};
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -110,59 +111,92 @@ var spreedPeerConnectionTable = [];
 		updateParticipantsUI(previousUsersInRoom.length + 1);
 	}
 
-	function initWebRTC() {
-		'use strict';
+	function usersInCallChanged(users) {
+		// The passed list are the users that are currently in the room,
+		// i.e. that are in the call and should call each other.
+		var currentSessionId = webrtc.connection.getSessionid();
+		var currentUsersInRoom = [];
+		var userMapping = {};
+		var selfInCall = false;
+		var sessionId;
+		for (sessionId in users) {
+			if (!users.hasOwnProperty(sessionId)) {
+				continue;
+			}
+			var user = users[sessionId];
+			if (!user.inCall) {
+				continue;
+			}
+
+			if (sessionId === currentSessionId) {
+				selfInCall = true;
+				continue;
+			}
+
+			currentUsersInRoom.push(sessionId);
+			userMapping[sessionId] = user;
+		}
+
+		if (!selfInCall) {
+			// Own session is no longer in the call, disconnect from all others.
+			usersChanged([], previousUsersInRoom);
+			return;
+		}
+
+		var newSessionIds = currentUsersInRoom.diff(previousUsersInRoom);
+		var disconnectedSessionIds = previousUsersInRoom.diff(currentUsersInRoom);
+		var newUsers = [];
+		newSessionIds.forEach(function(sessionId) {
+			newUsers.push(userMapping[sessionId]);
+		});
+		if (newUsers.length || disconnectedSessionIds.length) {
+			usersChanged(newUsers, disconnectedSessionIds);
+		}
+	}
+
+	/**
+	 * @param {OCA.Talk.Application} app
+	 */
+	function initWebRTC(app) {
 		Array.prototype.diff = function(a) {
 			return this.filter(function(i) {
 				return a.indexOf(i) < 0;
 			});
 		};
 
-		var signaling = OCA.SpreedMe.createSignalingConnection();
-		signaling.on('usersJoined', function(users) {
-			usersChanged(users, []);
-		});
-		signaling.on('usersLeft', function(users) {
+		app.signaling.on('usersLeft', function(users) {
+			users.forEach(function(user) {
+				delete usersInCallMapping[user];
+			});
 			usersChanged([], users);
 		});
-		signaling.on('usersInRoom', function(users) {
-			// The passed list are the users that are currently in the room,
-			// i.e. that are in the call and should call each other.
-			var currentSessionId = webrtc.connection.getSessionid();
-			var currentUsersInRoom = [];
-			var userMapping = {};
-			var selfInCall = false;
+		app.signaling.on('usersChanged', function(users) {
 			users.forEach(function(user) {
-				if (!user['inCall']) {
-					return;
-				}
-
-				var sessionId = user['sessionId'] || user.sessionid;
-				if (sessionId === currentSessionId) {
-					selfInCall = true;
-					return;
-				}
-
-				currentUsersInRoom.push(sessionId);
-				userMapping[sessionId] = user;
+				var sessionId = user.sessionId || user.sessionid;
+				usersInCallMapping[sessionId] = user;
 			});
-
-			if (!selfInCall) {
-				return;
-			}
-
-			var newSessionIds = currentUsersInRoom.diff(previousUsersInRoom);
-			var disconnectedSessionIds = previousUsersInRoom.diff(currentUsersInRoom);
-			var newUsers = [];
-			newSessionIds.forEach(function(sessionId) {
-				newUsers.push(userMapping[sessionId]);
-			});
-			if (newUsers.length || disconnectedSessionIds.length) {
-				usersChanged(newUsers, disconnectedSessionIds);
-			}
+			usersInCallChanged(usersInCallMapping);
 		});
+		app.signaling.on('usersInRoom', function(users) {
+			usersInCallMapping = {};
+			users.forEach(function(user) {
+				var sessionId = user.sessionId || user.sessionid;
+				usersInCallMapping[sessionId] = user;
+			});
+			usersInCallChanged(usersInCallMapping);
+		});
+		app.signaling.on('leaveCall', function () {
+			webrtc.leaveCall();
+		});
+		app.signaling.on('joinCall', function (token) {
+			app.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'Waiting for camera and microphone permissions'),
+				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
+			);
 
-		var nick = OC.getCurrentUser()['displayName'];
+			webrtc.joinCall(token);
+		});
 
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
@@ -179,9 +213,14 @@ var spreedPeerConnectionTable = [];
 			autoAdjustMic: false,
 			audioFallback: true,
 			detectSpeakingEvents: true,
-			connection: signaling,
+			connection: app.signaling,
 			enableDataChannels: true,
-			nick: nick
+			nick: OC.getCurrentUser().displayName
+		});
+
+
+		webrtc.on('localScreenStopped', function() {
+			app.screensharingStopped();
 		});
 
 		OCA.SpreedMe.webrtc = webrtc;
@@ -599,7 +638,8 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
-			OCA.SpreedMe.app.startSpreed(configuration, signaling);
+			console.log('localMediaStarted');
+			app.startLocalMedia(configuration);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
@@ -611,7 +651,6 @@ var spreedPeerConnectionTable = [];
 					messageAdditional = t('spreed', 'Please adjust your configuration');
 				} else {
 					message = t('spreed', 'Access to microphone & camera was denied');
-					$('#emptycontent p').hide();
 				}
 			} else if(!OCA.SpreedMe.webrtc.capabilities.support) {
 				console.log('WebRTC not supported');
@@ -623,44 +662,21 @@ var spreedPeerConnectionTable = [];
 				console.log('Error while accessing microphone & camera: ', error.message || error.name);
 			}
 
-			OCA.SpreedMe.app.setEmptyContentMessage(
+			app.setEmptyContentMessage(
 				'icon-video-off',
 				message,
 				messageAdditional
 			);
-
-			// Hide rooms sidebar
-			$('#app-navigation').hide();
 		});
 
 		if(!OCA.SpreedMe.webrtc.capabilities.support) {
 			console.log('WebRTC not supported');
-			var message, messageAdditional;
-
-			message = t('spreed', 'WebRTC is not supported in your browser :-/');
-			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
-
 			OCA.SpreedMe.app.setEmptyContentMessage(
 				'icon-video-off',
-				message,
-				messageAdditional
+				t('spreed', 'WebRTC is not supported in your browser :-/'),
+				t('spreed', 'Please use a different browser like Firefox or Chrome')
 			);
 		}
-
-		OCA.SpreedMe.webrtc.on('joinedRoom', function(name) {
-			OCA.SpreedMe.app.syncAndSetActiveRoom(name);
-		});
-
-		OCA.SpreedMe.webrtc.on('joinedCall', function() {
-			OCA.SpreedMe.app.syncRooms();
-
-			$('#app-content').removeClass('icon-loading');
-			$('.videoView').removeClass('hidden');
-		});
-
-		OCA.SpreedMe.webrtc.on('leftCall', function() {
-			OCA.SpreedMe.app.syncRooms();
-		});
 
 		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
 			console.log('%s datachannel is open', channel.label);
@@ -682,6 +698,7 @@ var spreedPeerConnectionTable = [];
 					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 				} else if (data.type === 'nickChanged') {
 					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
+					app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
 				}
 			} else if (label === 'hark') {
 				// Ignore messages from hark datachannel
@@ -707,16 +724,10 @@ var spreedPeerConnectionTable = [];
 				if (userId && userId.length) {
 					avatar.avatar(userId, 128);
 					nameIndicator.text(peer.nick);
-				} else if (peer.nick) {
-					avatar.imageplaceholder(peer.nick, undefined, 128);
-					nameIndicator.text(peer.nick);
-				} else if (guestName && guestName.length > 0) {
-					avatar.imageplaceholder(guestName, undefined, 128);
-					nameIndicator.text(guestName);
 				} else {
-					avatar.imageplaceholder('?', undefined, 128);
+					avatar.imageplaceholder('?', peer.nick || guestName, 128);
 					avatar.css('background-color', '#b9b9b9');
-					nameIndicator.text(t('spreed', 'Guest'));
+					nameIndicator.text(peer.nick || guestName || t('spreed', 'Guest'));
 				}
 
 				$(videoContainer).prepend(video);
@@ -743,6 +754,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'speaking');
 			$('#localVideoContainer').addClass('speaking');
 		});
+
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'stoppedSpeaking');
 			$('#localVideoContainer').removeClass('speaking');
@@ -813,7 +825,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
 
 			screenSharingActive = true;
-			$('#app-content').attr('class', '').addClass('screensharing');
+			$('#app-content').addClass('screensharing');
 
 			var screens = document.getElementById('screens');
 			if (screens) {
@@ -880,16 +892,14 @@ var spreedPeerConnectionTable = [];
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
 			if (!data.name) {
-				videoNameIndicator.text(t('spreed', 'Guest'));
-				videoAvatar.imageplaceholder('?', undefined, 128);
-				videoAvatar.css('background-color', '#b9b9b9');
 				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
-				videoNameIndicator.text(data.name);
-				videoAvatar.imageplaceholder(data.name, undefined, 128);
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
 				guestNamesTable[data.id] = data.name;
 			}
+			videoNameIndicator.text(data.name || t('spreed', 'Guest'));
+			videoAvatar.imageplaceholder('?', data.name, 128);
+			videoAvatar.css('background-color', '#b9b9b9');
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);

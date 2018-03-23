@@ -126,8 +126,8 @@
 		 * priorities; if the priority is the same as one or more of the current
 		 * tab headers the new tab header goes after the last of them.
 		 *
-		 * @param int priority the priority to get its insertion index.
-		 * @return int the insertion index.
+		 * @param {int} priority the priority to get its insertion index.
+		 * @return {int} the insertion index.
 		 */
 		_getIndexForTabHeaderPriority: function(priority) {
 			// _.map creates an array, so "currentPriorities" will contain a
@@ -155,7 +155,7 @@
 		 * insertion order) is automatically selected; if the tab header to be
 		 * removed is the last one, then the previous one is selected instead.
 		 *
-		 * @param string tabId the ID of the tab.
+		 * @param {string} tabId the ID of the tab.
 		 */
 		removeTabHeader: function(tabId) {
 			var tabIdIndex = _.indexOf(this._tabIds, tabId);
@@ -246,10 +246,10 @@
 		 * destroy it when the TabView is destroyed, except if the content view
 		 * is removed first.
 		 *
-		 * @param string tabId the ID of the tab.
-		 * @param Object tabHeaderOptions the options for the constructor of the
+		 * @param {string} tabId the ID of the tab.
+		 * @param {Object} tabHeaderOptions the options for the constructor of the
 		 *        TabHeaderView that will be added as the header of the tab.
-		 * @param Marionette.View tabContentView the View to be shown when the
+		 * @param {Marionette.View} tabContentView the View to be shown when the
 		 *        tab is selected.
 		 */
 		addTab: function(tabId, tabHeaderOptions, tabContentView) {
@@ -281,8 +281,8 @@
 		 * view, and thus the content view must be explicitly destroyed when no
 		 * longer needed.
 		 *
-		 * @param string tabId the ID of the tab to remove.
-		 * @return Marionette.View the content view of the removed tab.
+		 * @param {string} tabId the ID of the tab to remove.
+		 * @return {Marionette.View} the content view of the removed tab.
 		 */
 		removeTab: function(tabId) {
 			if (!this._tabContentViews.hasOwnProperty(tabId)) {
@@ -309,7 +309,7 @@
 		/**
 		 * Select the tab associated to the given tabId.
 		 *
-		 * @param string tabId the ID of the tab to select.
+		 * @param {string} tabId the ID of the tab to select.
 		 */
 		selectTab: function(tabId) {
 			if (!this._tabContentViews.hasOwnProperty(tabId)) {
@@ -324,7 +324,7 @@
 		 *
 		 * Only for internal use as an event handler.
 		 *
-		 * @param string tabId the ID of the selected tab.
+		 * @param {string} tabId the ID of the selected tab.
 		 */
 		onChildviewSelectTabHeader: function(tabId) {
 			if (this._selectedTabExtraClass) {
@@ -337,6 +337,10 @@
 
 			this._selectedTabExtraClass = 'tab-' + tabId;
 			this.getRegion('tabContent').$el.addClass(this._selectedTabExtraClass);
+
+			if (tabId === 'chat') {
+				this._tabContentViews[tabId].focusChatInput();
+			}
 		}
 
 	});

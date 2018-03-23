@@ -35,10 +35,14 @@
 		'<div class="loading hidden" style="height: 50px"></div>';
 
 	var ADD_COMMENT_TEMPLATE =
-		'<div class="newCommentRow comment" data-id="{{id}}">' +
+		'<div class="newCommentRow comment">' +
 		'    <div class="authorRow">' +
 		'        <div class="avatar" data-username="{{actorId}}"></div>' +
-		'        <div class="author">{{actorDisplayName}}</div>' +
+		'        {{#if actorId}}' +
+		'            <div class="author">{{actorDisplayName}}</div>' +
+		'        {{else}}' +
+		'            <div class="guest-name"></div>' +
+		'        {{/if}}' +
 		'    </div>' +
 		'    <form class="newCommentForm">' +
 		'        <div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>' +
@@ -50,7 +54,7 @@
 	var COMMENT_TEMPLATE =
 		'<li class="comment" data-id="{{id}}">' +
 		'    <div class="authorRow">' +
-		'        <div class="avatar" {{#if actorId}}data-username="{{actorId}}"{{/if}}> </div>' +
+		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
@@ -63,6 +67,14 @@
 			return 'chat' + (this._oldestOnTopLayout? ' oldestOnTopLayout': '');
 		},
 
+		ui: {
+			'guestName': 'div.guest-name'
+		},
+
+		regions: {
+			'guestName': '@ui.guestName'
+		},
+
 		events: {
 			'submit .newCommentForm': '_onSubmitComment',
 		},
@@ -72,6 +84,18 @@
 
 			this.listenTo(this.collection, 'reset', this.render);
 			this.listenTo(this.collection, 'add', this._onAddModel);
+
+			this._guestNameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
+				model: this.getOption('guestNameModel'),
+				modelAttribute: 'nick',
+
+				extraClassNames: 'guest-name',
+				labelTagName: 'p',
+				labelPlaceholder: t('spreed', 'You'),
+				inputMaxLength: '20',
+				inputPlaceholder: t('spreed', 'Name'),
+				buttonTitle: t('spreed', 'Rename')
+			});
 		},
 
 		template: Handlebars.compile(TEMPLATE),
@@ -83,12 +107,11 @@
 			if (!this._addCommentTemplate) {
 				this._addCommentTemplate = Handlebars.compile(ADD_COMMENT_TEMPLATE);
 			}
-			// FIXME handle guest users
-			var currentUser = OC.getCurrentUser();
+
 			return this._addCommentTemplate(_.extend({
-				actorId: currentUser.uid,
-				actorDisplayName: currentUser.displayName,
-				newMessagePlaceholder: t('spreed', 'New message…'),
+				actorId: OC.getCurrentUser().uid,
+				actorDisplayName: OC.getCurrentUser().displayName,
+				newMessagePlaceholder: t('spreed', 'New message …'),
 				submitText: t('spreed', 'Send')
 			}, params));
 		},
@@ -98,6 +121,10 @@
 				this._commentTemplate = Handlebars.compile(COMMENT_TEMPLATE);
 			}
 			return this._commentTemplate(params);
+		},
+
+		onBeforeRender: function() {
+			this.getRegion('guestName').reset({ preventDestroy: true, allowMissingEl: true });
 		},
 
 		onRender: function() {
@@ -110,12 +137,35 @@
 			}
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			this.$container = this.$el.find('ul.comments');
-			// FIXME handle guest users
-			this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32);
+
+			if (OC.getCurrentUser().uid) {
+				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
+			} else {
+				this.$el.find('.avatar').imageplaceholder('?', this.getOption('guestNameModel').get('nick'), 128);
+				this.$el.find('.avatar').css('background-color', '#b9b9b9');
+				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
+			}
+
 			this.delegateEvents();
-			this.$el.find('.message').on('keydown input change', this._onTypeComment);
+			var $message = this.$el.find('.message');
+			$message.blur().focus();
+			$message.on('keydown input change', this._onTypeComment);
+
+			/**
+			 * Make sure we focus the actual content part not the placeholder.
+			 * Firefox is a bit buggy there: https://stackoverflow.com/a/42170494
+			 */
+			$message.on("keydown click", function(){
+				if(!$message.text().trim().length){
+					$message.blur().focus();
+				}
+			});
 
 			autosize(this.$el.find('.newCommentRow .message'));
+		},
+
+		focusChatInput: function() {
+			this.$el.find('.message').blur().focus();
 		},
 
 		/**
@@ -128,7 +178,7 @@
 		 * the tooltip elements will be appended as siblings of the element for
 		 * which they are shown.
 		 *
-		 * @param jQuery tooltipContainer the element to append the tooltip
+		 * @param {jQuery} tooltipContainer the element to append the tooltip
 		 *        elements to
 		 */
 		setTooltipContainer: function(tooltipContainer) {
@@ -146,9 +196,9 @@
 				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
-			if (commentModel.attributes.actorType === 'guests') {
-				// FIXME get guest name from WebRTC or something like that
-				actorDisplayName = 'Guest';
+			if (commentModel.get('actorType') === 'guests' &&
+				actorDisplayName === null) {
+				actorDisplayName = t('spreed', 'Guest');
 			}
 			if (actorDisplayName == null) {
 				actorDisplayName = t('spreed', '[Unknown user name]');
@@ -226,7 +276,7 @@
 			// received.
 			this._lastAddedMessageModel = model;
 
-			this._postRenderItem($el);
+			this._postRenderItem(model, $el);
 
 			if (scrollToNew) {
 				var newestCommentHiddenHeight = ($newestComment.position().top + $newestComment.outerHeight(true)) - this.$container.outerHeight(true);
@@ -298,16 +348,22 @@
 			return model1.get('date').toDateString() === model2.get('date').toDateString();
 		},
 
-		_postRenderItem: function($el) {
+		_postRenderItem: function(model, $el) {
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			$el.find('.avatar').each(function() {
 				var $this = $(this);
-				$this.avatar($this.attr('data-username'), 32);
+				if (model.get('actorType') === 'users') {
+					$this.avatar($this.data('user-id'), 32, undefined, false, undefined, $this.data('displayname'));
+				} else {
+					$this.imageplaceholder('?', model.get('actorDisplayName'), 32);
+					$this.css('background-color', '#b9b9b9');
+				}
 			});
 
-			// FIXME do not show contacts menu for guest users
-			var username = $el.find('.avatar').data('username');
-			if (username !== oc_current_user) {
+			var username = $el.find('.avatar').data('user-id');
+			if (OC.getCurrentUser().uid &&
+				model.get('actorType') === 'users' &&
+				username !== OC.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
 					username, 0, $el.find('.authorRow'));
 			}
@@ -360,7 +416,6 @@
 		_onSubmitComment: function(e) {
 			var self = this;
 			var $form = $(e.target);
-			var comment = null;
 			var $submit = $form.find('.submit');
 			var $loading = $form.find('.submitLoading');
 			var $commentField = $form.find('.message');
@@ -375,11 +430,19 @@
 			$loading.removeClass('hidden');
 
 			message = this._commentBodyHTML2Plain($commentField);
-
-			comment = new OCA.SpreedMe.Models.ChatMessage({
+			var data = {
 				token: this.collection.token,
 				message: message
-			});
+			};
+
+			if (!OC.getCurrentUser().uid) {
+				var guestNick = OCA.SpreedMe.app._localStorageModel.get('nick');
+				if (guestNick) {
+					data.actorDisplayName = guestNick;
+				}
+			}
+
+			var comment = new OCA.SpreedMe.Models.ChatMessage(data);
 			comment.save({}, {
 				success: function(model) {
 					self._onSubmitSuccess(model, $form);

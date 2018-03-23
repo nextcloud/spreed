@@ -24,6 +24,7 @@
 namespace OCA\Spreed\Signaling;
 
 use OCA\Spreed\Config;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
@@ -56,6 +57,20 @@ class BackendNotifier{
 	}
 
 	/**
+	 * Perform actual network request to the signaling backend.
+	 * This can be overridden in tests.
+	 */
+	protected function doRequest($url, $params) {
+		if (defined('PHPUNIT_RUN')) {
+			// Don't perform network requests when running tests.
+			return;
+		}
+
+		$client = $this->clientService->newClient();
+		$client->post($url, $params);
+	}
+
+	/**
 	 * Perform a request to the signaling backend.
 	 *
 	 * @param string $url
@@ -77,7 +92,6 @@ class BackendNotifier{
 		} else if (strpos($url, 'ws://') === 0) {
 			$url = 'http://' . substr($url, 5);
 		}
-		$client = $this->clientService->newClient();
 		$body = json_encode($data);
 		$headers = [
 			'Content-Type' => 'application/json',
@@ -92,10 +106,10 @@ class BackendNotifier{
 			'headers' => $headers,
 			'body' => $body,
 		];
-		if (!$signaling['verify']) {
+		if (empty($signaling['verify'])) {
 			$params['verify'] = false;
 		}
-		$client->post($url, $params);
+		$this->doRequest($url, $params);
 	}
 
 	/**
@@ -117,7 +131,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomInvited($room, $users) {
-		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
+		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true), ['app' => 'spreed']);
 		$userIds = [];
 		foreach ($users as $user) {
 			$userIds[] = $user['userId'];
@@ -145,7 +159,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited($room, $userIds) {
-		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true));
+		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'disinvite',
 			'disinvite' => [
@@ -168,7 +182,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomModified($room) {
-		$this->logger->info('Room modified: ' . $room->getToken());
+		$this->logger->info('Room modified: ' . $room->getToken(), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'update',
 			'update' => [
@@ -188,12 +202,56 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomDeleted($room, $participants) {
-		$this->logger->info('Room deleted: ' . $room->getToken());
+		$this->logger->info('Room deleted: ' . $room->getToken(), ['app' => 'spreed']);
 		$userIds = array_keys($participants['users']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'delete',
 			'delete' => [
 				'userids' => $userIds,
+			],
+		]);
+	}
+
+	/**
+	 * The "in-call" status of the given session ids has changed..
+	 *
+	 * @param Room $room
+	 * @param bool $inCall
+	 * @param array $sessionids
+	 * @throws \Exception
+	 */
+	public function roomInCallChanged($room, $inCall, $sessionIds) {
+		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $inCall . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
+		$changed = [];
+		$users = [];
+		$participants = $room->getParticipants();
+		foreach ($participants['users'] as $userId => $participant) {
+			if ($participant['inCall']) {
+				$users[] = $participant;
+			}
+			if (in_array($participant['sessionId'], $sessionIds)) {
+				$participant['userId'] = $userId;
+				$changed[] = $participant;
+			}
+		}
+		foreach ($participants['guests'] as $participant) {
+			if (!isset($participant['participantType'])) {
+				$participant['participantType'] = Participant::GUEST;
+			}
+			if ($participant['inCall']) {
+				$users[] = $participant;
+			}
+			if (in_array($participant['sessionId'], $sessionIds)) {
+				$changed[] = $participant;
+			}
+		}
+
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'incall',
+			'incall' => [
+				'incall' => $inCall,
+				'changed' => $changed,
+				'users' => $users
 			],
 		]);
 	}

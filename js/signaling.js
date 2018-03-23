@@ -1,9 +1,30 @@
-(function(OCA, OC) {
+/** @global console */
+(function(OCA, OC, $) {
 	'use strict';
 
-	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
+	OCA.Talk.Signaling = {
+		Base: {},
+		Internal: {},
+		Standalone: {},
 
-	function SignalingBase(settings) {
+		createConnection: function() {
+			var settings = $("#app #signaling-settings").text();
+			if (settings) {
+				settings = JSON.parse(settings);
+			} else {
+				settings = {};
+			}
+			var urls = settings.server;
+			if (urls && urls.length) {
+				return new OCA.Talk.Signaling.Standalone(settings, urls);
+			} else {
+				return new OCA.Talk.Signaling.Internal(settings);
+			}
+		}
+	};
+
+	function Base(settings) {
 		this.settings = settings;
 		this.sessionId = '';
 		this.currentRoomToken = null;
@@ -12,7 +33,8 @@
 		this.features = {};
 	}
 
-	SignalingBase.prototype.on = function(ev, handler) {
+	OCA.Talk.Signaling.Base = Base;
+	OCA.Talk.Signaling.Base.prototype.on = function(ev, handler) {
 		if (!this.handlers.hasOwnProperty(ev)) {
 			this.handlers[ev] = [handler];
 		} else {
@@ -34,7 +56,7 @@
 		}
 	};
 
-	SignalingBase.prototype._trigger = function(ev, args) {
+	OCA.Talk.Signaling.Base.prototype._trigger = function(ev, args) {
 		var handlers = this.handlers[ev];
 		if (!handlers) {
 			return;
@@ -47,20 +69,20 @@
 		}
 	};
 
-	SignalingBase.prototype.getSessionid = function() {
+	OCA.Talk.Signaling.Base.prototype.getSessionid = function() {
 		return this.sessionId;
 	};
 
-	SignalingBase.prototype.disconnect = function() {
+	OCA.Talk.Signaling.Base.prototype.disconnect = function() {
 		this.sessionId = '';
 		this.currentCallToken = null;
 	};
 
-	SignalingBase.prototype.hasFeature = function(feature) {
+	OCA.Talk.Signaling.Base.prototype.hasFeature = function(feature) {
 		return this.features && this.features[feature];
 	};
 
-	SignalingBase.prototype.emit = function(ev, data) {
+	OCA.Talk.Signaling.Base.prototype.emit = function(ev, data) {
 		switch (ev) {
 			case 'joinRoom':
 				this.joinRoom(data);
@@ -80,25 +102,25 @@
 		}
 	};
 
-	SignalingBase.prototype.leaveCurrentRoom = function() {
+	OCA.Talk.Signaling.Base.prototype.leaveCurrentRoom = function() {
 		if (this.currentRoomToken) {
 			this.leaveRoom(this.currentRoomToken);
 			this.currentRoomToken = null;
 		}
 	};
 
-	SignalingBase.prototype.leaveCurrentCall = function() {
+	OCA.Talk.Signaling.Base.prototype.leaveCurrentCall = function() {
 		if (this.currentCallToken) {
 			this.leaveCall(this.currentCallToken);
 			this.currentCallToken = null;
 		}
 	};
 
-	SignalingBase.prototype.leaveAllCalls = function() {
+	OCA.Talk.Signaling.Base.prototype.leaveAllCalls = function() {
 		// Override if necessary.
 	};
 
-	SignalingBase.prototype.setRoomCollection = function(rooms) {
+	OCA.Talk.Signaling.Base.prototype.setRoomCollection = function(rooms) {
 		this.roomCollection = rooms;
 		return this.syncRooms();
 	};
@@ -112,14 +134,14 @@
 	 *
 	 * @param OCA.SpreedMe.Models.Room room the room to sync.
 	 */
-	SignalingBase.prototype.setRoom = function(room) {
+	OCA.Talk.Signaling.Base.prototype.setRoom = function(room) {
 		this.room = room;
 		return this.syncRooms();
 	};
 
-	SignalingBase.prototype.syncRooms = function() {
+	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
 		var defer = $.Deferred();
-		if (this.roomCollection && oc_current_user) {
+		if (this.roomCollection && OC.getCurrentUser().uid) {
 			this.roomCollection.fetch({
 				success: function(data) {
 					defer.resolve(data);
@@ -137,91 +159,7 @@
 		return defer;
 	};
 
-	// Connection to the internal signaling server provided by the app.
-	function InternalSignaling(/*settings*/) {
-		SignalingBase.prototype.constructor.apply(this, arguments);
-		this.spreedArrayConnection = [];
-
-		this.pingFails = 0;
-		this.pingInterval = null;
-		this.isSendingMessages = false;
-
-		this.pullMessagesRequest = null;
-
-		this.sendInterval = window.setInterval(function(){
-			this.sendPendingMessages();
-		}.bind(this), 500);
-	}
-
-	InternalSignaling.prototype = new SignalingBase();
-	InternalSignaling.prototype.constructor = InternalSignaling;
-
-	InternalSignaling.prototype.disconnect = function() {
-		this.spreedArrayConnection = [];
-		if (this.source) {
-			this.source.close();
-			this.source = null;
-		}
-		if (this.sendInterval) {
-			window.clearInterval(this.sendInterval);
-			this.sendInterval = null;
-		}
-		if (this.pingInterval) {
-			window.clearInterval(this.pingInterval);
-			this.pingInterval = null;
-		}
-		if (this.roomPoller) {
-			window.clearInterval(this.roomPoller);
-			this.roomPoller = null;
-		}
-		SignalingBase.prototype.disconnect.apply(this, arguments);
-	};
-
-	InternalSignaling.prototype.on = function(ev/*, handler*/) {
-		SignalingBase.prototype.on.apply(this, arguments);
-
-		switch (ev) {
-			case 'connect':
-				// A connection is established if we can perform a request
-				// through it.
-				this._sendMessageWithCallback(ev);
-				break;
-		}
-	};
-
-	InternalSignaling.prototype._sendMessageWithCallback = function(ev) {
-		var message = [{
-			ev: ev
-		}];
-
-		this._sendMessages(message).done(function(result) {
-			this._trigger(ev, [result.ocs.data]);
-		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
-			console.log('Sending signaling message with callback has failed.');
-			// TODO: Add error handling
-		});
-	};
-
-	InternalSignaling.prototype._sendMessages = function(messages) {
-		var defer = $.Deferred();
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
-			type: 'POST',
-			data: {messages: JSON.stringify(messages)},
-			beforeSend: function (request) {
-				request.setRequestHeader('Accept', 'application/json');
-			},
-			success: function (result) {
-				defer.resolve(result);
-			},
-			error: function (xhr, textStatus, errorThrown) {
-				defer.reject(xhr, textStatus, errorThrown);
-			}
-		});
-		return defer;
-	};
-
-	InternalSignaling.prototype.joinRoom = function(token, password) {
+	OCA.Talk.Signaling.Base.prototype.joinRoom = function(token, password) {
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
 			type: 'POST',
@@ -233,10 +171,9 @@
 			},
 			success: function (result) {
 				console.log("Joined", result);
-				this.sessionId = result.ocs.data.sessionId;
 				this.currentRoomToken = token;
-				this._startPingCall();
-				this._startPullingMessages();
+				this._trigger('joinRoom', [token]);
+				this._joinRoomSuccess(token, result.ocs.data.sessionId);
 			}.bind(this),
 			error: function (result) {
 				if (result.status === 404 || result.status === 503) {
@@ -271,24 +208,35 @@
 		});
 	};
 
-	InternalSignaling.prototype.leaveRoom = function(token) {
-		if (this.currentCallToken) {
-			this.leaveCall();
-		}
+	OCA.Talk.Signaling.Base.prototype._leaveRoomSuccess = function(/* token */) {
+		// Override in subclasses if necessary.
+	};
 
-		if (token === this.currentRoomToken) {
-			this._stopPingCall();
-			this._closeEventSource();
-		}
+	OCA.Talk.Signaling.Base.prototype.leaveRoom = function(token) {
+		this.leaveCurrentCall();
+
+		this._trigger('leaveRoom', [token]);
+		this._doLeaveRoom(token);
 
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
 			method: 'DELETE',
-			async: false
+			async: false,
+			success: function () {
+				this._leaveRoomSuccess(token);
+				// We left the current room.
+				if (token === this.currentRoomToken) {
+					this.currentRoomToken = null;
+				}
+			}.bind(this)
 		});
 	};
 
-	InternalSignaling.prototype.joinCall = function(token, callback) {
+	OCA.Talk.Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
+		// Override in subclasses if necessary.
+	};
+
+	OCA.Talk.Signaling.Base.prototype.joinCall = function(token) {
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			type: 'POST',
@@ -297,11 +245,8 @@
 			},
 			success: function () {
 				this.currentCallToken = token;
-				// We send an empty call description to simplewebrtc since
-				// usersChanged (webrtc.js) will create/remove peer connections
-				// with call participants
-				var callDescription = {'clients': {}};
-				callback('', callDescription);
+				this._trigger('joinCall', [token]);
+				this._joinCallSuccess(token);
 			}.bind(this),
 			error: function () {
 				// Room not found or maintenance mode
@@ -310,15 +255,134 @@
 		});
 	};
 
-	InternalSignaling.prototype.leaveCall = function(token) {
+	OCA.Talk.Signaling.Base.prototype._leaveCallSuccess = function(/* token */) {
+		// Override in subclasses if necessary.
+	};
+
+	OCA.Talk.Signaling.Base.prototype.leaveCall = function(token) {
+
+		if (!token) {
+			return;
+		}
+
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			method: 'DELETE',
-			async: false
+			async: false,
+			success: function () {
+				this._trigger('leaveCall', [token]);
+				this._leaveCallSuccess(token);
+				// We left the current call.
+				if (token === this.currentCallToken) {
+					this.currentCallToken = null;
+				}
+			}.bind(this)
 		});
 	};
 
-	InternalSignaling.prototype.sendCallMessage = function(data) {
+	// Connection to the internal signaling server provided by the app.
+	function Internal(/*settings*/) {
+		OCA.Talk.Signaling.Base.prototype.constructor.apply(this, arguments);
+		this.spreedArrayConnection = [];
+
+		this.pingFails = 0;
+		this.pingInterval = null;
+		this.isSendingMessages = false;
+
+		this.pullMessagesRequest = null;
+
+		this.sendInterval = window.setInterval(function(){
+			this.sendPendingMessages();
+		}.bind(this), 500);
+	}
+
+	Internal.prototype = new OCA.Talk.Signaling.Base();
+	Internal.prototype.constructor = Internal;
+	OCA.Talk.Signaling.Internal = Internal;
+
+	OCA.Talk.Signaling.Internal.prototype.disconnect = function() {
+		this.spreedArrayConnection = [];
+		if (this.source) {
+			this.source.close();
+			this.source = null;
+		}
+		if (this.sendInterval) {
+			window.clearInterval(this.sendInterval);
+			this.sendInterval = null;
+		}
+		if (this.pingInterval) {
+			window.clearInterval(this.pingInterval);
+			this.pingInterval = null;
+		}
+		if (this.roomPoller) {
+			window.clearInterval(this.roomPoller);
+			this.roomPoller = null;
+		}
+		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments);
+	};
+
+	OCA.Talk.Signaling.Internal.prototype.on = function(ev/*, handler*/) {
+		OCA.Talk.Signaling.Base.prototype.on.apply(this, arguments);
+
+		switch (ev) {
+			case 'connect':
+				// A connection is established if we can perform a request
+				// through it.
+				this._sendMessageWithCallback(ev);
+				break;
+		}
+	};
+
+	OCA.Talk.Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
+		var message = [{
+			ev: ev
+		}];
+
+		this._sendMessages(message).done(function(result) {
+			this._trigger(ev, [result.ocs.data]);
+		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
+			console.log('Sending signaling message with callback has failed.');
+			// TODO: Add error handling
+		});
+	};
+
+	OCA.Talk.Signaling.Internal.prototype._sendMessages = function(messages) {
+		var defer = $.Deferred();
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
+			type: 'POST',
+			data: {messages: JSON.stringify(messages)},
+			beforeSend: function (request) {
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (result) {
+				defer.resolve(result);
+			},
+			error: function (xhr, textStatus, errorThrown) {
+				defer.reject(xhr, textStatus, errorThrown);
+			}
+		});
+		return defer;
+	};
+
+	OCA.Talk.Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
+		this.sessionId = sessionId;
+		this._startPingCall();
+		this._startPullingMessages();
+	};
+
+	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
+		if (!token) {
+			return;
+		}
+
+		if (token === this.currentRoomToken) {
+			this._stopPingCall();
+			this._closeEventSource();
+		}
+	};
+
+	OCA.Talk.Signaling.Internal.prototype.sendCallMessage = function(data) {
 		if(data.type === 'answer') {
 			console.log("ANSWER", data);
 		} else if(data.type === 'offer') {
@@ -331,17 +395,17 @@
 		});
 	};
 
-	InternalSignaling.prototype.setRoomCollection = function(/*rooms*/) {
+	OCA.Talk.Signaling.Internal.prototype.setRoomCollection = function(/*rooms*/) {
 		this._pollForRoomChanges();
-		return SignalingBase.prototype.setRoomCollection.apply(this, arguments);
+		return OCA.Talk.Signaling.Base.prototype.setRoomCollection.apply(this, arguments);
 	};
 
-	InternalSignaling.prototype.setRoom = function(/*room*/) {
+	OCA.Talk.Signaling.Internal.prototype.setRoom = function(/*room*/) {
 		this._pollForRoomChanges();
-		return SignalingBase.prototype.setRoom.apply(this, arguments);
+		return OCA.Talk.Signaling.Base.prototype.setRoom.apply(this, arguments);
 	};
 
-	InternalSignaling.prototype._pollForRoomChanges = function() {
+	OCA.Talk.Signaling.Internal.prototype._pollForRoomChanges = function() {
 		if (this.roomPoller) {
 			window.clearInterval(this.roomPoller);
 		}
@@ -353,7 +417,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._getCallPeers = function(token) {
+	OCA.Talk.Signaling.Internal.prototype._getCallPeers = function(token) {
 		var defer = $.Deferred();
 		$.ajax({
 			beforeSend: function (request) {
@@ -371,7 +435,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._startPullingMessages = function() {
+	OCA.Talk.Signaling.Internal.prototype._startPullingMessages = function() {
 		// Abort ongoing request
 		if (this.pullMessagesRequest !== null) {
 			this.pullMessagesRequest.abort();
@@ -421,7 +485,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._closeEventSource = function() {
+	OCA.Talk.Signaling.Internal.prototype._closeEventSource = function() {
 		if (this.source) {
 			this.source.close();
 			this.source = null;
@@ -431,7 +495,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype.sendPendingMessages = function() {
+	OCA.Talk.Signaling.Internal.prototype.sendPendingMessages = function() {
 		if (!this.spreedArrayConnection.length || this.isSendingMessages) {
 			return;
 		}
@@ -451,7 +515,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._startPingCall = function() {
+	OCA.Talk.Signaling.Internal.prototype._startPingCall = function() {
 		this._pingCall();
 
 		// Send a ping to the server all 5 seconds to ensure that the connection
@@ -464,7 +528,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._stopPingCall = function() {
+	OCA.Talk.Signaling.Internal.prototype._stopPingCall = function() {
 		if (this.pingInterval) {
 			window.clearInterval(this.pingInterval);
 			this.pingInterval = null;
@@ -474,7 +538,7 @@
 	/**
 	 * @private
 	 */
-	InternalSignaling.prototype._pingCall = function() {
+	OCA.Talk.Signaling.Internal.prototype._pingCall = function() {
 		if (!this.currentRoomToken) {
 			return;
 		}
@@ -490,12 +554,13 @@
 				this.pingFails++;
 				return;
 			}
-			OCA.SpreedMe.Calls.leaveCurrentCall(false);
+			// FIXME this sounds wrong…
+			this.leaveCurrentCall(false);
 		}.bind(this));
 	};
 
-	function StandaloneSignaling(settings, urls) {
-		SignalingBase.prototype.constructor.apply(this, arguments);
+	function Standalone(settings, urls) {
+		OCA.Talk.Signaling.Base.prototype.constructor.apply(this, arguments);
 		if (typeof(urls) === "string") {
 			urls = [urls];
 		}
@@ -517,13 +582,15 @@
 		this.maxReconnectIntervalMs = 16000;
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs;
 		this.joinedUsers = {};
+		this.rooms = [];
 		this.connect();
 	}
 
-	StandaloneSignaling.prototype = new SignalingBase();
-	StandaloneSignaling.prototype.constructor = StandaloneSignaling;
+	Standalone.prototype = new OCA.Talk.Signaling.Base();
+	Standalone.prototype.constructor = Standalone;
+	OCA.Talk.Signaling.Standalone = Standalone;
 
-	StandaloneSignaling.prototype.reconnect = function() {
+	OCA.Talk.Signaling.Standalone.prototype.reconnect = function() {
 		if (this.reconnectTimer) {
 			return;
 		}
@@ -547,7 +614,7 @@
 		}
 	};
 
-	StandaloneSignaling.prototype.connect = function() {
+	OCA.Talk.Signaling.Standalone.prototype.connect = function() {
 		console.log("Connecting to", this.url);
 		this.callbacks = {};
 		this.id = 1;
@@ -588,10 +655,13 @@
 					}
 					break;
 				case "room":
-					if (this.currentCallToken && data.room.roomid !== this.currentCallToken) {
-						this._trigger('roomChanged', [this.currentCallToken, data.room.roomid]);
+					if (this.currentRoomToken && data.room.roomid !== this.currentRoomToken) {
+						this._trigger('roomChanged', [this.currentRoomToken, data.room.roomid]);
 						this.joinedUsers = {};
-						this.currentCallToken = null;
+						this.currentRoomToken = null;
+					} else {
+						// TODO(fancycode): Only fetch properties of room that was modified.
+						this.internalSyncRooms();
 					}
 					break;
 				case "event":
@@ -610,7 +680,7 @@
 		}.bind(this);
 	};
 
-	StandaloneSignaling.prototype.disconnect = function() {
+	OCA.Talk.Signaling.Standalone.prototype.disconnect = function() {
 		if (this.socket) {
 			this.doSend({
 				"type": "bye",
@@ -619,10 +689,10 @@
 			this.socket.close();
 			this.socket = null;
 		}
-		SignalingBase.prototype.disconnect.apply(this, arguments);
+		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments);
 	};
 
-	StandaloneSignaling.prototype.sendCallMessage = function(data) {
+	OCA.Talk.Signaling.Standalone.prototype.sendCallMessage = function(data) {
 		this.doSend({
 			"type": "message",
 			"message": {
@@ -635,7 +705,7 @@
 		});
 	};
 
-	StandaloneSignaling.prototype.doSend = function(msg, callback) {
+	OCA.Talk.Signaling.Standalone.prototype.doSend = function(msg, callback) {
 		if (!this.connected && msg.type !== "hello") {
 			// Defer sending any messages until the hello rsponse has been
 			// received.
@@ -652,7 +722,7 @@
 		this.socket.send(JSON.stringify(msg));
 	};
 
-	StandaloneSignaling.prototype.sendHello = function() {
+	OCA.Talk.Signaling.Standalone.prototype.sendHello = function() {
 		var msg;
 		if (this.resumeId) {
 			console.log("Trying to resume session", this.sessionId);
@@ -665,13 +735,13 @@
 			};
 		} else {
 			var user = OC.getCurrentUser();
-			var url = OC.generateUrl("/ocs/v2.php/apps/spreed/api/v1/signaling/backend");
+			var url = OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'backend';
 			msg = {
 				"type": "hello",
 				"hello": {
 					"version": "1.0",
 					"auth": {
-						"url": OC.getProtocol() + "://" + OC.getHost() + url,
+						"url": url,
 						"params": {
 							"userid": user.uid,
 							"ticket": this.settings.ticket
@@ -683,7 +753,7 @@
 		this.doSend(msg, this.helloResponseReceived.bind(this));
 	};
 
-	StandaloneSignaling.prototype.helloResponseReceived = function(data) {
+	OCA.Talk.Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 		console.log("Hello response received", data);
 		if (data.type !== "hello") {
 			if (this.resumeId) {
@@ -726,26 +796,44 @@
 			// so perform resync once.
 			this.internalSyncRooms();
 		}
-		if (!resumedSession && this.currentCallToken) {
-			this.joinCall(this.currentCallToken);
+		if (!resumedSession && this.currentRoomToken) {
+			this.joinRoom(this.currentRoomToken);
 		}
 	};
 
-	StandaloneSignaling.prototype.joinCall = function(token, callback) {
-		console.log("Join call", token);
+	OCA.Talk.Signaling.Standalone.prototype.setRoom = function(/* room */) {
+		OCA.Talk.Signaling.Base.prototype.setRoom.apply(this, arguments);
+		return this.internalSyncRooms();
+	};
+
+	OCA.Talk.Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessionId) {
+		console.log("Join room", token);
 		this.doSend({
 			"type": "room",
 			"room": {
-				"roomid": token
+				"roomid": token,
+				// Pass the Nextcloud session id to the signaling server. The
+				// session id will be passed through to Nextcloud to check if
+				// the (Nextcloud) user is allowed to join the room.
+				"sessionid": nextcloudSessionId,
 			}
 		}, function(data) {
-			this.joinResponseReceived(data, token, callback);
+			this.joinResponseReceived(data, token);
 		}.bind(this));
 	};
 
-	StandaloneSignaling.prototype.joinResponseReceived = function(data, token, callback) {
+	OCA.Talk.Signaling.Standalone.prototype._joinCallSuccess = function(/* token */) {
+		// Update room list to fetch modified properties.
+		this.internalSyncRooms();
+	};
+
+	OCA.Talk.Signaling.Standalone.prototype._leaveCallSuccess = function(/* token */) {
+		// Update room list to fetch modified properties.
+		this.internalSyncRooms();
+	};
+
+	OCA.Talk.Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		console.log("Joined", data, token);
-		this.currentCallToken = token;
 		if (this.roomCollection) {
 			// The list of rooms is not fetched from the server. Update ping
 			// of joined room so it gets sorted to the top.
@@ -756,16 +844,10 @@
 			});
 			this.roomCollection.sort();
 		}
-		if (callback) {
-			var roomDescription = {
-				"clients": {}
-			};
-			callback('', roomDescription);
-		}
 	};
 
-	StandaloneSignaling.prototype.leaveCall = function(token) {
-		console.log("Leave call", token);
+	OCA.Talk.Signaling.Standalone.prototype._doLeaveRoom = function(token) {
+		console.log("Leave room", token);
 		this.doSend({
 			"type": "room",
 			"room": {
@@ -779,11 +861,10 @@
 				this._trigger("usersLeft", [leftUsers]);
 			}
 			this.joinedUsers = {};
-			this.currentCallToken = null;
 		}.bind(this));
 	};
 
-	StandaloneSignaling.prototype.processEvent = function(data) {
+	OCA.Talk.Signaling.Standalone.prototype.processEvent = function(data) {
 		switch (data.event.target) {
 			case "room":
 				this.processRoomEvent(data);
@@ -791,13 +872,16 @@
 			case "roomlist":
 				this.processRoomListEvent(data);
 				break;
+			case "participants":
+				this.processRoomParticipantsEvent(data);
+				break;
 			default:
 				console.log("Unsupported event target", data);
 				break;
 		}
 	};
 
-	StandaloneSignaling.prototype.processRoomEvent = function(data) {
+	OCA.Talk.Signaling.Standalone.prototype.processRoomEvent = function(data) {
 		var i;
 		switch (data.event.type) {
 			case "join":
@@ -838,42 +922,56 @@
 		}
 	};
 
-	StandaloneSignaling.prototype.setRoomCollection = function(/* rooms */) {
-		SignalingBase.prototype.setRoomCollection.apply(this, arguments);
+	OCA.Talk.Signaling.Standalone.prototype.setRoomCollection = function(/* rooms */) {
+		OCA.Talk.Signaling.Base.prototype.setRoomCollection.apply(this, arguments);
 		// Retrieve initial list of rooms for this user.
 		return this.internalSyncRooms();
 	};
 
-	StandaloneSignaling.prototype.syncRooms = function() {
+	OCA.Talk.Signaling.Standalone.prototype.syncRooms = function() {
+		if (this.pending_sync) {
+			// A sync request is already in progress, don't start another one.
+			return this.pending_sync;
+		}
+
 		// Never manually sync rooms, will be done based on notifications
 		// from the signaling server.
 		var defer = $.Deferred();
-		defer.resolve([]);
+		defer.resolve(this.rooms);
 		return defer;
 	};
 
-	StandaloneSignaling.prototype.internalSyncRooms = function() {
-		return SignalingBase.prototype.syncRooms.apply(this, arguments);
+	OCA.Talk.Signaling.Standalone.prototype.internalSyncRooms = function() {
+		if (this.pending_sync) {
+			// A sync request is already in progress, don't start another one.
+			return this.pending_sync;
+		}
+
+		var defer = $.Deferred();
+		this.pending_sync = OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments);
+		this.pending_sync.then(function(rooms) {
+			this.pending_sync = null;
+			this.rooms = rooms;
+			defer.resolve(rooms);
+		}.bind(this));
+		return defer;
 	};
 
-	StandaloneSignaling.prototype.processRoomListEvent = function(data) {
+	OCA.Talk.Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 		console.log("Room list event", data);
 		this.internalSyncRooms();
 	};
 
-	OCA.SpreedMe.createSignalingConnection = function() {
-		var settings = $("#app #signaling-settings").text();
-		if (settings) {
-			settings = JSON.parse(settings);
-		} else {
-			settings = {};
-		}
-		var urls = settings['server'];
-		if (urls && urls.length) {
-			return new StandaloneSignaling(settings, urls);
-		} else {
-			return new InternalSignaling(settings);
+	OCA.Talk.Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
+		switch (data.event.type) {
+			case "update":
+				this._trigger("usersChanged", [data.event.update.users]);
+				this.internalSyncRooms();
+				break;
+			default:
+				console.log("Unknown room participant event", data);
+				break;
 		}
 	};
 
-})(OCA, OC);
+})(OCA, OC, $);

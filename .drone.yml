@@ -127,7 +127,6 @@ pipeline:
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
-      - DB=sqlite
     commands:
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -163,4 +162,31 @@ matrix:
     - TESTS: php7.1
     - TESTS: php7.2
     - TESTS: php7.1-integration
+      DB: sqlite
+    - TESTS: php7.1-integration
+      DB: mysql
+      DATABASEHOST: mysql-5.7
+    - TESTS: php7.1-integration
+      DB: pgsql
+      DATABASEHOST: postgres-10
     - TESTS: jsunit
+
+services:
+  mysql-5.7:
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=owncloud
+      - MYSQL_USER=oc_autotest
+      - MYSQL_PASSWORD=owncloud
+      - MYSQL_DATABASE=oc_autotest
+    when:
+      matrix:
+        DATABASEHOST: mysql-5.7
+  postgres-10:
+    image: postgres:10
+    environment:
+      - POSTGRES_USER=oc_autotest
+      - POSTGRES_PASSWORD=
+    when:
+      matrix:
+        DATABASEHOST: postgres-10

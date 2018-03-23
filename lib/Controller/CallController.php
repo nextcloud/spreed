@@ -25,7 +25,6 @@
 
 namespace OCA\Spreed\Controller;
 
-use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
@@ -45,8 +44,6 @@ class CallController extends OCSController {
 	private $session;
 	/** @var Manager */
 	private $manager;
-	/** @var Messages */
-	private $messages;
 
 	/**
 	 * @param string $appName
@@ -54,23 +51,18 @@ class CallController extends OCSController {
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
 	 * @param ISession $session
-	 * @param ILogger $logger
 	 * @param Manager $manager
-	 * @param Messages $messages
 	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
 								IUserManager $userManager,
 								ISession $session,
-								ILogger $logger,
-								Manager $manager,
-								Messages $messages) {
+								Manager $manager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->session = $session;
 		$this->manager = $manager;
-		$this->messages = $messages;
 	}
 
 	/**
@@ -112,7 +104,7 @@ class CallController extends OCSController {
 			}
 
 			$result[] = [
-				'userId' => $participant,
+				'userId' => (string) $participant,
 				'token' => $token,
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],

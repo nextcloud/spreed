@@ -60,7 +60,7 @@
 		'								<form class="password-form">' +
 		'									<input class="password-input" required maxlength="200" type="password"' +
 		'				  						placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
-		'									<input type="submit" value="" class="icon icon-confirm password-confirm"></input>'+
+		'									<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm"></input>'+
 		'								</form>' +
 		'							</span>' +
 		'						</li>' +
@@ -283,24 +283,24 @@
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
 				type: shareLink ? 'POST' : 'DELETE',
 				success: function() {
-					OCA.SpreedMe.app.syncRooms();
+					OCA.SpreedMe.app.signaling.syncRooms();
 				}
 			});
 		},
 
 		joinCall: function() {
-			OCA.SpreedMe.Calls.joinCall(this.model.get('token'));
+			OCA.SpreedMe.app.connection.joinCall(this.model.get('token'));
 		},
 
 		leaveCall: function() {
-			OCA.SpreedMe.Calls.leaveCall(this.model.get('token'));
+			OCA.SpreedMe.app.connection.leaveCall(this.model.get('token'));
 		},
 
 		/**
 		 * Password
 		 */
-		confirmPassword: function(event) {
-			event.preventDefault();
+		confirmPassword: function(e) {
+			e.preventDefault();
 			var newPassword = this.ui.passwordInput.val().trim();
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
@@ -311,7 +311,7 @@
 				success: function() {
 					this.ui.passwordInput.val('');
 					OC.hideMenus();
-					OCA.SpreedMe.app.syncRooms();
+					OCA.SpreedMe.app.signaling.syncRooms();
 				}.bind(this),
 				error: function() {
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});

@@ -164,6 +164,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" tries to create room with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 * @param TableNode|null $formData
+	 */
+	public function userTriesToCreateRoom($user, $statusCode, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('POST', '/apps/spreed/api/v1/room', $formData);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
@@ -421,6 +434,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			new TableNode([['message', $message]])
 		);
 		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
 	}
 
 	/**

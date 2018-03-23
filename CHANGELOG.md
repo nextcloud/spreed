@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.1.0 – 2018-02-14
+### Added
+- Finish support for go-based external signaling backend
+  [#492](https://github.com/nextcloud/spreed/pull/492)
+
+### Changed
+- Make capabilities and signaling settings available for guests
+  [#644](https://github.com/nextcloud/spreed/pull/644) [#654](https://github.com/nextcloud/spreed/pull/654)
+- Use the search name as room name when creating a new room
+  [#592](https://github.com/nextcloud/spreed/pull/592)
+- Make links in chat clickable
+  [#579](https://github.com/nextcloud/spreed/pull/579)
+
+### Fixed
+- Fix screensharing layout for guests
+  [#611](https://github.com/nextcloud/spreed/pull/611)
+- Correctly remember guest names when a guest is rejoining an existing call
+  [#593](https://github.com/nextcloud/spreed/pull/593)
+- Better date time divider in chat view
+  [#591](https://github.com/nextcloud/spreed/pull/591)
+
 ## 3.0.1 – 2018-01-12
 ### Added
 - Added capabilities so the mobile files apps can link to the mobile talk apps

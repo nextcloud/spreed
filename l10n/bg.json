@@ -30,9 +30,9 @@
     "Rename" : "Преименуване",
     "Your name …" : "Вашето име ...",
     "Copy link" : "Копирай връзката",
+    "You" : "Ти",
     "Send" : "Изпрати",
     "Guest" : "Гост",
-    "You" : "Ти",
     "and you" : "и Вие",
     "Access to microphone & camera is only possible with HTTPS" : "Достъпът до микрофона и камерата е възможен само при HTTPS",
     "Please adjust your configuration" : "Моля, коригирайте конфигурация си",
@@ -46,10 +46,10 @@
     "%s invited you to a group call" : "%s Ви покани на групов разговор",
     "{user} invited you to a group call" : "{user}  Ви покани на групов разговор",
     "Share screen" : "Споделяне на екран",
-    "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
     "TURN server" : "TURN сървър",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сървърът се използва като прокси сървър за трафика, идващ от участници стоящи зад защитна стена.",
+    "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "STUN server" : "STUN сървър"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
