@@ -554,8 +554,10 @@
 				this.pingFails++;
 				return;
 			}
-			// FIXME this sounds wrong…
-			this.leaveCurrentCall(false);
+
+			// FIXME This was trying to call connection.leaveCurrentCall(false);
+			// FIXME UI is also not updated. But at least it stops pinging the room.
+			this.leaveCurrentRoom();
 		}.bind(this));
 	};
 
