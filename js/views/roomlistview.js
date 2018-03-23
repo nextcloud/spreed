@@ -249,19 +249,19 @@
 
 					message = t('spreed', 'Waiting for others to join the call …');
 
+					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
+						message = t('spreed', 'No other people in this call');
+						if (messageAdditional === '' && this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
+							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
+						}
+					}
+
 					if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
 						messageAdditional = t('spreed', 'Share this link to invite others!');
 						if (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) {
 							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar or share this link to invite others!');
 						}
 						url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
-					}
-
-					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
-						message = t('spreed', 'No other people in this call');
-						if (messageAdditional === '' && this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
-							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
-						}
 					}
 
 					OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
