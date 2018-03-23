@@ -251,7 +251,7 @@
 
 					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
 						message = t('spreed', 'No other people in this call');
-						if (messageAdditional === '' && this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
+						if (this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
 							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
 						}
 					}
