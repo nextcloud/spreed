@@ -61,6 +61,8 @@
 		videoDisabled: localStorage.getItem("videoDisabled"),
 		_searchTerm: '',
 		guestNick: null,
+		_currentEmptyContent: null,
+		_lastEmptyContent: null,
 		_registerPageEvents: function() {
 			$('#select-participants').select2({
 				ajax: {
@@ -495,62 +497,74 @@
 			title += ' - ' + oc_defaults.title;
 			window.document.title = title;
 		},
-		setEmptyContentMessage: function(icon, message, messageAdditional) {
-			//Remove previous icon, avatar or link from emptycontent
-			var emptyContentIcon = document.getElementById('emptycontent-icon');
-			emptyContentIcon.removeAttribute('class');
-			emptyContentIcon.innerHTML = '';
-			$('#shareRoomInput').addClass('hidden');
-			$('#shareRoomClipboardButton').addClass('hidden');
+		/**
+		 *
+		 * @param {string|Object} icon
+		 * @param {string} icon.userId
+		 * @param {string} icon.displayName
+		 * @param {string} message
+		 * @param {string} [messageAdditional]
+		 * @param {string} [url]
+		 */
+		setEmptyContentMessage: function(icon, message, messageAdditional, url) {
+			console.log('setEmptyContentMessage');
+			console.log(arguments);
+			var $icon = $('#emptycontent-icon'),
+				$emptyContent = $('#emptycontent');
 
-			$('#emptycontent-icon').addClass(icon);
-			$('#emptycontent h2').text(message);
-			if (messageAdditional) {
-				$('#emptycontent p').text(messageAdditional);
+			//Remove previous icon and avatar from emptycontent
+			$icon.removeAttr('class').attr('class', '');
+			$icon.html('');
+
+			if (url) {
+				$('#shareRoomInput').removeClass('hidden').val(url);
+				$('#shareRoomClipboardButton').removeClass('hidden');
 			} else {
-				$('#emptycontent p').text('');
+				$('#shareRoomInput').addClass('hidden');
+				$('#shareRoomClipboardButton').addClass('hidden');
 			}
+
+			if (typeof icon === 'string') {
+				$icon.addClass(icon);
+			} else {
+				var $avatar = $('<div>');
+				$avatar.addClass('avatar room-avatar');
+				if (icon.userId !== icon.displayName) {
+					$avatar.avatar(icon.userId, 128, undefined, false, undefined, icon.displayName);
+				} else {
+					$avatar.avatar(icon.userId, 128);
+				}
+				$icon.append($avatar);
+			}
+
+			$emptyContent.find('h2').html(message);
+			$emptyContent.find('p').text(messageAdditional ? messageAdditional : '');
+			this._lastEmptyContent = this._currentEmptyContent;
+			this._currentEmptyContent = arguments;
+		},
+		restoreEmptyContent: function() {
+			this.setEmptyContentMessage.apply(this, this._lastEmptyContent);
 		},
 		setRoomMessageForGuest: function(participants) {
-			var message, messageAdditional;
-
-			//Remove previous icon or avatar
-			var emptyContentIcon = document.getElementById('emptycontent-icon');
-			emptyContentIcon.removeAttribute('class');
-			emptyContentIcon.innerHTML = '';
-
 			if (Object.keys(participants).length === 1) {
-				var waitingParticipantId, waitingParticipantName;
+				var participantId = '',
+					participantName = '';
 
-				$.each(participants, function(id, participant) {
-					waitingParticipantId = id;
-					waitingParticipantName = participant.name;
-				});
-
-				// Avatar for username
-				var avatar = document.createElement('div');
-				avatar.className = 'avatar room-avatar';
-
-				$('#emptycontent-icon').append(avatar);
-
-				$('#emptycontent-icon').find('.avatar').each(function () {
-					if (waitingParticipantName && (waitingParticipantId !== waitingParticipantName)) {
-						$(this).avatar(waitingParticipantId, 128, undefined, false, undefined, waitingParticipantName);
-					} else {
-						$(this).avatar(waitingParticipantId, 128);
+				_.each(participants, function(data, userId) {
+					if (OC.getCurrentUser().uid !== userId) {
+						participantId = userId;
+						participantName = data.name;
 					}
 				});
 
-				message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: waitingParticipantName});
-				messageAdditional = '';
-			} else {
-				message = t('spreed', 'Waiting for others to join the call …');
-				messageAdditional = '';
-				$('#emptycontent-icon').addClass('icon-contacts-dark');
-			}
+				OCA.SpreedMe.app.setEmptyContentMessage(
+					{ userId: participantId, displayName: participantName},
+					t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
+				);
 
-			$('#emptycontent h2').text(message);
-			$('#emptycontent p').text(messageAdditional);
+			} else {
+				OCA.SpreedMe.app.setEmptyContentMessage('icon-contacts-dark', t('spreed', 'Waiting for others to join the call …'));
+			}
 		},
 		initialize: function() {
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
@@ -626,11 +640,7 @@
 		startLocalMedia: function(configuration) {
 			this.connection.showCamera();
 			this.initAudioVideoSettings(configuration);
-
-			this.setEmptyContentMessage(
-				'icon-video',
-				t('spreed', 'Waiting for others to join the call …')
-			);
+			this.restoreEmptyContent();
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {

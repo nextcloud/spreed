@@ -189,16 +189,14 @@ var spreedPeerConnectionTable = [];
 			webrtc.leaveCall();
 		});
 		app.signaling.on('joinCall', function (token) {
+			app.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'Waiting for camera and microphone permissions'),
+				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
+			);
+
 			webrtc.joinCall(token);
 		});
-
-		var nick = OC.getCurrentUser().displayName;
-
-		app.setEmptyContentMessage(
-			'icon-video-off',
-			t('spreed', 'Waiting for camera and microphone permissions'),
-			t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
-		);
 
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
@@ -217,7 +215,7 @@ var spreedPeerConnectionTable = [];
 			detectSpeakingEvents: true,
 			connection: app.signaling,
 			enableDataChannels: true,
-			nick: nick
+			nick: OC.getCurrentUser().displayName
 		});
 
 
@@ -640,6 +638,7 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
+			console.log('localMediaStarted');
 			app.startLocalMedia(configuration);
 		});
 
@@ -652,7 +651,6 @@ var spreedPeerConnectionTable = [];
 					messageAdditional = t('spreed', 'Please adjust your configuration');
 				} else {
 					message = t('spreed', 'Access to microphone & camera was denied');
-					$('#emptycontent p').hide();
 				}
 			} else if(!OCA.SpreedMe.webrtc.capabilities.support) {
 				console.log('WebRTC not supported');
@@ -669,22 +667,14 @@ var spreedPeerConnectionTable = [];
 				message,
 				messageAdditional
 			);
-
-			// Hide rooms sidebar
-			$('#app-navigation').hide();
 		});
 
 		if(!OCA.SpreedMe.webrtc.capabilities.support) {
 			console.log('WebRTC not supported');
-			var message, messageAdditional;
-
-			message = t('spreed', 'WebRTC is not supported in your browser :-/');
-			messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
-
 			OCA.SpreedMe.app.setEmptyContentMessage(
 				'icon-video-off',
-				message,
-				messageAdditional
+				t('spreed', 'WebRTC is not supported in your browser :-/'),
+				t('spreed', 'Please use a different browser like Firefox or Chrome')
 			);
 		}
 
