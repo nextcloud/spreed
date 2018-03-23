@@ -175,7 +175,7 @@
 			}
 		},
 		leaveRoom: function() {
-			this.exitingActiveRoom();
+			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
 			$.ajax({
@@ -189,7 +189,7 @@
 				return;
 			}
 
-			this.exitingActiveRoom();
+			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
 			$.ajax({
@@ -197,7 +197,7 @@
 				type: 'DELETE'
 			});
 		},
-		exitingActiveRoom: function() {
+		cleanupIfActiveRoom: function() {
 			if (!this.model.get('active')) {
 				return;
 			}
