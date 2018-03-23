@@ -120,7 +120,7 @@
 			$('#app-content').removeClass('incall');
 		},
 		leaveCurrentCall: function(deleter) {
-			this.app.signaling.leaveRoom();
+			this.app.signaling.leaveCall();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
