@@ -131,7 +131,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomInvited($room, $users) {
-		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true));
+		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true), ['app' => 'spreed']);
 		$userIds = [];
 		foreach ($users as $user) {
 			$userIds[] = $user['userId'];
@@ -159,7 +159,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomsDisinvited($room, $userIds) {
-		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true));
+		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'disinvite',
 			'disinvite' => [
@@ -182,7 +182,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomModified($room) {
-		$this->logger->info('Room modified: ' . $room->getToken());
+		$this->logger->info('Room modified: ' . $room->getToken(), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'update',
 			'update' => [
@@ -202,7 +202,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomDeleted($room, $participants) {
-		$this->logger->info('Room deleted: ' . $room->getToken());
+		$this->logger->info('Room deleted: ' . $room->getToken(), ['app' => 'spreed']);
 		$userIds = array_keys($participants['users']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'delete',
@@ -221,7 +221,7 @@ class BackendNotifier{
 	 * @throws \Exception
 	 */
 	public function roomInCallChanged($room, $inCall, $sessionIds) {
-		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $inCall . ' ' . print_r($sessionIds, true));
+		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $inCall . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
 		$participants = $room->getParticipants();

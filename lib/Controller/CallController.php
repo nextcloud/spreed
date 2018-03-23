@@ -44,8 +44,6 @@ class CallController extends OCSController {
 	private $session;
 	/** @var Manager */
 	private $manager;
-	/** @var Messages */
-	private $messages;
 
 	/**
 	 * @param string $appName
@@ -53,23 +51,18 @@ class CallController extends OCSController {
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
 	 * @param ISession $session
-	 * @param ILogger $logger
 	 * @param Manager $manager
-	 * @param Messages $messages
 	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
 								IUserManager $userManager,
 								ISession $session,
-								ILogger $logger,
-								Manager $manager,
-								Messages $messages) {
+								Manager $manager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->session = $session;
 		$this->manager = $manager;
-		$this->messages = $messages;
 	}
 
 	/**
