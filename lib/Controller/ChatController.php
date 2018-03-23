@@ -26,6 +26,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -53,6 +54,9 @@ class ChatController extends OCSController {
 	/** @var ChatManager */
 	private $chatManager;
 
+	/** @var GuestManager */
+	private $guestManager;
+
 	/**
 	 * @param string $appName
 	 * @param string $UserId
@@ -61,6 +65,7 @@ class ChatController extends OCSController {
 	 * @param ISession $session
 	 * @param Manager $manager
 	 * @param ChatManager $chatManager
+	 * @param GuestManager $guestManager
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -68,7 +73,8 @@ class ChatController extends OCSController {
 								IUserManager $userManager,
 								ISession $session,
 								Manager $manager,
-								ChatManager $chatManager) {
+								ChatManager $chatManager,
+								GuestManager $guestManager) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -76,6 +82,7 @@ class ChatController extends OCSController {
 		$this->session = $session;
 		$this->manager = $manager;
 		$this->chatManager = $chatManager;
+		$this->guestManager = $guestManager;
 	}
 
 	/**
@@ -121,11 +128,12 @@ class ChatController extends OCSController {
 	 *
 	 * @param string $token the room token
 	 * @param string $message the message to send
+	 * @param string $actorDisplayName for guests
 	 * @return DataResponse the status code is "201 Created" if successful, and
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
-	public function sendMessage($token, $message) {
+	public function sendMessage($token, $message, $actorDisplayName = '') {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -133,13 +141,17 @@ class ChatController extends OCSController {
 
 		if ($this->userId === null) {
 			$actorType = 'guests';
-			$actorId = $this->session->get('spreed-session');
+			$sessionId = $this->session->get('spreed-session');
 			// The character limit for actorId is 64, but the spreed-session is
 			// 256 characters long, so it has to be hashed to get an ID that
 			// fits (except if there is no session, as the actorId should be
 			// empty in that case but sha1('') would generate a hash too
 			// instead of returning an empty string).
-			$actorId = $actorId ? sha1($actorId) : $actorId;
+			$actorId = $sessionId ? sha1($sessionId) : '';
+
+			if ($actorId && $actorDisplayName) {
+				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
+			}
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;
@@ -208,11 +220,23 @@ class ChatController extends OCSController {
 
 		$comments = $this->chatManager->receiveMessages((string) $room->getId(), $this->userId, $timeout, $offset, $notOlderThan);
 
-		return new DataResponse(array_map(function(IComment $comment) use ($token) {
+		$guestSessions = [];
+		foreach ($comments as $comment) {
+			if ($comment->getActorType() !== 'guests') {
+				continue;
+			}
+
+			$guestSessions[] = $comment->getActorId();
+		}
+
+		$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
+		return new DataResponse(array_map(function(IComment $comment) use ($token, $guestNames) {
 			$displayName = null;
 			if ($comment->getActorType() === 'users') {
 				$user = $this->userManager->get($comment->getActorId());
 				$displayName = $user instanceof IUser ? $user->getDisplayName() : null;
+			} else if ($comment->getActorType() === 'guests' && isset($guestNames[$comment->getActorId()])) {
+				$displayName = $guestNames[$comment->getActorId()];
 			}
 
 			return [
@@ -226,5 +250,4 @@ class ChatController extends OCSController {
 			];
 		}, $comments));
 	}
-
 }

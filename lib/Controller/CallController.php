@@ -25,7 +25,6 @@
 
 namespace OCA\Spreed\Controller;
 
-use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
@@ -105,7 +104,7 @@ class CallController extends OCSController {
 			}
 
 			$result[] = [
-				'userId' => $participant,
+				'userId' => (string) $participant,
 				'token' => $token,
 				'lastPing' => $data['lastPing'],
 				'sessionId' => $data['sessionId'],

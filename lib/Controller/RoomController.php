@@ -28,6 +28,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -59,6 +60,8 @@ class RoomController extends OCSController {
 	private $manager;
 	/** @var Messages */
 	private $messages;
+	/** @var GuestManager */
+	private $guestManager;
 	/** @var IL10N */
 	private $l10n;
 
@@ -72,6 +75,7 @@ class RoomController extends OCSController {
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param Messages $messages
+	 * @param GuestManager $guestManager
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -83,6 +87,7 @@ class RoomController extends OCSController {
 								ILogger $logger,
 								Manager $manager,
 								Messages $messages,
+								GuestManager $guestManager,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -92,6 +97,7 @@ class RoomController extends OCSController {
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->messages = $messages;
+		$this->guestManager = $guestManager;
 		$this->l10n = $l10n;
 	}
 
@@ -199,7 +205,7 @@ class RoomController extends OCSController {
 		foreach ($participants['users'] as $userId => $data) {
 			$user = $this->userManager->get($userId);
 			if ($user instanceof IUser) {
-				$participantList[$user->getUID()] = [
+				$participantList[(string) $user->getUID()] = [
 					'name' => $user->getDisplayName(),
 					'type' => $data['participantType'],
 					'call' => $data['inCall'],
@@ -508,22 +514,29 @@ class RoomController extends OCSController {
 		$results = [];
 
 		foreach ($participants['users'] as $userId => $participant) {
-			$user = $this->userManager->get($userId);
+			$user = $this->userManager->get((string) $userId);
 			if (!$user instanceof IUser) {
 				continue;
 			}
 
 			$results[] = array_merge($participant, [
-				'userId' => $userId,
-				'displayName' => $user->getDisplayName(),
+				'userId' => (string) $userId,
+				'displayName' => (string) $user->getDisplayName(),
 			]);
 		}
 
+		$guestSessions = [];
 		foreach ($participants['guests'] as $participant) {
+			$guestSessions[] = sha1($participant['sessionId']);
+		}
+		$guestNames = $this->guestManager->getNamesBySessionHashes($guestSessions);
+
+		foreach ($participants['guests'] as $participant) {
+			$sessionHash = sha1($participant['sessionId']);
 			$results[] = array_merge($participant, [
 				'participantType' => Participant::GUEST,
 				'userId' => '',
-				'displayName' => '',
+				'displayName' => isset($guestNames[$sessionHash]) ? $guestNames[$sessionHash] : '',
 			]);
 		}
 

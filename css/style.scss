@@ -927,26 +927,31 @@ video {
 }
 
 .detailCallInfoContainer h3,
+.newCommentRow .guest-name p,
 .detailCallInfoContainer .guest-name p {
 	display: inline-block;
 }
 
+.newCommentRow .guest-name p,
 .detailCallInfoContainer .guest-name p {
 	padding: 9px 0;
 }
 
+.newCommentRow .editable-text-label .edit-button,
 .detailCallInfoContainer .editable-text-label .edit-button {
 	display: none;
 }
 
 .detailCallInfoContainer .clipboard-button,
 .detailCallInfoContainer .password-button,
+.newCommentRow .editable-text-label:hover .edit-button,
 .detailCallInfoContainer .editable-text-label:hover .edit-button {
 	display: inline-block;
 }
 
 .detailCallInfoContainer .clipboard-button .icon,
 .detailCallInfoContainer .password-button .icon,
+.newCommentRow .editable-text-label .edit-button .icon,
 .detailCallInfoContainer .editable-text-label .edit-button .icon {
 	cursor: pointer;
 	padding: 22px;
@@ -955,15 +960,21 @@ video {
 	margin-top: -5px;
 }
 
+.newCommentRow .editable-text-label .input-wrapper,
 .detailCallInfoContainer .editable-text-label .input-wrapper,
 .detailCallInfoContainer .password-option {
 	position: relative;
 	display: inline-block;
 }
 
+.newCommentRow .editable-text-label input,
 .detailCallInfoContainer .editable-text-label input,
 .detailCallInfoContainer .password-input {
 	width: 100%;
+}
+
+.newCommentRow .editable-text-label .label {
+	margin-left: 5px;
 }
 
 .detailCallInfoContainer #link-checkbox+label {

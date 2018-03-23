@@ -72,6 +72,12 @@
 			}
 
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
+		},
+
+		updateGuestName: function(data) {
+			if (this.get('actorType') === 'guests' && this.get('actorId') === data.sessionId && this.get('actorDisplayName') !== data.displayName) {
+				this.set('actorDisplayName', data.displayName);
+			}
 		}
 
 	});

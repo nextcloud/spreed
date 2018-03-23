@@ -714,6 +714,7 @@ var spreedPeerConnectionTable = [];
 					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 				} else if (data.type === 'nickChanged') {
 					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
+					app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
 				}
 			} else if (label === 'hark') {
 				// Ignore messages from hark datachannel
@@ -739,16 +740,10 @@ var spreedPeerConnectionTable = [];
 				if (userId && userId.length) {
 					avatar.avatar(userId, 128);
 					nameIndicator.text(peer.nick);
-				} else if (peer.nick) {
-					avatar.imageplaceholder(peer.nick, undefined, 128);
-					nameIndicator.text(peer.nick);
-				} else if (guestName && guestName.length > 0) {
-					avatar.imageplaceholder(guestName, undefined, 128);
-					nameIndicator.text(guestName);
 				} else {
-					avatar.imageplaceholder('?', undefined, 128);
+					avatar.imageplaceholder('?', peer.nick || guestName, 128);
 					avatar.css('background-color', '#b9b9b9');
-					nameIndicator.text(t('spreed', 'Guest'));
+					nameIndicator.text(peer.nick || guestName || t('spreed', 'Guest'));
 				}
 
 				$(videoContainer).prepend(video);
@@ -913,16 +908,14 @@ var spreedPeerConnectionTable = [];
 			var screenNameIndicator = $(screen).find('.nameIndicator');
 
 			if (!data.name) {
-				videoNameIndicator.text(t('spreed', 'Guest'));
-				videoAvatar.imageplaceholder('?', undefined, 128);
-				videoAvatar.css('background-color', '#b9b9b9');
 				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
-				videoNameIndicator.text(data.name);
-				videoAvatar.imageplaceholder(data.name, undefined, 128);
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
 				guestNamesTable[data.id] = data.name;
 			}
+			videoNameIndicator.text(data.name || t('spreed', 'Guest'));
+			videoAvatar.imageplaceholder('?', data.name, 128);
+			videoAvatar.css('background-color', '#b9b9b9');
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);

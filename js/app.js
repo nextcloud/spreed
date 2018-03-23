@@ -86,7 +86,7 @@
 						var results = [];
 
 						$.each(response.ocs.data.exact.users, function(id, user) {
-							if (oc_current_user === user.value.shareWith) {
+							if (OC.getCurrentUser().uid === user.value.shareWith) {
 								return;
 							}
 							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
@@ -95,7 +95,7 @@
 							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
 						});
 						$.each(response.ocs.data.users, function(id, user) {
-							if (oc_current_user === user.value.shareWith) {
+							if (OC.getCurrentUser().uid === user.value.shareWith) {
 								return;
 							}
 							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
@@ -334,6 +334,11 @@
 				id: 'participantsTabView'
 			});
 
+			this.signaling.on('usersInRoom', function() {
+				// Also refresh the participant list when the users change
+				this._participants.fetch();
+			}.bind(this));
+
 			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
 				if (active) {
 					this.setRoom(model);
@@ -346,7 +351,7 @@
 		 * @param {string} token
 		 */
 		_setRoomActive: function(token) {
-			if (oc_current_user) {
+			if (OC.getCurrentUser().uid) {
 				this._rooms.forEach(function(room) {
 					room.set('active', room.get('token') === token);
 				});
@@ -368,7 +373,7 @@
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:participantInCall');
 
-					if (oc_current_user) {
+					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
 
 						self._rooms.forEach(function(room) {
@@ -507,9 +512,11 @@
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
 			$('#app-content').append(this._sidebarView.$el);
 
-			if (oc_current_user) {
+			if (OC.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
+			} else {
+				this.initGuestName();
 			}
 
 			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
@@ -520,7 +527,8 @@
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
 				id: 'commentsTabView',
-				oldestOnTopLayout: true
+				oldestOnTopLayout: true,
+				guestNameModel: this._localStorageModel
 			});
 
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
@@ -534,10 +542,6 @@
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
 			this.token = $('#app').attr('data-token');
-
-			if (!OC.getCurrentUser().uid) {
-				this.initGuestName();
-			}
 
 			$(window).unload(function () {
 				this.connection.leaveAllCalls();
@@ -656,15 +660,15 @@
 
 			var avatar = avatarContainer.find('.avatar');
 			var guestName = localStorage.getItem("nick");
-			if (oc_current_user) {
-				avatar.avatar(OC.currentUser, 128);
-			} else if (guestName) {
-				avatar.imageplaceholder(guestName, undefined, 128);
-			} else if (this.displayedGuestNameHint === false) {
-				avatar.imageplaceholder('?', undefined, 128);
+			if (OC.getCurrentUser().uid) {
+				avatar.avatar(OC.getCurrentUser().uid, 128);
+			} else {
+				avatar.imageplaceholder('?', guestName, 128);
 				avatar.css('background-color', '#b9b9b9');
-				OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
-				this.displayedGuestNameHint = true;
+				if (this.displayedGuestNameHint === false) {
+					OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
+					this.displayedGuestNameHint = true;
+				}
 			}
 
 			avatarContainer.removeClass('hidden');
@@ -677,23 +681,36 @@
 			this.videoDisabled = true;
 		},
 		initGuestName: function() {
+			var self = this;
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
-			this._localStorageModel.on('change:nick', function(model, value) {
-				var avatar = $('#localVideoContainer').find('.avatar');
-
-				if (value) {
-					avatar.imageplaceholder(value, undefined, 128);
-				} else {
-					avatar.imageplaceholder('?', undefined, 128);
-					avatar.css('background-color', '#b9b9b9');
-				}
-
-				if (OCA.SpreedMe.webrtc) {
-					OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', value);
-				}
-			});
+			this._localStorageModel.on('change:nick', function(model, newDisplayName) {
+				$.ajax({
+					url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + this.token + '/name',
+					type: 'POST',
+					data: {
+						displayName: newDisplayName
+					},
+					beforeSend: function (request) {
+						request.setRequestHeader('Accept', 'application/json');
+					},
+					success: function() {
+						self._onChangeGuestName(newDisplayName);
+					}
+				});
+			}.bind(this));
 
 			this._localStorageModel.fetch();
+		},
+		_onChangeGuestName: function(newDisplayName) {
+			var avatar = $('#localVideoContainer').find('.avatar');
+
+			avatar.imageplaceholder('?', newDisplayName, 128);
+			avatar.css('background-color', '#b9b9b9');
+
+			if (OCA.SpreedMe.webrtc) {
+				console.log('_onChangeGuestName.webrtc');
+				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);
+			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({

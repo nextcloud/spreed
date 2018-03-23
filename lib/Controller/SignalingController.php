@@ -26,6 +26,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -63,6 +64,7 @@ class SignalingController extends OCSController {
 	 * @param Manager $manager
 	 * @param IDBConnection $connection
 	 * @param Messages $messages
+	 * @param IUserManager $userManager
 	 * @param string $UserId
 	 */
 	public function __construct($appName,

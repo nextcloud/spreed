@@ -141,7 +141,7 @@
 
 	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
 		var defer = $.Deferred();
-		if (this.roomCollection && oc_current_user) {
+		if (this.roomCollection && OC.getCurrentUser().uid) {
 			this.roomCollection.fetch({
 				success: function(data) {
 					defer.resolve(data);
