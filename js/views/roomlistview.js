@@ -175,11 +175,7 @@
 			}
 		},
 		leaveRoom: function() {
-			// If user is in that room, it should leave the associated call first.
-			if (this.model.get('active')) {
-				OCA.SpreedMe.app.connection.leaveCurrentCall(true);
-			}
-
+			this.exitingActiveRoom();
 			this.$el.slideUp();
 
 			$.ajax({
@@ -193,19 +189,22 @@
 				return;
 			}
 
-			//If user is in that room, it should leave that room first.
-			if (this.model.get('active')) {
-				OCA.SpreedMe.app._chatView.$el.detach();
-				OCA.SpreedMe.app.connection.leaveCurrentCall(true);
-				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
-			}
-
+			this.exitingActiveRoom();
 			this.$el.slideUp();
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
 				type: 'DELETE'
 			});
+		},
+		exitingActiveRoom: function() {
+			if (!this.model.get('active')) {
+				return;
+			}
+
+			OCA.SpreedMe.app._chatView.$el.detach();
+			OCA.SpreedMe.app.connection.leaveCurrentCall(true);
+			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 		},
 		joinRoom: function(e) {
 			e.preventDefault();
