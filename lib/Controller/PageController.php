@@ -137,7 +137,7 @@ class PageController extends Controller {
 
 			$this->session->remove('spreed-password');
 
-			if ($room->hasPassword()) {
+			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
 				try {
 					$participant = $room->getParticipant($this->userId);
