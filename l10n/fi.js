@@ -38,6 +38,7 @@ OC.L10N.register(
     "Not supported!" : "Ei tuettu!",
     "Press ⌘-C to copy." : "Paina ⌘-C kopioidaksesi.",
     "Press Ctrl-C to copy." : "Paina Ctrl-C kopioidaksesi.",
+    "Join a conversation or start a new one" : "Liity keskusteluun tai aloita uusi",
     "This call has ended" : "Puhelu päättyi",
     "Please enter the password for this call" : "Anna salasana tälle puhelulle",
     "Password required" : "Salasana vaaditaan",
@@ -74,12 +75,8 @@ OC.L10N.register(
     "Add participant" : "Lisää osallistuja",
     "Leave room" : "Poistu huoneesta",
     "Delete room" : "Poista huone",
-    "Waiting for {participantName} to join the room …" : "Odotetaan, että {participantName} liittyy huoneeseen…",
-    "{participantName} is waiting for you to join the call …" : "{participantName} odottaa sinun liittyvän puheluun…",
-    "Waiting for others to join the room …" : "Odotetaan muiden liittyvän huoneeseen…",
     "No other people in this call" : "Ei muita henkilöitä tässä puhelussa",
     "You can invite others in the participant tab of the sidebar" : "Voit kutsua muita sivupalkissa olevan Osallistujat-välilehden kautta",
-    "Call in progress …" : "Puhelu meneillään…",
     "Share this link to invite others!" : "Jaa tämä linkki kutsuaksesi muita!",
     "and you" : "ja sinä",
     "Close" : "Sulje",
@@ -157,6 +154,9 @@ OC.L10N.register(
     "STUN server" : "STUN-palvelin",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille.",
     "TURN server shared secret" : "TURN-palvelimen jaettu salausavain",
-    "New message…" : "Uusi viesti…"
+    "Waiting for {participantName} to join the room …" : "Odotetaan, että {participantName} liittyy huoneeseen…",
+    "{participantName} is waiting for you to join the call …" : "{participantName} odottaa sinun liittyvän puheluun…",
+    "Waiting for others to join the room …" : "Odotetaan muiden liittyvän huoneeseen…",
+    "Call in progress …" : "Puhelu meneillään…"
 },
 "nplurals=2; plural=(n != 1);");
