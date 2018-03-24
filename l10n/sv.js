@@ -74,11 +74,7 @@ OC.L10N.register(
     "Add participant" : "Lägg till deltagare",
     "Leave room" : "Lämna rum",
     "Delete room" : "Radera rum",
-    "Waiting for {participantName} to join the room …" : "Väntar på {participantName} att gå med i ditt rum …",
-    "Waiting for others to join the room …" : "Väntar på andra att gå med i rummet ...",
     "No other people in this call" : "Inga andra personer i detta samtal",
-    "Call in progress …" : "Samtal pågår ...",
-    "Join {participant1} and {participant2}" : "Gå med {participant1} och {participant2}",
     "Share this link to invite others!" : "Dela denna länk för att bjuda in andra!",
     "and you" : "och du",
     "Close" : "Stäng",
@@ -161,9 +157,9 @@ OC.L10N.register(
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
     "TURN server shared secret" : "TURN server delade hemlighet",
-    "New message…" : "Nytt meddelande...",
-    "A (now) deleted user mentioned you in a group chat: %s" : "En (nu) raderad användare nämnde dig i en gruppchat: %s",
-    "A (now) deleted user mentioned you in a group chat: {call}" : "En (nu) raderad användare nämnde dig i en gruppchat: {call}",
-    "A (now) deleted user mentioned you in a group chat" : "En (nu) raderad användare nämnde dig i en gruppchat"
+    "Waiting for {participantName} to join the room …" : "Väntar på {participantName} att gå med i ditt rum …",
+    "Waiting for others to join the room …" : "Väntar på andra att gå med i rummet ...",
+    "Call in progress …" : "Samtal pågår ...",
+    "Join {participant1} and {participant2}" : "Gå med {participant1} och {participant2}"
 },
 "nplurals=2; plural=(n != 1);");

@@ -59,7 +59,6 @@ OC.L10N.register(
     "Leave room" : "Opustiť miestnosť",
     "Delete room" : "Zmazať miestnosť",
     "No other people in this call" : "Na tomto hovore nie sú žiadne ďalšie osoby",
-    "Call in progress …" : "Prebieha hovor …",
     "and you" : "a vy",
     "Close" : "Zatvoriť",
     "Waiting for camera and microphone permissions" : "Čakanie na povolenia kamery a mikrofónu",
@@ -109,6 +108,6 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "3.. 2.. 1.. Úsmev!",
     "STUN server" : "STUN server",
     "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
-    "New message…" : "Nová správa..."
+    "Call in progress …" : "Prebieha hovor …"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");
