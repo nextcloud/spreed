@@ -71,11 +71,7 @@ OC.L10N.register(
     "Add participant" : "添加参与者",
     "Leave room" : "离开房间",
     "Delete room" : "删除房间",
-    "Waiting for {participantName} to join the room …" : "等待 {participantName} 进入房间 …",
-    "{participantName} is waiting for you to join the call …" : "{participantName} 正在等待您加入通话 …",
-    "Waiting for others to join the room …" : "等待其他人进入房间。。。",
     "No other people in this call" : " 此通话中没有其他人",
-    "Call in progress …" : "通话中 ...",
     "Share this link to invite others!" : "分享这个链接邀请其他人！",
     "and you" : "和你\n ",
     "Close" : "关闭",
@@ -147,6 +143,9 @@ OC.L10N.register(
     "STUN server" : "STUN 服务器",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
     "TURN server shared secret" : "TURN服务器分享的秘密",
-    "New message…" : "新消息..."
+    "Waiting for {participantName} to join the room …" : "等待 {participantName} 进入房间 …",
+    "{participantName} is waiting for you to join the call …" : "{participantName} 正在等待您加入通话 …",
+    "Waiting for others to join the room …" : "等待其他人进入房间。。。",
+    "Call in progress …" : "通话中 ..."
 },
 "nplurals=1; plural=0;");

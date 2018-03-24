@@ -71,7 +71,6 @@ OC.L10N.register(
     "Add participant" : "Přidat účastníka",
     "Leave room" : "Opustit místnost",
     "Delete room" : "Smazat místnost",
-    "Waiting for others to join the room …" : "Čeká se až se ostatní připojí do místnosti…",
     "No other people in this call" : "Žádní další lidé v tomto hovoru",
     "Share this link to invite others!" : "Pro pozvání dalších lidí sdílejte tento odkaz!",
     "and you" : "a vy",
@@ -154,9 +153,6 @@ OC.L10N.register(
     "STUN server" : "Server STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
     "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
-    "New message…" : "Nová zpráva...",
-    "A (now) deleted user mentioned you in a group chat: %s" : "Uživatel, který byl (již) smazán, vás zmínil ve skupinovém chatu: %s",
-    "A (now) deleted user mentioned you in a group chat: {call}" : "Uživatel, který byl (již) smazán, vás zmínil ve skupinovém chatu: {call}",
-    "A (now) deleted user mentioned you in a group chat" : "Uživatel, který byl (již) smazán, vás zmínil ve skupinovém chatu"
+    "Waiting for others to join the room …" : "Čeká se až se ostatní připojí do místnosti…"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

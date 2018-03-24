@@ -36,10 +36,6 @@
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "Siunčiant žinutę, įvyko klaida",
     "Delete room" : "Ištrinti kambarį",
-    "Waiting for {participantName} to join the room …" : "Laukiama, kol {participantName} prisijungs prie kambario …",
-    "{participantName} is waiting for you to join the call …" : "{participantName} laukia, kol prisijungsite prie skambučio …",
-    "Waiting for others to join the room …" : "Laukiama, kol kiti prisijungs prie kambario …",
-    "Call in progress …" : "Skambutis eigoje …",
     "Close" : "Užverti",
     "Waiting for camera and microphone permissions" : "Laukiama kameros ir mikrofono leidimų",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Norėdami naudoti šią programėlę, suteikite savo naršyklei prieigą naudoti jūsų kamerą ir mikrofoną.",
@@ -73,6 +69,10 @@
     "Invalid port specified." : "Nurodytas neteisingas prievadas.",
     "Invalid protocols specified." : "Nurodyti neteisingi prievadai.",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris"
+    "STUN server" : "STUN serveris",
+    "Waiting for {participantName} to join the room …" : "Laukiama, kol {participantName} prisijungs prie kambario …",
+    "{participantName} is waiting for you to join the call …" : "{participantName} laukia, kol prisijungsite prie skambučio …",
+    "Waiting for others to join the room …" : "Laukiama, kol kiti prisijungs prie kambario …",
+    "Call in progress …" : "Skambutis eigoje …"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }
