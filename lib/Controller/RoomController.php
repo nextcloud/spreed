@@ -805,13 +805,13 @@ class RoomController extends OCSController {
 		try {
 			if ($this->userId !== null) {
 				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
-				$newSessionId = $room->enterRoomAsUser($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
+				$newSessionId = $room->joinRoom($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
 
 				if (!empty($sessionIds)) {
 					$this->messages->deleteMessages($sessionIds);
 				}
 			} else {
-				$newSessionId = $room->enterRoomAsGuest($password, $this->session->get('spreed-password') === $room->getToken());
+				$newSessionId = $room->joinRoomGuest($password, $this->session->get('spreed-password') === $room->getToken());
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
@@ -833,7 +833,7 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function exitRoom($token) {
+	public function leaveRoom($token) {
 		$sessionId = $this->session->get('spreed-session');
 		$this->session->remove('spreed-session');
 
@@ -845,7 +845,7 @@ class RoomController extends OCSController {
 				$room->removeParticipantBySession($participant);
 			} else {
 				$participant = $room->getParticipant($this->userId);
-				$room->disconnectUserFromAllRooms($participant->getUser());
+				$room->leaveRoom($participant->getUser());
 			}
 		} catch (RoomNotFoundException $e) {
 		} catch (ParticipantNotFoundException $e) {

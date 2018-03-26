@@ -239,7 +239,7 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#exitRoom',
+			'name' => 'Room#leaveRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants/active',
 			'verb' => 'DELETE',
 			'requirements' => [
