@@ -505,8 +505,6 @@ class Room {
 	public function joinRoom($userId, $password, $passedPasswordProtection = false) {
 		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this));
 
-		$this->disconnectUserFromAllRooms($userId);
-
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('session_id', $query->createParameter('session_id'))
@@ -553,6 +551,7 @@ class Room {
 			->set('session_id', $query->createNamedParameter('0'))
 			->set('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
@@ -560,6 +559,7 @@ class Room {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 

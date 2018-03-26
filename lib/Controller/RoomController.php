@@ -58,8 +58,6 @@ class RoomController extends OCSController {
 	private $logger;
 	/** @var Manager */
 	private $manager;
-	/** @var Messages */
-	private $messages;
 	/** @var GuestManager */
 	private $guestManager;
 	/** @var IL10N */
@@ -74,7 +72,6 @@ class RoomController extends OCSController {
 	 * @param IGroupManager $groupManager
 	 * @param ILogger $logger
 	 * @param Manager $manager
-	 * @param Messages $messages
 	 * @param GuestManager $guestManager
 	 * @param IL10N $l10n
 	 */
@@ -86,7 +83,6 @@ class RoomController extends OCSController {
 								IGroupManager $groupManager,
 								ILogger $logger,
 								Manager $manager,
-								Messages $messages,
 								GuestManager $guestManager,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
@@ -96,7 +92,6 @@ class RoomController extends OCSController {
 		$this->groupManager = $groupManager;
 		$this->logger = $logger;
 		$this->manager = $manager;
-		$this->messages = $messages;
 		$this->guestManager = $guestManager;
 		$this->l10n = $l10n;
 	}
@@ -804,12 +799,7 @@ class RoomController extends OCSController {
 
 		try {
 			if ($this->userId !== null) {
-				$sessionIds = $this->manager->getSessionIdsForUser($this->userId);
 				$newSessionId = $room->joinRoom($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
-
-				if (!empty($sessionIds)) {
-					$this->messages->deleteMessages($sessionIds);
-				}
 			} else {
 				$newSessionId = $room->joinRoomGuest($password, $this->session->get('spreed-password') === $room->getToken());
 			}
