@@ -32,9 +32,6 @@
 		/** @property {OCA.Talk.Application} app */
 		app: null,
 
-		showCamera: function() {
-			$('.videoView').removeClass('hidden');
-		},
 		_createCallSuccessHandle: function(ocsResponse) {
 			var token = ocsResponse.ocs.data.token;
 			OC.Util.History.pushState({

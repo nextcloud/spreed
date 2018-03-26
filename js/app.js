@@ -624,7 +624,7 @@
 			}
 		},
 		startLocalMedia: function(configuration) {
-			this.connection.showCamera();
+			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			this.setEmptyContentMessage(
