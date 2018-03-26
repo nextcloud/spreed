@@ -116,10 +116,6 @@
 		}
 	};
 
-	OCA.Talk.Signaling.Base.prototype.leaveAllCalls = function() {
-		// Override if necessary.
-	};
-
 	OCA.Talk.Signaling.Base.prototype.setRoomCollection = function(rooms) {
 		this.roomCollection = rooms;
 		return this.syncRooms();
@@ -522,9 +518,7 @@
 				return;
 			}
 
-			// FIXME This was trying to call connection.leaveCurrentCall(false);
-			// FIXME UI is also not updated. But at least it stops pinging the room.
-			this.leaveCurrentRoom();
+			OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
 		}.bind(this));
 	};
 
