@@ -38,7 +38,7 @@ class TalkSession {
 	 * @return string|null
 	 */
 	public function getSessionForRoom($token) {
-		return $this->session->get('spreed-session');
+		return $this->getValue('spreed-session', $token);
 	}
 
 	/**
@@ -46,14 +46,14 @@ class TalkSession {
 	 * @param string $sessionId
 	 */
 	public function setSessionForRoom($token, $sessionId) {
-		$this->session->set('spreed-session', $sessionId);
+		$this->setValue('spreed-session', $token, $sessionId);
 	}
 
 	/**
 	 * @param string $token
 	 */
 	public function removeSessionForRoom($token) {
-		$this->session->remove('spreed-session');
+		$this->removeValue('spreed-session', $token);
 	}
 
 	/**
@@ -61,24 +61,72 @@ class TalkSession {
 	 * @return string|null
 	 */
 	public function getPasswordForRoom($token) {
-		return $this->session->get('spreed-password');
+		return $this->getValue('spreed-password', $token);
 	}
 
 	/**
 	 * @param string $token
 	 * @param string $password
-	 * @return string|null
 	 */
 	public function setPasswordForRoom($token, $password) {
-		$this->session->set('spreed-password', $password);
+		$this->setValue('spreed-password', $token, $password);
 	}
 
 	/**
 	 * @param string $token
 	 */
 	public function removePasswordForRoom($token) {
-		$this->session->remove('spreed-password');
+		$this->removeValue('spreed-password', $token);
 	}
 
+	/**
+	 * @param string $key
+	 * @param string $token
+	 * @return string|null
+	 */
+	protected function getValue($key, $token) {
+		$values = $this->session->get($key);
+		$values = json_decode($values, true);
+		if ($values === null) {
+			return null;
+		}
+
+		if (!isset($values[$token])) {
+			return null;
+		}
+		return $values[$token];
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $token
+	 * @param string $value
+	 */
+	protected function setValue($key, $token, $value) {
+		$values = $this->session->get($key);
+		$values = json_decode($values, true);
+		if ($values === null) {
+			$values = [];
+		}
+
+		$values[$token] = $value;
+		$this->session->set($key, json_encode($values));
+	}
+
+	/**
+	 * @param string $key
+	 * @param string $token
+	 */
+	protected function removeValue($key, $token) {
+		$values = $this->session->get($key);
+		$values = json_decode($values, true);
+		if ($values === null) {
+			$values = [];
+		} else {
+			unset($values[$token]);
+		}
+
+		$this->session->set($key, json_encode($values));
+	}
 
 }
