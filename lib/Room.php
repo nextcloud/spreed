@@ -502,8 +502,8 @@ class Room {
 	 * @return string
 	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsUser($userId, $password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preUserEnterRoom', new GenericEvent($this));
+	public function joinRoom($userId, $password, $passedPasswordProtection = false) {
+		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this));
 
 		$this->disconnectUserFromAllRooms($userId);
 
@@ -536,7 +536,7 @@ class Room {
 			$query->execute();
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postUserEnterRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postJoinRoom', new GenericEvent($this));
 
 		return $sessionId;
 	}
@@ -544,7 +544,7 @@ class Room {
 	/**
 	 * @param string $userId
 	 */
-	public function disconnectUserFromAllRooms($userId) {
+	public function leaveRoom($userId) {
 		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this));
 
 		// Reset sessions on all normal rooms
@@ -572,8 +572,8 @@ class Room {
 	 * @return string
 	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsGuest($password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
+	public function joinRoomGuest($password, $passedPasswordProtection = false) {
+		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', new GenericEvent($this));
 
 		if (!$passedPasswordProtection && !$this->verifyPassword($password)) {
 			throw new InvalidPasswordException();
@@ -590,7 +590,7 @@ class Room {
 			$sessionId = $this->secureRandom->generate(255);
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postGuestEnterRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postJoinRoomGuest', new GenericEvent($this));
 
 		return $sessionId;
 	}
