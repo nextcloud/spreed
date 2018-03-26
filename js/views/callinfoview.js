@@ -28,8 +28,6 @@
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
-	var uiChannel = Backbone.Radio.channel('ui');
-
 	var TEMPLATE =
 		'<div class="room-name"></div>' +
 		'{{#if showShareLink}}' +
@@ -188,7 +186,7 @@
 		},
 
 		renderWhenInactive: function() {
-			if (this.ui.passwordInput.length === 0 || this.ui.passwordInput.val() === '') {
+			if (this.ui.passwordInput.length === 0 || (OC._currentMenu && OC._currentMenu.hasClass('password-menu')) || this.ui.passwordInput.val() === '') {
 				this.render();
 				return;
 			}
