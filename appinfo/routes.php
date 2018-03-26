@@ -30,20 +30,25 @@ return [
 		],
 	],
 	'ocs' => [
+		/**
+		 * Signaling
+		 */
 		[
 			'name' => 'Signaling#signaling',
-			'url' => '/api/{apiVersion}/signaling',
+			'url' => '/api/{apiVersion}/signaling/{token}',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
 			'name' => 'Signaling#pullMessages',
-			'url' => '/api/{apiVersion}/signaling',
+			'url' => '/api/{apiVersion}/signaling/{token}',
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 		[
@@ -62,6 +67,10 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
+
+		/**
+		 * Call
+		 */
 		[
 			'name' => 'Call#getPeersForCall',
 			'url' => '/api/{apiVersion}/call/{token}',
@@ -99,6 +108,9 @@ return [
 			],
 		],
 
+		/**
+		 * Chat
+		 */
 		[
 			'name' => 'Chat#receiveMessages',
 			'url' => '/api/{apiVersion}/chat/{token}',
@@ -118,6 +130,9 @@ return [
 			],
 		],
 
+		/**
+		 * Room
+		 */
 		[
 			'name' => 'Room#getRooms',
 			'url' => '/api/{apiVersion}/room',
@@ -265,6 +280,10 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+
+		/**
+		 * Guest
+		 */
 		[
 			'name' => 'Guest#setDisplayName',
 			'url' => '/api/{apiVersion}/guest/{token}/name',
