@@ -28,19 +28,17 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
-use OCA\Spreed\Signaling\Messages;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\ILogger;
 use OCP\IRequest;
-use OCP\ISession;
 use OCP\IUserManager;
 
 class CallController extends OCSController {
 	/** @var string */
 	private $userId;
-	/** @var ISession */
+	/** @var TalkSession */
 	private $session;
 	/** @var Manager */
 	private $manager;
@@ -50,14 +48,14 @@ class CallController extends OCSController {
 	 * @param string $UserId
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
-	 * @param ISession $session
+	 * @param TalkSession $session
 	 * @param Manager $manager
 	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
 								IUserManager $userManager,
-								ISession $session,
+								TalkSession $session,
 								Manager $manager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
@@ -73,7 +71,7 @@ class CallController extends OCSController {
 	 */
 	public function getPeersForCall($token) {
 		try {
-			$room = $this->manager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
+			$room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
 		} catch (RoomNotFoundException $e) {
 			if ($this->userId === null) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -143,12 +141,12 @@ class CallController extends OCSController {
 		}
 
 		if ($this->userId === null) {
-			if (!$this->session->exists('spreed-session')) {
+			if ($this->session->getSessionForRoom($token) === null) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
 			try {
-				$participant = $room->getParticipantBySession($this->session->get('spreed-session'));
+				$participant = $room->getParticipantBySession($this->session->getSessionForRoom($token));
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
@@ -177,7 +175,7 @@ class CallController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function pingCall($token) {
-		if (!$this->session->exists('spreed-session')) {
+		if ($this->session->getSessionForRoom($token) === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -187,7 +185,7 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$sessionId = $this->session->get('spreed-session');
+		$sessionId = $this->session->getSessionForRoom($token);
 		$room->ping($this->userId, $sessionId, time());
 
 		return new DataResponse();
@@ -208,12 +206,12 @@ class CallController extends OCSController {
 		}
 
 		if ($this->userId === null) {
-			if (!$this->session->exists('spreed-session')) {
+			if ($this->session->getSessionForRoom($token) === null) {
 				return new DataResponse();
 			}
 
 			try {
-				$participant = $room->getParticipantBySession($this->session->get('spreed-session'));
+				$participant = $room->getParticipantBySession($this->session->getSessionForRoom($token));
 			} catch (ParticipantNotFoundException $e) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}

@@ -28,12 +28,12 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Comments\IComment;
 use OCP\IRequest;
-use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 
@@ -45,7 +45,7 @@ class ChatController extends OCSController {
 	/** @var IUserManager */
 	private $userManager;
 
-	/** @var ISession */
+	/** @var TalkSession */
 	private $session;
 
 	/** @var Manager */
@@ -62,7 +62,7 @@ class ChatController extends OCSController {
 	 * @param string $UserId
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
-	 * @param ISession $session
+	 * @param TalkSession $session
 	 * @param Manager $manager
 	 * @param ChatManager $chatManager
 	 * @param GuestManager $guestManager
@@ -71,7 +71,7 @@ class ChatController extends OCSController {
 								$UserId,
 								IRequest $request,
 								IUserManager $userManager,
-								ISession $session,
+								TalkSession $session,
 								Manager $manager,
 								ChatManager $chatManager,
 								GuestManager $guestManager) {
@@ -97,7 +97,7 @@ class ChatController extends OCSController {
 	 */
 	private function getRoom($token) {
 		try {
-			$room = $this->manager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
+			$room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
 		} catch (RoomNotFoundException $exception) {
 			if ($this->userId === null) {
 				return null;
@@ -141,7 +141,7 @@ class ChatController extends OCSController {
 
 		if ($this->userId === null) {
 			$actorType = 'guests';
-			$sessionId = $this->session->get('spreed-session');
+			$sessionId = $this->session->getSessionForRoom($token);
 			// The character limit for actorId is 64, but the spreed-session is
 			// 256 characters long, so it has to be hashed to get an ID that
 			// fits (except if there is no session, as the actorId should be

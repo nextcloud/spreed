@@ -32,14 +32,13 @@ use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
-use OCA\Spreed\Signaling\Messages;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
-use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
@@ -48,7 +47,7 @@ use OCP\IGroupManager;
 class RoomController extends OCSController {
 	/** @var string */
 	private $userId;
-	/** @var ISession */
+	/** @var TalkSession */
 	private $session;
 	/** @var IUserManager */
 	private $userManager;
@@ -67,7 +66,7 @@ class RoomController extends OCSController {
 	 * @param string $appName
 	 * @param string $UserId
 	 * @param IRequest $request
-	 * @param ISession $session
+	 * @param TalkSession $session
 	 * @param IUserManager $userManager
 	 * @param IGroupManager $groupManager
 	 * @param ILogger $logger
@@ -78,7 +77,7 @@ class RoomController extends OCSController {
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
-								ISession $session,
+								TalkSession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
 								ILogger $logger,
@@ -133,7 +132,7 @@ class RoomController extends OCSController {
 				$participant = $room->getParticipant($this->userId);
 			} catch (ParticipantNotFoundException $e) {
 				try {
-					$participant = $room->getParticipantBySession($this->session->get('spreed-session'));
+					$participant = $room->getParticipantBySession($this->session->getSessionForRoom($token));
 				} catch (ParticipantNotFoundException $e) {
 				}
 			}
@@ -799,16 +798,16 @@ class RoomController extends OCSController {
 
 		try {
 			if ($this->userId !== null) {
-				$newSessionId = $room->joinRoom($this->userId, $password, $this->session->get('spreed-password') === $room->getToken());
+				$newSessionId = $room->joinRoom($this->userId, $password, $this->session->getPasswordForRoom($token) === $room->getToken());
 			} else {
-				$newSessionId = $room->joinRoomGuest($password, $this->session->get('spreed-password') === $room->getToken());
+				$newSessionId = $room->joinRoomGuest($password, $this->session->getPasswordForRoom($token) === $room->getToken());
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$this->session->remove('spreed-password');
-		$this->session->set('spreed-session', $newSessionId);
+		$this->session->removePasswordForRoom($token);
+		$this->session->setSessionForRoom($token, $newSessionId);
 		$room->ping($this->userId, $newSessionId, time());
 
 		return new DataResponse([
@@ -824,8 +823,8 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function leaveRoom($token) {
-		$sessionId = $this->session->get('spreed-session');
-		$this->session->remove('spreed-session');
+		$sessionId = $this->session->getSessionForRoom($token);
+		$this->session->removeSessionForRoom($token);
 
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);

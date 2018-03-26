@@ -26,24 +26,22 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IDBConnection;
 use OCP\IRequest;
-use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 
 class SignalingController extends OCSController {
 	/** @var Config */
 	private $config;
-	/** @var ISession */
+	/** @var TalkSession */
 	private $session;
 	/** @var Manager */
 	private $manager;
@@ -60,7 +58,7 @@ class SignalingController extends OCSController {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param Config $config
-	 * @param ISession $session
+	 * @param TalkSession $session
 	 * @param Manager $manager
 	 * @param IDBConnection $connection
 	 * @param Messages $messages
@@ -70,7 +68,7 @@ class SignalingController extends OCSController {
 	public function __construct($appName,
 								IRequest $request,
 								Config $config,
-								ISession $session,
+								TalkSession $session,
 								Manager $manager,
 								IDBConnection $connection,
 								Messages $messages,
@@ -101,10 +99,11 @@ class SignalingController extends OCSController {
 	/**
 	 * @PublicPage
 	 *
+	 * @param string $token
 	 * @param string $messages
 	 * @return DataResponse
 	 */
-	public function signaling($messages) {
+	public function signaling($token, $messages) {
 		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -121,7 +120,7 @@ class SignalingController extends OCSController {
 						break;
 					}
 					$decodedMessage = json_decode($fn, true);
-					if ($message['sessionId'] !== $this->session->get('spreed-session')) {
+					if ($message['sessionId'] !== $this->session->getSessionForRoom($token)) {
 						break;
 					}
 					$decodedMessage['from'] = $message['sessionId'];
@@ -137,9 +136,11 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 *
+	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function pullMessages() {
+	public function pullMessages($token) {
 		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -150,11 +151,7 @@ class SignalingController extends OCSController {
 		$sessionId = '';
 
 		while ($seconds > 0) {
-			if ($this->userId === null) {
-				$sessionId = $this->session->get('spreed-session');
-			} else {
-				$sessionId = $this->manager->getCurrentSessionId($this->userId);
-			}
+			$sessionId = $this->session->getSessionForRoom($token);
 
 			if ($sessionId === null) {
 				// User is not active anywhere
@@ -386,7 +383,7 @@ class SignalingController extends OCSController {
 		if (empty($participant)) {
 			// User was not invited to the room, check for access to public room.
 			try {
-				$participant = $room->getParticipantBySession($sessionId);
+				$room->getParticipantBySession($sessionId);
 			} catch (ParticipantNotFoundException $e) {
 				// Return generic error to avoid leaking which rooms exist.
 				return new DataResponse([
