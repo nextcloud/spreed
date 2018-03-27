@@ -48,6 +48,21 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `5` user following a public link
 
 
+## Capabilities
+
+### 3.0 (Initial Talk release)
+* `audio` - audio is supported
+* `video` - video + screensharing is supported
+* `chat` - simple text chat is supported
+
+### 3.1
+* `guest-signaling` - Guests can do signaling via api endpoints
+* `empty-group-room` - Group rooms can be created without inviting a Nextcloud user group by default
+
+### 3.2
+* `guest-display-names` - Display names of guests are stored in the database, can be set via API (not WebRTC only) and are used on returned comments/participants/etc.
+* `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL
+
 
 ## Room management
 
