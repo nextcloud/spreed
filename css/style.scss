@@ -114,28 +114,6 @@
 	opacity: .5;
 }
 
-.password-input,
-.editable-text-label input {
-	margin-top: 0 !important;
-	margin-bottom: 4px !important;
-}
-
-.icon-confirm.password-confirm,
-.icon-confirm.confirm-button {
-	background-size: 16px;
-	background-color: transparent;
-	border: none;
-	position: absolute;
-	right: 0;
-	bottom: 3px;
-	padding: 16px;
-	opacity: .5;
-}
-.icon-confirm.password-confirm:hover,
-.icon-confirm.confirm-button:hover  {
-	opacity: 1;
-}
-
 .icon-clippy.public-room {
 	background-position-y: 8px !important;
 }
@@ -818,8 +796,7 @@ video {
 	clear: both;
 }
 
-.tabHeaders,
-#app-sidebar .icon {
+.tabHeaders {
 	display: inline-block;
 }
 
@@ -921,65 +898,51 @@ video {
 /**
  * Sidebar details view
  */
-
-.detailCallInfoContainer .room-name {
-	display: inline-block;
-}
-
-.detailCallInfoContainer h3,
-.newCommentRow .guest-name p,
-.detailCallInfoContainer .guest-name p {
-	display: inline-block;
-}
-
-.newCommentRow .guest-name p,
-.detailCallInfoContainer .guest-name p {
-	padding: 9px 0;
-}
-
-.newCommentRow .editable-text-label .edit-button,
-.detailCallInfoContainer .editable-text-label .edit-button {
-	display: none;
-}
-
-.detailCallInfoContainer .clipboard-button,
-.detailCallInfoContainer .password-button,
-.newCommentRow .editable-text-label:hover .edit-button,
-.detailCallInfoContainer .editable-text-label:hover .edit-button {
-	display: inline-block;
-}
-
-.detailCallInfoContainer .clipboard-button .icon,
-.detailCallInfoContainer .password-button .icon,
-.newCommentRow .editable-text-label .edit-button .icon,
-.detailCallInfoContainer .editable-text-label .edit-button .icon {
-	cursor: pointer;
-	padding: 22px;
-	vertical-align: middle;
-	margin-left: -5px;
-	margin-top: -5px;
-}
-
-.newCommentRow .editable-text-label .input-wrapper,
-.detailCallInfoContainer .editable-text-label .input-wrapper,
-.detailCallInfoContainer .password-option {
-	position: relative;
-	display: inline-block;
-}
-
-.newCommentRow .editable-text-label input,
-.detailCallInfoContainer .editable-text-label input,
-.detailCallInfoContainer .password-input {
-	width: 100%;
-}
-
-.newCommentRow .editable-text-label .label {
-	margin-left: 5px;
-}
-
-.detailCallInfoContainer #link-checkbox+label {
-	display: inline-block;
-	padding: 12px 0;
+.detailCallInfoContainer,
+.authorRow {
+	.room-name {
+		display: inline-block;
+	}
+	.guest-name p {
+		display: inline-block;
+		padding: 9px 0;
+	}
+	.editable-text-label {
+		.label-wrapper {
+			display: flex;
+			align-items: center;
+			.edit-button {
+				margin-left: 5px;
+				display: none;
+			}
+			&:hover .edit-button {
+				display: block;
+			}
+		}
+		.input-wrapper {
+			display: flex;
+			align-items: center;
+		}
+		.label {
+			margin-left: 5px;
+		}
+	}
+	.share-link-options {
+		display: flex;
+		align-items: center;
+		.link-checkbox-label {
+			margin-left: 6px;
+		}
+		.button {
+			cursor: pointer;
+			width: 44px;
+			height: 44px;
+			display: block;
+		}
+		.password-button {
+			position: relative;
+		}
+	}
 }
 
 /**

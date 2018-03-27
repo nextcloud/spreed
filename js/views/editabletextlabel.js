@@ -31,13 +31,13 @@
 		'<div class="label-wrapper">' +
 		'	<{{labelTagName}} class="label">{{text}}</{{labelTagName}}>' +
 		'	{{#if editionEnabled}}' +
-		'		<div class="edit-button"><span class="icon icon-rename" {{#if buttonTitle}} title="{{buttonTitle}}" {{/if}}></span></div>' +
+		'		<div class="edit-button"><span class="icon button icon-rename" {{#if buttonTitle}} title="{{buttonTitle}}" {{/if}}></span></div>' +
 		'	{{/if}}' +
 		'</div>' +
 		'{{#if editionEnabled}}' +
 		'	<div class="input-wrapper hidden-important">' +
-		'		<input {{#if inputMaxLength}} maxlength="{{inputMaxLength}}" {{/if}} type="text" value="{{inputValue}}" {{#if inputPlaceholder}} placeholder="{{inputPlaceholder}}" {{/if}}>'+
-		'		<div class="icon icon-confirm confirm-button"></div>'+
+		'		<input class="username" {{#if inputMaxLength}} maxlength="{{inputMaxLength}}" {{/if}} type="text" value="{{inputValue}}" {{#if inputPlaceholder}} placeholder="{{inputPlaceholder}}" {{/if}}>'+
+		'		<input type="submit" value="" class="icon icon-confirm confirm-button"></div>'+
 		'	</div>' +
 		'{{/if}}';
 
@@ -82,7 +82,7 @@
 			label: '.label',
 			editButton: '.edit-button',
 			inputWrapper: '.input-wrapper',
-			input: 'input',
+			input: 'input.username',
 			confirmButton: '.confirm-button',
 		},
 
