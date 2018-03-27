@@ -30,13 +30,11 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
 use OCP\IDBConnection;
-use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Security\ISecureRandom;
 
 class CustomInputSignalingController extends SignalingController {
 
@@ -57,22 +55,22 @@ class CustomInputSignalingController extends SignalingController {
  */
 class SignalingControllerTest extends \Test\TestCase {
 
-	/** @var OCA\Spreed\Config */
+	/** @var Config */
 	private $config;
 
-	/** @var \OCP\ISession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var TalkSession|\PHPUnit_Framework_MockObject_MockObject */
 	private $session;
 
-	/** @var \OCA\Spreed\Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
 
-	/** @var \OCP\IDBConnection|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IDBConnection|\PHPUnit_Framework_MockObject_MockObject */
 	protected $dbConnection;
 
-	/** @var \OCA\Spreed\Signaling\Messages|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Messages|\PHPUnit_Framework_MockObject_MockObject */
 	protected $messages;
 
-	/** @var \OCP\IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
 
 	/** @var string */
@@ -94,7 +92,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$config->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->config = new Config($config, $secureRandom, $timeFactory);
-		$this->session = $this->createMock(ISession::class);
+		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->manager = $this->createMock(Manager::class);
 		$this->messages = $this->createMock(Messages::class);
