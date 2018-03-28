@@ -45,14 +45,14 @@
 								'<li>'+
 									'<button class="remove-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>'+t('spreed', 'Remove room from list')+'</span>'+
+										'<span>'+t('spreed', 'Remove conversation from list')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{#if isDeletable}}'+
 								'<li>'+
 									'<button class="delete-room-button">'+
 										'<span class="icon-delete"></span>'+
-										'<span>'+t('spreed', 'Delete room')+'</span>'+
+										'<span>'+t('spreed', 'Delete conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{/if}}'+

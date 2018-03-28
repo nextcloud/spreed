@@ -29,7 +29,7 @@
 
 	var TEMPLATE = ''+
 		'<form class="oca-spreedme-add-person">'+
-		'	<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Add participant')+'"/>'+
+		'	<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Add participant …')+'"/>'+
 		'</form>'+
 		'<ul class="participantWithList">' +
 		'</ul>';
@@ -139,7 +139,7 @@
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
 				},
 				formatSelection: function () {
-					return '<span class="select2-default" style="padding-left: 0;">'+OC.L10N.translate('spreed', 'Choose person…')+'</span>';
+					return '<span class="select2-default" style="padding-left: 0;">' + t('spreed', 'Add participant …') + '</span>';
 				}
 			});
 			this.ui.addParticipantInput.on('change', function(e) {
