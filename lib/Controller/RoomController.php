@@ -765,7 +765,7 @@ class RoomController extends OCSController {
 			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\RuntimeException $e) {
+		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 

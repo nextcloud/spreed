@@ -35,7 +35,7 @@ Feature: one-to-one
       | invite   | participant2 |
     And user "participant1" is participant of room "room2"
     And user "participant2" is participant of room "room2"
-    When user "participant1" leaves room "room2" with 200
+    When user "participant1" removes themselves from room "room2" with 200
     Then user "participant1" is not participant of room "room2"
     And user "participant2" is not participant of room "room2"
 

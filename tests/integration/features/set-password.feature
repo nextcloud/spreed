@@ -43,12 +43,12 @@ Feature: public
     And user "participant1" adds "participant2" to room "room" with 200
     When user "participant2" sets password "foobar" for room "room" with 403
     Then user "participant3" joins room "room" with 200
-    And user "participant3" leaves call "room" with 200
+    And user "participant3" leaves room "room" with 200
     When user "participant1" sets password "foobar" for room "room" with 200
     Then user "participant3" joins room "room" with 403
     Then user "participant3" joins room "room" with 200
       | password | foobar |
-    And user "participant3" leaves call "room" with 200
+    And user "participant3" leaves room "room" with 200
     When user "participant2" sets password "" for room "room" with 403
     Then user "participant3" joins room "room" with 403
 
@@ -60,11 +60,11 @@ Feature: public
       | room | 3    | 1               | participant1-displayname |
     When user "participant2" sets password "foobar" for room "room" with 404
     Then user "participant3" joins room "room" with 200
-    And user "participant3" leaves call "room" with 200
+    And user "participant3" leaves room "room" with 200
     When user "participant1" sets password "foobar" for room "room" with 200
     Then user "participant3" joins room "room" with 403
     Then user "participant3" joins room "room" with 200
       | password | foobar |
-    And user "participant3" leaves call "room" with 200
+    And user "participant3" leaves room "room" with 200
     When user "participant2" sets password "" for room "room" with 404
     Then user "participant3" joins room "room" with 403
