@@ -59,6 +59,7 @@
 		displayedGuestNameHint: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		videoDisabled: localStorage.getItem("videoDisabled"),
+		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
 		_currentEmptyContent: null,
@@ -214,33 +215,12 @@
 			});
 
 			$('#video-fullscreen').click(function() {
-				var fullscreenElem = document.getElementById('app-content');
-
-				if (!document.fullscreenElement && !document.mozFullScreenElement &&
-					!document.webkitFullscreenElement && !document.msFullscreenElement) {
-					if (fullscreenElem.requestFullscreen) {
-						fullscreenElem.requestFullscreen();
-					} else if (fullscreenElem.webkitRequestFullscreen) {
-						fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-					} else if (fullscreenElem.mozRequestFullScreen) {
-						fullscreenElem.mozRequestFullScreen();
-					} else if (fullscreenElem.msRequestFullscreen) {
-						fullscreenElem.msRequestFullscreen();
-					}
-					$(this).attr('data-original-title', t('spreed', 'Exit fullscreen'));
+				if (this.fullscreenDisabled) {
+					this.enableFullscreen();
 				} else {
-					if (document.exitFullscreen) {
-						document.exitFullscreen();
-					} else if (document.webkitExitFullscreen) {
-						document.webkitExitFullscreen();
-					} else if (document.mozCancelFullScreen) {
-						document.mozCancelFullScreen();
-					} else if (document.msExitFullscreen) {
-						document.msExitFullscreen();
-					}
-					$(this).attr('data-original-title', t('spreed', 'Fullscreen'));
+					this.disableFullscreen();
 				}
-			});
+			}.bind(this));
 
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
@@ -342,6 +322,14 @@
 							this.enableAudio();
 						} else {
 							this.disableAudio();
+						}
+						break;
+					case 70: // 'f'
+						event.preventDefault();
+						if (this.fullscreenDisabled) {
+							this.enableFullscreen();
+						} else {
+							this.disableFullscreen();
 						}
 						break;
 					case 67: // 'c'
@@ -657,6 +645,37 @@
 				this.disableVideo();
 			}
 		},
+		enableFullscreen: function() {
+			var fullscreenElem = document.getElementById('app-content');
+
+			if (fullscreenElem.requestFullscreen) {
+				fullscreenElem.requestFullscreen();
+			} else if (fullscreenElem.webkitRequestFullscreen) {
+				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			} else if (fullscreenElem.mozRequestFullScreen) {
+				fullscreenElem.mozRequestFullScreen();
+			} else if (fullscreenElem.msRequestFullscreen) {
+				fullscreenElem.msRequestFullscreen();
+			}
+			$('#video-fullscreen').attr('data-original-title', t('spreed', 'Exit fullscreen (f)'));
+
+			this.fullscreenDisabled = false;
+		},
+		disableFullscreen: function() {
+
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen();
+			}
+			$('#video-fullscreen').attr('data-original-title', t('spreed', 'Fullscreen (f)'));
+
+			this.fullscreenDisabled = true;
+		},
 		enableAudio: function() {
 			if (!OCA.SpreedMe.webrtc) {
 				return;
@@ -675,7 +694,7 @@
 			}
 
 			OCA.SpreedMe.webrtc.mute();
-			$('#mute').attr('data-original-title', t('spreed', 'Enable audio (m)'))
+			$('#mute').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
 				.addClass('audio-disabled icon-audio-off')
 				.removeClass('icon-audio');
 

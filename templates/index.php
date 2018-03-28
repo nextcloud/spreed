@@ -53,7 +53,7 @@ script(
 	<div id="app-content" class="participants-1">
 
 		<div id="app-content-wrapper">
-		<button id="video-fullscreen" class="icon-fullscreen icon-white icon-shadow" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen')) ?>"></button>
+		<button id="video-fullscreen" class="icon-fullscreen icon-white icon-shadow" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen (f)')) ?>"></button>
 
 		<div id="video-speaking">
 
