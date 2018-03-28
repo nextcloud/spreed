@@ -46,6 +46,8 @@ class Capabilities implements IPublicCapability {
 					'chat',
 					'guest-signaling',
 					'empty-group-room',
+					'guest-display-names',
+					'multi-room-users',
 				],
 			],
 		];

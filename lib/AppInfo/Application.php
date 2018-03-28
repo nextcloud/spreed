@@ -86,8 +86,8 @@ class Application extends App {
 			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
 		};
 
-		$dispatcher->addListener(Room::class . '::postUserEnterRoom', $listener);
-		$dispatcher->addListener(Room::class . '::postGuestEnterRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postJoinRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postJoinRoomGuest', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);

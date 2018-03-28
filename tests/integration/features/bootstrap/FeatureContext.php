@@ -203,7 +203,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" exits room "([^"]*)" with (\d+)$/
+	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier
@@ -216,7 +216,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" leaves room "([^"]*)" with (\d+)$/
+	 * @Then /^user "([^"]*)" removes themselves from room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
 	 * @param string $identifier

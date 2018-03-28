@@ -502,10 +502,8 @@ class Room {
 	 * @return string
 	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsUser($userId, $password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preUserEnterRoom', new GenericEvent($this));
-
-		$this->disconnectUserFromAllRooms($userId);
+	public function joinRoom($userId, $password, $passedPasswordProtection = false) {
+		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this));
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
@@ -536,7 +534,7 @@ class Room {
 			$query->execute();
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postUserEnterRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postJoinRoom', new GenericEvent($this));
 
 		return $sessionId;
 	}
@@ -544,7 +542,7 @@ class Room {
 	/**
 	 * @param string $userId
 	 */
-	public function disconnectUserFromAllRooms($userId) {
+	public function leaveRoom($userId) {
 		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this));
 
 		// Reset sessions on all normal rooms
@@ -553,6 +551,7 @@ class Room {
 			->set('session_id', $query->createNamedParameter('0'))
 			->set('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
@@ -560,6 +559,7 @@ class Room {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
@@ -572,8 +572,8 @@ class Room {
 	 * @return string
 	 * @throws InvalidPasswordException
 	 */
-	public function enterRoomAsGuest($password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preGuestEnterRoom', new GenericEvent($this));
+	public function joinRoomGuest($password, $passedPasswordProtection = false) {
+		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', new GenericEvent($this));
 
 		if (!$passedPasswordProtection && !$this->verifyPassword($password)) {
 			throw new InvalidPasswordException();
@@ -590,7 +590,7 @@ class Room {
 			$sessionId = $this->secureRandom->generate(255);
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postGuestEnterRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postJoinRoomGuest', new GenericEvent($this));
 
 		return $sessionId;
 	}

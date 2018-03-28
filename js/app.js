@@ -602,7 +602,7 @@
 			this.token = $('#app').attr('data-token');
 
 			$(window).unload(function () {
-				this.connection.leaveAllCalls();
+				this.connection.leaveCurrentRoom(false);
 				this.signaling.disconnect();
 			}.bind(this));
 
@@ -638,7 +638,7 @@
 			}
 		},
 		startLocalMedia: function(configuration) {
-			this.connection.showCamera();
+			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 			this.restoreEmptyContent();
 		},

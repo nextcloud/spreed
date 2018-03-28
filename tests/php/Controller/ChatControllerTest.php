@@ -30,10 +30,10 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\IComment;
-use OCP\ISession;
 use OCP\IUser;
 use OCP\IUserManager;
 
@@ -45,7 +45,7 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
 
-	/** @var ISession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var TalkSession|\PHPUnit_Framework_MockObject_MockObject */
 	private $session;
 
 	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
@@ -71,7 +71,7 @@ class ChatControllerTest extends \Test\TestCase {
 
 		$this->userId = 'testUser';
 		$this->userManager = $this->createMock(IUserManager::class);
-		$this->session = $this->createMock(ISession::class);
+		$this->session = $this->createMock(TalkSession::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
@@ -115,8 +115,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testSendMessageByUser() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn('testSpreedSession');
 
 		$this->manager->expects($this->once())
@@ -148,14 +148,14 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testSendMessageByUserNotJoinedButInRoom() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
 			->method('getRoomForSession')
 			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
+			->willThrowException(new RoomNotFoundException());
 
 		$this->manager->expects($this->once())
 			->method('getRoomForParticipantByToken')
@@ -187,8 +187,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testSendMessageByUserNotJoinedNorInRoom() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
@@ -220,8 +220,8 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->recreateChatController();
 
 		$this->session->expects($this->any())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn('testSpreedSession');
 
 		$this->manager->expects($this->once())
@@ -256,8 +256,8 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->recreateChatController();
 
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
@@ -279,8 +279,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testSendMessageToInvalidRoom() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
@@ -304,8 +304,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testReceiveMessagesByUser() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn('testSpreedSession');
 
 		$this->manager->expects($this->once())
@@ -356,8 +356,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
@@ -414,8 +414,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testReceiveMessagesByUserNotJoinedNorInRoom() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
@@ -450,8 +450,8 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->recreateChatController();
 
 		$this->session->expects($this->any())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn('testSpreedSession');
 
 		$this->manager->expects($this->once())
@@ -505,8 +505,8 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->recreateChatController();
 
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())
@@ -531,8 +531,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testReceiveMessagesTimeoutExpired() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn('testSpreedSession');
 
 		$this->manager->expects($this->once())
@@ -563,8 +563,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testReceiveMessagesTimeoutTooLarge() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn('testSpreedSession');
 
 		$this->manager->expects($this->once())
@@ -596,8 +596,8 @@ class ChatControllerTest extends \Test\TestCase {
 
 	public function testReceiveMessagesFromInvalidRoom() {
 		$this->session->expects($this->once())
-			->method('get')
-			->with('spreed-session')
+			->method('getSessionForRoom')
+			->with('testToken')
 			->willReturn(null);
 
 		$this->manager->expects($this->once())

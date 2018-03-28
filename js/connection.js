@@ -20,11 +20,8 @@
 		});
 
 		this.app.signaling.on('roomChanged', function() {
-			this.leaveCurrentCall(false);
+			this.leaveCurrentRoom(false);
 		}.bind(this));
-
-		// Todo this blocks multi room support
-		this.leaveAllCalls();
 	}
 
 	OCA.Talk.Connection = Connection;
@@ -32,9 +29,6 @@
 		/** @property {OCA.Talk.Application} app */
 		app: null,
 
-		showCamera: function() {
-			$('.videoView').removeClass('hidden');
-		},
 		_createCallSuccessHandle: function(ocsResponse) {
 			var token = ocsResponse.ocs.data.token;
 			OC.Util.History.pushState({
@@ -97,12 +91,18 @@
 			this.app.signaling.joinRoom(token);
 			this.app.syncAndSetActiveRoom(token);
 		},
+		leaveCurrentRoom: function(deleter) {
+			this.app.signaling.leaveCurrentRoom();
+			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			$('#app-content').removeClass('incall');
+			this.showRoomDeletedMessage(deleter);
+			roomsChannel.trigger('leaveCurrentCall');
+		},
 		joinCall: function(token) {
 			if (this.app.signaling.currentCallToken === token) {
 				return;
 			}
 
-			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.joinCall(token);
 			this.app.signaling.syncRooms();
 
@@ -110,28 +110,10 @@
 
 			$('#emptycontent').hide();
 		},
-		leaveCall: function(token) {
-			if (this.app.signaling.currentCallToken !== token) {
-				return;
-			}
-
+		leaveCurrentCall: function() {
 			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.syncRooms();
 			$('#app-content').removeClass('incall');
-		},
-		leaveCurrentCall: function(deleter) {
-			this.app.signaling.leaveCall();
-			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
-			$('#app-content').removeClass('incall');
-			this.showRoomDeletedMessage(deleter);
-			roomsChannel.trigger('leaveCurrentCall');
-		},
-		leaveAllCalls: function() {
-			if (this.app.signaling) {
-				// We currently only support a single active call.
-				this.app.signaling.leaveCurrentCall();
-				this.app.signaling.leaveCurrentRoom();
-			}
 		},
 		showRoomDeletedMessage: function(deleter) {
 			if (deleter) {

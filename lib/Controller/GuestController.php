@@ -27,18 +27,18 @@ use Doctrine\DBAL\DBALException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
-use OCP\ISession;
 
 class GuestController extends OCSController {
 
 	/** @var string */
 	private $userId;
 
-	/** @var ISession */
+	/** @var TalkSession */
 	private $session;
 
 	/** @var Manager */
@@ -51,14 +51,14 @@ class GuestController extends OCSController {
 	 * @param string $appName
 	 * @param string $UserId
 	 * @param IRequest $request
-	 * @param ISession $session
+	 * @param TalkSession $session
 	 * @param Manager $roomManager
 	 * @param GuestManager $guestManager
 	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
-								ISession $session,
+								TalkSession $session,
 								Manager $roomManager,
 								GuestManager $guestManager) {
 		parent::__construct($appName, $request);
@@ -82,10 +82,10 @@ class GuestController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$sessionId = $this->session->get('spreed-session');
+		$sessionId = $this->session->getSessionForRoom($token);
 
 		try {
-			$room = $this->roomManager->getRoomForSession($this->userId, $this->session->get('spreed-session'));
+			$room = $this->roomManager->getRoomForSession($this->userId, $sessionId);
 		} catch (RoomNotFoundException $exception) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}

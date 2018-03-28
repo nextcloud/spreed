@@ -291,7 +291,7 @@
 		},
 
 		leaveCall: function() {
-			OCA.SpreedMe.app.connection.leaveCall(this.model.get('token'));
+			OCA.SpreedMe.app.connection.leaveCurrentCall();
 		},
 
 		/**
