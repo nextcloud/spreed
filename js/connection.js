@@ -90,8 +90,10 @@
 			this.app.signaling.leaveCurrentRoom();
 			this.app.signaling.joinRoom(token);
 			this.app.syncAndSetActiveRoom(token);
+			$('#video-fullscreen').removeClass('hidden');
 		},
 		leaveCurrentRoom: function(deleter) {
+			$('#video-fullscreen').addClass('hidden');
 			this.app.signaling.leaveCurrentRoom();
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');

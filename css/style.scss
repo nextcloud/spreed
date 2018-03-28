@@ -182,7 +182,7 @@
 }
 
 /* Hide all siblings of the chat view when shown as the main view */
-#app-content-wrapper #commentsTabView ~ * {
+#app-content-wrapper #commentsTabView ~ *:not(#video-fullscreen):not([id^=tooltip]) {
 	display: none !important;
 }
 
