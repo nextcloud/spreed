@@ -336,7 +336,7 @@
 							this.disableVideo();
 						}
 						break;
-					case 65: // 'a'
+					case 77: // 'm'
 						event.preventDefault();
 						if (this.audioDisabled) {
 							this.enableAudio();
@@ -644,17 +644,17 @@
 			uiChannel.trigger('document:click', event);
 		},
 		initAudioVideoSettings: function(configuration) {
-			if (OCA.SpreedMe.app.audioDisabled) {
-				OCA.SpreedMe.app.disableAudio();
+			if (this.audioDisabled) {
+				this.disableAudio();
 			}
 
 			if (configuration.video !== false) {
-				if (OCA.SpreedMe.app.videoDisabled) {
-					OCA.SpreedMe.app.disableVideo();
+				if (this.videoDisabled) {
+					this.disableVideo();
 				}
 			} else {
-				OCA.SpreedMe.app.videoWasEnabledAtLeastOnce = false;
-				OCA.SpreedMe.app.disableVideo();
+				this.videoWasEnabledAtLeastOnce = false;
+				this.disableVideo();
 			}
 		},
 		enableAudio: function() {
@@ -663,11 +663,11 @@
 			}
 
 			OCA.SpreedMe.webrtc.unmute();
-			$('#mute').attr('data-original-title', t('spreed', 'Mute audio'))
+			$('#mute').attr('data-original-title', t('spreed', 'Mute audio (m)'))
 				.removeClass('audio-disabled icon-audio-off')
 				.addClass('icon-audio');
 
-			OCA.SpreedMe.app.audioDisabled = false;
+			this.audioDisabled = false;
 		},
 		disableAudio: function() {
 			if (!OCA.SpreedMe.webrtc) {
@@ -675,11 +675,11 @@
 			}
 
 			OCA.SpreedMe.webrtc.mute();
-			$('#mute').attr('data-original-title', t('spreed', 'Enable audio'))
+			$('#mute').attr('data-original-title', t('spreed', 'Enable audio (m)'))
 				.addClass('audio-disabled icon-audio-off')
 				.removeClass('icon-audio');
 
-			OCA.SpreedMe.app.audioDisabled = true;
+			this.audioDisabled = true;
 		},
 		enableVideo: function() {
 			if (!OCA.SpreedMe.webrtc) {
