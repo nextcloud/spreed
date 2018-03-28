@@ -692,7 +692,7 @@
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			OCA.SpreedMe.webrtc.resumeVideo();
-			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
+			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video (v)'))
 				.removeClass('video-disabled icon-video-off')
 				.addClass('icon-video');
 			$audioMuteButton.removeClass('video-disabled');
@@ -700,7 +700,7 @@
 			avatarContainer.hide();
 			localVideo.show();
 
-			OCA.SpreedMe.app.videoDisabled = false;
+			this.videoDisabled = false;
 		},
 		hideVideo: function() {
 			if (!OCA.SpreedMe.webrtc) {
@@ -713,7 +713,7 @@
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			if (!$hideVideoButton.hasClass('no-video-available')) {
-				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
+				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video (v)'))
 					.addClass('video-disabled icon-video-off')
 					.removeClass('icon-video');
 				$audioMuteButton.addClass('video-disabled');
