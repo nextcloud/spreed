@@ -496,11 +496,13 @@ video {
 	opacity: .7;
 }
 
+.nameIndicator button.no-audio-available,
 .nameIndicator button.no-video-available {
 	opacity: .7;
 	cursor: not-allowed;
- }
+}
 
+.nameIndicator button.no-audio-available:active,
 .nameIndicator button.no-video-available:active {
 	background-color: transparent;
 }
