@@ -29,14 +29,14 @@
 	var RoomCollection = Backbone.Collection.extend({
 		model: OCA.SpreedMe.Models.Room,
 		comparator: function(modelA, modelB) {
-			var activeA = modelA.get('active'),
-			    activeB = modelB.get('active');
+			var	activeA = modelA.get('active'),
+				activeB = modelB.get('active');
 
 			if (activeA !== activeB) {
 				return activeB - activeA;
 			}
 
-			return modelA.get('lastPing') < modelB.get('lastPing');;
+			return modelA.get('lastPing') < modelB.get('lastPing');
 		},
 		url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 		/**
