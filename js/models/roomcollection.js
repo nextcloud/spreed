@@ -36,7 +36,7 @@
 				return activeB - activeA;
 			}
 
-			return modelA.get('lastPing') < modelB.get('lastPing');
+			return modelB.get('lastPing') - modelA.get('lastPing');
 		},
 		url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
 		/**
