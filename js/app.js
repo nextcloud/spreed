@@ -304,6 +304,7 @@
 			// and the CTRL key is not pressed
 			if ($('input:focus').length === 0 &&
 				$('textarea:focus').length === 0 &&
+				$('div[contenteditable=true]:focus').length === 0 &&
 				!event.ctrlKey) {
 
 				// Actual shortcut handling
