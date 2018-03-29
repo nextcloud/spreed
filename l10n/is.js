@@ -14,7 +14,6 @@ OC.L10N.register(
     "New public call" : "Nýtt opinbert símtal",
     "Exit fullscreen" : "Hætta í skjáfylli",
     "Fullscreen" : "Fylla skjáinn",
-    "Enable screensharing" : "Virkja skjádeilingu",
     "Screensharing is not supported by your browser." : "Deiling á skjá er ekki studd í vafranum þínum",
     "Screensharing requires the page to be loaded through HTTPS." : "Deiling á skjá krefst þess að síðunni sé hlaðið inn með HTTPS.",
     "Screensharing options" : "Valkostir skjádeilingar",
@@ -32,6 +31,7 @@ OC.L10N.register(
     "Disable video" : "Gera myndskeið óvirk",
     "Enable video" : "Virkja myndskeið",
     "You can set your name on the right sidebar so other participants can identify you better." : "Þú getur stillt þetta þannig að nafnið þitt birtist efst á hægra hliðarspjaldi svo að aðrir þáttakendur eigi auðveldara með að þekkja þig.",
+    "Enable screensharing" : "Virkja skjádeilingu",
     "Copy" : "Afrita",
     "Copied!" : "Afritað!",
     "Not supported!" : "Ekki stutt!",
@@ -63,7 +63,6 @@ OC.L10N.register(
     "Promote to moderator" : "Gera að umsjónarmanni",
     "Remove participant" : "Fjarlægja þátttakanda",
     "Add participant" : "Bæta við þátttakanda",
-    "Leave room" : "Fara út af spjallsvæði",
     "Delete room" : "Eyða spjallsvæði",
     "No other people in this call" : "Engir aðrir í þessu símtali",
     "and you" : "og þú",
@@ -130,6 +129,7 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-þjónninn er nauðsynlegur til að þáttakendur geti tengst símtölum. TURN-þjónninn tryggir að tengingin virki jafnvel í gegnum eldveggi.",
     "STUN server" : "STUN-þjónn",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
-    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni"
+    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni",
+    "Leave room" : "Fara út af spjallsvæði"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
