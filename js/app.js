@@ -688,6 +688,7 @@
 
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
+			var $screensharingButton = $('#screensharing-button');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
@@ -696,6 +697,7 @@
 				.removeClass('video-disabled icon-video-off')
 				.addClass('icon-video');
 			$audioMuteButton.removeClass('video-disabled');
+			$screensharingButton.removeClass('video-disabled');
 
 			avatarContainer.hide();
 			localVideo.show();
@@ -709,6 +711,7 @@
 
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
+			var $screensharingButton = $('#screensharing-button');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
@@ -717,6 +720,7 @@
 					.addClass('video-disabled icon-video-off')
 					.removeClass('icon-video');
 				$audioMuteButton.addClass('video-disabled');
+				$screensharingButton.addClass('video-disabled');
 			}
 
 			var avatar = avatarContainer.find('.avatar');
