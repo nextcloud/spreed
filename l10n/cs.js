@@ -14,7 +14,6 @@ OC.L10N.register(
     "New public call" : "Nový veřejný hovor",
     "Exit fullscreen" : "Opustit režim celé obrazovky",
     "Fullscreen" : "Celá obrazovka",
-    "Enable screensharing" : "Povolit sdílení obrazovky",
     "Screensharing is not supported by your browser." : "Sdílení obrazovky není vaším prohlížečem podporováno.",
     "Screensharing requires the page to be loaded through HTTPS." : "Sdílení obrazovky vyžaduje, aby byla stránka načtena přes HTTPS.",
     "Screensharing options" : "Možnosti sdílení obrazovky",
@@ -32,6 +31,7 @@ OC.L10N.register(
     "Disable video" : "Vypnout video",
     "Enable video" : "Zapnout video",
     "You can set your name on the right sidebar so other participants can identify you better." : "Na pravé straně si můžete nastavit jméno, aby vás ostatní účastníci mohli lépe identifikovat.",
+    "Enable screensharing" : "Povolit sdílení obrazovky",
     "Copy" : "Kopírovat",
     "Copied!" : "Zkopírováno!",
     "Not supported!" : "Nepodporováno!",
@@ -69,7 +69,6 @@ OC.L10N.register(
     "Promote to moderator" : "Udělit práva moderátora",
     "Remove participant" : "Odstranit účastníka",
     "Add participant" : "Přidat účastníka",
-    "Leave room" : "Opustit místnost",
     "Delete room" : "Smazat místnost",
     "No other people in this call" : "Žádní další lidé v tomto hovoru",
     "Share this link to invite others!" : "Pro pozvání dalších lidí sdílejte tento odkaz!",
@@ -153,6 +152,7 @@ OC.L10N.register(
     "STUN server" : "Server STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
     "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
+    "Leave room" : "Opustit místnost",
     "Waiting for others to join the room …" : "Čeká se až se ostatní připojí do místnosti…"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

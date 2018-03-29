@@ -12,7 +12,6 @@ OC.L10N.register(
     "New public call" : "Nový verejný hovor",
     "New group call" : "Nový skupinový hovor",
     "Fullscreen" : "Celá obrazovka",
-    "Enable screensharing" : "Povoliť zdieľanie obrazovky",
     "Screensharing is not supported by your browser." : "Sprístupnenie obrazovky nie je podporované vaším prehliadačom.",
     "Screensharing requires the page to be loaded through HTTPS." : "Sprístupnenie obrazovky vyžaduje, aby bola stánka načítaná cez protokol HTTPS.",
     "Screensharing options" : "Nastavenia zdieľania obrazovky",
@@ -27,6 +26,7 @@ OC.L10N.register(
     "Enable audio" : "Povoliť audio",
     "Disable video" : "Zakázať video",
     "Enable video" : "Povoliť video",
+    "Enable screensharing" : "Povoliť zdieľanie obrazovky",
     "Copy" : "Kopírovať",
     "Copied!" : "Skopírované!",
     "Not supported!" : "Nie je podporované!",
@@ -56,7 +56,6 @@ OC.L10N.register(
     "Error occurred while sending message" : "Pri odosielaní správy nastala chyba",
     "moderator" : "moderátor",
     "Add participant" : "Pridať účastníka",
-    "Leave room" : "Opustiť miestnosť",
     "Delete room" : "Zmazať miestnosť",
     "No other people in this call" : "Na tomto hovore nie sú žiadne ďalšie osoby",
     "and you" : "a vy",
@@ -108,6 +107,7 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "3.. 2.. 1.. Úsmev!",
     "STUN server" : "STUN server",
     "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
+    "Leave room" : "Opustiť miestnosť",
     "Call in progress …" : "Prebieha hovor …"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");
