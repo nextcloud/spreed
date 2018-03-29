@@ -378,7 +378,8 @@ video {
 #app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow {
 	/* Still use white icons outside of calls when local video shows */
 	&#hideVideo.video-disabled,
-	&#mute.video-disabled {
+	&#mute.video-disabled,
+	&#screensharing-button.video-disabled {
 		filter: none;
 	}
 
