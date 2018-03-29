@@ -44,7 +44,7 @@ script(
 	</script>
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
-			<input id="select-participants" class="select2-offscreen" type="text" placeholder="<?php p($l->t('Choose person …')) ?>"/>
+			<input id="select-participants" class="select2-offscreen" type="text" placeholder="<?php p($l->t('New conversation …')) ?>"/>
 		</form>
 		<ul id="spreedme-room-list" class="with-icon">
 		</ul>

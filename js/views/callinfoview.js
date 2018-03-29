@@ -158,14 +158,14 @@
 						// change too in the server, so the model has to be fetched
 						// again to get the changes.
 						this.model.fetch();
-					}
+					}.bind(this)
 				},
 
 				extraClassNames: 'room-name',
 				labelTagName: 'h3',
 				inputMaxLength: '200',
 				inputPlaceholder: t('spreed', 'Name'),
-				labelPlaceholder: t('spreed', 'Room name'),
+				labelPlaceholder: t('spreed', 'Conversation name'),
 				buttonTitle: t('spreed', 'Rename')
 			});
 
@@ -267,7 +267,7 @@
 				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation with {name}', {name: this.model.get('displayName')}));
 			} else {
 				this._nameEditableTextLabel.setModelAttribute('name');
-				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Room name'));
+				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation name'));
 			}
 		},
 
