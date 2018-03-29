@@ -304,6 +304,7 @@
 			// and the CTRL key is not pressed
 			if ($('input:focus').length === 0 &&
 				$('textarea:focus').length === 0 &&
+				$('div[contenteditable=true]:focus').length === 0 &&
 				!event.ctrlKey) {
 
 				// Actual shortcut handling
@@ -722,10 +723,6 @@
 			this.videoDisabled = false;
 		},
 		hideVideo: function() {
-			if (!OCA.SpreedMe.webrtc) {
-				return;
-			}
-
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
@@ -756,6 +753,10 @@
 			localVideo.hide();
 		},
 		disableVideo: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				return;
+			}
+
 			OCA.SpreedMe.webrtc.pauseVideo();
 			this.hideVideo();
 			this.videoDisabled = true;
