@@ -58,7 +58,9 @@
 		videoWasEnabledAtLeastOnce: false,
 		displayedGuestNameHint: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
+		audioNotFound: false,
 		videoDisabled: localStorage.getItem("videoDisabled"),
+		videoNotFound: false,
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
@@ -622,6 +624,19 @@
 			this.initAudioVideoSettings(configuration);
 			this.restoreEmptyContent();
 		},
+		startWithoutLocalMedia: function(isAudioEnabled, isVideoEnabled) {
+			$('.videoView').removeClass('hidden');
+
+			this.disableAudio();
+			if (!isAudioEnabled) {
+				this.hasNoAudio();
+			}
+
+			this.disableVideo();
+			if (!isVideoEnabled) {
+				this.hasNoVideo();
+			}
+		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
 				this.connection.joinRoom(params.token);
@@ -678,7 +693,7 @@
 			this.fullscreenDisabled = true;
 		},
 		enableAudio: function() {
-			if (!OCA.SpreedMe.webrtc) {
+			if (this.audioNotFound || !OCA.SpreedMe.webrtc) {
 				return;
 			}
 
@@ -690,7 +705,7 @@
 			this.audioDisabled = false;
 		},
 		disableAudio: function() {
-			if (!OCA.SpreedMe.webrtc) {
+			if (this.audioNotFound || !OCA.SpreedMe.webrtc) {
 				return;
 			}
 
@@ -701,8 +716,15 @@
 
 			this.audioDisabled = true;
 		},
+		hasNoAudio: function() {
+			$('#mute').removeClass('audio-disabled icon-audio')
+				.addClass('no-audio-available icon-audio-off')
+				.attr('data-original-title', t('spreed', 'No audio'));
+			this.audioDisabled = true;
+			this.audioNotFound = true;
+		},
 		enableVideo: function() {
-			if (!OCA.SpreedMe.webrtc) {
+			if (this.videoNotFound || !OCA.SpreedMe.webrtc) {
 				return;
 			}
 
@@ -757,13 +779,20 @@
 			localVideo.hide();
 		},
 		disableVideo: function() {
-			if (!OCA.SpreedMe.webrtc) {
+			if (this.videoNotFound || !OCA.SpreedMe.webrtc) {
 				return;
 			}
 
 			OCA.SpreedMe.webrtc.pauseVideo();
 			this.hideVideo();
 			this.videoDisabled = true;
+		},
+		hasNoVideo: function() {
+			$('#hideVideo').removeClass('video-disabled icon-video')
+				.addClass('no-video-available icon-video-off')
+				.attr('data-original-title', t('spreed', 'No Camera'));
+			this.videoDisabled = true;
+			this.videoNotFound = true;
 		},
 		disableScreensharingButton: function() {
 			$('#screensharing-button').attr('data-original-title', t('spreed', 'Enable screensharing'))
