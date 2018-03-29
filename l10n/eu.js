@@ -58,7 +58,6 @@ OC.L10N.register(
     "Promote to moderator" : "Moderatzaile bihurtu zara",
     "Remove participant" : "Partehartzailea borratu",
     "Add participant" : "Partehartzailea gehitu",
-    "Leave room" : "Gela utzi",
     "Delete room" : "Gela borratu",
     "No other people in this call" : "Ez dago jenderik dei honetan",
     "and you" : "eta zu",
@@ -124,6 +123,7 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "STUN server" : "STUN zerbitzaria",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
+    "Leave room" : "Gela utzi"
 },
 "nplurals=2; plural=(n != 1);");
