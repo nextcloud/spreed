@@ -161,7 +161,7 @@ OC.L10N.register(
     "New group call" : "Neuer Gruppenanruf",
     "Exit fullscreen" : "Vollbild verlassen",
     "Enable audio" : "Mikrofon aktivieren",
-    "Enable video" : "Video deaktivieren",
+    "Enable video" : "Video aktivieren",
     "Room name" : "Raumname",
     "Add participant" : "Teilnehmer hinzufügen",
     "Leave room" : "Raum verlassen",
