@@ -68,7 +68,7 @@ OC.L10N.register(
     "No other people in this call" : "Niemand anderes in diesem Anruf",
     "You can invite others in the participant tab of the sidebar" : "Sie können andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste einladen",
     "Share this link to invite others!" : "Teile diesen Link, um andere Personen einzuladen!",
-    "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Sie können andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste einladen oder über diesen Link andere einladen!",
+    "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Sie können andere Teilnehmer auf dem Teilnehmer-Tab der Seitenleiste oder über diesen Link einladen!",
     "and you" : "und Sie",
     "Close" : "Schließen",
     "Waiting for camera and microphone permissions" : "Warte auf Berechtigungen für Kamera und Mikrofon",
