@@ -52,7 +52,7 @@
 			this.saveServers();
 
 			if (this.$list.find('div.stun-server').length === 0) {
-				OC.Notification.showTemporary(t('spreed', 'You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server.'));
+				OC.Notification.showTemporary(t('spreed', 'You deleted all STUN servers. As it is almost always needed, a default STUN server was added.'));
 				var $newServer = this.addNewTemplate('stun.nextcloud.com:443');
 				this.temporaryShowSuccess($newServer);
 			}
