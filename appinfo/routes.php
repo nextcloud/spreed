@@ -34,24 +34,6 @@ return [
 		 * Signaling
 		 */
 		[
-			'name' => 'Signaling#signaling',
-			'url' => '/api/{apiVersion}/signaling/{token}',
-			'verb' => 'POST',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
-			'name' => 'Signaling#pullMessages',
-			'url' => '/api/{apiVersion}/signaling/{token}',
-			'verb' => 'GET',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'token' => '^[a-z0-9]{4,30}$',
-			],
-		],
-		[
 			'name' => 'Signaling#getSettings',
 			'url' => '/api/{apiVersion}/signaling/settings',
 			'verb' => 'GET',
@@ -65,6 +47,24 @@ return [
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'Signaling#signaling',
+			'url' => '/api/{apiVersion}/signaling/messages/{token}',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Signaling#pullMessages',
+			'url' => '/api/{apiVersion}/signaling/messages/{token}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
 
