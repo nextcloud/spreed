@@ -51,7 +51,7 @@ return [
 		],
 		[
 			'name' => 'Signaling#signaling',
-			'url' => '/api/{apiVersion}/signaling/messages/{token}',
+			'url' => '/api/{apiVersion}/signaling/{token}/messages',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -60,7 +60,7 @@ return [
 		],
 		[
 			'name' => 'Signaling#pullMessages',
-			'url' => '/api/{apiVersion}/signaling/messages/{token}',
+			'url' => '/api/{apiVersion}/signaling/{token}/messages',
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',
