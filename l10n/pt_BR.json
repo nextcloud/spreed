@@ -3,7 +3,6 @@
     "Delete server" : "Excluir servidor",
     "Add new server" : "Adicionar novo servidor",
     "Saved" : "Salvo",
-    "You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server." : "Você excluiu todos os servidores stun. Como um stun é necessário em quase todos os casos, adicionamos um padrão.",
     "Shared secret" : "Segredo compartilhado",
     "TURN server protocols" : "Protocolos do servidor TURN",
     "UDP and TCP" : "UDP e TCP",

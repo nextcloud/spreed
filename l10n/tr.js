@@ -5,7 +5,6 @@ OC.L10N.register(
     "Delete server" : "Sunucuyu sil",
     "Add new server" : "Yeni sunucu ekle",
     "Saved" : "Kaydedildi",
-    "You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server." : "Tüm stun sunucularını sildiniz. Neredeyse tüm işlemler için bir stun sunucusu gerekli olduğundan varsayılan stun sunucusu eklendi.",
     "Shared secret" : "Paylaşılan parola",
     "TURN server protocols" : "TURN sunucu iletişim kuralları",
     "UDP and TCP" : "UDP ve TCP",

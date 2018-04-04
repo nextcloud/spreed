@@ -5,7 +5,6 @@ OC.L10N.register(
     "Delete server" : "Elimina server",
     "Add new server" : "Aggiungi nuovo server",
     "Saved" : "Salvato",
-    "You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server." : "Hai eliminato tutti i server stun. Poiché un server stun è necessario in quasi tutti i casi, abbiamo aggiunto un server stun predefinito.",
     "Shared secret" : "Segreto condiviso",
     "TURN server protocols" : "Protocolli server TURN",
     "UDP and TCP" : "UDP e TCP",
