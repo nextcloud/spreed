@@ -143,8 +143,8 @@
    in the list of messages) and to ensure that the contacts menu is not clipped
    due to overflowing the chat view on its left (much harder to fix). */
 #app-content-wrapper #commentsTabView .newCommentRow {
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-left: 44px;
+	padding-right: 44px;
 }
 
 #app-content-wrapper #commentsTabView .comments {
@@ -155,8 +155,8 @@
 	   to the closest ancestor with a relative position) */
 	position: relative;
 
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-left: 44px;
+	padding-right: 44px;
 }
 
 /* Hide all siblings of the chat view when shown as the main view */
