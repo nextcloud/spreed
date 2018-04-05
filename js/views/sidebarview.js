@@ -77,7 +77,7 @@
 		},
 
 		events: {
-			'click @ui.trigger': 'open',
+			'click @ui.trigger': 'toggle',
 			'click @ui.sidebar a.close': 'close',
 		},
 
@@ -89,6 +89,7 @@
 
 		initialize: function() {
 			this._enabled = false;
+			this._open = false;
 
 			this._callInfoView = null;
 
@@ -125,16 +126,28 @@
 			this._enabled = false;
 		},
 
+		toggle: function() {
+			if (!this._open) {
+				this.open();
+			} else {
+				this.close();
+			}
+		},
+
 		open: function() {
 			if (!this._enabled) {
 				return;
 			}
 
 			OC.Apps.showAppSidebar();
+
+			this._open = true;
 		},
 
 		close: function() {
 			OC.Apps.hideAppSidebar();
+
+			this._open = false;
 		},
 
 		/**
