@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete server" : "Excluir servidor",
     "Add new server" : "Adicionar novo servidor",
     "Saved" : "Salvo",
+    "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Você excluiu todos os servidores STUN. Como quase sempre é necessário, um servidor STUN padrão foi adicionado.",
     "Shared secret" : "Segredo compartilhado",
     "TURN server protocols" : "Protocolos do servidor TURN",
     "UDP and TCP" : "UDP e TCP",
