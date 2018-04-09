@@ -450,7 +450,11 @@ class Manager {
 		$i = 0;
 		while ($i < 1000) {
 			try {
-				return $this->generateNewToken($query, $entropy, $chars);
+				$token = $this->generateNewToken($query, $entropy, $chars);
+				if (\in_array($token, ['settings', 'backend'], true)) {
+					throw new \OutOfBoundsException('Reserved word');
+				}
+				return $token;
 			} catch (\OutOfBoundsException $e) {
 				$i++;
 				if ($entropy >= 30 || $i >= 999) {
