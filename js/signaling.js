@@ -341,7 +341,7 @@
 	OCA.Talk.Signaling.Internal.prototype._sendMessages = function(messages) {
 		var defer = $.Deferred();
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken + '/messages',
+			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken,
 			type: 'POST',
 			data: {messages: JSON.stringify(messages)},
 			beforeSend: function (request) {
@@ -417,7 +417,7 @@
 		// Connect to the messages endpoint and pull for new messages
 		this.pullMessagesRequest =
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken + '/messages',
+			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken,
 			type: 'GET',
 			dataType: 'json',
 			beforeSend: function (request) {
