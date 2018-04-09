@@ -30,6 +30,7 @@ OC.L10N.register(
     "Exit fullscreen (f)" : "Quitter le plein écran (f)",
     "Fullscreen (f)" : "Plein écran (f)",
     "Mute audio (m)" : "Couper le son (m)",
+    "Unmute audio (m)" : "Activer le son (m)",
     "Disable video (v)" : "Désactiver la vidéo (v)",
     "Enable video (v)" : "Activer la vidéo (v)",
     "You can set your name on the right sidebar so other participants can identify you better." : "Vous pouvez renseigner votre nom dans la barre latérale de droite pour que les autres participants puissent mieux vous identifer.",
