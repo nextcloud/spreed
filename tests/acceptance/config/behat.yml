@@ -8,7 +8,8 @@ default:
       contexts:
         # Base contexts
         - ActorContext
-        - NextcloudTestServerContext
+        - NextcloudTestServerContext:
+            nextcloudTestServerHelper: NextcloudTestServerLocalApacheHelper
 
         - FeatureContext
         - FileListContext
