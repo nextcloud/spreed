@@ -102,14 +102,14 @@ class ChatManager {
 	 *
 	 * @param string $chatId
 	 * @param int $offset Last known message id
-	 * @param int $timeout
 	 * @param int $limit
+	 * @param int $timeout
 	 * @param string $userId
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages($chatId, $offset, $timeout, $limit, $userId) {
+	public function waitForNewMessages($chatId, $offset, $limit, $timeout, $userId) {
 		$this->notifier->markMentionNotificationsRead($chatId, $userId);
 		$elapsedTime = 0;
 
