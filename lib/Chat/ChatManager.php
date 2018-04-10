@@ -45,10 +45,10 @@ class ChatManager {
 	private $notifier;
 
 	/**
-	 * @param ICommentsManager $commentsManager
+	 * @param CommentsManager $commentsManager
 	 * @param Notifier $notifier
 	 */
-	public function __construct(ICommentsManager $commentsManager,
+	public function __construct(CommentsManager $commentsManager,
 								Notifier $notifier) {
 		$this->commentsManager = $commentsManager;
 		$this->notifier = $notifier;
