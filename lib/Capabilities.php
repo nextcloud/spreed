@@ -43,7 +43,7 @@ class Capabilities implements IPublicCapability {
 				'features' => [
 					'audio',
 					'video',
-					'chat',
+					'chat-v2',
 					'guest-signaling',
 					'empty-group-room',
 					'guest-display-names',

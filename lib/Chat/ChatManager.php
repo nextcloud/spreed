@@ -38,7 +38,7 @@ use OCP\Comments\ICommentsManager;
  */
 class ChatManager {
 
-	/** @var ICommentsManager */
+	/** @var CommentsManager|ICommentsManager */
 	private $commentsManager;
 
 	/** @var Notifier */
@@ -77,59 +77,49 @@ class ChatManager {
 	}
 
 	/**
-	 * Receives the messages from the given chat.
-	 *
-	 * It is possible to limit the returned messages to those not older than
-	 * certain date and time setting the $notOlderThan parameter. In the same
-	 * way it is possible to ignore the first N messages setting the $offset
-	 * parameter. Both parameters are optional; if not set all the messages from
-	 * the chat are returned.
-	 *
-	 * In any case, receiveMessages will wait (hang) until there is at least one
-	 * message to be returned. It will not wait indefinitely, though; the
-	 * maximum time to wait must be set using the $timeout parameter.
+	 * Receive the history of a chat
 	 *
 	 * @param string $chatId
-	 * @param string $userId
-	 * @param int $timeout the maximum number of seconds to wait for messages
-	 * @param int $offset optional, starting point
-	 * @param \DateTime|null $notOlderThan optional, the date and time of the
-	 *        oldest message that may be returned
+	 * @param int $offset Last known message id
+	 * @param int $limit
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function receiveMessages($chatId, $userId, $timeout, $offset = 0, \DateTime $notOlderThan = null) {
-		$comments = [];
+	public function getHistory($chatId, $offset, $limit) {
+		return $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'desc', $limit);
+	}
 
-		$commentsFound = false;
-		$elapsedTime = 0;
-		while (!$commentsFound && $elapsedTime < $timeout) {
-			$numberOfComments = $this->commentsManager->getNumberOfCommentsForObject('chat', $chatId, $notOlderThan);
-
-			if ($numberOfComments > $offset) {
-				$commentsFound = true;
-			} else {
-				sleep(1);
-				$elapsedTime++;
-			}
-		}
-
+	/**
+	 * If there are currently no messages the response will not be sent
+	 * immediately. Instead, HTTP connection will be kept open waiting for new
+	 * messages to arrive and, when they do, then the response will be sent. The
+	 * connection will not be kept open indefinitely, though; the number of
+	 * seconds to wait for new messages to arrive can be set using the timeout
+	 * parameter; the default timeout is 30 seconds, maximum timeout is 60
+	 * seconds. If the timeout ends a successful but empty response will be
+	 * sent.
+	 *
+	 * @param string $chatId
+	 * @param int $offset Last known message id
+	 * @param int $timeout
+	 * @param int $limit
+	 * @param string $userId
+	 * @return IComment[] the messages found (only the id, actor type and id,
+	 *         creation date and message are relevant), or an empty array if the
+	 *         timeout expired.
+	 */
+	public function waitForNewMessages($chatId, $offset, $timeout, $limit, $userId) {
 		$this->notifier->markMentionNotificationsRead($chatId, $userId);
+		$elapsedTime = 0;
 
-		if ($commentsFound) {
-			// The limit and offset of getForObject can not be based on the
-			// number of comments, as more comments may have been added between
-			// that call and this one (very unlikely, yet possible).
-			$comments = $this->commentsManager->getForObject('chat', $chatId, $noLimit = 0, $noOffset = 0, $notOlderThan);
+		$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
 
-			// The comments are ordered from newest to oldest, so get all the
-			// comments before the $offset elements from the end of the array.
-			$length = null;
-			if ($offset) {
-				$length = -$offset;
-			}
-			$comments = array_slice($comments, $noOffset, $length);
+		while (empty($comments) && $elapsedTime < $timeout) {
+			sleep(1);
+			$elapsedTime++;
+
+			$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
 		}
 
 		return $comments;
