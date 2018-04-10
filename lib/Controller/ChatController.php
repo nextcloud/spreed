@@ -28,6 +28,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -56,6 +57,12 @@ class ChatController extends OCSController {
 
 	/** @var GuestManager */
 	private $guestManager;
+
+	/** @var Room */
+	protected $room;
+
+	/** @var string[] */
+	protected $guestNames;
 
 	/**
 	 * @param string $appName
@@ -115,6 +122,7 @@ class ChatController extends OCSController {
 			}
 		}
 
+		$this->room = $room;
 		return $room;
 	}
 
@@ -171,54 +179,54 @@ class ChatController extends OCSController {
 	/**
 	 * @PublicPage
 	 *
-	 * Receives the chat messages from the given room.
+	 * Receives chat messages from the given room.
 	 *
-	 * It is possible to limit the returned messages to those not older than
-	 * certain date and time setting the $notOlderThan parameter. In the same
-	 * way it is possible to ignore the first N messages setting the $offset
-	 * parameter. Both parameters are optional; if not set all the messages from
-	 * the chat are returned.
+	 * - Receiving the history ($lookIntoFuture=0):
+	 *   The next $limit messages after $lastKnownMessageId will be returned.
+	 *   The new $lastKnownMessageId for the follow up query is available as
+	 *   `X-Chat-Last-Given` header.
 	 *
-	 * If there are currently no messages the response will not be sent
-	 * immediately. Instead, HTTP connection will be kept open waiting for new
-	 * messages to arrive and, when they do, then the response will be sent. The
-	 * connection will not be kept open indefinitely, though; the number of
-	 * seconds to wait for new messages to arrive can be set using the timeout
-	 * parameter; the default timeout is 30 seconds, maximum timeout is 60
-	 * seconds. If the timeout ends then a successful but empty response will be
-	 * sent.
+	 * - Looking into the future ($lookIntoFuture=1):
+	 *   If there are currently no messages the response will not be sent
+	 *   immediately. Instead, HTTP connection will be kept open waiting for new
+	 *   messages to arrive and, when they do, then the response will be sent. The
+	 *   connection will not be kept open indefinitely, though; the number of
+	 *   seconds to wait for new messages to arrive can be set using the timeout
+	 *   parameter; the default timeout is 30 seconds, maximum timeout is 60
+	 *   seconds. If the timeout ends a successful but empty response will be
+	 *   sent.
+	 *   If messages have been returned (status=200) the new $lastKnownMessageId
+	 *   for the follow up query is available as `X-Chat-Last-Given` header.
 	 *
 	 * @param string $token the room token
-	 * @param int $offset optional, the first N messages to ignore
-	 * @param int $notOlderThanTimestamp optional, timestamp in seconds and UTC
-	 *        time zone
-	 * @param int $timeout optional, the number of seconds to wait for new
-	 *        messages (30 by default, 60 at most)
-	 * @return DataResponse an array of chat messages, or "404 Not found" if the
-	 *         room token was not valid; each chat message is an array with
+	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
+	 * @param int $lastKnownMessageId The last known message (serves as offset)
+	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 60 at most)
+	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
+	 * @return DataResponse an array of chat messages, "404 Not found" if the
+	 *         room token was not valid or "304 Not modified" if there were no messages;
+	 *         each chat message is an array with
 	 *         fields 'id', 'token', 'actorType', 'actorId',
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages($token, $offset = 0, $notOlderThanTimestamp = 0, $timeout = 30) {
+	public function receiveMessages($token, $lookIntoFuture, $lastKnownMessageId = 0, $timeout = 30, $limit = 100) {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
+		$limit = min(200, $limit);
+		$timeout = min(60, $timeout);
 
-		$notOlderThan = null;
-		if ($notOlderThanTimestamp > 0) {
-			$notOlderThan = new \DateTime();
-			$notOlderThan->setTimestamp($notOlderThanTimestamp);
-			$notOlderThan->setTimezone(new \DateTimeZone('UTC'));
+		if ($lookIntoFuture) {
+			$comments = $this->chatManager->waitForNewMessages((string) $room->getId(), $lastKnownMessageId, $timeout, $limit, $this->userId);
+		} else {
+			$comments = $this->chatManager->getHistory((string) $room->getId(), $lastKnownMessageId, $limit);
 		}
 
-		$maximumTimeout = 60;
-		if ($timeout > $maximumTimeout) {
-			$timeout = $maximumTimeout;
+		if (empty($comments)) {
+			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
-
-		$comments = $this->chatManager->receiveMessages((string) $room->getId(), $this->userId, $timeout, $offset, $notOlderThan);
 
 		$guestSessions = [];
 		foreach ($comments as $comment) {
@@ -230,7 +238,7 @@ class ChatController extends OCSController {
 		}
 
 		$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
-		return new DataResponse(array_map(function(IComment $comment) use ($token, $guestNames) {
+		$response = new DataResponse(array_map(function (IComment $comment) use ($token, $guestNames) {
 			$displayName = null;
 			if ($comment->getActorType() === 'users') {
 				$user = $this->userManager->get($comment->getActorId());
@@ -248,6 +256,13 @@ class ChatController extends OCSController {
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
 				'message' => $comment->getMessage()
 			];
-		}, $comments));
+		}, $comments), Http::STATUS_OK);
+
+		$newLastKnown = end($comments);
+		if ($newLastKnown instanceof IComment) {
+			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+		}
+
+		return $response;
 	}
 }
