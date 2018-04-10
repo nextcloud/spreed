@@ -200,9 +200,9 @@ class ChatController extends OCSController {
 	 *
 	 * @param string $token the room token
 	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
+	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
 	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 60 at most)
-	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @return DataResponse an array of chat messages, "404 Not found" if the
 	 *         room token was not valid or "304 Not modified" if there were no messages;
 	 *         each chat message is an array with
@@ -210,7 +210,7 @@ class ChatController extends OCSController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages($token, $lookIntoFuture, $lastKnownMessageId = 0, $timeout = 30, $limit = 100) {
+	public function receiveMessages($token, $lookIntoFuture, $limit = 100, $lastKnownMessageId = 0, $timeout = 30) {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -219,7 +219,7 @@ class ChatController extends OCSController {
 		$timeout = min(60, $timeout);
 
 		if ($lookIntoFuture) {
-			$comments = $this->chatManager->waitForNewMessages((string) $room->getId(), $lastKnownMessageId, $timeout, $limit, $this->userId);
+			$comments = $this->chatManager->waitForNewMessages((string) $room->getId(), $lastKnownMessageId, $limit, $timeout, $this->userId);
 		} else {
 			$comments = $this->chatManager->getHistory((string) $room->getId(), $lastKnownMessageId, $limit);
 		}

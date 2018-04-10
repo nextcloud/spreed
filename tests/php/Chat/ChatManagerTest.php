@@ -24,25 +24,26 @@
 namespace OCA\Spreed\Tests\php\Chat;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Chat\Notifier;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 
 class ChatManagerTest extends \Test\TestCase {
 
-	/** @var OCP\Comments\ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var CommentsManager|ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $commentsManager;
 
-	/** @var \OCA\Spreed\Chat\Notifier|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Notifier|\PHPUnit_Framework_MockObject_MockObject */
 	protected $notifier;
 
-	/** @var \OCA\Spreed\Chat\ChatManager */
+	/** @var ChatManager */
 	protected $chatManager;
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->commentsManager = $this->createMock(ICommentsManager::class);
+		$this->commentsManager = $this->createMock(CommentsManager::class);
 
 		$this->notifier = $this->createMock(Notifier::class);
 
@@ -101,109 +102,72 @@ class ChatManagerTest extends \Test\TestCase {
 		$this->chatManager->sendMessage('testChatId', 'users', 'testUser', 'testMessage', $creationDateTime);
 	}
 
-	public function testReceiveMessages() {
-		$notOlderThan = new \DateTime('@1000000000');
-
+	public function testGetHistory() {
 		$offset = 1;
-		$this->commentsManager->expects($this->once())
-			->method('getNumberOfCommentsForObject')
-			->with('chat', 'testChatId', $notOlderThan)
-			->willReturn($offset + 2);
-
-		$limit = 0;
-		$getForObjectOffset = 0;
-		$this->commentsManager->expects($this->once())
-			->method('getForObject')
-			->with('chat', 'testChatId', $limit, $getForObjectOffset, $notOlderThan)
-			->willReturn([
-				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
-				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
-				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
-			]);
-
-		$this->notifier->expects($this->once())
-			->method('markMentionNotificationsRead')
-			->with('testChatId', 'userId');
-
-		$timeout = 42;
-		$comments = $this->chatManager->receiveMessages('testChatId', 'userId', $timeout, $offset, $notOlderThan);
+		$limit = 42;
 		$expected = [
-				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
-				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2')
+			$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
+			$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
+			$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
 		];
+
+		$this->commentsManager->expects($this->once())
+			->method('getForObjectSinceTalkVersion')
+			->with('chat', 'testChatId', $offset, 'desc', $limit)
+			->willReturn($expected);
+
+		$comments = $this->chatManager->getHistory('testChatId', $offset, $limit);
 
 		$this->assertEquals($expected, $comments);
 	}
 
-	public function testReceiveMessagesMoreCommentsThanExpected() {
-		$notOlderThan = new \DateTime('@1000000000');
-
+	public function testWaitForNewMessages() {
 		$offset = 1;
-		$this->commentsManager->expects($this->once())
-			->method('getNumberOfCommentsForObject')
-			->with('chat', 'testChatId', $notOlderThan)
-			->willReturn($offset + 2);
+		$limit = 42;
+		$timeout = 23;
+		$expected = [
+			$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1'),
+			$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
+			$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
+		];
 
-		// An extra comment was added between the call to
-		// getNumberOfCommentsForObject and the call to getForObject
-		$limit = 0;
-		$getForObjectOffset = 0;
 		$this->commentsManager->expects($this->once())
-			->method('getForObject')
-			->with('chat', 'testChatId', $limit, $getForObjectOffset, $notOlderThan)
-			->willReturn([
-				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000108), 'testMessage4'),
-				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
-				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
-				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
-			]);
+			->method('getForObjectSinceTalkVersion')
+			->with('chat', 'testChatId', $offset, 'asc', $limit)
+			->willReturn($expected);
 
 		$this->notifier->expects($this->once())
 			->method('markMentionNotificationsRead')
 			->with('testChatId', 'userId');
 
-		$timeout = 42;
-		$comments = $this->chatManager->receiveMessages('testChatId', 'userId', $timeout, $offset, $notOlderThan);
-		$expected = [
-				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000108), 'testMessage4'),
-				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
-				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2')
-		];
+		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, 'userId');
 
 		$this->assertEquals($expected, $comments);
 	}
 
-	public function testReceiveMessagesNoOffset() {
-		$notOlderThan = new \DateTime('@1000000000');
+	public function testWaitForNewMessagesWithWaiting() {
+		$offset = 1;
+		$limit = 42;
+		$timeout = 23;
+		$expected = [
+			$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1'),
+			$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
+			$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
+		];
 
-		$offset = 0;
-		$this->commentsManager->expects($this->once())
-			->method('getNumberOfCommentsForObject')
-			->with('chat', 'testChatId', $notOlderThan)
-			->willReturn($offset + 3);
-
-		$limit = 0;
-		$getForObjectOffset = 0;
-		$this->commentsManager->expects($this->once())
-			->method('getForObject')
-			->with('chat', 'testChatId', $limit, $getForObjectOffset, $notOlderThan)
-			->willReturn([
-				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
-				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
-				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
-			]);
+		$this->commentsManager->expects($this->exactly(2))
+			->method('getForObjectSinceTalkVersion')
+			->with('chat', 'testChatId', $offset, 'asc', $limit)
+			->willReturnOnConsecutiveCalls(
+				[],
+				$expected
+			);
 
 		$this->notifier->expects($this->once())
 			->method('markMentionNotificationsRead')
 			->with('testChatId', 'userId');
 
-		$timeout = 42;
-		$comments = $this->chatManager->receiveMessages('testChatId', 'userId', $timeout, $offset, $notOlderThan);
-		$expected = [
-				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
-				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000023), 'testMessage2'),
-				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
-		];
+		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, 'userId');
 
 		$this->assertEquals($expected, $comments);
 	}
