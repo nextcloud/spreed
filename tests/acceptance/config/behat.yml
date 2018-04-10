@@ -17,6 +17,11 @@ default:
         - LoginPageContext
 
         # Talk app contexts
+        - ChatContext
+        - ConversationInfoContext
+        - ConversationListContext
+        - ParticipantListContext
+        - TalkAppContext
 
   extensions:
     Behat\MinkExtension:
