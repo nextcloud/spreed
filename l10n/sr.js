@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete server" : "Обриши сервер",
     "Add new server" : "Додај нови сервер",
     "Saved" : "Сачувано",
+    "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Избрисали сте све STUN сервере. Пошто је STUN сервер готово увек неопходан, додат је подразумевани STUN сервер.",
     "Shared secret" : "Дељена тајна",
     "TURN server protocols" : "TURN серверски протокол",
     "UDP and TCP" : "UDP и TCP",
