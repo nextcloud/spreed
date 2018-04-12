@@ -59,6 +59,7 @@ pipeline:
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
       - cd ../server
       - php ./build/signed-off-checker.php
+    secrets: [ github_token ]
     when:
       matrix:
         TESTS: signed-off-check
