@@ -64,17 +64,44 @@ class CommentsManager extends Manager {
 			$lastKnownCommentId
 		);
 		if ($lastKnownComment instanceof IComment) {
-			$query->andWhere(
-				$query->expr()->lte(
-					'creation_timestamp',
-					$query->createNamedParameter($lastKnownComment->getCreationDateTime()->getTimestamp()
-				)),
-				$query->expr()->lte(
-					'id',
-					$query->createNamedParameter($lastKnownComment->getId()
-				))
-
-			);
+			$lastKnownCommentDateTime = $lastKnownComment->getCreationDateTime();
+			if ($sortDirection === 'desc') {
+				$query->andWhere(
+					$query->expr()->orX(
+						$query->expr()->lt(
+							'creation_timestamp',
+							$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+							IQueryBuilder::PARAM_DATE
+						),
+						$query->expr()->andX(
+							$query->expr()->eq(
+								'creation_timestamp',
+								$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+								IQueryBuilder::PARAM_DATE
+							),
+							$query->expr()->lt('id', $query->createNamedParameter($lastKnownCommentId))
+						)
+					)
+				);
+			} else {
+				$query->andWhere(
+					$query->expr()->orX(
+						$query->expr()->gt(
+							'creation_timestamp',
+							$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+							IQueryBuilder::PARAM_DATE
+						),
+						$query->expr()->andX(
+							$query->expr()->eq(
+								'creation_timestamp',
+								$query->createNamedParameter($lastKnownCommentDateTime, IQueryBuilder::PARAM_DATE),
+								IQueryBuilder::PARAM_DATE
+							),
+							$query->expr()->gt('id', $query->createNamedParameter($lastKnownCommentId))
+						)
+					)
+				);
+			}
 		}
 
 		$resultStatement = $query->execute();
