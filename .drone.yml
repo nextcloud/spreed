@@ -151,6 +151,21 @@ pipeline:
     when:
       matrix:
         TESTS: jsunit
+  acceptance-conversation:
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b master https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/spreed
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-conversation --selenium-server selenium:4444 allow-git-repository-modifications features/conversation.feature
+    when:
+      matrix:
+        TESTS-ACCEPTANCE: conversation
 
 matrix:
   include:
@@ -171,6 +186,8 @@ matrix:
       DB: pgsql
       DATABASEHOST: postgres-10
     - TESTS: jsunit
+    - TESTS: acceptance
+      TESTS-ACCEPTANCE: conversation
 
 services:
   mysql-5.7:
@@ -191,3 +208,12 @@ services:
     when:
       matrix:
         DATABASEHOST: postgres-10
+  selenium:
+    image: selenium/standalone-firefox:2.53.1-beryllium
+    environment:
+      # Reduce default log level for Selenium server (INFO) as it is too
+      # verbose.
+      - JAVA_OPTS=-Dselenium.LOGGER.level=WARNING
+    when:
+      matrix:
+        TESTS: acceptance
