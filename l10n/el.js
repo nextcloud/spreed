@@ -54,6 +54,7 @@ OC.L10N.register(
     "Edit" : "Επεξεργασία",
     "No other people in this call" : "Κανένα άλλο άτομο σε αυτή την κλήση",
     "and you" : "και εσείς",
+    "Close" : "Κλείσιμο",
     "Waiting for camera and microphone permissions" : "Αναμονή για δικαιώματα για την κάμερα και το μικρόφωνο",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Παρακαλούμε δώστε πρόσβαση στον φυλλομετρητή να χρησιμοποιήσει την κάμερα και το μικρόφωνο ώστε να χρησιμοποιήσετε αυτή την εφαρμογή.",
     "Access to microphone & camera is only possible with HTTPS" : "Η πρόσβαση στο μικρόφωνο και στην κάμερα είναι εφικτή μόνο μέσω HTTPS",
