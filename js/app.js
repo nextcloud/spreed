@@ -788,7 +788,7 @@
 			this.videoDisabled = true;
 		},
 		hasNoVideo: function() {
-			$('#hideVideo').removeClass('video-disabled icon-video')
+			$('#hideVideo').removeClass('icon-video')
 				.addClass('no-video-available icon-video-off')
 				.attr('data-original-title', t('spreed', 'No Camera'));
 			this.videoDisabled = true;
