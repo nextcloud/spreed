@@ -88,10 +88,145 @@ class ChatContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function chatMessagesList($chatAncestor) {
+		return Locator::forThe()->css(".comments")->
+				descendantOf(self::chatView($chatAncestor))->
+				describedAs("List of received chat messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function chatMessage($chatAncestor, $number) {
+		return Locator::forThe()->xpath("li[$number]")->
+				descendantOf(self::chatMessagesList($chatAncestor))->
+				describedAs("Chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function groupedChatMessage($chatAncestor, $number) {
+		return Locator::forThe()->xpath("li[position() = $number and contains(concat(' ', normalize-space(@class), ' '), ' grouped ')]")->
+				descendantOf(self::chatMessagesList($chatAncestor))->
+				describedAs("Grouped chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function authorOfChatMessage($chatAncestor, $number) {
+		return Locator::forThe()->css(".author")->
+				descendantOf(self::chatMessage($chatAncestor, $number))->
+				describedAs("Author of chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function textOfChatMessage($chatAncestor, $number) {
+		return Locator::forThe()->css(".message")->
+				descendantOf(self::chatMessage($chatAncestor, $number))->
+				describedAs("Text of chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function textOfGroupedChatMessage($chatAncestor, $number) {
+		return Locator::forThe()->css(".message")->
+				descendantOf(self::groupedChatMessage($chatAncestor, $number))->
+				describedAs("Text of grouped chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function newChatMessageForm($chatAncestor) {
+		return Locator::forThe()->css(".newCommentForm")->
+				descendantOf(self::chatView($chatAncestor))->
+				describedAs("New chat message form");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function newChatMessageInput($chatAncestor) {
+		return Locator::forThe()->css(".message")->
+				descendantOf(self::newChatMessageForm($chatAncestor))->
+				describedAs("New chat message input");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function newChatMessageWorkingIcon($chatAncestor) {
+		return Locator::forThe()->css(".submitLoading")->
+				descendantOf(self::newChatMessageForm($chatAncestor))->
+				describedAs("New chat message working icon");
+	}
+
+	/**
+	 * @When I send a new chat message with the text :message
+	 */
+	public function iSendANewChatMessageWith($message) {
+		// Instead of waiting for the input to be enabled before sending a new
+		// message it is easier to wait for the working icon to not be shown.
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::newChatMessageWorkingIcon($this->chatAncestor),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The working icon for the new message was still being shown after $timeout seconds");
+		}
+
+		$this->actor->find(self::newChatMessageInput($this->chatAncestor), 10)->setValue($message . "\r");
+	}
+
+	/**
 	 * @Then I see that the chat is shown in the main view
 	 */
 	public function iSeeThatTheChatIsShownInTheMainView() {
 		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::chatView($this->chatAncestor), 10)->isVisible());
+	}
+
+	/**
+	 * @Then I see that the message :number was sent by :author with the text :message
+	 */
+	public function iSeeThatTheMessageWasSentByWithTheText($number, $author, $message) {
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::authorOfChatMessage($this->chatAncestor, $number),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The author of the message $number was not shown yet after $timeout seconds");
+		}
+		PHPUnit_Framework_Assert::assertEquals($author, $this->actor->find(self::authorOfChatMessage($this->chatAncestor, $number))->getText());
+
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::textOfChatMessage($this->chatAncestor, $number),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The text of the message $number was not shown yet after $timeout seconds");
+		}
+		PHPUnit_Framework_Assert::assertEquals($message, $this->actor->find(self::textOfChatMessage($this->chatAncestor, $number))->getText());
+	}
+
+	/**
+	 * @Then I see that the message :number was sent with the text :message and grouped with the previous one
+	 */
+	public function iSeeThatTheMessageWasSentWithTheTextAndGroupedWithThePreviousOne($number, $message) {
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::textOfGroupedChatMessage($this->chatAncestor, $number),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The text of the message $number was not shown yet after $timeout seconds");
+		}
+		PHPUnit_Framework_Assert::assertEquals($message, $this->actor->find(self::textOfGroupedChatMessage($this->chatAncestor, $number))->getText());
+
+		// Author element is not visible for the message, so its text is
+		// returned as an empty string (even if the element has actual text).
+		PHPUnit_Framework_Assert::assertEquals("", $this->actor->find(self::authorOfChatMessage($this->chatAncestor, $number))->getText());
 	}
 
 }
