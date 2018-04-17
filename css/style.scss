@@ -837,8 +837,7 @@ video {
 
 	a {
 		padding-left: 32px;
-		background-position: 12px;
-		background-repeat: no-repeat;
+		background: no-repeat 12px;
 		color: $color-main-text;
 		opacity: .5;
 	}
@@ -859,6 +858,14 @@ video {
 	opacity: .5;
 	font-weight: 300;
 	padding-left: 5px;
+}
+
+.participantWithList .icon {
+	width: 16px;
+	display: inline-block;
+	opacity: 0.4;
+	margin-left: 5px;
+	margin-bottom: -4px;
 }
 
 .participantWithList .participant-offline > a {
@@ -882,8 +889,7 @@ video {
 	text-overflow: ellipsis;
 	padding-left: 44px;
 	background-size: 16px 16px;
-	background-position: 14px center;
-	background-repeat: no-repeat;
+	background: no-repeat 14px center;
 }
 
 
@@ -1048,9 +1054,9 @@ video {
  * the sidebar.
  */
 #app-sidebar .tab-chat {
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 0px;
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
 }
 
 #app-sidebar #commentsTabView .newCommentRow,
@@ -1084,8 +1090,8 @@ video {
  * edge of the sidebar.
  */
 #app-sidebar .tab-participants {
-	padding-right: 0px;
-	padding-bottom: 0px;
+	padding-right: 0;
+	padding-bottom: 0;
 }
 
 #app-sidebar #participantsTabView form,
