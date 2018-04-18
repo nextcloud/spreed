@@ -35,6 +35,7 @@
 			' {{name}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
 			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
+			'{{#if inCall}}<span class="icon icon-video"></span>{{/if}}' +
 		'</a>'+
 		'{{#if canModerate}}' +
 			'<div class="participant-entry-utils">'+
