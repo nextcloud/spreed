@@ -7752,11 +7752,23 @@
 // check if all audio streams are enabled
 	LocalMedia.prototype.isAudioEnabled = function () {
 		var enabled = true;
+		var hasAudioTracks = false;
 		this.localStreams.forEach(function (stream) {
-			stream.getAudioTracks().forEach(function (track) {
-				enabled = enabled && track.enabled;
-			});
+			var audioTracks = stream.getAudioTracks();
+			if (audioTracks.length > 0) {
+				hasAudioTracks = true;
+				audioTracks.forEach(function (track) {
+					enabled = enabled && track.enabled;
+				});
+			}
 		});
+
+		// If no audioTracks were found, that means there is no microphone device.
+		// In that case, isAudioEnabled should return false.
+		if (!hasAudioTracks) {
+			return false;
+		}
+
 		return enabled;
 	};
 
