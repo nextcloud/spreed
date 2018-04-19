@@ -32,6 +32,7 @@
     "Disable video (v)" : "Deshabilitar vídeo (v)",
     "Enable video (v)" : "Habilitar vídeo (v)",
     "You can set your name on the right sidebar so other participants can identify you better." : "Puedes configurar tu nombre en la barra lateral derecha para que otros participantes puedan identificarte mejor.",
+    "No Camera" : "No hay cámara",
     "Enable screensharing" : "Activar compartir pantalla",
     "Copy" : "Copiar",
     "Copied!" : "Copiado.",
@@ -86,7 +87,6 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Por favor, da a tu navegador acceso a tu cámara y micrófono para usar esta app.",
     "Show screen" : "Mostrar pantalla",
     "Access to microphone & camera is only possible with HTTPS" : "Acceso a micrófono y cámara solo es posible con HTTPS",
-    "Please adjust your configuration" : "Por favor, ajusta tu configuración.",
     "Access to microphone & camera was denied" : "Acceso a micrófono y cámara fue rechazado",
     "WebRTC is not supported in your browser" : "Tu navegador no admite WebRTC.",
     "Please use a different browser like Firefox or Chrome" : "Por favor, usa un navegador diferente, como Firefox o Chrome.",
@@ -95,7 +95,6 @@
     "{participantName}'s screen" : "pantalla de {participantName}",
     "Guest's screen" : "Pantalla de Invitado",
     "Your screen" : "Su pantalla",
-    "No Camera" : "No hay cámara",
     "a call" : "una llamada",
     "(Duration %s)" : "(Duración %s)",
     "You attended a call with {user1}" : "Has participado en una llamada con {user1}",
@@ -152,6 +151,7 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "Puedes configurar tu nombre en la parte superior derecha de esta página para que otros participantes puedan identificarte mejor.",
     "Saving failed" : "Fallo al guardar",
     "Add person" : "Añadir persona.",
+    "Please adjust your configuration" : "Por favor, ajusta tu configuración.",
     "{actor} invited you to a private call" : "{actor} lo invitó a una llamada privada",
     "{actor} invited you to a group call" : "{actor} lo invitó a una llamada grupal",
     "{actor} invited you to the call {call}" : "{actor} lo invitó a la llamada {call}",
@@ -176,15 +176,6 @@
     "Room name" : "Nombre de la sala",
     "Add participant" : "Añadir participante",
     "Leave room" : "Abandonar habitación",
-    "Delete room" : "Borrar habitación",
-    "Waiting for {participantName} to join the room …" : "Esperando a que {participantName} se una a la sala...",
-    "{participantName} is waiting for you to join the call …" : "{participantName} está esperando a que te unas a la llamada...",
-    "Waiting for others to join the room …" : "Esperando a que otros se unan a la sala...",
-    "Call in progress …" : "Llamanda en proceso...",
-    "Join {participant1} and {participant2}" : "Unir a {participant1} y a {participant2}",
-    "Join {participant1}, {participant2} and {participant3}" : "Unir a {participant1}, {participant2} y {participant3}",
-    "Join {participant1}, {participant2}, {participant3} and {participant4}" : "Unir a {participant1}, {participant2}, {participant3} y {participant4}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}" : "Unir a {participant1}, {participant2}, {participant3}. {participant4} y {participant5}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4}, …" : "Unir a {participant1}, {participant2}, {participant3}, {participant4}...."
+    "Delete room" : "Borrar habitación"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

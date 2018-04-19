@@ -24,6 +24,7 @@ OC.L10N.register(
     "Waiting for {participantName} to join the call …" : "Väntar på att {participantName} ansluter sig till samtalet ...",
     "Waiting for others to join the call …" : "Väntar på andra ansluter sig till samtalet ...",
     "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är.",
+    "No Camera" : "Ingen kamera",
     "Enable screensharing" : "Tillåt skärmdelning",
     "Copy" : "Kopiera",
     "Copied!" : "Kopierat!",
@@ -70,7 +71,6 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Vänligen ge din webbläsare tillåtelse att använda din kamera och mikrofon för att kunna använda denna funktion.",
     "Show screen" : "Visa skärm",
     "Access to microphone & camera is only possible with HTTPS" : "Tillgång till mikrofon och kamera är endast möjligt via HTTPS",
-    "Please adjust your configuration" : "Vänligen justera dina inställningar",
     "Access to microphone & camera was denied" : "Tillgång till mikrofon och kamera blev nekad",
     "WebRTC is not supported in your browser" : "WebRTC är inte kompatibelt med din webbläsare",
     "Please use a different browser like Firefox or Chrome" : "Vänligen använd en annan webbläsare som t.ex Firefox eller Chrome",
@@ -79,7 +79,6 @@ OC.L10N.register(
     "{participantName}'s screen" : "{participantName}'s skärm",
     "Guest's screen" : "Gästskärm",
     "Your screen" : "Din skärm",
-    "No Camera" : "Ingen kamera",
     "a call" : "ett samtal",
     "(Duration %s)" : "(Varaktighet%s)",
     "You attended a call with {user1}" : "Du deltog i ett samtal med {user1}",
@@ -132,6 +131,7 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Du kan ändra ditt namn upp till höger på denna sida så att de andra deltagarna kan se vem du är.",
     "Saving failed" : "Lyckades ej att spara",
     "Add person" : "Lägg till person",
+    "Please adjust your configuration" : "Vänligen justera dina inställningar",
     "{actor} invited you to a private call" : "{actor} bjöd in dig till ett privat samtal",
     "{actor} invited you to a group call" : "{actor} bjöd in dig till ett gruppsamtal",
     "{actor} invited you to the call {call}" : "{actor} bjöd in dig till samtalet {call}",
@@ -156,10 +156,6 @@ OC.L10N.register(
     "Room name" : "Rumsnamn",
     "Add participant" : "Lägg till deltagare",
     "Leave room" : "Lämna rum",
-    "Delete room" : "Radera rum",
-    "Waiting for {participantName} to join the room …" : "Väntar på {participantName} att gå med i ditt rum …",
-    "Waiting for others to join the room …" : "Väntar på andra att gå med i rummet ...",
-    "Call in progress …" : "Samtal pågår ...",
-    "Join {participant1} and {participant2}" : "Gå med {participant1} och {participant2}"
+    "Delete room" : "Radera rum"
 },
 "nplurals=2; plural=(n != 1);");

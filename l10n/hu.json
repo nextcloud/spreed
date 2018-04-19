@@ -22,6 +22,7 @@
     "Waiting for {participantName} to join the call …" : "Várakozunk, hogy {participantName} csatlakozzon a híváshoz...",
     "Waiting for others to join the call …" : "Várakozunk, hogy mások csatlakozzanak a híváshoz...",
     "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson.",
+    "No Camera" : "Nincs kamera",
     "Enable screensharing" : "Képernyő megosztás engedélyezése",
     "Copy" : "Másol",
     "Copied!" : "Másolva!",
@@ -69,7 +70,6 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Kérlek engedélyezd a kamera és mikrofon elérést az app használatához.",
     "Show screen" : "Képernyőd mutatása",
     "Access to microphone & camera is only possible with HTTPS" : "A mikrofon és a kamera hozzáférése csak HTTPS-en lehetséges",
-    "Please adjust your configuration" : "Kérlek állíts a konfiguráción",
     "Access to microphone & camera was denied" : "A kamera és a mikrofon hozzáférése letiltva",
     "WebRTC is not supported in your browser" : "A böngésződ nem támogatja a WebRTC-t",
     "Please use a different browser like Firefox or Chrome" : "Kérlek használj másik böngészőt pl Firefoxot vagy Chrome-ot",
@@ -78,7 +78,6 @@
     "{participantName}'s screen" : "{participantName} képernyője",
     "Guest's screen" : "Vendég képernyője",
     "Your screen" : "Te képernyőd",
-    "No Camera" : "Nincs kamera",
     "a call" : "egy hívás",
     "(Duration %s)" : "(Időtartam: %s)",
     "You attended a call with {user1}" : "Részt vettél egy hívásban vele: {user1}",
@@ -132,6 +131,7 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "A jelenlegi oldal jobb felső sarkában állíthatod be a neved a könnyebb azonosíthatóság érdekében.",
     "Saving failed" : "Mentés sikertelen",
     "Add person" : "Személy hozzáadás",
+    "Please adjust your configuration" : "Kérlek állíts a konfiguráción",
     "{actor} invited you to a private call" : "{actor} meghívott egy privát beszélgetésbe",
     "{actor} invited you to a group call" : "{actor} meghívott egy csoportos beszélgetésbe",
     "{actor} invited you to the call {call}" : "{actor} meghívott a(z) {call} beszélgetésbe",
@@ -156,15 +156,6 @@
     "Room name" : "Szoba neve",
     "Add participant" : "Résztvevő hozzáadása",
     "Leave room" : "Szoba elhagyása",
-    "Delete room" : "Szoba törlése",
-    "Waiting for {participantName} to join the room …" : "Várakozunk, hogy {participantName} csatlakozzon a szobához...",
-    "{participantName} is waiting for you to join the call …" : "{participantName} várja, hogy csatlakozz a híváshoz ...",
-    "Waiting for others to join the room …" : "Várakozunk, hogy mások csatlakozzanak a szobához ...",
-    "Call in progress …" : "Hívás folyamatban ...",
-    "Join {participant1} and {participant2}" : "Csatlakozás hozzájuk: {participant1}, {participant2}",
-    "Join {participant1}, {participant2} and {participant3}" : "Csatlakozás hozzájuk: {participant1}, {participant2}, {participant3}",
-    "Join {participant1}, {participant2}, {participant3} and {participant4}" : "Csatlakozás hozzájuk: {participant1}, {participant2}, {participant3}, {participant4}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}" : "Csatlakozás hozzájuk: {participant1}, {participant2}, {participant3}, {participant4}, {participant5}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4}, …" : "Csatlakozás hozzájuk: {participant1}, {participant2}, {participant3}, {participant4}, …"
+    "Delete room" : "Szoba törlése"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

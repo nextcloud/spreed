@@ -71,10 +71,6 @@ OC.L10N.register(
     "Exit fullscreen" : "Išeiti iš viso ekrano",
     "Enable audio" : "Įjungti garsą",
     "Enable video" : "Įjungti vaizdą",
-    "Delete room" : "Ištrinti kambarį",
-    "Waiting for {participantName} to join the room …" : "Laukiama, kol {participantName} prisijungs prie kambario …",
-    "{participantName} is waiting for you to join the call …" : "{participantName} laukia, kol prisijungsite prie skambučio …",
-    "Waiting for others to join the room …" : "Laukiama, kol kiti prisijungs prie kambario …",
-    "Call in progress …" : "Skambutis eigoje …"
+    "Delete room" : "Ištrinti kambarį"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);");
