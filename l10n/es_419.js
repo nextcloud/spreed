@@ -64,7 +64,6 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Por favor da acceso a tu navegador para usar tu camara y micrófono poder usar esta aplicación. ",
     "Show screen" : "Mostrar pantalla",
     "Access to microphone & camera is only possible with HTTPS" : "El acceso al micrófono & cámara sólo es posible mediante HTTPS",
-    "Please adjust your configuration" : "Por favor ajusta tu configuración",
     "Access to microphone & camera was denied" : "El acceso al micrófono & cámara fue denegado",
     "WebRTC is not supported in your browser" : "WebRTC no está soportado en tu navegador",
     "Please use a different browser like Firefox or Chrome" : "Por favor usa un navegador diferente como Firefox o Chrome",
@@ -126,6 +125,7 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "Puedes establecer tu nombre en la parte superior derecha de esta página para que otros participantes te puedan identificar mejor. ",
     "Saving failed" : "Se presentó una falla al guardar",
     "Add person" : "Agregar persona",
+    "Please adjust your configuration" : "Por favor ajusta tu configuración",
     "{actor} invited you to a private call" : "{actor} te ha invitado a una llamada privada",
     "{actor} invited you to a group call" : "{actor} te ha invitado a una llamada en grupo",
     "{actor} invited you to the call {call}" : "{actor} te ha invitado a la llamada {call}",
@@ -148,15 +148,6 @@ OC.L10N.register(
     "Enable video" : "Habilitar el video",
     "Add participant" : "Agregar participante",
     "Leave room" : "Salir del cuarto",
-    "Delete room" : "Eliminar cuarto",
-    "Waiting for {participantName} to join the room …" : "Esperando a que {participantName} se una al cuarto...",
-    "{participantName} is waiting for you to join the call …" : "{participantName} está esperando a que te unas a la llamada ...",
-    "Waiting for others to join the room …" : "Esperando a que los demás se unan al cuarto ...",
-    "Call in progress …" : "Llamada en progreso ...",
-    "Join {participant1} and {participant2}" : "Únete a {participant1} y {participant2}",
-    "Join {participant1}, {participant2} and {participant3}" : "Únete a {participant1}, {participant2} y {participant3}",
-    "Join {participant1}, {participant2}, {participant3} and {participant4}" : "Únete a {participant1}, {participant2}, {participant3} y {participant4}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}" : "Únete a {participant1}, {participant2}, {participant3}, {participant4} y {participant5}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4}, …" : "Únete a {participant1}, {participant2}, {participant3}, {participant4}, ..."
+    "Delete room" : "Eliminar cuarto"
 },
 "nplurals=2; plural=(n != 1);");

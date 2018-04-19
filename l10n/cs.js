@@ -68,7 +68,6 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Prosíme dejte vašemu prohlížeči přístup ke kameře a mikrofonu, nebo nebude možné tuto aplikaci použít.",
     "Show screen" : "Ukázat obrazovku",
     "Access to microphone & camera is only possible with HTTPS" : "Přístup k mikrofonu & kameře je moýný pouze přes HTTPS",
-    "Please adjust your configuration" : "Prosím upravte vaši konfiguraci",
     "Access to microphone & camera was denied" : "Přístup k mikrofonu & kameře byl zamítnut",
     "WebRTC is not supported in your browser" : "Váš prohlížeč nepodporuje WebRTC",
     "Please use a different browser like Firefox or Chrome" : "Prosím, použijte jiný prohlížeč, jako třeba Firefox nebo Chrome",
@@ -129,6 +128,7 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "V pravém horním rohu této stránky můžete nastavit své jméno, aby vás ostatní účastníci mohli lépe identifikovat.",
     "Saving failed" : "Ukládání selhalo",
     "Add person" : "Přidat osobu",
+    "Please adjust your configuration" : "Prosím upravte vaši konfiguraci",
     "{actor} invited you to a private call" : "{actor} vás pozval do soukromého hovoru",
     "{actor} invited you to a group call" : "{actor} vás pozval do skupinového hovoru",
     "{actor} invited you to the call {call}" : "{actor} vás pozval  do hovoru {call}",
@@ -152,7 +152,6 @@ OC.L10N.register(
     "Room name" : "Název místnosti",
     "Add participant" : "Přidat účastníka",
     "Leave room" : "Opustit místnost",
-    "Delete room" : "Smazat místnost",
-    "Waiting for others to join the room …" : "Čeká se až se ostatní připojí do místnosti…"
+    "Delete room" : "Smazat místnost"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

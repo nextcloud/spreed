@@ -63,7 +63,6 @@ OC.L10N.register(
     "Waiting for camera and microphone permissions" : "Čakanie na povolenia kamery a mikrofónu",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Pre použitie tejto aplikácie, povoľte prosím vášmu prehliadaču prístup ku kamere a mikrofónu.",
     "Access to microphone & camera is only possible with HTTPS" : "Prístup ku mikrofónu a kamere je možný iba použitím HTTPS",
-    "Please adjust your configuration" : "Upravte prosím vaše nastavenia",
     "Access to microphone & camera was denied" : "Prístup ku mikrofónu a kamere bol zamietnutý",
     "WebRTC is not supported in your browser" : "WebRTC nie je podporované vaším prehliadačom",
     "Please use a different browser like Firefox or Chrome" : "Použite prosím iný prehliadač, napríklad Firefox alebo Chrome",
@@ -96,6 +95,7 @@ OC.L10N.register(
     "Time to call your friends" : "Je čas zavolať svojím priateľom",
     "Saving failed" : "Ukladanie neúspešné",
     "Add person" : "Pridať osobu",
+    "Please adjust your configuration" : "Upravte prosím vaše nastavenia",
     "{actor} invited you to a private call" : "{actor} vás pozval na súkromný hovor",
     "{actor} invited you to a group call" : "{actor} vás pozval na skupinový hovor",
     "{actor} invited you to the call {call}" : "{actor} vás pozval na hovor {call}",
@@ -117,7 +117,6 @@ OC.L10N.register(
     "Room name" : "Názov miestnosti",
     "Add participant" : "Pridať účastníka",
     "Leave room" : "Opustiť miestnosť",
-    "Delete room" : "Zmazať miestnosť",
-    "Call in progress …" : "Prebieha hovor …"
+    "Delete room" : "Zmazať miestnosť"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

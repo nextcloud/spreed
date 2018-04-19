@@ -24,6 +24,7 @@ OC.L10N.register(
     "Waiting for {participantName} to join the call …" : "等待 {participantName} 加入通话 …",
     "Waiting for others to join the call …" : "等待其他人加入通话 ...",
     "You can set your name on the right sidebar so other participants can identify you better." : "你可以在右边的侧边栏上设置你的名字，这样其他参与者就能更好地识别你",
+    "No Camera" : "没有摄像机",
     "Enable screensharing" : "启用屏幕共享",
     "Copy" : "复制",
     "Copied!" : "已复制！",
@@ -68,7 +69,6 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "如果使用这个应用程序，请允许你的浏览器使用的你摄像头和麦克风",
     "Show screen" : "显示屏幕",
     "Access to microphone & camera is only possible with HTTPS" : "仅使用HTTPS访问麦克风和摄像头",
-    "Please adjust your configuration" : "请调整您的配置",
     "Access to microphone & camera was denied" : "访问麦克风和摄像头被拒绝",
     "WebRTC is not supported in your browser" : "你的浏览器不支持WebRTC",
     "Please use a different browser like Firefox or Chrome" : "请使用Firefox或Chrome等其他浏览器",
@@ -77,7 +77,6 @@ OC.L10N.register(
     "{participantName}'s screen" : "{participantName}的屏幕",
     "Guest's screen" : "访客的屏幕",
     "Your screen" : "你的屏幕",
-    "No Camera" : "没有摄像机",
     "a call" : "一个电话",
     "(Duration %s)" : "(持续时间 %s)",
     "You attended a call with {user1}" : "你参加了 {user1}的电话",
@@ -119,6 +118,7 @@ OC.L10N.register(
     "You can set your name on the top right of this page so other participants can identify you better." : "您可以在此页面的右上角设置您的姓名，以便其他参与者更好地识别您。",
     "Saving failed" : "保存失败",
     "Add person" : "增加成员",
+    "Please adjust your configuration" : "请调整您的配置",
     "{actor} invited you to a private call" : "{actor}邀请你加入一个私人通话",
     "{actor} invited you to a group call" : "{actor}邀请你加入一个组通话",
     "{actor} invited you to the call {call}" : "{actor} 邀请你加入这个通话 {call}",
@@ -142,10 +142,6 @@ OC.L10N.register(
     "Room name" : "房间名",
     "Add participant" : "添加参与者",
     "Leave room" : "离开房间",
-    "Delete room" : "删除房间",
-    "Waiting for {participantName} to join the room …" : "等待 {participantName} 进入房间 …",
-    "{participantName} is waiting for you to join the call …" : "{participantName} 正在等待您加入通话 …",
-    "Waiting for others to join the room …" : "等待其他人进入房间。。。",
-    "Call in progress …" : "通话中 ..."
+    "Delete room" : "删除房间"
 },
 "nplurals=1; plural=0;");

@@ -32,6 +32,7 @@
     "Disable video (v)" : "Искључи видео (v)",
     "Enable video (v)" : "Укључи видео (v)",
     "You can set your name on the right sidebar so other participants can identify you better." : "Можете подесити име у траци са десне стране, да се боље представите учесницима разговора.",
+    "No Camera" : "Нема камере",
     "Enable screensharing" : "Укључи дељење екрана",
     "Copy" : "Копирај",
     "Copied!" : "Копирано!",
@@ -86,7 +87,6 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Дајте Вашем веб читачи дозволу да користи камеру и микрофон да бисте користили апликацију.",
     "Show screen" : "Прикажи екран",
     "Access to microphone & camera is only possible with HTTPS" : "Приступ микрофону & камери је могућ само кроз HTTPS протокол",
-    "Please adjust your configuration" : "Подесите Вашу конфигурацију",
     "Access to microphone & camera was denied" : "Приступ микрофону & камери одбијен",
     "WebRTC is not supported in your browser" : "WebRTC није подржан у Вашем веб читачу",
     "Please use a different browser like Firefox or Chrome" : "Користите други веб читач, као што су Фајерфокс или Хром",
@@ -95,7 +95,6 @@
     "{participantName}'s screen" : "Екран корисника {participantName}",
     "Guest's screen" : "Екран госта",
     "Your screen" : "Ваш екран",
-    "No Camera" : "Нема камере",
     "a call" : "позив",
     "(Duration %s)" : "(трајање %s)",
     "You attended a call with {user1}" : "Били сте на разговору са корисником {user1}",
@@ -152,6 +151,7 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "Можете подесити име у горњем десном углу стране, да се боље представите учесницима разговора.",
     "Saving failed" : "Снимање није успело",
     "Add person" : "Додај особу",
+    "Please adjust your configuration" : "Подесите Вашу конфигурацију",
     "{actor} invited you to a private call" : "{actor} Вас је позвао/ла на приватни разговор",
     "{actor} invited you to a group call" : "{actor} Вас је позвао/ла на групни разговор",
     "{actor} invited you to the call {call}" : "{actor} Вас је позвао/ла на разговор  {call}",
@@ -176,15 +176,6 @@
     "Room name" : "Име собе",
     "Add participant" : "Додај учесника",
     "Leave room" : "Напусти собу",
-    "Delete room" : "Обриши собу",
-    "Waiting for {participantName} to join the room …" : "Чекам да се {participantName} укључи у собу…",
-    "{participantName} is waiting for you to join the call …" : "{participantName} чека да се придружите разговору…",
-    "Waiting for others to join the room …" : "Чекам да се остали прикључе соби…",
-    "Call in progress …" : "Разговор у току…",
-    "Join {participant1} and {participant2}" : "Прикључили су се {participant1} и {participant2}",
-    "Join {participant1}, {participant2} and {participant3}" : "Прикључили су се {participant1}, {participant2} и {participant3}",
-    "Join {participant1}, {participant2}, {participant3} and {participant4}" : "Прикључили су се {participant1}, {participant2}, {participant3} и {participant4}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}" : "Прикључили су се {participant1}, {participant2}, {participant3}, {participant4} и {participant5}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4}, …" : "Прикључили су се {participant1}, {participant2}, {participant3}, {participant4}, …"
+    "Delete room" : "Обриши собу"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }
