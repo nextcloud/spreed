@@ -30,6 +30,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
@@ -37,7 +38,6 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\ILogger;
 use OCP\IRequest;
-use OCP\ISession;
 use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 
@@ -46,7 +46,7 @@ class PageController extends Controller {
 	private $userId;
 	/** @var RoomController */
 	private $api;
-	/** @var ISession */
+	/** @var TalkSession */
 	private $session;
 	/** @var ILogger */
 	private $logger;
@@ -63,7 +63,7 @@ class PageController extends Controller {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param RoomController $api
-	 * @param ISession $session
+	 * @param TalkSession $session
 	 * @param string $UserId
 	 * @param ILogger $logger
 	 * @param Manager $manager
@@ -74,7 +74,7 @@ class PageController extends Controller {
 	public function __construct($appName,
 								IRequest $request,
 								RoomController $api,
-								ISession $session,
+								TalkSession $session,
 								$UserId,
 								ILogger $logger,
 								Manager $manager,
@@ -135,7 +135,7 @@ class PageController extends Controller {
 				$token = '';
 			}
 
-			$this->session->remove('spreed-password');
+			$this->session->removePasswordForRoom($token);
 
 			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
@@ -148,7 +148,7 @@ class PageController extends Controller {
 
 				if ($requirePassword) {
 					if ($password !== '' && $room->verifyPassword($password)) {
-						$this->session->set('spreed-password', $token);
+						$this->session->setPasswordForRoom($token, $token);
 					} else {
 						return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 					}
@@ -192,10 +192,10 @@ class PageController extends Controller {
 			]));
 		}
 
-		$this->session->remove('spreed-password');
+		$this->session->removePasswordForRoom($token);
 		if ($room->hasPassword()) {
 			if ($password !== '' && $room->verifyPassword($password)) {
-				$this->session->set('spreed-password', $token);
+				$this->session->setPasswordForRoom($token, $token);
 			} else {
 				return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 			}

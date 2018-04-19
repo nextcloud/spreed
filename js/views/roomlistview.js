@@ -43,9 +43,9 @@
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
 								'<li>'+
-									'<button class="leave-room-button">'+
+									'<button class="remove-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>'+t('spreed', 'Leave room')+'</span>'+
+										'<span>'+t('spreed', 'Remove room from list')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{#if isDeletable}}'+
@@ -99,7 +99,7 @@
 		templateContext: function() {
 			return {
 				isDeletable: (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
-					(Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
+					(Object.keys(this.model.get('participants')).length > 1 || this.model.get('numGuests') > 0)
 			};
 		},
 		onRender: function() {
@@ -128,7 +128,7 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
-			'click @ui.menu .leave-room-button': 'leaveRoom',
+			'click @ui.menu .remove-room-button': 'removeRoom',
 			'click @ui.menu .delete-room-button': 'deleteRoom',
 			'click @ui.room': 'joinRoom'
 		},
@@ -172,7 +172,7 @@
 				});
 			}
 		},
-		leaveRoom: function() {
+		removeRoom: function() {
 			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
@@ -201,7 +201,7 @@
 			}
 
 			OCA.SpreedMe.app._chatView.$el.detach();
-			OCA.SpreedMe.app.connection.leaveCurrentCall(true);
+			OCA.SpreedMe.app.connection.leaveCurrentRoom(true);
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 		},
 		joinRoom: function(e) {

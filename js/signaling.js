@@ -116,10 +116,6 @@
 		}
 	};
 
-	OCA.Talk.Signaling.Base.prototype.leaveAllCalls = function() {
-		// Override if necessary.
-	};
-
 	OCA.Talk.Signaling.Base.prototype.setRoomCollection = function(rooms) {
 		this.roomCollection = rooms;
 		return this.syncRooms();
@@ -302,10 +298,6 @@
 
 	OCA.Talk.Signaling.Internal.prototype.disconnect = function() {
 		this.spreedArrayConnection = [];
-		if (this.source) {
-			this.source.close();
-			this.source = null;
-		}
 		if (this.sendInterval) {
 			window.clearInterval(this.sendInterval);
 			this.sendInterval = null;
@@ -349,7 +341,7 @@
 	OCA.Talk.Signaling.Internal.prototype._sendMessages = function(messages) {
 		var defer = $.Deferred();
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
+			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken,
 			type: 'POST',
 			data: {messages: JSON.stringify(messages)},
 			beforeSend: function (request) {
@@ -378,7 +370,6 @@
 
 		if (token === this.currentRoomToken) {
 			this._stopPingCall();
-			this._closeEventSource();
 		}
 	};
 
@@ -417,24 +408,6 @@
 	/**
 	 * @private
 	 */
-	OCA.Talk.Signaling.Internal.prototype._getCallPeers = function(token) {
-		var defer = $.Deferred();
-		$.ajax({
-			beforeSend: function (request) {
-				request.setRequestHeader('Accept', 'application/json');
-			},
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-			success: function (result) {
-				var peers = result.ocs.data;
-				defer.resolve(peers);
-			}
-		});
-		return defer;
-	};
-
-	/**
-	 * @private
-	 */
 	OCA.Talk.Signaling.Internal.prototype._startPullingMessages = function() {
 		// Abort ongoing request
 		if (this.pullMessagesRequest !== null) {
@@ -444,7 +417,7 @@
 		// Connect to the messages endpoint and pull for new messages
 		this.pullMessagesRequest =
 		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'signaling',
+			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken,
 			type: 'GET',
 			dataType: 'json',
 			beforeSend: function (request) {
@@ -480,16 +453,6 @@
 				}
 			}.bind(this)
 		});
-	};
-
-	/**
-	 * @private
-	 */
-	OCA.Talk.Signaling.Internal.prototype._closeEventSource = function() {
-		if (this.source) {
-			this.source.close();
-			this.source = null;
-		}
 	};
 
 	/**
@@ -555,9 +518,7 @@
 				return;
 			}
 
-			// FIXME This was trying to call connection.leaveCurrentCall(false);
-			// FIXME UI is also not updated. But at least it stops pinging the room.
-			this.leaveCurrentRoom();
+			OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
 		}.bind(this));
 	};
 

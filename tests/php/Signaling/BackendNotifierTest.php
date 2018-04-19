@@ -32,6 +32,7 @@ use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 use OCP\IUser;
 use OCP\Security\IHasher;
+use OCP\Security\ISecureRandom;
 
 class CustomBackendNotifier extends BackendNotifier {
 
@@ -73,7 +74,7 @@ class CustomApplication extends Application {
  */
 class BackendNotifierTest extends \Test\TestCase {
 
-    /** @var OCA\Spreed\Config */
+    /** @var Config */
     private $config;
 
     /** @var ISecureRandom */
@@ -282,7 +283,7 @@ class BackendNotifierTest extends \Test\TestCase {
         ], json_decode($body, true));
 
         $this->controller->clearLastRequest();
-        $guestSession = $room->enterRoomAsGuest('');
+        $guestSession = $room->joinRoomGuest('');
         $room->changeInCall($guestSession, true);
         $request = $this->controller->getLastRequest();
         $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
