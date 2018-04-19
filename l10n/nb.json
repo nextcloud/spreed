@@ -32,6 +32,7 @@
     "Disable video (v)" : "Skru av video (v)",
     "Enable video (v)" : "Skru på video (v)",
     "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre i sidefeltet, slik at andre deltagere har lettere for å identifisere deg.",
+    "No Camera" : "Inget kamera",
     "Enable screensharing" : "Skru på skjermdeling",
     "Copy" : "Kopier",
     "Copied!" : "Kopiert!",
@@ -86,7 +87,6 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Gi nettleseren tilgang til å bruke kamera og mikrofon for å kunne bruke dette programmet.",
     "Show screen" : "Vis skjerm",
     "Access to microphone & camera is only possible with HTTPS" : "Tilgang til mikrofon og kamera er kun mulig via HTTPS",
-    "Please adjust your configuration" : "Juster oppsettet ditt",
     "Access to microphone & camera was denied" : "Tilgang til mikrofon og kamera var avvist",
     "WebRTC is not supported in your browser" : "WebRTC er ikke støttet av din nettleser",
     "Please use a different browser like Firefox or Chrome" : "Bruk en annen nettleser, som Firefox eller Chrome",
@@ -95,7 +95,6 @@
     "{participantName}'s screen" : "{participantName}s skjerm",
     "Guest's screen" : "Gjestens skjerm",
     "Your screen" : "Din skjerm",
-    "No Camera" : "Inget kamera",
     "a call" : "en samtale",
     "(Duration %s)" : "(Varighet %s)",
     "You attended a call with {user1}" : "Du har tatt del i en samtale med {user1}",
@@ -152,6 +151,7 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre på siden slik at andre deltagere har lettere for å identifisere deg.",
     "Saving failed" : "Lagring mislyktes",
     "Add person" : "Legg til person",
+    "Please adjust your configuration" : "Juster oppsettet ditt",
     "{actor} invited you to a private call" : "{actor} inviterte deg til en privat samtale",
     "{actor} invited you to a group call" : "{actor} inviterte deg til gruppesamtale",
     "{actor} invited you to the call {call}" : "{actor} inviterte deg til samtalen {call}",
@@ -176,15 +176,6 @@
     "Room name" : "Romnavn",
     "Add participant" : "Legg til deltager",
     "Leave room" : "Forlat rom",
-    "Delete room" : "Slett rom",
-    "Waiting for {participantName} to join the room …" : "Venter på at {participantName} skal ta del i rommet…",
-    "{participantName} is waiting for you to join the call …" : "{participantName} venter på at du skal ta del i samtalen…",
-    "Waiting for others to join the room …" : "Venter på at andre skal ta del i rommet…",
-    "Call in progress …" : "Samtale pågår…",
-    "Join {participant1} and {participant2}" : "Slå følge med {participant1} og {participant2}",
-    "Join {participant1}, {participant2} and {participant3}" : "Slå følge med {participant1}, {participant2} og {participant3}",
-    "Join {participant1}, {participant2}, {participant3} and {participant4}" : "Slå følge med {participant1}, {participant2}, {participant3} og {participant4}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4} and {participant5}" : "Slå følge med {participant1}, {participant2}, {participant3}, {participant4} og {participant5}",
-    "Join {participant1}, {participant2}, {participant3}, {participant4}, …" : "Slå følge med {participant1}, {participant2}, {participant3}, {participant4}, …"
+    "Delete room" : "Slett rom"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

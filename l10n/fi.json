@@ -22,6 +22,7 @@
     "Waiting for {participantName} to join the call …" : "Odotetaan henkilön {participantName} liittymistä puheluun...",
     "Waiting for others to join the call …" : "Odotetaan muiden liittymistä puheluun...",
     "You can set your name on the right sidebar so other participants can identify you better." : "Voit asettaa nimesi oikeassa sivupalkissa, jolloin muut osallistujat tunnistavat sinut aiempaa paremmin.",
+    "No Camera" : "Ei kameraa",
     "Enable screensharing" : "Ota käyttöön näytönjakaminen",
     "Copy" : "Kopioi",
     "Copied!" : "Kopioitu!",
@@ -70,7 +71,6 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Anna selaimellesi oikeus käyttää kameraa ja mikrofonia käyttääksesi tätä sovellusta.",
     "Show screen" : "Näytä näyttö",
     "Access to microphone & camera is only possible with HTTPS" : "Kameran ja mikrofonin käyttäminen on mahdollista vain käytettäessä HTTPS-protokollaa",
-    "Please adjust your configuration" : "Määrittele kokoonpanosi",
     "Access to microphone & camera was denied" : "Yhteys mikrofoniin ja kameraan estettiin",
     "WebRTC is not supported in your browser" : "WebRTC ei ole tuettuna selaimessasi",
     "Please use a different browser like Firefox or Chrome" : "Käytä jotain toista selainta, kuten Firefoxia tai Chromea",
@@ -79,7 +79,6 @@
     "{participantName}'s screen" : "Henkilön {participantName} näyttö",
     "Guest's screen" : "Vieraan näyttö",
     "Your screen" : "Sinun näyttösi",
-    "No Camera" : "Ei kameraa",
     "a call" : "puhelu",
     "(Duration %s)" : "(Kesto %s)",
     "You attended a call with {user1}" : "Osallistuit puheluun käyttäjän {user1} kanssa",
@@ -127,6 +126,7 @@
     "You can set your name on the top right of this page so other participants can identify you better." : "Voit asettaa nimesi sivun oikeassa yläkulmassa, jotta muut osallistujat tunnistavat sinut paremmin.",
     "Saving failed" : "Tallennus epäonnistui",
     "Add person" : "Lisää henkilö",
+    "Please adjust your configuration" : "Määrittele kokoonpanosi",
     "{actor} invited you to a private call" : "{actor} kutsui sinut yksityispuheluun",
     "{actor} invited you to a group call" : "{actor} kutsui sinut ryhmäpuheluun",
     "{actor} invited you to the call {call}" : "{actor} kutsui sinut puheluun {call}",
@@ -151,10 +151,6 @@
     "Room name" : "Huoneen nimi",
     "Add participant" : "Lisää osallistuja",
     "Leave room" : "Poistu huoneesta",
-    "Delete room" : "Poista huone",
-    "Waiting for {participantName} to join the room …" : "Odotetaan, että {participantName} liittyy huoneeseen…",
-    "{participantName} is waiting for you to join the call …" : "{participantName} odottaa sinun liittyvän puheluun…",
-    "Waiting for others to join the room …" : "Odotetaan muiden liittyvän huoneeseen…",
-    "Call in progress …" : "Puhelu meneillään…"
+    "Delete room" : "Poista huone"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
