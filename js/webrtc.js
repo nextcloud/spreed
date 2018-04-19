@@ -217,12 +217,6 @@ var spreedPeerConnectionTable = [];
 			enableDataChannels: true,
 			nick: OC.getCurrentUser().displayName
 		});
-
-
-		webrtc.on('localScreenStopped', function() {
-			app.screensharingStopped();
-		});
-
 		OCA.SpreedMe.webrtc = webrtc;
 
 		var spreedListofSpeakers = {};
@@ -635,6 +629,10 @@ var spreedPeerConnectionTable = [];
 			if (peer.type === 'video') {
 				OCA.SpreedMe.videos.addPeer(peer);
 			}
+		});
+
+		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
+			app.disableScreensharingButton();
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
