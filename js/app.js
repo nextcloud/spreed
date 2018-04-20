@@ -59,6 +59,7 @@
 		displayedGuestNameHint: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		videoDisabled: localStorage.getItem("videoDisabled"),
+		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
 		_currentEmptyContent: null,
@@ -214,33 +215,12 @@
 			});
 
 			$('#video-fullscreen').click(function() {
-				var fullscreenElem = document.getElementById('app-content');
-
-				if (!document.fullscreenElement && !document.mozFullScreenElement &&
-					!document.webkitFullscreenElement && !document.msFullscreenElement) {
-					if (fullscreenElem.requestFullscreen) {
-						fullscreenElem.requestFullscreen();
-					} else if (fullscreenElem.webkitRequestFullscreen) {
-						fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-					} else if (fullscreenElem.mozRequestFullScreen) {
-						fullscreenElem.mozRequestFullScreen();
-					} else if (fullscreenElem.msRequestFullscreen) {
-						fullscreenElem.msRequestFullscreen();
-					}
-					$(this).attr('data-original-title', t('spreed', 'Exit fullscreen'));
+				if (this.fullscreenDisabled) {
+					this.enableFullscreen();
 				} else {
-					if (document.exitFullscreen) {
-						document.exitFullscreen();
-					} else if (document.webkitExitFullscreen) {
-						document.webkitExitFullscreen();
-					} else if (document.mozCancelFullScreen) {
-						document.mozCancelFullScreen();
-					} else if (document.msExitFullscreen) {
-						document.msExitFullscreen();
-					}
-					$(this).attr('data-original-title', t('spreed', 'Fullscreen'));
+					this.disableFullscreen();
 				}
-			});
+			}.bind(this));
 
 			$('#screensharing-button').click(function() {
 				var webrtc = OCA.SpreedMe.webrtc;
@@ -324,6 +304,7 @@
 			// and the CTRL key is not pressed
 			if ($('input:focus').length === 0 &&
 				$('textarea:focus').length === 0 &&
+				$('div[contenteditable=true]:focus').length === 0 &&
 				!event.ctrlKey) {
 
 				// Actual shortcut handling
@@ -336,12 +317,20 @@
 							this.disableVideo();
 						}
 						break;
-					case 65: // 'a'
+					case 77: // 'm'
 						event.preventDefault();
 						if (this.audioDisabled) {
 							this.enableAudio();
 						} else {
 							this.disableAudio();
+						}
+						break;
+					case 70: // 'f'
+						event.preventDefault();
+						if (this.fullscreenDisabled) {
+							this.enableFullscreen();
+						} else {
+							this.disableFullscreen();
 						}
 						break;
 					case 67: // 'c'
@@ -644,18 +633,49 @@
 			uiChannel.trigger('document:click', event);
 		},
 		initAudioVideoSettings: function(configuration) {
-			if (OCA.SpreedMe.app.audioDisabled) {
-				OCA.SpreedMe.app.disableAudio();
+			if (this.audioDisabled) {
+				this.disableAudio();
 			}
 
 			if (configuration.video !== false) {
-				if (OCA.SpreedMe.app.videoDisabled) {
-					OCA.SpreedMe.app.disableVideo();
+				if (this.videoDisabled) {
+					this.disableVideo();
 				}
 			} else {
-				OCA.SpreedMe.app.videoWasEnabledAtLeastOnce = false;
-				OCA.SpreedMe.app.disableVideo();
+				this.videoWasEnabledAtLeastOnce = false;
+				this.disableVideo();
 			}
+		},
+		enableFullscreen: function() {
+			var fullscreenElem = document.getElementById('app-content');
+
+			if (fullscreenElem.requestFullscreen) {
+				fullscreenElem.requestFullscreen();
+			} else if (fullscreenElem.webkitRequestFullscreen) {
+				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			} else if (fullscreenElem.mozRequestFullScreen) {
+				fullscreenElem.mozRequestFullScreen();
+			} else if (fullscreenElem.msRequestFullscreen) {
+				fullscreenElem.msRequestFullscreen();
+			}
+			$('#video-fullscreen').attr('data-original-title', t('spreed', 'Exit fullscreen (f)'));
+
+			this.fullscreenDisabled = false;
+		},
+		disableFullscreen: function() {
+
+			if (document.exitFullscreen) {
+				document.exitFullscreen();
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen();
+			}
+			$('#video-fullscreen').attr('data-original-title', t('spreed', 'Fullscreen (f)'));
+
+			this.fullscreenDisabled = true;
 		},
 		enableAudio: function() {
 			if (!OCA.SpreedMe.webrtc) {
@@ -663,11 +683,11 @@
 			}
 
 			OCA.SpreedMe.webrtc.unmute();
-			$('#mute').attr('data-original-title', t('spreed', 'Mute audio'))
+			$('#mute').attr('data-original-title', t('spreed', 'Mute audio (m)'))
 				.removeClass('audio-disabled icon-audio-off')
 				.addClass('icon-audio');
 
-			OCA.SpreedMe.app.audioDisabled = false;
+			this.audioDisabled = false;
 		},
 		disableAudio: function() {
 			if (!OCA.SpreedMe.webrtc) {
@@ -675,11 +695,11 @@
 			}
 
 			OCA.SpreedMe.webrtc.mute();
-			$('#mute').attr('data-original-title', t('spreed', 'Enable audio'))
+			$('#mute').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
 				.addClass('audio-disabled icon-audio-off')
 				.removeClass('icon-audio');
 
-			OCA.SpreedMe.app.audioDisabled = true;
+			this.audioDisabled = true;
 		},
 		enableVideo: function() {
 			if (!OCA.SpreedMe.webrtc) {
@@ -692,7 +712,7 @@
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			OCA.SpreedMe.webrtc.resumeVideo();
-			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
+			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video (v)'))
 				.removeClass('video-disabled icon-video-off')
 				.addClass('icon-video');
 			$audioMuteButton.removeClass('video-disabled');
@@ -700,20 +720,16 @@
 			avatarContainer.hide();
 			localVideo.show();
 
-			OCA.SpreedMe.app.videoDisabled = false;
+			this.videoDisabled = false;
 		},
 		hideVideo: function() {
-			if (!OCA.SpreedMe.webrtc) {
-				return;
-			}
-
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			if (!$hideVideoButton.hasClass('no-video-available')) {
-				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
+				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video (v)'))
 					.addClass('video-disabled icon-video-off')
 					.removeClass('icon-video');
 				$audioMuteButton.addClass('video-disabled');
@@ -737,6 +753,10 @@
 			localVideo.hide();
 		},
 		disableVideo: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				return;
+			}
+
 			OCA.SpreedMe.webrtc.pauseVideo();
 			this.hideVideo();
 			this.videoDisabled = true;
