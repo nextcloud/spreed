@@ -32,6 +32,7 @@
 			userId: '',
 			sessionId: '',
 			participantType: 4,
+			inCall: 0,
 			lastPing: 0
 		},
 
