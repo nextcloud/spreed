@@ -46,18 +46,28 @@
 		'	</div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
-		'	<div>' +
-		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
-		'		<label for="link-checkbox">' + t('spreed', 'Share link') + '</label>' +
+		'	<div class="share-link-options">' +
 		'		{{#if isPublic}}' +
-		'			<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
-		'			<div class="password-button"><span class="icon {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span></div>' +
-		'			<div class="password-option">' +
-		'				<input class="password-input" maxlength="200" type="password" autocomplete="new-password"' +
-		'				  placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
-		'				<div class="icon icon-confirm password-confirm"></div>'+
+		'			<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
+		'			<div class="password-button">' +
+		'				<span class="button {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span>' +
+		'				<div class="popovermenu password-menu menu-left">' +
+		'					<ul>' +
+		'						<li>' +
+		'							<span class="menuitem icon-triangle-e password-option">' +
+		'								<form class="password-form">' +
+		'									<input class="password-input" required maxlength="200" type="password"' +
+		'				  						placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
+		'									<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm"></input>'+
+		'								</form>' +
+		'							</span>' +
+		'						</li>' +
+		'					</ul>' +
+		'				</div>' +
 		'			</div>' +
 		'		{{/if}}' +
+		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
+		'		<label for="link-checkbox" class="link-checkbox-label">' + t('spreed', 'Share link') + '</label>' +
 		'	</div>' +
 		'{{/if}}';
 
@@ -68,7 +78,6 @@
 		template: Handlebars.compile(TEMPLATE),
 
 		renderTimeout: undefined,
-		passwordInputIsShown: false,
 
 		templateContext: function() {
 			var canModerate = this._canModerate();
@@ -83,6 +92,7 @@
 
 		ui: {
 			'roomName': 'div.room-name',
+			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 
@@ -90,10 +100,14 @@
 			'joinCallButton': 'button.join-call',
 			'leaveCallButton': 'button.leave-call',
 
-			'passwordButton': '.password-button',
+			'passwordButton': '.password-button .button',
+			'passwordForm': '.password-form',
+			'passwordMenu': '.password-menu',
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
-			'passwordConfirm': '.password-confirm'
+			'passwordConfirm': '.password-confirm',
+
+			'menu': '.password-menu',
 		},
 
 		regions: {
@@ -107,8 +121,9 @@
 			'keyup @ui.passwordInput': 'keyUpPassword',
 			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
+			'submit @ui.passwordForm': 'confirmPassword',
 			'click @ui.joinCallButton': 'joinCall',
-			'click @ui.leaveCallButton': 'leaveCall'
+			'click @ui.leaveCallButton': 'leaveCall',
 		},
 
 		modelEvents: {
@@ -167,10 +182,11 @@
 				inputPlaceholder: t('spreed', 'Name'),
 				buttonTitle: t('spreed', 'Rename')
 			});
+
 		},
 
 		renderWhenInactive: function() {
-			if (this.ui.passwordInput.length === 0 || !this.passwordInputIsShown || this.ui.passwordInput.val() === '') {
+			if (!OC._currentMenu || !OC._currentMenu.hasClass('password-menu') || this.ui.passwordInput.length === 0 || this.ui.passwordInput.val() === '') {
 				this.render();
 				return;
 			}
@@ -215,11 +231,15 @@
 			});
 			this.initClipboard();
 
-			this.ui.passwordOption.hide();
 			this.ui.passwordButton.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
 				title: (this.model.get('hasPassword')) ? t('spreed', 'Change password') : t('spreed', 'Set password')
+			});
+
+			var self = this;
+			OC.registerMenu($(this.ui.passwordButton), $(this.ui.passwordMenu), function() {
+				$(self.ui.passwordInput).focus();
 			});
 
 		},
@@ -277,14 +297,8 @@
 		/**
 		 * Password
 		 */
-		showPasswordInput: function() {
-			this.passwordInputIsShown = true;
-			this.ui.passwordButton.hide();
-			this.ui.passwordOption.show();
-			this.ui.passwordInput.focus();
-		},
-
-		confirmPassword: function() {
+		confirmPassword: function(e) {
+			e.preventDefault();
 			var newPassword = this.ui.passwordInput.val().trim();
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
@@ -293,10 +307,8 @@
 					password: newPassword
 				},
 				success: function() {
-					this.passwordInputIsShown = false;
 					this.ui.passwordInput.val('');
-					this.ui.passwordOption.hide();
-					this.ui.passwordButton.show();
+					OC.hideMenus();
 					OCA.SpreedMe.app.signaling.syncRooms();
 				}.bind(this),
 				error: function() {
@@ -306,15 +318,13 @@
 		},
 
 		keyUpPassword: function(e) {
+			e.preventDefault();
 			if (e.keyCode === 13) {
 				// Enter
-				this.confirmPassword();
+				this.confirmPassword(e);
 			} else if (e.keyCode === 27) {
 				// ESC
-				this.passwordInputIsShown = false;
-				this.ui.passwordInput.val('');
-				this.ui.passwordOption.hide();
-				this.ui.passwordButton.show();
+				OC.hideMenus();
 			}
 		},
 
