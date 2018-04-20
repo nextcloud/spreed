@@ -3,10 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## 3.2.0 – 2018-MM-DD
 ### Added
-- Shortcuts have been added when a call is active: (a)udio, (v)ideo, (c)hat and (p)articipant list
+- Shortcuts have been added when a call is active: (m)ute, (v)ideo, (f)ullscreen, (c)hat and (p)articipant list
   [#730](https://github.com/nextcloud/spreed/pull/730)
+  [#750](https://github.com/nextcloud/spreed/pull/750)
+- Allow users to chat in multiple tabs in multiple chats at the same time
+  [#748](https://github.com/nextcloud/spreed/pull/748)
 - Guest names are now handled better in chat and the participant list
   [#733](https://github.com/nextcloud/spreed/pull/733)
+- Users which are participanting in a call now have a video icon in the participant list
+  [#777](https://github.com/nextcloud/spreed/pull/777)
 
 ### Changed
 - Chat does now not require Media permissions anymore
@@ -20,6 +25,8 @@ All notable changes to this project will be documented in this file.
   [#737](https://github.com/nextcloud/spreed/pull/737)
 - Delete rooms when the last logged in user leaves
   [#727](https://github.com/nextcloud/spreed/pull/727)
+- Correctly update chat UI when leaving current room
+  [#743](https://github.com/nextcloud/spreed/pull/743)
 - Various layout fixes with videos and screensharing
   [#702](https://github.com/nextcloud/spreed/pull/702)
   [#712](https://github.com/nextcloud/spreed/pull/712)
