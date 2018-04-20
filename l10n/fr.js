@@ -177,7 +177,6 @@ OC.L10N.register(
     "Enable video" : "Activer la vidéo",
     "Room name" : "Nom du salon de discussion",
     "Add participant" : "Ajouter un participant",
-    "Leave room" : "Quitter le salon de discussion",
     "Delete room" : "Supprimer le salon de discussion"
 },
 "nplurals=2; plural=(n > 1);");

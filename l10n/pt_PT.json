@@ -122,7 +122,6 @@
     "Enable video" : "activar vídeo",
     "Room name" : "Nome da sala",
     "Add participant" : "Adicionar participante",
-    "Leave room" : "Sair da sala",
     "Delete room" : "Apagar sala"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -147,7 +147,6 @@ OC.L10N.register(
     "Enable audio" : "Habilitar el audio",
     "Enable video" : "Habilitar el video",
     "Add participant" : "Agregar participante",
-    "Leave room" : "Salir del cuarto",
     "Delete room" : "Eliminar cuarto"
 },
 "nplurals=2; plural=(n != 1);");

@@ -123,7 +123,6 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
     "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
     "Add participant" : "Partehartzailea gehitu",
-    "Leave room" : "Gela utzi",
     "Delete room" : "Gela borratu"
 },
 "nplurals=2; plural=(n != 1);");

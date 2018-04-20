@@ -152,7 +152,6 @@ OC.L10N.register(
     "Enable video" : "Käytä videota",
     "Room name" : "Huoneen nimi",
     "Add participant" : "Lisää osallistuja",
-    "Leave room" : "Poistu huoneesta",
     "Delete room" : "Poista huone"
 },
 "nplurals=2; plural=(n != 1);");

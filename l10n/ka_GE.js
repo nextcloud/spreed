@@ -157,7 +157,6 @@ OC.L10N.register(
     "Enable video" : "ვიდეოს ამოქმედება",
     "Room name" : "ოთახის სახელი",
     "Add participant" : "მონაწილის დამატება",
-    "Leave room" : "ოთახის დატოვება",
     "Delete room" : "ოთახის გაუქმება"
 },
 "nplurals=1; plural=0;");

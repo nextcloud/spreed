@@ -177,7 +177,6 @@ OC.L10N.register(
     "Enable video" : "Activar vídeo",
     "Room name" : "Nombre de la sala",
     "Add participant" : "Añadir participante",
-    "Leave room" : "Abandonar habitación",
     "Delete room" : "Borrar habitación"
 },
 "nplurals=2; plural=(n != 1);");

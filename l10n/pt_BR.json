@@ -29,6 +29,7 @@
     "Fullscreen (f)" : "Tela cheia (f)",
     "Mute audio (m)" : "Sem áudio (m)",
     "Unmute audio (m)" : "Com áudio (m)",
+    "No audio" : "Sem áudio",
     "Disable video (v)" : "Desativa vídeo (v)",
     "Enable video (v)" : "Ativa vídeo (v)",
     "You can set your name on the right sidebar so other participants can identify you better." : "Você pode definir seu nome na barra lateral direita para que outros participantes possam identificá-lo melhor.",
@@ -87,6 +88,7 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Para usar este aplicativo, permita o acesso de seu navegador à sua câmera e microfone",
     "Show screen" : "Mostrar tela",
     "Access to microphone & camera is only possible with HTTPS" : "O acesso ao microfone e à câmera só é possível com HTTPS",
+    "Please move your setup to HTTPS" : "Altere sua configuração para HTTPS",
     "Access to microphone & camera was denied" : "O acesso ao microfone e à câmera foi negado",
     "WebRTC is not supported in your browser" : "WebRTC não é suportado pelo seu navegador",
     "Please use a different browser like Firefox or Chrome" : "Utilize um navegador diferente como o Firefox ou Chrome",
@@ -169,13 +171,13 @@
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "O servidor STUN é usado para determinar o endereço IP público dos participantes atrás de um roteador.",
     "TURN server shared secret" : "Turn server compartilhado secreto",
+    "You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server." : "Você excluiu todos os servidores stun. Como um stun é necessário em quase todos os casos, adicionamos um servidor stun padrão.",
     "New group call" : "Nova chamada de grupo",
     "Exit fullscreen" : "Sair da tela cheia",
     "Enable audio" : "Ativar áudio",
     "Enable video" : "Ativar vídeo",
     "Room name" : "Nome da sala",
     "Add participant" : "Adicionar participante",
-    "Leave room" : "Sair da sala",
     "Delete room" : "Excluir sala"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
