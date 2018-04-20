@@ -8,7 +8,7 @@
 }
 
 .app-spreed #app-navigation {
-	padding-top: 46px;
+	padding-top: 45px;
 	padding-bottom: 0;
 }
 
@@ -453,10 +453,6 @@ video {
 	z-index: 90;
 }
 
-#video-fullscreen.public {
-	top: 89px;
-}
-
 #video-fullscreen,
 .nameIndicator button,
 #app-sidebar-trigger {
@@ -610,32 +606,6 @@ video {
 	display: none !important;
 }
 
-/* As there is no header in fullscreen the buttons can be moved to the top. */
-#app-content:-webkit-full-screen #app-sidebar-trigger {
-	top: 0;
-}
-#app-content:-moz-full-screen #app-sidebar-trigger {
-	top: 0;
-}
-#app-content:-ms-fullscreen #app-sidebar-trigger {
-	top: 0;
-}
-#app-content:fullscreen #app-sidebar-trigger {
-	top: 0;
-}
-#app-content:-webkit-full-screen #video-fullscreen {
-	top: 44px;
-}
-#app-content:-moz-full-screen #video-fullscreen {
-	top: 44px;
-}
-#app-content:-ms-fullscreen #video-fullscreen {
-	top: 44px;
-}
-#app-content:fullscreen #video-fullscreen {
-	top: 44px;
-}
-
 
 .localmediaerror h2 {
 	color: red;
@@ -711,8 +681,8 @@ video {
 }
 
 #app-sidebar-trigger {
-	position: fixed;
-	top: 45px;
+	position: absolute;
+	top: 0;
 	right: 0;
 	/* Higher than the z-index of the emptycontent */
 	z-index: 50;
@@ -768,6 +738,16 @@ video {
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
+}
+
+/* Correctly position icons below header in public chat. */
+#body-public {
+	#app-sidebar-trigger {
+		top: 45px;
+	}
+	#video-fullscreen {
+		top: 89px;
+	}
 }
 
 /* As the header is hidden (except for the logo), move the fullscreen button and

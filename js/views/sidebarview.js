@@ -55,8 +55,7 @@
 	 *
 	 * In order for the user to be able to open the sidebar when it is closed,
 	 * the SidebarView shows a small icon ("#app-sidebar-trigger") on the right
-	 * border of the document that opens the sidebar when clicked. When the
-	 * sidebar is open the icon is hidden.
+	 * border of the document that opens the sidebar when clicked.
 	 *
 	 * By default the sidebar is disabled, that is, it is closed and can not be
 	 * opened, neither by the user nor programatically. Calling "enable()" will
@@ -78,7 +77,7 @@
 		},
 
 		events: {
-			'click @ui.trigger': 'open',
+			'click @ui.trigger': 'toggle',
 			'click @ui.sidebar a.close': 'close',
 		},
 
@@ -90,6 +89,7 @@
 
 		initialize: function() {
 			this._enabled = false;
+			this._open = false;
 
 			this._callInfoView = null;
 
@@ -126,16 +126,28 @@
 			this._enabled = false;
 		},
 
+		toggle: function() {
+			if (!this._open) {
+				this.open();
+			} else {
+				this.close();
+			}
+		},
+
 		open: function() {
 			if (!this._enabled) {
 				return;
 			}
 
 			OC.Apps.showAppSidebar();
+
+			this._open = true;
 		},
 
 		close: function() {
 			OC.Apps.hideAppSidebar();
+
+			this._open = false;
 		},
 
 		/**
