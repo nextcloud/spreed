@@ -14,6 +14,8 @@ All notable changes to this project will be documented in this file.
   [#777](https://github.com/nextcloud/spreed/pull/777)
 
 ### Changed
+- It is now possible to join a call without camera and/or microphone
+  [#758](https://github.com/nextcloud/spreed/pull/758)
 - Chat does now not require Media permissions anymore
   [#711](https://github.com/nextcloud/spreed/pull/711)
 - Leaving a call will free up the Media permissions
