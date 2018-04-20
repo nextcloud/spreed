@@ -54,7 +54,7 @@
 		'				<div class="popovermenu password-menu menu-left">' +
 		'					<ul>' +
 		'						<li>' +
-		'							<span class="menuitem icon-triangle-e password-option">' +
+		'							<span class="menuitem {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}} password-option">' +
 		'								<form class="password-form">' +
 		'									<input class="password-input" required maxlength="200" type="password"' +
 		'				  						placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
