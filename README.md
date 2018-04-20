@@ -17,6 +17,11 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
+## Disabling internal camera/audio for testing
+
+* Disable camera until reboot: `sudo modprobe -r uvcvideo`
+* Re-enable camera: `sudo modprobe uvcvideo`
+
 ## Contribution Guidelines
 
 Please read the [Code of Conduct](https://nextcloud.com/community/code-of-conduct/). This document offers some guidance to ensure Nextcloud participants can cooperate effectively in a positive and inspiring atmosphere, and to explain how together we can strengthen and support each other.

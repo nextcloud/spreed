@@ -642,11 +642,11 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
 			console.log('Access to microphone & camera failed', error);
-			var message, messageAdditional;
+			var message;
 			if (error.name === "NotAllowedError") {
 				if (error.message && error.message.indexOf("Only secure origins") !== -1) {
 					message = t('spreed', 'Access to microphone & camera is only possible with HTTPS');
-					messageAdditional = t('spreed', 'Please adjust your configuration');
+					message += ': ' + t('spreed', 'Please move your setup to HTTPS');
 				} else {
 					message = t('spreed', 'Access to microphone & camera was denied');
 				}
@@ -654,17 +654,18 @@ var spreedPeerConnectionTable = [];
 				console.log('WebRTC not supported');
 
 				message = t('spreed', 'WebRTC is not supported in your browser');
-				messageAdditional = t('spreed', 'Please use a different browser like Firefox or Chrome');
+				message += ': ' + t('spreed', 'Please use a different browser like Firefox or Chrome');
 			} else {
 				message = t('spreed', 'Error while accessing microphone & camera');
 				console.log('Error while accessing microphone & camera: ', error.message || error.name);
 			}
 
-			app.setEmptyContentMessage(
-				'icon-video-off',
-				message,
-				messageAdditional
-			);
+			app.startWithoutLocalMedia(webrtc.webrtc.isAudioEnabled(), webrtc.webrtc.isVideoEnabled());
+			OC.Notification.show(message, {
+				type: 'error',
+				timeout: 15,
+			});
+			app.restoreEmptyContent();
 		});
 
 		if(!OCA.SpreedMe.webrtc.capabilities.support) {
@@ -954,19 +955,21 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('localStream', function() {
-			if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
-				OCA.SpreedMe.app.videoWasEnabledAtLeastOnce = true;
+			console.log('localStream');
+			if (!app.videoWasEnabledAtLeastOnce) {
+				app.videoWasEnabledAtLeastOnce = true;
 			}
 
-			if (!OCA.SpreedMe.app.videoDisabled) {
-				OCA.SpreedMe.app.enableVideo();
+			if (!app.videoDisabled) {
+				app.enableVideo();
 			}
 
-			var $hideVideoButton = $('#hideVideo');
-			if (OCA.SpreedMe.webrtc.webrtc.localStream.getVideoTracks().length === 0) {
-				$hideVideoButton.removeClass('video-disabled icon-video')
-					.addClass('no-video-available icon-video-off')
-					.attr('data-original-title', t('spreed', 'No Camera'));
+			if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
+				app.hasNoAudio();
+			}
+
+			if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
+				app.hasNoVideo();
 			}
 		});
 	}
