@@ -151,6 +151,21 @@ pipeline:
     when:
       matrix:
         TESTS: jsunit
+  acceptance-chat:
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b master https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/spreed
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-chat --selenium-server selenium:4444 allow-git-repository-modifications features/chat.feature
+    when:
+      matrix:
+        TESTS-ACCEPTANCE: chat
   acceptance-conversation:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     commands:
@@ -186,6 +201,8 @@ matrix:
       DB: pgsql
       DATABASEHOST: postgres-10
     - TESTS: jsunit
+    - TESTS: acceptance
+      TESTS-ACCEPTANCE: chat
     - TESTS: acceptance
       TESTS-ACCEPTANCE: conversation
 
