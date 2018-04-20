@@ -116,7 +116,6 @@ OC.L10N.register(
     "Enable video" : "Povoliť video",
     "Room name" : "Názov miestnosti",
     "Add participant" : "Pridať účastníka",
-    "Leave room" : "Opustiť miestnosť",
     "Delete room" : "Zmazať miestnosť"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

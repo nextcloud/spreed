@@ -177,7 +177,6 @@ OC.L10N.register(
     "Enable video" : "Görüntüyü aktar",
     "Room name" : "Oda adı",
     "Add participant" : "Katılımcı ekle",
-    "Leave room" : "Odadan ayrıl",
     "Delete room" : "Odayı sil"
 },
 "nplurals=2; plural=(n > 1);");

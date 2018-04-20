@@ -155,7 +155,6 @@ OC.L10N.register(
     "Enable video" : "비디오 활성화",
     "Room name" : "방 번호",
     "Add participant" : "참가자 추가",
-    "Leave room" : "방 떠나기",
     "Delete room" : "방 삭제"
 },
 "nplurals=1; plural=0;");

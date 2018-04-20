@@ -129,7 +129,6 @@ OC.L10N.register(
     "Enable audio" : "Virkja hljóð",
     "Enable video" : "Virkja myndskeið",
     "Add participant" : "Bæta við þátttakanda",
-    "Leave room" : "Fara út af spjallsvæði",
     "Delete room" : "Eyða spjallsvæði"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

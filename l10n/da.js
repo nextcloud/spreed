@@ -145,7 +145,6 @@ OC.L10N.register(
     "Enable audio" : "Aktiver lyd",
     "Enable video" : "Aktiver video",
     "Add participant" : "Tilføj deltagere",
-    "Leave room" : "Forlad rum",
     "Delete room" : "Slet rum"
 },
 "nplurals=2; plural=(n != 1);");

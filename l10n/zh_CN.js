@@ -141,7 +141,6 @@ OC.L10N.register(
     "Enable video" : "启用视频",
     "Room name" : "房间名",
     "Add participant" : "添加参与者",
-    "Leave room" : "离开房间",
     "Delete room" : "删除房间"
 },
 "nplurals=1; plural=0;");

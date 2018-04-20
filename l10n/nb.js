@@ -177,7 +177,6 @@ OC.L10N.register(
     "Enable video" : "Skru på video",
     "Room name" : "Romnavn",
     "Add participant" : "Legg til deltager",
-    "Leave room" : "Forlat rom",
     "Delete room" : "Slett rom"
 },
 "nplurals=2; plural=(n != 1);");

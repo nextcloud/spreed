@@ -155,7 +155,6 @@ OC.L10N.register(
     "Enable video" : "Aktivera video",
     "Room name" : "Rumsnamn",
     "Add participant" : "Lägg till deltagare",
-    "Leave room" : "Lämna rum",
     "Delete room" : "Radera rum"
 },
 "nplurals=2; plural=(n != 1);");

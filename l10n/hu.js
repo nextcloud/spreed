@@ -157,7 +157,6 @@ OC.L10N.register(
     "Enable video" : "Videó engedélyezése",
     "Room name" : "Szoba neve",
     "Add participant" : "Résztvevő hozzáadása",
-    "Leave room" : "Szoba elhagyása",
     "Delete room" : "Szoba törlése"
 },
 "nplurals=2; plural=(n != 1);");
