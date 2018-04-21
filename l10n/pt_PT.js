@@ -117,13 +117,6 @@ OC.L10N.register(
     "Please adjust your configuration" : "Por favor ajuste a sua configuração",
     "Fullscreen" : "Ecrã completo",
     "Mute audio" : "Silenciar áudio",
-    "Disable video" : "desactivar vídeo",
-    "New group call" : "Nova chamada de grupo",
-    "Exit fullscreen" : "Sair de ecrã completo",
-    "Enable audio" : "activar áudio",
-    "Enable video" : "activar vídeo",
-    "Room name" : "Nome da sala",
-    "Add participant" : "Adicionar participante",
-    "Delete room" : "Apagar sala"
+    "Disable video" : "desactivar vídeo"
 },
 "nplurals=2; plural=(n != 1);");

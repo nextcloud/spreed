@@ -48,10 +48,6 @@ OC.L10N.register(
     "Disable video" : "Изключване на видеото",
     "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
-    "STUN server" : "STUN сървър",
-    "Exit fullscreen" : "Изход от цял екран",
-    "Enable audio" : "Включи звук",
-    "Enable video" : "Включи видео",
-    "Room name" : "Име на стаята"
+    "STUN server" : "STUN сървър"
 },
 "nplurals=2; plural=(n != 1);");

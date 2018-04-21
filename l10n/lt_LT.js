@@ -67,10 +67,6 @@ OC.L10N.register(
     "Mute audio" : "Nutildyti garsą",
     "Disable video" : "Išjungti vaizdą",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris",
-    "Exit fullscreen" : "Išeiti iš viso ekrano",
-    "Enable audio" : "Įjungti garsą",
-    "Enable video" : "Įjungti vaizdą",
-    "Delete room" : "Ištrinti kambarį"
+    "STUN server" : "STUN serveris"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n%100<10 || n%100>=20) ? 1 : 2);");

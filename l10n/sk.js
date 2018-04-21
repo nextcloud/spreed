@@ -110,12 +110,6 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "3.. 2.. 1.. Úsmev!",
     "Choose person …" : "Vyberte osobu ...",
     "STUN server" : "STUN server",
-    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
-    "New group call" : "Nový skupinový hovor",
-    "Enable audio" : "Povoliť audio",
-    "Enable video" : "Povoliť video",
-    "Room name" : "Názov miestnosti",
-    "Add participant" : "Pridať účastníka",
-    "Delete room" : "Zmazať miestnosť"
+    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN"
 },
 "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");

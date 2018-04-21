@@ -155,13 +155,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Сервер STUN необходим, чтобы участники могли подключиться к вызовам. Сервер TURN гарантирует, что соединение работает даже через межсетевые экраны.",
     "STUN server" : "Сервер STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
-    "TURN server shared secret" : "Общая секретная фраза сервера TURN",
-    "New group call" : "Новый групповой звонок",
-    "Exit fullscreen" : "Выйти из полноэкранного режима",
-    "Enable audio" : "Включить звук",
-    "Enable video" : "Включить видео",
-    "Room name" : "Название комнаты",
-    "Add participant" : "Добавить участника",
-    "Delete room" : "Удалить комнату"
+    "TURN server shared secret" : "Общая секретная фраза сервера TURN"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");

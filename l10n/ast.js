@@ -79,7 +79,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Precísase'l sirvidor STUN pa qu'asina los participantes puean xunise a les llamaes. El sirvidor TURN asegúrase de que la conexón funciona pente tornafueos.",
     "STUN server" : "Sirvidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El sirvidor STUN úsase pa determinar la direición IP pública de los participantes darrera d'un router.",
-    "TURN server shared secret" : "Secretu compartíu del sirvidor TURN",
-    "Exit fullscreen" : "Colar de la pantalla completa"
+    "TURN server shared secret" : "Secretu compartíu del sirvidor TURN"
 },
 "nplurals=2; plural=(n != 1);");
