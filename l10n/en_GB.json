@@ -168,13 +168,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
-    "TURN server shared secret" : "TURN server shared secret",
-    "New group call" : "New group call",
-    "Exit fullscreen" : "Exit fullscreen",
-    "Enable audio" : "Enable audio",
-    "Enable video" : "Enable video",
-    "Room name" : "Room name",
-    "Add participant" : "Add participant",
-    "Delete room" : "Delete room"
+    "TURN server shared secret" : "TURN server shared secret"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

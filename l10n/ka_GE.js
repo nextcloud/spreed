@@ -150,13 +150,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "მონაწილეების ზარზე დასაკავშირებლად აუცილებელია STUN სერვერი. TURN სერვერი კავშირს უზრუნველყოფს ფაირვოლის გამოყენების შემთხვევაშიც.",
     "STUN server" : "STUN სერვერი",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
-    "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო",
-    "New group call" : "ახალი ჯგუფური ზარი",
-    "Exit fullscreen" : "მთელი ეკრანიდან გამოსვლა",
-    "Enable audio" : "აუდიოს ამოქმედება",
-    "Enable video" : "ვიდეოს ამოქმედება",
-    "Room name" : "ოთახის სახელი",
-    "Add participant" : "მონაწილის დამატება",
-    "Delete room" : "ოთახის გაუქმება"
+    "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო"
 },
 "nplurals=1; plural=0;");
