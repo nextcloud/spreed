@@ -148,13 +148,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-servern krävs för att deltagare kan ansluta till samtal. TURN-servern säkerställer att anslutningar fungerar genom brandväggar.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
-    "TURN server shared secret" : "TURN server delade hemlighet",
-    "New group call" : "Nytt gruppsamtal",
-    "Exit fullscreen" : "Avsluta helskärm",
-    "Enable audio" : "Aktivera ljud",
-    "Enable video" : "Aktivera video",
-    "Room name" : "Rumsnamn",
-    "Add participant" : "Lägg till deltagare",
-    "Delete room" : "Radera rum"
+    "TURN server shared secret" : "TURN server delade hemlighet"
 },
 "nplurals=2; plural=(n != 1);");

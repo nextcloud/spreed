@@ -149,12 +149,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "참가자가 통화에 연결하려면 STUN 서버를 설정해야 합니다. TURN 서버는 방화벽 뒤에 있는 사람도 연결할 수 있도록 합니다.",
     "STUN server" : "STUN 서버",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
-    "TURN server shared secret" : "TURN 서버 공유 비밀 키",
-    "Exit fullscreen" : "전체 화면 끝내기",
-    "Enable audio" : "오디오 활성화",
-    "Enable video" : "비디오 활성화",
-    "Room name" : "방 번호",
-    "Add participant" : "참가자 추가",
-    "Delete room" : "방 삭제"
+    "TURN server shared secret" : "TURN 서버 공유 비밀 키"
 },
 "nplurals=1; plural=0;");

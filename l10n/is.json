@@ -122,11 +122,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-þjónninn er nauðsynlegur til að þáttakendur geti tengst símtölum. TURN-þjónninn tryggir að tengingin virki jafnvel í gegnum eldveggi.",
     "STUN server" : "STUN-þjónn",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
-    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni",
-    "Exit fullscreen" : "Hætta í skjáfylli",
-    "Enable audio" : "Virkja hljóð",
-    "Enable video" : "Virkja myndskeið",
-    "Add participant" : "Bæta við þátttakanda",
-    "Delete room" : "Eyða spjallsvæði"
+    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

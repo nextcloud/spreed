@@ -170,14 +170,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "O servidor STUN é necessário para que os participantes possam conectar-se a chamadas. O servidor STUN garante que a conexão funcione até mesmo por trás de firewalls.",
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "O servidor STUN é usado para determinar o endereço IP público dos participantes atrás de um roteador.",
-    "TURN server shared secret" : "Turn server compartilhado secreto",
-    "You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server." : "Você excluiu todos os servidores stun. Como um stun é necessário em quase todos os casos, adicionamos um servidor stun padrão.",
-    "New group call" : "Nova chamada de grupo",
-    "Exit fullscreen" : "Sair da tela cheia",
-    "Enable audio" : "Ativar áudio",
-    "Enable video" : "Ativar vídeo",
-    "Room name" : "Nome da sala",
-    "Add participant" : "Adicionar participante",
-    "Delete room" : "Excluir sala"
+    "TURN server shared secret" : "Turn server compartilhado secreto"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

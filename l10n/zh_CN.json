@@ -133,12 +133,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
     "STUN server" : "STUN 服务器",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
-    "TURN server shared secret" : "TURN服务器分享的秘密",
-    "Exit fullscreen" : "退出全屏",
-    "Enable audio" : "启用音频",
-    "Enable video" : "启用视频",
-    "Room name" : "房间名",
-    "Add participant" : "添加参与者",
-    "Delete room" : "删除房间"
+    "TURN server shared secret" : "TURN服务器分享的秘密"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

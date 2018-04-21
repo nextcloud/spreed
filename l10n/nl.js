@@ -172,14 +172,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig om deelnemers met gesprekken te verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
-    "TURN server shared secret" : "TURN server gedeeld geheim",
-    "You deleted all stun servers. Because a stun is necessary in almost all cases, we added a default stun server." : "Je hebt alle STUN servers verwijderd. Omdat het bijna altijd nodig is, hebben we een standaard STUN server toegevoegd.",
-    "New group call" : "Nieuw groepsgesprek",
-    "Exit fullscreen" : "Terug uit volledig scherm",
-    "Enable audio" : "Audio inschakelen",
-    "Enable video" : "Video inschakelen",
-    "Room name" : "Kamernaam",
-    "Add participant" : "Deelnemer toevoegen",
-    "Delete room" : "Verwijder ruimte"
+    "TURN server shared secret" : "TURN server gedeeld geheim"
 },
 "nplurals=2; plural=(n != 1);");

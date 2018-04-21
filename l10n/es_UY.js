@@ -142,11 +142,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
-    "TURN server shared secret" : "Secreto compartido del servidor TURN",
-    "Exit fullscreen" : "Salir de la pantalla completa",
-    "Enable audio" : "Habilitar el audio",
-    "Enable video" : "Habilitar el video",
-    "Add participant" : "Agregar participante",
-    "Delete room" : "Eliminar cuarto"
+    "TURN server shared secret" : "Secreto compartido del servidor TURN"
 },
 "nplurals=2; plural=(n != 1);");
