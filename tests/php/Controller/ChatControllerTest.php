@@ -607,12 +607,20 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getId')
 			->willReturn(1234);
 
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn('testUser');
+		$testUser->expects($this->exactly(2))
+			->method('getDisplayName')
+			->willReturn('Test User');
+
 		$offset = 23;
 		$limit = 4;
 		$timeout = 10;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
-			->with('1234', $offset, $limit, $timeout, $this->userId)
+			->with('1234', $offset, $limit, $timeout, $testUser)
 			->willReturn([
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1'),
 				$comment2 = $this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000008), 'testMessage2'),
@@ -620,15 +628,12 @@ class ChatControllerTest extends \Test\TestCase {
 				$comment4 = $this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 			]);
 
-		$testUser = $this->createMock(IUser::class);
-		$testUser->expects($this->exactly(2))
-			->method('getDisplayName')
-			->willReturn('Test User');
-
-		$this->userManager->expects($this->exactly(3))
+		$this->userManager->expects($this->any())
 			->method('get')
-			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
-			->willReturn($testUser, null, $testUser);
+			->willReturnMap([
+				['testUser', $testUser],
+				['testUnknownUser', null]
+			]);
 
 		$this->richMessageHelper->expects($this->exactly(4))
 			->method('getRichMessage')
@@ -670,13 +675,23 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getId')
 			->willReturn(1234);
 
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn('testUser');
+
 		$offset = 23;
 		$limit = 4;
 		$timeout = 3;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
-			->with('1234', $offset, $limit, $timeout, $this->userId)
+			->with('1234', $offset, $limit, $timeout, $testUser)
 			->willReturn([]);
+
+		$this->userManager->expects($this->any())
+			->method('get')
+			->with('testUser')
+			->willReturn($testUser);
 
 		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
 		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
@@ -702,14 +717,24 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getId')
 			->willReturn(1234);
 
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn('testUser');
+
 		$offset = 23;
 		$timeout = 100000;
 		$maximumTimeout = 60;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
-			->with('1234', $offset, $limit, $maximumTimeout, $this->userId)
+			->with('1234', $offset, $limit, $maximumTimeout, $testUser)
 			->willReturn([]);
+
+		$this->userManager->expects($this->any())
+			->method('get')
+			->with('testUser')
+			->willReturn($testUser);
 
 		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
 		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
