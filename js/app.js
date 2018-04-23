@@ -125,7 +125,6 @@
 					}
 				},
 				initSelection: function (element, callback) {
-					console.log(element);
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
@@ -489,8 +488,6 @@
 		 * @param {string} [url]
 		 */
 		setEmptyContentMessage: function(icon, message, messageAdditional, url) {
-			console.log('setEmptyContentMessage');
-			console.log(arguments);
 			var $icon = $('#emptycontent-icon'),
 				$emptyContent = $('#emptycontent');
 
