@@ -61,7 +61,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ### 3.2
 * `guest-display-names` - Display names of guests are stored in the database, can be set via API (not WebRTC only) and are used on returned comments/participants/etc.
-* `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL
+* `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL.
+* `chat-v2` - Chat now has a decent offset, the previous `chat` is not available anymore.
 
 
 ## Room management
@@ -441,14 +442,21 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `offset` | int | Ignores the first N messages
-    `notOlderThanTimestamp` | int | Timestamp in seconds and UTC time zone
-    `timeout` | int | Number of seconds to wait for new messages (30 by default, 60 at most)
+    `lookIntoFuture` | int | `1` Poll and wait for new message or `0` get history of a room
+    `limit` | int | Number of chat messages to receive (100 by default, 200 at most)
+    `timeout` | int | `$lookIntoFuture = 1` only, Number of seconds to wait for new messages (30 by default, 60 at most)
+    `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
 
 * Response:
-    - Header:
+    - Status code:
         + `200 OK`
         + `404 Not Found` When the room could not be found for the participant
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `X-Chat-Last-Given` | int | Offset (lastKnownMessageId) for the next page.
 
     - Data:
         Array of messages, each message has at least:
@@ -456,6 +464,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `id` | int | ID of the comment
+        `token` | string | Room token
         `actorType` | string | `guests` or `users`
         `actorId` | string | User id of the message author
         `actorDisplayName` | string | Display name of the message author
