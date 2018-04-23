@@ -41,6 +41,7 @@ OC.L10N.register(
     "Change password" : "Zmeniť heslo",
     "Set password" : "Nastaviť heslo",
     "Share link" : "Sprístupniť odkaz",
+    "Conversation name" : "Názov rozhovoru",
     "Rename" : "Premenovať",
     "Your name …" : "Vaše meno ...",
     "Link copied!" : "Odkaz skopírovaný!",
