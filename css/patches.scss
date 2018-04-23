@@ -1,0 +1,13 @@
+
+/* inline input in popovermenu patch
+to be removed when 14 is min supported
+https://github.com/nextcloud/server/pull/8575/ */
+
+form.password-form {
+	display: flex;
+	input[type='submit'] {
+		padding: 6px 12px !important;
+		background-position: center !important;
+		width: 34px;
+	}
+}
