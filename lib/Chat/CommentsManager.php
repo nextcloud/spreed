@@ -58,11 +58,11 @@ class CommentsManager extends Manager {
 			$query->setMaxResults($limit);
 		}
 
-		$lastKnownComment = $this->getLastKnownCommentTalkVersion(
+		$lastKnownComment = $lastKnownCommentId !== 0 ? $this->getLastKnownCommentTalkVersion(
 			$objectType,
 			$objectId,
 			$lastKnownCommentId
-		);
+		) : null;
 		if ($lastKnownComment instanceof IComment) {
 			$lastKnownCommentDateTime = $lastKnownComment->getCreationDateTime();
 			if ($sortDirection === 'desc') {
