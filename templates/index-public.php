@@ -25,6 +25,7 @@ script(
 		'views/roomlistview',
 		'views/sidebarview',
 		'views/tabview',
+		'richobjectstringparser',
 		'simplewebrtc',
 		'webrtc',
 		'signaling',

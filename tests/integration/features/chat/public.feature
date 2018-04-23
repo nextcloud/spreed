@@ -9,8 +9,8 @@ Feature: chat/public
       | roomType | 3 |
     When user "participant1" sends message "Message 1" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | message   |
-      | public room | users     | participant1 | participant1-displayname | Message 1 |
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from public room
     Given user "participant1" creates room "public room"
@@ -18,8 +18,8 @@ Feature: chat/public
     And user "participant1" adds "participant2" to room "public room" with 200
     When user "participant2" sends message "Message 1" to room "public room" with 201
     Then user "participant2" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | message   |
-      | public room | users     | participant2 | participant2-displayname | Message 1 |
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited but joined user can send and receive chat messages to and from public room
     Given user "participant1" creates room "public room"
@@ -27,8 +27,8 @@ Feature: chat/public
     And user "participant3" joins room "public room" with 200
     When user "participant3" sends message "Message 1" to room "public room" with 201
     Then user "participant3" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | message   |
-      | public room | users     | participant3 | participant3-displayname | Message 1 |
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | users     | participant3 | participant3-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to and from public room
     Given user "participant1" creates room "public room"
@@ -43,8 +43,8 @@ Feature: chat/public
     And user "guest" joins room "public room" with 200
     When user "guest" sends message "Message 1" to room "public room" with 201
     Then user "guest" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId | actorDisplayName | message   |
-      | public room | guests    | guest   |                  | Message 1 |
+      | room        | actorType | actorId | actorDisplayName | message   | messageParameters |
+      | public room | guests    | guest   |                  | Message 1 | []                |
 
   Scenario: not joined guest can not send nor receive chat messages to and from public room
     Given user "participant1" creates room "public room"
@@ -62,17 +62,17 @@ Feature: chat/public
     And user "participant2" sends message "Message 2" to room "public room" with 201
     And user "guest" sends message "Message 3" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | message   |
-      | public room | guests    | guest        |                          | Message 3 |
-      | public room | users     | participant2 | participant2-displayname | Message 2 |
-      | public room | users     | participant1 | participant1-displayname | Message 1 |
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | guests    | guest        |                          | Message 3 | []                |
+      | public room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
     And user "participant2" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | message   |
-      | public room | guests    | guest        |                          | Message 3 |
-      | public room | users     | participant2 | participant2-displayname | Message 2 |
-      | public room | users     | participant1 | participant1-displayname | Message 1 |
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | guests    | guest        |                          | Message 3 | []                |
+      | public room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
     And user "guest" sees the following messages in room "public room" with 200
-      | room        | actorType | actorId      | actorDisplayName         | message   |
-      | public room | guests    | guest        |                          | Message 3 |
-      | public room | users     | participant2 | participant2-displayname | Message 2 |
-      | public room | users     | participant1 | participant1-displayname | Message 1 |
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | public room | guests    | guest        |                          | Message 3 | []                |
+      | public room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | public room | users     | participant1 | participant1-displayname | Message 1 | []                |

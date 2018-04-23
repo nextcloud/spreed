@@ -10,8 +10,8 @@ Feature: chat/one-to-one
       | invite   | participant2 |
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant1" sees the following messages in room "one-to-one room" with 200
-      | room            | actorType | actorId      | actorDisplayName         | message   |
-      | one-to-one room | users     | participant1 | participant1-displayname | Message 1 |
+      | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | one-to-one room | users     | participant1 | participant1-displayname | Message 1 | []                |
 
   Scenario: invited user can send and receive chat messages to and from one-to-one room
     Given user "participant1" creates room "one-to-one room"
@@ -19,8 +19,8 @@ Feature: chat/one-to-one
       | invite   | participant2 |
     When user "participant2" sends message "Message 1" to room "one-to-one room" with 201
     Then user "participant2" sees the following messages in room "one-to-one room" with 200
-      | room            | actorType | actorId      | actorDisplayName         | message   |
-      | one-to-one room | users     | participant2 | participant2-displayname | Message 1 |
+      | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | one-to-one room | users     | participant2 | participant2-displayname | Message 1 | []                |
 
   Scenario: not invited user can not send nor receive chat messages to nor from one-to-one room
     Given user "participant1" creates room "one-to-one room"
@@ -46,10 +46,10 @@ Feature: chat/one-to-one
     When user "participant1" sends message "Message 1" to room "one-to-one room" with 201
     And user "participant2" sends message "Message 2" to room "one-to-one room" with 201
     Then user "participant1" sees the following messages in room "one-to-one room" with 200
-      | room            | actorType | actorId      | actorDisplayName         | message   |
-      | one-to-one room | users     | participant2 | participant2-displayname | Message 2 |
-      | one-to-one room | users     | participant1 | participant1-displayname | Message 1 |
+      | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | one-to-one room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | one-to-one room | users     | participant1 | participant1-displayname | Message 1 | []                |
     And user "participant2" sees the following messages in room "one-to-one room" with 200
-      | room            | actorType | actorId      | actorDisplayName         | message   |
-      | one-to-one room | users     | participant2 | participant2-displayname | Message 2 |
-      | one-to-one room | users     | participant1 | participant1-displayname | Message 1 |
+      | room            | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | one-to-one room | users     | participant2 | participant2-displayname | Message 2 | []                |
+      | one-to-one room | users     | participant1 | participant1-displayname | Message 1 | []                |

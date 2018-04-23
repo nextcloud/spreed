@@ -48,7 +48,8 @@
 			actorId: '',
 			actorDisplayName: '',
 			timestamp: 0,
-			message: ''
+			message: '',
+			messageParameters: []
 		},
 
 		url: function() {
