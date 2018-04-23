@@ -450,6 +450,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `200 OK`
+        + `304 Not Modified` When there were no older/newer messages
         + `404 Not Found` When the room could not be found for the participant
 
     - Header:
