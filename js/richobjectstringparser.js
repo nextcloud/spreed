@@ -30,8 +30,13 @@
 
 			_.each(matches, function(parameter) {
 				parameter = parameter.substring(1, parameter.length - 1);
-				var parsed = self.parseParameter(parameters[parameter]);
+				if (!parameters.hasOwnProperty(parameter) || !parameters[parameter]) {
+					// Malformed translation?
+					console.error('Potential malformed ROS string: parameter {' + parameter + '} was found in the string but is missing from the parameter list');
+					return;
+				}
 
+				var parsed = self.parseParameter(parameters[parameter]);
 				subject = subject.replace('{' + parameter + '}', parsed);
 			});
 
