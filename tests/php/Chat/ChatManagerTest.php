@@ -28,6 +28,7 @@ use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Chat\Notifier;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IUser;
 
 class ChatManagerTest extends \Test\TestCase {
 
@@ -140,7 +141,13 @@ class ChatManagerTest extends \Test\TestCase {
 			->method('markMentionNotificationsRead')
 			->with('testChatId', 'userId');
 
-		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, 'userId');
+		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
+		$user = $this->createMock(IUser::class);
+		$user->expects($this->any())
+			->method('getUID')
+			->willReturn('userId');
+
+		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, $user);
 
 		$this->assertEquals($expected, $comments);
 	}
@@ -167,7 +174,13 @@ class ChatManagerTest extends \Test\TestCase {
 			->method('markMentionNotificationsRead')
 			->with('testChatId', 'userId');
 
-		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, 'userId');
+		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
+		$user = $this->createMock(IUser::class);
+		$user->expects($this->any())
+			->method('getUID')
+			->willReturn('userId');
+
+		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, $user);
 
 		$this->assertEquals($expected, $comments);
 	}

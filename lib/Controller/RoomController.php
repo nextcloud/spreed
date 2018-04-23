@@ -25,6 +25,7 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -59,6 +60,8 @@ class RoomController extends OCSController {
 	private $manager;
 	/** @var GuestManager */
 	private $guestManager;
+	/** @var ChatManager */
+	private $chatManager;
 	/** @var IL10N */
 	private $l10n;
 
@@ -72,6 +75,7 @@ class RoomController extends OCSController {
 	 * @param ILogger $logger
 	 * @param Manager $manager
 	 * @param GuestManager $guestManager
+	 * @param ChatManager $chatManager
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -83,6 +87,7 @@ class RoomController extends OCSController {
 								ILogger $logger,
 								Manager $manager,
 								GuestManager $guestManager,
+								ChatManager $chatManager,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -92,6 +97,7 @@ class RoomController extends OCSController {
 		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->guestManager = $guestManager;
+		$this->chatManager = $chatManager;
 		$this->l10n = $l10n;
 	}
 
@@ -170,6 +176,7 @@ class RoomController extends OCSController {
 			'count' => $room->getNumberOfParticipants(false, time() - 30),
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+			'unreadMessages' => 0,
 		];
 
 		if (!$participant instanceof Participant) {
@@ -184,6 +191,11 @@ class RoomController extends OCSController {
 			]);
 
 			return $roomData;
+		}
+
+		$currentUser = $this->userManager->get($this->userId);
+		if ($currentUser instanceof IUser) {
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room->getId(), $currentUser);
 		}
 
 		// Sort by lastPing
