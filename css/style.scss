@@ -24,6 +24,14 @@
 	border: 1px solid #eee;
 }
 
+.contactsmenu-popover li > a > img {
+	/* The app uses border-box sizing, so the size of the icon is the
+	 * width/height plus the padding set by default in the server
+	 * (16px + 11px*2). */
+	width: 38px;
+	height: 38px;
+}
+
 /**
  * Sidebar styles
  */
