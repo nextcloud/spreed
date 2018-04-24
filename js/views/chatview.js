@@ -377,7 +377,11 @@
 		_postRenderMessage: function($el) {
 			$el.find('.mention-user').each(function() {
 				var $this = $(this);
-				$this.contactsMenu($this.data('user'), 0, $this);
+
+				var user = $this.data('user');
+				if (user !== OC.getCurrentUser().uid) {
+					$this.contactsMenu(user, 0, $this);
+				}
 			});
 		},
 
