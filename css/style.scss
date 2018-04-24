@@ -630,7 +630,7 @@ video {
 	opacity: .3;
 }
 
-.bubble,
+.bubble:not(.contactsmenu-popover),
 #app-navigation .app-navigation-entry-menu {
 	right: 4px;
 }
