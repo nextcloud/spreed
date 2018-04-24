@@ -1,4 +1,4 @@
-/* global OCA, Handlebars */
+/* global OC, OCA, Handlebars */
 
 /**
  * @copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -9,11 +9,11 @@
  * later. See the COPYING file.
  */
 
-(function(OCA, Handlebars) {
+(function(OC, OCA, Handlebars) {
 
 	OCA.SpreedMe.RichObjectStringParser = {
 
-		_userLocalTemplate: '<span class="mention-user" data-user="{{id}}">@{{name}}</span>',
+		_userLocalTemplate: '<span class="mention-user {{#if isCurrentUser}}current-user{{/if}}" data-user="{{id}}">@{{name}}</span>',
 
 		_unknownTemplate: '<strong>{{name}}</strong>',
 		_unknownLinkTemplate: '<a href="{{link}}">{{name}}</a>',
@@ -59,6 +59,9 @@
 					if (!parameter.name) {
 						parameter.name = parameter.id;
 					}
+					if (OC.getCurrentUser().uid === parameter.id) {
+						parameter.isCurrentUser = true;
+					}
 					return this.userLocalTemplate(parameter);
 
 				default:
@@ -78,4 +81,4 @@
 
 	};
 
-})(OCA, Handlebars);
+})(OC, OCA, Handlebars);
