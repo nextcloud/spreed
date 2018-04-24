@@ -34,6 +34,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\Comments\IComment;
+use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 
@@ -92,7 +93,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->controller = new ChatController(
 			'spreed',
 			$this->userId,
-			$this->createMock(\OCP\IRequest::class),
+			$this->createMock(IRequest::class),
 			$this->userManager,
 			$this->session,
 			$this->manager,
@@ -302,7 +303,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testReceiveMessagesByUser() {
+	public function testReceiveHistoryByUser() {
 		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
@@ -320,12 +321,11 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getId')
 			->willReturn(1234);
 
-		$timeout = 42;
 		$offset = 23;
-		$timestamp = 1000000000;
+		$limit = 4;
 		$this->chatManager->expects($this->once())
-			->method('receiveMessages')
-			->with('1234', $this->userId, $timeout, $offset, new \DateTime('@' . $timestamp))
+			->method('getHistory')
+			->with('1234', $offset, $limit)
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -343,13 +343,14 @@ class ChatControllerTest extends \Test\TestCase {
 			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
 			->willReturn($testUser, null, $testUser);
 
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
+		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
 		$expected = new DataResponse([
 			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000016, 'message'=>'testMessage4'],
 			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>null, 'timestamp'=>1000000015, 'message'=>'testMessage3'],
 			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>null, 'timestamp'=>1000000008, 'message'=>'testMessage2'],
 			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000004, 'message'=>'testMessage1']
 		], Http::STATUS_OK);
+		$expected->addHeader('X-Chat-Last-Given', 108);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -378,12 +379,11 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getId')
 			->willReturn(1234);
 
-		$timeout = 42;
 		$offset = 23;
-		$timestamp = 1000000000;
+		$limit = 4;
 		$this->chatManager->expects($this->once())
-			->method('receiveMessages')
-			->with('1234', $this->userId, $timeout, $offset, new \DateTime('@' . $timestamp))
+			->method('getHistory')
+			->with('1234', $offset, $limit)
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -401,13 +401,14 @@ class ChatControllerTest extends \Test\TestCase {
 			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
 			->willReturn($testUser, null, $testUser);
 
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
+		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
 		$expected = new DataResponse([
 			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000016, 'message'=>'testMessage4'],
 			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>null, 'timestamp'=>1000000015, 'message'=>'testMessage3'],
 			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>null, 'timestamp'=>1000000008, 'message'=>'testMessage2'],
 			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000004, 'message'=>'testMessage1']
 		], Http::STATUS_OK);
+		$expected->addHeader('X-Chat-Last-Given', 108);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -433,13 +434,12 @@ class ChatControllerTest extends \Test\TestCase {
 			->with($this->userId)
 			->will($this->throwException(new ParticipantNotFoundException()));
 
-		$timeout = 42;
+		$limit = 5;
 		$offset = 23;
-		$timestamp = 1000000000;
 		$this->chatManager->expects($this->never())
-			->method('receiveMessages');
+			->method('getHistory');
 
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
+		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
 		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
 
 		$this->assertEquals($expected, $response);
@@ -466,12 +466,11 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getId')
 			->willReturn(1234);
 
-		$timeout = 42;
 		$offset = 23;
-		$timestamp = 1000000000;
+		$limit = 4;
 		$this->chatManager->expects($this->once())
-			->method('receiveMessages')
-			->with('1234', null, $timeout, $offset, new \DateTime('@' . $timestamp))
+			->method('getHistory')
+			->with('1234', $offset, $limit)
 			->willReturn([
 				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -489,13 +488,14 @@ class ChatControllerTest extends \Test\TestCase {
 			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
 			->willReturn($testUser, null, $testUser);
 
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
+		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
 		$expected = new DataResponse([
 			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000016, 'message'=>'testMessage4'],
 			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>null, 'timestamp'=>1000000015, 'message'=>'testMessage3'],
 			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>null, 'timestamp'=>1000000008, 'message'=>'testMessage2'],
 			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000004, 'message'=>'testMessage1']
 		], Http::STATUS_OK);
+		$expected->addHeader('X-Chat-Last-Given', 108);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -517,79 +517,13 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$timeout = 42;
 		$offset = 23;
-		$timestamp = 1000000000;
+		$limit = 4;
 		$this->chatManager->expects($this->never())
-			->method('receiveMessages');
+			->method('getHistory');
 
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
+		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
 		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testReceiveMessagesTimeoutExpired() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
-		$timeout = 42;
-		$offset = 23;
-		$timestamp = 1000000000;
-		$this->chatManager->expects($this->once())
-			->method('receiveMessages')
-			->with('1234', $this->userId, $timeout, $offset, new \DateTime('@' . $timestamp))
-			->willReturn([]);
-
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
-		$expected = new DataResponse([], Http::STATUS_OK);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testReceiveMessagesTimeoutTooLarge() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
-		$timeout = 100000;
-		$maximumTimeout = 60;
-		$offset = 23;
-		$timestamp = 1000000000;
-		$this->chatManager->expects($this->once())
-			->method('receiveMessages')
-			->with('1234', $this->userId, $maximumTimeout, $offset, new \DateTime('@' . $timestamp))
-			->willReturn([]);
-
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
-		$expected = new DataResponse([], Http::STATUS_OK);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -610,13 +544,153 @@ class ChatControllerTest extends \Test\TestCase {
 			->with('testToken', $this->userId)
 			->will($this->throwException(new RoomNotFoundException()));
 
-		$timeout = 42;
-		$offset = 23;
-		$timestamp = 1000000000;
 		$this->chatManager->expects($this->never())
-			->method('receiveMessages');
+			->method('getHistory');
 
-		$response = $this->controller->receiveMessages('testToken', $offset, $timestamp, $timeout);
+		$response = $this->controller->receiveMessages('testToken', 0);
+		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testWaitForNewMessagesByUser() {
+		$this->session->expects($this->once())
+			->method('getSessionForRoom')
+			->with('testToken')
+			->willReturn('testSpreedSession');
+
+		$this->manager->expects($this->once())
+			->method('getRoomForSession')
+			->with($this->userId, 'testSpreedSession')
+			->willReturn($this->room);
+
+		$this->manager->expects($this->never())
+			->method('getRoomForParticipantByToken');
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
+
+		$offset = 23;
+		$limit = 4;
+		$timeout = 10;
+		$this->chatManager->expects($this->once())
+			->method('waitForNewMessages')
+			->with('1234', $offset, $limit, $timeout, $this->userId)
+			->willReturn([
+				$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1'),
+				$this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000008), 'testMessage2'),
+				$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
+				$this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
+			]);
+
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->exactly(2))
+			->method('getDisplayName')
+			->willReturn('Test User');
+
+		$this->userManager->expects($this->exactly(3))
+			->method('get')
+			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
+			->willReturn($testUser, null, $testUser);
+
+		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
+		$expected = new DataResponse([
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000004, 'message'=>'testMessage1'],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>null, 'timestamp'=>1000000008, 'message'=>'testMessage2'],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>null, 'timestamp'=>1000000015, 'message'=>'testMessage3'],
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'Test User', 'timestamp'=>1000000016, 'message'=>'testMessage4'],
+		], Http::STATUS_OK);
+		$expected->addHeader('X-Chat-Last-Given', 111);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testWaitForNewMessagesTimeoutExpired() {
+		$this->session->expects($this->once())
+			->method('getSessionForRoom')
+			->with('testToken')
+			->willReturn('testSpreedSession');
+
+		$this->manager->expects($this->once())
+			->method('getRoomForSession')
+			->with($this->userId, 'testSpreedSession')
+			->willReturn($this->room);
+
+		$this->manager->expects($this->never())
+			->method('getRoomForParticipantByToken');
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
+
+		$offset = 23;
+		$limit = 4;
+		$timeout = 3;
+		$this->chatManager->expects($this->once())
+			->method('waitForNewMessages')
+			->with('1234', $offset, $limit, $timeout, $this->userId)
+			->willReturn([]);
+
+		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
+		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testWaitForNewMessagesTimeoutTooLarge() {
+		$this->session->expects($this->once())
+			->method('getSessionForRoom')
+			->with('testToken')
+			->willReturn('testSpreedSession');
+
+		$this->manager->expects($this->once())
+			->method('getRoomForSession')
+			->with($this->userId, 'testSpreedSession')
+			->willReturn($this->room);
+
+		$this->manager->expects($this->never())
+			->method('getRoomForParticipantByToken');
+
+		$this->room->expects($this->once())
+			->method('getId')
+			->willReturn(1234);
+
+		$offset = 23;
+		$timeout = 100000;
+		$maximumTimeout = 60;
+		$limit = 4;
+		$this->chatManager->expects($this->once())
+			->method('waitForNewMessages')
+			->with('1234', $offset, $limit, $maximumTimeout, $this->userId)
+			->willReturn([]);
+
+		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
+		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testWaitForNewMessagesFromInvalidRoom() {
+		$this->session->expects($this->once())
+			->method('getSessionForRoom')
+			->with('testToken')
+			->willReturn(null);
+
+		$this->manager->expects($this->once())
+			->method('getRoomForSession')
+			->with($this->userId, null)
+			->will($this->throwException(new RoomNotFoundException()));
+
+		$this->manager->expects($this->once())
+			->method('getRoomForParticipantByToken')
+			->with('testToken', $this->userId)
+			->will($this->throwException(new RoomNotFoundException()));
+
+		$this->chatManager->expects($this->never())
+			->method('waitForNewMessages');
+
+		$response = $this->controller->receiveMessages('testToken', 1);
 		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
 
 		$this->assertEquals($expected, $response);

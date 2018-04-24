@@ -441,13 +441,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Then /^user "([^"]*)" sees the following messages in room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
-	 * @param string $message
 	 * @param string $identifier
 	 * @param string $statusCode
 	 */
 	public function userSeesTheFollowingMessagesInRoom($user, $identifier, $statusCode, TableNode $formData = null) {
 		$this->setCurrentUser($user);
-		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier]);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$messages = $this->getDataFromResponse($this->response);
