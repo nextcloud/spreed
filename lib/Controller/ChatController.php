@@ -245,10 +245,10 @@ class ChatController extends OCSController {
 
 		$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
 		$response = new DataResponse(array_map(function (IComment $comment) use ($token, $guestNames) {
-			$displayName = null;
+			$displayName = '';
 			if ($comment->getActorType() === 'users') {
 				$user = $this->userManager->get($comment->getActorId());
-				$displayName = $user instanceof IUser ? $user->getDisplayName() : null;
+				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
 			} else if ($comment->getActorType() === 'guests' && isset($guestNames[$comment->getActorId()])) {
 				$displayName = $guestNames[$comment->getActorId()];
 			}
