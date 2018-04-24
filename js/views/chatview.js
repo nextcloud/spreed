@@ -63,6 +63,8 @@
 
 	var ChatView = Marionette.View.extend({
 
+		groupedMessages: 0,
+
 		className: function() {
 			return 'chat' + (this._oldestOnTopLayout? ' oldestOnTopLayout': '');
 		},
@@ -248,12 +250,16 @@
 			}
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
-					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model)) {
+					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
+					this.groupedMessages < 10) {
 				if (this._oldestOnTopLayout) {
 					$el.addClass('grouped');
 				} else {
 					$el.next().addClass('grouped');
 				}
+				this.groupedMessages++;
+			} else {
+				this.groupedMessages = 0;
 			}
 
 			// PHP timestamp is second-based; JavaScript timestamp is
@@ -334,7 +340,7 @@
 			}
 
 			if (_.isUndefined(secondsThreshold)) {
-				secondsThreshold = 120;
+				secondsThreshold = 15;
 			}
 
 			return Math.abs(model1.get('timestamp') - model2.get('timestamp')) <= secondsThreshold;
