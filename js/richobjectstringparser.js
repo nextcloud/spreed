@@ -13,7 +13,7 @@
 
 	OCA.SpreedMe.RichObjectStringParser = {
 
-		_userLocalTemplate: '<span class="mention-user">@{{id}}</span>',
+		_userLocalTemplate: '<span class="mention-user">@{{name}}</span>',
 
 		_unknownTemplate: '<strong>{{name}}</strong>',
 		_unknownLinkTemplate: '<a href="{{link}}">{{name}}</a>',
