@@ -375,12 +375,9 @@
 		},
 
 		_postRenderMessage: function($el) {
-			$el.find('.avatar').each(function() {
-				var avatar = $(this);
-				var strong = $(this).next();
-				var appendTo = $(this).parent();
-
-				$.merge(avatar, strong).contactsMenu(avatar.data('user'), 0, appendTo);
+			$el.find('.mention-user').each(function() {
+				var $this = $(this);
+				$this.contactsMenu($this.data('user'), 0, $this);
 			});
 		},
 
