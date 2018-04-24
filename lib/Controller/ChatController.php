@@ -219,7 +219,8 @@ class ChatController extends OCSController {
 		$timeout = min(60, $timeout);
 
 		if ($lookIntoFuture) {
-			$comments = $this->chatManager->waitForNewMessages((string) $room->getId(), $lastKnownMessageId, $limit, $timeout, $this->userId);
+			$currentUser = $this->userManager->get($this->userId);
+			$comments = $this->chatManager->waitForNewMessages((string) $room->getId(), $lastKnownMessageId, $limit, $timeout, $currentUser);
 		} else {
 			$comments = $this->chatManager->getHistory((string) $room->getId(), $lastKnownMessageId, $limit);
 		}
