@@ -84,7 +84,7 @@
 
 			this.token = token;
 
-			this.lastKnownMessageId = -1;
+			this.lastKnownMessageId = 0;
 
 			this._waitTimeUntilRetry = 1;
 
