@@ -53,7 +53,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### 3.0 (Initial Talk release)
 * `audio` - audio is supported
 * `video` - video + screensharing is supported
-* `chat` - simple text chat is supported
+* `chat` - simple text chat is supported, superseded by `chat-v2`
 
 ### 3.1
 * `guest-signaling` - Guests can do signaling via api endpoints
@@ -62,7 +62,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### 3.2
 * `guest-display-names` - Display names of guests are stored in the database, can be set via API (not WebRTC only) and are used on returned comments/participants/etc.
 * `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL.
-* `chat-v2` - Chat now has a decent offset, the previous `chat` is not available anymore.
+* `chat-v2` - Chat messages are now [Rich Object Strings](https://github.com/nextcloud/server/issues/1706) and pagination is available, the previous `chat` is not available anymore.
 
 
 ## Room management
@@ -470,7 +470,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `actorId` | string | User id of the message author
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
-        `message` | string | Message in plain text
+        `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
+        `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
 
 ### Sending a new chat message
 

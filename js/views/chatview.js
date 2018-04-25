@@ -206,6 +206,8 @@
 
 			var formattedMessage = escapeHTML(commentModel.get('message')).replace(/\n/g, '<br/>');
 			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
+			formattedMessage = OCA.SpreedMe.RichObjectStringParser.parseMessage(
+				formattedMessage, commentModel.get('messageParameters'));
 
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
@@ -373,12 +375,13 @@
 		},
 
 		_postRenderMessage: function($el) {
-			$el.find('.avatar').each(function() {
-				var avatar = $(this);
-				var strong = $(this).next();
-				var appendTo = $(this).parent();
+			$el.find('.mention-user').each(function() {
+				var $this = $(this);
 
-				$.merge(avatar, strong).contactsMenu(avatar.data('user'), 0, appendTo);
+				var user = $this.data('user');
+				if (user !== OC.getCurrentUser().uid) {
+					$this.contactsMenu(user, 0, $this);
+				}
 			});
 		},
 
