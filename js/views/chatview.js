@@ -96,6 +96,67 @@
 				inputPlaceholder: t('spreed', 'Name'),
 				buttonTitle: t('spreed', 'Rename')
 			});
+
+			_.bindAll(this, '_onAutoComplete');
+		},
+
+		_initAutoComplete: function($target) {
+			var s = this;
+			var limit = 20;
+			$target.atwho({
+				at: '@',
+				limit: limit,
+				callbacks: {
+					remoteFilter: s._onAutoComplete,
+					highlighter: function (li) {
+						// misuse the highlighter callback to instead of
+						// highlighting loads the avatars.
+						var $li = $(li);
+						$li.find('.avatar').avatar(undefined, 32);
+						return $li;
+					},
+					sorter: function (q, items) { return items; }
+				},
+				displayTpl: '<li>'
+				+ '<span class="avatar-name-wrapper">'
+				+ '<div class="avatar" '
+				+ 'data-username="${id}"'	// for avatars
+				+ ' data-user="${id}"'		// for contactsmenu
+				+ ' data-user-display-name="${label}"></div>'
+				+ ' <strong>${label}</strong>'
+				+ '</span></li>',
+				insertTpl: ''
+				+ '@${id}',
+				searchKey: "label"
+			});
+		},
+
+		_onAutoComplete: function(query, callback) {
+			var self = this;
+
+			if(_.isEmpty(query)) {
+				return;
+			}
+			if(!_.isUndefined(this._autoCompleteRequestTimer)) {
+				clearTimeout(this._autoCompleteRequestTimer);
+			}
+			this._autoCompleteRequestTimer = _.delay(function() {
+				if(!_.isUndefined(this._autoCompleteRequestCall)) {
+					this._autoCompleteRequestCall.abort();
+				}
+				this._autoCompleteRequestCall = $.ajax({
+					url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + self.collection.token + '/autocomplete',
+					data: {
+						search: query
+					},
+					beforeSend: function (request) {
+						request.setRequestHeader('Accept', 'application/json');
+					},
+					success: function (result) {
+						callback(result.ocs.data);
+					}
+				});
+			}.bind(this), 400);
 		},
 
 		template: Handlebars.compile(TEMPLATE),
@@ -165,6 +226,8 @@
 					$message.blur().focus();
 				}
 			});
+
+			this._initAutoComplete($message);
 
 			autosize(this.$el.find('.newCommentRow .message'));
 		},
@@ -398,8 +461,11 @@
 				$field.data('submitButtonEl', $submitButton);
 			}
 
-			// Submits form with Enter, but Shift+Enter is a new line
-			if (ev.keyCode === 13 && !ev.shiftKey) {
+			// Submits form with Enter, but Shift+Enter is a new line. If the
+			// autocomplete popover is being shown Enter does not submit the
+			// form either; it will be handled by At.js which will add the
+			// currently selected item to the message.
+			if (ev.keyCode === 13 && !ev.shiftKey && !$field.atwho('isSelecting')) {
 				$submitButton.click();
 				ev.preventDefault();
 			}
