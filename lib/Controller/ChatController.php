@@ -23,6 +23,8 @@
 
 namespace OCA\Spreed\Controller;
 
+use OC\Collaboration\Collaborators\SearchResult;
+use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
@@ -34,6 +36,8 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Collaboration\AutoComplete\IManager;
+use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
@@ -68,6 +72,15 @@ class ChatController extends OCSController {
 	/** @var RichMessageHelper */
 	private $richMessageHelper;
 
+	/** @var IManager */
+	private $autoCompleteManager;
+
+	/** @var SearchPlugin */
+	private $searchPlugin;
+
+	/** @var ISearchResult */
+	private $searchResult;
+
 	/**
 	 * @param string $appName
 	 * @param string $UserId
@@ -77,6 +90,10 @@ class ChatController extends OCSController {
 	 * @param Manager $manager
 	 * @param ChatManager $chatManager
 	 * @param GuestManager $guestManager
+	 * @param RichMessageHelper $richMessageHelper
+	 * @param IManager $autoCompleteManager
+	 * @param SearchPlugin $searchPlugin
+	 * @param SearchResult $searchResult
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -86,7 +103,10 @@ class ChatController extends OCSController {
 								Manager $manager,
 								ChatManager $chatManager,
 								GuestManager $guestManager,
-								RichMessageHelper $richMessageHelper) {
+								RichMessageHelper $richMessageHelper,
+								IManager $autoCompleteManager,
+								SearchPlugin $searchPlugin,
+								SearchResult $searchResult) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -96,6 +116,9 @@ class ChatController extends OCSController {
 		$this->chatManager = $chatManager;
 		$this->guestManager = $guestManager;
 		$this->richMessageHelper = $richMessageHelper;
+		$this->autoCompleteManager = $autoCompleteManager;
+		$this->searchPlugin = $searchPlugin;
+		$this->searchResult = $searchResult;
 	}
 
 	/**
@@ -274,5 +297,55 @@ class ChatController extends OCSController {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * @PublicPage
+	 *
+	 * @param string $token the room token
+	 * @param string $search
+	 * @param int $limit
+	 * @return DataResponse
+	 */
+	public function autoComplete($token, $search, $limit = 20) {
+		$room = $this->getRoom($token);
+		if ($room === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->searchPlugin->setContext([
+			'itemType' => 'chat',
+			'itemId' => $room->getId(),
+			'room' => $room,
+		]);
+		$this->searchPlugin->search((string) $search, $limit, 0, $this->searchResult);
+
+		$results = $this->searchResult->asArray();
+		$exactMatches = $results['exact'];
+		unset($results['exact']);
+		$results = array_merge_recursive($exactMatches, $results);
+
+		$this->autoCompleteManager->runSorters(['talk_chat_participants'], $results, [
+			'itemType' => 'chat',
+			'itemId' => $room->getId(),
+		]);
+
+		$results = $this->prepareResultArray($results);
+		return new DataResponse($results);
+	}
+
+
+	protected function prepareResultArray(array $results) {
+		$output = [];
+		foreach ($results as $type => $subResult) {
+			foreach ($subResult as $result) {
+				$output[] = [
+					'id' => $result['value']['shareWith'],
+					'label' => $result['label'],
+					'source' => $type,
+				];
+			}
+		}
+		return $output;
 	}
 }
