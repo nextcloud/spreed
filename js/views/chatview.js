@@ -54,8 +54,8 @@
 	var COMMENT_TEMPLATE =
 		'<li class="comment" data-id="{{id}}">' +
 		'    <div class="authorRow">' +
-		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
-		'        <div class="author">{{actorDisplayName}}</div>' +
+		'        <div class="avatar{{#if isUserAuthor}} currentUser{{/if}}" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
+		'        <div class="author{{#if isUserAuthor}} currentUser{{/if}}">{{actorDisplayName}}</div>' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
 		'    <div class="message">{{{formattedMessage}}}</div>' +
@@ -120,6 +120,11 @@
 			if (!this._commentTemplate) {
 				this._commentTemplate = Handlebars.compile(COMMENT_TEMPLATE);
 			}
+
+			params = _.extend({
+				isUserAuthor: OC.getCurrentUser().uid === params.actorId,
+			}, params);
+
 			return this._commentTemplate(params);
 		},
 
