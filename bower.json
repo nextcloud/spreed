@@ -20,6 +20,7 @@
     "backbone": "1.2.3",
     "backbone.marionette": "3.0.0",
     "jquery": "^2.0",
-    "jshashes": "^1.0"
+    "jshashes": "^1.0",
+    "ichord/At.js": "^1.4.1"
   }
 }
