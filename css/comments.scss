@@ -247,3 +247,21 @@
 #commentsTabView .comment.showDate .authorRow {
 	display: block;
 }
+
+#commentsTabView .comment .message .mention-user {
+	/* Make the mention the positioning context of its child contacts menu */
+	position: relative;
+
+	font-weight: bold;
+}
+
+#commentsTabView .comment .message .mention-user:not(.current-user) {
+	cursor: pointer;
+}
+
+#commentsTabView .comment .message .contactsmenu-popover {
+	/* Override default positioning of the contacts menu from server, as it is
+	 * based on an avatar plus a text instead of only '@' plus a text. */
+	left: -17px;
+	top: 140%;
+}

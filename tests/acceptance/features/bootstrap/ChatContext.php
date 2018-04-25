@@ -144,6 +144,24 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function formattedMentionInChatMessageOf($chatAncestor, $number, $user) {
+		return Locator::forThe()->xpath("span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and normalize-space() = '@$user']")->
+				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
+				describedAs("Formatted mention of $user in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function formattedLinkInChatMessageTo($chatAncestor, $number, $url) {
+		return Locator::forThe()->xpath("a[normalize-space(@href) = '$url']")->
+				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
+				describedAs("Formatted link to $url in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function newChatMessageForm($chatAncestor) {
 		return Locator::forThe()->css(".newCommentForm")->
 				descendantOf(self::chatView($chatAncestor))->
@@ -227,6 +245,20 @@ class ChatContext implements Context, ActorAwareInterface {
 		// Author element is not visible for the message, so its text is
 		// returned as an empty string (even if the element has actual text).
 		PHPUnit_Framework_Assert::assertEquals("", $this->actor->find(self::authorOfChatMessage($this->chatAncestor, $number))->getText());
+	}
+
+	/**
+	 * @Then I see that the message :number contains a formatted mention of :user
+	 */
+	public function iSeeThatTheMessageContainsAFormattedMentionOf($number, $user) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedMentionInChatMessageOf($this->chatAncestor, $number, $user), 10));
+	}
+
+	/**
+	 * @Then I see that the message :number contains a formatted link to :user
+	 */
+	public function iSeeThatTheMessageContainsAFormattedLinkTo($number, $url) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedLinkInChatMessageTo($this->chatAncestor, $number, $url), 10));
 	}
 
 }
