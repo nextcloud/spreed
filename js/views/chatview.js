@@ -126,7 +126,7 @@
 				+ ' <strong>${label}</strong>'
 				+ '</span></li>',
 				insertTpl: ''
-				+ '@${id}',
+				+ '<span class="mention-user" data-user="${id}">@${label}</span>',
 				searchKey: "label"
 			});
 		},
@@ -473,6 +473,12 @@
 
 		_commentBodyHTML2Plain: function($el) {
 			var $comment = $el.clone();
+
+			$comment.find('.mention-user').each(function () {
+				var $this = $(this);
+				var $inserted = $this.parent();
+				$inserted.html('@' + $this.data('user'));
+			});
 
 			var oldHtml;
 			var html = $comment.html();
