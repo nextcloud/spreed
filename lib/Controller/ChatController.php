@@ -25,6 +25,7 @@ namespace OCA\Spreed\Controller;
 
 use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
+use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
@@ -325,6 +326,7 @@ class ChatController extends OCSController {
 		unset($results['exact']);
 		$results = array_merge_recursive($exactMatches, $results);
 
+		$this->autoCompleteManager->registerSorter(Sorter::class);
 		$this->autoCompleteManager->runSorters(['talk_chat_participants'], $results, [
 			'itemType' => 'chat',
 			'itemId' => $room->getId(),

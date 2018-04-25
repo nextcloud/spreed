@@ -22,9 +22,17 @@
 namespace OCA\Spreed\Chat\AutoComplete;
 
 
+use OCA\Spreed\Chat\CommentsManager;
 use OCP\Collaboration\AutoComplete\ISorter;
 
 class Sorter implements ISorter {
+
+	/** @var CommentsManager */
+	protected $commentsManager;
+
+	public function __construct(CommentsManager $commentsManager) {
+		$this->commentsManager = $commentsManager;
+	}
 
 	/**
 	 * @return string The ID of the sorter, e.g. commenters
@@ -42,6 +50,25 @@ class Sorter implements ISorter {
 	 * @since 13.0.0
 	 */
 	public function sort(array &$sortArray, array $context) {
-		// TODO: Implement sort() method.
+		foreach ($sortArray as $type => &$byType) {
+			$lastComments = $this->commentsManager->getLastCommentDateByActor(
+				$context['itemType'],
+				$context['itemId'],
+				'comment',
+				$type,
+				array_map(function($suggestion) {
+					return $suggestion['value']['shareWith'];
+			}, $byType));
+
+			usort($byType, function ($a, $b) use ($lastComments) {
+				if (!isset($lastComments[$b['value']['shareWith']])) {
+					return -1;
+				}
+				if (!isset($lastComments[$a['value']['shareWith']])) {
+					return 1;
+				}
+				return $lastComments[$a['value']['shareWith']] - $lastComments[$b['value']['shareWith']];
+			});
+		}
 	}
 }
