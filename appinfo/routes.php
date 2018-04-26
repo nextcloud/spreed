@@ -130,8 +130,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Chat#autoComplete',
-			'url' => '/api/{apiVersion}/chat/{token}/autocomplete',
+			'name' => 'Chat#mentions',
+			'url' => '/api/{apiVersion}/chat/{token}/mentions',
 			'verb' => 'GET',
 			'requirements' => [
 				'apiVersion' => 'v1',

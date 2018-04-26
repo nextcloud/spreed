@@ -119,8 +119,8 @@
 				},
 				displayTpl: '<li>'
 				+ '<span class="avatar-name-wrapper">'
-				+ '<div class="avatar" '
-				+ 'data-username="${id}"'	// for avatars
+				+ '<div class="avatar"'
+				+ ' data-username="${id}"'	// for avatars
 				+ ' data-user="${id}"'		// for contactsmenu
 				+ ' data-user-display-name="${label}"></div>'
 				+ ' <strong>${label}</strong>'
@@ -145,7 +145,7 @@
 					this._autoCompleteRequestCall.abort();
 				}
 				this._autoCompleteRequestCall = $.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + self.collection.token + '/autocomplete',
+					url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + self.collection.token + '/mentions',
 					data: {
 						search: query
 					},
