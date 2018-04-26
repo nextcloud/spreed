@@ -513,7 +513,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         ------|------|------------
         `id` | string | The user id which should be sent as `@<id>` in the message
         `label` | string | The displayname of the user
-        `source` | string | The type of the user, currently only `user`
+        `source` | string | The type of the user, currently only `users`
         
 ## Guests
 
