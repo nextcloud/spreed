@@ -34,8 +34,12 @@ class SearchPlugin implements ISearchPlugin {
 	/** @var IUserManager */
 	protected $userManager;
 
-	public function __construct(IUserManager $userManager) {
+	/** @var string */
+	protected $userId;
+
+	public function __construct(IUserManager $userManager, $userId) {
 		$this->userManager = $userManager;
+		$this->userId = $userId;
 	}
 
 	/** @var Room */
@@ -67,6 +71,11 @@ class SearchPlugin implements ISearchPlugin {
 	protected function searchUsers($search, array $userIds, ISearchResult $searchResult) {
 		$matches = $exactMatches = [];
 		foreach ($userIds as $userId) {
+			if ($this->userId !== '' && $this->userId === $userId) {
+				// Do not suggest the current user
+				continue;
+			}
+
 			if ($search === '') {
 				$matches[] = $this->createResult('user', $userId, '');
 				continue;
