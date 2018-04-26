@@ -23,6 +23,8 @@
 
 namespace OCA\Spreed\Tests\php\Controller;
 
+use OC\Collaboration\Collaborators\SearchResult;
+use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Controller\ChatController;
@@ -34,6 +36,7 @@ use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
@@ -62,6 +65,15 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var RichMessageHelper|\PHPUnit_Framework_MockObject_MockObject */
 	protected $richMessageHelper;
 
+	/** @var IManager|\PHPUnit_Framework_MockObject_MockObject */
+	protected $autoCompleteManager;
+
+	/** @var SearchPlugin|\PHPUnit_Framework_MockObject_MockObject */
+	protected $searchPlugin;
+
+	/** @var SearchResult|\PHPUnit_Framework_MockObject_MockObject */
+	protected $searchResult;
+
 	/** @var Room|\PHPUnit_Framework_MockObject_MockObject */
 	protected $room;
 
@@ -81,6 +93,9 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->richMessageHelper = $this->createMock(RichMessageHelper::class);
+		$this->autoCompleteManager = $this->createMock(IManager::class);
+		$this->searchPlugin = $this->createMock(SearchPlugin::class);
+		$this->searchResult = $this->createMock(SearchResult::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -104,7 +119,10 @@ class ChatControllerTest extends \Test\TestCase {
 			$this->manager,
 			$this->chatManager,
 			$this->guestManager,
-			$this->richMessageHelper
+			$this->richMessageHelper,
+			$this->autoCompleteManager,
+			$this->searchPlugin,
+			$this->searchResult
 		);
 	}
 
@@ -742,4 +760,88 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
+	public function dataMentions() {
+		return [
+			['tes', 10, ['exact' => []], []],
+			['foo', 20, [
+				'exact' => [
+					'users' => [
+						['label' => 'Foo Bar', 'value' => ['shareWith' => 'foo', 'shareType' => 'user']],
+					]
+				],
+				'users' => [
+					['label' => 'FooBar', 'value' => ['shareWith' => 'foobar', 'shareType' => 'user']],
+				]], [
+					['id' => 'foo', 'label' => 'Foo Bar', 'source' => 'users'],
+					['id' => 'foobar', 'label' => 'FooBar', 'source' => 'users'],
+			]],
+		];
+	}
+
+	/**
+	 * @dataProvider dataMentions
+	 */
+	public function testMentions($search, $limit, $result, $expected) {
+		$this->session->expects($this->once())
+			->method('getSessionForRoom')
+			->with('testToken')
+			->willReturn('testSpreedSession');
+
+		$this->manager->expects($this->once())
+			->method('getRoomForSession')
+			->with($this->userId, 'testSpreedSession')
+			->willReturn($this->room);
+
+		$this->manager->expects($this->never())
+			->method('getRoomForParticipantByToken');
+
+		$this->room->expects($this->any())
+			->method('getId')
+			->willReturn(1234);
+
+		$this->searchPlugin->expects($this->once())
+			->method('setContext')
+			->with([
+				'itemType' => 'chat',
+				'itemId' => $this->room->getId(),
+				'room' => $this->room,
+			]);
+
+		$this->searchResult->expects($this->once())
+			->method('asArray')
+			->willReturn($result);
+
+		$response = $this->controller->mentions('testToken', $search, $limit);
+		$expected = new DataResponse($expected, Http::STATUS_OK);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testMentionsInvalidRoom() {
+		$this->session->expects($this->once())
+			->method('getSessionForRoom')
+			->with('testToken')
+			->willReturn('testSpreedSession');
+
+		$this->manager->expects($this->once())
+			->method('getRoomForSession')
+			->with($this->userId, 'testSpreedSession')
+			->willThrowException(new RoomNotFoundException());
+
+		$this->manager->expects($this->once())
+			->method('getRoomForParticipantByToken')
+			->with('testToken', $this->userId)
+			->willThrowException(new RoomNotFoundException());
+
+		$this->searchPlugin->expects($this->never())
+			->method('setContext');
+
+		$this->searchResult->expects($this->never())
+			->method('asArray');
+
+		$response = $this->controller->mentions('testToken', 'foo', 10);
+		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
+
+		$this->assertEquals($expected, $response);
+	}
 }
