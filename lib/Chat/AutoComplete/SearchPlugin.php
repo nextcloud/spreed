@@ -37,13 +37,13 @@ class SearchPlugin implements ISearchPlugin {
 	/** @var string */
 	protected $userId;
 
+	/** @var Room */
+	protected $room;
+
 	public function __construct(IUserManager $userManager, $userId) {
 		$this->userManager = $userManager;
 		$this->userId = $userId;
 	}
-
-	/** @var Room */
-	protected $room;
 
 	public function setContext(array $context) {
 		$this->room = $context['room'];
@@ -117,11 +117,13 @@ class SearchPlugin implements ISearchPlugin {
 	 * @param string $name
 	 * @return array
 	 */
-	public function createResult($type, $uid, $name) {
+	protected function createResult($type, $uid, $name) {
 		if ($type === 'user' && $name === '') {
 			$user = $this->userManager->get($uid);
 			if ($user instanceof IUser) {
 				$name = $user->getDisplayName();
+			} else {
+				$name = $uid;
 			}
 		}
 
