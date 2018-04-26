@@ -107,7 +107,7 @@ class ChatController extends OCSController {
 								RichMessageHelper $richMessageHelper,
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
-								SearchResult $searchResult) {
+								SearchResult $searchResult) { // FIXME for 14 ISearchResult is injectable
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
