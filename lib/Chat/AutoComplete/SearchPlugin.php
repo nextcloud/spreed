@@ -69,6 +69,8 @@ class SearchPlugin implements ISearchPlugin {
 	}
 
 	protected function searchUsers($search, array $userIds, ISearchResult $searchResult) {
+		$search = strtolower($search);
+
 		$matches = $exactMatches = [];
 		foreach ($userIds as $userId) {
 			if ($this->userId !== '' && $this->userId === $userId) {
@@ -81,12 +83,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if ($userId === $search) {
+			if (strtolower($userId) === $search) {
 				$exactMatches[] = $this->createResult('user', $userId, '');
 				continue;
 			}
 
-			if (strpos($userId, $search) !== false) {
+			if (strpos(strtolower($userId), $search) !== false) {
 				$matches[] = $this->createResult('user', $userId, '');
 				continue;
 			}
@@ -96,12 +98,12 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if ($user->getDisplayName() === $search) {
+			if (strtolower($user->getDisplayName()) === $search) {
 				$exactMatches[] = $this->createResult('user', $user->getUID(), $user->getDisplayName());
 				continue;
 			}
 
-			if (strpos($user->getDisplayName(), $search) !== false) {
+			if (strpos(strtolower($user->getDisplayName()), $search) !== false) {
 				$matches[] = $this->createResult('user', $user->getUID(), $user->getDisplayName());
 				continue;
 			}
