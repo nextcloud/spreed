@@ -308,7 +308,7 @@ class ChatController extends OCSController {
 	 * @param int $limit
 	 * @return DataResponse
 	 */
-	public function autoComplete($token, $search, $limit = 20) {
+	public function mentions($token, $search, $limit = 20) {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);

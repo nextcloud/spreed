@@ -489,6 +489,31 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `201 Created`
         + `404 Not Found` When the room could not be found for the participant
+
+### Get mention autocomplete suggestions
+
+* Method: `GET`
+* Endpoint: `/chat/{token}/mentions`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `search` | string | Search term for name suggestions (should at least be 1 character)
+    `limit` | int | Number of suggestions to receive (20 by default)
+
+* Response:
+    - Status code:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+    - Data:
+        Array of suggestions, each suggestion has at least:
+
+        field | type | Description
+        ------|------|------------
+        `id` | string | The user id which should be sent as `@<id>` in the message
+        `label` | string | The displayname of the user
+        `source` | string | The type of the user, currently only `user`
         
 ## Guests
 
