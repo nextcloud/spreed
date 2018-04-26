@@ -143,4 +143,41 @@ class CommentsManager extends Manager {
 
 		return null;
 	}
+
+	/**
+	 * @param string $objectType
+	 * @param string $objectId
+	 * @param string $verb
+	 * @param string $actorType
+	 * @param string[] $actors
+	 * @return array
+	 */
+	public function getLastCommentDateByActor(
+		$objectType,
+		$objectId,
+		$verb,
+		$actorType,
+		array $actors
+	) {
+		$lastComments = [];
+
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('actor_id')
+			->selectAlias($query->createFunction('MAX(' . $query->getColumnName('creation_timestamp') . ')'), 'last_comment')
+			->from('comments')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)))
+			->andWhere($query->expr()->eq('verb', $query->createNamedParameter($verb)))
+			->andWhere($query->expr()->eq('actor_type', $query->createNamedParameter($actorType)))
+			->andWhere($query->expr()->in('actor_id', $query->createNamedParameter($actors, IQueryBuilder::PARAM_STR_ARRAY)))
+			->groupBy('actor_id');
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$lastComments[$row['actor_id']] = new \DateTime($row['latest_comment']);
+		}
+		$result->closeCursor();
+
+		return $lastComments;
+	}
 }
