@@ -153,6 +153,12 @@
 	position: relative;
 }
 
+#commentsTabView .comment .authorRow .avatar:not(.currentUser),
+#commentsTabView .comment .authorRow .avatar:not(.currentUser) img,
+#commentsTabView .comment .authorRow .author:not(.currentUser) {
+	cursor: pointer;
+}
+
 .atwho-view-ul * .avatar-name-wrapper {
 	white-space: nowrap;
 }
