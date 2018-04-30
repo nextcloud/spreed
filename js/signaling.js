@@ -264,13 +264,6 @@
 				this.currentCallToken = token;
 				this._trigger('joinCall', [token]);
 				this._joinCallSuccess(token);
-				if (callback) {
-					// We send an empty call description to simplewebrtc since
-					// usersChanged (webrtc.js) will create/remove peer connections
-					// with call participants
-					var callDescription = {'clients': {}};
-					callback('', callDescription);
-				}
 			}.bind(this),
 			error: function () {
 				// Room not found or maintenance mode
@@ -995,6 +988,11 @@
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessionId) {
+		if (!this.sessionId) {
+			console.log("No hello response received yet, not joining room", token);
+			return;
+		}
+
 		console.log("Join room", token);
 		this.doSend({
 			"type": "room",
