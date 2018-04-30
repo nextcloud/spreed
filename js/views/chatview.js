@@ -79,9 +79,7 @@
 			'submit .newCommentForm': '_onSubmitComment',
 		},
 
-		initialize: function(options) {
-			this._oldestOnTopLayout = ('oldestOnTopLayout' in options)? options.oldestOnTopLayout: true;
-
+		initialize: function() {
 			this.listenTo(this.collection, 'reset', this.render);
 			this.listenTo(this.collection, 'add', this._onAddModel);
 
@@ -198,11 +196,8 @@
 		onRender: function() {
 			delete this._lastAddedMessageModel;
 
-			if (this._oldestOnTopLayout) {
-				this.$el.find('.emptycontent').after(this.addCommentTemplate({}));
-			} else {
-				this.$el.find('.comments').before(this.addCommentTemplate({}));
-			}
+			this.$el.find('.emptycontent').after(this.addCommentTemplate({}));
+
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			this.$container = this.$el.find('ul.comments');
 
@@ -293,40 +288,21 @@
 		_onAddModel: function(model, collection, options) {
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
-			var scrollToNew = false;
-			var scrollBack = false;
-			if (this._oldestOnTopLayout) {
-				var $newestComment = this.$container.children('.comment').last();
-				scrollToNew = $newestComment.length > 0 && $newestComment.position().top < this.$container.outerHeight(true);
-			} else {
-				var $firstComment = this.$container.children('.comment').first();
-				scrollBack = $firstComment.length > 0 && ($firstComment.position().top + $firstComment.outerHeight()) < 0;
-			}
-
-			if (scrollBack) {
-				var $firstVisibleComment = this.$container.children('.comment').filter(function() {
-						return $(this).position().top > 0;
-				}).first();
-				var firstVisibleCommentTop = Math.round($firstVisibleComment.position().top);
-			}
+			var $newestComment = this.$container.children('.comment').last();
+			var scrollToNew = $newestComment.length > 0 && $newestComment.position().top < this.$container.outerHeight(true);
 
 			var $el = $(this.commentTemplate(this._formatItem(model)));
 			if (!_.isUndefined(options.at) && collection.length > 1) {
 				this.$container.find('li').eq(options.at).before($el);
-			} else if (this._oldestOnTopLayout) {
-				this.$container.append($el);
 			} else {
-				this.$container.prepend($el);
+				this.$container.append($el);
 			}
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
 					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
 					this.groupedMessages < 10) {
-				if (this._oldestOnTopLayout) {
-					$el.addClass('grouped');
-				} else {
-					$el.next().addClass('grouped');
-				}
+				$el.addClass('grouped');
+
 				this.groupedMessages++;
 			} else {
 				this.groupedMessages = 0;
@@ -337,13 +313,8 @@
 			model.set('date', new Date(model.get('timestamp') * 1000));
 
 			if (!this._lastAddedMessageModel || !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
-				if (this._oldestOnTopLayout) {
-					$el.attr('data-date', this._getDateSeparator(model.get('date')));
-					$el.addClass('showDate');
-				} else if (this._lastAddedMessageModel) {
-					$el.next().attr('data-date', this._getDateSeparator(this._lastAddedMessageModel.get('date')));
-					$el.next().addClass('showDate');
-				}
+				$el.attr('data-date', this._getDateSeparator(model.get('date')));
+				$el.addClass('showDate');
 			}
 
 			// Keeping the model for the last added message is not only
@@ -357,14 +328,6 @@
 			if (scrollToNew) {
 				var newestCommentHiddenHeight = ($newestComment.position().top + $newestComment.outerHeight(true)) - this.$container.outerHeight(true);
 				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight + $el.outerHeight(true));
-			} else if (scrollBack) {
-				var newFirstVisibleCommentTop = Math.round($firstVisibleComment.position().top);
-
-				// It is not enough to just add the outer height of the added
-				// element, as the height of other elements could change too
-				// (for example, if the previous last message was grouped with
-				// the new one).
-				this.$container.scrollTop(this.$container.scrollTop() + (newFirstVisibleCommentTop - firstVisibleCommentTop));
 			}
 		},
 
