@@ -65,9 +65,7 @@
 
 		groupedMessages: 0,
 
-		className: function() {
-			return 'chat' + (this._oldestOnTopLayout? ' oldestOnTopLayout': '');
-		},
+		className: 'chat',
 
 		ui: {
 			'guestName': 'div.guest-name'
