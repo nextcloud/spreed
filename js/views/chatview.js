@@ -53,7 +53,7 @@
 
 	var COMMENT_TEMPLATE =
 		'<li class="comment" data-id="{{id}}">' +
-		'    <div class="authorRow{{#if isUserAuthor}} currentUser{{/if}}">' +
+		'    <div class="authorRow{{#if isUserAuthor}} currentUser{{/if}}{{#if isGuest}} guestUser{{/if}}">' +
 		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
@@ -183,7 +183,9 @@
 			}
 
 			params = _.extend({
+				// TODO isUserAuthor is not properly set for guests
 				isUserAuthor: OC.getCurrentUser().uid === params.actorId,
+				isGuest: params.actorType === 'guests',
 			}, params);
 
 			return this._commentTemplate(params);
