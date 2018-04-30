@@ -146,7 +146,7 @@
 	width: 100%;
 }
 
-#commentsTabView .comment .authorRow:not(.currentUser) {
+#commentsTabView .comment .authorRow:not(.currentUser):not(.guestUser) {
 	.avatar,
 	.avatar img,
 	.author {
