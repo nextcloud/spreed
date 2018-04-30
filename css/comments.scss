@@ -261,7 +261,7 @@
 }
 
 #commentsTabView .comment.showDate .authorRow {
-	display: block;
+	display: inline-flex;
 }
 
 #commentsTabView .comment .message .mention-user {
