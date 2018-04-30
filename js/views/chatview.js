@@ -36,7 +36,7 @@
 
 	var ADD_COMMENT_TEMPLATE =
 		'<div class="newCommentRow comment">' +
-		'    <div class="authorRow">' +
+		'    <div class="authorRow currentUser">' +
 		'        <div class="avatar" data-username="{{actorId}}"></div>' +
 		'        {{#if actorId}}' +
 		'            <div class="author">{{actorDisplayName}}</div>' +
