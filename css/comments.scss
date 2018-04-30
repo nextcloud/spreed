@@ -70,15 +70,6 @@
 	overflow-wrap: break-word;
 }
 
-#commentsTabView.oldestOnTopLayout .comment {
-	margin-top: 30px;
-	margin-bottom: 0;
-}
-
-#commentsTabView.oldestOnTopLayout .comment:first-child {
-	margin-top: 0;
-}
-
 #commentsTabView .comment .avatar,
 .atwho-view-ul * .avatar{
 	width: 32px;
@@ -222,10 +213,6 @@
 
 #commentsTabView .comment.grouped {
 	margin-top: -20px;
-}
-
-#commentsTabView.oldestOnTopLayout .comment.grouped {
-	margin-top: 10px;
 }
 
 #commentsTabView .comment.showDate {
