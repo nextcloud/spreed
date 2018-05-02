@@ -289,7 +289,7 @@
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
 			var $newestComment = this.$container.children('.comment').last();
-			var scrollToNew = $newestComment.length > 0 && this._getCommentTopPosition($newestComment) < this.$container.outerHeight(true);
+			var scrollToNew = $newestComment.length > 0 && this._getCommentTopPosition($newestComment) < this.$container.outerHeight();
 
 			var $el = $(this.commentTemplate(this._formatItem(model)));
 			if (!_.isUndefined(options.at) && collection.length > 1) {
@@ -326,7 +326,7 @@
 			this._postRenderItem(model, $el);
 
 			if (scrollToNew) {
-				var newestCommentHiddenHeight = (this._getCommentTopPosition($newestComment) + this._getCommentOuterHeight($newestComment)) - this.$container.outerHeight(true);
+				var newestCommentHiddenHeight = (this._getCommentTopPosition($newestComment) + this._getCommentOuterHeight($newestComment)) - this.$container.outerHeight();
 				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight + $el.outerHeight(true));
 			}
 		},
