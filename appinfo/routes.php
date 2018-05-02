@@ -129,6 +129,15 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Chat#mentions',
+			'url' => '/api/{apiVersion}/chat/{token}/mentions',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 
 		/**
 		 * Room

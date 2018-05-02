@@ -7,6 +7,7 @@ vendor_style('select2/select2');
 
 style('spreed', 'style');
 style('spreed', 'comments');
+style('spreed', 'autocomplete');
 script(
 	'spreed',
 	[
@@ -14,6 +15,8 @@ script(
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
 		'vendor/jshashes/hashes.min',
+		'vendor/Caret.js/dist/jquery.caret.min',
+		'vendor/At.js/dist/js/jquery.atwho.min',
 		'models/chatmessage',
 		'models/chatmessagecollection',
 		'models/localstoragemodel',
