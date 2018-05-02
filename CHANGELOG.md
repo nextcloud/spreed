@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 3.2.0 – 2018-MM-DD
+## 3.2.0 – 2018-05-03
 ### Added
 - Shortcuts have been added when a call is active: (m)ute, (v)ideo, (f)ullscreen, (c)hat and (p)articipant list
   [#730](https://github.com/nextcloud/spreed/pull/730)
@@ -12,6 +12,9 @@ All notable changes to this project will be documented in this file.
   [#733](https://github.com/nextcloud/spreed/pull/733)
 - Users which are participanting in a call now have a video icon in the participant list
   [#777](https://github.com/nextcloud/spreed/pull/777)
+- Unread chat message count is now displayed in the room list
+  [#806](https://github.com/nextcloud/spreed/pull/806)
+  [#824](https://github.com/nextcloud/spreed/pull/824)
 
 ### Changed
 - It is now possible to join a call without camera and/or microphone
@@ -20,11 +23,16 @@ All notable changes to this project will be documented in this file.
   [#711](https://github.com/nextcloud/spreed/pull/711)
 - Leaving a call will free up the Media permissions
   [#735](https://github.com/nextcloud/spreed/pull/735)
-
+- Participants can now be `@mentioned` in the chat by starting to type `@` followed by the name of the user
+  [#805](https://github.com/nextcloud/spreed/pull/805)
+  [#812](https://github.com/nextcloud/spreed/pull/812)
+  [#813](https://github.com/nextcloud/spreed/pull/813)
 
 ### Fixed
 - Correctly catch the input on the chat in firefox (instead of writing to the placeholder)
   [#737](https://github.com/nextcloud/spreed/pull/737)
+- Keep scrolling position when switching from chat to call or back
+  [#838](https://github.com/nextcloud/spreed/pull/838)
 - Delete rooms when the last logged in user leaves
   [#727](https://github.com/nextcloud/spreed/pull/727)
 - Correctly update chat UI when leaving current room
@@ -37,6 +45,7 @@ All notable changes to this project will be documented in this file.
   [#694](https://github.com/nextcloud/spreed/pull/694)
 - Fix contacts menu entry when no user was found
   [#686](https://github.com/nextcloud/spreed/pull/686)
+
 
 ## 3.1.0 – 2018-02-14
 ### Added
