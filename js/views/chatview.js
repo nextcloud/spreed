@@ -254,6 +254,65 @@
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 		},
 
+		/**
+		 * Saves the scroll position of the message list.
+		 *
+		 * This needs to be called before the chat view is detached in order to
+		 * be able to restore the scroll position when attached again.
+		 */
+		saveScrollPosition: function() {
+			var self = this;
+
+			if (_.isUndefined(this.$container)) {
+				return;
+			}
+
+			var containerHeight = this.$container.outerHeight();
+
+			this._$lastVisibleComment = this.$container.children('.comment').filter(function() {
+					return self._getCommentTopPosition($(this)) < containerHeight;
+			}).last();
+		},
+
+		/**
+		 * Restores the scroll position of the message list to the last saved
+		 * position.
+		 *
+		 * When the scroll position is restored the size of the message list may
+		 * have changed (for example, if the chat view was detached from the
+		 * main view and attached to the sidebar); it is not possible to
+		 * guarantee that exactly the same messages that were visible when the
+		 * scroll position was saved will be visible when the scroll position is
+		 * restored. Due to this, restoring the scroll position just ensures
+		 * that the last message that was partially visible when it was saved
+		 * will be fully visible when it is restored.
+		 */
+		restoreScrollPosition: function() {
+			if (_.isUndefined(this.$container) || _.isUndefined(this._$lastVisibleComment)) {
+				return;
+			}
+
+			var scrollBottom = 0;
+
+			// When the last visible comment has a next sibling the scroll
+			// position is based on the top position of that next sibling.
+			// Basing it on the last visible comment top position and its height
+			// could cause the next sibling to be shown due to a negative margin
+			// "pulling it up" over the last visible comment bottom margin.
+			var $nextSibling = this._$lastVisibleComment.next();
+			if ($nextSibling.length > 0) {
+				// Substract 1px to ensure that it does not scroll into the next
+				// element (which would cause the next element to be fully shown
+				// if saving and restoring the scroll position again) due to
+				// rounding.
+				scrollBottom = this._getCommentTopPosition($nextSibling) - 1;
+			} else {
+				scrollBottom = this._getCommentTopPosition(this._$lastVisibleComment) + this._getCommentOuterHeight(this._$lastVisibleComment);
+			}
+
+			this.$container.scrollTop(scrollBottom - this.$container.outerHeight());
+		},
+
 		_formatItem: function(commentModel) {
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.

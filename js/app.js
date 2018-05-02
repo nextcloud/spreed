@@ -433,14 +433,18 @@
 			}
 
 			if (this.activeRoom.get('participantInCall') && this._chatViewInMainView === true) {
+				this._chatView.saveScrollPosition();
 				this._chatView.$el.detach();
 				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
 				this._sidebarView.selectTab('chat');
+				this._chatView.restoreScrollPosition();
 				this._chatView.setTooltipContainer(this._chatView.$el);
 				this._chatViewInMainView = false;
 			} else if (!this.activeRoom.get('participantInCall') && !this._chatViewInMainView) {
+				this._chatView.saveScrollPosition();
 				this._sidebarView.removeTab('chat');
 				this._chatView.$el.prependTo('#app-content-wrapper');
+				this._chatView.restoreScrollPosition();
 				this._chatView.setTooltipContainer($('#app'));
 				this._chatView.focusChatInput();
 				this._chatViewInMainView = true;
