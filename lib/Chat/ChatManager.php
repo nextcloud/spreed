@@ -25,6 +25,7 @@ namespace OCA\Spreed\Chat;
 
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IUser;
 
 /**
  * Basic polling chat manager.
@@ -77,6 +78,16 @@ class ChatManager {
 	}
 
 	/**
+	 * @param string $chatId
+	 * @param IUser $userId
+	 * @return int
+	 */
+	public function getUnreadCount($chatId, IUser $user) {
+		$unreadSince = $this->commentsManager->getReadMark('chat', $chatId, $user);
+		return $this->commentsManager->getNumberOfCommentsForObject('chat', $chatId, $unreadSince);
+	}
+
+	/**
 	 * Receive the history of a chat
 	 *
 	 * @param string $chatId
@@ -104,13 +115,15 @@ class ChatManager {
 	 * @param int $offset Last known message id
 	 * @param int $limit
 	 * @param int $timeout
-	 * @param string $userId
+	 * @param IUser|null $user
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages($chatId, $offset, $limit, $timeout, $userId) {
-		$this->notifier->markMentionNotificationsRead($chatId, $userId);
+	public function waitForNewMessages($chatId, $offset, $limit, $timeout, $user) {
+		if ($user instanceof IUser) {
+			$this->notifier->markMentionNotificationsRead($chatId, $user->getUID());
+		}
 		$elapsedTime = 0;
 
 		$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
@@ -120,6 +133,10 @@ class ChatManager {
 			$elapsedTime++;
 
 			$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
+		}
+
+		if ($user instanceof IUser) {
+			$this->commentsManager->setReadMark('chat', $chatId, new  \DateTime(), $user);
 		}
 
 		return $comments;
