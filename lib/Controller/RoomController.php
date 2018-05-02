@@ -369,7 +369,11 @@ class RoomController extends OCSController {
 				'participantType' => Participant::OWNER,
 			]);
 
-			return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
+			return new DataResponse([
+				'token' => $room->getToken(),
+				'name' => $room->getName(),
+				'displayName' => $targetUser->getDisplayName(),
+			], Http::STATUS_CREATED);
 		}
 	}
 
@@ -415,7 +419,11 @@ class RoomController extends OCSController {
 
 		call_user_func_array([$room, 'addUsers'], $participants);
 
-		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
+		return new DataResponse([
+			'token' => $room->getToken(),
+			'name' => $room->getName(),
+			'displayName' => $room->getName(),
+		], Http::STATUS_CREATED);
 	}
 
 	/**
@@ -443,7 +451,11 @@ class RoomController extends OCSController {
 			'participantType' => Participant::OWNER,
 		]);
 
-		return new DataResponse(['token' => $room->getToken()], Http::STATUS_CREATED);
+		return new DataResponse([
+			'token' => $room->getToken(),
+			'name' => $room->getName(),
+			'displayName' => $room->getName(),
+		], Http::STATUS_CREATED);
 	}
 
 	/**
