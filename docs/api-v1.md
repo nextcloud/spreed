@@ -92,6 +92,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `token` | string | Token identifier of the room which is used for further interaction
+        `name` | string | Name of the room (can also be empty)
+        `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
 
 ### Get user´s rooms
 
