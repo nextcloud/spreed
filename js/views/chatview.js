@@ -289,7 +289,7 @@
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
 			var $newestComment = this.$container.children('.comment').last();
-			var scrollToNew = $newestComment.length > 0 && $newestComment.position().top < this.$container.outerHeight(true);
+			var scrollToNew = $newestComment.length > 0 && this._getCommentTopPosition($newestComment) < this.$container.outerHeight(true);
 
 			var $el = $(this.commentTemplate(this._formatItem(model)));
 			if (!_.isUndefined(options.at) && collection.length > 1) {
@@ -326,9 +326,40 @@
 			this._postRenderItem(model, $el);
 
 			if (scrollToNew) {
-				var newestCommentHiddenHeight = ($newestComment.position().top + $newestComment.outerHeight(true)) - this.$container.outerHeight(true);
+				var newestCommentHiddenHeight = (this._getCommentTopPosition($newestComment) + this._getCommentOuterHeight($newestComment)) - this.$container.outerHeight(true);
 				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight + $el.outerHeight(true));
 			}
+		},
+
+		_getCommentTopPosition: function($element) {
+			// When the margin is positive, jQuery returns the proper top
+			// position of the element (that is, including the top margin).
+			// However, when it is negative, jQuery returns where the top
+			// position of the element would be if there was no margin. Grouped
+			// messages use a negative top margin to "pull them up" closer to
+			// the previous message, so in those cases the top position returned
+			// by jQuery is below the actual top position of the element.
+			var marginTop = parseInt($element.css('margin-top'));
+			if (marginTop >= 0) {
+				return $element.position().top;
+			}
+
+			return $element.position().top + marginTop;
+		},
+
+		_getCommentOuterHeight: function($element) {
+			// When the margin is positive, jQuery returns the proper outer
+			// height of the element. However, when it is negative, it
+			// substracts the negative margin from the overall height of the
+			// element. Grouped messages use a negative top margin to "pull them
+			// up" closer to the previous message, so in those cases the outer
+			// height returned by jQuery is smaller than the actual height.
+			var marginTop = parseInt($element.css('margin-top'));
+			if (marginTop >= 0) {
+				return $element.outerHeight(true);
+			}
+
+			return $element.outerHeight(true) - marginTop;
 		},
 
 		_getDateSeparator: function(timestamp) {
