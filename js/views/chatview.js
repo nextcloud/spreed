@@ -412,6 +412,11 @@
 		},
 
 		_postRenderMessage: function($el) {
+			// Contacts menu is not shown in public view.
+			if (!OC.getCurrentUser().uid) {
+				return;
+			}
+
 			$el.find('.mention-user').each(function() {
 				var $this = $(this);
 
