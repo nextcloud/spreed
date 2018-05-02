@@ -257,7 +257,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	color: $color-primary-text;
 }
 
-#commentsTabView .comment .message .mention-user:not(.current-user) {
+body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.current-user) {
 	cursor: pointer;
 }
 
