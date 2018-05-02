@@ -564,7 +564,6 @@
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
 				id: 'commentsTabView',
-				oldestOnTopLayout: true,
 				guestNameModel: this._localStorageModel
 			});
 
