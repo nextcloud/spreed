@@ -166,7 +166,7 @@
     "Mute audio" : "Отключить звук",
     "Disable video" : "Отключить видео",
     "Smile in 3… 2… 1!" : "Улыбнитесь через 3… 2… 1!",
-    "Choose person …" : "Выберете пользователя…",
+    "Choose person …" : "Выберите пользователя…",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Сервер STUN необходим, чтобы участники могли подключиться к вызовам. Сервер TURN гарантирует, что соединение работает даже через межсетевые экраны.",
     "STUN server" : "Сервер STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
