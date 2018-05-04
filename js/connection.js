@@ -105,12 +105,15 @@
 				return;
 			}
 
-			this.app.signaling.joinCall(token);
-			this.app.signaling.syncRooms();
+			var self = this;
+			this.app.callbackAfterMedia = function() {
+				self.app.signaling.joinCall(token);
+				self.app.signaling.syncRooms();
+
+				$('#emptycontent').hide();
+			};
 
 			this.app.setupWebRTC();
-
-			$('#emptycontent').hide();
 		},
 		leaveCurrentCall: function() {
 			this.app.signaling.leaveCurrentCall();
