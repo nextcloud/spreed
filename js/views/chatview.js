@@ -321,7 +321,7 @@
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
 			if (commentModel.get('actorType') === 'guests' &&
-				actorDisplayName === null) {
+				actorDisplayName === '') {
 				actorDisplayName = t('spreed', 'Guest');
 			}
 			if (actorDisplayName == null) {
