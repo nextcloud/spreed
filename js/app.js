@@ -618,13 +618,24 @@
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
 			}
+			OCA.SpreedMe.webrtc.startMedia(this.token);
 		},
 		startLocalMedia: function(configuration) {
+			if (this.callbackAfterMedia) {
+				this.callbackAfterMedia();
+				this.callbackAfterMedia = null;
+			}
+
 			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 			this.restoreEmptyContent();
 		},
 		startWithoutLocalMedia: function(isAudioEnabled, isVideoEnabled) {
+			if (this.callbackAfterMedia) {
+				this.callbackAfterMedia();
+				this.callbackAfterMedia = null;
+			}
+
 			$('.videoView').removeClass('hidden');
 
 			this.disableAudio();
