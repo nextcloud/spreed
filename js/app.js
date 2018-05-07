@@ -703,29 +703,36 @@
 
 			this.fullscreenDisabled = true;
 		},
+		enableAudioButton: function() {
+			$('#mute').attr('data-original-title', t('spreed', 'Mute audio (m)'))
+				.removeClass('audio-disabled icon-audio-off')
+				.addClass('icon-audio');
+		},
 		enableAudio: function() {
 			if (this.audioNotFound || !OCA.SpreedMe.webrtc) {
 				return;
 			}
-
 			OCA.SpreedMe.webrtc.unmute();
-			$('#mute').attr('data-original-title', t('spreed', 'Mute audio (m)'))
-				.removeClass('audio-disabled icon-audio-off')
-				.addClass('icon-audio');
-
+			this.enableAudioButton();
 			this.audioDisabled = false;
+		},
+		disableAudioButton: function() {
+			$('#mute').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
+				.addClass('audio-disabled icon-audio-off')
+				.removeClass('icon-audio');
 		},
 		disableAudio: function() {
 			if (this.audioNotFound || !OCA.SpreedMe.webrtc) {
 				return;
 			}
-
 			OCA.SpreedMe.webrtc.mute();
-			$('#mute').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
-				.addClass('audio-disabled icon-audio-off')
-				.removeClass('icon-audio');
-
+			this.disableAudioButton();
 			this.audioDisabled = true;
+		},
+		hasAudio: function() {
+			$('#mute').removeClass('no-audio-available');
+			this.enableAudioButton();
+			this.audioNotFound = false;
 		},
 		hasNoAudio: function() {
 			$('#mute').removeClass('audio-disabled icon-audio')
@@ -734,18 +741,13 @@
 			this.audioDisabled = true;
 			this.audioNotFound = true;
 		},
-		enableVideo: function() {
-			if (this.videoNotFound || !OCA.SpreedMe.webrtc) {
-				return;
-			}
-
+		enableVideoUI: function() {
 			var $hideVideoButton = $('#hideVideo');
 			var $audioMuteButton = $('#mute');
 			var $screensharingButton = $('#screensharing-button');
 			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
-			OCA.SpreedMe.webrtc.resumeVideo();
 			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video (v)'))
 				.removeClass('video-disabled icon-video-off')
 				.addClass('icon-video');
@@ -754,7 +756,14 @@
 
 			avatarContainer.hide();
 			localVideo.show();
+		},
+		enableVideo: function() {
+			if (this.videoNotFound || !OCA.SpreedMe.webrtc) {
+				return;
+			}
 
+			OCA.SpreedMe.webrtc.resumeVideo();
+			this.enableVideoUI();
 			this.videoDisabled = false;
 		},
 		hideVideo: function() {
@@ -797,6 +806,11 @@
 			OCA.SpreedMe.webrtc.pauseVideo();
 			this.hideVideo();
 			this.videoDisabled = true;
+		},
+		hasVideo: function() {
+			$('#hideVideo').removeClass('no-video-available');
+			this.enableVideoUI();
+			this.videoNotFound = false;
 		},
 		hasNoVideo: function() {
 			$('#hideVideo').removeClass('icon-video')

@@ -961,6 +961,10 @@ var spreedPeerConnectionTable = [];
 				app.videoWasEnabledAtLeastOnce = true;
 			}
 
+			//Reset audio and video control panel
+			app.hasAudio();
+			app.hasVideo();
+
 			if (!app.videoDisabled) {
 				app.enableVideo();
 			}
