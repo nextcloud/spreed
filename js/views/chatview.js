@@ -306,7 +306,7 @@
 				// if saving and restoring the scroll position again) due to
 				// rounding.
 				scrollBottom = this._getCommentTopPosition($nextSibling) - 1;
-			} else {
+			} else if (this._$lastVisibleComment.length > 0) {
 				scrollBottom = this._getCommentTopPosition(this._$lastVisibleComment) + this._getCommentOuterHeight(this._$lastVisibleComment);
 			}
 
