@@ -618,7 +618,7 @@
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
 			}
-			OCA.SpreedMe.webrtc.startMedia();
+			OCA.SpreedMe.webrtc.startMedia(this.token);
 		},
 		startLocalMedia: function(configuration) {
 			if (this.callbackAfterMedia) {
