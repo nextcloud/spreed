@@ -770,6 +770,19 @@
 		return this.internalSyncRooms();
 	};
 
+	OCA.Talk.Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
+		if (!this.sessionId) {
+			// If we would join without a connection to the signaling server here,
+			// the room would be re-joined again in the "helloResponseReceived"
+			// callback, leading to two entries for anonymous participants.
+			console.log("Not connected to signaling server yet, defer joining room", token);
+			this.currentRoomToken = token;
+			return;
+		}
+
+		return OCA.Talk.Signaling.Base.prototype.joinRoom.apply(this, arguments);
+	};
+
 	OCA.Talk.Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessionId) {
 		console.log("Join room", token);
 		this.doSend({
