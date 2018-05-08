@@ -428,6 +428,7 @@
 					switch(message.type) {
 						case "usersInRoom":
 							this._trigger('usersInRoom', [message.data]);
+							this._trigger("usersChanged");
 							break;
 						case "message":
 							if (typeof(message.data) === 'string') {
@@ -867,6 +868,7 @@
 						this._trigger("usersLeft", [leftUsers]);
 					}
 					this._trigger("usersJoined", [joinedUsers]);
+					this._trigger("usersChanged");
 				}
 				break;
 			case "leave":
@@ -877,6 +879,7 @@
 						delete this.joinedUsers[leftSessionIds[i]];
 					}
 					this._trigger("usersLeft", [leftSessionIds]);
+					this._trigger("usersChanged");
 				}
 				break;
 			default:
