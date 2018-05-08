@@ -163,6 +163,14 @@ class Application extends App {
 			$sessionId = $event->getArgument('sessionId');
 			$notifier->roomInCallChanged($room, false, [$sessionId]);
 		});
+		$dispatcher->addListener(GuestManager::class . '::updateName', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
+			$sessionId = $event->getArgument('sessionId');
+			$notifier->participantsModified($room, [$sessionId]);
+		});
 	}
 
 	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher) {
