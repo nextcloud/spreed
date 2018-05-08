@@ -428,6 +428,7 @@
 					switch(message.type) {
 						case "usersInRoom":
 							this._trigger('usersInRoom', [message.data]);
+							this._trigger("usersChanged");
 							break;
 						case "message":
 							if (typeof(message.data) === 'string') {
@@ -769,6 +770,19 @@
 		return this.internalSyncRooms();
 	};
 
+	OCA.Talk.Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
+		if (!this.sessionId) {
+			// If we would join without a connection to the signaling server here,
+			// the room would be re-joined again in the "helloResponseReceived"
+			// callback, leading to two entries for anonymous participants.
+			console.log("Not connected to signaling server yet, defer joining room", token);
+			this.currentRoomToken = token;
+			return;
+		}
+
+		return OCA.Talk.Signaling.Base.prototype.joinRoom.apply(this, arguments);
+	};
+
 	OCA.Talk.Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessionId) {
 		console.log("Join room", token);
 		this.doSend({
@@ -867,6 +881,7 @@
 						this._trigger("usersLeft", [leftUsers]);
 					}
 					this._trigger("usersJoined", [joinedUsers]);
+					this._trigger("usersChanged");
 				}
 				break;
 			case "leave":
@@ -877,6 +892,7 @@
 						delete this.joinedUsers[leftSessionIds[i]];
 					}
 					this._trigger("usersLeft", [leftSessionIds]);
+					this._trigger("usersChanged");
 				}
 				break;
 			default:
