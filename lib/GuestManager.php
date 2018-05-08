@@ -53,6 +53,7 @@ class GuestManager {
 
 		try {
 			$oldName = $this->getNameBySessionHash($sessionHash);
+			$dispatchEvent = $oldName !== $displayName;
 
 			if ($oldName !== $displayName) {
 				$query = $this->connection->getQueryBuilder();
@@ -60,7 +61,6 @@ class GuestManager {
 					->set('display_name', $query->createNamedParameter($displayName))
 					->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
 				$query->execute();
-				$dispatchEvent = true;
 			}
 		} catch (ParticipantNotFoundException $e) {
 			$this->connection->insertIfNotExist('*PREFIX*talk_guests', [
