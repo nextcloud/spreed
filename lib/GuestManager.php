@@ -22,6 +22,7 @@
 namespace OCA\Spreed;
 
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -48,23 +49,55 @@ class GuestManager {
 	 */
 	public function updateName(Room $room, $sessionId, $displayName) {
 		$sessionHash = sha1($sessionId);
-		$result = $this->connection->insertIfNotExist('*PREFIX*talk_guests', [
-			'session_hash' => $sessionHash,
-			'display_name' => $displayName,
-		], ['session_hash']);
+		$dispatchEvent = true;
 
-		if ($result === 0) {
-			$query = $this->connection->getQueryBuilder();
-			$query->update('talk_guests')
-				->set('display_name', $query->createNamedParameter($displayName))
-				->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
-			$query->execute();
+		try {
+			$oldName = $this->getNameBySessionHash($sessionHash);
+
+			if ($oldName !== $displayName) {
+				$query = $this->connection->getQueryBuilder();
+				$query->update('talk_guests')
+					->set('display_name', $query->createNamedParameter($displayName))
+					->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
+				$query->execute();
+				$dispatchEvent = true;
+			}
+		} catch (ParticipantNotFoundException $e) {
+			$this->connection->insertIfNotExist('*PREFIX*talk_guests', [
+				'session_hash' => $sessionHash,
+				'display_name' => $displayName,
+			], ['session_hash']);
 		}
 
-		$this->dispatcher->dispatch(self::class . '::updateName', new GenericEvent($room, [
-			'sessionId' => $sessionId,
-			'newName' => $displayName,
-		]));
+
+		if ($dispatchEvent) {
+			$this->dispatcher->dispatch(self::class . '::updateName', new GenericEvent($room, [
+				'sessionId' => $sessionId,
+				'newName' => $displayName,
+			]));
+		}
+	}
+
+	/**
+	 * @param string $sessionHash
+	 * @return string
+	 * @throws ParticipantNotFoundException
+	 */
+	public function getNameBySessionHash($sessionHash) {
+		$query = $this->connection->getQueryBuilder();
+		$query->select('display_name')
+			->from('talk_guests')
+			->where($query->expr()->eq('session_hash', $query->createNamedParameter($sessionHash)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if (isset($row['display_name'])) {
+			return $row['display_name'];
+		}
+
+		throw new ParticipantNotFoundException();
 	}
 
 	/**
