@@ -428,7 +428,7 @@
 					switch(message.type) {
 						case "usersInRoom":
 							this._trigger('usersInRoom', [message.data]);
-							this._trigger("usersChanged");
+							this._trigger("participantListChanged");
 							break;
 						case "message":
 							if (typeof(message.data) === 'string') {
@@ -881,7 +881,7 @@
 						this._trigger("usersLeft", [leftUsers]);
 					}
 					this._trigger("usersJoined", [joinedUsers]);
-					this._trigger("usersChanged");
+					this._trigger("participantListChanged");
 				}
 				break;
 			case "leave":
@@ -892,7 +892,7 @@
 						delete this.joinedUsers[leftSessionIds[i]];
 					}
 					this._trigger("usersLeft", [leftSessionIds]);
-					this._trigger("usersChanged");
+					this._trigger("participantListChanged");
 				}
 				break;
 			default:
@@ -945,6 +945,7 @@
 		switch (data.event.type) {
 			case "update":
 				this._trigger("usersChanged", [data.event.update.users]);
+				this._trigger("participantListChanged");
 				this.internalSyncRooms();
 				break;
 			default:
