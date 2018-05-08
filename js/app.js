@@ -560,7 +560,7 @@
 				this.initGuestName();
 			}
 
-			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
+			this._sidebarView.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.disable();
 			});
 
@@ -571,7 +571,7 @@
 				guestNameModel: this._localStorageModel
 			});
 
-			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
+			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.stopReceivingMessages();
 			});
 
