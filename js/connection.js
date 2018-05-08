@@ -98,7 +98,7 @@
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
-			roomsChannel.trigger('leaveCurrentCall');
+			roomsChannel.trigger('leaveCurrentRoom');
 		},
 		joinCall: function(token) {
 			if (this.app.signaling.currentCallToken === token) {
