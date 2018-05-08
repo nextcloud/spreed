@@ -360,8 +360,7 @@
 				id: 'participantsTabView'
 			});
 
-			this.signaling.on('usersChanged', function() {
-				// Also refresh the participant list when the users change
+			this.signaling.on('participantListChanged', function() {
 				this._participants.fetch();
 			}.bind(this));
 
