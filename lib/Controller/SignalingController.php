@@ -166,12 +166,8 @@ class SignalingController extends OCSController {
 			});
 
 			if ($messageCount !== count($data)) {
-				try {
-					$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-					$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
-				} catch (RoomNotFoundException $e) {
-					return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
-				}
+				// Participant list changed, bail out and deliver the info to the user
+				break;
 			}
 
 			$this->dbConnection->close();
