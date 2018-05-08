@@ -575,6 +575,11 @@
 				this.stopReceivingMessages();
 			});
 
+			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
+				this._chatView.$el.detach();
+				this._chatViewInMainView = false;
+			});
+
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
