@@ -582,6 +582,14 @@
 			this.connection = new OCA.Talk.Connection(this);
 			this.token = $('#app').attr('data-token');
 
+			this.signaling.on('joinRoom', function(/* token */) {
+				this.inRoom = true;
+				if (this.pendingNickChange) {
+					this.setGuestName(this.pendingNickChange);
+					delete this.pendingNickChange;
+				}
+			}.bind(this));
+
 			$(window).unload(function () {
 				this.connection.leaveCurrentRoom(false);
 				this.signaling.disconnect();
@@ -810,23 +818,30 @@
 					.removeClass('icon-screen');
 			$('#screensharing-menu').toggleClass('open', false);
 		},
+		setGuestName: function(name) {
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + this.token + '/name',
+				type: 'POST',
+				data: {
+					displayName: name
+				},
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: function() {
+					this._onChangeGuestName(name);
+				}.bind(this)
+			});
+		},
 		initGuestName: function() {
-			var self = this;
 			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
 			this._localStorageModel.on('change:nick', function(model, newDisplayName) {
-				$.ajax({
-					url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + this.token + '/name',
-					type: 'POST',
-					data: {
-						displayName: newDisplayName
-					},
-					beforeSend: function (request) {
-						request.setRequestHeader('Accept', 'application/json');
-					},
-					success: function() {
-						self._onChangeGuestName(newDisplayName);
-					}
-				});
+				if (!this.token || !this.inRoom) {
+					this.pendingNickChange = newDisplayName;
+					return;
+				}
+
+				this.setGuestName(newDisplayName);
 			}.bind(this));
 
 			this._localStorageModel.fetch();
