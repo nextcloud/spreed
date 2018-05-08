@@ -179,7 +179,17 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	 * @Then I see that the :conversation conversation is active
 	 */
 	public function iSeeThatTheConversationIsActive($conversation) {
-		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::activeConversationListItemFor($conversation), 10)->isVisible());
+		// The active conversation list item may be hidden but exist in the DOM
+		// during the lapse between removing the conversation and getting the
+		// updated conversation list from the server, so it has to be explictly
+		// waited for it to be visible instead of relying on the implicit wait
+		// made to find the element.
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::activeConversationListItemFor($conversation),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The $conversation conversation is not active yet after $timeout seconds");
+		}
 	}
 
 	/**
