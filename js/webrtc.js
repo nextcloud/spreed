@@ -510,8 +510,9 @@ var spreedPeerConnectionTable = [];
 				if (mostRecentId !== null) {
 					OCA.SpreedMe.speakers.switchVideoToId(mostRecentId);
 				} else if (enforce === true) {
-					// if there is no mostRecentId is available there is no user left in call
+					// if there is no mostRecentId available, there is no user left in call
 					// remove the remaining dummy container then too
+					OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
 					$('.videoContainer-dummy').remove();
 				}
 			}
