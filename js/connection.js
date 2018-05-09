@@ -109,8 +109,6 @@
 			this.app.callbackAfterMedia = function() {
 				self.app.signaling.joinCall(token);
 				self.app.signaling.syncRooms();
-
-				$('#emptycontent').hide();
 			};
 
 			this.app.setupWebRTC();
