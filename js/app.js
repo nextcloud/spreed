@@ -419,13 +419,13 @@
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
 
-					self.updateChatViewPlacement();
-					self.listenTo(self.activeRoom, 'change:participantInCall', self.updateChatViewPlacement);
+					self.updateContentsLayout();
+					self.listenTo(self.activeRoom, 'change:participantInCall', self.updateContentsLayout);
 
 					self.updateSidebarWithActiveRoom();
 				});
 		},
-		updateChatViewPlacement: function() {
+		updateContentsLayout: function() {
 			if (!this.activeRoom) {
 				// This should never happen, but just in case
 				return;
@@ -447,6 +447,18 @@
 				this._chatView.setTooltipContainer($('#app'));
 				this._chatView.focusChatInput();
 				this._chatViewInMainView = true;
+			}
+
+			if (this.activeRoom.get('participantInCall')) {
+				$('#video-speaking').show();
+				$('#videos').show();
+				$('#screens').show();
+				$('#emptycontent').hide();
+			} else {
+				$('#video-speaking').hide();
+				$('#videos').hide();
+				$('#screens').hide();
+				$('#emptycontent').show();
 			}
 		},
 		updateSidebarWithActiveRoom: function() {
@@ -577,6 +589,11 @@
 			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this._chatView.$el.detach();
 				this._chatViewInMainView = false;
+
+				$('#video-speaking').hide();
+				$('#videos').hide();
+				$('#screens').hide();
+				$('#emptycontent').show();
 			});
 
 			$(document).on('click', this.onDocumentClick);
