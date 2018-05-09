@@ -176,6 +176,30 @@ class BackendNotifier{
 	}
 
 	/**
+	 * The given sessions have been removed from a room.
+	 *
+	 * @param Room $room
+	 * @param array $sessionIds
+	 * @throws \Exception
+	 */
+	public function roomSessionsRemoved($room, $sessionIds) {
+		$this->logger->info('Removed from ' . $room->getToken() . ': ' . print_r($sessionIds, true), ['app' => 'spreed']);
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'disinvite',
+			'disinvite' => [
+				'sessionids' => $sessionIds,
+				// TODO(fancycode): We should try to get rid of 'alluserids' and
+				// find a better way to notify existing users to update the room.
+				'alluserids' => $this->getRoomUserIds($room),
+				'properties' => [
+					'name' => $room->getName(),
+					'type' => $room->getType(),
+				],
+			],
+		]);
+	}
+
+	/**
 	 * The given room has been modified.
 	 *
 	 * @param Room $room
