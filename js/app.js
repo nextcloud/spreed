@@ -559,7 +559,7 @@
 				this.initGuestName();
 			}
 
-			this._sidebarView.listenTo(roomChannel, 'leaveCurrentCall', function() {
+			this._sidebarView.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.disable();
 			});
 
@@ -570,8 +570,13 @@
 				guestNameModel: this._localStorageModel
 			});
 
-			this._messageCollection.listenTo(roomChannel, 'leaveCurrentCall', function() {
+			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.stopReceivingMessages();
+			});
+
+			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
+				this._chatView.$el.detach();
+				this._chatViewInMainView = false;
 			});
 
 			$(document).on('click', this.onDocumentClick);

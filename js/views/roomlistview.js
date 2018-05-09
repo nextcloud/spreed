@@ -204,7 +204,6 @@
 				return;
 			}
 
-			OCA.SpreedMe.app._chatView.$el.detach();
 			OCA.SpreedMe.app.connection.leaveCurrentRoom(true);
 			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 		},
