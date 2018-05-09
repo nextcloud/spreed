@@ -179,6 +179,20 @@ class Application extends App {
 			$sessionId = $event->getArgument('sessionId');
 			$notifier->participantsModified($room, [$sessionId]);
 		});
+		$dispatcher->addListener(ChatManager::class . '::sendMessage', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
+			$comment = $event->getArgument('comment');
+			$message = [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+				],
+			];
+			$notifier->sendRoomMessage($room, $message);
+		});
 	}
 
 	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher) {
