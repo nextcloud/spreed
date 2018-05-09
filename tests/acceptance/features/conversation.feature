@@ -76,7 +76,7 @@ Feature: conversation
     And I see that the sidebar is closed
     And I act as Jane
     And I see that the "user0" conversation is not shown in the list
-    And I see that the "This call has ended" empty content message is shown in the main view
+    And I see that the "This conversation has ended" empty content message is shown in the main view
     And I see that the sidebar is closed
 
   Scenario: create a new conversation after removing the active one
