@@ -409,6 +409,10 @@
 	 * @private
 	 */
 	OCA.Talk.Signaling.Internal.prototype._startPullingMessages = function() {
+		if (!this.currentRoomToken) {
+			return;
+		}
+
 		// Abort ongoing request
 		if (this.pullMessagesRequest !== null) {
 			this.pullMessagesRequest.abort();
@@ -446,7 +450,7 @@
 			error: function (jqXHR, textStatus/*, errorThrown*/) {
 				if (jqXHR.status === 0 && textStatus === 'abort') {
 					// Resquest has been aborted. Ignore.
-				} else {
+				} else if (this.currentRoomToken) {
 					//Retry to pull messages after 5 seconds
 					window.setTimeout(function() {
 						this._startPullingMessages();
@@ -519,6 +523,7 @@
 				return;
 			}
 
+			this._stopPingCall();
 			OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
 		}.bind(this));
 	};
