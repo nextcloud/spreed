@@ -894,6 +894,8 @@
 			// The list of rooms might have changed while we were not connected,
 			// so perform resync once.
 			this.internalSyncRooms();
+			// Load any chat messages that might have been missed.
+			this._receiveChatMessages();
 		}
 		if (!resumedSession && this.currentRoomToken) {
 			this.joinRoom(this.currentRoomToken);
