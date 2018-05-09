@@ -103,9 +103,9 @@ class TalkAppContext implements Context, ActorAwareInterface {
 	}
 
 	/**
-	 * @Then I see that the empty content message is shown in the main view
+	 * @Then I see that the :text empty content message is shown in the main view
 	 */
-	public function iSeeThatTheEmptyContentMessageIsShownInTheMainView() {
+	public function iSeeThatTheEmptyContentMessageIsShownInTheMainView($text) {
 		// The empty content always exists in the DOM, so it has to be explictly
 		// waited for it to be visible instead of relying on the implicit wait
 		// made to find the element.
@@ -115,6 +115,8 @@ class TalkAppContext implements Context, ActorAwareInterface {
 				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The empty content was not shown yet after $timeout seconds");
 		}
+
+		PHPUnit_Framework_Assert::assertEquals($text, $this->actor->find(self::emptyContent())->getText());
 	}
 
 	/**
