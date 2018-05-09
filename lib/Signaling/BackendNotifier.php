@@ -316,4 +316,20 @@ class BackendNotifier{
 		]);
 	}
 
+	/**
+	 * Send a message to all sessions currently joined in a room. The message
+	 * will be received by "processRoomMessageEvent" in "signaling.js".
+	 *
+	 * @param Room $room
+	 * @param array $message
+	 */
+	public function sendRoomMessage($room, $message) {
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'message',
+			'message' => [
+				'data' => $message,
+			],
+		]);
+	}
+
 }
