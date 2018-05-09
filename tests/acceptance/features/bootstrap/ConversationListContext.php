@@ -107,6 +107,13 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function deleteConversationMenuItemFor($conversation) {
+		return self::conversationMenuItemFor($conversation, "Delete conversation");
+	}
+
+	/**
 	 * @Given I create a group conversation
 	 */
 	public function iCreateAGroupConversation() {
@@ -161,6 +168,14 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	public function iRemoveTheConversationFromTheList($conversation) {
 		$this->actor->find(self::conversationMenuButtonFor($conversation), 10)->click();
 		$this->actor->find(self::removeConversationFromListMenuItemFor($conversation), 2)->click();
+	}
+
+	/**
+	 * @Given I delete the :conversation conversation
+	 */
+	public function iDeleteTheConversation($conversation) {
+		$this->actor->find(self::conversationMenuButtonFor($conversation), 10)->click();
+		$this->actor->find(self::deleteConversationMenuItemFor($conversation), 2)->click();
 	}
 
 	/**
