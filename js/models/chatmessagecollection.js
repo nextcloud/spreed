@@ -57,8 +57,7 @@
 				throw 'Missing parameter token';
 			}
 
-			this._lastFetch = null;
-
+			this._handler = this._messagesReceived.bind(this);
 			this.setRoomToken(options.token);
 		},
 
@@ -84,14 +83,10 @@
 
 			this.token = token;
 
-			this.lastKnownMessageId = 0;
-
-			this._waitTimeUntilRetry = 1;
-
 			if (token !== null) {
-				this.url = OC.linkToOCS('apps/spreed/api/v1/chat', 2) + token;
+				this.signaling = OCA.SpreedMe.app.signaling;
 			} else {
-				this.url = null;
+				this.signaling = null;
 			}
 
 			this.reset();
@@ -101,52 +96,21 @@
 			this.invoke('updateGuestName', {sessionId: sessionId, displayName: newDisplayName});
 		},
 
-		receiveMessages: function() {
-			this.receiveMessagesAgain = true;
+		_messagesReceived: function(messages) {
+			this.set(messages);
+		},
 
-			this._lastFetch = this.fetch({
-				data: {
-					lastKnownMessageId: this.lastKnownMessageId,
-					lookIntoFuture: 1
-				},
-				success: _.bind(this._successfulFetch, this),
-				error: _.bind(this._failedFetch, this)
-			});
+		receiveMessages: function() {
+			if (this.signaling) {
+				this.signaling.on("chatMessagesReceived", this._handler);
+				this.signaling.startReceiveMessages();
+			}
 		},
 
 		stopReceivingMessages: function() {
-			this.receiveMessagesAgain = false;
-
-			if (this._lastFetch !== null) {
-				this._lastFetch.abort();
-			}
-		},
-
-		_successfulFetch: function(collection, response, options) {
-			var lastKnownMessageId = options.xhr.getResponseHeader("X-Chat-Last-Given");
-			if (lastKnownMessageId !== null) {
-				this.lastKnownMessageId = lastKnownMessageId;
-			}
-
-			this._lastFetch = null;
-
-			this._waitTimeUntilRetry = 1;
-
-			if (this.receiveMessagesAgain) {
-				this.receiveMessages();
-			}
-		},
-
-		_failedFetch: function() {
-			this._lastFetch = null;
-
-			if (this.receiveMessagesAgain) {
-				_.delay(_.bind(this.receiveMessages, this), this._waitTimeUntilRetry * 1000);
-
-				// Increase the wait time until retry to at most 64 seconds.
-				if (this._waitTimeUntilRetry < 64) {
-					this._waitTimeUntilRetry *= 2;
-				}
+			if (this.signaling) {
+				this.signaling.off("chatMessagesReceived", this._handler);
+				this.signaling.stopReceiveMessages();
 			}
 		}
 
