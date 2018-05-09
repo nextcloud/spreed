@@ -51,5 +51,5 @@ Feature: conversation
     And I see that the "You" conversation is active
     When I remove the "You" conversation from the list
     Then I see that the "You" conversation is not shown in the list
-    And I see that the empty content message is shown in the main view
+    And I see that the "Join a conversation or start a new one" empty content message is shown in the main view
     And I see that the sidebar is closed
