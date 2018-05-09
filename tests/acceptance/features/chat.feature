@@ -102,13 +102,17 @@ Feature: chat
     When I act as John
     And I send a new chat message with the text "Hello"
     And I act as Jane
+    And I see that the message 1 was sent by "admin" with the text "Hello"
     And I send a new chat message with the text "Hi!"
     And I act as John
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
     And I send a new chat message with the text "How are you?"
     And I act as Jane
+    And I see that the message 3 was sent by "admin" with the text "How are you?"
     And I send a new chat message with the text "Fine thanks"
     And I send a new chat message with the text "And you?"
     And I act as John
+    And I see that the message 5 was sent with the text "And you?" and grouped with the previous one
     And I send a new chat message with the text "Fine too!"
     Then I see that the message 1 was sent by "admin" with the text "Hello"
     And I see that the message 2 was sent by "user0" with the text "Hi!"
