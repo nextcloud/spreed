@@ -188,15 +188,6 @@ var spreedPeerConnectionTable = [];
 		app.signaling.on('leaveCall', function () {
 			webrtc.leaveCall();
 		});
-		app.signaling.on('joinCall', function (token) {
-			app.setEmptyContentMessage(
-				'icon-video-off',
-				t('spreed', 'Waiting for camera and microphone permissions'),
-				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
-			);
-
-			webrtc.joinCall(token);
-		});
 
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
@@ -218,6 +209,16 @@ var spreedPeerConnectionTable = [];
 			nick: OC.getCurrentUser().displayName
 		});
 		OCA.SpreedMe.webrtc = webrtc;
+
+		OCA.SpreedMe.webrtc.startMedia = function (token) {
+			app.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'Waiting for camera and microphone permissions'),
+				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
+			);
+
+			webrtc.joinCall(token);
+		};
 
 		var spreedListofSpeakers = {};
 		var spreedListofSharedScreens = {};
