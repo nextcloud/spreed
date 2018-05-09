@@ -31,6 +31,7 @@
 		this.currentCallToken = null;
 		this.handlers = {};
 		this.features = {};
+		this.pendingChatRequests = [];
 	}
 
 	OCA.Talk.Signaling.Base = Base;
@@ -53,6 +54,18 @@
 					});
 				}
 				break;
+		}
+	};
+
+	OCA.Talk.Signaling.Base.prototype.off = function(ev, handler) {
+		if (!this.handlers.hasOwnProperty(ev)) {
+			return;
+		}
+
+		var pos = this.handlers[ev].indexOf(handler);
+		while (pos !== -1) {
+			this.handlers[ev].splice(pos, 1);
+			pos = this.handlers[ev].indexOf(handler);
 		}
 	};
 
@@ -169,6 +182,7 @@
 				console.log("Joined", result);
 				this.currentRoomToken = token;
 				this._trigger('joinRoom', [token]);
+				this._runPendingChatRequests();
 				this._joinRoomSuccess(token, result.ocs.data.sessionId);
 			}.bind(this),
 			error: function (result) {
@@ -276,6 +290,50 @@
 		});
 	};
 
+	OCA.Talk.Signaling.Base.prototype._runPendingChatRequests = function() {
+		while (this.pendingChatRequests.length) {
+			var item = this.pendingChatRequests.shift();
+			this._doReceiveChatMessages.apply(this, item);
+		}
+	};
+
+	OCA.Talk.Signaling.Base.prototype.receiveChatMessages = function(lastKnownMessageId) {
+		var defer = $.Deferred();
+		if (!this.currentRoomToken) {
+			// Not in a room yet, defer loading of messages.
+			this.pendingChatRequests.push([defer, lastKnownMessageId]);
+			return defer;
+		}
+
+		return this._doReceiveChatMessages(defer, lastKnownMessageId);
+	};
+
+	OCA.Talk.Signaling.Base.prototype._doReceiveChatMessages = function(defer, lastKnownMessageId) {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + this.currentRoomToken,
+			method: 'GET',
+			data: {
+				lastKnownMessageId: lastKnownMessageId,
+				lookIntoFuture: 1
+			},
+			beforeSend: function (request) {
+				defer.notify(request);
+				request.setRequestHeader('Accept', 'application/json');
+			},
+			success: function (data, status, request) {
+				if (status === "notmodified") {
+					defer.resolve(null, request);
+				} else {
+					defer.resolve(data.ocs.data, request);
+				}
+			}.bind(this),
+			error: function (result) {
+				defer.reject(result);
+			}
+		});
+		return defer;
+	};
+
 	// Connection to the internal signaling server provided by the app.
 	function Internal(/*settings*/) {
 		OCA.Talk.Signaling.Base.prototype.constructor.apply(this, arguments);
@@ -286,6 +344,10 @@
 		this.isSendingMessages = false;
 
 		this.pullMessagesRequest = null;
+
+		// TODO(fancycode): Move to "Internal" class once an implementation
+		// exists for the standalone signaling server.
+		this._lastChatMessagesFetch = null;
 
 		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
@@ -521,6 +583,66 @@
 
 			OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
 		}.bind(this));
+	};
+
+	// TODO(fancycode): Move chat functions to "Internal" class once an
+	// implementation exists for the standalone signaling server.
+	OCA.Talk.Signaling.Base.prototype.startReceiveMessages = function() {
+		this._waitTimeUntilRetry = 1;
+		this.receiveMessagesAgain = true;
+		this.lastKnownMessageId = 0;
+
+		this._receiveChatMessages();
+	};
+
+	OCA.Talk.Signaling.Base.prototype.stopReceiveMessages = function() {
+		this.receiveMessagesAgain = false;
+		if (this._lastChatMessagesFetch !== null) {
+			this._lastChatMessagesFetch.abort();
+		}
+	};
+
+	OCA.Talk.Signaling.Base.prototype._receiveChatMessages = function() {
+		this.receiveChatMessages(this.lastKnownMessageId)
+			.progress(this._messagesReceiveStart.bind(this))
+			.done(this._messagesReceiveSuccess.bind(this))
+			.fail(this._messagesReceiveError.bind(this));
+	};
+
+	OCA.Talk.Signaling.Base.prototype._messagesReceiveStart = function(xhr) {
+		this._lastChatMessagesFetch = xhr;
+	};
+
+	OCA.Talk.Signaling.Base.prototype._messagesReceiveSuccess = function(messages, xhr) {
+		var lastKnownMessageId = xhr.getResponseHeader("X-Chat-Last-Given");
+		if (lastKnownMessageId !== null) {
+			this.lastKnownMessageId = lastKnownMessageId;
+		}
+
+		this._lastChatMessagesFetch = null;
+
+		this._waitTimeUntilRetry = 1;
+
+		if (this.receiveMessagesAgain) {
+			this._receiveChatMessages();
+		}
+
+		if (messages && messages.length) {
+			this._trigger("chatMessagesReceived", [messages]);
+		}
+	};
+
+	OCA.Talk.Signaling.Base.prototype._messagesReceiveError = function(/* result */) {
+		this._lastChatMessagesFetch = null;
+
+		if (this.receiveMessagesAgain) {
+			_.delay(_.bind(this._receiveChatMessages, this), this._waitTimeUntilRetry * 1000);
+
+			// Increase the wait time until retry to at most 64 seconds.
+			if (this._waitTimeUntilRetry < 64) {
+				this._waitTimeUntilRetry *= 2;
+			}
+		}
 	};
 
 	function Standalone(settings, urls) {
