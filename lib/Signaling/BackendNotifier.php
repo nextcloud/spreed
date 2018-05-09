@@ -213,6 +213,42 @@ class BackendNotifier{
 	}
 
 	/**
+	 * The participant list of the given room has been modified.
+	 *
+	 * @param Room $room
+	 * @throws \Exception
+	 */
+	public function participantsModified($room, $sessionIds) {
+		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
+		$changed = [];
+		$users = [];
+		$participants = $room->getParticipants();
+		foreach ($participants['users'] as $userId => $participant) {
+			$participant['userId'] = $userId;
+			$users[] = $participant;
+			if (in_array($participant['sessionId'], $sessionIds)) {
+				$changed[] = $participant;
+			}
+		}
+		foreach ($participants['guests'] as $participant) {
+			if (!isset($participant['participantType'])) {
+				$participant['participantType'] = Participant::GUEST;
+			}
+			$users[] = $participant;
+			if (in_array($participant['sessionId'], $sessionIds)) {
+				$changed[] = $participant;
+			}
+		}
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'participants',
+			'participants' => [
+				'changed' => $changed,
+				'users' => $users
+			],
+		]);
+	}
+
+	/**
 	 * The "in-call" status of the given session ids has changed..
 	 *
 	 * @param Room $room
