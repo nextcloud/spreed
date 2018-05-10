@@ -24,10 +24,13 @@
 # the acceptance tests launchers.
 #
 # It simply extends the default script by enabling the Talk app so it is already
-# available when the acceptance tests are run.
+# available when the acceptance tests are run. It also adds other users to test
+# with.
 
 set -o errexit
 
 tests/acceptance/installAndConfigureServer.sh "$@"
 
 php occ app:enable spreed
+
+OC_PASS=123456acb php occ user:add --password-from-env talk-user0
