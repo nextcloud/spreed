@@ -57,7 +57,7 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function itemInParticipantsListFor($participantName) {
-		return Locator::forThe()->xpath("//a/text()[normalize-space() = '$participantName']/..")->
+		return Locator::forThe()->xpath("//a/text()[normalize-space() = '$participantName']/ancestor::li")->
 				descendantOf(self::participantsList())->
 				describedAs("Item for $participantName in the participants list");
 	}
