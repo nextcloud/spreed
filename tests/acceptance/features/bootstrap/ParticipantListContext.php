@@ -72,6 +72,54 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function participantMenuButtonFor($participantName) {
+		return Locator::forThe()->css(".participant-entry-utils-menu-button button")->
+				descendantOf(self::itemInParticipantsListFor($participantName))->
+				describedAs("Menu button for $participantName in the participants list");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function participantMenuFor($participantName) {
+		return Locator::forThe()->css(".menu")->
+				descendantOf(self::itemInParticipantsListFor($participantName))->
+				describedAs("Menu for $participantName in the participants list");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	private static function participantMenuItemFor($participantName, $item) {
+		return Locator::forThe()->xpath("//button[normalize-space() = '$item']")->
+				descendantOf(self::participantMenuFor($participantName))->
+				describedAs("$item item in menu for $participantName in the participants list");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function promoteToModeratorMenuItemFor($participantName) {
+		return self::participantMenuItemFor($participantName, "Promote to moderator");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function demoteFromModeratorMenuItemFor($participantName) {
+		return self::participantMenuItemFor($participantName, "Demote from moderator");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function removeParticipantMenuItemFor($participantName) {
+		return self::participantMenuItemFor($participantName, "Remove participant");
+	}
+
+	/**
 	 * @return array
 	 */
 	public function participantsListItems() {
@@ -85,6 +133,54 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	public function iAddToTheParticipants($participantName) {
 		$this->actor->find(self::showParticipantDropdownButton(), 10)->click();
 		$this->actor->find(TalkAppContext::itemInSelect2DropdownFor($participantName), 2)->click();
+	}
+
+	/**
+	 * @When I promote :participantName to moderator
+	 */
+	public function iPromoteToModerator($participantName) {
+		$this->actor->find(self::participantMenuButtonFor($participantName), 10)->click();
+		$this->actor->find(self::promoteToModeratorMenuItemFor($participantName), 2)->click();
+	}
+
+	/**
+	 * @When I demote :participantName from moderator
+	 */
+	public function iDemoteFromModerator($participantName) {
+		$this->actor->find(self::participantMenuButtonFor($participantName), 10)->click();
+		$this->actor->find(self::demoteFromModeratorMenuItemFor($participantName), 2)->click();
+	}
+
+	/**
+	 * @When I remove :participantName from the participants
+	 */
+	public function iRemoveFromTheParticipants($participantName) {
+		$this->actor->find(self::participantMenuButtonFor($participantName), 10)->click();
+		$this->actor->find(self::removeParticipantMenuItemFor($participantName), 2)->click();
+	}
+
+	/**
+	 * @Then I see that I can add new participants
+	 */
+	public function iSeeThatICanAddNewParticipants() {
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::showParticipantDropdownButton(),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("Button to add new participants is not visible yet after $timeout seconds");
+		}
+	}
+
+	/**
+	 * @Then I see that I can not add new participants
+	 */
+	public function iSeeThatICanNotAddNewParticipants() {
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::showParticipantDropdownButton(),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("Button to add new participants is still visible after $timeout seconds");
+		}
 	}
 
 	/**
@@ -113,6 +209,48 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	public function iSeeThatIsShownInTheListOfParticipantsAsAModerator($participantName) {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::itemInParticipantsListFor($participantName), 10));
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::moderatorIndicatorFor($participantName), 10));
+	}
+
+	/**
+	 * @Then I see that :participantName is shown in the list of participants as a normal participant
+	 */
+	public function iSeeThatIsShownInTheListOfParticipantsAsANormalParticipant($participantName) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::itemInParticipantsListFor($participantName), 10));
+
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::moderatorIndicatorFor($participantName),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("Participant $participantName is still marked as a moderator after $timeout seconds but it should be a normal participant instead");
+		}
+	}
+
+	/**
+	 * @Then I see that I can moderate :participantName
+	 */
+	public function iSeeThatICanModerate($participantName) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::itemInParticipantsListFor($participantName), 10));
+
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::participantMenuButtonFor($participantName),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("Participant $participantName can not be moderated yet after $timeout seconds");
+		}
+	}
+
+	/**
+	 * @Then I see that I can not moderate :participantName
+	 */
+	public function iSeeThatICanNotModerate($participantName) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::itemInParticipantsListFor($participantName), 10));
+
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::participantMenuButtonFor($participantName),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("Participant $participantName can still be moderated after $timeout seconds");
+		}
 	}
 
 }
