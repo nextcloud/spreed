@@ -43,6 +43,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Притисни ⌘-C за копирање.",
     "Press Ctrl-C to copy." : "Притисни Ctrl-C за копирање.",
     "Join a conversation or start a new one" : "Придружи се разговору или започни нови",
+    "This conversation has ended" : "Разговор је завршен",
     "Please enter the password for this call" : "Уносите лозинку за овај позив",
     "Password required" : "Потребна је лозинка",
     "Password" : "Лозинка",
