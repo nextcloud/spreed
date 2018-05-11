@@ -128,7 +128,7 @@
 			} else {
 				this.app.setEmptyContentMessage(
 					'icon-video-off',
-					t('spreed', 'This call has ended')
+					t('spreed', 'This conversation has ended')
 				);
 			}
 		}
