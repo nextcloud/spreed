@@ -1046,10 +1046,14 @@ video {
 #app-sidebar #participantsTabView {
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
 }
 
 #app-sidebar .participantWithList {
 	overflow-y: auto;
+}
+
+#app-sidebar .participantWithList .participant:last-child {
 	/* Add room for the popovermenu on last user */
 	padding-bottom: 64px;
 }
