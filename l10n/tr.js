@@ -43,6 +43,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Kopyalamak için ⌘-C tuşlarına basın.",
     "Press Ctrl-C to copy." : "Kopyalamak için Ctrl-C tuşlarına basın.",
     "Join a conversation or start a new one" : "Bir sohbete katılın ya da yeni bir sohbet başlatın",
+    "This conversation has ended" : "Bu sohbet sona ermiş",
     "Please enter the password for this call" : "Lütfen bu çağrının parolasını yazın",
     "Password required" : "Parola zorunludur",
     "Password" : "Parola",
