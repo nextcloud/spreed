@@ -88,6 +88,7 @@
 			}
 
 			this.app.signaling.leaveCurrentRoom();
+			this.app.token = token;
 			this.app.signaling.joinRoom(token);
 			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
