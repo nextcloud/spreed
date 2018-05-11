@@ -1,6 +1,31 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.1 – 2018-05-11
+### Added
+- Standalone signaling server now supports the 3.2 changes
+  [#864](https://github.com/nextcloud/spreed/pull/864)
+  [#869](https://github.com/nextcloud/spreed/pull/869)
+
+### Fixed
+- Only join the room after media permission request was answered
+  [#854](https://github.com/nextcloud/spreed/pull/854)
+- Do not reload the participant everytime a guest sends a chat message
+  [#866](https://github.com/nextcloud/spreed/pull/866)
+- Make sure the web UI still works after you left the current conversation or call
+  [#871](https://github.com/nextcloud/spreed/pull/871)
+  [#872](https://github.com/nextcloud/spreed/pull/872)
+  [#874](https://github.com/nextcloud/spreed/pull/874)
+- Allow to scroll on long participant lists again
+  [#896](https://github.com/nextcloud/spreed/pull/896)
+- Do not throw an error when starting a call in a conversation without any chat message
+  [#861](https://github.com/nextcloud/spreed/pull/861)
+- Enable media controls when media is approved on a second request
+  [#861](https://github.com/nextcloud/spreed/pull/861)
+- Limit the unread message counter to 99+
+  [#845](https://github.com/nextcloud/spreed/pull/845)
+
+
 ## 3.2.0 – 2018-05-03
 ### Added
 - Shortcuts have been added when a call is active: (m)ute, (v)ideo, (f)ullscreen, (c)hat and (p)articipant list
