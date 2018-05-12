@@ -1,6 +1,9 @@
 OC.L10N.register(
     "spreed",
     {
+    "Validate SSL certificate" : "Validar certificat SSL",
+    "Delete server" : "Esborra servidor",
+    "Add new server" : "Afegeix un nou servidor",
     "Saved" : "Desat",
     "TURN server protocols" : "Protocols del servidor TURN",
     "UDP and TCP" : "UDP i TCP",
