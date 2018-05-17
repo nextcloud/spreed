@@ -215,7 +215,7 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @Then I see that the chat is shown in the main view
 	 */
 	public function iSeeThatTheChatIsShownInTheMainView() {
-		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::chatView($this->chatAncestor), 10)->isVisible());
+		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::chatView(TalkAppContext::mainView()), 10)->isVisible());
 	}
 
 	/**
