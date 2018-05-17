@@ -82,16 +82,16 @@ OC.L10N.register(
     "a call" : "ზარი",
     "(Duration %s)" : "(ხანგრძლივობა %s)",
     "You attended a call with {user1}" : "თქვენ დაესწარით ზარს მომხმარებელთან {user1}",
-    "_%n guest_::_%n guests_" : ["%n სტუმრები"],
+    "_%n guest_::_%n guests_" : ["%n სტუმრები","%n სტუმრები"],
     "You attended a call with {user1} and {user2}" : "თქვენ დაესწარით ზარს მომხმარებლებთან {user1} და {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "თქვენ დაესწარით ზარს მომხმარებლებთან {user1}, {user2} და {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "თქვენ დაესწარით ზარს მომხმარებლებთან {user1}, {user2}, {user3} და {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "თქვენ დაესწარით ზარს მომხმარებლებთან {user1}, {user2}, {user3}, {user4} და {user5}",
-    "_%n other_::_%n others_" : ["%n სხვა"],
+    "_%n other_::_%n others_" : ["%n სხვა","%n სხვა"],
     "{actor} invited you to {call}" : "მოწვევა {call} ზარზე მომხმარებლისგან {actor}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "თქვენ დაგპატიჟეს ოთახში <strong>სასაუბროთ</strong> ან მიიღეთ <strong>ზარი</strong>",
     "Talk to %s" : "საუბარი მომხმარებელთან %s",
-    "_%n other guest_::_%n other guests_" : ["%n სხვა სტუმარი"],
+    "_%n other guest_::_%n other guests_" : ["%n სხვა სტუმარი","%n სხვა სტუმარი"],
     ", " : ",",
     "… %s" : "… %s",
     "%s …" : "%s … ",
@@ -152,4 +152,4 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
     "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო"
 },
-"nplurals=1; plural=0;");
+"nplurals=2; plural=(n==1);");

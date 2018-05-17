@@ -71,9 +71,9 @@ OC.L10N.register(
     "Your screen" : "Vaša obrazovka",
     "(Duration %s)" : "(Trvanie %s)",
     "You attended a call with {user1}" : "Zúčastnili ste sa hovoru s {user1}",
-    "_%n guest_::_%n guests_" : ["%n hosť","%n hostí","%n hostí"],
+    "_%n guest_::_%n guests_" : ["%n hosť","%n hostí","%n hostí","%n hostí"],
     "You attended a call with {user1} and {user2}" : "Zúčastnili ste sa hovoru s {user1} a {user2}",
-    "_%n other guest_::_%n other guests_" : ["%n ďalší hosť","%n ďalší hostia","%n ďalší hostia"],
+    "_%n other guest_::_%n other guests_" : ["%n ďalší hosť","%n ďalší hostia","%n ďalší hostia","%n ďalší hostia"],
     ", " : ", ",
     "… %s" : "… %s",
     "%s …" : "%s …",
@@ -113,4 +113,4 @@ OC.L10N.register(
     "STUN server" : "STUN server",
     "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN"
 },
-"nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;");
+"nplurals=4; plural=(n % 1 == 0 ? 4: n==1 ? 1: n % 1 == 0 && n>=2 && n<=4 ? 3);");
