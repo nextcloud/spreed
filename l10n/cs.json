@@ -76,15 +76,15 @@
     "a call" : "hovor",
     "(Duration %s)" : "(Doba trvání %s)",
     "You attended a call with {user1}" : "Zúčastnili jste se hovoru s {user1}",
-    "_%n guest_::_%n guests_" : ["%n host","%n hosté","%n hostů"],
+    "_%n guest_::_%n guests_" : ["%n host","%n hosté","%n hostů","%n hostů"],
     "You attended a call with {user1} and {user2}" : "Zúčastnili jste se hovoru s {user1} a {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Zúčastnili jste se hovoru s {user1}, {user2} a {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Zúčastnili jste se hovoru s {user1}, {user2}, {user3} a {user4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Zúčastnili jste se hovoru s {user1}, {user2}, {user3}, {user4} a {user5}",
-    "_%n other_::_%n others_" : ["%n dalším","%n dalšími","%n dalšími"],
+    "_%n other_::_%n others_" : ["%n dalším","%n dalšími","%n dalšími","%n dalšími"],
     "{actor} invited you to {call}" : "{actor} vás pozval/a do {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Byli jste pozváni ke <strong>konverzaci</strong> nebo vám někdo <strong>volal</strong>",
-    "_%n other guest_::_%n other guests_" : ["%n jiný host","%n jiní hosté","%n jiných hostů"],
+    "_%n other guest_::_%n other guests_" : ["%n jiný host","%n jiní hosté","%n jiných hostů","%n jiných hostů"],
     ", " : ", ",
     "… %s" : "… %s",
     "%s …" : "%s …",
@@ -144,5 +144,5 @@
     "STUN server" : "Server STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
     "TURN server shared secret" : "Sdílené tajemství s TURN serverem"
-},"pluralForm" :"nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;"
+},"pluralForm" :"nplurals=4; plural=(n < 10 && n % 1 == 0) ? 1 : (n < 9999 && n >= 10 && n % 1 == 0) ? 3 : (n % 1 != 0) : 4;"
 }

@@ -43,6 +43,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Нажмите ⌘-C для копирования.",
     "Press Ctrl-C to copy." : "Нажмите Ctrl-C для копирования.",
     "Join a conversation or start a new one" : "Присоединитесь к обсуждению или же начните новое",
+    "This conversation has ended" : "Беседа была закончена",
     "Please enter the password for this call" : "Введите пароль для этого звонка",
     "Password required" : "Требуется пароль",
     "Password" : "Пароль",
