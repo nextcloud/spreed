@@ -171,6 +171,21 @@ class Application extends App {
 			$sessionId = $event->getArgument('sessionId');
 			$notifier->roomInCallChanged($room, false, [$sessionId]);
 		});
+		$dispatcher->addListener(Room::class . '::postRemoveBySession', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
+			$participant = $event->getArgument('participant');
+			$notifier->participantsModified($room, [$participant->getSessionId()]);
+		});
+		$dispatcher->addListener(Room::class . '::postCleanGuests', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
+			$notifier->participantsModified($room);
+		});
 		$dispatcher->addListener(GuestManager::class . '::updateName', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
