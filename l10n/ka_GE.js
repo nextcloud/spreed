@@ -152,4 +152,4 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
     "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო"
 },
-"nplurals=2; plural=(n==1);");
+"nplurals=2; plural=(n!=1);");
