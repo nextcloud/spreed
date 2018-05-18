@@ -357,6 +357,10 @@ class SignalingController extends OCSController {
 		$roomId = $roomRequest['roomid'];
 		$userId = $roomRequest['userid'];
 		$sessionId = $roomRequest['sessionid'];
+		$action = isset($roomRequest['action']) ? $roomRequest['action'] : 'join';
+		if (empty($action)) {
+			$action = 'join';
+		}
 
 		try {
 			$room = $this->manager->getRoomByToken($roomId);
@@ -383,7 +387,7 @@ class SignalingController extends OCSController {
 		if (empty($participant)) {
 			// User was not invited to the room, check for access to public room.
 			try {
-				$room->getParticipantBySession($sessionId);
+				$participant = $room->getParticipantBySession($sessionId);
 			} catch (ParticipantNotFoundException $e) {
 				// Return generic error to avoid leaking which rooms exist.
 				return new DataResponse([
@@ -396,9 +400,17 @@ class SignalingController extends OCSController {
 			}
 		}
 
-		// Rooms get sorted by last ping time for users, so make sure to
-		// update when a user joins a room.
-		$room->ping($userId, $sessionId, time());
+		if ($action === 'join') {
+			// Rooms get sorted by last ping time for users, so make sure to
+			// update when a user joins a room.
+			$room->ping($userId, $sessionId, time());
+		} else if ($action === 'leave') {
+			if (!empty($userId)) {
+				$room->leaveRoom($userId);
+			} else if (!empty($participant)) {
+				$room->removeParticipantBySession($participant);
+			}
+		}
 
 		$response = [
 			'type' => 'room',
