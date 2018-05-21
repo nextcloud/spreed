@@ -35,3 +35,39 @@ default:
         Jane:
           selenium2:
             wd_host: %selenium.server%
+        Kermit with microphone and camera:
+          selenium2:
+            wd_host: %selenium.server%
+            capabilities:
+              firefox:
+                profile: %paths.base%/firefox-profiles/granted-media-permissions-with-microphone-and-camera.zip
+        Karen with microphone:
+          selenium2:
+            wd_host: %selenium.server%
+            capabilities:
+              firefox:
+                profile: %paths.base%/firefox-profiles/granted-media-permissions-with-microphone.zip
+        James:
+          selenium2:
+            wd_host: %selenium.server%
+            capabilities:
+              firefox:
+                profile: %paths.base%/firefox-profiles/granted-media-permissions.zip
+        April with microphone and camera:
+          selenium2:
+            wd_host: %selenium.server%
+            capabilities:
+              firefox:
+                profile: %paths.base%/firefox-profiles/granted-media-permissions-with-microphone-and-camera.zip
+        Jarvis with microphone:
+          selenium2:
+            wd_host: %selenium.server%
+            capabilities:
+              firefox:
+                profile: %paths.base%/firefox-profiles/granted-media-permissions-with-microphone.zip
+        Lucius:
+          selenium2:
+            wd_host: %selenium.server%
+            capabilities:
+              firefox:
+                profile: %paths.base%/firefox-profiles/granted-media-permissions.zip
