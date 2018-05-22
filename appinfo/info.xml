@@ -54,6 +54,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</background-jobs>
 
 	<settings>
+		<personal>OCA\Spreed\Settings\Personal</personal>
 		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
