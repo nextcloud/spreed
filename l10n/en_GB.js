@@ -43,6 +43,7 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Press ⌘-C to copy.",
     "Press Ctrl-C to copy." : "Press Ctrl-C to copy.",
     "Join a conversation or start a new one" : "Join a conversation or start a new one",
+    "This conversation has ended" : "This conversation has ended",
     "Please enter the password for this call" : "Please enter the password for this call",
     "Password required" : "Password required",
     "Password" : "Password",
