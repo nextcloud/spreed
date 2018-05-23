@@ -35,7 +35,7 @@
 		USERSELFJOINED: 5,
 
 		/* Must stay in sync with values in "lib/Room.php". */
-		FLAG_IN_ROOM: 1,
+		FLAG_IN_CALL: 1,
 		FLAG_WITH_AUDIO: 2,
 		FLAG_WITH_VIDEO: 4,
 

@@ -110,7 +110,7 @@
 
 			var self = this;
 			this.app.callbackAfterMedia = function(configuration) {
-				var flags = OCA.SpreedMe.app.FLAG_IN_ROOM;
+				var flags = OCA.SpreedMe.app.FLAG_IN_CALL;
 				if (configuration) {
 					if (configuration.audio) {
 						flags |= OCA.SpreedMe.app.FLAG_WITH_AUDIO;

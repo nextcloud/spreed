@@ -44,7 +44,7 @@ class Room {
 
 	// Bit flags for 'in_call' status. Must stay in sync with values in
 	// "js/app.js".
-	const FLAG_IN_ROOM = 1;
+	const FLAG_IN_CALL = 1;
 	const FLAG_WITH_AUDIO = 2;
 	const FLAG_WITH_VIDEO = 4;
 

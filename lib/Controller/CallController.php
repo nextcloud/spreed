@@ -167,7 +167,7 @@ class CallController extends OCSController {
 
 		if ($flags === null) {
 			// Default flags: user is in room with audio/video.
-			$flags = Room::FLAG_IN_ROOM | Room::FLAG_WITH_AUDIO | Room::FLAG_WITH_VIDEO;
+			$flags = Room::FLAG_IN_CALL | Room::FLAG_WITH_AUDIO | Room::FLAG_WITH_VIDEO;
 		}
 
 		$room->changeInCall($sessionId, $flags);
