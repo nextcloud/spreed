@@ -34,6 +34,11 @@
 		GUEST: 4,
 		USERSELFJOINED: 5,
 
+		/* Must stay in sync with values in "lib/Room.php". */
+		FLAG_IN_ROOM: 1,
+		FLAG_WITH_AUDIO: 2,
+		FLAG_WITH_VIDEO: 4,
+
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 
@@ -655,7 +660,7 @@
 		},
 		startLocalMedia: function(configuration) {
 			if (this.callbackAfterMedia) {
-				this.callbackAfterMedia();
+				this.callbackAfterMedia(configuration);
 				this.callbackAfterMedia = null;
 			}
 
@@ -665,7 +670,7 @@
 		},
 		startWithoutLocalMedia: function(isAudioEnabled, isVideoEnabled) {
 			if (this.callbackAfterMedia) {
-				this.callbackAfterMedia();
+				this.callbackAfterMedia(null);
 				this.callbackAfterMedia = null;
 			}
 

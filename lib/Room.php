@@ -42,6 +42,12 @@ class Room {
 	const GROUP_CALL = 2;
 	const PUBLIC_CALL = 3;
 
+	// Bit flags for 'in_call' status. Must stay in sync with values in
+	// "js/app.js".
+	const FLAG_IN_ROOM = 1;
+	const FLAG_WITH_AUDIO = 2;
+	const FLAG_WITH_VIDEO = 4;
+
 	/** @var Manager */
 	private $manager;
 	/** @var IDBConnection */
@@ -680,12 +686,16 @@ class Room {
 
 	/**
 	 * @param string $sessionId
-	 * @param bool $active
+	 * @param int $flags
 	 */
-	public function changeInCall($sessionId, $active) {
-		if ($active) {
+	public function changeInCall($sessionId, $flags) {
+		if ($flags === false) {
+			$flags = 0;
+		}
+		if ($flags !== 0) {
 			$this->dispatcher->dispatch(self::class . '::preSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
+				'flags' => $flags,
 			]));
 		} else {
 			$this->dispatcher->dispatch(self::class . '::preSessionLeaveCall', new GenericEvent($this, [
@@ -695,14 +705,15 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
-			->set('in_call', $query->createNamedParameter((int) $active, IQueryBuilder::PARAM_INT))
+			->set('in_call', $query->createNamedParameter($flags, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		if ($active) {
+		if ($flags !== 0) {
 			$this->dispatcher->dispatch(self::class . '::postSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
+				'flags' => $flags,
 			]));
 		} else {
 			$this->dispatcher->dispatch(self::class . '::postSessionLeaveCall', new GenericEvent($this, [
@@ -784,14 +795,14 @@ class Room {
 		while ($row = $result->fetch()) {
 			if ($row['user_id'] !== '' && $row['user_id'] !== null) {
 				$users[$row['user_id']] = [
-					'inCall' => (bool) $row['in_call'],
+					'inCall' => $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
 					'sessionId' => $row['session_id'],
 					'participantType' => (int) $row['participant_type'],
 				];
 			} else {
 				$guests[] = [
-					'inCall' => (bool) $row['in_call'],
+					'inCall' => $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
 					'sessionId' => $row['session_id'],
 				];
@@ -855,7 +866,7 @@ class Room {
 		$query->select('session_id')
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $query->execute();
 		$row = $result->fetch();

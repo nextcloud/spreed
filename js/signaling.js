@@ -253,10 +253,13 @@
 		// Override in subclasses if necessary.
 	};
 
-	OCA.Talk.Signaling.Base.prototype.joinCall = function(token) {
+	OCA.Talk.Signaling.Base.prototype.joinCall = function(token, flags) {
 		$.ajax({
 			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
 			type: 'POST',
+			data: {
+				flags: flags
+			},
 			beforeSend: function (request) {
 				request.setRequestHeader('Accept', 'application/json');
 			},

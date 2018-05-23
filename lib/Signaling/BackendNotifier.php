@@ -276,18 +276,18 @@ class BackendNotifier{
 	 * The "in-call" status of the given session ids has changed..
 	 *
 	 * @param Room $room
-	 * @param bool $inCall
+	 * @param int $flags
 	 * @param array $sessionids
 	 * @throws \Exception
 	 */
-	public function roomInCallChanged($room, $inCall, $sessionIds) {
-		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $inCall . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
+	public function roomInCallChanged($room, $flags, $sessionIds) {
+		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
 		$participants = $room->getParticipants();
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
-			if ($participant['inCall']) {
+			if ($participant['inCall'] !== 0) {
 				$users[] = $participant;
 			}
 			if (in_array($participant['sessionId'], $sessionIds)) {
@@ -298,7 +298,7 @@ class BackendNotifier{
 			if (!isset($participant['participantType'])) {
 				$participant['participantType'] = Participant::GUEST;
 			}
-			if ($participant['inCall']) {
+			if ($participant['inCall'] !== 0) {
 				$users[] = $participant;
 			}
 			if (in_array($participant['sessionId'], $sessionIds)) {
@@ -309,7 +309,7 @@ class BackendNotifier{
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'incall',
 			'incall' => [
-				'incall' => $inCall,
+				'incall' => $flags,
 				'changed' => $changed,
 				'users' => $users
 			],

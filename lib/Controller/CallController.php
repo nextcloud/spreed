@@ -28,6 +28,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -131,9 +132,10 @@ class CallController extends OCSController {
 	 * @UseSession
 	 *
 	 * @param string $token
+	 * @param int $flags
 	 * @return DataResponse
 	 */
-	public function joinCall($token) {
+	public function joinCall($token, $flags) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
@@ -163,7 +165,12 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->changeInCall($sessionId, true);
+		if ($flags === null) {
+			// Default flags: user is in room with audio/video.
+			$flags = Room::FLAG_IN_ROOM | Room::FLAG_WITH_AUDIO | Room::FLAG_WITH_VIDEO;
+		}
+
+		$room->changeInCall($sessionId, $flags);
 
 		return new DataResponse();
 	}
@@ -205,7 +212,7 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->changeInCall($sessionId, false);
+		$room->changeInCall($sessionId, 0);
 
 		return new DataResponse();
 	}
