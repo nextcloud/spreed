@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
@@ -263,7 +264,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'userId' => $this->userId,
 			'sessionId' => $userSession,
 		]);
-		$room->changeInCall($userSession, true);
+		$room->changeInCall($userSession, Room::FLAG_IN_CALL | Room::FLAG_WITH_AUDIO | Room::FLAG_WITH_VIDEO);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -272,10 +273,10 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->assertContains([
 			'type' => 'incall',
 			'incall' => [
-				'incall' => true,
+				'incall' => 7,
 				'changed' => [
 					[
-						'inCall' => true,
+						'inCall' => 7,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
 						'participantType' => Participant::USER,
@@ -284,7 +285,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'users' => [
 					[
-						'inCall' => true,
+						'inCall' => 7,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
 						'participantType' => Participant::USER,
@@ -296,7 +297,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$this->controller->clearRequests();
 		$guestSession = $room->joinRoomGuest('');
-		$room->changeInCall($guestSession, true);
+		$room->changeInCall($guestSession, Room::FLAG_IN_CALL);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -305,10 +306,10 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->assertContains([
 			'type' => 'incall',
 			'incall' => [
-				'incall' => true,
+				'incall' => 1,
 				'changed' => [
 					[
-						'inCall' => true,
+						'inCall' => 1,
 						'lastPing' => 0,
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
@@ -316,14 +317,14 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'users' => [
 					[
-						'inCall' => true,
+						'inCall' => 7,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
 						'participantType' => Participant::USER,
 						'userId' => $this->userId,
 					],
 					[
-						'inCall' => true,
+						'inCall' => 1,
 						'lastPing' => 0,
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
@@ -333,7 +334,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		], $bodies);
 
 		$this->controller->clearRequests();
-		$room->changeInCall($userSession, false);
+		$room->changeInCall($userSession, 0);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -342,10 +343,10 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->assertContains([
 			'type' => 'incall',
 			'incall' => [
-				'incall' => false,
+				'incall' => 0,
 				'changed' => [
 					[
-						'inCall' => false,
+						'inCall' => 0,
 						'lastPing' => 0,
 						'sessionId' => $userSession,
 						'participantType' => Participant::USER,
@@ -354,7 +355,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				],
 				'users' => [
 					[
-						'inCall' => true,
+						'inCall' => 1,
 						'lastPing' => 0,
 						'sessionId' => $guestSession,
 						'participantType' => Participant::GUEST,
