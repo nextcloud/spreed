@@ -795,14 +795,14 @@ class Room {
 		while ($row = $result->fetch()) {
 			if ($row['user_id'] !== '' && $row['user_id'] !== null) {
 				$users[$row['user_id']] = [
-					'inCall' => $row['in_call'],
+					'inCall' => (int) $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
 					'sessionId' => $row['session_id'],
 					'participantType' => (int) $row['participant_type'],
 				];
 			} else {
 				$guests[] = [
-					'inCall' => $row['in_call'],
+					'inCall' => (int) $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
 					'sessionId' => $row['session_id'],
 				];
