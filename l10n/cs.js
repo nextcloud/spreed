@@ -27,6 +27,7 @@ OC.L10N.register(
     "Waiting for {participantName} to join the call …" : "Čeká se na {participantName}, aby se přidal k hovoru …",
     "Waiting for others to join the call …" : "Čekání na ostatní, až se připojí k hovoru …",
     "Exit fullscreen (f)" : "Opustit režim celé obrazovky (f)",
+    "Fullscreen (f)" : "Celá obrazovka (f)",
     "Mute audio (m)" : "Ztlumit zvuk (m)",
     "Unmute audio (m)" : "Zrušit ztlumení zvuku (m)",
     "No audio" : "Žádný zvuk",
