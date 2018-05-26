@@ -137,6 +137,7 @@ OC.L10N.register(
     "{user} wants to talk with you" : "{user} quiere hablar contigo",
     "A group call has started in {call}" : "Una llamada de grupo ha comenzado en {call}",
     "A group call has started" : "Ha comenzado una llamada de grupo",
+    "Video & audio-conferencing using WebRTC" : "Vídeo y audioconferencias usando WebRTC",
     "This call is password-protected" : "Esta llamada está protegida con contraseña",
     "The password is wrong. Try again." : "La contraseña es errónea. Vuelve a intentarlo.",
     "Share screen" : "Compartir pantalla",
