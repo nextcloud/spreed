@@ -726,6 +726,30 @@ class Room {
 		return $sessions;
 	}
 
+	public function getUserIds($inCall = false) {
+        $query = $this->db->getQueryBuilder();
+        $query->select('user_id')
+            ->from('talk_participants')
+            ->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+            ->andWhere($query->expr()->nonEmptyString('user_id'));
+
+        if ($inCall) {
+            $query->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+        } else {
+            $query->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+        }
+
+        $result = $query->execute();
+
+        $userIds = [];
+        while ($row = $result->fetch()) {
+            $userIds[] = $row['user_id'];
+        }
+        $result->closeCursor();
+
+        return $userIds;
+    }
+
 	/**
 	 * Get all user ids which are participants in a room but currently not active
 	 * @return string[]
