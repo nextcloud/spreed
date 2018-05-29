@@ -135,6 +135,7 @@
     "{user} wants to talk with you" : "{user} möchte mit Ihnen sprechen",
     "A group call has started in {call}" : "Ein Gruppenanruf wurde in {call} gestartet",
     "A group call has started" : "Ein Gruppenanruf wurde gestartet",
+    "Video & audio-conferencing using WebRTC" : "Video & Audio-Konferenzen mittels WebRTC",
     "This call is password-protected" : "Dieser Anruf ist passwortgeschützt",
     "The password is wrong. Try again." : "Das Passwort ist falsch. Bitte versuchen Sie es erneut.",
     "Share screen" : "Bildschirm übertragen",
