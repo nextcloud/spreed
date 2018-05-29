@@ -170,9 +170,9 @@ class BaseTest extends TestCase {
 			[Room::ONE_TO_ONE_CALL, 23, 'private-call', 'private-call', 'one2one'],
 			[Room::GROUP_CALL, 42, 'group-call', 'group-call', 'group'],
 			[Room::PUBLIC_CALL, 128, 'public-call', 'public-call', 'public'],
-			[Room::ONE_TO_ONE_CALL, 23, '', 'a call', 'one2one'],
-			[Room::GROUP_CALL, 42, '', 'a call', 'group'],
-			[Room::PUBLIC_CALL, 128, '', 'a call', 'public'],
+			[Room::ONE_TO_ONE_CALL, 23, '', 'a conversation', 'one2one'],
+			[Room::GROUP_CALL, 42, '', 'a conversation', 'group'],
+			[Room::PUBLIC_CALL, 128, '', 'a conversation', 'public'],
 		];
 	}
 
