@@ -162,10 +162,10 @@ class Notifier implements INotifier {
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$notification
 				->setParsedSubject(
-					$l->t('%s mentioned you in a private chat', [$user->getDisplayName()])
+					$l->t('%s mentioned you in a private conversation', [$user->getDisplayName()])
 				)
 				->setRichSubject(
-					$l->t('{user} mentioned you in a private chat'), [
+					$l->t('{user} mentioned you in a private conversation'), [
 						'user' => $richSubjectUser
 					]
 				);
@@ -174,10 +174,10 @@ class Notifier implements INotifier {
 			if ($richSubjectUser && $richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('%s mentioned you in a group chat: %s', [$user->getDisplayName(), $room->getName()])
+						$l->t('%s mentioned you in a group conversation: %s', [$user->getDisplayName(), $room->getName()])
 					)
 					->setRichSubject(
-						$l->t('{user} mentioned you in a group chat: {call}'), [
+						$l->t('{user} mentioned you in a group conversation: {call}'), [
 							'user' => $richSubjectUser,
 							'call' => $richSubjectCall
 						]
@@ -185,48 +185,48 @@ class Notifier implements INotifier {
 			} else if ($richSubjectUser && !$richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('%s mentioned you in a group chat', [$user->getDisplayName()])
+						$l->t('%s mentioned you in a group conversation', [$user->getDisplayName()])
 					)
 					->setRichSubject(
-						$l->t('{user} mentioned you in a group chat'), [
+						$l->t('{user} mentioned you in a group conversation'), [
 							'user' => $richSubjectUser
 						]
 					);
 			} else if (!$richSubjectUser && !$isGuest && $richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('You were mentioned in a group chat by a user that has since been deleted: %s', [$room->getName()])
+						$l->t('You were mentioned in a group conversation by a user that has since been deleted: %s', [$room->getName()])
 					)
 					->setRichSubject(
-						$l->t('You were mentioned in a group chat by a user that has since been deleted: {call}'), [
+						$l->t('You were mentioned in a group conversation by a user that has since been deleted: {call}'), [
 							'call' => $richSubjectCall
 						]
 					);
 			} else if (!$richSubjectUser && !$isGuest && !$richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('You were mentioned in a group chat by a user that has since been deleted')
+						$l->t('You were mentioned in a group conversation by a user that has since been deleted')
 					)
 					->setRichSubject(
-						$l->t('You were mentioned in a group chat by a user that has since been deleted')
+						$l->t('You were mentioned in a group conversation by a user that has since been deleted')
 					);
 			} else if (!$richSubjectUser && $isGuest && $richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('A guest mentioned you in a group chat: %s', [$room->getName()])
+						$l->t('A guest mentioned you in a group conversation: %s', [$room->getName()])
 					)
 					->setRichSubject(
-						$l->t('A guest mentioned you in a group chat: {call}'), [
+						$l->t('A guest mentioned you in a group conversation: {call}'), [
 							'call' => $richSubjectCall
 						]
 					);
 			} else if (!$richSubjectUser && $isGuest && !$richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('A guest mentioned you in a group chat')
+						$l->t('A guest mentioned you in a group conversation')
 					)
 					->setRichSubject(
-						$l->t('A guest mentioned you in a group chat')
+						$l->t('A guest mentioned you in a group conversation')
 					);
 			}
 		} else {
@@ -277,10 +277,10 @@ class Notifier implements INotifier {
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$notification
 				->setParsedSubject(
-					$l->t('%s invited you to a private call', [$user->getDisplayName()])
+					$l->t('%s invited you to a private conversation', [$user->getDisplayName()])
 				)
 				->setRichSubject(
-					$l->t('{user} invited you to a private call'), [
+					$l->t('{user} invited you to a private conversation'), [
 						'user' => [
 							'type' => 'user',
 							'id' => $uid,
@@ -293,10 +293,10 @@ class Notifier implements INotifier {
 			if ($room->getName() !== '') {
 				$notification
 					->setParsedSubject(
-						$l->t('%s invited you to a group call: %s', [$user->getDisplayName(), $room->getName()])
+						$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $room->getName()])
 					)
 					->setRichSubject(
-						$l->t('{user} invited you to a group call: {call}'), [
+						$l->t('{user} invited you to a group conversation: {call}'), [
 							'user' => [
 								'type' => 'user',
 								'id' => $uid,
@@ -313,10 +313,10 @@ class Notifier implements INotifier {
 			} else {
 				$notification
 					->setParsedSubject(
-						$l->t('%s invited you to a group call', [$user->getDisplayName()])
+						$l->t('%s invited you to a group conversation', [$user->getDisplayName()])
 					)
 					->setRichSubject(
-						$l->t('{user} invited you to a group call'), [
+						$l->t('{user} invited you to a group conversation'), [
 							'user' => [
 								'type' => 'user',
 								'id' => $uid,

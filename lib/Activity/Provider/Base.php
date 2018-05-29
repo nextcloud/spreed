@@ -126,7 +126,7 @@ abstract class Base implements IProvider {
 		return [
 			'type' => 'call',
 			'id' => $room->getId(),
-			'name' => $room->getName() ?: $l->t('a call'),
+			'name' => $room->getName() ?: $l->t('a conversation'),
 			'call-type' => $stringType,
 		];
 	}
@@ -140,7 +140,7 @@ abstract class Base implements IProvider {
 		return [
 			'type' => 'call',
 			'id' => $roomId,
-			'name' => $l->t('a call'),
+			'name' => $l->t('a conversation'),
 			'call-type' => Room::UNKNOWN_CALL,
 		];
 	}
