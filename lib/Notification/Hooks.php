@@ -98,7 +98,7 @@ class Hooks {
 	 * @param Room $room
 	 */
 	public function generateCallNotifications(Room $room) {
-		if ($room->getActiveSince() instanceof \DateTime) {
+		if (count($room->getUserIds(true, 1)) > 0) {
 			// Call already active => No new notifications
 			return;
 		}
@@ -126,7 +126,7 @@ class Hooks {
 			return;
 		}
 
-		$userIds = $room->getInactiveUserIds();
+		$userIds = $room->getUserIds(false);
 		foreach ($userIds as $userId) {
 			if ($actorId === $userId) {
 				continue;
