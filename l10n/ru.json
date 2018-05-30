@@ -146,6 +146,8 @@
     "A STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
     "TURN server" : "Сервер TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Сервер TURN служит для перенаправления потока данных от участников, находящихся за межсетевым экраном.",
+    "Android app" : "Android приложение",
+    "iOS app" : "iOS приложение",
     "Video calls" : "Видеозвонки",
     "New public call" : "Новый общий звонок",
     "Looking great today! :)" : "Отлично выглядите сегодня! :)",
