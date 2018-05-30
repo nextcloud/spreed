@@ -727,28 +727,28 @@ class Room {
 	}
 
 	public function getUserIds($inCall = false) {
-        $query = $this->db->getQueryBuilder();
-        $query->select('user_id')
-            ->from('talk_participants')
-            ->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-            ->andWhere($query->expr()->nonEmptyString('user_id'));
+		$query = $this->db->getQueryBuilder();
+		$query->select('user_id')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->nonEmptyString('user_id'));
 
-        if ($inCall) {
-            $query->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
-        } else {
-            $query->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
-        }
+		if ($inCall) {
+			$query->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+		} else {
+			$query->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
+		}
 
-        $result = $query->execute();
+		$result = $query->execute();
 
-        $userIds = [];
-        while ($row = $result->fetch()) {
-            $userIds[] = $row['user_id'];
-        }
-        $result->closeCursor();
+		$userIds = [];
+		while ($row = $result->fetch()) {
+			$userIds[] = $row['user_id'];
+		}
+		$result->closeCursor();
 
-        return $userIds;
-    }
+		return $userIds;
+	}
 
 	/**
 	 * @return bool

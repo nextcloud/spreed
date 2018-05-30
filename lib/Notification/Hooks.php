@@ -98,16 +98,16 @@ class Hooks {
 	 * @param Room $room
 	 */
 	public function generateCallNotifications(Room $room) {
-        if (count($room->getUserIds(true)) > 0) {
-            // Call already active => No new notifications
-            return;
-        }
+		if (count($room->getUserIds(true)) > 0) {
+			// Call already active => No new notifications
+			return;
+		}
 
-        $actor = $this->userSession->getUser();
+		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
 
-        $notification = $this->notificationManager->createNotification();
+		$notification = $this->notificationManager->createNotification();
 		$dateTime = new \DateTime();
 		try {
 			// Remove all old notifications for this room
