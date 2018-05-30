@@ -666,6 +666,7 @@ class Room {
 	}
 
 	/**
+
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
 	 */
@@ -726,7 +727,12 @@ class Room {
 		return $sessions;
 	}
 
-	public function getUserIds($inCall = false) {
+    /** Fetches a list of user IDs that are (in)active in the call
+     * @param bool $inCall determines whether you want users currently in or out of the call
+     * @param int $limit sets a number of results we want to get
+     * @return array returns a list of user ids
+     */
+    public function getUserIds($inCall = false, $limit = 0) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('user_id')
 			->from('talk_participants')
@@ -738,6 +744,10 @@ class Room {
 		} else {
 			$query->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 		}
+
+		if ($limit > 0) {
+            $query->setMaxResults($limit);
+        }
 
 		$result = $query->execute();
 
