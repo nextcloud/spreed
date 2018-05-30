@@ -68,8 +68,8 @@ class NotifierTest extends \Test\TestCase {
 
 	public function dataPrepareOne2One() {
 		return [
-			['admin', 'Admin', 'Admin invited you to a private call'],
-			['test', 'Test user', 'Test user invited you to a private call'],
+			['admin', 'Admin', 'Admin invited you to a private conversation'],
+			['test', 'Test user', 'Test user invited you to a private conversation'],
 		];
 	}
 
@@ -122,7 +122,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturnSelf();
 		$n->expects($this->once())
 			->method('setRichSubject')
-			->with('{user} invited you to a private call',[
+			->with('{user} invited you to a private conversation',[
 				'user' => [
 					'type' => 'user',
 					'id' => $uid,
@@ -149,8 +149,8 @@ class NotifierTest extends \Test\TestCase {
 
 	public function dataPrepareGroup() {
 		return [
-			[Room::GROUP_CALL, 'admin', 'Admin', '', 'Admin invited you to a group call'],
-			[Room::PUBLIC_CALL, 'test', 'Test user', 'Name', 'Test user invited you to a group call: Name'],
+			[Room::GROUP_CALL, 'admin', 'Admin', '', 'Admin invited you to a group conversation'],
+			[Room::PUBLIC_CALL, 'test', 'Test user', 'Name', 'Test user invited you to a group conversation: Name'],
 		];
 	}
 
@@ -213,7 +213,7 @@ class NotifierTest extends \Test\TestCase {
 				->method('getId');
 			$n->expects($this->once())
 				->method('setRichSubject')
-				->with('{user} invited you to a group call',[
+				->with('{user} invited you to a group conversation',[
 					'user' => [
 						'type' => 'user',
 						'id' => $uid,
@@ -227,7 +227,7 @@ class NotifierTest extends \Test\TestCase {
 				->willReturn($roomId);
 			$n->expects($this->once())
 				->method('setRichSubject')
-				->with('{user} invited you to a group call: {call}', [
+				->with('{user} invited you to a group conversation: {call}', [
 					'user' => [
 						'type' => 'user',
 						'id' => $uid,
@@ -263,34 +263,34 @@ class NotifierTest extends \Test\TestCase {
 		return [
 			[
 				Room::ONE_TO_ONE_CALL, ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], 'Test user', '',
-				'Test user mentioned you in a private chat',
-				['{user} mentioned you in a private chat',
+				'Test user mentioned you in a private conversation',
+				['{user} mentioned you in a private conversation',
 					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
 				],
 				'… message …'
 			],
-			// If the user is deleted in a one to one chat the chat is also
+			// If the user is deleted in a one to one conversation the conversation is also
 			// deleted, and that in turn would delete the pending notification.
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           [], 'Test user', '',
-				'Test user mentioned you in a group chat',
-				['{user} mentioned you in a group chat',
+				'Test user mentioned you in a group conversation',
+				['{user} mentioned you in a group conversation',
 					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
 				],
 				'message'
 			],
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart'], null,        '',
-				'You were mentioned in a group chat by a user that has since been deleted',
-				['You were mentioned in a group chat by a user that has since been deleted',
+				'You were mentioned in a group conversation by a user that has since been deleted',
+				['You were mentioned in a group conversation by a user that has since been deleted',
 					[]
 				],
 				'… message',
 				true],
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisEnd'], 'Test user', 'Room name',
-				'Test user mentioned you in a group chat: Room name',
-				['{user} mentioned you in a group chat: {call}',
+				'Test user mentioned you in a group conversation: Room name',
+				['{user} mentioned you in a group conversation: {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
@@ -300,8 +300,8 @@ class NotifierTest extends \Test\TestCase {
 			],
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], null,        'Room name',
-				'You were mentioned in a group chat by a user that has since been deleted: Room name',
-				['You were mentioned in a group chat by a user that has since been deleted: {call}',
+				'You were mentioned in a group conversation by a user that has since been deleted: Room name',
+				['You were mentioned in a group conversation by a user that has since been deleted: {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
 					]
@@ -310,32 +310,32 @@ class NotifierTest extends \Test\TestCase {
 				true],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           [], 'Test user', '',
-				'Test user mentioned you in a group chat',
-				['{user} mentioned you in a group chat',
+				'Test user mentioned you in a group conversation',
+				['{user} mentioned you in a group conversation',
 					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
 				],
 				'message'
 			],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart'], null,        '',
-				'You were mentioned in a group chat by a user that has since been deleted',
-				['You were mentioned in a group chat by a user that has since been deleted',
+				'You were mentioned in a group conversation by a user that has since been deleted',
+				['You were mentioned in a group conversation by a user that has since been deleted',
 					[]
 				],
 				'… message',
 				true],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], ['ellipsisEnd'], null,        '',
-				'A guest mentioned you in a group chat',
-				['A guest mentioned you in a group chat',
+				'A guest mentioned you in a group conversation',
+				['A guest mentioned you in a group conversation',
 					[]
 				],
 				'message …'
 			],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           ['ellipsisStart', 'ellipsisEnd'], 'Test user', 'Room name',
-				'Test user mentioned you in a group chat: Room name',
-				['{user} mentioned you in a group chat: {call}',
+				'Test user mentioned you in a group conversation: Room name',
+				['{user} mentioned you in a group conversation: {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
@@ -345,8 +345,8 @@ class NotifierTest extends \Test\TestCase {
 			],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'],           [], null,    'Room name',
-				'You were mentioned in a group chat by a user that has since been deleted: Room name',
-				['You were mentioned in a group chat by a user that has since been deleted: {call}',
+				'You were mentioned in a group conversation by a user that has since been deleted: Room name',
+				['You were mentioned in a group conversation by a user that has since been deleted: {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
 					]
@@ -355,8 +355,8 @@ class NotifierTest extends \Test\TestCase {
 				true],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], ['ellipsisStart', 'ellipsisEnd'], null,    'Room name',
-				'A guest mentioned you in a group chat: Room name',
-				['A guest mentioned you in a group chat: {call}',
+				'A guest mentioned you in a group conversation: Room name',
+				['A guest mentioned you in a group conversation: {call}',
 					['call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']]
 				],
 				'… message …'
