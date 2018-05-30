@@ -148,6 +148,8 @@ OC.L10N.register(
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur.",
     "TURN server" : "Serveur TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Le serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
+    "Android app" : "Application Android",
+    "iOS app" : "Application iOS",
     "Video calls" : "Appels vidéo",
     "New public call" : "Nouvel appel public",
     "Looking great today! :)" : "Excellente journée ! :)",
