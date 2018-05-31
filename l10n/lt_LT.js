@@ -65,10 +65,6 @@ OC.L10N.register(
     "… %s" : "… %s",
     "%s …" : "%s …",
     "… %s …" : "… %s …",
-    "%s mentioned you in a private chat" : "%s paminėjo jus privačiame pokalbyje",
-    "{user} mentioned you in a private chat" : "{user} paminėjo jus privačiame pokalbyje",
-    "%s invited you to a private call" : "%s pakvietė jus į privatų skambutį",
-    "{user} invited you to a private call" : "{user} pakvietė jus į privatų skambutį",
     "{user} wants to talk with you" : "{user} nori su jumis pasikalbėti",
     "This call is password-protected" : "Šis skambutis yra apsaugotas slaptažodžiu",
     "The password is wrong. Try again." : "Slaptažodis neteisingas. Bandykite dar kartą.",
@@ -81,10 +77,14 @@ OC.L10N.register(
     "Invalid format, must be stunserver:port." : "Neteisingas formatas, privalo būti stunserveris:prievadas.",
     "Invalid port specified." : "Nurodytas neteisingas prievadas.",
     "Invalid protocols specified." : "Nurodyti neteisingi prievadai.",
+    "%s invited you to a private call" : "%s pakvietė jus į privatų skambutį",
+    "{user} invited you to a private call" : "{user} pakvietė jus į privatų skambutį",
     "Fullscreen" : "Visas ekranas",
     "Mute audio" : "Nutildyti garsą",
     "Disable video" : "Išjungti vaizdą",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris"
+    "STUN server" : "STUN serveris",
+    "%s mentioned you in a private chat" : "%s paminėjo jus privačiame pokalbyje",
+    "{user} mentioned you in a private chat" : "{user} paminėjo jus privačiame pokalbyje"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

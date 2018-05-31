@@ -64,7 +64,6 @@
     "{participantName}'s screen" : "{participantName}-aren pantaila",
     "Guest's screen" : "Gonbidatuaren pantaila",
     "Your screen" : "Zure pantaila",
-    "a call" : "deia",
     "(Duration %s)" : "(Luzera %s)",
     "You attended a call with {user1}" : "{user1}-k egindako deia hartuta",
     "_%n guest_::_%n guests_" : ["%n gonbidatu","%n gonbidatu"],
@@ -77,12 +76,6 @@
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong> hitzaldi </strong> bat edo <strong>dei</strong> bat duzu",
     "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
     ", " : ", ",
-    "%s invited you to a private call" : "%s- dei pribatu batera gonbidatu zaitu",
-    "{user} invited you to a private call" : "{user}-rek dei pribatu batera gonbidatu zaitu",
-    "%s invited you to a group call: %s" : "%s-k %s talde deira gonbidatu zaitu",
-    "{user} invited you to a group call: {call}" : "{user}-k {call} talde deira gonbidatu zaitu",
-    "%s invited you to a group call" : "%s talde deira gonbidatu zaitu",
-    "{user} invited you to a group call" : "{user} talde deira gonbidatu zaitu",
     "This call is password-protected" : "Deia pasahitzarekin babestua dago",
     "The password is wrong. Try again." : "Pasahitza gaizki dago. Saiatu berriz",
     "Share screen" : "Pantaila partekatu",
@@ -111,6 +104,12 @@
     "Invalid format, must be stunserver:port." : "Formatu desegokia, stunzerb:portua izan behar du",
     "Invalid port specified." : "Portu ezegokia jarri da",
     "Invalid protocols specified." : "Protokolo ezegokiak jarri dira",
+    "%s invited you to a private call" : "%s- dei pribatu batera gonbidatu zaitu",
+    "{user} invited you to a private call" : "{user}-rek dei pribatu batera gonbidatu zaitu",
+    "%s invited you to a group call: %s" : "%s-k %s talde deira gonbidatu zaitu",
+    "{user} invited you to a group call: {call}" : "{user}-k {call} talde deira gonbidatu zaitu",
+    "%s invited you to a group call" : "%s talde deira gonbidatu zaitu",
+    "{user} invited you to a group call" : "{user} talde deira gonbidatu zaitu",
     "Fullscreen" : "Pantaila osoa",
     "Mute audio" : "Audioa ixildu",
     "Disable video" : "Bideoa desgaitu",
@@ -119,6 +118,7 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "STUN server" : "STUN zerbitzaria",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
+    "a call" : "deia"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
