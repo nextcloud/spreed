@@ -39,6 +39,7 @@
 		tagName: 'div',
 
 		ui: {
+			addParticipantForm: '.oca-spreedme-add-person',
 			addParticipantInput: '.add-person-input',
 			participantList: '.participantWithList'
 		},
@@ -67,12 +68,35 @@
 		 * @returns {Array}
 		 */
 		setRoom: function(room) {
+			this.stopListening(this.room, 'change:participantType');
+
 			this.room = room;
 			this.collection.setRoom(room);
+
+			this._updateAddParticipantFormVisibility();
+			this.listenTo(this.room, 'change:participantType', this._updateAddParticipantFormVisibility);
 		},
 
 		onRender: function() {
+			this._updateAddParticipantFormVisibility();
 			this.initAddParticipantSelector();
+		},
+
+		/**
+		 * Shows or hides the "Add participant" form based on the role of the
+		 * current user in the room.
+		 *
+		 * The form is shown if the current user is the owner or a moderator of
+		 * the room; otherwise the form is hidden.
+		 */
+		_updateAddParticipantFormVisibility: function() {
+			if (!this.room ||
+					(this.room.get('participantType') !== OCA.SpreedMe.app.OWNER &&
+					this.room.get('participantType') !== OCA.SpreedMe.app.MODERATOR)) {
+				this.ui.addParticipantForm.hide();
+			} else {
+				this.ui.addParticipantForm.show();
+			}
 		},
 
 		initAddParticipantSelector: function() {
