@@ -147,6 +147,12 @@
 				var participant = e.val;
 				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
 
+				// Clear the input to be able to select the last participant
+				// again (for example, in a different room), as select2 only
+				// triggers the change event when the selected item is different
+				// than the input value.
+				this.ui.addParticipantInput.val('');
+
 				$('.select2-drop').find('.avatar').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
