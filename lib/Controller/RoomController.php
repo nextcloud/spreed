@@ -219,6 +219,15 @@ class RoomController extends OCSController {
 			}
 		}
 
+		$inactiveUsers = array_filter($participants['users'], function($data) {
+			return $data['lastPing'] <= time() - 30 &&
+				$data['sessionId'] !== 0 && $data['sessionId'] !== '' && $data['sessionId'] !== '0';
+		});
+
+		foreach ($inactiveUsers as $inactiveUserId => $data) {
+			$room->leaveRoom($inactiveUserId);
+		}
+
 		$activeGuests = array_filter($participants['guests'], function($data) {
 			return $data['lastPing'] > time() - 30;
 		});
