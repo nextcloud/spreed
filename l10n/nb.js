@@ -63,7 +63,7 @@ OC.L10N.register(
     "Copy link" : "Kopier lenke",
     "You" : "Du",
     "No messages yet, start the conversation!" : "Ingen meldinger enda, start samtalen!",
-    "New message …" : "Ny melding…",
+    "New message …" : "Ny melding …",
     "Send" : "Send",
     "Guest" : "Gjest",
     "[Unknown user name]" : "[Ukjent brukernavn]",
