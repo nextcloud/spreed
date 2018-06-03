@@ -971,10 +971,12 @@ var spreedPeerConnectionTable = [];
 			}
 
 			if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
+				app.disableAudio();
 				app.hasNoAudio();
 			}
 
 			if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
+				app.disableVideo();
 				app.hasNoVideo();
 			}
 		});
