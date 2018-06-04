@@ -912,6 +912,11 @@ video {
 	background-color: transparent;
 }
 
+.participantWithList .participant-entry-utils-menu-button button:hover,
+.participantWithList .participant-entry-utils-menu-button button:focus, {
+	opacity: 1;
+}
+
 /**
  * Sidebar details view
  */
