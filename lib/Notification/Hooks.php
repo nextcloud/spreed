@@ -126,7 +126,7 @@ class Hooks {
 			return;
 		}
 
-		$userIds = $room->getInactiveUserIds();
+		$userIds = $room->getNotInCallUserIds();
 		foreach ($userIds as $userId) {
 			if ($actorId === $userId) {
 				continue;

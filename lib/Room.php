@@ -727,16 +727,16 @@ class Room {
 	}
 
 	/**
-	 * Get all user ids which are participants in a room but currently not active
+	 * Get all user ids which are participants in a room but currently not in the call
 	 * @return string[]
 	 */
-	public function getInactiveUserIds() {
+	public function getNotInCallUserIds() {
 		$query = $this->db->getQueryBuilder();
 		$query->select('user_id')
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('session_id', $query->createNamedParameter('0')))
-			->andWhere($query->expr()->nonEmptyString('user_id'));
+			->andWhere($query->expr()->nonEmptyString('user_id'))
+			->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)));
 		$result = $query->execute();
 
 		$userIds = [];
