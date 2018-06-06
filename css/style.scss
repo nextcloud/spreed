@@ -823,7 +823,8 @@ video {
 
 	a {
 		padding-left: 32px;
-		background: no-repeat 12px;
+		background-position: 12px;
+		background-repeat: no-repeat;
 		color: $color-main-text;
 		opacity: .5;
 	}
