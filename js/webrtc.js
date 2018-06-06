@@ -275,6 +275,14 @@ var spreedPeerConnectionTable = [];
 				muteIndicator.className = 'muteIndicator icon-white icon-shadow icon-audio-off audio-on';
 				muteIndicator.disabled = true;
 
+				var hideRemoteVideoButton = document.createElement('button');
+				hideRemoteVideoButton.className = 'hideRemoteVideo icon-white icon-shadow icon-video';
+				hideRemoteVideoButton.setAttribute('style', 'display: none;');
+				hideRemoteVideoButton.setAttribute('data-original-title', t('spreed', 'Disable video'));
+				hideRemoteVideoButton.onclick = function() {
+					OCA.SpreedMe.videos._toggleRemoteVideo(id);
+				};
+
 				var screenSharingIndicator = document.createElement('button');
 				screenSharingIndicator.className = 'screensharingIndicator icon-white icon-shadow icon-screen screen-off';
 				screenSharingIndicator.setAttribute('data-original-title', t('spreed', 'Show screen'));
@@ -283,12 +291,18 @@ var spreedPeerConnectionTable = [];
 				iceFailedIndicator.className = 'iceFailedIndicator icon-white icon-shadow icon-error not-failed';
 				iceFailedIndicator.disabled = true;
 
+				$(hideRemoteVideoButton).tooltip({
+					placement: 'top',
+					trigger: 'hover'
+				});
+
 				$(screenSharingIndicator).tooltip({
 					placement: 'top',
 					trigger: 'hover'
 				});
 
 				mediaIndicator.appendChild(muteIndicator);
+				mediaIndicator.appendChild(hideRemoteVideoButton);
 				mediaIndicator.appendChild(screenSharingIndicator);
 				mediaIndicator.appendChild(iceFailedIndicator);
 
@@ -302,6 +316,58 @@ var spreedPeerConnectionTable = [];
 
 				$(container).prependTo($('#videos'));
 				return container;
+			},
+			muteRemoteVideo: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
+
+				$container.find('.avatar-container').show();
+				$container.find('video').hide();
+				$container.find('.hideRemoteVideo').hide();
+			},
+			unmuteRemoteVideo: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
+
+				var $hideRemoteVideoButton = $container.find('.hideRemoteVideo');
+				$hideRemoteVideoButton.show();
+
+				if ($hideRemoteVideoButton.hasClass('icon-video')) {
+					$container.find('.avatar-container').hide();
+					$container.find('video').show();
+				}
+			},
+			_toggleRemoteVideo: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
+
+				var $hideRemoteVideoButton = $container.find('.hideRemoteVideo');
+				if ($hideRemoteVideoButton.hasClass('icon-video')) {
+					$container.find('.avatar-container').show();
+					$container.find('video').hide();
+					$hideRemoteVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
+						.removeClass('icon-video')
+						.addClass('icon-video-off');
+				} else {
+					$container.find('.avatar-container').hide();
+					$container.find('video').show();
+					$hideRemoteVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
+						.removeClass('icon-video-off')
+						.addClass('icon-video');
+				}
+
+				if (latestSpeakerId === id) {
+					OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
+				}
 			},
 			remove: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -450,6 +516,15 @@ var spreedPeerConnectionTable = [];
 						.append(newContainer.find('.speakingIndicator').clone())
 					);
 
+				// Cloning does not copy event handlers by default; it could be
+				// forced with a parameter, but the tooltip would have to be
+				// explicitly set on the new element anyway. Due to this the
+				// click handler is explicitly copied too.
+				$('.videoContainer-dummy').find('.hideRemoteVideo').get(0).onclick = newContainer.find('.hideRemoteVideo').get(0).onclick;
+				$('.videoContainer-dummy').find('.hideRemoteVideo').tooltip({
+					placement: 'top',
+					trigger: 'hover'
+				});
 			},
 			add: function(id, notPromote) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -917,10 +992,7 @@ var spreedPeerConnectionTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				var avatarContainer = $el.find('.avatar-container');
-				avatarContainer.removeClass('hidden');
-				avatarContainer.show();
-				$el.find('video').hide();
+				OCA.SpreedMe.videos.muteRemoteVideo(data.id);
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('audio-on');
@@ -943,8 +1015,7 @@ var spreedPeerConnectionTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				$el.find('.avatar-container').hide();
-				$el.find('video').show();
+				OCA.SpreedMe.videos.unmuteRemoteVideo(data.id);
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('audio-off');
