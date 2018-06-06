@@ -310,9 +310,7 @@ var spreedPeerConnectionTable = [];
 
 				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
 
-				var avatarContainer = $container.find('.avatar-container');
-				avatarContainer.removeClass('hidden');
-				avatarContainer.show();
+				$container.find('.avatar-container').show();
 				$container.find('video').hide();
 			},
 			unmuteRemoteVideo: function(id) {
