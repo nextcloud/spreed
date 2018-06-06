@@ -303,6 +303,28 @@ var spreedPeerConnectionTable = [];
 				$(container).prependTo($('#videos'));
 				return container;
 			},
+			muteRemoteVideo: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
+
+				var avatarContainer = $container.find('.avatar-container');
+				avatarContainer.removeClass('hidden');
+				avatarContainer.show();
+				$container.find('video').hide();
+			},
+			unmuteRemoteVideo: function(id) {
+				if (!(typeof id === 'string' || id instanceof String)) {
+					return;
+				}
+
+				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
+
+				$container.find('.avatar-container').hide();
+				$container.find('video').show();
+			},
 			remove: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
@@ -917,10 +939,7 @@ var spreedPeerConnectionTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				var avatarContainer = $el.find('.avatar-container');
-				avatarContainer.removeClass('hidden');
-				avatarContainer.show();
-				$el.find('video').hide();
+				OCA.SpreedMe.videos.muteRemoteVideo(data.id);
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('audio-on');
@@ -943,8 +962,7 @@ var spreedPeerConnectionTable = [];
 			var $el = $(el);
 
 			if (data.name === 'video') {
-				$el.find('.avatar-container').hide();
-				$el.find('video').show();
+				OCA.SpreedMe.videos.unmuteRemoteVideo(data.id);
 			} else {
 				var muteIndicator = $el.find('.muteIndicator');
 				muteIndicator.removeClass('audio-off');
