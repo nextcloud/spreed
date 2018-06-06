@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.2 – 2018-06-06
+### Added
+- Add toggle to show and hide video from other participants
+  [#937](https://github.com/nextcloud/spreed/pull/937)
+
+### Changed
+- Activities and Notifications text (Calls->Conversations)
+  [#919](https://github.com/nextcloud/spreed/pull/919)
+
+### Fixed
+- Send call notifications to every room participant that is not in the call
+  [#926](https://github.com/nextcloud/spreed/pull/926)
+- Mark messages directly as read when waiting for new messages
+  [#936](https://github.com/nextcloud/spreed/pull/936)
+- Fix tab header icons not shown
+  [#929](https://github.com/nextcloud/spreed/pull/929)
+- Fix room and participants menu buttons
+  [#934](https://github.com/nextcloud/spreed/pull/934)
+  [#941](https://github.com/nextcloud/spreed/pull/941)
+- Fix local audio and video not disabled when not available
+  [#938](https://github.com/nextcloud/spreed/pull/938)
+- Fix "Add participant" shown to normal participants
+  [#939](https://github.com/nextcloud/spreed/pull/939)
+- Fix adding the same participant several times in a row
+  [#940](https://github.com/nextcloud/spreed/pull/940)
+
+
 ## 3.2.1 – 2018-05-11
 ### Added
 - Standalone signaling server now supports the 3.2 changes
