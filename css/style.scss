@@ -895,6 +895,11 @@ video {
 	display: inline-block;
 }
 
+.participantWithList .participant-entry-utils li {
+	width: 44px;
+	height: 44px;
+}
+
 .participantWithList .participant-entry-utils button {
 	height: 100%;
 	width: 100%;
@@ -905,6 +910,12 @@ video {
 .participantWithList .participant-entry-utils-menu-button button {
 	border: 0;
 	opacity: .5;
+	background-color: transparent;
+}
+
+.participantWithList .participant-entry-utils-menu-button button:hover,
+.participantWithList .participant-entry-utils-menu-button button:focus, {
+	opacity: 1;
 }
 
 /**
