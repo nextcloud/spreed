@@ -128,15 +128,15 @@ class ChatManager {
 
 		$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
 
+		if ($user instanceof IUser) {
+			$this->commentsManager->setReadMark('chat', $chatId, new  \DateTime(), $user);
+		}
+
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;
 
 			$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
-		}
-
-		if ($user instanceof IUser) {
-			$this->commentsManager->setReadMark('chat', $chatId, new  \DateTime(), $user);
 		}
 
 		return $comments;
