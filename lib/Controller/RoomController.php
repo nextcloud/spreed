@@ -840,6 +840,7 @@ class RoomController extends OCSController {
 			$formattedRoom = $this->formatRoom($room, $room->getParticipant($this->userId));
 			$displayName = $formattedRoom['displayName'];
 		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\RuntimeException $e) {
 		}
 
