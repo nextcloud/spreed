@@ -67,7 +67,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		</settings>
 
 		<providers>
-			<provider>OCA\Spreed\Activity\Provider\Invitation</provider>
 			<provider>OCA\Spreed\Activity\Provider\Call</provider>
 		</providers>
 	</activity>

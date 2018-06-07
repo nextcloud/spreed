@@ -50,49 +50,6 @@ class Hooks {
 	}
 
 	/**
-	 * Room invitation: "{actor} invited you to {call}"
-	 *
-	 * @param Room $room
-	 * @param array[] $participants
-	 */
-	public function generateInvitation(Room $room, array $participants) {
-		$actor = $this->userSession->getUser();
-		if (!$actor instanceof IUser) {
-			return;
-		}
-		$actorId = $actor->getUID();
-
-
-		$notification = $this->notificationManager->createNotification();
-		$dateTime = new \DateTime();
-		try {
-			$notification->setApp('spreed')
-				->setDateTime($dateTime)
-				->setObject('room', $room->getId())
-				->setSubject('invitation', [
-					'actorId' => $actor->getUID(),
-				]);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
-			return;
-		}
-
-		foreach ($participants as $participant) {
-			if ($actorId === $participant['userId']) {
-				// No activity for self-joining and the creator
-				continue;
-			}
-
-			try {
-				$notification->setUser($participant['userId']);
-				$this->notificationManager->notify($notification);
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
-			}
-		}
-	}
-
-	/**
 	 * Call notification: "{user} wants to talk with you"
 	 *
 	 * @param Room $room
