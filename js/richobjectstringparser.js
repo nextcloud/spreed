@@ -25,7 +25,7 @@
 		 */
 		parseMessage: function(subject, parameters) {
 			var self = this,
-				regex = /\B@[a-z0-9_\-@.']+/i,
+				regex = /\B(^@\w+|(?<=\s)@\w+)/gi,
 				matches = subject.match(regex);
 
 			_.each(matches, function(parameter) {
