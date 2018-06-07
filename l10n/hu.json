@@ -67,6 +67,7 @@
     "Close" : "Bezár",
     "Waiting for camera and microphone permissions" : "Várakozás kamera és mikrofon engedélyezésre",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Kérlek engedélyezd a kamera és mikrofon elérést az app használatához.",
+    "Disable video" : "Videó kikapcsolása",
     "Show screen" : "Képernyőd mutatása",
     "Access to microphone & camera is only possible with HTTPS" : "A mikrofon és a kamera hozzáférése csak HTTPS-en lehetséges",
     "Access to microphone & camera was denied" : "A kamera és a mikrofon hozzáférése letiltva",
@@ -132,22 +133,11 @@
     "{user} invited you to a group call" : "{user} meghívott egy csoportos beszélgetésre",
     "Fullscreen" : "Teljes képernyő",
     "Mute audio" : "Hang némítása",
-    "Disable video" : "Videó kikapcsolása",
     "Smile in 3… 2… 1!" : "3… 2… 1... mosolyogj!",
     "Choose person …" : "Válassz valakit ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
     "STUN server" : "STUN kiszolgáló",
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
-    "TURN server shared secret" : "TURN szerver megosztott titok",
-    "a call" : "egy hívás",
-    "%s mentioned you in a private chat" : "%s megemlített egy privát beszélgetésben",
-    "{user} mentioned you in a private chat" : "{user} megemlített egy privát beszélgetésben",
-    "%s mentioned you in a group chat: %s" : "%s megemlített egy csoportos beszélgetésben: %s",
-    "{user} mentioned you in a group chat: {call}" : "{user} megemlített egy csoportos beszélgetésben: {call}",
-    "%s mentioned you in a group chat" : "%s megemlített egy csoportos beszélgetésben",
-    "{user} mentioned you in a group chat" : "{user} megemlített egy csoportos beszélgetésben",
-    "A guest mentioned you in a group chat: %s" : "Egy vendég megemlített egy csoportos beszélgetésben: %s",
-    "A guest mentioned you in a group chat: {call}" : "Egy vendég megemlített egy csoportos beszélgetésben: {call}",
-    "A guest mentioned you in a group chat" : "Egy vendég megemlített egy csoportos beszélgetésben"
+    "TURN server shared secret" : "TURN szerver megosztott titok"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

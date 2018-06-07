@@ -67,6 +67,7 @@
     "Close" : "Zakończ",
     "Waiting for camera and microphone permissions" : "Czekam na zezwolenie uprawnień dla mikrofonu i kamery",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Proszę dać swojej przeglądarce uprawnienia do użycia kamery i mikrofonu, aby używać tej aplikacji",
+    "Disable video" : "Wyłącz wideo.",
     "Show screen" : "Pokaż ekran",
     "Access to microphone & camera is only possible with HTTPS" : "Dostęp do mikrofonu i kamery możliwe jest tylko za pomocą protokołu HTTPS",
     "Access to microphone & camera was denied" : "Dostępu do mikrofonu i kamery został odrzucony",
@@ -132,22 +133,11 @@
     "{user} invited you to a group call" : "{user} zaprosił(a) Cię do grupowej rozmowy",
     "Fullscreen" : "Pełny ekran",
     "Mute audio" : "Wyciszenie audio",
-    "Disable video" : "Wyłącz wideo.",
     "Smile in 3… 2… 1!" : "Uśmiechnij się 3… 2… 1!",
     "Choose person …" : "Wybierz osobę...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Serwer STUN jest niezbędny aby umożliwić uczestnikom połączenie się do rozmów. Serwer TURN zapewnia, że połączenie będzie działać niezależnie od ustawień zapór sieciowych.",
     "STUN server" : "STUN serwer",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
-    "TURN server shared secret" : "Wpółdzielony kod serwera TURN",
-    "a call" : "rozmowa",
-    "%s mentioned you in a private chat" : "%s wspomniał(a) o Tobie w prywatnym czacie",
-    "{user} mentioned you in a private chat" : "{user} wspomniał(a) o Tobie w prywatnym czacie",
-    "%s mentioned you in a group chat: %s" : "%swspomniał(a) o Tobie w czacie grupowym: %s ",
-    "{user} mentioned you in a group chat: {call}" : "{user} wspomniał(a) o Tobie w czacie grupowym: {call}",
-    "%s mentioned you in a group chat" : "%swspomniał(a) o Tobie w czacie grupowym ",
-    "{user} mentioned you in a group chat" : "{user} wspomniał(a) o Tobie w czacie grupowym",
-    "A guest mentioned you in a group chat: %s" : "Gość wspomniał o Tobie w czacie grupowym: %s",
-    "A guest mentioned you in a group chat: {call}" : "Gość wspomniał o Tobie w czacie grupowym: {call}",
-    "A guest mentioned you in a group chat" : "Gość wspomniał o Tobie w czacie grupowym"
+    "TURN server shared secret" : "Wpółdzielony kod serwera TURN"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }

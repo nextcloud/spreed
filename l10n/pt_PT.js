@@ -69,6 +69,7 @@ OC.L10N.register(
     "Close" : "Fechar",
     "Waiting for camera and microphone permissions" : "À espera de permissões de câmera e microfone",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Por favor, permite ao seu browser aceder à sua câmera e microfone para que possa utilizar esta aplicação.",
+    "Disable video" : "desactivar vídeo",
     "Show screen" : "Mostrar ecrã",
     "Access to microphone & camera is only possible with HTTPS" : "Só é possível aceder ao microfone & câmera com HTTPS",
     "Access to microphone & camera was denied" : "Acesso recusado ao microfone & câmera",
@@ -106,17 +107,6 @@ OC.L10N.register(
     "%s invited you to a group call" : "%s convidou-o para uma chamada de grupo",
     "{user} invited you to a group call" : "{utilizador} convidou-o para uma chamada de grupo",
     "Fullscreen" : "Ecrã completo",
-    "Mute audio" : "Silenciar áudio",
-    "Disable video" : "desactivar vídeo",
-    "a call" : "uma chamada",
-    "%s mentioned you in a private chat" : "%s mencionou-o numa conversa privada",
-    "{user} mentioned you in a private chat" : "{utilizador} mencionou-o numa conversa privada",
-    "%s mentioned you in a group chat: %s" : "%s mencionou-o numa conversa de grupo: %s",
-    "{user} mentioned you in a group chat: {call}" : "{utilizador} mencionou-o numa conversa de grupo: {chamada}",
-    "%s mentioned you in a group chat" : "%s mencionou-o numa conversa de grupo",
-    "{user} mentioned you in a group chat" : "{utilizador} mencionou-o numa conversa de grupo",
-    "A guest mentioned you in a group chat: %s" : "Um convidado mencionou-o numa conversa de grupo: %s",
-    "A guest mentioned you in a group chat: {call}" : "Um convidado mencionou-o numa conversa de grupo: {chamada}",
-    "A guest mentioned you in a group chat" : "Um convidado mencionou-o numa conversa de grupo"
+    "Mute audio" : "Silenciar áudio"
 },
 "nplurals=2; plural=(n != 1);");

@@ -57,6 +57,7 @@ OC.L10N.register(
     "Close" : "Itxi",
     "Waiting for camera and microphone permissions" : "Kamera eta mikrofonoaren baimeneni itxoiten",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "App hau erabiltzeko mesedez, nabigatzaileari kamara eta mikroa erabiltzeko baimena eman. ",
+    "Disable video" : "Bideoa desgaitu",
     "Access to microphone & camera is only possible with HTTPS" : "Kamara eta mikrofonoak atzitzeko modu bakarra HTTPS bidez da",
     "Access to microphone & camera was denied" : "Kamara eta mikrora sarrera debekatua",
     "WebRTC is not supported in your browser" : "Zure nabigatzaileak ez du WebRTC onartzen",
@@ -114,13 +115,11 @@ OC.L10N.register(
     "{user} invited you to a group call" : "{user} talde deira gonbidatu zaitu",
     "Fullscreen" : "Pantaila osoa",
     "Mute audio" : "Audioa ixildu",
-    "Disable video" : "Bideoa desgaitu",
     "Smile in 3… 2… 1!" : "parre egin 3...2...1!",
     "Choose person …" : "Pertsona hautatu",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "STUN server" : "STUN zerbitzaria",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
-    "a call" : "deia"
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
 },
 "nplurals=2; plural=(n != 1);");

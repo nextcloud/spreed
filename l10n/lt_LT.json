@@ -48,6 +48,7 @@
     "Close" : "Užverti",
     "Waiting for camera and microphone permissions" : "Laukiama kameros ir mikrofono leidimų",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Norėdami naudoti šią programėlę, suteikite savo naršyklei prieigą naudoti jūsų kamerą ir mikrofoną.",
+    "Disable video" : "Išjungti vaizdą",
     "Access to microphone & camera is only possible with HTTPS" : "Prieiga prie mikrofono ir kameros yra įmanoma tik naudojant HTTPS",
     "Access to microphone & camera was denied" : "Prieiga prie mikrofono ir kameros buvo atmesta",
     "WebRTC is not supported in your browser" : "Jūsų naršyklėje WebRTC nėra palaikoma",
@@ -79,10 +80,7 @@
     "{user} invited you to a private call" : "{user} pakvietė jus į privatų skambutį",
     "Fullscreen" : "Visas ekranas",
     "Mute audio" : "Nutildyti garsą",
-    "Disable video" : "Išjungti vaizdą",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris",
-    "%s mentioned you in a private chat" : "%s paminėjo jus privačiame pokalbyje",
-    "{user} mentioned you in a private chat" : "{user} paminėjo jus privačiame pokalbyje"
+    "STUN server" : "STUN serveris"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

@@ -66,6 +66,7 @@ OC.L10N.register(
     "Close" : "关闭",
     "Waiting for camera and microphone permissions" : "等待摄像头和麦克风的授权",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "如果使用这个应用程序，请允许你的浏览器使用的你摄像头和麦克风",
+    "Disable video" : "禁用视频",
     "Show screen" : "显示屏幕",
     "Access to microphone & camera is only possible with HTTPS" : "仅使用HTTPS访问麦克风和摄像头",
     "Access to microphone & camera was denied" : "访问麦克风和摄像头被拒绝",
@@ -122,19 +123,11 @@ OC.L10N.register(
     "{user} invited you to a group call" : "{user}邀请你加入一个组通话",
     "Fullscreen" : "全屏",
     "Mute audio" : "静音",
-    "Disable video" : "禁用视频",
     "Smile in 3… 2… 1!" : "微笑中3... 2... 1!",
     "Choose person …" : "选择人...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
     "STUN server" : "STUN 服务器",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
-    "TURN server shared secret" : "TURN服务器分享的秘密",
-    "a call" : "一个电话",
-    "%s mentioned you in a private chat" : "%s 在私人聊天中提到你",
-    "{user} mentioned you in a private chat" : "{user} 在私人聊天中提到你",
-    "%s mentioned you in a group chat: %s" : "%s 在群组聊天中提到你: %s",
-    "{user} mentioned you in a group chat: {call}" : "{user} 在群组聊天中提到你: {call}",
-    "%s mentioned you in a group chat" : " %s 在群组聊天中提到你",
-    "{user} mentioned you in a group chat" : "{user} 在群组聊天中提到你"
+    "TURN server shared secret" : "TURN服务器分享的秘密"
 },
 "nplurals=1; plural=0;");
