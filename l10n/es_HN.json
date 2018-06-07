@@ -59,6 +59,7 @@
     "Close" : "Cerrar",
     "Waiting for camera and microphone permissions" : "Aguardando los permisos para la cámara y micrófono",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Por favor da acceso a tu navegador para usar tu camara y micrófono poder usar esta aplicación. ",
+    "Disable video" : "Deshabilitar video",
     "Show screen" : "Mostrar pantalla",
     "Access to microphone & camera is only possible with HTTPS" : "El acceso al micrófono & cámara sólo es posible mediante HTTPS",
     "Access to microphone & camera was denied" : "El acceso al micrófono & cámara fue denegado",
@@ -124,22 +125,11 @@
     "{user} invited you to a group call" : "{user} te ha invitado a una llamada en gupo",
     "Fullscreen" : "Pantalla completa",
     "Mute audio" : "Silenciar audio",
-    "Disable video" : "Deshabilitar video",
     "Smile in 3… 2… 1!" : "¡Sonríe en 3... 2... 1!",
     "Choose person …" : "Elegir persona ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
-    "TURN server shared secret" : "Secreto compartido del servidor TURN",
-    "a call" : "una llamada",
-    "%s mentioned you in a private chat" : "%s te mencionó en una conversación privada",
-    "{user} mentioned you in a private chat" : "{user} te mencionó en una conversacion privada",
-    "%s mentioned you in a group chat: %s" : "%s te mencionó en una conversación de grupo: %s",
-    "{user} mentioned you in a group chat: {call}" : "{user} te mencionó en una conversación de grupo: {call}",
-    "%s mentioned you in a group chat" : "%s te mencionó en una conversación de grupo",
-    "{user} mentioned you in a group chat" : "{user} te mencionó en una conversación de grupo",
-    "A guest mentioned you in a group chat: %s" : "Un invitado te mencionó en una conversación de grupo: %s",
-    "A guest mentioned you in a group chat: {call}" : "Un invitado te mencionó en una conversación de grupo: {call}",
-    "A guest mentioned you in a group chat" : "Un invitado te mencionó en una conversación de grupo"
+    "TURN server shared secret" : "Secreto compartido del servidor TURN"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -60,6 +60,7 @@ OC.L10N.register(
     "Close" : "Κλείσιμο",
     "Waiting for camera and microphone permissions" : "Αναμονή για δικαιώματα για την κάμερα και το μικρόφωνο",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Παρακαλούμε δώστε πρόσβαση στον φυλλομετρητή να χρησιμοποιήσει την κάμερα και το μικρόφωνο ώστε να χρησιμοποιήσετε αυτή την εφαρμογή.",
+    "Disable video" : "Απενεργοποίηση βίντεο",
     "Show screen" : "Εμφάνιση οθόνης",
     "Access to microphone & camera is only possible with HTTPS" : "Η πρόσβαση στο μικρόφωνο και στην κάμερα είναι εφικτή μόνο μέσω HTTPS",
     "Access to microphone & camera was denied" : "Άρνηση πρόσβασης στο μικρόφωνο & την κάμερα",
@@ -98,10 +99,8 @@ OC.L10N.register(
     "{user} invited you to a group call" : "Ο {user} σας προσκάλεσε σε ομαδική κλήση",
     "Fullscreen" : "Πλήρης οθόνη",
     "Mute audio" : "Σίγαση ήχου",
-    "Disable video" : "Απενεργοποίηση βίντεο",
     "Smile in 3… 2… 1!" : "Χαμογελάστε σε 3… 2… 1!",
     "Choose person …" : "Επιλογή ατόμου ...",
-    "STUN server" : "Διακομιστής STUN",
-    "a call" : "κλήση"
+    "STUN server" : "Διακομιστής STUN"
 },
 "nplurals=2; plural=(n != 1);");

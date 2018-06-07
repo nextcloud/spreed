@@ -82,6 +82,7 @@
     "Close" : "Sulje",
     "Waiting for camera and microphone permissions" : "Odotetaan käyttöoikeuden myöntämistä kameralle ja mikrofonille",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Anna selaimellesi oikeus käyttää kameraa ja mikrofonia käyttääksesi tätä sovellusta.",
+    "Disable video" : "Poista video käytöstä",
     "Show screen" : "Näytä näyttö",
     "Access to microphone & camera is only possible with HTTPS" : "Kameran ja mikrofonin käyttäminen on mahdollista vain käytettäessä HTTPS-protokollaa",
     "Access to microphone & camera was denied" : "Yhteys mikrofoniin ja kameraan estettiin",
@@ -141,22 +142,11 @@
     "{user} invited you to a group call" : "{user} kutsui sinut ryhmäpuheluun",
     "Fullscreen" : "Koko näyttö",
     "Mute audio" : "Mykistä ääni",
-    "Disable video" : "Poista video käytöstä",
     "Smile in 3… 2… 1!" : "Hymyile, 3... 2... 1!",
     "Choose person …" : "Valitse henkilö...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-palvelin on välttämätön, jotta osallistujat voivat yhdistää puheluihin. TURN-palvelin varmistaa, että yhteys toimii myös palomuurien läpi.",
     "STUN server" : "STUN-palvelin",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille.",
-    "TURN server shared secret" : "TURN-palvelimen jaettu salausavain",
-    "a call" : "puhelu",
-    "%s mentioned you in a private chat" : "%s mainitsi sinut yksityiskeskustelussa",
-    "{user} mentioned you in a private chat" : "{user} mainitsi sinut yksityiskeskustelussa",
-    "%s mentioned you in a group chat: %s" : "%s mainitsi sinut ryhmäkeskustelussa: %s",
-    "{user} mentioned you in a group chat: {call}" : "{user} mainitsi sinut ryhmäkeskustelussa: {call}",
-    "%s mentioned you in a group chat" : "%s mainitsi sinut ryhmäkeskustelussa",
-    "{user} mentioned you in a group chat" : "{user} mainitsi sinut ryhmäkeskustelussa",
-    "A guest mentioned you in a group chat: %s" : "Vieras mainitsi sinut ryhmäkeskustelussa: %s",
-    "A guest mentioned you in a group chat: {call}" : "Vieras mainitsi sinut ryhmäkeskustelussa: {call}",
-    "A guest mentioned you in a group chat" : "Vieras mainitsi sinut ryhmäkeskustelussa"
+    "TURN server shared secret" : "TURN-palvelimen jaettu salausavain"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

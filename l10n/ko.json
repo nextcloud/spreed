@@ -66,6 +66,7 @@
     "Close" : "닫기",
     "Waiting for camera and microphone permissions" : "카메라와 마이크 권한을 기다리는 중",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "이 앱을 사용하려면 웹 브라우저에 카메라 및 마이크 사용 권한을 부여해야 합니다.",
+    "Disable video" : "비디오 비활성화",
     "Show screen" : "화면 보이기",
     "Access to microphone & camera is only possible with HTTPS" : "마이크와 카메라에는 HTTPS로만 접근할 수 있음",
     "Access to microphone & camera was denied" : "마이크 및 카메라 접근이 거부됨",
@@ -131,22 +132,11 @@
     "{user} invited you to a group call" : "{user} 님이 그룹 통화에 초대함",
     "Fullscreen" : "전체 화면",
     "Mute audio" : "오디오 음소거",
-    "Disable video" : "비디오 비활성화",
     "Smile in 3… 2… 1!" : "3… 2… 1… 스마일!",
     "Choose person …" : "사람 선택 …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "참가자가 통화에 연결하려면 STUN 서버를 설정해야 합니다. TURN 서버는 방화벽 뒤에 있는 사람도 연결할 수 있도록 합니다.",
     "STUN server" : "STUN 서버",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
-    "TURN server shared secret" : "TURN 서버 공유 비밀 키",
-    "a call" : "통화",
-    "%s mentioned you in a private chat" : "%s 님이 비밀 대화에서 여러분을 언급함",
-    "{user} mentioned you in a private chat" : "{user} 님이 비밀 대화에서 여러분을 언급함",
-    "%s mentioned you in a group chat: %s" : "%s 님이 그룹 대화에서 여러분을 언급함: %s",
-    "{user} mentioned you in a group chat: {call}" : "{user} 님이 그룹 대화에서 여러분을 언급함: {call}",
-    "%s mentioned you in a group chat" : "%s 님이 그룹 대화에서 여러분을 언급함",
-    "{user} mentioned you in a group chat" : "{user} 님이 그룹 대화에서 여러분을 언급함",
-    "A guest mentioned you in a group chat: %s" : "손님이 그룹 대화에서 여러분을 언급함: %s",
-    "A guest mentioned you in a group chat: {call}" : "손님이 그룹 대화에서 여러분을 언급함: {call}",
-    "A guest mentioned you in a group chat" : "손님이 그룹 대화에서 여러분을 언급함"
+    "TURN server shared secret" : "TURN 서버 공유 비밀 키"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
