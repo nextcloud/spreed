@@ -90,6 +90,7 @@ OC.L10N.register(
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Para usar este aplicativo, permita o acesso de seu navegador à sua câmera e microfone",
     "Disable video" : "Desativar vídeo",
     "Show screen" : "Mostrar tela",
+    "Enable video" : "Ativar vídeo",
     "Access to microphone & camera is only possible with HTTPS" : "O acesso ao microfone e à câmera só é possível com HTTPS",
     "Please move your setup to HTTPS" : "Altere sua configuração para HTTPS",
     "Access to microphone & camera was denied" : "O acesso ao microfone e à câmera foi negado",
