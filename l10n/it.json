@@ -122,9 +122,6 @@
     "{user} mentioned you in a group conversation: {call}" : "{user} ti ha menzionato in una conversazione di gruppo: {call}",
     "%s mentioned you in a group conversation" : "%s ti ha menzionato in una conversazione di gruppo",
     "{user} mentioned you in a group conversation" : "{user} ti ha menzionato in una conversazione di gruppo",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Sei stato menzionato in una conversazione di gruppo da un utente che è stato eliminato: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Sei stato menzionato in una conversazione di gruppo da un utente che è stato eliminato: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Sei stato menzionato in una conversazione di gruppo da un utente che è stato eliminato",
     "A guest mentioned you in a group conversation: %s" : "Un ospite ti ha menzionato in una conversazione di gruppo: %s",
     "A guest mentioned you in a group conversation: {call}" : "Un ospite ti ha menzionato in una conversazione di gruppo: {call}",
     "A guest mentioned you in a group conversation" : "Un ospite ti ha menzionato in una conversazione di gruppo",
@@ -185,6 +182,9 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Il server STUN è necessario affinché i partecipanti possano connettersi alle chiamate. Il server TURN assicura che le connessioni funzionino anche attraverso firewall.",
     "STUN server" : "Server STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Il server STUN è utilizzato è utilizzato per determinare l'indirizzo pubblico dei partecipanti che si trovano dietro a un router.",
-    "TURN server shared secret" : "Il segreto condiviso del server TURN"
+    "TURN server shared secret" : "Il segreto condiviso del server TURN",
+    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Sei stato menzionato in una conversazione di gruppo da un utente che è stato eliminato: %s",
+    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Sei stato menzionato in una conversazione di gruppo da un utente che è stato eliminato: {call}",
+    "You were mentioned in a group conversation by a user that has since been deleted" : "Sei stato menzionato in una conversazione di gruppo da un utente che è stato eliminato"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
