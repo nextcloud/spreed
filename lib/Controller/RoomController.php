@@ -834,8 +834,19 @@ class RoomController extends OCSController {
 		$this->session->setSessionForRoom($token, $newSessionId);
 		$room->ping($this->userId, $newSessionId, time());
 
+		$displayName = '';
+
+		try {
+			$formattedRoom = $this->formatRoom($room, $room->getParticipant($this->userId));
+			$displayName = $formattedRoom['displayName'];
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\RuntimeException $e) {
+		}
+
 		return new DataResponse([
 			'sessionId' => $newSessionId,
+			'displayName' => $displayName,
 		]);
 	}
 
