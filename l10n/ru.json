@@ -122,9 +122,6 @@
     "{user} mentioned you in a group conversation: {call}" : "{user} упомянул(а) Вас в групповой беседе: {call}",
     "%s mentioned you in a group conversation" : "%s упомянул(а) Вас в групповой беседе",
     "{user} mentioned you in a group conversation" : "{user} упомянул(а) Вас в групповой беседе",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена",
     "A guest mentioned you in a group conversation: %s" : "Гость упомянул(а) Вас в групповой беседе: %s",
     "A guest mentioned you in a group conversation: {call}" : "Гость упомянул(а) Вас в групповой беседе: {call}",
     "A guest mentioned you in a group conversation" : "Гость упомянул(а) Вас в групповой беседе",
@@ -185,6 +182,9 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Сервер STUN необходим, чтобы участники могли подключиться к вызовам. Сервер TURN гарантирует, что соединение работает даже через межсетевые экраны.",
     "STUN server" : "Сервер STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
-    "TURN server shared secret" : "Общая секретная фраза сервера TURN"
+    "TURN server shared secret" : "Общая секретная фраза сервера TURN",
+    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена: %s",
+    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена: {call}",
+    "You were mentioned in a group conversation by a user that has since been deleted" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

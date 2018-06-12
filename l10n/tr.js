@@ -123,9 +123,6 @@ OC.L10N.register(
     "{user} mentioned you in a group conversation: {call}" : "{user} bir grup konuşmasında sizden bahsetti: {call}",
     "%s mentioned you in a group conversation" : "%s bir grup konuşmasında sizden bahsetti",
     "{user} mentioned you in a group conversation" : "{user} bir grup konuşmasında sizden bahsetti",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız",
     "A guest mentioned you in a group conversation: %s" : "Bir konuk bir grup konuşmasında sizden bahsetti: %s",
     "A guest mentioned you in a group conversation: {call}" : "Bir konuk bir grup konuşmasında sizden bahsetti: {call}",
     "A guest mentioned you in a group conversation" : "Bir konuk bir grup konuşmasında sizden bahsetti",
@@ -186,6 +183,9 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN sunucusu katılımcı çağrılarının bağlanabilmesi için gereklidir. TURN sunucusu bağlantının güvenlik duvarları arkasından çalışabilmesini sağlar.",
     "STUN server" : "STUN Sunucusu",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
-    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası"
+    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
+    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: %s",
+    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: {call}",
+    "You were mentioned in a group conversation by a user that has since been deleted" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız"
 },
 "nplurals=2; plural=(n > 1);");
