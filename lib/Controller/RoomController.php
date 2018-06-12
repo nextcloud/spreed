@@ -26,6 +26,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -64,6 +65,8 @@ class RoomController extends OCSController {
 	private $chatManager;
 	/** @var IL10N */
 	private $l10n;
+	/** @var richMessageHelper */
+	private $richMessageHelper;
 
 	/**
 	 * @param string $appName
@@ -76,6 +79,7 @@ class RoomController extends OCSController {
 	 * @param Manager $manager
 	 * @param GuestManager $guestManager
 	 * @param ChatManager $chatManager
+	 * @param RichMessageHelper $richMessageHelper
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -88,6 +92,7 @@ class RoomController extends OCSController {
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
+								RichMessageHelper $richMessageHelper,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -99,6 +104,7 @@ class RoomController extends OCSController {
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->l10n = $l10n;
+		$this->richMessageHelper = $richMessageHelper;
 	}
 
 	/**
@@ -198,6 +204,7 @@ class RoomController extends OCSController {
 				'numGuests' => 0,
 				'hasCall' => false,
 				'guestList' => '',
+				'lastMessage' => [],
 			]);
 
 			return $roomData;
@@ -242,11 +249,43 @@ class RoomController extends OCSController {
 			$room->cleanGuestParticipants();
 		}
 
+		$lastMessageFromHistory = $this->chatManager->getHistory($room->getId(), 0, 1);
+		$lastMessage = [];
+
+		if (!empty($lastMessageFromHistory)) {
+
+			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessageFromHistory[0]);
+
+			$displayName = '';
+
+			$actorId = $lastMessageFromHistory[0]->getActorId();
+			$actorType = $lastMessageFromHistory[0]->getActorType();
+
+			if ($actorType === 'users') {
+				$user = $this->userManager->get($actorId);
+				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
+			} else if ($actorType === 'guests') {
+				$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
+				$displayName = isset($guestNames[$actorId]) ? $guestNames[$actorId] : '';
+			}
+
+			$lastMessage = [
+				'id' => $lastMessageFromHistory[0]->getId(),
+				'actorType' => $actorType,
+				'actorId' => $actorId,
+				'actorDisplayName' => $displayName,
+				'timestamp' => $lastMessageFromHistory[0]->getCreationDateTime()->getTimestamp(),
+				'message' => $message,
+				'messageParameters' => $messageParameters,
+			];
+		}
+
 		$roomData = array_merge($roomData, [
 			'lastPing' => $participant->getLastPing(),
 			'sessionId' => $participant->getSessionId(),
 			'participants' => $participantList,
 			'numGuests' => $numActiveGuests,
+			'lastMessage' => $lastMessage,
 		]);
 
 		if ($this->userId !== null) {
