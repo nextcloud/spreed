@@ -124,9 +124,6 @@ OC.L10N.register(
     "{user} mentioned you in a group conversation: {call}" : "{user} hat Sie in einer Gruppenunterhaltung erwähnt: {call}",
     "%s mentioned you in a group conversation" : "%s hat Sie in einer Gruppenunterhaltung erwähnt",
     "{user} mentioned you in a group conversation" : "{user} hat Sie in einer Gruppenunterhaltung erwähnt",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Sie wurden in einer Gruppenunterhaltung von einem bereits gelöschten Benutzer erwähnt: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Sie wurden in einer Gruppenunterhaltung von einem bereits gelöschten Benutzer erwähnt: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Sie wurden in einer Gruppenunterhaltung von einem bereits gelöschten Benutzer erwähnt",
     "A guest mentioned you in a group conversation: %s" : "Ein Gast hat Sie in einer Gruppenunterhaltung erwähnt: %s",
     "A guest mentioned you in a group conversation: {call}" : "Ein Gast hat Sie in einer Gruppenunterhaltung erwähnt: {call}",
     "A guest mentioned you in a group conversation" : "Ein Gast hat Sie in einer Gruppenunterhaltung erwähnt",
@@ -185,6 +182,9 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Der STUN-Server ist nötig, damit sich alle Teilnehmer mit den Anrufen verbinden können. Der TURN-Server stellt sicher, dass die Verbindung auch durch Firewalls hindurch funktioniert.",
     "STUN server" : "STUN-Server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Der STUN-Server wird verwendet, um die öffentliche IP-Adresse von Teilnehmern hinter einem Router zu bestimmen.",
-    "TURN server shared secret" : "TURN-Server Shared Secret"
+    "TURN server shared secret" : "TURN-Server Shared Secret",
+    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Sie wurden in einer Gruppenunterhaltung von einem bereits gelöschten Benutzer erwähnt: %s",
+    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Sie wurden in einer Gruppenunterhaltung von einem bereits gelöschten Benutzer erwähnt: {call}",
+    "You were mentioned in a group conversation by a user that has since been deleted" : "Sie wurden in einer Gruppenunterhaltung von einem bereits gelöschten Benutzer erwähnt"
 },
 "nplurals=2; plural=(n != 1);");
