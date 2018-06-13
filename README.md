@@ -17,6 +17,16 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
+
+### Installing
+
+There are several ways of installing Talk. If you just need to enable local access it's enough to just enable the app from the Nextcloud App Store. 
+
+If you need to use Talk from outside your own LAN, or through a strict firewall you need to install and setup a TURN server. That's a bit more tricky, but the guys from [Nextcloud VM](https://github.com/nextcloud/vm) has developed a script which takes care of everything for you. You can find the script [here](https://github.com/nextcloud/vm/blob/master/apps/talk.sh). The script is tested on Ubuntu Server 18.04, but should work on 16.04 as well. Please keep in mind that it's developed for the VM specifically and any issues should be reported in that repo, not here.
+
+**Here's a short video on how it's done:**<br>
+[![Install Talk on Nextcloud](https://lh3.googleusercontent.com/crCv9cBtaOz-5BqpXp0Dhxjq3kyh5rbg0oKx2_BlCwZe2i3nuGhkK2zIzzdCMXFVal8=s180)](https://youtu.be/KdTsWIy4eN0)
+
 ## Disabling internal camera/audio for testing
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
