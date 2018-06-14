@@ -17,6 +17,15 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
+
+### Installing
+
+Nextcloud Talk is really easy to install. You just need to enable the app from the [Nextcloud App Store](https://apps.nextcloud.com/apps/spreed) and everything will work out of the box.
+
+There are some scenarios (users behind strict firewalls / symmetric NATs) where a TURN server is needed. That's a bit more tricky installation, but the guys from [Nextcloud VM](https://github.com/nextcloud/vm) has developed a script which takes care of everything for you. You can find the script [here](https://github.com/nextcloud/vm/blob/master/apps/talk.sh). The script is tested on Ubuntu Server 18.04, but should work on 16.04 as well. Please keep in mind that it's developed for the VM specifically and any issues should be reported in that repo, not here.
+
+Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
+
 ## Disabling internal camera/audio for testing
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
