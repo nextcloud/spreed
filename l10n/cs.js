@@ -40,6 +40,7 @@ OC.L10N.register(
     "Not supported!" : "Nepodporováno!",
     "Press ⌘-C to copy." : "Stiskněte ⌘-C ke zkopírování.",
     "Press Ctrl-C to copy." : "Pro zkopírování stiskněte Ctrl-C.",
+    "Join a conversation or start a new one" : "Připojte se k rozhovoru, nebo začněte nový",
     "This conversation has ended" : "Tato konverzace skončila",
     "Please enter the password for this call" : "Prosím zadejte heslo tohoto hovoru",
     "Password required" : "Vyžadováno heslo",
