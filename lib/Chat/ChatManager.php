@@ -63,6 +63,7 @@ class ChatManager {
 	 * @param string $actorId
 	 * @param string $message
 	 * @param \DateTime $creationDateTime
+	 * @return IComment
 	 */
 	public function sendMessage($chatId, $actorType, $actorId, $message, \DateTime $creationDateTime) {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', $chatId);
@@ -75,6 +76,7 @@ class ChatManager {
 		$this->commentsManager->save($comment);
 
 		$this->notifier->notifyMentionedUsers($comment);
+		return $comment;
 	}
 
 	/**
