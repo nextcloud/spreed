@@ -936,6 +936,16 @@
 		}.bind(this));
 	};
 
+	OCA.Talk.Signaling.Standalone.prototype.joinCall = function(token) {
+		if (this.signalingRoomJoined !== token) {
+			console.log("Not joined room yet, not joining call", token);
+			this.pendingJoinCall = token;
+			return;
+		}
+
+		OCA.Talk.Signaling.Base.prototype.joinCall.apply(this, arguments);
+	};
+
 	OCA.Talk.Signaling.Standalone.prototype._joinCallSuccess = function(/* token */) {
 		// Update room list to fetch modified properties.
 		this.internalSyncRooms();
@@ -948,6 +958,11 @@
 
 	OCA.Talk.Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		console.log("Joined", data, token);
+		this.signalingRoomJoined = token;
+		if (token === this.pendingJoinCall) {
+			this.joinCall(this.pendingJoinCall);
+			this.pendingJoinCall = null;
+		}
 		if (this.roomCollection) {
 			// The list of rooms is not fetched from the server. Update ping
 			// of joined room so it gets sorted to the top.
@@ -969,6 +984,7 @@
 			}
 		}, function(data) {
 			console.log("Left", data);
+			this.signalingRoomJoined = null;
 			// Any users we previously had in the room also "left" for us.
 			var leftUsers = _.keys(this.joinedUsers);
 			if (leftUsers.length) {
