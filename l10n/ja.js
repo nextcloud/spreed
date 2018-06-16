@@ -42,7 +42,7 @@ OC.L10N.register(
     "Not supported!" : "未対応",
     "Press ⌘-C to copy." : "⌘-C でコピーします。",
     "Press Ctrl-C to copy." : "Ctrl-C でコピーします。",
-    "Join a conversation or start a new one" : "会話を開始もしくは参加",
+    "Join a conversation or start a new one" : "会話に参加または開始する",
     "This conversation has ended" : "会話は終了しました",
     "Please enter the password for this call" : "この通話のパスワードを入力してください",
     "Password required" : "パスワードが必要です",
