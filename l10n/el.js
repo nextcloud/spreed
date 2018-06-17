@@ -80,6 +80,8 @@ OC.L10N.register(
     "Stop screensharing" : "Διακόψτε την κοινή χρήση της οθόνης",
     "STUN servers" : "Διακομιστές STUN",
     "TURN server" : "Διακομιστής TURN",
+    "Android app" : "Εφαρμογή Android",
+    "iOS app" : "Εφαρμογή iOS",
     "Video calls" : "Κλήσεις βίντεο",
     "New public call" : "Νέα δημόσια κλήση",
     "Looking great today! :)" : "Φαίνεσαι μια χαρά σήμερα! :)",
