@@ -425,7 +425,14 @@ class Notifier implements INotifier {
 			} else {
 				$notification
 					->setParsedSubject($l->t('A group call has started'))
-					->setRichSubject($l->t('A group call has started'));
+					->setRichSubject($l->t('A group call has started'), [
+						'call' => [
+							'type' => 'call',
+							'id' => $room->getId(),
+							'name' => $l->t('a conversation'),
+							'call-type' => $this->getRoomType($room),
+						],
+					]);
 			}
 
 		} else {
