@@ -219,6 +219,13 @@ class ChatContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @Then I see that the chat is shown in the sidebar
+	 */
+	public function iSeeThatTheChatIsShownInTheSidebar() {
+		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::chatView(TalkAppContext::sidebar()), 10)->isVisible());
+	}
+
+	/**
 	 * @Then I see that the message :number was sent by :author with the text :message
 	 */
 	public function iSeeThatTheMessageWasSentByWithTheText($number, $author, $message) {

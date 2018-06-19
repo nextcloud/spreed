@@ -26,6 +26,7 @@ use Behat\Behat\Context\Context;
 class ConversationInfoContext implements Context, ActorAwareInterface {
 
 	use ActorAware;
+	use ChatAncestorSetter;
 
 	/**
 	 * @return Locator
@@ -73,12 +74,48 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function joinCallButton() {
+		return Locator::forThe()->css(".join-call")->
+				descendantOf(self::conversationInfoContainer())->
+				describedAs("Join call button in conversation info");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function leaveCallButton() {
+		return Locator::forThe()->css(".leave-call")->
+				descendantOf(self::conversationInfoContainer())->
+				describedAs("Leave call button in conversation info");
+	}
+
+	/**
 	 * @Given I rename the conversation to :newConversationName
 	 */
 	public function iRenameTheConversationTo($newConversationName) {
 		$this->actor->find(self::conversationNameLabel(), 10)->click();
 		$this->actor->find(self::editConversationNameButton(), 2)->click();
 		$this->actor->find(self::conversationNameTextInput(), 2)->setValue($newConversationName . "\r");
+	}
+
+	/**
+	 * @Given I join the call
+	 */
+	public function iJoinTheCall() {
+		$this->actor->find(self::joinCallButton(), 10)->click();
+
+		$this->setChatAncestorForActor(TalkAppContext::sidebar(), $this->actor);
+	}
+
+	/**
+	 * @Given I leave the call
+	 */
+	public function iLeaveTheCall() {
+		$this->actor->find(self::leaveCallButton(), 10)->click();
+
+		$this->setChatAncestorForActor(TalkAppContext::mainView(), $this->actor);
 	}
 
 }

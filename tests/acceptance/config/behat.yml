@@ -17,6 +17,7 @@ default:
         - LoginPageContext
 
         # Talk app contexts
+        - CallContext
         - ChatContext
         - ConversationInfoContext
         - ConversationListContext
