@@ -20,7 +20,6 @@
 }
 
 .oca-spreedme-add-person {
-	width: 100%;
 	border: 1px solid $color-border;
 	border-radius: $border-radius;
 }
@@ -1079,7 +1078,7 @@ video {
 
 #app-sidebar #participantsTabView form,
 #app-sidebar #participantsTabView .participantWithList {
-	padding-right: 15px;
+	margin-right: 15px;
 }
 
 /**
