@@ -47,7 +47,7 @@
 								'<li>'+
 									'<button class="remove-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>'+t('spreed', 'Remove conversation from list')+'</span>'+
+										'<span>'+t('spreed', 'Leave conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{/if}}'+
