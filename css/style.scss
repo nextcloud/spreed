@@ -16,12 +16,13 @@
 	position: absolute;
 	width: 249px;
 	top: 0;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid $color-border;
 }
 
 .oca-spreedme-add-person {
 	width: 100%;
-	border: 1px solid #eee;
+	border: 1px solid $color-border;
+	border-radius: $border-radius;
 }
 
 .contactsmenu-popover li > a > img {
