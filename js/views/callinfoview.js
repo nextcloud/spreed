@@ -33,9 +33,6 @@
 		'{{#if showShareLink}}' +
 		'	<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
 		'{{/if}}' +
-		'{{#if isGuest}}' +
-		'	<div class="guest-name"></div>' +
-		'{{/if}}' +
 		'{{#if participantInCall}}' +
 		'	<div>' +
 		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
