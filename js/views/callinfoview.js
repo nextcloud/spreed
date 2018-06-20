@@ -30,9 +30,6 @@
 
 	var TEMPLATE =
 		'<div class="room-name"></div>' +
-		'{{#if showShareLink}}' +
-		'	<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
-		'{{/if}}' +
 		'<div class="call-controls-container">' +
 		'{{#if participantInCall}}' +
 		'	<div class="call-button">' +
@@ -66,6 +63,11 @@
 		'				</div>' +
 		'			</div>' +
 		'		{{/if}}' +
+		'	</div>' +
+		'{{/if}}' +
+		'{{#if showShareLink}}' +
+		'	<div class="share-link-options">' +
+		'		<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
 		'	</div>' +
 		'{{/if}}' +
 		'</div>';
