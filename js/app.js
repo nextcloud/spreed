@@ -818,7 +818,7 @@
 				avatar.imageplaceholder('?', guestName, 128);
 				avatar.css('background-color', '#b9b9b9');
 				if (this.displayedGuestNameHint === false) {
-					OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
+					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
 					this.displayedGuestNameHint = true;
 				}
 			}
