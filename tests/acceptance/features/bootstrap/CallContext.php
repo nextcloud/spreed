@@ -93,6 +93,42 @@ class CallContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function containerFor($user) {
+		return Locator::forThe()->xpath("//div[contains(concat(' ', normalize-space(@class), ' '), ' videoContainer ') and not(contains(concat(' ', normalize-space(@class), ' '), ' promoted '))]//div[contains(concat(' ', normalize-space(@class), ' '), ' nameIndicator ') and normalize-space() = '$user']/..")->
+				descendantOf(TalkAppContext::mainView())->
+				describedAs("Container for $user of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function videoFor($user) {
+		return Locator::forThe()->css("video")->
+				descendantOf(self::containerFor($user))->
+				describedAs("Video in the container for $user of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function avatarFor($user) {
+		return Locator::forThe()->css(".avatar-container")->
+				descendantOf(self::containerFor($user))->
+				describedAs("Avatar in the container for $user of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function audioNotAvailableIndicatorFor($user) {
+		return Locator::forThe()->css(".audio-off")->
+				descendantOf(self::containerFor($user))->
+				describedAs("Audio not available indicator in the container for $user of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function promotedContainer() {
 		return Locator::forThe()->css(".videoContainer.promoted")->
 				descendantOf(TalkAppContext::mainView())->
@@ -231,6 +267,37 @@ class CallContext implements Context, ActorAwareInterface {
 				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
 			PHPUnit_Framework_Assert::fail("The local avatar is still shown after $timeout seconds");
 		}
+	}
+
+	/**
+	 * @Then I see that the video for :user is not shown
+	 */
+	public function iSeeThatTheVideoForIsNotShown($user) {
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::videoFor($user),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The video for $user is still shown after $timeout seconds");
+		}
+	}
+
+	/**
+	 * @Then I see that the avatar for :user is shown
+	 */
+	public function iSeeThatTheAvatarForIsShown($user) {
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::avatarFor($user),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The avatar for $user was not shown yet after $timeout seconds");
+		}
+	}
+
+	/**
+	 * @Then I see that the audio for :user is not available
+	 */
+	public function iSeeThatTheAudioForIsNotAvailable($user) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::audioNotAvailableIndicatorFor($user), 10));
 	}
 
 	/**
