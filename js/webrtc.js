@@ -386,7 +386,9 @@ var spreedPeerConnectionTable = [];
 				spreedPeerConnectionTable[peer.id] = 0;
 
 				peer.pc.on('iceConnectionStateChange', function () {
+					var userId = spreedMappingTable[peer.id];
 					var avatar = $(newContainer).find('.avatar');
+					var nameIndicator = $(newContainer).find('.nameIndicator');
 					var mediaIndicator = $(newContainer).find('.mediaIndicator');
 					avatar.removeClass('icon-loading');
 					mediaIndicator.find('.iceFailedIndicator').addClass('not-failed');
@@ -400,6 +402,12 @@ var spreedPeerConnectionTable = [];
 						case 'completed': // on caller side
 							console.log('Connection established.');
 							avatar.css('opacity', '1');
+							// Ensure that the peer name is shown, as the name
+							// indicator for registered users without microphone
+							// nor camera will not be updated later.
+							if (userId && userId.length) {
+								nameIndicator.text(peer.nick);
+							}
 							// Send the current information about the video and microphone state
 							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 								OCA.SpreedMe.webrtc.emit('videoOff');
