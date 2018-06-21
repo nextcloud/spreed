@@ -1057,6 +1057,7 @@ video {
 
 #app-sidebar .participantWithList {
 	overflow-y: auto;
+	padding-top: 8px;
 }
 
 #app-sidebar .participantWithList .participant:last-child {
@@ -1079,15 +1080,6 @@ video {
 #app-sidebar #participantsTabView form,
 #app-sidebar #participantsTabView .participantWithList {
 	margin-right: 15px;
-}
-
-/**
- * Add a little margin so the participants do not "touch" the form when they are
- * scrolled, in the same way that the chat messages do not disappear directly
- * below the new message input.
- */
-#app-sidebar #participantsTabView form {
-	margin-bottom: 15px;
 }
 
 /**
