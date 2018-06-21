@@ -102,8 +102,8 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
-	public static function removeConversationFromListMenuItemFor($conversation) {
-		return self::conversationMenuItemFor($conversation, "Remove conversation from list");
+	public static function leaveConversationMenuItemFor($conversation) {
+		return self::conversationMenuItemFor($conversation, "Leave conversation");
 	}
 
 	/**
@@ -163,11 +163,11 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	}
 
 	/**
-	 * @Given I remove the :conversation conversation from the list
+	 * @Given I leave the :conversation conversation
 	 */
 	public function iRemoveTheConversationFromTheList($conversation) {
 		$this->actor->find(self::conversationMenuButtonFor($conversation), 10)->click();
-		$this->actor->find(self::removeConversationFromListMenuItemFor($conversation), 2)->click();
+		$this->actor->find(self::leaveConversationMenuItemFor($conversation), 2)->click();
 	}
 
 	/**
