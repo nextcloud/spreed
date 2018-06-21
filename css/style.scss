@@ -396,6 +396,7 @@ video {
 	max-height: 100% !important;
 	bottom: 0;
 	border-top-right-radius: 3px;
+	right: 0;
 }
 
 .videoContainer.promoted,
@@ -464,11 +465,13 @@ video {
 .participants-1 .videoView .nameIndicator,
 .participants-2 .videoView .nameIndicator {
 	left: initial;
+	right: 0;
 }
 
 .participants-1 .videoView .avatar-container,
 .participants-2 .videoView .avatar-container {
 	left: initial;
+	right: 0;
 }
 
 /* ellipsize name in 1on1 calls */
