@@ -353,10 +353,7 @@ class SignalingController extends OCSController {
 		$roomId = $roomRequest['roomid'];
 		$userId = $roomRequest['userid'];
 		$sessionId = $roomRequest['sessionid'];
-		$action = isset($roomRequest['action']) ? $roomRequest['action'] : 'join';
-		if (empty($action)) {
-			$action = 'join';
-		}
+		$action = !empty($roomRequest['action']) ? $roomRequest['action'] : 'join';
 
 		try {
 			$room = $this->manager->getRoomByToken($roomId);
