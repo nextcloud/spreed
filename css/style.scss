@@ -910,7 +910,7 @@ video {
 }
 
 .participantWithList .participant-entry-utils-menu-button button:hover,
-.participantWithList .participant-entry-utils-menu-button button:focus, {
+.participantWithList .participant-entry-utils-menu-button button:focus {
 	opacity: 1;
 }
 
@@ -1079,7 +1079,15 @@ video {
 	padding-bottom: 0;
 }
 
-#app-sidebar #participantsTabView form,
+
+/* Form needs margin, participant list needs padding
+ * So the form has margin from the right side, but the scroll bar of the
+ * participant list is directly on the right.
+ */
+#app-sidebar #participantsTabView form {
+	margin-right: 15px;
+}
+
 #app-sidebar #participantsTabView .participantWithList {
 	padding-right: 15px;
 }
