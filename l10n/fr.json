@@ -88,6 +88,7 @@
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Veuillez donner à votre navigateur l'accès à votre caméra et votre microphone pour pouvoir utiliser l'application.",
     "Disable video" : "Désactiver la vidéo",
     "Show screen" : "Montrer l'écran",
+    "Enable video" : "Activer la vidéo",
     "Access to microphone & camera is only possible with HTTPS" : "L'accès au microphone et à la caméra est seulement possible en HTTPS",
     "Please move your setup to HTTPS" : "Veuillez modifier votre installation afin d'utiliser HTTPS",
     "Access to microphone & camera was denied" : "L'accès au microphone et à la caméra a été refusé",
