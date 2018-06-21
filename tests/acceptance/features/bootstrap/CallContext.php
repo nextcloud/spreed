@@ -66,6 +66,15 @@ class CallContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function localAudioDisabledIndicator() {
+		return Locator::forThe()->css(".audio-disabled:not(.no-audio-available)")->
+				descendantOf(self::localContainer())->
+				describedAs("Audio disabled indicator in the local container of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function localAudioNotAvailableIndicator() {
 		return Locator::forThe()->css(".no-audio-available")->
 				descendantOf(self::localContainer())->
@@ -79,6 +88,15 @@ class CallContext implements Context, ActorAwareInterface {
 		return Locator::forThe()->css(".icon-video:not(.video-disabled):not(.no-video-available)")->
 				descendantOf(self::localContainer())->
 				describedAs("Video enabled indicator in the local container of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function localVideoDisabledIndicator() {
+		return Locator::forThe()->css(".icon-video-off:not(.no-video-available)")->
+				descendantOf(self::localContainer())->
+				describedAs("Video disabled indicator in the local container of the call in the main view");
 	}
 
 	/**
@@ -187,6 +205,15 @@ class CallContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function promotedAudioNotAvailableIndicator() {
+		return Locator::forThe()->css(".audio-off")->
+				descendantOf(self::promotedDummyContainer())->
+				describedAs("Audio not available indicator in the promoted dummy container of the call in the main view");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function promotedVideoEnabledIndicator() {
 		return Locator::forThe()->css(".icon-video")->
 				descendantOf(self::promotedDummyContainer())->
@@ -194,10 +221,68 @@ class CallContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function promotedVideoDisabledIndicator() {
+		return Locator::forThe()->css(".icon-video-off")->
+				descendantOf(self::promotedDummyContainer())->
+				describedAs("Video disabled indicator in the promoted dummy container of the call in the main view");
+	}
+
+	/**
+	 * @When I enable the local audio
+	 */
+	public function iEnableTheLocalAudio() {
+		$this->actor->find(self::localAudioDisabledIndicator(), 10)->click();
+	}
+
+	/**
+	 * @When I disable the local audio
+	 */
+	public function iDisableTheLocalAudio() {
+		$this->actor->find(self::localAudioEnabledIndicator(), 10)->click();
+	}
+
+	/**
+	 * @When I enable the local video
+	 */
+	public function iEnableTheLocalVideo() {
+		$this->actor->find(self::localVideoDisabledIndicator(), 10)->click();
+	}
+
+	/**
+	 * @When I disable the local video
+	 */
+	public function iDisableTheLocalVideo() {
+		$this->actor->find(self::localVideoEnabledIndicator(), 10)->click();
+	}
+
+	/**
+	 * @When I enable the promoted video
+	 */
+	public function iEnableThePromotedVideo() {
+		$this->actor->find(self::promotedVideoDisabledIndicator(), 10)->click();
+	}
+
+	/**
+	 * @When I disable the promoted video
+	 */
+	public function iDisableThePromotedVideo() {
+		$this->actor->find(self::promotedVideoEnabledIndicator(), 10)->click();
+	}
+
+	/**
 	 * @Then I see that the local audio is enabled
 	 */
 	public function iSeeThatTheLocalAudioIsEnabled() {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::localAudioEnabledIndicator(), 10));
+	}
+
+	/**
+	 * @Then I see that the local audio is disabled
+	 */
+	public function iSeeThatTheLocalAudioIsDisabled() {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::localAudioDisabledIndicator(), 10));
 	}
 
 	/**
@@ -212,6 +297,13 @@ class CallContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheLocalVideoIsEnabled() {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::localVideoEnabledIndicator(), 10));
+	}
+
+	/**
+	 * @Then I see that the local video is disabled
+	 */
+	public function iSeeThatTheLocalVideoIsDisabled() {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::localVideoDisabledIndicator(), 10));
 	}
 
 	/**
@@ -379,10 +471,24 @@ class CallContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @Then I see that the promoted audio is not available
+	 */
+	public function iSeeThatThePromotedAudioIsNotAvailable() {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::promotedAudioNotAvailableIndicator(), 10));
+	}
+
+	/**
 	 * @Then I see that the promoted video is enabled
 	 */
 	public function iSeeThatThePromotedVideoIsEnabled() {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::promotedVideoEnabledIndicator(), 10));
+	}
+
+	/**
+	 * @Then I see that the promoted video is disabled
+	 */
+	public function iSeeThatThePromotedVideoIsDisabled() {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::promotedVideoDisabledIndicator(), 10));
 	}
 
 }
