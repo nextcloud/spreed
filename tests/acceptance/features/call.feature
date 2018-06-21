@@ -439,3 +439,89 @@ Feature: call
     And I see that the promoted video is shown
     And I see that the promoted avatar is not shown
     And I see that the promoted user is "user0"
+
+  Scenario: send messages during a call
+    Given I act as "Karen with microphone"
+    And I am logged in as the admin
+    And I have opened the Talk app
+    And I create a one-to-one conversation with "user0"
+    And I see that the "user0" conversation is active
+    And I join the call
+    And I see that the chat is shown in the sidebar
+    And I act as "Jarvis with microphone"
+    And I am logged in
+    And I have opened the Talk app
+    And I open the "admin" conversation
+    And I see that the "admin" conversation is active
+    And I join the call
+    And I see that the chat is shown in the sidebar
+    When I act as "Karen with microphone"
+    And I send a new chat message with the text "Hello"
+    And I act as "Jarvis with microphone"
+    And I see that the message 1 was sent by "admin" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    Then I see that the message 1 was sent by "admin" with the text "Hello"
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I act as "Karen with microphone"
+    And I see that the message 1 was sent by "admin" with the text "Hello"
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
+
+  Scenario: start and join a call after sending messages
+    Given I act as "Karen with microphone"
+    And I am logged in as the admin
+    And I have opened the Talk app
+    And I create a one-to-one conversation with "user0"
+    And I see that the "user0" conversation is active
+    And I see that the chat is shown in the main view
+    And I act as "Jarvis with microphone"
+    And I am logged in
+    And I have opened the Talk app
+    And I open the "admin" conversation
+    And I see that the "admin" conversation is active
+    And I see that the chat is shown in the main view
+    And I act as "Karen with microphone"
+    And I send a new chat message with the text "Hello"
+    And I act as "Jarvis with microphone"
+    And I see that the message 1 was sent by "admin" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    When I join the call
+    And I see that the chat is shown in the sidebar
+    And I act as "Karen with microphone"
+    And I join the call
+    And I see that the chat is shown in the sidebar
+    Then I see that the message 1 was sent by "admin" with the text "Hello"
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I act as "Jarvis with microphone"
+    And I see that the message 1 was sent by "admin" with the text "Hello"
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
+
+  Scenario: leave a call after sending messages
+    Given I act as "Karen with microphone"
+    And I am logged in as the admin
+    And I have opened the Talk app
+    And I create a one-to-one conversation with "user0"
+    And I see that the "user0" conversation is active
+    And I join the call
+    And I see that the chat is shown in the sidebar
+    And I act as "Jarvis with microphone"
+    And I am logged in
+    And I have opened the Talk app
+    And I open the "admin" conversation
+    And I see that the "admin" conversation is active
+    And I join the call
+    And I see that the chat is shown in the sidebar
+    And I act as "Karen with microphone"
+    And I send a new chat message with the text "Hello"
+    And I act as "Jarvis with microphone"
+    And I see that the message 1 was sent by "admin" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    When I leave the call
+    And I see that the chat is shown in the main view
+    And I act as "Karen with microphone"
+    And I leave the call
+    And I see that the chat is shown in the main view
+    Then I see that the message 1 was sent by "admin" with the text "Hello"
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I act as "Jarvis with microphone"
+    And I see that the message 1 was sent by "admin" with the text "Hello"
+    And I see that the message 2 was sent by "user0" with the text "Hi!"
