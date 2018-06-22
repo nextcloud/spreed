@@ -33,9 +33,9 @@ OC.L10N.register(
     "Cancel" : "Atsisakyti",
     "Submit" : "Pateikti",
     "Rename" : "Pervadinti",
+    "Copy link" : "Kopijuoti nuorodą",
     "Conversation with {name}" : "Pokalbis su {name}",
     "Link copied!" : "Nuoroda nukopijuota!",
-    "Copy link" : "Kopijuoti nuorodą",
     "Send" : "Siųsti",
     "Guest" : "Svečias",
     "[Unknown user name]" : "[Nežinomas naudotojo vardas]",
@@ -45,7 +45,6 @@ OC.L10N.register(
     "Error occurred while sending message" : "Siunčiant žinutę, įvyko klaida",
     "Remove participant" : "Šalinti dalyvį",
     "Add participant …" : "Pridėti dalyvį …",
-    "Remove conversation from list" : "Šalinti pokalbį iš sąrašo",
     "Delete conversation" : "Ištrinti pokalbį",
     "Close" : "Užverti",
     "Waiting for camera and microphone permissions" : "Laukiama kameros ir mikrofono leidimų",
@@ -83,6 +82,7 @@ OC.L10N.register(
     "Fullscreen" : "Visas ekranas",
     "Mute audio" : "Nutildyti garsą",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris"
+    "STUN server" : "STUN serveris",
+    "Remove conversation from list" : "Šalinti pokalbį iš sąrašo"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
