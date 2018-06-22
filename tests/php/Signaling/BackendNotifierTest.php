@@ -277,6 +277,7 @@ class BackendNotifierTest extends \Test\TestCase {
                         'lastPing' => 0,
                         'sessionId' => $userSession,
                         'participantType' => Participant::USER,
+                        'userId' => $this->userId,
                     ],
                 ],
             ],
@@ -305,6 +306,7 @@ class BackendNotifierTest extends \Test\TestCase {
                         'lastPing' => 0,
                         'sessionId' => $userSession,
                         'participantType' => Participant::USER,
+                        'userId' => $this->userId,
                     ],
                     [
                         'inCall' => true,

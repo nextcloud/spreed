@@ -286,11 +286,11 @@ class BackendNotifier{
 		$users = [];
 		$participants = $room->getParticipants();
 		foreach ($participants['users'] as $userId => $participant) {
+			$participant['userId'] = $userId;
 			if ($participant['inCall']) {
 				$users[] = $participant;
 			}
 			if (in_array($participant['sessionId'], $sessionIds)) {
-				$participant['userId'] = $userId;
 				$changed[] = $participant;
 			}
 		}
