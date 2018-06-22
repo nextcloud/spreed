@@ -478,6 +478,7 @@ var spreedPeerConnectionTable = [];
 				var signaling = OCA.SpreedMe.app.signaling;
 				if (peer.id === webrtc.connection.getSessionid()) {
 					console.log("Not adding video for own peer", peer);
+					OCA.SpreedMe.videos.startSendingNick(peer);
 					return;
 				}
 
@@ -587,6 +588,40 @@ var spreedPeerConnectionTable = [];
 				peer.pc.on('PeerConnectionTrace', function (event) {
 					console.log('trace', event);
 				});
+			},
+			// The nick name below the avatar is distributed through the
+			// DataChannel of the PeerConnection and only sent once during
+			// establishment. For the MCU case, the sending PeerConnection
+			// is created once and then never changed when more participants
+			// join. For this, we periodically send the nick to all other
+			// participants through the sending PeerConnection.
+			//
+			// TODO: The name for the avatar should come from the participant
+			// list which already has all information and get rid of using the
+			// DataChannel for this.
+			startSendingNick: function(peer) {
+				if (!signaling.hasFeature("mcu")) {
+					return;
+				}
+
+				OCA.SpreedMe.videos.stopSendingNick(peer);
+				peer.nickInterval = setInterval(function() {
+					var currentGuestNick;
+					if (!OC.getCurrentUser()['uid']) {
+						currentGuestNick = localStorage.getItem("nick");
+					} else {
+						currentGuestNick = OC.getCurrentUser().displayName;
+					}
+					peer.sendDirectly('status', 'nickChanged', currentGuestNick);
+				}, 1000);
+			},
+			stopSendingNick: function(peer) {
+				if (!peer.nickInterval) {
+					return;
+				}
+
+				clearInterval(peer.nickInterval);
+				peer.nickInterval = null;
 			}
 		};
 
@@ -868,6 +903,7 @@ var spreedPeerConnectionTable = [];
 				clearInterval(peer.check_video_interval);
 				peer.check_video_interval = null;
 			}
+			OCA.SpreedMe.videos.stopSendingNick(peer);
 		}
 
 		function startPeerCheckMedia(peer, stream) {
