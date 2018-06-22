@@ -20,7 +20,6 @@
     "Talk" : "Hitzaldi",
     "Waiting for {participantName} to join the call …" : "{participantName}-ri itxoitzen deira gehitzeko",
     "Waiting for others to join the call …" : "Besteek deira gehitzera itxoiten...",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Eskubiko barran zure izena jar dezakezu, partehartzaileek hobeto identifikatzeko.",
     "Copy" : "Kopiatu",
     "Copied!" : "Kopiatuta!",
     "Not supported!" : "Euskarririk gabe!",
@@ -33,9 +32,9 @@
     "Submit" : "Bidali",
     "Leave call" : "Deia utzi",
     "Join call" : "Deira lotu",
+    "Share link" : "Esteka partekatu",
     "Change password" : "Pasahitza aldatu",
     "Set password" : "Pasahitza ezarri",
-    "Share link" : "Esteka partekatu",
     "Name" : "Izena",
     "Rename" : "Abizena",
     "Your name …" : "Zure izena ...",
@@ -118,6 +117,7 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "STUN server" : "STUN zerbitzaria",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
+    "You can set your name on the right sidebar so other participants can identify you better." : "Eskubiko barran zure izena jar dezakezu, partehartzaileek hobeto identifikatzeko."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

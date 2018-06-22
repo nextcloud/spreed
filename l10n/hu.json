@@ -21,7 +21,6 @@
     "Talk" : "Beszélgetés",
     "Waiting for {participantName} to join the call …" : "Várakozunk, hogy {participantName} csatlakozzon a híváshoz...",
     "Waiting for others to join the call …" : "Várakozunk, hogy mások csatlakozzanak a híváshoz...",
-    "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson.",
     "No Camera" : "Nincs kamera",
     "Enable screensharing" : "Képernyő megosztás engedélyezése",
     "Copy" : "Másol",
@@ -36,16 +35,16 @@
     "Submit" : "Küldés",
     "Leave call" : "Hívás elhagyása",
     "Join call" : "Csatlakozás híváshoz",
+    "Share link" : "Megosztás hivatkozással",
     "Change password" : "Jelszó módosítása",
     "Set password" : "Jelszó beállítása",
-    "Share link" : "Megosztás hivatkozással",
     "Name" : "Név",
     "Rename" : "Átnevez",
     "Your name …" : "A te neved …",
+    "Copy link" : "Hivatkozás másolása",
     "Conversation with {name}" : "Beszélgetés vele: {name}",
     "Error occurred while setting password" : "Hiba a jelszó beállításakor",
     "Link copied!" : "Hivatkozás másolva!",
-    "Copy link" : "Hivatkozás másolása",
     "You" : "Te",
     "No messages yet, start the conversation!" : "Még nincs üzenet, kezdeményezz beszélgetést!",
     "Send" : "Küld",
@@ -138,6 +137,7 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
     "STUN server" : "STUN kiszolgáló",
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
-    "TURN server shared secret" : "TURN szerver megosztott titok"
+    "TURN server shared secret" : "TURN szerver megosztott titok",
+    "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

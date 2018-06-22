@@ -21,7 +21,6 @@
     "Talk" : "通话",
     "Waiting for {participantName} to join the call …" : "等待 {participantName} 加入通话 …",
     "Waiting for others to join the call …" : "等待其他人加入通话 ...",
-    "You can set your name on the right sidebar so other participants can identify you better." : "你可以在右边的侧边栏上设置你的名字，这样其他参与者就能更好地识别你",
     "No Camera" : "没有摄像机",
     "Enable screensharing" : "启用屏幕共享",
     "Copy" : "复制",
@@ -36,15 +35,15 @@
     "Submit" : "提交",
     "Leave call" : "离开通话",
     "Join call" : "加入通话",
+    "Share link" : "分享链接",
     "Change password" : "修改密码",
     "Set password" : "设置密码",
-    "Share link" : "分享链接",
     "Name" : "姓名",
     "Rename" : "重命名",
     "Your name …" : "您的姓名 ...",
+    "Copy link" : "复制链接",
     "Conversation with {name}" : "与{name}通话",
     "Link copied!" : "已复制链接",
-    "Copy link" : "复制链接",
     "You" : "你",
     "No messages yet, start the conversation!" : "还没有消息，开始对话！",
     "Send" : "发送",
@@ -126,6 +125,7 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
     "STUN server" : "STUN 服务器",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
-    "TURN server shared secret" : "TURN服务器分享的秘密"
+    "TURN server shared secret" : "TURN服务器分享的秘密",
+    "You can set your name on the right sidebar so other participants can identify you better." : "你可以在右边的侧边栏上设置你的名字，这样其他参与者就能更好地识别你"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

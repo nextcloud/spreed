@@ -21,7 +21,6 @@
     "Talk" : "Prata",
     "Waiting for {participantName} to join the call …" : "Väntar på att {participantName} ansluter sig till samtalet ...",
     "Waiting for others to join the call …" : "Väntar på andra ansluter sig till samtalet ...",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är.",
     "No Camera" : "Ingen kamera",
     "Enable screensharing" : "Tillåt skärmdelning",
     "Copy" : "Kopiera",
@@ -36,16 +35,16 @@
     "Submit" : "Skicka",
     "Leave call" : "Lämna samtalet",
     "Join call" : "Gå med i samtal",
+    "Share link" : "Dela länk",
     "Change password" : "Byt lösenord",
     "Set password" : "Sätt lösenord",
-    "Share link" : "Dela länk",
     "Name" : "Namn",
     "Rename" : "Byt namn",
     "Your name …" : "Ditt namn ...",
+    "Copy link" : "Kopiera länk",
     "Conversation with {name}" : "Konversation med {name}",
     "Error occurred while setting password" : "Fel inträffade när lösenord sattes",
     "Link copied!" : "Länk kopierad!",
-    "Copy link" : "Kopiera länk",
     "You" : "Du",
     "No messages yet, start the conversation!" : "Inga meddelanden än, starta konversationen!",
     "Send" : "Skicka",
@@ -136,6 +135,7 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-servern krävs för att deltagare kan ansluta till samtal. TURN-servern säkerställer att anslutningar fungerar genom brandväggar.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
-    "TURN server shared secret" : "TURN server delade hemlighet"
+    "TURN server shared secret" : "TURN server delade hemlighet",
+    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
