@@ -606,13 +606,17 @@ var spreedPeerConnectionTable = [];
 
 				OCA.SpreedMe.videos.stopSendingNick(peer);
 				peer.nickInterval = setInterval(function() {
-					var currentGuestNick;
-					if (!OC.getCurrentUser()['uid']) {
-						currentGuestNick = localStorage.getItem("nick");
+					var payload;
+					var user = OC.getCurrentUser();
+					if (!user.uid) {
+						payload = localStorage.getItem("nick");
 					} else {
-						currentGuestNick = OC.getCurrentUser().displayName;
+						payload = {
+							"name": user.displayName,
+							"userid": user.uid
+						};
 					}
-					peer.sendDirectly('status', 'nickChanged', currentGuestNick);
+					peer.sendDirectly('status', "nickChanged", payload);
 				}, 1000);
 			},
 			stopSendingNick: function(peer) {
@@ -1040,8 +1044,13 @@ var spreedPeerConnectionTable = [];
 				} else if(data.type === 'videoOff') {
 					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 				} else if (data.type === 'nickChanged') {
-					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
-					app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
+					var payload = data.payload || '';
+					if (typeof(payload) === 'string') {
+						OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
+						app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
+					} else {
+						OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name: payload.name, userid: payload.userid});
+					}
 				}
 			} else if (label === 'hark') {
 				// Ignore messages from hark datachannel
@@ -1271,11 +1280,17 @@ var spreedPeerConnectionTable = [];
 				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
-				guestNamesTable[data.id] = data.name;
+				if (!data.userid) {
+					guestNamesTable[data.id] = data.name;
+				}
 			}
 			videoNameIndicator.text(data.name || t('spreed', 'Guest'));
-			videoAvatar.imageplaceholder('?', data.name, 128);
-			videoAvatar.css('background-color', '#b9b9b9');
+			if (data.userid) {
+				videoAvatar.avatar(data.userid, 128);
+			} else {
+				videoAvatar.imageplaceholder('?', data.name, 128);
+				videoAvatar.css('background-color', '#b9b9b9');
+			}
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
