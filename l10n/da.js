@@ -23,7 +23,6 @@ OC.L10N.register(
     "Talk" : "Snak",
     "Waiting for {participantName} to join the call …" : "Venter på {participantName} tilslutter sig opkaldet ...",
     "Waiting for others to join the call …" : "Venter på andre tilslutter sig opkaldet ...",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig.",
     "Enable screensharing" : "Slå skærmdeling til",
     "Copy" : "Kopiér",
     "Copied!" : "Kopieret!",
@@ -37,9 +36,9 @@ OC.L10N.register(
     "Submit" : "Indsend",
     "Leave call" : "Forlad opkald",
     "Join call" : "Deltag i opkaldet",
+    "Share link" : "Del link",
     "Change password" : "Skift password",
     "Set password" : "Sæt password",
-    "Share link" : "Del link",
     "Name" : "Navn",
     "Rename" : "Omdøb",
     "Your name …" : "Dit navn ...",
@@ -130,6 +129,7 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN serveren er nødvendig for at deltagerne kan forbinde til opkaldene. TURN serveren sikre at forbindelsen virker, selv gennem firewalls.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN serveren bliver brugt til at bestemme den offentlige IP adresse for deltagerne bagved en router.",
-    "TURN server shared secret" : "TURN server delte hemmelighed"
+    "TURN server shared secret" : "TURN server delte hemmelighed",
+    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig."
 },
 "nplurals=2; plural=(n != 1);");

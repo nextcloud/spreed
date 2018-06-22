@@ -21,7 +21,6 @@
     "Talk" : "Falar",
     "Waiting for {participantName} to join the call …" : "À espera que {nomeDoParticipante} se junte à chamada ..",
     "Waiting for others to join the call …" : "À espera que outros se juntem à chamada ..",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor.",
     "No Camera" : "Sem Câmera",
     "Enable screensharing" : "Activar partilha de ecrã",
     "Copy" : "Copiar",
@@ -36,16 +35,16 @@
     "Submit" : "Submeter",
     "Leave call" : "Sair da chamada",
     "Join call" : "Juntar-se à chamada",
+    "Share link" : "Partilhar ligação",
     "Change password" : "Alterar palavra-passe",
     "Set password" : "Definir palavra-passe",
-    "Share link" : "Partilhar ligação",
     "Name" : "Nome",
     "Rename" : "Renomear",
     "Your name …" : "O seu nome ..",
+    "Copy link" : "Copiar ligação",
     "Conversation with {name}" : "Conversa com {nome}",
     "Error occurred while setting password" : "Ocorreu um erro a definir a palavra-passe",
     "Link copied!" : "Ligação copiada!",
-    "Copy link" : "Copiar ligação",
     "You" : "Você",
     "No messages yet, start the conversation!" : "Ainda não tem mensagens, comece a conversa!",
     "Send" : "Enviar",
@@ -105,6 +104,7 @@
     "%s invited you to a group call" : "%s convidou-o para uma chamada de grupo",
     "{user} invited you to a group call" : "{utilizador} convidou-o para uma chamada de grupo",
     "Fullscreen" : "Ecrã completo",
-    "Mute audio" : "Silenciar áudio"
+    "Mute audio" : "Silenciar áudio",
+    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
