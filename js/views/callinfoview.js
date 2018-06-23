@@ -131,6 +131,9 @@
 			'change:hasPassword': function() {
 				this.renderWhenInactive();
 			},
+			'change:hasCall': function() {
+				this.renderWhenInactive();
+			},
 			'change:participantInCall': function() {
 				this.renderWhenInactive();
 			},
