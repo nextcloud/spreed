@@ -41,7 +41,6 @@ OC.L10N.register(
     "Set password" : "Establecer contraseña",
     "Name" : "Nombre",
     "Rename" : "Renombrar",
-    "Your name …" : "Tu nombre",
     "You" : "Tú",
     "No messages yet, start the conversation!" : "Aún no hay mensajes. ¡!Inicia la conversación!",
     "Send" : "Enviar",
@@ -132,6 +131,7 @@ OC.L10N.register(
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
     "TURN server shared secret" : "Secreto compartido del servidor TURN",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Puedes establecer tu nombre en la barra derecha para que otros participantes te puedan identificar más facilmente. "
+    "You can set your name on the right sidebar so other participants can identify you better." : "Puedes establecer tu nombre en la barra derecha para que otros participantes te puedan identificar más facilmente. ",
+    "Your name …" : "Tu nombre"
 },
 "nplurals=2; plural=(n != 1);");

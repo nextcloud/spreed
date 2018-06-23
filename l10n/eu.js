@@ -39,7 +39,6 @@ OC.L10N.register(
     "Set password" : "Pasahitza ezarri",
     "Name" : "Izena",
     "Rename" : "Abizena",
-    "Your name …" : "Zure izena ...",
     "You" : "Zu ",
     "No messages yet, start the conversation!" : "Ez dago mezurik, elkarrizketa hasi!",
     "Send" : "Bidali",
@@ -120,6 +119,7 @@ OC.L10N.register(
     "STUN server" : "STUN zerbitzaria",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
     "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Eskubiko barran zure izena jar dezakezu, partehartzaileek hobeto identifikatzeko."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Eskubiko barran zure izena jar dezakezu, partehartzaileek hobeto identifikatzeko.",
+    "Your name …" : "Zure izena ..."
 },
 "nplurals=2; plural=(n != 1);");

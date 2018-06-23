@@ -55,7 +55,6 @@ OC.L10N.register(
     "Name" : "Naam",
     "Conversation name" : "Gespreksnaam",
     "Rename" : "Hernoemen",
-    "Your name …" : "Je naam ...",
     "Copy link" : "Link kopiëren",
     "Conversation with {name}" : "Conversatie met {name}",
     "Error occurred while setting password" : "Fout bij instellen wachtwoord",
@@ -159,6 +158,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
     "TURN server shared secret" : "TURN server gedeeld geheim",
     "You can set your name on the right sidebar so other participants can identify you better." : "Je kan je naam in de rechter zijbalk instellen zodat de overige deelnemers je beter herkennen.",
+    "Your name …" : "Je naam ...",
     "Remove conversation from list" : "Verwijder gesprek uit overzicht"
 },
 "nplurals=2; plural=(n != 1);");

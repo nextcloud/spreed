@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "设置密码",
     "Name" : "姓名",
     "Rename" : "重命名",
-    "Your name …" : "您的姓名 ...",
     "Copy link" : "复制链接",
     "Conversation with {name}" : "与{name}通话",
     "Link copied!" : "已复制链接",
@@ -128,6 +127,7 @@ OC.L10N.register(
     "STUN server" : "STUN 服务器",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
     "TURN server shared secret" : "TURN服务器分享的秘密",
-    "You can set your name on the right sidebar so other participants can identify you better." : "你可以在右边的侧边栏上设置你的名字，这样其他参与者就能更好地识别你"
+    "You can set your name on the right sidebar so other participants can identify you better." : "你可以在右边的侧边栏上设置你的名字，这样其他参与者就能更好地识别你",
+    "Your name …" : "您的姓名 ..."
 },
 "nplurals=1; plural=0;");

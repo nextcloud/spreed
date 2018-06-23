@@ -54,7 +54,6 @@ OC.L10N.register(
     "Name" : "Jméno",
     "Conversation name" : "Název konverzace",
     "Rename" : "Přejmenovat",
-    "Your name …" : "Vaše jméno …",
     "Copy link" : "Zkopírovat odkaz",
     "Conversation with {name}" : "Konverzace s {name}",
     "Error occurred while setting password" : "Při nastavování hesla došlo k chybě",
@@ -153,6 +152,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
     "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
     "You can set your name on the right sidebar so other participants can identify you better." : "Na pravé straně si můžete nastavit jméno, aby vás ostatní účastníci mohli lépe identifikovat.",
+    "Your name …" : "Vaše jméno …",
     "Remove conversation from list" : "Odebrat konverzaci ze seznamu"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

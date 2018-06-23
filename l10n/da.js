@@ -41,7 +41,6 @@ OC.L10N.register(
     "Set password" : "Sæt password",
     "Name" : "Navn",
     "Rename" : "Omdøb",
-    "Your name …" : "Dit navn ...",
     "You" : "Dig",
     "No messages yet, start the conversation!" : "Ingen beskeder endnu, start samtalen!",
     "Send" : "Send",
@@ -130,6 +129,7 @@ OC.L10N.register(
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN serveren bliver brugt til at bestemme den offentlige IP adresse for deltagerne bagved en router.",
     "TURN server shared secret" : "TURN server delte hemmelighed",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig.",
+    "Your name …" : "Dit navn ..."
 },
 "nplurals=2; plural=(n != 1);");

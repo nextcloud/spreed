@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "Nastaviť heslo",
     "Conversation name" : "Názov rozhovoru",
     "Rename" : "Premenovať",
-    "Your name …" : "Vaše meno ...",
     "Copy link" : "Kopírovať odkaz",
     "Link copied!" : "Odkaz skopírovaný!",
     "You" : "Vy",
@@ -111,6 +110,7 @@ OC.L10N.register(
     "Smile in 3… 2… 1!" : "3.. 2.. 1.. Úsmev!",
     "Choose person …" : "Vyberte osobu ...",
     "STUN server" : "STUN server",
-    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN"
+    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
+    "Your name …" : "Vaše meno ..."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
