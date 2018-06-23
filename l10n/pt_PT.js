@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "Definir palavra-passe",
     "Name" : "Nome",
     "Rename" : "Renomear",
-    "Your name …" : "O seu nome ..",
     "Copy link" : "Copiar ligação",
     "Conversation with {name}" : "Conversa com {nome}",
     "Error occurred while setting password" : "Ocorreu um erro a definir a palavra-passe",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "{user} invited you to a group call" : "{utilizador} convidou-o para uma chamada de grupo",
     "Fullscreen" : "Ecrã completo",
     "Mute audio" : "Silenciar áudio",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor.",
+    "Your name …" : "O seu nome .."
 },
 "nplurals=2; plural=(n != 1);");

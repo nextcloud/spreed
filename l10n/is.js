@@ -55,7 +55,6 @@ OC.L10N.register(
     "Name" : "Nafn",
     "Conversation name" : "Heiti samtals",
     "Rename" : "Endurnefna",
-    "Your name …" : "Nafnið þitt …",
     "Copy link" : "Afrita tengil",
     "Conversation with {name}" : "Samtal við {name}",
     "Error occurred while setting password" : "Villa kom upp við að stilla lykilorð",
@@ -152,6 +151,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
     "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni",
     "You can set your name on the right sidebar so other participants can identify you better." : "Þú getur stillt þetta þannig að nafnið þitt birtist efst á hægra hliðarspjaldi svo að aðrir þáttakendur eigi auðveldara með að þekkja þig.",
+    "Your name …" : "Nafnið þitt …",
     "Remove conversation from list" : "Fjarlægja samtal af lista"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

@@ -54,7 +54,6 @@ OC.L10N.register(
     "Name" : "Nimi",
     "Conversation name" : "Keskustelun nimi",
     "Rename" : "Nimeä uudelleen",
-    "Your name …" : "Nimesi…",
     "Copy link" : "Kopioi linkki",
     "Conversation with {name}" : "Keskustelu henkilön {name} kanssa",
     "Error occurred while setting password" : "Virhe salasanaa asettaessa",
@@ -149,6 +148,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille.",
     "TURN server shared secret" : "TURN-palvelimen jaettu salausavain",
     "You can set your name on the right sidebar so other participants can identify you better." : "Voit asettaa nimesi oikeassa sivupalkissa, jolloin muut osallistujat tunnistavat sinut aiempaa paremmin.",
+    "Your name …" : "Nimesi…",
     "Remove conversation from list" : "Poista keskustelu luettelosta"
 },
 "nplurals=2; plural=(n != 1);");

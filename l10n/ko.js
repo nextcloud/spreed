@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "암호 설정",
     "Name" : "이름",
     "Rename" : "이름 바꾸기",
-    "Your name …" : "내 이름…",
     "Copy link" : "링크 복사",
     "Conversation with {name}" : "{name} 님과 대화",
     "Link copied!" : "링크 복사됨!",
@@ -139,6 +138,7 @@ OC.L10N.register(
     "STUN server" : "STUN 서버",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
     "TURN server shared secret" : "TURN 서버 공유 비밀 키",
-    "You can set your name on the right sidebar so other participants can identify you better." : "오른쪽의 사이드바에서 이름을 입력하여 다른 참가자들과 구별할 수 있습니다."
+    "You can set your name on the right sidebar so other participants can identify you better." : "오른쪽의 사이드바에서 이름을 입력하여 다른 참가자들과 구별할 수 있습니다.",
+    "Your name …" : "내 이름…"
 },
 "nplurals=1; plural=0;");

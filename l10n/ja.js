@@ -56,7 +56,6 @@ OC.L10N.register(
     "Name" : "名前",
     "Conversation name" : "会話の名前",
     "Rename" : "名前変更",
-    "Your name …" : "名前 …",
     "Copy link" : "リンクをコピー",
     "Conversation with {name}" : "{name} と会話",
     "Error occurred while setting password" : "パスワード設定中にエラーが発生しました",
@@ -160,6 +159,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。",
     "TURN server shared secret" : "TURNサーバーの共有秘密鍵",
     "You can set your name on the right sidebar so other participants can identify you better." : "右側のサイドバーに自身の参加名を設定することで他の参加者があなたを認識しやすくできます。",
+    "Your name …" : "名前 …",
     "Remove conversation from list" : "会話をリストから削除"
 },
 "nplurals=1; plural=0;");

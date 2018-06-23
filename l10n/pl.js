@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "Ustaw hasło",
     "Name" : "Nazwa",
     "Rename" : "Zmień nazwę",
-    "Your name …" : "Twoje imię...",
     "Copy link" : "Kopiuj odnośnik",
     "Conversation with {name}" : "Rozmowa z {name}",
     "Error occurred while setting password" : "Wystąpił błąd podczas ustawiania hasła",
@@ -140,6 +139,7 @@ OC.L10N.register(
     "STUN server" : "STUN serwer",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
     "TURN server shared secret" : "Wpółdzielony kod serwera TURN",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Możesz ustawić swoją nazwę na prawym pasku bocznym, aby inni uczestnicy mogli Cię lepiej zidentyfikować."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Możesz ustawić swoją nazwę na prawym pasku bocznym, aby inni uczestnicy mogli Cię lepiej zidentyfikować.",
+    "Your name …" : "Twoje imię..."
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

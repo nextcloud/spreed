@@ -45,7 +45,6 @@ OC.L10N.register(
     "Set password" : "Ορισμός συνθηματικού",
     "Name" : "Όνομα",
     "Rename" : "Μετονομασία",
-    "Your name …" : "Το όνομά σας …",
     "Copy link" : "Αντιγραφή συνδέσμου",
     "You" : "Εσείς",
     "New message …" : "Νέο μήνυμα …",
@@ -103,6 +102,7 @@ OC.L10N.register(
     "Mute audio" : "Σίγαση ήχου",
     "Smile in 3… 2… 1!" : "Χαμογελάστε σε 3… 2… 1!",
     "Choose person …" : "Επιλογή ατόμου ...",
-    "STUN server" : "Διακομιστής STUN"
+    "STUN server" : "Διακομιστής STUN",
+    "Your name …" : "Το όνομά σας …"
 },
 "nplurals=2; plural=(n != 1);");
