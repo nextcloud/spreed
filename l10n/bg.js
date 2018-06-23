@@ -23,7 +23,6 @@ OC.L10N.register(
     "Share link" : "Сподели връзка",
     "Name" : "Име",
     "Rename" : "Преименуване",
-    "Your name …" : "Вашето име ...",
     "Copy link" : "Копирай връзката",
     "You" : "Ти",
     "Send" : "Изпрати",
@@ -48,6 +47,7 @@ OC.L10N.register(
     "Mute audio" : "Спиране на звука",
     "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
-    "STUN server" : "STUN сървър"
+    "STUN server" : "STUN сървър",
+    "Your name …" : "Вашето име ..."
 },
 "nplurals=2; plural=(n != 1);");

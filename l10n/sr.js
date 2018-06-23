@@ -56,7 +56,6 @@ OC.L10N.register(
     "Name" : "Име",
     "Conversation name" : "Назив разговора",
     "Rename" : "Преименуј",
-    "Your name …" : "Ваше име…",
     "Copy link" : "Копирај везу",
     "Conversation with {name}" : "Разговор са корисником {name}",
     "Error occurred while setting password" : "Грешка приликом постављања лозинке",
@@ -160,6 +159,7 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера.",
     "TURN server shared secret" : "Дељена тајна TURN сервера",
     "You can set your name on the right sidebar so other participants can identify you better." : "Можете подесити име у траци са десне стране, да се боље представите учесницима разговора.",
+    "Your name …" : "Ваше име…",
     "Remove conversation from list" : "Уклони разговор са списка"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

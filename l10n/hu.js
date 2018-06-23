@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "Jelszó beállítása",
     "Name" : "Név",
     "Rename" : "Átnevez",
-    "Your name …" : "A te neved …",
     "Copy link" : "Hivatkozás másolása",
     "Conversation with {name}" : "Beszélgetés vele: {name}",
     "Error occurred while setting password" : "Hiba a jelszó beállításakor",
@@ -140,6 +139,7 @@ OC.L10N.register(
     "STUN server" : "STUN kiszolgáló",
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
     "TURN server shared secret" : "TURN szerver megosztott titok",
-    "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson."
+    "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson.",
+    "Your name …" : "A te neved …"
 },
 "nplurals=2; plural=(n != 1);");

@@ -42,7 +42,6 @@ OC.L10N.register(
     "Set password" : "Sätt lösenord",
     "Name" : "Namn",
     "Rename" : "Byt namn",
-    "Your name …" : "Ditt namn ...",
     "Copy link" : "Kopiera länk",
     "Conversation with {name}" : "Konversation med {name}",
     "Error occurred while setting password" : "Fel inträffade när lösenord sattes",
@@ -138,6 +137,7 @@ OC.L10N.register(
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
     "TURN server shared secret" : "TURN server delade hemlighet",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är.",
+    "Your name …" : "Ditt namn ..."
 },
 "nplurals=2; plural=(n != 1);");
