@@ -31,15 +31,17 @@
 	var TEMPLATE =
 		'<div class="room-name"></div>' +
 		'<div class="call-controls-container">' +
-		'{{#if participantInCall}}' +
 		'	<div class="call-button">' +
+		'	{{#if participantInCall}}' +
 		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
+		'	{{else}}' +
+		'		{{#if hasCall}}' +
+		'		<button class="join-call call-ongoing primary">' + t('spreed', 'Join call') + '</button>' +
+		'		{{else}}' +
+		'		<button class="join-call primary">' + t('spreed', 'Start call') + '</button>' +
+		'		{{/if}}' +
+		'	{{/if}}' +
 		'	</div>' +
-		'{{else}}' +
-		'	<div class="call-button">' +
-		'		<button class="join-call primary">' + t('spreed', 'Join call') + '</button>' +
-		'	</div>' +
-		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div class="share-link-options">' +
 		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
@@ -127,6 +129,9 @@
 
 		modelEvents: {
 			'change:hasPassword': function() {
+				this.renderWhenInactive();
+			},
+			'change:hasCall': function() {
 				this.renderWhenInactive();
 			},
 			'change:participantInCall': function() {
