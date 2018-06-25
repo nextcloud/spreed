@@ -27,8 +27,11 @@ default:
     Behat\MinkExtension:
       sessions:
         default:
-          selenium2: ~
+          selenium2:
+            wd_host: %selenium.server%
         John:
-          selenium2: ~
+          selenium2:
+            wd_host: %selenium.server%
         Jane:
-          selenium2: ~
+          selenium2:
+            wd_host: %selenium.server%
