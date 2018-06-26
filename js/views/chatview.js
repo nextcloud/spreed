@@ -341,6 +341,13 @@
 				altDate: OC.Util.formatDate(timestamp),
 				formattedMessage: formattedMessage
 			});
+
+            try {
+                data.formattedMessage = decodeURIComponent(JSON.parse('"' + formattedMessage.replace(/\"/g, '\\"') + '"'))
+            } catch(e) {
+                // Do nothing as we already have a formatted message message
+            }
+
 			return data;
 		},
 
@@ -624,4 +631,7 @@
 
 	OCA.SpreedMe.Views.ChatView = ChatView;
 
+    $(function(){
+        $('').Emoji();
+    });
 })(OCA, OC, OCP, Marionette, Handlebars, autosize, moment);
