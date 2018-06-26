@@ -630,8 +630,4 @@
 	});
 
 	OCA.SpreedMe.Views.ChatView = ChatView;
-
-    $(function(){
-        $('').Emoji();
-    });
 })(OCA, OC, OCP, Marionette, Handlebars, autosize, moment);
