@@ -17,6 +17,12 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
+### Supported Browsers
+
+Firefox | Chrome/Chromium | Edge | Safari | Opera
+---|---|---|---|---
+✔️ 52 or later | ✔️ 49 or later | ⏳ [Planned](https://github.com/nextcloud/spreed/issues/687) | ⏳ [Planned](https://github.com/nextcloud/spreed/issues/687) | ❌ Not planned yet
+
 
 ### Installing
 
