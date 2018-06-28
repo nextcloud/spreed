@@ -23,6 +23,7 @@ OC.L10N.register(
     "Talk" : "Rozmowa",
     "Waiting for {participantName} to join the call …" : "Oczekiwanie na {participantName} by przyłączyć się do rozmowy...",
     "Waiting for others to join the call …" : "Czekamy na innych aby przyłączyć się do rozmowy...",
+    "Fullscreen (f)" : "Pełny ekran (f)",
     "No Camera" : "Brak kamery",
     "Enable screensharing" : "Włącz współdzielenie ekranu",
     "Copy" : "Kopiuj",
