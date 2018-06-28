@@ -91,7 +91,7 @@
 				return guestA - guestB;
 			}
 
-			return modelA.get('displayName') > modelB.get('displayName');
+			return modelA.get('displayName').localeCompare(modelB.get('displayName'));
 		}
 	});
 
