@@ -51,6 +51,7 @@ OC.L10N.register(
     "Submit" : "Envoyer",
     "Leave call" : "Quitter l'appel",
     "Join call" : "Rejoindre l'appel",
+    "Start call" : "Commencer l'appel",
     "Share link" : "Partager le lien",
     "Change password" : "Changer le mot de passe",
     "Set password" : "Saisissez le mot de passe",
