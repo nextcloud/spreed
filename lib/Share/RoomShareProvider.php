@@ -83,6 +83,7 @@ class RoomShareProvider implements IShareProvider {
 
 	/**
 	 * Unshare a file from self as recipient.
+	 *
 	 * If a user unshares a room share from their self then the original room
 	 * share should still exist.
 	 *
@@ -107,8 +108,9 @@ class RoomShareProvider implements IShareProvider {
 
 	/**
 	 * Move a share as a recipient.
+	 *
 	 * This is updating the share target. Thus the mount point of the recipient.
-	 * This may require special handling. If a user moves a group share
+	 * This may require special handling. If a user moves a room share
 	 * the target should only be changed for them.
 	 *
 	 * @param IShare $share

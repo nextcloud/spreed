@@ -61,6 +61,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array */
 	protected $createdGroups = [];
 
+	public static function getTokenForIdentifier(string $identifier) {
+		return self::$identifierToToken[$identifier];
+	}
+
 	/**
 	 * FeatureContext constructor.
 	 */
@@ -73,6 +77,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @BeforeScenario
 	 */
 	public function setUp() {
+		self::$identifierToToken = [];
+		self::$tokenToIdentifier = [];
+		self::$sessionIdToUser = [];
+
 		$this->createdUsers = [];
 		$this->createdGroups = [];
 	}
