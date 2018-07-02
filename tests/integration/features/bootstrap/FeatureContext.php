@@ -55,12 +55,38 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var string */
 	protected $lastEtag;
 
+	/** @var array */
+	protected $createdUsers = [];
+
+	/** @var array */
+	protected $createdGroups = [];
+
 	/**
 	 * FeatureContext constructor.
 	 */
 	public function __construct() {
 		$this->cookieJars = [];
 		$this->baseUrl = getenv('TEST_SERVER_URL');
+	}
+
+	/**
+	 * @BeforeScenario
+	 */
+	public function setUp() {
+		$this->createdUsers = [];
+		$this->createdGroups = [];
+	}
+
+	/**
+	 * @AfterScenario
+	 */
+	public function tearDown() {
+		foreach ($this->createdUsers as $user) {
+			$this->deleteUser($user);
+		}
+		foreach ($this->createdGroups as $group) {
+			$this->deleteGroup($group);
+		}
 	}
 
 	/**
@@ -594,6 +620,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			],
 		];
 		$client->send($client->createRequest('GET', $userProvisioningUrl . '/' . $user, $options2));
+
+		$this->createdUsers[] = $user;
+	}
+
+	private function deleteUser($user) {
+		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users/' . $user;
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+		$client->send($client->createRequest('DELETE', $userProvisioningUrl, $options));
+
+		unset($this->createdUsers[array_search($user, $this->createdUsers)]);
 	}
 
 	private function setUserDisplayName($user) {
@@ -650,6 +692,22 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			],
 		];
 		$client->send($client->createRequest('POST', $userProvisioningUrl, $options));
+
+		$this->createdGroups[] = $group;
+	}
+
+	private function deleteGroup($group) {
+		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/groups/' . $group;
+		$client = new Client();
+		$options = [
+			'auth' => ['admin', 'admin'],
+			'headers' => [
+				'OCS-APIREQUEST' => 'true',
+			],
+		];
+		$client->send($client->createRequest('DELETE', $userProvisioningUrl, $options));
+
+		unset($this->createdGroups[array_search($group, $this->createdGroups)]);
 	}
 
 	/**
