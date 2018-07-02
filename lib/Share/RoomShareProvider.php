@@ -388,7 +388,22 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws ShareNotFound
 	 */
 	public function getShareById($id, $recipientId = null) {
-		throw new \Exception("Not implemented");
+		$qb = $this->dbConnection->getQueryBuilder();
+
+		$qb->select('*')
+			->from('share')
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)))
+			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)));
+
+		$cursor = $qb->execute();
+		$data = $cursor->fetch();
+		$cursor->closeCursor();
+
+		if ($data === false) {
+			throw new ShareNotFound();
+		}
+
+		return $this->createShareObject($data);
 	}
 
 	/**
