@@ -24,10 +24,18 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Share;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Manager;
 use OCP\Files\Folder;
+use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\IUserManager;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
 
@@ -43,6 +51,50 @@ use OCP\Share\IShareProvider;
  */
 class RoomShareProvider implements IShareProvider {
 
+	/** @var IDBConnection */
+	private $dbConnection;
+
+	/** @var IUserManager */
+	private $userManager;
+
+	/** @var IShareManager */
+	private $shareManager;
+
+	/** @var IRootFolder */
+	private $rootFolder;
+
+	/** @var IL10N */
+	private $l;
+
+	/** @var Manager */
+	private $manager;
+
+	/**
+	 * RoomShareProvider constructor.
+	 *
+	 * @param IDBConnection $connection
+	 * @param IUserManager $userManager
+	 * @param IShareManager $shareManager
+	 * @param IRootFolder $rootFolder
+	 * @param IL10N $l10n
+	 * @param Manager $manager
+	 */
+	public function __construct(
+			IDBConnection $connection,
+			IUserManager $userManager,
+			IShareManager $shareManager,
+			IRootFolder $rootFolder,
+			IL10N $l,
+			Manager $manager
+	) {
+		$this->dbConnection = $connection;
+		$this->userManager = $userManager;
+		$this->shareManager = $shareManager;
+		$this->rootFolder = $rootFolder;
+		$this->l = $l;
+		$this->manager = $manager;
+	}
+
 	/**
 	 * Return the identifier of this provider.
 	 *
@@ -57,9 +109,150 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @param IShare $share
 	 * @return IShare The share object
+	 * @throws GenericShareException
 	 */
 	public function create(IShare $share) {
-		throw new \Exception("Not implemented");
+		try {
+			$room = $this->manager->getRoomByToken($share->getSharedWith());
+		} catch (RoomNotFoundException $e) {
+			throw new GenericShareException("Room not found", $this->l->t('Conversation not found'), 404);
+		}
+
+		try {
+			$room->getParticipant($share->getSharedBy());
+		} catch (ParticipantNotFoundException $e) {
+			// If the sharer is not a participant of the room even if the room
+			// exists the error is still "Room not found".
+			throw new GenericShareException("Room not found", $this->l->t('Conversation not found'), 404);
+		}
+
+		$existingShares = $this->getSharesByPath($share->getNode());
+		foreach ($existingShares as $existingShare) {
+			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
+				throw new GenericShareException("Already shared", $this->l->t('Path is already shared with this room'), 403);
+			}
+		}
+
+		$shareId = $this->addShareToDB(
+			$share->getSharedWith(),
+			$share->getSharedBy(),
+			$share->getShareOwner(),
+			$share->getNodeType(),
+			$share->getNodeId(),
+			$share->getTarget(),
+			$share->getPermissions(),
+			$share->getExpirationDate()
+		);
+
+		$data = $this->getRawShare($shareId);
+
+		return $this->createShareObject($data);
+	}
+
+	/**
+	 * Add share to the database and return the ID
+	 *
+	 * @param string $shareWith
+	 * @param string $sharedBy
+	 * @param string $shareOwner
+	 * @param string $itemType
+	 * @param int $itemSource
+	 * @param string $target
+	 * @param int $permissions
+	 * @param \DateTime|null $expirationDate
+	 * @return int
+	 */
+	private function addShareToDB(
+			string $shareWith,
+			string $sharedBy,
+			string $shareOwner,
+			string $itemType,
+			int $itemSource,
+			string $target,
+			int $permissions,
+			\DateTime $expirationDate = null
+	): int {
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->insert('share')
+			->setValue('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM))
+			->setValue('share_with', $qb->createNamedParameter($shareWith))
+			->setValue('uid_initiator', $qb->createNamedParameter($sharedBy))
+			->setValue('uid_owner', $qb->createNamedParameter($shareOwner))
+			->setValue('item_type', $qb->createNamedParameter($itemType))
+			->setValue('item_source', $qb->createNamedParameter($itemSource))
+			->setValue('file_source', $qb->createNamedParameter($itemSource))
+			->setValue('file_target', $qb->createNamedParameter($target))
+			->setValue('permissions', $qb->createNamedParameter($permissions))
+			->setValue('stime', $qb->createNamedParameter(time()));
+
+		if ($expirationDate !== null) {
+			$qb->setValue('expiration', $qb->createNamedParameter($expirationDate, 'datetime'));
+		}
+
+		$qb->execute();
+		$id = $qb->getLastInsertId();
+
+		return (int)$id;
+	}
+
+	/**
+	 * Get database row of the given share
+	 *
+	 * @param int $id
+	 * @return array
+	 * @throws ShareNotFound
+	 */
+	private function getRawShare(int $id) {
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('*')
+			->from('share')
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)));
+
+		$cursor = $qb->execute();
+		$data = $cursor->fetch();
+		$cursor->closeCursor();
+
+		if ($data === false) {
+			throw new ShareNotFound();
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Create a share object from a database row
+	 *
+	 * @param array $data
+	 * @return IShare
+	 */
+	private function createShareObject($data) {
+		$share = $this->shareManager->newShare();
+		$share->setId((int)$data['id'])
+			->setShareType((int)$data['share_type'])
+			->setPermissions((int)$data['permissions'])
+			->setTarget($data['file_target']);
+
+		$shareTime = new \DateTime();
+		$shareTime->setTimestamp((int)$data['stime']);
+		$share->setShareTime($shareTime);
+		$share->setSharedWith($data['share_with']);
+
+		$share->setSharedBy($data['uid_initiator']);
+		$share->setShareOwner($data['uid_owner']);
+
+		if ($data['expiration'] !== null) {
+			$expiration = \DateTime::createFromFormat('Y-m-d H:i:s', $data['expiration']);
+			if ($expiration !== false) {
+				$share->setExpirationDate($expiration);
+			}
+		}
+
+		$share->setNodeId((int)$data['file_source']);
+		$share->setNodeType($data['item_type']);
+
+		$share->setProviderId($this->identifier());
+
+		return $share;
 	}
 
 	/**
@@ -167,7 +360,21 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharesByPath(Node $path) {
-		throw new \Exception("Not implemented");
+		$qb = $this->dbConnection->getQueryBuilder();
+
+		$cursor = $qb->select('*')
+			->from('share')
+			->andWhere($qb->expr()->eq('file_source', $qb->createNamedParameter($path->getId())))
+			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->execute();
+
+		$shares = [];
+		while ($data = $cursor->fetch()) {
+			$shares[] = $this->createShareObject($data);
+		}
+		$cursor->closeCursor();
+
+		return $shares;
 	}
 
 	/**
