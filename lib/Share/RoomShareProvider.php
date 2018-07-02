@@ -338,7 +338,45 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharesBy($userId, $shareType, $node, $reshares, $limit, $offset) {
-		throw new \Exception("Not implemented");
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('*')
+			->from('share');
+
+		$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)));
+
+		/**
+		 * Reshares for this user are shares where they are the owner.
+		 */
+		if ($reshares === false) {
+			$qb->andWhere($qb->expr()->eq('uid_initiator', $qb->createNamedParameter($userId)));
+		} else {
+			$qb->andWhere(
+				$qb->expr()->orX(
+					$qb->expr()->eq('uid_owner', $qb->createNamedParameter($userId)),
+					$qb->expr()->eq('uid_initiator', $qb->createNamedParameter($userId))
+				)
+			);
+		}
+
+		if ($node !== null) {
+			$qb->andWhere($qb->expr()->eq('file_source', $qb->createNamedParameter($node->getId())));
+		}
+
+		if ($limit !== -1) {
+			$qb->setMaxResults($limit);
+		}
+
+		$qb->setFirstResult($offset);
+		$qb->orderBy('id');
+
+		$cursor = $qb->execute();
+		$shares = [];
+		while ($data = $cursor->fetch()) {
+			$shares[] = $this->createShareObject($data);
+		}
+		$cursor->closeCursor();
+
+		return $shares;
 	}
 
 	/**
