@@ -27,6 +27,8 @@ namespace OCA\Spreed\Share;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -441,7 +443,60 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare[]
 	 */
 	public function getSharedWith($userId, $shareType, $node, $limit, $offset) {
-		throw new \Exception("Not implemented");
+		$allRooms = $this->manager->getRoomsForParticipant($userId);
+
+		/** @var IShare[] $shares */
+		$shares = [];
+
+		$start = 0;
+		while (true) {
+			$rooms = array_slice($allRooms, $start, 100);
+			$start += 100;
+
+			if ($rooms === []) {
+				break;
+			}
+
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->select('*')
+				->from('share')
+				->orderBy('id')
+				->setFirstResult(0);
+
+			if ($limit !== -1) {
+				$qb->setMaxResults($limit);
+			}
+
+			// Filter by node if provided
+			if ($node !== null) {
+				$qb->andWhere($qb->expr()->eq('file_source', $qb->createNamedParameter($node->getId())));
+			}
+
+			$rooms = array_map(function(Room $room) { return $room->getToken(); }, $rooms);
+
+			$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+				->andWhere($qb->expr()->in('share_with', $qb->createNamedParameter(
+					$rooms,
+					IQueryBuilder::PARAM_STR_ARRAY
+				)))
+				->andWhere($qb->expr()->orX(
+					$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
+					$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
+				));
+
+			$cursor = $qb->execute();
+			while ($data = $cursor->fetch()) {
+				if ($offset > 0) {
+					$offset--;
+					continue;
+				}
+
+				$shares[] = $this->createShareObject($data);
+			}
+			$cursor->closeCursor();
+		}
+
+		return $shares;
 	}
 
 	/**
