@@ -44,6 +44,8 @@ Feature: create
     When user "participant1" shares "welcome.txt" with room "one-to-one room not invited to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
+    And user "participant1" gets all shares
+    And the list of returned shares has 0 shares
 
   Scenario: create share with an owned group room
     Given user "participant1" creates room "own group room"
@@ -84,6 +86,8 @@ Feature: create
     When user "participant1" shares "welcome.txt" with room "group room not invited to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
+    And user "participant1" gets all shares
+    And the list of returned shares has 0 shares
 
   Scenario: create share with a group room no longer invited to
     Given user "participant2" creates room "group room no longer invited to"
@@ -93,6 +97,8 @@ Feature: create
     When user "participant1" shares "welcome.txt" with room "group room no longer invited to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
+    And user "participant1" gets all shares
+    And the list of returned shares has 0 shares
 
   Scenario: create share with an owned public room
     Given user "participant1" creates room "own public room"
@@ -150,6 +156,8 @@ Feature: create
     When user "participant1" shares "welcome.txt" with room "public room not joined to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
+    And user "participant1" gets all shares
+    And the list of returned shares has 0 shares
 
   Scenario: create share with a public room no longer joined to
     Given user "participant2" creates room "public room no longer joined to"
@@ -159,6 +167,8 @@ Feature: create
     When user "participant1" shares "welcome.txt" with room "public room no longer joined to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
+    And user "participant1" gets all shares
+    And the list of returned shares has 0 shares
 
 
 
@@ -188,6 +198,8 @@ Feature: create
       | expireDate | invalid date |
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
+    And user "participant1" gets all shares
+    And the list of returned shares has 0 shares
 
   Scenario: create share with specific permissions
     Given user "participant1" creates room "group room"
@@ -228,6 +240,28 @@ Feature: create
       | file_target            | /welcome.txt |
       | share_with             | another group room |
       | share_with_displayname | Another group room |
+    And user "participant1" gets all shares
+    And the list of returned shares has 2 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+    And share 1 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | another group room |
+      | share_with_displayname | Another group room |
 
   Scenario: create share again with same room
     Given user "participant1" creates room "group room"
@@ -237,6 +271,18 @@ Feature: create
     When user "participant1" shares "welcome.txt" with room "group room"
     Then the OCS status code should be "403"
     And the HTTP status code should be "401"
+    And user "participant1" gets all shares
+    And the list of returned shares has 1 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
 
 
 
