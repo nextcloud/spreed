@@ -56,6 +56,53 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @Given user :user creates folder :destination
+	 *
+	 * @param string $user
+	 * @param string $destination
+	 */
+	public function userCreatesFolder($user, $destination) {
+		$this->currentUser = $user;
+	
+		$url = "/$user/$destination/";
+
+		$this->sendingToDav('MKCOL', $url);
+
+		$this->theHTTPStatusCodeShouldBe(201);
+	}
+
+	/**
+	 * @Given user :user moves file :source to :destination
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 */
+	public function userMovesFileTo(string $user, string $source, string $destination) {
+		$this->currentUser = $user;
+	
+		$url = "/$user/$source";
+
+		$headers = [];
+		$headers['Destination'] = $this->baseUrl . "remote.php/dav/files/$user/" . $destination;
+
+		$this->sendingToDav('MOVE', $url, $headers);
+	}
+
+	/**
+	 * @Given user :user moves file :source to :destination with :statusCode
+	 *
+	 * @param string $user
+	 * @param string $source
+	 * @param string $destination
+	 * @param int statusCode
+	 */
+	public function userMovesFileToWith(string $user, string $source, string $destination, int $statusCode) {
+		$this->userMovesFileTo($user, $source, $destination);
+		$this->theHTTPStatusCodeShouldBe($statusCode);
+	}
+
+	/**
 	 * @When user :user shares :path with user :sharee
 	 *
 	 * @param string $user
@@ -281,6 +328,38 @@ class SharingContext implements Context {
 				$fd['expireDate'] = date('Y-m-d', strtotime($fd['expireDate']));
 			}
 			$options['body'] = $fd;
+		}
+
+		try {
+			$this->response = $client->send($client->createRequest($verb, $fullUrl, $options));
+		} catch (GuzzleHttp\Exception\ClientException $ex) {
+			$this->response = $ex->getResponse();
+		}
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $url
+	 * @param array $headers
+	 * @param string $body
+	 */
+	private function sendingToDav(string $verb, string $url, array $headers = null, string $body = null) {
+		$fullUrl = $this->baseUrl . "remote.php/dav/files" . $url;
+		$client = new Client();
+		$options = [];
+		if ($this->currentUser === 'admin') {
+			$options['auth'] = $this->adminUser;
+		} else {
+			$options['auth'] = [$this->currentUser, $this->regularUserPassword];
+		}
+		$options['headers'] = [
+			'OCS_APIREQUEST' => 'true'
+		];
+		if ($headers !== null) {
+			$options['headers'] = array_merge($options['headers'], $headers);
+		}
+		if ($body !== null) {
+			$options['body'] = $body;
 		}
 
 		try {
