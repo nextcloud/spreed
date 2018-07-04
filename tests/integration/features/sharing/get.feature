@@ -54,3 +54,14 @@ Feature: get
       | file_target            | /welcome.txt |
       | share_with             | group room |
       | share_with_displayname | New room name |
+    And user "participant2" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room |
+      | share_with_displayname | New room name |

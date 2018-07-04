@@ -177,6 +177,19 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets all received shares
+	 *
+	 * @param string $user
+	 */
+	public function userGetsAllReceivedShares(string $user) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares?shared_with_me=true';
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
 	 * @Then the OCS status code should be :statusCode
 	 *
 	 * @param int $statusCode
