@@ -153,6 +153,20 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user updates last share with
+	 *
+	 * @param string $user
+	 * @param TableNode $body
+	 */
+	public function userUpdatesLastShareWith(string $user, TableNode $body) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares/' . $this->getLastShareId();
+
+		$this->sendingTo('PUT', $url, $body);
+	}
+
+	/**
 	 * @When user :user gets last share
 	 */
 	public function userGetsLastShare(string $user) {
