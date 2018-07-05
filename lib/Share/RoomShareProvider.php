@@ -267,7 +267,41 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare The share object
 	 */
 	public function update(IShare $share) {
-		throw new \Exception("Not implemented");
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('share')
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
+			->set('uid_owner', $qb->createNamedParameter($share->getShareOwner()))
+			->set('uid_initiator', $qb->createNamedParameter($share->getSharedBy()))
+			->set('permissions', $qb->createNamedParameter($share->getPermissions()))
+			->set('item_source', $qb->createNamedParameter($share->getNode()->getId()))
+			->set('file_source', $qb->createNamedParameter($share->getNode()->getId()))
+			->set('expiration', $qb->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
+			->execute();
+
+		/*
+		 * Update all user defined group shares
+		 */
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('share')
+			->where($qb->expr()->eq('parent', $qb->createNamedParameter($share->getId())))
+			->set('uid_owner', $qb->createNamedParameter($share->getShareOwner()))
+			->set('uid_initiator', $qb->createNamedParameter($share->getSharedBy()))
+			->set('item_source', $qb->createNamedParameter($share->getNode()->getId()))
+			->set('file_source', $qb->createNamedParameter($share->getNode()->getId()))
+			->set('expiration', $qb->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATE))
+			->execute();
+
+		/*
+		 * Now update the permissions for all children that have not set it to 0
+		 */
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('share')
+			->where($qb->expr()->eq('parent', $qb->createNamedParameter($share->getId())))
+			->andWhere($qb->expr()->neq('permissions', $qb->createNamedParameter(0)))
+			->set('permissions', $qb->createNamedParameter($share->getPermissions()))
+			->execute();
+
+		return $share;
 	}
 
 	/**
