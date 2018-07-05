@@ -177,6 +177,61 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets all shares and reshares
+	 *
+	 * @param string $user
+	 */
+	public function userGetsAllSharesAndReshares(string $user) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares?reshares=true';
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
+	 * @When user :user gets all shares for :path
+	 *
+	 * @param string $user
+	 * @param string $path
+	 */
+	public function userGetsAllSharesFor(string $user, string $path) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares?path=' . $path;
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
+	 * @When user :user gets all shares and reshares for :path
+	 *
+	 * @param string $user
+	 * @param string $path
+	 */
+	public function userGetsAllSharesAndResharesFor(string $user, string $path) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares?reshares=true&path=' . $path;
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
+	 * @When user :user gets all shares for :path and its subfiles
+	 *
+	 * @param string $user
+	 * @param string $path
+	 */
+	public function userGetsAllSharesForAndItsSubfiles(string $user, string $path) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares?subfiles=true&path=' . $path;
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
 	 * @When user :user gets all received shares
 	 *
 	 * @param string $user
@@ -185,6 +240,20 @@ class SharingContext implements Context {
 		$this->currentUser = $user;
 
 		$url = '/apps/files_sharing/api/v1/shares?shared_with_me=true';
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
+	 * @When user :user gets all received shares for :path
+	 *
+	 * @param string $user
+	 * @param string $path
+	 */
+	public function userGetsAllReceivedSharesFor(string $user, string $path) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares?shared_with_me=true&path=' . $path;
 
 		$this->sendingTo('GET', $url);
 	}
