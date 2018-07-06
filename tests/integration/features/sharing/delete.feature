@@ -249,3 +249,91 @@ Feature: delete
       | share_with             | participant2 |
       | share_with_displayname | participant2-displayname |
       | share_type             | 0 |
+
+
+
+  Scenario: delete received share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    When user "participant2" deletes last share
+    Then the OCS status code should be "100"
+    And the HTTP status code should be "200"
+    And user "participant2" gets last share
+    And the OCS status code should be "404"
+    And user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+    And user "participant3" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+
+
+
+  Scenario: delete share received directly and through a room
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    When user "participant2" deletes last share
+    Then the OCS status code should be "100"
+    And the HTTP status code should be "200"
+    And user "participant2" gets last share
+    And the OCS status code should be "404"
+    And user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+    And user "participant3" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+    And user "participant2" gets all received shares
+    And the list of returned shares has 1 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant2 |
+      | share_with_displayname | participant2-displayname |
+      | share_type             | 0 |
