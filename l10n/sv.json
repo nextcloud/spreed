@@ -75,6 +75,7 @@
     "{participantName}'s screen" : "{participantName}'s skärm",
     "Guest's screen" : "Gästskärm",
     "Your screen" : "Din skärm",
+    "a conversation" : "en konversation",
     "(Duration %s)" : "(Varaktighet%s)",
     "You attended a call with {user1}" : "Du deltog i ett samtal med {user1}",
     "_%n guest_::_%n guests_" : ["%n gäst","%n gäster"],
