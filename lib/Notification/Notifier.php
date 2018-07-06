@@ -93,9 +93,6 @@ class Notifier implements INotifier {
 			->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
 
 		$subject = $notification->getSubject();
-		if ($subject === 'invitation') {
-			return $this->parseInvitation($notification, $room, $l);
-		}
 		if ($subject === 'call') {
 			return $this->parseCall($notification, $room, $l);
 		}
@@ -252,84 +249,6 @@ class Notifier implements INotifier {
 			default:
 				throw new \InvalidArgumentException('Unknown room type');
 		}
-	}
-
-	/**
-	 * @param INotification $notification
-	 * @param Room $room
-	 * @param IL10N $l
-	 * @return INotification
-	 * @throws \InvalidArgumentException
-	 */
-	protected function parseInvitation(INotification $notification, Room $room, IL10N $l) {
-		if ($notification->getObjectType() !== 'room') {
-			throw new \InvalidArgumentException('Unknown object type');
-		}
-
-		$parameters = $notification->getSubjectParameters();
-		$uid = isset($parameters['actorId']) ? $parameters['actorId'] : $parameters[0];
-
-		$user = $this->userManager->get($uid);
-		if (!$user instanceof IUser) {
-			throw new \InvalidArgumentException('Calling user does not exist anymore');
-		}
-
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$notification
-				->setParsedSubject(
-					$l->t('%s invited you to a private conversation', [$user->getDisplayName()])
-				)
-				->setRichSubject(
-					$l->t('{user} invited you to a private conversation'), [
-						'user' => [
-							'type' => 'user',
-							'id' => $uid,
-							'name' => $user->getDisplayName(),
-						]
-					]
-				);
-
-		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $room->getName()])
-					)
-					->setRichSubject(
-						$l->t('{user} invited you to a group conversation: {call}'), [
-							'user' => [
-								'type' => 'user',
-								'id' => $uid,
-								'name' => $user->getDisplayName(),
-							],
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $room->getName(),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			} else {
-				$notification
-					->setParsedSubject(
-						$l->t('%s invited you to a group conversation', [$user->getDisplayName()])
-					)
-					->setRichSubject(
-						$l->t('{user} invited you to a group conversation'), [
-							'user' => [
-								'type' => 'user',
-								'id' => $uid,
-								'name' => $user->getDisplayName(),
-							]
-						]
-					);
-			}
-		} else {
-			throw new \InvalidArgumentException('Unknown room type');
-		}
-
-		return $notification;
 	}
 
 	/**

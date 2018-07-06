@@ -118,51 +118,5 @@ class Hooks {
 		$room->resetActiveSince();
 		return true;
 	}
-
-	/**
-	 * Invitation activity: "{actor} invited you to {call}"
-	 *
-	 * @param Room $room
-	 * @param array[] $participants
-	 */
-	public function generateInvitationActivity(Room $room, array $participants) {
-		$actor = $this->userSession->getUser();
-		if (!$actor instanceof IUser) {
-			return;
-		}
-		$actorId = $actor->getUID();
-
-		$event = $this->activityManager->generateEvent();
-		try {
-			$event->setApp('spreed')
-				->setType('spreed')
-				->setAuthor($actorId)
-				->setObject('room', $room->getId(), $room->getName())
-				->setTimestamp($this->timeFactory->getTime())
-				->setSubject('invitation', [
-					'user' => $actor->getUID(),
-					'room' => $room->getId(),
-					'name' => $room->getName(),
-				]);
-		} catch (\InvalidArgumentException $e) {
-			$this->logger->logException($e, ['app' => 'spreed']);
-			return;
-		}
-
-		foreach ($participants as $participant) {
-			if ($actorId === $participant['userId']) {
-				// No activity for self-joining and the creator
-				continue;
-			}
-
-			try {
-				$event->setAffectedUser($participant['userId']);
-				$this->activityManager->publish($event);
-			} catch (\InvalidArgumentException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
-			} catch (\BadMethodCallException $e) {
-				$this->logger->logException($e, ['app' => 'spreed']);
-			}
-		}
-	}
 }
+

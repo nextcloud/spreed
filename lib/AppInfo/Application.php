@@ -63,7 +63,6 @@ class Application extends App {
 			$this->registerSignalingBackendHooks($dispatcher);
 		}
 		$this->registerCallActivityHooks($dispatcher);
-		$this->registerRoomInvitationHook($dispatcher);
 		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
 	}
@@ -232,22 +231,6 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
-	}
-
-	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
-			/** @var Hooks $activityHooks */
-			$activityHooks = $this->getContainer()->query(Hooks::class);
-			$activityHooks->generateInvitationActivity($room, $event->getArgument('users'));
-
-			/** @var \OCA\Spreed\Notification\Hooks $notificationHooks */
-			$notificationHooks = $this->getContainer()->query(\OCA\Spreed\Notification\Hooks::class);
-			$notificationHooks->generateInvitation($room, $event->getArgument('users'));
-		};
-		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
 	}
 
 	protected function registerCallNotificationHook(EventDispatcherInterface $dispatcher) {
