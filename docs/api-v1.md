@@ -11,6 +11,8 @@
   * [Delete a room](#delete-a-room)
   * [Allow guests in a room (public room)](#allow-guests-in-a-room-public-room)
   * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
+  * [Set room as favorite](#set-room-as-favorite)
+  * [Unset room favourite status](#unset-room-favourite-status)
 - [Participant management](#participant-management)
   * [Get list of participants in a room](#get-list-of-participants-in-a-room)
   * [Add a participant to a room](#add-a-participant-to-a-room)
@@ -220,6 +222,25 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the room is not a public room
         + `404 Not Found` When the room could not be found for the participant
 
+### Set room as favorite
+
+* Method: `POST`
+* Endpoint: `/room/{token}/favourite`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
+
+### Unset room favourite status
+
+* Method: `DELETE`
+* Endpoint: `/room/{token}/favourite`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant
 
 ## Participant management
 

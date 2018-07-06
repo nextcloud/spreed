@@ -177,6 +177,7 @@ class RoomController extends OCSController {
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'unreadMessages' => 0,
+			'isFavourite' => $room->isFavourite(),
 		];
 
 		if (!$participant instanceof Participant) {
@@ -188,6 +189,7 @@ class RoomController extends OCSController {
 				'numGuests' => 0,
 				'hasCall' => false,
 				'guestList' => '',
+				'isFavourite' => false,
 			]);
 
 			return $roomData;
@@ -461,6 +463,43 @@ class RoomController extends OCSController {
 			'displayName' => $room->getName(),
 		], Http::STATUS_CREATED);
 	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function setRoomAsFavourite($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$room->setFavourite(true);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function setRoomAsNotFavourite($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			if ($room->isFavourite()) {
+				$room->setFavourite(false);
+			}
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse([]);
+	}
+
 
 	/**
 	 * @NoAdminRequired

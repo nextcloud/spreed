@@ -289,6 +289,25 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Room#setRoomAsFavourite',
+			'url' => '/api/{apiVersion}/room/{token}/favourite',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#setRoomAsNotFavourite',
+			'url' => '/api/{apiVersion}/room/{token}/favourite',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+
 
 		/**
 		 * Guest
