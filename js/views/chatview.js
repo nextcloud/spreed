@@ -77,6 +77,7 @@
 
 		events: {
 			'submit .newCommentForm': '_onSubmitComment',
+			'paste div.message': '_onPaste'
 		},
 
 		initialize: function() {
@@ -155,6 +156,18 @@
 					}
 				});
 			}.bind(this), 400);
+		},
+
+		/**
+		 * Limit pasting to plain text
+		 *
+		 * @param e
+		 * @private
+		 */
+		_onPaste: function (e) {
+			e.preventDefault();
+			var text = e.originalEvent.clipboardData.getData("text/plain");
+			document.execCommand('insertText', false, text);
 		},
 
 		template: Handlebars.compile(TEMPLATE),
