@@ -329,7 +329,47 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $recipient UserId of the recipient
 	 */
 	public function deleteFromSelf(IShare $share, $recipient) {
-		throw new \Exception("Not implemented");
+		// Check if there is a userroom share
+		$qb = $this->dbConnection->getQueryBuilder();
+		$stmt = $qb->select(['id', 'permissions'])
+			->from('share')
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($recipient)))
+			->andWhere($qb->expr()->eq('parent', $qb->createNamedParameter($share->getId())))
+			->andWhere($qb->expr()->orX(
+				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
+				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
+			))
+			->execute();
+
+		$data = $stmt->fetch();
+		$stmt->closeCursor();
+
+		if ($data === false) {
+			// No userroom share yet. Create one.
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->insert('share')
+				->values([
+					'share_type' => $qb->createNamedParameter(self::SHARE_TYPE_USERROOM),
+					'share_with' => $qb->createNamedParameter($recipient),
+					'uid_owner' => $qb->createNamedParameter($share->getShareOwner()),
+					'uid_initiator' => $qb->createNamedParameter($share->getSharedBy()),
+					'parent' => $qb->createNamedParameter($share->getId()),
+					'item_type' => $qb->createNamedParameter($share->getNodeType()),
+					'item_source' => $qb->createNamedParameter($share->getNodeId()),
+					'file_source' => $qb->createNamedParameter($share->getNodeId()),
+					'file_target' => $qb->createNamedParameter($share->getTarget()),
+					'permissions' => $qb->createNamedParameter(0),
+					'stime' => $qb->createNamedParameter($share->getShareTime()->getTimestamp()),
+				])->execute();
+		} else if ($data['permissions'] !== 0) {
+			// Already a userroom share. Update it.
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->update('share')
+				->set('permissions', $qb->createNamedParameter(0))
+				->where($qb->expr()->eq('id', $qb->createNamedParameter($data['id'])))
+				->execute();
+		}
 	}
 
 	/**
