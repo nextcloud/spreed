@@ -112,7 +112,7 @@ class RoomController extends OCSController {
 	public function getRooms($roomId = null) {
 		$return = [];
 
-		if ($roomId == null) {
+		if ($roomId === null) {
 			$rooms = $this->manager->getRoomsForParticipant($this->userId);
 		} else {
 			try {
