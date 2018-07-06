@@ -106,7 +106,7 @@ class RoomController extends OCSController {
 	 *
 	 * @NoAdminRequired
 	 *
-	 * @param null $roomId
+	 * @param int $roomId
 	 * @return DataResponse
 	 */
 	public function getRooms($roomId = null) {
