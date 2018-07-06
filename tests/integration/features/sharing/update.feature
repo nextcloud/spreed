@@ -1099,3 +1099,69 @@ Feature: update
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
       | permissions            | 1 |
+
+
+
+  Scenario: update share after sharee deleted it
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" deletes last share with OCS 100
+    When user "participant1" updates last share with
+      | permissions            | 1 |
+      | expireDate             | +3 days |
+    Then share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+      | permissions            | 1 |
+      | expiration             | +3 days |
+    And user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+      | permissions            | 1 |
+      | expiration             | +3 days |
+    And user "participant2" gets last share
+    And the OCS status code should be "404"
+
+  Scenario: update received share after deleting it
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" deletes last share with OCS 100
+    When user "participant2" updates last share with
+      | permissions            | 1 |
+      | expireDate             | +3 days |
+    Then the OCS status code should be "404"
+    And the HTTP status code should be "200"
+    And user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+    And user "participant2" gets last share
+    And the OCS status code should be "404"
