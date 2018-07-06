@@ -51,6 +51,7 @@ OC.L10N.register(
     "Submit" : "Gönder",
     "Leave call" : "Görüşmeden ayrıl",
     "Join call" : "Görüşmeye katıl",
+    "Start call" : "Görüşmeyi başlat",
     "Share link" : "Bağlantıyı paylaş",
     "Change password" : "Parolayı değiştir",
     "Set password" : "Parolayı ayarla",
