@@ -88,6 +88,60 @@ Feature: get
 
 
 
+  Scenario: get an expired share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room"
+      | expireDate | -3 days |
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+      | expiration             | -3 days |
+    When user "participant1" gets last share
+    Then the OCS status code should be "404"
+    And the HTTP status code should be "200"
+    And user "participant2" gets last share
+    And the OCS status code should be "404"
+    And the HTTP status code should be "200"
+
+  Scenario: get an expired share moved by the sharee
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" moves file "/welcome (2).txt" to "/renamed.txt" with 201
+    And user "participant1" updates last share with
+      | expireDate | -3 days |
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+      | expiration             | -3 days |
+    When user "participant1" gets last share
+    Then the OCS status code should be "404"
+    And the HTTP status code should be "200"
+    And user "participant2" gets last share
+    And the OCS status code should be "404"
+    And the HTTP status code should be "200"
+
+
+
   Scenario: get all shares of a user
     Given user "participant1" creates room "own group room"
       | roomType | 2 |
