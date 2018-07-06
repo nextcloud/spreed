@@ -310,7 +310,13 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 */
 	public function delete(IShare $share) {
-		throw new \Exception("Not implemented");
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->delete('share')
+			->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())));
+
+		$qb->orWhere($qb->expr()->eq('parent', $qb->createNamedParameter($share->getId())));
+
+		$qb->execute();
 	}
 
 	/**
@@ -706,6 +712,33 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function getAccessList($nodes, $currentAccess) {
 		throw new \Exception("Not implemented");
+	}
+
+	/**
+	 * Get all children of this share
+	 *
+	 * Not part of IShareProvider API, but needed by OC\Share20\Manager.
+	 *
+	 * @param IShare $parent
+	 * @return IShare[]
+	 */
+	public function getChildren(IShare $parent) {
+		$children = [];
+
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('*')
+			->from('share')
+			->where($qb->expr()->eq('parent', $qb->createNamedParameter($parent->getId())))
+			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->orderBy('id');
+
+		$cursor = $qb->execute();
+		while ($data = $cursor->fetch()) {
+			$children[] = $this->createShareObject($data);
+		}
+		$cursor->closeCursor();
+
+		return $children;
 	}
 
 }
