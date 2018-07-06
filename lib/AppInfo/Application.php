@@ -29,6 +29,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Signaling\BackendNotifier;
@@ -70,6 +71,7 @@ class Application extends App {
 		$this->registerRoomInvitationHook($dispatcher);
 		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
+		$this->registerRoomHooks($dispatcher);
 		$this->registerClientLinks($server);
 
 		/** @var Listener $systemMessageListener */
@@ -318,6 +320,40 @@ class Application extends App {
 			/** @var ChatManager $chatManager */
 			$chatManager = $this->getContainer()->query(ChatManager::class);
 			$chatManager->deleteMessages($room);
+		};
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+	}
+
+	protected function registerRoomHooks(EventDispatcherInterface $dispatcher) {
+		$listener = function(GenericEvent $event)  {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			if ($event->getArgument('selfJoin')) {
+				/** @var \OCA\Spreed\Share\RoomShareProvider $roomShareProvider */
+				$roomShareProvider = $this->getContainer()->query(\OCA\Spreed\Share\RoomShareProvider::class);
+				$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('userId'));
+			}
+		};
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var \OCA\Spreed\Share\RoomShareProvider $roomShareProvider */
+			$roomShareProvider = $this->getContainer()->query(\OCA\Spreed\Share\RoomShareProvider::class);
+			$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('user')->getUID());
+		};
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var \OCA\Spreed\Share\RoomShareProvider $roomShareProvider */
+			$roomShareProvider = $this->getContainer()->query(\OCA\Spreed\Share\RoomShareProvider::class);
+			$roomShareProvider->deleteInRoom($room->getToken());
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}

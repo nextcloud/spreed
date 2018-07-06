@@ -740,7 +740,8 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int $shareType
 	 */
 	public function userDeleted($uid, $shareType) {
-		throw new \Exception("Not implemented");
+		// A deleted user is handled automatically by the room hooks due to the
+		// user being removed from the room.
 	}
 
 	/**
@@ -751,7 +752,6 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $gid
 	 */
 	public function groupDeleted($gid) {
-		throw new \Exception("Not implemented");
 	}
 
 	/**
@@ -763,7 +763,6 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $gid
 	 */
 	public function userDeletedFromGroup($uid, $gid) {
-		throw new \Exception("Not implemented");
 	}
 
 	/**
@@ -804,6 +803,87 @@ class RoomShareProvider implements IShareProvider {
 		$cursor->closeCursor();
 
 		return $children;
+	}
+
+	/**
+	 * Delete all shares in a room, or only those from the given user.
+	 *
+	 * When a user is given all her shares are removed, both own shares and
+	 * received shares.
+	 *
+	 * Not part of IShareProvider API, but needed by the hooks in
+	 * OCA\Spreed\AppInfo\Application
+	 *
+	 * @param string $roomToken
+	 * @param string|null $user
+	 */
+	public function deleteInRoom(string $roomToken, string $user = null) {
+		//First delete all custom room shares for the original shares to be removed
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('id')
+			->from('share')
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
+
+		if ($user !== null) {
+			$qb->andWhere($qb->expr()->eq('uid_initiator', $qb->createNamedParameter($user)));
+		}
+
+		$cursor = $qb->execute();
+		$ids = [];
+		while($row = $cursor->fetch()) {
+			$ids[] = (int)$row['id'];
+		}
+		$cursor->closeCursor();
+
+		if (!empty($ids)) {
+			$chunks = array_chunk($ids, 100);
+			foreach ($chunks as $chunk) {
+				$qb->delete('share')
+					->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+					->andWhere($qb->expr()->in('parent', $qb->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)));
+				$qb->execute();
+			}
+		}
+
+		// Now delete all the original room shares
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->delete('share')
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
+
+		if ($user !== null) {
+			$qb->andWhere($qb->expr()->eq('uid_initiator', $qb->createNamedParameter($user)));
+		}
+
+		$qb->execute();
+
+		// Finally delete all custom room shares leftovers for the given user
+		if ($user !== null) {
+			$qb = $this->dbConnection->getQueryBuilder();
+			$qb->select('id')
+				->from('share')
+				->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
+
+			$cursor = $qb->execute();
+			$ids = [];
+			while($row = $cursor->fetch()) {
+				$ids[] = (int)$row['id'];
+			}
+			$cursor->closeCursor();
+
+			if (!empty($ids)) {
+				$chunks = array_chunk($ids, 100);
+				foreach ($chunks as $chunk) {
+					$qb->delete('share')
+						->where($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)))
+						->andWhere($qb->expr()->in('share_with', $qb->createNamedParameter($user)))
+						->andWhere($qb->expr()->in('parent', $qb->createNamedParameter($chunk, IQueryBuilder::PARAM_INT_ARRAY)));
+					$qb->execute();
+				}
+			}
+		}
 	}
 
 }
