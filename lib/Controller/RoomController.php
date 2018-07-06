@@ -106,12 +106,23 @@ class RoomController extends OCSController {
 	 *
 	 * @NoAdminRequired
 	 *
+	 * @param null $roomId
 	 * @return DataResponse
 	 */
-	public function getRooms() {
-		$rooms = $this->manager->getRoomsForParticipant($this->userId);
-
+	public function getRooms($roomId = null) {
 		$return = [];
+
+		if ($roomId == null) {
+			$rooms = $this->manager->getRoomsForParticipant($this->userId);
+		} else {
+			try {
+				$singleRoom = $this->manager->getRoomForParticipant($roomId, $this->userId);
+				$rooms[] = $singleRoom;
+			} catch (RoomNotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		}
+
 		foreach ($rooms as $room) {
 			try {
 				$return[] = $this->formatRoom($room, $room->getParticipant($this->userId));
