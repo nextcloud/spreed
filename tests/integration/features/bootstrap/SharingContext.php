@@ -167,6 +167,30 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user deletes last share
+	 *
+	 * @param string $user
+	 */
+	public function userDeletesLastShare(string $user) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares/' . $this->getLastShareId();
+
+		$this->sendingTo('DELETE', $url);
+	}
+
+	/**
+	 * @When user :user deletes last share with OCS :statusCode
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 */
+	public function userDeletesLastShareWithOcs(string $user, int $statusCode) {
+		$this->userDeletesLastShare($user);
+		$this->theOCSStatusCodeShouldBe($statusCode);
+	}
+
+	/**
 	 * @When user :user gets last share
 	 */
 	public function userGetsLastShare(string $user) {
