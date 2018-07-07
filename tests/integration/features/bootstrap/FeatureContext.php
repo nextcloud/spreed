@@ -632,6 +632,25 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->createdUsers[] = $user;
 	}
 
+	/**
+	 * @Given /^user "([^"]*)" is deleted$/
+	 * @param string $user
+	 */
+	public function userIsDeleted($user) {
+		$deleted = false;
+
+		$this->deleteUser($user);
+		try {
+			$this->userExists($user);
+		} catch (\GuzzleHttp\Exception\ClientException $ex) {
+			$deleted = true;
+		}
+
+		if (!$deleted) {
+			PHPUnit_Framework_Assert::fail("User $user exists");
+		}
+	}
+
 	private function deleteUser($user) {
 		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users/' . $user;
 		$client = new Client();

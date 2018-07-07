@@ -857,3 +857,142 @@ Feature: hooks
       | file_target            | /welcome (2).txt |
       | share_with             | yet another group room |
       | share_with_displayname | Yet another group room |
+
+
+
+  Scenario: delete user after sharing a file
+    Given user "participant1" creates room "group room invited to"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant2" shares "welcome.txt" with room "group room invited to" with OCS 100
+    When user "participant2" is deleted
+    Then user "participant1" gets last share
+    And the OCS status code should be "404"
+
+  Scenario: delete user after receiving a shared a file
+    Given user "participant1" creates room "group room invited to"
+      | roomType | 2 |
+    And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
+    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds "participant3" to room "group room invited to" with 200
+    And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
+    When user "participant2" is deleted
+    Then user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+    And user "participant3" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+
+  Scenario: delete user after receiving and moving a shared a file
+    Given user "participant1" creates room "group room invited to"
+      | roomType | 2 |
+    And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
+    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds "participant3" to room "group room invited to" with 200
+    And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
+    And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
+    When user "participant2" is deleted
+    Then user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+    And user "participant3" gets last share
+    And share is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+
+  Scenario: delete user after resharing a file
+    Given user "participant1" creates room "group room invited to"
+      | roomType | 2 |
+    And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
+    And user "participant1" adds "participant2" to room "group room invited to" with 200
+    And user "participant1" adds "participant3" to room "group room invited to" with 200
+    And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with user "participant4" with OCS 100
+    When user "participant2" is deleted
+    Then user "participant1" gets last share
+    And share is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2 |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant4 |
+      | share_with_displayname | participant4-displayname |
+      | share_type             | 0 |
+    And user "participant1" gets all shares
+    And the list of returned shares has 1 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome.txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+    And user "participant3" gets last share
+    And the OCS status code should be "404"
+    And the HTTP status code should be "200"
+    And user "participant3" gets all received shares
+    And the list of returned shares has 1 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room invited to |
+      | share_with_displayname | Group room invited to |
+    And user "participant4" gets last share
+    And share is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2 |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant4 |
+      | share_with_displayname | participant4-displayname |
+      | share_type             | 0 |
