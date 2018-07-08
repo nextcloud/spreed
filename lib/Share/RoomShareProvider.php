@@ -766,7 +766,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws ShareNotFound
 	 */
 	public function getShareByToken($token) {
-		throw new \Exception("Not implemented");
+		throw new ShareNotFound();
 	}
 
 	/**
