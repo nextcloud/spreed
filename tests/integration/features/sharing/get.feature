@@ -619,3 +619,115 @@ Feature: get
     And the list of returned shares has 0 shares
     And user "participant3" gets deleted shares
     And the list of returned shares has 0 shares
+
+
+
+  Scenario: get DAV properties for a share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/welcome.txt"
+    Then the response contains a share-types DAV property with
+      | 10 |
+
+  Scenario: get DAV properties for a folder with a share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" creates folder "/test"
+    And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
+    And user "participant1" shares "/test/renamed.txt" with room "group room" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/test"
+    Then the response contains a share-types DAV property with
+      | 10 |
+
+  Scenario: get DAV properties for a received share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
+    Then the response contains a share-types DAV property with
+
+  Scenario: get DAV properties for a room share reshared with a user
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant2" creates room "another group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/welcome.txt"
+    Then the response contains a share-types DAV property with
+      | 10 |
+
+  Scenario: get DAV properties for a user share reshared with a room
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant2" creates room "another group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with room "group room" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/welcome.txt"
+    Then the response contains a share-types DAV property with
+      | 0 |
+
+  Scenario: get DAV properties for a room share reshared with a user as the resharer
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant2" creates room "another group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
+    Then the response contains a share-types DAV property with
+      | 0 |
+
+  Scenario: get DAV properties for a user share reshared with a room as the resharer
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant2" creates room "another group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with room "group room" with OCS 100
+    When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
+    Then the response contains a share-types DAV property with
+      | 10 |
+
+  # Reshares are taken into account only for the files in the folder, not the
+  # folder itself.
+  Scenario: get DAV properties for a reshared folder
+    Given user "participant2" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" creates folder "/test"
+    And user "participant1" shares "/test" with user "participant2" with OCS 100
+    And user "participant2" shares "/test" with room "group room" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/test"
+    Then the response contains a share-types DAV property with
+      | 0 |
+
+  Scenario: get DAV properties for a folder with a reshare
+    Given user "participant2" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" creates folder "/test"
+    And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
+    And user "participant1" shares "/test/renamed.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "renamed.txt" with room "group room" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/test"
+    Then the response contains a share-types DAV property with
+      | 0 |
+      | 10 |
+
+  Scenario: get DAV properties for a folder with a reshared folder
+    Given user "participant2" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" creates folder "/test"
+    And user "participant1" creates folder "/test/subfolder"
+    And user "participant1" shares "/test/subfolder" with user "participant2" with OCS 100
+    And user "participant2" shares "subfolder" with room "group room" with OCS 100
+    When user "participant1" gets the share-type DAV property for "/test"
+    Then the response contains a share-types DAV property with
+      | 0 |
+      | 10 |

@@ -323,6 +323,30 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets the share-type DAV property for :path
+	 *
+	 * @param string $user
+	 * @param string $path
+	 */
+	public function userGetsTheShareTypeDavPropertyFor(string $user, string $path) {
+		$this->currentUser = $user;
+
+		$url = "/$user/$path";
+
+		$headers = null;
+
+		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">' .
+				'	<d:prop>' .
+				'		<oc:share-types/>' .
+				'	</d:prop>' .
+				'</d:propfind>';
+
+		$this->sendingToDav('PROPFIND', $url, $headers, $body);
+
+		$this->theHTTPStatusCodeShouldBe(207);
+	}
+
+	/**
 	 * @Then the OCS status code should be :statusCode
 	 *
 	 * @param int $statusCode
@@ -416,6 +440,30 @@ class SharingContext implements Context {
 		foreach ($expectedFields as $field => $value) {
 			$this->assertFieldIsInReturnedShare($field, $value, $returnedShare);
 		}
+	}
+
+	/**
+	 * @Then the response contains a share-types DAV property with
+	 *
+	 * @param TableNode|null $table
+	 */
+	public function theResponseContainsAShareTypesDavPropertyWith(TableNode $table = null) {
+		$xmlResponse = $this->getXmlResponse();
+		$xmlResponse->registerXPathNamespace('oc', 'http://owncloud.org/ns');
+
+		$shareTypes = [];
+		foreach ($xmlResponse->xpath('//oc:share-types/oc:share-type') as $shareType) {
+			$shareTypes[] = (int)$shareType;
+		}
+
+		$expectedShareTypes = [];
+		if ($table !== null) {
+			foreach ($table->getRows() as $row) {
+				$expectedShareTypes[] = (int)$row[0];
+			}
+		}
+
+		PHPUnit_Framework_Assert::assertEquals($expectedShareTypes, $shareTypes);
 	}
 
 	/**
