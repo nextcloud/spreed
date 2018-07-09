@@ -81,7 +81,7 @@ class Notifier implements INotifier {
 		$l = $this->lFactory->get('spreed', $languageCode);
 
 		try {
-			$room = $this->manager->getRoomByToken((int) $notification->getObjectId());
+			$room = $this->manager->getRoomByToken($notification->getObjectId());
 		} catch (RoomNotFoundException $e) {
 			try {
 				// Before 3.2.3 the id was passed in notifications

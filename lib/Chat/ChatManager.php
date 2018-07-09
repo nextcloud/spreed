@@ -151,7 +151,7 @@ class ChatManager {
 	 * @param Room $chat
 	 */
 	public function deleteMessages(Room $chat) {
-		$this->commentsManager->deleteCommentsAtObject('chat', $chat->getId());
+		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
 	}
