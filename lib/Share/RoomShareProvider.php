@@ -812,7 +812,99 @@ class RoomShareProvider implements IShareProvider {
 	 * @return array
 	 */
 	public function getAccessList($nodes, $currentAccess) {
-		throw new \Exception("Not implemented");
+		$ids = [];
+		foreach ($nodes as $node) {
+			$ids[] = $node->getId();
+		}
+
+		$qb = $this->dbConn->getQueryBuilder();
+
+		$or = $qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM));
+
+		if ($currentAccess) {
+			$or->add($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)));
+		}
+
+		$qb->select('id', 'parent', 'share_type', 'share_with', 'file_source', 'file_target', 'permissions')
+			->from('share')
+			->where(
+				$or
+			)
+			->andWhere($qb->expr()->in('file_source', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
+			->andWhere($qb->expr()->orX(
+				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
+				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
+			));
+		$cursor = $qb->execute();
+
+		$users = [];
+		while($row = $cursor->fetch()) {
+			$type = (int)$row['share_type'];
+			if ($type === \OCP\Share::SHARE_TYPE_ROOM) {
+				$roomToken = $row['share_with'];
+				try {
+					$room = $this->manager->getRoomByToken($roomToken);
+				} catch (RoomNotFoundException $e) {
+					continue;
+				}
+
+				$userList = $room->getParticipants()['users'];
+				foreach ($userList as $uid => $participantData) {
+					$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
+					$users[$uid][$row['id']] = $row;
+				}
+			} else if ($type === self::SHARE_TYPE_USERROOM && $currentAccess === true) {
+				$uid = $row['share_with'];
+				$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
+				$users[$uid][$row['id']] = $row;
+			}
+		}
+		$cursor->closeCursor();
+
+		if ($currentAccess === true) {
+			$users = array_map([$this, 'filterSharesOfUser'], $users);
+			$users = array_filter($users);
+		} else {
+			$users = array_keys($users);
+		}
+
+		return ['users' => $users];
+	}
+
+	/**
+	 * For each user the path with the fewest slashes is returned
+	 * @param array $shares
+	 * @return array
+	 */
+	protected function filterSharesOfUser(array $shares) {
+		// Room shares when the user has a share exception
+		foreach ($shares as $id => $share) {
+			$type = (int) $share['share_type'];
+			$permissions = (int) $share['permissions'];
+
+			if ($type === self::SHARE_TYPE_USERROOM) {
+				unset($shares[$share['parent']]);
+
+				if ($permissions === 0) {
+					unset($shares[$id]);
+				}
+			}
+		}
+
+		$best = [];
+		$bestDepth = 0;
+		foreach ($shares as $id => $share) {
+			$depth = substr_count($share['file_target'], '/');
+			if (empty($best) || $depth < $bestDepth) {
+				$bestDepth = $depth;
+				$best = [
+					'node_id' => $share['file_source'],
+					'node_path' => $share['file_target'],
+				];
+			}
+		}
+
+		return $best;
 	}
 
 	/**
