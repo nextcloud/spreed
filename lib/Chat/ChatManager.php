@@ -23,6 +23,7 @@
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
@@ -58,15 +59,15 @@ class ChatManager {
 	/**
 	 * Sends a new message to the given chat.
 	 *
-	 * @param string $chatId
+	 * @param Room $chat
 	 * @param string $actorType
 	 * @param string $actorId
 	 * @param string $message
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function sendMessage($chatId, $actorType, $actorId, $message, \DateTime $creationDateTime) {
-		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', $chatId);
+	public function sendMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime) {
+		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
@@ -75,32 +76,32 @@ class ChatManager {
 
 		$this->commentsManager->save($comment);
 
-		$this->notifier->notifyMentionedUsers($comment);
+		$this->notifier->notifyMentionedUsers($chat, $comment);
 		return $comment;
 	}
 
 	/**
-	 * @param string $chatId
-	 * @param IUser $userId
+	 * @param Room $chat
+	 * @param IUser $user
 	 * @return int
 	 */
-	public function getUnreadCount($chatId, IUser $user) {
-		$unreadSince = $this->commentsManager->getReadMark('chat', $chatId, $user);
-		return $this->commentsManager->getNumberOfCommentsForObject('chat', $chatId, $unreadSince);
+	public function getUnreadCount(Room $chat, IUser $user) {
+		$unreadSince = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
+		return $this->commentsManager->getNumberOfCommentsForObject('chat', $chat->getId(), $unreadSince);
 	}
 
 	/**
 	 * Receive the history of a chat
 	 *
-	 * @param string $chatId
+	 * @param Room $chat
 	 * @param int $offset Last known message id
 	 * @param int $limit
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function getHistory($chatId, $offset, $limit) {
-		return $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'desc', $limit);
+	public function getHistory(Room $chat, $offset, $limit) {
+		return $this->commentsManager->getForObjectSinceTalkVersion('chat', $chat->getId(), $offset, 'desc', $limit);
 	}
 
 	/**
@@ -113,7 +114,7 @@ class ChatManager {
 	 * seconds. If the timeout ends a successful but empty response will be
 	 * sent.
 	 *
-	 * @param string $chatId
+	 * @param Room $chat
 	 * @param int $offset Last known message id
 	 * @param int $limit
 	 * @param int $timeout
@@ -122,23 +123,23 @@ class ChatManager {
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages($chatId, $offset, $limit, $timeout, $user) {
+	public function waitForNewMessages(Room $chat, $offset, $limit, $timeout, $user) {
 		if ($user instanceof IUser) {
-			$this->notifier->markMentionNotificationsRead($chatId, $user->getUID());
+			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
+		$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chat->getId(), $offset, 'asc', $limit);
 
 		if ($user instanceof IUser) {
-			$this->commentsManager->setReadMark('chat', $chatId, new  \DateTime(), $user);
+			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), new  \DateTime(), $user);
 		}
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chatId, $offset, 'asc', $limit);
+			$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chat->getId(), $offset, 'asc', $limit);
 		}
 
 		return $comments;
@@ -147,12 +148,12 @@ class ChatManager {
 	/**
 	 * Deletes all the messages for the given chat.
 	 *
-	 * @param string $chatId
+	 * @param Room $chat
 	 */
-	public function deleteMessages($chatId) {
-		$this->commentsManager->deleteCommentsAtObject('chat', $chatId);
+	public function deleteMessages(Room $chat) {
+		$this->commentsManager->deleteCommentsAtObject('chat', $chat->getId());
 
-		$this->notifier->removePendingNotificationsForRoom($chatId);
+		$this->notifier->removePendingNotificationsForRoom($chat);
 	}
 
 }
