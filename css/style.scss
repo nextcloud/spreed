@@ -910,7 +910,7 @@ video {
 }
 
 .participantWithList .participant-entry-utils-menu-button button:hover,
-.participantWithList .participant-entry-utils-menu-button button:focus, {
+.participantWithList .participant-entry-utils-menu-button button:focus {
 	opacity: 1;
 }
 
@@ -1059,6 +1059,7 @@ video {
 
 #app-sidebar .participantWithList {
 	overflow-y: auto;
+	padding-top: 8px;
 }
 
 #app-sidebar .participantWithList .participant:last-child {
@@ -1078,18 +1079,17 @@ video {
 	padding-bottom: 0;
 }
 
-#app-sidebar #participantsTabView form,
-#app-sidebar #participantsTabView .participantWithList {
-	padding-right: 15px;
-}
 
-/**
- * Add a little margin so the participants do not "touch" the form when they are
- * scrolled, in the same way that the chat messages do not disappear directly
- * below the new message input.
+/* Form needs margin, participant list needs padding
+ * So the form has margin from the right side, but the scroll bar of the
+ * participant list is directly on the right.
  */
 #app-sidebar #participantsTabView form {
-	margin-bottom: 15px;
+	margin-right: 15px;
+}
+
+#app-sidebar #participantsTabView .participantWithList {
+	padding-right: 15px;
 }
 
 /**
