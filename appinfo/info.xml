@@ -50,7 +50,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<background-jobs>
 		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
 		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
-		<job>OCA\Spreed\BackgroundJob\ResetInCallFlags</job>
 	</background-jobs>
 
 	<settings>
