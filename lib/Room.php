@@ -659,7 +659,7 @@ class Room {
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->emptyString('user_id'))
-			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter(time() - 100, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::class . '::postCleanGuests', new GenericEvent($this));

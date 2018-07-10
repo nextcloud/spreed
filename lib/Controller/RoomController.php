@@ -209,7 +209,7 @@ class RoomController extends OCSController {
 
 		$participantList = [];
 		foreach ($participants['users'] as $userId => $data) {
-			$user = $this->userManager->get($userId);
+			$user = $this->userManager->get((string) $userId);
 			if ($user instanceof IUser) {
 				$participantList[(string) $user->getUID()] = [
 					'name' => $user->getDisplayName(),
@@ -217,19 +217,14 @@ class RoomController extends OCSController {
 					'call' => $data['inCall'],
 				];
 			}
-		}
 
-		$inactiveUsers = array_filter($participants['users'], function($data) {
-			return $data['lastPing'] <= time() - 30 &&
-				$data['sessionId'] !== 0 && $data['sessionId'] !== '' && $data['sessionId'] !== '0';
-		});
-
-		foreach ($inactiveUsers as $inactiveUserId => $data) {
-			$room->leaveRoom($inactiveUserId);
+			if ($data['sessionId'] !== '0' && $data['lastPing'] <= time() - 100) {
+				$room->leaveRoom((string) $userId);
+			}
 		}
 
 		$activeGuests = array_filter($participants['guests'], function($data) {
-			return $data['lastPing'] > time() - 30;
+			return $data['lastPing'] > time() - 100;
 		});
 
 		$numActiveGuests = count($activeGuests);
