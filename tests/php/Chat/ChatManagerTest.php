@@ -26,6 +26,7 @@ namespace OCA\Spreed\Tests\php\Chat;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Chat\Notifier;
+use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
@@ -96,11 +97,16 @@ class ChatManagerTest extends \Test\TestCase {
 			->method('save')
 			->with($comment);
 
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn('testChatId');
+
 		$this->notifier->expects($this->once())
 			->method('notifyMentionedUsers')
-			->with($comment);
+			->with($chat, $comment);
 
-		$this->chatManager->sendMessage('testChatId', 'users', 'testUser', 'testMessage', $creationDateTime);
+		$this->chatManager->sendMessage($chat, 'users', 'testUser', 'testMessage', $creationDateTime);
 	}
 
 	public function testGetHistory() {
@@ -112,12 +118,17 @@ class ChatManagerTest extends \Test\TestCase {
 			$this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage1')
 		];
 
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn('testChatId');
+
 		$this->commentsManager->expects($this->once())
 			->method('getForObjectSinceTalkVersion')
 			->with('chat', 'testChatId', $offset, 'desc', $limit)
 			->willReturn($expected);
 
-		$comments = $this->chatManager->getHistory('testChatId', $offset, $limit);
+		$comments = $this->chatManager->getHistory($chat, $offset, $limit);
 
 		$this->assertEquals($expected, $comments);
 	}
@@ -132,6 +143,11 @@ class ChatManagerTest extends \Test\TestCase {
 			$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
 		];
 
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn('testChatId');
+
 		$this->commentsManager->expects($this->once())
 			->method('getForObjectSinceTalkVersion')
 			->with('chat', 'testChatId', $offset, 'asc', $limit)
@@ -139,7 +155,7 @@ class ChatManagerTest extends \Test\TestCase {
 
 		$this->notifier->expects($this->once())
 			->method('markMentionNotificationsRead')
-			->with('testChatId', 'userId');
+			->with($chat, 'userId');
 
 		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
 		$user = $this->createMock(IUser::class);
@@ -147,7 +163,7 @@ class ChatManagerTest extends \Test\TestCase {
 			->method('getUID')
 			->willReturn('userId');
 
-		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, $user);
+		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user);
 
 		$this->assertEquals($expected, $comments);
 	}
@@ -162,6 +178,11 @@ class ChatManagerTest extends \Test\TestCase {
 			$this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000042), 'testMessage3'),
 		];
 
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn('testChatId');
+
 		$this->commentsManager->expects($this->exactly(2))
 			->method('getForObjectSinceTalkVersion')
 			->with('chat', 'testChatId', $offset, 'asc', $limit)
@@ -172,7 +193,7 @@ class ChatManagerTest extends \Test\TestCase {
 
 		$this->notifier->expects($this->once())
 			->method('markMentionNotificationsRead')
-			->with('testChatId', 'userId');
+			->with($chat, 'userId');
 
 		/** @var IUser|\PHPUnit_Framework_MockObject_MockObject $user */
 		$user = $this->createMock(IUser::class);
@@ -180,21 +201,27 @@ class ChatManagerTest extends \Test\TestCase {
 			->method('getUID')
 			->willReturn('userId');
 
-		$comments = $this->chatManager->waitForNewMessages('testChatId', $offset, $limit, $timeout, $user);
+		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user);
 
 		$this->assertEquals($expected, $comments);
 	}
 
 	public function testDeleteMessages() {
+
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->any())
+			->method('getId')
+			->willReturn('testChatId');
+
 		$this->commentsManager->expects($this->once())
 			->method('deleteCommentsAtObject')
 			->with('chat', 'testChatId');
 
 		$this->notifier->expects($this->once())
 			->method('removePendingNotificationsForRoom')
-			->with('testChatId');
+			->with($chat);
 
-		$this->chatManager->deleteMessages('testChatId');
+		$this->chatManager->deleteMessages($chat);
 	}
 
 }

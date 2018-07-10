@@ -158,13 +158,9 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
-			->with('1234',
+			->with($this->room,
 				   'users',
 				   $this->userId,
 				   'testMessage',
@@ -197,13 +193,9 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getParticipant')
 			->with($this->userId);
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
-			->with('1234',
+			->with($this->room,
 				   'users',
 				   $this->userId,
 				   'testMessage',
@@ -263,13 +255,9 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
-			->with('1234',
+			->with($this->room,
 				   'guests',
 				   sha1('testSpreedSession'),
 				   'testMessage',
@@ -347,15 +335,11 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$offset = 23;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
 			->method('getHistory')
-			->with('1234', $offset, $limit)
+			->with($this->room, $offset, $limit)
 			->willReturn([
 				$comment4 = $this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$comment3 = $this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -415,15 +399,11 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getParticipant')
 			->with($this->userId);
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$offset = 23;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
 			->method('getHistory')
-			->with('1234', $offset, $limit)
+			->with($this->room, $offset, $limit)
 			->willReturn([
 				$comment4 = $this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$comment3 = $this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -512,15 +492,11 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$offset = 23;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
 			->method('getHistory')
-			->with('1234', $offset, $limit)
+			->with($this->room, $offset, $limit)
 			->willReturn([
 				$comment4 = $this->newComment(111, 'users', 'testUser', new \DateTime('@' . 1000000016), 'testMessage4'),
 				$comment3 = $this->newComment(110, 'users', 'testUnknownUser', new \DateTime('@' . 1000000015), 'testMessage3'),
@@ -627,10 +603,6 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -644,7 +616,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timeout = 10;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
-			->with('1234', $offset, $limit, $timeout, $testUser)
+			->with($this->room, $offset, $limit, $timeout, $testUser)
 			->willReturn([
 				$comment1 = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000004), 'testMessage1'),
 				$comment2 = $this->newComment(109, 'guests', 'testSpreedSession', new \DateTime('@' . 1000000008), 'testMessage2'),
@@ -695,10 +667,6 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -709,7 +677,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$timeout = 3;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
-			->with('1234', $offset, $limit, $timeout, $testUser)
+			->with($this->room, $offset, $limit, $timeout, $testUser)
 			->willReturn([]);
 
 		$this->userManager->expects($this->any())
@@ -737,10 +705,6 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
-		$this->room->expects($this->once())
-			->method('getId')
-			->willReturn(1234);
-
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -752,7 +716,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$limit = 4;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
-			->with('1234', $offset, $limit, $maximumTimeout, $testUser)
+			->with($this->room, $offset, $limit, $maximumTimeout, $testUser)
 			->willReturn([]);
 
 		$this->userManager->expects($this->any())
