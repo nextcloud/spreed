@@ -195,20 +195,20 @@ class Notifier implements INotifier {
 			} else if (!$richSubjectUser && !$isGuest && $richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('You were mentioned in a group conversation by a user that has since been deleted: %s', [$room->getName()])
+						$l->t('You were mentioned in a group conversation by a deleted user: %s', [$room->getName()])
 					)
 					->setRichSubject(
-						$l->t('You were mentioned in a group conversation by a user that has since been deleted: {call}'), [
+						$l->t('You were mentioned in a group conversation by a deleted user: {call}'), [
 							'call' => $richSubjectCall
 						]
 					);
 			} else if (!$richSubjectUser && !$isGuest && !$richSubjectCall) {
 				$notification
 					->setParsedSubject(
-						$l->t('You were mentioned in a group conversation by a user that has since been deleted')
+						$l->t('You were mentioned in a group conversation by a deleted user')
 					)
 					->setRichSubject(
-						$l->t('You were mentioned in a group conversation by a user that has since been deleted')
+						$l->t('You were mentioned in a group conversation by a deleted user')
 					);
 			} else if (!$richSubjectUser && $isGuest && $richSubjectCall) {
 				$notification
