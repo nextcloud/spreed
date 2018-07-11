@@ -650,10 +650,6 @@ video {
 	display: none;
 }
 
-.participantWithList li > a,
-#app-navigation li > a {
-	padding-right: 44px !important;
-}
 #app-navigation .utils {
 	padding: 0;
 }
@@ -1164,6 +1160,10 @@ video {
 
 #app-sidebar #participantsTabView .participantWithList {
 	padding-right: 15px;
+
+	li > a {
+		padding-right: 44px !important;
+	}
 }
 
 /**
