@@ -107,7 +107,7 @@ class Manager {
 			]));
 		}
 
-		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage);
+		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage, $row['object_type'], $row['object_id']);
 	}
 
 	/**
@@ -371,34 +371,42 @@ class Manager {
 	}
 
 	/**
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createOne2OneRoom() {
-		return $this->createRoom(Room::ONE_TO_ONE_CALL);
+	public function createOne2OneRoom($objectType = '', $objectId = '') {
+		return $this->createRoom(Room::ONE_TO_ONE_CALL, '', $objectType, $objectId);
 	}
 
 	/**
 	 * @param string $name
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createGroupRoom($name = '') {
-		return $this->createRoom(Room::GROUP_CALL, $name);
+	public function createGroupRoom($name = '', $objectType = '', $objectId = '') {
+		return $this->createRoom(Room::GROUP_CALL, $name, $objectType, $objectId);
 	}
 
 	/**
 	 * @param string $name
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createPublicRoom($name = '') {
-		return $this->createRoom(Room::PUBLIC_CALL, $name);
+	public function createPublicRoom($name = '', $objectType = '', $objectId = '') {
+		return $this->createRoom(Room::PUBLIC_CALL, $name, $objectType, $objectId);
 	}
 
 	/**
 	 * @param int $type
 	 * @param string $name
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	private function createRoom($type, $name = '') {
+	private function createRoom($type, $name = '', $objectType = '', $objectId = '') {
 		$token = $this->getNewToken();
 
 		$query = $this->db->getQueryBuilder();
@@ -410,6 +418,12 @@ class Manager {
 					'token' => $query->createNamedParameter($token),
 				]
 			);
+
+		if (!empty($objectType) && !empty($objectId)) {
+			$query->setValue('object_type', $query->createNamedParameter($objectType))
+				->setValue('object_id', $query->createNamedParameter($objectId));
+		}
+
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 

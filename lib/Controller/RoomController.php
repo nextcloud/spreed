@@ -186,6 +186,8 @@ class RoomController extends OCSController {
 			'type' => $room->getType(),
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
+			'objectType' => $room->getObjectType(),
+			'objectId' => $room->getObjectId(),
 			'participantType' => $participantType,
 			'participantInCall' => $participantInCall,
 			'count' => $room->getNumberOfParticipants(false, time() - 30),
