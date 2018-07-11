@@ -98,6 +98,8 @@ class Manager {
 		if (!empty($row['comment_id'])) {
 			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, [
 				'id' => $row['comment_id'],
+				'object_type' => $row['comment_object_type'],
+				'object_id' => $row['comment_object_id'],
 				'parent_id' => '',
 				'topmost_parent_id' => '',
 				'latest_child_timestamp' => null,
@@ -140,7 +142,9 @@ class Manager {
 		if ($includeLastMessage) {
 			$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
 			$query->selectAlias('c.id', 'comment_id');
-			$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp');
+			$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.object_type', 'c.object_id');
+			$query->selectAlias('c.object_type', 'comment_object_type');
+			$query->selectAlias('c.object_id', 'comment_object_id');
 		}
 
 		$result = $query->execute();
