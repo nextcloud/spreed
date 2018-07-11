@@ -30,25 +30,25 @@
 
 	var TEMPLATE =
 		'<div class="room-name"></div>' +
-		'{{#if showShareLink}}' +
-		'	<div class="clipboard-button"><span class="icon icon-clippy"></span></div>' +
-		'{{/if}}' +
+		'<div class="call-controls-container">' +
 		'{{#if participantInCall}}' +
-		'	<div>' +
+		'	<div class="call-button">' +
 		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
 		'	</div>' +
 		'{{else}}' +
-		'	<div>' +
+		'	<div class="call-button">' +
 		'		<button class="join-call primary">' + t('spreed', 'Join call') + '</button>' +
 		'	</div>' +
 		'{{/if}}' +
 		'{{#if canModerate}}' +
 		'	<div class="share-link-options">' +
+		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
+		'		<label for="link-checkbox" class="link-checkbox-label">' + t('spreed', 'Share link') + '</label>' +
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
 		'			<div class="password-button">' +
 		'				<span class="button {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span>' +
-		'				<div class="popovermenu password-menu menu-left">' +
+		'				<div class="popovermenu password-menu menu-right">' +
 		'					<ul>' +
 		'						<li>' +
 		'							<span class="menuitem {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}} password-option">' +
@@ -63,10 +63,14 @@
 		'				</div>' +
 		'			</div>' +
 		'		{{/if}}' +
-		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
-		'		<label for="link-checkbox" class="link-checkbox-label">' + t('spreed', 'Share link') + '</label>' +
 		'	</div>' +
-		'{{/if}}';
+		'{{/if}}' +
+		'{{#if showShareLink}}' +
+		'	<div class="share-link-options">' +
+		'		<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
+		'	</div>' +
+		'{{/if}}' +
+		'</div>';
 
 	var CallInfoView  = Marionette.View.extend({
 
@@ -207,7 +211,7 @@
 			this.ui.clipboardButton.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreed', 'Copy')
+				title: t('spreed', 'Copy link')
 			});
 			this.initClipboard();
 
@@ -344,7 +348,7 @@
 					.tooltip('show');
 				_.delay(function () {
 					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy'))
+						.attr('data-original-title', t('spreed', 'Copy link'))
 						.tooltip('fixTitle');
 				}, 3000);
 			});

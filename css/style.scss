@@ -989,17 +989,48 @@ video {
 			margin-left: 5px;
 		}
 	}
+
+	.call-controls-container {
+		display: flex;
+
+		.call-button,
+		.share-link-options {
+			flex-grow: 1;
+			flex-basis: 50%;
+		}
+
+		.call-button {
+			flex-grow: 0;
+
+			.join-call,
+			.leave-call {
+				width: 100%;
+				padding: 12px;
+			}
+		}
+	}
+
 	.share-link-options {
 		display: flex;
 		align-items: center;
 		.link-checkbox-label {
-			margin-left: 6px;
+			white-space: nowrap;
+			padding: 12px;
 		}
 		.button {
 			cursor: pointer;
 			width: 44px;
 			height: 44px;
 			display: block;
+			background-color: transparent;
+			border: none;
+			margin: 0;
+			opacity: .5;
+			&:hover,
+			&:focus,
+			&:active {
+				opacity: 1;
+			}
 		}
 		.password-button {
 			position: relative;
