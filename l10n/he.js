@@ -133,7 +133,6 @@ OC.L10N.register(
     "STUN server" : "שרת STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "שרת ה־STUN משמש לאיתור כתובות ה־IP הציבורית של משתתפים שנמצאים מאחורי נתב.",
     "TURN server shared secret" : "סוד משותף לשרת TURN",
-    "Your name …" : "השם שלך…",
     "Remove conversation from list" : "הסרת דיון מהרשימה"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

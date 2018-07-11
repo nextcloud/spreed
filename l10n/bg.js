@@ -47,7 +47,6 @@ OC.L10N.register(
     "Mute audio" : "Спиране на звука",
     "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
-    "STUN server" : "STUN сървър",
-    "Your name …" : "Вашето име ..."
+    "STUN server" : "STUN сървър"
 },
 "nplurals=2; plural=(n != 1);");
