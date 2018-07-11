@@ -136,7 +136,6 @@
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
     "TURN server shared secret" : "TURN server delade hemlighet",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är.",
-    "Your name …" : "Ditt namn ..."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan ändra ditt namn på höger sidomeny så att de andra deltagarna kan se vem du är."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

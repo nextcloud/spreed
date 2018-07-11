@@ -181,10 +181,6 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
     "TURN server shared secret" : "TURN server shared secret",
     "You can set your name on the right sidebar so other participants can identify you better." : "You can set your name on the right sidebar so other participants can identify you better.",
-    "Your name …" : "Your name …",
-    "Remove conversation from list" : "Remove conversation from list",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "You were mentioned in a group conversation by a user that has since been deleted: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "You were mentioned in a group conversation by a user that has since been deleted: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "You were mentioned in a group conversation by a user that has since been deleted"
+    "Remove conversation from list" : "Remove conversation from list"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -106,7 +106,6 @@ OC.L10N.register(
     "{user} invited you to a group call" : "{utilizador} convidou-o para uma chamada de grupo",
     "Fullscreen" : "Ecrã completo",
     "Mute audio" : "Silenciar áudio",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor.",
-    "Your name …" : "O seu nome .."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor."
 },
 "nplurals=2; plural=(n != 1);");
