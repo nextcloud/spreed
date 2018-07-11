@@ -189,10 +189,6 @@ OC.L10N.register(
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN esta usado para determinar la dirección IP pública de los participantes detrás de un router.",
     "TURN server shared secret" : "Servidor TURN compartido en secreto",
     "You can set your name on the right sidebar so other participants can identify you better." : "Puedes configurar tu nombre en la barra lateral derecha para que otros participantes puedan identificarte mejor.",
-    "Your name …" : "Tu nombre...",
-    "Remove conversation from list" : "Eliminar conversación de la lista",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Te ha mencionado en una conversación de grupo un usuario que después ha sido borrado: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Te ha mencionado en una conversación de grupo un usuario que después ha sido borrado: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Te ha mencionado en una conversación de grupo un usuario que después ha sido borrado"
+    "Remove conversation from list" : "Eliminar conversación de la lista"
 },
 "nplurals=2; plural=(n != 1);");

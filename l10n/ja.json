@@ -157,7 +157,6 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。",
     "TURN server shared secret" : "TURNサーバーの共有秘密鍵",
     "You can set your name on the right sidebar so other participants can identify you better." : "右側のサイドバーに自身の参加名を設定することで他の参加者があなたを認識しやすくできます。",
-    "Your name …" : "名前 …",
     "Remove conversation from list" : "会話をリストから削除"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

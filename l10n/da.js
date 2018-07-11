@@ -129,7 +129,6 @@ OC.L10N.register(
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN serveren bliver brugt til at bestemme den offentlige IP adresse for deltagerne bagved en router.",
     "TURN server shared secret" : "TURN server delte hemmelighed",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig.",
-    "Your name …" : "Dit navn ..."
+    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig."
 },
 "nplurals=2; plural=(n != 1);");

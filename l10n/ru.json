@@ -187,10 +187,6 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
     "TURN server shared secret" : "Общая секретная фраза сервера TURN",
     "You can set your name on the right sidebar so other participants can identify you better." : "Вы можете ввести своё имя в правом поле, чтобы другие участники могли лучше Вас идентифицировать. ",
-    "Your name …" : "Ваше имя…",
-    "Remove conversation from list" : "Удалить обсуждение из списка",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Вы были упомянуты в групповой беседе пользователем, учётная запись которого была удалена"
+    "Remove conversation from list" : "Удалить обсуждение из списка"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }

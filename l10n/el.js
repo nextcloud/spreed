@@ -102,7 +102,6 @@ OC.L10N.register(
     "Mute audio" : "Σίγαση ήχου",
     "Smile in 3… 2… 1!" : "Χαμογελάστε σε 3… 2… 1!",
     "Choose person …" : "Επιλογή ατόμου ...",
-    "STUN server" : "Διακομιστής STUN",
-    "Your name …" : "Το όνομά σας …"
+    "STUN server" : "Διακομιστής STUN"
 },
 "nplurals=2; plural=(n != 1);");

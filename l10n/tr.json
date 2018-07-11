@@ -187,10 +187,6 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
     "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
     "You can set your name on the right sidebar so other participants can identify you better." : "Diğer kullanıcıların sizi daha iyi tanıyabilmesi için bu sayfanın sağ üst köşesinden adınızı ayarlayabilirsiniz.",
-    "Your name …" : "Adınız …",
-    "Remove conversation from list" : "Konuşmayı listeden kaldır",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız"
+    "Remove conversation from list" : "Konuşmayı listeden kaldır"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
