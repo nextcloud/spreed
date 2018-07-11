@@ -1,6 +1,20 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.3 – 2018-07-11
+### Changed
+- Only paste the content of HTML into the chat input without the actual HTML 
+  [#1018](https://github.com/nextcloud/spreed/pull/1018)
+
+### Fixed
+- Fixes for standalone signaling server
+  [#910](https://github.com/nextcloud/spreed/pull/910)
+- Name not shown for participants without audio and video
+  [#982](https://github.com/nextcloud/spreed/pull/982)
+- Correctly timeout users when they are chatting/calling and got disconnected 
+  [#935](https://github.com/nextcloud/spreed/pull/935)
+- Multiple layout fixes
+
 ## 3.2.2 – 2018-06-06
 ### Added
 - Add toggle to show and hide video from other participants
