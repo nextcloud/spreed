@@ -41,6 +41,7 @@ use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ChatControllerTest extends \Test\TestCase {
 
@@ -74,6 +75,9 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var SearchResult|\PHPUnit_Framework_MockObject_MockObject */
 	protected $searchResult;
 
+	/** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+	private $dispatcher;
+
 	/** @var Room|\PHPUnit_Framework_MockObject_MockObject */
 	protected $room;
 
@@ -96,6 +100,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(SearchResult::class);
+		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -122,7 +127,8 @@ class ChatControllerTest extends \Test\TestCase {
 			$this->richMessageHelper,
 			$this->autoCompleteManager,
 			$this->searchPlugin,
-			$this->searchResult
+			$this->searchResult,
+			$this->dispatcher
 		);
 	}
 

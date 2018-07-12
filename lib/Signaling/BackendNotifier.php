@@ -286,11 +286,11 @@ class BackendNotifier{
 		$users = [];
 		$participants = $room->getParticipants();
 		foreach ($participants['users'] as $userId => $participant) {
+			$participant['userId'] = $userId;
 			if ($participant['inCall']) {
 				$users[] = $participant;
 			}
 			if (in_array($participant['sessionId'], $sessionIds)) {
-				$participant['userId'] = $userId;
 				$changed[] = $participant;
 			}
 		}
@@ -312,6 +312,22 @@ class BackendNotifier{
 				'incall' => $inCall,
 				'changed' => $changed,
 				'users' => $users
+			],
+		]);
+	}
+
+	/**
+	 * Send a message to all sessions currently joined in a room. The message
+	 * will be received by "processRoomMessageEvent" in "signaling.js".
+	 *
+	 * @param Room $room
+	 * @param array $message
+	 */
+	public function sendRoomMessage($room, $message) {
+		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
+			'type' => 'message',
+			'message' => [
+				'data' => $message,
 			],
 		]);
 	}

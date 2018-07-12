@@ -398,6 +398,7 @@
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:participantInCall');
 
+					var participants;
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
 
@@ -406,14 +407,15 @@
 								self.activeRoom = room;
 							}
 						});
+						participants = self.activeRoom.get('participants');
 					} else {
 						// The public page supports only a single room, so the
 						// active room is already the room for the given token.
-
-						self.setRoomMessageForGuest(self.activeRoom.get('participants'));
+						participants = self.activeRoom.get('participants');
+						self.setRoomMessageForGuest(participants);
 					}
 					// Disable video when entering a room with more than 5 participants.
-					if (Object.keys(self.activeRoom.get('participants')).length > 5) {
+					if (participants && Object.keys(participants).length > 5) {
 						self.disableVideo();
 					}
 
@@ -818,7 +820,7 @@
 				avatar.imageplaceholder('?', guestName, 128);
 				avatar.css('background-color', '#b9b9b9');
 				if (this.displayedGuestNameHint === false) {
-					OC.Notification.showTemporary(t('spreed', 'You can set your name on the right sidebar so other participants can identify you better.'));
+					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
 					this.displayedGuestNameHint = true;
 				}
 			}

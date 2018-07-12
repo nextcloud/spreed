@@ -13,6 +13,9 @@ var spreedPeerConnectionTable = [];
 
 	var previousUsersInRoom = [];
 	var usersInCallMapping = {};
+	var ownPeer = null;
+	var ownScreenPeer = null;
+	var hasLocalMedia = false;
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -37,9 +40,99 @@ var spreedPeerConnectionTable = [];
 		}
 	}
 
-	function usersChanged(newUsers, disconnectedSessionIds) {
+	function createScreensharingPeer(signaling, sessionId) {
+		var currentSessionId = signaling.getSessionid();
+		var useMcu = signaling.hasFeature("mcu");
+
+		if (useMcu && !webrtc.webrtc.getPeers(currentSessionId, 'screen').length) {
+			if (ownScreenPeer) {
+				ownScreenPeer.end();
+			}
+
+			// Create own publishing stream.
+			ownScreenPeer = webrtc.webrtc.createPeer({
+				id: currentSessionId,
+				type: 'screen',
+				sharemyscreen: true,
+				enableDataChannels: false,
+				receiveMedia: {
+					offerToReceiveAudio: 0,
+					offerToReceiveVideo: 0
+				},
+				broadcaster: currentSessionId,
+			});
+			webrtc.emit('createdPeer', ownScreenPeer);
+			ownScreenPeer.start();
+		}
+
+		if (sessionId === currentSessionId) {
+			return;
+		}
+
+		if (!webrtc.webrtc.getPeers(sessionId, 'screen').length) {
+			if (useMcu) {
+				// TODO(jojo): Already create peer object to avoid duplicate offers.
+				// TODO(jojo): We should use "requestOffer" as with regular
+				// audio/video peers. Not possible right now as there is no way
+				// for clients to know that screensharing is active and an offer
+				// from the MCU should be requested.
+				webrtc.connection.sendOffer(sessionId, "screen");
+			} else {
+				var peer = webrtc.webrtc.createPeer({
+					id: sessionId,
+					type: 'screen',
+					sharemyscreen: true,
+					enableDataChannels: false,
+					receiveMedia: {
+						offerToReceiveAudio: 0,
+						offerToReceiveVideo: 0
+					},
+					broadcaster: currentSessionId,
+				});
+				webrtc.emit('createdPeer', peer);
+				peer.start();
+			}
+		}
+	}
+
+	function checkStartPublishOwnPeer(signaling) {
 		'use strict';
-		var currentSessionId = webrtc.connection.getSessionid();
+		var currentSessionId = signaling.getSessionid();
+		if (!hasLocalMedia || webrtc.webrtc.getPeers(currentSessionId, 'video').length) {
+			// No media yet or already publishing.
+			return;
+		}
+
+		if (ownPeer) {
+			OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
+			OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+			OCA.SpreedMe.videos.remove(ownPeer.id);
+			delete spreedMappingTable[ownPeer.id];
+			ownPeer.end();
+		}
+
+		// Create own publishing stream.
+		ownPeer = webrtc.webrtc.createPeer({
+			id: currentSessionId,
+			type: "video",
+			enableDataChannels: true,
+			receiveMedia: {
+				offerToReceiveAudio: 0,
+				offerToReceiveVideo: 0
+			}
+		});
+		webrtc.emit('createdPeer', ownPeer);
+		ownPeer.start();
+	}
+
+	function usersChanged(signaling, newUsers, disconnectedSessionIds) {
+		'use strict';
+		var currentSessionId = signaling.getSessionid();
+
+		var useMcu = signaling.hasFeature("mcu");
+		if (useMcu && newUsers.length) {
+			checkStartPublishOwnPeer(signaling);
+		}
 
 		newUsers.forEach(function(user) {
 			if (!user.inCall) {
@@ -62,39 +155,32 @@ var spreedPeerConnectionTable = [];
 			}
 
 			var peer;
-			// To avoid overloading the user joining a room (who previously called
-			// all the other participants), we decide who calls who by comparing
-			// the session ids of the users: "larger" ids call "smaller" ones.
-			if (sessionId < currentSessionId && !webrtc.webrtc.getPeers(sessionId, 'video').length) {
-				console.log("Starting call with", user);
-				peer = webrtc.webrtc.createPeer({
-					id: sessionId,
-					type: "video",
-					enableDataChannels: true,
-					receiveMedia: {
-						offerToReceiveAudio: 1,
-						offerToReceiveVideo: 1
-					}
-				});
-				webrtc.emit('createdPeer', peer);
-				peer.start();
+			if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
+				if (useMcu) {
+					// TODO(jojo): Already create peer object to avoid duplicate offers.
+					webrtc.connection.requestOffer(user, "video");
+				} else if (sessionId < currentSessionId) {
+					// To avoid overloading the user joining a room (who previously called
+					// all the other participants), we decide who calls who by comparing
+					// the session ids of the users: "larger" ids call "smaller" ones.
+					console.log("Starting call with", user);
+					peer = webrtc.webrtc.createPeer({
+						id: sessionId,
+						type: "video",
+						enableDataChannels: true,
+						receiveMedia: {
+							offerToReceiveAudio: 1,
+							offerToReceiveVideo: 1
+						}
+					});
+					webrtc.emit('createdPeer', peer);
+					peer.start();
+				}
 			}
 
 			//Send shared screen to new participants
-			if (webrtc.getLocalScreen() && !webrtc.webrtc.getPeers(sessionId, 'screen').length) {
-				peer = webrtc.webrtc.createPeer({
-					id: sessionId,
-					type: 'screen',
-					sharemyscreen: true,
-					enableDataChannels: false,
-					receiveMedia: {
-						offerToReceiveAudio: 0,
-						offerToReceiveVideo: 0
-					},
-					broadcaster: currentSessionId,
-				});
-				webrtc.emit('createdPeer', peer);
-				peer.start();
+			if (webrtc.getLocalScreen()) {
+				createScreensharingPeer(signaling, sessionId);
 			}
 		});
 
@@ -111,10 +197,10 @@ var spreedPeerConnectionTable = [];
 		updateParticipantsUI(previousUsersInRoom.length + 1);
 	}
 
-	function usersInCallChanged(users) {
+	function usersInCallChanged(signaling, users) {
 		// The passed list are the users that are currently in the room,
 		// i.e. that are in the call and should call each other.
-		var currentSessionId = webrtc.connection.getSessionid();
+		var currentSessionId = signaling.getSessionid();
 		var currentUsersInRoom = [];
 		var userMapping = {};
 		var selfInCall = false;
@@ -139,7 +225,7 @@ var spreedPeerConnectionTable = [];
 
 		if (!selfInCall) {
 			// Own session is no longer in the call, disconnect from all others.
-			usersChanged([], previousUsersInRoom);
+			usersChanged(signaling, [], previousUsersInRoom);
 			return;
 		}
 
@@ -150,7 +236,7 @@ var spreedPeerConnectionTable = [];
 			newUsers.push(userMapping[sessionId]);
 		});
 		if (newUsers.length || disconnectedSessionIds.length) {
-			usersChanged(newUsers, disconnectedSessionIds);
+			usersChanged(signaling, newUsers, disconnectedSessionIds);
 		}
 	}
 
@@ -164,28 +250,29 @@ var spreedPeerConnectionTable = [];
 			});
 		};
 
-		app.signaling.on('usersLeft', function(users) {
+		var signaling = app.signaling;
+		signaling.on('usersLeft', function(users) {
 			users.forEach(function(user) {
 				delete usersInCallMapping[user];
 			});
-			usersChanged([], users);
+			usersChanged(signaling, [], users);
 		});
-		app.signaling.on('usersChanged', function(users) {
+		signaling.on('usersChanged', function(users) {
 			users.forEach(function(user) {
 				var sessionId = user.sessionId || user.sessionid;
 				usersInCallMapping[sessionId] = user;
 			});
-			usersInCallChanged(usersInCallMapping);
+			usersInCallChanged(signaling, usersInCallMapping);
 		});
-		app.signaling.on('usersInRoom', function(users) {
+		signaling.on('usersInRoom', function(users) {
 			usersInCallMapping = {};
 			users.forEach(function(user) {
 				var sessionId = user.sessionId || user.sessionid;
 				usersInCallMapping[sessionId] = user;
 			});
-			usersInCallChanged(usersInCallMapping);
+			usersInCallChanged(signaling, usersInCallMapping);
 		});
-		app.signaling.on('leaveCall', function () {
+		signaling.on('leaveCall', function () {
 			webrtc.leaveCall();
 		});
 
@@ -204,7 +291,7 @@ var spreedPeerConnectionTable = [];
 			autoAdjustMic: false,
 			audioFallback: true,
 			detectSpeakingEvents: true,
-			connection: app.signaling,
+			connection: signaling,
 			enableDataChannels: true,
 			nick: OC.getCurrentUser().displayName
 		});
@@ -235,6 +322,17 @@ var spreedPeerConnectionTable = [];
 				});
 			}
 		});
+
+		var sendDataChannelToAll = function(channel, message, payload) {
+			// If running with MCU, the message must be sent through the
+			// publishing peer and will be distributed by the MCU to subscribers.
+			var conn = OCA.SpreedMe.webrtc.connection;
+			if (ownPeer && conn.hasFeature && conn.hasFeature('mcu')) {
+				ownPeer.sendDirectly(channel, message, payload);
+				return;
+			}
+			OCA.SpreedMe.webrtc.sendDirectlyToAll(channel, message, payload);
+		};
 
 		OCA.SpreedMe.videos = {
 			getContainerId: function(id) {
@@ -377,6 +475,13 @@ var spreedPeerConnectionTable = [];
 				$(OCA.SpreedMe.videos.getContainerId(id)).remove();
 			},
 			addPeer: function(peer) {
+				var signaling = OCA.SpreedMe.app.signaling;
+				if (peer.id === webrtc.connection.getSessionid()) {
+					console.log("Not adding video for own peer", peer);
+					OCA.SpreedMe.videos.startSendingNick(peer);
+					return;
+				}
+
 				var newContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
 				if (newContainer.length === 0) {
 					newContainer = $(OCA.SpreedMe.videos.add(peer.id));
@@ -421,46 +526,53 @@ var spreedPeerConnectionTable = [];
 							}
 							if (!OC.getCurrentUser()['uid']) {
 								var currentGuestNick = localStorage.getItem("nick");
-								OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', currentGuestNick);
+								sendDataChannelToAll('status', 'nickChanged', currentGuestNick);
 							}
 
 							// Reset ice restart counter for peer
 							if (spreedPeerConnectionTable[peer.id] > 0) {
 								spreedPeerConnectionTable[peer.id] = 0;
 							}
-
 							break;
 						case 'disconnected':
 							console.log('Disconnected.');
-							// If the peer is still disconnected after 5 seconds we try ICE restart.
-							setTimeout(function() {
-								if(peer.pc.iceConnectionState === 'disconnected') {
-									avatar.addClass('icon-loading');
-									if (spreedPeerConnectionTable[peer.id] < 5) {
-										if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-											peer.pc.pc.peerconnection.signalingState === 'stable') {
-											spreedPeerConnectionTable[peer.id] ++;
-											console.log('ICE restart.');
-											peer.icerestart();
+							if (!signaling.hasFeature("mcu")) {
+								// ICE failures will be handled in "iceFailed"
+								// below for MCU installations.
+								setTimeout(function() {
+									// If the peer is still disconnected after 5 seconds we try ICE restart.
+									if(peer.pc.iceConnectionState === 'disconnected') {
+										avatar.addClass('icon-loading');
+										if (spreedPeerConnectionTable[peer.id] < 5) {
+											if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
+												peer.pc.pc.peerconnection.signalingState === 'stable') {
+												spreedPeerConnectionTable[peer.id] ++;
+												console.log('ICE restart.');
+												peer.icerestart();
+											}
 										}
 									}
-								}
-							}, 5000);
+								}, 5000);
+							}
 							break;
 						case 'failed':
 							console.log('Connection failed.');
-							if (spreedPeerConnectionTable[peer.id] < 5) {
-								avatar.addClass('icon-loading');
-								if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-									peer.pc.pc.peerconnection.signalingState === 'stable') {
-									spreedPeerConnectionTable[peer.id] ++;
-									console.log('ICE restart.');
-									peer.icerestart();
+							if (!signaling.hasFeature("mcu")) {
+								// ICE failures will be handled in "iceFailed"
+								// below for MCU installations.
+								if (spreedPeerConnectionTable[peer.id] < 5) {
+									avatar.addClass('icon-loading');
+									if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
+										peer.pc.pc.peerconnection.signalingState === 'stable') {
+										spreedPeerConnectionTable[peer.id] ++;
+										console.log('ICE restart.');
+										peer.icerestart();
+									}
+								} else {
+									console.log('ICE failed after 5 tries.');
+									mediaIndicator.children().hide();
+									mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
 								}
-							} else {
-								console.log('ICE failed after 5 tries.');
-								mediaIndicator.children().hide();
-								mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
 							}
 							break;
 						case 'closed':
@@ -476,6 +588,44 @@ var spreedPeerConnectionTable = [];
 				peer.pc.on('PeerConnectionTrace', function (event) {
 					console.log('trace', event);
 				});
+			},
+			// The nick name below the avatar is distributed through the
+			// DataChannel of the PeerConnection and only sent once during
+			// establishment. For the MCU case, the sending PeerConnection
+			// is created once and then never changed when more participants
+			// join. For this, we periodically send the nick to all other
+			// participants through the sending PeerConnection.
+			//
+			// TODO: The name for the avatar should come from the participant
+			// list which already has all information and get rid of using the
+			// DataChannel for this.
+			startSendingNick: function(peer) {
+				if (!signaling.hasFeature("mcu")) {
+					return;
+				}
+
+				OCA.SpreedMe.videos.stopSendingNick(peer);
+				peer.nickInterval = setInterval(function() {
+					var payload;
+					var user = OC.getCurrentUser();
+					if (!user.uid) {
+						payload = localStorage.getItem("nick");
+					} else {
+						payload = {
+							"name": user.displayName,
+							"userid": user.uid
+						};
+					}
+					peer.sendDirectly('status', "nickChanged", payload);
+				}, 1000);
+			},
+			stopSendingNick: function(peer) {
+				if (!peer.nickInterval) {
+					return;
+				}
+
+				clearInterval(peer.nickInterval);
+				peer.nickInterval = null;
 			}
 		};
 
@@ -713,20 +863,133 @@ var spreedPeerConnectionTable = [];
 			console.log('PEER CREATED', peer);
 			if (peer.type === 'video') {
 				OCA.SpreedMe.videos.addPeer(peer);
+				// Make sure required data channels exist for all peers. This
+				// is required for peers that get created by SimpleWebRTC from
+				// received "Offer" messages. Otherwise the "channelMessage"
+				// will not be called.
+				peer.getDataChannel('status');
 			}
+		});
+
+		function checkPeerMedia(peer, track, mediaType) {
+			var defer = $.Deferred();
+			peer.pc.pc.getStats(track, function(stats) {
+				var result = false;
+				Object.keys(stats).forEach(function(key) {
+					var value = stats[key];
+					if (!result && !value || value.mediaType !== mediaType || !value.hasOwnProperty('bytesReceived')) {
+						return;
+					}
+
+					if (value.bytesReceived > 0) {
+						OCA.SpreedMe.webrtc.emit('unmute', {
+							id: peer.id,
+							name: mediaType
+						});
+						result = true;
+					}
+				});
+				if (result) {
+					defer.resolve();
+				} else {
+					defer.reject();
+				}
+			});
+			return defer;
+		}
+
+		function stopPeerCheckMedia(peer) {
+			if (peer.check_audio_interval) {
+				clearInterval(peer.check_audio_interval);
+				peer.check_audio_interval = null;
+			}
+			if (peer.check_video_interval) {
+				clearInterval(peer.check_video_interval);
+				peer.check_video_interval = null;
+			}
+			OCA.SpreedMe.videos.stopSendingNick(peer);
+		}
+
+		function startPeerCheckMedia(peer, stream) {
+			stopPeerCheckMedia(peer);
+			peer.check_video_interval = setInterval(function() {
+				stream.getVideoTracks().forEach(function(video) {
+					checkPeerMedia(peer, video, 'video').then(function() {
+						clearInterval(peer.check_video_interval);
+						peer.check_video_interval = null;
+					});
+				});
+			}, 1000);
+			peer.check_audio_interval = setInterval(function() {
+				stream.getAudioTracks().forEach(function(audio) {
+					checkPeerMedia(peer, audio, 'audio').then(function() {
+						clearInterval(peer.check_audio_interval);
+						peer.check_audio_interval = null;
+					});
+				});
+			}, 1000);
+		}
+
+		OCA.SpreedMe.webrtc.on('peerStreamAdded', function (peer) {
+			// With the MCU, a newly subscribed stream might not get the
+			// "audioOn"/"videoOn" messages as they are only sent when
+			// a user starts publishing. Instead wait for initial data
+			// and trigger events locally.
+			if (!OCA.SpreedMe.app.signaling.hasFeature("mcu")) {
+				return;
+			}
+
+			startPeerCheckMedia(peer, peer.stream);
+		});
+
+		OCA.SpreedMe.webrtc.on('peerStreamRemoved', function (peer) {
+			stopPeerCheckMedia(peer);
 		});
 
 		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
 			app.disableScreensharingButton();
 		});
 
+		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (!signaling.hasFeature("mcu")) {
+				// ICE restarts will be handled by "iceConnectionStateChange"
+				// above.
+				return;
+			}
+
+			// For now assume the connection to the MCU is interrupted on ICE
+			// failures and force a reconnection of all streams.
+			if (ownPeer) {
+				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
+				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+				OCA.SpreedMe.videos.remove(ownPeer.id);
+				delete spreedMappingTable[ownPeer.id];
+				ownPeer.end();
+				ownPeer = null;
+			}
+			usersChanged(signaling, [], previousUsersInRoom);
+			usersInCallMapping = {};
+			previousUsersInRoom = [];
+			// Reconnects with a new session id will trigger "usersChanged"
+			// with the users in the room and that will re-establish the
+			// peerconnection streams.
+			signaling.forceReconnect(true);
+		});
+
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
 			console.log('localMediaStarted');
 			app.startLocalMedia(configuration);
+			hasLocalMedia = true;
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (signaling.hasFeature("mcu")) {
+				checkStartPublishOwnPeer(signaling);
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
 			console.log('Access to microphone & camera failed', error);
+			hasLocalMedia = false;
 			var message;
 			if (error.name === "NotAllowedError") {
 				if (error.message && error.message.indexOf("Only secure origins") !== -1) {
@@ -781,8 +1044,13 @@ var spreedPeerConnectionTable = [];
 				} else if(data.type === 'videoOff') {
 					OCA.SpreedMe.webrtc.emit('mute', {id: peer.id, name:'video'});
 				} else if (data.type === 'nickChanged') {
-					OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
-					app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
+					var payload = data.payload || '';
+					if (typeof(payload) === 'string') {
+						OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name:data.payload});
+						app._messageCollection.updateGuestName(new Hashes.SHA1().hex(peer.id), data.payload);
+					} else {
+						OCA.SpreedMe.webrtc.emit('nick', {id: peer.id, name: payload.name, userid: payload.userid});
+					}
 				}
 			} else if (label === 'hark') {
 				// Ignore messages from hark datachannel
@@ -835,12 +1103,12 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'speaking');
+			sendDataChannelToAll('status', 'speaking');
 			$('#localVideoContainer').addClass('speaking');
 		});
 
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'stoppedSpeaking');
+			sendDataChannelToAll('status', 'stoppedSpeaking');
 			$('#localVideoContainer').removeClass('speaking');
 		});
 
@@ -893,16 +1161,16 @@ var spreedPeerConnectionTable = [];
 
 		// Send the audio on and off events via data channel
 		OCA.SpreedMe.webrtc.on('audioOn', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'audioOn');
+			sendDataChannelToAll('status', 'audioOn');
 		});
 		OCA.SpreedMe.webrtc.on('audioOff', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'audioOff');
+			sendDataChannelToAll('status', 'audioOff');
 		});
 		OCA.SpreedMe.webrtc.on('videoOn', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'videoOn');
+			sendDataChannelToAll('status', 'videoOn');
 		});
 		OCA.SpreedMe.webrtc.on('videoOff', function() {
-			OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'videoOff');
+			sendDataChannelToAll('status', 'videoOff');
 		});
 
 		OCA.SpreedMe.webrtc.on('screenAdded', function(video, peer) {
@@ -952,6 +1220,39 @@ var spreedPeerConnectionTable = [];
 		// Local screen added.
 		OCA.SpreedMe.webrtc.on('localScreenAdded', function(video) {
 			OCA.SpreedMe.webrtc.emit('screenAdded', video, null);
+			var signaling = OCA.SpreedMe.app.signaling;
+
+			var currentSessionId = signaling.getSessionid();
+			OCA.SpreedMe.webrtc.getPeers(null, 'video').forEach(function (existingPeer) {
+				if (existingPeer.id === currentSessionId) {
+					// Running with MCU, no need to create screensharing
+					// subscriber for client itself.
+					return;
+				}
+
+				createScreensharingPeer(signaling, existingPeer.id);
+			});
+		});
+
+		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (!signaling.hasFeature('mcu')) {
+				// Only need to notify clients here if running with MCU.
+				// Otherwise SimpleWebRTC will notify each client on its own.
+				return;
+			}
+
+			var currentSessionId = signaling.getSessionid();
+			OCA.SpreedMe.webrtc.getPeers().forEach(function(existingPeer) {
+				if (ownScreenPeer && existingPeer.type === 'screen' && existingPeer.id === currentSessionId) {
+					ownScreenPeer = null;
+					existingPeer.end();
+					signaling.sendRoomMessage({
+						roomType: 'screen',
+						type: 'unshareScreen'
+					});
+				}
+			});
 		});
 
 		// Peer changed nick
@@ -979,11 +1280,17 @@ var spreedPeerConnectionTable = [];
 				screenNameIndicator.text(t('spreed', "Guest's screen"));
 			} else {
 				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
-				guestNamesTable[data.id] = data.name;
+				if (!data.userid) {
+					guestNamesTable[data.id] = data.name;
+				}
 			}
 			videoNameIndicator.text(data.name || t('spreed', 'Guest'));
-			videoAvatar.imageplaceholder('?', data.name, 128);
-			videoAvatar.css('background-color', '#b9b9b9');
+			if (data.userid) {
+				videoAvatar.avatar(data.userid, 128);
+			} else {
+				videoAvatar.imageplaceholder('?', data.name, 128);
+				videoAvatar.css('background-color', '#b9b9b9');
+			}
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
