@@ -1,6 +1,16 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.4 – 2018-07-12
+### Added
+- Allow external signaling servers to integrate a MCU
+  [#398](https://github.com/nextcloud/spreed/pull/398)
+
+### Fixed
+- Support chat with a standalone signaling servers
+  [#890](https://github.com/nextcloud/spreed/pull/890)
+  [#887](https://github.com/nextcloud/spreed/pull/887)
+
 ## 3.2.3 – 2018-07-11
 ### Changed
 - Only paste the content of HTML into the chat input without the actual HTML 
