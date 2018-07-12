@@ -24,6 +24,8 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\PublicShareAuth;
 
+use OCA\Spreed\Participant;
+
 /**
  * Custom behaviour for rooms to request the password for a share.
  *
@@ -38,6 +40,57 @@ namespace OCA\Spreed\PublicShareAuth;
  * different room events.
  */
 class Room {
+
+	/**
+	 * Prevents other users from joining if there is already another participant
+	 * in the room besides the owner.
+	 *
+	 * This method should be called before a user joins a room.
+	 *
+	 * @param \OCA\Spreed\Room $room
+	 * @param string $userId
+	 * @throws \OverflowException
+	 */
+	public function preventExtraUsersFromJoining(\OCA\Spreed\Room $room, string $userId) {
+		if ($room->getObjectType() !== 'share:password') {
+			return;
+		}
+
+		$participants = $room->getParticipants();
+		$users = $participants['users'];
+		$guests = $participants['guests'];
+
+		if (array_key_exists($userId, $users) && $users[$userId]['participantType'] === Participant::OWNER) {
+			return;
+		}
+
+		if (\count($users) > 1 || \count($guests) > 0) {
+			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
+		}
+	}
+
+	/**
+	 * Prevents other guests from joining if there is already another
+	 * participant in the room besides the owner.
+	 *
+	 * This method should be called before a guest joins a room.
+	 *
+	 * @param \OCA\Spreed\Room $room
+	 * @throws \OverflowException
+	 */
+	public function preventExtraGuestsFromJoining(\OCA\Spreed\Room $room) {
+		if ($room->getObjectType() !== 'share:password') {
+			return;
+		}
+
+		$participants = $room->getParticipants();
+		$users = $participants['users'];
+		$guests = $participants['guests'];
+
+		if (\count($users) > 1 || \count($guests) > 0) {
+			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
+		}
+	}
 
 	/**
 	 * Destroys the PublicShareAuth room as soon as one of the participant

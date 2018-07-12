@@ -572,7 +572,9 @@ class Room {
 	 * @throws InvalidPasswordException
 	 */
 	public function joinRoom($userId, $password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this, [
+			'userId' => $userId,
+		]));
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')

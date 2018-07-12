@@ -323,6 +323,26 @@ class Application extends App {
 
 			/** @var \OCA\Spreed\PublicShareAuth\Room $publicShareAuthRoom */
 			$publicShareAuthRoom = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\Room::class);
+			$publicShareAuthRoom->preventExtraUsersFromJoining($room, $event->getArgument('userId'));
+		};
+		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var \OCA\Spreed\PublicShareAuth\Room $publicShareAuthRoom */
+			$publicShareAuthRoom = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\Room::class);
+			$publicShareAuthRoom->preventExtraGuestsFromJoining($room);
+		};
+		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var \OCA\Spreed\PublicShareAuth\Room $publicShareAuthRoom */
+			$publicShareAuthRoom = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\Room::class);
 			$publicShareAuthRoom->destroyRoomOnParticipantLeave($room);
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
