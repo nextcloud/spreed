@@ -301,6 +301,16 @@ return [
 
 
 		/**
+		 * PublicShareAuth
+		 */
+		[
+			'name' => 'PublicShareAuth#createRoom',
+			'url' => '/api/{apiVersion}/publicshareauth',
+			'verb' => 'POST',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
+
+		/**
 		 * Guest
 		 */
 		[
