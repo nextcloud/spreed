@@ -147,10 +147,22 @@ class PageController extends Controller {
 				}
 
 				if ($requirePassword) {
-					if ($password !== '' && $room->verifyPassword($password)) {
+					$passwordVerification = [
+						'result' => false,
+						'url' => ''
+					];
+					
+					$passwordVerification = $room->verifyPassword($password);
+
+					if ($passwordVerification['result']) {
 						$this->session->setPasswordForRoom($token, $token);
 					} else {
-						return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+						if ($passwordVerification['url'] == '') {
+							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+						}
+						else {
+							return new RedirectResponse($passwordVerification['url']);
+						}
 					}
 				}
 			}
@@ -194,10 +206,22 @@ class PageController extends Controller {
 
 		$this->session->removePasswordForRoom($token);
 		if ($room->hasPassword()) {
-			if ($password !== '' && $room->verifyPassword($password)) {
+			$passwordVerification = [
+				'result' => false,
+				'url' => ''
+			];
+			
+			$passwordVerification = $room->verifyPassword($password);
+
+			if ($passwordVerification['result']) {
 				$this->session->setPasswordForRoom($token, $token);
 			} else {
-				return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+				if ($passwordVerification['url'] == '') {
+					return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+				}
+				else {
+					return new RedirectResponse($passwordVerification['url']);
+				}
 			}
 		}
 
