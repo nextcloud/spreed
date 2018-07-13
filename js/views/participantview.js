@@ -102,17 +102,17 @@
 		initAddParticipantSelector: function() {
 			this.ui.addParticipantInput.select2({
 				ajax: {
-					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
+					url: OC.linkToOCS('core/autocomplete', 2) + 'get',
 					dataType: 'json',
 					quietMillis: 100,
 					data: function (term) {
 						return {
 							format: 'json',
 							search: term,
-							perPage: 200,
-							itemType: 'call'
+							itemType: 'call',
+							itemId: this.room.get('token')
 						};
-					},
+					}.bind(this),
 					results: function (response) {
 						// TODO improve error case
 						if (_.isUndefined(response.ocs.data)) {
@@ -122,32 +122,16 @@
 						var results = [],
 							participants = this.room.get('participants');
 
-						$.each(response.ocs.data.exact.users, function(id, user) {
-							var isExactUserInGroup = false;
-
-							$.each(participants, function(participantId) {
-								if (participantId === user.value.shareWith) {
-									isExactUserInGroup = true;
-								}
-							});
-
-							if (!isExactUserInGroup) {
-								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
+						response.ocs.data.forEach(function(suggestion) {
+							if (participants.hasOwnProperty(suggestion.id)) {
+								return;
 							}
-						});
 
-						$.each(response.ocs.data.users, function(id, user) {
-							var isUserInGroup = false;
-
-							$.each(participants, function(participantId) {
-								if (participantId === user.value.shareWith) {
-									isUserInGroup = true;
-								}
+							results.push({
+								id: suggestion.id,
+								displayName: suggestion.label,
+								type: 'user'
 							});
-
-							if (!isUserInGroup) {
-								results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-							}
 						});
 
 						return {
