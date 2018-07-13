@@ -121,6 +121,10 @@
 						return '<span><div class="avatar icon-add"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
+					if (element.type === 'group') {
+						return '<span><div class="avatar icon-contacts-dark"></div>' + escapeHTML(element.displayName) + '</span>';
+					}
+
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
 				},
 				formatSelection: function () {
