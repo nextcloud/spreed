@@ -68,7 +68,7 @@ class Hooks {
 		try {
 			$notification->setApp('spreed')
 				->setDateTime($dateTime)
-				->setObject('room', $room->getId())
+				->setObject('room', $room->getToken())
 				->setSubject('invitation', [
 					'actorId' => $actor->getUID(),
 				]);
@@ -111,7 +111,7 @@ class Hooks {
 		try {
 			// Remove all old notifications for this room
 			$notification->setApp('spreed')
-				->setObject('room', $room->getId());
+				->setObject('room', $room->getToken());
 			$this->notificationManager->markProcessed($notification);
 
 			$notification->setObject('call', $room->getId());

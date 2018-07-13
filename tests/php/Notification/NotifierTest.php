@@ -93,7 +93,7 @@ class NotifierTest extends \Test\TestCase {
 			->method('getType')
 			->willReturn(Room::ONE_TO_ONE_CALL);
 		$this->manager->expects($this->once())
-			->method('getRoomById')
+			->method('getRoomByToken')
 			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
@@ -180,7 +180,7 @@ class NotifierTest extends \Test\TestCase {
 			->method('getName')
 			->willReturn($name);
 		$this->manager->expects($this->once())
-			->method('getRoomById')
+			->method('getRoomByToken')
 			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
@@ -398,7 +398,7 @@ class NotifierTest extends \Test\TestCase {
 				->willReturn('testRoomId');
 		}
 		$this->manager->expects($this->once())
-			->method('getRoomById')
+			->method('getRoomByToken')
 			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
@@ -499,15 +499,18 @@ class NotifierTest extends \Test\TestCase {
 
 		if ($validRoom === null) {
 			$this->manager->expects($this->never())
-				->method('getRoomById');
+				->method('getRoomByToken');
 		} else if ($validRoom === true) {
 			$room = $this->createMock(Room::class);
 			$room->expects($this->never())
 				->method('getType');
 			$this->manager->expects($this->once())
-				->method('getRoomById')
+				->method('getRoomByToken')
 				->willReturn($room);
 		} else if ($validRoom === false) {
+			$this->manager->expects($this->once())
+				->method('getRoomByToken')
+				->willThrowException(new RoomNotFoundException());
 			$this->manager->expects($this->once())
 				->method('getRoomById')
 				->willThrowException(new RoomNotFoundException());

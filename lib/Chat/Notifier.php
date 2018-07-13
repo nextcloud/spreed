@@ -72,9 +72,10 @@ class Notifier {
 	 * Not every user mentioned in the message is notified, but only those that
 	 * are able to participate in the room.
 	 *
+	 * @param Room $chat
 	 * @param IComment $comment
 	 */
-	public function notifyMentionedUsers(IComment $comment) {
+	public function notifyMentionedUsers(Room $chat, IComment $comment) {
 		$mentionedUserIds = $this->getMentionedUserIds($comment);
 		if (empty($mentionedUserIds)) {
 			return;
@@ -82,7 +83,7 @@ class Notifier {
 
 		foreach ($mentionedUserIds as $mentionedUserId) {
 			if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {
-				$notification = $this->createNotification($comment, $mentionedUserId);
+				$notification = $this->createNotification($chat, $comment, $mentionedUserId);
 
 				$this->notificationManager->notify($notification);
 			}
@@ -92,31 +93,31 @@ class Notifier {
 	/**
 	 * Removes all the pending notifications for the room with the given ID.
 	 *
-	 * @param string $roomId
+	 * @param Room $chat
 	 */
-	public function removePendingNotificationsForRoom($roomId) {
+	public function removePendingNotificationsForRoom(Room $chat) {
 		$notification = $this->notificationManager->createNotification();
 
 		// @todo this should be in the Notifications\Hooks
 		$notification->setApp('spreed');
 
-		$notification->setObject('chat', $roomId);
+		$notification->setObject('chat', $chat->getToken());
 		$this->notificationManager->markProcessed($notification);
 
-		$notification->setObject('room', $roomId);
+		$notification->setObject('room', $chat->getToken());
 		$this->notificationManager->markProcessed($notification);
 
-		$notification->setObject('call', $roomId);
+		$notification->setObject('call', $chat->getToken());
 		$this->notificationManager->markProcessed($notification);
 	}
 
 	/**
 	 * Removes all the pending mention notifications for the room
 	 *
-	 * @param string $roomId
+	 * @param Room $chat
 	 * @param string $userId
 	 */
-	public function markMentionNotificationsRead($roomId, $userId) {
+	public function markMentionNotificationsRead(Room $chat, $userId) {
 
 		if ($userId === null || $userId === '') {
 			return;
@@ -126,7 +127,7 @@ class Notifier {
 
 		$notification
 			->setApp('spreed')
-			->setObject('chat', $roomId)
+			->setObject('chat', $chat->getToken())
 			->setUser($userId);
 
 		$this->notificationManager->markProcessed($notification);
@@ -159,15 +160,16 @@ class Notifier {
 	 * Creates a notification for the given chat message comment and mentioned
 	 * user ID.
 	 *
+	 * @param Room $chat
 	 * @param IComment $comment
 	 * @param string $mentionedUserId
 	 * @return INotification
 	 */
-	private function createNotification(IComment $comment, $mentionedUserId) {
+	private function createNotification(Room $chat, IComment $comment, $mentionedUserId) {
 		$notification = $this->notificationManager->createNotification();
 		$notification
 			->setApp('spreed')
-			->setObject('chat', $comment->getObjectId())
+			->setObject('chat', $chat->getToken())
 			->setUser($mentionedUserId)
 			->setSubject('mention', [
 				'userType' => $comment->getActorType(),

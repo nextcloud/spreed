@@ -269,7 +269,7 @@ class Application extends App {
 
 			/** @var ChatManager $chatManager */
 			$chatManager = $this->getContainer()->query(ChatManager::class);
-			$chatManager->deleteMessages((string) $room->getId());
+			$chatManager->deleteMessages($room);
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
