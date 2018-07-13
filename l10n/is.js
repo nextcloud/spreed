@@ -149,8 +149,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-þjónninn er nauðsynlegur til að þáttakendur geti tengst símtölum. TURN-þjónninn tryggir að tengingin virki jafnvel í gegnum eldveggi.",
     "STUN server" : "STUN-þjónn",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
-    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Þú getur stillt þetta þannig að nafnið þitt birtist efst á hægra hliðarspjaldi svo að aðrir þáttakendur eigi auðveldara með að þekkja þig.",
-    "Remove conversation from list" : "Fjarlægja samtal af lista"
+    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

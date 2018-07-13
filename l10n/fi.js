@@ -172,8 +172,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-palvelin on välttämätön, jotta osallistujat voivat yhdistää puheluihin. TURN-palvelin varmistaa, että yhteys toimii myös palomuurien läpi.",
     "STUN server" : "STUN-palvelin",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille.",
-    "TURN server shared secret" : "TURN-palvelimen jaettu salausavain",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Voit asettaa nimesi oikeassa sivupalkissa, jolloin muut osallistujat tunnistavat sinut aiempaa paremmin.",
-    "Remove conversation from list" : "Poista keskustelu luettelosta"
+    "TURN server shared secret" : "TURN-palvelimen jaettu salausavain"
 },
 "nplurals=2; plural=(n != 1);");

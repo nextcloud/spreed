@@ -138,7 +138,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
     "STUN server" : "STUN kiszolgáló",
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
-    "TURN server shared secret" : "TURN szerver megosztott titok",
-    "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson."
+    "TURN server shared secret" : "TURN szerver megosztott titok"
 },
 "nplurals=2; plural=(n != 1);");

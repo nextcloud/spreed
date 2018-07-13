@@ -185,8 +185,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Сервер STUN необходим, чтобы участники могли подключиться к вызовам. Сервер TURN гарантирует, что соединение работает даже через межсетевые экраны.",
     "STUN server" : "Сервер STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Сервер STUN используется для определения общедоступного IP адреса участников за маршрутизатором.",
-    "TURN server shared secret" : "Общая секретная фраза сервера TURN",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Вы можете ввести своё имя в правом поле, чтобы другие участники могли лучше Вас идентифицировать. ",
-    "Remove conversation from list" : "Удалить обсуждение из списка"
+    "TURN server shared secret" : "Общая секретная фраза сервера TURN"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }
