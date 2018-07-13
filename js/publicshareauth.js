@@ -69,6 +69,11 @@
 
 			var shareToken = $('#sharingToken').val();
 
+			if (this.hideTalkSidebarTimeout) {
+				clearTimeout(this.hideTalkSidebarTimeout);
+				delete this.hideTalkSidebarTimeout;
+			}
+
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'publicshareauth',
 				type: 'POST',
@@ -103,6 +108,12 @@
 			OCA.SpreedMe.app.activeRoom = new OCA.SpreedMe.Models.Room({token: token});
 			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
+			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
+				if (token === leftRoomToken) {
+					self.leaveRoom();
+				}
+			});
+
 			// Prevent updateContentsLayout from executing, as it is not needed
 			// when not having a full UI and messes with the tooltip container.
 			OCA.SpreedMe.app.updateContentsLayout = function() {
@@ -118,8 +129,23 @@
 			});
 		},
 
+		leaveRoom: function() {
+			$('.request-password-wrapper .icon')
+					.removeClass('icon-loading-small-dark')
+					.addClass('icon-confirm-white');
+			$('#request-password-button').prop('disabled', '');
+
+			this.hideTalkSidebarTimeout = setTimeout(this.hideTalkSidebar, 5000);
+		},
+
 		showTalkSidebar: function() {
 			$('#talk-sidebar').removeClass('disappear');
+		},
+
+		hideTalkSidebar: function() {
+			$('#talk-sidebar').addClass('disappear');
+
+			delete this.hideTalkSidebarTimeout;
 		},
 	};
 
