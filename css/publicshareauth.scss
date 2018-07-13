@@ -1,0 +1,132 @@
+/* Request password button has the appearance of the log in button */
+.request-password-wrapper {
+	position: relative;
+	width: 280px;
+	margin: 16px auto;
+}
+
+.request-password-wrapper .icon {
+	position: absolute;
+	top: 23px;
+	right: 23px;
+	pointer-events: none;
+}
+
+input#request-password-button {
+	width: 269px;
+	padding: 10px 10px;
+}
+
+input#request-password-button:disabled ~ .icon {
+	opacity: 0.5;
+}
+
+
+
+/* Special layout to include the Talk sidebar */
+/* The original style of the body is kept until the layout has been adjusted to
+ * include the Talk sidebar. If only "#body-login" was used, immediately after
+ * load and before the sidebar was injected the original elements would be using
+ * the style for the adjusted layout, which is not the proper one for them, and
+ * this would cause the elements to "jump" to their final position once the
+ * layout was adjusted. */
+#body-login.talk-sidebar-enabled {
+	flex-direction: row;
+	align-items: stretch;
+}
+
+/* #body-login should be used to override the #content rules set in server. */
+#body-login #content {
+	flex-grow: 1;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	height: auto;
+
+	overflow-x: hidden;
+
+	/* Override "padding-top: 50px" set in server. */
+	padding-top: 0;
+}
+
+/* Properties based on the app-sidebar */
+#talk-sidebar {
+	position: relative;
+	flex-shrink: 0;
+	width: 27vw;
+	min-width: 300px;
+	height: 100vh;
+
+	background: var(--color-main-background);
+	border-left: 1px solid var(--color-border);
+
+	overflow-x: hidden;
+	overflow-y: auto;
+	z-index: 500;
+
+	transition: 300ms width ease-in-out,
+				300ms min-width ease-in-out;
+}
+
+#talk-sidebar.disappear {
+	width: 0;
+	min-width: 0;
+	border-left-width: 0;
+}
+
+#talk-sidebar #commentsTabView ~ #emptycontent {
+	display: none !important;
+}
+
+
+
+/**
+ * Cascade parent element height to the chat view in the sidebar to limit the
+ * vertical scroll bar only to the list of messages. Otherwise, the vertical
+ * scroll bar would be shown for the whole sidebar and everything would be
+ * moved when scrolling to see overflown messages.
+ *
+ * The list of messages should stretch to fill the available space at the bottom
+ * of the right sidebar, so the height is cascaded using flex boxes.
+ */
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+}
+
+#talk-sidebar #commentsTabView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#talk-sidebar .comments {
+	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+}
+
+#talk-sidebar #commentsTabView .newCommentRow,
+#talk-sidebar #commentsTabView .comments {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+
+
+/* Unset conflicting rules from guest.css for the sidebar */
+#talk-sidebar {
+	text-align: left;
+}
+
+#talk-sidebar form {
+	width: unset;
+	margin: 0;
+}
