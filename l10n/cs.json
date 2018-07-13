@@ -148,8 +148,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN server je potřebný, aby se mohli účastníci připojit k hovorům. TURN server zajišťuje, že bude spojení fungovat i skrz firewally.",
     "STUN server" : "Server STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
-    "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Na pravé straně si můžete nastavit jméno, aby vás ostatní účastníci mohli lépe identifikovat.",
-    "Remove conversation from list" : "Odebrat konverzaci ze seznamu"
+    "TURN server shared secret" : "Sdílené tajemství s TURN serverem"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }
