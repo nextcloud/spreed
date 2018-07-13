@@ -82,7 +82,6 @@ OC.L10N.register(
     "Fullscreen" : "Visas ekranas",
     "Mute audio" : "Nutildyti garsą",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris",
-    "Remove conversation from list" : "Šalinti pokalbį iš sąrašo"
+    "STUN server" : "STUN serveris"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

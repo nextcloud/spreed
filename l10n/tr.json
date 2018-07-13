@@ -185,8 +185,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN sunucusu katılımcı çağrılarının bağlanabilmesi için gereklidir. TURN sunucusu bağlantının güvenlik duvarları arkasından çalışabilmesini sağlar.",
     "STUN server" : "STUN Sunucusu",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
-    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Diğer kullanıcıların sizi daha iyi tanıyabilmesi için bu sayfanın sağ üst köşesinden adınızı ayarlayabilirsiniz.",
-    "Remove conversation from list" : "Konuşmayı listeden kaldır"
+    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }
