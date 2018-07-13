@@ -43,6 +43,21 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
+								'{{#if isFavorite}}'+
+								'<li>'+
+									'<button class="unfavorite-room-button">'+
+										'<span class="icon-starred"></span>'+
+										'<span>'+t('spreed', 'Unpin conversation')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'{{else}}'+
+								'<li>'+
+									'<button class="favorite-room-button">'+
+										'<span class="icon-star-dark"></span>'+
+										'<span>'+t('spreed', 'Pin conversation')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'{{/if}}'+
 								'{{#if isRemovable}}'+
 								'<li>'+
 									'<button class="remove-room-button">'+
@@ -81,6 +96,9 @@
 				this.render();
 			},
 			'change:participantType': function() {
+				this.render();
+			},
+			'change:isFavorite': function() {
 				this.render();
 			},
 			'change:unreadMessages': function() {
@@ -138,6 +156,8 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
+			'click @ui.menu .favorite-room-button': 'addRoomToFavorites',
+			'click @ui.menu .unfavorite-room-button': 'removeRoomFromFavorites',
 			'click @ui.menu .remove-room-button': 'removeRoom',
 			'click @ui.menu .delete-room-button': 'deleteRoom',
 			'click @ui.room': 'joinRoom'
@@ -202,6 +222,32 @@
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
+				type: 'DELETE'
+			});
+		},
+		addRoomToFavorites: function() {
+			if (this.model.get('participantType') !== 1 &&
+				this.model.get('participantType') !== 2) {
+				return;
+			}
+
+			this.model.set('isFavorite', 1);
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
+				type: 'POST'
+			});
+		},
+		removeRoomFromFavorites: function() {
+			if (this.model.get('participantType') !== 1 &&
+				this.model.get('participantType') !== 2) {
+				return;
+			}
+
+			this.model.set('isFavorite', 0);
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
 				type: 'DELETE'
 			});
 		},
