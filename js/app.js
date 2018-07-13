@@ -69,7 +69,7 @@
 		_registerPageEvents: function() {
 			$('#select-participants').select2({
 				ajax: {
-					url: OC.linkToOCS('apps/files_sharing/api/v1') + 'sharees',
+					url: OC.linkToOCS('core/autocomplete', 2) + 'get',
 					dataType: 'json',
 					quietMillis: 100,
 					data: function (term) {
@@ -77,8 +77,9 @@
 						return {
 							format: 'json',
 							search: term,
-							perPage: 20,
-							itemType: 'call'
+							itemType: 'call',
+							itemId: 'new',
+							shareTypes: [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP]
 						};
 					},
 					results: function (response) {
@@ -89,24 +90,12 @@
 						}
 
 						var results = [];
-
-						$.each(response.ocs.data.exact.users, function(id, user) {
-							if (OC.getCurrentUser().uid === user.value.shareWith) {
-								return;
-							}
-							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-						});
-						$.each(response.ocs.data.exact.groups, function(id, group) {
-							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
-						});
-						$.each(response.ocs.data.users, function(id, user) {
-							if (OC.getCurrentUser().uid === user.value.shareWith) {
-								return;
-							}
-							results.push({ id: user.value.shareWith, displayName: user.label, type: "user"});
-						});
-						$.each(response.ocs.data.groups, function(id, group) {
-							results.push({ id: group.value.shareWith, displayName: group.label + ' ' + t('spreed', '(group)'), type: "group"});
+						response.ocs.data.forEach(function(suggestion) {
+							results.push({
+								id: suggestion.id,
+								displayName: suggestion.label,
+								type: suggestion.source === 'users' ? 'user' : 'group'
+							});
 						});
 
 						//Add custom entry to create a new empty group or public room
