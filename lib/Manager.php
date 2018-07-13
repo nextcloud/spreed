@@ -93,7 +93,7 @@ class Manager {
 	 * @return Participant
 	 */
 	public function createParticipantObject(Room $room, array $row) {
-		return new Participant($this->db, $room, $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], $row['session_id'], (bool) $row['in_call']);
+		return new Participant($this->db, $room, $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], $row['session_id'], (bool) $row['in_call'], (bool) $row['favorite']);
 	}
 
 	/**

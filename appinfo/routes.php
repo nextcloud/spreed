@@ -290,8 +290,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#setRoomAsFavourite',
-			'url' => '/api/{apiVersion}/room/{token}/favourite',
+			'name' => 'Room#addToFavorites',
+			'url' => '/api/{apiVersion}/room/{token}/favorite',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -299,8 +299,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#setRoomAsNotFavourite',
-			'url' => '/api/{apiVersion}/room/{token}/favourite',
+			'name' => 'Room#removeFromFavorites',
+			'url' => '/api/{apiVersion}/room/{token}/favorite',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',

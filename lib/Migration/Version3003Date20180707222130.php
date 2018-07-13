@@ -27,7 +27,7 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
-class Version3002Date20180707222130 extends SimpleMigrationStep {
+class Version3003Date20180707222130 extends SimpleMigrationStep {
 
 
 	/**
@@ -42,7 +42,7 @@ class Version3002Date20180707222130 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_participants');
-		$table->addColumn('favourite', Type::BOOLEAN, [
+		$table->addColumn('favorite', Type::BOOLEAN, [
 			'default' => 0,
 		]);
 

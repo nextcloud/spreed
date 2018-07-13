@@ -23,6 +23,7 @@
 
 namespace OCA\Spreed;
 
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class Participant {
@@ -46,6 +47,8 @@ class Participant {
 	protected $sessionId;
 	/** @var bool */
 	protected $inCall;
+	/** @var bool */
+	private $isFavorite;
 
 	/**
 	 * @param IDBConnection $db
@@ -55,8 +58,9 @@ class Participant {
 	 * @param int $lastPing
 	 * @param string $sessionId
 	 * @param bool $inCall
+	 * @param bool $isFavorite
 	 */
-	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall) {
+	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall, $isFavorite) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -64,6 +68,7 @@ class Participant {
 		$this->lastPing = $lastPing;
 		$this->sessionId = $sessionId;
 		$this->inCall = $inCall;
+		$this->isFavorite = $isFavorite;
 	}
 
 	public function getUser() {
@@ -84,5 +89,28 @@ class Participant {
 
 	public function isInCall() {
 		return $this->inCall;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function isFavorite() {
+		return $this->isFavorite;
+	}
+
+	public function setFavorite($favor) {
+		if (!$this->user) {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_participants')
+			->set('favorite', $query->createNamedParameter((int) $favor, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
+		$query->execute();
+
+		$this->isFavorite = $favor;
+		return true;
 	}
 }

@@ -160,9 +160,10 @@ class RoomController extends OCSController {
 		if ($participant instanceof Participant) {
 			$participantType = $participant->getParticipantType();
 			$participantInCall = $participant->isInCall();
+			$favorite = $participant->isFavorite();
 		} else {
 			$participantType = Participant::GUEST;
-			$participantInCall = false;
+			$participantInCall = $favorite = false;
 		}
 
 		$roomData = [
@@ -177,7 +178,7 @@ class RoomController extends OCSController {
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'unreadMessages' => 0,
-			'isFavourite' => $room->isFavourite(),
+			'isFavorite' => $favorite,
 		];
 
 		if (!$participant instanceof Participant) {
@@ -189,7 +190,6 @@ class RoomController extends OCSController {
 				'numGuests' => 0,
 				'hasCall' => false,
 				'guestList' => '',
-				'isFavourite' => false,
 			]);
 
 			return $roomData;
@@ -470,13 +470,17 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function setRoomAsFavourite($token) {
+	public function addToFavorites($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$room->setFavourite(true);
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
+
+		$participant->setFavorite(true);
 
 		return new DataResponse([]);
 	}
@@ -487,15 +491,17 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function setRoomAsNotFavourite($token) {
+	public function removeFromFavorites($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			if ($room->isFavourite()) {
-				$room->setFavourite(false);
-			}
+			$participant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
+
+		$participant->setFavorite(false);
 
 		return new DataResponse([]);
 	}

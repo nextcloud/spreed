@@ -66,8 +66,6 @@ class Room {
 	private $activeGuests;
 	/** @var \DateTime|null */
 	private $activeSince;
-	/** @var bool */
-	private $favourite;
 
 	/** @var string */
 	protected $currentUser;
@@ -89,9 +87,8 @@ class Room {
 	 * @param string $password
 	 * @param int $activeGuests
 	 * @param \DateTime|null $activeSince
-	 * @param bool $favourite
 	 */
-	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null, $favourite = false) {
+	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
@@ -104,26 +101,6 @@ class Room {
 		$this->password = $password;
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
-		$this->favourite = $favourite;
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function isFavourite() {
-		return $this->favourite;
-	}
-
-	public function setFavourite($shouldBeFavourite) {
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('favourite', $query->createNamedParameter((int) $shouldBeFavourite, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->currentUser->getId())))
-			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId())));
-		$query->execute();
-
-		$this->favourite = $shouldBeFavourite;
-		return true;
 	}
 
 	/**
