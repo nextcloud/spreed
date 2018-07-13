@@ -103,6 +103,11 @@
 			OCA.SpreedMe.app.activeRoom = new OCA.SpreedMe.Models.Room({token: token});
 			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
+			// Prevent updateContentsLayout from executing, as it is not needed
+			// when not having a full UI and messes with the tooltip container.
+			OCA.SpreedMe.app.updateContentsLayout = function() {
+			};
+
 			OCA.SpreedMe.app.connection.joinRoom(token);
 
 			OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
