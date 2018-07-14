@@ -363,6 +363,38 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When transfering ownership from :user1 to :user2
+	 *
+	 * @param string $user1
+	 * @param string $user2
+	 */
+	public function transferingOwnershipFromTo(string $user1, string $user2) {
+		$args = ['files:transfer-ownership', $user1, $user2];
+
+		$args = array_map(function($arg) {
+			return escapeshellarg($arg);
+		}, $args);
+		$args[] = '--no-ansi';
+		$args = implode(' ', $args);
+
+		$descriptor = [
+			0 => ['pipe', 'r'],
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		];
+		$process = proc_open('php console.php ' . $args, $descriptor, $pipes, '../../../../');
+		$lastStdOut = stream_get_contents($pipes[1]);
+		$lastStdErr = stream_get_contents($pipes[2]);
+		$lastCode = proc_close($process);
+
+		// Clean opcode cache
+		$client = new GuzzleHttp\Client();
+		$client->send($client->createRequest('GET', $this->baseUrl . '/apps/testing/clean_opcode_cache.php'));
+
+		PHPUnit_Framework_Assert::assertEquals(0, $lastCode);
+	}
+
+	/**
 	 * @Then the OCS status code should be :statusCode
 	 *
 	 * @param int $statusCode
