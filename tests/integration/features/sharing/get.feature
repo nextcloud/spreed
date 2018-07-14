@@ -731,3 +731,21 @@ Feature: get
     Then the response contains a share-types DAV property with
       | 0 |
       | 10 |
+
+
+
+  Scenario: get recent files including a share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" creates folder "/test"
+    And user "participant1" creates folder "/test/subfolder"
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant1" shares "test/subfolder" with room "group room" with OCS 100
+    And user "participant1" shares "test/subfolder" with user "participant3" with OCS 100
+    When user "participant1" gets recent files
+    Then the response contains a share-types file property for "/welcome.txt" with
+      | 10 |
+    And the response contains a share-types file property for "/test" with
+    And the response contains a share-types file property for "/test/subfolder" with
+      | 0 |
+      | 10 |

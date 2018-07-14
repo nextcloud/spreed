@@ -24,6 +24,7 @@
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
+use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Message\ResponseInterface;
 
 class SharingContext implements Context {
@@ -347,6 +348,21 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets recent files
+	 *
+	 * @param string $user
+	 */
+	public function userGetsRecentFiles(string $user) {
+		// Recents endpoint is not an OCS endpoint, so a request token must be
+		// provided.
+		list($requestToken, $cookieJar) = $this->loggingInUsingWebAs($user);
+
+		$url = '/index.php/apps/files/api/v1/recent';
+
+		$this->sendingToWithRequestToken('GET', $url, $requestToken, $cookieJar);
+	}
+
+	/**
 	 * @Then the OCS status code should be :statusCode
 	 *
 	 * @param int $statusCode
@@ -467,6 +483,43 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @Then the response contains a share-types file property for :path with
+	 *
+	 * @param string $path
+	 * @param TableNode|null $table
+	 */
+	public function theResponseContainsAShareTypesFilesPropertyForWith(string $path, TableNode $table = null) {
+		$response = json_decode($this->response->getBody());
+
+		$fileForPath = array_filter($response->files, function($file) use ($path) {
+			$filePath = $file->path . (substr($file->path, -1) === '/'? '': '/');
+			return ($filePath . $file->name) === $path;
+		});
+
+		if (empty($fileForPath)) {
+			PHPUnit_Framework_Assert::fail("$path not found in the response");
+		}
+
+		$fileForPath = array_shift($fileForPath);
+
+		$shareTypes = [];
+		if (property_exists($fileForPath, 'shareTypes')) {
+			foreach ($fileForPath->shareTypes as $shareType) {
+				$shareTypes[] = (int)$shareType;
+			}
+		}
+
+		$expectedShareTypes = [];
+		if ($table !== null) {
+			foreach ($table->getRows() as $row) {
+				$expectedShareTypes[] = (int)$row[0];
+			}
+		}
+
+		PHPUnit_Framework_Assert::assertEquals($expectedShareTypes, $shareTypes);
+	}
+
+	/**
 	 * @param string $user
 	 * @param string $path
 	 * @param string $shareType
@@ -561,6 +614,77 @@ class SharingContext implements Context {
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $url
+	 * @param string $requestToken
+	 * @param CookieJar $cookieJar
+	 */
+	private function sendingToWithRequestToken(string $verb, string $url, string $requestToken, CookieJar $cookieJar) {
+		$fullUrl = $this->baseUrl . $url;
+
+		$client = new Client();
+		try {
+			$this->response = $client->send($client->createRequest(
+				$verb,
+				$fullUrl,
+				[
+					'cookies' => $cookieJar,
+					'headers' => [
+						'requesttoken' => $requestToken
+					]
+				]
+			));
+		} catch (GuzzleHttp\Exception\ClientException $e) {
+			$this->response = $e->getResponse();
+		}
+	}
+
+	/**
+	 * @param ResponseInterface $response
+	 * @return string
+	 */
+	private function extractRequestTokenFromResponse(ResponseInterface $response): string {
+		return substr(preg_replace('/(.*)data-requesttoken="(.*)">(.*)/sm', '\2', $response->getBody()->getContents()), 0, 89);
+	}
+
+	/**
+	 * @param string $user
+	 */
+	private function loggingInUsingWebAs(string $user) {
+		$loginUrl = $this->baseUrl . '/login';
+
+		$cookieJar = new CookieJar();
+
+		// Request a new session and extract CSRF token
+		$client = new Client();
+		$response = $client->get(
+			$loginUrl,
+			[
+				'cookies' => $cookieJar,
+			]
+		);
+		$requestToken = $this->extractRequestTokenFromResponse($response);
+
+		// Login and extract new token
+		$password = ($user === 'admin') ? $this->adminUser[1] : $this->regularUserPassword;
+		$client = new Client();
+		$response = $client->post(
+			$loginUrl,
+			[
+				'body' => [
+					'user' => $user,
+					'password' => $password,
+					'requesttoken' => $requestToken,
+				],
+				'cookies' => $cookieJar,
+			]
+		);
+		$requestToken = $this->extractRequestTokenFromResponse($response);
+
+		return [$requestToken, $cookieJar];
 	}
 
 	/**
