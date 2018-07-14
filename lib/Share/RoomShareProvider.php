@@ -5,6 +5,10 @@ declare(strict_types=1);
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
  *
+ * Code copied from "lib/private/Share20/DefaultShareProvider.php" and
+ * "apps/sharebymail/lib/ShareByMailProvider.php" at d805959e819e64 in Nextcloud
+ * server repository.
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
