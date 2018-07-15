@@ -191,6 +191,19 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user restores last share
+	 *
+	 * @param string $user
+	 */
+	public function userRestoresLastShareWithOcs(string $user) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/deletedshares/ocRoomShare:' . $this->getLastShareId();
+
+		$this->sendingTo('POST', $url);
+	}
+
+	/**
 	 * @When user :user gets last share
 	 */
 	public function userGetsLastShare(string $user) {
