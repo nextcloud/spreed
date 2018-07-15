@@ -381,7 +381,32 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws GenericShareException In case the share could not be restored
 	 */
 	public function restore(IShare $share, string $recipient): IShare {
-		throw new \Exception("Not implemented");
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->select('permissions')
+			->from('share')
+			->where(
+				$qb->expr()->eq('id', $qb->createNamedParameter($share->getId()))
+			);
+		$cursor = $qb->execute();
+		$data = $cursor->fetch();
+		$cursor->closeCursor();
+
+		$originalPermission = $data['permissions'];
+
+		$qb = $this->dbConnection->getQueryBuilder();
+		$qb->update('share')
+			->set('permissions', $qb->createNamedParameter($originalPermission))
+			->where(
+				$qb->expr()->eq('parent', $qb->createNamedParameter($share->getId()))
+			)->andWhere(
+				$qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM))
+			)->andWhere(
+				$qb->expr()->eq('share_with', $qb->createNamedParameter($recipient))
+			);
+
+		$qb->execute();
+
+		return $this->getShareById($share->getId(), $recipient);
 	}
 
 	/**
