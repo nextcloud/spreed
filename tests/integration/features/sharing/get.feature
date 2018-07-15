@@ -578,3 +578,44 @@ Feature: get
       | file_target            | /welcome (2).txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
+
+
+
+  Scenario: get deleted shares when deleting an own share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant1" deletes last share
+    When user "participant1" gets deleted shares
+    Then the list of returned shares has 0 shares
+    And user "participant2" gets deleted shares
+    And the list of returned shares has 0 shares
+
+  Scenario: get deleted shares when deleting a received share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" renames room "group room" to "Group room" with 200
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" adds "participant3" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" deletes last share
+    When user "participant2" gets deleted shares
+    Then the list of returned shares has 1 shares
+    And share 0 is returned with
+      | id                     | REGEXP /ocRoomShare:[0-9]+/ |
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | group room |
+      | share_with_displayname | Group room |
+      | permissions            | 0 |
+      | mail_send              | IGNORE |
+    And user "participant1" gets deleted shares
+    And the list of returned shares has 0 shares
+    And user "participant3" gets deleted shares
+    And the list of returned shares has 0 shares

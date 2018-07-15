@@ -297,6 +297,19 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets deleted shares
+	 *
+	 * @param string $user
+	 */
+	public function userGetsDeletedShares(string $user) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/deletedshares';
+
+		$this->sendingTo('GET', $url);
+	}
+
+	/**
 	 * @Then the OCS status code should be :statusCode
 	 *
 	 * @param int $statusCode
@@ -509,6 +522,10 @@ class SharingContext implements Context {
 	 * @param \SimpleXMLElement $returnedShare
 	 */
 	private function assertFieldIsInReturnedShare(string $field, string $contentExpected, \SimpleXMLElement $returnedShare){
+		if ($contentExpected === 'IGNORE') {
+			return;
+		}
+
 		if (!array_key_exists($field, $returnedShare)) {
 			PHPUnit_Framework_Assert::fail("$field was not found in response");
 		}
