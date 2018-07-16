@@ -46,6 +46,7 @@ script(
 	<script type="text/json" id="signaling-settings">
 	<?php echo json_encode($_['signaling-settings']) ?>
 	</script>
+	<?php if(!$_['hideRoomList']): ?>
 	<div id="app-navigation" class="icon-loading">
 		<form id="oca-spreedme-add-room">
 			<input id="select-participants" class="select2-offscreen" type="text" placeholder="<?php p($l->t('New conversation …')) ?>"/>
@@ -53,6 +54,7 @@ script(
 		<ul id="spreedme-room-list" class="with-icon">
 		</ul>
 	</div>
+	<?php endif; ?>
 
 	<div id="app-content" class="participants-1">
 

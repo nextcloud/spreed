@@ -26,6 +26,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -64,6 +65,8 @@ class RoomController extends OCSController {
 	private $chatManager;
 	/** @var IL10N */
 	private $l10n;
+	/** @var Config */
+	private $config;
 
 	/**
 	 * @param string $appName
@@ -77,6 +80,7 @@ class RoomController extends OCSController {
 	 * @param GuestManager $guestManager
 	 * @param ChatManager $chatManager
 	 * @param IL10N $l10n
+	 * @param Config $config
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -88,7 +92,8 @@ class RoomController extends OCSController {
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
-								IL10N $l10n) {
+								IL10N $l10n,
+								Config $config) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->userId = $UserId;
@@ -99,6 +104,7 @@ class RoomController extends OCSController {
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->l10n = $l10n;
+		$this->config = $config;
 	}
 
 	/**
@@ -109,6 +115,10 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getRooms() {
+		if ($this->config->hideRoomList()) {
+			return new DataResponse([]);
+		}
+
 		$rooms = $this->manager->getRoomsForParticipant($this->userId);
 
 		$return = [];

@@ -165,6 +165,7 @@ class PageController extends Controller {
 		$params = [
 			'token' => $token,
 			'signaling-settings' => $this->config->getSettings($this->userId),
+			'hideRoomList' => $this->config->hideRoomList(),
 		];
 		$response = new TemplateResponse($this->appName, 'index', $params);
 		$csp = new ContentSecurityPolicy();

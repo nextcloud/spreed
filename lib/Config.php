@@ -229,4 +229,13 @@ class Config {
 		return hash_equals($hash, substr($ticket, $lastColon + 1));
 	}
 
+	/**
+	 * Should the room list be hidden for users?
+	 *
+	 * @return bool
+	 */
+	public function hideRoomList() {
+		return $this->config->getSystemValue('spreed.hide_roomlist', false);
+	}
+
 }
