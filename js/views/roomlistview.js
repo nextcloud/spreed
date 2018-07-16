@@ -129,11 +129,6 @@
 				this.$el.removeClass('active');
 			}
 
-			//If the room is not a one2one room, we show tooltip.
-			if (this.model.get('type') !== ROOM_TYPE_ONE_TO_ONE) {
-				this.addTooltip();
-			}
-
 			this.toggleMenuClass();
 		},
 		events: {
@@ -279,33 +274,6 @@
 					console.log("Unknown room type", this.model.get('type'));
 					return;
 			}
-		},
-		addTooltip: function () {
-			var participants = [];
-			$.each(this.model.get('participants'), function(participantId, data) {
-				if (participantId !== OC.getCurrentUser().uid) {
-					participants.push(escapeHTML(data.name));
-				}
-			});
-
-			if (this.model.get('guestList') !== '') {
-				participants.push(this.model.get('guestList'));
-			}
-
-			if (participants.length === 0) {
-				participants.push(t('spreed', 'You'));
-			} else {
-				participants.push(t('spreed', 'and you'));
-			}
-
-			var htmlstring = participants.join('<br>');
-
-			this.ui.room.tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				html: 'true',
-				title: htmlstring
-			});
 		}
 	});
 
