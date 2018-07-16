@@ -81,4 +81,10 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<contactsmenu>
 		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>
 	</contactsmenu>
+
+	<collaboration>
+		<plugins>
+			<plugin type="collaborator-search" share-type="SHARE_TYPE_ROOM">OCA\Spreed\Collaboration\Collaborators\RoomPlugin</plugin>
+		</plugins>
+	</collaboration>
 </info>
