@@ -547,7 +547,7 @@ class Room {
 			'userId' => $userId,
 		]));
 
-		// Reset sessions on all normal rooms
+		// Reset session when leaving a normal room
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('session_id', $query->createNamedParameter('0'))
@@ -557,7 +557,7 @@ class Room {
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		// And kill session on all self joined rooms
+		// And kill session when leaving a self joined room
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
