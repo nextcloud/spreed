@@ -364,11 +364,13 @@
 				this._participants.fetch();
 			}.bind(this));
 
-			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
-				if (active) {
-					this.setRoom(model);
-				}
-			});
+			if (this._rooms) {
+				this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
+					if (active) {
+						this.setRoom(model);
+					}
+				});
+			}
 
 			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), icon: 'icon-contacts-dark' }, this._participantsView);
 		},
@@ -376,7 +378,7 @@
 		 * @param {string} token
 		 */
 		_setRoomActive: function(token) {
-			if (OC.getCurrentUser().uid) {
+			if (this._rooms) {
 				this._rooms.forEach(function(room) {
 					room.set('active', room.get('token') === token);
 				});
@@ -393,39 +395,51 @@
 			}.bind(this));
 		},
 		syncAndSetActiveRoom: function(token) {
-			var self = this;
+			if (!this.withRoomList) {
+				this.activeRoom.fetch({
+					success: function() {
+						this.setActiveRoom(this.activeRoom);
+					}.bind(this)
+				});
+				return;
+			}
+
 			this.signaling.syncRooms()
 				.then(function() {
-					self.stopListening(self.activeRoom, 'change:participantInCall');
+					var activeRoom;
+					roomChannel.trigger('active', token);
 
-					var participants;
-					if (OC.getCurrentUser().uid) {
-						roomChannel.trigger('active', token);
+					this._rooms.forEach(function(room) {
+						if (room.get('token') === token) {
+							activeRoom = room;
+						}
+					});
+					this.setActiveRoom(activeRoom);
+				}.bind(this));
+		},
+		setActiveRoom: function(room) {
+			if (this.activeRoom) {
+				this.stopListening(this.activeRoom, 'change:participantInCall');
+			}
 
-						self._rooms.forEach(function(room) {
-							if (room.get('token') === token) {
-								self.activeRoom = room;
-							}
-						});
-						participants = self.activeRoom.get('participants');
-					} else {
-						// The public page supports only a single room, so the
-						// active room is already the room for the given token.
-						participants = self.activeRoom.get('participants');
-						self.setRoomMessageForGuest(participants);
-					}
-					// Disable video when entering a room with more than 5 participants.
-					if (participants && Object.keys(participants).length > 5) {
-						self.disableVideo();
-					}
+			this.activeRoom = room;
+			console.log("Set active room", room);
 
-					self.setPageTitle(self.activeRoom.get('displayName'));
+			var participants = this.activeRoom.get('participants');
+			if (!OC.getCurrentUser().uid) {
+				this.setRoomMessageForGuest(participants);
+			}
+			// Disable video when entering a room with more than 5 participants.
+			if (participants && Object.keys(participants).length > 5) {
+				this.disableVideo();
+			}
 
-					self.updateContentsLayout();
-					self.listenTo(self.activeRoom, 'change:participantInCall', self.updateContentsLayout);
+			this.setPageTitle(this.activeRoom.get('displayName'));
 
-					self.updateSidebarWithActiveRoom();
-				});
+			this.updateContentsLayout();
+			this.listenTo(this.activeRoom, 'change:participantInCall', this.updateContentsLayout);
+
+			this.updateSidebarWithActiveRoom();
 		},
 		updateContentsLayout: function() {
 			if (!this.activeRoom) {
@@ -565,10 +579,13 @@
 		initialize: function() {
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
 			$('#app-content').append(this._sidebarView.$el);
+			this.withRoomList = $('#spreedme-room-list').length > 0;
 
 			if (OC.getCurrentUser().uid) {
-				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
-				this.listenTo(roomChannel, 'active', this._setRoomActive);
+				if (this.withRoomList) {
+					this._rooms = new OCA.SpreedMe.Models.RoomCollection();
+					this.listenTo(roomChannel, 'active', this._setRoomActive);
+				}
 			} else {
 				this.initGuestName();
 			}
@@ -620,22 +637,36 @@
 			}.bind(this));
 
 			if (OC.getCurrentUser().uid) {
-				this._showRoomList();
-				this.signaling.setRoomCollection(this._rooms)
-					.then(function(data) {
-						$('#app-navigation').removeClass('icon-loading');
-						this._roomsView.render();
+				if (this.withRoomList) {
+					this._showRoomList();
+					this.signaling.setRoomCollection(this._rooms)
+						.then(function(data) {
+							$('#app-navigation').removeClass('icon-loading');
+							this._roomsView.render();
 
-						if (data.length === 0) {
-							$('#select-participants').select2('open');
-						}
-					}.bind(this));
-
+							if (data.length === 0) {
+								$('#select-participants').select2('open');
+							}
+						}.bind(this));
+				}
 				this._showParticipantList();
 			} else {
 				// The token is always defined in the public page.
+				this.withRoomList = false;
+			}
+
+			if (!this.withRoomList && this.token) {
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
+				this.activeRoom.fetch({
+					success: function() {
+						if (this._participants && this._participantsView) {
+							this._participants.setRoom(this.activeRoom);
+							this._participantsView.setRoom(this.activeRoom);
+						}
+						this.setActiveRoom(this.activeRoom);
+					}.bind(this)
+				});
 			}
 
 			this._registerPageEvents();
