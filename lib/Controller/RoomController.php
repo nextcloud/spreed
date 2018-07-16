@@ -516,7 +516,8 @@ class RoomController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
+	 * @UseSession
 	 *
 	 * @param string $token
 	 * @return DataResponse

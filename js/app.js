@@ -636,6 +636,8 @@
 				// The token is always defined in the public page.
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
+				this._showParticipantList();
+				this._participantsView.setRoom(this.activeRoom);
 			}
 
 			this._registerPageEvents();
