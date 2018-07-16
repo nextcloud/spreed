@@ -543,7 +543,9 @@ class Room {
 	 * @param string $userId
 	 */
 	public function leaveRoom($userId) {
-		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this, [
+			'userId' => $userId,
+		]));
 
 		// Reset sessions on all normal rooms
 		$query = $this->db->getQueryBuilder();
@@ -561,9 +563,12 @@ class Room {
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$selfJoined = (bool) $query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this, [
+			'userId' => $userId,
+			'selfJoin' => $selfJoined,
+		]));
 	}
 
 	/**
