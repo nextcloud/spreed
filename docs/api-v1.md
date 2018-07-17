@@ -69,6 +69,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### 3.3
 * `favorites` - Rooms can be marked as favorites which will pin them to the top of the room list.
 * `last-room-activity` - Rooms have the `lastActivity` attribute and should be sorted by that instead of the last ping of the user.
+* `no-ping` - The ping endpoint has been removed. Ping is updated with a call to fetch the signaling messages instead.
 
 ## Room management
 
@@ -435,16 +436,6 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 * Method: `POST`
 * Endpoint: `/call/{token}`
-
-* Response:
-    - Header:
-        + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
-
-### Send ping to keep the call alive
-
-* Method: `POST`
-* Endpoint: `/call/{token}/ping`
 
 * Response:
     - Header:

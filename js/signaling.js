@@ -417,12 +417,10 @@
 		OCA.Talk.Signaling.Base.prototype.constructor.apply(this, arguments);
 		this.spreedArrayConnection = [];
 
-		this.pingFails = 0;
-		this.pingInterval = null;
-		this.isSendingMessages = false;
-
+		this.pullMessagesFails = 0;
 		this.pullMessagesRequest = null;
 
+		this.isSendingMessages = false;
 		this.sendInterval = window.setInterval(function(){
 			this.sendPendingMessages();
 		}.bind(this), 500);
@@ -437,10 +435,6 @@
 		if (this.sendInterval) {
 			window.clearInterval(this.sendInterval);
 			this.sendInterval = null;
-		}
-		if (this.pingInterval) {
-			window.clearInterval(this.pingInterval);
-			this.pingInterval = null;
 		}
 		if (this.roomPoller) {
 			window.clearInterval(this.roomPoller);
@@ -499,18 +493,11 @@
 
 	OCA.Talk.Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 		this.sessionId = sessionId;
-		this._startPingCall();
 		this._startPullingMessages();
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
-		if (!token) {
-			return;
-		}
-
-		if (token === this.currentRoomToken) {
-			this._stopPingCall();
-		}
+		// Nothing to do anymore
 	};
 
 	OCA.Talk.Signaling.Internal.prototype.sendCallMessage = function(data) {
@@ -568,6 +555,7 @@
 				request.setRequestHeader('Accept', 'application/json');
 			},
 			success: function (result) {
+				this.pullMessagesFails = 0;
 				$.each(result.ocs.data, function(id, message) {
 					switch(message.type) {
 						case "usersInRoom":
@@ -589,8 +577,14 @@
 			}.bind(this),
 			error: function (jqXHR, textStatus/*, errorThrown*/) {
 				if (jqXHR.status === 0 && textStatus === 'abort') {
-					// Resquest has been aborted. Ignore.
+					// Request has been aborted. Ignore.
 				} else if (this.currentRoomToken) {
+					if (this.pullMessagesFails >= 3) {
+						OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
+						return;
+					}
+
+					this.pullMessagesFails++;
 					//Retry to pull messages after 5 seconds
 					window.setTimeout(function() {
 						this._startPullingMessages();
@@ -617,54 +611,6 @@
 		}.bind(this)).fail(function(/*xhr, textStatus, errorThrown*/) {
 			console.log('Sending pending signaling messages has failed.');
 			this.isSendingMessages = false;
-		}.bind(this));
-	};
-
-	/**
-	 * @private
-	 */
-	OCA.Talk.Signaling.Internal.prototype._startPingCall = function() {
-		this._pingCall();
-
-		// Send a ping to the server all 5 seconds to ensure that the connection
-		// is still alive.
-		this.pingInterval = window.setInterval(function() {
-			this._pingCall();
-		}.bind(this), 5000);
-	};
-
-	/**
-	 * @private
-	 */
-	OCA.Talk.Signaling.Internal.prototype._stopPingCall = function() {
-		if (this.pingInterval) {
-			window.clearInterval(this.pingInterval);
-			this.pingInterval = null;
-		}
-	};
-
-	/**
-	 * @private
-	 */
-	OCA.Talk.Signaling.Internal.prototype._pingCall = function() {
-		if (!this.currentRoomToken) {
-			return;
-		}
-
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + this.currentRoomToken + '/ping',
-			method: 'POST'
-		}).done(function() {
-			this.pingFails = 0;
-		}.bind(this)).fail(function(xhr) {
-			// If there is an error when pinging, retry for 3 times.
-			if (xhr.status !== 404 && this.pingFails < 3) {
-				this.pingFails++;
-				return;
-			}
-
-			this._stopPingCall();
-			OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
 		}.bind(this));
 	};
 

@@ -150,6 +150,13 @@ class SignalingController extends OCSController {
 		$seconds = 30;
 		$sessionId = '';
 
+		try {
+			$sessionId = $this->session->getSessionForRoom($token);
+			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+			$room->ping($this->userId, $sessionId, time());
+		} catch (RoomNotFoundException $e) {
+		}
+
 		while ($seconds > 0) {
 			$sessionId = $this->session->getSessionForRoom($token);
 
