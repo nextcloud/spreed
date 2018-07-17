@@ -574,7 +574,7 @@ class Room {
 	 */
 	public function joinRoomGuest($password, $passedPasswordProtection = false) {
 		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', new GenericEvent($this));
-		
+
 		if (!$passedPasswordProtection && !$this->verifyPassword($password)['result']) {
 			throw new InvalidPasswordException();
 		}
@@ -595,7 +595,7 @@ class Room {
 		return $sessionId;
 	}
 
-	
+
 	/**
 	 * @param string $sessionId
 	 * @param bool $active
@@ -640,9 +640,12 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::verifyPassword', $event);
 		if ($event->hasArgument('result')) {
 			$result = $event->getArgument('result');
-			return $result;
+			return [
+				'result' => $result['result'] ?? false,
+				'url' => $result['url'] ?? ''
+			];
 		}
-		
+
 		$passwordVerification = [
 			'result' => !$this->hasPassword() || $this->hasher->verify($password, $this->password),
 			'url' => ''

@@ -147,17 +147,13 @@ class PageController extends Controller {
 				}
 
 				if ($requirePassword) {
-					$passwordVerification = [
-						'result' => false,
-						'url' => ''
-					];
-					
+
 					$passwordVerification = $room->verifyPassword($password);
 
 					if ($passwordVerification['result']) {
 						$this->session->setPasswordForRoom($token, $token);
 					} else {
-						if ($passwordVerification['url'] == '') {
+						if ($passwordVerification['url'] === '') {
 							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 						}
 						else {
@@ -210,7 +206,7 @@ class PageController extends Controller {
 				'result' => false,
 				'url' => ''
 			];
-			
+
 			$passwordVerification = $room->verifyPassword($password);
 
 			if ($passwordVerification['result']) {
