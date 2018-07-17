@@ -601,10 +601,22 @@
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
+		GetURLParameter: function(sParam) {
+			var sPageURL = window.location.search.substring(1);
+			var sURLVariables = sPageURL.split('&');
+			for (var i = 0; i < sURLVariables.length; i++)
+			{
+				var sParameterName = sURLVariables[i].split('=');
+				if (sParameterName[0] == sParam) {
+				    return sParameterName[1];
+				}
+			}
+		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
 			this.token = $('#app').attr('data-token');
+			this.password = this.GetURLParameter('password');
 
 			this.signaling.on('joinRoom', function(/* token */) {
 				this.inRoom = true;
@@ -644,7 +656,12 @@
 			this.initShareRoomClipboard();
 
 			if (this.token) {
-				this.connection.joinRoom(this.token);
+				if (OC.getCurrentUser().uid === null || OC.getCurrentUser().uid == '') {
+					this.connection.joinRoom(this.token, this.password);
+				}
+				else {
+					this.connection.joinRoom(this.token);
+				}
 			}
 		},
 		setupWebRTC: function() {

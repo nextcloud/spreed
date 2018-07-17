@@ -82,14 +82,14 @@
 				success: _.bind(this._createCallSuccessHandle, this)
 			});
 		},
-		joinRoom: function(token) {
+		joinRoom: function(token, password) {
 			if (this.app.signaling.currentRoomToken === token) {
 				return;
 			}
 
 			this.app.signaling.leaveCurrentRoom();
 			this.app.token = token;
-			this.app.signaling.joinRoom(token);
+			this.app.signaling.joinRoom(token, password);
 			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
 		},
