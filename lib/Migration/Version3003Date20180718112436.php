@@ -1,8 +1,8 @@
 <?php
 /**
- * @copyright Copyright (c) 2018 Mario Danic <mario@lovelyhq.com>
+ * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
- * @author Mario Danic <mario@lovelyhq.com>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -27,8 +27,7 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
-class Version3003Date20180707222130 extends SimpleMigrationStep {
-
+class Version3003Date20180718112436 extends SimpleMigrationStep {
 
 	/**
 	 * @param IOutput $output
@@ -41,11 +40,13 @@ class Version3003Date20180707222130 extends SimpleMigrationStep {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
-		$table = $schema->getTable('talk_participants');
-		if (!$table->hasColumn('favorite')) {
-			$table->addColumn('favorite', Type::BOOLEAN, [
-				'default' => 0,
+		$table = $schema->getTable('talk_rooms');
+		if (!$table->hasColumn('last_activity')) {
+			$table->addColumn('last_activity', Type::DATETIME, [
+				'notnull' => false,
 			]);
+
+			$table->addIndex(['last_activity'], 'last_active');
 		}
 
 		return $schema;

@@ -166,6 +166,13 @@ class RoomController extends OCSController {
 			$participantInCall = $favorite = false;
 		}
 
+		$lastActivity = $room->getLastActivity();
+		if ($lastActivity instanceof \DateTimeInterface) {
+			$lastActivity = $lastActivity->getTimestamp();
+		} else {
+			$lastActivity = 0;
+		}
+
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -177,6 +184,7 @@ class RoomController extends OCSController {
 			'count' => $room->getNumberOfParticipants(false, time() - 30),
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+			'lastActivity' => $lastActivity,
 			'unreadMessages' => 0,
 			'isFavorite' => $favorite,
 		];

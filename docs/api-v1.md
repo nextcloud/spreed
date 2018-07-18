@@ -66,6 +66,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL.
 * `chat-v2` - Chat messages are now [Rich Object Strings](https://github.com/nextcloud/server/issues/1706) and pagination is available, the previous `chat` is not available anymore.
 
+### 3.3
+* `favorites` - Rooms can be marked as favorites which will pin them to the top of the room list.
+* `last-room-activity` - Rooms have the `lastActivity` attribute and should be sorted by that instead of the last ping of the user.
 
 ## Room management
 
@@ -124,6 +127,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
         `hasPassword` | bool | Flag if the room has a password
         `hasCall` | bool | Flag if the room has an active call
+        `lastActivity` | int | Timestamp of the last activity in the room, in seconds and UTC time zone
         `isFavorite` | bool | Flag if the room is favorited by the user
         `unreadMessages` | int | Number of unread chat messages in the room (only available with `chat-v2` capability)
 
