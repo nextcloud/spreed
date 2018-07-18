@@ -196,6 +196,8 @@ class SignalingController extends OCSController {
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
 			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
 		} catch (RoomNotFoundException $e) {
+			$data[] = ['type' => 'usersInRoom', 'data' => []];
+			return new DataResponse($data, Http::STATUS_NOT_FOUND);
 		}
 
 		return new DataResponse($data);
