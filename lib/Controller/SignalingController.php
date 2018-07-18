@@ -148,23 +148,21 @@ class SignalingController extends OCSController {
 
 		$data = [];
 		$seconds = 30;
-		$sessionId = '';
 
 		try {
 			$sessionId = $this->session->getSessionForRoom($token);
-			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-			$room->ping($this->userId, $sessionId, time());
-		} catch (RoomNotFoundException $e) {
-		}
-
-		while ($seconds > 0) {
-			$sessionId = $this->session->getSessionForRoom($token);
-
 			if ($sessionId === null) {
-				// User is not active anywhere
+				// User is not active in this room
 				return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 			}
 
+			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+			$room->ping($this->userId, $sessionId, time());
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
+		}
+
+		while ($seconds > 0) {
 			// Query all messages and send them to the user
 			$data = $this->messages->getAndDeleteMessages($sessionId);
 			$messageCount = count($data);
@@ -184,6 +182,13 @@ class SignalingController extends OCSController {
 				break;
 			}
 			sleep(1);
+
+			// Refresh the session and retry
+			$sessionId = $this->session->getSessionForRoom($token);
+			if ($sessionId === null) {
+				// User is not active in this room
+				return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
+			}
 		}
 
 		try {
