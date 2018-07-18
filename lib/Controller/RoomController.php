@@ -38,6 +38,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -115,7 +116,7 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getRooms() {
-		$rooms = $this->manager->getRoomsForParticipant($this->userId);
+		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
 
 		$return = [];
 		foreach ($rooms as $room) {
@@ -249,35 +250,35 @@ class RoomController extends OCSController {
 			$room->cleanGuestParticipants();
 		}
 
-		$lastMessageFromHistory = $this->chatManager->getHistory($room->getId(), 0, 1);
-		$lastMessage = [];
+		$lastMessage = $room->getLastMessage();
+		if ($lastMessage instanceof IComment) {
 
-		if (!empty($lastMessageFromHistory)) {
-
-			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessageFromHistory[0]);
+			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
 
 			$displayName = '';
 
-			$actorId = $lastMessageFromHistory[0]->getActorId();
-			$actorType = $lastMessageFromHistory[0]->getActorType();
+			$actorId = $lastMessage->getActorId();
+			$actorType = $lastMessage->getActorType();
 
 			if ($actorType === 'users') {
 				$user = $this->userManager->get($actorId);
 				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
 			} else if ($actorType === 'guests') {
 				$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
-				$displayName = isset($guestNames[$actorId]) ? $guestNames[$actorId] : '';
+				$displayName = $guestNames[$actorId] ?? '';
 			}
 
 			$lastMessage = [
-				'id' => $lastMessageFromHistory[0]->getId(),
+				'id' => $lastMessage->getId(),
 				'actorType' => $actorType,
 				'actorId' => $actorId,
 				'actorDisplayName' => $displayName,
-				'timestamp' => $lastMessageFromHistory[0]->getCreationDateTime()->getTimestamp(),
+				'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
 				'message' => $message,
 				'messageParameters' => $messageParameters,
 			];
+		} else {
+			$lastMessage = [];
 		}
 
 		$roomData = array_merge($roomData, [

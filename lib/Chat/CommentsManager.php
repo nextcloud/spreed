@@ -30,6 +30,14 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 class CommentsManager extends Manager {
 
 	/**
+	 * @param array $data
+	 * @return IComment
+	 */
+	public function getCommentFromData(array $data): IComment {
+		return new Comment($this->normalizeDatabaseData($data));
+	}
+
+	/**
 	 * @param string $objectType
 	 * @param string $objectId
 	 * @param int $lastKnownCommentId

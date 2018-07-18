@@ -27,6 +27,7 @@ namespace OCA\Spreed;
 
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 use OCP\IUser;
@@ -68,6 +69,8 @@ class Room {
 	private $activeSince;
 	/** @var \DateTime|null */
 	private $lastActivity;
+	/** @var IComment|null */
+	private $lastMessage;
 
 	/** @var string */
 	protected $currentUser;
@@ -90,8 +93,9 @@ class Room {
 	 * @param int $activeGuests
 	 * @param \DateTime|null $activeSince
 	 * @param \DateTime|null $lastActivity
+	 * @param IComment|null $lastMessage
 	 */
-	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null, \DateTime $lastActivity = null) {
+	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null, \DateTime $lastActivity = null, IComment $lastMessage = null) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
@@ -105,6 +109,7 @@ class Room {
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
 		$this->lastActivity = $lastActivity;
+		$this->lastMessage = $lastMessage;
 	}
 
 	/**
@@ -154,6 +159,13 @@ class Room {
 	 */
 	public function getLastActivity() {
 		return $this->lastActivity;
+	}
+
+	/**
+	 * @return IComment|null
+	 */
+	public function getLastMessage() {
+		return $this->lastMessage;
 	}
 
 	/**
@@ -367,6 +379,14 @@ class Room {
 		$this->activeSince = $since;
 
 		return true;
+	}
+
+	public function setLastMessage(IComment $message) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('last_message', $query->createNamedParameter((int) $message->getId()))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
 	}
 
 	/**
