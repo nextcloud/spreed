@@ -458,6 +458,8 @@
 				// 'LL' formats a localized date including day of month, month
 				// name and year
 				absoluteDate: OC.Util.formatDate(timestamp, 'LL')
+			}, undefined, {
+				escape: false // French "Today" has a ' in it
 			});
 		},
 
