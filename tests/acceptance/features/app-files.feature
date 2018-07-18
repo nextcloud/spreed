@@ -38,7 +38,7 @@ Feature: app-files
     # share is ready before continuing.
     And I write down the shared link
     And I open the Chat tab in the details view of the Files app
-    Then I see that the "Start a conversation Share this file with others to discuss Share" empty content message is shown in the chat tab
+    Then I see that the chat is shown in the Chat tab
 
   Scenario: chat tab header is not shown in a folder even if shared
     Given I am logged in as the admin
