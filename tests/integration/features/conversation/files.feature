@@ -77,7 +77,8 @@ Feature: conversation/files
 
   Scenario: get room for file shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
-    When user "participant1" gets the room for path "welcome.txt" with 404
+    When user "participant1" gets the room for path "welcome.txt" with 200
+    Then user "participant1" is not participant of room "file welcome.txt room"
 
   Scenario: get room for file shared with user and by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100

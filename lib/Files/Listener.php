@@ -26,6 +26,7 @@ namespace OCA\Spreed\Files;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\UnauthorizedException;
 use OCA\Spreed\Room;
+use OCA\Spreed\TalkSession;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -34,11 +35,12 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  *
  * The rooms for files are intended to give the users a way to talk about a
  * specific shared file, for example, when collaboratively editing it. The room
- * is persistent and can be accessed simultaneously by any user with direct
+ * is persistent and can be accessed simultaneously by any user or guest if the
+ * file is publicly shared (link share, for example), or by any user with direct
  * access (user, group, circle and room share, but not link share, for example)
  * to that file (or to an ancestor). The room has no owner, although self joined
- * users become persistent participants automatically when they join until they
- * explicitly leave or no longer have access to the file.
+ * users with direct access become persistent participants automatically when
+ * they join until they explicitly leave or no longer have access to the file.
  *
  * These rooms are associated to a "file" object, and their custom behaviour is
  * provided by calling the methods of this class as a response to different room
@@ -48,9 +50,13 @@ class Listener {
 
 	/** @var Util */
 	protected $util;
+	/** @var TalkSession */
+	protected $talkSession;
 
-	public function __construct(Util $util) {
+	public function __construct(Util $util,
+								TalkSession $talkSession) {
 		$this->util = $util;
+		$this->talkSession = $talkSession;
 	}
 
 	public static function register(EventDispatcherInterface $dispatcher): void {
@@ -61,7 +67,7 @@ class Listener {
 			$listener = \OC::$server->query(self::class);
 
 			try {
-				$listener->preventUsersWithoutDirectAccessToTheFileFromJoining($room, $event->getArgument('userId'));
+				$listener->preventUsersWithoutAccessToTheFileFromJoining($room, $event->getArgument('userId'));
 				$listener->addUserAsPersistentParticipant($room, $event->getArgument('userId'));
 			} catch (UnauthorizedException $e) {
 				$event->setArgument('cancel', true);
@@ -72,8 +78,11 @@ class Listener {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
 			try {
-				self::preventGuestsFromJoining($room);
+				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($room);
 			} catch (UnauthorizedException $e) {
 				$event->setArgument('cancel', true);
 			}
@@ -82,8 +91,10 @@ class Listener {
 	}
 
 	/**
-	 * Prevents users from joining if they do not have direct access to the
-	 * file.
+	 * Prevents users from joining if they do not have access to the file.
+	 *
+	 * A user has access to the file if the file is publicly accessible (through
+	 * a link share, for example) or if the user has direct access to it.
 	 *
 	 * A user has direct access to a file if she received the file (or an
 	 * ancestor) through a user, group, circle or room share (but not through a
@@ -95,22 +106,31 @@ class Listener {
 	 * @param string $userId
 	 * @throws UnauthorizedException
 	 */
-	public function preventUsersWithoutDirectAccessToTheFileFromJoining(Room $room, string $userId): void {
+	public function preventUsersWithoutAccessToTheFileFromJoining(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}
 
-		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
+		// If a guest can access the file then any user can too.
+		$shareToken = $this->talkSession->getFileShareTokenForRoom($room->getToken());
+		if ($shareToken && $this->util->canGuestAccessFile($shareToken)) {
+			return;
+		}
+
+		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
 		if (!$share) {
 			$groupFolder = $this->util->getGroupFolderNode($room->getObjectId(), $userId);
 			if (!$groupFolder) {
-				throw new UnauthorizedException('User does not have direct access to the file');
+				throw new UnauthorizedException('User does not have access to the file');
 			}
 		}
 	}
 
 	/**
 	 * Add user as a persistent participant of a file room.
+	 *
+	 * Only users with direct access to the file are added as persistent
+	 * participants of the room.
 	 *
 	 * This method should be called before a user joins a room, but only if the
 	 * user should be able to join the room.
@@ -123,6 +143,10 @@ class Listener {
 			return;
 		}
 
+		if (!$this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId)) {
+			return;
+		}
+
 		try {
 			$room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
@@ -131,19 +155,24 @@ class Listener {
 	}
 
 	/**
-	 * Prevents guests from joining the room.
+	 * Prevents guests from joining the room if it is not publicly accessible.
 	 *
 	 * This method should be called before a guest joins a room.
 	 *
 	 * @param Room $room
 	 * @throws UnauthorizedException
 	 */
-	protected static function preventGuestsFromJoining(Room $room): void {
+	protected function preventGuestsFromJoiningIfNotPubliclyAccessible(Room $room): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}
 
-		throw new UnauthorizedException('Guests are not allowed in rooms for files');
+		$shareToken = $this->talkSession->getFileShareTokenForRoom($room->getToken());
+		if ($shareToken && $this->util->canGuestAccessFile($shareToken)) {
+			return;
+		}
+
+		throw new UnauthorizedException('Guests are not allowed in this room');
 	}
 
 }
