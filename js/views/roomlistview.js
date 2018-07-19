@@ -46,14 +46,14 @@
 								'{{#if isFavorite}}'+
 								'<li>'+
 									'<button class="unfavorite-room-button">'+
-										'<span class="icon-starred"></span>'+
+										'<span class="icon-star-dark"></span>'+
 										'<span>'+t('spreed', 'Unpin conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{else}}'+
 								'<li>'+
 									'<button class="favorite-room-button">'+
-										'<span class="icon-star-dark"></span>'+
+										'<span class="icon-starred"></span>'+
 										'<span>'+t('spreed', 'Pin conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
