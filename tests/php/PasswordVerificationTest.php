@@ -26,17 +26,21 @@ use OCP\IConfig;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Test\TestCase;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
+/**
+ * @group DB
+ */
 class PasswordVerificationTest extends TestCase {
 
 	public function testVerifyPassword() {
 		$dispatcher = \OC::$server->getEventDispatcher();
-		
+
 		$dispatcher->addListener('OCA\Spreed\Room::verifyPassword', function(GenericEvent $event) {
 			$password = $event->getArgument('password');
 			$room = $event->getSubject();
 			$hasPassword = $room->hasPassword();
-			
+
 			if ($password == "1234") {
 			    $event->setArgument('result',  [ 'result' => true, 'url' => '']);
 			}
@@ -44,7 +48,7 @@ class PasswordVerificationTest extends TestCase {
 				$event->setArgument('result',  [ 'result' => false, 'url' => 'https://test']);
 			}
         });
-        
+
         $secureRandom = \OC::$server->getSecureRandom();
         $config = \OC::$server->getConfig();
 
