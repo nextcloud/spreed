@@ -36,13 +36,6 @@
 				return favoriteB - favoriteA;
 			}
 
-			var	activeA = modelA.get('active'),
-				activeB = modelB.get('active');
-
-			if (activeA !== activeB) {
-				return activeB - activeA;
-			}
-
 			return modelB.get('lastActivity') - modelA.get('lastActivity');
 		},
 		url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'room',
