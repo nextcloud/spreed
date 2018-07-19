@@ -29,10 +29,12 @@ use OCA\Spreed\GuestManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Room;
+use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
 use OCP\IServerContainer;
+use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -66,6 +68,7 @@ class Application extends App {
 		$this->registerRoomInvitationHook($dispatcher);
 		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
+		$this->registerClientLinks($server);
 	}
 
 	protected function registerNotifier(IServerContainer $server) {
@@ -80,6 +83,14 @@ class Application extends App {
 				'name' => $l->t('Talk'),
 			];
 		});
+	}
+
+	protected function registerClientLinks(IServerContainer $server) {
+		if ($server->getAppManager()->isEnabledForUser('firstrunwizard')) {
+			/** @var IManager $settingManager */
+			$settingManager = $server->getSettingsManager();
+			$settingManager->registerSetting('personal', Personal::class);
+		}
 	}
 
 	protected function registerInternalSignalingHooks(EventDispatcherInterface $dispatcher) {
