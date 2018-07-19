@@ -24,10 +24,19 @@ namespace OCA\Spreed\Migration;
 
 use Doctrine\DBAL\Types\Type;
 use OCP\DB\ISchemaWrapper;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;
 
 class Version3003Date20180718112436 extends SimpleMigrationStep {
+
+	/** @var IDBConnection */
+	protected $connection;
+
+	public function __construct(IDBConnection $connection) {
+		$this->connection = $connection;
+	}
 
 	/**
 	 * @param IOutput $output
@@ -50,5 +59,34 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 		}
 
 		return $schema;
+	}
+
+	/**
+	 * @param IOutput $output
+	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
+	 * @param array $options
+	 * @since 13.0.0
+	 */
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+		$update = $this->connection->getQueryBuilder();
+		$update->update('talk_rooms')
+			->set('last_activity', $update->createParameter('activity'))
+			->where($update->expr()->eq('id', $update->createParameter('room')));
+
+		$query = $this->connection->getQueryBuilder();
+		$query->select( 'object_id')
+			->selectAlias($query->createFunction('MAX(' . $query->getColumnName('creation_timestamp') . ')'), 'last_activity')
+			->from('comments')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter('chat')))
+			->groupBy('object_id');
+
+		$result = $query->execute();
+		while ($row = $result->fetch()) {
+			$lastActivity = new \DateTime($row['last_activity']);
+			$update->setParameter('activity', $lastActivity, IQueryBuilder::PARAM_DATE)
+				->setParameter('room', $row['object_id']);
+			$update->execute();
+		}
+		$result->closeCursor();
 	}
 }
