@@ -65,6 +65,7 @@ class Application extends App {
 			$this->registerSignalingBackendHooks($dispatcher);
 		}
 		$this->registerCallActivityHooks($dispatcher);
+		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerRoomInvitationHook($dispatcher);
 		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
@@ -243,6 +244,17 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
+	}
+
+	protected function registerRoomActivityHooks(EventDispatcherInterface $dispatcher) {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+			$room->setLastActivity(new \DateTime());
+		};
+
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+		$dispatcher->addListener(ChatManager::class . '::sendMessage', $listener);
 	}
 
 	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {

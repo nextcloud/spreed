@@ -42,9 +42,11 @@ class Version3003Date20180707222130 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_participants');
-		$table->addColumn('favorite', Type::BOOLEAN, [
-			'default' => 0,
-		]);
+		if (!$table->hasColumn('favorite')) {
+			$table->addColumn('favorite', Type::BOOLEAN, [
+				'default' => 0,
+			]);
+		}
 
 		return $schema;
 	}

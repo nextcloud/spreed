@@ -84,7 +84,12 @@ class Manager {
 			$activeSince = new \DateTime($row['active_since']);
 		}
 
-		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince);
+		$lastActivity = null;
+		if (!empty($row['last_activity'])) {
+			$lastActivity = new \DateTime($row['last_activity']);
+		}
+
+		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity);
 	}
 
 	/**

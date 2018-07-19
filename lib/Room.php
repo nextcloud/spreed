@@ -66,6 +66,8 @@ class Room {
 	private $activeGuests;
 	/** @var \DateTime|null */
 	private $activeSince;
+	/** @var \DateTime|null */
+	private $lastActivity;
 
 	/** @var string */
 	protected $currentUser;
@@ -87,8 +89,9 @@ class Room {
 	 * @param string $password
 	 * @param int $activeGuests
 	 * @param \DateTime|null $activeSince
+	 * @param \DateTime|null $lastActivity
 	 */
-	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null) {
+	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null, \DateTime $lastActivity = null) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
@@ -101,6 +104,7 @@ class Room {
 		$this->password = $password;
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
+		$this->lastActivity = $lastActivity;
 	}
 
 	/**
@@ -143,6 +147,13 @@ class Room {
 	 */
 	public function getActiveSince() {
 		return $this->activeSince;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getLastActivity() {
+		return $this->lastActivity;
 	}
 
 	/**
@@ -305,6 +316,22 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postSetPassword', new GenericEvent($this, [
 			'password' => $password,
 		]));
+
+		return true;
+	}
+
+	/**
+	 * @param \DateTime $now
+	 * @return bool
+	 */
+	public function setLastActivity(\DateTime $now) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('last_activity', $query->createNamedParameter($now, 'datetime'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->lastActivity = $now;
 
 		return true;
 	}

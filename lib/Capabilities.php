@@ -49,6 +49,7 @@ class Capabilities implements IPublicCapability {
 					'guest-display-names',
 					'multi-room-users',
 					'favorites',
+					'last-room-activity',
 				],
 			],
 		];
