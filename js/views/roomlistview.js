@@ -43,6 +43,7 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
+								'{{#if canFavorite}}'+
 								'{{#if isFavorite}}'+
 								'<li>'+
 									'<button class="unfavorite-room-button">'+
@@ -57,6 +58,7 @@
 										'<span>'+t('spreed', 'Pin conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
+								'{{/if}}'+
 								'{{/if}}'+
 								'{{#if isRemovable}}'+
 								'<li>'+
@@ -125,6 +127,7 @@
 			var isRemovable = this.model.get('type') !== 1;
 			return {
 				isRemovable: isRemovable,
+				canFavorite: this.model.get('participantType') !== 5,
 				isDeletable: !isRemovable || ((this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
 					(Object.keys(this.model.get('participants')).length > 1 || this.model.get('numGuests') > 0)),
 				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages')
@@ -226,8 +229,7 @@
 			});
 		},
 		addRoomToFavorites: function() {
-			if (this.model.get('participantType') !== 1 &&
-				this.model.get('participantType') !== 2) {
+			if (this.model.get('participantType') === 5) {
 				return;
 			}
 
@@ -239,8 +241,7 @@
 			});
 		},
 		removeRoomFromFavorites: function() {
-			if (this.model.get('participantType') !== 1 &&
-				this.model.get('participantType') !== 2) {
+			if (this.model.get('participantType') === 5) {
 				return;
 			}
 
