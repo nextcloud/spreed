@@ -43,6 +43,7 @@ class CapabilitiesTest extends TestCase {
 					'empty-group-room',
 					'guest-display-names',
 					'multi-room-users',
+					'favorites',
 				],
 			],
 		], $capabilities->getCapabilities());
