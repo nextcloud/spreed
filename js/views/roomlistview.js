@@ -232,7 +232,10 @@
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
-				type: 'POST'
+				type: 'POST',
+				success: function() {
+					OCA.SpreedMe.app.signaling.syncRooms();
+				}
 			});
 		},
 		removeRoomFromFavorites: function() {
@@ -244,7 +247,10 @@
 
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
-				type: 'DELETE'
+				type: 'DELETE',
+				success: function() {
+					OCA.SpreedMe.app.signaling.syncRooms();
+				}
 			});
 		},
 		cleanupIfActiveRoom: function() {
