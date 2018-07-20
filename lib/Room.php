@@ -663,12 +663,13 @@ class Room {
 
 	/**
 	 * @param string $password
-	 * @return bool
+	 * @return array
 	 */
 	public function verifyPassword($password) {
 		$event = new GenericEvent($this, [
 			'password' => $password
 		]);
+
 		$this->dispatcher->dispatch(self::class . '::verifyPassword', $event);
 		if ($event->hasArgument('result')) {
 			$result = $event->getArgument('result');
@@ -678,11 +679,10 @@ class Room {
 			];
 		}
 
-		$passwordVerification = [
+		return [
 			'result' => !$this->hasPassword() || $this->hasher->verify($password, $this->password),
 			'url' => ''
 		];
-		return $passwordVerification;
 	}
 
 	/**
