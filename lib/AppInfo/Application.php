@@ -24,6 +24,7 @@ namespace OCA\Spreed\AppInfo;
 use OCA\Spreed\Activity\Hooks;
 use OCA\Spreed\Capabilities;
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\SystemMessage\Listener;
 use OCA\Spreed\Config;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\HookListener;
@@ -70,6 +71,10 @@ class Application extends App {
 		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
 		$this->registerClientLinks($server);
+
+		/** @var Listener $systemMessageListener */
+		$systemMessageListener = $this->getContainer()->query(Listener::class);
+		$systemMessageListener->register();
 	}
 
 	protected function registerNotifier(IServerContainer $server) {

@@ -53,7 +53,7 @@ class RichMessageHelper {
 	 *     not be resolved.
 	 *
 	 * @param IComment $comment
-	 * @return Array first element, the rich message; second element, the
+	 * @return array first element, the rich message; second element, the
 	 *         parameters of the rich message (or an empty array if there are no
 	 *         parameters).
 	 */

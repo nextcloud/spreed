@@ -28,6 +28,7 @@ use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
+use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
@@ -84,6 +85,9 @@ class ChatController extends OCSController {
 	/** @var ISearchResult */
 	private $searchResult;
 
+	/** @var Parser */
+	private $parser;
+
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 
@@ -99,7 +103,7 @@ class ChatController extends OCSController {
 	 * @param RichMessageHelper $richMessageHelper
 	 * @param IManager $autoCompleteManager
 	 * @param SearchPlugin $searchPlugin
-	 * @param SearchResult $searchResult
+	 * @param ISearchResult $searchResult
 	 * @param EventDispatcherInterface $dispatcher
 	 */
 	public function __construct($appName,
@@ -113,7 +117,8 @@ class ChatController extends OCSController {
 								RichMessageHelper $richMessageHelper,
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
-								SearchResult $searchResult,   // FIXME for 14 ISearchResult is injectable
+								ISearchResult $searchResult,
+								Parser $parser,
 								EventDispatcherInterface $dispatcher) {
 		parent::__construct($appName, $request);
 
@@ -127,6 +132,7 @@ class ChatController extends OCSController {
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
+		$this->parser = $parser;
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -299,7 +305,11 @@ class ChatController extends OCSController {
 				$displayName = $guestNames[$comment->getActorId()];
 			}
 
-			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+			if ($comment->getVerb() === 'system') {
+				list($message, $messageParameters) = $this->parser->parseMessage($comment, $displayName);
+			} else {
+				list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+			}
 
 			return [
 				'id' => $comment->getId(),
@@ -310,6 +320,7 @@ class ChatController extends OCSController {
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
 				'message' => $message,
 				'messageParameters' => $messageParameters,
+				'verb' => $comment->getVerb(),
 			];
 		}, $comments), Http::STATUS_OK);
 

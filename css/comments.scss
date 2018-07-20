@@ -246,15 +246,23 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	/* Make the mention the positioning context of its child contacts menu */
 	position: relative;
 
-	font-weight: bold;
 	background-color: nc-lighten($color-main-text, 90%);
 	padding: 2px 5px;
 	border-radius: 10px;
+
 }
 
-#commentsTabView .comment .message .mention-user.current-user {
-	background-color: $color-primary;
-	color: $color-primary-text;
+#commentsTabView .comment:not(.systemMessage) .message .mention-user {
+	font-weight: bold;
+
+	.current-user {
+		background-color: $color-primary;
+		color: $color-primary-text;
+	}
+}
+
+#commentsTabView .comment.systemMessage .message {
+	opacity: .5;
 }
 
 body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.current-user) {

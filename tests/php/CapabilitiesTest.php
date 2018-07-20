@@ -46,6 +46,7 @@ class CapabilitiesTest extends TestCase {
 					'favorites',
 					'last-room-activity',
 					'no-ping',
+					'system-messages',
 				],
 			],
 		], $capabilities->getCapabilities());

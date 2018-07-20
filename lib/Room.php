@@ -389,9 +389,6 @@ class Room {
 		$query->execute();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function resetActiveSince() {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
@@ -399,7 +396,6 @@ class Room {
 			->set('active_since', $query->createNamedParameter(null, 'datetime'))
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
-
 	}
 
 	/**

@@ -23,9 +23,11 @@
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\Comments\NotFoundException;
 use OCP\IUser;
 
 /**
@@ -66,6 +68,29 @@ class ChatManager {
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
+	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime) {
+		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
+		$comment->setMessage($message);
+		$comment->setCreationDateTime($creationDateTime);
+		$comment->setVerb('system');
+		try {
+			$this->commentsManager->save($comment);
+		} catch (NotFoundException $e) {
+		}
+
+		return $comment;
+	}
+
+	/**
+	 * Sends a new message to the given chat.
+	 *
+	 * @param Room $chat
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $message
+	 * @param \DateTime $creationDateTime
+	 * @return IComment
+	 */
 	public function sendMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime) {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
@@ -74,7 +99,10 @@ class ChatManager {
 		// comment
 		$comment->setVerb('comment');
 
-		$this->commentsManager->save($comment);
+		try {
+			$this->commentsManager->save($comment);
+		} catch (NotFoundException $e) {
+		}
 
 		// Update last_message
 		$chat->setLastMessage($comment);
