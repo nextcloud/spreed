@@ -78,6 +78,8 @@ OC.L10N.register(
     "Promote to moderator" : "Promovido a moderador",
     "Remove participant" : "Remover participante",
     "Add participant …" : "Adicionar participante...",
+    "Unpin conversation" : "Desfixar conversa",
+    "Pin conversation" : "Fixar conversa",
     "Leave conversation" : "Encerrar conversa",
     "Delete conversation" : "Excluir conversa",
     "No other people in this call" : "Não há outras pessoas nesta chamada",
