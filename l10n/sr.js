@@ -78,6 +78,8 @@ OC.L10N.register(
     "Promote to moderator" : "Унапреди на модератора",
     "Remove participant" : "Уклони учесника",
     "Add participant …" : "Додај учесника…",
+    "Unpin conversation" : "Откачи разговор",
+    "Pin conversation" : "Закачи разговор",
     "Leave conversation" : "Напусти разговор",
     "Delete conversation" : "Обриши разовор",
     "No other people in this call" : "Нема других људи на вези",
