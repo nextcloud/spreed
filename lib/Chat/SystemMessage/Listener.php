@@ -82,14 +82,15 @@ class Listener {
 		$this->dispatcher->addListener(Room::class . '::postChangeType', function(GenericEvent $event) {
 			$arguments = $event->getArguments();
 
-			if ($arguments['newType'] !== Room::PUBLIC_CALL && $arguments['newType'] !== Room::PUBLIC_CALL) {
-				// one2one => group: Only added a user
-				return;
-			}
-
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->sendSystemMessage($room, 'change_type', $event->getArguments());
+
+			if ($arguments['newType'] === Room::PUBLIC_CALL) {
+				$this->sendSystemMessage($room, 'allowed_guests', $event->getArguments());
+			}
+			if ($arguments['oldType'] === Room::PUBLIC_CALL) {
+				$this->sendSystemMessage($room, 'disallowed_guests', $event->getArguments());
+			}
 		});
 
 		$this->dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {

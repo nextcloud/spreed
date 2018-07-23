@@ -59,12 +59,10 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
 		} else if ($message === 'renamed_conversation') {
 			$parsedMessage = $this->l->t('{actor} renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
-		} else if ($message === 'change_type') {
-			if ($parameters['newType'] === Room::PUBLIC_CALL) {
-				$parsedMessage = $this->l->t('{actor} allowed guests in the conversation');
-			} else {
-				$parsedMessage = $this->l->t('{actor} disallowed guests in the conversation');
-			}
+		} else if ($message === 'allowed_guests') {
+			$parsedMessage = $this->l->t('{actor} allowed guests in the conversation');
+		} else if ($message === 'disallowed_guests') {
+			$parsedMessage = $this->l->t('{actor} disallowed guests in the conversation');
 		} else if ($message === 'set_password') {
 			$parsedMessage = $this->l->t('{actor} set a password for the conversation');
 		} else if ($message === 'removed_password') {
