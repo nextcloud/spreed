@@ -322,7 +322,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testReceiveHistoryByUser() {
-		$this->session->expects($this->once())
+		$this->session->expects($this->exactly(2))
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -380,7 +380,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom() {
-		$this->session->expects($this->once())
+		$this->session->expects($this->exactly(2))
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn(null);
@@ -590,7 +590,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testWaitForNewMessagesByUser() {
-		$this->session->expects($this->once())
+		$this->session->expects($this->exactly(2))
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -654,7 +654,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutExpired() {
-		$this->session->expects($this->once())
+		$this->session->expects($this->exactly(2))
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -692,7 +692,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutTooLarge() {
-		$this->session->expects($this->once())
+		$this->session->expects($this->exactly(2))
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -712,7 +712,7 @@ class ChatControllerTest extends \Test\TestCase {
 
 		$offset = 23;
 		$timeout = 100000;
-		$maximumTimeout = 60;
+		$maximumTimeout = 30;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
 			->method('waitForNewMessages')
