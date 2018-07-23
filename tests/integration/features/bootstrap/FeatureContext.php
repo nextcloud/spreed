@@ -437,6 +437,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$messages = $this->getDataFromResponse($this->response);
+		$messages = array_filter($messages, function(array $message) {
+			// Filter out system messages
+			return $message['systemMessage'] === '';
+		});
+
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($messages);
 			return;
@@ -447,7 +452,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => (string) $message['actorType'],
-				'actorId' => ($message['actorType'] == 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
+				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
 				'actorDisplayName' => (string) $message['actorDisplayName'],
 				// TODO test timestamp; it may require using Runkit, php-timecop
 				// or something like that.
