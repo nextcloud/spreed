@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.5 – 2018-07-23
+### Fixed
+- Fix handling of malicious usernames while autocompleting in chat
+
 ## 3.2.4 – 2018-07-12
 ### Added
 - Allow external signaling servers to integrate a MCU
