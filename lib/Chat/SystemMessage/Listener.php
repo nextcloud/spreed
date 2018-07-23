@@ -129,7 +129,7 @@ class Listener {
 		if ($this->userId === null) {
 			$actorType = 'guests';
 			$sessionId = $this->session->getSessionForRoom($room->getToken());
-			$actorId = $sessionId ? sha1($sessionId) : '';
+			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;

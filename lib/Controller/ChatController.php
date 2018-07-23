@@ -23,7 +23,6 @@
 
 namespace OCA\Spreed\Controller;
 
-use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
@@ -199,9 +198,9 @@ class ChatController extends OCSController {
 			// fits (except if there is no session, as the actorId should be
 			// empty in that case but sha1('') would generate a hash too
 			// instead of returning an empty string).
-			$actorId = $sessionId ? sha1($sessionId) : '';
+			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 
-			if ($actorId && $actorDisplayName) {
+			if ($sessionId && $actorDisplayName) {
 				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
 			}
 		} else {
