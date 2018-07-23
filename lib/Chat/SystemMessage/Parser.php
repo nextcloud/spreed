@@ -85,6 +85,8 @@ class Parser {
 		} else if ($message === 'moderator_demoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
+		} else if ($message === 'call_ended') {
+			list($parsedMessage, $parsedParameters) = $this->parseCall($parameters);
 		}
 
 		return [$parsedMessage, $parsedParameters];
@@ -136,5 +138,79 @@ class Parser {
 		} catch (ParticipantNotFoundException $e) {
 			return $this->l->t('Guest');
 		}
+	}
+
+	protected function parseCall(array $parameters): array {
+		sort($parameters['users']);
+		$numUsers = \count($parameters['users']);
+		$displayedUsers = $numUsers;
+
+		switch ($numUsers) {
+			case 1:
+				$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+				$subject = str_replace('{user2}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
+				break;
+			case 2:
+				if ($parameters['guests'] === 0) {
+					$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
+				} else {
+					$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+					$subject = str_replace('{user3}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
+				}
+				break;
+			case 3:
+				if ($parameters['guests'] === 0) {
+					$subject = $this->l->t('Call with {user1}, {user2} and {user3} (Duration {duration})');
+				} else {
+					$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+					$subject = str_replace('{user4}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
+				}
+				break;
+			case 4:
+				if ($parameters['guests'] === 0) {
+					$subject = $this->l->t('Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})');
+				} else {
+					$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+					$subject = str_replace('{user5}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
+				}
+				break;
+			case 5:
+			default:
+				$subject = $this->l->t('Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})');
+				if ($numUsers === 5 && $parameters['guests'] === 0) {
+					$displayedUsers = 5;
+				} else {
+					$displayedUsers = 4;
+					$numOthers = $parameters['guests'] + $numUsers - $displayedUsers;
+					$subject = str_replace('{user5}', $this->l->n('%n other', '%n others', $numOthers), $subject);
+				}
+		}
+
+		$params = [];
+		for ($i = 1; $i <= $displayedUsers; $i++) {
+			$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+		}
+
+
+		$subject = str_replace('{duration}', $this->getDuration($parameters['duration']), $subject);
+		return [
+			$subject,
+			$params,
+		];
+	}
+
+	protected function getDuration($seconds): string {
+		$hours = floor($seconds / 3600);
+		$seconds %= 3600;
+		$minutes = floor($seconds / 60);
+		$seconds %= 60;
+
+		if ($hours > 0) {
+			$duration = sprintf('%1$d:%2$02d:%3$02d', $hours, $minutes, $seconds);
+		} else {
+			$duration = sprintf('%1$d:%2$02d', $minutes, $seconds);
+		}
+
+		return $duration;
 	}
 }
