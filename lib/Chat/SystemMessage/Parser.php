@@ -22,7 +22,8 @@
 namespace OCA\Spreed\Chat\SystemMessage;
 
 
-use OCA\Spreed\Room;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IUser;
@@ -32,14 +33,19 @@ class Parser {
 
 	/** @var IUserManager */
 	protected $userManager;
+	/** @var GuestManager */
+	protected $guestManager;
 	/** @var IL10N */
 	protected $l;
 
 	/** @var string[] */
 	protected $displayNames = [];
+	/** @var string[] */
+	protected $guestNames = [];
 
-	public function __construct(IUserManager $userManager, IL10N $l) {
+	public function __construct(IUserManager $userManager, GuestManager $guestManager, IL10N $l) {
 		$this->userManager = $userManager;
+		$this->guestManager = $guestManager;
 		$this->l = $l;
 	}
 
@@ -48,7 +54,7 @@ class Parser {
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 
-		$parsedParameters = ['actor' => $this->getActor($comment, $displayName)];
+		$parsedParameters = ['actor' => $this->getActor($comment)];
 		$parsedMessage = $comment->getMessage();
 
 		if ($message === 'joined_call') {
@@ -81,16 +87,15 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 		}
 
-
 		return [$parsedMessage, $parsedParameters];
 	}
 
-	protected function getActor(IComment $comment, string $displayName): array {
-		return [
-			'type' => 'user',
-			'id' => $comment->getActorId(),
-			'name' => $displayName,
-		];
+	protected function getActor(IComment $comment): array {
+		if ($comment->getActorType() === 'guests') {
+			return $this->getGuest($comment->getActorId());
+		}
+
+		return $this->getUser($comment->getActorId());
 	}
 
 	protected function getUser(string $uid): array {
@@ -111,5 +116,25 @@ class Parser {
 			return $user->getDisplayName();
 		}
 		return $uid;
+	}
+
+	protected function getGuest(string $sessionHash): array {
+		if (!isset($this->guestNames[$sessionHash])) {
+			$this->guestNames[$sessionHash] = $this->getGuestName($sessionHash);
+		}
+
+		return [
+			'type' => 'guest',
+			'id' => $sessionHash,
+			'name' => $this->guestNames[$sessionHash],
+		];
+	}
+
+	protected function getGuestName(string $sessionHash): string {
+		try {
+			return $this->l->t('%s (guest)', [$this->guestManager->getNameBySessionHash($sessionHash)]);
+		} catch (ParticipantNotFoundException $e) {
+			return $this->l->t('Guest');
+		}
 	}
 }
