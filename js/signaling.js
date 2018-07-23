@@ -496,7 +496,7 @@
 		this._startPullingMessages();
 	};
 
-	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
+	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(/*token*/) {
 		// Nothing to do anymore
 	};
 
