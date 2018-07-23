@@ -163,9 +163,11 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	margin-left: 5px;
 }
 #commentsTabView .comment .date {
-	position: absolute;
-	right: 0;
-	top: 5px;
+	/* "margin-left: auto" aligns the block to the right, while
+	 * "text-align: right" aligns the text inside the block to the right, for
+	 * example, when it uses two lines due to a limited width. */
+	margin-left: auto;
+	text-align: right;
 }
 
 #commentsTabView .comments li .message {
