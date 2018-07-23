@@ -263,7 +263,25 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	}
 }
 
+/* System messages have no author, so the author row only contains the date.
+ * Instead of showing the date on its own row and the message below it the
+ * message and the date are merged in a single row using flexboxes. */
+#commentsTabView .comment.systemMessage {
+	display: flex;
+	flex-direction: row;
+}
+
+#commentsTabView .comment.systemMessage .authorRow {
+	order: 1;
+	flex-grow: 0;
+	width: auto;
+	padding-left: 10px;
+}
+
 #commentsTabView .comment.systemMessage .message {
+	order: 0;
+	flex-grow: 1;
+
 	opacity: .5;
 }
 
