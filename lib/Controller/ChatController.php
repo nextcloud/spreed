@@ -320,7 +320,7 @@ class ChatController extends OCSController {
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
 				'message' => $message,
 				'messageParameters' => $messageParameters,
-				'verb' => $comment->getVerb(),
+				'systemMessage' => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
 			];
 		}, $comments), Http::STATUS_OK);
 

@@ -357,7 +357,7 @@
 				date: relativeDate ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LTS'),
 				relativeDate: relativeDate,
 				altDate: OC.Util.formatDate(timestamp),
-				isNotSystemMessage: commentModel.get('verb') !== 'system',
+				isNotSystemMessage: commentModel.get('systemMessage') === '',
 				formattedMessage: formattedMessage
 			});
 			return data;
@@ -474,7 +474,7 @@
 				return false;
 			}
 
-			return model1.get('verb') === model2.get('verb') &&
+			return (model1.get('systemMessage').length === 0) === (model2.get('systemMessage').length === 0) &&
 				model1.get('actorId') === model2.get('actorId') &&
 				model1.get('actorType') === model2.get('actorType');
 		},
