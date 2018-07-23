@@ -116,16 +116,19 @@
 					},
 					sorter: function (q, items) { return items; }
 				},
-				displayTpl: '<li>'
-				+ '<span class="avatar-name-wrapper">'
-				+ '<div class="avatar"'
-				+ ' data-username="${id}"'	// for avatars
-				+ ' data-user="${id}"'		// for contactsmenu
-				+ ' data-user-display-name="${label}"></div>'
-				+ ' <strong>${label}</strong>'
-				+ '</span></li>',
-				insertTpl: ''
-				+ '<span class="mention-user" data-user="${id}">@${label}</span>',
+				displayTpl: function (item) {
+					return '<li>'
+						+ '<span class="avatar-name-wrapper">'
+						+ '<div class="avatar"'
+						+ ' data-username="' + escapeHTML(item.id) + '"'	// for avatars
+						+ ' data-user="' + escapeHTML(item.id) + '"'		// for contactsmenu
+						+ ' data-user-display-name="' + escapeHTML(item.label) + '"></div>'
+						+ ' <strong>' + escapeHTML(item.label) + '</strong>'
+						+ '</span></li>';
+				},
+				insertTpl: function (item) {
+					return '<span class="mention-user" data-user="' + escapeHTML(item.id) + '">@' + escapeHTML(item.label) + '</span>';
+				},
 				searchKey: "label"
 			});
 		},
