@@ -78,6 +78,8 @@ OC.L10N.register(
     "Promote to moderator" : "Сделать модератором",
     "Remove participant" : "Удалить участника",
     "Add participant …" : "Добавить участника …",
+    "Unpin conversation" : "Открепить беседу",
+    "Pin conversation" : "Прикрепить беседу",
     "Leave conversation" : "Покинуть беседу",
     "Delete conversation" : "Удалить обсуждение",
     "No other people in this call" : "У этого звонка нет других участников",
