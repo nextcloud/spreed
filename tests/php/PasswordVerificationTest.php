@@ -20,41 +20,46 @@
  */
 namespace OCA\Spreed\Tests\php;
 
-use OCA\Spreed\Config;
-use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IConfig;
+use OCA\Spreed\Manager;
+use OCA\Spreed\Room;
+use OCP\IDBConnection;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Test\TestCase;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class PasswordVerificationTest extends TestCase {
 
 	public function testVerifyPassword() {
-		$dispatcher = \OC::$server->getEventDispatcher();
-		
-		$dispatcher->addListener('OCA\Spreed\Room::verifyPassword', function(GenericEvent $event) {
+		$dispatcher = new EventDispatcher();
+		$dispatcher->addListener(Room::class . '::verifyPassword', function(GenericEvent $event) {
 			$password = $event->getArgument('password');
-			$room = $event->getSubject();
-			$hasPassword = $room->hasPassword();
-			
-			if ($password == "1234") {
-			    $event->setArgument('result',  [ 'result' => true, 'url' => '']);
+
+			if ($password === '1234') {
+				$event->setArgument('result',  [ 'result' => true, 'url' => '']);
 			}
 			else {
 				$event->setArgument('result',  [ 'result' => false, 'url' => 'https://test']);
 			}
-        });
-        
-        $secureRandom = \OC::$server->getSecureRandom();
-        $config = \OC::$server->getConfig();
+		});
 
-        $dbConnection = \OC::$server->getDatabaseConnection();
-        $dispatcher = \OC::$server->getEventDispatcher();
-        $manager = new Manager($dbConnection, $config, $secureRandom, $dispatcher, $this->createMock(IHasher::class));
-        $room = $manager->createPublicRoom();
-        $verificationResult = $room->verifyPassword('1234');
-        $this->assertSame($verificationResult, ['result' => true, 'url' => '']);
-        $verificationResult = $room->verifyPassword('4321');
-        $this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
+		$room = new Room(
+			$this->createMock(Manager::class),
+			$this->createMock(IDBConnection::class),
+			$this->createMock(ISecureRandom::class),
+			$dispatcher,
+			$this->createMock(IHasher::class),
+			1,
+			Room::PUBLIC_CALL,
+			'foobar',
+			'Test',
+			'passy',
+			0
+		);
+		$verificationResult = $room->verifyPassword('1234');
+		$this->assertSame($verificationResult, ['result' => true, 'url' => '']);
+		$verificationResult = $room->verifyPassword('4321');
+		$this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
 	}
 }

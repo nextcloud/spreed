@@ -209,7 +209,7 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$comment = $this->chatManager->sendMessage((string) $room->getId(), $actorType, $actorId, $message, $creationDateTime);
+		$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
 
 		$this->dispatcher->dispatch(ChatManager::class . '::sendMessage', new GenericEvent($room, [
 			'actorType' => $actorType,
@@ -266,9 +266,9 @@ class ChatController extends OCSController {
 
 		if ($lookIntoFuture) {
 			$currentUser = $this->userManager->get($this->userId);
-			$comments = $this->chatManager->waitForNewMessages((string) $room->getId(), $lastKnownMessageId, $limit, $timeout, $currentUser);
+			$comments = $this->chatManager->waitForNewMessages($room, $lastKnownMessageId, $limit, $timeout, $currentUser);
 		} else {
-			$comments = $this->chatManager->getHistory((string) $room->getId(), $lastKnownMessageId, $limit);
+			$comments = $this->chatManager->getHistory($room, $lastKnownMessageId, $limit);
 		}
 
 		if (empty($comments)) {

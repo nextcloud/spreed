@@ -78,7 +78,6 @@
     "You can invite others in the participant tab of the sidebar" : "Je kunt anderen uitnodigen in de deelnemerstab van de zijbalk",
     "Share this link to invite others!" : "Deel deze link om anderen uit te nodigen!",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Je kan anderen in het deelnemers tabblad toevoegen, of door deze link aan anderen te geven. ",
-    "and you" : "en jij",
     "Close" : "Sluiten",
     "Waiting for camera and microphone permissions" : "Wacht op camera en microfoon permissies",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Geef je browser toegang tot de camera en microfoon om deze app te kunnen te gebruiken.",
@@ -132,6 +131,7 @@
     "This call has ended" : "Het gesprek is beeindigd",
     "Saving failed" : "Opslaan mislukt",
     "Add person" : "Persoon toevoegen",
+    "and you" : "en jij",
     "Please adjust your configuration" : "Stel je configuratie bij",
     "{actor} invited you to a private call" : "{actor} heeft je uitgenodigd voor een privégesprek",
     "{actor} invited you to a group call" : "{actor} heeft je uitgenodigd voor een groepsgesprek",
@@ -154,9 +154,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig om deelnemers met gesprekken te verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
-    "TURN server shared secret" : "TURN server gedeeld geheim",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Je kan je naam in de rechter zijbalk instellen zodat de overige deelnemers je beter herkennen.",
-    "Your name …" : "Je naam ...",
-    "Remove conversation from list" : "Verwijder gesprek uit overzicht"
+    "TURN server shared secret" : "TURN server gedeeld geheim"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

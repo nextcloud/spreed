@@ -160,9 +160,17 @@ class RoomController extends OCSController {
 		if ($participant instanceof Participant) {
 			$participantType = $participant->getParticipantType();
 			$participantInCall = $participant->isInCall();
+			$favorite = $participant->isFavorite();
 		} else {
 			$participantType = Participant::GUEST;
-			$participantInCall = false;
+			$participantInCall = $favorite = false;
+		}
+
+		$lastActivity = $room->getLastActivity();
+		if ($lastActivity instanceof \DateTimeInterface) {
+			$lastActivity = $lastActivity->getTimestamp();
+		} else {
+			$lastActivity = 0;
 		}
 
 		$roomData = [
@@ -176,7 +184,9 @@ class RoomController extends OCSController {
 			'count' => $room->getNumberOfParticipants(false, time() - 30),
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
+			'lastActivity' => $lastActivity,
 			'unreadMessages' => 0,
+			'isFavorite' => $favorite,
 		];
 
 		if (!$participant instanceof Participant) {
@@ -195,7 +205,7 @@ class RoomController extends OCSController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($currentUser instanceof IUser) {
-			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room->getId(), $currentUser);
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $currentUser);
 		}
 
 		// Sort by lastPing
@@ -209,7 +219,7 @@ class RoomController extends OCSController {
 
 		$participantList = [];
 		foreach ($participants['users'] as $userId => $data) {
-			$user = $this->userManager->get($userId);
+			$user = $this->userManager->get((string) $userId);
 			if ($user instanceof IUser) {
 				$participantList[(string) $user->getUID()] = [
 					'name' => $user->getDisplayName(),
@@ -217,10 +227,14 @@ class RoomController extends OCSController {
 					'call' => $data['inCall'],
 				];
 			}
+
+			if ($data['sessionId'] !== '0' && $data['lastPing'] <= time() - 100) {
+				$room->leaveRoom((string) $userId);
+			}
 		}
 
 		$activeGuests = array_filter($participants['guests'], function($data) {
-			return $data['lastPing'] > time() - 30;
+			return $data['lastPing'] > time() - 100;
 		});
 
 		$numActiveGuests = count($activeGuests);
@@ -457,6 +471,49 @@ class RoomController extends OCSController {
 			'displayName' => $room->getName(),
 		], Http::STATUS_CREATED);
 	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function addToFavorites($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participant->setFavorite(true);
+
+		return new DataResponse([]);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @return DataResponse
+	 */
+	public function removeFromFavorites($token) {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participant->setFavorite(false);
+
+		return new DataResponse([]);
+	}
+
 
 	/**
 	 * @NoAdminRequired

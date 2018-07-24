@@ -75,7 +75,6 @@
     "You can invite others in the participant tab of the sidebar" : "ניתן להזמין אחרים בלשונית המשתתפים בסרגל הצד",
     "Share this link to invite others!" : "יש לשתף את הקישור הזה כדי להזמין אחרים!",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "ניתן להזמין אחרים דרך לשונית המשתפים בסרגל הצד או לשתף את הקישור הזה כדי להזמין אחרים!",
-    "and you" : "ואני",
     "Close" : "סגירה",
     "Waiting for camera and microphone permissions" : "בהמתנה להרשאות גישה למצלמה ולמיקרופון",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "נא להעניק לדפדפן שלך גישה להשתמש במצלמה ובמיקרופון שלך כדי להשתמש ביישומון הזה.",
@@ -110,6 +109,7 @@
     "This call has ended" : "השיחה הזאת הסתיימה",
     "Saving failed" : "השמירה נכשלה",
     "Add person" : "הוספת מישהו",
+    "and you" : "ואני",
     "Please adjust your configuration" : "נא להתאים את ההגדרות שלך",
     "{actor} invited you to a private call" : "הוזמנת לשיחה פרטית על ידי {actor}",
     "{actor} invited you to a group call" : "הוזמנת לשיחה קבוצתית על ידי {actor}",
@@ -130,8 +130,6 @@
     "Smile in 3… 2… 1!" : "לחייך בעוד 3… 2… 1!",
     "STUN server" : "שרת STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "שרת ה־STUN משמש לאיתור כתובות ה־IP הציבורית של משתתפים שנמצאים מאחורי נתב.",
-    "TURN server shared secret" : "סוד משותף לשרת TURN",
-    "Your name …" : "השם שלך…",
-    "Remove conversation from list" : "הסרת דיון מהרשימה"
+    "TURN server shared secret" : "סוד משותף לשרת TURN"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"
 }

@@ -289,6 +289,25 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+		[
+			'name' => 'Room#addToFavorites',
+			'url' => '/api/{apiVersion}/room/{token}/favorite',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#removeFromFavorites',
+			'url' => '/api/{apiVersion}/room/{token}/favorite',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+
 
 		/**
 		 * Guest

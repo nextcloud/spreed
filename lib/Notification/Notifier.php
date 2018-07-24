@@ -33,7 +33,6 @@ use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
-use OCP\RichObjectStrings\InvalidObjectExeption;
 
 class Notifier implements INotifier {
 
@@ -82,10 +81,15 @@ class Notifier implements INotifier {
 		$l = $this->lFactory->get('spreed', $languageCode);
 
 		try {
-			$room = $this->manager->getRoomById((int) $notification->getObjectId());
+			$room = $this->manager->getRoomByToken($notification->getObjectId());
 		} catch (RoomNotFoundException $e) {
-			// Room does not exist
-			throw new \InvalidArgumentException('Invalid room');
+			try {
+				// Before 3.2.3 the id was passed in notifications
+				$room = $this->manager->getRoomById((int) $notification->getObjectId());
+			} catch (RoomNotFoundException $e) {
+				// Room does not exist
+				throw new \InvalidArgumentException('Invalid room');
+			}
 		}
 
 		$notification

@@ -61,7 +61,6 @@
     "No other people in this call" : "Nincs más ebben a hívásban",
     "You can invite others in the participant tab of the sidebar" : "Az oldalsávon található „közreműködő” fülön lehet másokat meghívni",
     "Share this link to invite others!" : "Oszd meg ezt a linket mások meghívásához!",
-    "and you" : "és te",
     "Close" : "Bezár",
     "Waiting for camera and microphone permissions" : "Várakozás kamera és mikrofon engedélyezésre",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Kérlek engedélyezd a kamera és mikrofon elérést az app használatához.",
@@ -114,6 +113,7 @@
     "This call has ended" : "A hívás véget ért",
     "Saving failed" : "Mentés sikertelen",
     "Add person" : "Személy hozzáadás",
+    "and you" : "és te",
     "Please adjust your configuration" : "Kérlek állíts a konfiguráción",
     "{actor} invited you to a private call" : "{actor} meghívott egy privát beszélgetésbe",
     "{actor} invited you to a group call" : "{actor} meghívott egy csoportos beszélgetésbe",
@@ -136,8 +136,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "A STUN szerver azért szükséges, hogy mások is csatlakozhassanak a beszélgetésekhez. A TURN szerver a tűzfal mögötti felhasználók csatlakozását biztosítja.",
     "STUN server" : "STUN kiszolgáló",
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
-    "TURN server shared secret" : "TURN szerver megosztott titok",
-    "You can set your name on the right sidebar so other participants can identify you better." : "A jobb sávban beállíthatod a nevedet, hogy a többi résztvevő könnyebben azonosíthasson.",
-    "Your name …" : "A te neved …"
+    "TURN server shared secret" : "TURN szerver megosztott titok"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -11,6 +11,8 @@
   * [Delete a room](#delete-a-room)
   * [Allow guests in a room (public room)](#allow-guests-in-a-room-public-room)
   * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
+  * [Add room to favorites](#add-room-to-favorites)
+  * [Remove room from favorites](#remove-room-from-favorites)
 - [Participant management](#participant-management)
   * [Get list of participants in a room](#get-list-of-participants-in-a-room)
   * [Add a participant to a room](#add-a-participant-to-a-room)
@@ -64,6 +66,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL.
 * `chat-v2` - Chat messages are now [Rich Object Strings](https://github.com/nextcloud/server/issues/1706) and pagination is available, the previous `chat` is not available anymore.
 
+### 3.3
+* `favorites` - Rooms can be marked as favorites which will pin them to the top of the room list.
+* `last-room-activity` - Rooms have the `lastActivity` attribute and should be sorted by that instead of the last ping of the user.
 
 ## Room management
 
@@ -122,6 +127,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
         `hasPassword` | bool | Flag if the room has a password
         `hasCall` | bool | Flag if the room has an active call
+        `lastActivity` | int | Timestamp of the last activity in the room, in seconds and UTC time zone
+        `isFavorite` | bool | Flag if the room is favorited by the user
         `unreadMessages` | int | Number of unread chat messages in the room (only available with `chat-v2` capability)
 
 ### Get single room (also for guests)
@@ -220,6 +227,25 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the room is not a public room
         + `404 Not Found` When the room could not be found for the participant
 
+### Add room to favorites
+
+* Method: `POST`
+* Endpoint: `/room/{token}/favorite`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant or the participant is a guest
+
+### Remove room from favorites
+
+* Method: `DELETE`
+* Endpoint: `/room/{token}/favorite`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant or the participant is a guest
 
 ## Participant management
 

@@ -80,7 +80,6 @@ OC.L10N.register(
     "You can invite others in the participant tab of the sidebar" : "Du kan invitere andre fra deltagerfanen i sidefeltet",
     "Share this link to invite others!" : "Klikk denne lenken for å invitere andre.",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Du kan invitere andre i deltagerfanen av sidefeltet eller dele denne lenke for å invitere andre!",
-    "and you" : "og deg",
     "Close" : "Lukk",
     "Waiting for camera and microphone permissions" : "Venter på kamera- og mikrofon-tilganger",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Gi nettleseren tilgang til å bruke kamera og mikrofon for å kunne bruke dette programmet.",
@@ -134,6 +133,7 @@ OC.L10N.register(
     "This call has ended" : "Denne samtalen er avsluttet",
     "Saving failed" : "Lagring mislyktes",
     "Add person" : "Legg til person",
+    "and you" : "og deg",
     "Please adjust your configuration" : "Juster oppsettet ditt",
     "{actor} invited you to a private call" : "{actor} inviterte deg til en privat samtale",
     "{actor} invited you to a group call" : "{actor} inviterte deg til gruppesamtale",
@@ -156,9 +156,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN- tjeneren er nødvendig for at deltakere kan koble til samtaler. TURN- tjeneren sørger for at koblingen fungerer selv gjennom brannmurer.",
     "STUN server" : "STUN-tjener",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-tjeneren brukes til å bestemme offentlig IP-adresse til deltagere bak en ruter.",
-    "TURN server shared secret" : "TURN-tjeners delte hemmelighet",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sette navnet ditt øverst til høyre i sidefeltet, slik at andre deltagere har lettere for å identifisere deg.",
-    "Your name …" : "Ditt navn…",
-    "Remove conversation from list" : "Fjern samtale fra liste"
+    "TURN server shared secret" : "TURN-tjeners delte hemmelighet"
 },
 "nplurals=2; plural=(n != 1);");

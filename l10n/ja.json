@@ -79,7 +79,6 @@
     "You can invite others in the participant tab of the sidebar" : "サイドバーの参加者タブで他のユーザーを招待できます",
     "Share this link to invite others!" : "このリンクを共有して他の人を招待します。",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "サイドバーの参加者タブかこのリンクを共有して他のユーザーを招待できます。",
-    "and you" : "と自分",
     "Close" : "閉じる",
     "Waiting for camera and microphone permissions" : "カメラとマイクの許可待ち",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "ブラウザーでカメラとマイクへのアクセスを許可してください。",
@@ -133,6 +132,7 @@
     "This call has ended" : "この通話は終了しています",
     "Saving failed" : "保存失敗",
     "Add person" : "人を追加",
+    "and you" : "と自分",
     "Please adjust your configuration" : "設定を調整してください",
     "{actor} invited you to a private call" : "{actor} からプライベート通話に招待されました",
     "{actor} invited you to a group call" : "{actor} からグループ通話に招待されました",
@@ -155,9 +155,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUNサーバーは参加者の通話に必要です。TURNサーバーはファイアウォール経由の接続に使用されます。",
     "STUN server" : "STUNサーバー",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。",
-    "TURN server shared secret" : "TURNサーバーの共有秘密鍵",
-    "You can set your name on the right sidebar so other participants can identify you better." : "右側のサイドバーに自身の参加名を設定することで他の参加者があなたを認識しやすくできます。",
-    "Your name …" : "名前 …",
-    "Remove conversation from list" : "会話をリストから削除"
+    "TURN server shared secret" : "TURNサーバーの共有秘密鍵"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

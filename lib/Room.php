@@ -66,6 +66,8 @@ class Room {
 	private $activeGuests;
 	/** @var \DateTime|null */
 	private $activeSince;
+	/** @var \DateTime|null */
+	private $lastActivity;
 
 	/** @var string */
 	protected $currentUser;
@@ -87,8 +89,9 @@ class Room {
 	 * @param string $password
 	 * @param int $activeGuests
 	 * @param \DateTime|null $activeSince
+	 * @param \DateTime|null $lastActivity
 	 */
-	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null) {
+	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null, \DateTime $lastActivity = null) {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
@@ -101,6 +104,7 @@ class Room {
 		$this->password = $password;
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
+		$this->lastActivity = $lastActivity;
 	}
 
 	/**
@@ -143,6 +147,13 @@ class Room {
 	 */
 	public function getActiveSince() {
 		return $this->activeSince;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getLastActivity() {
+		return $this->lastActivity;
 	}
 
 	/**
@@ -305,6 +316,22 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postSetPassword', new GenericEvent($this, [
 			'password' => $password,
 		]));
+
+		return true;
+	}
+
+	/**
+	 * @param \DateTime $now
+	 * @return bool
+	 */
+	public function setLastActivity(\DateTime $now) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('last_activity', $query->createNamedParameter($now, 'datetime'))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->lastActivity = $now;
 
 		return true;
 	}
@@ -543,9 +570,11 @@ class Room {
 	 * @param string $userId
 	 */
 	public function leaveRoom($userId) {
-		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this, [
+			'userId' => $userId,
+		]));
 
-		// Reset sessions on all normal rooms
+		// Reset session when leaving a normal room
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('session_id', $query->createNamedParameter('0'))
@@ -555,15 +584,18 @@ class Room {
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		// And kill session on all self joined rooms
+		// And kill session when leaving a self joined room
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
-		$query->execute();
+		$selfJoined = (bool) $query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this, [
+			'userId' => $userId,
+			'selfJoin' => $selfJoined,
+		]));
 	}
 
 	/**
@@ -639,23 +671,26 @@ class Room {
 
 	/**
 	 * @param string $password
-	 * @return bool
+	 * @return array
 	 */
 	public function verifyPassword($password) {
 		$event = new GenericEvent($this, [
 			'password' => $password
 		]);
+
 		$this->dispatcher->dispatch(self::class . '::verifyPassword', $event);
 		if ($event->hasArgument('result')) {
 			$result = $event->getArgument('result');
-			return $result;
+			return [
+				'result' => $result['result'] ?? false,
+				'url' => $result['url'] ?? ''
+			];
 		}
 
-		$passwordVerification = [
+		return [
 			'result' => !$this->hasPassword() || $this->hasher->verify($password, $this->password),
 			'url' => ''
 		];
-		return $passwordVerification;
 	}
 
 	/**
@@ -681,7 +716,7 @@ class Room {
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->emptyString('user_id'))
-			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter(time() - 30, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter(time() - 100, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::class . '::postCleanGuests', new GenericEvent($this));

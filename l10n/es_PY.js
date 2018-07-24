@@ -55,7 +55,6 @@ OC.L10N.register(
     "No other people in this call" : "No hay más personas en esta llamada",
     "You can invite others in the participant tab of the sidebar" : "Puedes invitar a otras personas en la pestaña de participante del menú lateral",
     "Share this link to invite others!" : "¡Comparte esta liga para invitar a otras personas!",
-    "and you" : "y tú",
     "Close" : "Cerrar",
     "Waiting for camera and microphone permissions" : "Aguardando los permisos para la cámara y micrófono",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Por favor da acceso a tu navegador para usar tu camara y micrófono poder usar esta aplicación. ",
@@ -108,6 +107,7 @@ OC.L10N.register(
     "This call has ended" : "Esta llamada ha terminado",
     "Saving failed" : "Se presentó una falla al guardar",
     "Add person" : "Agregar persona",
+    "and you" : "y tú",
     "Please adjust your configuration" : "Por favor ajusta tu configuración",
     "{actor} invited you to a private call" : "{actor} te ha invitado a una llamada privada",
     "{actor} invited you to a group call" : "{actor} te ha invitado a una llamada en grupo",
@@ -130,8 +130,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN se requiere para que los participantes puedan conectarse a llamadas. El servidor TURN se aseguara de que la conexión funcione aún a través de firewalls.",
     "STUN server" : "Servidor STUN",
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
-    "TURN server shared secret" : "Secreto compartido del servidor TURN",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Puedes establecer tu nombre en la barra derecha para que otros participantes te puedan identificar más facilmente. ",
-    "Your name …" : "Tu nombre"
+    "TURN server shared secret" : "Secreto compartido del servidor TURN"
 },
 "nplurals=2; plural=(n != 1);");

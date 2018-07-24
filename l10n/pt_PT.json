@@ -61,7 +61,6 @@
     "No other people in this call" : "Sem mais pessoas nesta chamada",
     "You can invite others in the participant tab of the sidebar" : "Pode convidar outros no separador participantes na barra lateral  ",
     "Share this link to invite others!" : "Envie este link para convidar outros!",
-    "and you" : "e você",
     "Close" : "Fechar",
     "Waiting for camera and microphone permissions" : "À espera de permissões de câmera e microfone",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Por favor, permite ao seu browser aceder à sua câmera e microfone para que possa utilizar esta aplicação.",
@@ -95,6 +94,7 @@
     "Looking great today! :)" : "Hoje está com óptimo aspecto! :)",
     "Time to call your friends" : "Está na hora de ligar aos seus amigos",
     "This call has ended" : "Esta chamada terminou",
+    "and you" : "e você",
     "Please adjust your configuration" : "Por favor ajuste a sua configuração",
     "%s invited you to a private call" : "%s convidou-o para uma chamada privada",
     "{user} invited you to a private call" : "{utilizador} convidou-o para uma chamada privada",
@@ -103,8 +103,6 @@
     "%s invited you to a group call" : "%s convidou-o para uma chamada de grupo",
     "{user} invited you to a group call" : "{utilizador} convidou-o para uma chamada de grupo",
     "Fullscreen" : "Ecrã completo",
-    "Mute audio" : "Silenciar áudio",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Pode definir o seu nome na barra lateral para que outros participantes o possam identificar melhor.",
-    "Your name …" : "O seu nome .."
+    "Mute audio" : "Silenciar áudio"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

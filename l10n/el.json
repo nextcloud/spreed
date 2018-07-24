@@ -53,7 +53,6 @@
     "Add participant …" : "Προσθήκη συμμετέχοντα …",
     "No other people in this call" : "Κανένα άλλο άτομο σε αυτή την κλήση",
     "Share this link to invite others!" : "Διαμοιρασμός του συνδέσμου για να προσκαλέσετε άλλους!",
-    "and you" : "και εσείς",
     "Close" : "Κλείσιμο",
     "Waiting for camera and microphone permissions" : "Αναμονή για δικαιώματα για την κάμερα και το μικρόφωνο",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Παρακαλούμε δώστε πρόσβαση στον φυλλομετρητή να χρησιμοποιήσει την κάμερα και το μικρόφωνο ώστε να χρησιμοποιήσετε αυτή την εφαρμογή.",
@@ -86,6 +85,7 @@
     "This call has ended" : "Αυτή η κλήση τερματίστηκε",
     "Saving failed" : "Αποτυχία αποθήκευσης",
     "Add person" : "Προσθήκη ατόμου",
+    "and you" : "και εσείς",
     "Please adjust your configuration" : "Παρακαλούμε προσαρμόστε τις ρυθμίσεις σας",
     "You were invited to a <strong>video call</strong>" : "Έχετε προσκληθεί σε <strong>κλήση βίντεο</strong>",
     "Video call" : "Κλήση βίντεο",
@@ -100,7 +100,6 @@
     "Mute audio" : "Σίγαση ήχου",
     "Smile in 3… 2… 1!" : "Χαμογελάστε σε 3… 2… 1!",
     "Choose person …" : "Επιλογή ατόμου ...",
-    "STUN server" : "Διακομιστής STUN",
-    "Your name …" : "Το όνομά σας …"
+    "STUN server" : "Διακομιστής STUN"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

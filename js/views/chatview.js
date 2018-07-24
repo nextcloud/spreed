@@ -77,6 +77,7 @@
 
 		events: {
 			'submit .newCommentForm': '_onSubmitComment',
+			'paste div.message': '_onPaste'
 		},
 
 		initialize: function() {
@@ -115,16 +116,19 @@
 					},
 					sorter: function (q, items) { return items; }
 				},
-				displayTpl: '<li>'
-				+ '<span class="avatar-name-wrapper">'
-				+ '<div class="avatar"'
-				+ ' data-username="${id}"'	// for avatars
-				+ ' data-user="${id}"'		// for contactsmenu
-				+ ' data-user-display-name="${label}"></div>'
-				+ ' <strong>${label}</strong>'
-				+ '</span></li>',
-				insertTpl: ''
-				+ '<span class="mention-user" data-user="${id}">@${label}</span>',
+				displayTpl: function (item) {
+					return '<li>'
+						+ '<span class="avatar-name-wrapper">'
+						+ '<div class="avatar"'
+						+ ' data-username="' + escapeHTML(item.id) + '"'	// for avatars
+						+ ' data-user="' + escapeHTML(item.id) + '"'		// for contactsmenu
+						+ ' data-user-display-name="' + escapeHTML(item.label) + '"></div>'
+						+ ' <strong>' + escapeHTML(item.label) + '</strong>'
+						+ '</span></li>';
+				},
+				insertTpl: function (item) {
+					return '<span class="mention-user" data-user="' + escapeHTML(item.id) + '">@' + escapeHTML(item.label) + '</span>';
+				},
 				searchKey: "label"
 			});
 		},
@@ -155,6 +159,18 @@
 					}
 				});
 			}.bind(this), 400);
+		},
+
+		/**
+		 * Limit pasting to plain text
+		 *
+		 * @param e
+		 * @private
+		 */
+		_onPaste: function (e) {
+			e.preventDefault();
+			var text = e.originalEvent.clipboardData.getData("text/plain");
+			document.execCommand('insertText', false, text);
 		},
 
 		template: Handlebars.compile(TEMPLATE),
@@ -445,6 +461,8 @@
 				// 'LL' formats a localized date including day of month, month
 				// name and year
 				absoluteDate: OC.Util.formatDate(timestamp, 'LL')
+			}, undefined, {
+				escape: false // French "Today" has a ' in it
 			});
 		},
 

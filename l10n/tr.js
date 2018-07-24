@@ -51,6 +51,7 @@ OC.L10N.register(
     "Submit" : "Gönder",
     "Leave call" : "Görüşmeden ayrıl",
     "Join call" : "Görüşmeye katıl",
+    "Start call" : "Görüşmeyi başlat",
     "Share link" : "Bağlantıyı paylaş",
     "Change password" : "Parolayı değiştir",
     "Set password" : "Parolayı ayarla",
@@ -83,7 +84,6 @@ OC.L10N.register(
     "You can invite others in the participant tab of the sidebar" : "Diğer kişileri yan çubuktaki katılımcı sekmesinden çağırabilirsiniz",
     "Share this link to invite others!" : "Diğer kişileri çağırmak için bu bağlantıyı paylaşın!",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "Diğer kişileri yan çubuktaki katılımcı sekmesinden ya da bu bağlantıyı paylaşarak çağırabilirsiniz!",
-    "and you" : "ve siz",
     "Close" : "Kapat",
     "Waiting for camera and microphone permissions" : "Kamera ve mikrofon izinleri için bekleniyor",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Lütfen bu uygulamayı kullanabilmek için tarayıcınıza kamera ve mikrofonunuza erişme izni verin.",
@@ -163,6 +163,7 @@ OC.L10N.register(
     "This call has ended" : "Bu görüşme sona erdi",
     "Saving failed" : "Kaydedilemedi",
     "Add person" : "Kişi ekle",
+    "and you" : "ve siz",
     "Please adjust your configuration" : "Lütfen yapılandırmanızı ayarlayın",
     "{actor} invited you to a private call" : "{actor} sizinle özel olarak görüşmek istiyor",
     "{actor} invited you to a group call" : "{actor} sizi bir grup görüşmesine çağırdı",
@@ -186,12 +187,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN sunucusu katılımcı çağrılarının bağlanabilmesi için gereklidir. TURN sunucusu bağlantının güvenlik duvarları arkasından çalışabilmesini sağlar.",
     "STUN server" : "STUN Sunucusu",
     "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
-    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Diğer kullanıcıların sizi daha iyi tanıyabilmesi için bu sayfanın sağ üst köşesinden adınızı ayarlayabilirsiniz.",
-    "Your name …" : "Adınız …",
-    "Remove conversation from list" : "Konuşmayı listeden kaldır",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "Bir grup konuşmasında silinmiş bir kullanıcı tarafından anıldınız"
+    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası"
 },
 "nplurals=2; plural=(n > 1);");

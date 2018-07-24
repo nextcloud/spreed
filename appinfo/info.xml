@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>3.99.3</version>
+	<version>3.99.5</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -44,13 +44,12 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/contacts-menu.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="13" max-version="14" />
+		<nextcloud min-version="14" max-version="14" />
 	</dependencies>
 
 	<background-jobs>
 		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
 		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
-		<job>OCA\Spreed\BackgroundJob\ResetInCallFlags</job>
 	</background-jobs>
 
 	<settings>
@@ -58,7 +57,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
 		<admin-section>OCA\Spreed\Settings\Admin\Section</admin-section>
-		<personal>OCA\Spreed\Settings\Personal</personal>
 	</settings>
 
 	<activity>

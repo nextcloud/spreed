@@ -51,7 +51,6 @@ OC.L10N.register(
     "Promote to moderator" : "Moderatzaile bihurtu zara",
     "Remove participant" : "Partehartzailea borratu",
     "No other people in this call" : "Ez dago jenderik dei honetan",
-    "and you" : "eta zu",
     "Close" : "Itxi",
     "Waiting for camera and microphone permissions" : "Kamera eta mikrofonoaren baimeneni itxoiten",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "App hau erabiltzeko mesedez, nabigatzaileari kamara eta mikroa erabiltzeko baimena eman. ",
@@ -96,6 +95,7 @@ OC.L10N.register(
     "This call has ended" : "Deia bukatu da",
     "Saving failed" : "Gordetzean errorea",
     "Add person" : "Pertsona gehitu",
+    "and you" : "eta zu",
     "Please adjust your configuration" : "Konfigurazioa zehaztu",
     "{actor} invited you to a private call" : "{actor} dei pribatu batera gonbidatu zaitu",
     "{actor} invited you to a group call" : "{actor} dei publiko batera gonbidatu zaitu",
@@ -118,8 +118,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "STUN server" : "STUN zerbitzaria",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Eskubiko barran zure izena jar dezakezu, partehartzaileek hobeto identifikatzeko.",
-    "Your name …" : "Zure izena ..."
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
 },
 "nplurals=2; plural=(n != 1);");

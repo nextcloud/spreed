@@ -60,7 +60,6 @@
     "No other people in this call" : "이 통화에 다른 사람이 없음",
     "You can invite others in the participant tab of the sidebar" : "사이드바의 참가자 탭에서 다른 사람들을 초대할 수 있음",
     "Share this link to invite others!" : "다른 사람을 초대하려면 링크를 공유하십시오!",
-    "and you" : "그리고 나",
     "Close" : "닫기",
     "Waiting for camera and microphone permissions" : "카메라와 마이크 권한을 기다리는 중",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "이 앱을 사용하려면 웹 브라우저에 카메라 및 마이크 사용 권한을 부여해야 합니다.",
@@ -113,6 +112,7 @@
     "This call has ended" : "통화가 끝남",
     "Saving failed" : "저장 실패",
     "Add person" : "사람 추가",
+    "and you" : "그리고 나",
     "Please adjust your configuration" : "설정을 조정하십시오",
     "{actor} invited you to a private call" : "{actor} 님이 개인 통화에 초대함",
     "{actor} invited you to a group call" : "{actor} 님이 그룹 통화에 초대함",
@@ -135,8 +135,6 @@
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "참가자가 통화에 연결하려면 STUN 서버를 설정해야 합니다. TURN 서버는 방화벽 뒤에 있는 사람도 연결할 수 있도록 합니다.",
     "STUN server" : "STUN 서버",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
-    "TURN server shared secret" : "TURN 서버 공유 비밀 키",
-    "You can set your name on the right sidebar so other participants can identify you better." : "오른쪽의 사이드바에서 이름을 입력하여 다른 참가자들과 구별할 수 있습니다.",
-    "Your name …" : "내 이름…"
+    "TURN server shared secret" : "TURN 서버 공유 비밀 키"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

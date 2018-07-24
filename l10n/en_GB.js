@@ -81,7 +81,6 @@ OC.L10N.register(
     "You can invite others in the participant tab of the sidebar" : "You can invite others in the participant tab of the sidebar",
     "Share this link to invite others!" : "Share this link to invite others!",
     "You can invite others in the participant tab of the sidebar or share this link to invite others!" : "You can invite others in the participant tab of the sidebar or share this link to invite others!",
-    "and you" : "and you",
     "Close" : "Close",
     "Waiting for camera and microphone permissions" : "Waiting for camera and microphone permissions",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "Please give your browser access to use your camera and microphone in order to use this app.",
@@ -158,6 +157,7 @@ OC.L10N.register(
     "This call has ended" : "This call has ended",
     "Saving failed" : "Saving failed",
     "Add person" : "Add person",
+    "and you" : "and you",
     "Please adjust your configuration" : "Please adjust your configuration",
     "{actor} invited you to a private call" : "{actor} invited you to a private call",
     "{actor} invited you to a group call" : "{actor} invited you to a group call",
@@ -181,12 +181,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
-    "TURN server shared secret" : "TURN server shared secret",
-    "You can set your name on the right sidebar so other participants can identify you better." : "You can set your name on the right sidebar so other participants can identify you better.",
-    "Your name …" : "Your name …",
-    "Remove conversation from list" : "Remove conversation from list",
-    "You were mentioned in a group conversation by a user that has since been deleted: %s" : "You were mentioned in a group conversation by a user that has since been deleted: %s",
-    "You were mentioned in a group conversation by a user that has since been deleted: {call}" : "You were mentioned in a group conversation by a user that has since been deleted: {call}",
-    "You were mentioned in a group conversation by a user that has since been deleted" : "You were mentioned in a group conversation by a user that has since been deleted"
+    "TURN server shared secret" : "TURN server shared secret"
 },
 "nplurals=2; plural=(n != 1);");

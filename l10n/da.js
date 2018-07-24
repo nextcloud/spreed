@@ -54,7 +54,6 @@ OC.L10N.register(
     "Remove participant" : "Fjern deltager",
     "No other people in this call" : "Ingen andre deltager i dette opkald",
     "Share this link to invite others!" : "Del dette link for at invitere andre!",
-    "and you" : "og dif",
     "Close" : "Luk",
     "Waiting for camera and microphone permissions" : "Venter på kamera og mikrofon tilladelser",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "For at give bruge denne app skal du give din browser adgang til dit kamera og mikrofon.",
@@ -106,6 +105,7 @@ OC.L10N.register(
     "This call has ended" : "Opkaldet er afsluttet",
     "Saving failed" : "Kunne ikke gemme",
     "Add person" : "Tilføj person",
+    "and you" : "og dif",
     "Please adjust your configuration" : "Justér venligst dine konfigurationer",
     "{actor} invited you to a private call" : "{actor} inviterede dig til et privat opkald",
     "{actor} invited you to a group call" : "{actor} inviterede dig til et gruppe opkald.",
@@ -128,8 +128,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN serveren er nødvendig for at deltagerne kan forbinde til opkaldene. TURN serveren sikre at forbindelsen virker, selv gennem firewalls.",
     "STUN server" : "STUN server",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN serveren bliver brugt til at bestemme den offentlige IP adresse for deltagerne bagved en router.",
-    "TURN server shared secret" : "TURN server delte hemmelighed",
-    "You can set your name on the right sidebar so other participants can identify you better." : "Du kan sætte dit navn i højre sidebar, så andre deltagere bedre kan identificere dig.",
-    "Your name …" : "Dit navn ..."
+    "TURN server shared secret" : "TURN server delte hemmelighed"
 },
 "nplurals=2; plural=(n != 1);");

@@ -60,7 +60,6 @@ OC.L10N.register(
     "Remove participant" : "移除参与者",
     "No other people in this call" : " 此通话中没有其他人",
     "Share this link to invite others!" : "分享这个链接邀请其他人！",
-    "and you" : "和你\n ",
     "Close" : "关闭",
     "Waiting for camera and microphone permissions" : "等待摄像头和麦克风的授权",
     "Please, give your browser access to use your camera and microphone in order to use this app." : "如果使用这个应用程序，请允许你的浏览器使用的你摄像头和麦克风",
@@ -104,6 +103,7 @@ OC.L10N.register(
     "This call has ended" : "此次通话已结束",
     "Saving failed" : "保存失败",
     "Add person" : "增加成员",
+    "and you" : "和你\n ",
     "Please adjust your configuration" : "请调整您的配置",
     "{actor} invited you to a private call" : "{actor}邀请你加入一个私人通话",
     "{actor} invited you to a group call" : "{actor}邀请你加入一个组通话",
@@ -126,8 +126,6 @@ OC.L10N.register(
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
     "STUN server" : "STUN 服务器",
     "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
-    "TURN server shared secret" : "TURN服务器分享的秘密",
-    "You can set your name on the right sidebar so other participants can identify you better." : "你可以在右边的侧边栏上设置你的名字，这样其他参与者就能更好地识别你",
-    "Your name …" : "您的姓名 ..."
+    "TURN server shared secret" : "TURN服务器分享的秘密"
 },
 "nplurals=1; plural=0;");

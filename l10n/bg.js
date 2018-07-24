@@ -27,7 +27,6 @@ OC.L10N.register(
     "You" : "Ти",
     "Send" : "Изпрати",
     "Guest" : "Гост",
-    "and you" : "и Вие",
     "Disable video" : "Изключване на видеото",
     "Access to microphone & camera is only possible with HTTPS" : "Достъпът до микрофона и камерата е възможен само при HTTPS",
     "Access to microphone & camera was denied" : "Достъпът до микрофона и камерата е отказан",
@@ -36,6 +35,7 @@ OC.L10N.register(
     "Share screen" : "Споделяне на екран",
     "TURN server" : "TURN сървър",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сървърът се използва като прокси сървър за трафика, идващ от участници стоящи зад защитна стена.",
+    "and you" : "и Вие",
     "Please adjust your configuration" : "Моля, коригирайте конфигурация си",
     "%s invited you to a private call" : "%s Ви покани на частен разговор",
     "{user} invited you to a private call" : "{user} Ви покани на частен разговор",
@@ -47,7 +47,6 @@ OC.L10N.register(
     "Mute audio" : "Спиране на звука",
     "Smile in 3… 2… 1!" : "Усмивка след  3… 2… 1!",
     "Choose person …" : "Избор на човек ...",
-    "STUN server" : "STUN сървър",
-    "Your name …" : "Вашето име ..."
+    "STUN server" : "STUN сървър"
 },
 "nplurals=2; plural=(n != 1);");
