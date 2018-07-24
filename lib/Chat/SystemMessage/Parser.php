@@ -57,21 +57,23 @@ class Parser {
 		$parsedParameters = ['actor' => $this->getActor($comment)];
 		$parsedMessage = $comment->getMessage();
 
-		if ($message === 'joined_call') {
-			$parsedMessage = $this->l->t('{actor} joined the call');
-		} else if ($message === 'left_call') {
-			$parsedMessage = $this->l->t('{actor} left the call');
-		} else if ($message === 'created_conversation') {
+		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
-		} else if ($message === 'renamed_conversation') {
+		} else if ($message === 'conversation_renamed') {
 			$parsedMessage = $this->l->t('{actor} renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
-		} else if ($message === 'allowed_guests') {
+		} else if ($message === 'call_joined') {
+			$parsedMessage = $this->l->t('{actor} joined the call');
+		} else if ($message === 'call_left') {
+			$parsedMessage = $this->l->t('{actor} left the call');
+		} else if ($message === 'call_ended') {
+			list($parsedMessage, $parsedParameters) = $this->parseCall($parameters);
+		} else if ($message === 'guests_allowed') {
 			$parsedMessage = $this->l->t('{actor} allowed guests in the conversation');
-		} else if ($message === 'disallowed_guests') {
+		} else if ($message === 'guests_disallowed') {
 			$parsedMessage = $this->l->t('{actor} disallowed guests in the conversation');
-		} else if ($message === 'set_password') {
+		} else if ($message === 'password_set') {
 			$parsedMessage = $this->l->t('{actor} set a password for the conversation');
-		} else if ($message === 'removed_password') {
+		} else if ($message === 'password_removed') {
 			$parsedMessage = $this->l->t('{actor} removed the password for the conversation');
 		} else if ($message === 'user_added') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
@@ -85,9 +87,9 @@ class Parser {
 		} else if ($message === 'moderator_demoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
-		} else if ($message === 'call_ended') {
-			list($parsedMessage, $parsedParameters) = $this->parseCall($parameters);
 		}
+
+		$comment->setMessage($message);
 
 		return [$parsedMessage, $parsedParameters];
 	}
@@ -190,7 +192,6 @@ class Parser {
 		for ($i = 1; $i <= $displayedUsers; $i++) {
 			$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
 		}
-
 
 		$subject = str_replace('{duration}', $this->getDuration($parameters['duration']), $subject);
 		return [

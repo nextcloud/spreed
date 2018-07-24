@@ -27,6 +27,7 @@ use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\IUser;
+use OCP\IUserSession;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -37,46 +38,46 @@ class Listener {
 	/** @var ChatManager */
 	protected $chatManager;
 	/** @var TalkSession */
-	protected $session;
-	/** @var string */
-	protected $userId;
+	protected $talkSession;
+	/** @var IUserSession */
+	protected $userSession;
 
-	public function __construct(EventDispatcherInterface $dispatcher, ChatManager $chatManager, TalkSession $session, $userId) {
+	public function __construct(EventDispatcherInterface $dispatcher, ChatManager $chatManager, TalkSession $talkSession, IUserSession $userSession) {
 		$this->dispatcher = $dispatcher;
 		$this->chatManager = $chatManager;
-		$this->session = $session;
-		$this->userId = $userId;
+		$this->talkSession = $talkSession;
+		$this->userSession = $userSession;
 	}
 
 	public function register() {
 		$this->dispatcher->addListener(Room::class . '::postSessionJoinCall', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->sendSystemMessage($room, 'joined_call');
+			$this->sendSystemMessage($room, 'call_joined');
 		});
 		$this->dispatcher->addListener(Room::class . '::postSessionLeaveCall', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->sendSystemMessage($room, 'left_call');
+			$this->sendSystemMessage($room, 'call_left');
 		});
 
 		$this->dispatcher->addListener(Room::class . '::createRoom', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->sendSystemMessage($room, 'created_conversation');
+			$this->sendSystemMessage($room, 'conversation_created');
 		});
 		$this->dispatcher->addListener(Room::class . '::postSetName', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->sendSystemMessage($room, 'renamed_conversation', $event->getArguments());
+			$this->sendSystemMessage($room, 'conversation_renamed', $event->getArguments());
 		});
 		$this->dispatcher->addListener(Room::class . '::postSetPassword', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
 			if ($event->getArgument('password')) {
-				$this->sendSystemMessage($room, 'set_password');
+				$this->sendSystemMessage($room, 'password_set');
 			} else {
-				$this->sendSystemMessage($room, 'removed_password');
+				$this->sendSystemMessage($room, 'password_removed');
 			}
 		});
 		$this->dispatcher->addListener(Room::class . '::postChangeType', function(GenericEvent $event) {
@@ -86,20 +87,22 @@ class Listener {
 			$room = $event->getSubject();
 
 			if ($arguments['newType'] === Room::PUBLIC_CALL) {
-				$this->sendSystemMessage($room, 'allowed_guests', $event->getArguments());
+				$this->sendSystemMessage($room, 'guests_allowed', $event->getArguments());
 			}
 			if ($arguments['oldType'] === Room::PUBLIC_CALL) {
-				$this->sendSystemMessage($room, 'disallowed_guests', $event->getArguments());
+				$this->sendSystemMessage($room, 'guests_disallowed', $event->getArguments());
 			}
 		});
 
 		$this->dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {
 			$participants = $event->getArgument('users');
+			$user = $this->userSession->getUser();
+			$userId = $user instanceof IUser ? $user->getUID() : null;
 
 			/** @var Room $room */
 			$room = $event->getSubject();
 			foreach ($participants as $participant) {
-				if ($this->userId !== $participant['userId']) {
+				if ($userId !== $participant['userId']) {
 					$this->sendSystemMessage($room, 'user_added', ['user' => $participant['userId']]);
 				}
 			}
@@ -125,14 +128,14 @@ class Listener {
 	}
 
 	protected function sendSystemMessage(Room $room, string $message, array $parameters = []) {
-
-		if ($this->userId === null) {
+		$user = $this->userSession->getUser();
+		if (!$user instanceof IUser) {
 			$actorType = 'guests';
-			$sessionId = $this->session->getSessionForRoom($room->getToken());
+			$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
 			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 		} else {
 			$actorType = 'users';
-			$actorId = $this->userId;
+			$actorId = $user->getUID();
 		}
 
 		$this->chatManager->addSystemMessage(

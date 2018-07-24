@@ -539,15 +539,15 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         
 ### System messages
 
-* `joined_call` - {actor} joined the call
-* `left_call` - {actor} left the call
+* `conversation_created` - {actor} created the conversation
+* `conversation_renamed` - {actor} renamed the conversation from "foo" to "bar"
+* `call_joined` - {actor} joined the call
+* `call_left` - {actor} left the call
 * `call_ended` - Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration 30:23)
-* `created_conversation` - {actor} created the conversation
-* `renamed_conversation` - {actor} renamed the conversation from "foo" to "bar"
-* `allowed_guests` - {actor} allowed guests in the conversation
-* `disallowed_guests` - {actor} disallowed guests in the conversation
-* `set_password` - {actor} set a password for the conversation
-* `removed_password` - {actor} removed the password for the conversation
+* `guests_allowed` - {actor} allowed guests in the conversation
+* `guests_disallowed` - {actor} disallowed guests in the conversation
+* `password_set` - {actor} set a password for the conversation
+* `password_removed` - {actor} removed the password for the conversation
 * `user_added` - {actor} added {user} to the conversation
 * `user_removed` - {actor} removed {user} from the conversation
 * `moderator_promoted` - {actor} promoted {user} to moderator
