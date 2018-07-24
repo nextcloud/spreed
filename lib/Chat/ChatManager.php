@@ -27,6 +27,8 @@ use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Basic polling chat manager.
@@ -46,14 +48,20 @@ class ChatManager {
 	/** @var Notifier */
 	private $notifier;
 
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
+
 	/**
 	 * @param CommentsManager $commentsManager
 	 * @param Notifier $notifier
+	 * @param EventDispatcherInterface $dispatcher
 	 */
 	public function __construct(CommentsManager $commentsManager,
-								Notifier $notifier) {
+								Notifier $notifier,
+								EventDispatcherInterface $dispatcher) {
 		$this->commentsManager = $commentsManager;
 		$this->notifier = $notifier;
+		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -77,6 +85,15 @@ class ChatManager {
 		$this->commentsManager->save($comment);
 
 		$this->notifier->notifyMentionedUsers($chat, $comment);
+
+		$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
+			'actorType' => $actorType,
+			'actorId' => $actorId,
+			'message' => $message,
+			'timestamp' => $creationDateTime,
+			'comment' => $comment,
+		]));
+
 		return $comment;
 	}
 
