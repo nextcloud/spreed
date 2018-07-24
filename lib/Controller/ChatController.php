@@ -43,8 +43,6 @@ use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ChatController extends OCSController {
 
@@ -84,9 +82,6 @@ class ChatController extends OCSController {
 	/** @var ISearchResult */
 	private $searchResult;
 
-	/** @var EventDispatcherInterface */
-	private $dispatcher;
-
 	/**
 	 * @param string $appName
 	 * @param string $UserId
@@ -100,7 +95,6 @@ class ChatController extends OCSController {
 	 * @param IManager $autoCompleteManager
 	 * @param SearchPlugin $searchPlugin
 	 * @param SearchResult $searchResult
-	 * @param EventDispatcherInterface $dispatcher
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -113,8 +107,7 @@ class ChatController extends OCSController {
 								RichMessageHelper $richMessageHelper,
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
-								SearchResult $searchResult,   // FIXME for 14 ISearchResult is injectable
-								EventDispatcherInterface $dispatcher) {
+								SearchResult $searchResult   /* FIXME for 14 ISearchResult is injectable */) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -127,7 +120,6 @@ class ChatController extends OCSController {
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
-		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -209,15 +201,7 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
-
-		$this->dispatcher->dispatch(ChatManager::class . '::sendMessage', new GenericEvent($room, [
-			'actorType' => $actorType,
-			'actorId' => $actorId,
-			'message' => $message,
-			'timestamp' => $creationDateTime,
-			'comment' => $comment,
-		]));
+		$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
