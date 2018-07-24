@@ -29,8 +29,6 @@ Feature: callapi/one-to-one
     And user "participant2" joins call "room" with 200
     Then user "participant1" sees 2 peers in call "room" with 200
     And user "participant2" sees 2 peers in call "room" with 200
-    Then user "participant1" pings call "room" with 200
-    And user "participant2" pings call "room" with 200
     Then user "participant1" leaves call "room" with 200
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant2" sees 1 peers in call "room" with 200
@@ -63,9 +61,6 @@ Feature: callapi/one-to-one
     And user "participant3" joins call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
-    And user "participant3" pings call "room" with 404
-    Then user "participant1" sees 1 peers in call "room" with 200
-    And user "participant3" sees 0 peers in call "room" with 404
     Then user "participant3" leaves call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "participant3" sees 0 peers in call "room" with 404
@@ -95,9 +90,6 @@ Feature: callapi/one-to-one
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
     And user "guest" joins call "room" with 404
-    Then user "participant1" sees 1 peers in call "room" with 200
-    And user "guest" sees 0 peers in call "room" with 404
-    And user "guest" pings call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
     Then user "guest" leaves call "room" with 404

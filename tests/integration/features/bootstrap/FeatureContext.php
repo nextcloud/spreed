@@ -347,19 +347,6 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
-	 * @Then /^user "([^"]*)" pings call "([^"]*)" with (\d+)$/
-	 *
-	 * @param string $user
-	 * @param string $identifier
-	 * @param string $statusCode
-	 */
-	public function userPingsCall($user, $identifier, $statusCode) {
-		$this->setCurrentUser($user);
-		$this->sendRequest('POST', '/apps/spreed/api/v1/call/' . self::$identifierToToken[$identifier] . '/ping');
-		$this->assertStatusCode($this->response, $statusCode);
-	}
-
-	/**
 	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
