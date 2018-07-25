@@ -29,7 +29,6 @@ use OCA\Spreed\Participant;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -47,8 +46,6 @@ class PublicShareAuthController extends OCSController {
 	private $shareManager;
 	/** @var Manager */
 	private $manager;
-	/** @var IL10N */
-	private $l10n;
 
 	/**
 	 * @param string $appName
@@ -57,7 +54,6 @@ class PublicShareAuthController extends OCSController {
 	 * @param NotificationManager $notificationManager
 	 * @param ShareManager $shareManager
 	 * @param Manager $manager
-	 * @param IL10N $l10n
 	 */
 	public function __construct(
 			string $appName,
@@ -65,15 +61,13 @@ class PublicShareAuthController extends OCSController {
 			IUserManager $userManager,
 			NotificationManager $notificationManager,
 			ShareManager $shareManager,
-			Manager $manager,
-			IL10N $l10n
+			Manager $manager
 	) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;
 		$this->notificationManager = $notificationManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
-		$this->l10n = $l10n;
 	}
 
 	/**
@@ -127,10 +121,8 @@ class PublicShareAuthController extends OCSController {
 			}
 		}
 
-		$roomName = $this->l10n->t("Password request by %s", [$share->getSharedWith()]);
-
 		// Create the room
-		$room = $this->manager->createPublicRoom($roomName, 'share:password', $shareToken);
+		$room = $this->manager->createPublicRoom($share->getSharedWith(), 'share:password', $shareToken);
 		$room->addUsers([
 			'userId' => $sharerUser->getUID(),
 			'participantType' => Participant::OWNER,

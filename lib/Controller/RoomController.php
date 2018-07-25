@@ -214,6 +214,11 @@ class RoomController extends OCSController {
 			return $roomData;
 		}
 
+		if ($room->getObjectType() === 'share:password') {
+			// FIXME use an event
+			$roomData['displayName'] = $this->l10n->t('Password request by %s', [$room->getName()]);
+		}
+
 		$currentUser = $this->userManager->get($this->userId);
 		if ($currentUser instanceof IUser) {
 			$unreadSince = $this->chatManager->getUnreadMarker($room, $currentUser);
