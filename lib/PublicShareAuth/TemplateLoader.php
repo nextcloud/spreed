@@ -26,6 +26,8 @@ namespace OCA\Spreed\PublicShareAuth;
 
 use OCP\Share\IShare;
 use OCP\Util;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Helper class to extend the "publicshareauth" template from the server.
@@ -35,6 +37,22 @@ use OCP\Util;
  * Talk UI as needed.
  */
 class TemplateLoader {
+
+	/** @var EventDispatcherInterface */
+	protected $dispatcher;
+
+	public function __construct(EventDispatcherInterface $dispatcher) {
+		$this->dispatcher = $dispatcher;
+	}
+
+	public function register() {
+		$listener = function(GenericEvent $event) {
+			/** @var IShare $share */
+			$share = $event->getArgument('share');
+			$this->loadRequestPasswordByTalkUi($share);
+		};
+		$this->dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts::publicShareAuth', $listener);
+	}
 
 	/**
 	 * Load the "Request password by Talk" UI in the public share authentication

@@ -25,6 +25,9 @@ declare(strict_types=1);
 namespace OCA\Spreed\PublicShareAuth;
 
 use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Custom behaviour for rooms to request the password for a share.
@@ -39,7 +42,40 @@ use OCA\Spreed\Participant;
  * behaviour is provided by calling the methods of this class as a response to
  * different room events.
  */
-class Room {
+class Listener {
+
+	/** @var EventDispatcherInterface */
+	protected $dispatcher;
+
+	public function __construct(EventDispatcherInterface $dispatcher) {
+		$this->dispatcher = $dispatcher;
+	}
+
+	public function register() {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+			$this->preventExtraUsersFromJoining($room, $event->getArgument('userId'));
+		};
+		$this->dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+			$this->preventExtraGuestsFromJoining($room);
+		};
+		$this->dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+			$this->destroyRoomOnParticipantLeave($room);
+		};
+		$this->dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$this->dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$this->dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$this->dispatcher->addListener(Room::class . '::postCleanGuests', $listener);
+	}
 
 	/**
 	 * Prevents other users from joining if there is already another participant
