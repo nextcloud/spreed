@@ -23,12 +23,13 @@
 
 namespace OCA\Spreed\Chat;
 
-use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IUser;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Basic polling chat manager.
@@ -44,17 +45,21 @@ class ChatManager {
 
 	/** @var CommentsManager|ICommentsManager */
 	private $commentsManager;
-
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
 	/** @var Notifier */
 	private $notifier;
 
 	/**
 	 * @param CommentsManager $commentsManager
+	 * @param EventDispatcherInterface $dispatcher
 	 * @param Notifier $notifier
 	 */
 	public function __construct(CommentsManager $commentsManager,
+								EventDispatcherInterface $dispatcher,
 								Notifier $notifier) {
 		$this->commentsManager = $commentsManager;
+		$this->dispatcher = $dispatcher;
 		$this->notifier = $notifier;
 	}
 
@@ -75,6 +80,10 @@ class ChatManager {
 		$comment->setVerb('system');
 		try {
 			$this->commentsManager->save($comment);
+
+			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
+				'comment' => $comment,
+			]));
 		} catch (NotFoundException $e) {
 		}
 
@@ -101,13 +110,18 @@ class ChatManager {
 
 		try {
 			$this->commentsManager->save($comment);
+
+			// Update last_message
+			$chat->setLastMessage($comment);
+
+			$this->notifier->notifyMentionedUsers($chat, $comment);
+
+			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
+				'comment' => $comment,
+			]));
 		} catch (NotFoundException $e) {
 		}
 
-		// Update last_message
-		$chat->setLastMessage($comment);
-
-		$this->notifier->notifyMentionedUsers($chat, $comment);
 		return $comment;
 	}
 

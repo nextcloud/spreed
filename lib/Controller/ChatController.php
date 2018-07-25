@@ -43,8 +43,6 @@ use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ChatController extends OCSController {
 
@@ -87,9 +85,6 @@ class ChatController extends OCSController {
 	/** @var Parser */
 	private $parser;
 
-	/** @var EventDispatcherInterface */
-	private $dispatcher;
-
 	/**
 	 * @param string $appName
 	 * @param string $UserId
@@ -103,7 +98,7 @@ class ChatController extends OCSController {
 	 * @param IManager $autoCompleteManager
 	 * @param SearchPlugin $searchPlugin
 	 * @param ISearchResult $searchResult
-	 * @param EventDispatcherInterface $dispatcher
+	 * @param Parser $parser
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -117,8 +112,7 @@ class ChatController extends OCSController {
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
-								Parser $parser,
-								EventDispatcherInterface $dispatcher) {
+								Parser $parser) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -132,7 +126,6 @@ class ChatController extends OCSController {
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->parser = $parser;
-		$this->dispatcher = $dispatcher;
 	}
 
 	/**
@@ -214,15 +207,7 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
-
-		$this->dispatcher->dispatch(ChatManager::class . '::sendMessage', new GenericEvent($room, [
-			'actorType' => $actorType,
-			'actorId' => $actorId,
-			'message' => $message,
-			'timestamp' => $creationDateTime,
-			'comment' => $comment,
-		]));
+		$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}

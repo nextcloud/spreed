@@ -216,7 +216,19 @@ class Application extends App {
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
-			$comment = $event->getArgument('comment');
+			$message = [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+				],
+			];
+			$notifier->sendRoomMessage($room, $message);
+		});
+		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
 			$message = [
 				'type' => 'chat',
 				'chat' => [
