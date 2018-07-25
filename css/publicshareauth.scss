@@ -21,6 +21,15 @@ input#request-password-button:disabled ~ .icon {
 	opacity: 0.5;
 }
 
+/* Mimic the appearance of the log in button when a link is used. */
+.request-password-wrapper a {
+	display: block;
+	width: 269px;
+	padding: 13px 10px;
+	font-size: 20px;
+	margin: 5px;
+}
+
 
 
 /* Special layout to include the Talk sidebar */

@@ -28,6 +28,11 @@ return [
 			'url' => '/',
 			'verb' => 'GET',
 		],
+		[
+			'name' => 'Page#shareAuth',
+			'url' => '/shareauth/{token}',
+			'verb' => 'GET',
+		],
 	],
 	'ocs' => [
 		/**
