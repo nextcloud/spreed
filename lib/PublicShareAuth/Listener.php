@@ -83,11 +83,11 @@ class Listener {
 	 *
 	 * This method should be called before a user joins a room.
 	 *
-	 * @param \OCA\Spreed\Room $room
+	 * @param Room $room
 	 * @param string $userId
 	 * @throws \OverflowException
 	 */
-	public function preventExtraUsersFromJoining(\OCA\Spreed\Room $room, string $userId) {
+	public function preventExtraUsersFromJoining(Room $room, string $userId) {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
@@ -111,10 +111,10 @@ class Listener {
 	 *
 	 * This method should be called before a guest joins a room.
 	 *
-	 * @param \OCA\Spreed\Room $room
+	 * @param Room $room
 	 * @throws \OverflowException
 	 */
-	public function preventExtraGuestsFromJoining(\OCA\Spreed\Room $room) {
+	public function preventExtraGuestsFromJoining(Room $room) {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
@@ -136,9 +136,9 @@ class Listener {
 	 * reason (no matter if the user or guest removed herself, was removed or
 	 * timed out).
 	 *
-	 * @param \OCA\Spreed\Room $room
+	 * @param Room $room
 	 */
-	public function destroyRoomOnParticipantLeave(\OCA\Spreed\Room $room) {
+	public function destroyRoomOnParticipantLeave(Room $room) {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
