@@ -109,18 +109,6 @@ class PublicShareAuthController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		// If there is already a room for the share just return it.
-		$roomsForSharer = $this->manager->getRoomsForParticipant($sharerUser->getUID());
-		foreach ($roomsForSharer as $room) {
-			if ($room->getObjectType() === 'share:password' && $room->getObjectId() === $shareToken) {
-				return new DataResponse([
-					'token' => $room->getToken(),
-					'name' => $room->getName(),
-					'displayName' => $room->getName(),
-				]);
-			}
-		}
-
 		// Create the room
 		$room = $this->manager->createPublicRoom($share->getSharedWith(), 'share:password', $shareToken);
 		$room->addUsers([
