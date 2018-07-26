@@ -374,13 +374,15 @@
 				id: 'participantsTabView'
 			});
 
-			this.signaling.on('participantListChanged', function() {
+			this._participantsListChangedCallback = function() {
 				// The "participantListChanged" event can be triggered by the
 				// signaling before the room is set in the collection.
 				if (this._participants.url) {
 					this._participants.fetch();
 				}
-			}.bind(this));
+			}.bind(this);
+
+			this.signaling.on('participantListChanged', this._participantsListChangedCallback);
 
 			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
 				if (active) {
@@ -389,6 +391,15 @@
 			});
 
 			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), icon: 'icon-contacts-dark' }, this._participantsView);
+		},
+		_hideParticipantList: function() {
+			this._sidebarView.removeTab('participants');
+
+			this.signaling.off('participantListChanged', this._participantsListChangedCallback);
+
+			delete this._participantsListChangedCallback;
+			delete this._participantsView;
+			delete this._participants;
 		},
 		/**
 		 * @param {string} token
@@ -667,6 +678,18 @@
 				// in the public share auth page).
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
+
+				this.listenTo(this.activeRoom, 'change:participantType', function(model, participantType) {
+					if (participantType === OCA.SpreedMe.app.GUEST_MODERATOR) {
+						this._showParticipantList();
+						// The public page supports only a single room, so the
+						// active room has to be explicitly set as it will not
+						// be set in a 'change:active' event.
+						this._participantsView.setRoom(this.activeRoom);
+					} else {
+						this._hideParticipantList();
+					}
+				});
 			}
 
 			this._registerPageEvents();
