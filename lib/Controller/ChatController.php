@@ -248,7 +248,7 @@ class ChatController extends OCSController {
 	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
 	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
-	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 60 at most)
+	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
 	 * @return DataResponse an array of chat messages, "404 Not found" if the
 	 *         room token was not valid or "304 Not modified" if there were no messages;
 	 *         each chat message is an array with
@@ -262,7 +262,12 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 		$limit = min(200, $limit);
-		$timeout = min(60, $timeout);
+		$timeout = min(30, $timeout);
+
+		$sessionId = $this->session->getSessionForRoom($token);
+		if ($sessionId !== null) {
+			$room->ping($this->userId, $sessionId, time());
+		}
 
 		if ($lookIntoFuture) {
 			$currentUser = $this->userManager->get($this->userId);

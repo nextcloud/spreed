@@ -34,6 +34,3 @@ Feature: public
     And user "participant1" is participant of room "room"
     And user "participant2" is not participant of room "room"
     When user "participant2" renames room "room" to "new name" with 404
-
-
-  # Make private

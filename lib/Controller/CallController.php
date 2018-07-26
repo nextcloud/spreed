@@ -170,29 +170,6 @@ class CallController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 *
-	 * @param string $token
-	 * @return DataResponse
-	 */
-	public function pingCall($token) {
-		if ($this->session->getSessionForRoom($token) === null) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$sessionId = $this->session->getSessionForRoom($token);
-		$room->ping($this->userId, $sessionId, time());
-
-		return new DataResponse();
-	}
-
-	/**
-	 * @PublicPage
 	 * @UseSession
 	 *
 	 * @param string $token

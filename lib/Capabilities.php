@@ -50,6 +50,7 @@ class Capabilities implements IPublicCapability {
 					'multi-room-users',
 					'favorites',
 					'last-room-activity',
+					'no-ping',
 				],
 			],
 		];
