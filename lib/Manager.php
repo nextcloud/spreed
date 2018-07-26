@@ -22,6 +22,7 @@
 namespace OCA\Spreed;
 
 
+use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
@@ -39,6 +40,8 @@ class Manager {
 	private $config;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var CommentsManager */
+	private $commentsManager;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 	/** @var IHasher */
@@ -50,13 +53,15 @@ class Manager {
 	 * @param IDBConnection $db
 	 * @param IConfig $config
 	 * @param ISecureRandom $secureRandom
+	 * @param CommentsManager $commentsManager
 	 * @param EventDispatcherInterface $dispatcher
 	 * @param IHasher $hasher
 	 */
-	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher) {
+	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom, CommentsManager $commentsManager, EventDispatcherInterface $dispatcher, IHasher $hasher) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
+		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->hasher = $hasher;
 	}
@@ -89,7 +94,12 @@ class Manager {
 			$lastActivity = new \DateTime($row['last_activity']);
 		}
 
-		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity);
+		$lastMessage = null;
+		if (!empty($row['comment_id'])) {
+			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, ['id' => $row['comment_id']]));
+		}
+
+		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage);
 	}
 
 	/**
@@ -103,17 +113,24 @@ class Manager {
 
 	/**
 	 * @param string $participant
+	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForParticipant($participant) {
+	public function getRoomsForParticipant($participant, $includeLastMessage = false) {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('r.*')->addSelect('p.*')
 			->from('talk_rooms', 'r')
 			->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
 				$query->expr()->eq('p.user_id', $query->createNamedParameter($participant)),
 				$query->expr()->eq('p.room_id', 'r.id')
 			))
 			->where($query->expr()->isNotNull('p.user_id'));
+
+		if ($includeLastMessage) {
+			$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
+			$query->selectAlias('c.id', 'comment_id');
+			$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp');
+		}
 
 		$result = $query->execute();
 		$rooms = [];

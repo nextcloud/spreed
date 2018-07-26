@@ -26,6 +26,7 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -37,6 +38,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
@@ -64,6 +66,8 @@ class RoomController extends OCSController {
 	private $chatManager;
 	/** @var IL10N */
 	private $l10n;
+	/** @var richMessageHelper */
+	private $richMessageHelper;
 
 	/**
 	 * @param string $appName
@@ -76,6 +80,7 @@ class RoomController extends OCSController {
 	 * @param Manager $manager
 	 * @param GuestManager $guestManager
 	 * @param ChatManager $chatManager
+	 * @param RichMessageHelper $richMessageHelper
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -88,6 +93,7 @@ class RoomController extends OCSController {
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
+								RichMessageHelper $richMessageHelper,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -99,6 +105,7 @@ class RoomController extends OCSController {
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->l10n = $l10n;
+		$this->richMessageHelper = $richMessageHelper;
 	}
 
 	/**
@@ -109,7 +116,7 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function getRooms() {
-		$rooms = $this->manager->getRoomsForParticipant($this->userId);
+		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
 
 		$return = [];
 		foreach ($rooms as $room) {
@@ -198,6 +205,7 @@ class RoomController extends OCSController {
 				'numGuests' => 0,
 				'hasCall' => false,
 				'guestList' => '',
+				'lastMessage' => [],
 			]);
 
 			return $roomData;
@@ -242,11 +250,43 @@ class RoomController extends OCSController {
 			$room->cleanGuestParticipants();
 		}
 
+		$lastMessage = $room->getLastMessage();
+		if ($lastMessage instanceof IComment) {
+
+			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
+
+			$displayName = '';
+
+			$actorId = $lastMessage->getActorId();
+			$actorType = $lastMessage->getActorType();
+
+			if ($actorType === 'users') {
+				$user = $this->userManager->get($actorId);
+				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
+			} else if ($actorType === 'guests') {
+				$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
+				$displayName = $guestNames[$actorId] ?? '';
+			}
+
+			$lastMessage = [
+				'id' => $lastMessage->getId(),
+				'actorType' => $actorType,
+				'actorId' => $actorId,
+				'actorDisplayName' => $displayName,
+				'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
+				'message' => $message,
+				'messageParameters' => $messageParameters,
+			];
+		} else {
+			$lastMessage = [];
+		}
+
 		$roomData = array_merge($roomData, [
 			'lastPing' => $participant->getLastPing(),
 			'sessionId' => $participant->getSessionId(),
 			'participants' => $participantList,
 			'numGuests' => $numActiveGuests,
+			'lastMessage' => $lastMessage,
 		]);
 
 		if ($this->userId !== null) {

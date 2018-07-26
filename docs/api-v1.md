@@ -131,7 +131,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `lastActivity` | int | Timestamp of the last activity in the room, in seconds and UTC time zone
         `isFavorite` | bool | Flag if the room is favorited by the user
         `unreadMessages` | int | Number of unread chat messages in the room (only available with `chat-v2` capability)
-
+        `lastMessage` | message | Last message in a room if available, otherwise empty
+       
 ### Get single room (also for guests)
 
 * Method: `GET`

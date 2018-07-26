@@ -76,6 +76,9 @@ class ChatManager {
 
 		$this->commentsManager->save($comment);
 
+		// Update last_message
+		$chat->setLastMessage($comment);
+
 		$this->notifier->notifyMentionedUsers($chat, $comment);
 		return $comment;
 	}
