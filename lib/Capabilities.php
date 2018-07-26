@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Joas Schilling <coding@schilljs.com>
  *
@@ -25,19 +26,9 @@ namespace OCA\Spreed;
 
 use OCP\Capabilities\IPublicCapability;
 
-/**
- * Class Capabilities
- *
- * @package OCA\Notifications
- */
 class Capabilities implements IPublicCapability {
 
-	/**
-	 * Return this classes capabilities
-	 *
-	 * @return array
-	 */
-	public function getCapabilities() {
+	public function getCapabilities(): array {
 		return [
 			'spreed' => [
 				'features' => [

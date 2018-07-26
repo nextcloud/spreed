@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
  *
@@ -28,9 +29,6 @@ class HookListener {
 	/** @var Manager */
 	protected $manager;
 
-	/**
-	 * @param Manager $manager
-	 */
 	public function __construct(Manager $manager) {
 		$this->manager = $manager;
 	}
@@ -48,7 +46,7 @@ class HookListener {
 				$particiants = $room->getParticipants();
 
 				// Also delete the room, when the user is the only non-guest user
-				if (count($particiants['users']) === 1) {
+				if (\count($particiants['users']) === 1) {
 					$room->deleteRoom();
 				} else {
 					$room->removeUser($user);

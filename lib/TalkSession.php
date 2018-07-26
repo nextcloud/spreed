@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -37,22 +38,15 @@ class TalkSession {
 	 * @param string $token
 	 * @return string|null
 	 */
-	public function getSessionForRoom($token) {
+	public function getSessionForRoom(string $token) {
 		return $this->getValue('spreed-session', $token);
 	}
 
-	/**
-	 * @param string $token
-	 * @param string $sessionId
-	 */
-	public function setSessionForRoom($token, $sessionId) {
+	public function setSessionForRoom(string $token, string $sessionId) {
 		$this->setValue('spreed-session', $token, $sessionId);
 	}
 
-	/**
-	 * @param string $token
-	 */
-	public function removeSessionForRoom($token) {
+	public function removeSessionForRoom(string $token) {
 		$this->removeValue('spreed-session', $token);
 	}
 
@@ -60,22 +54,15 @@ class TalkSession {
 	 * @param string $token
 	 * @return string|null
 	 */
-	public function getPasswordForRoom($token) {
+	public function getPasswordForRoom(string $token) {
 		return $this->getValue('spreed-password', $token);
 	}
 
-	/**
-	 * @param string $token
-	 * @param string $password
-	 */
-	public function setPasswordForRoom($token, $password) {
+	public function setPasswordForRoom(string $token, string $password) {
 		$this->setValue('spreed-password', $token, $password);
 	}
 
-	/**
-	 * @param string $token
-	 */
-	public function removePasswordForRoom($token) {
+	public function removePasswordForRoom(string $token) {
 		$this->removeValue('spreed-password', $token);
 	}
 
@@ -84,7 +71,7 @@ class TalkSession {
 	 * @param string $token
 	 * @return string|null
 	 */
-	protected function getValue($key, $token) {
+	protected function getValue(string $key, string $token) {
 		$values = $this->session->get($key);
 		$values = json_decode($values, true);
 		if ($values === null) {
@@ -97,12 +84,7 @@ class TalkSession {
 		return $values[$token];
 	}
 
-	/**
-	 * @param string $key
-	 * @param string $token
-	 * @param string $value
-	 */
-	protected function setValue($key, $token, $value) {
+	protected function setValue(string $key, string $token, string $value) {
 		$values = $this->session->get($key);
 		$values = json_decode($values, true);
 		if ($values === null) {
@@ -113,11 +95,7 @@ class TalkSession {
 		$this->session->set($key, json_encode($values));
 	}
 
-	/**
-	 * @param string $key
-	 * @param string $token
-	 */
-	protected function removeValue($key, $token) {
+	protected function removeValue(string $key, string $token) {
 		$values = $this->session->get($key);
 		$values = json_decode($values, true);
 		if ($values === null) {
