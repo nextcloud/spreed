@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
@@ -51,13 +52,6 @@ class Notifier implements INotifier {
 	/** @var Definitions */
 	protected $definitions;
 
-	/**
-	 * @param IFactory $lFactory
-	 * @param IURLGenerator $url
-	 * @param IUserManager $userManager
-	 * @param Manager $manager
-	 * @param Definitions $definitions
-	 */
 	public function __construct(IFactory $lFactory, IURLGenerator $url, IUserManager $userManager, Manager $manager, Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
@@ -73,7 +67,7 @@ class Notifier implements INotifier {
 	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
 	 * @since 9.0.0
 	 */
-	public function prepare(INotification $notification, $languageCode) {
+	public function prepare(INotification $notification, $languageCode): INotification {
 		if ($notification->getApp() !== 'spreed') {
 			throw new \InvalidArgumentException('Incorrect app');
 		}
@@ -117,7 +111,7 @@ class Notifier implements INotifier {
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseMention(INotification $notification, Room $room, IL10N $l) {
+	protected function parseMention(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'chat') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
@@ -154,11 +148,11 @@ class Notifier implements INotifier {
 		$messageParameters = $notification->getMessageParameters();
 
 		$parsedMessage = $notification->getMessage();
-		if (in_array('ellipsisStart', $messageParameters) && !in_array('ellipsisEnd', $messageParameters)) {
+		if (\in_array('ellipsisStart', $messageParameters) && !\in_array('ellipsisEnd', $messageParameters)) {
 			$parsedMessage = $l->t('… %s', $parsedMessage);
-		} else if (!in_array('ellipsisStart', $messageParameters) && in_array('ellipsisEnd', $messageParameters)) {
+		} else if (!\in_array('ellipsisStart', $messageParameters) && \in_array('ellipsisEnd', $messageParameters)) {
 			$parsedMessage = $l->t('%s …', $parsedMessage);
-		} else if (in_array('ellipsisStart', $messageParameters) && in_array('ellipsisEnd', $messageParameters)) {
+		} else if (\in_array('ellipsisStart', $messageParameters) && \in_array('ellipsisEnd', $messageParameters)) {
 			$parsedMessage = $l->t('… %s …', $parsedMessage);
 		}
 		$notification->setParsedMessage($parsedMessage);
@@ -174,7 +168,7 @@ class Notifier implements INotifier {
 					]
 				);
 
-		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			if ($richSubjectUser && $richSubjectCall) {
 				$notification
 					->setParsedSubject(
@@ -265,13 +259,13 @@ class Notifier implements INotifier {
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseInvitation(INotification $notification, Room $room, IL10N $l) {
+	protected function parseInvitation(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'room') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
 		$parameters = $notification->getSubjectParameters();
-		$uid = isset($parameters['actorId']) ? $parameters['actorId'] : $parameters[0];
+		$uid = $parameters['actorId'] ?? $parameters[0];
 
 		$user = $this->userManager->get($uid);
 		if (!$user instanceof IUser) {
@@ -293,7 +287,7 @@ class Notifier implements INotifier {
 					]
 				);
 
-		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			if ($room->getName() !== '') {
 				$notification
 					->setParsedSubject(
@@ -343,7 +337,7 @@ class Notifier implements INotifier {
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseCall(INotification $notification, Room $room, IL10N $l) {
+	protected function parseCall(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'call') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
@@ -370,7 +364,7 @@ class Notifier implements INotifier {
 				throw new \InvalidArgumentException('Calling user does not exist anymore');
 			}
 
-		} else if (in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
 			if ($room->getName() !== '') {
 				$notification
 					->setParsedSubject(
