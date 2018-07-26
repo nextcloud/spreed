@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -21,8 +22,6 @@
 
 namespace OCA\Spreed\Activity\Provider;
 
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
 use OCP\IL10N;
 
@@ -36,7 +35,7 @@ class Call extends Base {
 	 * @throws \InvalidArgumentException
 	 * @since 11.0.0
 	 */
-	public function parse($language, IEvent $event, IEvent $previousEvent = null) {
+	public function parse($language, IEvent $event, IEvent $previousEvent = null): IEvent {
 		$event = parent::preParse($event);
 
 		if ($event->getSubject() === 'call') {
@@ -51,17 +50,17 @@ class Call extends Base {
 //			}
 
 			$result = $this->parseCall($event, $l);
-			$result['subject'] .= ' ' . $this->getDuration($l, $parameters['duration']);
+			$result['subject'] .= ' ' . $this->getDuration($l, (int) $parameters['duration']);
 //			$result['params']['call'] = $roomParameter;
 			$this->setSubjects($event, $result['subject'], $result['params']);
 		} else {
-			throw new \InvalidArgumentException();
+			throw new \InvalidArgumentException('Wrong subject');
 		}
 
 		return $event;
 	}
 
-	protected function getDuration(IL10N $l, $seconds) {
+	protected function getDuration(IL10N $l, int $seconds): string {
 		$hours = floor($seconds / 3600);
 		$seconds %= 3600;
 		$minutes = floor($seconds / 60);
@@ -76,7 +75,7 @@ class Call extends Base {
 		return $l->t('(Duration %s)', $duration);
 	}
 
-	protected function parseCall(IEvent $event, IL10N $l) {
+	protected function parseCall(IEvent $event, IL10N $l): array {
 		$parameters = $event->getSubjectParameters();
 
 		$currentUser = array_search($this->activityManager->getCurrentUserId(), $parameters['users'], true);
@@ -86,7 +85,7 @@ class Call extends Base {
 		unset($parameters['users'][$currentUser]);
 		sort($parameters['users']);
 
-		$numUsers = count($parameters['users']);
+		$numUsers = \count($parameters['users']);
 		$displayedUsers = $numUsers;
 		switch ($numUsers) {
 			case 0:

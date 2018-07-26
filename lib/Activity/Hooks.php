@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -42,12 +43,6 @@ class Hooks {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	/**
-	 * @param IManager $activityManager
-	 * @param IUserSession $userSession
-	 * @param ILogger $logger
-	 * @param ITimeFactory $timeFactory
-	 */
 	public function __construct(IManager $activityManager, IUserSession $userSession, ILogger $logger, ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
@@ -70,7 +65,7 @@ class Hooks {
 	 * @param Room $room
 	 * @return bool True if activity was generated, false otherwise
 	 */
-	public function generateCallActivity(Room $room) {
+	public function generateCallActivity(Room $room): bool {
 		$activeSince = $room->getActiveSince();
 		if (!$activeSince instanceof \DateTime || $room->hasSessionsInCall()) {
 			return false;
@@ -78,9 +73,9 @@ class Hooks {
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$participants = $room->getParticipants($activeSince->getTimestamp());
-		$userIds = array_map('strval', array_keys($participants['users']));
+		$userIds = array_map('\strval', array_keys($participants['users']));
 
-		if (empty($userIds) || (count($userIds) === 1 && $room->getActiveGuests() === 0)) {
+		if (empty($userIds) || (\count($userIds) === 1 && $room->getActiveGuests() === 0)) {
 			// Single user pinged or guests only => no activity
 			$room->resetActiveSince();
 			return false;

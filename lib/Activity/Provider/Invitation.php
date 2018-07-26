@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -34,7 +35,7 @@ class Invitation extends Base {
 	 * @throws \InvalidArgumentException
 	 * @since 11.0.0
 	 */
-	public function parse($language, IEvent $event, IEvent $previousEvent = null) {
+	public function parse($language, IEvent $event, IEvent $previousEvent = null): IEvent {
 		$event = parent::preParse($event);
 
 		if ($event->getSubject() === 'invitation') {
@@ -53,7 +54,7 @@ class Invitation extends Base {
 				'call' => $roomParameter,
 			]);
 		} else {
-			throw new \InvalidArgumentException();
+			throw new \InvalidArgumentException('Wrong subject');
 		}
 
 		return $event;
