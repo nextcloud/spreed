@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -21,7 +22,6 @@
 
 namespace OCA\Spreed\Activity\Provider;
 
-use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
@@ -73,9 +73,9 @@ abstract class Base implements IProvider {
 	 * @return IEvent
 	 * @throws \InvalidArgumentException
 	 */
-	public function preParse(IEvent $event) {
+	public function preParse(IEvent $event): IEvent {
 		if ($event->getApp() !== 'spreed') {
-			throw new \InvalidArgumentException();
+			throw new \InvalidArgumentException('Wrong app');
 		}
 
 		if ($this->activityManager->getRequirePNG()) {
@@ -93,7 +93,7 @@ abstract class Base implements IProvider {
 	 * @param array $parameters
 	 * @throws \InvalidArgumentException
 	 */
-	protected function setSubjects(IEvent $event, $subject, array $parameters) {
+	protected function setSubjects(IEvent $event, string $subject, array $parameters) {
 		$placeholders = $replacements = [];
 		foreach ($parameters as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
@@ -109,7 +109,7 @@ abstract class Base implements IProvider {
 	 * @param Room $room
 	 * @return array
 	 */
-	protected function getRoom(IL10N $l, Room $room) {
+	protected function getRoom(IL10N $l, Room $room): array {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				$stringType = 'one2one';
@@ -136,7 +136,7 @@ abstract class Base implements IProvider {
 	 * @param int $roomId
 	 * @return array
 	 */
-	protected function getFormerRoom(IL10N $l, $roomId) {
+	protected function getFormerRoom(IL10N $l, int $roomId): array {
 		return [
 			'type' => 'call',
 			'id' => $roomId,
@@ -149,7 +149,7 @@ abstract class Base implements IProvider {
 	 * @param string $uid
 	 * @return array
 	 */
-	protected function getUser($uid) {
+	protected function getUser(string $uid): array {
 		if (!isset($this->displayNames[$uid])) {
 			$this->displayNames[$uid] = $this->getDisplayName($uid);
 		}
@@ -165,7 +165,7 @@ abstract class Base implements IProvider {
 	 * @param string $uid
 	 * @return string
 	 */
-	protected function getDisplayName($uid) {
+	protected function getDisplayName(string $uid): string {
 		$user = $this->userManager->get($uid);
 		if ($user instanceof IUser) {
 			return $user->getDisplayName();
