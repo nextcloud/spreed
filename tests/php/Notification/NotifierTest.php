@@ -541,7 +541,8 @@ class NotifierTest extends \Test\TestCase {
 			->method('getObjectType')
 			->willReturn($objectType);
 
-		$this->setExpectedException(\InvalidArgumentException::class, $message);
+		$this->expectException(\InvalidArgumentException::class);
+		$this->expectExceptionMessage($message);
 		$this->notifier->prepare($n, 'de');
 	}
 }

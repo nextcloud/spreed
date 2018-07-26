@@ -14,7 +14,7 @@ pipeline:
       matrix:
         TESTS: stylelint
   check-app-compatbility:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -32,7 +32,7 @@ pipeline:
       matrix:
         TESTS: check-app-compatbility
   syntax-php7.0:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -48,7 +48,7 @@ pipeline:
       matrix:
         TESTS: syntax-php7.0
   signed-off-check:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -64,7 +64,7 @@ pipeline:
       matrix:
         TESTS: signed-off-check
   php7.0:
-    image: nextcloudci/php7.0:php7.0-2
+    image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -84,7 +84,7 @@ pipeline:
       matrix:
         TESTS: php7.0
   php7.1:
-    image: nextcloudci/php7.1:php7.1-15
+    image: nextcloudci/php7.1:php7.1-16
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -104,7 +104,7 @@ pipeline:
       matrix:
         TESTS: php7.1
   php7.2:
-    image: nextcloudci/php7.2:php7.2-9
+    image: nextcloudci/php7.2:php7.2-12
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -124,7 +124,7 @@ pipeline:
       matrix:
         TESTS: php7.2
   php7.1-integration:
-    image: nextcloudci/php7.1:php7.1-15
+    image: nextcloudci/php7.1:php7.1-16
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master

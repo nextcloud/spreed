@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -38,11 +39,6 @@ class Hooks {
 	/** @var ILogger */
 	protected $logger;
 
-	/**
-	 * @param IManager $notificationManager
-	 * @param IUserSession $userSession
-	 * @param ILogger $logger
-	 */
 	public function __construct(IManager $notificationManager, IUserSession $userSession, ILogger $logger) {
 		$this->notificationManager = $notificationManager;
 		$this->userSession = $userSession;
