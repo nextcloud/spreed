@@ -23,6 +23,7 @@
 namespace OCA\Spreed\Tests\php\Signaling;
 
 use OCA\Spreed\AppInfo\Application;
+use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
@@ -122,7 +123,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
         $dbConnection = \OC::$server->getDatabaseConnection();
         $dispatcher = \OC::$server->getEventDispatcher();
-        $this->manager = new Manager($dbConnection, $config, $this->secureRandom, $dispatcher, $this->createMock(IHasher::class));
+        $this->manager = new Manager($dbConnection, $config, $this->secureRandom, $this->createMock(CommentsManager::class), $dispatcher, $this->createMock(IHasher::class));
     }
 
     private function recreateBackendNotifier() {
