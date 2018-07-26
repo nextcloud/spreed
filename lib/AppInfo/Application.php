@@ -162,6 +162,15 @@ class Application extends App {
 			// so they can update the room properties.
 			$notifier->roomModified($room);
 		});
+		$dispatcher->addListener(Room::class . '::postSetParticipantTypeBySession', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
+			// The type of a participant has changed, notify all participants
+			// so they can update the room properties.
+			$notifier->roomModified($room);
+		});
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
