@@ -33,6 +33,7 @@
 		USER: 3,
 		GUEST: 4,
 		USERSELFJOINED: 5,
+		GUEST_MODERATOR: 6,
 
 		/* Must stay in sync with values in "lib/Room.php". */
 		FLAG_DISCONNECTED: 0,

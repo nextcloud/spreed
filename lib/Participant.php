@@ -34,6 +34,7 @@ class Participant {
 	const USER = 3;
 	const GUEST = 4;
 	const USER_SELF_JOINED = 5;
+	const GUEST_MODERATOR = 6;
 
 	const FLAG_DISCONNECTED = 0;
 	const FLAG_IN_CALL = 1;
@@ -77,6 +78,18 @@ class Participant {
 
 	public function getParticipantType(): int {
 		return $this->participantType;
+	}
+
+	public function isGuest(): bool {
+		return \in_array($this->participantType, [self::GUEST, self::GUEST_MODERATOR], true);
+	}
+
+	public function hasModeratorPermissions(bool $guestModeratorAllowed = true): bool {
+		if (!$guestModeratorAllowed) {
+			return \in_array($this->participantType, [self::OWNER, self::MODERATOR], true);
+		}
+
+		return \in_array($this->participantType, [self::OWNER, self::MODERATOR, self::GUEST_MODERATOR], true);
 	}
 
 	public function getLastPing(): int {
