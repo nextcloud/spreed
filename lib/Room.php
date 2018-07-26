@@ -176,6 +176,13 @@ class Room {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function getPassword() {
+		return $this->password;
+	}
+
+	/**
 	 * @param string $userId
 	 * @param Participant $participant
 	 */
