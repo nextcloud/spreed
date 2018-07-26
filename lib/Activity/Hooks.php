@@ -43,12 +43,6 @@ class Hooks {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	/**
-	 * @param IManager $activityManager
-	 * @param IUserSession $userSession
-	 * @param ILogger $logger
-	 * @param ITimeFactory $timeFactory
-	 */
 	public function __construct(IManager $activityManager, IUserSession $userSession, ILogger $logger, ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;

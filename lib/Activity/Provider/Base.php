@@ -53,13 +53,6 @@ abstract class Base implements IProvider {
 	/** @var string[] */
 	protected $displayNames = [];
 
-	/**
-	 * @param IFactory $languageFactory
-	 * @param IURLGenerator $url
-	 * @param IManager $activityManager
-	 * @param IUserManager $userManager
-	 * @param Manager $manager
-	 */
 	public function __construct(IFactory $languageFactory, IURLGenerator $url, IManager $activityManager, IUserManager $userManager, Manager $manager) {
 		$this->languageFactory = $languageFactory;
 		$this->url = $url;
