@@ -270,8 +270,8 @@ class Application extends App {
 			$room->setLastActivity(new \DateTime());
 		};
 
-		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 		$dispatcher->addListener(ChatManager::class . '::sendMessage', $listener);
+		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', $listener);
 	}
 
 	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {
