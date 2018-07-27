@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -47,7 +48,7 @@ class GuestManager {
 	 * @param string $displayName
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
-	public function updateName(Room $room, $sessionId, $displayName) {
+	public function updateName(Room $room, string $sessionId, string $displayName) {
 		$sessionHash = sha1($sessionId);
 		$dispatchEvent = true;
 
@@ -84,7 +85,7 @@ class GuestManager {
 	 * @return string
 	 * @throws ParticipantNotFoundException
 	 */
-	public function getNameBySessionHash($sessionHash) {
+	public function getNameBySessionHash(string $sessionHash): string {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('display_name')
 			->from('talk_guests')
@@ -105,7 +106,7 @@ class GuestManager {
 	 * @param string[] $sessionHashes
 	 * @return string[]
 	 */
-	public function getNamesBySessionHashes(array $sessionHashes) {
+	public function getNamesBySessionHashes(array $sessionHashes): array {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('*')
 			->from('talk_guests')
