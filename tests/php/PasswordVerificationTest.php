@@ -44,12 +44,13 @@ class PasswordVerificationTest extends TestCase {
 			}
 		});
 
+		$hasher = $this->createMock(IHasher::class);
 		$room = new Room(
 			$this->createMock(Manager::class),
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ISecureRandom::class),
 			$dispatcher,
-			$this->createMock(IHasher::class),
+			$hasher,
 			1,
 			Room::PUBLIC_CALL,
 			'foobar',
@@ -61,5 +62,6 @@ class PasswordVerificationTest extends TestCase {
 		$this->assertSame($verificationResult, ['result' => true, 'url' => '']);
 		$verificationResult = $room->verifyPassword('4321');
 		$this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
+		$this->assertSame('passy', $room->getPassword());
 	}
 }

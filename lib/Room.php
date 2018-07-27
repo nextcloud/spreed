@@ -175,6 +175,10 @@ class Room {
 		return $this->password !== '';
 	}
 
+	public function getPassword(): string {
+		return $this->password;
+	}
+
 	/**
 	 * @param string $userId
 	 * @param Participant $participant
