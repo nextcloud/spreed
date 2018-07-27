@@ -39,11 +39,11 @@ class CustomBackendNotifier extends BackendNotifier {
 
 	private $requests = [];
 
-	public function getRequests() {
+	public function getRequests(): array {
 		return $this->requests;
 	}
 
-	public function clearLastRequest() {
+	public function clearRequests() {
 		$this->requests = [];
 	}
 
@@ -187,7 +187,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$room->addUsers([
 			'userId' => $this->userId,
 		]);
-		$this->controller->clearLastRequest();
+		$this->controller->clearRequests();
 		$testUser = $this->createMock(IUser::class);
 		$testUser
 			->method('getUID')
@@ -294,7 +294,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		], $bodies);
 
-		$this->controller->clearLastRequest();
+		$this->controller->clearRequests();
 		$guestSession = $room->joinRoomGuest('');
 		$room->changeInCall($guestSession, true);
 
@@ -332,7 +332,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		], $bodies);
 
-		$this->controller->clearLastRequest();
+		$this->controller->clearRequests();
 		$room->changeInCall($userSession, false);
 
 		$requests = $this->controller->getRequests();
