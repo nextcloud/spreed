@@ -757,8 +757,8 @@ video {
 	position: absolute;
 	top: 0;
 	right: 0;
-	/* Higher than the z-index of the emptycontent */
-	z-index: 50;
+	/* Higher than the z-index of the app-content */
+	z-index: 1050;
 	cursor: pointer;
 }
 
