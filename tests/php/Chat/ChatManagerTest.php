@@ -30,11 +30,15 @@ use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ChatManagerTest extends \Test\TestCase {
 
 	/** @var CommentsManager|ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $commentsManager;
+
+	/** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+	protected $dispatcher;
 
 	/** @var Notifier|\PHPUnit_Framework_MockObject_MockObject */
 	protected $notifier;
@@ -46,10 +50,11 @@ class ChatManagerTest extends \Test\TestCase {
 		parent::setUp();
 
 		$this->commentsManager = $this->createMock(CommentsManager::class);
-
+		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 		$this->notifier = $this->createMock(Notifier::class);
 
 		$this->chatManager = new ChatManager($this->commentsManager,
+											 $this->dispatcher,
 											 $this->notifier);
 	}
 
