@@ -73,6 +73,10 @@ class TalkSession {
 	 */
 	protected function getValue(string $key, string $token) {
 		$values = $this->session->get($key);
+		if ($values === null) {
+			return null;
+		}
+
 		$values = json_decode($values, true);
 		if ($values === null) {
 			return null;
@@ -86,10 +90,15 @@ class TalkSession {
 
 	protected function setValue(string $key, string $token, string $value) {
 		$values = $this->session->get($key);
-		$values = json_decode($values, true);
 		if ($values === null) {
 			$values = [];
+		} else {
+			$values = json_decode($values, true);
+			if ($values === null) {
+				$values = [];
+			}
 		}
+
 
 		$values[$token] = $value;
 		$this->session->set($key, json_encode($values));
@@ -97,11 +106,15 @@ class TalkSession {
 
 	protected function removeValue(string $key, string $token) {
 		$values = $this->session->get($key);
-		$values = json_decode($values, true);
 		if ($values === null) {
 			$values = [];
 		} else {
-			unset($values[$token]);
+			$values = json_decode($values, true);
+			if ($values === null) {
+				$values = [];
+			} else {
+				unset($values[$token]);
+			}
 		}
 
 		$this->session->set($key, json_encode($values));
