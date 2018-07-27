@@ -557,7 +557,7 @@
 		},
 		initialize: function() {
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
-			$('#app-content').append(this._sidebarView.$el);
+			$('#content').append(this._sidebarView.$el);
 
 			if (OC.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
