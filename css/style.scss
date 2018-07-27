@@ -1,8 +1,64 @@
+/* The standard layout defined in the server includes a fixed header with a
+ * sticky sidebar. This causes the scroll bar for the main area to appear to the
+ * right of the sidebar, which looks confusing for the chat. Thus that layout is
+ * overridden with a full set of flex containers to cascade parent element
+ * height to the main view to limit the vertical scroll bar only to it (same
+ * thing done for the sidebar and the chat view). */
+#body-user {
+	display: flex;
+	flex-direction: column;
+}
+
+#body-user #header {
+	/* Override fixed position from server to include it in the flex layout */
+	position: static;
+	flex-shrink: 0;
+}
+
+#content-wrapper {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Override "min-height: 100%" set in server, as the header is part of the
+	 * flex layout and thus the whole body is not available for the content. */
+	min-height: 0;
+}
+
+#content {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Override margin used in server, as the header is part of the flex layout
+	 * and thus the content does not need to be pushed down. */
+	margin-top: 0;
+}
+
+#app-content {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
 #body-public {
 	height: 100%;
 }
 
-.app-spreed #app-content,
 #body-public #app-content {
 	overflow: hidden;
 }
