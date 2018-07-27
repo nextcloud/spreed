@@ -175,10 +175,7 @@ class Room {
 		return $this->password !== '';
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getPassword() {
+	public function getPassword(): string {
 		return $this->password;
 	}
 

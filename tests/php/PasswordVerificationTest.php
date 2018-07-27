@@ -62,6 +62,6 @@ class PasswordVerificationTest extends TestCase {
 		$this->assertSame($verificationResult, ['result' => true, 'url' => '']);
 		$verificationResult = $room->verifyPassword('4321');
 		$this->assertSame($verificationResult, ['result' => false, 'url' => 'https://test']);
-		$this->assertSame($hasher->verify("passy", $room->getPassword()), 1);
+		$this->assertSame('passy', $room->getPassword());
 	}
 }
