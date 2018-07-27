@@ -753,10 +753,16 @@ video {
 	display: inline-block;
 }
 
+/* The sidebar wrapper contains the trigger for the sidebar and the sidebar
+ * itself placed in columns. To prevent the trigger from taking up space for the
+ * app content the trigger width is removed from the wrapper by pushing its left
+ * margin. */
+#app-sidebar-wrapper {
+	display: flex;
+	margin-left: -44px;
+}
+
 #app-sidebar-trigger {
-	position: absolute;
-	top: 0;
-	right: 0;
 	/* Higher than the z-index of the app-content */
 	z-index: 1050;
 	cursor: pointer;
