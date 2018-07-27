@@ -4,12 +4,14 @@
  * overridden with a full set of flex containers to cascade parent element
  * height to the main view to limit the vertical scroll bar only to it (same
  * thing done for the sidebar and the chat view). */
-#body-user {
+#body-user,
+#body-public {
 	display: flex;
 	flex-direction: column;
 }
 
-#body-user #header {
+#body-user #header,
+#body-public #header {
 	/* Override fixed position from server to include it in the flex layout */
 	position: static;
 	flex-shrink: 0;
@@ -53,14 +55,6 @@
 	overflow: hidden;
 
 	flex-grow: 1;
-}
-
-#body-public {
-	height: 100%;
-}
-
-#body-public #app-content {
-	overflow: hidden;
 }
 
 .app-spreed #app-navigation {
@@ -809,27 +803,9 @@ video {
 	}
 }
 
-/* The header element contains the header div; as the header div uses a fixed
-   position the header element has no height, and as #app-content-wrapper uses a
-   "100%" height its contents must be padded to prevent them from overlapping
-   with the header element */
-#body-public #app-content-wrapper {
-	padding-top: 45px;
-}
-
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
-}
-
-/* Correctly position icons below header in public chat. */
-#body-public {
-	#app-sidebar-trigger {
-		top: 45px;
-	}
-	#video-fullscreen {
-		top: 89px;
-	}
 }
 
 /* As the header is hidden (except for the logo), move the fullscreen button and
