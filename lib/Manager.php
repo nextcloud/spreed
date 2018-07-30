@@ -398,7 +398,11 @@ class Manager {
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 
-		return $this->getRoomById($roomId);
+		$room = $this->getRoomById($roomId);
+
+		$this->dispatcher->dispatch(Room::class . '::createRoom', new GenericEvent($room));
+
+		return $room;
 	}
 
 	/**

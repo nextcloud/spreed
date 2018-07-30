@@ -37,36 +37,36 @@ use OCP\Security\ISecureRandom;
 
 class CustomBackendNotifier extends BackendNotifier {
 
-    private $lastRequest;
+	private $requests = [];
 
-    public function getLastRequest() {
-        return $this->lastRequest;
-    }
+	public function getRequests(): array {
+		return $this->requests;
+	}
 
-    public function clearLastRequest() {
-        $this->lastRequest = null;
-    }
+	public function clearRequests() {
+		$this->requests = [];
+	}
 
-    protected function doRequest($url, $params) {
-        $this->lastRequest = [
-            'url' => $url,
-            'params' => $params,
-        ];
-    }
+	protected function doRequest($url, $params) {
+		$this->requests[] = [
+			'url' => $url,
+			'params' => $params,
+		];
+	}
 
 }
 
 class CustomApplication extends Application {
 
-    private $notifier;
+	private $notifier;
 
-    public function setBackendNotifier($notifier) {
-        $this->notifier = $notifier;
-    }
+	public function setBackendNotifier($notifier) {
+		$this->notifier = $notifier;
+	}
 
-    protected function getBackendNotifier() {
-        return $this->notifier;
-    }
+	protected function getBackendNotifier() {
+		return $this->notifier;
+	}
 
 }
 
@@ -75,277 +75,293 @@ class CustomApplication extends Application {
  */
 class BackendNotifierTest extends \Test\TestCase {
 
-    /** @var Config */
-    private $config;
+	/** @var Config */
+	private $config;
 
-    /** @var ISecureRandom */
-    private $secureRandom;
+	/** @var ISecureRandom */
+	private $secureRandom;
 
-    /** @var CustomBackendNotifier */
-    private $controller;
+	/** @var CustomBackendNotifier */
+	private $controller;
 
-    /** @var Manager */
-    private $manager;
+	/** @var Manager */
+	private $manager;
 
-    /** @var string */
-    private $userId;
+	/** @var string */
+	private $userId;
 
-    public function setUp() {
-        parent::setUp();
-        // Make sure necessary database tables are set up.
-        \OC_App::updateApp('spreed');
+	public function setUp() {
+		parent::setUp();
+		// Make sure necessary database tables are set up.
+		\OC_App::updateApp('spreed');
 
-        $this->userId = 'testUser';
-        $this->secureRandom = \OC::$server->getSecureRandom();
-        $timeFactory = $this->createMock(ITimeFactory::class);
-        $config = \OC::$server->getConfig();
-        $this->signalingSecret = 'the-signaling-secret';
-        $this->baseUrl = 'https://localhost/signaling';
-        $config->setAppValue('spreed', 'signaling_servers', json_encode([
-            'secret' => $this->signalingSecret,
-            'servers' => [
-                [
-                    'server' => $this->baseUrl,
-                ],
-            ],
-        ]));
+		$this->userId = 'testUser';
+		$this->secureRandom = \OC::$server->getSecureRandom();
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		$config = \OC::$server->getConfig();
+		$this->signalingSecret = 'the-signaling-secret';
+		$this->baseUrl = 'https://localhost/signaling';
+		$config->setAppValue('spreed', 'signaling_servers', json_encode([
+			'secret' => $this->signalingSecret,
+			'servers' => [
+				[
+					'server' => $this->baseUrl,
+				],
+			],
+		]));
 
-        $this->config = new Config($config, $this->secureRandom, $timeFactory);
-        $this->recreateBackendNotifier();
+		$this->config = new Config($config, $this->secureRandom, $timeFactory);
+		$this->recreateBackendNotifier();
 
-        $app = new CustomApplication();
-        $app->setBackendNotifier($this->controller);
-        $app->register();
+		$app = new CustomApplication();
+		$app->setBackendNotifier($this->controller);
+		$app->register();
 
-        \OC::$server->registerService(BackendNotifier::class, function() {
-            return $this->controller;
-        });
+		\OC::$server->registerService(BackendNotifier::class, function() {
+			return $this->controller;
+		});
 
-        $dbConnection = \OC::$server->getDatabaseConnection();
-        $dispatcher = \OC::$server->getEventDispatcher();
-        $this->manager = new Manager($dbConnection, $config, $this->secureRandom, $this->createMock(CommentsManager::class), $dispatcher, $this->createMock(IHasher::class));
-    }
+		$dbConnection = \OC::$server->getDatabaseConnection();
+		$dispatcher = \OC::$server->getEventDispatcher();
+		$this->manager = new Manager($dbConnection, $config, $this->secureRandom, $this->createMock(CommentsManager::class), $dispatcher, $this->createMock(IHasher::class));
+	}
 
-    private function recreateBackendNotifier() {
-        $this->controller = new CustomBackendNotifier(
-            $this->config,
-            $this->createMock(ILogger::class),
-            $this->createMock(IClientService::class),
-            $this->secureRandom
-        );
-    }
+	private function recreateBackendNotifier() {
+		$this->controller = new CustomBackendNotifier(
+			$this->config,
+			$this->createMock(ILogger::class),
+			$this->createMock(IClientService::class),
+			$this->secureRandom
+		);
+	}
 
-    private function calculateBackendChecksum($data, $random) {
-        if (empty($random) || strlen($random) < 32) {
-            return false;
-        }
-        $hash = hash_hmac('sha256', $random . $data, $this->signalingSecret);
-        return $hash;
-    }
+	private function calculateBackendChecksum($data, $random) {
+		if (empty($random) || strlen($random) < 32) {
+			return false;
+		}
+		$hash = hash_hmac('sha256', $random . $data, $this->signalingSecret);
+		return $hash;
+	}
 
-    private function validateBackendRequest($expectedUrl, $request) {
-        $this->assertTrue(isset($request));
-        $this->assertEquals($expectedUrl, $request['url']);
-        $headers = $request['params']['headers'];
-        $this->assertEquals('application/json', $headers['Content-Type']);
-        $random = $headers['Spreed-Signaling-Random'];
-        $checksum = $headers['Spreed-Signaling-Checksum'];
-        $body = $request['params']['body'];
-        $this->assertEquals($this->calculateBackendChecksum($body, $random), $checksum);
-        return $body;
-    }
+	private function validateBackendRequest($expectedUrl, $request) {
+		$this->assertTrue(isset($request));
+		$this->assertEquals($expectedUrl, $request['url']);
+		$headers = $request['params']['headers'];
+		$this->assertEquals('application/json', $headers['Content-Type']);
+		$random = $headers['Spreed-Signaling-Random'];
+		$checksum = $headers['Spreed-Signaling-Checksum'];
+		$body = $request['params']['body'];
+		$this->assertEquals($this->calculateBackendChecksum($body, $random), $checksum);
+		return $body;
+	}
 
-    public function testRoomInvite() {
-        $room = $this->manager->createPublicRoom();
-        $room->addUsers([
-            'userId' => $this->userId,
-        ]);
+	public function testRoomInvite() {
+		$room = $this->manager->createPublicRoom();
+		$room->addUsers([
+			'userId' => $this->userId,
+		]);
 
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'invite',
-            'invite' => [
-                'userids' => [
-                    $this->userId,
-                ],
-                'alluserids' => [
-                    $this->userId,
-                ],
-                'properties' => [
-                    'name' => $room->getName(),
-                    'type' => $room->getType(),
-                ],
-            ],
-        ], json_decode($body, true));
-    }
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'invite',
+			'invite' => [
+				'userids' => [
+					$this->userId,
+				],
+				'alluserids' => [
+					$this->userId,
+				],
+				'properties' => [
+					'name' => $room->getName(),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
 
-    public function testRoomDisinvite() {
-        $room = $this->manager->createPublicRoom();
-        $room->addUsers([
-            'userId' => $this->userId,
-        ]);
-        $this->controller->clearLastRequest();
-        $testUser = $this->createMock(IUser::class);
-        $testUser
-            ->method('getUID')
-            ->willReturn($this->userId);
-        $room->removeUser($testUser);
+	public function testRoomDisinvite() {
+		$room = $this->manager->createPublicRoom();
+		$room->addUsers([
+			'userId' => $this->userId,
+		]);
+		$this->controller->clearRequests();
+		$testUser = $this->createMock(IUser::class);
+		$testUser
+			->method('getUID')
+			->willReturn($this->userId);
+		$room->removeUser($testUser);
 
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'disinvite',
-            'disinvite' => [
-                'userids' => [
-                    $this->userId,
-                ],
-                'alluserids' => [
-                ],
-                'properties' => [
-                    'name' => $room->getName(),
-                    'type' => $room->getType(),
-                ],
-            ],
-        ], json_decode($body, true));
-    }
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'disinvite',
+			'disinvite' => [
+				'userids' => [
+					$this->userId,
+				],
+				'alluserids' => [
+				],
+				'properties' => [
+					'name' => $room->getName(),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
 
-    public function testRoomNameChanged() {
-        $room = $this->manager->createPublicRoom();
-        $room->setName('Test room');
+	public function testRoomNameChanged() {
+		$room = $this->manager->createPublicRoom();
+		$room->setName('Test room');
 
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'update',
-            'update' => [
-                'userids' => [
-                ],
-                'properties' => [
-                    'name' => $room->getName(),
-                    'type' => $room->getType(),
-                ],
-            ],
-        ], json_decode($body, true));
-    }
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getName(),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
 
-    public function testRoomDelete() {
-        $room = $this->manager->createPublicRoom();
-        $room->addUsers([
-            'userId' => $this->userId,
-        ]);
-        $room->deleteRoom();
+	public function testRoomDelete() {
+		$room = $this->manager->createPublicRoom();
+		$room->addUsers([
+			'userId' => $this->userId,
+		]);
+		$room->deleteRoom();
 
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'delete',
-            'delete' => [
-                'userids' => [
-                    $this->userId,
-                ],
-            ],
-        ], json_decode($body, true));
-    }
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'delete',
+			'delete' => [
+				'userids' => [
+					$this->userId,
+				],
+			],
+		], $bodies);
+	}
 
-    public function testRoomInCallChanged() {
-        $room = $this->manager->createPublicRoom();
-        $userSession = 'user-session';
-        $room->addUsers([
-            'userId' => $this->userId,
-            'sessionId' => $userSession,
-        ]);
-        $room->changeInCall($userSession, true);
+	public function testRoomInCallChanged() {
+		$room = $this->manager->createPublicRoom();
+		$userSession = 'user-session';
+		$room->addUsers([
+			'userId' => $this->userId,
+			'sessionId' => $userSession,
+		]);
+		$room->changeInCall($userSession, true);
 
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'incall',
-            'incall' => [
-                'incall' => true,
-                'changed' => [
-                    [
-                        'inCall' => true,
-                        'lastPing' => 0,
-                        'sessionId' => $userSession,
-                        'participantType' => Participant::USER,
-                        'userId' => $this->userId,
-                    ],
-                ],
-                'users' => [
-                    [
-                        'inCall' => true,
-                        'lastPing' => 0,
-                        'sessionId' => $userSession,
-                        'participantType' => Participant::USER,
-                        'userId' => $this->userId,
-                    ],
-                ],
-            ],
-        ], json_decode($body, true));
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'incall',
+			'incall' => [
+				'incall' => true,
+				'changed' => [
+					[
+						'inCall' => true,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => true,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+				],
+			],
+		], $bodies);
 
-        $this->controller->clearLastRequest();
-        $guestSession = $room->joinRoomGuest('');
-        $room->changeInCall($guestSession, true);
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'incall',
-            'incall' => [
-                'incall' => true,
-                'changed' => [
-                    [
-                        'inCall' => true,
-                        'lastPing' => 0,
-                        'sessionId' => $guestSession,
-                        'participantType' => Participant::GUEST,
-                    ],
-                ],
-                'users' => [
-                    [
-                        'inCall' => true,
-                        'lastPing' => 0,
-                        'sessionId' => $userSession,
-                        'participantType' => Participant::USER,
-                        'userId' => $this->userId,
-                    ],
-                    [
-                        'inCall' => true,
-                        'lastPing' => 0,
-                        'sessionId' => $guestSession,
-                        'participantType' => Participant::GUEST,
-                    ],
-                ],
-            ],
-        ], json_decode($body, true));
+		$this->controller->clearRequests();
+		$guestSession = $room->joinRoomGuest('');
+		$room->changeInCall($guestSession, true);
 
-        $this->controller->clearLastRequest();
-        $room->changeInCall($userSession, false);
-        $request = $this->controller->getLastRequest();
-        $body = $this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request);
-        $this->assertSame([
-            'type' => 'incall',
-            'incall' => [
-                'incall' => false,
-                'changed' => [
-                    [
-                        'inCall' => false,
-                        'lastPing' => 0,
-                        'sessionId' => $userSession,
-                        'participantType' => Participant::USER,
-                        'userId' => $this->userId,
-                    ],
-                ],
-                'users' => [
-                    [
-                        'inCall' => true,
-                        'lastPing' => 0,
-                        'sessionId' => $guestSession,
-                        'participantType' => Participant::GUEST,
-                    ],
-                ],
-            ],
-        ], json_decode($body, true));
-    }
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'incall',
+			'incall' => [
+				'incall' => true,
+				'changed' => [
+					[
+						'inCall' => true,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => true,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+					[
+						'inCall' => true,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST,
+					],
+				],
+			],
+		], $bodies);
+
+		$this->controller->clearRequests();
+		$room->changeInCall($userSession, false);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'incall',
+			'incall' => [
+				'incall' => false,
+				'changed' => [
+					[
+						'inCall' => false,
+						'lastPing' => 0,
+						'sessionId' => $userSession,
+						'participantType' => Participant::USER,
+						'userId' => $this->userId,
+					],
+				],
+				'users' => [
+					[
+						'inCall' => true,
+						'lastPing' => 0,
+						'sessionId' => $guestSession,
+						'participantType' => Participant::GUEST,
+					],
+				],
+			],
+		], $bodies);
+	}
 
 }

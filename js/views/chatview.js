@@ -52,10 +52,12 @@
 		'</div>';
 
 	var COMMENT_TEMPLATE =
-		'<li class="comment" data-id="{{id}}">' +
+		'<li class="comment{{#if isNotSystemMessage}}{{else}} systemMessage{{/if}}" data-id="{{id}}">' +
 		'    <div class="authorRow{{#if isUserAuthor}} currentUser{{/if}}{{#if isGuest}} guestUser{{/if}}">' +
+		'        {{#if isNotSystemMessage}}' +
 		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
+		'        {{/if}}' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
 		'    </div>' +
 		'    <div class="message">{{{formattedMessage}}}</div>' +
@@ -355,6 +357,7 @@
 				date: relativeDate ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LTS'),
 				relativeDate: relativeDate,
 				altDate: OC.Util.formatDate(timestamp),
+				isNotSystemMessage: commentModel.get('systemMessage') === '',
 				formattedMessage: formattedMessage
 			});
 			return data;
@@ -471,7 +474,8 @@
 				return false;
 			}
 
-			return model1.get('actorId') === model2.get('actorId') &&
+			return (model1.get('systemMessage').length === 0) === (model2.get('systemMessage').length === 0) &&
+				model1.get('actorId') === model2.get('actorId') &&
 				model1.get('actorType') === model2.get('actorType');
 		},
 

@@ -100,7 +100,7 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function chatMessage($chatAncestor, $number) {
-		return Locator::forThe()->xpath("li[$number]")->
+		return Locator::forThe()->xpath("li[not(contains(concat(' ', normalize-space(@class), ' '), ' systemMessage '))][$number]")->
 				descendantOf(self::chatMessagesList($chatAncestor))->
 				describedAs("Chat message $number in the list of received messages");
 	}
@@ -109,7 +109,7 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function groupedChatMessage($chatAncestor, $number) {
-		return Locator::forThe()->xpath("li[position() = $number and contains(concat(' ', normalize-space(@class), ' '), ' grouped ')]")->
+		return Locator::forThe()->xpath("li[not(contains(concat(' ', normalize-space(@class), ' '), ' systemMessage '))][position() = $number and contains(concat(' ', normalize-space(@class), ' '), ' grouped ')]")->
 				descendantOf(self::chatMessagesList($chatAncestor))->
 				describedAs("Grouped chat message $number in the list of received messages");
 	}

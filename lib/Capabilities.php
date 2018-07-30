@@ -42,6 +42,7 @@ class Capabilities implements IPublicCapability {
 					'favorites',
 					'last-room-activity',
 					'no-ping',
+					'system-messages',
 				],
 			],
 		];

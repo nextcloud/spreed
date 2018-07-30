@@ -308,10 +308,7 @@
 
 		keyUpPassword: function(e) {
 			e.preventDefault();
-			if (e.keyCode === 13) {
-				// Enter
-				this.confirmPassword(e);
-			} else if (e.keyCode === 27) {
+			if (e.keyCode === 27) {
 				// ESC
 				OC.hideMenus();
 			}

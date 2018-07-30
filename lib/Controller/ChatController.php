@@ -23,11 +23,11 @@
 
 namespace OCA\Spreed\Controller;
 
-use OC\Collaboration\Collaborators\SearchResult;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
+use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
@@ -43,8 +43,6 @@ use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ChatController extends OCSController {
 
@@ -84,8 +82,8 @@ class ChatController extends OCSController {
 	/** @var ISearchResult */
 	private $searchResult;
 
-	/** @var EventDispatcherInterface */
-	private $dispatcher;
+	/** @var Parser */
+	private $parser;
 
 	/**
 	 * @param string $appName
@@ -99,8 +97,8 @@ class ChatController extends OCSController {
 	 * @param RichMessageHelper $richMessageHelper
 	 * @param IManager $autoCompleteManager
 	 * @param SearchPlugin $searchPlugin
-	 * @param SearchResult $searchResult
-	 * @param EventDispatcherInterface $dispatcher
+	 * @param ISearchResult $searchResult
+	 * @param Parser $parser
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -113,8 +111,8 @@ class ChatController extends OCSController {
 								RichMessageHelper $richMessageHelper,
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
-								SearchResult $searchResult,   // FIXME for 14 ISearchResult is injectable
-								EventDispatcherInterface $dispatcher) {
+								ISearchResult $searchResult,
+								Parser $parser) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -127,7 +125,7 @@ class ChatController extends OCSController {
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
-		$this->dispatcher = $dispatcher;
+		$this->parser = $parser;
 	}
 
 	/**
@@ -193,9 +191,9 @@ class ChatController extends OCSController {
 			// fits (except if there is no session, as the actorId should be
 			// empty in that case but sha1('') would generate a hash too
 			// instead of returning an empty string).
-			$actorId = $sessionId ? sha1($sessionId) : '';
+			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 
-			if ($actorId && $actorDisplayName) {
+			if ($sessionId && $actorDisplayName) {
 				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
 			}
 		} else {
@@ -209,15 +207,7 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
-
-		$this->dispatcher->dispatch(ChatManager::class . '::sendMessage', new GenericEvent($room, [
-			'actorType' => $actorType,
-			'actorId' => $actorId,
-			'message' => $message,
-			'timestamp' => $creationDateTime,
-			'comment' => $comment,
-		]));
+		$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
@@ -299,7 +289,11 @@ class ChatController extends OCSController {
 				$displayName = $guestNames[$comment->getActorId()];
 			}
 
-			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+			if ($comment->getVerb() === 'system') {
+				list($message, $messageParameters) = $this->parser->parseMessage($comment, $displayName);
+			} else {
+				list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+			}
 
 			return [
 				'id' => $comment->getId(),
@@ -310,6 +304,7 @@ class ChatController extends OCSController {
 				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
 				'message' => $message,
 				'messageParameters' => $messageParameters,
+				'systemMessage' => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
 			];
 		}, $comments), Http::STATUS_OK);
 

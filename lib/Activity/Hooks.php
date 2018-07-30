@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Activity;
 
+use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Room;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -37,15 +38,19 @@ class Hooks {
 	/** @var IUserSession */
 	protected $userSession;
 
+	/** @var ChatManager */
+	protected $chatManager;
+
 	/** @var ILogger */
 	protected $logger;
 
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	public function __construct(IManager $activityManager, IUserSession $userSession, ILogger $logger, ITimeFactory $timeFactory) {
+	public function __construct(IManager $activityManager, IUserSession $userSession, ChatManager $chatManager, ILogger $logger, ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
+		$this->chatManager = $chatManager;
 		$this->logger = $logger;
 		$this->timeFactory = $timeFactory;
 	}
@@ -98,6 +103,15 @@ class Hooks {
 			$this->logger->logException($e, ['app' => 'spreed']);
 			return false;
 		}
+
+		$this->chatManager->addSystemMessage($room, 'users', $userIds[0], json_encode([
+			'message' => 'call_ended',
+			'parameters' => [
+				'users' => $userIds,
+				'guests' => $room->getActiveGuests(),
+				'duration' => $duration,
+			],
+		]), new \DateTime());
 
 		foreach ($userIds as $userId) {
 			try {

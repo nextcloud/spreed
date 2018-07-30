@@ -163,9 +163,11 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	margin-left: 5px;
 }
 #commentsTabView .comment .date {
-	position: absolute;
-	right: 0;
-	top: 5px;
+	/* "margin-left: auto" aligns the block to the right, while
+	 * "text-align: right" aligns the text inside the block to the right, for
+	 * example, when it uses two lines due to a limited width. */
+	margin-left: auto;
+	text-align: right;
 }
 
 #commentsTabView .comments li .message {
@@ -246,15 +248,41 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	/* Make the mention the positioning context of its child contacts menu */
 	position: relative;
 
-	font-weight: bold;
 	background-color: nc-lighten($color-main-text, 90%);
 	padding: 2px 5px;
 	border-radius: 10px;
+
 }
 
-#commentsTabView .comment .message .mention-user.current-user {
-	background-color: $color-primary;
-	color: $color-primary-text;
+#commentsTabView .comment:not(.systemMessage) .message .mention-user {
+	font-weight: bold;
+
+	.current-user {
+		background-color: $color-primary;
+		color: $color-primary-text;
+	}
+}
+
+/* System messages have no author, so the author row only contains the date.
+ * Instead of showing the date on its own row and the message below it the
+ * message and the date are merged in a single row using flexboxes. */
+#commentsTabView .comment.systemMessage {
+	display: flex;
+	flex-direction: row;
+}
+
+#commentsTabView .comment.systemMessage .authorRow {
+	order: 1;
+	flex-grow: 0;
+	width: auto;
+	padding-left: 10px;
+}
+
+#commentsTabView .comment.systemMessage .message {
+	order: 0;
+	flex-grow: 1;
+
+	opacity: .5;
 }
 
 body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.current-user) {

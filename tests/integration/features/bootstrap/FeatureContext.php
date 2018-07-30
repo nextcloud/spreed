@@ -437,6 +437,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, $statusCode);
 
 		$messages = $this->getDataFromResponse($this->response);
+		$messages = array_filter($messages, function(array $message) {
+			// Filter out system messages
+			return $message['systemMessage'] === '';
+		});
+
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($messages);
 			return;
@@ -447,12 +452,46 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			return [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => (string) $message['actorType'],
-				'actorId' => ($message['actorType'] == 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
+				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
 				'actorDisplayName' => (string) $message['actorDisplayName'],
 				// TODO test timestamp; it may require using Runkit, php-timecop
 				// or something like that.
 				'message' => (string) $message['message'],
 				'messageParameters' => json_encode($message['messageParameters']),
+			];
+		}, $messages));
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sees the following system messages in room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userSeesTheFollowingSystemMessagesInRoom($user, $identifier, $statusCode, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$messages = $this->getDataFromResponse($this->response);
+		$messages = array_filter($messages, function(array $message) {
+			return $message['systemMessage'] !== '';
+		});
+
+		if ($formData === null) {
+			PHPUnit_Framework_Assert::assertEmpty($messages);
+			return;
+		}
+
+		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
+		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($message) {
+			return [
+				'room' => self::$tokenToIdentifier[$message['token']],
+				'actorType' => (string) $message['actorType'],
+				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
+				'actorDisplayName' => (string) $message['actorDisplayName'],
+				'systemMessage' => (string) $message['systemMessage'],
 			];
 		}, $messages));
 	}

@@ -24,6 +24,7 @@ namespace OCA\Spreed\AppInfo;
 use OCA\Spreed\Activity\Hooks;
 use OCA\Spreed\Capabilities;
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\SystemMessage\Listener;
 use OCA\Spreed\Config;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\HookListener;
@@ -70,6 +71,10 @@ class Application extends App {
 		$this->registerCallNotificationHook($dispatcher);
 		$this->registerChatHooks($dispatcher);
 		$this->registerClientLinks($server);
+
+		/** @var Listener $systemMessageListener */
+		$systemMessageListener = $this->getContainer()->query(Listener::class);
+		$systemMessageListener->register();
 	}
 
 	protected function registerNotifier(IServerContainer $server) {
@@ -211,7 +216,19 @@ class Application extends App {
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
-			$comment = $event->getArgument('comment');
+			$message = [
+				'type' => 'chat',
+				'chat' => [
+					'refresh' => true,
+				],
+			];
+			$notifier->sendRoomMessage($room, $message);
+		});
+		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', function(GenericEvent $event) {
+			/** @var BackendNotifier $notifier */
+			$notifier = $this->getBackendNotifier();
+
+			$room = $event->getSubject();
 			$message = [
 				'type' => 'chat',
 				'chat' => [
@@ -253,8 +270,8 @@ class Application extends App {
 			$room->setLastActivity(new \DateTime());
 		};
 
-		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 		$dispatcher->addListener(ChatManager::class . '::sendMessage', $listener);
+		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', $listener);
 	}
 
 	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {

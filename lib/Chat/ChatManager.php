@@ -26,7 +26,10 @@ namespace OCA\Spreed\Chat;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\Comments\NotFoundException;
 use OCP\IUser;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Basic polling chat manager.
@@ -42,18 +45,49 @@ class ChatManager {
 
 	/** @var CommentsManager|ICommentsManager */
 	private $commentsManager;
-
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
 	/** @var Notifier */
 	private $notifier;
 
 	/**
 	 * @param CommentsManager $commentsManager
+	 * @param EventDispatcherInterface $dispatcher
 	 * @param Notifier $notifier
 	 */
 	public function __construct(CommentsManager $commentsManager,
+								EventDispatcherInterface $dispatcher,
 								Notifier $notifier) {
 		$this->commentsManager = $commentsManager;
+		$this->dispatcher = $dispatcher;
 		$this->notifier = $notifier;
+	}
+
+	/**
+	 * Sends a new message to the given chat.
+	 *
+	 * @param Room $chat
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $message
+	 * @param \DateTime $creationDateTime
+	 * @return IComment
+	 */
+	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime) {
+		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
+		$comment->setMessage($message);
+		$comment->setCreationDateTime($creationDateTime);
+		$comment->setVerb('system');
+		try {
+			$this->commentsManager->save($comment);
+
+			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
+				'comment' => $comment,
+			]));
+		} catch (NotFoundException $e) {
+		}
+
+		return $comment;
 	}
 
 	/**
@@ -74,12 +108,20 @@ class ChatManager {
 		// comment
 		$comment->setVerb('comment');
 
-		$this->commentsManager->save($comment);
+		try {
+			$this->commentsManager->save($comment);
 
-		// Update last_message
-		$chat->setLastMessage($comment);
+			// Update last_message
+			$chat->setLastMessage($comment);
 
-		$this->notifier->notifyMentionedUsers($chat, $comment);
+			$this->notifier->notifyMentionedUsers($chat, $comment);
+
+			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
+				'comment' => $comment,
+			]));
+		} catch (NotFoundException $e) {
+		}
+
 		return $comment;
 	}
 
