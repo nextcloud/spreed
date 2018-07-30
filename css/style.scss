@@ -36,6 +36,10 @@
 
 	flex-grow: 1;
 
+	/* Does not change anything in normal mode, but ensures that the element
+	 * will stretch to the full width in full screen mode. */
+	width: 100%;
+
 	/* Override margin used in server, as the header is part of the flex layout
 	 * and thus the content does not need to be pushed down. */
 	margin-top: 0;
@@ -593,91 +597,63 @@ video {
 
 /* Fullscreen handling */
 
-/**
- * Different browsers handle fullscreen elements with a margin in different
- * ways: Firefox ignores the margin and uses the full width, while Chromium uses
- * a strange mix which is neither the full width nor the full margin. Due to
- * this the margin is removed to unify the appearance across browsers; visually,
- * this causes the sidebar to slide on the content instead of "pushing" it to
- * the left.
- */
-#app-content:-webkit-full-screen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-#app-content:-moz-full-screen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-#app-content:-ms-fullscreen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-#app-content:fullscreen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-
 /* No switching between rooms in fullscreen, focus on the current call. */
-#app-content:-webkit-full-screen #app-navigation-toggle {
+#content:-webkit-full-screen #app-navigation-toggle {
 	display: none !important;
 }
-#app-content:-moz-full-screen #app-navigation-toggle {
+#content:-moz-full-screen #app-navigation-toggle {
 	display: none !important;
 }
-#app-content:-ms-fullscreen #app-navigation-toggle {
+#content:-ms-fullscreen #app-navigation-toggle {
 	display: none !important;
 }
-#app-content:fullscreen #app-navigation-toggle {
+#content:fullscreen #app-navigation-toggle {
 	display: none !important;
 }
 
-/**
- * In fullscreen mode there is no header, so the sidebar has to be moved to the
- * top.
- */
-#app-content:-webkit-full-screen #app-sidebar {
-	top: 0;
+#content:-webkit-full-screen #app-navigation {
+	display: none;
 }
-#app-content:-moz-full-screen #app-sidebar {
-	top: 0;
+#content:-moz-full-screen #app-navigation {
+	display: none;
 }
-#app-content:-ms-fullscreen #app-sidebar {
-	top: 0;
+#content:-ms-fullscreen #app-navigation {
+	display: none;
 }
-#app-content:fullscreen #app-sidebar {
-	top: 0;
+#content:fullscreen #app-navigation {
+	display: none;
 }
 
-/* In the public page the header is inside the app-content, so it has to be
-   hidden explicitly. */
-#app-content:-webkit-full-screen #header {
-	display: none !important;
+#content:-webkit-full-screen #app-content {
+	margin-left: 0;
 }
-#app-content:-moz-full-screen #header {
-	display: none !important;
+#content:-moz-full-screen #app-content {
+	margin-left: 0;
 }
-#app-content:-ms-fullscreen #header {
-	display: none !important;
+#content:-ms-fullscreen #app-content {
+	margin-left: 0;
 }
-#app-content:fullscreen #header {
-	display: none !important;
+#content:fullscreen #app-content {
+	margin-left: 0;
+}
+
+/* Set the background of the content to the same colour as the app content and
+ * the app sidebar to prevent a black background from appearing when the sidebar
+ * is shown or hidden.
+ * During a call the background of the app content is black, but as the
+ * background of the content has the same colour of the sidebar and is a
+ * placeholder on its position it looks acceptable. */
+#content:-webkit-full-screen {
+	background-color: var(--color-main-background);
+}
+#content:-moz-full-screen {
+	background-color: var(--color-main-background);
+}
+#content:-ms-fullscreen {
+	background-color: var(--color-main-background);
+}
+#content:fullscreen {
+	background-color: var(--color-main-background);
 }
 
 
@@ -758,6 +734,16 @@ video {
 	/* Higher than the z-index of the app-content */
 	z-index: 1050;
 	cursor: pointer;
+}
+
+/* Override server definitions to ensure that the sidebar is vertically
+ * stretched, as the header is part of the flex layout and its height does not
+ * need to be removed from the sidebar (specially in fullscreen mode where there
+ * is no header). */
+#app-sidebar {
+	position: static;
+	height: unset;
+	top: 0;
 }
 
 .icon-menu-people {

@@ -697,7 +697,7 @@
 			}
 		},
 		enableFullscreen: function() {
-			var fullscreenElem = document.getElementById('app-content');
+			var fullscreenElem = document.getElementById('content');
 
 			if (fullscreenElem.requestFullscreen) {
 				fullscreenElem.requestFullscreen();
