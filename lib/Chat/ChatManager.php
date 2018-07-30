@@ -27,6 +27,7 @@ use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\IDBConnection;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -114,7 +115,10 @@ class ChatManager {
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-			$this->notifier->notifyMentionedUsers($chat, $comment);
+			$notifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
+			if (!empty($notifiedUsers)) {
+				$chat->markUsersAsMentioned($notifiedUsers, $creationDateTime);
+			}
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
 				'comment' => $comment,
@@ -125,13 +129,15 @@ class ChatManager {
 		return $comment;
 	}
 
-	/**
-	 * @param Room $chat
-	 * @param IUser $user
-	 * @return int
-	 */
-	public function getUnreadCount(Room $chat, IUser $user) {
-		$unreadSince = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
+	public function getUnreadMarker(Room $chat, IUser $user): \DateTime {
+		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
+		if ($marker === null) {
+			$marker = new \DateTime('2000-01-01');
+		}
+		return $marker;
+	}
+
+	public function getUnreadCount(Room $chat, \DateTime $unreadSince): int {
 		return $this->commentsManager->getNumberOfCommentsForObject('chat', $chat->getId(), $unreadSince);
 	}
 

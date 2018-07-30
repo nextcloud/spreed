@@ -96,7 +96,13 @@ class Manager {
 
 		$lastMessage = null;
 		if (!empty($row['comment_id'])) {
-			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, ['id' => $row['comment_id']]));
+			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, [
+				'id' => $row['comment_id'],
+				'parent_id' => '',
+				'topmost_parent_id' => '',
+				'latest_child_timestamp' => null,
+				'children_count' => 0,
+			]));
 		}
 
 		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage);
@@ -108,7 +114,12 @@ class Manager {
 	 * @return Participant
 	 */
 	public function createParticipantObject(Room $room, array $row) {
-		return new Participant($this->db, $room, $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], $row['session_id'], (bool) $row['in_call'], (bool) $row['favorite']);
+		$lastMention = null;
+		if (!empty($row['last_mention'])) {
+			$lastMention = new \DateTime($row['last_mention']);
+		}
+
+		return new Participant($this->db, $room, $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], $row['session_id'], (bool) $row['in_call'], (bool) $row['favorite'], $lastMention);
 	}
 
 	/**

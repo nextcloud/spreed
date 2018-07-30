@@ -149,13 +149,19 @@
 	line-height: 44px;
 	padding: 0 12px; /* Same padding as all li > a in the app-navigation */
 
+	span {
+		padding: 2px 5px;
+		border-radius: 10px;
+		background-color: nc-lighten($color-main-text, 90%);
+		font-weight: bold;
+	}
+
 	&.highlighted {
 		padding-right: 0;
 		text-align: center;
+		width: 22px !important;
 
 		span {
-			padding: 2px 5px;
-			border-radius: 10px;
 			background-color: $color-primary;
 			color: $color-primary-text;
 		}
@@ -926,7 +932,7 @@ video {
 }
 
 .participantWithList .participant-entry-utils-menu-button button:hover,
-.participantWithList .participant-entry-utils-menu-button button:focus, {
+.participantWithList .participant-entry-utils-menu-button button:focus {
 	opacity: 1;
 }
 

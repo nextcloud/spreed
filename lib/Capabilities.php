@@ -43,6 +43,7 @@ class Capabilities implements IPublicCapability {
 					'last-room-activity',
 					'no-ping',
 					'system-messages',
+					'mention-flag',
 				],
 			],
 		];
