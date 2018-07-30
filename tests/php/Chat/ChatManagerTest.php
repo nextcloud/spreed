@@ -129,7 +129,7 @@ class ChatManagerTest extends \Test\TestCase {
 			->willReturn('testChatId');
 
 		$this->commentsManager->expects($this->once())
-			->method('getForObjectSinceTalkVersion')
+			->method('getForObjectSince')
 			->with('chat', 'testChatId', $offset, 'desc', $limit)
 			->willReturn($expected);
 
@@ -154,7 +154,7 @@ class ChatManagerTest extends \Test\TestCase {
 			->willReturn('testChatId');
 
 		$this->commentsManager->expects($this->once())
-			->method('getForObjectSinceTalkVersion')
+			->method('getForObjectSince')
 			->with('chat', 'testChatId', $offset, 'asc', $limit)
 			->willReturn($expected);
 
@@ -189,7 +189,7 @@ class ChatManagerTest extends \Test\TestCase {
 			->willReturn('testChatId');
 
 		$this->commentsManager->expects($this->exactly(2))
-			->method('getForObjectSinceTalkVersion')
+			->method('getForObjectSince')
 			->with('chat', 'testChatId', $offset, 'asc', $limit)
 			->willReturnOnConsecutiveCalls(
 				[],

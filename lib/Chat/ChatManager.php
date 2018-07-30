@@ -152,7 +152,7 @@ class ChatManager {
 	 *         timeout expired.
 	 */
 	public function getHistory(Room $chat, $offset, $limit) {
-		return $this->commentsManager->getForObjectSinceTalkVersion('chat', $chat->getId(), $offset, 'desc', $limit);
+		return $this->commentsManager->getForObjectSince('chat', $chat->getId(), $offset, 'desc', $limit);
 	}
 
 	/**
@@ -180,7 +180,7 @@ class ChatManager {
 		}
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chat->getId(), $offset, 'asc', $limit);
+		$comments = $this->commentsManager->getForObjectSince('chat', $chat->getId(), $offset, 'asc', $limit);
 
 		if ($user instanceof IUser) {
 			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), new  \DateTime(), $user);
@@ -190,7 +190,7 @@ class ChatManager {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getForObjectSinceTalkVersion('chat', $chat->getId(), $offset, 'asc', $limit);
+			$comments = $this->commentsManager->getForObjectSince('chat', $chat->getId(), $offset, 'asc', $limit);
 		}
 
 		return $comments;
