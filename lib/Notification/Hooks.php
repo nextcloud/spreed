@@ -110,7 +110,7 @@ class Hooks {
 				->setObject('room', $room->getToken());
 			$this->notificationManager->markProcessed($notification);
 
-			$notification->setObject('call', $room->getId());
+			$notification->setObject('call', $room->getToken());
 			$this->notificationManager->markProcessed($notification);
 
 			$notification->setSubject('call', [
