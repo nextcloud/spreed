@@ -33,6 +33,11 @@ class Participant {
 	const GUEST = 4;
 	const USER_SELF_JOINED = 5;
 
+	const FLAG_DISCONNECTED = 0;
+	const FLAG_IN_CALL = 1;
+	const FLAG_WITH_AUDIO = 2;
+	const FLAG_WITH_VIDEO = 4;
+
 	/** @var IDBConnection */
 	protected $db;
 	/** @var Room */

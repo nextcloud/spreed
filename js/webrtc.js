@@ -16,7 +16,7 @@ var spreedPeerConnectionTable = [];
 	var ownPeer = null;
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
-	var selfInCall = 0;
+	var selfInCall = OCA.SpreedMe.app.FLAG_DISCONNECTED;
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -136,7 +136,7 @@ var spreedPeerConnectionTable = [];
 		if (flags.hasOwnProperty('inCall')) {
 			flags = flags.inCall;
 		}
-		flags = flags || 0;
+		flags = flags || OCA.SpreedMe.app.FLAG_DISCONNECTED;
 		var REQUIRED_FLAGS = OCA.SpreedMe.app.FLAG_WITH_AUDIO | OCA.SpreedMe.app.FLAG_WITH_VIDEO;
 		return (flags & REQUIRED_FLAGS) !== 0;
 	}

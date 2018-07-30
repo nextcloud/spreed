@@ -42,12 +42,6 @@ class Room {
 	const GROUP_CALL = 2;
 	const PUBLIC_CALL = 3;
 
-	// Bit flags for 'in_call' status. Must stay in sync with values in
-	// "js/app.js".
-	const FLAG_IN_CALL = 1;
-	const FLAG_WITH_AUDIO = 2;
-	const FLAG_WITH_VIDEO = 4;
-
 	/** @var Manager */
 	private $manager;
 	/** @var IDBConnection */
@@ -684,15 +678,8 @@ class Room {
 	}
 
 
-	/**
-	 * @param string $sessionId
-	 * @param int $flags
-	 */
-	public function changeInCall($sessionId, $flags) {
-		if ($flags === false) {
-			$flags = 0;
-		}
-		if ($flags !== 0) {
+	public function changeInCall(string $sessionId, int $flags) {
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(self::class . '::preSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
 				'flags' => $flags,
@@ -710,7 +697,7 @@ class Room {
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		if ($flags !== 0) {
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(self::class . '::postSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
 				'flags' => $flags,
@@ -866,7 +853,7 @@ class Room {
 		$query->select('session_id')
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(0, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $query->execute();
 		$row = $result->fetch();

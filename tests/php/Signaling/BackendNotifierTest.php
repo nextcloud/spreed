@@ -264,7 +264,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			'userId' => $this->userId,
 			'sessionId' => $userSession,
 		]);
-		$room->changeInCall($userSession, Room::FLAG_IN_CALL | Room::FLAG_WITH_AUDIO | Room::FLAG_WITH_VIDEO);
+		$room->changeInCall($userSession, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -297,7 +297,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$this->controller->clearRequests();
 		$guestSession = $room->joinRoomGuest('');
-		$room->changeInCall($guestSession, Room::FLAG_IN_CALL);
+		$room->changeInCall($guestSession, Participant::FLAG_IN_CALL);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -334,7 +334,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		], $bodies);
 
 		$this->controller->clearRequests();
-		$room->changeInCall($userSession, 0);
+		$room->changeInCall($userSession, Participant::FLAG_DISCONNECTED);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {

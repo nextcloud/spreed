@@ -287,7 +287,7 @@ class BackendNotifier{
 		$participants = $room->getParticipants();
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
-			if ($participant['inCall'] !== 0) {
+			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
 				$users[] = $participant;
 			}
 			if (in_array($participant['sessionId'], $sessionIds)) {
@@ -298,7 +298,7 @@ class BackendNotifier{
 			if (!isset($participant['participantType'])) {
 				$participant['participantType'] = Participant::GUEST;
 			}
-			if ($participant['inCall'] !== 0) {
+			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
 				$users[] = $participant;
 			}
 			if (in_array($participant['sessionId'], $sessionIds)) {

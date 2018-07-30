@@ -28,7 +28,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Spreed\Participant;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
@@ -70,7 +70,7 @@ class CallController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getPeersForCall($token) {
+	public function getPeersForCall(string $token): DataResponse {
 		try {
 			$room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
 		} catch (RoomNotFoundException $e) {
@@ -132,10 +132,10 @@ class CallController extends OCSController {
 	 * @UseSession
 	 *
 	 * @param string $token
-	 * @param int $flags
+	 * @param int|null $flags
 	 * @return DataResponse
 	 */
-	public function joinCall($token, $flags) {
+	public function joinCall(string $token, $flags): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
@@ -167,7 +167,7 @@ class CallController extends OCSController {
 
 		if ($flags === null) {
 			// Default flags: user is in room with audio/video.
-			$flags = Room::FLAG_IN_CALL | Room::FLAG_WITH_AUDIO | Room::FLAG_WITH_VIDEO;
+			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
 		}
 
 		$room->changeInCall($sessionId, $flags);
@@ -182,7 +182,7 @@ class CallController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function leaveCall($token) {
+	public function leaveCall(string $token): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {
@@ -212,7 +212,7 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->changeInCall($sessionId, 0);
+		$room->changeInCall($sessionId, Participant::FLAG_DISCONNECTED);
 
 		return new DataResponse();
 	}

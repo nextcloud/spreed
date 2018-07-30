@@ -29,6 +29,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Signaling\BackendNotifier;
@@ -195,7 +196,7 @@ class Application extends App {
 
 			$room = $event->getSubject();
 			$sessionId = $event->getArgument('sessionId');
-			$notifier->roomInCallChanged($room, 0, [$sessionId]);
+			$notifier->roomInCallChanged($room, Participant::FLAG_DISCONNECTED, [$sessionId]);
 		});
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
