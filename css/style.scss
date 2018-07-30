@@ -1,21 +1,67 @@
+/* The standard layout defined in the server includes a fixed header with a
+ * sticky sidebar. This causes the scroll bar for the main area to appear to the
+ * right of the sidebar, which looks confusing for the chat. Thus that layout is
+ * overridden with a full set of flex containers to cascade parent element
+ * height to the main view to limit the vertical scroll bar only to it (same
+ * thing done for the sidebar and the chat view). */
+#body-user,
 #body-public {
-	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
-.app-spreed #app-content,
-#body-public #app-content {
+#body-user #header,
+#body-public #header {
+	/* Override fixed position from server to include it in the flex layout */
+	position: static;
+	flex-shrink: 0;
+}
+
+#content-wrapper {
+	display: flex;
+	flex-direction: column;
 	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Override "min-height: 100%" set in server, as the header is part of the
+	 * flex layout and thus the whole body is not available for the content. */
+	min-height: 0;
 }
 
-.app-spreed #app-navigation {
-	padding-top: 45px;
-	padding-bottom: 0;
+#content {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Does not change anything in normal mode, but ensures that the element
+	 * will stretch to the full width in full screen mode. */
+	width: 100%;
+
+	/* Override margin used in server, as the header is part of the flex layout
+	 * and thus the content does not need to be pushed down. */
+	margin-top: 0;
+}
+
+#app-content {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
 }
 
 #oca-spreedme-add-room {
-	position: absolute;
-	width: 249px;
-	top: 0;
 	border-bottom: 1px solid $color-border;
 }
 
@@ -551,91 +597,63 @@ video {
 
 /* Fullscreen handling */
 
-/**
- * Different browsers handle fullscreen elements with a margin in different
- * ways: Firefox ignores the margin and uses the full width, while Chromium uses
- * a strange mix which is neither the full width nor the full margin. Due to
- * this the margin is removed to unify the appearance across browsers; visually,
- * this causes the sidebar to slide on the content instead of "pushing" it to
- * the left.
- */
-#app-content:-webkit-full-screen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-#app-content:-moz-full-screen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-#app-content:-ms-fullscreen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-#app-content:fullscreen {
-	width: 100%;
-	margin-right: 0;
-
-	&.participants-1 {
-		background: #fff;
-	}
-}
-
 /* No switching between rooms in fullscreen, focus on the current call. */
-#app-content:-webkit-full-screen #app-navigation-toggle {
+#content:-webkit-full-screen #app-navigation-toggle {
 	display: none !important;
 }
-#app-content:-moz-full-screen #app-navigation-toggle {
+#content:-moz-full-screen #app-navigation-toggle {
 	display: none !important;
 }
-#app-content:-ms-fullscreen #app-navigation-toggle {
+#content:-ms-fullscreen #app-navigation-toggle {
 	display: none !important;
 }
-#app-content:fullscreen #app-navigation-toggle {
+#content:fullscreen #app-navigation-toggle {
 	display: none !important;
 }
 
-/**
- * In fullscreen mode there is no header, so the sidebar has to be moved to the
- * top.
- */
-#app-content:-webkit-full-screen #app-sidebar {
-	top: 0;
+#content:-webkit-full-screen #app-navigation {
+	display: none;
 }
-#app-content:-moz-full-screen #app-sidebar {
-	top: 0;
+#content:-moz-full-screen #app-navigation {
+	display: none;
 }
-#app-content:-ms-fullscreen #app-sidebar {
-	top: 0;
+#content:-ms-fullscreen #app-navigation {
+	display: none;
 }
-#app-content:fullscreen #app-sidebar {
-	top: 0;
+#content:fullscreen #app-navigation {
+	display: none;
 }
 
-/* In the public page the header is inside the app-content, so it has to be
-   hidden explicitly. */
-#app-content:-webkit-full-screen #header {
-	display: none !important;
+#content:-webkit-full-screen #app-content {
+	margin-left: 0;
 }
-#app-content:-moz-full-screen #header {
-	display: none !important;
+#content:-moz-full-screen #app-content {
+	margin-left: 0;
 }
-#app-content:-ms-fullscreen #header {
-	display: none !important;
+#content:-ms-fullscreen #app-content {
+	margin-left: 0;
 }
-#app-content:fullscreen #header {
-	display: none !important;
+#content:fullscreen #app-content {
+	margin-left: 0;
+}
+
+/* Set the background of the content to the same colour as the app content and
+ * the app sidebar to prevent a black background from appearing when the sidebar
+ * is shown or hidden.
+ * During a call the background of the app content is black, but as the
+ * background of the content has the same colour of the sidebar and is a
+ * placeholder on its position it looks acceptable. */
+#content:-webkit-full-screen {
+	background-color: var(--color-main-background);
+}
+#content:-moz-full-screen {
+	background-color: var(--color-main-background);
+}
+#content:-ms-fullscreen {
+	background-color: var(--color-main-background);
+}
+#content:fullscreen {
+	background-color: var(--color-main-background);
 }
 
 
@@ -703,13 +721,29 @@ video {
 	display: inline-block;
 }
 
+/* The sidebar wrapper contains the trigger for the sidebar and the sidebar
+ * itself placed in columns. To prevent the trigger from taking up space for the
+ * app content the trigger width is removed from the wrapper by pushing its left
+ * margin. */
+#app-sidebar-wrapper {
+	display: flex;
+	margin-left: -44px;
+}
+
 #app-sidebar-trigger {
-	position: absolute;
-	top: 0;
-	right: 0;
-	/* Higher than the z-index of the emptycontent */
-	z-index: 50;
+	/* Higher than the z-index of the app-content */
+	z-index: 1050;
 	cursor: pointer;
+}
+
+/* Override server definitions to ensure that the sidebar is vertically
+ * stretched, as the header is part of the flex layout and its height does not
+ * need to be removed from the sidebar (specially in fullscreen mode where there
+ * is no header). */
+#app-sidebar {
+	position: static;
+	height: unset;
+	top: 0;
 }
 
 .icon-menu-people {
@@ -753,27 +787,9 @@ video {
 	}
 }
 
-/* The header element contains the header div; as the header div uses a fixed
-   position the header element has no height, and as #app-content-wrapper uses a
-   "100%" height its contents must be padded to prevent them from overlapping
-   with the header element */
-#body-public #app-content-wrapper {
-	padding-top: 45px;
-}
-
 /* make blue header bar transparent in shared room */
 #body-public #app-content:not(.participants-1) #header.spreed-public {
 	background: transparent;
-}
-
-/* Correctly position icons below header in public chat. */
-#body-public {
-	#app-sidebar-trigger {
-		top: 45px;
-	}
-	#video-fullscreen {
-		top: 89px;
-	}
 }
 
 /* As the header is hidden (except for the logo), move the fullscreen button and

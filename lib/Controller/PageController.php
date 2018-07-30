@@ -36,6 +36,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
@@ -220,7 +221,8 @@ class PageController extends Controller {
 			'token' => $token,
 			'signaling-settings' => $this->config->getSettings($this->userId),
 		];
-		$response = new TemplateResponse($this->appName, 'index-public', $params, 'base');
+		$response = new PublicTemplateResponse($this->appName, 'index-public', $params);
+		$response->setFooterVisible(false);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');

@@ -42,6 +42,15 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	public static function conversationNameEditableTextLabel() {
 		return Locator::forThe()->css(".room-name")->
 				descendantOf(self::conversationInfoContainer())->
+				describedAs("Conversation name editable text label in conversation info");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function conversationNameLabel() {
+		return Locator::forThe()->css(".label")->
+				descendantOf(self::conversationNameEditableTextLabel())->
 				describedAs("Conversation name label in conversation info");
 	}
 
@@ -67,7 +76,7 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	 * @Given I rename the conversation to :newConversationName
 	 */
 	public function iRenameTheConversationTo($newConversationName) {
-		$this->actor->find(self::conversationNameEditableTextLabel(), 10)->click();
+		$this->actor->find(self::conversationNameLabel(), 10)->click();
 		$this->actor->find(self::editConversationNameButton(), 2)->click();
 		$this->actor->find(self::conversationNameTextInput(), 2)->setValue($newConversationName . "\r");
 	}
