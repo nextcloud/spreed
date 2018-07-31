@@ -631,8 +631,16 @@ video {
 	display: none;
 }
 
-.muteIndicator.audio-off {
+.muteIndicator.audio-off,
+.hideRemoteVideo.icon-video-off {
 	opacity: .7;
+}
+
+.hideRemoteVideo.icon-video-off {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
 }
 
 .iceFailedIndicator {
