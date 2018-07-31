@@ -462,11 +462,28 @@ video {
 /* Use dark icons when not in a call (= white background) */
 #app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow,
 #app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .icon-white.icon-shadow {
-	/* Still use white icons outside of calls when local video shows */
+	/* Still use white icons outside of calls when local video shows; otherwise
+	 * use dark icons.
+	 * There is no need to override "icon-video" and "icon-screensharing", as
+	 * they will never be shown with dark icons. */
 	&#hideVideo.video-disabled,
 	&#mute.video-disabled,
 	&#screensharing-button.video-disabled {
 		filter: none;
+	}
+	&#hideVideo.video-disabled {
+		background-image: var(--icon-video-off-000);
+	}
+	&#mute.video-disabled {
+		&.icon-audio-off {
+			background-image: var(--icon-audio-off-000);
+		}
+		&.icon-audio {
+			background-image: var(--icon-audio-000);
+		}
+	}
+	&#screensharing-button.video-disabled {
+		background-image: var(--icon-screen-off-000);
 	}
 
 	&.icon-menu-people {
