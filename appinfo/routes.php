@@ -218,6 +218,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#inviteEmailToRoom',
+			'url' => '/api/{apiVersion}/room/{token}/participants/guests',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#removeParticipantFromRoom',
 			'url' => '/api/{apiVersion}/room/{token}/participants',
 			'verb' => 'DELETE',

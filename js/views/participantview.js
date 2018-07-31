@@ -110,7 +110,8 @@
 							format: 'json',
 							search: term,
 							itemType: 'call',
-							itemId: this.room.get('token')
+							itemId: this.room.get('token'),
+							shareTypes: [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_EMAIL]
 						};
 					}.bind(this),
 					results: function (response) {
@@ -130,7 +131,7 @@
 							results.push({
 								id: suggestion.id,
 								displayName: suggestion.label,
-								type: 'user'
+								type: suggestion.source === 'users' ? 'user' : 'email'
 							});
 						});
 
@@ -144,45 +145,33 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
+					if (element.type === 'email') {
+						return '<span><div class="avatar icon-mail"></div>' + escapeHTML(element.displayName) + '</span>';
+					}
+
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
 				},
 				formatSelection: function () {
 					return '<span class="select2-default" style="padding-left: 0;">' + t('spreed', 'Add participant …') + '</span>';
 				}
 			});
-			this.ui.addParticipantInput.on('change', function(e) {
-				var token = this.room.get('token');
-				var participant = e.val;
-				OCA.SpreedMe.app.addParticipantToRoom(token, participant);
 
-				// Clear the input to be able to select the last participant
-				// again (for example, in a different room), as select2 only
-				// triggers the change event when the selected item is different
-				// than the input value.
-				this.ui.addParticipantInput.val('');
-
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
+			this.ui.addParticipantInput.on('select2-selecting', function(e) {
+				switch (e.object.type) {
+					case 'user':
+						OCA.SpreedMe.app.addParticipantToRoom(this.room.get('token'), e.object.id);
+						break;
+					case 'email':
+						OCA.SpreedMe.app.inviteEmailToRoom(this.room.get('token'), e.object.id);
+						break;
+					default:
+						console.log('Unknown type', e.object.type);
+						break;
+				}
 			}.bind(this));
-			this.ui.addParticipantInput.on('click', function() {
-				$('.select2-drop').find('.avatar').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
 
 			this.ui.addParticipantInput.on('select2-loaded', function() {
-				$('.select2-drop').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar[data-user]').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));

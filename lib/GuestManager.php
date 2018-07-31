@@ -25,7 +25,14 @@ namespace OCA\Spreed;
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\Defaults;
 use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
+use OCP\Mail\IMailer;
+use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -34,11 +41,37 @@ class GuestManager {
 	/** @var IDBConnection */
 	protected $connection;
 
+	/** @var IMailer */
+	protected $mailer;
+
+	/** @var Defaults */
+	protected $defaults;
+
+	/** @var IUserSession */
+	protected $userSession;
+
+	/** @var IURLGenerator */
+	protected $url;
+
+	/** @var IL10N */
+	protected $l;
+
 	/** @var EventDispatcherInterface */
 	protected $dispatcher;
 
-	public function __construct(IDBConnection $connection, EventDispatcherInterface $dispatcher) {
+	public function __construct(IDBConnection $connection,
+								IMailer $mailer,
+								Defaults $defaults,
+								IUserSession $userSession,
+								IURLGenerator $url,
+								IL10N $l,
+								EventDispatcherInterface $dispatcher) {
 		$this->connection = $connection;
+		$this->mailer = $mailer;
+		$this->defaults = $defaults;
+		$this->userSession = $userSession;
+		$this->url = $url;
+		$this->l = $l;
 		$this->dispatcher = $dispatcher;
 	}
 
@@ -122,5 +155,65 @@ class GuestManager {
 		$result->closeCursor();
 
 		return $map;
+	}
+
+	public function inviteByEmail(Room $room, string $email) {
+		$this->dispatcher->dispatch(self::class . '::preInviteByEmail', new GenericEvent($room, [
+			'email' => $email,
+		]));
+
+		$link = $this->url->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()]);
+
+		$message = $this->mailer->createMessage();
+
+		$user = $this->userSession->getUser();
+		$invitee = $user instanceof IUser ? $user->getDisplayName() : '';
+
+		$template = $this->mailer->createEMailTemplate('Talk.InviteByEmail', [
+			'invitee' => $invitee,
+			'roomName' => $room->getName(),
+			'roomLink' => $link,
+		]);
+
+		if ($user instanceof IUser) {
+			$subject = $this->l->t('%s invited you to a conversation.', $user->getDisplayName());
+			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $user->getDisplayName()]);
+		} else {
+			$subject = $this->l->t('You were invited to a conversation.');
+			$message->setFrom([Util::getDefaultEmailAddress('no-reply') => $this->defaults->getName()]);
+		}
+
+		$template->setSubject($subject);
+		$template->addHeader();
+		$template->addHeading($this->l->t('Conversation invitation'));
+		$template->addBodyText(
+			htmlspecialchars($subject . ' ' . $this->l->t('Click the button below to join.')),
+			$subject
+		);
+
+		if ($room->getName()) {
+			$template->addBodyButton(
+				$this->l->t('Join »%s«', [$room->getName()]),
+				$link
+			);
+		} else {
+			$template->addBodyButton(
+				$this->l->t('Join now'),
+				$link
+			);
+		}
+
+		$template->addFooter();
+
+		$message->setTo([$email]);
+		$message->useTemplate($template);
+		try {
+			$this->mailer->send($message);
+
+			$this->dispatcher->dispatch(self::class . '::postInviteByEmail', new GenericEvent($room, [
+				'email' => $email,
+			]));
+		} catch (\Exception $e) {
+		}
 	}
 }
