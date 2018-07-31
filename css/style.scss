@@ -449,6 +449,16 @@ video {
 	background-color: #000;
 }
 
+#app-content ~ #app-sidebar-wrapper .icon-menu-people,
+#app-content .icon-fullscreen {
+	opacity: .5;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
 /* Use dark icons when not in a call (= white background) */
 #app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow,
 #app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .icon-white.icon-shadow {
@@ -469,12 +479,6 @@ video {
 	&.icon-menu-people,
 	&.icon-fullscreen {
 		filter: none;
-		opacity: .5;
-
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
 	}
 }
 
