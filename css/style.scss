@@ -17,24 +17,18 @@
 	flex-shrink: 0;
 }
 
-#content-wrapper {
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-
-	flex-grow: 1;
-
-	/* Override "min-height: 100%" set in server, as the header is part of the
-	 * flex layout and thus the whole body is not available for the content. */
-	min-height: 0;
-}
-
 #content {
 	display: flex;
 	flex-direction: row;
 	overflow: hidden;
 
 	flex-grow: 1;
+
+	/* Override "min-height: 100%" and "padding-top: 50px" set in server, as the
+	 * header is part of the flex layout and thus the whole body is not
+	 * available for the content. */
+	min-height: 0;
+	padding-top: 0;
 
 	/* Does not change anything in normal mode, but ensures that the element
 	 * will stretch to the full width in full screen mode. */
