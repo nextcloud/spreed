@@ -459,6 +459,13 @@ video {
 		filter: none;
 	}
 
+	&.icon-menu-people {
+		background-image: var(--icon-menu-people-000);
+	}
+	&.icon-fullscreen {
+		background-image: var(--icon-fullscreen-000);
+	}
+
 	&.icon-menu-people,
 	&.icon-fullscreen {
 		filter: none;
@@ -747,9 +754,7 @@ video {
 	top: 0;
 }
 
-.icon-menu-people {
-	background-image: url('../img/menu-people.svg?v=1');
-}
+@include icon-black-white('menu-people', 'spreed', 1);
 
 .icon-no-password {
 	background-image: url('../img/no-password.svg?v=1');
