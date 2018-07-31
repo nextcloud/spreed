@@ -466,15 +466,15 @@ video {
 	 * use dark icons.
 	 * There is no need to override "icon-video" and "icon-screensharing", as
 	 * they will never be shown with dark icons. */
-	&#hideVideo.video-disabled,
-	&#mute.video-disabled,
-	&#screensharing-button.video-disabled {
+	&#hideVideo.local-video-disabled,
+	&#mute.local-video-disabled,
+	&#screensharing-button.local-video-disabled {
 		filter: none;
 	}
-	&#hideVideo.video-disabled {
+	&#hideVideo.local-video-disabled {
 		background-image: var(--icon-video-off-000);
 	}
-	&#mute.video-disabled {
+	&#mute.local-video-disabled {
 		&.icon-audio-off {
 			background-image: var(--icon-audio-off-000);
 		}
@@ -482,7 +482,7 @@ video {
 			background-image: var(--icon-audio-000);
 		}
 	}
-	&#screensharing-button.video-disabled {
+	&#screensharing-button.local-video-disabled {
 		background-image: var(--icon-screen-off-000);
 	}
 
