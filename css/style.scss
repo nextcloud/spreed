@@ -583,6 +583,15 @@ video {
 	opacity: .7;
 }
 
+.nameIndicator button.audio-disabled:not(.no-audio-available),
+.nameIndicator button.video-disabled:not(.no-video-available),
+.nameIndicator button.screensharing-disabled {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
 .nameIndicator button.no-audio-available,
 .nameIndicator button.no-video-available {
 	opacity: .7;
