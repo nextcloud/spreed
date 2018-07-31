@@ -132,11 +132,11 @@
 	margin: 0 !important;
 }
 
-.icon-contacts-dark,
+.select2-result .icon-contacts-dark.avatar,
+.select2-result .icon-add.avatar,
+#app-navigation .icon-contacts-dark,
 #app-navigation .app-navigation-entry-link .icon-public,
-.icon-add  {
-	background-color: transparent !important;
-	color: transparent !important;
+#app-navigation .icon-add  {
 	border-radius: 0;
 	width: 32px;
 	height: 32px;

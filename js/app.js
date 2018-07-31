@@ -133,7 +133,7 @@
 			});
 
 			$('#select-participants').on("click", function() {
-				$('.select2-drop').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar[data-user]').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
@@ -164,7 +164,7 @@
 			}.bind(this));
 
 			$('#select-participants').on("select2-loaded", function() {
-				$('.select2-drop').find('.avatar').each(function () {
+				$('.select2-drop').find('.avatar[data-user]').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
 						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
