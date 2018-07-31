@@ -482,6 +482,13 @@ video {
 	}
 }
 
+/* Use white icon for the app navigation toggle when in a call */
+#app-content.incall .icon-menu,
+#app-content.screensharing .icon-menu {
+	@include icon-color('menu', 'actions', $color-white, 1, true);
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
 #app-content.screensharing #screens {
 	position: absolute;
 	width: 100%;
