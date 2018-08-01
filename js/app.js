@@ -773,10 +773,10 @@
 			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
 
 			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video (v)'))
-				.removeClass('video-disabled icon-video-off')
+				.removeClass('local-video-disabled video-disabled icon-video-off')
 				.addClass('icon-video');
-			$audioMuteButton.removeClass('video-disabled');
-			$screensharingButton.removeClass('video-disabled');
+			$audioMuteButton.removeClass('local-video-disabled');
+			$screensharingButton.removeClass('local-video-disabled');
 
 			avatarContainer.hide();
 			localVideo.show();
@@ -799,10 +799,10 @@
 
 			if (!$hideVideoButton.hasClass('no-video-available')) {
 				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video (v)'))
-					.addClass('video-disabled icon-video-off')
+					.addClass('local-video-disabled video-disabled icon-video-off')
 					.removeClass('icon-video');
-				$audioMuteButton.addClass('video-disabled');
-				$screensharingButton.addClass('video-disabled');
+				$audioMuteButton.addClass('local-video-disabled');
+				$screensharingButton.addClass('local-video-disabled');
 			}
 
 			var avatar = avatarContainer.find('.avatar');

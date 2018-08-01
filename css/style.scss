@@ -449,25 +449,61 @@ video {
 	background-color: #000;
 }
 
+#app-content ~ #app-sidebar-wrapper .icon-menu-people,
+#app-content .icon-fullscreen {
+	opacity: .5;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
 /* Use dark icons when not in a call (= white background) */
-#app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow {
-	/* Still use white icons outside of calls when local video shows */
-	&#hideVideo.video-disabled,
-	&#mute.video-disabled,
-	&#screensharing-button.video-disabled {
+#app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow,
+#app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .icon-white.icon-shadow {
+	/* Still use white icons outside of calls when local video shows; otherwise
+	 * use dark icons.
+	 * There is no need to override "icon-video" and "icon-screensharing", as
+	 * they will never be shown with dark icons. */
+	&#hideVideo.local-video-disabled,
+	&#mute.local-video-disabled,
+	&#screensharing-button.local-video-disabled {
 		filter: none;
+	}
+	&#hideVideo.local-video-disabled {
+		background-image: var(--icon-video-off-000);
+	}
+	&#mute.local-video-disabled {
+		&.icon-audio-off {
+			background-image: var(--icon-audio-off-000);
+		}
+		&.icon-audio {
+			background-image: var(--icon-audio-000);
+		}
+	}
+	&#screensharing-button.local-video-disabled {
+		background-image: var(--icon-screen-off-000);
+	}
+
+	&.icon-menu-people {
+		background-image: var(--icon-menu-people-000);
+	}
+	&.icon-fullscreen {
+		background-image: var(--icon-fullscreen-000);
 	}
 
 	&.icon-menu-people,
 	&.icon-fullscreen {
 		filter: none;
-		opacity: .5;
-
-		&:hover,
-		&:focus {
-			opacity: 1;
-		}
 	}
+}
+
+/* Use white icon for the app navigation toggle when in a call */
+#app-content.incall .icon-menu,
+#app-content.screensharing .icon-menu {
+	@include icon-color('menu', 'actions', $color-white, 1, true);
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
 
 #app-content.screensharing #screens {
@@ -547,6 +583,15 @@ video {
 	opacity: .7;
 }
 
+.nameIndicator button.audio-disabled:not(.no-audio-available),
+.nameIndicator button.video-disabled:not(.no-video-available),
+.nameIndicator button.screensharing-disabled {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
 .nameIndicator button.no-audio-available,
 .nameIndicator button.no-video-available {
 	opacity: .7;
@@ -586,8 +631,16 @@ video {
 	display: none;
 }
 
-.muteIndicator.audio-off {
+.muteIndicator.audio-off,
+.hideRemoteVideo.icon-video-off {
 	opacity: .7;
+}
+
+.hideRemoteVideo.icon-video-off {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
 }
 
 .iceFailedIndicator {
@@ -746,9 +799,7 @@ video {
 	top: 0;
 }
 
-.icon-menu-people {
-	background-image: url('../img/menu-people.svg?v=1');
-}
+@include icon-black-white('menu-people', 'spreed', 1);
 
 .icon-no-password {
 	background-image: url('../img/no-password.svg?v=1');
