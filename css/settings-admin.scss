@@ -1,6 +1,11 @@
 .videocalls.section {
 	input {
 		width: 300px;
+		vertical-align: middle;
+	}
+
+	select {
+		vertical-align: middle;
 	}
 
 	.icon-delete,
@@ -9,6 +14,9 @@
 	div.signaling-server:last-child .icon-add,
 	div.turn-server:last-child .icon-add {
 		display: inline-block;
+		width: 44px;
+		height: 44px;
+		vertical-align: middle;
 	}
 
 	.icon-checkmark-color.hidden {
