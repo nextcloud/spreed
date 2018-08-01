@@ -8,8 +8,8 @@
 	OCA.VideoCalls.Admin.TurnServer = {
 
 		TEMPLATE: '<div class="turn-server">' +
-		'	<input type="text" class="server" placeholder="turn.example.org" value="{{server}}">' +
-		'	<input type="text" class="secret" placeholder="' + t('spreed', 'Shared secret') + '" value="{{secret}}">' +
+		'	<input type="text" class="server" placeholder="turn.example.org" value="{{server}}" aria-label="' + t('spreed', 'TURN server URL') + '">' +
+		'	<input type="text" class="secret" placeholder="' + t('spreed', 'Shared secret') + '" value="{{secret}}" aria-label="' + t('spreed', 'TURN server shared secret') + '">' +
 		'	<select class="protocols" title="' + t('spreed', 'TURN server protocols') + '">' +
 		'	{{#select protocols}}' +
 		'		<option value="udp,tcp">' + t('spreed', 'UDP and TCP') + '</option>' +

@@ -8,7 +8,7 @@
 	OCA.VideoCalls.Admin.StunServer = {
 
 		TEMPLATE: '<div class="stun-server">' +
-		'	<input type="text" name="stun_server" placeholder="stunserver:port" value="{{server}}" />' +
+		'	<input type="text" name="stun_server" placeholder="stunserver:port" value="{{server}}" aria-label="' + t('spreed', 'STUN server URL') + '" />' +
 		'	<a class="icon icon-delete" title="' + t('spreed', 'Delete server') + '"></a>' +
 		'	<a class="icon icon-add" title="' + t('spreed', 'Add new server') + '"></a>' +
 		'	<span class="icon icon-checkmark-color hidden" title="' + t('spreed', 'Saved') + '"></span>' +
