@@ -39,6 +39,7 @@ use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IUserManager;
+use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
@@ -63,6 +64,9 @@ class RoomShareProvider implements IShareProvider {
 	/** @var IDBConnection */
 	private $dbConnection;
 
+	/** @var ISecureRandom */
+	private $secureRandom;
+
 	/** @var IUserManager */
 	private $userManager;
 
@@ -82,6 +86,7 @@ class RoomShareProvider implements IShareProvider {
 	 * RoomShareProvider constructor.
 	 *
 	 * @param IDBConnection $connection
+	 * @param ISecureRandom $secureRandom
 	 * @param IUserManager $userManager
 	 * @param IShareManager $shareManager
 	 * @param IRootFolder $rootFolder
@@ -90,6 +95,7 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function __construct(
 			IDBConnection $connection,
+			ISecureRandom $secureRandom,
 			IUserManager $userManager,
 			IShareManager $shareManager,
 			IRootFolder $rootFolder,
@@ -97,6 +103,7 @@ class RoomShareProvider implements IShareProvider {
 			Manager $manager
 	) {
 		$this->dbConnection = $connection;
+		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->rootFolder = $rootFolder;
@@ -142,6 +149,13 @@ class RoomShareProvider implements IShareProvider {
 			}
 		}
 
+		$share->setToken(
+			$this->secureRandom->generate(
+				15, // \OC\Share\Constants::TOKEN_LENGTH
+				\OCP\Security\ISecureRandom::CHAR_HUMAN_READABLE
+			)
+		);
+
 		$shareId = $this->addShareToDB(
 			$share->getSharedWith(),
 			$share->getSharedBy(),
@@ -150,6 +164,7 @@ class RoomShareProvider implements IShareProvider {
 			$share->getNodeId(),
 			$share->getTarget(),
 			$share->getPermissions(),
+			$share->getToken(),
 			$share->getExpirationDate()
 		);
 
@@ -168,6 +183,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int $itemSource
 	 * @param string $target
 	 * @param int $permissions
+	 * @param string $token
 	 * @param \DateTime|null $expirationDate
 	 * @return int
 	 */
@@ -179,6 +195,7 @@ class RoomShareProvider implements IShareProvider {
 			int $itemSource,
 			string $target,
 			int $permissions,
+			string $token,
 			\DateTime $expirationDate = null
 	): int {
 		$qb = $this->dbConnection->getQueryBuilder();
@@ -192,6 +209,7 @@ class RoomShareProvider implements IShareProvider {
 			->setValue('file_source', $qb->createNamedParameter($itemSource))
 			->setValue('file_target', $qb->createNamedParameter($target))
 			->setValue('permissions', $qb->createNamedParameter($permissions))
+			->setValue('token', $qb->createNamedParameter($token))
 			->setValue('stime', $qb->createNamedParameter(time()));
 
 		if ($expirationDate !== null) {
@@ -239,7 +257,8 @@ class RoomShareProvider implements IShareProvider {
 		$share->setId((int)$data['id'])
 			->setShareType((int)$data['share_type'])
 			->setPermissions((int)$data['permissions'])
-			->setTarget($data['file_target']);
+			->setTarget($data['file_target'])
+			->setToken($data['token']);
 
 		$shareTime = new \DateTime();
 		$shareTime->setTimestamp((int)$data['stime']);
@@ -770,7 +789,32 @@ class RoomShareProvider implements IShareProvider {
 	 * @throws ShareNotFound
 	 */
 	public function getShareByToken($token) {
-		throw new ShareNotFound();
+		$qb = $this->dbConnection->getQueryBuilder();
+
+		$cursor = $qb->select('*')
+			->from('share')
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('token', $qb->createNamedParameter($token)))
+			->execute();
+
+		$data = $cursor->fetch();
+
+		if ($data === false) {
+			throw new ShareNotFound();
+		}
+
+		$roomToken = $data['share_with'];
+		try {
+			$room = $this->manager->getRoomByToken($roomToken);
+		} catch (RoomNotFoundException $e) {
+			throw new ShareNotFound();
+		}
+
+		if ($room->getType() !== Room::PUBLIC_CALL) {
+			throw new ShareNotFound();
+		}
+
+		return $this->createShareObject($data);
 	}
 
 	/**
