@@ -179,6 +179,12 @@
 				$(this).tooltip('hide');
 			});
 
+			this.registerLocalVideoButtonHandlers();
+
+			$(document).keyup(this._onKeyUp.bind(this));
+		},
+
+		registerLocalVideoButtonHandlers: function() {
 			$('#hideVideo').click(function() {
 				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
 					// don't allow clicking the video toggle
@@ -286,8 +292,6 @@
 			$("#stop-screen-button").on('click', function() {
 				OCA.SpreedMe.webrtc.stopScreenShare();
 			});
-
-			$(document).keyup(this._onKeyUp.bind(this));
 		},
 
 		_onKeyUp: function(event) {
