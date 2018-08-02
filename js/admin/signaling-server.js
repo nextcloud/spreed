@@ -8,7 +8,7 @@
 	OCA.VideoCalls.Admin.SignalingServer = {
 
 		TEMPLATE: '<div class="signaling-server">' +
-		'	<input type="text" class="server" placeholder="wss://signaling.example.org" value="{{server}}">' +
+		'	<input type="text" class="server" placeholder="wss://signaling.example.org" value="{{server}}" aria-label="' + t('spreed', 'Signaling server URL') + '">' +
 		'	<input type="checkbox" id="verify{{seed}}" name="verify{{seed}}" class="checkbox verify" value="1" {{#if verify}} checked="checked"{{/if}}>' +
 		'	<label for="verify{{seed}}">' + t('spreed', 'Validate SSL certificate') + '</label>' +
 		'	<a class="icon icon-delete" title="' + t('spreed', 'Delete server') + '"></a>' +
@@ -49,7 +49,7 @@
 				this.addNewTemplate();
 			}
 
-			this.$secret.parents('p').first().removeClass('hidden');
+			this.$secret.parents('.signaling-secret').first().removeClass('hidden');
 		},
 
 		addNewTemplate: function() {
