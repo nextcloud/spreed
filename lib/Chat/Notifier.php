@@ -26,6 +26,7 @@ namespace OCA\Spreed\Chat;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Notification\IManager as INotificationManager;
@@ -93,6 +94,53 @@ class Notifier {
 		}
 
 		return $notifiedUsers;
+	}
+
+	/**
+	 * Notifies the user mentioned in the comment.
+	 *
+	 * The comment must be a chat message comment. That is, its "objectId" must
+	 * be the room ID.
+	 *
+	 * Not every user mentioned in the message is notified, but only those that
+	 * are able to participate in the room.
+	 *
+	 * @param Room $chat
+	 * @param IComment $comment
+	 */
+	public function notifyOtherParticipant(Room $chat, IComment $comment) {
+		$participants = $chat->getParticipants();
+
+		foreach ($participants['users'] as $userId => $participant) {
+			if ($userId === $comment->getActorId()) {
+				// Do not notify the author
+				continue;
+			}
+
+			if ($participant['sessionId'] && $participant['sessionId'] !== '0') {
+				// User is online
+				continue;
+			}
+
+			$notification = $this->notificationManager->createNotification();
+			$notification
+				->setApp('spreed')
+				->setObject('chat', $chat->getToken())
+				->setUser($userId)
+				->setSubject('chat', [
+					'userType' => $comment->getActorType(),
+					'userId' => $comment->getActorId(),
+				])
+				->setDateTime($comment->getCreationDateTime());
+
+			if (strlen($comment->getMessage()) > 64) {
+				$notification->setMessage(substr($comment->getMessage(), 0, 64), ['ellipsisEnd']);
+			} else {
+				$notification->setMessage($comment->getMessage());
+			}
+
+			$this->notificationManager->notify($notification);
+		}
 	}
 
 	/**

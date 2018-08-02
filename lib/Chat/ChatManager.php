@@ -27,7 +27,6 @@ use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
-use OCP\IDBConnection;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -118,6 +117,9 @@ class ChatManager {
 			$notifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
 			if (!empty($notifiedUsers)) {
 				$chat->markUsersAsMentioned($notifiedUsers, $creationDateTime);
+			} else if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
+				// User was not mentioned, send a normal notification
+				$this->notifier->notifyOtherParticipant($chat, $comment);
 			}
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [

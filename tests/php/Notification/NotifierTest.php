@@ -451,7 +451,7 @@ class NotifierTest extends \Test\TestCase {
 		$notification->expects($this->once())
 			->method('getApp')
 			->willReturn('spreed');
-		$notification->expects($this->once())
+		$notification->expects($this->exactly(2))
 			->method('getSubject')
 			->willReturn('mention');
 		$notification->expects($this->once())
