@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.99 – 2018-08-02
+### Changed
+- Pre-release for Nextcloud 14 beta
+
 ## 3.2.4 – 2018-07-12
 ### Added
 - Allow external signaling servers to integrate a MCU
