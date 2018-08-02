@@ -863,6 +863,15 @@ class Room {
 		return isset($row['num_participants']) ? (int) $row['num_participants'] : 0;
 	}
 
+	public function markUsersAsMentioned(array $userIds, \DateTime $time) {
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_participants')
+			->set('last_mention', $query->createNamedParameter($time, 'datetime'))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->in('user_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
+		$query->execute();
+	}
+
 	/**
 	 * @param string $userId
 	 * @param string $sessionId

@@ -74,20 +74,25 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 * @param IComment $comment
+	 * @return string[] The notified users
 	 */
-	public function notifyMentionedUsers(Room $chat, IComment $comment) {
+	public function notifyMentionedUsers(Room $chat, IComment $comment): array {
 		$mentionedUserIds = $this->getMentionedUserIds($comment);
 		if (empty($mentionedUserIds)) {
-			return;
+			return [];
 		}
 
+		$notifiedUsers = [];
 		foreach ($mentionedUserIds as $mentionedUserId) {
 			if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {
 				$notification = $this->createNotification($chat, $comment, $mentionedUserId);
 
 				$this->notificationManager->notify($notification);
+				$notifiedUsers[] = $mentionedUserId;
 			}
 		}
+
+		return $notifiedUsers;
 	}
 
 	/**

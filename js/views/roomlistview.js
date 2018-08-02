@@ -37,7 +37,8 @@
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}"><div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
-								'{{#if unreadMessages}}<li class="app-navigation-entry-utils-counter highlighted"><span>{{numUnreadMessages}}</span></li>{{/if}}'+
+								'{{#if unreadMention}}<li class="app-navigation-entry-utils-counter highlighted"><span>@</span></li>{{/if}}'+
+								'{{#if unreadMessages}}<li class="app-navigation-entry-utils-counter"><span>{{numUnreadMessages}}</span></li>{{/if}}'+
 								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
 							'</ul>'+
 						'</div>'+

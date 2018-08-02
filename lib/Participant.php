@@ -49,6 +49,8 @@ class Participant {
 	protected $inCall;
 	/** @var bool */
 	private $isFavorite;
+	/** @var \DateTime|null */
+	private $lastMention;
 
 	/**
 	 * @param IDBConnection $db
@@ -59,8 +61,9 @@ class Participant {
 	 * @param string $sessionId
 	 * @param bool $inCall
 	 * @param bool $isFavorite
+	 * @param \DateTime|null $lastMention
 	 */
-	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall, $isFavorite) {
+	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall, $isFavorite, \DateTime $lastMention = null) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -69,6 +72,7 @@ class Participant {
 		$this->sessionId = $sessionId;
 		$this->inCall = $inCall;
 		$this->isFavorite = $isFavorite;
+		$this->lastMention = $lastMention;
 	}
 
 	public function getUser() {
@@ -89,6 +93,13 @@ class Participant {
 
 	public function isInCall() {
 		return $this->inCall;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getLastMention() {
+		return $this->lastMention;
 	}
 
 	/**

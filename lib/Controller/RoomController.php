@@ -162,7 +162,7 @@ class RoomController extends OCSController {
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room, Participant $participant = null) {
+	protected function formatRoom(Room $room, Participant $participant = null): array {
 
 		if ($participant instanceof Participant) {
 			$participantType = $participant->getParticipantType();
@@ -193,6 +193,7 @@ class RoomController extends OCSController {
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
 			'unreadMessages' => 0,
+			'unreadMention' => false,
 			'isFavorite' => $favorite,
 		];
 
@@ -213,7 +214,12 @@ class RoomController extends OCSController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($currentUser instanceof IUser) {
-			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $currentUser);
+			$unreadSince = $this->chatManager->getUnreadMarker($room, $currentUser);
+			if ($participant instanceof Participant) {
+				$lastMention = $participant->getLastMention();
+				$roomData['unreadMention'] = $lastMention !== null && $unreadSince < $lastMention;
+			}
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $unreadSince);
 		}
 
 		// Sort by lastPing
