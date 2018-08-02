@@ -99,7 +99,7 @@
 			if (!OCA.Talk.PublicShareAuth) {
 				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
-			$('#app-content').removeClass('incall');
+			$('#app-content, #talk-sidebar').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
 			roomsChannel.trigger('leaveCurrentRoom');
 		},
@@ -119,7 +119,7 @@
 		leaveCurrentCall: function() {
 			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.syncRooms();
-			$('#app-content').removeClass('incall');
+			$('#app-content, #talk-sidebar').removeClass('incall');
 		},
 		showRoomDeletedMessage: function(deleter) {
 			if (deleter) {

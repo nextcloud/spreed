@@ -64,6 +64,9 @@
 
 			$('body').append('<div id="talk-sidebar" class="disappear"></div>');
 			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p></p></div>');
+			$('#talk-sidebar').append('<div id="call-container"></div>');
+			$('#call-container').append('<div id="videos"></div>');
+			$('#call-container').append('<div id="screens"></div>');
 
 			$('body').addClass('talk-sidebar-enabled');
 		},
@@ -118,12 +121,22 @@
 					OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
+					var participants = OCA.SpreedMe.app.activeRoom.get('participants');
+					OCA.SpreedMe.app.setRoomMessageForGuest(participants);
+
 					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
 
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 
+					// Ensure that the elements are shown, as they could have
+					// been hidden if the password was already requested and
+					// that conversation ended in this same page.
+					$('#videos').show();
+
 					self.showTalkSidebar();
+
+					OCA.SpreedMe.app.connection.joinCall(joinedRoomToken);
 				});
 			});
 

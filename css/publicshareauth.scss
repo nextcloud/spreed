@@ -82,6 +82,63 @@ input#request-password-button:disabled ~ .icon {
 
 
 
+/* Talk sidebar */
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+}
+
+#talk-sidebar:not(.incall) #call-container {
+	display: none;
+}
+
+#talk-sidebar #call-container {
+	position: relative;
+
+	flex-grow: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+/* Video in Talk sidebar */
+#talk-sidebar #videos {
+	position: relative;
+
+	flex-grow: 1;
+}
+
+#talk-sidebar .videoContainer {
+	/* The video container has some small padding to prevent the video from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+#talk-sidebar .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+#talk-sidebar .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+/* Screensharing in Talk sidebar */
+#talk-sidebar #screens {
+	display: none;
+}
+
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the
  * vertical scroll bar only to the list of messages. Otherwise, the vertical
@@ -91,17 +148,19 @@ input#request-password-button:disabled ~ .icon {
  * The list of messages should stretch to fill the available space at the bottom
  * of the right sidebar, so the height is cascaded using flex boxes.
  */
-#talk-sidebar {
-	display: flex;
-	flex-direction: column;
-}
-
 #talk-sidebar #commentsTabView {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
 
 	flex-grow: 1;
+
+	/* Show chat view below "#videos", even if in the markup it is above it to
+	 * hide the empty content using CSS. */
+	order: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
 }
 
 #talk-sidebar .comments {
