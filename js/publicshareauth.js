@@ -56,6 +56,8 @@
 		},
 
 		setupLayoutForTalkSidebar: function() {
+			$('body').append('<div id="notification-container"><div id="notification"></div></div>');
+
 			$('body').append('<div id="content"></div>');
 			$('#content').append($('.wrapper'));
 			$('#content').append($('footer'));
