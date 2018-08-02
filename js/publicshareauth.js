@@ -31,6 +31,8 @@
 			this.setupRequestPasswordButton();
 			this.setupLayoutForTalkSidebar();
 
+			this.setupSignalingEventHandlers();
+
 			$('#request-password-button').click(function() {
 				$('.request-password-wrapper + .error-message').hide();
 
@@ -102,17 +104,29 @@
 			});
 		},
 
-		setupRoom: function(token) {
+		setupSignalingEventHandlers: function() {
 			var self = this;
 
-			OCA.SpreedMe.app.activeRoom = new OCA.SpreedMe.Models.Room({token: token});
-			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
+			OCA.SpreedMe.app.signaling.on('joinRoom', function(joinedRoomToken) {
+				if (OCA.SpreedMe.app.token !== joinedRoomToken) {
+					return;
+				}
+
+				self.showTalkSidebar();
+			});
 
 			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
-				if (token === leftRoomToken) {
-					self.leaveRoom();
+				if (OCA.SpreedMe.app.token !== leftRoomToken) {
+					return;
 				}
+
+				self.leaveRoom();
 			});
+		},
+
+		setupRoom: function(token) {
+			OCA.SpreedMe.app.activeRoom = new OCA.SpreedMe.Models.Room({token: token});
+			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
 			// Prevent updateContentsLayout from executing, as it is not needed
 			// when not having a full UI and messes with the tooltip container.
@@ -123,10 +137,6 @@
 
 			OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
 			OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
-
-			OCA.SpreedMe.app.signaling.on('joinRoom', function() {
-				self.showTalkSidebar();
-			});
 		},
 
 		leaveRoom: function() {
