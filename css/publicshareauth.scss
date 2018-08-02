@@ -97,6 +97,9 @@ input#request-password-button:disabled ~ .icon {
 
 	flex-grow: 1;
 
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
 	/* Distribute available height between call container and chat view. */
 	height: 50%;
 
