@@ -135,8 +135,25 @@ input#request-password-button:disabled ~ .icon {
 }
 
 /* Screensharing in Talk sidebar */
-#talk-sidebar #screens {
-	display: none;
+#talk-sidebar.screensharing #videos .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0;
+}
+
+#talk-sidebar.screensharing #screens {
+	position: absolute;
+	width: 100%;
+	height: calc(100% - 200px);
+	top: 0;
+	background-color: transparent;
+}
+
+#talk-sidebar.screensharing .screenContainer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
 }
 
 /**

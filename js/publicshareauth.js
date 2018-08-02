@@ -133,6 +133,7 @@
 					// been hidden if the password was already requested and
 					// that conversation ended in this same page.
 					$('#videos').show();
+					$('#screens').show();
 
 					self.showTalkSidebar();
 
