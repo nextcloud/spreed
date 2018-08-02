@@ -147,7 +147,7 @@
 				}
 
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
-					OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
+					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
 					var participants = OCA.SpreedMe.app.activeRoom.get('participants');

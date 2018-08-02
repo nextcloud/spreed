@@ -76,16 +76,23 @@ input#request-password-button:disabled ~ .icon {
 	border-left-width: 0;
 }
 
-#talk-sidebar #commentsTabView ~ #emptycontent {
-	display: none !important;
-}
-
 
 
 /* Talk sidebar */
 #talk-sidebar {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
+}
+
+#talk-sidebar #emptycontent {
+	position: relative;
+
+	margin-top: 10px;
+}
+
+#talk-sidebar.incall #emptycontent {
+	display: none;
 }
 
 #talk-sidebar:not(.incall) #call-container {
@@ -174,10 +181,6 @@ input#request-password-button:disabled ~ .icon {
 	overflow: hidden;
 
 	flex-grow: 1;
-
-	/* Show chat view below "#videos", even if in the markup it is above it to
-	 * hide the empty content using CSS. */
-	order: 1;
 
 	/* Distribute available height between call container and chat view. */
 	height: 50%;
