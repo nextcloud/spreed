@@ -112,7 +112,17 @@
 					return;
 				}
 
-				self.showTalkSidebar();
+				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
+					OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
+					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
+
+					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
+
+					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
+					OCA.SpreedMe.app._messageCollection.receiveMessages();
+
+					self.showTalkSidebar();
+				});
 			});
 
 			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
@@ -128,15 +138,8 @@
 			OCA.SpreedMe.app.activeRoom = new OCA.SpreedMe.Models.Room({token: token});
 			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
-			// Prevent updateContentsLayout from executing, as it is not needed
-			// when not having a full UI and messes with the tooltip container.
-			OCA.SpreedMe.app.updateContentsLayout = function() {
-			};
-
-			OCA.SpreedMe.app.connection.joinRoom(token);
-
-			OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
-			OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
+			OCA.SpreedMe.app.token = token;
+			OCA.SpreedMe.app.signaling.joinRoom(token);
 		},
 
 		leaveRoom: function() {
