@@ -3,6 +3,7 @@
     "Delete server" : "删除服务器",
     "Add new server" : "添加新服务器",
     "Saved" : "已保存",
+    "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "您删除了所有的 STUN 服务器。因为该类型服务器经常被使用，我们添加了一个默认的 STUN 服务器。",
     "Shared secret" : "共享的密钥",
     "TURN server protocols" : "TURN服务器协议",
     "UDP and TCP" : "UDP 和 TCP",
