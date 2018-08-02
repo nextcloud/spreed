@@ -171,6 +171,9 @@ class SignalingController extends OCSController {
 			});
 
 			if ($messageCount !== count($data)) {
+				// Make sure the array is a json array not a json object,
+				// because the index list has a gap
+				$data = array_values($data);
 				// Participant list changed, bail out and deliver the info to the user
 				break;
 			}
