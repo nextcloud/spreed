@@ -29,8 +29,8 @@
 	var RoomCollection = Backbone.Collection.extend({
 		model: OCA.SpreedMe.Models.Room,
 		comparator: function(modelA, modelB) {
-			var	favoriteA = modelA.get('isFavorite'),
-				favoriteB = modelB.get('isFavorite');
+			var	favoriteA = modelA.get('isPinned'),
+				favoriteB = modelB.get('isPinned');
 
 			if (favoriteA !== favoriteB) {
 				return favoriteB - favoriteA;

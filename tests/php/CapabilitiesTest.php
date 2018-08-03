@@ -43,7 +43,7 @@ class CapabilitiesTest extends TestCase {
 					'empty-group-room',
 					'guest-display-names',
 					'multi-room-users',
-					'favorites',
+					'pin-room',
 					'last-room-activity',
 					'no-ping',
 					'system-messages',

@@ -167,10 +167,10 @@ class RoomController extends OCSController {
 		if ($participant instanceof Participant) {
 			$participantType = $participant->getParticipantType();
 			$participantInCall = $participant->isInCall();
-			$favorite = $participant->isFavorite();
+			$pinned = $participant->isPinned();
 		} else {
 			$participantType = Participant::GUEST;
-			$participantInCall = $favorite = false;
+			$participantInCall = $pinned = false;
 		}
 
 		$lastActivity = $room->getLastActivity();
@@ -194,7 +194,7 @@ class RoomController extends OCSController {
 			'lastActivity' => $lastActivity,
 			'unreadMessages' => 0,
 			'unreadMention' => false,
-			'isFavorite' => $favorite,
+			'isPinned' => $pinned,
 		];
 
 		if (!$participant instanceof Participant) {
@@ -524,7 +524,7 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function addToFavorites($token) {
+	public function pinRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 			$participant = $room->getParticipant($this->userId);
@@ -534,7 +534,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$participant->setFavorite(true);
+		$participant->setIsPinned(true);
 
 		return new DataResponse([]);
 	}
@@ -545,7 +545,7 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function removeFromFavorites($token) {
+	public function unpinRoom($token) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 			$participant = $room->getParticipant($this->userId);
@@ -555,7 +555,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$participant->setFavorite(false);
+		$participant->setIsPinned(false);
 
 		return new DataResponse([]);
 	}

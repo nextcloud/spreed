@@ -281,8 +281,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#addToFavorites',
-			'url' => '/api/{apiVersion}/room/{token}/favorite',
+			'name' => 'Room#pinRoom',
+			'url' => '/api/{apiVersion}/room/{token}/pin',
 			'verb' => 'POST',
 			'requirements' => [
 				'apiVersion' => 'v1',
@@ -290,8 +290,8 @@ return [
 			],
 		],
 		[
-			'name' => 'Room#removeFromFavorites',
-			'url' => '/api/{apiVersion}/room/{token}/favorite',
+			'name' => 'Room#unpinRoom',
+			'url' => '/api/{apiVersion}/room/{token}/pin',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1',
