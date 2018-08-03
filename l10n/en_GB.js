@@ -7,6 +7,7 @@ OC.L10N.register(
     "Saved" : "Saved",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "You deleted all STUN servers. As it is almost always needed, a default STUN server was added.",
     "Shared secret" : "Shared secret",
+    "TURN server shared secret" : "TURN server shared secret",
     "TURN server protocols" : "TURN server protocols",
     "UDP and TCP" : "UDP and TCP",
     "UDP only" : "UDP only",
@@ -180,7 +181,6 @@ OC.L10N.register(
     "Choose person …" : "Choose person …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls.",
     "STUN server" : "STUN server",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
-    "TURN server shared secret" : "TURN server shared secret"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router."
 },
 "nplurals=2; plural=(n != 1);");

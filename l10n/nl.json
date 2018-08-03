@@ -5,6 +5,7 @@
     "Saved" : "Opgeslagen",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Je hebt alle STUN servers verwijderd. Omdat het bijna altijd nodig is, is er een standaard STUN server toegevoegd.",
     "Shared secret" : "gedeeld geheim",
+    "TURN server shared secret" : "TURN server gedeeld geheim",
     "TURN server protocols" : "TURN server protocollen",
     "UDP and TCP" : "UDP en TCP",
     "UDP only" : "Alleen udp",
@@ -153,7 +154,6 @@
     "Choose person …" : "Kies persoon ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "De STUN server is nodig om deelnemers met gesprekken te verbinden. De TURN server zorgt ervoor dat de verbinding ook door firewalls heen gaat.",
     "STUN server" : "STUN server",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen.",
-    "TURN server shared secret" : "TURN server gedeeld geheim"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "De STUN server wordt gebruikt om het openbare IP-adres van deelnemers achter een router vast te stellen."
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

@@ -5,6 +5,7 @@
     "Saved" : "保存しました",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "すべてのSTUNサーバーは削除されましたが、STUNサーバーは必要なのでデフォルトサーバーが設定されました。",
     "Shared secret" : "共有秘密鍵",
+    "TURN server shared secret" : "TURNサーバーの共有秘密鍵",
     "TURN server protocols" : "TURNサーバープロトコル",
     "UDP and TCP" : "UDP と TCP",
     "UDP only" : "UDP のみ",
@@ -154,7 +155,6 @@
     "Choose person …" : "ユーザー選択 …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUNサーバーは参加者の通話に必要です。TURNサーバーはファイアウォール経由の接続に使用されます。",
     "STUN server" : "STUNサーバー",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。",
-    "TURN server shared secret" : "TURNサーバーの共有秘密鍵"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

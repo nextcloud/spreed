@@ -7,6 +7,7 @@ OC.L10N.register(
     "Saved" : "Kaydedildi",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Tüm stun sunucularını sildiniz. Neredeyse her zaman gerekli olduğundan bir varsayılan stun sunucusu eklendi.",
     "Shared secret" : "Paylaşılan parola",
+    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
     "TURN server protocols" : "TURN sunucu iletişim kuralları",
     "UDP and TCP" : "UDP ve TCP",
     "UDP only" : "Yalnız UDP",
@@ -205,7 +206,6 @@ OC.L10N.register(
     "Choose person …" : "Kişiyi seçin ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Katılımcıarın görüşmelere bağlanabilmesi için STUN sunucusu gereklidir. TURN sunucusu bağlantının güvenlik duvarları arkasından çalışabilmesini sağlar.",
     "STUN server" : "STUN Sunucusu",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında.",
-    "TURN server shared secret" : "Paylaşılan TURN sunucu parolası"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Katılımcıların herkese açık IP adreslerini belirlemek için kullanılan STUN sunucusu bir yönelticinin arkasında."
 },
 "nplurals=2; plural=(n > 1);");

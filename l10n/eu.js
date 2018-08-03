@@ -6,6 +6,7 @@ OC.L10N.register(
     "Add new server" : "Zerbitzari berria gehitu",
     "Saved" : "Gordeta",
     "Shared secret" : "Partekatutako sekretua",
+    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
     "TURN server protocols" : "TURN zerbitzari protokoloak",
     "UDP and TCP" : "UDP eta TCP",
     "UDP only" : "UDP bakarrik",
@@ -123,7 +124,6 @@ OC.L10N.register(
     "Choose person …" : "Pertsona hautatu",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN zerbitzaria beharrezkoa da deiak konektatzeko. TURN zerbitzariak konexioa funtzionatzen duela bermatzen du, nahiz eta firewall bat egon.",
     "STUN server" : "STUN zerbitzaria",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du",
-    "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzaria router baten atzean dauden erabiltzaileen IP helbideak jakiteko balio du"
 },
 "nplurals=2; plural=(n != 1);");

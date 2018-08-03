@@ -6,6 +6,7 @@ OC.L10N.register(
     "Add new server" : "Lägg till ny server",
     "Saved" : "Sparad",
     "Shared secret" : "Delad hemlighet",
+    "TURN server shared secret" : "TURN server delade hemlighet",
     "TURN server protocols" : "TURN server protokoll",
     "UDP and TCP" : "UDP och TCP",
     "UDP only" : "endast UDP",
@@ -136,7 +137,6 @@ OC.L10N.register(
     "Choose person …" : "Välj person ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-servern krävs för att deltagare kan ansluta till samtal. TURN-servern säkerställer att anslutningar fungerar genom brandväggar.",
     "STUN server" : "STUN server",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
-    "TURN server shared secret" : "TURN server delade hemlighet"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router."
 },
 "nplurals=2; plural=(n != 1);");

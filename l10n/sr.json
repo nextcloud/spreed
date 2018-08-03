@@ -5,6 +5,7 @@
     "Saved" : "Сачувано",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Избрисали сте све STUN сервере. Пошто је STUN сервер готово увек неопходан, додат је подразумевани STUN сервер.",
     "Shared secret" : "Дељена тајна",
+    "TURN server shared secret" : "Дељена тајна TURN сервера",
     "TURN server protocols" : "TURN серверски протокол",
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "Само UDP",
@@ -186,7 +187,6 @@
     "Choose person …" : "Одаберите особу…",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN сервер је неопходан да би учесници могли да се повежу у разговор. TURN сервер се стара да конекција може да се успостави чак и кроз фајервол.",
     "STUN server" : "STUN сервер",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера.",
-    "TURN server shared secret" : "Дељена тајна TURN сервера"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN сервер се користи да одреди јавну IP адресу учесника који су иза рутера."
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

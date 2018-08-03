@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Saved" : "U ruajt",
+    "TURN server shared secret" : "Serveri TURN ndan sekret",
     "TURN server protocols" : "Protokollet e serverit TURN",
     "UDP and TCP" : "UDP dhe TCP",
     "UDP only" : "Vetëm UDP",
@@ -78,7 +79,6 @@ OC.L10N.register(
     "Choose person …" : "Zgjidhni personin ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Serveri STUN është i nevojshëm që pjesëmarrësit të mund të lidhen me thirrjet. Serveri TURN siguron që lidhja të funksionojë edhe përmes firewalls.",
     "STUN server" : "Server STUN",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Serveri STUN përdoret për të përcaktuar adresë IP publike të pjesëmarrësve prapa një routeri.",
-    "TURN server shared secret" : "Serveri TURN ndan sekret"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Serveri STUN përdoret për të përcaktuar adresë IP publike të pjesëmarrësve prapa një routeri."
 },
 "nplurals=2; plural=(n != 1);");
