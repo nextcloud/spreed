@@ -297,7 +297,7 @@ class ChatController extends OCSController {
 			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
 
 			return [
-				'id' => $comment->getId(),
+				'id' => (int) $comment->getId(),
 				'token' => $token,
 				'actorType' => $comment->getActorType(),
 				'actorId' => $comment->getActorId(),
