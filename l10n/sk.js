@@ -4,6 +4,7 @@ OC.L10N.register(
     "Delete server" : "Zmazať server",
     "Add new server" : "Pridať nový server",
     "Saved" : "Uložené",
+    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN",
     "TURN server protocols" : "Protokoly servera TURN",
     "UDP and TCP" : "UDP aj TCP",
     "UDP only" : "iba UDP",
@@ -109,7 +110,6 @@ OC.L10N.register(
     "Mute audio" : "Stlmiť zvuk",
     "Smile in 3… 2… 1!" : "3.. 2.. 1.. Úsmev!",
     "Choose person …" : "Vyberte osobu ...",
-    "STUN server" : "STUN server",
-    "TURN server shared secret" : "Sprístupnený tajný kľúč servera TURN"
+    "STUN server" : "STUN server"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

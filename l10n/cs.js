@@ -6,6 +6,7 @@ OC.L10N.register(
     "Add new server" : "Přidat nový server",
     "Saved" : "Uloženo",
     "Shared secret" : "Předsdílené heslo",
+    "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
     "TURN server protocols" : "Protokoly TURN serveru",
     "UDP and TCP" : "UDP a TCP",
     "UDP only" : "Pouze UDP",
@@ -159,7 +160,6 @@ OC.L10N.register(
     "Choose person …" : "Vyberte osobu …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN server je potřebný, aby se mohli účastníci připojit k hovorům. TURN server zajišťuje, že bude spojení fungovat i skrz firewally.",
     "STUN server" : "Server STUN",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
-    "TURN server shared secret" : "Sdílené tajemství s TURN serverem"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

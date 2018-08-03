@@ -4,6 +4,7 @@
     "Add new server" : "Bæta við nýjum þjóni",
     "Saved" : "Vistað",
     "Shared secret" : "Sameiginlegur leynilykill",
+    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni",
     "TURN server protocols" : "Samskiptareglur TURN-þjóns",
     "UDP and TCP" : "UDP og TCP",
     "UDP only" : "Aðeins UDP",
@@ -174,7 +175,6 @@
     "Choose person …" : "Veldu einstakling …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-þjónninn er nauðsynlegur til að þáttakendur geti tengst símtölum. TURN-þjónninn tryggir að tengingin virki jafnvel í gegnum eldveggi.",
     "STUN server" : "STUN-þjónn",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini.",
-    "TURN server shared secret" : "Sameiginlegur leynilykill á TURN-þjóni"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-miðlari er notaður til að ákvarða opinbert vistfang þátttakenda á bak við beini."
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

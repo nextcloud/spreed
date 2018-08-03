@@ -6,6 +6,7 @@ OC.L10N.register(
     "Add new server" : "ახალი სერვერის დამატება",
     "Saved" : "დამახსოვრდა",
     "Shared secret" : "გაზიარებული საიდუმლო",
+    "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო",
     "TURN server protocols" : "TURN სერვერის პროტოკოლები",
     "UDP and TCP" : "UDP და TCP",
     "UDP only" : "მხოლოდ UDP",
@@ -137,7 +138,6 @@ OC.L10N.register(
     "Choose person …" : "აირჩიეთ პიროვნება ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "მონაწილეების ზარზე დასაკავშირებლად აუცილებელია STUN სერვერი. TURN სერვერი კავშირს უზრუნველყოფს ფაირვოლის გამოყენების შემთხვევაშიც.",
     "STUN server" : "STUN სერვერი",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
-    "TURN server shared secret" : "TURN სერვერმა გააზიარა საიდუმლო"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის."
 },
 "nplurals=2; plural=(n!=1);");
