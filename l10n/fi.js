@@ -7,6 +7,7 @@ OC.L10N.register(
     "Saved" : "Tallennettu",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Poistit kaikki STUN-palvelimet. Koska STUN-palvelinta tarvitaan lähes aina, lisäsimme oletuksena käytettävän STUN-palvelimen.",
     "Shared secret" : "Jaettu salaisuus",
+    "TURN server shared secret" : "TURN-palvelimen jaettu salausavain",
     "TURN server protocols" : "TURN-palvelimen protokollat",
     "UDP and TCP" : "UDP ja TCP",
     "UDP only" : "Vain UDP",
@@ -174,7 +175,6 @@ OC.L10N.register(
     "Choose person …" : "Valitse henkilö...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-palvelin on välttämätön, jotta osallistujat voivat yhdistää puheluihin. TURN-palvelin varmistaa, että yhteys toimii myös palomuurien läpi.",
     "STUN server" : "STUN-palvelin",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille.",
-    "TURN server shared secret" : "TURN-palvelimen jaettu salausavain"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-palvelinta käytetään määrittämään julkinen osoite reitittimen takana oleville osallistujille."
 },
 "nplurals=2; plural=(n != 1);");

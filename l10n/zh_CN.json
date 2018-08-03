@@ -5,6 +5,7 @@
     "Saved" : "已保存",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "您删除了所有的 STUN 服务器。因为该类型服务器经常被使用，我们添加了一个默认的 STUN 服务器。",
     "Shared secret" : "共享的密钥",
+    "TURN server shared secret" : "TURN服务器分享的秘密",
     "TURN server protocols" : "TURN服务器协议",
     "UDP and TCP" : "UDP 和 TCP",
     "UDP only" : "仅UDP",
@@ -132,7 +133,6 @@
     "Choose person …" : "选择人...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
     "STUN server" : "STUN 服务器",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
-    "TURN server shared secret" : "TURN服务器分享的秘密"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

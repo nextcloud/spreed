@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete server" : "Esborra servidor",
     "Add new server" : "Afegeix un nou servidor",
     "Saved" : "Desat",
+    "TURN server shared secret" : "El servidor TURN comparteix secreta.....",
     "TURN server protocols" : "Protocols del servidor TURN",
     "UDP and TCP" : "UDP i TCP",
     "UDP only" : "UDP només",
@@ -91,7 +92,6 @@ OC.L10N.register(
     "Choose person …" : "Elegeix persona ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "El servidor STUN és necessari perquè els participants puguin connectar-se a les trucades. El servidor TURN assegura que la connexió funciona a través de tallafocs.",
     "STUN server" : "Servidor STUN",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN s'utilitza per determinar l'adreça IP pública dels participants darrere d'un enrutador.",
-    "TURN server shared secret" : "El servidor TURN comparteix secreta....."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN s'utilitza per determinar l'adreça IP pública dels participants darrere d'un enrutador."
 },
 "nplurals=2; plural=(n != 1);");

@@ -4,6 +4,7 @@
     "Add new server" : "Dodaj nowy serwer",
     "Saved" : "Zapisano",
     "Shared secret" : "Współdzielony kod",
+    "TURN server shared secret" : "Wpółdzielony kod serwera TURN",
     "TURN server protocols" : "Protokoły serwera TURN",
     "UDP and TCP" : "UDP i TCP",
     "UDP only" : "Tylko UDP",
@@ -137,7 +138,6 @@
     "Choose person …" : "Wybierz osobę…",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "Serwer STUN jest niezbędny aby umożliwić uczestnikom połączenie się do rozmów. Serwer TURN zapewnia, że połączenie będzie działać niezależnie od ustawień zapór sieciowych.",
     "STUN server" : "STUN serwer",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
-    "TURN server shared secret" : "Wpółdzielony kod serwera TURN"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem."
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }
