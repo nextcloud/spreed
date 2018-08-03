@@ -275,7 +275,7 @@ class RoomController extends OCSController {
 			}
 
 			$lastMessage = [
-				'id' => $lastMessage->getId(),
+				'id' => (int) $lastMessage->getId(),
 				'actorType' => $actorType,
 				'actorId' => $actorId,
 				'actorDisplayName' => $displayName,
