@@ -1,11 +1,14 @@
 OC.L10N.register(
     "spreed",
     {
+    "Signaling server URL" : "İşaret sunucusunun adresi",
     "Validate SSL certificate" : "SSL sertifikasını doğrula",
     "Delete server" : "Sunucuyu sil",
     "Add new server" : "Yeni sunucu ekle",
     "Saved" : "Kaydedildi",
+    "STUN server URL" : "STUN sunucusunun adresi",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Tüm stun sunucularını sildiniz. Neredeyse her zaman gerekli olduğundan bir varsayılan stun sunucusu eklendi.",
+    "TURN server URL" : "TURN sunucusunun adresi",
     "Shared secret" : "Paylaşılan parola",
     "TURN server shared secret" : "Paylaşılan TURN sunucu parolası",
     "TURN server protocols" : "TURN sunucu iletişim kuralları",
@@ -136,6 +139,7 @@ OC.L10N.register(
     "… %s" : "… %s",
     "%s …" : "%s …",
     "… %s …" : "… %s …",
+    "{user} sent you a private message" : "{user} size özel bir ileti gönderdi",
     "%s mentioned you in a private conversation" : "%s özel bir görüşmede sizden bahsetti",
     "{user} mentioned you in a private conversation" : "{user} özel bir görüşmede sizden bahsetti",
     "%s mentioned you in a group conversation: %s" : "%s bir grup görüşmesinde sizden bahsetti: %s",

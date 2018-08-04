@@ -1,11 +1,14 @@
 OC.L10N.register(
     "spreed",
     {
+    "Signaling server URL" : "URL cервера сигнализации",
     "Validate SSL certificate" : "Проверить сертификат SSL",
     "Delete server" : "Удалить сервер",
     "Add new server" : "Добавить новый сервер",
     "Saved" : "Сохранено",
+    "STUN server URL" : "URL cервера STUN",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Вы удалили все сервера STUN. Так как он почти всегда нужен, был добавлен STUN сервер по умолчанию.",
+    "TURN server URL" : "URL сервера TURN",
     "Shared secret" : "Общая секретная фраза",
     "TURN server shared secret" : "Общая секретная фраза сервера TURN",
     "TURN server protocols" : "Протоколы сервера TURN",
@@ -136,6 +139,7 @@ OC.L10N.register(
     "… %s" : "… %s",
     "%s …" : "%s …",
     "… %s …" : "… %s …",
+    "{user} sent you a private message" : "{user} отправил вам личное сообщение",
     "%s mentioned you in a private conversation" : "%s упомянул(а) Вас в частной беседе",
     "{user} mentioned you in a private conversation" : "{user} упомянул(а) вас в частной беседе",
     "%s mentioned you in a group conversation: %s" : "%s упомянул(а) Вас в групповой беседе: %s",

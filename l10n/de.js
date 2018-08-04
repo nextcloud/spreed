@@ -1,11 +1,14 @@
 OC.L10N.register(
     "spreed",
     {
+    "Signaling server URL" : "Signalisierungsserver-URL",
     "Validate SSL certificate" : "SSL-Zertifikat überprüfen",
     "Delete server" : "Server löschen",
     "Add new server" : "Neuen Server hinzufügen",
     "Saved" : "Gespeichert",
+    "STUN server URL" : "STUN-Server-URL",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Du hast alle STUN-Server gelöscht. Da ein STUN in den meisten Fällen benötigt wird, wurde ein Standard-STUN-Server hinzugefügt.",
+    "TURN server URL" : "TURN-Server-URL",
     "Shared secret" : "Gemeinsames Geheimnis",
     "TURN server shared secret" : "TURN-Server Shared Secret",
     "TURN server protocols" : "TURN-Server Protokolle",
@@ -136,6 +139,7 @@ OC.L10N.register(
     "… %s" : "... %s",
     "%s …" : "%s ...",
     "… %s …" : "... %s ...",
+    "{user} sent you a private message" : "{user} hat Dir eine private Nachricht gesendet",
     "%s mentioned you in a private conversation" : "%s hat dich in einer privaten Unterhaltung erwähnt",
     "{user} mentioned you in a private conversation" : "{user} hat dich in einer privaten Unterhaltung erwähnt",
     "%s mentioned you in a group conversation: %s" : "%s hat dich in einer Gruppenunterhaltung erwähnt: %s",
