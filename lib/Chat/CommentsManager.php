@@ -67,7 +67,7 @@ class CommentsManager extends Manager {
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$lastComments[$row['actor_id']] = new \DateTime($row['latest_comment']);
+			$lastComments[$row['actor_id']] = new \DateTime($row['last_comment']);
 		}
 		$result->closeCursor();
 
