@@ -296,7 +296,7 @@ class ChatController extends OCSController {
 			}
 
 			return [
-				'id' => $comment->getId(),
+				'id' => (int) $comment->getId(),
 				'token' => $token,
 				'actorType' => $comment->getActorType(),
 				'actorId' => $comment->getActorId(),
