@@ -354,7 +354,11 @@
 			});
 
 			this.signaling.on('participantListChanged', function() {
-				this._participants.fetch();
+				// The "participantListChanged" event can be triggered by the
+				// signaling before the room is set in the collection.
+				if (this._participants.url) {
+					this._participants.fetch();
+				}
 			}.bind(this));
 
 			this._participantsView.listenTo(this._rooms, 'change:active', function(model, active) {
