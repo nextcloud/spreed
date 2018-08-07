@@ -23,9 +23,12 @@ declare(strict_types=1);
 namespace OCA\Spreed\Notification;
 
 
+use OCA\Spreed\Chat\RichMessageHelper;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCP\Comments\ICommentsManager;
+use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -49,14 +52,28 @@ class Notifier implements INotifier {
 	/** @var Manager */
 	protected $manager;
 
+	/** @var ICommentsManager */
+	protected $commentManager;
+
+	/** @var RichMessageHelper */
+	protected $richMessageHelper;
+
 	/** @var Definitions */
 	protected $definitions;
 
-	public function __construct(IFactory $lFactory, IURLGenerator $url, IUserManager $userManager, Manager $manager, Definitions $definitions) {
+	public function __construct(IFactory $lFactory,
+								IURLGenerator $url,
+								IUserManager $userManager,
+								Manager $manager,
+								ICommentsManager $commentManager,
+								RichMessageHelper $richMessageHelper,
+								Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->commentManager = $commentManager;
+		$this->richMessageHelper = $richMessageHelper;
 		$this->definitions = $definitions;
 	}
 
@@ -146,16 +163,29 @@ class Notifier implements INotifier {
 		}
 
 		$messageParameters = $notification->getMessageParameters();
-
-		$parsedMessage = $notification->getMessage();
-		if (\in_array('ellipsisStart', $messageParameters) && !\in_array('ellipsisEnd', $messageParameters)) {
-			$parsedMessage = $l->t('… %s', $parsedMessage);
-		} else if (!\in_array('ellipsisStart', $messageParameters) && \in_array('ellipsisEnd', $messageParameters)) {
-			$parsedMessage = $l->t('%s …', $parsedMessage);
-		} else if (\in_array('ellipsisStart', $messageParameters) && \in_array('ellipsisEnd', $messageParameters)) {
-			$parsedMessage = $l->t('… %s …', $parsedMessage);
+		if (!isset($messageParameters['commentId'])) {
+			throw new \InvalidArgumentException('Unknown comment');
 		}
-		$notification->setParsedMessage($parsedMessage);
+
+		try {
+			$comment = $this->commentManager->get($messageParameters['commentId']);
+		} catch (NotFoundException $e) {
+			throw new \InvalidArgumentException('Unknown comment');
+		}
+		list($richMessage, $richMessageParameters) = $this->richMessageHelper->getRichMessage($comment);
+
+		$placeholders = $replacements = [];
+		foreach ($richMessageParameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder . '}';
+			if ($parameter['type'] === 'user') {
+				$replacements[] = '@' . $parameter['name'];
+			} else {
+				$replacements[] = $parameter['name'];
+			}
+		}
+
+		$notification->setParsedMessage(str_replace($placeholders, $replacements, $richMessage));
+		$notification->setRichMessage($richMessage, $richMessageParameters);
 
 		if ($notification->getSubject() === 'chat') {
 			$notification

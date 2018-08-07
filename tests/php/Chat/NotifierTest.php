@@ -93,7 +93,7 @@ class NotifierTest extends \Test\TestCase {
 		return $comment;
 	}
 
-	private function newNotification($room, $comment) {
+	private function newNotification($room, IComment $comment) {
 		$notification = $this->createMock(INotification::class);
 
 		$notification->expects($this->once())
@@ -112,6 +112,10 @@ class NotifierTest extends \Test\TestCase {
 				'userType' => $comment->getActorType(),
 				'userId' => $comment->getActorId(),
 			])
+			->willReturnSelf();
+
+		$notification->expects($this->once())
+			->method('setMessage')
 			->willReturnSelf();
 
 		$notification->expects($this->once())
@@ -143,7 +147,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$notification->expects($this->once())
 			->method('setMessage')
-			->with($comment->getMessage())
+			->with('comment')
 			->willReturnSelf();
 
 		$this->manager->expects($this->once())
@@ -186,7 +190,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$notification->expects($this->once())
 			->method('setMessage')
-			->with($comment->getMessage())
+			->with('comment')
 			->willReturnSelf();
 
 		$this->manager->expects($this->once())
@@ -230,7 +234,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$notification->expects($this->once())
 			->method('setMessage')
-			->with('123456789 @anotherUserWithOddLengthName 123456789-123456789-1234', ['ellipsisEnd'])
+			->with('comment')
 			->willReturnSelf();
 
 		$this->manager->expects($this->once())
@@ -274,7 +278,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$notification->expects($this->once())
 			->method('setMessage')
-			->with('89-123456789-1234 @anotherUserWithOddLengthName 6789-123456789-1', ['ellipsisStart', 'ellipsisEnd'])
+			->with('comment')
 			->willReturnSelf();
 
 		$this->manager->expects($this->once())
@@ -318,7 +322,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$notification->expects($this->once())
 			->method('setMessage')
-			->with('6789-123456789-123456789 @anotherUserWithOddLengthName 123456789', ['ellipsisStart'])
+			->with('comment')
 			->willReturnSelf();
 
 		$this->manager->expects($this->once())
@@ -348,8 +352,11 @@ class NotifierTest extends \Test\TestCase {
 			->method('getToken')
 			->willReturn('Token123');
 
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
+		$notification = $this->newNotification($room, $comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
 
 		$this->notificationManager->expects($this->never())
 			->method('notify');
@@ -365,8 +372,12 @@ class NotifierTest extends \Test\TestCase {
 			->method('getToken')
 			->willReturn('Token123');
 
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
+
+		$notification = $this->newNotification($room, $comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
 
 		$this->notificationManager->expects($this->never())
 			->method('notify');
@@ -382,9 +393,6 @@ class NotifierTest extends \Test\TestCase {
 			->method('getToken')
 			->willReturn('Token123');
 
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
-
 		$room = $this->createMock(Room::class);
 		$this->manager->expects($this->once())
 			->method('getRoomById')
@@ -396,8 +404,11 @@ class NotifierTest extends \Test\TestCase {
 			->with('userNotInOneToOneChat')
 			->will($this->throwException(new ParticipantNotFoundException()));
 
-		$this->notificationManager->expects($this->never())
-			->method('createNotification');
+		$notification = $this->newNotification($room, $comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
 
 		$this->notificationManager->expects($this->never())
 			->method('notify');
@@ -430,34 +441,23 @@ class NotifierTest extends \Test\TestCase {
 			->method('getToken')
 			->willReturn('Token123');
 
-		$anotherUserNotification = $this->newNotification($room, $comment);
-		$userAbleToJoinNotification = $this->newNotification($room, $comment);
+		$notification = $this->newNotification($room, $comment);
 
-		$this->notificationManager->expects($this->exactly(2))
+		$this->notificationManager->expects($this->once())
 			->method('createNotification')
-			->will($this->onConsecutiveCalls(
-				$anotherUserNotification,
-				$userAbleToJoinNotification
-			));
+			->willReturn($notification);
 
-		$anotherUserNotification->expects($this->once())
-			->method('setUser')
-			->with('anotherUser')
-			->willReturnSelf();
-
-		$anotherUserNotification->expects($this->once())
+		$notification->expects($this->once())
 			->method('setMessage')
-			->with('Mention @anotherUser, and @unknownUser, and @testUser, and @user')
+			->with('comment')
 			->willReturnSelf();
 
-		$userAbleToJoinNotification->expects($this->once())
+		$notification->expects($this->exactly(2))
 			->method('setUser')
-			->with('userAbleToJoin')
-			->willReturnSelf();
-
-		$userAbleToJoinNotification->expects($this->once())
-			->method('setMessage')
-			->with('notherUser, and @unknownUser, and @testUser, and @userAbleToJoin')
+			->withConsecutive(
+				[ 'anotherUser' ],
+				[ 'userAbleToJoin' ]
+			)
 			->willReturnSelf();
 
 		$this->manager->expects($this->exactly(2))
@@ -475,8 +475,8 @@ class NotifierTest extends \Test\TestCase {
 		$this->notificationManager->expects($this->exactly(2))
 			->method('notify')
 			->withConsecutive(
-				[ $anotherUserNotification ],
-				[ $userAbleToJoinNotification ]
+				[ $notification ],
+				[ $notification ]
 			);
 
 		$this->notifier->notifyMentionedUsers($room, $comment);
