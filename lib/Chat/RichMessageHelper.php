@@ -25,6 +25,8 @@ namespace OCA\Spreed\Chat;
 
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IUser;
+use OCP\IUserManager;
 
 /**
  * Helper class to get a rich message from a plain text message.
@@ -34,11 +36,12 @@ class RichMessageHelper {
 	/** @var ICommentsManager */
 	private $commentsManager;
 
-	/**
-	 * @param ICommentsManager $commentsManager
-	 */
-	public function __construct(ICommentsManager $commentsManager) {
+	/** @var IUserManager */
+	private $userManager;
+
+	public function __construct(ICommentsManager $commentsManager, IUserManager $userManager) {
 		$this->commentsManager = $commentsManager;
+		$this->userManager = $userManager;
 	}
 
 	/**
@@ -65,6 +68,13 @@ class RichMessageHelper {
 
 		$mentions = $comment->getMentions();
 		foreach ($mentions as $mention) {
+			if ($mention['type'] === 'user') {
+				$user = $this->userManager->get($mention['id']);
+				if (!$user instanceof IUser) {
+					continue;
+				}
+			}
+
 			if (!array_key_exists($mention['type'], $mentionTypeCount)) {
 				$mentionTypeCount[$mention['type']] = 0;
 			}

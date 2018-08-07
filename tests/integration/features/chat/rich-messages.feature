@@ -26,7 +26,7 @@ Feature: chat/public
     When user "participant1" sends message "Mention to @unknownUser" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                    | messageParameters |
-      | public room | users     | participant1 | participant1-displayname | Mention to {mention-user1} | {"mention-user1":{"type":"user","id":"unknownUser","name":"Unknown user"}} |
+      | public room | users     | participant1 | participant1-displayname | Mention to @unknownUser | [] |
 
   Scenario: message with duplicated mention has single mention parameter
     Given user "participant1" creates room "public room"
@@ -42,4 +42,4 @@ Feature: chat/public
     When user "participant1" sends message "Mention to @participant2, @unknownUser, @participant2 again and @participant3" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                                                                                | messageParameters |
-      | public room | users     | participant1 | participant1-displayname | Mention to {mention-user1}, {mention-user2}, {mention-user1} again and {mention-user3} | {"mention-user1":{"type":"user","id":"participant2","name":"participant2-displayname"},"mention-user2":{"type":"user","id":"unknownUser","name":"Unknown user"},"mention-user3":{"type":"user","id":"participant3","name":"participant3-displayname"}} |
+      | public room | users     | participant1 | participant1-displayname | Mention to {mention-user1}, @unknownUser, {mention-user1} again and {mention-user2} | {"mention-user1":{"type":"user","id":"participant2","name":"participant2-displayname"},"mention-user2":{"type":"user","id":"participant3","name":"participant3-displayname"}} |

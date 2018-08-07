@@ -26,21 +26,27 @@ namespace OCA\Spreed\Tests\php\Chat;
 use OCA\Spreed\Chat\RichMessageHelper;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IUser;
+use OCP\IUserManager;
 
 class RichMessageHelperTest extends \Test\TestCase {
 
-	/** @var \OCP\Comments\ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $commentsManager;
 
-	/** @var \OCA\Spreed\Chat\RichMessageHelper */
+	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	protected $userManager;
+
+	/** @var RichMessageHelper */
 	protected $richMessageHelper;
 
 	public function setUp() {
 		parent::setUp();
 
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 
-		$this->richMessageHelper = new RichMessageHelper($this->commentsManager);
+		$this->richMessageHelper = new RichMessageHelper($this->commentsManager, $this->userManager);
 	}
 
 	private function newComment($message, $mentions) {
@@ -72,6 +78,11 @@ class RichMessageHelperTest extends \Test\TestCase {
 			->with('user', 'testUser')
 			->willReturn('testUser display name');
 
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('testUser')
+			->willReturn($this->createMock(IUser::class));
+
 		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
 
 		$expectedMessageParameters = [
@@ -96,6 +107,11 @@ class RichMessageHelperTest extends \Test\TestCase {
 			->method('resolveDisplayName')
 			->with('user', 'testUser')
 			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('testUser')
+			->willReturn($this->createMock(IUser::class));
 
 		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
 
@@ -132,6 +148,15 @@ class RichMessageHelperTest extends \Test\TestCase {
 				'testUser3 display name'
 			);
 
+		$this->userManager->expects($this->exactly(3))
+			->method('get')
+			->withConsecutive(
+				['testUser1'],
+				['testUser2'],
+				['testUser3']
+			)
+			->willReturn($this->createMock(IUser::class));
+
 		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
 
 		$expectedMessageParameters = [
@@ -156,6 +181,42 @@ class RichMessageHelperTest extends \Test\TestCase {
 		$this->assertEquals($expectedMessageParameters, $messageParameters);
 	}
 
+	public function testGetRichMessageWithNonExistingUserMention() {
+		$mentions = [
+			['type'=>'user', 'id'=>'me'],
+			['type'=>'user', 'id'=>'testUser'],
+		];
+		$comment = $this->newComment('Mention @me to @testUser', $mentions);
+
+		$this->commentsManager->expects($this->once())
+			->method('resolveDisplayName')
+			->with('user', 'testUser')
+			->willReturn('testUser display name');
+
+		$this->userManager->expects($this->at(0))
+			->method('get')
+			->with('me')
+			->willReturn(null);
+
+		$this->userManager->expects($this->at(1))
+			->method('get')
+			->with('testUser')
+			->willReturn($this->createMock(IUser::class));
+
+		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+
+		$expectedMessageParameters = [
+			'mention-user1' => [
+				'type' => 'user',
+				'id' => 'testUser',
+				'name' => 'testUser display name'
+			]
+		];
+
+		$this->assertEquals('Mention @me to {mention-user1}', $message);
+		$this->assertEquals($expectedMessageParameters, $messageParameters);
+	}
+
 	public function testGetRichMessageWhenDisplayNameCanNotBeResolved() {
 		$mentions = [
 			['type'=>'user', 'id'=>'testUser'],
@@ -165,6 +226,11 @@ class RichMessageHelperTest extends \Test\TestCase {
 		$this->commentsManager->expects($this->once())
 			->method('resolveDisplayName')
 			->willThrowException(new \OutOfBoundsException());
+
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('testUser')
+			->willReturn($this->createMock(IUser::class));
 
 		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
 
