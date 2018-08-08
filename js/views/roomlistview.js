@@ -44,18 +44,18 @@
 						'</div>'+
 						'<div class="app-navigation-entry-menu">'+
 							'<ul class="app-navigation-entry-menu-list">'+
-								'{{#if canFavorite}}'+
-								'{{#if isFavorite}}'+
+								'{{#if canPin}}'+
+								'{{#if isPinned}}'+
 								'<li>'+
-									'<button class="unfavorite-room-button">'+
-										'<span class="icon-star-dark"></span>'+
+									'<button class="unpin-room-button">'+
+										'<span class="icon icon-unpin"></span>'+
 										'<span>'+t('spreed', 'Unpin conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
 								'{{else}}'+
 								'<li>'+
-									'<button class="favorite-room-button">'+
-										'<span class="icon-starred"></span>'+
+									'<button class="pin-room-button">'+
+										'<span class="icon icon-pin"></span>'+
 										'<span>'+t('spreed', 'Pin conversation')+'</span>'+
 									'</button>'+
 								'</li>'+
@@ -101,7 +101,7 @@
 			'change:participantType': function() {
 				this.render();
 			},
-			'change:isFavorite': function() {
+			'change:isPinned': function() {
 				this.render();
 			},
 			'change:unreadMessages': function() {
@@ -128,7 +128,7 @@
 			var isRemovable = this.model.get('type') !== 1;
 			return {
 				isRemovable: isRemovable,
-				canFavorite: this.model.get('participantType') !== 5,
+				canPin: this.model.get('participantType') !== 5,
 				isDeletable: !isRemovable || ((this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
 					(Object.keys(this.model.get('participants')).length > 1 || this.model.get('numGuests') > 0)),
 				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages')
@@ -155,8 +155,8 @@
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
-			'click @ui.menu .favorite-room-button': 'addRoomToFavorites',
-			'click @ui.menu .unfavorite-room-button': 'removeRoomFromFavorites',
+			'click @ui.menu .pin-room-button': 'pinRoom',
+			'click @ui.menu .unpin-room-button': 'unpinRoom',
 			'click @ui.menu .remove-room-button': 'removeRoom',
 			'click @ui.menu .delete-room-button': 'deleteRoom',
 			'click @ui.room': 'joinRoom'
@@ -224,30 +224,30 @@
 				type: 'DELETE'
 			});
 		},
-		addRoomToFavorites: function() {
+		pinRoom: function() {
 			if (this.model.get('participantType') === 5) {
 				return;
 			}
 
-			this.model.set('isFavorite', 1);
+			this.model.set('isPinned', 1);
 
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/pin',
 				type: 'POST',
 				success: function() {
 					OCA.SpreedMe.app.signaling.syncRooms();
 				}
 			});
 		},
-		removeRoomFromFavorites: function() {
+		unpinRoom: function() {
 			if (this.model.get('participantType') === 5) {
 				return;
 			}
 
-			this.model.set('isFavorite', 0);
+			this.model.set('isPinned', 0);
 
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/pin',
 				type: 'DELETE',
 				success: function() {
 					OCA.SpreedMe.app.signaling.syncRooms();

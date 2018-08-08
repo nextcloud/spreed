@@ -48,7 +48,7 @@ class Participant {
 	/** @var bool */
 	protected $inCall;
 	/** @var bool */
-	private $isFavorite;
+	private $isPinned;
 	/** @var \DateTime|null */
 	private $lastMention;
 
@@ -60,10 +60,10 @@ class Participant {
 	 * @param int $lastPing
 	 * @param string $sessionId
 	 * @param bool $inCall
-	 * @param bool $isFavorite
+	 * @param bool $isPinned
 	 * @param \DateTime|null $lastMention
 	 */
-	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall, $isFavorite, \DateTime $lastMention = null) {
+	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall, $isPinned, \DateTime $lastMention = null) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -71,7 +71,7 @@ class Participant {
 		$this->lastPing = $lastPing;
 		$this->sessionId = $sessionId;
 		$this->inCall = $inCall;
-		$this->isFavorite = $isFavorite;
+		$this->isPinned = $isPinned;
 		$this->lastMention = $lastMention;
 	}
 
@@ -102,26 +102,23 @@ class Participant {
 		return $this->lastMention;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isFavorite() {
-		return $this->isFavorite;
+	public function isPinned(): bool {
+		return $this->isPinned;
 	}
 
-	public function setFavorite($favor) {
+	public function setIsPinned(bool $pin) {
 		if (!$this->user) {
 			return false;
 		}
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
-			->set('favorite', $query->createNamedParameter((int) $favor, IQueryBuilder::PARAM_INT))
+			->set('favorite', $query->createNamedParameter((int) $pin, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
 		$query->execute();
 
-		$this->isFavorite = $favor;
+		$this->isPinned = $pin;
 		return true;
 	}
 }

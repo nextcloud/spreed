@@ -803,6 +803,8 @@ video {
 }
 
 @include icon-black-white('menu-people', 'spreed', 1);
+@include icon-black-white('pin', 'spreed', 1);
+@include icon-black-white('unpin', 'spreed', 1);
 
 .icon-no-password {
 	background-image: url('../img/no-password.svg?v=1');
