@@ -136,6 +136,22 @@
 	height: 32px;
 }
 
+#app-navigation .favorite-mark {
+	position: absolute;
+	/* 44px is the padding of the main entry link, and 16px the size (size, not
+	 * background size) of the icon, both defined in the server. */
+	left: calc(44px - 16px);
+	line-height: 100%;
+
+	.icon-favorite {
+		display: inline-block;
+		vertical-align: middle;
+
+		/* Show favorite icon in yellow instead of default black. */
+		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
+	}
+}
+
 #app-navigation .app-navigation-entry-utils-counter {
 	overflow: hidden;
 	text-align: right;

@@ -35,7 +35,17 @@
 	var ROOM_TYPE_PUBLIC_CALL = 3;
 
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
-							'<div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div> {{displayName}}' +
+							'<div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
+							'{{#if isFavorite}}'+
+							// The favorite mark can not be a child of the
+							// avatar, as it would be removed when the avatar is
+							// loaded.
+							'<div class="favorite-mark">' +
+								'<span class="icon icon-favorite" />' +
+								'<span class="hidden-visually">' + t('spreed', 'Favorited') + '</span>' +
+							'</div>' +
+							'{{/if}}' +
+							' {{displayName}}' +
 						'</a>'+
 						'<div class="app-navigation-entry-utils">'+
 							'<ul>'+
