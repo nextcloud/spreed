@@ -485,7 +485,7 @@
 			}
 
 			if (_.isUndefined(secondsThreshold)) {
-				secondsThreshold = 15;
+				secondsThreshold = 30;
 			}
 
 			return Math.abs(model1.get('timestamp') - model2.get('timestamp')) <= secondsThreshold;
