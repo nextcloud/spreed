@@ -43,6 +43,7 @@ Feature: hooks
       | file_target            | /welcome (2).txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
 
 
 
@@ -116,6 +117,7 @@ Feature: hooks
       | file_target            | /welcome (2).txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant2 |
@@ -127,6 +129,7 @@ Feature: hooks
       | file_target            | /welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
 
   Scenario: leave public room self joined to after sharing a file
     Given user "participant1" creates room "public room"
@@ -318,6 +321,7 @@ Feature: hooks
       | file_target            | /welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And the OCS status code should be "404"
 
@@ -340,6 +344,7 @@ Feature: hooks
       | file_target            | /welcome.txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And the OCS status code should be "404"
 
@@ -611,6 +616,7 @@ Feature: hooks
       | file_target            | /welcome (2).txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
 
   Scenario: join sharee again to public room after a file was shared and moved by the sharee and the sharee left the room
     Given user "participant1" creates room "public room"
@@ -633,6 +639,7 @@ Feature: hooks
       | file_target            | /welcome (2).txt |
       | share_with             | public room |
       | share_with_displayname | Public room |
+      | token                  | A_TOKEN |
 
 
 

@@ -190,6 +190,7 @@ Feature: delete
       | file_target            | /welcome.txt |
       | share_with             | public room not joined to |
       | share_with_displayname | Public room not joined to |
+      | token                  | A_TOKEN |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |
@@ -201,6 +202,7 @@ Feature: delete
       | file_target            | /welcome (2).txt |
       | share_with             | public room not joined to |
       | share_with_displayname | Public room not joined to |
+      | token                  | A_TOKEN |
 
 
 

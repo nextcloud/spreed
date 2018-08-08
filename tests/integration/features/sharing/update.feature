@@ -215,6 +215,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant1" gets last share
@@ -228,6 +229,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant2" gets last share
@@ -241,6 +243,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant3" gets last share
@@ -254,6 +257,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
 
@@ -277,6 +281,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant1" gets last share
@@ -290,6 +295,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant2" gets last share
@@ -303,6 +309,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant3" gets last share
@@ -316,6 +323,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
 
@@ -339,6 +347,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant1" gets last share
@@ -352,6 +361,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant2" gets last share
@@ -365,6 +375,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant3" gets last share
@@ -378,6 +389,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
 
@@ -472,6 +484,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room not joined to |
       | share_with_displayname | Public room not joined to |
+      | token                  | A_TOKEN |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |
@@ -483,6 +496,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room not joined to |
       | share_with_displayname | Public room not joined to |
+      | token                  | A_TOKEN |
 
 
 
@@ -749,6 +763,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant1" gets last share
@@ -762,6 +777,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant2" gets last share
@@ -775,6 +791,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant3" gets last share
@@ -788,6 +805,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
 
@@ -811,6 +829,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant1" gets last share
@@ -824,6 +843,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant2" gets last share
@@ -837,6 +857,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant3" gets last share
@@ -850,6 +871,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
 
@@ -873,6 +895,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant1" gets last share
@@ -886,6 +909,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant2" gets last share
@@ -899,6 +923,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
     And user "participant3" gets last share
@@ -912,6 +937,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
       | permissions            | 1 |
       | expiration             | +3 days |
 
@@ -939,6 +965,7 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | public room no longer joined to |
       | share_with_displayname | Public room no longer joined to |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And the OCS status code should be "404"
     And the HTTP status code should be "200"
@@ -953,6 +980,7 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | public room no longer joined to |
       | share_with_displayname | Public room no longer joined to |
+      | token                  | A_TOKEN |
 
 
 

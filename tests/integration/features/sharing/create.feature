@@ -170,6 +170,7 @@ Feature: create
       | file_target            | /welcome.txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -181,6 +182,7 @@ Feature: create
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -192,6 +194,7 @@ Feature: create
       | file_target            | /welcome (2).txt |
       | share_with             | own public room |
       | share_with_displayname | Own public room |
+      | token                  | A_TOKEN |
 
   Scenario: create share with a public room invited to
     Given user "participant2" creates room "public room invited to"
@@ -210,6 +213,7 @@ Feature: create
       | file_target            | /welcome.txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -221,6 +225,7 @@ Feature: create
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -232,6 +237,7 @@ Feature: create
       | file_target            | /welcome (2).txt |
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
 
   Scenario: create share with a public room self joined to
     Given user "participant2" creates room "public room self joined to"
@@ -250,6 +256,7 @@ Feature: create
       | file_target            | /welcome.txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -261,6 +268,7 @@ Feature: create
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -272,6 +280,7 @@ Feature: create
       | file_target            | /welcome (2).txt |
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
+      | token                  | A_TOKEN |
 
   Scenario: create share with a public room not joined to
     Given user "participant2" creates room "public room not joined to"

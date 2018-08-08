@@ -102,6 +102,10 @@ class ShareAPIController {
 
 		$result['share_with_displayname'] = $roomName;
 
+		if ($room->getType() === Room::PUBLIC_CALL) {
+			$result['token'] = $share->getToken();
+		}
+
 		return $result;
 	}
 
