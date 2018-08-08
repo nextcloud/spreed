@@ -93,16 +93,19 @@ class NotifierTest extends \Test\TestCase {
 	public function testPrepareOne2One($uid, $displayName, $parsedSubject) {
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
-		$l->expects($this->exactly(2))
+		$l->expects($this->any())
 			->method('t')
 			->will($this->returnCallback(function($text, $parameters = []) {
 				return vsprintf($text, $parameters);
 			}));
 
 		$room = $this->createMock(Room::class);
-		$room->expects($this->once())
+		$room->expects($this->any())
 			->method('getType')
 			->willReturn(Room::ONE_TO_ONE_CALL);
+		$room->expects($this->any())
+			->method('getId')
+			->willReturn(123);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
 			->willReturn($room);
@@ -138,7 +141,13 @@ class NotifierTest extends \Test\TestCase {
 					'type' => 'user',
 					'id' => $uid,
 					'name' => $displayName,
-				]
+				],
+				'call' => [
+					'type' => 'call',
+					'id' => 123,
+					'name' => 'a conversation',
+					'call-type' => 'one2one'
+				],
 			])
 			->willReturnSelf();
 
@@ -177,7 +186,7 @@ class NotifierTest extends \Test\TestCase {
 		$roomId = $type;
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
-		$l->expects($this->exactly(2))
+		$l->expects($this->any())
 			->method('t')
 			->will($this->returnCallback(function($text, $parameters = []) {
 				return vsprintf($text, $parameters);
@@ -219,9 +228,11 @@ class NotifierTest extends \Test\TestCase {
 			->with($parsedSubject)
 			->willReturnSelf();
 
+		$room->expects($this->once())
+			->method('getId')
+			->willReturn($roomId);
+
 		if ($name === '') {
-			$room->expects($this->never())
-				->method('getId');
 			$n->expects($this->once())
 				->method('setRichSubject')
 				->with('{user} invited you to a group conversation',[
@@ -229,13 +240,16 @@ class NotifierTest extends \Test\TestCase {
 						'type' => 'user',
 						'id' => $uid,
 						'name' => $displayName,
-					]
+					],
+					'call' => [
+						'type' => 'call',
+						'id' => $roomId,
+						'name' => 'a conversation',
+						'call-type' => 'group',
+					],
 				])
 				->willReturnSelf();
 		} else {
-			$room->expects($this->once())
-				->method('getId')
-				->willReturn($roomId);
 			$n->expects($this->once())
 				->method('setRichSubject')
 				->with('{user} invited you to a group conversation: {call}', [
@@ -276,7 +290,10 @@ class NotifierTest extends \Test\TestCase {
 				Room::ONE_TO_ONE_CALL, ['userType' => 'users', 'userId' => 'testUser'], 'Test user', '',
 				'Test user mentioned you in a private conversation',
 				['{user} mentioned you in a private conversation',
-					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
+					[
+						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
+						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'one2one'],
+					]
 				],
 			],
 			// If the user is deleted in a one to one conversation the conversation is also
@@ -285,14 +302,19 @@ class NotifierTest extends \Test\TestCase {
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'], 'Test user', '',
 				'Test user mentioned you in a group conversation',
 				['{user} mentioned you in a group conversation',
-					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
+					[
+						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
+						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'group'],
+					]
 				],
 			],
 			[
 				Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'], null,        '',
 				'You were mentioned in a group conversation by a deleted user',
 				['You were mentioned in a group conversation by a deleted user',
-					[]
+					[
+						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'group'],
+					]
 				],
 				true],
 			[
@@ -318,21 +340,28 @@ class NotifierTest extends \Test\TestCase {
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'], 'Test user', '',
 				'Test user mentioned you in a group conversation',
 				['{user} mentioned you in a group conversation',
-					['user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user']]
+					[
+						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
+						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public'],
+					]
 				],
 			],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'], null,        '',
 				'You were mentioned in a group conversation by a deleted user',
 				['You were mentioned in a group conversation by a deleted user',
-					[]
+					[
+						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public']
+					]
 				],
 				true],
 			[
 				Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,        '',
 				'A guest mentioned you in a group conversation',
 				['A guest mentioned you in a group conversation',
-					[]
+					[
+						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public']
+					]
 				],
 			],
 			[
@@ -377,7 +406,7 @@ class NotifierTest extends \Test\TestCase {
 	public function testPrepareMention($roomType, $subjectParameters, $displayName, $roomName, $parsedSubject, $richSubject, $deletedUser = false) {
 		$notification = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
-		$l->expects($this->atLeast(2))
+		$l->expects($this->any())
 			->method('t')
 			->will($this->returnCallback(function($text, $parameters = []) {
 				return vsprintf($text, $parameters);
@@ -387,6 +416,9 @@ class NotifierTest extends \Test\TestCase {
 		$room->expects($this->atLeastOnce())
 			->method('getType')
 			->willReturn($roomType);
+		$room->expects($this->any())
+			->method('getId')
+			->willReturn('testRoomId');
 		$room->expects($this->atLeastOnce())
 			->method('getName')
 			->willReturn($roomName);
