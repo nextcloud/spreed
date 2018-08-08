@@ -96,7 +96,9 @@
 		leaveCurrentRoom: function(deleter) {
 			$('#video-fullscreen').addClass('hidden');
 			this.app.signaling.leaveCurrentRoom();
-			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			if (!OCA.Talk.PublicShareAuth) {
+				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			}
 			$('#app-content').removeClass('incall');
 			this.showRoomDeletedMessage(deleter);
 			roomsChannel.trigger('leaveCurrentRoom');

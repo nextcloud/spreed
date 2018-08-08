@@ -28,6 +28,11 @@ return [
 			'url' => '/',
 			'verb' => 'GET',
 		],
+		[
+			'name' => 'Page#shareAuth',
+			'url' => '/shareauth/{token}',
+			'verb' => 'GET',
+		],
 	],
 	'ocs' => [
 		/**
@@ -299,6 +304,16 @@ return [
 			],
 		],
 
+
+		/**
+		 * PublicShareAuth
+		 */
+		[
+			'name' => 'PublicShareAuth#createRoom',
+			'url' => '/api/{apiVersion}/publicshareauth',
+			'verb' => 'POST',
+			'requirements' => ['apiVersion' => 'v1'],
+		],
 
 		/**
 		 * Guest

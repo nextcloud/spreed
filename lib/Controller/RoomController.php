@@ -186,6 +186,8 @@ class RoomController extends OCSController {
 			'type' => $room->getType(),
 			'name' => $room->getName(),
 			'displayName' => $room->getName(),
+			'objectType' => $room->getObjectType(),
+			'objectId' => $room->getObjectId(),
 			'participantType' => $participantType,
 			'participantInCall' => $participantInCall,
 			'count' => $room->getNumberOfParticipants(false, time() - 30),
@@ -210,6 +212,11 @@ class RoomController extends OCSController {
 			]);
 
 			return $roomData;
+		}
+
+		if ($room->getObjectType() === 'share:password') {
+			// FIXME use an event
+			$roomData['displayName'] = $this->l10n->t('Password request by %s', [$room->getName()]);
 		}
 
 		$currentUser = $this->userManager->get($this->userId);

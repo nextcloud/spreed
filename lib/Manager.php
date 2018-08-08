@@ -98,6 +98,8 @@ class Manager {
 		if (!empty($row['comment_id'])) {
 			$lastMessage = $this->commentsManager->getCommentFromData(array_merge($row, [
 				'id' => $row['comment_id'],
+				'object_type' => $row['comment_object_type'],
+				'object_id' => $row['comment_object_id'],
 				'parent_id' => '',
 				'topmost_parent_id' => '',
 				'latest_child_timestamp' => null,
@@ -105,7 +107,7 @@ class Manager {
 			]));
 		}
 
-		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage);
+		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage, $row['object_type'], $row['object_id']);
 	}
 
 	/**
@@ -140,7 +142,9 @@ class Manager {
 		if ($includeLastMessage) {
 			$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
 			$query->selectAlias('c.id', 'comment_id');
-			$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp');
+			$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.object_type', 'c.object_id');
+			$query->selectAlias('c.object_type', 'comment_object_type');
+			$query->selectAlias('c.object_id', 'comment_object_id');
 		}
 
 		$result = $query->execute();
@@ -367,34 +371,42 @@ class Manager {
 	}
 
 	/**
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createOne2OneRoom() {
-		return $this->createRoom(Room::ONE_TO_ONE_CALL);
+	public function createOne2OneRoom($objectType = '', $objectId = '') {
+		return $this->createRoom(Room::ONE_TO_ONE_CALL, '', $objectType, $objectId);
 	}
 
 	/**
 	 * @param string $name
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createGroupRoom($name = '') {
-		return $this->createRoom(Room::GROUP_CALL, $name);
+	public function createGroupRoom($name = '', $objectType = '', $objectId = '') {
+		return $this->createRoom(Room::GROUP_CALL, $name, $objectType, $objectId);
 	}
 
 	/**
 	 * @param string $name
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createPublicRoom($name = '') {
-		return $this->createRoom(Room::PUBLIC_CALL, $name);
+	public function createPublicRoom($name = '', $objectType = '', $objectId = '') {
+		return $this->createRoom(Room::PUBLIC_CALL, $name, $objectType, $objectId);
 	}
 
 	/**
 	 * @param int $type
 	 * @param string $name
+	 * @param string $objectType
+	 * @param string $objectId
 	 * @return Room
 	 */
-	private function createRoom($type, $name = '') {
+	private function createRoom($type, $name = '', $objectType = '', $objectId = '') {
 		$token = $this->getNewToken();
 
 		$query = $this->db->getQueryBuilder();
@@ -406,6 +418,12 @@ class Manager {
 					'token' => $query->createNamedParameter($token),
 				]
 			);
+
+		if (!empty($objectType) && !empty($objectId)) {
+			$query->setValue('object_type', $query->createNamedParameter($objectType))
+				->setValue('object_id', $query->createNamedParameter($objectId));
+		}
+
 		$query->execute();
 		$roomId = $query->getLastInsertId();
 

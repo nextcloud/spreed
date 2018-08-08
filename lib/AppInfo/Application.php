@@ -75,6 +75,14 @@ class Application extends App {
 		/** @var Listener $systemMessageListener */
 		$systemMessageListener = $this->getContainer()->query(Listener::class);
 		$systemMessageListener->register();
+
+		/** @var \OCA\Spreed\PublicShareAuth\Listener $shareAuthListener */
+		$shareAuthListener = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\Listener::class);
+		$shareAuthListener->register();
+
+		/** @var \OCA\Spreed\PublicShareAuth\TemplateLoader $shareAuthTemplateLoader */
+		$shareAuthTemplateLoader = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\TemplateLoader::class);
+		$shareAuthTemplateLoader->register();
 	}
 
 	protected function registerNotifier(IServerContainer $server) {
