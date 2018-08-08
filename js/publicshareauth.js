@@ -28,8 +28,7 @@
 		init: function() {
 			var self = this;
 
-			// this.setupRequestPasswordButton();
-			this.setupCallButton();
+			this.setupRequestPasswordButton();
 			this.setupLayoutForTalkSidebar();
 
 			$('#request-password-button').click(function() {
@@ -43,15 +42,6 @@
 
 				self.requestPassword();
 			});
-		},
-
-		setupCallButton: function() {
-			var url = OC.generateUrl('apps/spreed/shareauth/' + $('#sharingToken').val());
-
-			$('main').append('<div id="submit-wrapper" class="request-password-wrapper">' +
-				'    <a href="' + url + '" target="_blank" class="primary button">' + t('spreed', 'Request password') + '</a>' +
-				'    <div class="icon icon-confirm-white"></div>' +
-				'</div>');
 		},
 
 		setupRequestPasswordButton: function() {
