@@ -25,13 +25,18 @@ var spreedPeerConnectionTable = [];
 
 		var $appContentElement = $('#app-content, #talk-sidebar'),
 			participantsClass = 'participants-' + currentUsersNo,
+			hadScreensharing = $appContentElement.hasClass('screensharing'),
 			hadSidebar = $appContentElement.hasClass('with-app-sidebar');
-		if (!$appContentElement.hasClass(participantsClass) && !$appContentElement.hasClass('screensharing')) {
+		if (!$appContentElement.hasClass(participantsClass)) {
 			$appContentElement.attr('class', '').addClass(participantsClass);
 			if (currentUsersNo > 1) {
 				$appContentElement.addClass('incall');
 			} else {
 				$appContentElement.removeClass('incall');
+			}
+
+			if (hadScreensharing) {
+				$appContentElement.addClass('screensharing');
 			}
 
 			if (hadSidebar) {
