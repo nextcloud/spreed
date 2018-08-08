@@ -28,9 +28,10 @@
 		init: function() {
 			var self = this;
 
-			// this.setupRequestPasswordButton();
-			this.setupCallButton();
+			this.setupRequestPasswordButton();
 			this.setupLayoutForTalkSidebar();
+
+			this.setupSignalingEventHandlers();
 
 			$('#request-password-button').click(function() {
 				$('.request-password-wrapper + .error-message').hide();
@@ -45,15 +46,6 @@
 			});
 		},
 
-		setupCallButton: function() {
-			var url = OC.generateUrl('apps/spreed/shareauth/' + $('#sharingToken').val());
-
-			$('main').append('<div id="submit-wrapper" class="request-password-wrapper">' +
-				'    <a href="' + url + '" target="_blank" class="primary button">' + t('spreed', 'Request password') + '</a>' +
-				'    <div class="icon icon-confirm-white"></div>' +
-				'</div>');
-		},
-
 		setupRequestPasswordButton: function() {
 			// "submit-wrapper" is used to mimic the login button and thus get
 			// automatic colouring of the confirm icon by the Theming app
@@ -64,12 +56,46 @@
 		},
 
 		setupLayoutForTalkSidebar: function() {
+			$('body').append('<div id="notification-container"><div id="notification"></div></div>');
+
 			$('body').append('<div id="content"></div>');
 			$('#content').append($('.wrapper'));
 			$('#content').append($('footer'));
 
 			$('body').append('<div id="talk-sidebar" class="disappear"></div>');
 			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p></p></div>');
+			$('#talk-sidebar').append('<div id="call-container"></div>');
+			$('#call-container').append('<div id="videos"><div id="localVideoContainer" class="videoView videoContainer"></div></div>');
+			$('#call-container').append('<div id="screens"></div>');
+
+			$('#localVideoContainer').append(
+				'<video id="localVideo"></video>' +
+				'<div class="avatar-container hidden">' +
+				'	<div class="avatar"></div>' +
+				'</div>' +
+				'<div class="nameIndicator">' +
+				'	<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Mute audio (m)') + '"></button>' +
+				'	<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Disable video (v)') + '"></button>' +
+				'	<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Share screen') + '"></button>' +
+				'	<div id="screensharing-menu" class="app-navigation-entry-menu">' +
+				'		<ul>' +
+				'			<li>' +
+				'				<button id="show-screen-button">' +
+				'					<span class="icon-screen"></span>' +
+				'					<span>' + t('spreed', 'Show your screen') + '</span>' +
+				'				</button>' +
+				'			</li>' +
+				'			<li>' +
+				'				<button id="stop-screen-button">' +
+				'					<span class="icon-screen-off"></span>' +
+				'					<span>' + t('spreed', 'Stop screensharing') + '</span>' +
+				'				</button>' +
+				'			</li>' +
+				'		</ul>' +
+				'	</div>' +
+				'</div>');
+
+			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 
 			$('body').addClass('talk-sidebar-enabled');
 		},
@@ -112,31 +138,53 @@
 			});
 		},
 
-		setupRoom: function(token) {
+		setupSignalingEventHandlers: function() {
 			var self = this;
 
+			OCA.SpreedMe.app.signaling.on('joinRoom', function(joinedRoomToken) {
+				if (OCA.SpreedMe.app.token !== joinedRoomToken) {
+					return;
+				}
+
+				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
+					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
+					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
+
+					var participants = OCA.SpreedMe.app.activeRoom.get('participants');
+					OCA.SpreedMe.app.setRoomMessageForGuest(participants);
+
+					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
+
+					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
+					OCA.SpreedMe.app._messageCollection.receiveMessages();
+
+					// Ensure that the elements are shown, as they could have
+					// been hidden if the password was already requested and
+					// that conversation ended in this same page.
+					$('#videos').show();
+					$('#screens').show();
+
+					self.showTalkSidebar();
+
+					OCA.SpreedMe.app.connection.joinCall(joinedRoomToken);
+				});
+			});
+
+			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
+				if (OCA.SpreedMe.app.token !== leftRoomToken) {
+					return;
+				}
+
+				self.leaveRoom();
+			});
+		},
+
+		setupRoom: function(token) {
 			OCA.SpreedMe.app.activeRoom = new OCA.SpreedMe.Models.Room({token: token});
 			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
-			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
-				if (token === leftRoomToken) {
-					self.leaveRoom();
-				}
-			});
-
-			// Prevent updateContentsLayout from executing, as it is not needed
-			// when not having a full UI and messes with the tooltip container.
-			OCA.SpreedMe.app.updateContentsLayout = function() {
-			};
-
-			OCA.SpreedMe.app.connection.joinRoom(token);
-
-			OCA.SpreedMe.app._chatView.$el.prependTo('#talk-sidebar');
-			OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
-
-			OCA.SpreedMe.app.signaling.on('joinRoom', function() {
-				self.showTalkSidebar();
-			});
+			OCA.SpreedMe.app.token = token;
+			OCA.SpreedMe.app.signaling.joinRoom(token);
 		},
 
 		leaveRoom: function() {

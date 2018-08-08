@@ -574,6 +574,8 @@ class Room {
 	public function joinRoom($userId, $password, $passedPasswordProtection = false) {
 		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'password' => $password,
+			'passedPasswordProtection' => $passedPasswordProtection,
 		]));
 
 		$query = $this->db->getQueryBuilder();
@@ -605,7 +607,11 @@ class Room {
 			$query->execute();
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postJoinRoom', new GenericEvent($this));
+		$this->dispatcher->dispatch(self::class . '::postJoinRoom', new GenericEvent($this, [
+			'userId' => $userId,
+			'password' => $password,
+			'passedPasswordProtection' => $passedPasswordProtection,
+		]));
 
 		return $sessionId;
 	}

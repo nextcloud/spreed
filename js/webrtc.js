@@ -23,7 +23,7 @@ var spreedPeerConnectionTable = [];
 			currentUsersNo = 1;
 		}
 
-		var $appContentElement = $('#app-content'),
+		var $appContentElement = $('#app-content, #talk-sidebar'),
 			participantsClass = 'participants-' + currentUsersNo,
 			hadSidebar = $appContentElement.hasClass('with-app-sidebar');
 		if (!$appContentElement.hasClass(participantsClass) && !$appContentElement.hasClass('screensharing')) {
@@ -1151,7 +1151,7 @@ var spreedPeerConnectionTable = [];
 			// Check if there are still some screens
 			if (!document.getElementById('screens').hasChildNodes()) {
 				screenSharingActive = false;
-				$('#app-content').removeClass('screensharing');
+				$('#app-content, #talk-sidebar').removeClass('screensharing');
 				if (unpromotedSpeakerId) {
 					OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
 					unpromotedSpeakerId = null;
@@ -1177,7 +1177,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
 
 			screenSharingActive = true;
-			$('#app-content').addClass('screensharing');
+			$('#app-content, #talk-sidebar').addClass('screensharing');
 
 			var screens = document.getElementById('screens');
 			if (screens) {

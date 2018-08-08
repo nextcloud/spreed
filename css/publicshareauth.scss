@@ -21,15 +21,6 @@ input#request-password-button:disabled ~ .icon {
 	opacity: 0.5;
 }
 
-/* Mimic the appearance of the log in button when a link is used. */
-.request-password-wrapper a {
-	display: block;
-	width: 269px;
-	padding: 13px 10px;
-	font-size: 20px;
-	margin: 5px;
-}
-
 
 
 /* Special layout to include the Talk sidebar */
@@ -85,11 +76,95 @@ input#request-password-button:disabled ~ .icon {
 	border-left-width: 0;
 }
 
-#talk-sidebar #commentsTabView ~ #emptycontent {
-	display: none !important;
+
+
+/* Talk sidebar */
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
+#talk-sidebar #emptycontent {
+	position: relative;
 
+	margin-top: 10px;
+}
+
+#talk-sidebar.incall #emptycontent {
+	display: none;
+}
+
+#talk-sidebar:not(.incall) #call-container {
+	display: none;
+}
+
+#talk-sidebar #call-container {
+	position: relative;
+
+	flex-grow: 1;
+
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+/* Video in Talk sidebar */
+#talk-sidebar #videos {
+	position: relative;
+
+	flex-grow: 1;
+}
+
+#talk-sidebar .videoContainer {
+	/* The video container has some small padding to prevent the video from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+#talk-sidebar .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+#talk-sidebar .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+/* Screensharing in Talk sidebar */
+#talk-sidebar.screensharing #videos .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0;
+}
+
+#talk-sidebar.screensharing #screens {
+	position: absolute;
+	width: 100%;
+	height: calc(100% - 200px);
+	top: 0;
+	background-color: transparent;
+}
+
+#talk-sidebar.screensharing .screenContainer {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
 
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the
@@ -100,17 +175,15 @@ input#request-password-button:disabled ~ .icon {
  * The list of messages should stretch to fill the available space at the bottom
  * of the right sidebar, so the height is cascaded using flex boxes.
  */
-#talk-sidebar {
-	display: flex;
-	flex-direction: column;
-}
-
 #talk-sidebar #commentsTabView {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
 
 	flex-grow: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
 }
 
 #talk-sidebar .comments {

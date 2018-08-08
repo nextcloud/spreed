@@ -179,6 +179,12 @@
 				$(this).tooltip('hide');
 			});
 
+			this.registerLocalVideoButtonHandlers();
+
+			$(document).keyup(this._onKeyUp.bind(this));
+		},
+
+		registerLocalVideoButtonHandlers: function() {
 			$('#hideVideo').click(function() {
 				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
 					// don't allow clicking the video toggle
@@ -286,8 +292,6 @@
 			$("#stop-screen-button").on('click', function() {
 				OCA.SpreedMe.webrtc.stopScreenShare();
 			});
-
-			$(document).keyup(this._onKeyUp.bind(this));
 		},
 
 		_onKeyUp: function(event) {
@@ -629,8 +633,9 @@
 					}.bind(this));
 
 				this._showParticipantList();
-			} else {
-				// The token is always defined in the public page.
+			} else if (this.token) {
+				// The token is always defined in the public page (although not
+				// in the public share auth page).
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
 			}
