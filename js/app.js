@@ -633,8 +633,9 @@
 					}.bind(this));
 
 				this._showParticipantList();
-			} else {
-				// The token is always defined in the public page.
+			} else if (this.token) {
+				// The token is always defined in the public page (although not
+				// in the public share auth page).
 				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
 				this.signaling.setRoom(this.activeRoom);
 			}
