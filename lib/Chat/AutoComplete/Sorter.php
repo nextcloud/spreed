@@ -38,7 +38,7 @@ class Sorter implements ISorter {
 	 * @return string The ID of the sorter, e.g. commenters
 	 * @since 13.0.0
 	 */
-	public function getId() {
+	public function getId(): string {
 		return 'talk_chat_participants';
 	}
 
@@ -51,6 +51,11 @@ class Sorter implements ISorter {
 	 */
 	public function sort(array &$sortArray, array $context) {
 		foreach ($sortArray as $type => &$byType) {
+			if ($type !== 'users') {
+				continue;
+			}
+
+			/** @var \DateTime[] $lastComments */
 			$lastComments = $this->commentsManager->getLastCommentDateByActor(
 				$context['itemType'],
 				$context['itemId'],
@@ -67,7 +72,7 @@ class Sorter implements ISorter {
 				if (!isset($lastComments[$a['value']['shareWith']])) {
 					return 1;
 				}
-				return $lastComments[$a['value']['shareWith']] - $lastComments[$b['value']['shareWith']];
+				return $lastComments[$b['value']['shareWith']]->getTimestamp() - $lastComments[$a['value']['shareWith']]->getTimestamp();
 			});
 		}
 	}
