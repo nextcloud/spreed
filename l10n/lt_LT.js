@@ -26,6 +26,7 @@ OC.L10N.register(
     "Copied!" : "Nukopijuota!",
     "Not supported!" : "Nepalaikoma!",
     "Press ⌘-C to copy." : "Norėdami nukopijuoti, paspauskite ⌘-C.",
+    "Stop screensharing" : "Stabdyti ekrano bendrinimą",
     "Please enter the password for this call" : "Įveskite šio skambučio slaptažodį",
     "Password required" : "Reikalingas slaptažodis",
     "Password" : "Slaptažodis",
@@ -61,13 +62,9 @@ OC.L10N.register(
     "_%n guest_::_%n guests_" : ["%n svečias","%n svečiai","%n svečių","%n svečių"],
     "{actor} invited you to {call}" : "{actor} pakvietė jus į {call}",
     ", " : ", ",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
     "{user} wants to talk with you" : "{user} nori su jumis pasikalbėti",
     "This call is password-protected" : "Šis skambutis yra apsaugotas slaptažodžiu",
     "The password is wrong. Try again." : "Slaptažodis neteisingas. Bandykite dar kartą.",
-    "Stop screensharing" : "Stabdyti ekrano bendrinimą",
     "STUN servers" : "STUN serveriai",
     "TURN server" : "TURN serveris",
     "Video calls" : "Vaizdo skambučiai",
@@ -82,6 +79,9 @@ OC.L10N.register(
     "Fullscreen" : "Visas ekranas",
     "Mute audio" : "Nutildyti garsą",
     "Smile in 3… 2… 1!" : "Šypsokitės po 3… 2… 1!",
-    "STUN server" : "STUN serveris"
+    "STUN server" : "STUN serveris",
+    "… %s" : "… %s",
+    "%s …" : "%s …",
+    "… %s …" : "… %s …"
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");

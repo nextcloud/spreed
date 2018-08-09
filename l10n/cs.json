@@ -40,6 +40,9 @@
     "Press Ctrl-C to copy." : "Pro zkopírování stiskněte Ctrl-C.",
     "Join a conversation or start a new one" : "Připojte se k rozhovoru, nebo začněte nový",
     "This conversation has ended" : "Tato konverzace skončila",
+    "Share screen" : "Sdílet obrazovku",
+    "Show your screen" : "Zobrazit vaši obrazovku",
+    "Stop screensharing" : "Zastavit sdílení obrazovky",
     "Please enter the password for this call" : "Prosím zadejte heslo tohoto hovoru",
     "Password required" : "Vyžadováno heslo",
     "Password" : "Heslo",
@@ -106,9 +109,6 @@
     "Talk to %s" : "Mluvit s %s",
     "_%n other guest_::_%n other guests_" : ["%n jiný host","%n jiní hosté","%n jiných hostů","%n jiných hostů"],
     ", " : ", ",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
     "%s mentioned you in a private conversation" : "%s vás zmínil(a) v soukromé konverzaci",
     "{user} mentioned you in a private conversation" : "{user} vás zmínil(a) v soukromé konverzaci",
     "{user} wants to talk with you" : "{user} s vámi chce mluvit",
@@ -116,9 +116,6 @@
     "A group call has started" : "Skupinový hovor zahájen",
     "This call is password-protected" : "Toto volání je chráněno heslem",
     "The password is wrong. Try again." : "Heslo není správné. Zkus to znovu.",
-    "Share screen" : "Sdílet obrazovku",
-    "Show your screen" : "Zobrazit vaši obrazovku",
-    "Stop screensharing" : "Zastavit sdílení obrazovky",
     "Signaling server" : "Signální server",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Externí signální server může být použit pro větší instalace. Pro použití interního signálního serveru ponechejte pole prázdné.",
     "STUN servers" : "Servery STUN",
@@ -158,6 +155,9 @@
     "Choose person …" : "Vyberte osobu …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN server je potřebný, aby se mohli účastníci připojit k hovorům. TURN server zajišťuje, že bude spojení fungovat i skrz firewally.",
     "STUN server" : "Server STUN",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN server se používá ke zjištění veřejné IP adresy účastníků, kteří jsou za routerem.",
+    "… %s" : "… %s",
+    "%s …" : "%s …",
+    "… %s …" : "… %s …"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

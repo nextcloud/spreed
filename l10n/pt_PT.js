@@ -86,9 +86,6 @@ OC.L10N.register(
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Foi convidado para uma sala de <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
     "Talk to %s" : "Falar com %s",
     ", " : ",",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ...",
     "{user} wants to talk with you" : "{utilizador} quer falar consigo",
     "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}",
     "(group)" : "(grupo)",
@@ -105,6 +102,9 @@ OC.L10N.register(
     "%s invited you to a group call" : "%s convidou-o para uma chamada de grupo",
     "{user} invited you to a group call" : "{utilizador} convidou-o para uma chamada de grupo",
     "Fullscreen" : "Ecrã completo",
-    "Mute audio" : "Silenciar áudio"
+    "Mute audio" : "Silenciar áudio",
+    "… %s" : "... %s",
+    "%s …" : "%s ...",
+    "… %s …" : "... %s ..."
 },
 "nplurals=2; plural=(n != 1);");
