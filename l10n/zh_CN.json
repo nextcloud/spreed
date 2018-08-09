@@ -33,6 +33,9 @@
     "Not supported!" : "不支持！",
     "Press ⌘-C to copy." : "请按 ⌘-C 键复制",
     "Press Ctrl-C to copy." : "请按 Ctrl-C 键复制",
+    "Share screen" : "共享屏幕",
+    "Show your screen" : "显示你的屏幕",
+    "Stop screensharing" : "停止屏幕共享",
     "Please enter the password for this call" : "请输入此通话的密码",
     "Password required" : "要求输入密码",
     "Password" : "密码",
@@ -86,15 +89,9 @@
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "你参加了 {user1} , {user2} , {user3} , {user4} 和 {user5} 的通话",
     "_%n other guest_::_%n other guests_" : ["%n 其他访客"],
     ", " : ", ",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ...",
     "{user} wants to talk with you" : "{user} 想要和您通话",
     "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "使用 WebRTC 召开视频 & 音频会议\n\n* 💬 **集成聊天功能!** 从 Nextcloud 13 开始，Nextcloud Talk 提供了简易文字聊天功能。我们计划在未来版本提供更多特色功能。\n* 👥 **进行私人，小组，公开或者受密码保护的通话！** 可以选择邀请某个人，某个小组或者发送公共邀请链接来加入通话。\n* 💻 **共享屏幕！** 向您的通话成员分享您的屏幕。\n* 🚀 **集成了 Nextcloud 的其他 apps!** 现在仅仅集成了联系人功能，将来会集成更多应用。\n* 🙈 **我们没有在做无用的基础功能！**基于出色的 [simpleWebRTC](https://simplewebrtc.com/) 库  \n\n另外在 [即将到来的版本](https://github.com/nextcloud/spreed/milestones/) 中:\n* ✋ [联合通话](https://github.com/nextcloud/spreed/issues/21),\n提供了和在其他 Nextcloud 平台上的用户进行通话的功能。",
     "The password is wrong. Try again." : "密码错误。请重试。",
-    "Share screen" : "共享屏幕",
-    "Show your screen" : "显示你的屏幕",
-    "Stop screensharing" : "停止屏幕共享",
     "STUN servers" : "STUN 服务器",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN 服务器用以探测路由器下的参与者的公网 IP 地址。",
     "TURN server" : "TURN 服务器",
@@ -133,6 +130,9 @@
     "Choose person …" : "选择人...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN服务器是必需的，所以参与者可以连接到呼叫。 TURN服务器通过防火墙确保连接正常工作。",
     "STUN server" : "STUN 服务器",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN服务器用于确定路由器后面的参与者的公共IP地址。",
+    "… %s" : "... %s",
+    "%s …" : "%s ...",
+    "… %s …" : "... %s ..."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
