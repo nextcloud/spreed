@@ -28,6 +28,9 @@
     "Not supported!" : "Ej kompatibel!",
     "Press ⌘-C to copy." : "Tryck ⌘-C för att kopiera.",
     "Press Ctrl-C to copy." : "Tryck Ctrl-C för att kopiera.",
+    "Share screen" : "Dela skärm",
+    "Show your screen" : "Visa din skärm",
+    "Stop screensharing" : "Stoppa skärmdelning",
     "Please enter the password for this call" : "Var god ange lösenordet för detta samtal",
     "Password required" : "Lösenord krävs",
     "Password" : "Lösenord",
@@ -88,17 +91,11 @@
     "Talk to %s" : "Prata med %s",
     "_%n other guest_::_%n other guests_" : ["%n annan gäst","%n andra gäster"],
     ", " : ",",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
     "{user} wants to talk with you" : "{user} vill prata med dig",
     "A group call has started in {call}" : "Ett gruppsamtal har startats i {call}",
     "A group call has started" : "Ett gruppsamtal har startats",
     "This call is password-protected" : "Detta samtal är lösenordsskyddat",
     "The password is wrong. Try again." : "Lösenordet är fel. Försök igen.",
-    "Share screen" : "Dela skärm",
-    "Show your screen" : "Visa din skärm",
-    "Stop screensharing" : "Stoppa skärmdelning",
     "Signaling server" : "Signalerar server",
     "STUN servers" : "STUN-servrar",
     "A STUN server is used to determine the public IP address of participants behind a router." : "En STUN-server används för att bestämma den offentliga IP-adressen av deltagare bakom en router.",
@@ -135,6 +132,9 @@
     "Choose person …" : "Välj person ...",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUN-servern krävs för att deltagare kan ansluta till samtal. TURN-servern säkerställer att anslutningar fungerar genom brandväggar.",
     "STUN server" : "STUN server",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router."
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUN-servern används för att bestämma den publika IP-adressen av deltagare bakom en router.",
+    "… %s" : "… %s",
+    "%s …" : "%s …",
+    "… %s …" : "… %s …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

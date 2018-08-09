@@ -32,6 +32,9 @@
     "Not supported!" : "Δεν υποστηρίζεται!",
     "Press ⌘-C to copy." : "Για αντιγραφή πατήστε ⌘-C.",
     "Press Ctrl-C to copy." : "Για αντιγραφή πατήστε Ctrl-C.",
+    "Share screen" : "Διαμοιρασμός οθόνης",
+    "Show your screen" : "Εμφάνιση της οθόνης σας",
+    "Stop screensharing" : "Διακόψτε την κοινή χρήση της οθόνης",
     "Password required" : "Απαιτείται συνθηματικό",
     "Password" : "Συνθηματικό",
     "Cancel" : "Ακύρωση",
@@ -68,13 +71,7 @@
     "_%n guest_::_%n guests_" : ["%n επισκέπτης","%n επισκέπτες"],
     "_%n other guest_::_%n other guests_" : ["%n επισκέπτης","%n επισκέπτες"],
     ", " : ", ",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
     "{user} wants to talk with you" : "Ο {user} θέλει να σας μιλήσει",
-    "Share screen" : "Διαμοιρασμός οθόνης",
-    "Show your screen" : "Εμφάνιση της οθόνης σας",
-    "Stop screensharing" : "Διακόψτε την κοινή χρήση της οθόνης",
     "STUN servers" : "Διακομιστές STUN",
     "TURN server" : "Διακομιστής TURN",
     "Android app" : "Εφαρμογή Android",
@@ -102,6 +99,9 @@
     "Mute audio" : "Σίγαση ήχου",
     "Smile in 3… 2… 1!" : "Χαμογελάστε σε 3… 2… 1!",
     "Choose person …" : "Επιλογή ατόμου ...",
-    "STUN server" : "Διακομιστής STUN"
+    "STUN server" : "Διακομιστής STUN",
+    "… %s" : "… %s",
+    "%s …" : "%s …",
+    "… %s …" : "… %s …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

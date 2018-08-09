@@ -30,6 +30,7 @@ OC.L10N.register(
     "Not supported!" : "Nie je podporované!",
     "Press ⌘-C to copy." : "Stlač ⌘-C pre skopírovanie.",
     "Press Ctrl-C to copy." : "Stlač Ctrl-C pre skopírovanie.",
+    "Share screen" : "Sprístupniť obrazovku",
     "Please enter the password for this call" : "Zadajte prosím heslo pre tento hovor",
     "Password required" : "Vyžaduje sa heslo",
     "Password" : "Heslo",
@@ -74,12 +75,8 @@ OC.L10N.register(
     "You attended a call with {user1} and {user2}" : "Zúčastnili ste sa hovoru s {user1} a {user2}",
     "_%n other guest_::_%n other guests_" : ["%n ďalší hosť","%n ďalší hostia","%n ďalší hostia","%n ďalší hostia"],
     ", " : ", ",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
     "A group call has started" : "Skupinový hovor sa začal",
     "This call is password-protected" : "Tento hovor je chránený heslom",
-    "Share screen" : "Sprístupniť obrazovku",
     "TURN server" : "TURN server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN server sa používa na presmerovanie prenosu dát od účastníkov, ktorí sú za firewallom.",
     "Video calls" : "Videohovor",
@@ -110,6 +107,9 @@ OC.L10N.register(
     "Mute audio" : "Stlmiť zvuk",
     "Smile in 3… 2… 1!" : "3.. 2.. 1.. Úsmev!",
     "Choose person …" : "Vyberte osobu ...",
-    "STUN server" : "STUN server"
+    "STUN server" : "STUN server",
+    "… %s" : "… %s",
+    "%s …" : "%s …",
+    "… %s …" : "… %s …"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

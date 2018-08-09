@@ -41,6 +41,9 @@
     "Press Ctrl-C to copy." : "Ctrl-C でコピーします。",
     "Join a conversation or start a new one" : "会話に参加または開始する",
     "This conversation has ended" : "会話は終了しました",
+    "Share screen" : "画面共有",
+    "Show your screen" : "自分の画面を表示",
+    "Stop screensharing" : "画面共有を停止",
     "Please enter the password for this call" : "この通話のパスワードを入力してください",
     "Password required" : "パスワードが必要です",
     "Password" : "パスワード",
@@ -107,17 +110,11 @@
     "Talk to %s" : "%s と通話",
     "_%n other guest_::_%n other guests_" : ["他のゲスト %n 名"],
     ", " : "、",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ...",
     "{user} wants to talk with you" : "{user} からの通話要請があります",
     "A group call has started in {call}" : "{call} のグループ通話が開始されました",
     "A group call has started" : "グループ通話が開始されました",
     "This call is password-protected" : "この通話はパスワードで保護されています",
     "The password is wrong. Try again." : "パスワードが違います。再入力してください",
-    "Share screen" : "画面共有",
-    "Show your screen" : "自分の画面を表示",
-    "Stop screensharing" : "画面共有を停止",
     "Signaling server" : "シグナリングサーバー",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバを利用するには、空欄のままにしてください。",
     "STUN servers" : "STUNサーバー",
@@ -155,6 +152,9 @@
     "Choose person …" : "ユーザー選択 …",
     "The STUN server is necessary so participants can connect to calls. The TURN server makes sure connection works even through firewalls." : "STUNサーバーは参加者の通話に必要です。TURNサーバーはファイアウォール経由の接続に使用されます。",
     "STUN server" : "STUNサーバー",
-    "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。"
+    "The STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーはルーターの背後にいる参加者のパブリックIPアドレスを決定するために使用されます。",
+    "… %s" : "... %s",
+    "%s …" : "%s ...",
+    "… %s …" : "... %s ..."
 },"pluralForm" :"nplurals=1; plural=0;"
 }
