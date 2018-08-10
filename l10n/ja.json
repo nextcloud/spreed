@@ -116,7 +116,7 @@
     "This call is password-protected" : "この通話はパスワードで保護されています",
     "The password is wrong. Try again." : "パスワードが違います。再入力してください",
     "Signaling server" : "シグナリングサーバー",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバを利用するには、空欄のままにしてください。",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "大規模に使用する場合は、オプションで外部のシグナリングサーバーを設定できます。内部のシグナリングサーバーを利用するには、空欄のままにしてください。",
     "STUN servers" : "STUNサーバー",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーは、ルーターを介した参加者のパブリックIPアドレスを決定するために使用されます。",
     "TURN server" : "TURNサーバー",
