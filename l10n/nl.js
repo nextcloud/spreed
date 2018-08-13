@@ -44,6 +44,8 @@ OC.L10N.register(
     "Press ⌘-C to copy." : "Druk op ⌘-C om te kopiëren.",
     "Press Ctrl-C to copy." : "Druk op Ctrl-C om te kopiëren.",
     "Join a conversation or start a new one" : "Doe mee met een discussie, of start een nieuwe",
+    "This conversation has ended" : "Dit gesprek is beeindigd",
+    "Request password" : "Aanvragen wachtwoord",
     "Share screen" : "Scherm delen",
     "Show your screen" : "Mijn scherm weergeven",
     "Stop screensharing" : "Stop schermdelen",
