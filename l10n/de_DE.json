@@ -138,6 +138,7 @@
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Unterhaltung mit {user1}, {user2}, {user3} und {user4} (Dauer {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Unterhaltung mit {user1}, {user2}, {user3}, {user4} und {user5} (Dauer {duration})",
     "Talk to %s" : "Spreche mit %s",
+    "Password request by %s" : "Passwort angefordert von %s",
     "_%n other guest_::_%n other guests_" : ["ein weiterer Gast","%n weitere Gäste"],
     ", " : ", ",
     "{user} sent you a private message" : "{user} hat Ihnen eine private Nachricht gesendet",
