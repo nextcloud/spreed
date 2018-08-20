@@ -6,7 +6,7 @@ style('spreed', ['settings-admin']);
 ?>
 
 <div class="videocalls section signaling-server">
-	<h3><?php p($l->t('Signaling server')) ?></h3>
+	<h2><?php p($l->t('Signaling server')) ?></h2>
 	<p class="settings-hint"><?php p($l->t('An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.')) ?></p>
 
 	<div class="signaling-servers" data-servers="<?php p($_['signalingServers']) ?>">
