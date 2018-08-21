@@ -543,6 +543,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 * `conversation_created` - {actor} created the conversation
 * `conversation_renamed` - {actor} renamed the conversation from "foo" to "bar"
+* `call_started` - {actor} started a call
 * `call_joined` - {actor} joined the call
 * `call_left` - {actor} left the call
 * `call_ended` - Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration 30:23)

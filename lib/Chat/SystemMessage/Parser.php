@@ -61,6 +61,8 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
 		} else if ($message === 'conversation_renamed') {
 			$parsedMessage = $this->l->t('{actor} renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
+		} else if ($message === 'call_started') {
+			$parsedMessage = $this->l->t('{actor} started a call');
 		} else if ($message === 'call_joined') {
 			$parsedMessage = $this->l->t('{actor} joined the call');
 		} else if ($message === 'call_left') {
