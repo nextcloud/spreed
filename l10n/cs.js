@@ -1,10 +1,12 @@
 OC.L10N.register(
     "spreed",
     {
+    "Signaling server URL" : "URL adresa signalizovacího serveru",
     "Validate SSL certificate" : "Ověřit SSL certifikát",
     "Delete server" : "Smazat server",
     "Add new server" : "Přidat nový server",
     "Saved" : "Uloženo",
+    "TURN server URL" : "URL adresa TURN serveru",
     "Shared secret" : "Předsdílené heslo",
     "TURN server shared secret" : "Sdílené tajemství s TURN serverem",
     "TURN server protocols" : "Protokoly TURN serveru",
@@ -42,6 +44,7 @@ OC.L10N.register(
     "Press Ctrl-C to copy." : "Pro zkopírování stiskněte Ctrl-C.",
     "Join a conversation or start a new one" : "Připojte se k rozhovoru, nebo začněte nový",
     "This conversation has ended" : "Tato konverzace skončila",
+    "Request password" : "Vyžadovat heslo",
     "Share screen" : "Sdílet obrazovku",
     "Show your screen" : "Zobrazit vaši obrazovku",
     "Stop screensharing" : "Zastavit sdílení obrazovky",
