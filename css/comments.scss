@@ -257,7 +257,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 #commentsTabView .comment:not(.systemMessage) .message .mention-user {
 	font-weight: bold;
 
-	.current-user {
+	&.current-user {
 		background-color: $color-primary;
 		color: $color-primary-text;
 	}
