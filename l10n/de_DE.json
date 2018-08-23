@@ -174,7 +174,7 @@
     "A STUN server is used to determine the public IP address of participants behind a router." : "Der STUN-Server wird verwendet, um die öffentliche IP-Adresse von Teilnehmern hinter einem Router zu bestimmen.",
     "TURN server" : "TURN-Server",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Der TURN-Server dient als Proxy für die Verbindungen von Teilnehmern hinter einer Firewall.",
-    "%s Talk on your mobile devices" : "%s Sprich auf deinen Handys",
+    "%s Talk on your mobile devices" : "%s Talk auf Ihren mobilen Geräten",
     "Join conversations at any time, any where, on any device." : "Immer, überall und auf allen Geräten einer Unterhaltung beitreten",
     "Android app" : "Android-App",
     "iOS app" : "iOS-App",
