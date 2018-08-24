@@ -122,6 +122,7 @@
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Bir <strong>sohbet</strong> odasına çağrıldınız ya da bir <strong>görüşme çağrısı</strong> aldınız",
     "{actor} created the conversation" : "{actor} görüşme ekledi",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor}, görüşmenin \"%1$s\" olan adını \"%2$s\" olarak değiştirdi",
+    "{actor} started a call" : "{actor} bir görüşme başlattı",
     "{actor} joined the call" : "{actor} görüşmeye katıldı",
     "{actor} left the call" : "{actor} görüşmeden ayrıldı",
     "{actor} allowed guests in the conversation" : "{actor} görüşmeye konukların katılmasına izin verdi",
