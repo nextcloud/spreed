@@ -28,6 +28,7 @@ use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 
 class Parser {
 
@@ -35,6 +36,8 @@ class Parser {
 	protected $userManager;
 	/** @var GuestManager */
 	protected $guestManager;
+	/** @var IUserSession */
+	protected $userSession;
 	/** @var IL10N */
 	protected $l;
 
@@ -43,9 +46,10 @@ class Parser {
 	/** @var string[] */
 	protected $guestNames = [];
 
-	public function __construct(IUserManager $userManager, GuestManager $guestManager, IL10N $l) {
+	public function __construct(IUserManager $userManager, GuestManager $guestManager, IUserSession $userSession, IL10N $l) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
+		$this->userSession = $userSession;
 		$this->l = $l;
 	}
 
@@ -55,40 +59,93 @@ class Parser {
 		$parameters = $data['parameters'];
 
 		$parsedParameters = ['actor' => $this->getActor($comment)];
+		$currentUser = $this->userSession->getUser();
+		$currentUserIsActor = $currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['actor']['id'];
 		$parsedMessage = $comment->getMessage();
 
 		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You created the conversation');
+			}
 		} else if ($message === 'conversation_renamed') {
 			$parsedMessage = $this->l->t('{actor} renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You renamed the conversation from "%1$s" to "%2$s"', [$parameters['oldName'], $parameters['newName']]);
+			}
 		} else if ($message === 'call_started') {
 			$parsedMessage = $this->l->t('{actor} started a call');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You started a call');
+			}
 		} else if ($message === 'call_joined') {
 			$parsedMessage = $this->l->t('{actor} joined the call');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You joined the call');
+			}
 		} else if ($message === 'call_left') {
 			$parsedMessage = $this->l->t('{actor} left the call');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You left the call');
+			}
 		} else if ($message === 'call_ended') {
 			list($parsedMessage, $parsedParameters) = $this->parseCall($parameters);
 		} else if ($message === 'guests_allowed') {
 			$parsedMessage = $this->l->t('{actor} allowed guests in the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You allowed guests in the conversation');
+			}
 		} else if ($message === 'guests_disallowed') {
 			$parsedMessage = $this->l->t('{actor} disallowed guests in the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You disallowed guests in the conversation');
+			}
 		} else if ($message === 'password_set') {
 			$parsedMessage = $this->l->t('{actor} set a password for the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You set a password for the conversation');
+			}
 		} else if ($message === 'password_removed') {
 			$parsedMessage = $this->l->t('{actor} removed the password for the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You removed the password for the conversation');
+			}
 		} else if ($message === 'user_added') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} added {user} to the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You added {user} to the conversation');
+			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+				$parsedMessage = $this->l->t('{actor} added you to the conversation');
+			}
 		} else if ($message === 'user_removed') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
-			$parsedMessage = $this->l->t('{actor} removed {user} from the conversation');
+			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
+				$parsedMessage = $this->l->t('{actor} left the conversation');
+			} else {
+				$parsedMessage = $this->l->t('{actor} removed {user} from the conversation');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You removed {user} from the conversation');
+				} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+					$parsedMessage = $this->l->t('{actor} removed you from the conversation');
+				}
+			}
 		} else if ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You promoted {user} to moderator');
+			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
+			}
 		} else if ($message === 'moderator_demoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You demoted {user} from moderator');
+			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
+			}
 		}
 
 		$comment->setMessage($message);
