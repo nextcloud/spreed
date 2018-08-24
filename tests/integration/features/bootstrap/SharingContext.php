@@ -324,6 +324,31 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" gets sharees for$/
+	 *
+	 * @param string $user
+	 * @param TableNode $body
+	 */
+	public function userGetsShareesFor(string $user, TableNode $body) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/sharees';
+
+		$parameters = [];
+		$parameters[] = 'shareType=10'; // Share::SHARE_TYPE_ROOM,
+		$parameters[] = 'itemType=file';
+		foreach ($body->getRowsHash() as $key => $value) {
+			$parameters[] = $key . '=' . $value;
+		}
+
+		$url .= '?' . implode('&', $parameters);
+
+		$this->sendingTo('GET', $url);
+
+		PHPUnit_Framework_Assert::assertEquals(200, $this->response->getStatusCode());
+	}
+
+	/**
 	 * @When user :user gets the share-type DAV property for :path
 	 *
 	 * @param string $user
@@ -487,6 +512,36 @@ class SharingContext implements Context {
 
 		foreach ($expectedFields as $field => $value) {
 			$this->assertFieldIsInReturnedShare($field, $value, $returnedShare);
+		}
+	}
+
+	/**
+	 * @Then /^"([^"]*)" sharees returned (are|is empty)$/
+	 *
+	 * Each sharee is specified as "| room name | room test identifier |"; the
+	 * name is checked against the returned "label" value, and the room test
+	 * identifier is used to get the room token, which is checked against the
+	 * returned "shareWith" value. The returned "shareType" value is expected to
+	 * always be "Share::SHARE_TYPE_ROOM", so there is no need to specify it.
+	 *
+	 * @param string $shareeType
+	 * @param string $isEmpty
+	 * @param TableNode|null $shareesList
+	 */
+	public function shareesReturnedAreIsEmpty(string $shareeType, string $isEmpty, TableNode $shareesList = null) {
+		if ($isEmpty !== 'is empty') {
+			$sharees = [];
+			foreach ($shareesList->getRows() as $row) {
+				$expectedSharee = [$row[0]];
+				$expectedSharee[] = 10; // Share::SHARE_TYPE_ROOM
+				$expectedSharee[] = FeatureContext::getTokenForIdentifier($row[1]);
+				$sharees[] = $expectedSharee;
+			}
+			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
+			PHPUnit_Framework_Assert::assertEquals($sharees, $respondedArray);
+		} else {
+			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
+			PHPUnit_Framework_Assert::assertEmpty($respondedArray);
 		}
 	}
 
@@ -762,6 +817,53 @@ class SharingContext implements Context {
 		} else {
 			PHPUnit_Framework_Assert::assertEquals($contentExpected, (string)$returnedShare->$field, "Field '$field' does not match");
 		}
+	}
+
+	private function getArrayOfShareesResponded(ResponseInterface $response, string $shareeType) {
+		$elements = simplexml_load_string($response->getBody())->data;
+		$elements = json_decode(json_encode($elements), 1);
+		if (strpos($shareeType, 'exact ') === 0) {
+			$elements = $elements['exact'];
+			$shareeType = substr($shareeType, 6);
+		}
+
+		// "simplexml_load_string" creates a SimpleXMLElement object for each
+		// XML element with child elements. In turn, each child is indexed by
+		// its tag in the SimpleXMLElement object. However, when there are
+		// several child XML elements with the same tag, an array with all the
+		// children with the same tag is indexed instead. Therefore, when the
+		// XML contains
+		// <rooms>
+		//   <element>
+		//     <label>...</label>
+		//     <value>...</value>
+		//   </element>
+		// </rooms>
+		// the "$elements[$shareeType]" variable contains an "element" key which
+		// in turn contains "label" and "value" keys, but when the XML contains
+		// <rooms>
+		//   <element>
+		//     <label>...</label>
+		//     <value>...</value>
+		//   </element>
+		//   <element>
+		//     <label>...</label>
+		//     <value>...</value>
+		//   </element>
+		// </rooms>
+		// the "$elements[$shareeType]" variable contains an "element" key which
+		// in turn contains "0" and "1" keys, and in turn each one contains
+		// "label" and "value" keys.
+		$elements = $elements[$shareeType];
+		if (array_key_exists('element', $elements) && is_int(array_keys($elements['element'])[0])) {
+			$elements = $elements['element'];
+		}
+
+		$sharees = [];
+		foreach ($elements as $element) {
+			$sharees[] = [$element['label'], $element['value']['shareType'], $element['value']['shareWith']];
+		}
+		return $sharees;
 	}
 
 }
