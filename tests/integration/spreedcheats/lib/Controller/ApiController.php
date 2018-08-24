@@ -59,6 +59,14 @@ class ApiController extends OCSController {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')->execute();
 
+		$query = $this->db->getQueryBuilder();
+		$query->delete('share')
+			->where($query->expr()->orX(
+				$query->expr()->eq('share_type', $query->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)),
+				$query->expr()->eq('share_type', $query->createNamedParameter(11 /*RoomShareProvider::SHARE_TYPE_USERROOM*/))
+			))
+			->execute();
+
 		return new DataResponse();
 	}
 }

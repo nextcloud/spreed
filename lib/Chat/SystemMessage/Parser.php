@@ -24,8 +24,10 @@ namespace OCA\Spreed\Chat\SystemMessage;
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
+use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\IL10N;
+use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
@@ -38,6 +40,10 @@ class Parser {
 	protected $guestManager;
 	/** @var IUserSession */
 	protected $userSession;
+	/** @var RoomShareProvider */
+	protected $shareProvider;
+	/** @var IURLGenerator */
+	protected $url;
 	/** @var IL10N */
 	protected $l;
 
@@ -46,10 +52,17 @@ class Parser {
 	/** @var string[] */
 	protected $guestNames = [];
 
-	public function __construct(IUserManager $userManager, GuestManager $guestManager, IUserSession $userSession, IL10N $l) {
+	public function __construct(IUserManager $userManager,
+								GuestManager $guestManager,
+								IUserSession $userSession,
+								RoomShareProvider $shareProvider,
+								IURLGenerator $url,
+								IL10N $l) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->userSession = $userSession;
+		$this->shareProvider = $shareProvider;
+		$this->url = $url;
 		$this->l = $l;
 	}
 
@@ -146,6 +159,19 @@ class Parser {
 			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
+		} else if ($message === 'file_shared') {
+			try {
+				$parsedParameters['file'] = $this->getFileFromShare($parameters['share']);
+				$parsedMessage = $this->l->t('{actor} shared {file} into the conversation');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You shared {file} into the conversation');
+				}
+			} catch (\Exception $e) {
+				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You shared a file which is no longer available');
+				}
+			}
 		}
 
 		$comment->setMessage($message);
@@ -159,6 +185,36 @@ class Parser {
 		}
 
 		return $this->getUser($comment->getActorId());
+	}
+
+	/**
+	 * @param string $shareId
+	 * @return array
+	 * @throws \OCP\Files\InvalidPathException
+	 * @throws \OCP\Files\NotFoundException
+	 * @throws \OCP\Share\Exceptions\ShareNotFound
+	 */
+	protected function getFileFromShare(string $shareId): array {
+		$share = $this->shareProvider->getShareById($shareId);
+		$node = $share->getNode();
+
+
+		if ($this->userSession->isLoggedIn()) {
+			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
+				'fileid' => $node->getId(),
+			]);
+		} else {
+			$url = $this->url->linkToRouteAbsolute('files_sharing.sharecontroller.showShare', [
+				'token' => $share->getToken(),
+			]);
+		}
+
+		return [
+			'type' => 'file',
+			'id' => $shareId,
+			'name' => $node->getName(),
+			'link' => $url,
+		];
 	}
 
 	protected function getUser(string $uid): array {
