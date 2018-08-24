@@ -166,12 +166,14 @@ class RoomController extends OCSController {
 
 		if ($participant instanceof Participant) {
 			$participantType = $participant->getParticipantType();
-			$participantInCall = $participant->isInCall();
+			$participantFlags = $participant->getInCallFlags();
 			$favorite = $participant->isFavorite();
 		} else {
 			$participantType = Participant::GUEST;
-			$participantInCall = $favorite = false;
+			$participantFlags = Participant::FLAG_DISCONNECTED;
+			$favorite = false;
 		}
+		$participantInCall = $participantFlags & Participant::FLAG_IN_CALL !== 0;
 
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
@@ -189,7 +191,9 @@ class RoomController extends OCSController {
 			'objectType' => $room->getObjectType(),
 			'objectId' => $room->getObjectId(),
 			'participantType' => $participantType,
+			// Deprecated, use participantFlags instead.
 			'participantInCall' => $participantInCall,
+			'participantFlags' => $participantFlags,
 			'count' => $room->getNumberOfParticipants(false, time() - 30),
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,

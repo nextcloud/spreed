@@ -16,7 +16,7 @@ var spreedPeerConnectionTable = [];
 	var ownPeer = null;
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
-	var selfInCall = OCA.SpreedMe.app.FLAG_DISCONNECTED;
+	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -219,7 +219,7 @@ var spreedPeerConnectionTable = [];
 		var currentSessionId = signaling.getSessionid();
 		var currentUsersInRoom = [];
 		var userMapping = {};
-		var selfInCall = 0;
+		selfInCall = OCA.SpreedMe.app.FLAG_DISCONNECTED;
 		var sessionId;
 		for (sessionId in users) {
 			if (!users.hasOwnProperty(sessionId)) {

@@ -123,7 +123,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `name` | string | Name of the room (can also be empty)
         `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
         `participantType` | int | Permissions level of the current user
-        `participantInCall` | bool | Flag if the current user is in the call
+        `participantInCall` | bool | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
+        `participantFlags` | int | Flags of the current user (only available with `in-call-flags` capability)
         `count` | int | Number of active users
         `numGuests` | int | Number of active guests
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)

@@ -32,7 +32,7 @@
 		'<div class="room-name"></div>' +
 		'<div class="call-controls-container">' +
 		'	<div class="call-button">' +
-		'	{{#if participantInCall}}' +
+		'	{{#if isInCall}}' +
 		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
 		'	{{else}}' +
 		'		{{#if hasCall}}' +
@@ -86,6 +86,7 @@
 			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
 				isGuest: this.model.get('participantType') === 4,
+				isInCall: this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL !== 0,
 				canModerate: canModerate,
 				isPublic: this.model.get('type') === 3,
 				showShareLink: !canModerate && this.model.get('type') === 3,
@@ -134,7 +135,7 @@
 			'change:hasCall': function() {
 				this.renderWhenInactive();
 			},
-			'change:participantInCall': function() {
+			'change:participantFlags': function() {
 				this.renderWhenInactive();
 			},
 			'change:participantType': function() {

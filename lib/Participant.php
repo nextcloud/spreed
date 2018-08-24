@@ -96,7 +96,7 @@ class Participant {
 		return $this->sessionId;
 	}
 
-	public function isInCall() {
+	public function getInCallFlags() {
 		return $this->inCall;
 	}
 
