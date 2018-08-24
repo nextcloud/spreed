@@ -48,6 +48,10 @@
 		'        <div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>' +
 		'        <input class="submit icon-confirm" type="submit" value="" />' +
 		'        <div class="submitLoading icon-loading-small hidden"></div>'+
+		'        {{#if actorId}}' +
+		'        <button class="share icon-add"></button>' +
+		'        <div class="shareLoading icon-loading-small hidden"></div>'+
+		'        {{/if}}' +
 		'    </form>' +
 		'</div>';
 
@@ -78,6 +82,7 @@
 		},
 
 		events: {
+			'click .newCommentForm .share': '_onAddShare',
 			'submit .newCommentForm': '_onSubmitComment',
 			'paste div.message': '_onPaste'
 		},
@@ -640,6 +645,41 @@
 			$form.find('.message').focus();
 
 			OC.Notification.show(t('spreed', 'Error occurred while sending message'), {type: 'error'});
+		},
+
+		_onAddShare: function() {
+			var self = this;
+			var $form = this.$el.find('.newCommentForm');
+			var $shareButton = $form.find('.share');
+			var $shareLoadingIcon = $form.find('.shareLoading');
+
+			OC.dialogs.filepicker(t('spreed', 'File to share'), function(targetPath) {
+				$shareButton.addClass('hidden');
+				$shareLoadingIcon.removeClass('hidden');
+
+				$.ajax({
+					type: 'POST',
+					url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares',
+					dataType: 'json',
+					data: {
+						shareType: OC.Share.SHARE_TYPE_ROOM,
+						path: targetPath,
+						shareWith: self.collection.token
+					}
+				}).always(function() {
+					$shareLoadingIcon.addClass('hidden');
+					$shareButton.removeClass('hidden');
+				}).fail(function(xhr) {
+					var message = t('spreed', 'Error while sharing');
+
+					var result = xhr.responseJSON;
+					if (result && result.ocs && result.ocs.meta) {
+						message = result.ocs.meta.message;
+					}
+
+					OC.Notification.showTemporary(message);
+				});
+			}, false, null, true, OC.dialogs.FILEPICKER_TYPE_CHOOSE);
 		},
 
 	});

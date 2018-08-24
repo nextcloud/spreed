@@ -22,31 +22,45 @@
 }
 
 #commentsTabView .newCommentForm .message {
-	width: calc(100% - 32px);
+	width: calc(100% - 36px);
 	margin-left: 36px;
 	padding-right: 30px;
 	display: block;
 }
 
 #commentsTabView .newCommentForm .submit,
-#commentsTabView .newCommentForm .submitLoading {
+#commentsTabView .newCommentForm .submitLoading,
+#commentsTabView .newCommentForm .share,
+#commentsTabView .newCommentForm .shareLoading {
 	position: absolute;
 
 	width: 44px;
 	height: 44px;
 
 	bottom: -4px;
-	right: -8px;
 	margin: 0;
 }
 
-#commentsTabView .newCommentForm .submit {
+#commentsTabView .newCommentForm .submit,
+#commentsTabView .newCommentForm .submitLoading {
+	right: 0;
+}
+
+#commentsTabView .newCommentForm .share,
+#commentsTabView .newCommentForm .shareLoading {
+	right: -44px;
+}
+
+#commentsTabView .newCommentForm .submit,
+#commentsTabView .newCommentForm .share {
 	background-color: transparent;
 	border: none;
 	opacity: .3;
 }
 #commentsTabView .newCommentForm .submit:hover,
-#commentsTabView .newCommentForm .submit:focus {
+#commentsTabView .newCommentForm .submit:focus,
+#commentsTabView .newCommentForm .share:hover,
+#commentsTabView .newCommentForm .share:focus {
 	opacity: 1;
 }
 
