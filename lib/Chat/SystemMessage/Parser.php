@@ -82,7 +82,11 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} added {user} to the conversation');
 		} else if ($message === 'user_removed') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
-			$parsedMessage = $this->l->t('{actor} removed {user} from the conversation');
+			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
+				$parsedMessage = $this->l->t('{actor} left the conversation');
+			} else {
+				$parsedMessage = $this->l->t('{actor} removed {user} from the conversation');
+			}
 		} else if ($message === 'moderator_promoted') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
