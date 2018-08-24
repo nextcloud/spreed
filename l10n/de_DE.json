@@ -122,6 +122,7 @@
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Sie wurden zu einem <strong>Gespräch</strong> eingeladen oder hatten einen <strong>Anruf</strong>",
     "{actor} created the conversation" : "{actor} hat die Unterhaltung begonnen",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} hat die Unterhaltung von \"%1$s\" nach \"%2$s\" umbenannt",
+    "{actor} started a call" : "{actor} hat eine Unterhaltung begonnen",
     "{actor} joined the call" : "{actor} ist der Unterhaltung beigetreten",
     "{actor} left the call" : "{actor} hat die Unterhaltung verlassen",
     "{actor} allowed guests in the conversation" : "{actor} hat Gäste in der Unterhaltung erlaubt",

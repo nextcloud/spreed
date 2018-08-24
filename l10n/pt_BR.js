@@ -124,6 +124,7 @@ OC.L10N.register(
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Você foi convidado para uma sala<strong>de conversa</strong> ou teve uma <strong>chamada</strong>",
     "{actor} created the conversation" : "{actor} criou a conversa",
     "{actor} renamed the conversation from \"%1$s\" to \"%2$s\"" : "{actor} renomeou a conversa de \"%1$s\" para \"%2$s\"",
+    "{actor} started a call" : "{actor} iniciou uma chamada",
     "{actor} joined the call" : "{actor} juntou-se à chamada",
     "{actor} left the call" : "{actor} saiu da chamada",
     "{actor} allowed guests in the conversation" : "{actor} permitiu convidados na conversa",
