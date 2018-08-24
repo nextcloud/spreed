@@ -592,6 +592,21 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `server` | string | URL of the external signaling server
     `ticket` | string | Ticket for the external signaling server
 
+    - STUN server
+    
+       field | type | Description
+       ------|------|------------
+       `url` | string | STUN server URL
+
+    - TURN server
+    
+       field | type | Description
+       ------|------|------------
+       `url` | array | One element array with TURN server URL
+       `urls` | array | One element array with TURN server URL
+       `username` | string | User name for the TURN server
+       `credential` | string | User password for the TURN server
+
 * Response:
     - Header:
         + `200 OK`
