@@ -16,7 +16,7 @@
 		_userLocalTemplate: '<span class="mention-user {{#if isCurrentUser}}current-user{{/if}}" data-user="{{id}}">@{{name}}</span>',
 
 		_unknownTemplate: '<strong>{{name}}</strong>',
-		_unknownLinkTemplate: '<a href="{{link}}">{{name}}</a>',
+		_unknownLinkTemplate: '<a href="{{link}}" class="external" target="_blank" rel="noopener noreferrer"><strong>{{name}}</strong></a>',
 
 		/**
 		 * @param {string} subject

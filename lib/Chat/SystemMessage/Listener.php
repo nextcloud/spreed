@@ -23,11 +23,14 @@ namespace OCA\Spreed\Chat\SystemMessage;
 
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Share;
+use OCP\Share\IShare;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -37,14 +40,17 @@ class Listener {
 	protected $dispatcher;
 	/** @var ChatManager */
 	protected $chatManager;
+	/** @var Manager */
+	protected $roomManager;
 	/** @var TalkSession */
 	protected $talkSession;
 	/** @var IUserSession */
 	protected $userSession;
 
-	public function __construct(EventDispatcherInterface $dispatcher, ChatManager $chatManager, TalkSession $talkSession, IUserSession $userSession) {
+	public function __construct(EventDispatcherInterface $dispatcher, ChatManager $chatManager, Manager $roomManager, TalkSession $talkSession, IUserSession $userSession) {
 		$this->dispatcher = $dispatcher;
 		$this->chatManager = $chatManager;
+		$this->roomManager = $roomManager;
 		$this->talkSession = $talkSession;
 		$this->userSession = $userSession;
 	}
@@ -128,6 +134,17 @@ class Listener {
 			} else if ($event->getArgument('newType') === Participant::USER) {
 				$this->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getArgument('user')]);
 			}
+		});
+		$this->dispatcher->addListener('OCP\Share::postShare', function(GenericEvent $event) {
+			/** @var IShare $share */
+			$share = $event->getSubject();
+
+			if ($share->getShareType() !== Share::SHARE_TYPE_ROOM) {
+				return;
+			}
+
+			$room = $this->roomManager->getRoomByToken($share->getSharedWith());
+			$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId()]);
 		});
 	}
 
