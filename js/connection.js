@@ -109,8 +109,17 @@
 			}
 
 			var self = this;
-			this.app.callbackAfterMedia = function() {
-				self.app.signaling.joinCall(token);
+			this.app.callbackAfterMedia = function(configuration) {
+				var flags = OCA.SpreedMe.app.FLAG_IN_CALL;
+				if (configuration) {
+					if (configuration.audio) {
+						flags |= OCA.SpreedMe.app.FLAG_WITH_AUDIO;
+					}
+					if (configuration.video) {
+						flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
+					}
+				}
+				self.app.signaling.joinCall(token, flags);
 				self.app.signaling.syncRooms();
 			};
 

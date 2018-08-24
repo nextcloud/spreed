@@ -16,6 +16,7 @@ var spreedPeerConnectionTable = [];
 	var ownPeer = null;
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
+	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -130,6 +131,16 @@ var spreedPeerConnectionTable = [];
 		ownPeer.start();
 	}
 
+	function userHasStreams(user) {
+		var flags = user;
+		if (flags.hasOwnProperty('inCall')) {
+			flags = flags.inCall;
+		}
+		flags = flags || OCA.SpreedMe.app.FLAG_DISCONNECTED;
+		var REQUIRED_FLAGS = OCA.SpreedMe.app.FLAG_WITH_AUDIO | OCA.SpreedMe.app.FLAG_WITH_VIDEO;
+		return (flags & REQUIRED_FLAGS) !== 0;
+	}
+
 	function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 		'use strict';
 		var currentSessionId = signaling.getSessionid();
@@ -164,7 +175,7 @@ var spreedPeerConnectionTable = [];
 				if (useMcu) {
 					// TODO(jojo): Already create peer object to avoid duplicate offers.
 					webrtc.connection.requestOffer(user, "video");
-				} else if (sessionId < currentSessionId) {
+				} else if (userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
 					// To avoid overloading the user joining a room (who previously called
 					// all the other participants), we decide who calls who by comparing
 					// the session ids of the users: "larger" ids call "smaller" ones.
@@ -208,7 +219,7 @@ var spreedPeerConnectionTable = [];
 		var currentSessionId = signaling.getSessionid();
 		var currentUsersInRoom = [];
 		var userMapping = {};
-		var selfInCall = false;
+		selfInCall = OCA.SpreedMe.app.FLAG_DISCONNECTED;
 		var sessionId;
 		for (sessionId in users) {
 			if (!users.hasOwnProperty(sessionId)) {
@@ -220,7 +231,7 @@ var spreedPeerConnectionTable = [];
 			}
 
 			if (sessionId === currentSessionId) {
-				selfInCall = true;
+				selfInCall = user.inCall;
 				continue;
 			}
 
@@ -348,6 +359,13 @@ var spreedPeerConnectionTable = [];
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
 				}
+
+				var user = usersInCallMapping[id];
+				if (user && !userHasStreams(user)) {
+					console.log("User has no stream", id);
+					return;
+				}
+
 				// Indicator for username
 				var userIndicator = document.createElement('div');
 				userIndicator.className = 'nameIndicator';

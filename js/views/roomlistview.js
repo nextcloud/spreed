@@ -107,7 +107,7 @@
 			'change:hasCall': function() {
 				this.render();
 			},
-			'change:participantInCall': function() {
+			'change:participantFlags': function() {
 				this.render();
 			},
 			'change:participantType': function() {

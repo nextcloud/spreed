@@ -678,14 +678,11 @@ class Room {
 	}
 
 
-	/**
-	 * @param string $sessionId
-	 * @param bool $active
-	 */
-	public function changeInCall($sessionId, $active) {
-		if ($active) {
+	public function changeInCall(string $sessionId, int $flags) {
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(self::class . '::preSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
+				'flags' => $flags,
 			]));
 		} else {
 			$this->dispatcher->dispatch(self::class . '::preSessionLeaveCall', new GenericEvent($this, [
@@ -695,14 +692,15 @@ class Room {
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
-			->set('in_call', $query->createNamedParameter((int) $active, IQueryBuilder::PARAM_INT))
+			->set('in_call', $query->createNamedParameter($flags, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		if ($active) {
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(self::class . '::postSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
+				'flags' => $flags,
 			]));
 		} else {
 			$this->dispatcher->dispatch(self::class . '::postSessionLeaveCall', new GenericEvent($this, [
@@ -784,14 +782,14 @@ class Room {
 		while ($row = $result->fetch()) {
 			if ($row['user_id'] !== '' && $row['user_id'] !== null) {
 				$users[$row['user_id']] = [
-					'inCall' => (bool) $row['in_call'],
+					'inCall' => (int) $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
 					'sessionId' => $row['session_id'],
 					'participantType' => (int) $row['participant_type'],
 				];
 			} else {
 				$guests[] = [
-					'inCall' => (bool) $row['in_call'],
+					'inCall' => (int) $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
 					'sessionId' => $row['session_id'],
 				];
@@ -855,7 +853,7 @@ class Room {
 		$query->select('session_id')
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('in_call', $query->createNamedParameter(1, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->neq('in_call', $query->createNamedParameter(Participant::FLAG_DISCONNECTED, IQueryBuilder::PARAM_INT)))
 			->setMaxResults(1);
 		$result = $query->execute();
 		$row = $result->fetch();
