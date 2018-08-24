@@ -1199,6 +1199,11 @@ video {
 	padding-right: 15px;
 }
 
+#app-sidebar #commentsTabView .newCommentForm {
+	/* Make room to show the "Add" button when chat is shown in the sidebar. */
+	margin-right: 44px;
+}
+
 /**
  * Limiting the scroll bar in the sidebar to the list of chat messages causes
  * the scroll bar to be removed from the whole sidebar in other tabs too.
