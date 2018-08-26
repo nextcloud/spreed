@@ -139,12 +139,12 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
-					if ((element.type === "createGroupRoom") || (element.type === "createPublicRoom")) {
-						return '<span><div class="avatar icon-add"></div>' + escapeHTML(element.displayName) + '</span>';
+					if (element.type === "createPublicRoom") {
+						return '<span><div class="avatar icon-public-white"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
-					if (element.type === 'group') {
-						return '<span><div class="avatar icon-contacts-dark"></div>' + escapeHTML(element.displayName) + '</span>';
+					if (element.type === "createGroupRoom" || element.type === 'group') {
+						return '<span><div class="avatar icon-contacts"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';

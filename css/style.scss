@@ -127,14 +127,14 @@
 	margin: 0 !important;
 }
 
-.select2-result .icon-contacts-dark.avatar,
-.select2-result .icon-add.avatar,
-#app-navigation .icon-contacts-dark,
-#app-navigation .app-navigation-entry-link .icon-public,
-#app-navigation .icon-add  {
-	border-radius: 0;
+.select2-result .icon-contacts.avatar,
+.select2-result .icon-public-white.avatar,
+#app-navigation .icon-contacts,
+#app-navigation .app-navigation-entry-link .icon-public-white {
+	border-radius: 50%;
 	width: 32px;
 	height: 32px;
+	background-color: var(--color-background-darker);
 }
 
 #app-navigation .favorite-mark {
