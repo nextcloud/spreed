@@ -631,16 +631,16 @@ class RoomShareProvider implements IShareProvider {
 	 * If the recipient has not modified the share the original one is returned
 	 * instead.
 	 *
-	 * @param Share[] $shares
+	 * @param IShare[] $shares
 	 * @param string $userId
-	 * @return Share[]
+	 * @return IShare[]
 	 */
 	private function resolveSharesForRecipient(array $shares, string $userId): array {
 		$result = [];
 
 		$start = 0;
 		while (true) {
-			/** @var Share[] $shareSlice */
+			/** @var IShare[] $shareSlice */
 			$shareSlice = array_slice($shares, $start, 100);
 			$start += 100;
 
@@ -650,7 +650,7 @@ class RoomShareProvider implements IShareProvider {
 
 			/** @var int[] $ids */
 			$ids = [];
-			/** @var Share[] $shareMap */
+			/** @var IShare[] $shareMap */
 			$shareMap = [];
 
 			foreach ($shareSlice as $share) {
@@ -859,25 +859,22 @@ class RoomShareProvider implements IShareProvider {
 	 * @param bool $currentAccess If current access is required (like for removed shares that might get revived later)
 	 * @return array
 	 */
-	public function getAccessList($nodes, $currentAccess) {
+	public function getAccessList($nodes, $currentAccess): array {
 		$ids = [];
 		foreach ($nodes as $node) {
 			$ids[] = $node->getId();
 		}
 
-		$qb = $this->dbConn->getQueryBuilder();
+		$qb = $this->dbConnection->getQueryBuilder();
 
-		$or = $qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM));
-
+		$types = [\OCP\Share::SHARE_TYPE_ROOM];
 		if ($currentAccess) {
-			$or->add($qb->expr()->eq('share_type', $qb->createNamedParameter(self::SHARE_TYPE_USERROOM)));
+			$types[] = self::SHARE_TYPE_USERROOM;
 		}
 
 		$qb->select('id', 'parent', 'share_type', 'share_with', 'file_source', 'file_target', 'permissions')
 			->from('share')
-			->where(
-				$or
-			)
+			->where($qb->expr()->in('share_type', $qb->createNamedParameter($types, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->in('file_source', $qb->createNamedParameter($ids, IQueryBuilder::PARAM_INT_ARRAY)))
 			->andWhere($qb->expr()->orX(
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('file')),
