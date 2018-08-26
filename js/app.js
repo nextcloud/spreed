@@ -87,7 +87,7 @@
 							itemId: 'new',
 							shareTypes: [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP]
 						};
-					},
+					}.bind(this),
 					results: function (response) {
 						// TODO improve error case
 						if (response.ocs.data === undefined) {
@@ -106,11 +106,32 @@
 
 						//Add custom entry to create a new empty group or public room
 						if (OCA.SpreedMe.app._searchTerm === '') {
-							results.unshift({ id: "create-public-room", displayName: t('spreed', 'New public conversation'), type: "createPublicRoom"});
-							results.unshift({ id: "create-group-room", displayName: t('spreed', 'New group conversation'), type: "createGroupRoom"});
+							results.unshift({
+								id: "create-public-room",
+								displayName: t('spreed', 'New public conversation'),
+								type: "createPublicRoom"
+							});
+							results.unshift({
+								id: "create-group-room",
+								displayName: t('spreed', 'New group conversation'),
+								type: "createGroupRoom"
+							});
 						} else {
-							results.push({ id: "create-group-room", displayName: t('spreed', 'New group conversation'), type: "createGroupRoom"});
-							results.push({ id: "create-public-room", displayName: t('spreed', 'New public conversation'), type: "createPublicRoom"});
+							var shortenedName = OCA.SpreedMe.app._searchTerm;
+							if (OCA.SpreedMe.app._searchTerm.length > 25) {
+								shortenedName = shortenedName.substring(0, 25) + '…';
+							}
+
+							results.push({
+								id: "create-group-room",
+								displayName: shortenedName,
+								type: "createGroupRoom"
+							});
+							results.push({
+								id: "create-public-room",
+								displayName: t('spreed', '{name} (public)', { name: shortenedName }),
+								type: "createPublicRoom"
+							});
 						}
 
 						return {
@@ -123,12 +144,12 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
-					if ((element.type === "createGroupRoom") || (element.type === "createPublicRoom")) {
-						return '<span><div class="avatar icon-add"></div>' + escapeHTML(element.displayName) + '</span>';
+					if (element.type === "createPublicRoom") {
+						return '<span><div class="avatar icon-public-white"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
-					if (element.type === 'group') {
-						return '<span><div class="avatar icon-contacts-dark"></div>' + escapeHTML(element.displayName) + '</span>';
+					if (element.type === "createGroupRoom" || element.type === 'group') {
+						return '<span><div class="avatar icon-contacts"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
