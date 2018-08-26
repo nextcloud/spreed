@@ -167,7 +167,7 @@
 				},
 
 				extraClassNames: 'room-name',
-				labelTagName: 'h3',
+				labelTagName: 'h2',
 				inputMaxLength: '200',
 				inputPlaceholder: t('spreed', 'Name'),
 				labelPlaceholder: t('spreed', 'Conversation name'),
