@@ -106,11 +106,27 @@
 
 						//Add custom entry to create a new empty group or public room
 						if (OCA.SpreedMe.app._searchTerm === '') {
-							results.unshift({ id: "create-public-room", displayName: t('spreed', 'New public conversation'), type: "createPublicRoom"});
-							results.unshift({ id: "create-group-room", displayName: t('spreed', 'New group conversation'), type: "createGroupRoom"});
+							results.unshift({
+								id: "create-public-room",
+								displayName: t('spreed', 'New public conversation'),
+								type: "createPublicRoom"
+							});
+							results.unshift({
+								id: "create-group-room",
+								displayName: t('spreed', 'New group conversation'),
+								type: "createGroupRoom"
+							});
 						} else {
-							results.push({ id: "create-group-room", displayName: t('spreed', 'New group conversation'), type: "createGroupRoom"});
-							results.push({ id: "create-public-room", displayName: t('spreed', 'New public conversation'), type: "createPublicRoom"});
+							results.push({
+								id: "create-group-room",
+								displayName: t('spreed', 'Create "{name}"', { name: OCA.SpreedMe.app._searchTerm }),
+								type: "createGroupRoom"
+							});
+							results.push({
+								id: "create-public-room",
+								displayName: t('spreed', 'Create "{name}"', { name: OCA.SpreedMe.app._searchTerm }),
+								type: "createPublicRoom"
+							});
 						}
 
 						return {
