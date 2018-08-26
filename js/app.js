@@ -87,7 +87,7 @@
 							itemId: 'new',
 							shareTypes: [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP]
 						};
-					},
+					}.bind(this),
 					results: function (response) {
 						// TODO improve error case
 						if (response.ocs.data === undefined) {
