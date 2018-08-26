@@ -171,7 +171,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 
 #commentsTabView .comment .author,
 #commentsTabView .comment .date {
-	opacity: .5;
+	color: var(--color-text-maxcontrast);
 }
 #commentsTabView .comment .author {
 	margin-left: 5px;
@@ -277,6 +277,10 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	}
 }
 
+#commentsTabView .comment.systemMessage .message .mention-user {
+	color: var(--color-main-text);
+}
+
 /* System messages have no author, so the author row only contains the date.
  * Instead of showing the date on its own row and the message below it the
  * message and the date are merged in a single row using flexboxes. */
@@ -295,8 +299,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 #commentsTabView .comment.systemMessage .message {
 	order: 0;
 	flex-grow: 1;
-
-	opacity: .5;
+	color: var(--color-text-maxcontrast);
 }
 
 body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.current-user) {
