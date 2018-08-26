@@ -104,43 +104,43 @@ class Parser {
 		} else if ($message === 'call_ended') {
 			list($parsedMessage, $parsedParameters) = $this->parseCall($parameters);
 		} else if ($message === 'guests_allowed') {
-			$parsedMessage = $this->l->t('{actor} allowed guests in the conversation');
+			$parsedMessage = $this->l->t('{actor} allowed guests');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You allowed guests in the conversation');
+				$parsedMessage = $this->l->t('You allowed guests');
 			}
 		} else if ($message === 'guests_disallowed') {
-			$parsedMessage = $this->l->t('{actor} disallowed guests in the conversation');
+			$parsedMessage = $this->l->t('{actor} disallowed guests');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You disallowed guests in the conversation');
+				$parsedMessage = $this->l->t('You disallowed guests');
 			}
 		} else if ($message === 'password_set') {
-			$parsedMessage = $this->l->t('{actor} set a password for the conversation');
+			$parsedMessage = $this->l->t('{actor} set a password');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You set a password for the conversation');
+				$parsedMessage = $this->l->t('You set a password');
 			}
 		} else if ($message === 'password_removed') {
-			$parsedMessage = $this->l->t('{actor} removed the password for the conversation');
+			$parsedMessage = $this->l->t('{actor} removed the password');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You removed the password for the conversation');
+				$parsedMessage = $this->l->t('You removed the password');
 			}
 		} else if ($message === 'user_added') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
-			$parsedMessage = $this->l->t('{actor} added {user} to the conversation');
+			$parsedMessage = $this->l->t('{actor} added {user}');
 			if ($currentUserIsActor) {
-				$parsedMessage = $this->l->t('You added {user} to the conversation');
+				$parsedMessage = $this->l->t('You added {user}');
 			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
-				$parsedMessage = $this->l->t('{actor} added you to the conversation');
+				$parsedMessage = $this->l->t('{actor} added you');
 			}
 		} else if ($message === 'user_removed') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
 				$parsedMessage = $this->l->t('{actor} left the conversation');
 			} else {
-				$parsedMessage = $this->l->t('{actor} removed {user} from the conversation');
+				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
-					$parsedMessage = $this->l->t('You removed {user} from the conversation');
+					$parsedMessage = $this->l->t('You removed {user}');
 				} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
-					$parsedMessage = $this->l->t('{actor} removed you from the conversation');
+					$parsedMessage = $this->l->t('{actor} removed you');
 				}
 			}
 		} else if ($message === 'moderator_promoted') {
@@ -162,9 +162,9 @@ class Parser {
 		} else if ($message === 'file_shared') {
 			try {
 				$parsedParameters['file'] = $this->getFileFromShare($parameters['share']);
-				$parsedMessage = $this->l->t('{actor} shared {file} into the conversation');
+				$parsedMessage = $this->l->t('{actor} shared {file}');
 				if ($currentUserIsActor) {
-					$parsedMessage = $this->l->t('You shared {file} into the conversation');
+					$parsedMessage = $this->l->t('You shared {file}');
 				}
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
