@@ -938,8 +938,13 @@ video {
 	margin-bottom: -4px;
 }
 
-.participantWithList .participant-offline > a {
-	color: var(--color-text-maxcontrast);
+.participantWithList .participant-offline {
+	& > a {
+		color: var(--color-text-maxcontrast);
+	}
+	.avatar {
+		opacity: .4;
+	}
 }
 
 .participantWithList li {
