@@ -117,14 +117,19 @@
 								type: "createGroupRoom"
 							});
 						} else {
+							var shortenedName = OCA.SpreedMe.app._searchTerm;
+							if (OCA.SpreedMe.app._searchTerm.length > 25) {
+								shortenedName = shortenedName.substring(0, 25) + '…';
+							}
+
 							results.push({
 								id: "create-group-room",
-								displayName: t('spreed', 'Create "{name}"', { name: OCA.SpreedMe.app._searchTerm }),
+								displayName: shortenedName,
 								type: "createGroupRoom"
 							});
 							results.push({
 								id: "create-public-room",
-								displayName: t('spreed', 'Create "{name}"', { name: OCA.SpreedMe.app._searchTerm }),
+								displayName: t('spreed', '{name} (public)', { name: shortenedName }),
 								type: "createPublicRoom"
 							});
 						}
