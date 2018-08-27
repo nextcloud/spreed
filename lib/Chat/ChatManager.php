@@ -82,10 +82,10 @@ class ChatManager {
 		try {
 			$this->commentsManager->save($comment);
 
-			if ($sendNotifications) {
-				// Update last_message
-				$chat->setLastMessage($comment);
+			// Update last_message
+			$chat->setLastMessage($comment);
 
+			if ($sendNotifications) {
 				if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
 					$this->notifier->notifyOtherParticipant($chat, $comment);
 				}
