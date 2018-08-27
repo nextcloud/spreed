@@ -71,9 +71,10 @@ class ChatManager {
 	 * @param string $actorId
 	 * @param string $message
 	 * @param \DateTime $creationDateTime
+	 * @param bool $sendNotifications
 	 * @return IComment
 	 */
-	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime): IComment {
+	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
@@ -81,8 +82,10 @@ class ChatManager {
 		try {
 			$this->commentsManager->save($comment);
 
-			// Update last_message
-			$chat->setLastMessage($comment);
+			if ($sendNotifications) {
+				// Update last_message
+				$chat->setLastMessage($comment);
+			}
 
 			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
 				'comment' => $comment,
