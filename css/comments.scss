@@ -312,3 +312,16 @@ body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .m
 	left: -12px;
 	top: 140%;
 }
+
+#commentsTabView .comment .message .filePreviewContainer .filePreview {
+	/* The file preview can not be a block; otherwise it would fill the whole
+	 * width of the container and the loading icon would not be centered on the
+	 * image. */
+	display: inline-block;
+}
+
+#commentsTabView .comment .message .filePreviewContainer a {
+	/* As the file preview is an inline block the name is set as a block to
+	 * force it to be on its own line below the preview. */
+	display: block;
+}

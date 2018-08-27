@@ -529,6 +529,12 @@
 		},
 
 		_postRenderMessage: function($el) {
+			var self = this;
+
+			$el.find('.filePreview').each(function() {
+				self._renderFilePreview($(this));
+			});
+
 			// Contacts menu is not shown in public view.
 			if (!OC.getCurrentUser().uid) {
 				return;
@@ -542,6 +548,44 @@
 					$this.contactsMenu(user, 0, $this);
 				}
 			});
+		},
+
+		_renderFilePreview: function($filePreview) {
+			var previewSize = Math.ceil(128 * window.devicePixelRatio);
+
+			var url = OC.generateUrl(
+				'/core/preview?fileId={fileId}&x={width}&y={height}&forceIcon=true',
+				{
+					fileId: $filePreview.data('file-id'),
+					width: previewSize,
+					height: previewSize
+				});
+
+			var img = new Image();
+
+			img.onload = function() {
+				$filePreview.removeClass('icon-loading');
+			};
+
+			img.onerror = function() {
+				// If the default file icon can not be loaded either there is
+				// nothing else that can be done, just remove the loading icon
+				// and the image and leave only the message about a shared file.
+				img.onerror = function() {
+					$filePreview.removeClass('icon-loading');
+					$filePreview.find('img').remove();
+				};
+
+				img.src = OC.imagePath('core', 'filetypes/file');
+			};
+
+			$filePreview.addClass('icon-loading');
+
+			img.width = previewSize;
+			img.height = previewSize;
+			img.src = url;
+
+			$filePreview.append(img);
 		},
 
 		_onTypeComment: function(ev) {
