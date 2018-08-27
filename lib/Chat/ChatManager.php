@@ -81,6 +81,9 @@ class ChatManager {
 		try {
 			$this->commentsManager->save($comment);
 
+			// Update last_message
+			$chat->setLastMessage($comment);
+
 			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
 				'comment' => $comment,
 			]));
