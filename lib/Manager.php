@@ -140,11 +140,7 @@ class Manager {
 			->where($query->expr()->isNotNull('p.user_id'));
 
 		if ($includeLastMessage) {
-			$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
-			$query->selectAlias('c.id', 'comment_id');
-			$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.object_type', 'c.object_id');
-			$query->selectAlias('c.object_type', 'comment_object_type');
-			$query->selectAlias('c.object_id', 'comment_object_id');
+			$this->loadLastMessageInfo($query);
 		}
 
 		$result = $query->execute();
@@ -210,10 +206,11 @@ class Manager {
 	 *
 	 * @param string $token
 	 * @param string $participant
+	 * @param bool $includeLastMessage
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForParticipantByToken($token, $participant) {
+	public function getRoomForParticipantByToken($token, $participant, $includeLastMessage = false) {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms', 'r')
@@ -226,6 +223,10 @@ class Manager {
 					$query->expr()->eq('p.user_id', $query->createNamedParameter($participant)),
 					$query->expr()->eq('p.room_id', 'r.id')
 				));
+		}
+
+		if ($includeLastMessage) {
+			$this->loadLastMessageInfo($query);
 		}
 
 		$result = $query->execute();
@@ -557,5 +558,13 @@ class Manager {
 			throw new \OutOfBoundsException();
 		}
 		return $token;
+	}
+
+	protected function loadLastMessageInfo(IQueryBuilder $query) {
+		$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
+		$query->selectAlias('c.id', 'comment_id');
+		$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.verb');
+		$query->selectAlias('c.object_type', 'comment_object_type');
+		$query->selectAlias('c.object_id', 'comment_object_id');
 	}
 }
