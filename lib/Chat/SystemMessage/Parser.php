@@ -47,6 +47,8 @@ class Parser {
 	/** @var IL10N */
 	protected $l;
 
+	/** @var null|IUser */
+	protected $recipient;
 	/** @var string[] */
 	protected $displayNames = [];
 	/** @var string[] */
@@ -64,16 +66,21 @@ class Parser {
 		$this->shareProvider = $shareProvider;
 		$this->url = $url;
 		$this->l = $l;
+		$this->recipient = $this->userSession->getUser();
 	}
 
-	public function parseMessage(IComment $comment, string $displayName): array {
+	public function setUserInfo(IUser $user, IL10N $l) {
+		$this->recipient = $user;
+		$this->l = $l;
+	}
+
+	public function parseMessage(IComment $comment): array {
 		$data = json_decode($comment->getMessage(), true);
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 
 		$parsedParameters = ['actor' => $this->getActor($comment)];
-		$currentUser = $this->userSession->getUser();
-		$currentUserIsActor = $currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['actor']['id'];
+		$currentUserIsActor = $this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['actor']['id'];
 		$parsedMessage = $comment->getMessage();
 
 		if ($message === 'conversation_created') {
@@ -128,7 +135,7 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} added {user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
 			}
 		} else if ($message === 'user_removed') {
@@ -139,7 +146,7 @@ class Parser {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+				} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 				}
 			}
@@ -148,7 +155,7 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 			}
 		} else if ($message === 'moderator_demoted') {
@@ -156,7 +163,7 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
 		} else if ($message === 'file_shared') {
@@ -198,8 +205,7 @@ class Parser {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
 
-
-		if ($this->userSession->isLoggedIn()) {
+		if ($this->recipient instanceof IUser) {
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
@@ -211,8 +217,9 @@ class Parser {
 
 		return [
 			'type' => 'file',
-			'id' => $shareId,
+			'id' => $node->getId(),
 			'name' => $node->getName(),
+			'path' => $node->getName(), // This should actually be the path of the recipient, but for now we just use the file name.
 			'link' => $url,
 		];
 	}

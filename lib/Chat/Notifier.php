@@ -208,7 +208,7 @@ class Notifier {
 				'userType' => $comment->getActorType(),
 				'userId' => $comment->getActorId(),
 			])
-			->setMessage('comment', [
+			->setMessage($comment->getVerb(), [
 				'commentId' => $comment->getId(),
 			])
 			->setDateTime($comment->getCreationDateTime());

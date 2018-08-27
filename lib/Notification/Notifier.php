@@ -24,6 +24,7 @@ namespace OCA\Spreed\Notification;
 
 
 use OCA\Spreed\Chat\RichMessageHelper;
+use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
@@ -58,6 +59,9 @@ class Notifier implements INotifier {
 	/** @var RichMessageHelper */
 	protected $richMessageHelper;
 
+	/** @var Parser */
+	protected $systemMessageParser;
+
 	/** @var Definitions */
 	protected $definitions;
 
@@ -67,6 +71,7 @@ class Notifier implements INotifier {
 								Manager $manager,
 								ICommentsManager $commentManager,
 								RichMessageHelper $richMessageHelper,
+								Parser $systemMessageParser,
 								Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
@@ -74,6 +79,7 @@ class Notifier implements INotifier {
 		$this->manager = $manager;
 		$this->commentManager = $commentManager;
 		$this->richMessageHelper = $richMessageHelper;
+		$this->systemMessageParser = $systemMessageParser;
 		$this->definitions = $definitions;
 	}
 
@@ -115,7 +121,7 @@ class Notifier implements INotifier {
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'mention' ||  $subject === 'chat') {
-			return $this->parseMention($notification, $room, $l);
+			return $this->parseChatMessage($notification, $room, $l);
 		}
 		if ($subject === 'share:password') {
 			return $this->parsePasswordRequest($notification, $room, $l);
@@ -131,7 +137,7 @@ class Notifier implements INotifier {
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseMention(INotification $notification, Room $room, IL10N $l): INotification {
+	protected function parseChatMessage(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'chat') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
@@ -172,7 +178,14 @@ class Notifier implements INotifier {
 		} catch (NotFoundException $e) {
 			throw new \InvalidArgumentException('Unknown comment');
 		}
-		list($richMessage, $richMessageParameters) = $this->richMessageHelper->getRichMessage($comment);
+
+		if ($comment->getVerb() === 'system') {
+			$user = $this->userManager->get($notification->getUser());
+			$this->systemMessageParser->setUserInfo($user, $l);
+			list($richMessage, $richMessageParameters) = $this->systemMessageParser->parseMessage($comment);
+		} else {
+			list($richMessage, $richMessageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		}
 
 		$placeholders = $replacements = [];
 		foreach ($richMessageParameters as $placeholder => $parameter) {

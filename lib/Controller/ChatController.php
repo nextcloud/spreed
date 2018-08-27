@@ -40,6 +40,7 @@ use OCP\AppFramework\OCSController;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -85,6 +86,9 @@ class ChatController extends OCSController {
 	/** @var Parser */
 	private $parser;
 
+	/** @var IL10N */
+	private $l;
+
 	/**
 	 * @param string $appName
 	 * @param string $UserId
@@ -99,6 +103,7 @@ class ChatController extends OCSController {
 	 * @param SearchPlugin $searchPlugin
 	 * @param ISearchResult $searchResult
 	 * @param Parser $parser
+	 * @param IL10N $l
 	 */
 	public function __construct($appName,
 								$UserId,
@@ -112,7 +117,8 @@ class ChatController extends OCSController {
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
-								Parser $parser) {
+								Parser $parser,
+								IL10N $l) {
 		parent::__construct($appName, $request);
 
 		$this->userId = $UserId;
@@ -126,6 +132,7 @@ class ChatController extends OCSController {
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->parser = $parser;
+		$this->l = $l;
 	}
 
 	/**
@@ -290,7 +297,7 @@ class ChatController extends OCSController {
 			}
 
 			if ($comment->getVerb() === 'system') {
-				list($message, $messageParameters) = $this->parser->parseMessage($comment, $displayName);
+				list($message, $messageParameters) = $this->parser->parseMessage($comment);
 			} else {
 				list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
 			}
