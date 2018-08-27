@@ -27,8 +27,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\RichMessageHelper;
-use OCA\Spreed\Chat\SystemMessage\Parser;
+use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -68,10 +67,8 @@ class RoomController extends OCSController {
 	private $chatManager;
 	/** @var IL10N */
 	private $l10n;
-	/** @var richMessageHelper */
-	private $richMessageHelper;
-	/** @var Parser */
-	private $systemMessageParser;
+	/** @var MessageParser */
+	private $messageParser;
 
 	/**
 	 * @param string $appName
@@ -84,8 +81,7 @@ class RoomController extends OCSController {
 	 * @param Manager $manager
 	 * @param GuestManager $guestManager
 	 * @param ChatManager $chatManager
-	 * @param RichMessageHelper $richMessageHelper
-	 * @param Parser $systemMessageParser
+	 * @param MessageParser $messageParser
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -98,8 +94,7 @@ class RoomController extends OCSController {
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
-								RichMessageHelper $richMessageHelper,
-								Parser $systemMessageParser,
+								MessageParser $messageParser,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -111,8 +106,7 @@ class RoomController extends OCSController {
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->l10n = $l10n;
-		$this->richMessageHelper = $richMessageHelper;
-		$this->systemMessageParser = $systemMessageParser;
+		$this->messageParser = $messageParser;
 	}
 
 	/**
@@ -276,7 +270,7 @@ class RoomController extends OCSController {
 
 		$lastMessage = $room->getLastMessage();
 		if ($lastMessage instanceof IComment) {
-			$lastMessage = $this->formatLastMessage($lastMessage);
+			$lastMessage = $this->formatLastMessage($lastMessage, $currentUser);
 		} else {
 			$lastMessage = [];
 		}
@@ -362,14 +356,11 @@ class RoomController extends OCSController {
 
 	/**
 	 * @param IComment $lastMessage
+	 * @param IUser $currentUser
 	 * @return array
 	 */
-	protected function formatLastMessage(IComment $lastMessage): array {
-		if ($lastMessage->getVerb() === 'system') {
-			list($message, $messageParameters) = $this->systemMessageParser->parseMessage($lastMessage);
-		} else {
-			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
-		}
+	protected function formatLastMessage(IComment $lastMessage, IUser $currentUser): array {
+		list($message, $messageParameters) = $this->messageParser->parseMessage($lastMessage, $this->l10n, $currentUser);
 
 		$displayName = '';
 

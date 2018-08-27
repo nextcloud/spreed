@@ -23,8 +23,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Notification;
 
 
-use OCA\Spreed\Chat\RichMessageHelper;
-use OCA\Spreed\Chat\SystemMessage\Parser;
+use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
@@ -56,11 +55,8 @@ class Notifier implements INotifier {
 	/** @var ICommentsManager */
 	protected $commentManager;
 
-	/** @var RichMessageHelper */
-	protected $richMessageHelper;
-
-	/** @var Parser */
-	protected $systemMessageParser;
+	/** @var MessageParser */
+	protected $messageParser;
 
 	/** @var Definitions */
 	protected $definitions;
@@ -70,16 +66,14 @@ class Notifier implements INotifier {
 								IUserManager $userManager,
 								Manager $manager,
 								ICommentsManager $commentManager,
-								RichMessageHelper $richMessageHelper,
-								Parser $systemMessageParser,
+								MessageParser $messageParser,
 								Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
 		$this->commentManager = $commentManager;
-		$this->richMessageHelper = $richMessageHelper;
-		$this->systemMessageParser = $systemMessageParser;
+		$this->messageParser = $messageParser;
 		$this->definitions = $definitions;
 	}
 
@@ -179,13 +173,8 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown comment');
 		}
 
-		if ($comment->getVerb() === 'system') {
-			$user = $this->userManager->get($notification->getUser());
-			$this->systemMessageParser->setUserInfo($user, $l);
-			list($richMessage, $richMessageParameters) = $this->systemMessageParser->parseMessage($comment);
-		} else {
-			list($richMessage, $richMessageParameters) = $this->richMessageHelper->getRichMessage($comment);
-		}
+		$user = $this->userManager->get($notification->getUser());
+		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($comment, $l, $user);
 
 		$placeholders = $replacements = [];
 		foreach ($richMessageParameters as $placeholder => $parameter) {

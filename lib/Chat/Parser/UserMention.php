@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -21,7 +21,7 @@
  *
  */
 
-namespace OCA\Spreed\Chat;
+namespace OCA\Spreed\Chat\Parser;
 
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -31,7 +31,7 @@ use OCP\IUserManager;
 /**
  * Helper class to get a rich message from a plain text message.
  */
-class RichMessageHelper {
+class UserMention {
 
 	/** @var ICommentsManager */
 	private $commentsManager;
@@ -60,7 +60,7 @@ class RichMessageHelper {
 	 *         parameters of the rich message (or an empty array if there are no
 	 *         parameters).
 	 */
-	public function getRichMessage(IComment $comment) {
+	public function parseMessage(IComment $comment): array {
 		$message = $comment->getMessage();
 		$messageParameters = [];
 

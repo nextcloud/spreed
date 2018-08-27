@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Spreed\Chat\SystemMessage;
+namespace OCA\Spreed\Chat\Parser;
 
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
@@ -34,7 +34,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 
-class Parser {
+class SystemMessage {
 
 	/** @var IUserManager */
 	protected $userManager;
