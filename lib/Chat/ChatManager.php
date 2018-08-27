@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -73,7 +73,7 @@ class ChatManager {
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime) {
+	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
@@ -103,7 +103,7 @@ class ChatManager {
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime) {
+	public function sendMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
@@ -156,8 +156,8 @@ class ChatManager {
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function getHistory(Room $chat, $offset, $limit) {
-		return $this->commentsManager->getForObjectSince('chat', $chat->getId(), $offset, 'desc', $limit);
+	public function getHistory(Room $chat, $offset, $limit): array {
+		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'desc', $limit);
 	}
 
 	/**
@@ -179,13 +179,13 @@ class ChatManager {
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, $offset, $limit, $timeout, $user) {
+	public function waitForNewMessages(Room $chat, $offset, $limit, $timeout, $user): array {
 		if ($user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getForObjectSince('chat', $chat->getId(), $offset, 'asc', $limit);
+		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
 
 		if ($user instanceof IUser) {
 			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), new  \DateTime(), $user);
@@ -195,7 +195,7 @@ class ChatManager {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getForObjectSince('chat', $chat->getId(), $offset, 'asc', $limit);
+			$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
 		}
 
 		return $comments;
@@ -211,5 +211,4 @@ class ChatManager {
 
 		$this->notifier->removePendingNotificationsForRoom($chat);
 	}
-
 }
