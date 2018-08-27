@@ -93,7 +93,7 @@
     "Please use a different browser like Firefox or Chrome" : "Bruk en annen nettleser, som Firefox eller Chrome",
     "Error while accessing microphone & camera" : "Feil med tilgang til mikrofon og kamera",
     "WebRTC is not supported in your browser :-/" : "WebRTC støttes ikke av din nettleser :-/",
-    "{participantName}'s screen" : "{participantName}s skjerm",
+    "{participantName}'s screen" : "{participantName}'s skjerm",
     "Guest's screen" : "Gjestens skjerm",
     "Your screen" : "Din skjerm",
     "(Duration %s)" : "(Varighet %s)",

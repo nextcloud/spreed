@@ -109,8 +109,6 @@
     "_%n other_::_%n others_" : ["%n dalším","%n dalšími","%n dalšími","%n dalšími"],
     "{actor} invited you to {call}" : "{actor} vás pozval/a do {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Byli jste pozváni ke <strong>konverzaci</strong> nebo vám někdo <strong>volal</strong>",
-    "{actor} added {user} to the conversation" : "{actor} přidal {user} do konverzace",
-    "{actor} removed {user} from the conversation" : "{actor} odebral(a) {user} uživatele z konverzace",
     "{actor} promoted {user} to moderator" : "{actor} povýšil(a) {user} na moderátora",
     "%s (guest)" : "%s (host)",
     "Call with {user1} and {user2} (Duration {duration})" : "Hovor s {user1} a {user2} (délka {duration})",
