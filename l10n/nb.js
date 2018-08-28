@@ -1,10 +1,12 @@
 OC.L10N.register(
     "spreed",
     {
+    "Signaling server URL" : "Sender signal til tjeners URL",
     "Validate SSL certificate" : "Bekreft SSL-sertifikat",
     "Delete server" : "Slett tjener",
     "Add new server" : "Legg til ny tjener",
     "Saved" : "Lagret",
+    "STUN server URL" : "STUN tjener URL",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Du slettet alle STUN-tjenere. Siden behovet nesten alltid er der, har en forvalgt STUN-tjener blitt lagt til.",
     "Shared secret" : "Delt hemmelighet",
     "TURN server shared secret" : "TURN-tjeners delte hemmelighet",
