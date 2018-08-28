@@ -21,7 +21,9 @@
 
 namespace OCA\Spreed\Tests\php\Notifications;
 
+use OC\L10N\L10N;
 use OCA\Spreed\Chat\RichMessageHelper;
+use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Notification\Notifier;
@@ -52,6 +54,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $richMessageHelper;
 	/** @var Definitions|\PHPUnit_Framework_MockObject_MockObject */
 	protected $definitions;
+	/** @var Parser|\PHPUnit_Framework_MockObject_MockObject */
+	protected $systemMessageParser;
 	/** @var Notifier */
 	protected $notifier;
 
@@ -64,6 +68,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->richMessageHelper = $this->createMock(RichMessageHelper::class);
+		$this->systemMessageParser = $this->createMock(Parser::class);
 		$this->definitions = $this->createMock(Definitions::class);
 
 		$this->notifier = new Notifier(
@@ -73,6 +78,7 @@ class NotifierTest extends \Test\TestCase {
 			$this->manager,
 			$this->commentsManager,
 			$this->richMessageHelper,
+			$this->systemMessageParser,
 			$this->definitions
 		);
 	}
