@@ -52,6 +52,18 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
 	</background-jobs>
 
+	<commands>
+		<command>OCA\Spreed\Command\Stun\Add</command>
+		<command>OCA\Spreed\Command\Stun\Delete</command>
+		<command>OCA\Spreed\Command\Stun\ListCommand</command>
+		<command>OCA\Spreed\Command\Turn\Add</command>
+		<command>OCA\Spreed\Command\Turn\Delete</command>
+		<command>OCA\Spreed\Command\Turn\ListCommand</command>
+		<command>OCA\Spreed\Command\Signaling\Add</command>
+		<command>OCA\Spreed\Command\Signaling\Delete</command>
+		<command>OCA\Spreed\Command\Signaling\ListCommand</command>
+	</commands>
+
 	<settings>
 		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
