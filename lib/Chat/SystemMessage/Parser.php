@@ -26,6 +26,8 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -42,6 +44,8 @@ class Parser {
 	protected $userSession;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
+	/** @var IRootFolder */
+	protected $rootFolder;
 	/** @var IURLGenerator */
 	protected $url;
 	/** @var IL10N */
@@ -58,12 +62,14 @@ class Parser {
 								GuestManager $guestManager,
 								IUserSession $userSession,
 								RoomShareProvider $shareProvider,
+								IRootFolder $rootFolder,
 								IURLGenerator $url,
 								IL10N $l) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->userSession = $userSession;
 		$this->shareProvider = $shareProvider;
+		$this->rootFolder = $rootFolder;
 		$this->url = $url;
 		$this->l = $l;
 		$this->recipient = $this->userSession->getUser();
@@ -204,8 +210,28 @@ class Parser {
 	protected function getFileFromShare(string $shareId): array {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
+		$name = $node->getName();
+		$path = $node->getName();
 
 		if ($this->recipient instanceof IUser) {
+			if ($this->userSession->getUser() === $this->recipient) {
+				$userFolder = $this->rootFolder->getUserFolder($this->recipient->getUID());
+				if ($userFolder instanceof Node) {
+					$userNodes = $userFolder->getById($node->getId());
+					/** @var Node $userNode */
+					$userNode = reset($userNodes);
+					$fullPath = $userNode->getPath();
+					$pathSegments = explode('/', $fullPath, 4);
+					$name = $userNode->getName();
+					$path = $pathSegments[3] ?? $path;
+				}
+			} else {
+				$fullPath = $node->getPath();
+				$pathSegments = explode('/', $fullPath, 4);
+				$name = $node->getName();
+				$path = $pathSegments[3] ?? $path;
+			}
+
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
@@ -218,8 +244,8 @@ class Parser {
 		return [
 			'type' => 'file',
 			'id' => $node->getId(),
-			'name' => $node->getName(),
-			'path' => $node->getName(), // This should actually be the path of the recipient, but for now we just use the file name.
+			'name' => $name,
+			'path' => $path,
 			'link' => $url,
 		];
 	}
