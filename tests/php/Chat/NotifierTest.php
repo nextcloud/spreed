@@ -89,6 +89,7 @@ class NotifierTest extends \Test\TestCase {
 		$comment->method('getCreationDateTime')->willReturn($creationDateTime);
 		$comment->method('getMessage')->willReturn($message);
 		$comment->method('getMentions')->willReturn($mentions);
+		$comment->method('getVerb')->willReturn('comment');
 
 		return $comment;
 	}

@@ -162,7 +162,7 @@ class Listener {
 		$this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
-			new \DateTime()
+			new \DateTime(), $message === 'file_shared'
 		);
 	}
 }

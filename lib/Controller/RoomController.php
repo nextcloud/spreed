@@ -27,6 +27,7 @@ namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
+use OCA\Spreed\Chat\SystemMessage\Parser;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -68,6 +69,8 @@ class RoomController extends OCSController {
 	private $l10n;
 	/** @var richMessageHelper */
 	private $richMessageHelper;
+	/** @var Parser */
+	private $systemMessageParser;
 
 	/**
 	 * @param string $appName
@@ -81,6 +84,7 @@ class RoomController extends OCSController {
 	 * @param GuestManager $guestManager
 	 * @param ChatManager $chatManager
 	 * @param RichMessageHelper $richMessageHelper
+	 * @param Parser $systemMessageParser
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -94,6 +98,7 @@ class RoomController extends OCSController {
 								GuestManager $guestManager,
 								ChatManager $chatManager,
 								RichMessageHelper $richMessageHelper,
+								Parser $systemMessageParser,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -106,6 +111,7 @@ class RoomController extends OCSController {
 		$this->chatManager = $chatManager;
 		$this->l10n = $l10n;
 		$this->richMessageHelper = $richMessageHelper;
+		$this->systemMessageParser = $systemMessageParser;
 	}
 
 	/**
@@ -138,7 +144,7 @@ class RoomController extends OCSController {
 	 */
 	public function getRoom($token) {
 		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
 
 			$participant = null;
 			try {
@@ -269,8 +275,11 @@ class RoomController extends OCSController {
 
 		$lastMessage = $room->getLastMessage();
 		if ($lastMessage instanceof IComment) {
-
-			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
+			if ($lastMessage->getVerb() === 'system') {
+				list($message, $messageParameters) = $this->systemMessageParser->parseMessage($lastMessage);
+			} else {
+				list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
+			}
 
 			$displayName = '';
 

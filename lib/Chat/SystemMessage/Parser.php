@@ -26,6 +26,8 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -42,11 +44,15 @@ class Parser {
 	protected $userSession;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
+	/** @var IRootFolder */
+	protected $rootFolder;
 	/** @var IURLGenerator */
 	protected $url;
 	/** @var IL10N */
 	protected $l;
 
+	/** @var null|IUser */
+	protected $recipient;
 	/** @var string[] */
 	protected $displayNames = [];
 	/** @var string[] */
@@ -56,24 +62,31 @@ class Parser {
 								GuestManager $guestManager,
 								IUserSession $userSession,
 								RoomShareProvider $shareProvider,
+								IRootFolder $rootFolder,
 								IURLGenerator $url,
 								IL10N $l) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->userSession = $userSession;
 		$this->shareProvider = $shareProvider;
+		$this->rootFolder = $rootFolder;
 		$this->url = $url;
+		$this->l = $l;
+		$this->recipient = $this->userSession->getUser();
+	}
+
+	public function setUserInfo(IUser $user, IL10N $l) {
+		$this->recipient = $user;
 		$this->l = $l;
 	}
 
-	public function parseMessage(IComment $comment, string $displayName): array {
+	public function parseMessage(IComment $comment): array {
 		$data = json_decode($comment->getMessage(), true);
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 
 		$parsedParameters = ['actor' => $this->getActor($comment)];
-		$currentUser = $this->userSession->getUser();
-		$currentUserIsActor = $currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['actor']['id'];
+		$currentUserIsActor = $this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['actor']['id'];
 		$parsedMessage = $comment->getMessage();
 
 		if ($message === 'conversation_created') {
@@ -128,7 +141,7 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} added {user}');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
 			}
 		} else if ($message === 'user_removed') {
@@ -139,7 +152,7 @@ class Parser {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+				} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 				}
 			}
@@ -148,7 +161,7 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 			}
 		} else if ($message === 'moderator_demoted') {
@@ -156,7 +169,7 @@ class Parser {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} else if ($currentUser instanceof IUser && $currentUser->getUID() === $parsedParameters['user']['id']) {
+			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
 		} else if ($message === 'file_shared') {
@@ -197,9 +210,28 @@ class Parser {
 	protected function getFileFromShare(string $shareId): array {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
+		$name = $node->getName();
+		$path = $node->getName();
 
+		if ($this->recipient instanceof IUser) {
+			if ($this->userSession->getUser() === $this->recipient) {
+				$userFolder = $this->rootFolder->getUserFolder($this->recipient->getUID());
+				if ($userFolder instanceof Node) {
+					$userNodes = $userFolder->getById($node->getId());
+					/** @var Node $userNode */
+					$userNode = reset($userNodes);
+					$fullPath = $userNode->getPath();
+					$pathSegments = explode('/', $fullPath, 4);
+					$name = $userNode->getName();
+					$path = $pathSegments[3] ?? $path;
+				}
+			} else {
+				$fullPath = $node->getPath();
+				$pathSegments = explode('/', $fullPath, 4);
+				$name = $node->getName();
+				$path = $pathSegments[3] ?? $path;
+			}
 
-		if ($this->userSession->isLoggedIn()) {
 			$url = $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', [
 				'fileid' => $node->getId(),
 			]);
@@ -211,8 +243,9 @@ class Parser {
 
 		return [
 			'type' => 'file',
-			'id' => $shareId,
-			'name' => $node->getName(),
+			'id' => $node->getId(),
+			'name' => $name,
+			'path' => $path,
 			'link' => $url,
 		];
 	}

@@ -23,6 +23,7 @@
 
 namespace OCA\Spreed\Tests\php\Controller;
 
+use OC\L10N\L10N;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\RichMessageHelper;
@@ -42,6 +43,7 @@ use OCP\Comments\IComment;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use PHPUnit\Framework\Constraint\Callback;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ChatControllerTest extends \Test\TestCase {
@@ -79,8 +81,8 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var Parser|\PHPUnit_Framework_MockObject_MockObject */
 	protected $parser;
 
-	/** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
-	private $dispatcher;
+	/** @var L10N|\PHPUnit_Framework_MockObject_MockObject */
+	private $l;
 
 	/** @var Room|\PHPUnit_Framework_MockObject_MockObject */
 	protected $room;
@@ -88,7 +90,7 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var \OCA\Spreed\Controller\ChatController */
 	private $controller;
 
-	/** @var \PHPUnit_Framework_Constraint_Callback */
+	/** @var Callback */
 	private $newMessageDateTimeConstraint;
 
 	public function setUp() {
@@ -101,11 +103,12 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->richMessageHelper = $this->createMock(RichMessageHelper::class);
+		$this->systemMessageParser = $this->createMock(Parser::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
 		$this->parser = $this->createMock(Parser::class);
-		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+		$this->l = $this->createMock(L10N::class);
 
 		$this->room = $this->createMock(Room::class);
 
@@ -134,7 +137,7 @@ class ChatControllerTest extends \Test\TestCase {
 			$this->searchPlugin,
 			$this->searchResult,
 			$this->parser,
-			$this->dispatcher
+			$this->l
 		);
 	}
 
