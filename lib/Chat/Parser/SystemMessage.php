@@ -75,19 +75,26 @@ class SystemMessage {
 		$this->recipient = $this->userSession->getUser();
 	}
 
-	public function setUserInfo(IUser $user, IL10N $l) {
-		$this->recipient = $user;
+	public function setUserInfo(IL10N $l, IUser $user = null) {
 		$this->l = $l;
+		$this->recipient = $user;
 	}
 
+	/**
+	 * @param IComment $comment
+	 * @return array
+	 * @throws \OutOfBoundsException
+	 */
 	public function parseMessage(IComment $comment): array {
 		$data = json_decode($comment->getMessage(), true);
+		if (!\is_array($data)) {
+			throw new \OutOfBoundsException('Invalid message');
+		}
+
 		$message = $data['message'];
 		$parameters = $data['parameters'];
-
 		$parsedParameters = ['actor' => $this->getActor($comment)];
 		$currentUserIsActor = $this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['actor']['id'];
-		$parsedMessage = $comment->getMessage();
 
 		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
@@ -183,6 +190,8 @@ class SystemMessage {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
 			}
+		} else {
+			throw new \OutOfBoundsException('Unknown subject');
 		}
 
 		$comment->setMessage($message);
@@ -346,7 +355,7 @@ class SystemMessage {
 		];
 	}
 
-	protected function getDuration($seconds): string {
+	protected function getDuration(int $seconds): string {
 		$hours = floor($seconds / 3600);
 		$seconds %= 3600;
 		$minutes = floor($seconds / 60);

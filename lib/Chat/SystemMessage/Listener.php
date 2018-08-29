@@ -162,14 +162,19 @@ class Listener {
 
 			/** @var SystemMessage $parser */
 			$parser = \OC::$server->query(SystemMessage::class);
-			$parser->setUserInfo($event->getArgument('user'), $event->getArgument('l10n'));
-			list($message, $parameters) = $parser->parseMessage($chatMessage);
+			$parser->setUserInfo($event->getArgument('l10n'), $event->getArgument('user'));
 
-			$event->setArguments([
-				'message' => $message,
-				'parameters' => $parameters,
-			]);
-			$event->stopPropagation();
+			try {
+				list($message, $parameters) = $parser->parseMessage($chatMessage);
+
+				$event->setArguments([
+					'message' => $message,
+					'parameters' => $parameters,
+				]);
+				$event->stopPropagation();
+			} catch (\OutOfBoundsException $e) {
+				// Unknown message, ignore
+			}
 		});
 	}
 
