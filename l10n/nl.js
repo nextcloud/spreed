@@ -26,7 +26,7 @@ OC.L10N.register(
     "An error occurred while starting screensharing." : "Er trad een fout op bij starten schermdelen.",
     "Participants" : "Deelnemers",
     "Chat" : "Chat",
-    "Talk" : "Praat",
+    "Talk" : "Talk",
     "Waiting for {participantName} to join the call …" : "Wachten op deelname door {participantName} ...",
     "Waiting for others to join the call …" : "Wachten op deelname door anderen ...",
     "Exit fullscreen (f)" : "Ga uit volledig scherm (f)",
