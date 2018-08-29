@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -21,15 +21,15 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat;
+namespace OCA\Spreed\Tests\php\Chat\Parser;
 
-use OCA\Spreed\Chat\RichMessageHelper;
+use OCA\Spreed\Chat\Parser\UserMention;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
 use OCP\IUserManager;
 
-class RichMessageHelperTest extends \Test\TestCase {
+class UserMentionTest extends \Test\TestCase {
 
 	/** @var ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $commentsManager;
@@ -37,7 +37,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
 
-	/** @var RichMessageHelper */
+	/** @var UserMention */
 	protected $richMessageHelper;
 
 	public function setUp() {
@@ -46,10 +46,15 @@ class RichMessageHelperTest extends \Test\TestCase {
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 
-		$this->richMessageHelper = new RichMessageHelper($this->commentsManager, $this->userManager);
+		$this->richMessageHelper = new UserMention($this->commentsManager, $this->userManager);
 	}
 
-	private function newComment($message, $mentions) {
+	/**
+	 * @param string $message
+	 * @param array $mentions
+	 * @return \PHPUnit\Framework\MockObject\MockObject|IComment
+	 */
+	private function newComment(string $message, array $mentions): IComment {
 		$comment = $this->createMock(IComment::class);
 
 		$comment->method('getMessage')->willReturn($message);
@@ -61,7 +66,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 	public function testGetRichMessageWithoutEnrichableReferences() {
 		$comment = $this->newComment('Message without enrichable references', []);
 
-		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
 
 		$this->assertEquals('Message without enrichable references', $message);
 		$this->assertEquals([], $messageParameters);
@@ -83,7 +88,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -113,7 +118,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -157,7 +162,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 			)
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -203,7 +208,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -232,7 +237,7 @@ class RichMessageHelperTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
+		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
