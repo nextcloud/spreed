@@ -28,6 +28,7 @@ use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -199,14 +200,6 @@ class SystemMessage {
 		return [$parsedMessage, $parsedParameters];
 	}
 
-	protected function getActor(IComment $comment): array {
-		if ($comment->getActorType() === 'guests') {
-			return $this->getGuest($comment->getActorId());
-		}
-
-		return $this->getUser($comment->getActorId());
-	}
-
 	/**
 	 * @param string $shareId
 	 * @return array
@@ -218,13 +211,17 @@ class SystemMessage {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
 		$name = $node->getName();
-		$path = $node->getName();
+		$path = $name;
 
 		if ($this->recipient instanceof IUser) {
-			if ($this->userSession->getUser() === $this->recipient) {
+			if ($this->userSession->getUser() !== $this->recipient) {
 				$userFolder = $this->rootFolder->getUserFolder($this->recipient->getUID());
 				if ($userFolder instanceof Node) {
 					$userNodes = $userFolder->getById($node->getId());
+					if (empty($userNodes)) {
+						throw new NotFoundException('File was not found');
+					}
+
 					/** @var Node $userNode */
 					$userNode = reset($userNodes);
 					$fullPath = $userNode->getPath();
@@ -235,7 +232,6 @@ class SystemMessage {
 			} else {
 				$fullPath = $node->getPath();
 				$pathSegments = explode('/', $fullPath, 4);
-				$name = $node->getName();
 				$path = $pathSegments[3] ?? $path;
 			}
 
@@ -255,6 +251,14 @@ class SystemMessage {
 			'path' => $path,
 			'link' => $url,
 		];
+	}
+
+	protected function getActor(IComment $comment): array {
+		if ($comment->getActorType() === 'guests') {
+			return $this->getGuest($comment->getActorId());
+		}
+
+		return $this->getUser($comment->getActorId());
 	}
 
 	protected function getUser(string $uid): array {

@@ -26,12 +26,16 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IShare;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
@@ -69,6 +73,12 @@ class SystemMessageTest extends TestCase {
 			->method('t')
 			->will($this->returnCallback(function($text, $parameters = []) {
 				return vsprintf($text, $parameters);
+			}));
+		$this->l->expects($this->any())
+			->method('n')
+			->will($this->returnCallback(function($singular, $plural, $count, $parameters = []) {
+				$text = $count === 1 ? $singular : $plural;
+				return vsprintf(str_replace('%n', $count, $text), $parameters);
 			}));
 	}
 
@@ -152,6 +162,221 @@ class SystemMessageTest extends TestCase {
 		$parser->setUserInfo($l, null);
 		$this->assertNull(self::invokePrivate($parser, 'recipient'));
 		$this->assertSame($l, self::invokePrivate($parser, 'l'));
+	}
+
+	public function testGetFileFromShareForGuest() {
+		$node = $this->createMock(Node::class);
+		$node->expects($this->once())
+			->method('getId')
+			->willReturn('54');
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('name');
+
+		$share = $this->createMock(IShare::class);
+		$share->expects($this->once())
+			->method('getNode')
+			->willReturn($node);
+		$share->expects($this->once())
+			->method('getToken')
+			->willReturn('token');
+
+		$this->shareProvider->expects($this->once())
+			->method('getShareById')
+			->with('23')
+			->willReturn($share);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files_sharing.sharecontroller.showShare', [
+				'token' => 'token',
+			])
+			->willReturn('absolute-link');
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '54',
+			'name' => 'name',
+			'path' => 'name',
+			'link' => 'absolute-link',
+		], self::invokePrivate($parser, 'getFileFromShare', ['23']));
+	}
+
+	public function testGetFileFromShareForOwner() {
+		$node = $this->createMock(Node::class);
+		$node->expects($this->exactly(2))
+			->method('getId')
+			->willReturn('54');
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('name');
+		$node->expects($this->once())
+			->method('getPath')
+			->willReturn('/owner/files/path/to/file/name');
+
+		$share = $this->createMock(IShare::class);
+		$share->expects($this->once())
+			->method('getNode')
+			->willReturn($node);
+
+		$this->shareProvider->expects($this->once())
+			->method('getShareById')
+			->with('23')
+			->willReturn($share);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files.viewcontroller.showFile', [
+				'fileid' => '54',
+			])
+			->willReturn('absolute-link-owner');
+
+		$this->userSession->expects($this->exactly(2))
+			->method('getUser')
+			->willReturn($this->createMock(IUser::class));
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '54',
+			'name' => 'name',
+			'path' => 'path/to/file/name',
+			'link' => 'absolute-link-owner',
+		], self::invokePrivate($parser, 'getFileFromShare', ['23']));
+	}
+
+	public function testGetFileFromShareForRecipient() {
+		$node = $this->createMock(Node::class);
+		$node->expects($this->exactly(3))
+			->method('getId')
+			->willReturn('54');
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('name');
+
+		$share = $this->createMock(IShare::class);
+		$share->expects($this->once())
+			->method('getNode')
+			->willReturn($node);
+
+		$recipient = $this->createMock(IUser::class);
+		$recipient->expects($this->once())
+			->method('getUID')
+			->willReturn('user');
+
+		$this->shareProvider->expects($this->once())
+			->method('getShareById')
+			->with('23')
+			->willReturn($share);
+
+		$file = $this->createMock(Node::class);
+		$file->expects($this->once())
+			->method('getName')
+			->willReturn('different');
+		$file->expects($this->once())
+			->method('getPath')
+			->willReturn('/user/files/Shared/different');
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getById')
+			->with('54')
+			->willReturn([$file]);
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('user')
+			->willReturn($userFolder);
+
+		$this->url->expects($this->once())
+			->method('linkToRouteAbsolute')
+			->with('files.viewcontroller.showFile', [
+				'fileid' => '54',
+			])
+			->willReturn('absolute-link-owner');
+
+		$this->userSession->expects($this->exactly(2))
+			->method('getUser')
+			->willReturnOnConsecutiveCalls(
+				$recipient,
+				$this->createMock(IUser::class)
+			);
+
+		$parser = $this->getParser();
+		$this->assertSame([
+			'type' => 'file',
+			'id' => '54',
+			'name' => 'different',
+			'path' => 'Shared/different',
+			'link' => 'absolute-link-owner',
+		], self::invokePrivate($parser, 'getFileFromShare', ['23']));
+	}
+
+	/**
+	 * @expectedException \OCP\Files\NotFoundException
+	 */
+	public function testGetFileFromShareForRecipientThrows() {
+		$node = $this->createMock(Node::class);
+		$node->expects($this->once())
+			->method('getId')
+			->willReturn('54');
+		$node->expects($this->once())
+			->method('getName')
+			->willReturn('name');
+
+		$share = $this->createMock(IShare::class);
+		$share->expects($this->once())
+			->method('getNode')
+			->willReturn($node);
+
+		$recipient = $this->createMock(IUser::class);
+		$recipient->expects($this->once())
+			->method('getUID')
+			->willReturn('user');
+
+		$this->shareProvider->expects($this->once())
+			->method('getShareById')
+			->with('23')
+			->willReturn($share);
+
+		$userFolder = $this->createMock(Folder::class);
+		$userFolder->expects($this->once())
+			->method('getById')
+			->with('54')
+			->willReturn([]);
+
+		$this->rootFolder->expects($this->once())
+			->method('getUserFolder')
+			->with('user')
+			->willReturn($userFolder);
+
+		$this->url->expects($this->never())
+			->method('linkToRouteAbsolute');
+
+		$this->userSession->expects($this->exactly(2))
+			->method('getUser')
+			->willReturnOnConsecutiveCalls(
+				$recipient,
+				$this->createMock(IUser::class)
+			);
+
+		$parser = $this->getParser();
+		self::invokePrivate($parser, 'getFileFromShare', ['23']);
+	}
+
+	/**
+	 * @expectedException \OCP\Share\Exceptions\ShareNotFound
+	 */
+	public function testGetFileFromShareThrows() {
+
+		$this->shareProvider->expects($this->once())
+			->method('getShareById')
+			->with('23')
+			->willThrowException(new ShareNotFound());
+
+		$parser = $this->getParser();
+		self::invokePrivate($parser, 'getFileFromShare', ['23']);
 	}
 
 	public function dataGetActor(): array {
@@ -314,6 +539,109 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		$this->assertSame('Guest', self::invokePrivate($parser, 'getGuestName', [$sessionHash]));
+	}
+
+	public function dataParseCall(): array {
+		return [
+			'1 user + guests' => [
+				['users' => ['user1'], 'guests' => 3, 'duration' => 42],
+				[
+					'Call with {user1} and 3 guests (Duration "duration")',
+					['user1' => ['data' => 'user1']],
+				],
+			],
+			'2 users' => [
+				['users' => ['user1', 'user2'], 'guests' => 0, 'duration' => 42],
+				[
+					'Call with {user1} and {user2} (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2']],
+				],
+			],
+			'2 users + guests' => [
+				['users' => ['user1', 'user2'], 'guests' => 1, 'duration' => 42],
+				[
+					'Call with {user1}, {user2} and 1 guest (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2']],
+				],
+			],
+			'3 users' => [
+				['users' => ['user1', 'user2', 'user3'], 'guests' => 0, 'duration' => 42],
+				[
+					'Call with {user1}, {user2} and {user3} (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3']],
+				],
+			],
+			'3 users + guests' => [
+				['users' => ['user1', 'user2', 'user3'], 'guests' => 22, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3} and 22 guests (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3']],
+				],
+			],
+			'4 users' => [
+				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 0, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3} and {user4} (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
+				],
+			],
+			'4 users + guests' => [
+				['users' => ['user1', 'user2', 'user3', 'user4'], 'guests' => 4, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3}, {user4} and 4 guests (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
+				],
+			],
+			'5 users' => [
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 0, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4'], 'user5' => ['data' => 'user5']],
+				],
+			],
+			'5 users + guests' => [
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5'], 'guests' => 1, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
+				],
+			],
+			'6 users' => [
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 0, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3}, {user4} and 2 others (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
+				],
+			],
+			'6 users + guests' => [
+				['users' => ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'], 'guests' => 2, 'duration' => 42],
+				[
+					'Call with {user1}, {user2}, {user3}, {user4} and 4 others (Duration "duration")',
+					['user1' => ['data' => 'user1'], 'user2' => ['data' => 'user2'], 'user3' => ['data' => 'user3'], 'user4' => ['data' => 'user4']],
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider dataParseCall
+	 * @param array $parameters
+	 * @param array $expected
+	 */
+	public function testParseCall(array $parameters, array $expected) {
+		$parser = $this->getParser(['getDuration', 'getUser']);
+		$parser->expects($this->once())
+			->method('getDuration')
+			->with(42)
+			->willReturn('"duration"');
+
+		$parser->expects($this->any())
+			->method('getUser')
+			->willReturnCallback(function($user) {
+				return ['data' => $user];
+			});
+
+		$this->assertSame($expected, self::invokePrivate($parser, 'parseCall', [$parameters]));
 	}
 
 	public function dataGetDuration(): array {
