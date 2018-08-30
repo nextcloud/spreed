@@ -50,7 +50,7 @@ class Participant {
 	protected $lastPing;
 	/** @var string */
 	protected $sessionId;
-	/** @var bool */
+	/** @var int */
 	protected $inCall;
 	/** @var bool */
 	private $isFavorite;
@@ -64,7 +64,7 @@ class Participant {
 	 * @param int $participantType
 	 * @param int $lastPing
 	 * @param string $sessionId
-	 * @param bool $inCall
+	 * @param int $inCall
 	 * @param bool $isFavorite
 	 * @param \DateTime|null $lastMention
 	 */
