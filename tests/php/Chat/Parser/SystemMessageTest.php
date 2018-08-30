@@ -27,8 +27,10 @@ use OCA\Spreed\GuestManager;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\Folder;
+use OCP\Files\InvalidPathException;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -55,9 +57,6 @@ class SystemMessageTest extends TestCase {
 	protected $url;
 	/** @var IL10N|MockObject */
 	protected $l;
-
-	/** @var SystemMessage */
-	protected $parser;
 
 	public function setUp() {
 		parent::setUp();
@@ -110,6 +109,324 @@ class SystemMessageTest extends TestCase {
 			$this->url,
 			$this->l
 		);
+	}
+
+	public function dataParseMessage(): array {
+		return [
+			['conversation_created', [], null, [
+				'{actor} created the conversation',
+				['actor' => ['id' => 'actor']],
+			]],
+			['conversation_created', [], 'recipient', [
+				'{actor} created the conversation',
+				['actor' => ['id' => 'actor']],
+			]],
+			['conversation_created', [], 'actor', [
+				'You created the conversation',
+				['actor' => ['id' => 'actor']],
+			]],
+			['conversation_renamed', ['oldName' => 'old', 'newName' => 'new'], null, [
+				'{actor} renamed the conversation from "old" to "new"',
+				['actor' => ['id' => 'actor']],
+			]],
+			['conversation_renamed', ['oldName' => 'old', 'newName' => 'new'], 'recipient', [
+				'{actor} renamed the conversation from "old" to "new"',
+				['actor' => ['id' => 'actor']],
+			]],
+			['conversation_renamed', ['oldName' => 'old', 'newName' => 'new'], 'actor', [
+				'You renamed the conversation from "old" to "new"',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_started', [], null, [
+				'{actor} started a call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_started', [], 'recipient', [
+				'{actor} started a call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_started', [], 'actor', [
+				'You started a call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_joined', [], null, [
+				'{actor} joined the call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_joined', [], 'recipient', [
+				'{actor} joined the call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_joined', [], 'actor', [
+				'You joined the call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_left', [], null, [
+				'{actor} left the call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_left', [], 'recipient', [
+				'{actor} left the call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_left', [], 'actor', [
+				'You left the call',
+				['actor' => ['id' => 'actor']],
+			]],
+			['call_ended', [], null, [
+				'tested by testParsecall', []
+			]],
+			['call_ended', [], 'recipient', [
+				'tested by testParsecall', []
+			]],
+			['call_ended', [], 'actor', [
+				'tested by testParsecall', []
+			]],
+			['guests_allowed', [], null, [
+				'{actor} allowed guests',
+				['actor' => ['id' => 'actor']],
+			]],
+			['guests_allowed', [], 'recipient', [
+				'{actor} allowed guests',
+				['actor' => ['id' => 'actor']],
+			]],
+			['guests_allowed', [], 'actor', [
+				'You allowed guests',
+				['actor' => ['id' => 'actor']],
+			]],
+			['guests_disallowed', [], null, [
+				'{actor} disallowed guests',
+				['actor' => ['id' => 'actor']],
+			]],
+			['guests_disallowed', [], 'recipient', [
+				'{actor} disallowed guests',
+				['actor' => ['id' => 'actor']],
+			]],
+			['guests_disallowed', [], 'actor', [
+				'You disallowed guests',
+				['actor' => ['id' => 'actor']],
+			]],
+			['password_set', [], null, [
+				'{actor} set a password',
+				['actor' => ['id' => 'actor']],
+			]],
+			['password_set', [], 'recipient', [
+				'{actor} set a password',
+				['actor' => ['id' => 'actor']],
+			]],
+			['password_set', [], 'actor', [
+				'You set a password',
+				['actor' => ['id' => 'actor']],
+			]],
+			['password_removed', [], null, [
+				'{actor} removed the password',
+				['actor' => ['id' => 'actor']],
+			]],
+			['password_removed', [], 'recipient', [
+				'{actor} removed the password',
+				['actor' => ['id' => 'actor']],
+			]],
+			['password_removed', [], 'actor', [
+				'You removed the password',
+				['actor' => ['id' => 'actor']],
+			]],
+			['user_added', ['user' => 'user'], null, [
+				'{actor} added {user}',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_added', ['user' => 'user'], 'recipient', [
+				'{actor} added {user}',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_added', ['user' => 'user'], 'user', [
+				'{actor} added you',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_added', ['user' => 'user'], 'actor', [
+				'You added {user}',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_removed', ['user' => 'user'], null, [
+				'{actor} removed {user}',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_removed', ['user' => 'user'], 'recipient', [
+				'{actor} removed {user}',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_removed', ['user' => 'actor'], 'actor', [
+				'{actor} left the conversation',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'actor']],
+			]],
+			['user_removed', ['user' => 'user'], 'user', [
+				'{actor} removed you',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['user_removed', ['user' => 'user'], 'actor', [
+				'You removed {user}',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_promoted', ['user' => 'user'], null, [
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_promoted', ['user' => 'user'], 'recipient', [
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_promoted', ['user' => 'user'], 'user', [
+				'{actor} promoted you to moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_promoted', ['user' => 'user'], 'actor', [
+				'You promoted {user} to moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_demoted', ['user' => 'user'], null, [
+				'{actor} demoted {user} from moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_demoted', ['user' => 'user'], 'recipient', [
+				'{actor} demoted {user} from moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_demoted', ['user' => 'user'], 'user', [
+				'{actor} demoted you from moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['moderator_demoted', ['user' => 'user'], 'actor', [
+				'You demoted {user} from moderator',
+				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+			]],
+			['file_shared', ['share' => '42'], null, [
+				'{file}',
+				['actor' => ['id' => 'actor'], 'file' => ['id' => 'file-from-share']],
+			]],
+			['file_shared', ['share' => '42'], 'recipient', [
+				'{file}',
+				['actor' => ['id' => 'actor'], 'file' => ['id' => 'file-from-share']],
+			]],
+			['file_shared', ['share' => '42'], 'actor', [
+				'{file}',
+				['actor' => ['id' => 'actor'], 'file' => ['id' => 'file-from-share']],
+			]],
+			['file_shared', ['share' => ShareNotFound::class], null, [
+				'{actor} shared a file which is no longer available',
+				['actor' => ['id' => 'actor']],
+			]],
+			['file_shared', ['share' => InvalidPathException::class], 'recipient', [
+				'{actor} shared a file which is no longer available',
+				['actor' => ['id' => 'actor']],
+			]],
+			['file_shared', ['share' => NotFoundException::class], 'actor', [
+				'You shared a file which is no longer available',
+				['actor' => ['id' => 'actor']],
+			]],
+		];
+	}
+
+	/**
+	 * @dataProvider dataParseMessage
+	 * @param string $message
+	 * @param array $parameters
+	 * @param $recipientId
+	 * @param array $expected
+	 */
+	public function testParseMessage(string $message, array $parameters, $recipientId, array $expected) {
+		if ($recipientId) {
+			$recipient = $this->createMock(IUser::class);
+			$recipient->expects($this->atLeastOnce())
+				->method('getUID')
+				->willReturn($recipientId);
+		} else {
+			$recipient = null;
+		}
+
+		/** @var IComment|MockObject $comment */
+		$comment = $this->createMock(IComment::class);
+		$comment->expects($this->once())
+			->method('getMessage')
+			->willReturn(json_encode([
+				'message' => $message,
+				'parameters' => $parameters,
+			]));
+
+		$parser = $this->getParser(['getActor', 'getUser', 'parseCall', 'getFileFromShare']);
+		$parser->expects($this->once())
+			->method('getActor')
+			->with($comment)
+			->willReturn(['id' => 'actor']);
+		$parser->expects($this->any())
+			->method('getUser')
+			->with($parameters['user'] ?? 'user')
+			->willReturn(['id' => $parameters['user'] ?? 'user']);
+		self::invokePrivate($parser, 'recipient', [$recipient]);
+
+		if ($message === 'call_ended') {
+			$parser->expects($this->once())
+				->method('parseCall')
+				->with($parameters)
+				->willReturn($expected);
+		} else {
+			$parser->expects($this->never())
+				->method('parseCall');
+		}
+
+		if ($message === 'file_shared') {
+			if (is_subclass_of($parameters['share'], \Exception::class)) {
+				$parser->expects($this->once())
+					->method('getFileFromShare')
+					->with($parameters['share'])
+					->willThrowException(new $parameters['share']());
+			} else {
+				$parser->expects($this->once())
+					->method('getFileFromShare')
+					->with($parameters['share'])
+					->willReturn(['id' => 'file-from-share']);
+				$comment->expects($this->once())
+					->method('setVerb')
+					->with('comment');
+			}
+		} else {
+			$parser->expects($this->never())
+				->method('getFileFromShare');
+		}
+
+		$comment->expects($this->once())
+			->method('setMessage')
+			->with($message);
+
+		$this->assertSame($expected, $parser->parseMessage($comment));
+	}
+
+	public function dataParseMessageThrows(): array {
+		return [
+			[null],
+			['not json'],
+			[json_encode('not a json array')],
+			[json_encode(['message' => 'unkown_subject', 'parameters' => []])],
+		];
+	}
+
+	/**
+	 * @dataProvider dataParseMessageThrows
+	 * @param string|null $return
+	 * @expectedException \OutOfBoundsException
+	 */
+	public function testParseMessageThrows($return) {
+		/** @var IComment|MockObject $comment */
+		$comment = $this->createMock(IComment::class);
+		$comment->expects($this->once())
+			->method('getMessage')
+			->willReturn($return);
+
+		$parser = $this->getParser(['getActor']);
+		$parser->expects($this->any())
+			->method('getActor')
+			->with($comment)
+			->willReturn(['id' => 'actor']);
+
+		$parser->parseMessage($comment);
 	}
 
 	public function testSetUserInfoGuestToUser() {
