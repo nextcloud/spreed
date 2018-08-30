@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
+# @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
 #
 # @license GNU AGPL version 3 or any later version
 #
@@ -44,9 +45,10 @@
 # https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
 #
 # Finally, take into account that this script will automatically remove the
-# Docker container named "nextcloud-local-test-integration-spreed", even if the
-# script did not create it (probably you will not have containers nor images
-# with that name, but just in case).
+# Docker containers named "database-nextcloud-local-test-integration-spreed" and
+# "nextcloud-local-test-integration-spreed", even if the script did not create
+# them (probably you will not have containers nor images with that name, but
+# just in case).
 
 # Sets the variables that abstract the differences in command names and options
 # between operating systems.
@@ -61,15 +63,54 @@ function setOperatingSystemAbstractionVariables() {
 			fi
 
 			MKTEMP=gmktemp
+			TIMEOUT=gtimeout
 			;;
 		linux*)
 			MKTEMP=mktemp
+			TIMEOUT=timeout
 			;;
 		*)
 			echo "Operating system ($OSTYPE) not supported"
 			exit 1
 			;;
 	esac
+}
+
+# Launches the database server in a Docker container.
+#
+# No server is started if "SQLite" is being used; in other cases the database
+# is set up as needed and generic "$DATABASE_NAME/USER/PASSWORD" variables
+# (independent of the database type) are set to be used when installing the
+# Nextcloud server.
+#
+# The Docker container started here will be automatically stopped when the
+# script exits (see cleanUp). If the database server can not be started then the
+# script will be exited immediately with an error state.
+function prepareDatabase() {
+	if [ "$DATABASE" = "sqlite" ]; then
+		return
+	fi
+
+	DATABASE_CONTAINER=database-nextcloud-local-test-integration-spreed
+
+	DATABASE_NAME=oc_autotest
+	DATABASE_USER=oc_autotest
+	DATABASE_PASSWORD=nextcloud
+
+	DATABASE_CONTAINER_OPTIONS="--env MYSQL_ROOT_PASSWORD=nextcloud_root --env MYSQL_USER=$DATABASE_USER --env MYSQL_PASSWORD=$DATABASE_PASSWORD --env MYSQL_DATABASE=$DATABASE_NAME"
+
+	echo "Starting database server"
+	docker run --detach --name=$DATABASE_CONTAINER $DATABASE_CONTAINER_OPTIONS $DATABASE_IMAGE
+
+	DATABASE_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DATABASE_CONTAINER)
+	DATABASE_PORT=3306
+
+	echo "Waiting for database server to be ready"
+	if ! $TIMEOUT 600s bash -c "while ! curl $DATABASE_IP:$DATABASE_PORT >/dev/null 2>&1; do sleep 1; done"; then
+		echo "Could not start database server after 600 seconds" >&2
+
+		exit 1
+	fi
 }
 
 # Creates a Docker container to run the integration tests.
@@ -83,10 +124,18 @@ function setOperatingSystemAbstractionVariables() {
 function prepareDocker() {
 	NEXTCLOUD_LOCAL_CONTAINER=nextcloud-local-test-integration-spreed
 
+	NEXTCLOUD_LOCAL_CONTAINER_NETWORK_OPTIONS=""
+	if [ -n "$DATABASE_CONTAINER" ]; then
+		# The network stack is shared between the database and the Nextcloud
+		# container, so the Nextcloud server can access the database directly on
+		# 127.0.0.1.
+		NEXTCLOUD_LOCAL_CONTAINER_NETWORK_OPTIONS="--network=container:$DATABASE_CONTAINER"
+	fi
+
 	echo "Starting the Nextcloud container"
 	# When using "nextcloudci/phpX.Y" images the container exits immediately if
 	# no command is given, so a Bash session is created to prevent that.
-	docker run --detach --name=$NEXTCLOUD_LOCAL_CONTAINER --interactive --tty $NEXTCLOUD_LOCAL_IMAGE bash
+	docker run --detach --name=$NEXTCLOUD_LOCAL_CONTAINER $NEXTCLOUD_LOCAL_CONTAINER_NETWORK_OPTIONS --interactive --tty $NEXTCLOUD_LOCAL_IMAGE bash
 
 	# Use the $TMPDIR or, if not set, fall back to /tmp.
 	NEXTCLOUD_LOCAL_TAR="$($MKTEMP --tmpdir="${TMPDIR:-/tmp}" --suffix=.tar nextcloud-local-XXXXXXXXXX)"
@@ -100,8 +149,15 @@ function prepareDocker() {
 	docker exec $NEXTCLOUD_LOCAL_CONTAINER mkdir /nextcloud
 	docker cp - $NEXTCLOUD_LOCAL_CONTAINER:/nextcloud/ < "$NEXTCLOUD_LOCAL_TAR"
 
+	# Database options are needed only when a database other than SQLite is
+	# used.
+	NEXTCLOUD_LOCAL_CONTAINER_INSTALL_DATABASE_OPTIONS=""
+	if [ -n "$DATABASE_CONTAINER" ]; then
+		NEXTCLOUD_LOCAL_CONTAINER_INSTALL_DATABASE_OPTIONS="--database=$DATABASE --database-name=$DATABASE_NAME --database-user=$DATABASE_USER --database-pass=$DATABASE_PASSWORD --database-host=127.0.0.1"
+	fi
+
 	echo "Installing Nextcloud in the container"
-	docker exec $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd nextcloud && php occ maintenance:install --admin-pass=admin"
+	docker exec $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd nextcloud && php occ maintenance:install --admin-pass=admin $NEXTCLOUD_LOCAL_CONTAINER_INSTALL_DATABASE_OPTIONS"
 }
 
 # Removes/stops temporal elements created/started by this script.
@@ -124,6 +180,11 @@ function cleanUp() {
 		echo "Removing Docker container $NEXTCLOUD_LOCAL_CONTAINER"
 		docker rm --volumes --force $NEXTCLOUD_LOCAL_CONTAINER
 	fi
+
+	if [ -n "$DATABASE_CONTAINER" -a -n "$(docker ps --all --quiet --filter name="^/$DATABASE_CONTAINER$")" ]; then
+		echo "Removing Docker container $DATABASE_CONTAINER"
+		docker rm --volumes --force $DATABASE_CONTAINER
+	fi
 }
 
 # Exit immediately on errors.
@@ -145,11 +206,36 @@ if [ "$1" = "--image" ]; then
 	shift 2
 fi
 
+# "--database XXX" option can be provided to set the database to use to run the
+# integration tests (one of "sqlite" or "mysql"; "sqlite" is used by default).
+DATABASE="sqlite"
+if [ "$1" = "--database" ]; then
+	DATABASE=$2
+
+	shift 2
+fi
+
+if [ "$DATABASE" != "sqlite" ] && [ "$DATABASE" != "mysql" ]; then
+	echo "--database must be followed by one of: sqlite or mysql"
+
+	exit 1
+fi
+
+# "--database-image XXX" option can be provided to set the Docker image to use
+# for the database container (ignored when using "sqlite").
+DATABASE_IMAGE="mysql:5.7"
+if [ "$1" = "--database-image" ]; then
+	DATABASE_IMAGE=$2
+
+	shift 2
+fi
+
 # If no parameter is provided to this script all the integration tests are run.
 SCENARIO_TO_RUN=$1
 
 setOperatingSystemAbstractionVariables
 
+prepareDatabase
 prepareDocker
 
 echo "Running tests"
