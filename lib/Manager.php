@@ -212,14 +212,15 @@ class Manager {
 	 */
 	public function getRoomForParticipantByToken($token, $participant, $includeLastMessage = false) {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('r.*')
 			->from('talk_rooms', 'r')
-			->where($query->expr()->eq('token', $query->createNamedParameter($token)))
+			->where($query->expr()->eq('r.token', $query->createNamedParameter($token)))
 			->setMaxResults(1);
 
 		if ($participant !== null) {
 			// Non guest user
-			$query->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
+			$query->addSelect('p.*')
+				->leftJoin('r', 'talk_participants', 'p', $query->expr()->andX(
 					$query->expr()->eq('p.user_id', $query->createNamedParameter($participant)),
 					$query->expr()->eq('p.room_id', 'r.id')
 				));
