@@ -98,15 +98,22 @@ function prepareDatabase() {
 	DATABASE_PASSWORD=nextcloud
 
 	DATABASE_CONTAINER_OPTIONS="--env MYSQL_ROOT_PASSWORD=nextcloud_root --env MYSQL_USER=$DATABASE_USER --env MYSQL_PASSWORD=$DATABASE_PASSWORD --env MYSQL_DATABASE=$DATABASE_NAME"
+	if [ "$DATABASE" = "pgsql" ]; then
+		DATABASE_CONTAINER_OPTIONS=" --env POSTGRES_USER=$DATABASE_USER --env POSTGRES_PASSWORD=$DATABASE_PASSWORD"
+	fi
 
 	echo "Starting database server"
 	docker run --detach --name=$DATABASE_CONTAINER $DATABASE_CONTAINER_OPTIONS $DATABASE_IMAGE
 
 	DATABASE_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $DATABASE_CONTAINER)
+
 	DATABASE_PORT=3306
+	if [ "$DATABASE" = "pgsql" ]; then
+		DATABASE_PORT=5432
+	fi
 
 	echo "Waiting for database server to be ready"
-	if ! $TIMEOUT 600s bash -c "while ! curl $DATABASE_IP:$DATABASE_PORT >/dev/null 2>&1; do sleep 1; done"; then
+	if ! $TIMEOUT 600s bash -c "while ! (</dev/tcp/$DATABASE_IP/$DATABASE_PORT) >/dev/null 2>&1; do sleep 1; done"; then
 		echo "Could not start database server after 600 seconds" >&2
 
 		exit 1
@@ -207,7 +214,8 @@ if [ "$1" = "--image" ]; then
 fi
 
 # "--database XXX" option can be provided to set the database to use to run the
-# integration tests (one of "sqlite" or "mysql"; "sqlite" is used by default).
+# integration tests (one of "sqlite", "mysql" or "pgsql"; "sqlite" is used
+# by default).
 DATABASE="sqlite"
 if [ "$1" = "--database" ]; then
 	DATABASE=$2
@@ -215,15 +223,19 @@ if [ "$1" = "--database" ]; then
 	shift 2
 fi
 
-if [ "$DATABASE" != "sqlite" ] && [ "$DATABASE" != "mysql" ]; then
-	echo "--database must be followed by one of: sqlite or mysql"
+if [ "$DATABASE" != "sqlite" ] && [ "$DATABASE" != "mysql" ] && [ "$DATABASE" != "pgsql" ]; then
+	echo "--database must be followed by one of: sqlite, mysql or pgsql"
 
 	exit 1
 fi
 
 # "--database-image XXX" option can be provided to set the Docker image to use
 # for the database container (ignored when using "sqlite").
-DATABASE_IMAGE="mysql:5.7"
+if [ "$DATABASE" = "mysql" ]; then
+	DATABASE_IMAGE="mysql:5.7"
+elif [ "$DATABASE" = "pgsql" ]; then
+	DATABASE_IMAGE="postgres:10"
+fi
 if [ "$1" = "--database-image" ]; then
 	DATABASE_IMAGE=$2
 
