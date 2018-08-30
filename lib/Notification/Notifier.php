@@ -173,8 +173,8 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown comment');
 		}
 
-		$user = $this->userManager->get($notification->getUser());
-		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($comment, $l, $user);
+		$recipient = $this->userManager->get($notification->getUser());
+		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($comment, $l, $recipient);
 
 		$placeholders = $replacements = [];
 		foreach ($richMessageParameters as $placeholder => $parameter) {
