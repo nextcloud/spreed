@@ -111,7 +111,7 @@ class Hooks {
 				'guests' => $room->getActiveGuests(),
 				'duration' => $duration,
 			],
-		]), new \DateTime());
+		]), new \DateTime(), false);
 
 		foreach ($userIds as $userId) {
 			try {
