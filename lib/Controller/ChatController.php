@@ -267,9 +267,22 @@ class ChatController extends AEnvironmentAwareController {
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+			$this->participant->setLastReadMessage((int) $newLastKnown->getId());
 		}
 
 		return $response;
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 *
+	 * @param int $lastReadMessage
+	 * @return DataResponse
+	 */
+	public function setReadMarker(int $lastReadMessage): DataResponse {
+		$this->participant->setLastReadMessage($lastReadMessage);
+		return new DataResponse();
 	}
 
 	/**

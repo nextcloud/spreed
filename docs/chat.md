@@ -63,6 +63,24 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
 
+## Mark chat as read
+
+* Method: `POST`
+* Endpoint: `/chat/{token}/read`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `lastReadMessage` | int | The last read message ID
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant,
+        or the participant is a guest.
+
+
+
 ## Get mention autocomplete suggestions
 
 * Method: `GET`
