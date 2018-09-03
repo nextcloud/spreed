@@ -679,7 +679,7 @@
 
 					OC.Notification.showTemporary(message);
 				});
-			}, false, null, true, OC.dialogs.FILEPICKER_TYPE_CHOOSE);
+			}, false, ['*', 'httpd/unix-directory'], true, OC.dialogs.FILEPICKER_TYPE_CHOOSE);
 		},
 
 	});
