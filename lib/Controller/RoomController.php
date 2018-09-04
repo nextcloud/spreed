@@ -302,6 +302,7 @@ class RoomController extends OCSController {
 				'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
 				'message' => $message,
 				'messageParameters' => $messageParameters,
+				'systemMessage' => $lastMessage->getVerb() === 'system' ? $lastMessage->getMessage() : '',
 			];
 		} else {
 			$lastMessage = [];
