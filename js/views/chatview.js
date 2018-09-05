@@ -134,9 +134,28 @@
 						+ '</span></li>';
 				},
 				insertTpl: function (item) {
-					return '<span class="mention-user" data-user="' + escapeHTML(item.id) + '">@' + escapeHTML(item.label) + '</span>';
+					return '' +
+						'<span class="mention-user avatar-name-wrapper">' +
+							'<span class="avatar" ' +
+									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
+									'data-user="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-display-name="' + escapeHTML(item.label) + '">' +
+							'</span>' +
+							'<strong>' + escapeHTML(item.label) + '</strong>' +
+						'</span>';
 				},
 				searchKey: "label"
+			});
+			$target.on('inserted.atwho', function (je, $el) {
+				s._postRenderItem(
+					null,
+					// we need to pass the parent of the inserted element
+					// passing the whole comments form would re-apply and request
+					// avatars from the server
+					$(je.target).find(
+						'span[data-username="' + $el.find('[data-username]').data('username') + '"]'
+					).parent()
+				);
 			});
 		},
 
@@ -504,11 +523,15 @@
 			return model1.get('date').toDateString() === model2.get('date').toDateString();
 		},
 
+		/**
+		 * If there is no model then it is being called on a message being
+		 * composed.
+		 */
 		_postRenderItem: function(model, $el) {
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				if (model.get('actorType') === 'users') {
+				if (!model || model.get('actorType') === 'users') {
 					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('displayname'));
 				} else {
 					$element.imageplaceholder('?', model.get('actorDisplayName'), size);
@@ -518,12 +541,17 @@
 			$el.find('.authorRow .avatar').each(function() {
 				setAvatar($(this), 32);
 			});
-			$el.find('.message .avatar').each(function() {
+			var inlineAvatars = $el.find('.message .avatar');
+			if ($($el.context).hasClass('message')) {
+				inlineAvatars = $el.find('.avatar');
+			}
+			inlineAvatars.each(function () {
 				setAvatar($(this), 16);
 			});
 
 			var username = $el.find('.avatar').data('user-id');
 			if (OC.getCurrentUser().uid &&
+				model &&
 				model.get('actorType') === 'users' &&
 				username !== OC.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
@@ -575,7 +603,7 @@
 			$comment.find('.mention-user').each(function () {
 				var $this = $(this);
 				var $inserted = $this.parent();
-				$inserted.html('@' + $this.data('user'));
+				$inserted.html('@' + $this.find('.avatar').data('user'));
 			});
 
 			var oldHtml;
