@@ -640,7 +640,8 @@ class RoomController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
+	 * @UseSession
 	 *
 	 * @param string $token
 	 * @return DataResponse
@@ -812,16 +813,17 @@ class RoomController extends OCSController {
 	}
 
 	/**
-	 * @NoAdminRequired
+	 * @PublicPage
+	 * @UseSession
 	 *
 	 * @param string $token
 	 * @param string $participant
 	 * @return DataResponse
 	 */
-	public function removeGuestFromRoom($token, $participant) {
+	public function removeGuestFromRoom($token, $participant, $sessionId) {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$currentParticipant = $room->getParticipant($this->userId);
+			$currentParticipant = $room->getParticipantBySession($sessionId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ParticipantNotFoundException $e) {
@@ -838,9 +840,9 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($targetParticipant->getParticipantType() !== Participant::GUEST) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
+		//if ($targetParticipant->getParticipantType() !== Participant::GUEST) {
+		//	return new DataResponse([], Http::STATUS_FORBIDDEN);
+		//}
 
 		$room->removeParticipantBySession($targetParticipant);
 		return new DataResponse([]);

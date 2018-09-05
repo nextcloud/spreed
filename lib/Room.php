@@ -655,7 +655,15 @@ class Room {
 	 * @throws InvalidPasswordException
 	 */
 	public function joinRoomGuest($password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', new GenericEvent($this));
+		$participantType = Participant::GUEST;
+		$event = new GenericEvent($this, [
+			'password' => $password
+		]);
+		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', $event);
+
+		if ($event->hasArgument('participantType')) {
+			$participantType = $event->getArgument('participantType');
+		}
 
 		if (!$passedPasswordProtection && !$this->verifyPassword($password)['result']) {
 			throw new InvalidPasswordException();
@@ -667,7 +675,7 @@ class Room {
 			'room_id' => $this->getId(),
 			'last_ping' => 0,
 			'session_id' => $sessionId,
-			'participant_type' => Participant::GUEST,
+			'participant_type' => $participantType,
 		], ['session_id'])) {
 			$sessionId = $this->secureRandom->generate(255);
 		}

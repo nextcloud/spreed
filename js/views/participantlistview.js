@@ -243,7 +243,8 @@
 					type: 'DELETE',
 					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + endpoint,
 					data: {
-						participant: participantId
+						participant: participantId,
+						sessionId: OCA.SpreedMe.app.activeRoom.get('sessionId')
 					},
 					success: function() {
 						self.render();
