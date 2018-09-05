@@ -272,8 +272,8 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	font-weight: bold;
 
 	&.currentUser {
-		background-color: $color-primary;
-		color: $color-primary-text;
+		background-color: var(--color-primary);
+		color: var(--color-primary-text);
 	}
 }
 
