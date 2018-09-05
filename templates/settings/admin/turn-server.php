@@ -2,6 +2,7 @@
 /** @var array $_ */
 /** @var \OCP\IL10N $l */
 script('spreed', ['admin/turn-server']);
+script('spreed', ['admin/sha1']);
 style('spreed', ['settings-admin']);
 ?>
 
