@@ -124,14 +124,15 @@
 					sorter: function (q, items) { return items; }
 				},
 				displayTpl: function (item) {
-					return '<li>'
-						+ '<span class="avatar-name-wrapper">'
-						+ '<div class="avatar"'
-						+ ' data-username="' + escapeHTML(item.id) + '"'	// for avatars
-						+ ' data-user="' + escapeHTML(item.id) + '"'		// for contactsmenu
-						+ ' data-user-display-name="' + escapeHTML(item.label) + '"></div>'
-						+ ' <strong>' + escapeHTML(item.label) + '</strong>'
-						+ '</span></li>';
+					return '<li>' +
+						'<span class="avatar-name-wrapper">' +
+							'<span class="avatar" ' +
+									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
+									'data-user="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-display-name="' + escapeHTML(item.label) + '">' +
+							'</span>' +
+							'<strong>' + escapeHTML(item.label) + '</strong>' +
+						'</span></li>';
 				},
 				insertTpl: function (item) {
 					return '' +
