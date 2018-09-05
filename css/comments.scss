@@ -271,7 +271,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 #commentsTabView .comment:not(.systemMessage) .message .mention-user {
 	font-weight: bold;
 
-	&.current-user {
+	&.currentUser {
 		background-color: $color-primary;
 		color: $color-primary-text;
 	}
@@ -302,7 +302,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	color: var(--color-text-maxcontrast);
 }
 
-body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.current-user) {
+body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) {
 	cursor: pointer;
 }
 
