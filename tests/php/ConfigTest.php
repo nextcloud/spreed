@@ -80,6 +80,11 @@ class ConfigTest extends TestCase {
 
 		/** @var \PHPUnit_Framework_MockObject_MockObject|ISecureRandom $secureRandom */
 		$secureRandom = $this->createMock(ISecureRandom::class);
+		$secureRandom
+			->expects($this->once())
+			->method('generate')
+			->with(16)
+			->willReturn('abcdefghijklmnop');
 		$helper = new Config($config, $secureRandom, $timeFactory);
 
 		//
@@ -87,15 +92,15 @@ class ConfigTest extends TestCase {
 		if ($server['server'] === 'turn.example.org') {
 			$this->assertSame([
 				'server' => 'turn.example.org',
-				'username' => '1479829425',
-				'password' => 'ZY8fZQxAw/24gT0XYnMlcepUFlI=',
+				'username' => '1479829425:abcdefghijklmnop',
+				'password' => '4VJLVbihLzuxgMfDrm5C3zy8kLQ=',
 				'protocols' => 'udp,tcp',
 			], $server);
 		} else {
 			$this->assertSame([
 				'server' => 'turn2.example.com',
-				'username' => '1479829425',
-				'password' => 'VoqRpE4ktQ85TqFps8Qt+scEEvE=',
+				'username' => '1479829425:abcdefghijklmnop',
+				'password' => 'Ol9DEqnvyN4g+IAM+vFnqhfWUTE=',
 				'protocols' => 'tcp',
 			], $server);
 		}
