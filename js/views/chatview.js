@@ -506,14 +506,20 @@
 
 		_postRenderItem: function(model, $el) {
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
-			$el.find('.avatar').each(function() {
-				var $this = $(this);
+
+			var setAvatar = function($element, size) {
 				if (model.get('actorType') === 'users') {
-					$this.avatar($this.data('user-id'), 32, undefined, false, undefined, $this.data('displayname'));
+					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('displayname'));
 				} else {
-					$this.imageplaceholder('?', model.get('actorDisplayName'), 32);
-					$this.css('background-color', '#b9b9b9');
+					$element.imageplaceholder('?', model.get('actorDisplayName'), size);
+					$element.css('background-color', '#b9b9b9');
 				}
+			};
+			$el.find('.authorRow .avatar').each(function() {
+				setAvatar($(this), 32);
+			});
+			$el.find('.message .avatar').each(function() {
+				setAvatar($(this), 16);
 			});
 
 			var username = $el.find('.avatar').data('user-id');
@@ -536,8 +542,9 @@
 
 			$el.find('.mention-user').each(function() {
 				var $this = $(this);
+				var $avatar = $this.find('.avatar');
 
-				var user = $this.data('user');
+				var user = $avatar.data('user');
 				if (user !== OC.getCurrentUser().uid) {
 					$this.contactsMenu(user, 0, $this);
 				}

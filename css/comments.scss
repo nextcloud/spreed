@@ -261,10 +261,29 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	/* Make the mention the positioning context of its child contacts menu */
 	position: relative;
 
-	background-color: nc-lighten($color-main-text, 90%);
-	padding: 2px 5px;
-	border-radius: 10px;
+	display: inline;
+	vertical-align: top;
+	background-color: var(--color-background-dark);
+	border-radius: 50vh;
+	padding: 1px 7px 1px 1px;
 
+	/* Ensure that the avatar and the user name will be kept together;
+	 * otherwise a line break could be added between them when the wrapper
+	 * is close to the right border of the message. */
+	white-space: nowrap;
+
+	.avatar {
+		img {
+			vertical-align: top;
+		}
+		height: 16px;
+		width: 16px;
+		vertical-align: middle;
+		padding: 1px;
+		margin-top: -3px;
+		margin-left: 0;
+		margin-right: 2px;
+	}
 }
 
 #commentsTabView .comment:not(.systemMessage) .message .mention-user {
@@ -301,7 +320,9 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	color: var(--color-text-maxcontrast);
 }
 
-body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) {
+body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser),
+body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar,
+body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar img {
 	cursor: pointer;
 }
 
