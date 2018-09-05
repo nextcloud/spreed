@@ -136,6 +136,9 @@
 			var $server = $row.find('input.server').val();
 			var $secret = $row.find('input.secret').val();
 			var $protocols = $row.find('select.protocols').val().split(',');
+			if (!$server || !$secret || !$protocols.length) {
+				return;
+			}
 
 			var $urls = [];
 			var i;
