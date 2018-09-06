@@ -175,10 +175,8 @@ class Parser {
 		} else if ($message === 'file_shared') {
 			try {
 				$parsedParameters['file'] = $this->getFileFromShare($parameters['share']);
-				$parsedMessage = $this->l->t('{actor} shared {file}');
-				if ($currentUserIsActor) {
-					$parsedMessage = $this->l->t('You shared {file}');
-				}
+				$parsedMessage = '{file}';
+				$comment->setVerb('comment');
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {

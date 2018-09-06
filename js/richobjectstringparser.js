@@ -25,6 +25,12 @@
 					'</span>' +
 				'</span>',
 
+		_filePreviewTemplate: '' +
+				'<a href="{{link}}" class="filePreviewContainer" target="_blank" rel="noopener noreferrer">' +
+					'<span class="filePreview" data-file-id="{{id}}"></span>' +
+					'<strong>{{name}}</strong>' +
+				'</a>',
+
 		_unknownTemplate: '<strong>{{name}}</strong>',
 		_unknownLinkTemplate: '<a href="{{link}}" class="external" target="_blank" rel="noopener noreferrer"><strong>{{name}}</strong></a>',
 
@@ -73,6 +79,12 @@
 						parameter.isCurrentUser = true;
 					}
 					return this.userLocalTemplate(parameter);
+
+				case 'file':
+					if (!this.filePreviewTemplate) {
+						this.filePreviewTemplate = Handlebars.compile(this._filePreviewTemplate);
+					}
+					return this.filePreviewTemplate(parameter);
 
 				default:
 					if (!_.isUndefined(parameter.link)) {
