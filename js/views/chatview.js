@@ -570,13 +570,13 @@
 				$filePreview.find('img').remove();
 			};
 
+			var img = new Image();
+
 			var handlePreviewLoadError = function() {
 				img.onerror = handleDefaultIconLoadError;
 
 				img.src = defaultIconUrl;
 			};
-
-			var img = new Image();
 
 			img.onload = function() {
 				$filePreview.removeClass('icon-loading');
