@@ -145,7 +145,7 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function formattedMentionInChatMessageOf($chatAncestor, $number, $user) {
-		return Locator::forThe()->xpath("span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and normalize-space() = '@$user']")->
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and normalize-space() = '$user']")->
 				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
 				describedAs("Formatted mention of $user in chat message $number in the list of received messages");
 	}
