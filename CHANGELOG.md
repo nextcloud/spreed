@@ -1,9 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 3.99 – 2018-08-02
+## 4.0.0 – 2018-09-06
+### Added
+- Video verification for password protected email shares
+  [#1123](https://github.com/nextcloud/spreed/pull/1123)
+  [#1049](https://github.com/nextcloud/spreed/pull/1049)
+- Add a file picker to the chat to share files and folders into a chat room
+  [#1151](https://github.com/nextcloud/spreed/pull/1151)
+  [#1050](https://github.com/nextcloud/spreed/pull/1050)
+- Log the activity of a conversation in the chat (user added/removed, call happened, …)
+  [#1067](https://github.com/nextcloud/spreed/pull/1067)
+- Allow to favor conversations so they are pinned to the top of the list
+  [#1025](https://github.com/nextcloud/spreed/pull/1025)
+  
 ### Changed
-- Pre-release for Nextcloud 14 beta
+- Mentions in the chat now show the avatar of the user and highlight yourself more prominent
+  [#1142](https://github.com/nextcloud/spreed/pull/1142)
+- Messages in one2one chats now always send a notification
+  [#1029](https://github.com/nextcloud/spreed/pull/1029)
+- Conversations are now sorted by last activity rather then your last visit
+  [#1061](https://github.com/nextcloud/spreed/pull/1061)
+
+### Fixed
+- Fix turn credentials generation
+  [#1176](https://github.com/nextcloud/spreed/pull/1176)
+- Do not turn all `@…` strings into a mention
+  [#1118](https://github.com/nextcloud/spreed/pull/1118)
 
 ## 3.2.4 – 2018-07-12
 ### Added
