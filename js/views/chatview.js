@@ -585,7 +585,7 @@
 			img.height = previewSize;
 			img.src = url;
 
-			$filePreview.append(img);
+			$filePreview.prepend(img);
 		},
 
 		_onTypeComment: function(ev) {

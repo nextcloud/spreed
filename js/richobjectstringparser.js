@@ -16,10 +16,10 @@
 		_userLocalTemplate: '<span class="mention-user {{#if isCurrentUser}}current-user{{/if}}" data-user="{{id}}">@{{name}}</span>',
 
 		_filePreviewTemplate: '' +
-				'<div class="filePreviewContainer">' +
-					'<div class="filePreview" data-file-id="{{id}}"></div>' +
-					'<a href="{{link}}" target="_blank" rel="noopener noreferrer"><strong>{{name}}</strong></a>' +
-				'</div>',
+				'<a href="{{link}}" class="filePreviewContainer" target="_blank" rel="noopener noreferrer">' +
+					'<span class="filePreview" data-file-id="{{id}}"></span>' +
+					'<strong>{{name}}</strong>' +
+				'</a>',
 
 		_unknownTemplate: '<strong>{{name}}</strong>',
 		_unknownLinkTemplate: '<a href="{{link}}" class="external" target="_blank" rel="noopener noreferrer"><strong>{{name}}</strong></a>',

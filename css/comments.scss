@@ -320,7 +320,7 @@ body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .m
 	display: inline-block;
 }
 
-#commentsTabView .comment .message .filePreviewContainer a {
+#commentsTabView .comment .message .filePreviewContainer strong {
 	/* As the file preview is an inline block the name is set as a block to
 	 * force it to be on its own line below the preview. */
 	display: block;
