@@ -553,7 +553,8 @@
 		_renderFilePreview: function($filePreview) {
 			var previewSize = Math.ceil(128 * window.devicePixelRatio);
 
-			var url = OC.generateUrl(
+			var defaultIconUrl = OC.imagePath('core', 'filetypes/file');
+			var previewUrl = OC.generateUrl(
 				'/core/preview?fileId={fileId}&x={width}&y={height}&forceIcon=true',
 				{
 					fileId: $filePreview.data('file-id'),
@@ -561,29 +562,38 @@
 					height: previewSize
 				});
 
+			// If the default file icon can not be loaded either there is
+			// nothing else that can be done, just remove the loading icon
+			// and the image and leave only the message about a shared file.
+			var handleDefaultIconLoadError = function() {
+				$filePreview.removeClass('icon-loading');
+				$filePreview.find('img').remove();
+			};
+
+			var handlePreviewLoadError = function() {
+				img.onerror = handleDefaultIconLoadError;
+
+				img.src = defaultIconUrl;
+			};
+
 			var img = new Image();
 
 			img.onload = function() {
 				$filePreview.removeClass('icon-loading');
 			};
 
-			img.onerror = function() {
-				// If the default file icon can not be loaded either there is
-				// nothing else that can be done, just remove the loading icon
-				// and the image and leave only the message about a shared file.
-				img.onerror = function() {
-					$filePreview.removeClass('icon-loading');
-					$filePreview.find('img').remove();
-				};
-
-				img.src = OC.imagePath('core', 'filetypes/file');
-			};
-
 			$filePreview.addClass('icon-loading');
 
 			img.width = previewSize;
 			img.height = previewSize;
-			img.src = url;
+
+			if (OC.getCurrentUser().uid) {
+				img.onerror = handlePreviewLoadError;
+				img.src = previewUrl;
+			} else {
+				img.onerror = handleDefaultIconLoadError;
+				img.src = defaultIconUrl;
+			}
 
 			$filePreview.prepend(img);
 		},
