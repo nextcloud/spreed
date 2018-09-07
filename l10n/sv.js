@@ -151,8 +151,6 @@ OC.L10N.register(
     "{actor} demoted {user} from moderator" : "{actor} tog bort {user} som moderator",
     "You demoted {user} from moderator" : "Du tog bort {user} som moderator",
     "{actor} demoted you from moderator" : "{actor} tog bort dig som moderator",
-    "{actor} shared {file}" : "{actor} delade {file}",
-    "You shared {file}" : "Du delade {file}",
     "{actor} shared a file which is no longer available" : "{actor} delade en fil som inte längre är tillgänglig",
     "You shared a file which is no longer available" : "Du delade en fil som inte längre är tillgänglig",
     "%s (guest)" : "%s (gäst)",

@@ -154,8 +154,6 @@
     "{actor} demoted {user} from moderator" : "{actor} hat {user} die Modoratorrechte entzogen",
     "You demoted {user} from moderator" : "Sie haben {user} die Moderator-Rechte entzogen",
     "{actor} demoted you from moderator" : "{actor} hat Ihnen die Moderator-Rechte entzogen",
-    "{actor} shared {file}" : "{actor} hat {file} geteilt",
-    "You shared {file}" : "Sie haben {file} geteilt",
     "{actor} shared a file which is no longer available" : "{actor} hat eine Datei geteilt, die nicht mehr vorhanden ist",
     "You shared a file which is no longer available" : "Sie haben eine Datei geteilt, die nicht mehr vorhanden ist",
     "%s (guest)" : "%s (Gast)",

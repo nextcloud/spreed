@@ -154,8 +154,6 @@
     "{actor} demoted {user} from moderator" : "{actor} је скинуо улогу модератора кориснику {user}",
     "You demoted {user} from moderator" : "Скинули сте улогу модератора кориснику {user}",
     "{actor} demoted you from moderator" : "{actor} Вам је скинуо улогу модератора",
-    "{actor} shared {file}" : "{actor} је поделио фајл {file}",
-    "You shared {file}" : "Поделили сте фајл {file}",
     "{actor} shared a file which is no longer available" : "{actor} је поделио фајл који више није доступан",
     "You shared a file which is no longer available" : "Поделили сте фајл који више није доступан",
     "%s (guest)" : "%s (гост)",
