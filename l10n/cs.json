@@ -140,8 +140,6 @@
     "{actor} promoted {user} to moderator" : "{actor} povýšil(a) {user} na moderátora",
     "You promoted {user} to moderator" : "Povýšili jste {user} na moderátora",
     "{actor} promoted you to moderator" : "{actor} vás povýšil(a) na moderátora",
-    "{actor} shared {file}" : "{actor} sdílel(a) {file}",
-    "You shared {file}" : "Sdíleli jste {file}",
     "%s (guest)" : "%s (host)",
     "Call with {user1} and {user2} (Duration {duration})" : "Hovor s {user1} a {user2} (délka {duration})",
     "Talk to %s" : "Mluvit s %s",
