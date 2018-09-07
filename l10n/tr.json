@@ -154,8 +154,6 @@
     "{actor} demoted {user} from moderator" : "{actor}, {user} kullanıcısını sorumluluktan çıkardı",
     "You demoted {user} from moderator" : "{user} kullanıcısını sorumluluktan çıkardınız",
     "{actor} demoted you from moderator" : "{actor}, sizi sorumluluktan çıkardı",
-    "{actor} shared {file}" : "{actor}, {file} dosyasını paylaştı",
-    "You shared {file}" : "{file} dosyasını paylaştınız",
     "{actor} shared a file which is no longer available" : "{actor} artık kullanılamayan bir dosya paylaştı",
     "You shared a file which is no longer available" : "Artık kullanılamayan bir dosya paylaştınız",
     "%s (guest)" : "%s (konuk)",

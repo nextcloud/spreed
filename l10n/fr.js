@@ -156,8 +156,6 @@ OC.L10N.register(
     "{actor} demoted {user} from moderator" : "{actor} a démis {user} de la fonction de modérateur",
     "You demoted {user} from moderator" : "Vous avez rétrogradé {user} de son rôle de modérateur",
     "{actor} demoted you from moderator" : "{actor} vous a rétrogradé de votre rôle de modérateur",
-    "{actor} shared {file}" : "{actor} a partagé {file}",
-    "You shared {file}" : "Vous avez partagé {file}",
     "{actor} shared a file which is no longer available" : "{actor} a partagé un fichier qui n'est plus disponible",
     "You shared a file which is no longer available" : "Vous avez partagé un fichier qui n'est plus disponible",
     "%s (guest)" : "%s (invité)",
