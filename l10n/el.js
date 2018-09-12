@@ -12,6 +12,7 @@ OC.L10N.register(
     "TCP only" : "Μόνο TCP",
     "New public conversation" : "Νέα δημόσια συνομιλία",
     "New group conversation" : "Νέα ομαδική συζήτηση",
+    "{name} (public)" : "{name} (δημόσιο)",
     "New conversation …" : "Νέα συζήτηση …",
     "Screensharing is not supported by your browser." : "Ο διαμοιρασμός της οθόνης δεν υποστηρίζεται από τον φυλλομετρητή σας.",
     "Screensharing requires the page to be loaded through HTTPS." : "Για τον διαμοιρασμό οθόνης απαιτείται η φόρτωση της σελίδας μέσω HTTPS.",
