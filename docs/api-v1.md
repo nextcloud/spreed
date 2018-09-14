@@ -139,6 +139,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `unreadMessages` | int | Number of unread chat messages in the room (only available with `chat-v2` capability)
         `unreadMention` | bool | Flag if the user was mentioned since their last visit
         `lastMessage` | message | Last message in a room if available, otherwise empty
+        `objectType` | string | The type of object that the room is associated with; "share:password" if the room is used to request a password for a share, otherwise empty
+        `objectId` | string | Share token if "objectType" is "share:password", otherwise empty
        
 ### Get single room (also for guests)
 
