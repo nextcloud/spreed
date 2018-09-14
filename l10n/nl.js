@@ -38,6 +38,7 @@ OC.L10N.register(
     "No audio" : "Geen geluid",
     "Disable video (v)" : "Video uitschakelen (v)",
     "Enable video (v)" : "Video inschakelen (v)",
+    "Set your name in the chat window so other participants can identify you better." : "Zet je naam in het chatvenster, zodat andere deelnemers je kunnen herkennen.",
     "No Camera" : "Geen camera",
     "Enable screensharing" : "Inschakelen schermdelen",
     "Copy" : "Kopiëren",
