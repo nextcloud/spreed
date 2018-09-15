@@ -327,10 +327,8 @@ body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .m
 }
 
 #commentsTabView .comment .message .contactsmenu-popover {
-	/* Override default positioning of the contacts menu from server, as it is
-	 * based on an avatar plus a text instead of only '@' plus a text. */
-	left: -12px;
-	top: 140%;
+	left: -6px;
+	top: 24px;
 }
 
 #commentsTabView .comment .message .filePreviewContainer .filePreview {
