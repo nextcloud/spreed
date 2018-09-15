@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Signaling server URL" : "シグナリングサーバーURL",
     "Validate SSL certificate" : "SSL証明書を検証する",
     "Delete server" : "サーバーを削除",
     "Add new server" : "新しいサーバーを追加",
