@@ -46,10 +46,10 @@
 		'    </div>' +
 		'    <form class="newCommentForm">' +
 		'        <div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>' +
-		'        <input class="submit icon-confirm" type="submit" value="" />' +
+		'        <input class="submit icon-confirm has-tooltip" type="submit" value="" title="{{submitText}}"/>' +
 		'        <div class="submitLoading icon-loading-small hidden"></div>'+
 		'        {{#if actorId}}' +
-		'        <button class="share icon-add"></button>' +
+		'        <button class="share icon-add has-tooltip" title="{{shareText}}"></button>' +
 		'        <div class="shareLoading icon-loading-small hidden"></div>'+
 		'        {{/if}}' +
 		'    </form>' +
@@ -214,7 +214,8 @@
 				actorId: OC.getCurrentUser().uid,
 				actorDisplayName: OC.getCurrentUser().displayName,
 				newMessagePlaceholder: t('spreed', 'New message …'),
-				submitText: t('spreed', 'Send')
+				submitText: t('spreed', 'Send'),
+				shareText: t('spreed', 'Share')
 			}, params));
 		},
 
