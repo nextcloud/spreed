@@ -26,6 +26,7 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
+use OCA\Spreed\Share\RoomShareProvider;
 use OCA\Spreed\TalkSession;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -135,7 +136,7 @@ class Listener {
 				$this->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getArgument('user')]);
 			}
 		});
-		$this->dispatcher->addListener('OCP\Share::postShare', function(GenericEvent $event) {
+		$listener = function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getSubject();
 
@@ -145,7 +146,9 @@ class Listener {
 
 			$room = $this->roomManager->getRoomByToken($share->getSharedWith());
 			$this->sendSystemMessage($room, 'file_shared', ['share' => $share->getId()]);
-		});
+		};
+		$this->dispatcher->addListener('OCP\Share::postShare', $listener);
+		$this->dispatcher->addListener(RoomShareProvider::class . '::' . 'share_file_again', $listener);
 	}
 
 	protected function sendSystemMessage(Room $room, string $message, array $parameters = []) {
