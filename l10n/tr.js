@@ -75,6 +75,7 @@ OC.L10N.register(
     "No messages yet, start the conversation!" : "Henüz bir ileti yok. Görüşmeyi başlatın!",
     "New message …" : "Yeni ileti …",
     "Send" : "Gönder",
+    "Share" : "Paylaş",
     "Guest" : "Konuk",
     "[Unknown user name]" : "[Kullanıcı adı bilinmiyor]",
     "Today" : "Bugün",
