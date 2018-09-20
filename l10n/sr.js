@@ -75,6 +75,7 @@ OC.L10N.register(
     "No messages yet, start the conversation!" : "Још нема порука, започните разговор!",
     "New message …" : "Нова порука…",
     "Send" : "Пошаљи",
+    "Share" : "Подели",
     "Guest" : "Гост",
     "[Unknown user name]" : "[непознато корисничко име]",
     "Today" : "Данас",

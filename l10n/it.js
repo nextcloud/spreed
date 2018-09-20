@@ -75,6 +75,7 @@ OC.L10N.register(
     "No messages yet, start the conversation!" : "Ancora nessun messaggio, inizia la conversazione!",
     "New message …" : "Nuovo messaggio...",
     "Send" : "Invia",
+    "Share" : "Condividi",
     "Guest" : "Ospite",
     "[Unknown user name]" : "[Nome utente sconosciuto]",
     "Today" : "Ogg",
