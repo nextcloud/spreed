@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.6 – 2018-09-20
+### Fixed
+- Fix turn credential generation
+  [#1203](https://github.com/nextcloud/spreed/pull/1203)
+- Fix several inconsistencies with the internal api
+  [#1202](https://github.com/nextcloud/spreed/pull/1202)
+  [#1201](https://github.com/nextcloud/spreed/pull/1201)
+  [#1200](https://github.com/nextcloud/spreed/pull/1200)
+
 ## 3.2.5 – 2018-07-23
 ### Fixed
 - Fix handling of malicious usernames while autocompleting in chat
