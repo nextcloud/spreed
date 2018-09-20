@@ -75,6 +75,7 @@ OC.L10N.register(
     "No messages yet, start the conversation!" : "Zatím žádné zprávy, zahajte konverzaci!",
     "New message …" : "Nová zpráva…",
     "Send" : "Odeslat",
+    "Share" : "Sdílet",
     "Guest" : "Host",
     "[Unknown user name]" : "[Neznámé uživatelské jméno]",
     "Today" : "Dnes",
