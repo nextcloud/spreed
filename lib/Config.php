@@ -131,12 +131,14 @@ class Config {
 
 		// Credentials are valid for 24h
 		// FIXME add the TTL to the response and properly reconnect then
-		$username = $this->timeFactory->getTime() + 86400;
+		$timestamp = $this->timeFactory->getTime() + 86400;
+		$rnd = $this->secureRandom->generate(16);
+		$username = (string) $timestamp . ':' . $rnd;
 		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
 
 		return array(
 			'server' => $server['server'],
-			'username' => (string) $username,
+			'username' => $username,
 			'password' => $password,
 			'protocols' => $server['protocols'],
 		);
