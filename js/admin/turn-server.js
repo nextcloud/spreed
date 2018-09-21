@@ -73,18 +73,24 @@
 			}
 		},
 
-		notifyTurnResult: function($candidates, $timeout) {
+		notifyTurnResult: function($button, $candidates, $timeout) {
 			console.log("Received candidates", $candidates);
+			$button.removeClass('icon-loading');
 			var $types = $candidates.map(function($cand) {
 				return $cand.type;
 			});
-			var $result;
+			var $class;
 			if ($types.indexOf('relay') === -1) {
-				$result = t('spreed', 'TURN candidate generation failed, please check the settings.');
+				$class = 'icon-error';
 			} else {
-				$result = t('spreed', 'The TURN server settings are valid.');
+				$class = 'icon-checkmark';
 			}
-			OC.Notification.showTemporary($result);
+			$button.addClass($class);
+			$button.removeClass('icon-category-monitoring');
+			setTimeout(function() {
+				$button.removeClass($class);
+				$button.addClass('icon-category-monitoring');
+			}, 7000);
 			clearTimeout($timeout);
 		},
 
@@ -111,28 +117,29 @@
 			};
 		},
 
-		iceCallback: function($pc, $candidates, $timeout, e) {
+		iceCallback: function($pc, $button, $candidates, $timeout, e) {
 			if (e.candidate) {
 				$candidates.push(this.parseCandidate(e.candidate.candidate));
 			} else if (!('onicegatheringstatechange' in RTCPeerConnection.prototype)) {
 				$pc.close();
-				this.notifyTurnResult($candidates, $timeout);
+				this.notifyTurnResult($button, $candidates, $timeout);
 			}
 		},
 
-		gatheringStateChange: function($pc, $candidates, $timeout) {
+		gatheringStateChange: function($pc, $button, $candidates, $timeout) {
 			if ($pc.iceGatheringState !== 'complete') {
 				return;
 			}
 
 			$pc.close();
-			this.notifyTurnResult($candidates, $timeout);
+			this.notifyTurnResult($button, $candidates, $timeout);
 		},
 
 		testServer: function(e) {
 			e.stopPropagation();
 
-			var $row = $(e.currentTarget).parents('div.turn-server').first();
+			var $button = $(e.currentTarget);
+			var $row = $button.parents('div.turn-server').first();
 			var $server = $row.find('input.server').val();
 			var $secret = $row.find('input.secret').val();
 			var $protocols = $row.find('select.protocols').val().split(',');
@@ -171,14 +178,14 @@
 			};
 			console.log('Creating PeerConnection with', $config);
 			var $candidates = [];
-			OC.Notification.showTemporary(t('spreed', 'Checking TURN server {server}', {'server': $server}));
+			$button.addClass('icon-loading');
 			var $pc = new RTCPeerConnection($config);
 			var $timeout = setTimeout(function() {
-				this.notifyTurnResult($candidates, $timeout);
+				this.notifyTurnResult($button, $candidates, $timeout);
 				$pc.close();
 			}.bind(this), 10000);
-			$pc.onicecandidate = this.iceCallback.bind(this, $pc, $candidates, $timeout);
-			$pc.onicegatheringstatechange = this.gatheringStateChange.bind(this, $pc, $candidates, $timeout);
+			$pc.onicecandidate = this.iceCallback.bind(this, $pc, $button, $candidates, $timeout);
+			$pc.onicegatheringstatechange = this.gatheringStateChange.bind(this, $pc, $button, $candidates, $timeout);
 			$pc.createOffer(
 				$offerOptions
 			).then(
@@ -187,7 +194,7 @@
 				},
 				function(error) {
 					console.log("Error creating offer", error);
-					this.notifyTurnResult($candidates, $timeout);
+					this.notifyTurnResult($button, $candidates, $timeout);
 					$pc.close();
 				}.bind(this)
 			);
