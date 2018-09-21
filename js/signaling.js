@@ -560,6 +560,7 @@
 			success: function (result) {
 				this.pullMessagesFails = 0;
 				$.each(result.ocs.data, function(id, message) {
+					this._trigger('onBeforeReceiveMessage', [message]);
 					switch(message.type) {
 						case "usersInRoom":
 							this._trigger('usersInRoom', [message.data]);
@@ -575,6 +576,7 @@
 							console.log('Unknown Signaling Message');
 							break;
 					}
+					this._trigger('onAfterReceiveMessage', [message]);
 				}.bind(this));
 				this._startPullingMessages();
 			}.bind(this),
@@ -706,6 +708,7 @@
 					delete this.callbacks[id];
 				cb(data);
 			}
+			this._trigger('onBeforeReceiveMessage', [data]);
 			switch (data.type) {
 				case "hello":
 					if (!id) {
@@ -736,6 +739,7 @@
 					}
 					break;
 			}
+			this._trigger('onAfterReceiveMessage', [data]);
 		}.bind(this);
 	};
 
