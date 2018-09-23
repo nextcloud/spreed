@@ -15,6 +15,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP und TCP",
     "UDP only" : "Nur UDP",
     "TCP only" : "Nur TCP",
+    "Test server" : "Test-Server",
     "New public conversation" : "Neue öffentliche Unterhaltung",
     "New group conversation" : "Neue Gruppenunterhaltung",
     "{name} (public)" : "{name} (public)",
