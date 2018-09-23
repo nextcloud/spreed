@@ -15,6 +15,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP и TCP",
     "UDP only" : "Само UDP",
     "TCP only" : "Само TCP",
+    "Test server" : "Тестни сервер",
     "New public conversation" : "Ново јавно ћаскање",
     "New group conversation" : "Ново групно ћаскање",
     "{name} (public)" : "{name} (јавно)",
