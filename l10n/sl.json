@@ -41,6 +41,7 @@
     "Your screen" : "Tvoj zaslon",
     "a conversation" : "pogovor",
     "{actor} invited you to {call}" : "{actor} pošlje povabilo na {call}",
+    "You added {user}" : "Dodan je uporabnik {user}",
     "%s invited you to a private conversation" : "%s pošlje povabilo za zasebni pogovor",
     "{user} invited you to a private conversation" : "{user} pošlje povabilo za zasebni pogovor",
     "%s invited you to a group conversation: %s" : "%s pošlje povabilo na skupinski pogovor: %s",
