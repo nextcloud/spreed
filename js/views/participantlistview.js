@@ -79,19 +79,19 @@
 		childView: Marionette.View.extend({
 			tagName: 'li',
 			modelEvents: {
-				'change:active': function() {
+				'change:sessionId': function() {
+					// The sessionId is used to know if the user is online.
 					this.render();
 				},
 				'change:displayName': function() {
 					this.render();
 				},
-				'change:participants': function() {
+				'change:participantType': function() {
 					this.render();
 				},
-				'change:type': function() {
+				'change:inCall': function() {
 					this.render();
-					this.checkSharingStatus();
-				}
+				},
 			},
 			initialize: function() {
 				this.listenTo(uiChannel, 'document:click', function(event) {
