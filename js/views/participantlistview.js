@@ -97,8 +97,9 @@
 			initialize: function() {
 				this.listenTo(uiChannel, 'document:click', function(event) {
 					var target = $(event.target);
-					if (!this.$el.is(target.closest('.participant'))) {
-						// Click was not triggered by this element -> close menu
+					if (!target.closest('.popovermenu').is(this.ui.menu) && !target.is(this.ui.menuButton)) {
+						// Close the menu when clicking outside it or the button
+						// that toggles it.
 						this.menuShown = false;
 						this.toggleMenuClass();
 					}
