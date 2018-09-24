@@ -180,6 +180,8 @@
 					return;
 				}
 
+				this.closeMenu();
+
 				var participantId = this.model.get('userId'),
 					self = this;
 
@@ -206,6 +208,8 @@
 					return;
 				}
 
+				this.closeMenu();
+
 				var participantId = this.model.get('userId'),
 					self = this;
 
@@ -231,6 +235,8 @@
 				if (this.model.get('participantType') === OCA.SpreedMe.app.OWNER) {
 					return;
 				}
+
+				this.closeMenu();
 
 				var self = this,
 					participantId = this.model.get('userId'),
