@@ -75,6 +75,7 @@
 	OCA.SpreedMe.Views.ParticipantListView = Marionette.CollectionView.extend({
 		tagName: 'ul',
 		className: 'participantWithList',
+		reorderOnSort: true,
 
 		childView: Marionette.View.extend({
 			tagName: 'li',
