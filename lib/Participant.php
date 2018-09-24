@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -23,6 +24,7 @@
 
 namespace OCA\Spreed;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -57,18 +59,7 @@ class Participant {
 	/** @var \DateTime|null */
 	private $lastMention;
 
-	/**
-	 * @param IDBConnection $db
-	 * @param Room $room
-	 * @param string $user
-	 * @param int $participantType
-	 * @param int $lastPing
-	 * @param string $sessionId
-	 * @param int $inCall
-	 * @param bool $isFavorite
-	 * @param \DateTime|null $lastMention
-	 */
-	public function __construct(IDBConnection $db, Room $room, $user, $participantType, $lastPing, $sessionId, $inCall, $isFavorite, \DateTime $lastMention = null) {
+	public function __construct(IDBConnection $db, Room $room, string $user, int $participantType, int $lastPing, string $sessionId, int $inCall, bool $isFavorite, \DateTime $lastMention = null) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -80,23 +71,23 @@ class Participant {
 		$this->lastMention = $lastMention;
 	}
 
-	public function getUser() {
+	public function getUser(): string {
 		return $this->user;
 	}
 
-	public function getParticipantType() {
+	public function getParticipantType(): int {
 		return $this->participantType;
 	}
 
-	public function getLastPing() {
+	public function getLastPing(): int {
 		return $this->lastPing;
 	}
 
-	public function getSessionId() {
+	public function getSessionId(): string {
 		return $this->sessionId;
 	}
 
-	public function getInCallFlags() {
+	public function getInCallFlags(): int {
 		return $this->inCall;
 	}
 
@@ -107,14 +98,11 @@ class Participant {
 		return $this->lastMention;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function isFavorite() {
+	public function isFavorite(): bool {
 		return $this->isFavorite;
 	}
 
-	public function setFavorite($favor) {
+	public function setFavorite(bool $favor): bool {
 		if (!$this->user) {
 			return false;
 		}
