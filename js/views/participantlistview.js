@@ -184,7 +184,11 @@
 						participant: participantId
 					},
 					success: function() {
-						self.render();
+						self.model.set('participantType', OCA.SpreedMe.app.MODERATOR);
+						// When an attribute that affects the order of a
+						// collection is set the collection has to be explicitly
+						// sorted again.
+						self.model.collection.sort();
 					},
 					error: function() {
 						console.log('Error while promoting user to moderator');
@@ -206,7 +210,11 @@
 						participant: participantId
 					},
 					success: function() {
-						self.render();
+						self.model.set('participantType', OCA.SpreedMe.app.USER);
+						// When an attribute that affects the order of a
+						// collection is set the collection has to be explicitly
+						// sorted again.
+						self.model.collection.sort();
 					},
 					error: function() {
 						console.log('Error while demoting moderator');
@@ -234,7 +242,7 @@
 						participant: participantId
 					},
 					success: function() {
-						self.render();
+						self.model.collection.remove(self.model);
 					},
 					error: function() {
 						console.log('Error while removing user from room');
