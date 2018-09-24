@@ -765,6 +765,9 @@
 
 					var result = xhr.responseJSON;
 					if (result && result.ocs && result.ocs.meta) {
+						if (result.ocs.meta.statuscode === 403) {
+							return;
+						}
 						message = result.ocs.meta.message;
 					}
 
