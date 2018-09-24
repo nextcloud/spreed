@@ -100,8 +100,7 @@
 					if (!target.closest('.popovermenu').is(this.ui.menu) && !target.is(this.ui.menuButton)) {
 						// Close the menu when clicking outside it or the button
 						// that toggles it.
-						this.menuShown = false;
-						this.toggleMenuClass();
+						this.closeMenu();
 					}
 				});
 			},
@@ -171,6 +170,10 @@
 			},
 			toggleMenuClass: function() {
 				this.ui.menu.toggleClass('open', this.menuShown);
+			},
+			closeMenu: function(e) {
+				this.menuShown = false;
+				this.toggleMenuClass();
 			},
 			promoteToModerator: function() {
 				if (this.model.get('participantType') !== OCA.SpreedMe.app.USER) {
