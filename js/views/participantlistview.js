@@ -193,7 +193,7 @@
 						self.model.collection.sort();
 					},
 					error: function() {
-						console.log('Error while promoting user to moderator');
+						OC.Notification.showTemporary(t('spreed', 'Error while promoting user to moderator'), {type: 'error'});
 					}
 				});
 			},
@@ -219,7 +219,7 @@
 						self.model.collection.sort();
 					},
 					error: function() {
-						console.log('Error while demoting moderator');
+						OC.Notification.showTemporary(t('spreed', 'Error while demoting moderator'), {type: 'error'});
 					}
 				});
 			},
@@ -247,7 +247,7 @@
 						self.model.collection.remove(self.model);
 					},
 					error: function() {
-						console.log('Error while removing user from room');
+						OC.Notification.showTemporary(t('spreed', 'Error while removing user from room'), {type: 'error'});
 					}
 				});
 			}
