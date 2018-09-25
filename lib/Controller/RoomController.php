@@ -276,35 +276,7 @@ class RoomController extends OCSController {
 
 		$lastMessage = $room->getLastMessage();
 		if ($lastMessage instanceof IComment) {
-			if ($lastMessage->getVerb() === 'system') {
-				list($message, $messageParameters) = $this->systemMessageParser->parseMessage($lastMessage);
-			} else {
-				list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
-			}
-
-			$displayName = '';
-
-			$actorId = $lastMessage->getActorId();
-			$actorType = $lastMessage->getActorType();
-
-			if ($actorType === 'users') {
-				$user = $this->userManager->get($actorId);
-				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
-			} else if ($actorType === 'guests') {
-				$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
-				$displayName = $guestNames[$actorId] ?? '';
-			}
-
-			$lastMessage = [
-				'id' => (int) $lastMessage->getId(),
-				'actorType' => $actorType,
-				'actorId' => $actorId,
-				'actorDisplayName' => $displayName,
-				'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
-				'message' => $message,
-				'messageParameters' => $messageParameters,
-				'systemMessage' => $lastMessage->getVerb() === 'system' ? $lastMessage->getMessage() : '',
-			];
+			$lastMessage = $this->formatLastMessage($lastMessage);
 		} else {
 			$lastMessage = [];
 		}
@@ -386,6 +358,42 @@ class RoomController extends OCSController {
 		$roomData['guestList'] = $guestString;
 
 		return $roomData;
+	}
+
+	/**
+	 * @param IComment $lastMessage
+	 * @return array
+	 */
+	protected function formatLastMessage(IComment $lastMessage): array {
+		if ($lastMessage->getVerb() === 'system') {
+			list($message, $messageParameters) = $this->systemMessageParser->parseMessage($lastMessage);
+		} else {
+			list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($lastMessage);
+		}
+
+		$displayName = '';
+
+		$actorId = $lastMessage->getActorId();
+		$actorType = $lastMessage->getActorType();
+
+		if ($actorType === 'users') {
+			$user = $this->userManager->get($actorId);
+			$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
+		} else if ($actorType === 'guests') {
+			$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
+			$displayName = $guestNames[$actorId] ?? '';
+		}
+
+		return [
+			'id' => (int) $lastMessage->getId(),
+			'actorType' => $actorType,
+			'actorId' => $actorId,
+			'actorDisplayName' => $displayName,
+			'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
+			'message' => $message,
+			'messageParameters' => $messageParameters,
+			'systemMessage' => $lastMessage->getVerb() === 'system' ? $lastMessage->getMessage() : '',
+		];
 	}
 
 	/**
