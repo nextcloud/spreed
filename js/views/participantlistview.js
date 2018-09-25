@@ -40,7 +40,10 @@
 		'{{#if canModerate}}' +
 			'<div class="participant-entry-utils">'+
 				'<ul>'+
-					'<li class="participant-entry-utils-menu-button"><button class="icon icon-more"></button></li>'+
+					'<li class="participant-entry-utils-menu-button">' +
+						'<button class="icon icon-more"></button>' +
+						'<span class="icon icon-loading-small hidden"></span>' +
+					'</li>' +
 				'</ul>'+
 			'</div>'+
 			'<div class="popovermenu bubble menu">'+
@@ -159,7 +162,9 @@
 			},
 			ui: {
 				'participant': 'li.participant',
-				'menu': '.popovermenu'
+				'menu': '.popovermenu',
+				'menuButton': '.participant-entry-utils-menu-button button',
+				'menuButtonIconLoading': '.participant-entry-utils-menu-button .icon-loading-small'
 			},
 			template: Handlebars.compile(ITEM_TEMPLATE),
 			menuShown: false,
@@ -181,6 +186,8 @@
 				}
 
 				this.closeMenu();
+				this.ui.menuButton.addClass('hidden');
+				this.ui.menuButtonIconLoading.removeClass('hidden');
 
 				var participantId = this.model.get('userId'),
 					self = this;
@@ -199,6 +206,9 @@
 						self.model.collection.sort();
 					},
 					error: function() {
+						self.ui.menuButtonIconLoading.addClass('hidden');
+						self.ui.menuButton.removeClass('hidden');
+
 						OC.Notification.showTemporary(t('spreed', 'Error while promoting user to moderator'), {type: 'error'});
 					}
 				});
@@ -209,6 +219,8 @@
 				}
 
 				this.closeMenu();
+				this.ui.menuButton.addClass('hidden');
+				this.ui.menuButtonIconLoading.removeClass('hidden');
 
 				var participantId = this.model.get('userId'),
 					self = this;
@@ -227,6 +239,9 @@
 						self.model.collection.sort();
 					},
 					error: function() {
+						self.ui.menuButtonIconLoading.addClass('hidden');
+						self.ui.menuButton.removeClass('hidden');
+
 						OC.Notification.showTemporary(t('spreed', 'Error while demoting moderator'), {type: 'error'});
 					}
 				});
@@ -237,6 +252,8 @@
 				}
 
 				this.closeMenu();
+				this.ui.menuButton.addClass('hidden');
+				this.ui.menuButtonIconLoading.removeClass('hidden');
 
 				var self = this,
 					participantId = this.model.get('userId'),
@@ -257,6 +274,9 @@
 						self.model.collection.remove(self.model);
 					},
 					error: function() {
+						self.ui.menuButtonIconLoading.addClass('hidden');
+						self.ui.menuButton.removeClass('hidden');
+
 						OC.Notification.showTemporary(t('spreed', 'Error while removing user from room'), {type: 'error'});
 					}
 				});
