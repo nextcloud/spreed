@@ -232,12 +232,11 @@ class RoomController extends OCSController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($currentUser instanceof IUser) {
-			$unreadSince = $this->chatManager->getUnreadMarker($room, $currentUser);
-			if ($participant instanceof Participant) {
-				$lastMention = $participant->getLastMention();
-				$roomData['unreadMention'] = $lastMention !== null && $unreadSince < $lastMention;
-			}
-			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $unreadSince);
+			$lastReadMessage = $participant->getLastReadMessage();
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+
+			$lastMention = $participant->getLastMentionMessage();
+			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
 		}
 
 		// Sort by lastPing

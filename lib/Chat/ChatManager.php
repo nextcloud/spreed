@@ -147,8 +147,8 @@ class ChatManager {
 		return $marker;
 	}
 
-	public function getUnreadCount(Room $chat, \DateTime $unreadSince): int {
-		return $this->commentsManager->getNumberOfCommentsForObject('chat', $chat->getId(), $unreadSince, 'comment');
+	public function getUnreadCount(Room $chat, int $lastReadMessage): int {
+		return $this->commentsManager->getNumberOfCommentsForObjectSinceComment('chat', $chat->getId(), $lastReadMessage, 'comment');
 	}
 
 	/**

@@ -73,4 +73,23 @@ class CommentsManager extends Manager {
 
 		return $lastComments;
 	}
+
+	public function getNumberOfCommentsForObjectSinceComment($objectType, $objectId, $lastRead, $verb = ''): int {
+		$query = $this->dbConn->getQueryBuilder();
+		$query->selectAlias($query->createFunction('COUNT(' . $query->getColumnName('id') . ')'), 'num_messages')
+			->from('comments')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)))
+			->andWhere($query->expr()->gt('id', $query->createNamedParameter($lastRead)));
+
+		if ($verb !== '') {
+			$query->andWhere($query->expr()->eq('verb', $query->createNamedParameter($verb)));
+		}
+
+		$result = $query->execute();
+		$data = $result->fetch();
+		$result->closeCursor();
+
+		return isset($data['num_messages']) ? (int) $data['num_messages'] : 0;
+	}
 }

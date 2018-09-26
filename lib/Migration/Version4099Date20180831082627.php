@@ -52,8 +52,12 @@ class Version4099Date20180831082627 extends SimpleMigrationStep {
 		$schema = $schemaClosure();
 
 		$table = $schema->getTable('talk_participants');
-		if (!$table->hasColumn('last_message_read')) {
-			$table->addColumn('last_message_read', Type::BIGINT, [
+		if (!$table->hasColumn('last_read_message')) {
+			$table->addColumn('last_read_message', Type::BIGINT, [
+				'default' => 0,
+				'notnull' => false,
+			]);
+			$table->addColumn('last_mention_message', Type::BIGINT, [
 				'default' => 0,
 				'notnull' => false,
 			]);
