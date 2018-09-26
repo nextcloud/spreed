@@ -23,7 +23,7 @@ OC.L10N.register(
     "Please enter the password for this call" : "Prosimo vtipkajte geslo za ta klic",
     "Password required" : "Zahtevano je geslo",
     "Password" : "Geslo",
-    "Cancel" : "Prekinitev",
+    "Cancel" : "Prekliči",
     "Leave call" : "Zapusti klic",
     "Change password" : "Spremeni geslo",
     "Set password" : "Nastavi geslo",
