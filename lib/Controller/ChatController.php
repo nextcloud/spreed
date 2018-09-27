@@ -26,8 +26,7 @@ namespace OCA\Spreed\Controller;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\RichMessageHelper;
-use OCA\Spreed\Chat\SystemMessage\Parser;
+use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
@@ -71,8 +70,8 @@ class ChatController extends OCSController {
 	/** @var string[] */
 	protected $guestNames;
 
-	/** @var RichMessageHelper */
-	private $richMessageHelper;
+	/** @var MessageParser */
+	private $messageParser;
 
 	/** @var IManager */
 	private $autoCompleteManager;
@@ -82,9 +81,6 @@ class ChatController extends OCSController {
 
 	/** @var ISearchResult */
 	private $searchResult;
-
-	/** @var Parser */
-	private $parser;
 
 	/** @var IL10N */
 	private $l;
@@ -98,14 +94,13 @@ class ChatController extends OCSController {
 	 * @param Manager $manager
 	 * @param ChatManager $chatManager
 	 * @param GuestManager $guestManager
-	 * @param RichMessageHelper $richMessageHelper
+	 * @param MessageParser $messageParser
 	 * @param IManager $autoCompleteManager
 	 * @param SearchPlugin $searchPlugin
 	 * @param ISearchResult $searchResult
-	 * @param Parser $parser
 	 * @param IL10N $l
 	 */
-	public function __construct($appName,
+	public function __construct(string $appName,
 								$UserId,
 								IRequest $request,
 								IUserManager $userManager,
@@ -113,11 +108,10 @@ class ChatController extends OCSController {
 								Manager $manager,
 								ChatManager $chatManager,
 								GuestManager $guestManager,
-								RichMessageHelper $richMessageHelper,
+								MessageParser $messageParser,
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
-								Parser $parser,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -127,11 +121,10 @@ class ChatController extends OCSController {
 		$this->manager = $manager;
 		$this->chatManager = $chatManager;
 		$this->guestManager = $guestManager;
-		$this->richMessageHelper = $richMessageHelper;
+		$this->messageParser = $messageParser;
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
-		$this->parser = $parser;
 		$this->l = $l;
 	}
 
@@ -266,8 +259,8 @@ class ChatController extends OCSController {
 			$room->ping($this->userId, $sessionId, time());
 		}
 
+		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
-			$currentUser = $this->userManager->get($this->userId);
 			$comments = $this->chatManager->waitForNewMessages($room, $lastKnownMessageId, $limit, $timeout, $currentUser);
 		} else {
 			$comments = $this->chatManager->getHistory($room, $lastKnownMessageId, $limit);
@@ -287,7 +280,7 @@ class ChatController extends OCSController {
 		}
 
 		$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
-		$response = new DataResponse(array_map(function (IComment $comment) use ($token, $guestNames) {
+		$response = new DataResponse(array_map(function (IComment $comment) use ($token, $guestNames, $currentUser) {
 			$displayName = '';
 			if ($comment->getActorType() === 'users') {
 				$user = $this->userManager->get($comment->getActorId());
@@ -296,11 +289,7 @@ class ChatController extends OCSController {
 				$displayName = $guestNames[$comment->getActorId()];
 			}
 
-			if ($comment->getVerb() === 'system') {
-				list($message, $messageParameters) = $this->parser->parseMessage($comment);
-			} else {
-				list($message, $messageParameters) = $this->richMessageHelper->getRichMessage($comment);
-			}
+			list($message, $messageParameters) = $this->messageParser->parseMessage($comment, $this->l, $currentUser);
 
 			return [
 				'id' => (int) $comment->getId(),

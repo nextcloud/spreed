@@ -26,8 +26,7 @@ namespace OCA\Spreed\Tests\php\Controller;
 use OC\L10N\L10N;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\RichMessageHelper;
-use OCA\Spreed\Chat\SystemMessage\Parser;
+use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Controller\ChatController;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
@@ -44,7 +43,6 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\Constraint\Callback;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ChatControllerTest extends \Test\TestCase {
 
@@ -66,8 +64,8 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var GuestManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $guestManager;
 
-	/** @var RichMessageHelper|\PHPUnit_Framework_MockObject_MockObject */
-	protected $richMessageHelper;
+	/** @var MessageParser|\PHPUnit_Framework_MockObject_MockObject */
+	protected $messageParser;
 
 	/** @var IManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $autoCompleteManager;
@@ -77,9 +75,6 @@ class ChatControllerTest extends \Test\TestCase {
 
 	/** @var ISearchResult|\PHPUnit_Framework_MockObject_MockObject */
 	protected $searchResult;
-
-	/** @var Parser|\PHPUnit_Framework_MockObject_MockObject */
-	protected $parser;
 
 	/** @var L10N|\PHPUnit_Framework_MockObject_MockObject */
 	private $l;
@@ -102,12 +97,10 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
-		$this->richMessageHelper = $this->createMock(RichMessageHelper::class);
-		$this->systemMessageParser = $this->createMock(Parser::class);
+		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
-		$this->parser = $this->createMock(Parser::class);
 		$this->l = $this->createMock(L10N::class);
 
 		$this->room = $this->createMock(Room::class);
@@ -132,11 +125,10 @@ class ChatControllerTest extends \Test\TestCase {
 			$this->manager,
 			$this->chatManager,
 			$this->guestManager,
-			$this->richMessageHelper,
+			$this->messageParser,
 			$this->autoCompleteManager,
 			$this->searchPlugin,
 			$this->searchResult,
-			$this->parser,
 			$this->l
 		);
 	}
@@ -361,13 +353,13 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getDisplayName')
 			->willReturn('Test User');
 
-		$this->userManager->expects($this->exactly(3))
+		$this->userManager->expects($this->exactly(4))
 			->method('get')
-			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
-			->willReturn($testUser, null, $testUser);
+			->withConsecutive(['testUser'], ['testUser'], ['testUnknownUser'], ['testUser'])
+			->willReturn($testUser, $testUser, null, $testUser);
 
-		$this->richMessageHelper->expects($this->exactly(4))
-			->method('getRichMessage')
+		$this->messageParser->expects($this->exactly(4))
+			->method('parseMessage')
 			->withConsecutive($comment4, $comment3, $comment2, $comment1)
 			->willReturn(
 				['testMessage4', ['testMessageParameters4']],
@@ -425,13 +417,13 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getDisplayName')
 			->willReturn('Test User');
 
-		$this->userManager->expects($this->exactly(3))
+		$this->userManager->expects($this->exactly(4))
 			->method('get')
-			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
-			->willReturn($testUser, null, $testUser);
+			->withConsecutive(['testUser'], ['testUser'], ['testUnknownUser'], ['testUser'])
+			->willReturn($testUser, $testUser, null, $testUser);
 
-		$this->richMessageHelper->expects($this->exactly(4))
-			->method('getRichMessage')
+		$this->messageParser->expects($this->exactly(4))
+			->method('parseMessage')
 			->withConsecutive($comment4, $comment3, $comment2, $comment1)
 			->willReturn(
 				['testMessage4', ['testMessageParameters4']],
@@ -518,13 +510,13 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getDisplayName')
 			->willReturn('Test User');
 
-		$this->userManager->expects($this->exactly(3))
+		$this->userManager->expects($this->exactly(4))
 			->method('get')
-			->withConsecutive(['testUser'], ['testUnknownUser'], ['testUser'])
-			->willReturn($testUser, null, $testUser);
+			->withConsecutive([null], ['testUser'], ['testUnknownUser'], ['testUser'])
+			->willReturn(null, $testUser, null, $testUser);
 
-		$this->richMessageHelper->expects($this->exactly(4))
-			->method('getRichMessage')
+		$this->messageParser->expects($this->exactly(4))
+			->method('parseMessage')
 			->withConsecutive($comment4, $comment3, $comment2, $comment1)
 			->willReturn(
 				['testMessage4', ['testMessageParameters4']],
@@ -640,8 +632,8 @@ class ChatControllerTest extends \Test\TestCase {
 				['testUnknownUser', null]
 			]);
 
-		$this->richMessageHelper->expects($this->exactly(4))
-			->method('getRichMessage')
+		$this->messageParser->expects($this->exactly(4))
+			->method('parseMessage')
 			->withConsecutive($comment1, $comment2, $comment3, $comment4)
 			->willReturn(
 				['testMessage1', ['testMessageParameters1']],

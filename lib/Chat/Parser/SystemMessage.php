@@ -19,7 +19,7 @@
  *
  */
 
-namespace OCA\Spreed\Chat\SystemMessage;
+namespace OCA\Spreed\Chat\Parser;
 
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
@@ -28,13 +28,14 @@ use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 
-class Parser {
+class SystemMessage {
 
 	/** @var IUserManager */
 	protected $userManager;
@@ -75,19 +76,26 @@ class Parser {
 		$this->recipient = $this->userSession->getUser();
 	}
 
-	public function setUserInfo(IUser $user, IL10N $l) {
-		$this->recipient = $user;
+	public function setUserInfo(IL10N $l, IUser $user = null) {
 		$this->l = $l;
+		$this->recipient = $user;
 	}
 
+	/**
+	 * @param IComment $comment
+	 * @return array
+	 * @throws \OutOfBoundsException
+	 */
 	public function parseMessage(IComment $comment): array {
 		$data = json_decode($comment->getMessage(), true);
+		if (!\is_array($data)) {
+			throw new \OutOfBoundsException('Invalid message');
+		}
+
 		$message = $data['message'];
 		$parameters = $data['parameters'];
-
 		$parsedParameters = ['actor' => $this->getActor($comment)];
 		$currentUserIsActor = $this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['actor']['id'];
-		$parsedMessage = $comment->getMessage();
 
 		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
@@ -183,19 +191,13 @@ class Parser {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
 			}
+		} else {
+			throw new \OutOfBoundsException('Unknown subject');
 		}
 
 		$comment->setMessage($message);
 
 		return [$parsedMessage, $parsedParameters];
-	}
-
-	protected function getActor(IComment $comment): array {
-		if ($comment->getActorType() === 'guests') {
-			return $this->getGuest($comment->getActorId());
-		}
-
-		return $this->getUser($comment->getActorId());
 	}
 
 	/**
@@ -209,13 +211,17 @@ class Parser {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
 		$name = $node->getName();
-		$path = $node->getName();
+		$path = $name;
 
 		if ($this->recipient instanceof IUser) {
-			if ($this->userSession->getUser() === $this->recipient) {
+			if ($this->userSession->getUser() !== $this->recipient) {
 				$userFolder = $this->rootFolder->getUserFolder($this->recipient->getUID());
 				if ($userFolder instanceof Node) {
 					$userNodes = $userFolder->getById($node->getId());
+					if (empty($userNodes)) {
+						throw new NotFoundException('File was not found');
+					}
+
 					/** @var Node $userNode */
 					$userNode = reset($userNodes);
 					$fullPath = $userNode->getPath();
@@ -226,7 +232,6 @@ class Parser {
 			} else {
 				$fullPath = $node->getPath();
 				$pathSegments = explode('/', $fullPath, 4);
-				$name = $node->getName();
 				$path = $pathSegments[3] ?? $path;
 			}
 
@@ -246,6 +251,14 @@ class Parser {
 			'path' => $path,
 			'link' => $url,
 		];
+	}
+
+	protected function getActor(IComment $comment): array {
+		if ($comment->getActorType() === 'guests') {
+			return $this->getGuest($comment->getActorId());
+		}
+
+		return $this->getUser($comment->getActorId());
 	}
 
 	protected function getUser(string $uid): array {
@@ -346,7 +359,7 @@ class Parser {
 		];
 	}
 
-	protected function getDuration($seconds): string {
+	protected function getDuration(int $seconds): string {
 		$hours = floor($seconds / 3600);
 		$seconds %= 3600;
 		$minutes = floor($seconds / 60);

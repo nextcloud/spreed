@@ -78,6 +78,10 @@ class Application extends App {
 		$systemMessageListener = $this->getContainer()->query(Listener::class);
 		$systemMessageListener->register();
 
+		/** @var \OCA\Spreed\Chat\Listener $chatListener */
+		$chatListener = $this->getContainer()->query(\OCA\Spreed\Chat\Listener::class);
+		$chatListener->register();
+
 		/** @var \OCA\Spreed\PublicShareAuth\Listener $shareAuthListener */
 		$shareAuthListener = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\Listener::class);
 		$shareAuthListener->register();
