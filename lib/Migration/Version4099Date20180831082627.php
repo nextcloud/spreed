@@ -100,5 +100,16 @@ class Version4099Date20180831082627 extends SimpleMigrationStep {
 		}
 		$result->closeCursor();
 
+		/**
+		 * The above query only works if the user read in the same exact second
+		 * as the comment was posted (author only), we set the read marker to -1
+		 * for all users and in case of -1 we calculate the marker on the next request.
+		 */
+		$default = $this->connection->getQueryBuilder();
+		$default->update('talk_participants')
+			->set('last_read_message', $default->createNamedParameter(-1))
+			->where($default->expr()->isNotNull('user_id'))
+			->andWhere($default->expr()->eq('last_read_message', $default->createNamedParameter(0)));
+		$default->execute();
 	}
 }

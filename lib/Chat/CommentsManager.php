@@ -74,7 +74,7 @@ class CommentsManager extends Manager {
 		return $lastComments;
 	}
 
-	public function getNumberOfCommentsForObjectSinceComment($objectType, $objectId, $lastRead, $verb = ''): int {
+	public function getNumberOfCommentsForObjectSinceComment(string $objectType, string $objectId, int $lastRead, string $verb = ''): int {
 		$query = $this->dbConn->getQueryBuilder();
 		$query->selectAlias($query->createFunction('COUNT(' . $query->getColumnName('id') . ')'), 'num_messages')
 			->from('comments')
@@ -91,5 +91,25 @@ class CommentsManager extends Manager {
 		$result->closeCursor();
 
 		return isset($data['num_messages']) ? (int) $data['num_messages'] : 0;
+	}
+
+	public function getLastCommentBeforeDate(string $objectType, string $objectId, \DateTime $beforeDate, string $verb = ''): int {
+		$query = $this->dbConn->getQueryBuilder();
+		$query->select('id')
+			->from('comments')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)))
+			->andWhere($query->expr()->lt('creation_timestamp', $query->createNamedParameter($beforeDate, IQueryBuilder::PARAM_DATE)))
+			->orderBy('creation_timestamp', 'desc');
+
+		if ($verb !== '') {
+			$query->andWhere($query->expr()->eq('verb', $query->createNamedParameter($verb)));
+		}
+
+		$result = $query->execute();
+		$data = $result->fetch();
+		$result->closeCursor();
+
+		return (int) ($data['id'] ?? 0);
 	}
 }

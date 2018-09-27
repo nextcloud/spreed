@@ -139,8 +139,17 @@ class ChatManager {
 		return $comment;
 	}
 
+	public function getLastReadMessageFromLegacy(Room $chat, IUser $user): int {
+		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
+		if ($marker === null) {
+			return 0;
+		}
+
+		return $this->commentsManager->getLastCommentBeforeDate('chat', (string) $chat->getId(), $marker, 'comment');
+	}
+
 	public function getUnreadCount(Room $chat, int $lastReadMessage): int {
-		return $this->commentsManager->getNumberOfCommentsForObjectSinceComment('chat', $chat->getId(), $lastReadMessage, 'comment');
+		return $this->commentsManager->getNumberOfCommentsForObjectSinceComment('chat', (string) $chat->getId(), $lastReadMessage, 'comment');
 	}
 
 	/**

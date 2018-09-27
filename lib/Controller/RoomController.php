@@ -233,6 +233,15 @@ class RoomController extends OCSController {
 		$currentUser = $this->userManager->get($this->userId);
 		if ($currentUser instanceof IUser) {
 			$lastReadMessage = $participant->getLastReadMessage();
+			if ($lastReadMessage === -1) {
+				/*
+				 * Because the migration from the old comment_read_markers was
+				 * not possible in a programmatic way with a reasonable O(1) or O(n)
+				 * but only with O(user×chat), we do the conversion here.
+				 */
+				$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
+				$participant->setLastReadMessage($lastReadMessage);
+			}
 			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
 
 			$lastMention = $participant->getLastMentionMessage();
