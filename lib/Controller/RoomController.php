@@ -47,6 +47,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\Mail\IMailer;
 
 class RoomController extends OCSController {
 	/** @var string */
@@ -65,10 +66,12 @@ class RoomController extends OCSController {
 	private $guestManager;
 	/** @var ChatManager */
 	private $chatManager;
-	/** @var IL10N */
-	private $l10n;
 	/** @var MessageParser */
 	private $messageParser;
+	/** @var IMailer */
+	private $mailer;
+	/** @var IL10N */
+	private $l10n;
 
 	/**
 	 * @param string $appName
@@ -82,6 +85,7 @@ class RoomController extends OCSController {
 	 * @param GuestManager $guestManager
 	 * @param ChatManager $chatManager
 	 * @param MessageParser $messageParser
+	 * @param IMailer $mailer
 	 * @param IL10N $l10n
 	 */
 	public function __construct($appName,
@@ -95,6 +99,7 @@ class RoomController extends OCSController {
 								GuestManager $guestManager,
 								ChatManager $chatManager,
 								MessageParser $messageParser,
+								IMailer $mailer,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -105,8 +110,9 @@ class RoomController extends OCSController {
 		$this->manager = $manager;
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
-		$this->l10n = $l10n;
 		$this->messageParser = $messageParser;
+		$this->mailer = $mailer;
+		$this->l10n = $l10n;
 	}
 
 	/**
@@ -732,6 +738,46 @@ class RoomController extends OCSController {
 		$room->addUsers([
 			'userId' => $newUser->getUID(),
 		]);
+
+		return new DataResponse($data);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param string $newParticipant
+	 * @return DataResponse
+	 */
+	public function inviteEmailToRoom($token, $newParticipant): DataResponse {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!\in_array($participant->getParticipantType(), [Participant::OWNER, Participant::MODERATOR], true)) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$currentUser = $this->userManager->get($this->userId);
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$data = [];
+		if ($room->getType() !== Room::PUBLIC_CALL) {
+			// In case a user is added to a one2one call, we change the call to a group call
+			// In case a guest is added to a non-public call, we change the call to a public call
+			$room->changeType(Room::PUBLIC_CALL);
+
+			$data = ['type' => $room->getType()];
+		}
+
+		$this->guestManager->inviteByEmail($room, $newParticipant);
 
 		return new DataResponse($data);
 	}

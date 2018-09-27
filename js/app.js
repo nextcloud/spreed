@@ -159,38 +159,27 @@
 				}
 			});
 
-			$('#select-participants').on("click", function() {
-				$('.select2-drop').find('.avatar[data-user]').each(function () {
-					var element = $(this);
-					if (element.data('user-display-name')) {
-						element.avatar(element.data('user'), 32, undefined, false, undefined, element.data('user-display-name'));
-					} else {
-						element.avatar(element.data('user'), 32);
-					}
-				});
-			});
-
-			$('#select-participants').on("select2-selecting", function(e) {
+			$('#select-participants').on('select2-selecting', function(e) {
 				switch (e.object.type) {
-					case "user":
+					case 'user':
 						this.connection.createOneToOneVideoCall(e.val);
 						break;
-					case "group":
-						this.connection.createGroupVideoCall(e.val, "");
+					case 'group':
+						this.connection.createGroupVideoCall(e.val, '');
 						break;
-					case "createPublicRoom":
+					case 'createPublicRoom':
 						this.connection.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
 						break;
-					case "createGroupRoom":
-						this.connection.createGroupVideoCall("", OCA.SpreedMe.app._searchTerm);
+					case 'createGroupRoom':
+						this.connection.createGroupVideoCall('', OCA.SpreedMe.app._searchTerm);
 						break;
 					default:
-						console.log("Unknown type", e.object.type);
+						console.log('Unknown type', e.object.type);
 						break;
 				}
 			}.bind(this));
 
-			$('#select-participants').on("select2-loaded", function() {
+			$('#select-participants').on('select2-loaded', function() {
 				$('.select2-drop').find('.avatar[data-user]').each(function () {
 					var element = $(this);
 					if (element.data('user-display-name')) {
@@ -415,6 +404,16 @@
 				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
 				{
 					newParticipant: participant
+				}
+			).done(function() {
+				this.signaling.syncRooms();
+			}.bind(this));
+		},
+		inviteEmailToRoom: function(token, email) {
+			$.post(
+				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/guests',
+				{
+					newParticipant: email
 				}
 			).done(function() {
 				this.signaling.syncRooms();
