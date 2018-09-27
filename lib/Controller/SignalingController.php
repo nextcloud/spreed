@@ -33,7 +33,6 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
-use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -45,8 +44,6 @@ class SignalingController extends OCSController {
 	private $session;
 	/** @var Manager */
 	private $manager;
-	/** @var IDBConnection */
-	private $dbConnection;
 	/** @var Messages */
 	private $messages;
 	/** @var string|null */
@@ -60,7 +57,6 @@ class SignalingController extends OCSController {
 	 * @param Config $config
 	 * @param TalkSession $session
 	 * @param Manager $manager
-	 * @param IDBConnection $connection
 	 * @param Messages $messages
 	 * @param IUserManager $userManager
 	 * @param string $UserId
@@ -70,14 +66,12 @@ class SignalingController extends OCSController {
 								Config $config,
 								TalkSession $session,
 								Manager $manager,
-								IDBConnection $connection,
 								Messages $messages,
 								IUserManager $userManager,
 								$UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->session = $session;
-		$this->dbConnection = $connection;
 		$this->manager = $manager;
 		$this->messages = $messages;
 		$this->userManager = $userManager;
@@ -178,7 +172,6 @@ class SignalingController extends OCSController {
 				break;
 			}
 
-			$this->dbConnection->close();
 			if (empty($data)) {
 				$seconds--;
 			} else {

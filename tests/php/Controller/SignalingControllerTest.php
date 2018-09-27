@@ -32,7 +32,6 @@ use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
 
@@ -64,9 +63,6 @@ class SignalingControllerTest extends \Test\TestCase {
 	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
 
-	/** @var IDBConnection|\PHPUnit_Framework_MockObject_MockObject */
-	protected $dbConnection;
-
 	/** @var Messages|\PHPUnit_Framework_MockObject_MockObject */
 	protected $messages;
 
@@ -93,7 +89,6 @@ class SignalingControllerTest extends \Test\TestCase {
 		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
 		$this->config = new Config($config, $secureRandom, $timeFactory);
 		$this->session = $this->createMock(TalkSession::class);
-		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->manager = $this->createMock(Manager::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
@@ -107,7 +102,6 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->config,
 			$this->session,
 			$this->manager,
-			$this->dbConnection,
 			$this->messages,
 			$this->userManager,
 			$this->userId
