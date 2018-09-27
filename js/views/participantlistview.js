@@ -30,7 +30,7 @@
 	var uiChannel = Backbone.Radio.channel('ui');
 
 	var ITEM_TEMPLATE = '' +
-		'<a class="participant-entry-link {{#if isOffline}}participant-offline{{/if}}" href="#" data-sessionId="{{sessionId}}">' +
+		'<a class="participant-entry-link" href="#" data-sessionId="{{sessionId}}">' +
 			'<div class="avatar"></div>' +
 			' {{name}}' +
 			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
@@ -75,36 +75,24 @@
 	OCA.SpreedMe.Views.ParticipantListView = Marionette.CollectionView.extend({
 		tagName: 'ul',
 		className: 'participantWithList',
-		collectionEvents: {
-			'update': function() {
-				this.render();
-			},
-			'reset': function() {
-				this.render();
-			},
-			'sort': function() {
-				this.render();
-			},
-			'sync': function() {
-				this.render();
-			}
-		},
+		reorderOnSort: true,
+
 		childView: Marionette.View.extend({
 			tagName: 'li',
 			modelEvents: {
-				'change:active': function() {
+				'change:sessionId': function() {
+					// The sessionId is used to know if the user is online.
 					this.render();
 				},
 				'change:displayName': function() {
 					this.render();
 				},
-				'change:participants': function() {
+				'change:participantType': function() {
 					this.render();
 				},
-				'change:type': function() {
+				'change:inCall': function() {
 					this.render();
-					this.checkSharingStatus();
-				}
+				},
 			},
 			initialize: function() {
 				this.listenTo(uiChannel, 'document:click', function(event) {
@@ -157,6 +145,8 @@
 
 				if (!this.model.isOnline()) {
 					this.$el.addClass('participant-offline');
+				} else {
+					this.$el.removeClass('participant-offline');
 				}
 
 				this.toggleMenuClass();
@@ -196,7 +186,11 @@
 						participant: participantId
 					},
 					success: function() {
-						self.render();
+						self.model.set('participantType', OCA.SpreedMe.app.MODERATOR);
+						// When an attribute that affects the order of a
+						// collection is set the collection has to be explicitly
+						// sorted again.
+						self.model.collection.sort();
 					},
 					error: function() {
 						console.log('Error while promoting user to moderator');
@@ -218,7 +212,11 @@
 						participant: participantId
 					},
 					success: function() {
-						self.render();
+						self.model.set('participantType', OCA.SpreedMe.app.USER);
+						// When an attribute that affects the order of a
+						// collection is set the collection has to be explicitly
+						// sorted again.
+						self.model.collection.sort();
 					},
 					error: function() {
 						console.log('Error while demoting moderator');
@@ -246,7 +244,7 @@
 						participant: participantId
 					},
 					success: function() {
-						self.render();
+						self.model.collection.remove(self.model);
 					},
 					error: function() {
 						console.log('Error while removing user from room');
