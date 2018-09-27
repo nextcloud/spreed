@@ -47,6 +47,7 @@ class Capabilities implements IPublicCapability {
 					'in-call-flags',
 					'invite-by-mail',
 					'notification-levels',
+					'new-chat-flow',
 				],
 			],
 		];

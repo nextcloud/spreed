@@ -178,7 +178,7 @@ class ChatController extends OCSController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
-	public function sendMessage($token, $message, $actorDisplayName = '') {
+	public function sendMessage($token, $message, $actorDisplayName = ''): DataResponse {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -276,7 +276,7 @@ class ChatController extends OCSController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages($token, $lookIntoFuture, $limit = 100, $lastKnownMessageId = 0, $timeout = 30) {
+	public function receiveMessages($token, $lookIntoFuture, $limit = 100, $lastKnownMessageId = 0, $timeout = 30): DataResponse {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -343,6 +343,30 @@ class ChatController extends OCSController {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token the room token
+	 * @param int $lastReadMessage
+	 * @return DataResponse
+	 */
+	public function setReadMarker($token, $lastReadMessage): DataResponse {
+		$room = $this->getRoom($token);
+		if ($room === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$participant = $room->getParticipant($this->userId);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$participant->setLastReadMessage($lastReadMessage);
+
+		return new DataResponse();
+	}
+
+	/**
 	 * @PublicPage
 	 *
 	 * @param string $token the room token
@@ -350,7 +374,7 @@ class ChatController extends OCSController {
 	 * @param int $limit
 	 * @return DataResponse
 	 */
-	public function mentions($token, $search, $limit = 20) {
+	public function mentions($token, $search, $limit = 20): DataResponse {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -379,7 +403,7 @@ class ChatController extends OCSController {
 	}
 
 
-	protected function prepareResultArray(array $results) {
+	protected function prepareResultArray(array $results): array {
 		$output = [];
 		foreach ($results as $type => $subResult) {
 			foreach ($subResult as $result) {

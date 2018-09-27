@@ -30,6 +30,8 @@
 - [Chat](#chat)
   * [Receive chat messages of a room](#receive-chat-messages-of-a-room)
   * [Sending a new chat message](#sending-a-new-chat-message)
+  * [Mark chat as read](#mark-chat-as-read)
+  * [Get mention autocomplete suggestions](#get-mention-autocomplete-suggestions)
 - [Guests](#guests)
   * [Set display name](#set-display-name)
 - [Signaling](#signaling)
@@ -81,6 +83,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### 5.0
 * `invite-by-mail` - Guests can be invited with their email address
 * `notification-levels` - Users can select when they want to be notified in conversations
+* `new-chat-flow` - The read marker for the chat needs to be set manually, see [Better chat flow experience](https://github.com/nextcloud/spreed/issues/1164)
 
 ## Room management
 
@@ -569,6 +572,22 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a room](#receive-chat-messages-of-a-room)
+
+### Mark chat as read
+
+* Method: `POST`
+* Endpoint: `/chat/{token}/read`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `lastReadMessage` | int | The last read message ID
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant,
+        or the participant is a guest.
 
 ### Get mention autocomplete suggestions
 

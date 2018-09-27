@@ -124,7 +124,7 @@ class ChatManager {
 
 			$mentionedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
 			if (!empty($mentionedUsers)) {
-				$chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
+				$chat->markUsersAsMentioned($notifiedUsers, (int) $comment->getId());
 			}
 
 			// User was not mentioned, send a normal notification
@@ -137,14 +137,6 @@ class ChatManager {
 		}
 
 		return $comment;
-	}
-
-	public function getUnreadMarker(Room $chat, IUser $user): \DateTime {
-		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
-		if ($marker === null) {
-			$marker = new \DateTime('2000-01-01');
-		}
-		return $marker;
 	}
 
 	public function getUnreadCount(Room $chat, int $lastReadMessage): int {
@@ -191,11 +183,6 @@ class ChatManager {
 		$elapsedTime = 0;
 
 		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
-
-		if ($user instanceof IUser) {
-			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), new  \DateTime(), $user);
-		}
-
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;

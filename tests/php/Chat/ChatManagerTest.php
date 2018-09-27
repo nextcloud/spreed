@@ -30,6 +30,7 @@ use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ChatManagerTest extends \Test\TestCase {
@@ -209,6 +210,20 @@ class ChatManagerTest extends \Test\TestCase {
 		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user);
 
 		$this->assertEquals($expected, $comments);
+	}
+
+	public function testGetUnreadCount() {
+		/** @var Room|MockObject $chat */
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->once())
+			->method('getId')
+			->willReturn(23);
+
+		$this->commentsManager->expects($this->once())
+			->method('getNumberOfCommentsForObjectSinceComment')
+			->with('chat', 23, 42, 'comment');
+
+		$this->chatManager->getUnreadCount($chat, 42);
 	}
 
 	public function testDeleteMessages() {
