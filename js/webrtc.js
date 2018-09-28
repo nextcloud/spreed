@@ -5,6 +5,7 @@ var webrtc;
 var guestNamesTable = {};
 var spreedMappingTable = {};
 var spreedPeerConnectionTable = [];
+var usersWithStreams = {};
 
 (function(OCA, OC) {
 	'use strict';
@@ -172,7 +173,7 @@ var spreedPeerConnectionTable = [];
 
 			var peer;
 			if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
-				if (useMcu) {
+				if (useMcu && userHasStreams(user)) {
 					// TODO(jojo): Already create peer object to avoid duplicate offers.
 					webrtc.connection.requestOffer(user, "video");
 				} else if (userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
@@ -207,10 +208,20 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
+			delete usersWithStreams[sessionId];
 		});
 
 		previousUsersInRoom = previousUsersInRoom.diff(disconnectedSessionIds);
-		updateParticipantsUI(previousUsersInRoom.length + 1);
+	}
+
+	function countProperties(obj) {
+		var count = 0;
+		for (var prop in obj) {
+			if (obj.hasOwnProperty(prop)) {
+				++count;
+			}
+		}
+		return count;
 	}
 
 	function usersInCallChanged(signaling, users) {
@@ -227,9 +238,15 @@ var spreedPeerConnectionTable = [];
 			}
 			var user = users[sessionId];
 			if (!user.inCall) {
+				delete usersWithStreams[sessionId];
 				continue;
 			}
 
+			if (userHasStreams(user)) {
+				usersWithStreams[sessionId] = true;
+			} else {
+				delete usersWithStreams[sessionId];
+			}
 			if (sessionId === currentSessionId) {
 				selfInCall = user.inCall;
 				continue;
@@ -242,6 +259,7 @@ var spreedPeerConnectionTable = [];
 		if (!selfInCall) {
 			// Own session is no longer in the call, disconnect from all others.
 			usersChanged(signaling, [], previousUsersInRoom);
+			updateParticipantsUI(0);
 			return;
 		}
 
@@ -254,6 +272,11 @@ var spreedPeerConnectionTable = [];
 		if (newUsers.length || disconnectedSessionIds.length) {
 			usersChanged(signaling, newUsers, disconnectedSessionIds);
 		}
+		var count = countProperties(usersWithStreams);
+		if (!usersWithStreams.hasOwnProperty(currentSessionId)) {
+			++count;
+		}
+		updateParticipantsUI(count);
 	}
 
 	/**
