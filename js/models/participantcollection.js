@@ -31,6 +31,14 @@
 		room: undefined,
 
 		/**
+		 * Returns the unique identifier for each participant model in the
+		 * collection.
+		 */
+		modelId: function (attrs) {
+			return attrs['userId']? ('userId-' + attrs['userId']) : ('sessionId' + attrs['sessionId']);
+		},
+
+		/**
 		 * @param {OCA.SpreedMe.Models.Room} room
 		 * @returns {Array}
 		 */
