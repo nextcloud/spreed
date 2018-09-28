@@ -697,7 +697,9 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
+			if (isAudioEnabled || isVideoEnabled) {
+				$('.videoView').removeClass('hidden');
+			}
 
 			this.disableAudio();
 			if (!isAudioEnabled) {
