@@ -120,6 +120,35 @@ class SignalingController extends OCSController {
 						break;
 					}
 					$decodedMessage = json_decode($fn, true);
+					\OC::$server->getLogger()->critical(json_encode($decodedMessage));
+
+					if (isset($decodedMessage['sdp'])) {
+						$h264 = '';
+						preg_match('!a=rtpmap\:(\d+)\sH264/\d+!', $decodedMessage['sdp'], $matches);
+						if ($matches) {
+							// TODO
+							$h264 = $matches[0];
+						}
+						if ($h264 !== '') {
+							preg_match('!m=video\s(\d+)\s[A-Z/]+\s([0-9\ ]+)!', $decodedMessage['sdp'], $matches);
+							if(count($matches) === 3) {
+								$candidates = explode(' ', $matches[2]);
+								$prioritized = [];
+								foreach ($candidates as $candidate) {
+									if ($candidate === $h264) {
+										array_unshift($prioritized, $candidate);
+									} else {
+										array_push($prioritized, $candidate);
+									}
+								}
+
+								$mPriotized = str_replace($matches[0], join(' ', $prioritized), $matches[0]);
+								\OC::$server->getLogger()->error("Setting H.264 as preferred video codec. '$mPriotized'");
+								$decodedMessage['sdp'] = str_replace($matches[0], $mPriotized, $decodedMessage['sdp']);
+							}
+						}
+					}
+
 					if ($message['sessionId'] !== $this->session->getSessionForRoom($token)) {
 						break;
 					}
