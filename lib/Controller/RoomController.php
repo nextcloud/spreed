@@ -365,7 +365,7 @@ class RoomController extends OCSController {
 	 * @param IUser $currentUser
 	 * @return array
 	 */
-	protected function formatLastMessage(IComment $lastMessage, IUser $currentUser): array {
+	protected function formatLastMessage(IComment $lastMessage, IUser $currentUser = null): array {
 		list($message, $messageParameters) = $this->messageParser->parseMessage($lastMessage, $this->l10n, $currentUser);
 
 		$displayName = '';
