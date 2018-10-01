@@ -39,6 +39,7 @@ use OCP\AppFramework\OCSController;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
+use OCP\Comments\MessageTooLongException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -207,7 +208,13 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
+		try {
+			$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
+		} catch (MessageTooLongException $e) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}

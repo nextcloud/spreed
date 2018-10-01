@@ -544,7 +544,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `201 Created`
+        + `400 Bad Request` In case of any other error
         + `404 Not Found` When the room could not be found for the participant
+        + `413 Payload Too Large` When the message was longer than the allowed limit of 1000 characters
 
 ### Get mention autocomplete suggestions
 
