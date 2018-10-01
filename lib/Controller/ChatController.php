@@ -184,6 +184,8 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$currentUser = null;
+		$displayName = '';
 		if ($this->userId === null) {
 			$actorType = 'guests';
 			$sessionId = $this->session->getSessionForRoom($token);
@@ -196,10 +198,15 @@ class ChatController extends OCSController {
 
 			if ($sessionId && $actorDisplayName) {
 				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
+				$displayName = $actorDisplayName;
+			} else if ($sessionId) {
+				$displayName = $this->guestManager->getNameBySessionHash($actorId);
 			}
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;
+			$currentUser = $this->userManager->get($this->userId);
+			$displayName = $currentUser instanceof IUser ? $currentUser->getDisplayName() : '';
 		}
 
 		if (!$actorId) {
@@ -209,14 +216,26 @@ class ChatController extends OCSController {
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
+			$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse([], Http::STATUS_CREATED);
+		list($message, $messageParameters) = $this->messageParser->parseMessage($comment, $this->l, $currentUser);
+
+		return new DataResponse([
+			'id' => (int) $comment->getId(),
+			'token' => $token,
+			'actorType' => $comment->getActorType(),
+			'actorId' => $comment->getActorId(),
+			'actorDisplayName' => $displayName,
+			'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+			'message' => $message,
+			'messageParameters' => $messageParameters,
+			'systemMessage' => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
+		], Http::STATUS_CREATED);
 	}
 
 	/**
