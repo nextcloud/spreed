@@ -708,8 +708,12 @@
 				success: function(model) {
 					self._onSubmitSuccess(model, $form);
 				},
-				error: function() {
-					self._onSubmitError($form);
+				error: function(model, response) {
+					if (response.status === 413) {
+						self._onSubmitError($form, t('spreed', 'The message you are trying to send is too long'));
+					} else {
+						self._onSubmitError($form, t('spreed', 'Error occurred while sending message'));
+					}
 				}
 			});
 
@@ -728,14 +732,14 @@
 			// thanks to the auto-refresh of the list.
 		},
 
-		_onSubmitError: function($form) {
+		_onSubmitError: function($form, errorMsg) {
 			$form.find('.submit').removeClass('hidden');
 			$form.find('.submitLoading').addClass('hidden');
 			$form.find('.message').prop('contenteditable', true);
 
 			$form.find('.message').focus();
 
-			OC.Notification.show(t('spreed', 'Error occurred while sending message'), {type: 'error'});
+			OC.Notification.show(errorMsg, {type: 'error'});
 		},
 
 		_onAddShare: function() {
