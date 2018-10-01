@@ -176,7 +176,7 @@
 			toggleMenuClass: function() {
 				this.ui.menu.toggleClass('open', this.menuShown);
 			},
-			closeMenu: function(e) {
+			closeMenu: function() {
 				this.menuShown = false;
 				this.toggleMenuClass();
 			},
