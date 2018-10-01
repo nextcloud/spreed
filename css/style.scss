@@ -937,6 +937,10 @@ video {
 	opacity: .4;
 	margin-left: 5px;
 	margin-bottom: -4px;
+
+	&.hidden {
+		display: none;
+	}
 }
 
 .participantWithList .participant-offline {
@@ -989,7 +993,8 @@ video {
 	height: 44px;
 }
 
-.participantWithList .participant-entry-utils button {
+.participantWithList .participant-entry-utils button,
+.participantWithList .participant-entry-utils button + .icon-loading-small {
 	height: 100%;
 	width: 100%;
 	margin: 0;
