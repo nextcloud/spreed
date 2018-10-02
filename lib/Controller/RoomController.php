@@ -179,7 +179,7 @@ class RoomController extends OCSController {
 			$participantFlags = Participant::FLAG_DISCONNECTED;
 			$favorite = false;
 		}
-		$participantInCall = $participantFlags & Participant::FLAG_IN_CALL !== 0;
+		$participantInCall = ($participantFlags & Participant::FLAG_IN_CALL) !== 0;
 
 		$lastActivity = $room->getLastActivity();
 		if ($lastActivity instanceof \DateTimeInterface) {
