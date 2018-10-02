@@ -276,7 +276,7 @@ class RoomController extends OCSController {
 
 		$lastMessage = $room->getLastMessage();
 		if ($lastMessage instanceof IComment) {
-			$lastMessage = $this->formatLastMessage($lastMessage, $currentUser);
+			$lastMessage = $this->formatLastMessage($room, $lastMessage, $currentUser);
 		} else {
 			$lastMessage = [];
 		}
@@ -361,12 +361,13 @@ class RoomController extends OCSController {
 	}
 
 	/**
+	 * @param Room $room
 	 * @param IComment $lastMessage
 	 * @param IUser $currentUser
 	 * @return array
 	 */
-	protected function formatLastMessage(IComment $lastMessage, IUser $currentUser = null): array {
-		list($message, $messageParameters) = $this->messageParser->parseMessage($lastMessage, $this->l10n, $currentUser);
+	protected function formatLastMessage(Room $room, IComment $lastMessage, IUser $currentUser = null): array {
+		list($message, $messageParameters) = $this->messageParser->parseMessage($room, $lastMessage, $this->l10n, $currentUser);
 
 		$displayName = '';
 

@@ -25,6 +25,7 @@ namespace OCA\Spreed\Chat\Parser;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Share\RoomShareProvider;
+use OCA\Spreed\TalkSession;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -43,6 +44,8 @@ class SystemMessage {
 	protected $guestManager;
 	/** @var IUserSession */
 	protected $userSession;
+	/** @var TalkSession */
+	protected $talkSession;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
 	/** @var IRootFolder */
@@ -54,6 +57,8 @@ class SystemMessage {
 
 	/** @var null|IUser */
 	protected $recipient;
+	/** @var null|string */
+	protected $sessionId;
 	/** @var string[] */
 	protected $displayNames = [];
 	/** @var string[] */
@@ -62,6 +67,7 @@ class SystemMessage {
 	public function __construct(IUserManager $userManager,
 								GuestManager $guestManager,
 								IUserSession $userSession,
+								TalkSession $talkSession,
 								RoomShareProvider $shareProvider,
 								IRootFolder $rootFolder,
 								IURLGenerator $url,
@@ -69,6 +75,7 @@ class SystemMessage {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->userSession = $userSession;
+		$this->talkSession = $talkSession;
 		$this->shareProvider = $shareProvider;
 		$this->rootFolder = $rootFolder;
 		$this->url = $url;
@@ -79,6 +86,13 @@ class SystemMessage {
 	public function setUserInfo(IL10N $l, IUser $user = null) {
 		$this->l = $l;
 		$this->recipient = $user;
+		$this->sessionId = null;
+	}
+
+	public function setGuestInfo(IL10N $l, string $sessionId = null) {
+		$this->l = $l;
+		$this->recipient = null;
+		$this->sessionId = $sessionId;
 	}
 
 	/**
@@ -95,7 +109,8 @@ class SystemMessage {
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 		$parsedParameters = ['actor' => $this->getActor($comment)];
-		$currentUserIsActor = $this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['actor']['id'];
+		$currentUserIsActor = ($this->recipient instanceof IUser && $parsedParameters['actor']['type'] === 'user' && $this->recipient->getUID() === $parsedParameters['actor']['id']) ||
+			($this->sessionId !== null && $parsedParameters['actor']['type'] === 'guest' && $this->sessionId === $parsedParameters['actor']['id']);
 
 		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
@@ -178,6 +193,22 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
 			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
+				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
+			}
+		} else if ($message === 'guest_moderator_promoted') {
+			$parsedParameters['user'] = $this->getGuest($parameters['session']);
+			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You promoted {user} to moderator');
+			} else if ($this->sessionId !== null && $this->sessionId === $parsedParameters['user']['id']) {
+				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
+			}
+		} else if ($message === 'guest_moderator_demoted') {
+			$parsedParameters['user'] = $this->getGuest($parameters['session']);
+			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You demoted {user} from moderator');
+			} else if ($this->sessionId !== null && $this->sessionId === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
 		} else if ($message === 'file_shared') {

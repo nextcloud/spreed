@@ -280,7 +280,7 @@ class ChatController extends OCSController {
 		}
 
 		$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
-		$response = new DataResponse(array_map(function (IComment $comment) use ($token, $guestNames, $currentUser) {
+		$response = new DataResponse(array_map(function (IComment $comment) use ($room, $token, $guestNames, $currentUser) {
 			$displayName = '';
 			if ($comment->getActorType() === 'users') {
 				$user = $this->userManager->get($comment->getActorId());
@@ -289,7 +289,7 @@ class ChatController extends OCSController {
 				$displayName = $guestNames[$comment->getActorId()];
 			}
 
-			list($message, $messageParameters) = $this->messageParser->parseMessage($comment, $this->l, $currentUser);
+			list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
 
 			return [
 				'id' => (int) $comment->getId(),
