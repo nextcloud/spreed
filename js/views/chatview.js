@@ -532,10 +532,10 @@
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				if (!model || model.get('actorType') === 'users') {
+				if ($element.data('user-id')) {
 					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
 				} else {
-					$element.imageplaceholder('?', model.get('actorDisplayName'), size);
+					$element.imageplaceholder('?', $element.data('displayname'), size);
 					$element.css('background-color', '#b9b9b9');
 				}
 			};
