@@ -86,7 +86,7 @@
 			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
 				isGuest: this.model.get('participantType') === 4,
-				isInCall: this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL !== 0,
+				isInCall: (this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0,
 				canModerate: canModerate,
 				isPublic: this.model.get('type') === 3,
 				showShareLink: !canModerate && this.model.get('type') === 3,
