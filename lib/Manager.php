@@ -299,6 +299,30 @@ class Manager {
 	}
 
 	/**
+	 * @param string $objectType
+	 * @param string $objectId
+	 * @return Room
+	 * @throws RoomNotFoundException
+	 */
+	public function getRoomByObject(string $objectType, string $objectId): Room {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->where($query->expr()->eq('object_type', $query->createNamedParameter($objectType)))
+			->andWhere($query->expr()->eq('object_id', $query->createNamedParameter($objectId)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		return $this->createRoomObject($row);
+	}
+
+	/**
 	 * @param string|null $userId
 	 * @param string $sessionId
 	 * @return Room
