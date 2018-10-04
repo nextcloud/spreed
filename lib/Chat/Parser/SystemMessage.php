@@ -25,7 +25,6 @@ namespace OCA\Spreed\Chat\Parser;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Share\RoomShareProvider;
-use OCA\Spreed\TalkSession;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
@@ -44,8 +43,6 @@ class SystemMessage {
 	protected $guestManager;
 	/** @var IUserSession */
 	protected $userSession;
-	/** @var TalkSession */
-	protected $talkSession;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
 	/** @var IRootFolder */
@@ -67,7 +64,6 @@ class SystemMessage {
 	public function __construct(IUserManager $userManager,
 								GuestManager $guestManager,
 								IUserSession $userSession,
-								TalkSession $talkSession,
 								RoomShareProvider $shareProvider,
 								IRootFolder $rootFolder,
 								IURLGenerator $url,
@@ -75,7 +71,6 @@ class SystemMessage {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->userSession = $userSession;
-		$this->talkSession = $talkSession;
 		$this->shareProvider = $shareProvider;
 		$this->rootFolder = $rootFolder;
 		$this->url = $url;

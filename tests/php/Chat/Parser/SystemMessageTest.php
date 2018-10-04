@@ -115,63 +115,63 @@ class SystemMessageTest extends TestCase {
 		return [
 			['conversation_created', [], null, [
 				'{actor} created the conversation',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['conversation_created', [], 'recipient', [
 				'{actor} created the conversation',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['conversation_created', [], 'actor', [
 				'You created the conversation',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['conversation_renamed', ['oldName' => 'old', 'newName' => 'new'], null, [
 				'{actor} renamed the conversation from "old" to "new"',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['conversation_renamed', ['oldName' => 'old', 'newName' => 'new'], 'recipient', [
 				'{actor} renamed the conversation from "old" to "new"',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['conversation_renamed', ['oldName' => 'old', 'newName' => 'new'], 'actor', [
 				'You renamed the conversation from "old" to "new"',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_started', [], null, [
 				'{actor} started a call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_started', [], 'recipient', [
 				'{actor} started a call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_started', [], 'actor', [
 				'You started a call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_joined', [], null, [
 				'{actor} joined the call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_joined', [], 'recipient', [
 				'{actor} joined the call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_joined', [], 'actor', [
 				'You joined the call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_left', [], null, [
 				'{actor} left the call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_left', [], 'recipient', [
 				'{actor} left the call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_left', [], 'actor', [
 				'You left the call',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['call_ended', [], null, [
 				'tested by testParsecall', []
@@ -184,143 +184,183 @@ class SystemMessageTest extends TestCase {
 			]],
 			['guests_allowed', [], null, [
 				'{actor} allowed guests',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['guests_allowed', [], 'recipient', [
 				'{actor} allowed guests',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['guests_allowed', [], 'actor', [
 				'You allowed guests',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['guests_disallowed', [], null, [
 				'{actor} disallowed guests',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['guests_disallowed', [], 'recipient', [
 				'{actor} disallowed guests',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['guests_disallowed', [], 'actor', [
 				'You disallowed guests',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['password_set', [], null, [
 				'{actor} set a password',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['password_set', [], 'recipient', [
 				'{actor} set a password',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['password_set', [], 'actor', [
 				'You set a password',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['password_removed', [], null, [
 				'{actor} removed the password',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['password_removed', [], 'recipient', [
 				'{actor} removed the password',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['password_removed', [], 'actor', [
 				'You removed the password',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['user_added', ['user' => 'user'], null, [
 				'{actor} added {user}',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_added', ['user' => 'user'], 'recipient', [
 				'{actor} added {user}',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_added', ['user' => 'user'], 'user', [
 				'{actor} added you',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_added', ['user' => 'user'], 'actor', [
 				'You added {user}',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'user'], null, [
 				'{actor} removed {user}',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'user'], 'recipient', [
 				'{actor} removed {user}',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'actor'], 'actor', [
 				'{actor} left the conversation',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'user'], 'user', [
 				'{actor} removed you',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'user'], 'actor', [
 				'You removed {user}',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_promoted', ['user' => 'user'], null, [
 				'{actor} promoted {user} to moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_promoted', ['user' => 'user'], 'recipient', [
 				'{actor} promoted {user} to moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_promoted', ['user' => 'user'], 'user', [
 				'{actor} promoted you to moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_promoted', ['user' => 'user'], 'actor', [
 				'You promoted {user} to moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_demoted', ['user' => 'user'], null, [
 				'{actor} demoted {user} from moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_demoted', ['user' => 'user'], 'recipient', [
 				'{actor} demoted {user} from moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_demoted', ['user' => 'user'], 'user', [
 				'{actor} demoted you from moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['moderator_demoted', ['user' => 'user'], 'actor', [
 				'You demoted {user} from moderator',
-				['actor' => ['id' => 'actor'], 'user' => ['id' => 'user']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
+			]],
+			['guest_moderator_promoted', ['session' => 'moderator'], null, [
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_promoted', ['session' => 'moderator'], 'recipient', [
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_promoted', ['session' => 'moderator'], 'guest::user', [
+				'{actor} promoted {user} to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_promoted', ['session' => 'moderator'], 'guest::moderator', [
+				'{actor} promoted you to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_promoted', ['session' => 'moderator'], 'actor', [
+				'You promoted {user} to moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_demoted', ['session' => 'moderator'], null, [
+				'{actor} demoted {user} from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_demoted', ['session' => 'moderator'], 'recipient', [
+				'{actor} demoted {user} from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_demoted', ['session' => 'moderator'], 'guest::user', [
+				'{actor} demoted {user} from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_demoted', ['session' => 'moderator'], 'guest::moderator', [
+				'{actor} demoted you from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
+			]],
+			['guest_moderator_demoted', ['session' => 'moderator'], 'actor', [
+				'You demoted {user} from moderator',
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'moderator', 'type' => 'guest']],
 			]],
 			['file_shared', ['share' => '42'], null, [
 				'{file}',
-				['actor' => ['id' => 'actor'], 'file' => ['id' => 'file-from-share']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'file' => ['id' => 'file-from-share']],
 			]],
 			['file_shared', ['share' => '42'], 'recipient', [
 				'{file}',
-				['actor' => ['id' => 'actor'], 'file' => ['id' => 'file-from-share']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'file' => ['id' => 'file-from-share']],
 			]],
 			['file_shared', ['share' => '42'], 'actor', [
 				'{file}',
-				['actor' => ['id' => 'actor'], 'file' => ['id' => 'file-from-share']],
+				['actor' => ['id' => 'actor', 'type' => 'user'], 'file' => ['id' => 'file-from-share']],
 			]],
 			['file_shared', ['share' => ShareNotFound::class], null, [
 				'{actor} shared a file which is no longer available',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['file_shared', ['share' => InvalidPathException::class], 'recipient', [
 				'{actor} shared a file which is no longer available',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['file_shared', ['share' => NotFoundException::class], 'actor', [
 				'You shared a file which is no longer available',
-				['actor' => ['id' => 'actor']],
+				['actor' => ['id' => 'actor', 'type' => 'user']],
 			]],
 		];
 	}
@@ -333,13 +373,18 @@ class SystemMessageTest extends TestCase {
 	 * @param array $expected
 	 */
 	public function testParseMessage(string $message, array $parameters, $recipientId, array $expected) {
-		if ($recipientId) {
+		if ($recipientId && strpos($recipientId, 'guest::') === false) {
 			$recipient = $this->createMock(IUser::class);
 			$recipient->expects($this->atLeastOnce())
 				->method('getUID')
 				->willReturn($recipientId);
+			$sessionId = null;
+		} else if ($recipientId) {
+			$recipient = null;
+			$sessionId = substr($recipientId, strlen('guest::'));
 		} else {
 			$recipient = null;
+			$sessionId = null;
 		}
 
 		/** @var IComment|MockObject $comment */
@@ -351,16 +396,21 @@ class SystemMessageTest extends TestCase {
 				'parameters' => $parameters,
 			]));
 
-		$parser = $this->getParser(['getActor', 'getUser', 'parseCall', 'getFileFromShare']);
+		$parser = $this->getParser(['getActor', 'getUser', 'getGuest', 'parseCall', 'getFileFromShare']);
 		$parser->expects($this->once())
 			->method('getActor')
 			->with($comment)
-			->willReturn(['id' => 'actor']);
+			->willReturn(['id' => 'actor', 'type' => 'user']);
 		$parser->expects($this->any())
 			->method('getUser')
 			->with($parameters['user'] ?? 'user')
-			->willReturn(['id' => $parameters['user'] ?? 'user']);
+			->willReturn(['id' => $parameters['user'] ?? 'user', 'type' => 'user']);
+		$parser->expects($this->any())
+			->method('getGuest')
+			->with($parameters['session'] ?? 'guest')
+			->willReturn(['id' => $parameters['session'] ?? 'guest', 'type' => 'guest']);
 		self::invokePrivate($parser, 'recipient', [$recipient]);
+		self::invokePrivate($parser, 'sessionId', [$sessionId]);
 
 		if ($message === 'call_ended') {
 			$parser->expects($this->once())
@@ -424,12 +474,12 @@ class SystemMessageTest extends TestCase {
 		$parser->expects($this->any())
 			->method('getActor')
 			->with($comment)
-			->willReturn(['id' => 'actor']);
+			->willReturn(['id' => 'actor', 'type' => 'user']);
 
 		$parser->parseMessage($comment);
 	}
 
-	public function testSetUserInfoGuestToUser() {
+	public function testSetUserInfoEmptyToUser() {
 		/** @var IUser $user */
 		$user = $this->createMock(IUser::class);
 		/** @var IL10N $l */
@@ -437,9 +487,11 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		$this->assertNull(self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
 		$this->assertSame($this->l, self::invokePrivate($parser, 'l'));
 		$parser->setUserInfo($l, $user);
 		$this->assertSame($user, self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
 		$this->assertSame($l, self::invokePrivate($parser, 'l'));
 	}
 
@@ -457,13 +509,15 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		$this->assertSame($user1, self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
 		$this->assertSame($this->l, self::invokePrivate($parser, 'l'));
 		$parser->setUserInfo($l, $user2);
 		$this->assertSame($user2, self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
 		$this->assertSame($l, self::invokePrivate($parser, 'l'));
 	}
 
-	public function testSetUserInfoUserToGuest() {
+	public function testSetUserInfoUserToEmpty() {
 		/** @var IUser $user1 */
 		$user = $this->createMock(IUser::class);
 		/** @var IL10N $l */
@@ -475,9 +529,41 @@ class SystemMessageTest extends TestCase {
 
 		$parser = $this->getParser();
 		$this->assertSame($user, self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
 		$this->assertSame($this->l, self::invokePrivate($parser, 'l'));
 		$parser->setUserInfo($l, null);
 		$this->assertNull(self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
+		$this->assertSame($l, self::invokePrivate($parser, 'l'));
+	}
+
+	public function testSetGuestInfoEmptyToGuest() {
+		/** @var IL10N $l */
+		$l = $this->createMock(IL10N::class);
+
+		$parser = $this->getParser();
+		$this->assertNull(self::invokePrivate($parser, 'recipient'));
+		$this->assertNull(self::invokePrivate($parser, 'sessionId'));
+		$this->assertSame($this->l, self::invokePrivate($parser, 'l'));
+		$parser->setGuestInfo($l, 'session');
+		$this->assertNull(self::invokePrivate($parser, 'recipient'));
+		$this->assertSame('session', self::invokePrivate($parser, 'sessionId'));
+		$this->assertSame($l, self::invokePrivate($parser, 'l'));
+	}
+
+	public function testSetGuestInfoGuest1ToGuest2() {
+		/** @var IL10N $l */
+		$l = $this->createMock(IL10N::class);
+
+		$parser = $this->getParser();
+		self::invokePrivate($parser, 'sessionId', ['session1']);
+
+		$this->assertNull(self::invokePrivate($parser, 'recipient'));
+		$this->assertSame('session1', self::invokePrivate($parser, 'sessionId'));
+		$this->assertSame($this->l, self::invokePrivate($parser, 'l'));
+		$parser->setGuestInfo($l, 'session2');
+		$this->assertNull(self::invokePrivate($parser, 'recipient'));
+		$this->assertSame('session2', self::invokePrivate($parser, 'sessionId'));
 		$this->assertSame($l, self::invokePrivate($parser, 'l'));
 	}
 

@@ -174,7 +174,7 @@ class Notifier implements INotifier {
 		}
 
 		$recipient = $this->userManager->get($notification->getUser());
-		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($comment, $l, $recipient);
+		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($room, $comment, $l, $recipient);
 
 		$placeholders = $replacements = [];
 		foreach ($richMessageParameters as $placeholder => $parameter) {
