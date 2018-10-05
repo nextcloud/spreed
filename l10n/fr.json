@@ -172,6 +172,7 @@
     ", " : ", ",
     "%s invited you to a conversation." : "%s vous a invité dans une discussion.",
     "You were invited to a conversation." : "Vous avez été invité dans une discussion.",
+    "Conversation invitation" : "Invitation à la discussion",
     "Click the button below to join." : "Cliquez sur le bouton ci-dessous pour rejoindre.",
     "Join »%s«" : "Rejoindre «%s»",
     "Join now" : "Rejoindre maintenant",
