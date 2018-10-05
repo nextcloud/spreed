@@ -223,7 +223,7 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		list($message, $messageParameters) = $this->messageParser->parseMessage($comment, $this->l, $currentUser);
+		list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
 
 		return new DataResponse([
 			'id' => (int) $comment->getId(),
