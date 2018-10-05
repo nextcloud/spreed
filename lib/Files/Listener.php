@@ -68,6 +68,14 @@ class Listener {
 			$this->preventGuestsFromJoining($room);
 		};
 		$this->dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+
+		// TODO listen to share deletion to remove the conversation when the
+		// file is no longer shared? Also note that if a user share is
+		// transfered to the other user the share is removed
+
+		// TODO right now there are no owners or persistent participants of the
+		// room, but if there were, listen to file ownership transfer to change
+		// the room owner/participant when needed
 	}
 
 	/**
@@ -91,6 +99,8 @@ class Listener {
 
 		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
 		if (!$share) {
+			// TODO the exception message is shown as an error in Nextcloud
+			// logs, how to prevent that?
 			throw new \Exception('User does not have direct access to the file');
 		}
 	}
