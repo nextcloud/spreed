@@ -1,0 +1,357 @@
+/*
+ * Copyright (c) 2016
+ *
+ * This file is licensed under the Affero General Public License version 3
+ * or later.
+ *
+ * See the COPYING-README file.
+ *
+ */
+
+#chatTabView .comments,
+#chatTabView .emptycontent {
+	flex-grow: 1;
+}
+
+#chatTabView .emptycontent {
+	margin-top: 0;
+}
+
+#chatTabView .newCommentForm {
+	position: relative;
+}
+
+#chatTabView .newCommentForm .message {
+	width: calc(100% - 36px);
+	margin-left: 36px;
+	padding-right: 30px;
+	display: block;
+}
+
+#chatTabView .newCommentForm .submit,
+#chatTabView .newCommentForm .submitLoading,
+#chatTabView .newCommentForm .share,
+#chatTabView .newCommentForm .shareLoading {
+	position: absolute;
+
+	width: 44px;
+	height: 44px;
+
+	bottom: -4px;
+	margin: 0;
+}
+
+#chatTabView .newCommentForm .submit,
+#chatTabView .newCommentForm .submitLoading {
+	right: 0;
+}
+
+#chatTabView .newCommentForm .share,
+#chatTabView .newCommentForm .shareLoading {
+	right: -44px;
+}
+
+#chatTabView .newCommentForm .submit,
+#chatTabView .newCommentForm .share {
+	background-color: transparent;
+	border: none;
+	opacity: .3;
+}
+#chatTabView .newCommentForm .submit:hover,
+#chatTabView .newCommentForm .submit:focus,
+#chatTabView .newCommentForm .share:hover,
+#chatTabView .newCommentForm .share:focus {
+	opacity: 1;
+}
+
+#chatTabView .newCommentForm .cancel {
+	margin-right: 6px;
+}
+
+#chatTabView .newCommentForm div.message {
+	resize: none;
+}
+
+#chatTabView .newCommentForm div.message:empty:before {
+	content: attr(data-placeholder);
+	color: grey;
+}
+
+/* Internal wrappers used by the virtual list. */
+#chatTabView .comments .wrapper-background,
+#chatTabView .comments .wrapper {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+#chatTabView .comment {
+	position: relative;
+	margin-bottom: 30px;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+}
+
+#chatTabView .comment .avatar,
+.atwho-view-ul * .avatar{
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	margin-right: 5px;
+}
+
+#chatTabView .comment .message .avatar,
+.atwho-view-ul * .avatar
+{
+	display: inline-block;
+}
+
+#activityTabView li.comment.collapsed .activitymessage,
+#chatTabView .comment.collapsed .message {
+	white-space: pre-wrap;
+}
+
+#activityTabView li.comment.collapsed .activitymessage,
+#chatTabView .comment.collapsed .message {
+	max-height: 70px;
+	overflow: hidden;
+}
+
+#activityTabView li.comment .message-overlay,
+#chatTabView .comment .message-overlay {
+	display: none;
+}
+
+#activityTabView li.comment.collapsed .message-overlay,
+#chatTabView .comment.collapsed .message-overlay {
+	display: block;
+	position: absolute;
+	z-index: 2;
+	height: 50px;
+	pointer-events: none;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: -moz-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+	background: -webkit-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+	background: -o-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+	background: -ms-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+	background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#00FFFFFF', endColorstr='#FFFFFFFF');
+	background-repeat: no-repeat;
+}
+
+#chatTabView .authorRow>div {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#chatTabView .authorRow>div.hidden {
+	display: none !important;
+}
+
+.atwho-view-ul * .avatar-name-wrapper,
+#chatTabView .comment .authorRow {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	width: 100%;
+}
+
+#chatTabView .comment .authorRow .contactsmenu-popover {
+	top: 32px;
+}
+
+body:not(#body-public) #chatTabView .comment .authorRow:not(.currentUser):not(.guestUser) {
+	.avatar,
+	.avatar img,
+	.author {
+		cursor: pointer;
+	}
+}
+
+.atwho-view-ul .avatar-name-wrapper,
+.atwho-view-ul .avatar-name-wrapper .avatar,
+.atwho-view-ul .avatar-name-wrapper .avatar img {
+	cursor: pointer;
+}
+
+.atwho-view-ul * .avatar-name-wrapper {
+	white-space: nowrap;
+}
+
+#chatTabView .comment .author,
+#chatTabView .comment .date {
+	color: var(--color-text-maxcontrast);
+}
+#chatTabView .comment .author {
+	margin-left: 5px;
+}
+#chatTabView .comment .date {
+	/* "margin-left: auto" aligns the block to the right, while
+	 * "text-align: right" aligns the text inside the block to the right, for
+	 * example, when it uses two lines due to a limited width. */
+	margin-left: auto;
+	text-align: right;
+}
+
+#chatTabView .comments li .message {
+	padding-left: 40px;
+}
+
+#chatTabView .comment .action {
+	opacity: 0;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+#chatTabView .comment:hover .action {
+	opacity: 0.3;
+}
+
+#chatTabView .comment .action:hover {
+	opacity: 1;
+}
+
+#chatTabView .comment .action.delete {
+	position: absolute;
+	right: 0;
+}
+
+#chatTabView .comment.disabled {
+	opacity: 0.3;
+}
+
+#chatTabView .comment.disabled .action {
+	visibility: hidden;
+}
+
+#chatTabView .message.error {
+	color: #e9322d;
+	border-color: #e9322d;
+	box-shadow: 0 0 6px #f8b9b7;
+}
+
+.app-files .action-comment {
+	padding: 16px 14px;
+}
+
+#chatTabView .comment.grouped .authorRow {
+	display: none;
+}
+
+#chatTabView .comment.grouped {
+	margin-top: -20px;
+}
+
+#chatTabView .comment.showDate {
+	margin-top: 40px;
+	border-top: 1px solid #dbdbdb;
+	padding-top: 10px;
+}
+
+#chatTabView .comment.showDate:before {
+	content: attr(data-date);
+
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	padding: 0 7px 0 7px;
+
+	text-align: center;
+
+	color: #878787;
+	background-color: #fff;
+}
+
+#chatTabView .comment.showDate .authorRow {
+	display: inline-flex;
+}
+
+#chatTabView .comment .message .mention-user {
+	/* Make the mention the positioning context of its child contacts menu */
+	position: relative;
+
+	display: inline;
+	vertical-align: top;
+	background-color: var(--color-background-dark);
+	border-radius: 50vh;
+	padding: 1px 7px 1px 1px;
+
+	/* Ensure that the avatar and the user name will be kept together;
+	 * otherwise a line break could be added between them when the wrapper
+	 * is close to the right border of the message. */
+	white-space: nowrap;
+
+	.avatar {
+		img {
+			vertical-align: top;
+		}
+		height: 16px;
+		width: 16px;
+		vertical-align: middle;
+		padding: 1px;
+		margin-top: -2px;
+		margin-left: 0;
+		margin-right: 2px;
+	}
+}
+
+#chatTabView .comment:not(.systemMessage) .message .mention-user {
+	font-weight: bold;
+
+	&.currentUser {
+		background-color: var(--color-primary);
+		color: var(--color-primary-text);
+	}
+}
+
+#chatTabView .comment.systemMessage .message .mention-user {
+	color: var(--color-main-text);
+}
+
+/* System messages have no author, so the author row only contains the date.
+ * Instead of showing the date on its own row and the message below it the
+ * message and the date are merged in a single row using flexboxes. */
+#chatTabView .comment.systemMessage {
+	display: flex;
+	flex-direction: row;
+}
+
+#chatTabView .comment.systemMessage .authorRow {
+	order: 1;
+	flex-grow: 0;
+	width: auto;
+	padding-left: 10px;
+}
+
+#chatTabView .comment.systemMessage .message {
+	order: 0;
+	flex-grow: 1;
+	color: var(--color-text-maxcontrast);
+}
+
+body:not(#body-public) #chatTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser),
+body:not(#body-public) #chatTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar,
+body:not(#body-public) #chatTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar img {
+	cursor: pointer;
+}
+
+#chatTabView .comment .message .contactsmenu-popover {
+	left: -6px;
+	top: 24px;
+}
+
+#chatTabView .comment .message .filePreviewContainer .filePreview {
+	/* The file preview can not be a block; otherwise it would fill the whole
+	 * width of the container and the loading icon would not be centered on the
+	 * image. */
+	display: inline-block;
+}
+
+#chatTabView .comment .message .filePreviewContainer strong {
+	/* As the file preview is an inline block the name is set as a block to
+	 * force it to be on its own line below the preview. */
+	display: block;
+}

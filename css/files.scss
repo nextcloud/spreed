@@ -1,0 +1,106 @@
+/**
+ * Cascade parent element height to the chat view in the sidebar to limit the
+ * vertical scroll bar only to the list of messages. Otherwise, the vertical
+ * scroll bar would be shown for the whole sidebar and everything would be
+ * moved when scrolling to see overflown messages.
+ *
+ * The list of messages should stretch to fill the available space at the bottom
+ * of the right sidebar, so the height is cascaded using flex boxes.
+ *
+ * It is horrible, I know (but better than using JavaScript ;-) ). Please
+ * improve it if you know how :-)
+ */
+#app-sidebar {
+	display: flex;
+	flex-direction: column;
+}
+
+#app-sidebar .detailFileInfoContainer {
+	flex-shrink: 0;
+}
+
+#app-sidebar .tabsContainer {
+	display: flex;
+	flex-direction: column;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .tab {
+	display: flex;
+	flex-direction: column;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .tabsContainer.with-inner-scroll-bars,
+#app-sidebar .tabsContainer.with-inner-scroll-bars .tab {
+	overflow: hidden;
+}
+
+#app-sidebar .tab.hidden {
+	display: none;
+}
+
+#app-sidebar #chatTabView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-sidebar #chatTabView .comments {
+	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+}
+
+/**
+ * Place the scroll bar of the message list on the right edge of the sidebar,
+ * but keeping the padding of the tab view.
+ *
+ * The padding must be set on the left too to ensure that the contacts menu
+ * shown when clicking on an author name does not overflow the tab (as it would
+ * be hidden).
+ *
+ * The bottom padding is removed to extend the chat view to the bottom edge of
+ * the sidebar.
+ */
+#app-sidebar .tab-chat {
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+}
+
+/* Hack needed to overcome the padding of the tab container and move the scroll
+ * bar of the messages list to the right border of the sidebar. */
+#app-sidebar .tabsContainer.with-inner-scroll-bars .tab {
+	padding-right: 0px;
+}
+
+#app-sidebar #chatTabView .comments {
+	padding-right: 15px;
+}
+
+#app-sidebar #chatTabView .comments .wrapper-background,
+#app-sidebar #chatTabView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	right: 15px;
+}
+
+#app-sidebar #chatTabView .newCommentRow {
+	/* The details view in the Files app has a bottom padding of 15px, so the
+	 * general bottom margin used for comments should be reduced for the new
+	 * comment form. */
+	margin-bottom: 5px;
+}
+
+#app-sidebar #chatTabView .newCommentForm {
+	/* Make room to show the "Add" button when chat is shown in the sidebar. */
+	margin-right: 44px;
+}
