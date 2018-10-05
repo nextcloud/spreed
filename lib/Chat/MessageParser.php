@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IUser;
@@ -41,8 +42,9 @@ class MessageParser {
 		$this->dispatcher = $dispatcher;
 	}
 
-	public function parseMessage(IComment $chatMessage, IL10N $l, IUser $user = null): array {
+	public function parseMessage(Room $room, IComment $chatMessage, IL10N $l, IUser $user = null): array {
 		$event = new GenericEvent($chatMessage, [
+			'room' => $room,
 			'user' => $user,
 			'l10n' => $l,
 		]);

@@ -139,6 +139,18 @@ class Listener {
 				$this->sendSystemMessage($room, 'moderator_demoted', ['user' => $event->getArgument('user')]);
 			}
 		});
+		$this->dispatcher->addListener(Room::class . '::postSetParticipantTypeBySession', function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+			/** @var Participant $participant */
+			$participant = $event->getArgument('participant');
+
+			if ($event->getArgument('newType') === Participant::GUEST_MODERATOR) {
+				$this->sendSystemMessage($room, 'guest_moderator_promoted', ['session' => sha1($participant->getSessionId())]);
+			} else if ($event->getArgument('newType') === Participant::GUEST) {
+				$this->sendSystemMessage($room, 'guest_moderator_demoted', ['session' => sha1($participant->getSessionId())]);
+			}
+		});
 		$listener = function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getSubject();
@@ -152,6 +164,7 @@ class Listener {
 		};
 		$this->dispatcher->addListener('OCP\Share::postShare', $listener);
 		$this->dispatcher->addListener(RoomShareProvider::class . '::' . 'share_file_again', $listener);
+
 		$this->dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
 			/** @var IComment $chatMessage */
 			$chatMessage = $event->getSubject();
@@ -162,7 +175,17 @@ class Listener {
 
 			/** @var SystemMessage $parser */
 			$parser = \OC::$server->query(SystemMessage::class);
-			$parser->setUserInfo($event->getArgument('l10n'), $event->getArgument('user'));
+
+			$user = $event->getArgument('user');
+			if ($user instanceof IUser) {
+				$parser->setUserInfo($event->getArgument('l10n'), $event->getArgument('user'));
+			} else {
+				/** @var Room $room */
+				$room = $event->getArgument('room');
+				/** @var TalkSession $talkSession */
+				$talkSession = \OC::$server->query(TalkSession::class);
+				$parser->setGuestInfo($event->getArgument('l10n'), sha1($talkSession->getSessionForRoom($room->getToken())));
+			}
 
 			try {
 				list($message, $parameters) = $parser->parseMessage($chatMessage);

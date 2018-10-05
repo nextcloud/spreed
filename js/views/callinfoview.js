@@ -44,8 +44,10 @@
 		'	</div>' +
 		'{{#if canModerate}}' +
 		'	<div class="share-link-options">' +
+		'		{{#if canFullModerate}}' +
 		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
 		'		<label for="link-checkbox" class="link-checkbox-label">' + t('spreed', 'Share link') + '</label>' +
+		'		{{/if}}' +
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
 		'			<div class="password-button">' +
@@ -88,6 +90,7 @@
 				isGuest: this.model.get('participantType') === 4,
 				isInCall: (this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0,
 				canModerate: canModerate,
+				canFullModerate: this._canFullModerate(),
 				isPublic: this.model.get('type') === 3,
 				showShareLink: !canModerate && this.model.get('type') === 3,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
@@ -235,6 +238,10 @@
 		},
 
 		_canModerate: function() {
+			return this._canFullModerate() || this.model.get('participantType') === 6;
+		},
+
+		_canFullModerate: function() {
 			return this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
 		},
 

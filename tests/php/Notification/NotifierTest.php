@@ -485,7 +485,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($comment);
 		$this->messageParser->expects($this->once())
 			->method('parseMessage')
-			->with($comment)
+			->with($room, $comment)
 			->willReturn(['Hi {mention-user1}', [
 				'mention-user1' => [
 					'type' => 'user',

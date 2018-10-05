@@ -587,6 +587,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `user_removed` - {actor} removed {user} from the conversation
 * `moderator_promoted` - {actor} promoted {user} to moderator
 * `moderator_demoted` - {actor} demoted {user} from moderator
+* `guest_moderator_promoted` - {actor} promoted {user} to moderator
+* `guest_moderator_demoted` - {actor} demoted {user} from moderator
         
 ## Guests
 

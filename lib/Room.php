@@ -527,6 +527,29 @@ class Room {
 	}
 
 	/**
+	 * @param Participant $participant
+	 * @param int $participantType
+	 */
+	public function setParticipantTypeBySession(Participant $participant, int $participantType) {
+		$this->dispatcher->dispatch(self::class . '::preSetParticipantTypeBySession', new GenericEvent($this, [
+			'participant' => $participant,
+			'newType' => $participantType,
+		]));
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_participants')
+			->set('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
+		$query->execute();
+
+		$this->dispatcher->dispatch(self::class . '::postSetParticipantTypeBySession', new GenericEvent($this, [
+			'participant' => $participant,
+			'newType' => $participantType,
+		]));
+	}
+
+	/**
 	 * @param IUser $user
 	 */
 	public function removeUser(IUser $user) {
@@ -791,6 +814,7 @@ class Room {
 				$guests[] = [
 					'inCall' => (int) $row['in_call'],
 					'lastPing' => (int) $row['last_ping'],
+					'participantType' => (int) $row['participant_type'],
 					'sessionId' => $row['session_id'],
 				];
 			}
