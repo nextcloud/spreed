@@ -205,6 +205,7 @@ class RoomController extends OCSController {
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
+			'lastReadMessage' => 0,
 			'unreadMessages' => 0,
 			'unreadMention' => false,
 			'isFavorite' => $favorite,
@@ -246,6 +247,7 @@ class RoomController extends OCSController {
 
 			$lastMention = $participant->getLastMentionMessage();
 			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+			$roomData['lastReadMessage'] = $lastReadMessage;
 		}
 
 		// Sort by lastPing

@@ -529,7 +529,7 @@
 			});
 			this._sidebarView.setCallInfoView(callInfoView);
 
-			this._messageCollection.setRoomToken(this.activeRoom.get('token'));
+			this._messageCollection.setRoomToken(this.activeRoom.get('token'), this.activeRoom.get('lastReadMessage'));
 			this._messageCollection.receiveMessages();
 		},
 		setPageTitle: function(title){

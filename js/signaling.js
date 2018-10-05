@@ -348,10 +348,10 @@
 		return defer;
 	};
 
-	OCA.Talk.Signaling.Base.prototype.startReceiveMessages = function() {
+	OCA.Talk.Signaling.Base.prototype.startReceiveMessages = function(lastKnownMessageId) {
 		this._waitTimeUntilRetry = 1;
 		this.receiveMessagesAgain = true;
-		this.lastKnownMessageId = 0;
+		this.lastKnownMessageId = lastKnownMessageId;
 
 		this._receiveChatMessages();
 	};

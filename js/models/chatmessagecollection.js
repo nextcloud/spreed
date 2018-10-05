@@ -77,11 +77,13 @@
 		 * explicitly called if needed.
 		 *
 		 * @param {?string} token the token of the room.
+		 * @param {?int} lastReadMessage the last read message in that room
 		 */
-		setRoomToken: function(token) {
+		setRoomToken: function(token, lastReadMessage) {
 			this.stopReceivingMessages();
 
 			this.token = token;
+			this.lastReadMessage = lastReadMessage || 0;
 
 			if (token !== null) {
 				this.signaling = OCA.SpreedMe.app.signaling;
@@ -103,7 +105,7 @@
 		receiveMessages: function() {
 			if (this.signaling) {
 				this.signaling.on("chatMessagesReceived", this._handler);
-				this.signaling.startReceiveMessages();
+				this.signaling.startReceiveMessages(this.lastReadMessage);
 			}
 		},
 
