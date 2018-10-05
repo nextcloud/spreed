@@ -89,6 +89,10 @@ class Application extends App {
 		/** @var \OCA\Spreed\PublicShareAuth\TemplateLoader $shareAuthTemplateLoader */
 		$shareAuthTemplateLoader = $this->getContainer()->query(\OCA\Spreed\PublicShareAuth\TemplateLoader::class);
 		$shareAuthTemplateLoader->register();
+
+		/** @var \OCA\Spreed\Files\Listener $filesListener */
+		$filesListener = $this->getContainer()->query(\OCA\Spreed\Files\Listener::class);
+		$filesListener->register();
 	}
 
 	protected function registerNotifier(IServerContainer $server) {
