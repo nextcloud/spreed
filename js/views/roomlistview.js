@@ -308,6 +308,8 @@
 		 * @param {integer} level
 		 */
 		_setNotificationLevel: function(level) {
+			this.model.set('notificationLevel', level);
+
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/notify',
 				data: { level: level },
