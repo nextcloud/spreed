@@ -35,6 +35,12 @@
 		USERSELFJOINED: 5,
 		GUEST_MODERATOR: 6,
 
+		/* Must stay in sync with values in "lib/Participant.php". */
+		NOTIFY_DEFAULT: 0,
+		NOTIFY_ALWAYS: 1,
+		NOTIFY_MENTION: 2,
+		NOTIFY_NEVER: 3,
+
 		/* Must stay in sync with values in "lib/Room.php". */
 		FLAG_DISCONNECTED: 0,
 		FLAG_IN_CALL: 1,

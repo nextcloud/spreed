@@ -73,6 +73,26 @@
 								'</li>'+
 								'{{/if}}'+
 								'{{/if}}'+
+								'<li><div class="separator"></div></li>'+
+								'<li{{#if notifyAlways}} class="active"{{/if}}>'+
+									'<button class="notify-always-button">'+
+										'<span class="icon-sound"></span>'+
+										'<span>'+t('spreed', 'Always notify')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'<li{{#if notifyMention}} class="active"{{/if}}>'+
+									'<button class="notify-mention-button">'+
+										'<span class="icon-user"></span>'+
+										'<span>'+t('spreed', 'Notify on @-mention')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'<li{{#if notifyNever}} class="active"{{/if}}>'+
+									'<button class="notify-never-button">'+
+										'<span class="icon-sound-off"></span>'+
+										'<span>'+t('spreed', 'Never notify')+'</span>'+
+									'</button>'+
+								'</li>'+
+								'<li><div class="separator"></div></li>'+
 								'{{#if isRemovable}}'+
 								'<li>'+
 									'<button class="remove-room-button">'+
@@ -116,6 +136,9 @@
 			'change:isFavorite': function() {
 				this.render();
 			},
+			'change:notificationLevel': function() {
+				this.render();
+			},
 			'change:unreadMessages': function() {
 				this.render();
 			},
@@ -139,8 +162,11 @@
 			// If a room is a one2one room it can not be removed from the list, only be deleted for both participants.
 			var isRemovable = this.model.get('type') !== 1;
 			return {
-				isRemovable: isRemovable,
 				canFavorite: this.model.get('participantType') !== 5,
+				notifyAlways: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_ALWAYS,
+				notifyMention: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_MENTION,
+				notifyNever: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_NEVER,
+				isRemovable: isRemovable,
 				isDeletable: !isRemovable || ((this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
 					(Object.keys(this.model.get('participants')).length > 1 || this.model.get('numGuests') > 0)),
 				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages')
@@ -169,6 +195,9 @@
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
 			'click @ui.menu .favorite-room-button': 'addRoomToFavorites',
 			'click @ui.menu .unfavorite-room-button': 'removeRoomFromFavorites',
+			'click @ui.menu .notify-always-button': 'setNotificationLevelAlways',
+			'click @ui.menu .notify-mention-button': 'setNotificationLevelMention',
+			'click @ui.menu .notify-never-button': 'setNotificationLevelNever',
 			'click @ui.menu .remove-room-button': 'removeRoom',
 			'click @ui.menu .delete-room-button': 'deleteRoom',
 			'click @ui.room': 'joinRoom'
@@ -261,6 +290,28 @@
 			$.ajax({
 				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/favorite',
 				type: 'DELETE',
+				success: function() {
+					OCA.SpreedMe.app.signaling.syncRooms();
+				}
+			});
+		},
+		setNotificationLevelAlways: function() {
+			this._setNotificationLevel(OCA.SpreedMe.app.NOTIFY_ALWAYS);
+		},
+		setNotificationLevelMention: function() {
+			this._setNotificationLevel(OCA.SpreedMe.app.NOTIFY_MENTION);
+		},
+		setNotificationLevelNever: function() {
+			this._setNotificationLevel(OCA.SpreedMe.app.NOTIFY_NEVER);
+		},
+		/**
+		 * @param {integer} level
+		 */
+		_setNotificationLevel: function(level) {
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/notify',
+				data: { level: level },
+				type: 'POST',
 				success: function() {
 					OCA.SpreedMe.app.signaling.syncRooms();
 				}
