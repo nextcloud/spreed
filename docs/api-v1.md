@@ -80,6 +80,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ### 5.0
 * `invite-by-mail` - Guests can be invited with their email address
+* `notification-levels` - Users can select when they want to be notified in conversations
 
 ## Room management
 
