@@ -86,9 +86,7 @@ class ChatManager {
 			$chat->setLastMessage($comment);
 
 			if ($sendNotifications) {
-				if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
-					$this->notifier->notifyOtherParticipant($chat, $comment);
-				}
+				$this->notifier->notifyOtherParticipant($chat, $comment, []);
 			}
 
 			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
