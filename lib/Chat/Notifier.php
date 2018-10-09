@@ -26,6 +26,7 @@ namespace OCA\Spreed\Chat;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Notification\IManager as INotificationManager;
@@ -69,7 +70,7 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 * @param IComment $comment
-	 * @return string[] The notified users
+	 * @return string[] Users that were mentioned
 	 */
 	public function notifyMentionedUsers(Room $chat, IComment $comment): array {
 		$mentionedUserIds = $this->getMentionedUserIds($comment);
@@ -78,17 +79,14 @@ class Notifier {
 		}
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
-
-		$notifiedUsers = [];
 		foreach ($mentionedUserIds as $mentionedUserId) {
 			if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {
 				$notification->setUser($mentionedUserId);
 				$this->notificationManager->notify($notification);
-				$notifiedUsers[] = $mentionedUserId;
 			}
 		}
 
-		return $notifiedUsers;
+		return $mentionedUserIds;
 	}
 
 	/**
@@ -102,25 +100,60 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 * @param IComment $comment
+	 * @param string[] $mentionedUsers
 	 */
-	public function notifyOtherParticipant(Room $chat, IComment $comment) {
-		$participants = $chat->getParticipants();
+	public function notifyOtherParticipant(Room $chat, IComment $comment, array $mentionedUsers) {
+		$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_ALWAYS);
 
-		foreach ($participants['users'] as $userId => $participant) {
-			if ($userId === $comment->getActorId()) {
+		$notification = $this->createNotification($chat, $comment, 'chat');
+		foreach ($participants as $participant) {
+			if ($participant->isGuest()) {
+				continue;
+			}
+
+			if ($participant->getUser() === $comment->getActorId()) {
 				// Do not notify the author
 				continue;
 			}
 
-			if ($participant['sessionId'] && $participant['sessionId'] !== '0') {
+			if (\in_array($participant->getUser(), $mentionedUsers, true)) {
+				continue;
+			}
+
+			if ($participant->getSessionId() !== '0') {
 				// User is online
 				continue;
 			}
 
-			$notification = $this->createNotification($chat, $comment, 'chat');
-			$notification->setUser($userId);
-
+			$notification->setUser($participant->getUser());
 			$this->notificationManager->notify($notification);
+		}
+
+		// Also notify default participants in one2one chats
+		if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
+			$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_DEFAULT);
+			foreach ($participants as $participant) {
+				if ($participant->isGuest()) {
+					continue;
+				}
+
+				if ($participant->getUser() === $comment->getActorId()) {
+					// Do not notify the author
+					continue;
+				}
+
+				if (\in_array($participant->getUser(), $mentionedUsers, true)) {
+					continue;
+				}
+
+				if ($participant->getSessionId() !== '0') {
+					// User is online
+					continue;
+				}
+
+				$notification->setUser($participant->getUser());
+				$this->notificationManager->notify($notification);
+			}
 		}
 	}
 
@@ -240,13 +273,12 @@ class Notifier {
 
 		try {
 			$room = $this->manager->getRoomById($comment->getObjectId());
-			$room->getParticipant($userId);
+			$participant = $room->getParticipant($userId);
+			return $participant->getNotificationLevel() !== Participant::NOTIFY_NEVER;
 		} catch (RoomNotFoundException $e) {
 			return false;
 		} catch (ParticipantNotFoundException $e) {
 			return false;
 		}
-
-		return true;
 	}
 }

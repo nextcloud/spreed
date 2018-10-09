@@ -13,6 +13,7 @@
   * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
   * [Add room to favorites](#add-room-to-favorites)
   * [Remove room from favorites](#remove-room-from-favorites)
+  * [Set notification level](#set-notification-level)
 - [Participant management](#participant-management)
   * [Get list of participants in a room](#get-list-of-participants-in-a-room)
   * [Add a participant to a room](#add-a-participant-to-a-room)
@@ -79,6 +80,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ### 5.0
 * `invite-by-mail` - Guests can be invited with their email address
+* `notification-levels` - Users can select when they want to be notified in conversations
 
 ## Room management
 
@@ -140,6 +142,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `hasCall` | bool | Flag if the room has an active call
         `lastActivity` | int | Timestamp of the last activity in the room, in seconds and UTC time zone
         `isFavorite` | bool | Flag if the room is favorited by the user
+        `notificationLevel` | int | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
         `unreadMessages` | int | Number of unread chat messages in the room (only available with `chat-v2` capability)
         `unreadMention` | bool | Flag if the user was mentioned since their last visit
         `lastMessage` | message | Last message in a room if available, otherwise empty
@@ -260,6 +263,22 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant or the participant is a guest
+
+### Set notification level
+
+* Method: `POST`
+* Endpoint: `/room/{token}/notify`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `level` | int | The notification level (one of `Participant::NOTIFY_*` (1-3))
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `400 Bad Request` When the the given level is invalid
         + `404 Not Found` When the room could not be found for the participant or the participant is a guest
 
 ## Participant management

@@ -189,95 +189,67 @@ class Notifier implements INotifier {
 		$notification->setParsedMessage(str_replace($placeholders, $replacements, $richMessage));
 		$notification->setRichMessage($richMessage, $richMessageParameters);
 
+		$richSubjectParameters = [
+			'user' => $richSubjectUser,
+			'call' => $richSubjectCall,
+		];
+
 		if ($notification->getSubject() === 'chat') {
-			$notification
-				->setParsedSubject(str_replace('{user}', $user->getDisplayName(), $l->t('{user} sent you a private message')))
-				->setRichSubject(
-					$l->t('{user} sent you a private message'), [
-						'user' => $richSubjectUser,
-						'call' => $richSubjectCall,
-					]
-				);
-
-		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$notification
-				->setParsedSubject(
-					$l->t('%s mentioned you in a private conversation', [$user->getDisplayName()])
-				)
-				->setRichSubject(
-					$l->t('{user} mentioned you in a private conversation'), [
-						'user' => $richSubjectUser,
-						'call' => $richSubjectCall,
-					]
-				);
-
-		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($richSubjectUser && $room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						$l->t('%s mentioned you in a group conversation: %s', [$user->getDisplayName(), $room->getName()])
-					)
-					->setRichSubject(
-						$l->t('{user} mentioned you in a group conversation: {call}'), [
-							'user' => $richSubjectUser,
-							'call' => $richSubjectCall,
-						]
-					);
-			} else if ($richSubjectUser) {
-				$notification
-					->setParsedSubject(
-						$l->t('%s mentioned you in a group conversation', [$user->getDisplayName()])
-					)
-					->setRichSubject(
-						$l->t('{user} mentioned you in a group conversation'), [
-							'user' => $richSubjectUser,
-							'call' => $richSubjectCall,
-						]
-					);
-			} else if (!$isGuest && $room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						$l->t('You were mentioned in a group conversation by a deleted user: %s', [$room->getName()])
-					)
-					->setRichSubject(
-						$l->t('You were mentioned in a group conversation by a deleted user: {call}'), [
-							'call' => $richSubjectCall,
-						]
-					);
-			} else if (!$isGuest) {
-				$notification
-					->setParsedSubject(
-						$l->t('You were mentioned in a group conversation by a deleted user')
-					)
-					->setRichSubject(
-						$l->t('You were mentioned in a group conversation by a deleted user'), [
-							'call' => $richSubjectCall,
-						]
-					);
-			} else if ($room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						$l->t('A guest mentioned you in a group conversation: %s', [$room->getName()])
-					)
-					->setRichSubject(
-						$l->t('A guest mentioned you in a group conversation: {call}'), [
-							'call' => $richSubjectCall,
-						]
-					);
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$subject = $l->t('{user} sent you a private message');
 			} else {
-				$notification
-					->setParsedSubject(
-						$l->t('A guest mentioned you in a group conversation')
-					)
-					->setRichSubject(
-						$l->t('A guest mentioned you in a group conversation'), [
-							'call' => $richSubjectCall,
-						]
-					);
+				if ($richSubjectUser) {
+					if ($room->getName() !== '') {
+						$subject = $l->t('{user} sent a message in conversation {call}');
+					} else {
+						$subject = $l->t('{user} sent a message in a conversation');
+					}
+				} else if (!$isGuest) {
+					if ($room->getName() !== '') {
+						$subject = $l->t('A deleted user sent a message in conversation {call}');
+					} else {
+						$subject = $l->t('A deleted user sent a message in a conversation');
+					}
+				} else if ($room->getName() !== '') {
+					$subject = $l->t('A guest sent a message in conversation {call}');
+				} else {
+					$subject = $l->t('A guest sent a message in a conversation');
+				}
 			}
+		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$subject = $l->t('{user} mentioned you in a private conversation');
 		} else {
-			throw new \InvalidArgumentException('Unknown room type');
+			if ($richSubjectUser) {
+				if ($room->getName() !== '') {
+					$subject = $l->t('{user} mentioned you in conversation {call}');
+				} else {
+					$subject = $l->t('{user} mentioned you in a conversation');
+				}
+			} else if (!$isGuest) {
+				if ($room->getName() !== '') {
+					$subject = $l->t('A deleted user mentioned you in conversation {call}');
+				} else {
+					$subject = $l->t('A deleted user mentioned you in a conversation');
+				}
+			} else if ($room->getName() !== '') {
+				$subject = $l->t('A guest mentioned you in conversation {call}');
+			} else {
+				$subject = $l->t('A guest mentioned you in a conversation');
+			}
 		}
+
+		if ($richSubjectParameters['user'] === null) {
+			unset($richSubjectParameters['user']);
+		}
+
+		$placeholders = $replacements = [];
+		foreach ($richSubjectParameters as $placeholder => $parameter) {
+			$placeholders[] = '{' . $placeholder . '}';
+			$replacements[] = $parameter['name'];
+		}
+
+		$notification->setParsedSubject(str_replace($placeholders, $replacements, $subject))
+			->setRichSubject($subject, $richSubjectParameters);
 
 		return $notification;
 	}

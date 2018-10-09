@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Spreed;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
@@ -41,6 +40,11 @@ class Participant {
 	const FLAG_WITH_AUDIO = 2;
 	const FLAG_WITH_VIDEO = 4;
 
+	const NOTIFY_DEFAULT = 0;
+	const NOTIFY_ALWAYS = 1;
+	const NOTIFY_MENTION = 2;
+	const NOTIFY_NEVER = 3;
+
 	/** @var IDBConnection */
 	protected $db;
 	/** @var Room */
@@ -55,12 +59,14 @@ class Participant {
 	protected $sessionId;
 	/** @var int */
 	protected $inCall;
+	/** @var int */
+	protected $notificationLevel;
 	/** @var bool */
 	private $isFavorite;
 	/** @var \DateTime|null */
 	private $lastMention;
 
-	public function __construct(IDBConnection $db, Room $room, string $user, int $participantType, int $lastPing, string $sessionId, int $inCall, bool $isFavorite, \DateTime $lastMention = null) {
+	public function __construct(IDBConnection $db, Room $room, string $user, int $participantType, int $lastPing, string $sessionId, int $inCall, int $notificationLevel, bool $isFavorite, \DateTime $lastMention = null) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -68,6 +74,7 @@ class Participant {
 		$this->lastPing = $lastPing;
 		$this->sessionId = $sessionId;
 		$this->inCall = $inCall;
+		$this->notificationLevel = $notificationLevel;
 		$this->isFavorite = $isFavorite;
 		$this->lastMention = $lastMention;
 	}
@@ -128,6 +135,34 @@ class Participant {
 		$query->execute();
 
 		$this->isFavorite = $favor;
+		return true;
+	}
+
+	public function getNotificationLevel(): int {
+		return $this->notificationLevel;
+	}
+
+	public function setNotificationLevel(int $notificationLevel): bool {
+		if (!$this->user) {
+			return false;
+		}
+
+		if (!\in_array($notificationLevel, [
+			self::NOTIFY_ALWAYS,
+			self::NOTIFY_MENTION,
+			self::NOTIFY_NEVER
+		], true)) {
+			return false;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_participants')
+			->set('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('user_id', $query->createNamedParameter($this->user)))
+			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->room->getId())));
+		$query->execute();
+
+		$this->notificationLevel = $notificationLevel;
 		return true;
 	}
 }

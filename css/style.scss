@@ -755,6 +755,18 @@ video {
 	float: inherit;
 }
 
+#app-navigation .app-navigation-entry-menu li.active {
+	box-shadow: inset 4px 0 var(--color-primary);
+	margin-left: -1px;
+	padding-left: 1px;
+}
+
+#app-navigation .app-navigation-entry-menu li div.separator {
+	border-bottom: 1px solid var(--color-border-dark);
+	margin: 0 10px;
+}
+
+
 #app-navigation .app-navigation-entry-menu li button {
 	float: inherit !important;
 	margin: 0;

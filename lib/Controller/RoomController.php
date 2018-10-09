@@ -208,21 +208,21 @@ class RoomController extends OCSController {
 			'unreadMessages' => 0,
 			'unreadMention' => false,
 			'isFavorite' => $favorite,
+			'notificationLevel' => $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION,
+			'lastPing' => 0,
+			'sessionId' => '0',
+			'participants' => [],
+			'numGuests' => 0,
+			'guestList' => '',
+			'lastMessage' => [],
 		];
 
 		if (!$participant instanceof Participant) {
-			// Unauthenticated user without a session (didn't enter password)
-			$roomData = array_merge($roomData, [
-				'lastPing' => 0,
-				'sessionId' => '0',
-				'participants' => [],
-				'numGuests' => 0,
-				'hasCall' => false,
-				'guestList' => '',
-				'lastMessage' => [],
-			]);
-
 			return $roomData;
+		}
+
+		if ($participant->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
+			$roomData['notificationLevel'] = $participant->getNotificationLevel();
 		}
 
 		if ($room->getObjectType() === 'share:password') {
@@ -588,6 +588,29 @@ class RoomController extends OCSController {
 		return new DataResponse([]);
 	}
 
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token
+	 * @param int $level
+	 * @return DataResponse
+	 */
+	public function setNotificationLevel(string $token, int $level): DataResponse {
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
+		} catch (RoomNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$currentParticipant->setNotificationLevel($level)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
 
 	/**
 	 * @PublicPage

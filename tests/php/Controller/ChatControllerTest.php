@@ -23,7 +23,6 @@
 
 namespace OCA\Spreed\Tests\php\Controller;
 
-use OC\L10N\L10N;
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
@@ -39,6 +38,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
+use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -76,7 +76,7 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var ISearchResult|\PHPUnit_Framework_MockObject_MockObject */
 	protected $searchResult;
 
-	/** @var L10N|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject */
 	private $l;
 
 	/** @var Room|\PHPUnit_Framework_MockObject_MockObject */
@@ -101,7 +101,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
-		$this->l = $this->createMock(L10N::class);
+		$this->l = $this->createMock(IL10N::class);
 
 		$this->room = $this->createMock(Room::class);
 

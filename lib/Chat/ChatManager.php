@@ -86,9 +86,7 @@ class ChatManager {
 			$chat->setLastMessage($comment);
 
 			if ($sendNotifications) {
-				if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
-					$this->notifier->notifyOtherParticipant($chat, $comment);
-				}
+				$this->notifier->notifyOtherParticipant($chat, $comment, []);
 			}
 
 			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
@@ -124,13 +122,13 @@ class ChatManager {
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-			$notifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
-			if (!empty($notifiedUsers)) {
-				$chat->markUsersAsMentioned($notifiedUsers, $creationDateTime);
-			} else if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
-				// User was not mentioned, send a normal notification
-				$this->notifier->notifyOtherParticipant($chat, $comment);
+			$mentionedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
+			if (!empty($mentionedUsers)) {
+				$chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
 			}
+
+			// User was not mentioned, send a normal notification
+			$this->notifier->notifyOtherParticipant($chat, $comment, $mentionedUsers);
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
 				'comment' => $comment,

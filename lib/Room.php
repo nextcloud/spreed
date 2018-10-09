@@ -828,6 +828,27 @@ class Room {
 	}
 
 	/**
+	 * @param int $notificationLevel
+	 * @return Participant[] Array of participants
+	 */
+	public function getParticipantsByNotificationLevel(int $notificationLevel): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('notification_level', $query->createNamedParameter($notificationLevel, IQueryBuilder::PARAM_INT)));
+		$result = $query->execute();
+
+		$participants = [];
+		while ($row = $result->fetch()) {
+			$participants[] = $this->manager->createParticipantObject($this, $row);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
 	 * @return string[]
 	 */
 	public function getActiveSessions() {
