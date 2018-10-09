@@ -39,6 +39,7 @@ use OCP\AppFramework\OCSController;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
+use OCP\Comments\MessageTooLongException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -183,6 +184,8 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$currentUser = null;
+		$displayName = '';
 		if ($this->userId === null) {
 			$actorType = 'guests';
 			$sessionId = $this->session->getSessionForRoom($token);
@@ -195,10 +198,19 @@ class ChatController extends OCSController {
 
 			if ($sessionId && $actorDisplayName) {
 				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
+				$displayName = $actorDisplayName;
+			} else if ($sessionId) {
+				try {
+					$displayName = $this->guestManager->getNameBySessionHash($actorId);
+				} catch (ParticipantNotFoundException $e) {
+					$displayName = '';
+				}
 			}
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;
+			$currentUser = $this->userManager->get($this->userId);
+			$displayName = $currentUser instanceof IUser ? $currentUser->getDisplayName() : '';
 		}
 
 		if (!$actorId) {
@@ -207,9 +219,27 @@ class ChatController extends OCSController {
 
 		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
 
-		$this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
+		try {
+			$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
+		} catch (MessageTooLongException $e) {
+			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
 
-		return new DataResponse([], Http::STATUS_CREATED);
+		list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
+
+		return new DataResponse([
+			'id' => (int) $comment->getId(),
+			'token' => $token,
+			'actorType' => $comment->getActorType(),
+			'actorId' => $comment->getActorId(),
+			'actorDisplayName' => $displayName,
+			'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+			'message' => $message,
+			'messageParameters' => $messageParameters,
+			'systemMessage' => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
+		], Http::STATUS_CREATED);
 	}
 
 	/**

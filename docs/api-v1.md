@@ -563,7 +563,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `201 Created`
+        + `400 Bad Request` In case of any other error
         + `404 Not Found` When the room could not be found for the participant
+        + `413 Payload Too Large` When the message was longer than the allowed limit of 1000 characters
+
+    - Data:
+        The full message array of the new message, as defined in [Receive chat messages of a room](#receive-chat-messages-of-a-room)
 
 ### Get mention autocomplete suggestions
 

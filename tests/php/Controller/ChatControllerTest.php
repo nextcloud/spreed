@@ -43,6 +43,7 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\Constraint\Callback;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ChatControllerTest extends \Test\TestCase {
 
@@ -159,17 +160,45 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
+		$date = new \DateTime();
+		/** @var IComment|MockObject $comment */
+		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
-				   'users',
-				   $this->userId,
-				   'testMessage',
-				   $this->newMessageDateTimeConstraint
-			);
+				'users',
+				$this->userId,
+				'testMessage',
+				$this->newMessageDateTimeConstraint
+			)
+			->willReturn($comment);
+
+		$user = $this->createMock(IUser::class);
+		$user->expects($this->once())
+			->method('getDisplayName')
+			->willReturn('displayName');
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with($this->userId)
+			->willReturn($user);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($this->room, $comment, $this->l, $user)
+			->willReturn(['parsedMessage', ['arg' => 'uments']]);
 
 		$response = $this->controller->sendMessage('testToken', 'testMessage');
-		$expected = new DataResponse([], Http::STATUS_CREATED);
+		$expected = new DataResponse([
+			'id' => 42,
+			'token' => 'testToken',
+			'actorType' => 'user',
+			'actorId' => $this->userId,
+			'actorDisplayName' => 'displayName',
+			'timestamp' => $date->getTimestamp(),
+			'message' => 'parsedMessage',
+			'messageParameters' => ['arg' => 'uments'],
+			'systemMessage' => '',
+		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -194,17 +223,45 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getParticipant')
 			->with($this->userId);
 
+		$date = new \DateTime();
+		/** @var IComment|MockObject $comment */
+		$comment = $this->newComment(23, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
-				   'users',
-				   $this->userId,
-				   'testMessage',
-				   $this->newMessageDateTimeConstraint
-			);
+				'users',
+				$this->userId,
+				'testMessage',
+				$this->newMessageDateTimeConstraint
+			)
+			->willReturn($comment);
+
+		$user = $this->createMock(IUser::class);
+		$user->expects($this->once())
+			->method('getDisplayName')
+			->willReturn('displayName');
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with($this->userId)
+			->willReturn($user);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($this->room, $comment, $this->l, $user)
+			->willReturn(['parsedMessage2', ['arg' => 'uments2']]);
 
 		$response = $this->controller->sendMessage('testToken', 'testMessage');
-		$expected = new DataResponse([], Http::STATUS_CREATED);
+		$expected = new DataResponse([
+			'id' => 23,
+			'token' => 'testToken',
+			'actorType' => 'user',
+			'actorId' => $this->userId,
+			'actorDisplayName' => 'displayName',
+			'timestamp' => $date->getTimestamp(),
+			'message' => 'parsedMessage2',
+			'messageParameters' => ['arg' => 'uments2'],
+			'systemMessage' => '',
+		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -256,17 +313,41 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
+		$date = new \DateTime();
+		/** @var IComment|MockObject $comment */
+		$comment = $this->newComment(64, 'guest', sha1('testSpreedSession'), $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
-				   'guests',
-				   sha1('testSpreedSession'),
-				   'testMessage',
-				   $this->newMessageDateTimeConstraint
-			);
+				'guests',
+				sha1('testSpreedSession'),
+				'testMessage',
+				$this->newMessageDateTimeConstraint
+			)
+			->willReturn($comment);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($this->room, $comment, $this->l, null)
+			->willReturn(['parsedMessage3', ['arg' => 'uments3']]);
+
+		$this->guestManager->expects($this->once())
+			->method('getNameBySessionHash')
+			->with(sha1('testSpreedSession'))
+			->willReturn('guest name');
 
 		$response = $this->controller->sendMessage('testToken', 'testMessage');
-		$expected = new DataResponse([], Http::STATUS_CREATED);
+		$expected = new DataResponse([
+			'id' => 64,
+			'token' => 'testToken',
+			'actorType' => 'guest',
+			'actorId' => $comment->getActorId(),
+			'actorDisplayName' => 'guest name',
+			'timestamp' => $date->getTimestamp(),
+			'message' => 'parsedMessage3',
+			'messageParameters' => ['arg' => 'uments3'],
+			'systemMessage' => '',
+		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
 	}
