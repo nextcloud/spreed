@@ -200,7 +200,11 @@ class ChatController extends OCSController {
 				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
 				$displayName = $actorDisplayName;
 			} else if ($sessionId) {
-				$displayName = $this->guestManager->getNameBySessionHash($actorId);
+				try {
+					$displayName = $this->guestManager->getNameBySessionHash($actorId);
+				} catch (ParticipantNotFoundException $e) {
+					$displayName = '';
+				}
 			}
 		} else {
 			$actorType = 'users';
