@@ -111,15 +111,7 @@
     "Talk to %s" : "Hablar con %s",
     "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
     ", " : ",",
-    "%s mentioned you in a private conversation" : "%s te mencionó en una conversación privada",
     "{user} mentioned you in a private conversation" : "{user} te mencionó en una conversación privada",
-    "%s mentioned you in a group conversation: %s" : "%s te mencionó en una conversación de grupo: %s",
-    "{user} mentioned you in a group conversation: {call}" : "{user} te mencionó en una conversación de grupo: {call} ",
-    "%s mentioned you in a group conversation" : "%s te mencionó en una conversación de grupo",
-    "{user} mentioned you in a group conversation" : "{user} te mencionó en una conversación de grupo",
-    "A guest mentioned you in a group conversation: %s" : "Un invitado te mencionó en una conversación de grupo: %s",
-    "A guest mentioned you in a group conversation: {call}" : "Un invitado te mencionó en una conversación de grupo: {call}",
-    "A guest mentioned you in a group conversation" : "Un invitado te mencionó en una conversación de grupo",
     "%s invited you to a private conversation" : "%s te invitó a una conversación privada",
     "{user} invited you to a private conversation" : " {user} te invitó a una conversación privada",
     "%s invited you to a group conversation: %s" : "%s te invitó a una conversación de grupo: %s",
@@ -178,6 +170,14 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "El servidor STUN se usa para determinar la dirección IP pública de los participantes que se encuentran detrás de un enrutador. ",
     "… %s" : "... %s",
     "%s …" : "%s ...",
-    "… %s …" : "... %s ..."
+    "… %s …" : "... %s ...",
+    "%s mentioned you in a private conversation" : "%s te mencionó en una conversación privada",
+    "%s mentioned you in a group conversation: %s" : "%s te mencionó en una conversación de grupo: %s",
+    "{user} mentioned you in a group conversation: {call}" : "{user} te mencionó en una conversación de grupo: {call} ",
+    "%s mentioned you in a group conversation" : "%s te mencionó en una conversación de grupo",
+    "{user} mentioned you in a group conversation" : "{user} te mencionó en una conversación de grupo",
+    "A guest mentioned you in a group conversation: %s" : "Un invitado te mencionó en una conversación de grupo: %s",
+    "A guest mentioned you in a group conversation: {call}" : "Un invitado te mencionó en una conversación de grupo: {call}",
+    "A guest mentioned you in a group conversation" : "Un invitado te mencionó en una conversación de grupo"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
