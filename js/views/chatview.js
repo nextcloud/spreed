@@ -388,18 +388,14 @@
 			return data;
 		},
 
-		_onAddModel: function(model, collection, options) {
+		_onAddModel: function(model) {
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
 			var $newestComment = this.$container.children('.comment').last();
 			var scrollToNew = $newestComment.length > 0 && this._getCommentTopPosition($newestComment) < this.$container.outerHeight();
 
 			var $el = $(this.commentTemplate(this._formatItem(model)));
-			if (!_.isUndefined(options.at) && collection.length > 1) {
-				this.$container.find('li').eq(options.at).before($el);
-			} else {
-				this.$container.append($el);
-			}
+			this.$container.append($el);
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
 					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
