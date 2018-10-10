@@ -112,15 +112,7 @@
     "Talk to %s" : "Talk to %s",
     "_%n other guest_::_%n other guests_" : ["%n other guest","%n other guests"],
     ", " : ", ",
-    "%s mentioned you in a private conversation" : "%s mentioned you in a private conversation",
     "{user} mentioned you in a private conversation" : "{user} mentioned you in a private conversation",
-    "%s mentioned you in a group conversation: %s" : "%s mentioned you in a group conversation: %s",
-    "{user} mentioned you in a group conversation: {call}" : "{user} mentioned you in a group conversation: {call}",
-    "%s mentioned you in a group conversation" : "%s mentioned you in a group conversation",
-    "{user} mentioned you in a group conversation" : "{user} mentioned you in a group conversation",
-    "A guest mentioned you in a group conversation: %s" : "A guest mentioned you in a group conversation: %s",
-    "A guest mentioned you in a group conversation: {call}" : "A guest mentioned you in a group conversation: {call}",
-    "A guest mentioned you in a group conversation" : "A guest mentioned you in a group conversation",
     "%s invited you to a private conversation" : "%s invited you to a private conversation",
     "{user} invited you to a private conversation" : "{user} invited you to a private conversation",
     "%s invited you to a group conversation: %s" : "%s invited you to a group conversation: %s",
@@ -179,6 +171,14 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "The STUN server is used to determine the public IP address of participants behind a router.",
     "… %s" : "… %s",
     "%s …" : "%s …",
-    "… %s …" : "… %s …"
+    "… %s …" : "… %s …",
+    "%s mentioned you in a private conversation" : "%s mentioned you in a private conversation",
+    "%s mentioned you in a group conversation: %s" : "%s mentioned you in a group conversation: %s",
+    "{user} mentioned you in a group conversation: {call}" : "{user} mentioned you in a group conversation: {call}",
+    "%s mentioned you in a group conversation" : "%s mentioned you in a group conversation",
+    "{user} mentioned you in a group conversation" : "{user} mentioned you in a group conversation",
+    "A guest mentioned you in a group conversation: %s" : "A guest mentioned you in a group conversation: %s",
+    "A guest mentioned you in a group conversation: {call}" : "A guest mentioned you in a group conversation: {call}",
+    "A guest mentioned you in a group conversation" : "A guest mentioned you in a group conversation"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
