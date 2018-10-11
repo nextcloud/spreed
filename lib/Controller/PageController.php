@@ -139,27 +139,17 @@ class PageController extends Controller {
 			$this->session->removePasswordForRoom($token);
 
 			if ($room instanceof Room && $room->hasPassword()) {
-				// If the user joined themselves or is not found, they need the password.
-				try {
-					$participant = $room->getParticipant($this->userId);
-					$requirePassword = $participant->getParticipantType() === Participant::USER_SELF_JOINED;
-				} catch (ParticipantNotFoundException $e) {
-					$requirePassword = true;
-				}
+				// Always verify the password so that our hooks are called
+				$passwordVerification = $room->verifyPassword($password);
 
-				if ($requirePassword) {
-
-					$passwordVerification = $room->verifyPassword($password);
-
-					if ($passwordVerification['result']) {
-						$this->session->setPasswordForRoom($token, $token);
-					} else {
-						if ($passwordVerification['url'] === '') {
-							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
-						}
-						else {
-							return new RedirectResponse($passwordVerification['url']);
-						}
+				if ($passwordVerification['result']) {
+					$this->session->setPasswordForRoom($token, $token);
+				} else {
+					if ($passwordVerification['url'] === '') {
+						return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+					}
+					else {
+						return new RedirectResponse($passwordVerification['url']);
 					}
 				}
 			}

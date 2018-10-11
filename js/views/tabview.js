@@ -133,7 +133,11 @@
 			// _.map creates an array, so "currentPriorities" will contain a
 			// "length" property.
 			var currentPriorities = _.map(this._tabIds, _.bind(function(tabId) {
-				return this.getRegion(tabId).currentView.getOption('priority');
+				var region = this.getRegion(tabId);
+				if (typeof region !== 'undefined') {
+					return region.currentView.getOption('priority');
+				}
+				return 0;
 			}, this));
 
 			var index = _.findIndex(currentPriorities, function(currentPriority) {
