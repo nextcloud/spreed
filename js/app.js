@@ -452,6 +452,10 @@
 								self.activeRoom = room;
 							}
 						});
+
+						if (self.activeRoom === null) {
+							self.activeRoom = new OCA.SpreedMe.Models.Room({ token: self.token });
+						}
 						participants = self.activeRoom.get('participants');
 					} else {
 						// The public page supports only a single room, so the
