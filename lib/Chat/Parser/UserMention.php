@@ -86,7 +86,8 @@ class UserMention {
 			// index of the mentions of that type.
 			$mentionParameterId = 'mention-' . $mention['type'] . $mentionTypeCount[$mention['type']];
 
-			$message = str_replace('@' . $mention['id'], '{' . $mentionParameterId . '}', $message);
+			$placeholder = strpos($mention['id'], ' ') !== false ? ('@"' . $mention['id'] . '"') : ('@' .  $mention['id']);
+			$message = str_replace($placeholder, '{' . $mentionParameterId . '}', $message);
 
 			try {
 				$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
