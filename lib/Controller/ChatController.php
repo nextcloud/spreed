@@ -40,6 +40,7 @@ use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
+use OCP\Files\IRootFolder;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -83,6 +84,9 @@ class ChatController extends OCSController {
 	/** @var ISearchResult */
 	private $searchResult;
 
+	/** @var IRootFolder */
+	private $rootFolder;
+
 	/** @var IL10N */
 	private $l;
 
@@ -99,6 +103,7 @@ class ChatController extends OCSController {
 	 * @param IManager $autoCompleteManager
 	 * @param SearchPlugin $searchPlugin
 	 * @param ISearchResult $searchResult
+	 * @param IRootFolder $rootFolder
 	 * @param IL10N $l
 	 */
 	public function __construct(string $appName,
@@ -113,6 +118,7 @@ class ChatController extends OCSController {
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
+								IRootFolder $rootFolder,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -126,6 +132,7 @@ class ChatController extends OCSController {
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
+		$this->rootFolder = $rootFolder;
 		$this->l = $l;
 	}
 
@@ -402,6 +409,85 @@ class ChatController extends OCSController {
 		return new DataResponse($results);
 	}
 
+	/**
+	 * @NoAdminRequired
+	 *
+	 * @param string $token the room token
+	 * @param string $since
+	 * @return DataResponse
+	 */
+	public function saveChatLog(string $token, string $since): DataResponse {
+		$room = $this->getRoom($token);
+		if ($room === null) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		try {
+			$room->getParticipant($this->userId);
+		} catch (ParticipantNotFoundException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$dateTime = \DateTime::createFromFormat(\DateTime::ATOM, $since);
+		if (!$dateTime instanceof \DateTime) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$userFolder = $this->rootFolder->getUserFolder($this->userId);
+		$file = $userFolder->newFile($room->getName() . '-' . $since . '.txt');
+		$handle = $file->fopen('w+');
+
+		$offsetMessageId = $this->chatManager->getLastMessageBeforeDate($room, $dateTime);
+		$comments = $this->chatManager->getHistory($room, $offsetMessageId, 200, 'asc');
+
+		$guestNames = [];
+		$guestNumber = 1;
+		while (!empty($comments)) {
+			/** @var IComment $comment */
+			$comment = array_shift($comments);
+			list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, null);
+
+			if ($comment->getVerb() !== 'comment') {
+				continue;
+			}
+
+			$line = $this->l->l('datetime', $comment->getCreationDateTime());
+			if ($comment->getActorType() === 'users') {
+				$author = $this->userManager->get($comment->getActorId());
+				if ($author instanceof IUser) {
+					$line .= ' @' . $author->getDisplayName() . ': ';
+				} else {
+					$line .= ' @' . $comment->getActorId() . ': ';
+				}
+			} else {
+				if (!isset($guestNames[$comment->getActorId()])) {
+					try {
+						$guestNames[$comment->getActorId()] = $this->guestManager->getNameBySessionHash($comment->getActorId());
+					} catch (ParticipantNotFoundException $e) {
+						$guestNames[$comment->getActorId()] = $this->l->t('Guest') . ' #' . $guestNumber;
+						$guestNumber++;
+					}
+				}
+				$line .= ' ' . $guestNames[$comment->getActorId()] . ' (' . $this->l->t('Guest') . '): ';
+			}
+
+			$search = $replace = [];
+			foreach ($messageParameters as $key => $parameter) {
+				$search[] = '{' . $key . '}';
+				$replace[] = ($parameter['type'] === 'user' ? '@' : '') . $parameter['name'];
+			}
+			$search[] = "\n";
+			$replace[] = "\n   ";
+			$line .= str_replace($search, $replace, $message);
+			fwrite($handle, $line . "\n");
+
+		}
+
+		fclose($handle);
+		$file->touch();
+
+		return new DataResponse();
+	}
 
 	protected function prepareResultArray(array $results): array {
 		$output = [];

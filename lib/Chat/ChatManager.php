@@ -145,7 +145,11 @@ class ChatManager {
 			return 0;
 		}
 
-		return $this->commentsManager->getLastCommentBeforeDate('chat', (string) $chat->getId(), $marker, 'comment');
+		return $this->getLastMessageBeforeDate($chat, $marker);
+	}
+
+	public function getLastMessageBeforeDate(Room $chat, \DateTime $dateTime): int {
+		return $this->commentsManager->getLastCommentBeforeDate('chat', (string) $chat->getId(), $dateTime, 'comment');
 	}
 
 	public function getUnreadCount(Room $chat, int $lastReadMessage): int {
@@ -158,12 +162,12 @@ class ChatManager {
 	 * @param Room $chat
 	 * @param int $offset Last known message id
 	 * @param int $limit
+	 * @param string $sort
 	 * @return IComment[] the messages found (only the id, actor type and id,
-	 *         creation date and message are relevant), or an empty array if the
-	 *         timeout expired.
+	 *         creation date and message are relevant)
 	 */
-	public function getHistory(Room $chat, $offset, $limit): array {
-		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'desc', $limit);
+	public function getHistory(Room $chat, int $offset, int $limit, string $sort = 'desc'): array {
+		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, strtolower($sort), $limit);
 	}
 
 	/**
