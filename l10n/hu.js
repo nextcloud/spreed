@@ -44,7 +44,7 @@ OC.L10N.register(
     "Change password" : "Jelszó módosítása",
     "Set password" : "Jelszó beállítása",
     "Name" : "Név",
-    "Rename" : "Átnevez",
+    "Rename" : "Átnevezés",
     "Copy link" : "Hivatkozás másolása",
     "Conversation with {name}" : "Beszélgetés vele: {name}",
     "Error occurred while setting password" : "Hiba a jelszó beállításakor",
