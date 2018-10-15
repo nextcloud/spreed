@@ -31,6 +31,9 @@ install-npm-deps:
 install-npm-deps-dev:
 	npm install --deps
 
+build-js-templates:
+	handlebars -n OCA.VideoCalls.Admin.Templates js/admin/templates/ -f js/admin/templates.js
+
 dev-setup: install-npm-deps-dev
 
 appstore: clean install-deps
@@ -77,4 +80,5 @@ appstore: clean install-deps
 		echo "Signing package…"; \
 		openssl dgst -sha512 -sign $(cert_dir)/$(app_name).key $(build_dir)/$(app_name)-$(version).tar.gz | openssl base64; \
 	fi
+
 
