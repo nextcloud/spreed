@@ -1,23 +1,17 @@
-/* global OC, OCP, OCA, $, _, Handlebars */
+/* global OC, OCP, OCA, $, _ */
 
-(function(OC, OCP, OCA, $, _, Handlebars) {
+(function(OC, OCP, OCA, $, _) {
 	'use strict';
 
 	OCA.VideoCalls = OCA.VideoCalls || {};
 	OCA.VideoCalls.Admin = OCA.VideoCalls.Admin || {};
 	OCA.VideoCalls.Admin.StunServer = {
 
-		TEMPLATE: '<div class="stun-server">' +
-		'	<input type="text" name="stun_server" placeholder="stunserver:port" value="{{server}}" aria-label="' + t('spreed', 'STUN server URL') + '" />' +
-		'	<a class="icon icon-delete" title="' + t('spreed', 'Delete server') + '"></a>' +
-		'	<a class="icon icon-add" title="' + t('spreed', 'Add new server') + '"></a>' +
-		'	<span class="icon icon-checkmark-color hidden" title="' + t('spreed', 'Saved') + '"></span>' +
-		'</div>',
 		$list: undefined,
 		template: undefined,
 
 		init: function() {
-			this.template = Handlebars.compile(this.TEMPLATE);
+			this.template = OCA.VideoCalls.Admin.Templates['stun-server'];
 			this.$list = $('div.stun-servers');
 			this.renderList();
 		},
@@ -115,7 +109,11 @@
 
 		renderServer: function(server) {
 			var $template = $(this.template({
-				server: server
+				server: server,
+				stunTXT: t('spreed', 'STUN server URL'),
+				deleteTXT: t('spreed', 'Delete server'),
+				newTXT: t('spreed', 'Add new server'),
+				savedTXT: t('spreed', 'Saved'),
 			}));
 
 			$template.find('a.icon-add').on('click', this.addNewTemplate.bind(this));
@@ -128,7 +126,7 @@
 	};
 
 
-})(OC, OCP, OCA, $, _, Handlebars);
+})(OC, OCP, OCA, $, _);
 
 $(document).ready(function(){
 	OCA.VideoCalls.Admin.StunServer.init();

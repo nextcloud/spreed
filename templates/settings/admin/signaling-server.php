@@ -1,7 +1,7 @@
 <?php
 /** @var array $_ */
 /** @var \OCP\IL10N $l */
-script('spreed', ['admin/signaling-server']);
+script('spreed', ['admin/signaling-server', 'admin/templates']);
 style('spreed', ['settings-admin']);
 ?>
 
