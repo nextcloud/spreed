@@ -31,6 +31,7 @@ use OCA\Spreed\HookListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
+use OCA\Spreed\Search\Provider;
 use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\Signaling\Messages;
@@ -54,6 +55,8 @@ class Application extends App {
 			$listener = \OC::$server->query(HookListener::class);
 			$listener->deleteUser($user);
 		});
+
+		$server->getSearch()->registerProvider(Provider::class, ['apps' => ['spreed']]);
 
 		$this->registerNotifier($server);
 		$this->getContainer()->registerCapability(Capabilities::class);
