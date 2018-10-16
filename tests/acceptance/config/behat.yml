@@ -17,6 +17,7 @@ default:
         - FilesAppContext
         - FilesAppSharingContext
         - LoginPageContext
+        - PublicShareContext
 
         # Talk app contexts
         - ChatContext
@@ -25,6 +26,7 @@ default:
         - FilesAppChatTabContext
         - FilesAppRoomSharingContext
         - ParticipantListContext
+        - PublicSharePasswordRequestContext
         - TalkAppContext
 
   extensions:
