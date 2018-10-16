@@ -26,6 +26,7 @@ use Behat\Behat\Context\Context;
 class PublicSharePasswordRequestContext implements Context, ActorAwareInterface {
 
 	use ActorAware;
+	use ChatAncestorSetter;
 
 	/**
 	 * @return Locator
@@ -33,6 +34,23 @@ class PublicSharePasswordRequestContext implements Context, ActorAwareInterface 
 	public static function requestPasswordButton() {
 		return Locator::forThe()->button("Request password")->
 				describedAs("Request password button in the public share authentication page");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function talkSidebar() {
+		return Locator::forThe()->css("#talk-sidebar")->
+				describedAs("Talk sidebar in the public share authentication page");
+	}
+
+	/**
+	 * @When I request the password
+	 */
+	public function iRequestThePassword() {
+		$this->actor->find(self::requestPasswordButton(), 10)->click();
+
+		$this->setChatAncestorForActor(self::talkSidebar(), $this->actor);
 	}
 
 	/**
