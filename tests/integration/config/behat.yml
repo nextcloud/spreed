@@ -7,6 +7,12 @@ default:
         - %paths.base%/../features
       contexts:
         - FeatureContext
+        - SearchContext:
+            baseUrl: http://localhost:8080/
+            admin:
+              - admin
+              - admin
+            regularUserPassword: 123456
         - SharingContext:
             baseUrl: http://localhost:8080/
             admin:

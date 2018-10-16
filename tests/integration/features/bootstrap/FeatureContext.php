@@ -39,6 +39,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $tokenToIdentifier;
 	/** @var array[] */
 	protected static $sessionIdToUser;
+	/** @var array[] */
+	protected static $userToSessionId;
 
 	/** @var string */
 	protected $currentUser;
@@ -65,6 +67,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		return self::$identifierToToken[$identifier];
 	}
 
+	public static function getSessionIdForUser(string $user) {
+		return self::$userToSessionId[$user];
+	}
+
 	/**
 	 * FeatureContext constructor.
 	 */
@@ -80,6 +86,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$identifierToToken = [];
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [];
+		self::$userToSessionId = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -233,6 +240,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// database, though, so the ID stored in the database and returned
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
+			self::$userToSessionId[$user] = sha1($response['sessionId']);
 		}
 	}
 
@@ -420,6 +428,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// database, though, so the ID stored in the database and returned
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
+			self::$userToSessionId[$user] = sha1($response['sessionId']);
 		}
 	}
 
