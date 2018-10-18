@@ -89,7 +89,9 @@
 
 		initialize: function() {
 			this.listenTo(this.collection, 'reset', this.render);
+			this.listenTo(this.collection, 'add:start', this._onAddModelStart);
 			this.listenTo(this.collection, 'add', this._onAddModel);
+			this.listenTo(this.collection, 'add:end', this._onAddModelEnd);
 
 			this._guestNameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.getOption('guestNameModel'),
@@ -390,13 +392,16 @@
 			return data;
 		},
 
+		_onAddModelStart: function() {
+			this._newMessagesBuffer = document.createDocumentFragment();
+
+			this._scrollToNew = this._$newestComment.length === 0 || this._getCommentTopPosition(this._$newestComment) < this.$container.outerHeight();
+		},
+
 		_onAddModel: function(model) {
-			this.$el.find('.emptycontent').toggleClass('hidden', true);
-
-			var scrollToNew = this._$newestComment.length > 0 && this._getCommentTopPosition(this._$newestComment) < this.$container.outerHeight();
-
 			var $el = $(this.commentTemplate(this._formatItem(model)));
-			this.$container.append($el);
+			// ParentNode.append() is not compatible with older browsers.
+			this._newMessagesBuffer.appendChild($el.get(0));
 			this._$newestComment = $el;
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
@@ -425,8 +430,15 @@
 			this._lastAddedMessageModel = model;
 
 			this._postRenderItem(model, $el);
+		},
 
-			if (scrollToNew) {
+		_onAddModelEnd: function() {
+			this.$el.find('.emptycontent').toggleClass('hidden', true);
+
+			this.$container.append(this._newMessagesBuffer);
+			delete this._newMessagesBuffer;
+
+			if (this._scrollToNew) {
 				var newestCommentHiddenHeight = (this._getCommentTopPosition(this._$newestComment) + this._getCommentOuterHeight(this._$newestComment)) - this.$container.outerHeight();
 				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight);
 			}

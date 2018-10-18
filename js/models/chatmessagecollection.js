@@ -97,7 +97,9 @@
 		},
 
 		_messagesReceived: function(messages) {
+			this.trigger('add:start');
 			this.set(messages);
+			this.trigger('add:end');
 		},
 
 		receiveMessages: function() {
