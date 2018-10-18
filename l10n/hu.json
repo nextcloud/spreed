@@ -9,6 +9,8 @@
     "UDP and TCP" : "UDP és TCP",
     "UDP only" : "csak UDP",
     "TCP only" : "csak TCP",
+    "New public conversation" : "Új nyilvános beszélgetés",
+    "New conversation …" : "Új beszélgetés …",
     "Screensharing is not supported by your browser." : "A böngésződ nem támogatja a képernyőmegosztást.",
     "Screensharing requires the page to be loaded through HTTPS." : "A képernyőmegosztáshoz HTTPS szükséges.",
     "Screensharing options" : "Képernyő megosztás beállításai",
@@ -21,6 +23,8 @@
     "Talk" : "Beszélgetés",
     "Waiting for {participantName} to join the call …" : "Várakozunk, hogy {participantName} csatlakozzon a híváshoz...",
     "Waiting for others to join the call …" : "Várakozunk, hogy mások csatlakozzanak a híváshoz...",
+    "Exit fullscreen (f)" : "Kilépés a teljes képernyős módból (f)",
+    "Mute audio (m)" : "Audio elnémítása (m)",
     "No Camera" : "Nincs kamera",
     "Enable screensharing" : "Képernyő megosztás engedélyezése",
     "Copy" : "Másol",
@@ -61,6 +65,7 @@
     "Demote from moderator" : "lefokozás moderátorról",
     "Promote to moderator" : "Moderátorrá kinevezés",
     "Remove participant" : "Résztvevő eltávolítása",
+    "Delete conversation" : "Beszélgetés törlése",
     "No other people in this call" : "Nincs más ebben a hívásban",
     "You can invite others in the participant tab of the sidebar" : "Az oldalsávon található „közreműködő” fülön lehet másokat meghívni",
     "Share this link to invite others!" : "Oszd meg ezt a linket mások meghívásához!",
@@ -136,6 +141,13 @@
     "The STUN server is used to determine the public IP address of participants behind a router." : "A STUN szervert használunk a router mögötti résztvevők publikus IP címének megállapítására.",
     "… %s" : "… %s",
     "%s …" : "%s …",
-    "… %s …" : "… %s …"
+    "… %s …" : "… %s …",
+    "%s mentioned you in a group conversation: %s" : "%s megemlített téged egy csoportos beszélgetésben: %s",
+    "{user} mentioned you in a group conversation: {call}" : "{user} megemlített téged egy csoportos beszélgetésben: {call}",
+    "%s mentioned you in a group conversation" : "%s megemlített téged egy csoportos beszélgetésben",
+    "{user} mentioned you in a group conversation" : "{user} megemlített téged egy csoportos beszélgetésben",
+    "A guest mentioned you in a group conversation: %s" : "Egy vendég megemlített téged egy csoportos beszélgetésben: %s",
+    "A guest mentioned you in a group conversation: {call}" : "Egy vendég megemlített téged egy csoportos beszélgetésben: {call}",
+    "A guest mentioned you in a group conversation" : "Egy vendég megemlített téged egy csoportos beszélgetésben"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
