@@ -239,6 +239,8 @@
 		onRender: function() {
 			delete this._lastAddedMessageModel;
 
+			this._$newestComment = $();
+
 			this.$el.find('.emptycontent').after(this.addCommentTemplate({}));
 
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
@@ -391,11 +393,11 @@
 		_onAddModel: function(model) {
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
-			var $newestComment = this.$container.children('.comment').last();
-			var scrollToNew = $newestComment.length > 0 && this._getCommentTopPosition($newestComment) < this.$container.outerHeight();
+			var scrollToNew = this._$newestComment.length > 0 && this._getCommentTopPosition(this._$newestComment) < this.$container.outerHeight();
 
 			var $el = $(this.commentTemplate(this._formatItem(model)));
 			this.$container.append($el);
+			this._$newestComment = $el;
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
 					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
@@ -425,7 +427,7 @@
 			this._postRenderItem(model, $el);
 
 			if (scrollToNew) {
-				var newestCommentHiddenHeight = (this._getCommentTopPosition($el) + this._getCommentOuterHeight($el)) - this.$container.outerHeight();
+				var newestCommentHiddenHeight = (this._getCommentTopPosition(this._$newestComment) + this._getCommentOuterHeight(this._$newestComment)) - this.$container.outerHeight();
 				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight);
 			}
 		},
