@@ -425,8 +425,8 @@
 			this._postRenderItem(model, $el);
 
 			if (scrollToNew) {
-				var newestCommentHiddenHeight = (this._getCommentTopPosition($newestComment) + this._getCommentOuterHeight($newestComment)) - this.$container.outerHeight();
-				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight + $el.outerHeight(true));
+				var newestCommentHiddenHeight = (this._getCommentTopPosition($el) + this._getCommentOuterHeight($el)) - this.$container.outerHeight();
+				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight);
 			}
 		},
 
