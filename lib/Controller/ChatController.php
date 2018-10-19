@@ -41,6 +41,7 @@ use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\Files\IRootFolder;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -87,6 +88,9 @@ class ChatController extends OCSController {
 	/** @var IRootFolder */
 	private $rootFolder;
 
+	/** @var IConfig */
+	private $config;
+
 	/** @var IL10N */
 	private $l;
 
@@ -104,6 +108,7 @@ class ChatController extends OCSController {
 	 * @param SearchPlugin $searchPlugin
 	 * @param ISearchResult $searchResult
 	 * @param IRootFolder $rootFolder
+	 * @param IConfig $config
 	 * @param IL10N $l
 	 */
 	public function __construct(string $appName,
@@ -119,6 +124,7 @@ class ChatController extends OCSController {
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
 								IRootFolder $rootFolder,
+								IConfig $config,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -133,6 +139,7 @@ class ChatController extends OCSController {
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
 		$this->rootFolder = $rootFolder;
+		$this->config = $config;
 		$this->l = $l;
 	}
 
@@ -433,8 +440,12 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		$timezone = $this->config->getUserValue($this->userId, 'core', 'timezone', 'UTC');
+		$dateTimeZone = new \DateTimeZone($timezone);
+		$dateTime->setTimezone($dateTimeZone);
+
 		$userFolder = $this->rootFolder->getUserFolder($this->userId);
-		$file = $userFolder->newFile($room->getName() . '-' . $since . '.txt');
+		$file = $userFolder->newFile($room->getName() . '-' . $dateTime->format(\DateTime::ATOM) . '.txt');
 		$handle = $file->fopen('w+');
 
 		$offsetMessageId = $this->chatManager->getLastMessageBeforeDate($room, $dateTime);
@@ -451,7 +462,8 @@ class ChatController extends OCSController {
 				continue;
 			}
 
-			$line = $this->l->l('datetime', $comment->getCreationDateTime());
+			$comment->getCreationDateTime()->setTimezone($dateTimeZone);
+			$line = '[' . $this->l->l('datetime', $comment->getCreationDateTime(), ['width' => 'long|medium']) . ']';
 			if ($comment->getActorType() === 'users') {
 				$author = $this->userManager->get($comment->getActorId());
 				if ($author instanceof IUser) {
