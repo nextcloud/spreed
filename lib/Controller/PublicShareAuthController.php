@@ -116,18 +116,6 @@ class PublicShareAuthController extends OCSController {
 			'participantType' => Participant::OWNER,
 		]);
 
-		// Notify the owner
-		$notification = $this->notificationManager->createNotification();
-		$notification
-			->setApp('spreed')
-			->setObject('room', $room->getToken())
-			->setUser($sharerUser->getUID())
-			->setSubject('share:password', [
-				'sharedWith' => $share->getSharedWith(),
-			])
-			->setDateTime(new \DateTime());
-		$this->notificationManager->notify($notification);
-
 		return new DataResponse([
 			'token' => $room->getToken(),
 			'name' => $room->getName(),
