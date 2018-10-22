@@ -112,13 +112,13 @@ class Notifier implements INotifier {
 			return $this->parseInvitation($notification, $room, $l);
 		}
 		if ($subject === 'call') {
+			if ($room->getObjectType() === 'share:password') {
+				return $this->parsePasswordRequest($notification, $room, $l);
+			}
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'mention' ||  $subject === 'chat') {
 			return $this->parseChatMessage($notification, $room, $l);
-		}
-		if ($subject === 'share:password') {
-			return $this->parsePasswordRequest($notification, $room, $l);
 		}
 
 		throw new \InvalidArgumentException('Unknown subject');
@@ -445,18 +445,15 @@ class Notifier implements INotifier {
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parsePasswordRequest(INotification $notification, Room $room, IL10N $l) {
-		if ($notification->getObjectType() !== 'room') {
+	protected function parsePasswordRequest(INotification $notification, Room $room, IL10N $l): INotification {
+		if ($notification->getObjectType() !== 'call') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
-		$parameters = $notification->getSubjectParameters();
-		$sharedWith = $parameters['sharedWith'];
+		$sharedWith = $room->getName();
 
 		$notification
-			->setParsedSubject(
-				$l->t('Password request by %s', [$sharedWith])
-			)
+			->setParsedSubject(str_replace('{email}', $sharedWith, $l->t('{email} requested the password to access a share')))
 			->setRichSubject(
 				$l->t('{email} requested the password to access a share'), [
 					'email' => [
