@@ -32,10 +32,17 @@ There are some scenarios (users behind strict firewalls / symmetric NATs) where 
 
 Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
-## Disabling internal camera/audio for testing
+
+## Development setup
+
+Simply clone this repository into the `apps` folder of your Nextcloud development instance. Then activate it through the apps management. :tada:
+
+
+### Disabling internal camera/audio for testing
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
 * Re-enable camera: `sudo modprobe uvcvideo`
+
 
 ## Contribution Guidelines
 
