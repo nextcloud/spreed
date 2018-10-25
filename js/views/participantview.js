@@ -111,7 +111,7 @@
 							search: term,
 							itemType: 'call',
 							itemId: this.room.get('token'),
-							shareTypes: [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_EMAIL]
+							shareTypes: [OC.Share.SHARE_TYPE_USER, OC.Share.SHARE_TYPE_GROUP, OC.Share.SHARE_TYPE_EMAIL]
 						};
 					}.bind(this),
 					results: function (response) {

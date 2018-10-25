@@ -743,22 +743,22 @@ class RoomController extends OCSController {
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
-	public function addParticipantToRoom(string $token, string $newParticipant): DataResponse {
+	public function addParticipantToRoom(string $token, string $newParticipant, bool $isGroup = false): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
+			$currentUser = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if (!$participant->hasModeratorPermissions(false)) {
+		if (!$currentUser->hasModeratorPermissions(false)) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$participants = $room->getParticipants();
-		if (isset($participants['users'][$newParticipant])) {
+		if (!$isGroup && isset($participants['users'][$newParticipant])) {
 			return new DataResponse([]);
 		}
 
@@ -767,22 +767,45 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$newUser = $this->userManager->get($newParticipant);
-		if (!$newUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		$participantsToAdd = [];
+
+		if (!$isGroup) {
+			$newUser = $this->userManager->get($newParticipant);
+			if (!$newUser instanceof IUser) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$room->addUsers([
+				'userId' => $newUser->getUID(),
+			]);
+		} else {
+			$newUser = $this->groupManager->get($newParticipant);
+			if (!$newUser instanceof IGroup) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$usersInGroup = $newUser->getUsers();
+			foreach ($usersInGroup as $user) {
+				if (isset($participants['users'][$user->getUID()])) {
+					continue;
+				}
+
+				$participantsToAdd[] = [
+					'userId' => $user->getUID(),
+				];
+			}
+
+			\call_user_func_array([$room, 'addUsers'], $participantsToAdd);
 		}
 
 		$data = [];
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			// In case a user is added to a one2one call, we change the call to a group call
-			$room->changeType(Room::GROUP_CALL);
-
-			$data = ['type' => $room->getType()];
+			if (!$isGroup || count($participantsToAdd) > 0) {
+				$room->changeType(Room::GROUP_CALL);
+				$data = ['type' => $room->getType()];
+			}
 		}
-
-		$room->addUsers([
-			'userId' => $newUser->getUID(),
-		]);
 
 		return new DataResponse($data);
 	}

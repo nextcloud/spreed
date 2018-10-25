@@ -51,6 +51,7 @@ class CapabilitiesTest extends TestCase {
 					'in-call-flags',
 					'invite-by-mail',
 					'notification-levels',
+					'invite-group',
 				],
 			],
 		], $capabilities->getCapabilities());

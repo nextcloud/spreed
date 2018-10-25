@@ -81,6 +81,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### 5.0
 * `invite-by-mail` - Guests can be invited with their email address
 * `notification-levels` - Users can select when they want to be notified in conversations
+* `invite-group` - Groups can now be added to conversations via the add participant API
 
 ## Room management
 
@@ -312,14 +313,15 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `newParticipant` | string | User to add
+    `newParticipant` | string | User or group to add
+    `isGroup` | bool | Define if you're adding a group (default is false)
 
 * Response:
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the room could not be found for the participant
-        + `404 Not Found` When the user to add could not be found
+        + `404 Not Found` When the user or group to add could not be found
 
     - Data:
 
