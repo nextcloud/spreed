@@ -81,9 +81,6 @@ class PublicShareAuthController extends OCSController {
 	 * a guest or user on behalf of a registered user, the sharer, who will be
 	 * the owner of the room.
 	 *
-	 * If there is already a room for requesting the password of the given share
-	 * no new room is created; the existing room is returned instead.
-	 *
 	 * The share must have "send password by Talk" enabled; an error is returned
 	 * otherwise.
 	 *
