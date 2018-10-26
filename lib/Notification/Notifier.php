@@ -37,6 +37,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
+use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 
@@ -463,19 +464,24 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown share');
 		}
 
-		$sharedWith = $share->getSharedWith();
+		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
+			$sharedWith = $share->getSharedWith();
 
-		$notification
-			->setParsedSubject(str_replace('{email}', $sharedWith, $l->t('{email} requested the password to access a share')))
-			->setRichSubject(
-				$l->t('{email} requested the password to access a share'), [
-					'email' => [
-						'type' => 'email',
-						'id' => $sharedWith,
-						'name' => $sharedWith,
+			$notification
+				->setParsedSubject(str_replace('{email}', $sharedWith, $l->t('{email} requested the password to access a share')))
+				->setRichSubject(
+					$l->t('{email} requested the password to access a share'), [
+						'email' => [
+							'type' => 'email',
+							'id' => $sharedWith,
+							'name' => $sharedWith,
+						]
 					]
-				]
-			);
+				);
+		} else {
+			$notification
+				->setParsedSubject($l->t('Someone requested the password to access a share'));
+		}
 
 		return $notification;
 	}

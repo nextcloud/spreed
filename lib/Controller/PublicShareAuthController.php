@@ -32,6 +32,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Share;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\Exceptions\ShareNotFound;
 
@@ -100,8 +101,14 @@ class PublicShareAuthController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
+			$roomName = $share->getSharedWith();
+		} else {
+			$roomName = trim($share->getTarget(), '/');
+		}
+
 		// Create the room
-		$room = $this->manager->createPublicRoom($share->getSharedWith(), 'share:password', $shareToken);
+		$room = $this->manager->createPublicRoom($roomName, 'share:password', $shareToken);
 		$room->addUsers([
 			'userId' => $sharerUser->getUID(),
 			'participantType' => Participant::OWNER,
