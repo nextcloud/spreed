@@ -146,7 +146,7 @@
 				},
 				formatResult: function (element) {
 					if (element.type === 'email') {
-						return '<span><div class="avatar icon-mail"></div>' + escapeHTML(element.displayName) + '</span>';
+						return '<span><div class="avatar icon-mail icon-white"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
