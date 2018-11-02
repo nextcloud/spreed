@@ -42,6 +42,7 @@ OC.L10N.register(
     "Set password" : "Ezarri pasahitza",
     "Name" : "Izena",
     "Rename" : "Abizena",
+    "Copy link" : "Kopiatu esteka",
     "Link copied!" : "Esteka kopiatuta!",
     "You" : "Zu ",
     "No messages yet, start the conversation!" : "Ez dago mezurik, elkarrizketa hasi!",
