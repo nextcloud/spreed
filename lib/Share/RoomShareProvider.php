@@ -745,10 +745,16 @@ class RoomShareProvider implements IShareProvider {
 			}
 
 			$qb = $this->dbConnection->getQueryBuilder();
-			$qb->select('*')
-				->from('share')
+			$qb->select('s.*',
+				'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+				'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+				'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
+			)
+				->selectAlias('st.id', 'storage_string_id')
+				->from('share', 's')
 				->orderBy('id')
-				->setFirstResult(0);
+				->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
+				->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'));
 
 			if ($limit !== -1) {
 				$qb->setMaxResults($limit);
@@ -773,6 +779,10 @@ class RoomShareProvider implements IShareProvider {
 
 			$cursor = $qb->execute();
 			while ($data = $cursor->fetch()) {
+				if (!$this->isAccessibleResult($data)) {
+					continue;
+				}
+
 				if ($offset > 0) {
 					$offset--;
 					continue;
@@ -786,6 +796,22 @@ class RoomShareProvider implements IShareProvider {
 		$shares = $this->resolveSharesForRecipient($shares, $userId);
 
 		return $shares;
+	}
+
+	private function isAccessibleResult($data) {
+		// exclude shares leading to deleted file entries
+		if ($data['fileid'] === null) {
+			return false;
+		}
+
+		// exclude shares leading to trashbin on home storages
+		$pathSections = explode('/', $data['path'], 2);
+		// FIXME: would not detect rare md5'd home storage case properly
+		if ($pathSections[0] !== 'files'
+			&& in_array(explode(':', $data['storage_string_id'], 2)[0], array('home', 'object'))) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
