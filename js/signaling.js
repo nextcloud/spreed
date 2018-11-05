@@ -8,6 +8,47 @@
 		Internal: {},
 		Standalone: {},
 
+		/**
+		* Loads the signaling settings.
+		*
+		* The signaling settings are set in the DOM element in which
+		* "createConnection" expects to find them; if the DOM element already
+		* exists it is assumed that the settings are already loaded.
+		*
+		* @return Deferred a Deferred object that will be resolved once the
+		*         settings are loaded.
+		*/
+		loadSettings: function() {
+			var deferred = $.Deferred();
+
+			if ($('#app #signaling-settings').length > 0) {
+				deferred.resolve();
+
+				return deferred.promise();
+			}
+
+			if ($('#app').length === 0) {
+				$('body').append('<div id="app"></div>');
+			}
+			$('#app').append('<script type="text/json" id="signaling-settings"></script>');
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/signaling/', 2) + 'settings',
+				type: 'GET',
+				dataType: 'json',
+				success: function (result) {
+					$('#app #signaling-settings').text(JSON.stringify(result.ocs.data));
+
+					deferred.resolve();
+				},
+				error: function (xhr, textStatus, errorThrown) {
+					deferred.reject(xhr, textStatus, errorThrown);
+				}
+			});
+
+			return deferred.promise();
+		},
+
 		createConnection: function() {
 			var settings = $("#app #signaling-settings").text();
 			if (settings) {
