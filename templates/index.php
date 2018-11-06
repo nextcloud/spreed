@@ -23,6 +23,7 @@ script(
 		'models/roomcollection',
 		'models/participant',
 		'models/participantcollection',
+		'views/callbutton',
 		'views/callinfoview',
 		'views/chatview',
 		'views/editabletextlabel',

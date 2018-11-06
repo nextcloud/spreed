@@ -31,17 +31,7 @@
 	var TEMPLATE =
 		'<div class="room-name"></div>' +
 		'<div class="call-controls-container">' +
-		'	<div class="call-button">' +
-		'	{{#if isInCall}}' +
-		'		<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
-		'	{{else}}' +
-		'		{{#if hasCall}}' +
-		'		<button class="join-call call-ongoing primary">' + t('spreed', 'Join call') + '</button>' +
-		'		{{else}}' +
-		'		<button class="join-call primary">' + t('spreed', 'Start call') + '</button>' +
-		'		{{/if}}' +
-		'	{{/if}}' +
-		'	</div>' +
+		'	<div class="call-button"></div>' +
 		'{{#if canModerate}}' +
 		'	<div class="share-link-options">' +
 		'		{{#if canFullModerate}}' +
@@ -88,7 +78,6 @@
 			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
 				isGuest: this.model.get('participantType') === 4,
-				isInCall: (this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0,
 				canModerate: canModerate,
 				canFullModerate: this._canFullModerate(),
 				isPublic: this.model.get('type') === 3,
@@ -103,8 +92,7 @@
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 
-			'joinCallButton': 'button.join-call',
-			'leaveCallButton': 'button.leave-call',
+			'callButton': 'div.call-button',
 
 			'passwordButton': '.password-button .button',
 			'passwordForm': '.password-form',
@@ -118,6 +106,7 @@
 
 		regions: {
 			'roomName': '@ui.roomName',
+			'callButton': '@ui.callButton',
 		},
 
 		events: {
@@ -127,18 +116,10 @@
 			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
-			'click @ui.joinCallButton': 'joinCall',
-			'click @ui.leaveCallButton': 'leaveCall',
 		},
 
 		modelEvents: {
 			'change:hasPassword': function() {
-				this.renderWhenInactive();
-			},
-			'change:hasCall': function() {
-				this.renderWhenInactive();
-			},
-			'change:participantFlags': function() {
 				this.renderWhenInactive();
 			},
 			'change:participantType': function() {
@@ -182,6 +163,10 @@
 				buttonTitle: t('spreed', 'Rename')
 			});
 
+			this._callButton = new OCA.SpreedMe.Views.CallButton({
+				model: this.model,
+			});
+
 			this._updateNameEditability();
 		},
 
@@ -205,6 +190,7 @@
 			// rendered, as the element of the region does not exist yet at that
 			// time and without that option the call would fail otherwise.
 			this.getRegion('roomName').reset({ preventDestroy: true, allowMissingEl: true });
+			this.getRegion('callButton').reset({ preventDestroy: true, allowMissingEl: true });
 		},
 
 		onRender: function() {
@@ -213,9 +199,10 @@
 				this.renderTimeout = undefined;
 			}
 
-			// Attach the child view again (or for the first time) after the
+			// Attach the child views again (or for the first time) after the
 			// template has been rendered.
 			this.showChildView('roomName', this._nameEditableTextLabel, { replaceElement: true } );
+			this.showChildView('callButton', this._callButton, { replaceElement: true } );
 
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
@@ -291,14 +278,6 @@
 					OCA.SpreedMe.app.signaling.syncRooms();
 				}
 			});
-		},
-
-		joinCall: function() {
-			OCA.SpreedMe.app.connection.joinCall(this.model.get('token'));
-		},
-
-		leaveCall: function() {
-			OCA.SpreedMe.app.connection.leaveCurrentCall();
 		},
 
 		/**

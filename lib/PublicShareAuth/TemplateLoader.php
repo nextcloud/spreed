@@ -89,6 +89,7 @@ class TemplateLoader {
 		Util::addScript('spreed', 'models/roomcollection');
 		Util::addScript('spreed', 'models/participant');
 		Util::addScript('spreed', 'models/participantcollection');
+		Util::addScript('spreed', 'views/callbutton');
 		Util::addScript('spreed', 'views/callinfoview');
 		Util::addScript('spreed', 'views/chatview');
 		Util::addScript('spreed', 'views/editabletextlabel');
