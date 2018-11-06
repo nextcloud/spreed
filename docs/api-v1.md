@@ -78,9 +78,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `in-call-flags` - A new flag `participantFlags` has been introduced and is replacing the `participantInCall` boolean.
 
 ### 5.0
-* `invite-by-mail` - Guests can be invited with their email address
+* `invite-by-mail` - *Replaced by `invite-groups-and-mails`* Guests can be invited with their email address
 * `notification-levels` - Users can select when they want to be notified in conversations
-* `invite-group` - Groups can be added to existing conversations via the add participant endpoint
+* `invite-groups-and-mails` - Groups can be added to existing conversations via the add participant endpoint
 
 ## Room management
 

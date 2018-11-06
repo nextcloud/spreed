@@ -45,9 +45,8 @@ class Capabilities implements IPublicCapability {
 					'system-messages',
 					'mention-flag',
 					'in-call-flags',
-					'invite-by-mail',
 					'notification-levels',
-					'invite-group',
+					'invite-groups-and-mails',
 				],
 			],
 		];
