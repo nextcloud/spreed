@@ -877,6 +877,69 @@ Feature: get
 
 
 
+  Scenario: get files after sharing a file
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    When user "participant1" gets the DAV properties for "/"
+    Then the list of returned files for "participant1" is
+      | / |
+      | /welcome.txt |
+    And user "participant2" gets the DAV properties for "/"
+    And the list of returned files for "participant2" is
+      | / |
+      | /welcome.txt |
+      | /welcome%20(2).txt |
+
+
+
+  Scenario: get files after deleting a share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant1" deletes last share
+    When user "participant1" gets the DAV properties for "/"
+    Then the list of returned files for "participant1" is
+      | / |
+      | /welcome.txt |
+    And user "participant2" gets the DAV properties for "/"
+    And the list of returned files for "participant2" is
+      | / |
+      | /welcome.txt |
+
+  Scenario: get files after deleting a received share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant2" deletes last share
+    When user "participant2" gets the DAV properties for "/"
+    Then the list of returned files for "participant2" is
+      | / |
+      | /welcome.txt |
+    And user "participant1" gets the DAV properties for "/"
+    And the list of returned files for "participant1" is
+      | / |
+      | /welcome.txt |
+
+  Scenario: get files after deleting the file of a share
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
+    And user "participant1" deletes file "welcome.txt"
+    When user "participant1" gets the DAV properties for "/"
+    Then the list of returned files for "participant1" is
+      | / |
+    And user "participant2" gets the DAV properties for "/"
+    And the list of returned files for "participant2" is
+      | / |
+      | /welcome.txt |
+
+
+
   Scenario: get recent files including a share
     Given user "participant1" creates room "group room"
       | roomType | 2 |

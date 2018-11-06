@@ -365,6 +365,22 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user gets the DAV properties for :path
+	 *
+	 * @param string $user
+	 * @param string $path
+	 */
+	public function userGetsTheDavPropertiesFor(string $user, string $path) {
+		$this->currentUser = $user;
+
+		$url = "/$user/$path";
+
+		$this->sendingToDav('PROPFIND', $url);
+
+		$this->theHTTPStatusCodeShouldBe(207);
+	}
+
+	/**
 	 * @When user :user gets the share-type DAV property for :path
 	 *
 	 * @param string $user
@@ -559,6 +575,31 @@ class SharingContext implements Context {
 			$respondedArray = $this->getArrayOfShareesResponded($this->response, $shareeType);
 			PHPUnit_Framework_Assert::assertEmpty($respondedArray);
 		}
+	}
+
+	/**
+	 * @Then the list of returned files for :user is
+	 *
+	 * @param string $user
+	 * @param TableNode|null $table
+	 */
+	public function theListOfReturnedFilesForIs(string $user, TableNode $table = null) {
+		$xmlResponse = $this->getXmlResponse();
+		$xmlResponse->registerXPathNamespace('d', 'DAV:');
+
+		$hrefs = [];
+		foreach ($xmlResponse->xpath('//d:response/d:href') as $href) {
+			$hrefs[] = (string)$href;
+		}
+
+		$expectedHrefs = [];
+		if ($table !== null) {
+			foreach ($table->getRows() as $row) {
+				$expectedHrefs[] = '/remote.php/dav/files/' . $user . (string)$row[0];
+			}
+		}
+
+		PHPUnit_Framework_Assert::assertEquals($expectedHrefs, $hrefs);
 	}
 
 	/**
