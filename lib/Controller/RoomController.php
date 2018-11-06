@@ -48,6 +48,7 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Mail\IMailer;
+use OCP\Share;
 
 class RoomController extends OCSController {
 	/** @var string */
@@ -741,50 +742,46 @@ class RoomController extends OCSController {
 	 *
 	 * @param string $token
 	 * @param string $newParticipant
+	 * @param string $source
 	 * @return DataResponse
 	 */
-	public function addParticipantToRoom(string $token, string $newParticipant, bool $isGroup = false): DataResponse {
+	public function addParticipantToRoom(string $token, string $newParticipant, string $source = 'users'): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$currentUser = $room->getParticipant($this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if (!$currentUser->hasModeratorPermissions(false)) {
+		if (!$currentParticipant->hasModeratorPermissions(false)) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$participants = $room->getParticipants();
-		if (!$isGroup && isset($participants['users'][$newParticipant])) {
-			return new DataResponse([]);
-		}
-
-		$currentUser = $this->userManager->get($this->userId);
-		if (!$currentUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
 
 		$participantsToAdd = [];
-
-		if (!$isGroup) {
+		if ($source === 'users') {
 			$newUser = $this->userManager->get($newParticipant);
 			if (!$newUser instanceof IUser) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
+			if (isset($participants['users'][$newParticipant])) {
+				return new DataResponse([]);
+			}
+
 			$room->addUsers([
 				'userId' => $newUser->getUID(),
 			]);
-		} else {
-			$newUser = $this->groupManager->get($newParticipant);
-			if (!$newUser instanceof IGroup) {
+		} else if ($source === 'groups') {
+			$group = $this->groupManager->get($newParticipant);
+			if (!$group instanceof IGroup) {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			$usersInGroup = $newUser->getUsers();
+			$usersInGroup = $group->getUsers();
 			foreach ($usersInGroup as $user) {
 				if (isset($participants['users'][$user->getUID()])) {
 					continue;
@@ -795,16 +792,21 @@ class RoomController extends OCSController {
 				];
 			}
 
+			if (empty($participantsToAdd)) {
+				return new DataResponse([]);
+			}
+
 			\call_user_func_array([$room, 'addUsers'], $participantsToAdd);
+		} else {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$data = [];
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			// In case a user is added to a one2one call, we change the call to a group call
-			if (!$isGroup || count($participantsToAdd) > 0) {
-				$room->changeType(Room::GROUP_CALL);
-				$data = ['type' => $room->getType()];
-			}
+			$room->changeType(Room::GROUP_CALL);
+
+			$data = ['type' => $room->getType()];
 		}
 
 		return new DataResponse($data);

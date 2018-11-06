@@ -81,7 +81,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 ### 5.0
 * `invite-by-mail` - Guests can be invited with their email address
 * `notification-levels` - Users can select when they want to be notified in conversations
-* `invite-group` - Groups can now be added to conversations via the add participant API
+* `invite-group` - Groups can be added to existing conversations via the add participant endpoint
 
 ## Room management
 
@@ -314,12 +314,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `newParticipant` | string | User or group to add
-    `isGroup` | bool | Define if you're adding a group (default is false)
+    `source` | string | Type of the participant as returned by the autocomplete suggestion endpoint (default is `users`)
 
 * Response:
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
+        + `400 Bad Request` When the source type is unknown
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the user or group to add could not be found
 
@@ -327,7 +328,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
         field | type | Description
         ------|------|------------
-        `type` | string | In case the room type changed, the new value is returned
+        `type` | int | In case the room type changed, the new value is returned
 
 ### Delete a participant from a room
 
