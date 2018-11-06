@@ -104,6 +104,22 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @Given user :user deletes file :file
+	 *
+	 * @param string $user
+	 * @param string $file
+	 */
+	public function userDeletesFile($user, $file) {
+		$this->currentUser = $user;
+	
+		$url = "/$user/$file";
+
+		$this->sendingToDav('DELETE', $url);
+
+		$this->theHTTPStatusCodeShouldBe(204);
+	}
+
+	/**
 	 * @When user :user shares :path with user :sharee
 	 *
 	 * @param string $user
