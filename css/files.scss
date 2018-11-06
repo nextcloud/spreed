@@ -1,3 +1,442 @@
+.talkCallInfoView .call-button {
+	margin-top: 10px;
+
+	/* TODO reduce a little the space between the file info and the tab
+	 * headers? */
+/* 	margin-bottom: -10px; */
+
+	/* TODO center? */
+/*	margin-left: auto;
+	margin-right: auto;
+	display: block;*/
+}
+
+
+
+
+#talk-sidebar {
+	/* Overlap the padding from the sidebar itself to maximize the area of the
+	 * video as much as possible */
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-top: -15px;
+}
+
+/*#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+}*/
+
+#talk-sidebar:not(.incall) #call-container {
+	display: none;
+}
+
+#talk-sidebar #call-container {
+	position: relative;
+
+/* 	flex-grow: 1; */
+
+	/* Distribute available height between call container and chat view. */
+/* 	height: 50%; */
+
+	/* TODO the padding is not a good approach; it works when there is no video,
+	 * but when there is it is added below the video, but it does not cause the
+	 * video to stretch to its container */
+	/* Show the call container in a 16/9 proportion based on the sidebar
+	 * width. This is the same */
+	padding-bottom: 56.25%;
+
+	max-height: 56.25%;
+
+/* 	height: 30vh; */
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+/* Video in Talk sidebar */
+#talk-sidebar #videos {
+/* 	position: relative; */
+	/* TODO try to fix the problem with the padding above */
+	position: absolute;
+
+	flex-grow: 1;
+}
+
+#talk-sidebar .videoContainer {
+	/* The video container has some small padding to prevent the video from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+#talk-sidebar .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+
+	/* TODO: Limit the height of the video based on the height of the window. */
+/* 	max-height: 30vh; */
+}
+
+#talk-sidebar .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+/* Screensharing in Talk sidebar */
+#talk-sidebar #screens {
+	display: none;
+}
+
+
+
+
+
+
+
+/**
+ * Video styles
+ */
+
+#videos {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-justify-content: space-around;
+	justify-content: space-around;
+	-webkit-align-items: flex-end;
+	align-items: flex-end;
+}
+
+.videoContainer,
+#app-content.screensharing .videoContainer {
+	position: relative;
+	width: 100%;
+	padding: 0 2%;
+	-webkit-box-flex: auto;
+	-moz-box-flex: auto;
+	-webkit-flex: auto;
+	-ms-flex: auto;
+	flex: auto;
+	z-index: 2;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+}
+
+.videoContainer.hidden,
+#app-content.screensharing .videoContainer.hidden {
+	display: none;
+}
+
+#app-content.screensharing .videoContainer {
+	max-height: 200px;
+}
+
+video {
+	z-index: 0;
+	max-height: 100%;
+	/* default filter for slightly better look */
+	-webkit-filter: contrast(1.1) saturate(1.1) sepia(.1);
+	filter: contrast(1.1) saturate(1.1) sepia(.1);
+	vertical-align: top; /* fix white line below video */
+}
+
+#app-content.screensharing .videoContainer video {
+	max-height: 200px;
+	background-color: transparent;
+	box-shadow: 0;
+}
+
+#screens video {
+	width: 100%;
+	-webkit-filter: none;
+	filter: none;
+}
+
+#videos .videoContainer:not(.promoted) video {
+	/* TODO make the unpromoted videos smaller to not overlap too much the
+	 * promoted video */
+	/* max-height: 200px; */
+	max-height: 100px;
+	max-width: 100%;
+	background-color: transparent;
+	border-radius: $border-radius $border-radius 0 0;
+	box-shadow: 0 0 15px $color-box-shadow;
+}
+
+#videos .videoContainer .avatar {
+	box-shadow: 0 0 15px $color-box-shadow;
+}
+
+/* The avatars are requested with a size of 128px, so reduce it to not overlap
+ * too much the promoted video */
+/* TODO there has to be a better way... */
+#videos .videoContainer:not(.promoted) .avatar,
+#videos .videoContainer:not(.promoted) .avatar img {
+	width: 64px !important;
+	height: 64px !important;
+}
+
+.participants-1 #videos .videoContainer video,
+.participants-2 #videos .videoContainer video {
+	padding: 0;
+}
+
+.videoContainer .avatar-container {
+	position: absolute;
+	text-align: center;
+	bottom: 44px;
+	left: 0;
+	width: 100%;
+}
+.videoContainer .avatar-container .avatar {
+	display: inline-block;
+}
+.videoContainer.promoted .avatar-container {
+	top: 30%;
+}
+.videoContainer.promoted .avatar-container + .nameIndicator {
+	display: none;
+}
+
+.videoContainer.promoted .mediaIndicator {
+	display: none !important;
+}
+
+
+
+
+/* big speaker video */
+.participants-1 .videoContainer,
+.participants-2 .videoContainer,
+.videoContainer.promoted {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	left: 0;
+	top: 0;
+	z-index: 1;
+}
+.videoContainer.promoted video,
+.participants-2 .videoContainer:not(.videoView) video {
+	position: absolute;
+	width: initial;
+	height: 100%;
+	left: 50%;
+	top: 50%;
+	transform: translateY(-50%) translateX(-50%);
+}
+
+/* own video */
+.participants-1 .videoView,
+.participants-2 .videoView {
+	position: absolute;
+	width: 33%;
+	min-width: 200px;
+	overflow:visible;
+	right: 0;
+	bottom: 0;
+	top: initial;
+	left: initial;
+	z-index: 10;
+}
+@media only screen and (max-width: 768px) {
+	.participants-1 .videoView,
+	.participants-2 .videoView {
+		max-height: 35%;
+	}
+}
+.participants-1 .videoView video,
+.participants-2 .videoView video {
+	position: absolute;
+	max-height: 100% !important;
+	bottom: 0;
+	border-top-right-radius: 3px;
+	right: 0;
+}
+
+
+
+
+
+
+.nameIndicator {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	/* TODO Reduce padding to bring the name closer to the bottom */
+	/* padding: 12px; */
+	padding: 3px;
+	color: #fff;
+	text-shadow: 3px 3px 10px rgba(0, 0, 0, .5), 3px -3px 10px rgba(0, 0, 0, .5), -3px 3px 10px rgba(0, 0, 0, .5), -3px -3px 10px rgba(0, 0, 0, .5);
+	width: 100%;
+	text-align: center;
+	/* TODO use default font size, as it takes too much space otherwise */
+	/* font-size: 20px; */
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.videoView .nameIndicator {
+	padding: 0;
+	overflow: visible;
+}
+
+.participants-1 .videoView .nameIndicator,
+.participants-2 .videoView .nameIndicator {
+	left: initial;
+	right: 0;
+}
+
+.participants-1 .videoView .avatar-container,
+.participants-2 .videoView .avatar-container {
+	left: initial;
+	right: 0;
+}
+
+/* ellipsize name in 1on1 calls */
+.participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+	/* TODO Reduce padding to bring the name closer to the bottom */
+	/* 	padding: 12px 35%; */
+	padding: 3px 35%;
+}
+
+
+
+
+.nameIndicator button {
+	background-size: 24px;
+}
+
+.nameIndicator button.audio-disabled,
+.nameIndicator button.video-disabled,
+.nameIndicator button.screensharing-disabled {
+	opacity: .7;
+}
+
+.nameIndicator button.audio-disabled:not(.no-audio-available),
+.nameIndicator button.video-disabled:not(.no-video-available),
+.nameIndicator button.screensharing-disabled {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
+.nameIndicator button.no-audio-available,
+.nameIndicator button.no-video-available {
+	opacity: .7;
+	cursor: not-allowed;
+}
+
+.nameIndicator button.no-audio-available:active,
+.nameIndicator button.no-video-available:active {
+	background-color: transparent;
+}
+
+.mediaIndicator {
+	position: absolute;
+	width: 100%;
+	/* TODO move the media indicator closer to the bottom */
+	/* bottom: 44px; */
+	bottom: 16px;
+	left: 0;
+	background-size: 22px;
+	text-align: center;
+}
+
+.muteIndicator,
+.hideRemoteVideo,
+.screensharingIndicator,
+.iceFailedIndicator {
+	position: relative;
+	display: inline-block;
+	background-color: transparent !important;
+	border: none;
+	width: 32px;
+	height: 32px;
+	background-size: 22px;
+}
+
+.muteIndicator.audio-on,
+.screensharingIndicator.screen-off,
+.iceFailedIndicator.not-failed {
+	display: none;
+}
+
+.muteIndicator.audio-off,
+.hideRemoteVideo.icon-video-off {
+	opacity: .7;
+}
+
+.hideRemoteVideo.icon-video-off {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
+.iceFailedIndicator {
+	opacity: .8 !important;
+}
+
+
+
+
+
+
+#videos .videoContainer.speaking:not(.videoView) .nameIndicator,
+#videos .videoContainer.videoView.speaking .nameIndicator .icon-audio {
+	animation: pulse 1s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes pulse {
+	0% {
+		opacity: 1;
+	}
+	50% {
+		opacity: .3;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+
+
+
+
+
+
+/* Helper class to hide other info views during a call; this makes possible to
+ * restore their previous visibility once the call stops without having to keep
+ * track of their previous visibility. */
+#app-sidebar .hidden-by-call {
+	display: none;
+}
+
+
+
+
+
+
+
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the
  * vertical scroll bar only to the list of messages. Otherwise, the vertical
@@ -11,11 +450,20 @@
  * improve it if you know how :-)
  */
 #app-sidebar {
-	display: flex;
+	/* Override "display: block" set inline by jQuery. */
+	display: flex !important;
 	flex-direction: column;
 }
 
+#app-sidebar.disappear {
+	/* Override "display: flex !important" when the sidebar has to be hidden. */
+	display: none !important;
+}
+
 #app-sidebar .detailFileInfoContainer {
+	display: flex;
+	flex-direction: column;
+
 	flex-shrink: 0;
 }
 
@@ -36,6 +484,14 @@
 #app-sidebar .tabsContainer.with-inner-scroll-bars,
 #app-sidebar .tabsContainer.with-inner-scroll-bars .tab {
 	overflow: hidden;
+}
+
+/* Force a minimum height to ensure that the chat view will be at least 300px
+ * height, even if the info view is large and the screen short; in that case a
+ * scroll bar will be shown for the sidebar, but even if that looks really bad
+ * it is better than an unusable chat view. */
+#app-sidebar .tabsContainer.force-minimum-height {
+	min-height: 300px;
 }
 
 #app-sidebar .tab.hidden {

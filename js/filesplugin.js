@@ -25,6 +25,212 @@
 
 	OCA.Talk = OCA.Talk || {};
 
+	var roomsChannel = Backbone.Radio.channel('rooms');
+
+	OCA.Talk.RoomForFileModel = function() {
+	};
+	OCA.Talk.RoomForFileModel.prototype = {
+
+		// TODO use promises for proper handling of calling leave will waiting
+		// for joining to a room
+
+		join: function(currentFileId) {
+			if (this._currentFileId === currentFileId) {
+				return;
+			}
+
+			this.leave();
+
+			this._currentFileId = currentFileId;
+
+			// TODO do not join the new room before leaving the previous one to
+			// ensure that the UI was restored, the call ended, etc.
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'file/' + currentFileId,
+				type: 'GET',
+				beforeSend: function(request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: function(ocsResponse) {
+					OCA.Talk.FilesPlugin.joinRoom(ocsResponse.ocs.data.token);
+				},
+				error: function() {
+					// TODO show error somehow, maybe in the empty content of
+					// the chat?
+					OCA.Talk.FilesPlugin.leaveCurrentRoom();
+				}
+			});
+		},
+
+		leave: function() {
+			if (this._currentFileId === undefined) {
+				return;
+			}
+
+			delete this._currentFileId;
+
+			OCA.Talk.FilesPlugin.leaveCurrentRoom();
+			// TODO Not needed when changing to another room as the new one
+			// will override the values of the previous one, but needed when
+			// there is no room to stop the signaling from pinging the
+			// previous room; this should probably be fixed anyways in the
+			// signaling.
+			OCA.SpreedMe.app.signaling.disconnect();
+		}
+	};
+
+	OCA.Talk.TalkCallDetailFileInfoView = OCA.Files.DetailFileInfoView.extend({
+
+		className: 'talkCallInfoView',
+
+		initialize: function(options) {
+			this._roomForFileModel = options.roomForFileModel;
+			this._fileList = options.fileList;
+
+			this._boundHideCallUi = this._hideCallUi.bind(this);
+
+			this.listenTo(roomsChannel, 'joinedRoom', this.setActiveRoom);
+		},
+
+		/**
+		 * Sets the file info to be displayed in the view
+		 *
+		 * @param {OCA.Files.FileInfo} fileInfo file info to set
+		 */
+		setFileInfo: function(fileInfo) {
+			// TODO
+			if (this.model === fileInfo) {
+				// TODO the same file info seems to be set again when closing
+				// and opening the sidebar; it seems that in that case the event
+				// handlers for the join call button no longer work, check why
+				return;
+			}
+
+			this.model = fileInfo;
+
+			// Discard the call button until joining to the new room.
+			delete this._callButton;
+
+			this.render();
+
+			if (OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(this.model)) {
+				this._roomForFileModel.join(this.model.get('id'));
+			} else {
+				this._roomForFileModel.leave();
+			}
+		},
+
+		setActiveRoom: function(activeRoom) {
+			this.stopListening(this._activeRoom, 'change:participantFlags', this._updateCallContainer);
+// 			this.stopListening(OCA.SpreedMe.app.signaling, 'leaveCall', this._hideCallUi);
+			OCA.SpreedMe.app.signaling.off('leaveCall', this._boundHideCallUi);
+
+			this._activeRoom = activeRoom;
+
+			if (activeRoom) {
+				this._callButton = new OCA.SpreedMe.Views.CallButton({
+					model: activeRoom,
+				});
+				// Force initial rendering; changes in the room state will
+				// automatically render the button again from now on.
+				this._callButton.render();
+
+				// TODO unify this somehow
+				this.listenTo(activeRoom, 'change:participantFlags', this._updateCallContainer);
+// 				this.listenTo(OCA.SpreedMe.app.signaling, 'leaveCall', this._hideCallUi);
+				OCA.SpreedMe.app.signaling.on('leaveCall', this._boundHideCallUi);
+			} else {
+				// TODO needed here? Or is it enough deleting it in setFileInfo?
+				delete this._callButton;
+			}
+
+			this.render();
+		},
+
+		// TODO render again when the sidebar is closed and opened again
+		render: function() {
+			this.$el.empty();
+			this._$talkSidebar = null;
+			this._callUiShown = false;
+
+			if (!OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(this.model) || !this._callButton) {
+				return;
+			}
+
+			this._$talkSidebar = $('<div id="talk-sidebar" class="hidden"></div>');
+
+			this.$el.append(this._$talkSidebar);
+			$('#talk-sidebar').append('<div id="call-container"></div>');
+			$('#call-container').append('<div id="videos"></div>');
+			$('#call-container').append('<div id="screens"></div>');
+
+			this.$el.append(this._callButton.$el);
+		},
+
+		_updateCallContainer: function() {
+			var flags = this._activeRoom.get('participantFlags') || 0;
+			var inCall = flags & OCA.SpreedMe.app.FLAG_IN_CALL !== 0;
+			if (inCall) {
+				this._showCallUi();
+			} else {
+				this._hideCallUi();
+			}
+		},
+
+		// TODO show again after closing the sidebar and opening it again; also
+		// ensure that an audio call is not broken when the sidebar is closed.
+		_showCallUi: function() {
+			if (!this._$talkSidebar || this._callUiShown) {
+				return;
+			}
+
+			this._fileList.getRegisteredDetailViews().forEach(function(detailView) {
+				if (!(detailView instanceof OCA.Talk.TalkCallDetailFileInfoView)) {
+					detailView.$el.addClass('hidden-by-call');
+				}
+			});
+
+			// TODO it seems that "#talk-sidebar" classes are changed in a
+			// strange way by webrtc.js or something like that; even if that is
+			// fixed probably #talk-sidebar should not be used in the end, as it
+			// is just a quick way to get the CSS style from the public share
+			// page.
+			this._$talkSidebar.removeClass('hidden');
+
+			// The icon to close the sidebar overlaps the video, so use its
+			// white version with a shadow instead of the black one.
+			// TODO change it only when there is a call in progress; while
+			// waiting for other participants it should be kept black.
+			$('#app-sidebar .icon-close').addClass('icon-white icon-shadow');
+
+			this._callUiShown = true;
+		},
+
+		_hideCallUi: function() {
+			// TODO the _$talkSidebar could be undefined when changing to a
+			// different file, so the detail view has to be unhidden in any
+			// case.
+			// TODO mmm, no, it does not work... let's check why :-P
+			this._fileList.getRegisteredDetailViews().forEach(function(detailView) {
+				if (!(detailView instanceof OCA.Talk.TalkCallDetailFileInfoView)) {
+					detailView.$el.removeClass('hidden-by-call');
+				}
+			});
+
+			if (!this._$talkSidebar || !this._callUiShown) {
+				return;
+			}
+
+			this._$talkSidebar.addClass('hidden');
+
+			// Restore the icon to close the sidebar.
+			$('#app-sidebar .icon-close').removeClass('icon-white icon-shadow');
+
+			this._callUiShown = false;
+		}
+
+	});
+
 	/**
 	 * Tab view for Talk chat in the details view of the Files app.
 	 *
@@ -41,12 +247,16 @@
 		 */
 		order: -10,
 
+		initialize: function(options) {
+			this._roomForFileModel = options.roomForFileModel;
+		},
+
 		/**
 		 * Returns a CSS class to force scroll bars in the chat view instead of
 		 * in the whole sidebar.
 		 */
 		getTabsContainerExtraClasses: function() {
-			return 'with-inner-scroll-bars';
+			return 'with-inner-scroll-bars force-minimum-height';
 		},
 
 		getLabel: function() {
@@ -65,6 +275,7 @@
 		 * @see OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile
 		 */
 		canDisplay: function(fileInfo) {
+			// TODO how to check again when shares for a file change?
 			if (OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo)) {
 				return true;
 			}
@@ -72,14 +283,7 @@
 			// If the Talk tab can not be displayed then the current room is
 			// left; this must be done here because "setFileInfo" will not get
 			// called with the new file if the tab can not be displayed.
-			delete this._currentFileId;
-			OCA.Talk.FilesPlugin.leaveCurrentRoom();
-			// TODO Not needed when changing to another room as the new one
-			// will override the values of the previous one, but needed when
-			// there is no room to stop the signaling from pinging the
-			// previous room; this should probably be fixed anyways in the
-			// signaling.
-			OCA.SpreedMe.app.signaling.disconnect();
+			this._roomForFileModel.leave();
 
 			return false;
 		},
@@ -93,6 +297,31 @@
 		 * @param OCA.Files.FileInfoModel fileInfo
 		 */
 		setFileInfo: function(fileInfo) {
+			if (this.model === fileInfo) {
+				// If the tab was hidden and it is being shown again at this
+				// point the tab has not been made visible yet, so the
+				// operations need to be delayed. However, the scroll position
+				// is saved before the tab is made visible to avoid it being
+				// reset.
+				// TODO the system tags may finish to load once the chat view
+				// was already loaded; in that case the input for tags will be
+				// shown, "compressing" slightly the chat view and thus causing
+				// it to "lose" the last visible element (as the scroll position
+				// is kept so the elements at the bottom are hidden).
+				var lastKnownScrollPosition = OCA.SpreedMe.app._chatView.getLastKnownScrollPosition();
+				setTimeout(function() {
+					OCA.SpreedMe.app._chatView.restoreScrollPosition(lastKnownScrollPosition);
+
+					// Load the pending elements that may have been added while
+					// the tab was hidden.
+					OCA.SpreedMe.app._chatView.reloadMessageList();
+
+					OCA.SpreedMe.app._chatView.focusChatInput();
+				}, 0);
+
+				return;
+			}
+
 			this.model = fileInfo;
 
 			if (!fileInfo || fileInfo.get('id') === undefined) {
@@ -118,33 +347,35 @@
 			// TODO if id changed probably stop Talk until the new room is
 			// fetch; replace chat by a loading spinner
 
-			this._currentFileId = fileInfo.get('id');
+			this._roomForFileModel.join(this.model.get('id'));
 
-		// TODO probably move to a model
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'file/' + fileInfo.get('id'),
-				type: 'GET',
-				beforeSend: function(request) {
-					request.setRequestHeader('Accept', 'application/json');
-				},
-				success: function(ocsResponse) {
-					OCA.Talk.FilesPlugin.joinRoom(ocsResponse.ocs.data.token);
-				},
-				error: function() {
-					// TODO show error somehow, maybe in the empty content of
-					// the chat?
-					OCA.Talk.FilesPlugin.leaveCurrentRoom();
-				}
-			});
+// 			this._currentFileId = fileInfo.get('id');
+// 
+// 		// TODO probably move to a model
+// 			$.ajax({
+// 				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'file/' + fileInfo.get('id'),
+// 				type: 'GET',
+// 				beforeSend: function(request) {
+// 					request.setRequestHeader('Accept', 'application/json');
+// 				},
+// 				success: function(ocsResponse) {
+// 					OCA.Talk.FilesPlugin.joinRoom(ocsResponse.ocs.data.token);
+// 				},
+// 				error: function() {
+// 					// TODO show error somehow, maybe in the empty content of
+// 					// the chat?
+// 					OCA.Talk.FilesPlugin.leaveCurrentRoom();
+// 				}
+// 			});
 
 			// TODO
 			OCA.SpreedMe.app._chatView.$el.appendTo(this.$el);
+			OCA.SpreedMe.app._chatView.reloadMessageList();
 			OCA.SpreedMe.app._chatView.setTooltipContainer($('#app-sidebar'));
+			OCA.SpreedMe.app._chatView.focusChatInput();
 		},
 
 	});
-
-	var roomsChannel = Backbone.Radio.channel('rooms');
 
 	/**
 	 * @namespace
@@ -161,9 +392,34 @@
 				return;
 			}
 
-			this.setupSignalingEventHandlers();
+			// If the details view is opened before the views are registered it
+			// would be needed to close and open the details view again. TODO:
+			// fix it in server so the details view is refreshed in this case?
+			// The problem would be a lot of refreshing when several views are
+			// added at once during initialization... It would be better to
+			// register the views when the plugin is attached and queue the
+			// actions until the app has started.
+			var self = this;
+			OCA.SpreedMe.app.on('start', function() {
+				self.setupSignalingEventHandlers();
 
-			fileList.registerTabView(new OCA.Talk.TalkChatDetailTabView());
+				var roomForFileModel = new OCA.Talk.RoomForFileModel();
+				fileList.registerDetailView(new OCA.Talk.TalkCallDetailFileInfoView({ roomForFileModel: roomForFileModel, fileList: fileList }));
+				fileList.registerTabView(new OCA.Talk.TalkChatDetailTabView({ roomForFileModel: roomForFileModel }));
+			});
+
+			// Unlike in the regular Talk app when Talk is embedded the
+			// signaling settings are not initially included in the HTML, so
+			// they need to be explicitly loaded before starting the app.
+			OCA.Talk.Signaling.loadSettings().then(function() {
+				OCA.SpreedMe.app.start();
+			});
+
+// 			this.setupSignalingEventHandlers();
+// 
+// 			var roomForFileModel = new OCA.Talk.RoomForFileModel();
+// 			fileList.registerDetailView(new OCA.Talk.TalkCallDetailFileInfoView({ roomForFileModel: roomForFileModel, fileList: fileList }));
+// 			fileList.registerTabView(new OCA.Talk.TalkChatDetailTabView({ roomForFileModel: roomForFileModel }));
 		},
 
 		/**
@@ -213,6 +469,19 @@
 				}
 
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
+					roomsChannel.trigger('joinedRoom', OCA.SpreedMe.app.activeRoom);
+
+					// TODO apparently needed by some code in the calls in the public share
+// 					var participants = OCA.SpreedMe.app.activeRoom.get('participants');
+// 					OCA.SpreedMe.app.setRoomMessageForGuest(participants);
+
+					// TODO not needed here, and probably anywhere as it will be
+					// implicit when the call UI is shown
+					// Ensure that the elements are shown, as they could have
+					// been hidden if the password was already requested and
+					// that conversation ended in this same page.
+// 					$('#videos').show();
+
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 				});
@@ -243,7 +512,7 @@
 	};
 
 	OCA.SpreedMe.app = new OCA.Talk.Embedded();
-	OCA.SpreedMe.app.start();
 
 	OC.Plugins.register('OCA.Files.FileList', OCA.Talk.FilesPlugin);
+
 })(OC, OCA);
