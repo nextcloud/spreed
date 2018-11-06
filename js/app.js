@@ -417,11 +417,12 @@
 				});
 			}
 		},
-		addParticipantToRoom: function(token, participant) {
+		addParticipantToRoom: function(token, participant, type) {
 			$.post(
 				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
 				{
-					newParticipant: participant
+					newParticipant: participant,
+					source: type
 				}
 			).done(function() {
 				this.signaling.syncRooms();

@@ -131,7 +131,7 @@
 							results.push({
 								id: suggestion.id,
 								displayName: suggestion.label,
-								type: suggestion.source === 'users' ? 'user' : 'email'
+								type: suggestion.source
 							});
 						});
 
@@ -145,8 +145,10 @@
 					callback({id: element.val()});
 				},
 				formatResult: function (element) {
-					if (element.type === 'email') {
+					if (element.type === 'emails') {
 						return '<span><div class="avatar icon-mail"></div>' + escapeHTML(element.displayName) + '</span>';
+					} else if (element.type === 'groups') {
+						return '<span><div class="avatar icon-contacts"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
@@ -158,10 +160,11 @@
 
 			this.ui.addParticipantInput.on('select2-selecting', function(e) {
 				switch (e.object.type) {
-					case 'user':
-						OCA.SpreedMe.app.addParticipantToRoom(this.room.get('token'), e.object.id);
+					case 'users':
+					case 'groups':
+						OCA.SpreedMe.app.addParticipantToRoom(this.room.get('token'), e.object.id, e.object.type);
 						break;
-					case 'email':
+					case 'emails':
 						OCA.SpreedMe.app.inviteEmailToRoom(this.room.get('token'), e.object.id);
 						break;
 					default:
