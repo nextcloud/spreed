@@ -27,6 +27,63 @@
 
 	var roomsChannel = Backbone.Radio.channel('rooms');
 
+	OCA.Talk.RoomForFileModel = function() {
+	};
+	OCA.Talk.RoomForFileModel.prototype = {
+
+		join: function(currentFileId) {
+			if (this._currentFileId === currentFileId) {
+				return;
+			}
+
+			this.leave();
+
+			this._currentFileId = currentFileId;
+
+			var self = this;
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'file/' + currentFileId,
+				type: 'GET',
+				beforeSend: function(request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: function(ocsResponse) {
+					if (self._currentFileId !== currentFileId) {
+						// Leave, or join with a different id, was called while
+						// waiting for the response; as it is not the latest one
+						// just ignore it.
+						return;
+					}
+
+					OCA.Talk.FilesPlugin.joinRoom(ocsResponse.ocs.data.token);
+				},
+				error: function() {
+					if (self._currentFileId !== currentFileId) {
+						// Leave, or join with a different id, was called while
+						// waiting for the response; as it is not the latest one
+						// just ignore it.
+						return;
+					}
+
+					OC.Notification.showTemporary(t('spreed', 'Error while getting the room ID'), {type: 'error'});
+
+					OCA.Talk.FilesPlugin.leaveCurrentRoom();
+				}
+			});
+		},
+
+		leave: function() {
+			if (this._currentFileId === undefined) {
+				return;
+			}
+
+			delete this._currentFileId;
+
+			OCA.Talk.FilesPlugin.leaveCurrentRoom();
+		}
+	};
+
 	/**
 	 * Tab view for Talk chat in the details view of the Files app.
 	 *
@@ -43,7 +100,9 @@
 		 */
 		order: -10,
 
-		initialize: function() {
+		initialize: function(options) {
+			this._roomForFileModel = options.roomForFileModel;
+
 			this.$el.append('<div class="app-not-started-placeholder icon-loading"></div>');
 		},
 
@@ -79,7 +138,7 @@
 			// left; this must be done here because "setFileInfo" will not get
 			// called with the new file if the tab can not be displayed.
 			if (this._appStarted) {
-				OCA.Talk.FilesPlugin.leaveCurrentRoom();
+				this._roomForFileModel.leave();
 			} else {
 				this.model = null;
 			}
@@ -142,21 +201,7 @@
 				return;
 			}
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'file/' + fileInfo.get('id'),
-				type: 'GET',
-				beforeSend: function(request) {
-					request.setRequestHeader('Accept', 'application/json');
-				},
-				success: function(ocsResponse) {
-					OCA.Talk.FilesPlugin.joinRoom(ocsResponse.ocs.data.token);
-				},
-				error: function() {
-					OC.Notification.showTemporary(t('spreed', 'Error while getting the room ID'), {type: 'error'});
-
-					OCA.Talk.FilesPlugin.leaveCurrentRoom();
-				}
-			});
+			this._roomForFileModel.join(this.model.get('id'));
 
 			// If the details view is rendered again after the chat view has
 			// been appended to this tab the chat view would stop working due to
@@ -202,7 +247,8 @@
 				return;
 			}
 
-			var talkChatDetailTabView = new OCA.Talk.TalkChatDetailTabView();
+			var roomForFileModel = new OCA.Talk.RoomForFileModel();
+			var talkChatDetailTabView = new OCA.Talk.TalkChatDetailTabView({ roomForFileModel: roomForFileModel });
 
 			OCA.SpreedMe.app.on('start', function() {
 				self.setupSignalingEventHandlers();
