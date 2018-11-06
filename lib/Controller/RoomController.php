@@ -761,6 +761,7 @@ class RoomController extends OCSController {
 
 		$participants = $room->getParticipants();
 
+		$updateRoomType = $room->getType() === Room::ONE_TO_ONE_CALL ? Room::GROUP_CALL : false;
 		$participantsToAdd = [];
 		if ($source === 'users') {
 			$newUser = $this->userManager->get($newParticipant);
@@ -797,19 +798,22 @@ class RoomController extends OCSController {
 			}
 
 			\call_user_func_array([$room, 'addUsers'], $participantsToAdd);
+		} else if ($source === 'emails') {
+			$this->guestManager->inviteByEmail($room, $newParticipant);
+			$updateRoomType = $room->getType() !== Room::PUBLIC_CALL ? Room::PUBLIC_CALL : false;
 		} else {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$data = [];
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			// In case a user is added to a one2one call, we change the call to a group call
-			$room->changeType(Room::GROUP_CALL);
+		if ($updateRoomType !== false) {
+			// In case a user is added to a one2one room, we change the call to a group room
+			// In case an email is added to a closed room, we change the call to a public room
+			$room->changeType($updateRoomType);
 
-			$data = ['type' => $room->getType()];
+			return new DataResponse(['type' => $room->getType()]);
 		}
 
-		return new DataResponse($data);
+		return new DataResponse();
 	}
 
 	/**

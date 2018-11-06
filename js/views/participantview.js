@@ -162,10 +162,8 @@
 				switch (e.object.type) {
 					case 'users':
 					case 'groups':
-						OCA.SpreedMe.app.addParticipantToRoom(this.room.get('token'), e.object.id, e.object.type);
-						break;
 					case 'emails':
-						OCA.SpreedMe.app.inviteEmailToRoom(this.room.get('token'), e.object.id);
+						OCA.SpreedMe.app.addParticipantToRoom(this.room.get('token'), e.object.id, e.object.type);
 						break;
 					default:
 						console.log('Unknown type', e.object.type);

@@ -428,16 +428,6 @@
 				this.signaling.syncRooms();
 			}.bind(this));
 		},
-		inviteEmailToRoom: function(token, email) {
-			$.post(
-				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/guests',
-				{
-					newParticipant: email
-				}
-			).done(function() {
-				this.signaling.syncRooms();
-			}.bind(this));
-		},
 		syncAndSetActiveRoom: function(token) {
 			var self = this;
 			this.signaling.syncRooms()
