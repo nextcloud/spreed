@@ -84,6 +84,165 @@
 		}
 	};
 
+	OCA.Talk.TalkCallDetailFileInfoView = OCA.Files.DetailFileInfoView.extend({
+
+		className: 'talkCallInfoView',
+
+		initialize: function(options) {
+			this._roomForFileModel = options.roomForFileModel;
+			this._fileList = options.fileList;
+
+			this._boundHideCallUi = this._hideCallUi.bind(this);
+
+			this.listenTo(roomsChannel, 'joinedRoom', this.setActiveRoom);
+			this.listenTo(roomsChannel, 'leaveCurrentRoom', this.setActiveRoom);
+		},
+
+		/**
+		 * Sets the file info to be displayed in the view
+		 *
+		 * @param {OCA.Files.FileInfo} fileInfo file info to set
+		 */
+		setFileInfo: function(fileInfo) {
+			if (!this._appStarted) {
+				this.model = fileInfo;
+
+				return;
+			}
+
+			if (this.model === fileInfo) {
+				return;
+			}
+
+			this.model = fileInfo;
+
+			// Discard the call button until joining to the new room.
+			delete this._callButton;
+
+			this.render();
+
+			if (OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(this.model)) {
+				this._roomForFileModel.join(this.model.get('id'));
+			} else {
+				this._roomForFileModel.leave();
+				// The "leaveCall" handler would have been removed before the
+				// signaling was able to emit the event, so hide the call UI
+				// explicitly.
+				this._boundHideCallUi();
+			}
+		},
+
+		setActiveRoom: function(activeRoom) {
+			this.stopListening(this._activeRoom, 'change:participantFlags', this._updateCallContainer);
+			// Signaling uses its own event system, so Backbone methods can not
+			// be used.
+			OCA.SpreedMe.app.signaling.off('leaveCall', this._boundHideCallUi);
+
+			this._activeRoom = activeRoom;
+
+			if (activeRoom) {
+				this._callButton = new OCA.SpreedMe.Views.CallButton({
+					model: activeRoom,
+					connection: OCA.SpreedMe.app.connection,
+				});
+				// Force initial rendering; changes in the room state will
+				// automatically render the button again from now on.
+				this._callButton.render();
+
+				this.listenTo(activeRoom, 'change:participantFlags', this._updateCallContainer);
+				// Signaling uses its own event system, so Backbone methods can
+				// not be used.
+				OCA.SpreedMe.app.signaling.on('leaveCall', this._boundHideCallUi);
+			} else {
+				delete this._callButton;
+			}
+
+			this.render();
+		},
+
+		render: function() {
+			this.$el.empty();
+			this._$callContainerWrapper = null;
+
+			if (!OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(this.model) || !this._callButton) {
+				return;
+			}
+
+			this._$callContainerWrapper = $('<div id="call-container-wrapper" class="hidden"></div>');
+
+			this.$el.append(this._$callContainerWrapper);
+			$('#call-container-wrapper').append('<div id="call-container"></div>');
+			$('#call-container').append('<div id="videos"></div>');
+			$('#call-container').append('<div id="screens"></div>');
+
+			this.$el.append(this._callButton.$el);
+		},
+
+		_updateCallContainer: function() {
+			var flags = this._activeRoom.get('participantFlags') || 0;
+			var inCall = flags & OCA.SpreedMe.app.FLAG_IN_CALL !== 0;
+			if (inCall) {
+				this._showCallUi();
+			} else {
+				this._hideCallUi();
+			}
+		},
+
+		_showCallUi: function() {
+			if (!this._$callContainerWrapper || !this._$callContainerWrapper.hasClass('hidden')) {
+				return;
+			}
+
+			this._fileList.getRegisteredDetailViews().forEach(function(detailView) {
+				if (!(detailView instanceof OCA.Talk.TalkCallDetailFileInfoView)) {
+					detailView.$el.addClass('hidden-by-call');
+				}
+			});
+
+			this._$callContainerWrapper.removeClass('hidden');
+
+			// The icon to close the sidebar overlaps the video, so use its
+			// white version with a shadow instead of the black one.
+			// TODO Change it only when there is a call in progress; while
+			// waiting for other participants it should be kept black. However,
+			// this would need to hook in "updateParticipantsUI" which is where
+			// the "incall" class is set.
+			$('#app-sidebar .icon-close').addClass('icon-white icon-shadow');
+		},
+
+		_hideCallUi: function() {
+			// The _$callContainerWrapper could be undefined when changing to a
+			// different file, so the detail views have to be unhidden in any
+			// case.
+			this._fileList.getRegisteredDetailViews().forEach(function(detailView) {
+				if (!(detailView instanceof OCA.Talk.TalkCallDetailFileInfoView)) {
+					detailView.$el.removeClass('hidden-by-call');
+				}
+			});
+
+			// Restore the icon to close the sidebar.
+			$('#app-sidebar .icon-close').removeClass('icon-white icon-shadow');
+
+			if (!this._$callContainerWrapper || this._$callContainerWrapper.hasClass('hidden')) {
+				return;
+			}
+
+			this._$callContainerWrapper.addClass('hidden');
+		},
+
+		setAppStarted: function() {
+			this._appStarted = true;
+
+			// Set again the file info now that the app has started.
+			if (OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(this.model)) {
+				var fileInfo = this.model;
+				this.model = null;
+				this.setFileInfo(fileInfo);
+			}
+		},
+
+	});
+
 	/**
 	 * Tab view for Talk chat in the details view of the Files app.
 	 *
@@ -111,7 +270,7 @@
 		 * in the whole sidebar.
 		 */
 		getTabsContainerExtraClasses: function() {
-			return 'with-inner-scroll-bars';
+			return 'with-inner-scroll-bars force-minimum-height';
 		},
 
 		getLabel: function() {
@@ -253,6 +412,7 @@
 			}
 
 			var roomForFileModel = new OCA.Talk.RoomForFileModel();
+			var talkCallDetailFileInfoView = new OCA.Talk.TalkCallDetailFileInfoView({ roomForFileModel: roomForFileModel, fileList: fileList });
 			var talkChatDetailTabView = new OCA.Talk.TalkChatDetailTabView({ roomForFileModel: roomForFileModel });
 
 			OCA.SpreedMe.app.on('start', function() {
@@ -261,9 +421,11 @@
 				// While the app is being started the view just shows a
 				// placeholder UI that is replaced by the actual UI once
 				// started.
+				talkCallDetailFileInfoView.setAppStarted();
 				talkChatDetailTabView.setAppStarted();
 			}.bind(this));
 
+			fileList.registerDetailView(talkCallDetailFileInfoView);
 			fileList.registerTabView(talkChatDetailTabView);
 
 			// Unlike in the regular Talk app when Talk is embedded the
@@ -325,6 +487,8 @@
 				}
 
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
+					roomsChannel.trigger('joinedRoom', OCA.SpreedMe.app.activeRoom);
+
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 				});

@@ -1,3 +1,125 @@
+.talkCallInfoView .call-button {
+	margin-top: 10px;
+}
+
+
+
+
+
+.talkCallInfoView #call-container-wrapper {
+	/* Overlap the padding from the sidebar itself to maximize the area of the
+	 * video as much as possible */
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-top: -15px;
+}
+
+.talkCallInfoView #call-container-wrapper #call-container:not(.incall) {
+	display: none;
+}
+
+.talkCallInfoView #call-container-wrapper #call-container {
+	position: relative;
+
+	/* Show the call container in a 16/9 proportion based on the sidebar
+	 * width. This is the same proportion used for previews of images by the
+	 * SidebarPreviewManager. */
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+/* Video in Talk sidebar */
+.talkCallInfoView #call-container-wrapper #videos {
+	position: absolute;
+
+	flex-grow: 1;
+}
+
+.talkCallInfoView #call-container-wrapper .videoContainer {
+	/* The video container has some small padding to prevent the video from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+.talkCallInfoView #call-container-wrapper .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+.talkCallInfoView #call-container-wrapper .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+/* Screensharing in Talk sidebar */
+.talkCallInfoView #call-container-wrapper #screens {
+	display: none;
+}
+
+
+
+
+
+.talkCallInfoView #videos .videoContainer:not(.promoted) video {
+	/* Make the unpromoted videos smaller to not overlap too much the promoted
+	 * video */
+	max-height: 100px;
+}
+
+/* The avatars are requested with a size of 128px, so reduce it to not overlap
+ * too much the promoted video */
+.talkCallInfoView #videos .videoContainer:not(.promoted) .avatar,
+.talkCallInfoView #videos .videoContainer:not(.promoted) .avatar img {
+	width: 64px !important;
+	height: 64px !important;
+}
+
+
+
+.talkCallInfoView .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px;
+	/* Use default font size, as it takes too much space otherwise */
+	font-size: initial;
+}
+
+.talkCallInfoView .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px 35%;
+}
+
+
+
+.talkCallInfoView .mediaIndicator {
+	/* Move the media indicator closer to the bottom */
+	bottom: 16px;
+}
+
+
+
+
+
+/* Helper class to hide other info views during a call; this makes possible to
+ * restore their previous visibility once the call stops without having to keep
+ * track of their previous visibility. */
+#app-sidebar .hidden-by-call {
+	display: none;
+}
+
+
+
+
+
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the
  * vertical scroll bar only to the list of messages. Otherwise, the vertical
@@ -22,6 +144,9 @@
 }
 
 #app-sidebar .detailFileInfoContainer {
+	display: flex;
+	flex-direction: column;
+
 	flex-shrink: 0;
 }
 
@@ -42,6 +167,14 @@
 #app-sidebar .tabsContainer.with-inner-scroll-bars,
 #app-sidebar .tabsContainer.with-inner-scroll-bars .tab {
 	overflow: hidden;
+}
+
+/* Force a minimum height to ensure that the chat view will be at least 300px
+ * height, even if the info view is large and the screen short; in that case a
+ * scroll bar will be shown for the sidebar, but even if that looks really bad
+ * it is better than an unusable chat view. */
+#app-sidebar .tabsContainer.force-minimum-height {
+	min-height: 300px;
 }
 
 #app-sidebar .tab.hidden {
