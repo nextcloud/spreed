@@ -464,23 +464,42 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown share');
 		}
 
+		try {
+			$segments = explode('/', $share->getNode()->getPath(), 4);
+			if (!isset($segments[3])) {
+				throw new \OCP\Files\NotFoundException('File not in /user/files/');
+			}
+			$file = [
+				'type' => 'file',
+				'id' => $share->getNodeId(),
+				'name' => $share->getNode()->getName(),
+				'path' => $segments[3],
+				'link' => $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $share->getNodeId()]),
+			];
+		} catch (\OCP\Files\NotFoundException $e) {
+			throw new \InvalidArgumentException('Unknown file');
+		}
+
 		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
 			$sharedWith = $share->getSharedWith();
 
 			$notification
-				->setParsedSubject(str_replace('{email}', $sharedWith, $l->t('{email} requested the password to access a share')))
+				->setParsedSubject(str_replace(['{email}', '{file}'], [$sharedWith, $file['name']], $l->t('{email} requested the password to access {file}')))
 				->setRichSubject(
-					$l->t('{email} requested the password to access a share'), [
+					$l->t('{email} requested the password to access {file}'),
+					[
 						'email' => [
 							'type' => 'email',
 							'id' => $sharedWith,
 							'name' => $sharedWith,
-						]
+						],
+						'file' => $file,
 					]
 				);
 		} else {
 			$notification
-				->setParsedSubject($l->t('Someone requested the password to access a share'));
+				->setParsedSubject(str_replace('{file}', $file['name'], $l->t('Someone requested the password to access {file}')))
+				->setRichSubject($l->t('Someone requested the password to access {file}'), ['file' => $file]);
 		}
 
 		return $notification;
