@@ -37,6 +37,8 @@ use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
+use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IManager as IShareManager;
 
 class Notifier implements INotifier {
 
@@ -48,6 +50,9 @@ class Notifier implements INotifier {
 
 	/** @var IUserManager */
 	protected $userManager;
+
+	/** @var IShareManager */
+	private $shareManager;
 
 	/** @var Manager */
 	protected $manager;
@@ -64,6 +69,7 @@ class Notifier implements INotifier {
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,
 								IUserManager $userManager,
+								IShareManager $shareManager,
 								Manager $manager,
 								ICommentsManager $commentManager,
 								MessageParser $messageParser,
@@ -71,6 +77,7 @@ class Notifier implements INotifier {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
 		$this->userManager = $userManager;
+		$this->shareManager = $shareManager;
 		$this->manager = $manager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
@@ -112,13 +119,13 @@ class Notifier implements INotifier {
 			return $this->parseInvitation($notification, $room, $l);
 		}
 		if ($subject === 'call') {
+			if ($room->getObjectType() === 'share:password') {
+				return $this->parsePasswordRequest($notification, $room, $l);
+			}
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'mention' ||  $subject === 'chat') {
 			return $this->parseChatMessage($notification, $room, $l);
-		}
-		if ($subject === 'share:password') {
-			return $this->parsePasswordRequest($notification, $room, $l);
 		}
 
 		throw new \InvalidArgumentException('Unknown subject');
@@ -445,18 +452,21 @@ class Notifier implements INotifier {
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parsePasswordRequest(INotification $notification, Room $room, IL10N $l) {
-		if ($notification->getObjectType() !== 'room') {
+	protected function parsePasswordRequest(INotification $notification, Room $room, IL10N $l): INotification {
+		if ($notification->getObjectType() !== 'call') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
-		$parameters = $notification->getSubjectParameters();
-		$sharedWith = $parameters['sharedWith'];
+		try {
+			$share = $this->shareManager->getShareByToken($room->getObjectId());
+		} catch (ShareNotFound $e) {
+			throw new \InvalidArgumentException('Unknown share');
+		}
+
+		$sharedWith = $share->getSharedWith();
 
 		$notification
-			->setParsedSubject(
-				$l->t('Password request by %s', [$sharedWith])
-			)
+			->setParsedSubject(str_replace('{email}', $sharedWith, $l->t('{email} requested the password to access a share')))
 			->setRichSubject(
 				$l->t('{email} requested the password to access a share'), [
 					'email' => [

@@ -35,6 +35,7 @@ use OCP\IUserManager;
 use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
 use OCP\RichObjectStrings\Definitions;
+use OCP\Share\IManager as ShareManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class NotifierTest extends \Test\TestCase {
@@ -45,6 +46,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $url;
 	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
+	/** @var ShareManager|\PHPUnit_Framework_MockObject_MockObject */
+	protected $shareManager;
 	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
 	/** @var ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
@@ -62,6 +65,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->lFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->shareManager = $this->createMock(ShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
@@ -71,6 +75,7 @@ class NotifierTest extends \Test\TestCase {
 			$this->lFactory,
 			$this->url,
 			$this->userManager,
+			$this->shareManager,
 			$this->manager,
 			$this->commentsManager,
 			$this->messageParser,
