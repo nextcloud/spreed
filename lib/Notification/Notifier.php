@@ -112,7 +112,7 @@ class Notifier implements INotifier {
 
 		$notification
 			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')))
-			->setLink($this->url->linkToRouteAbsolute('spreed.Page.index') . '?token=' . $room->getToken());
+			->setLink($this->url->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()]));
 
 		$subject = $notification->getSubject();
 		if ($subject === 'invitation') {
