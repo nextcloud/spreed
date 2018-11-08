@@ -32,7 +32,6 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Notification\IManager as NotificationManager;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\Exceptions\ShareNotFound;
 
@@ -40,8 +39,6 @@ class PublicShareAuthController extends OCSController {
 
 	/** @var IUserManager */
 	private $userManager;
-	/** @var NotificationManager */
-	private $notificationManager;
 	/** @var ShareManager */
 	private $shareManager;
 	/** @var Manager */
@@ -51,7 +48,6 @@ class PublicShareAuthController extends OCSController {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
-	 * @param NotificationManager $notificationManager
 	 * @param ShareManager $shareManager
 	 * @param Manager $manager
 	 */
@@ -59,13 +55,11 @@ class PublicShareAuthController extends OCSController {
 			string $appName,
 			IRequest $request,
 			IUserManager $userManager,
-			NotificationManager $notificationManager,
 			ShareManager $shareManager,
 			Manager $manager
 	) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;
-		$this->notificationManager = $notificationManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
 	}
