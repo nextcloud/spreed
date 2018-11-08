@@ -465,16 +465,10 @@ class Notifier implements INotifier {
 		}
 
 		try {
-			$segments = explode('/', $share->getNode()->getPath(), 4);
-			if (!isset($segments[3])) {
-				throw new \OCP\Files\NotFoundException('File not in /user/files/');
-			}
 			$file = [
-				'type' => 'file',
+				'type' => 'highlight',
 				'id' => $share->getNodeId(),
 				'name' => $share->getNode()->getName(),
-				'path' => $segments[3],
-				'link' => $this->url->linkToRouteAbsolute('files.viewcontroller.showFile', ['fileid' => $share->getNodeId()]),
 			];
 		} catch (\OCP\Files\NotFoundException $e) {
 			throw new \InvalidArgumentException('Unknown file');
