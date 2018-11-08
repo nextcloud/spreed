@@ -5626,6 +5626,8 @@
 				}
 
 				var sdp = SDPUtils.writeSessionBoilerplate();
+				sdp = maybePreferCodec(sdp, 'video', 'send', 'H264');
+
 				var transceivers = [];
 				tracks.forEach(function(mline, sdpMLineIndex) {
 					// For each track, create an ice gatherer, ice transport,
@@ -5696,6 +5698,8 @@
 				var self = this;
 
 				var sdp = SDPUtils.writeSessionBoilerplate();
+				sdp = maybePreferCodec(sdp, 'video', 'receive', 'H264');
+
 				if (this.usingBundle) {
 					sdp += 'a=group:BUNDLE ' + this.transceivers.map(function(t) {
 							return t.mid;
@@ -16677,6 +16681,8 @@
 				}
 
 				var sdp = SDPUtils.writeSessionBoilerplate();
+				sdp = maybePreferCodec(sdp, 'video', 'send', 'H264');
+
 				var transceivers = [];
 				tracks.forEach(function(mline, sdpMLineIndex) {
 					// For each track, create an ice gatherer, ice transport,
@@ -16762,6 +16768,8 @@
 				var self = this;
 
 				var sdp = SDPUtils.writeSessionBoilerplate();
+				sdp = maybePreferCodec(sdp, 'video', 'receive', 'H264');
+
 				if (this.usingBundle) {
 					sdp += 'a=group:BUNDLE ' + this.transceivers.map(function(t) {
 							return t.mid;
