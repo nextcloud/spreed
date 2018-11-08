@@ -202,14 +202,17 @@
 
 			this._$container.append($wrapper);
 
-			var previousWrapperHeight = $wrapper.height();
+			var previousWrapperHeight = this._getElementHeight($wrapper);
 
 			$wrapper.append(this._appendedElementsBuffer);
 			delete this._appendedElementsBuffer;
 
-			var wrapperHeightDifference = $wrapper.height() - previousWrapperHeight;
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
 
-			this._$wrapperBackground.height(this._$wrapperBackground.height() + wrapperHeightDifference);
+			// Although getting the height with jQuery < 3.X rounds to the
+			// nearest integer setting the height respects the given float
+			// number.
+			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
 			while (this._$firstAppendedElement) {
 				this._updateCache(this._$firstAppendedElement, $wrapper);
@@ -271,12 +274,50 @@
 			// position of the element would be if there was no margin, so in
 			// those cases the top position returned by jQuery is below the
 			// actual top position of the element.
-			var marginTop = parseInt($element.css('margin-top'));
+			var marginTop = parseFloat($element.css('margin-top'));
 			if (marginTop >= 0) {
 				return $element.position().top;
 			}
 
 			return $element.position().top + marginTop;
+		},
+
+		/**
+		 * Returns the height of the given element.
+		 *
+		 * This must be used instead of jQuery.height(); before the 3.0.0
+		 * release jQuery rounded the height to the nearest integer, but Firefox
+		 * has subpixel accuracy, so the height returned by jQuery can not be
+		 * used in the calculations.
+		 *
+		 * @param jQuery $element the jQuery element to get its height.
+		 */
+		_getElementHeight: function($element) {
+			return $element.get(0).getBoundingClientRect().height;
+		},
+
+		/**
+		 * Returns the outer height, without margins, of the given element.
+		 *
+		 * The returned value includes the height, the padding and the border.
+		 *
+		 * This must be used instead of jQuery.height(); before the 3.0.0
+		 * release jQuery rounded the height to the nearest integer, but Firefox
+		 * has subpixel accuracy, so the height returned by jQuery can not be
+		 * used in the calculations.
+		 *
+		 * @param jQuery $element the jQuery element to get its height.
+		 */
+		_getElementOuterHeightWithoutMargins: function($element) {
+			// Although before jQuery 3.0.0 the height is rounded to the nearest
+			// integer the padding and border width, on the other hand, are
+			// returned as a float value as expected.
+			var paddingTop = parseFloat($element.css('padding-top'));
+			var paddingBottom = parseFloat($element.css('padding-bottom'));
+			var borderTop = parseFloat($element.css('border-top-width'));
+			var borderBottom = parseFloat($element.css('border-bottom-width'));
+
+			return this._getElementHeight($element) + paddingTop + paddingBottom + borderTop + borderBottom;
 		},
 
 		/**
@@ -288,20 +329,25 @@
 		 * element (negative top margin) or its next element (negative bottom
 		 * margin), but without modifying its visible height.
 		 *
+		 * This must be used instead of jQuery.height(); before the 3.0.0
+		 * release jQuery rounded the height to the nearest integer, but Firefox
+		 * has subpixel accuracy, so the height returned by jQuery can not be
+		 * used in the calculations.
+		 *
 		 * @param jQuery $element the jQuery element to get its height.
 		 */
 		_getElementOuterHeight: function($element) {
-			// When the margin is positive, jQuery returns the proper outer
-			// height of the element. However, when it is negative, it
-			// substracts the negative margin from the overall height of the
-			// element, so in those cases the outer height returned by jQuery is
-			// smaller than the actual height.
-			var marginTop = parseInt($element.css('margin-top'));
-			if (marginTop >= 0) {
-				return $element.outerHeight(true);
-			}
+			// Although before jQuery 3.0.0 the height is rounded to the nearest
+			// integer the margin, on the other hand, is returned as a float
+			// value as expected.
+			// Besides that note that outerHeight(true) would return a smaller
+			// height than the actual height when there are negative margins, as
+			// in that case jQuery would substract the negative margin from the
+			// overall height of the element.
+			var marginTop = Math.max(0, parseFloat($element.css('margin-top')));
+			var marginBottom = Math.max(0, parseFloat($element.css('margin-bottom')));
 
-			return $element.outerHeight(true) - marginTop;
+			return this._getElementOuterHeightWithoutMargins($element) + marginTop + marginBottom;
 		},
 
 		/**
@@ -309,6 +355,14 @@
 		 *
 		 * Elements no longer in the viewport are removed, while elements now in
 		 * the viewport are added.
+		 *
+		 * Note that the float precision problems are not handled in the
+		 * visibility checks, so in browsers with subpixel accuracy, like
+		 * Firefox, elements in which their bottom is very very close to the top
+		 * of the container, or elements in which their top is very very close
+		 * to the bottom of the container may be shown or hidden when they
+		 * should not. However, this should not be a problem, as only fractions
+		 * of a pixel would be wrongly shown or hidden.
 		 */
 		updateVisibleElements: function() {
 			if (!this._$firstVisibleElement && !this._$firstElement) {
@@ -323,7 +377,7 @@
 			}
 
 			var visibleAreaTop = this._$container.scrollTop();
-			var visibleAreaBottom = visibleAreaTop + this._$container.outerHeight();
+			var visibleAreaBottom = visibleAreaTop + this._getElementOuterHeightWithoutMargins(this._$container);
 
 			var firstVisibleElementIsStillPartiallyVisible =
 					this._$firstVisibleElement._top <= visibleAreaTop &&
