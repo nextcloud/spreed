@@ -550,13 +550,12 @@
 				setAvatar($(this), 16);
 			});
 
-			var userId = $el.find('.avatar').data('user-id');
 			if (OC.getCurrentUser().uid &&
 				model &&
 				model.get('actorType') === 'users' &&
-				userId !== OC.getCurrentUser().uid) {
+				model.get('actorId') !== OC.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
-					userId, 0, $el.find('.authorRow'));
+					model.get('actorId'), 0, $el.find('.authorRow'));
 			}
 
 			var $message = $el.find('.message');
