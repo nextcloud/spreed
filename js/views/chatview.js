@@ -118,7 +118,8 @@
 						// misuse the highlighter callback to instead of
 						// highlighting loads the avatars.
 						var $li = $(li);
-						$li.find('.avatar').avatar(undefined, 32);
+						var $avatar = $li.find('.avatar');
+						$avatar.avatar($avatar.data('user-id'), 32);
 						return $li;
 					},
 					sorter: function (q, items) { return items; }
@@ -128,7 +129,7 @@
 						'<span class="avatar-name-wrapper">' +
 							'<span class="avatar" ' +
 									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
-									'data-user="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-id="' + escapeHTML(item.id) + '" ' + // for contactsmenu
 									'data-user-display-name="' + escapeHTML(item.label) + '">' +
 							'</span>' +
 							'<strong>' + escapeHTML(item.label) + '</strong>' +
@@ -139,7 +140,7 @@
 						'<span class="mention-user avatar-name-wrapper">' +
 							'<span class="avatar" ' +
 									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
-									'data-user="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-id="' + escapeHTML(item.id) + '" ' + // for contactsmenu
 									'data-user-display-name="' + escapeHTML(item.label) + '">' +
 							'</span>' +
 							'<strong>' + escapeHTML(item.label) + '</strong>' +
@@ -580,7 +581,7 @@
 				var $this = $(this);
 				var $avatar = $this.find('.avatar');
 
-				var user = $avatar.data('user');
+				var user = $avatar.data('user-id');
 				if (user !== OC.getCurrentUser().uid) {
 					$this.contactsMenu(user, 0, $this);
 				}
@@ -659,7 +660,7 @@
 			$comment.find('.mention-user').each(function () {
 				var $this = $(this);
 				var $inserted = $this.parent();
-				$inserted.html('@' + $this.find('.avatar').data('user'));
+				$inserted.html('@' + $this.find('.avatar').data('user-id'));
 			});
 
 			var oldHtml;
