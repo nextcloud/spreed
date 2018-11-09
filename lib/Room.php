@@ -828,6 +828,32 @@ class Room {
 	}
 
 	/**
+	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
+	 * @return string[]
+	 */
+	public function getParticipantUserIds(int $lastPing = 0): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->nonEmptyString('user_id'));
+
+		if ($lastPing > 0) {
+			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
+		}
+
+		$result = $query->execute();
+
+		$users = [];
+		while ($row = $result->fetch()) {
+			$users[] = $row['user_id'];
+		}
+		$result->closeCursor();
+
+		return $users;
+	}
+
+	/**
 	 * @param int $notificationLevel
 	 * @return Participant[] Array of participants
 	 */

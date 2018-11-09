@@ -769,7 +769,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantUserIds();
 
 		$updateRoomType = $room->getType() === Room::ONE_TO_ONE_CALL ? Room::GROUP_CALL : false;
 		$participantsToAdd = [];
@@ -779,7 +779,7 @@ class RoomController extends OCSController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			if (isset($participants['users'][$newParticipant])) {
+			if (\in_array($newParticipant, $participants, true)) {
 				return new DataResponse([]);
 			}
 
@@ -794,7 +794,7 @@ class RoomController extends OCSController {
 
 			$usersInGroup = $group->getUsers();
 			foreach ($usersInGroup as $user) {
-				if (isset($participants['users'][$user->getUID()])) {
+				if (\in_array($user->getUID(), $participants, true)) {
 					continue;
 				}
 

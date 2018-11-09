@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\PublicShareAuth;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -92,15 +93,15 @@ class Listener {
 			return;
 		}
 
-		$participants = $room->getParticipants();
-		$users = $participants['users'];
-		$guests = $participants['guests'];
-
-		if (array_key_exists($userId, $users) && $users[$userId]['participantType'] === Participant::OWNER) {
-			return;
+		try {
+			$participant = $room->getParticipant($userId);
+			if ($participant->getParticipantType() === Participant::OWNER) {
+				return;
+			}
+		} catch (ParticipantNotFoundException $e) {
 		}
 
-		if (\count($users) > 1 || \count($guests) > 0) {
+		if ($room->getActiveGuests() > 0 || \count($room->getParticipantUserIds()) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
@@ -119,11 +120,7 @@ class Listener {
 			return;
 		}
 
-		$participants = $room->getParticipants();
-		$users = $participants['users'];
-		$guests = $participants['guests'];
-
-		if (\count($users) > 1 || \count($guests) > 0) {
+		if ($room->getActiveGuests() > 0 || \count($room->getParticipantUserIds()) > 1) {
 			throw new \OverflowException('Only the owner and another participant are allowed in rooms to request the password for a share');
 		}
 	}
