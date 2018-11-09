@@ -150,6 +150,10 @@
 	width: 100%;
 }
 
+#commentsTabView .comment .authorRow .contactsmenu-popover {
+	top: 32px;
+}
+
 body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):not(.guestUser) {
 	.avatar,
 	.avatar img,
