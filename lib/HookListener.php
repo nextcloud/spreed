@@ -43,14 +43,7 @@ class HookListener {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
 				$room->deleteRoom();
 			} else {
-				$particiants = $room->getParticipants();
-
-				// Also delete the room, when the user is the only non-guest user
-				if (\count($particiants['users']) === 1) {
-					$room->deleteRoom();
-				} else {
-					$room->removeUser($user);
-				}
+				$room->removeUser($user);
 			}
 		}
 	}
