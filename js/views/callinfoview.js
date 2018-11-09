@@ -156,9 +156,14 @@
 		},
 
 		initialize: function() {
+			var nameAttribute = 'name';
+			if (this.model.get('objectType') === 'share:password') {
+				nameAttribute = 'displayName';
+			}
+
 			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.model,
-				modelAttribute: 'name',
+				modelAttribute: nameAttribute,
 				modelSaveOptions: {
 					patch: true,
 					success: function() {
@@ -246,6 +251,11 @@
 		},
 
 		_updateNameEditability: function() {
+			if (this.model.get('objectType') === 'share:password') {
+				this._nameEditableTextLabel.disableEdition();
+				return;
+			}
+
 			if (this._canModerate() && this.model.get('type') !== 1) {
 				this._nameEditableTextLabel.enableEdition();
 			} else {
