@@ -48,6 +48,7 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Mail\IMailer;
+use OCP\Share;
 
 class RoomController extends OCSController {
 	/** @var string */
@@ -741,50 +742,78 @@ class RoomController extends OCSController {
 	 *
 	 * @param string $token
 	 * @param string $newParticipant
+	 * @param string $source
 	 * @return DataResponse
 	 */
-	public function addParticipantToRoom(string $token, string $newParticipant): DataResponse {
+	public function addParticipantToRoom(string $token, string $newParticipant, string $source = 'users'): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
+			$currentParticipant = $room->getParticipant($this->userId);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if (!$participant->hasModeratorPermissions(false)) {
+		if (!$currentParticipant->hasModeratorPermissions(false)) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
 		$participants = $room->getParticipants();
-		if (isset($participants['users'][$newParticipant])) {
-			return new DataResponse([]);
+
+		$updateRoomType = $room->getType() === Room::ONE_TO_ONE_CALL ? Room::GROUP_CALL : false;
+		$participantsToAdd = [];
+		if ($source === 'users') {
+			$newUser = $this->userManager->get($newParticipant);
+			if (!$newUser instanceof IUser) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			if (isset($participants['users'][$newParticipant])) {
+				return new DataResponse([]);
+			}
+
+			$room->addUsers([
+				'userId' => $newUser->getUID(),
+			]);
+		} else if ($source === 'groups') {
+			$group = $this->groupManager->get($newParticipant);
+			if (!$group instanceof IGroup) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$usersInGroup = $group->getUsers();
+			foreach ($usersInGroup as $user) {
+				if (isset($participants['users'][$user->getUID()])) {
+					continue;
+				}
+
+				$participantsToAdd[] = [
+					'userId' => $user->getUID(),
+				];
+			}
+
+			if (empty($participantsToAdd)) {
+				return new DataResponse([]);
+			}
+
+			\call_user_func_array([$room, 'addUsers'], $participantsToAdd);
+		} else if ($source === 'emails') {
+			$this->guestManager->inviteByEmail($room, $newParticipant);
+			$updateRoomType = $room->getType() !== Room::PUBLIC_CALL ? Room::PUBLIC_CALL : false;
+		} else {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$currentUser = $this->userManager->get($this->userId);
-		if (!$currentUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		if ($updateRoomType !== false) {
+			// In case a user is added to a one2one room, we change the call to a group room
+			// In case an email is added to a closed room, we change the call to a public room
+			$room->changeType($updateRoomType);
+
+			return new DataResponse(['type' => $room->getType()]);
 		}
 
-		$newUser = $this->userManager->get($newParticipant);
-		if (!$newUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$data = [];
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			// In case a user is added to a one2one call, we change the call to a group call
-			$room->changeType(Room::GROUP_CALL);
-
-			$data = ['type' => $room->getType()];
-		}
-
-		$room->addUsers([
-			'userId' => $newUser->getUID(),
-		]);
-
-		return new DataResponse($data);
+		return new DataResponse();
 	}
 
 	/**

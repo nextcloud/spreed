@@ -21,7 +21,6 @@
   * [Remove yourself from a room](#remove-yourself-from-a-room)
   * [Promote a user to a moderator](#promote-a-user-to-a-moderator)
   * [Demote a moderator to a user](#demote-a-moderator-to-a-user)
-  * [Invite a guest by email](#invite-a-guest-by-email)
 - [Call management](#call-management)
   * [Get list of connected participants](#get-list-of-connected-participants)
   * [Join a call](#join-a-call)
@@ -79,8 +78,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `in-call-flags` - A new flag `participantFlags` has been introduced and is replacing the `participantInCall` boolean.
 
 ### 5.0
-* `invite-by-mail` - Guests can be invited with their email address
+* `invite-by-mail` - *Replaced by `invite-groups-and-mails`* Guests can be invited with their email address
 * `notification-levels` - Users can select when they want to be notified in conversations
+* `invite-groups-and-mails` - Groups can be added to existing conversations via the add participant endpoint
 
 ## Room management
 
@@ -312,20 +312,22 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `newParticipant` | string | User to add
+    `newParticipant` | string | User, group or email to add
+    `source` | string | Source of the participant(s) as returned by the autocomplete suggestion endpoint (default is `users`)
 
 * Response:
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
+        + `400 Bad Request` When the source type is unknown
         + `404 Not Found` When the room could not be found for the participant
-        + `404 Not Found` When the user to add could not be found
+        + `404 Not Found` When the user or group to add could not be found
 
     - Data:
 
         field | type | Description
         ------|------|------------
-        `type` | string | In case the room type changed, the new value is returned
+        `type` | int | In case the room type changed, the new value is returned
 
 ### Delete a participant from a room
 
@@ -441,29 +443,6 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
         + `412 Precondition Failed` When the participant to demote is not a moderator (type `2`)
-
-### Invite a guest by email
-
-* Method: `POST`
-* Endpoint: `/room/{token}/participants/guests`
-* Data:
-
-    field | type | Description
-    ------|------|------------
-    `newParticipant` | string | Email address to invite
-
-* Response:
-    - Header:
-        + `200 OK`
-        + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the room could not be found for the participant
-
-    - Data:
-
-        field | type | Description
-        ------|------|------------
-        `type` | string | In case the room type changed, the new value is returned
-
 
 
 ## Call management

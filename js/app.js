@@ -417,21 +417,12 @@
 				});
 			}
 		},
-		addParticipantToRoom: function(token, participant) {
+		addParticipantToRoom: function(token, participant, type) {
 			$.post(
 				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants',
 				{
-					newParticipant: participant
-				}
-			).done(function() {
-				this.signaling.syncRooms();
-			}.bind(this));
-		},
-		inviteEmailToRoom: function(token, email) {
-			$.post(
-				OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/guests',
-				{
-					newParticipant: email
+					newParticipant: participant,
+					source: type
 				}
 			).done(function() {
 				this.signaling.syncRooms();
