@@ -37,7 +37,7 @@
 	var ADD_COMMENT_TEMPLATE =
 		'<div class="newCommentRow comment">' +
 		'    <div class="authorRow currentUser">' +
-		'        <div class="avatar" data-username="{{actorId}}"></div>' +
+		'        <div class="avatar" data-user-id="{{actorId}}"></div>' +
 		'        {{#if actorId}}' +
 		'            <div class="author">{{actorDisplayName}}</div>' +
 		'        {{else}}' +
@@ -128,8 +128,7 @@
 					return '<li>' +
 						'<span class="avatar-name-wrapper">' +
 							'<span class="avatar" ' +
-									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
-									'data-user-id="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-id="' + escapeHTML(item.id) + '" ' +
 									'data-user-display-name="' + escapeHTML(item.label) + '">' +
 							'</span>' +
 							'<strong>' + escapeHTML(item.label) + '</strong>' +
@@ -139,8 +138,7 @@
 					return '' +
 						'<span class="mention-user avatar-name-wrapper">' +
 							'<span class="avatar" ' +
-									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
-									'data-user-id="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-id="' + escapeHTML(item.id) + '" ' +
 									'data-user-display-name="' + escapeHTML(item.label) + '">' +
 							'</span>' +
 							'<strong>' + escapeHTML(item.label) + '</strong>' +
@@ -155,7 +153,7 @@
 					// passing the whole comments form would re-apply and request
 					// avatars from the server
 					$(je.target).find(
-						'span[data-username="' + $el.find('[data-username]').data('username') + '"]'
+						'span[data-user-id="' + $el.find('[data-user-id]').data('user-id') + '"]'
 					).parent()
 				);
 			});
@@ -552,13 +550,13 @@
 				setAvatar($(this), 16);
 			});
 
-			var username = $el.find('.avatar').data('user-id');
+			var userId = $el.find('.avatar').data('user-id');
 			if (OC.getCurrentUser().uid &&
 				model &&
 				model.get('actorType') === 'users' &&
-				username !== OC.getCurrentUser().uid) {
+				userId !== OC.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
-					username, 0, $el.find('.authorRow'));
+					userId, 0, $el.find('.authorRow'));
 			}
 
 			var $message = $el.find('.message');
