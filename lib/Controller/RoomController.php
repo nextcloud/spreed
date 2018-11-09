@@ -254,12 +254,22 @@ class RoomController extends OCSController {
 		foreach ($participants['users'] as $userId => $data) {
 			$user = $this->userManager->get((string) $userId);
 			if ($user instanceof IUser) {
-				$participantList[(string) $user->getUID()] = [
+				$participantList[(string)$user->getUID()] = [
 					'name' => $user->getDisplayName(),
 					'type' => $data['participantType'],
 					'call' => $data['inCall'],
+					'sessionId' => $user->getSessionId(),
 				];
+
+				try {
+					$participant = $room->getParticipant((string)$user->getUID());
+					$participantList[(string)$user->getUID()]['participantFlags'] = $participant->getInCallFlags();
+				} catch (ParticipantNotFoundException $e) {
+					// In case this happens we remove the user from the participants list
+                    unset($participantList[(string)$user->getUID()]);
+                }
 			}
+
 
 			if ($data['sessionId'] !== '0' && $data['lastPing'] <= time() - 100) {
 				$room->leaveRoom((string) $userId);
