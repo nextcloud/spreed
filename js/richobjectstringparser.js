@@ -17,7 +17,6 @@
 				'<span class="atwho-inserted" contenteditable="false">' +
 					'<span class="mention-user avatar-name-wrapper {{#if isCurrentUser}}currentUser{{/if}}">' +
 						'<span class="avatar" ' +
-								'data-username="{{id}}" ' +
 								'data-user-id="{{id}}" ' +
 								'data-user-display-name="{{name}}">' +
 						'</span>' +
