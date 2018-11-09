@@ -262,6 +262,7 @@ class RoomController extends OCSController {
 						'name' => $user->getDisplayName(),
 						'type' => $participant->getParticipantType(),
 						'call' => $participant->getInCallFlags(),
+						'sessionId' => $participant->getSessionId(),
 					];
 				}
 
