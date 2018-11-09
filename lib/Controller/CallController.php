@@ -93,34 +93,19 @@ class CallController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		/** @var array[] $participants */
-		$participants = $room->getParticipants(time() - 30);
 		$result = [];
-		foreach ($participants['users'] as $participant => $data) {
-			if ($data['sessionId'] === '0' || !$data['inCall']) {
+		$participants = $room->getParticipants(time() - 30);
+		foreach ($participants as $participant) {
+			if ($participant->getSessionId() === '0' || $participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
 				// User is not active in call
 				continue;
 			}
 
 			$result[] = [
-				'userId' => (string) $participant,
+				'userId' => $participant->getUser(),
 				'token' => $token,
-				'lastPing' => $data['lastPing'],
-				'sessionId' => $data['sessionId'],
-			];
-		}
-
-		foreach ($participants['guests'] as $data) {
-			if (!$data['inCall']) {
-				// User is not active in call
-				continue;
-			}
-
-			$result[] = [
-				'userId' => '',
-				'token' => $token,
-				'lastPing' => $data['lastPing'],
-				'sessionId' => $data['sessionId'],
+				'lastPing' => $participant->getLastPing(),
+				'sessionId' => $participant->getSessionId(),
 			];
 		}
 

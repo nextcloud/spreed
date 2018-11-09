@@ -272,7 +272,7 @@ class Room {
 	}
 
 	public function deleteRoom() {
-		$participants = $this->getParticipants();
+		$participants = $this->getParticipantsLegacy();
 		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', new GenericEvent($this, [
 			'participants' => $participants,
 		]));
@@ -787,9 +787,35 @@ class Room {
 
 	/**
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
-	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
+	 * @return Participant[]
 	 */
-	public function getParticipants($lastPing = 0) {
+	public function getParticipants($lastPing = 0): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($lastPing > 0) {
+			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
+		}
+
+		$result = $query->execute();
+
+		$participants = [];
+		while ($row = $result->fetch()) {
+			$participants[] = $this->manager->createParticipantObject($this, $row);
+		}
+		$result->closeCursor();
+
+		return $participants;
+	}
+
+	/**
+	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
+	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
+	 * @deprecated Use self::getParticipants() instead
+	 */
+	public function getParticipantsLegacy($lastPing = 0): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_participants')
@@ -833,7 +859,7 @@ class Room {
 	 */
 	public function getParticipantUserIds(int $lastPing = 0): array {
 		$query = $this->db->getQueryBuilder();
-		$query->select('*')
+		$query->select('user_id')
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->nonEmptyString('user_id'));

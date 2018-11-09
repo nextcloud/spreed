@@ -235,7 +235,7 @@ class BackendNotifier{
 		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantsLegacy();
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
 			$users[] = $participant;
@@ -273,7 +273,7 @@ class BackendNotifier{
 		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantsLegacy();
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
 			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
