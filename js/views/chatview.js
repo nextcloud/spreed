@@ -59,7 +59,7 @@
 		'<li class="comment{{#if isNotSystemMessage}}{{else}} systemMessage{{/if}}" data-id="{{id}}">' +
 		'    <div class="authorRow{{#if isUserAuthor}} currentUser{{/if}}{{#if isGuest}} guestUser{{/if}}">' +
 		'        {{#if isNotSystemMessage}}' +
-		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
+		'        <div class="avatar" data-user-id="{{actorId}}" data-user-display-name="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        {{/if}}' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
@@ -533,7 +533,7 @@
 
 			var setAvatar = function($element, size) {
 				if (!model || model.get('actorType') === 'users') {
-					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('displayname'));
+					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
 				} else {
 					$element.imageplaceholder('?', model.get('actorDisplayName'), size);
 					$element.css('background-color', '#b9b9b9');
