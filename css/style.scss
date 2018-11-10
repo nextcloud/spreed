@@ -539,6 +539,9 @@
 	margin-top: 0;
 	margin-bottom: 10px;
 	min-height: 44px;
+
+	/* Prevent the chat view from vertically compressing the tab headers */
+	flex-shrink: 0;
 }
 
 .tabHeaders .tabHeader {
@@ -549,19 +552,18 @@
 	border-bottom: 1px solid $color-border;
 	margin-bottom: 0;
 
-	a {
-		padding-left: 32px;
-		background-position: 12px;
-		background-repeat: no-repeat;
+	.icon, a {
 		color: $color-main-text;
 		opacity: .5;
 	}
 }
 
-.tabHeaders .tabHeader.selected a,
-.tabHeaders .tabHeader:hover a,
-.tabHeaders .tabHeader:focus a {
-	opacity: 1;
+.tabHeaders .tabHeader.selected,
+.tabHeaders .tabHeader:hover,
+.tabHeaders .tabHeader:focus {
+	.icon, a {
+		opacity: 1;
+	}
 }
 /* END: move padding fixes and icons-for-tabs capability into core */
 
