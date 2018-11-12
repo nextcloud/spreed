@@ -40,7 +40,10 @@
 		'{{#if canModerate}}' +
 			'<div class="participant-entry-utils">'+
 				'<ul>'+
-					'<li class="participant-entry-utils-menu-button"><button class="icon icon-more"></button></li>'+
+					'<li class="participant-entry-utils-menu-button">' +
+						'<button class="icon icon-more"></button>' +
+						'<span class="icon icon-loading-small hidden"></span>' +
+					'</li>' +
 				'</ul>'+
 			'</div>'+
 			'<div class="popovermenu bubble menu">'+
@@ -97,10 +100,10 @@
 			initialize: function() {
 				this.listenTo(uiChannel, 'document:click', function(event) {
 					var target = $(event.target);
-					if (!this.$el.is(target.closest('.participant'))) {
-						// Click was not triggered by this element -> close menu
-						this.menuShown = false;
-						this.toggleMenuClass();
+					if (!target.closest('.popovermenu').is(this.ui.menu) && !target.is(this.ui.menuButton)) {
+						// Close the menu when clicking outside it or the button
+						// that toggles it.
+						this.closeMenu();
 					}
 				});
 			},
@@ -159,7 +162,9 @@
 			},
 			ui: {
 				'participant': 'li.participant',
-				'menu': '.popovermenu'
+				'menu': '.popovermenu',
+				'menuButton': '.participant-entry-utils-menu-button button',
+				'menuButtonIconLoading': '.participant-entry-utils-menu-button .icon-loading-small'
 			},
 			template: Handlebars.compile(ITEM_TEMPLATE),
 			menuShown: false,
@@ -171,10 +176,18 @@
 			toggleMenuClass: function() {
 				this.ui.menu.toggleClass('open', this.menuShown);
 			},
+			closeMenu: function() {
+				this.menuShown = false;
+				this.toggleMenuClass();
+			},
 			promoteToModerator: function() {
 				if (this.model.get('participantType') !== OCA.SpreedMe.app.USER) {
 					return;
 				}
+
+				this.closeMenu();
+				this.ui.menuButton.addClass('hidden');
+				this.ui.menuButtonIconLoading.removeClass('hidden');
 
 				var participantId = this.model.get('userId'),
 					self = this;
@@ -193,7 +206,10 @@
 						self.model.collection.sort();
 					},
 					error: function() {
-						console.log('Error while promoting user to moderator');
+						self.ui.menuButtonIconLoading.addClass('hidden');
+						self.ui.menuButton.removeClass('hidden');
+
+						OC.Notification.showTemporary(t('spreed', 'Error while promoting user to moderator'), {type: 'error'});
 					}
 				});
 			},
@@ -201,6 +217,10 @@
 				if (this.model.get('participantType') !== OCA.SpreedMe.app.MODERATOR) {
 					return;
 				}
+
+				this.closeMenu();
+				this.ui.menuButton.addClass('hidden');
+				this.ui.menuButtonIconLoading.removeClass('hidden');
 
 				var participantId = this.model.get('userId'),
 					self = this;
@@ -219,7 +239,10 @@
 						self.model.collection.sort();
 					},
 					error: function() {
-						console.log('Error while demoting moderator');
+						self.ui.menuButtonIconLoading.addClass('hidden');
+						self.ui.menuButton.removeClass('hidden');
+
+						OC.Notification.showTemporary(t('spreed', 'Error while demoting moderator'), {type: 'error'});
 					}
 				});
 			},
@@ -227,6 +250,10 @@
 				if (this.model.get('participantType') === OCA.SpreedMe.app.OWNER) {
 					return;
 				}
+
+				this.closeMenu();
+				this.ui.menuButton.addClass('hidden');
+				this.ui.menuButtonIconLoading.removeClass('hidden');
 
 				var self = this,
 					participantId = this.model.get('userId'),
@@ -247,7 +274,10 @@
 						self.model.collection.remove(self.model);
 					},
 					error: function() {
-						console.log('Error while removing user from room');
+						self.ui.menuButtonIconLoading.addClass('hidden');
+						self.ui.menuButton.removeClass('hidden');
+
+						OC.Notification.showTemporary(t('spreed', 'Error while removing user from room'), {type: 'error'});
 					}
 				});
 			}
