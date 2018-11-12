@@ -45,6 +45,8 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 use OCP\Share\IShareProvider;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Share provider for room shares.
@@ -76,6 +78,9 @@ class RoomShareProvider implements IShareProvider {
 	/** @var IRootFolder */
 	private $rootFolder;
 
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
+
 	/** @var IL10N */
 	private $l;
 
@@ -90,6 +95,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IUserManager $userManager
 	 * @param IShareManager $shareManager
 	 * @param IRootFolder $rootFolder
+	 * @param EventDispatcherInterface $dispatcher
 	 * @param IL10N $l10n
 	 * @param Manager $manager
 	 */
@@ -99,6 +105,7 @@ class RoomShareProvider implements IShareProvider {
 			IUserManager $userManager,
 			IShareManager $shareManager,
 			IRootFolder $rootFolder,
+			EventDispatcherInterface $dispatcher,
 			IL10N $l,
 			Manager $manager
 	) {
@@ -107,6 +114,7 @@ class RoomShareProvider implements IShareProvider {
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->rootFolder = $rootFolder;
+		$this->dispatcher = $dispatcher;
 		$this->l = $l;
 		$this->manager = $manager;
 	}
@@ -145,6 +153,7 @@ class RoomShareProvider implements IShareProvider {
 		$existingShares = $this->getSharesByPath($share->getNode());
 		foreach ($existingShares as $existingShare) {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
+				$this->dispatcher->dispatch(self::class . '::' . 'share_file_again', new GenericEvent($existingShare));
 				throw new GenericShareException("Already shared", $this->l->t('Path is already shared with this room'), 403);
 			}
 		}
