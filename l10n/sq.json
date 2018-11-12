@@ -1,10 +1,10 @@
 { "translations": {
     "Saved" : "U ruajt",
     "TURN server shared secret" : "Serveri TURN ndan sekret",
-    "TURN server protocols" : "Protokollet e serverit TURN",
     "UDP and TCP" : "UDP dhe TCP",
     "UDP only" : "Vetëm UDP",
     "TCP only" : "Vetëm TCP",
+    "TURN server protocols" : "Protokollet e serverit TURN",
     "Screensharing is not supported by your browser." : "Ndarja e erkaneve nuk është e mbështetur nga shfletuesi juaj ",
     "Screensharing requires the page to be loaded through HTTPS." : "Ndarja e ekranit kërkon faqen të ngarkohet përmes HTTPS.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Ndarja e ekranit punon vetëm me Firefox, versionin 52 ose më të ri.",

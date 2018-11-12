@@ -3,10 +3,10 @@ OC.L10N.register(
     {
     "Saved" : "Guardado",
     "TURN server shared secret" : "Secreto compartido del servidor TURN",
-    "TURN server protocols" : "Protocolos del servidor TURN",
     "UDP and TCP" : "UDP y TCP",
     "UDP only" : "sólo UDP",
     "TCP only" : "sólo TCP",
+    "TURN server protocols" : "Protocolos del servidor TURN",
     "Screensharing is not supported by your browser." : "Compartir pantalla no está soportado por su navegador. ",
     "Screensharing requires the page to be loaded through HTTPS." : "Compartir pantalla requiere que la página se cargue a través de HTTPS.",
     "Sharing your screen only works with Firefox version 52 or newer." : "Compartir la pantalla sólo funciona con Firefox versión 52 o superior. ",

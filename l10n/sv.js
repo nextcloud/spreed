@@ -7,10 +7,10 @@ OC.L10N.register(
     "Saved" : "Sparad",
     "Shared secret" : "Delad hemlighet",
     "TURN server shared secret" : "TURN server delade hemlighet",
-    "TURN server protocols" : "TURN server protokoll",
     "UDP and TCP" : "UDP och TCP",
     "UDP only" : "endast UDP",
     "TCP only" : "endast TCP",
+    "TURN server protocols" : "TURN server protokoll",
     "New public conversation" : "Ny publik konversation",
     "New group conversation" : "Ny gruppkonversation",
     "{name} (public)" : "{name} (publik)",
@@ -167,7 +167,6 @@ OC.L10N.register(
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Samtal med {user1}, {user2}, {user3} och {user4} (Varade {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Samtal med {user1}, {user2}, {user3}, {user4} och {user5} (Varade {duration})",
     "Talk to %s" : "Prata med %s",
-    "Password request by %s" : "Lösenordet efterfrågas av %s",
     "_%n other guest_::_%n other guests_" : ["%n annan gäst","%n andra gäster"],
     ", " : ",",
     "%s invited you to a conversation." : "%s bjöd in dig till en konversation.",
@@ -199,7 +198,6 @@ OC.L10N.register(
     "{user} wants to talk with you" : "{user} vill prata med dig",
     "A group call has started in {call}" : "Ett gruppsamtal har startats i {call}",
     "A group call has started" : "Ett gruppsamtal har startats",
-    "{email} requested the password to access a share" : "{email} begärde lösenordet för att komma åt en delning",
     "Invalid date, date format must be YYYY-MM-DD" : "Felaktigt datum, datumformat måste vara ÅÅÅÅ-MM-DD",
     "Conversation not found" : "Konversationen hittades inte",
     "Path is already shared with this room" : "Sökvägen är redan delad med detta rum",
@@ -261,6 +259,8 @@ OC.L10N.register(
     "You were mentioned in a group conversation by a deleted user" : "Du nämndes i en gruppkonversation av en raderad användare",
     "A guest mentioned you in a group conversation: %s" : "En gäst nämnde dig i en gruppkonversation: %s",
     "A guest mentioned you in a group conversation: {call}" : "En gäst nämnde dig i en gruppkonversation: {call}",
-    "A guest mentioned you in a group conversation" : "En gäst nämnde dig i en gruppkonversation"
+    "A guest mentioned you in a group conversation" : "En gäst nämnde dig i en gruppkonversation",
+    "Password request by %s" : "Lösenordet efterfrågas av %s",
+    "{email} requested the password to access a share" : "{email} begärde lösenordet för att komma åt en delning"
 },
 "nplurals=2; plural=(n != 1);");

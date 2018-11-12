@@ -4,15 +4,15 @@
     "Delete server" : "Xóa máy chủ",
     "Add new server" : "Thêm máy chủ mới",
     "Saved" : "Đã lưu",
-    "STUN server URL" : "URL máy chủ STUN",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Bạn đã xóa tất cả các máy chủ STUN. Vì nó gần như luôn luôn cần thiết, một máy chủ STUN mặc định đã được thêm vào.",
+    "STUN server URL" : "URL máy chủ STUN",
     "TURN server URL" : "URL máy chủ TURN",
     "Shared secret" : "Chia sẽ mật khẩu",
     "TURN server shared secret" : "Khóa đã được chia sẽ máy chủ TURN",
-    "TURN server protocols" : "Giao thức máy chủ TURN",
     "UDP and TCP" : "UDP và TCP",
     "UDP only" : "Chỉ UDP",
     "TCP only" : "Chỉ TCP",
+    "TURN server protocols" : "Giao thức máy chủ TURN",
     "New public conversation" : "Tạo đàm thoại công khai mới",
     "New group conversation" : "Tạo nhóm đàm thoại mới",
     "{name} (public)" : "{name} (public)",
@@ -162,7 +162,6 @@
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Đã gọi với {user1}, {user2}, {user3} và {user4} (Thời lượng {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Đã gọi với {user1}, {user2}, {user3}, {user4} và {user5} (Thời lượng {duration})",
     "Talk to %s" : "Trò chuyện với %s",
-    "Password request by %s" : "Mật khẩu được yêu cầu bởi %s",
     "_%n other guest_::_%n other guests_" : ["%nnhững khách khác "],
     ", " : ",",
     "{user} sent you a private message" : "{user} đã gửi cho bạn một tin nhắn riêng",
@@ -176,7 +175,6 @@
     "{user} wants to talk with you" : "{user} muốn nói chuyện với bạn",
     "A group call has started in {call}" : "Một cuộc gọi nhóm đã được thực hiện trong {call}",
     "A group call has started" : "Một cuộc gọi nhóm đã được thực hiện",
-    "{email} requested the password to access a share" : "{email} đã yêu cầu mật khẩu để truy cập chia sẽ",
     "Invalid date, date format must be YYYY-MM-DD" : "Định dạng ngày không hợp lệ phải là YYYY-MM-DD",
     "Conversation not found" : "Không tìm thấy cuộc hội thoại",
     "Path is already shared with this room" : "Đường dẫn đã được chia sẻ với phòng này",
@@ -238,6 +236,8 @@
     "You were mentioned in a group conversation by a deleted user" : "Bạn đã được đề cập trong cuộc trò chuyện nhóm của một người dùng đã bị xóa",
     "A guest mentioned you in a group conversation: %s" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm: %s",
     "A guest mentioned you in a group conversation: {call}" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm: {call}",
-    "A guest mentioned you in a group conversation" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm"
+    "A guest mentioned you in a group conversation" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm",
+    "Password request by %s" : "Mật khẩu được yêu cầu bởi %s",
+    "{email} requested the password to access a share" : "{email} đã yêu cầu mật khẩu để truy cập chia sẽ"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
