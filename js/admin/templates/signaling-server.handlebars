@@ -1,0 +1,8 @@
+<div class="signaling-server">
+	<input type="text" class="server" placeholder="wss://signaling.example.org" value="{{server}}" aria-label="{{signalingServerURLTXT}}">
+	<input type="checkbox" id="verify{{seed}}" name="verify{{seed}}" class="checkbox verify" value="1" {{#if verify}} checked="checked"{{/if}}>
+	<label for="verify{{seed}}">{{validatingSSLTXT}}</label>
+	<a class="icon icon-delete" title="{{deleteTXT}}"></a>
+	<a class="icon icon-add" title="{{addNewTXT}}"></a>
+	<span class="icon icon-checkmark-color hidden" title="{{savedTXT}}"></span>
+</div>
