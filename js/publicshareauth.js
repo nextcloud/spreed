@@ -208,7 +208,16 @@
 	};
 
 	OCA.SpreedMe.app = new OCA.Talk.Application();
-	OCA.SpreedMe.app.start();
 
-	OCA.Talk.PublicShareAuth.init();
+	OCA.SpreedMe.app.on('start', function() {
+		OCA.Talk.PublicShareAuth.init();
+	});
+
+	// Unlike in the regular Talk app when Talk is embedded the signaling
+	// settings are not initially included in the HTML, so they need to be
+	// explicitly loaded before starting the app.
+	OCA.Talk.Signaling.loadSettings().then(function() {
+		OCA.SpreedMe.app.start();
+	});
+
 })(OCA);

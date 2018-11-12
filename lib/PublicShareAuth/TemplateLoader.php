@@ -103,7 +103,6 @@ class TemplateLoader {
 		Util::addScript('spreed', 'signaling');
 		Util::addScript('spreed', 'connection');
 		Util::addScript('spreed', 'app');
-		Util::addScript('spreed', 'init');
 		Util::addScript('spreed', 'publicshareauth');
 	}
 
