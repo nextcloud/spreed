@@ -33,7 +33,7 @@
 			$('#app').append('<script type="text/json" id="signaling-settings"></script>');
 
 			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/signaling/', 2) + 'settings',
+				url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'settings',
 				type: 'GET',
 				dataType: 'json',
 				success: function (result) {
