@@ -37,7 +37,7 @@
 	var ADD_COMMENT_TEMPLATE =
 		'<div class="newCommentRow comment">' +
 		'    <div class="authorRow currentUser">' +
-		'        <div class="avatar" data-username="{{actorId}}"></div>' +
+		'        <div class="avatar" data-user-id="{{actorId}}"></div>' +
 		'        {{#if actorId}}' +
 		'            <div class="author">{{actorDisplayName}}</div>' +
 		'        {{else}}' +
@@ -59,7 +59,7 @@
 		'<li class="comment{{#if isNotSystemMessage}}{{else}} systemMessage{{/if}}" data-id="{{id}}">' +
 		'    <div class="authorRow{{#if isUserAuthor}} currentUser{{/if}}{{#if isGuest}} guestUser{{/if}}">' +
 		'        {{#if isNotSystemMessage}}' +
-		'        <div class="avatar" data-user-id="{{actorId}}" data-displayname="{{actorDisplayName}}"> </div>' +
+		'        <div class="avatar" data-user-id="{{#if isGuest}}{{else}}{{actorId}}{{/if}}" data-user-display-name="{{actorDisplayName}}"> </div>' +
 		'        <div class="author">{{actorDisplayName}}</div>' +
 		'        {{/if}}' +
 		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
@@ -118,7 +118,8 @@
 						// misuse the highlighter callback to instead of
 						// highlighting loads the avatars.
 						var $li = $(li);
-						$li.find('.avatar').avatar(undefined, 32);
+						var $avatar = $li.find('.avatar');
+						$avatar.avatar($avatar.data('user-id'), 32);
 						return $li;
 					},
 					sorter: function (q, items) { return items; }
@@ -127,8 +128,7 @@
 					return '<li>' +
 						'<span class="avatar-name-wrapper">' +
 							'<span class="avatar" ' +
-									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
-									'data-user="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-id="' + escapeHTML(item.id) + '" ' +
 									'data-user-display-name="' + escapeHTML(item.label) + '">' +
 							'</span>' +
 							'<strong>' + escapeHTML(item.label) + '</strong>' +
@@ -138,8 +138,7 @@
 					return '' +
 						'<span class="mention-user avatar-name-wrapper">' +
 							'<span class="avatar" ' +
-									'data-username="' + escapeHTML(item.id) + '" ' + // for avatars
-									'data-user="' + escapeHTML(item.id) + '" ' + // for contactsmenu
+									'data-user-id="' + escapeHTML(item.id) + '" ' +
 									'data-user-display-name="' + escapeHTML(item.label) + '">' +
 							'</span>' +
 							'<strong>' + escapeHTML(item.label) + '</strong>' +
@@ -154,7 +153,7 @@
 					// passing the whole comments form would re-apply and request
 					// avatars from the server
 					$(je.target).find(
-						'span[data-username="' + $el.find('[data-username]').data('username') + '"]'
+						'span[data-user-id="' + $el.find('[data-user-id]').data('user-id') + '"]'
 					).parent()
 				);
 			});
@@ -533,10 +532,10 @@
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				if (!model || model.get('actorType') === 'users') {
-					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('displayname'));
+				if ($element.data('user-id')) {
+					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
 				} else {
-					$element.imageplaceholder('?', model.get('actorDisplayName'), size);
+					$element.imageplaceholder('?', $element.data('displayname'), size);
 					$element.css('background-color', '#b9b9b9');
 				}
 			};
@@ -551,13 +550,12 @@
 				setAvatar($(this), 16);
 			});
 
-			var username = $el.find('.avatar').data('user-id');
 			if (OC.getCurrentUser().uid &&
 				model &&
 				model.get('actorType') === 'users' &&
-				username !== OC.getCurrentUser().uid) {
+				model.get('actorId') !== OC.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
-					username, 0, $el.find('.authorRow'));
+					model.get('actorId'), 0, $el.find('.authorRow'));
 			}
 
 			var $message = $el.find('.message');
@@ -580,7 +578,7 @@
 				var $this = $(this);
 				var $avatar = $this.find('.avatar');
 
-				var user = $avatar.data('user');
+				var user = $avatar.data('user-id');
 				if (user !== OC.getCurrentUser().uid) {
 					$this.contactsMenu(user, 0, $this);
 				}
@@ -659,7 +657,7 @@
 			$comment.find('.mention-user').each(function () {
 				var $this = $(this);
 				var $inserted = $this.parent();
-				$inserted.html('@' + $this.find('.avatar').data('user'));
+				$inserted.html('@' + $this.find('.avatar').data('user-id'));
 			});
 
 			var oldHtml;
