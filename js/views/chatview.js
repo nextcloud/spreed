@@ -655,9 +655,14 @@
 			var $comment = $el.clone();
 
 			$comment.find('.mention-user').each(function () {
-				var $this = $(this);
-				var $inserted = $this.parent();
-				$inserted.html('@' + $this.find('.avatar').data('user-id'));
+				var $this = $(this),
+					$inserted = $this.parent(),
+					userId = $this.find('.avatar').data('user-id');
+				if (userId.indexOf(' ') !== -1) {
+					$inserted.html('@"' + userId + '"');
+				} else {
+					$inserted.html('@' + userId);
+				}
 			});
 
 			var oldHtml;
