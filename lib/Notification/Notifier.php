@@ -37,6 +37,7 @@ use OCP\L10N\IFactory;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
+use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 
@@ -463,19 +464,37 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown share');
 		}
 
-		$sharedWith = $share->getSharedWith();
+		try {
+			$file = [
+				'type' => 'highlight',
+				'id' => $share->getNodeId(),
+				'name' => $share->getNode()->getName(),
+			];
+		} catch (\OCP\Files\NotFoundException $e) {
+			throw new \InvalidArgumentException('Unknown file');
+		}
 
-		$notification
-			->setParsedSubject(str_replace('{email}', $sharedWith, $l->t('{email} requested the password to access a share')))
-			->setRichSubject(
-				$l->t('{email} requested the password to access a share'), [
-					'email' => [
-						'type' => 'email',
-						'id' => $sharedWith,
-						'name' => $sharedWith,
+		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
+			$sharedWith = $share->getSharedWith();
+
+			$notification
+				->setParsedSubject(str_replace(['{email}', '{file}'], [$sharedWith, $file['name']], $l->t('{email} requested the password to access {file}')))
+				->setRichSubject(
+					$l->t('{email} requested the password to access {file}'),
+					[
+						'email' => [
+							'type' => 'email',
+							'id' => $sharedWith,
+							'name' => $sharedWith,
+						],
+						'file' => $file,
 					]
-				]
-			);
+				);
+		} else {
+			$notification
+				->setParsedSubject(str_replace('{file}', $file['name'], $l->t('Someone requested the password to access {file}')))
+				->setRichSubject($l->t('Someone requested the password to access {file}'), ['file' => $file]);
+		}
 
 		return $notification;
 	}

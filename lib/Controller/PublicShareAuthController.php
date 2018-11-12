@@ -32,7 +32,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\Notification\IManager as NotificationManager;
+use OCP\Share;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\Exceptions\ShareNotFound;
 
@@ -40,8 +40,6 @@ class PublicShareAuthController extends OCSController {
 
 	/** @var IUserManager */
 	private $userManager;
-	/** @var NotificationManager */
-	private $notificationManager;
 	/** @var ShareManager */
 	private $shareManager;
 	/** @var Manager */
@@ -51,7 +49,6 @@ class PublicShareAuthController extends OCSController {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
-	 * @param NotificationManager $notificationManager
 	 * @param ShareManager $shareManager
 	 * @param Manager $manager
 	 */
@@ -59,13 +56,11 @@ class PublicShareAuthController extends OCSController {
 			string $appName,
 			IRequest $request,
 			IUserManager $userManager,
-			NotificationManager $notificationManager,
 			ShareManager $shareManager,
 			Manager $manager
 	) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;
-		$this->notificationManager = $notificationManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
 	}
@@ -80,9 +75,6 @@ class PublicShareAuthController extends OCSController {
 	 * the user that created the room these are special rooms always created by
 	 * a guest or user on behalf of a registered user, the sharer, who will be
 	 * the owner of the room.
-	 *
-	 * If there is already a room for requesting the password of the given share
-	 * no new room is created; the existing room is returned instead.
 	 *
 	 * The share must have "send password by Talk" enabled; an error is returned
 	 * otherwise.
@@ -109,8 +101,14 @@ class PublicShareAuthController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
+			$roomName = $share->getSharedWith();
+		} else {
+			$roomName = trim($share->getTarget(), '/');
+		}
+
 		// Create the room
-		$room = $this->manager->createPublicRoom($share->getSharedWith(), 'share:password', $shareToken);
+		$room = $this->manager->createPublicRoom($roomName, 'share:password', $shareToken);
 		$room->addUsers([
 			'userId' => $sharerUser->getUID(),
 			'participantType' => Participant::OWNER,
