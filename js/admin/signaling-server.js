@@ -1,27 +1,19 @@
-/* global OC, OCP, OCA, $, _, Handlebars */
+/* global OC, OCP, OCA, $, _ */
 
-(function(OC, OCP, OCA, $, _, Handlebars) {
+(function(OC, OCP, OCA, $, _) {
 	'use strict';
 
 	OCA.VideoCalls = OCA.VideoCalls || {};
 	OCA.VideoCalls.Admin = OCA.VideoCalls.Admin || {};
 	OCA.VideoCalls.Admin.SignalingServer = {
 
-		TEMPLATE: '<div class="signaling-server">' +
-		'	<input type="text" class="server" placeholder="wss://signaling.example.org" value="{{server}}" aria-label="' + t('spreed', 'Signaling server URL') + '">' +
-		'	<input type="checkbox" id="verify{{seed}}" name="verify{{seed}}" class="checkbox verify" value="1" {{#if verify}} checked="checked"{{/if}}>' +
-		'	<label for="verify{{seed}}">' + t('spreed', 'Validate SSL certificate') + '</label>' +
-		'	<a class="icon icon-delete" title="' + t('spreed', 'Delete server') + '"></a>' +
-		'	<a class="icon icon-add" title="' + t('spreed', 'Add new server') + '"></a>' +
-		'	<span class="icon icon-checkmark-color hidden" title="' + t('spreed', 'Saved') + '"></span>' +
-		'</div>',
 		$list: undefined,
 		$secret: undefined,
 		template: undefined,
 		seed: 0,
 
 		init: function() {
-			this.template = Handlebars.compile(this.TEMPLATE);
+			this.template = OCA.VideoCalls.Admin.Templates['signaling-server'];
 			this.$list = $('div.signaling-servers');
 			this.$secret = $('#signaling_secret');
 			this.renderList();
@@ -134,7 +126,14 @@
 
 		renderServer: function(server) {
 			server.seed = this.seed++;
-			var $template = $(this.template(server));
+			var $template = $(this.template(_.extend(
+				{
+					signalingServerURLTXT: t('spreed', 'Signaling server URL'),
+					validatingSSLTXT: t('spreed', 'Validate SSL certificate'),
+					deleteTXT: t('spreed', 'Delete server'),
+					addNewTXT: t('spreed', 'Add new server'),
+					savedTXT: t('spreed', 'Saved')
+				}, server)));
 
 			$template.find('a.icon-add').on('click', this.addNewTemplate.bind(this));
 			$template.find('a.icon-delete').on('click', this.deleteServer.bind(this));
@@ -146,7 +145,7 @@
 	};
 
 
-})(OC, OCP, OCA, $, _, Handlebars);
+})(OC, OCP, OCA, $, _);
 
 $(document).ready(function(){
 	OCA.VideoCalls.Admin.SignalingServer.init();
