@@ -611,17 +611,27 @@ class RoomShareProvider implements IShareProvider {
 	 */
 	public function getShareById($id, $recipientId = null) {
 		$qb = $this->dbConnection->getQueryBuilder();
-
-		$qb->select('*')
-			->from('share')
-			->where($qb->expr()->eq('id', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)));
+		$qb->select('s.*',
+			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
+			'f.parent AS f_parent', 'f.name', 'f.mimetype', 'f.mimepart', 'f.size', 'f.mtime', 'f.storage_mtime',
+			'f.encrypted', 'f.unencrypted_size', 'f.etag', 'f.checksum'
+		)
+			->selectAlias('st.id', 'storage_string_id')
+			->from('share', 's')
+			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
+			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
+			->where($qb->expr()->eq('s.id', $qb->createNamedParameter($id)))
+			->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)));
 
 		$cursor = $qb->execute();
 		$data = $cursor->fetch();
 		$cursor->closeCursor();
 
 		if ($data === false) {
+			throw new ShareNotFound();
+		}
+
+		if (!$this->isAccessibleResult($data)) {
 			throw new ShareNotFound();
 		}
 
