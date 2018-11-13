@@ -171,6 +171,7 @@
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Chamada com {user1}, {user2}, {user3} e {user4} (Duração {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Chamada com {user1}, {user2}, {user3}, {user4} e {user5} (Duração {duration})",
     "Talk to %s" : "Falar com %s",
+    "Password request: %s" : "Pedido de senha: %s",
     "_%n other guest_::_%n other guests_" : ["%n outro convidado","%n outros convidados"],
     ", " : ", ",
     "%s invited you to a conversation." : "%s convidou você para uma conversa.",
@@ -202,6 +203,8 @@
     "{user} wants to talk with you" : "{user} quer falar com você",
     "A group call has started in {call}" : "Uma chamada de grupo foi iniciada em {call}",
     "A group call has started" : "Uma chamada de grupo foi iniciada",
+    "{email} requested the password to access {file}" : "{email} solicitou a senha para acessar {file}",
+    "Someone requested the password to access {file}" : "Alguém solicitou a senha para acessar {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Data inválida, o formato deve ser YYYY-MM-DD",
     "Conversation not found" : "Conversa não encontrada",
     "Path is already shared with this room" : "O caminho já está compartilhando nesta sala",
@@ -266,6 +269,9 @@
     "A guest mentioned you in a group conversation: %s" : "Um convidado mencionou você numa conversa de grupo: %s",
     "A guest mentioned you in a group conversation: {call}" : "Um convidado mencionou você numa conversa de grupo: {call}",
     "A guest mentioned you in a group conversation" : "Um convidado mencionou você numa conversa de grupo",
+    "TURN candidate generation failed, please check the settings." : "Geração de candidatura TURN falhou, verifique as configurações.",
+    "The TURN server settings are valid." : "As configurações do servidor TURN são válidas.",
+    "Checking TURN server {server}" : "Verificando servidor TURN {server}",
     "Password request by %s" : "Senha solicitada por %s",
     "{email} requested the password to access a share" : "{email} solicitou a senha para acessar um compartilhamento"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
