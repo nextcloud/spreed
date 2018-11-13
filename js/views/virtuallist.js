@@ -166,6 +166,7 @@
 			this._prependedElementsBuffer = document.createDocumentFragment();
 
 			delete this._$firstPrependedElement;
+			delete this._$lastPrependedElement;
 		},
 
 		appendElementStart: function() {
@@ -193,6 +194,7 @@
 			if (!this._$firstPrependedElement) {
 				this._$firstPrependedElement = $element;
 			}
+			this._$lastPrependedElement = $element;
 		},
 
 		appendElement: function($element) {
@@ -217,10 +219,34 @@
 		},
 
 		prependElementEnd: function() {
+			this._loadPreviousElements(
+				this._$firstPrependedElement,
+				this._$lastPrependedElement,
+				this._prependedElementsBuffer
+			);
+
+			delete this._prependedElementsBuffer;
+
+			this.updateVisibleElements();
+		},
+
+		appendElementEnd: function() {
+			this._loadNextElements(
+				this._$firstAppendedElement,
+				this._$lastAppendedElement,
+				this._appendedElementsBuffer
+			);
+
+			delete this._appendedElementsBuffer;
+
+			this.updateVisibleElements();
+		},
+
+		_loadPreviousElements: function($firstElementToLoad, $lastElementToLoad, elementsBuffer) {
 			var $wrapper = $('<div class="wrapper"></div>');
 			$wrapper._top = 0;
 
-			var $firstExistingElement = this._$firstPrependedElement._next;
+			var $firstExistingElement = $firstElementToLoad._next;
 
 			if ($firstExistingElement) {
 				// The wrapper is already at the top, so no need to set its
@@ -235,8 +261,7 @@
 
 			var previousWrapperHeight = this._getElementHeight($wrapper);
 
-			$wrapper.prepend(this._prependedElementsBuffer);
-			delete this._prependedElementsBuffer;
+			$wrapper.prepend(elementsBuffer);
 
 			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
 
@@ -245,10 +270,10 @@
 			// number.
 			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
-			while (this._$firstPrependedElement) {
-				this._updateCache(this._$firstPrependedElement, $wrapper);
+			while ($firstElementToLoad !== $lastElementToLoad._previous) {
+				this._updateCache($firstElementToLoad, $wrapper);
 
-				this._$firstPrependedElement = this._$firstPrependedElement._previous;
+				$firstElementToLoad = $firstElementToLoad._previous;
 			}
 
 			// Remove the temporal wrapper used to layout and get the height of
@@ -284,27 +309,13 @@
 			this._$container.scrollTop(Math.round(this._$container.scrollTop() + wrapperHeightDifference));
 
 			// Update the position of the wrapper with the visible elements.
-			// This is needed even if "updateVisibleElements()" is called, as it
-			// could "short circuit" before reaching the point where the wrapper
-			// position is updated.
+			// This is needed even if "updateVisibleElements()" is called later,
+			// as it could "short circuit" before reaching the point where the
+			// wrapper position is updated.
 			if (this._$firstVisibleElement) {
 				this._$wrapper._top += wrapperHeightDifference;
 				this._$wrapper.css('top', this._$wrapper._top);
 			}
-
-			this.updateVisibleElements();
-		},
-
-		appendElementEnd: function() {
-			this._loadNextElements(
-				this._$firstAppendedElement,
-				this._$lastAppendedElement,
-				this._appendedElementsBuffer
-			);
-
-			delete this._appendedElementsBuffer;
-
-			this.updateVisibleElements();
 		},
 
 		_loadNextElements: function($firstElementToLoad, $lastElementToLoad, elementsBuffer) {
