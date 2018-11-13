@@ -58,7 +58,8 @@
 	 * finally processing the appended elements. Thus, even if there is only one
 	 * element to add, first "appendElementStart()" must be called, followed by
 	 * one or more calls to "appendElement()" each one with a single element,
-	 * and followed by a final call to "appendElementEnd()".
+	 * and followed by a final call to "appendElementEnd()". Elements are
+	 * prepended in a similar way using the equivalent methods.
 	 *
 	 * The elements in the list can have different heights, and they can
 	 * partially overlap their previous or next element due to the use of a
@@ -161,10 +162,36 @@
 
 	VirtualList.prototype = {
 
+		prependElementStart: function() {
+			this._prependedElementsBuffer = document.createDocumentFragment();
+
+			delete this._$firstPrependedElement;
+		},
+
 		appendElementStart: function() {
 			this._appendedElementsBuffer = document.createDocumentFragment();
 
 			delete this._$firstAppendedElement;
+		},
+
+		prependElement: function($element) {
+			// ParentNode.prepend() is not compatible with older browsers.
+			this._prependedElementsBuffer.insertBefore($element.get(0), this._prependedElementsBuffer.firstChild);
+
+			if (this._$firstElement) {
+				this._$firstElement._previous = $element;
+			}
+			$element._next = this._$firstElement;
+			$element._previous = null;
+			this._$firstElement = $element;
+
+			if (!this._$lastElement) {
+				this._$lastElement = $element;
+			}
+
+			if (!this._$firstPrependedElement) {
+				this._$firstPrependedElement = $element;
+			}
 		},
 
 		appendElement: function($element) {
@@ -185,6 +212,85 @@
 			if (!this._$firstAppendedElement) {
 				this._$firstAppendedElement = $element;
 			}
+		},
+
+		prependElementEnd: function() {
+			var $wrapper = $('<div class="wrapper"></div>');
+			$wrapper._top = 0;
+
+			var $firstExistingElement = this._$firstPrependedElement._next;
+
+			if ($firstExistingElement) {
+				// The wrapper is already at the top, so no need to set its
+				// position.
+
+				// Include the next element, as its position may change due to
+				// collapsing margins.
+				$wrapper.append($firstExistingElement.clone());
+			}
+
+			this._$container.append($wrapper);
+
+			var previousWrapperHeight = this._getElementHeight($wrapper);
+
+			$wrapper.prepend(this._prependedElementsBuffer);
+			delete this._prependedElementsBuffer;
+
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
+
+			// Although getting the height with jQuery < 3.X rounds to the
+			// nearest integer setting the height respects the given float
+			// number.
+			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
+
+			while (this._$firstPrependedElement) {
+				this._updateCache(this._$firstPrependedElement, $wrapper);
+
+				this._$firstPrependedElement = this._$firstPrependedElement._previous;
+			}
+
+			// Remove the temporal wrapper used to layout and get the height of
+			// the added items.
+			$wrapper.detach();
+			$wrapper.children().detach();
+			$wrapper.remove();
+
+			// Update the cached position of elements after the prepended ones.
+			while ($firstExistingElement) {
+				$firstExistingElement._top += wrapperHeightDifference;
+				$firstExistingElement._topRaw += wrapperHeightDifference;
+
+				$firstExistingElement = $firstExistingElement._next;
+			}
+
+			// Keep the scrolling at the same point as before the elements were
+			// prepended.
+			// Despite having subpixel accuracy for positions and sizes, Firefox
+			// uses integer values for the scroll position, so the proper scroll
+			// position would be implicitly truncated. Instead, the scroll
+			// position is explicitly rounded to mitigate a progressive "drift"
+			// when several batches of elements are prepended.
+			// Note, however, that rounded the value just mitigates, but does
+			// not fully prevent the drift, and when several batches are
+			// prepended in a row in a short period of time the result is a
+			// wiggly effect in the existing elements due to the successive
+			// corrections in the scroll positions.
+			// Besides that, the drawback of this approach is that the scrolling
+			// in browsers with subpixel accuracy and float values for the
+			// scroll position (maybe Firefox mobile?) will not be as accurate
+			// as it could be.
+			this._$container.scrollTop(Math.round(this._$container.scrollTop() + wrapperHeightDifference));
+
+			// Update the position of the wrapper with the visible elements.
+			// This is needed even if "updateVisibleElements()" is called, as it
+			// could "short circuit" before reaching the point where the wrapper
+			// position is updated.
+			if (this._$firstVisibleElement) {
+				this._$wrapper._top += wrapperHeightDifference;
+				this._$wrapper.css('top', this._$wrapper._top);
+			}
+
+			this.updateVisibleElements();
 		},
 
 		appendElementEnd: function() {
