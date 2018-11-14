@@ -884,6 +884,57 @@
 			this._$wrapper.appendTo(this._$container);
 		},
 
+		/**
+		 * Scroll the list to the given element.
+		 *
+		 * The element will be aligned with the top of the list (or as far as
+		 * possible, in case the element is at the bottom).
+		 *
+		 * @param {jQuery} $element the element of the list to scroll to.
+		 */
+		scrollTo: function($element) {
+			if (!this._isLoaded($element)) {
+				return;
+			}
+
+			this._$container.scrollTop($element._top);
+
+			// The visible elements are updated when the scroll event is
+			// handled. However, as the scroll event is asynchronous, it is not
+			// guaranteed that it will be handled before this method returns; as
+			// the caller could expect that the visibility of elements is
+			// updated when scrolling programatically this must be explicitly
+			// done.
+			// Note that, although the event is handled asynchronously (and in
+			// some cases several scrolls can be merged in a single event) the
+			// value returned by scrollTop() is always the expected one
+			// immediately after setting it with scrollTop(value).
+			this.updateVisibleElements();
+		},
+
+		/**
+		 * Returns whether the given element is loaded or not.
+		 *
+		 * @param {jQuery} $element the element to check.
+		 * @return true if the element is loaded, false otherwise.
+		 */
+		_isLoaded: function($element) {
+			if (!this._$firstLoadedElement || !this._$lastLoadedElement) {
+				return false;
+			}
+
+			var $currentElement = this._$firstLoadedElement;
+			while ($currentElement !== this._$lastLoadedElement._next) {
+				if ($currentElement === $element) {
+					return true;
+				}
+
+				$currentElement = $currentElement._next;
+			}
+
+			return false;
+		},
+
 	};
 
 	OCA.SpreedMe.Views.VirtualList = VirtualList;
