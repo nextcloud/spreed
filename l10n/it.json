@@ -171,6 +171,7 @@
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Chiamata con {user1}, {user2}, {user3} e {user4} (Durata {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Chiamata con {user1}, {user2}, {user3}, {user4} e {user5} (Durata {duration})",
     "Talk to %s" : "Parla con %s",
+    "Password request: %s" : "Password richiesta: %s",
     "_%n other guest_::_%n other guests_" : ["%n altro ospite","%n altri ospiti"],
     ", " : ", ",
     "%s invited you to a conversation." : "%s ti ha invitato a una conversazione.",
@@ -202,6 +203,8 @@
     "{user} wants to talk with you" : "{user} vuole parlare con te.",
     "A group call has started in {call}" : "Una chiamata di gruppo è iniziata in {call}",
     "A group call has started" : "Una chiamata di gruppo è iniziata",
+    "{email} requested the password to access {file}" : "{email} ha richiesto la password per accedere a {file}",
+    "Someone requested the password to access {file}" : "Qualcun ha richiesto la password per accedere a {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Data non valida, il formato della data deve essere AAAA-MM-GG",
     "Conversation not found" : "Conversazione non trovata",
     "Path is already shared with this room" : "Il percorso è già condiviso con questa stanza",
@@ -266,6 +269,9 @@
     "A guest mentioned you in a group conversation: %s" : "Un ospite ti ha menzionato in una conversazione di gruppo: %s",
     "A guest mentioned you in a group conversation: {call}" : "Un ospite ti ha menzionato in una conversazione di gruppo: {call}",
     "A guest mentioned you in a group conversation" : "Un ospite ti ha menzionato in una conversazione di gruppo",
+    "TURN candidate generation failed, please check the settings." : "Gnerazione del candidato TURN non riuscita, controlla le impostazioni.",
+    "The TURN server settings are valid." : "Le impostazioni del server TURN sono valide.",
+    "Checking TURN server {server}" : "Controllo server TURN {server}",
     "Password request by %s" : "Password richiesta da %s",
     "{email} requested the password to access a share" : "{email} ha richiesto la password per accedere a una condivisione"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
