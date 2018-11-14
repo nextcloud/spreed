@@ -17,6 +17,24 @@ var spreedPeerConnectionTable = [];
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
 	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
+	var canPublish = true;
+
+   	function setPublish(publish) {
+    		canPublish = publish;
+    	}
+
+	OCA.SpreedMe.setPublish = setPublish;
+
+    	function getPublishVideo() {
+    		if (canPublish) {
+    			return {
+					width: { max: 1280 },
+					height: { max: 720 }
+				};
+		}
+
+		return canPublish;
+	}
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -166,9 +184,6 @@ var spreedPeerConnectionTable = [];
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 			spreedMappingTable[sessionId] = user.userId || user.userid;
 			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(sessionId));
-			if (videoContainer.length === 0) {
-				OCA.SpreedMe.videos.add(sessionId);
-			}
 
 			var peer;
 			if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
@@ -295,14 +310,11 @@ var spreedPeerConnectionTable = [];
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
-			autoRequestMedia: true,
+			autoRequestMedia: canPublish,
 			debug: false,
 			media: {
-				audio: true,
-				video: {
-					width: { max: 1280 },
-					height: { max: 720 }
-				}
+				audio: canPublish,
+				video: getPublishVideo()
 			},
 			autoAdjustMic: false,
 			audioFallback: true,
@@ -312,6 +324,11 @@ var spreedPeerConnectionTable = [];
 			nick: OC.getCurrentUser().displayName
 		});
 		OCA.SpreedMe.webrtc = webrtc;
+
+		if (!canPublish) {
+			// user is not allowed to publish media, just join the call
+			app.startWithoutLocalMedia(false, false);
+		}
 
 		OCA.SpreedMe.webrtc.startMedia = function (token) {
 			app.setEmptyContentMessage(
