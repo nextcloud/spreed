@@ -68,7 +68,9 @@
 	 * exceed the bottom position of its next element.
 	 *
 	 * It is assumed that the position and size of an element will not change
-	 * once added to the list.
+	 * once added to the list. Changing the size of the container could change
+	 * the position and size of all the elements, so in that case "reload()"
+	 * needs to be called.
 	 *
 	 *
 	 *
@@ -80,14 +82,19 @@
 	 *
 	 * ············· - List start / Wrapper background start - Top position = 0
 	 * ·           ·
+	 * ·  _  _  _  · _ First loaded element
+	 * ·           ·
 	 * · _ _ _ _ _ · _ Wrapper start - Top position ~= scroll position
 	 * :___________: _
 	 * | ~~~     | |   Viewport start / Container top
 	 * | ~~      |||
-	 * | ~~      | |
+	 * | ~~      |||
 	 * | ~~~~~   | |   Viewport end / Container bottom
 	 * :¯¯¯¯¯¯¯¯¯¯¯: ¯
 	 * · ¯ ¯ ¯ ¯ ¯ · ¯ Wrapper end
+	 * ·           ·
+	 * ·           ·
+	 * ·  ¯  ¯  ¯  · ¯ Last loaded element
 	 * ·           ·
 	 * ·           ·
 	 * ·           ·
@@ -136,12 +143,23 @@
 	 * this temporal wrapper is set based on the already added elements, so the
 	 * browser can layout the new elements and their real position and size can
 	 * be cached.
+	 *
+	 * Reloading the list recalculates the position and size of all the
+	 * elements. When the list contains a lot of elements it is not possible to
+	 * recalculate the values for all the elements at once, so they are first
+	 * recalculated for the visible elements and then they are progressively
+	 * recalculated for the rest of elements. During that process it is possible
+	 * to scroll only to the already loaded elements (although eventually all
+	 * the elements will be loaded and it will be possible to scroll again to
+	 * any element).
 	 */
 	var VirtualList = function($container) {
 		this._$container = $container;
 
 		this._$firstElement = null;
 		this._$lastElement = null;
+		this._$firstLoadedElement = null;
+		this._$lastLoadedElement = null;
 		this._$firstVisibleElement = null;
 		this._$lastVisibleElement = null;
 
@@ -219,6 +237,23 @@
 		},
 
 		prependElementEnd: function() {
+			// If the prepended elements are not immediately before the first
+			// loaded element there is nothing to load now; they will be loaded
+			// as needed with the other pending elements.
+			if (this._$firstPrependedElement._next !== this._$firstLoadedElement) {
+				delete this._prependedElementsBuffer;
+
+				return;
+			}
+
+			if (this._lastContainerWidth !== this._$container.width()) {
+				delete this._prependedElementsBuffer;
+
+				this.reload();
+
+				return;
+			}
+
 			this._loadPreviousElements(
 				this._$firstPrependedElement,
 				this._$lastPrependedElement,
@@ -231,6 +266,23 @@
 		},
 
 		appendElementEnd: function() {
+			// If the appended elements are not immediately after the last
+			// loaded element there is nothing to load now; they will be loaded
+			// as needed with the other pending elements.
+			if (this._$firstAppendedElement._previous !== this._$lastLoadedElement) {
+				delete this._appendedElementsBuffer;
+
+				return;
+			}
+
+			if (this._lastContainerWidth !== this._$container.width()) {
+				delete this._appendedElementsBuffer;
+
+				this.reload();
+
+				return;
+			}
+
 			this._loadNextElements(
 				this._$firstAppendedElement,
 				this._$lastAppendedElement,
@@ -240,6 +292,232 @@
 			delete this._appendedElementsBuffer;
 
 			this.updateVisibleElements();
+		},
+
+		/**
+		 * Reloads the list to adjust to the new size of the container.
+		 *
+		 * This needs to be called whenever the size of the container has
+		 * changed.
+		 *
+		 * When the width of the container has changed it is not possible to
+		 * guarantee that exactly the same elements that were visible before
+		 * will be visible after the list is reloaded. Due to this, in those
+		 * cases reloading the list just ensures that the last element that was
+		 * partially visible before will be fully visible after the list is
+		 * reloaded.
+		 *
+		 * On the other hand, when only the height has changed no reload is
+		 * needed; in that case the visibility of the elements is updated based
+		 * on the new height.
+		 *
+		 * Reloading the list requires to recalculate the position and size of
+		 * all the elements. The initial call reloads the last visible element
+		 * (if any) and some of its previous and next siblings; the rest of the
+		 * elements will be queued to be progressively updated until all are
+		 * loaded. During this process it is possible to scroll only to those
+		 * elements already loaded, although further elements can be appended or
+		 * prepended if needed and they will be available once the reload ends.
+		 *
+		 * In browsers with subpixel accuracy for the position and size that use
+		 * integer values for the scroll position, like Firefox, reloading the
+		 * list causes a wiggly effect (and, in some cases, a slight drift) due
+		 * to prepending the elements and trying to keep the scroll position, as
+		 * the scroll position is rounded to an int but the position of the
+		 * elements is a float.
+		 */
+		reload: function() {
+			if (this._lastContainerWidth === this._$container.width()) {
+				// If the width is the same the cache is still valid, so no need
+				// for a full reload.
+				this.updateVisibleElements();
+
+				return;
+			}
+
+			if (this._pendingLoad) {
+				clearTimeout(this._pendingLoad);
+				delete this._pendingLoad;
+			}
+
+			this._lastContainerWidth = this._$container.width();
+
+			var $initialElement = this._$lastVisibleElement;
+			if (!$initialElement) {
+				// No element was visible; either the list was reloaded when
+				// empty or during the first append/prepend of elements.
+				$initialElement = this._$lastElement;
+			}
+
+			if (!$initialElement) {
+				// The list is empty, so there is nothing to load.
+				return;
+			}
+
+			// Detach all the visible elements from the wrapper
+			this._$wrapper.detach();
+
+			while (this._$firstVisibleElement && this._$firstVisibleElement !== this._$lastVisibleElement._next) {
+				this._$firstVisibleElement.detach();
+				this._$firstVisibleElement = this._$firstVisibleElement._next;
+			}
+
+			this._$firstVisibleElement = null;
+			this._$lastVisibleElement = null;
+
+			this._$wrapper._top = 0;
+			this._$wrapper.css('top', this._$wrapper._top);
+
+			this._$wrapper.appendTo(this._$container);
+
+			// Reset wrapper background
+			this._$wrapperBackground.height(0);
+
+			this._loadInitialElements($initialElement);
+
+			// Scroll to the last visible element, or to the top of the next one
+			// to prevent it from becoming the last visible element when the
+			// visibilities are updated.
+			if ($initialElement._next) {
+				// The implicit "Math.floor()" on the scroll position when the
+				// browser has subpixel accuracy but uses int positions for
+				// scrolling ensures that the next element to the last visible
+				// one will not become visible (which could happen if the value
+				// was rounded instead).
+				this._$container.scrollTop($initialElement._next._top - this._getElementOuterHeightWithoutMargins(this._$container));
+			} else {
+				// As the last visible element is also the last element this
+				// simply scrolls the list to the bottom.
+				this._$container.scrollTop($initialElement._top + $initialElement._height);
+			}
+
+			this.updateVisibleElements();
+
+			this._queueLoadOfPendingElements();
+		},
+
+		_loadInitialElements: function($initialElement) {
+			var $firstElement = $initialElement;
+			var $lastElement = $firstElement;
+
+			var elementsBuffer = document.createDocumentFragment();
+
+			var $currentElement = $firstElement;
+			var i;
+			for (i = 0; i < 50 && $currentElement; i++) {
+				// ParentNode.prepend() is not compatible with older browsers.
+				elementsBuffer.insertBefore($currentElement.get(0), elementsBuffer.firstChild);
+				$lastElement = $currentElement;
+				$currentElement = $currentElement._previous;
+			}
+
+			$currentElement = $firstElement._next;
+			for (i = 0; i < 50 && $currentElement; i++) {
+				// ParentNode.append() is not compatible with older browsers.
+				elementsBuffer.appendChild($currentElement.get(0));
+				$firstElement = $currentElement;
+				$currentElement = $currentElement._next;
+			}
+
+			this._$firstLoadedElement = null;
+			this._$lastLoadedElement = null;
+
+			this._loadPreviousElements(
+				$firstElement,
+				$lastElement,
+				elementsBuffer
+			);
+
+			// FIXME it is happily assumed that the initial load covers the full
+			// view with 50 and 50 elements before and after... but it should be
+			// actually verified and enforced loading again other elements as
+			// needed.
+		},
+
+		_queueLoadOfPendingElements: function() {
+			if (this._pendingLoad) {
+				return;
+			}
+
+			// To load the elements they need to be rendered again, so it is a
+			// rather costly operation. A small interval between loads, even
+			// with just a few elements, could hog the browser and cause its UI
+			// to become unresponsive, so a "long" interval is used instead; to
+			// compensate for the "long" interval the number of elements loaded
+			// in each batch is rather large, but still within a reasonable
+			// limit that should be renderable by the browser without causing
+			// (much :-) ) jank.
+			this._pendingLoad = setTimeout(function() {
+				delete this._pendingLoad;
+
+				var numberOfElementsToLoad = 200;
+				numberOfElementsToLoad -= this._loadPreviousPendingElements(numberOfElementsToLoad/2);
+				this._loadNextPendingElements(numberOfElementsToLoad);
+
+				// The loaded elements are out of view (it is assumed that the
+				// initial load of elements cover the full visible area), so no
+				// need to update the visible elements.
+			}.bind(this), 100);
+		},
+
+		_loadPreviousPendingElements: function(numberOfElementsToLoad) {
+			if (!this._$firstLoadedElement || this._$firstLoadedElement === this._$firstElement) {
+				return 0;
+			}
+
+			var prependedElementsBuffer = document.createDocumentFragment();
+
+			var $firstPrependedElement = this._$firstLoadedElement._previous;
+			var $lastPrependedElement = $firstPrependedElement;
+
+			var $currentElement = $firstPrependedElement;
+			var i;
+			for (i = 0; i < numberOfElementsToLoad && $currentElement; i++) {
+				// ParentNode.prepend() is not compatible with older browsers.
+				prependedElementsBuffer.insertBefore($currentElement.get(0), prependedElementsBuffer.firstChild);
+				$lastPrependedElement = $currentElement;
+				$currentElement = $currentElement._previous;
+			}
+
+			this._loadPreviousElements(
+				$firstPrependedElement,
+				$lastPrependedElement,
+				prependedElementsBuffer
+			);
+
+			this._queueLoadOfPendingElements();
+
+			return i;
+		},
+
+		_loadNextPendingElements: function(numberOfElementsToLoad) {
+			if (!this._$lastLoadedElement || this._$lastLoadedElement === this._$lastElement) {
+				return 0;
+			}
+
+			var appendedElementsBuffer = document.createDocumentFragment();
+
+			var $firstAppendedElement = this._$lastLoadedElement._next;
+			var $lastAppendedElement = $firstAppendedElement;
+
+			var $currentElement = $firstAppendedElement;
+			var i;
+			for (i = 0; i < numberOfElementsToLoad && $currentElement; i++) {
+				// ParentNode.append() is not compatible with older browsers.
+				appendedElementsBuffer.appendChild($currentElement.get(0));
+				$lastAppendedElement = $currentElement;
+				$currentElement = $currentElement._next;
+			}
+
+			this._loadNextElements(
+				$firstAppendedElement,
+				$lastAppendedElement,
+				appendedElementsBuffer
+			);
+
+			this._queueLoadOfPendingElements();
+
+			return i;
 		},
 
 		_loadPreviousElements: function($firstElementToLoad, $lastElementToLoad, elementsBuffer) {
@@ -270,6 +548,13 @@
 			// number.
 			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
+			// Note that the order of "first/last" is not the same for the main
+			// elements and the elements passed to this method.
+			if (!this._$lastLoadedElement) {
+				this._$lastLoadedElement = $firstElementToLoad;
+			}
+			this._$firstLoadedElement = $lastElementToLoad;
+
 			while ($firstElementToLoad !== $lastElementToLoad._previous) {
 				this._updateCache($firstElementToLoad, $wrapper);
 
@@ -283,7 +568,7 @@
 			$wrapper.remove();
 
 			// Update the cached position of elements after the prepended ones.
-			while ($firstExistingElement) {
+			while ($firstExistingElement !== this._$lastLoadedElement._next) {
 				$firstExistingElement._top += wrapperHeightDifference;
 				$firstExistingElement._topRaw += wrapperHeightDifference;
 
@@ -343,6 +628,11 @@
 			// nearest integer setting the height respects the given float
 			// number.
 			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
+
+			if (!this._$firstLoadedElement) {
+				this._$firstLoadedElement = $firstElementToLoad;
+			}
+			this._$lastLoadedElement = $lastElementToLoad;
 
 			while ($firstElementToLoad !== $lastElementToLoad._next) {
 				this._updateCache($firstElementToLoad, $wrapper);
@@ -493,12 +783,12 @@
 		 * of a pixel would be wrongly shown or hidden.
 		 */
 		updateVisibleElements: function() {
-			if (!this._$firstVisibleElement && !this._$firstElement) {
+			if (!this._$firstVisibleElement && !this._$firstLoadedElement) {
 				return;
 			}
 
 			if (!this._$firstVisibleElement) {
-				this._$firstVisibleElement = this._$firstElement;
+				this._$firstVisibleElement = this._$firstLoadedElement;
 				this._$lastVisibleElement = this._$firstVisibleElement;
 
 				this._$wrapper.append(this._$firstVisibleElement);
@@ -548,7 +838,7 @@
 				}
 
 				// Show the new first visible element.
-				this._$firstVisibleElement = this._$firstElement;
+				this._$firstVisibleElement = this._$firstLoadedElement;
 				while (this._$firstVisibleElement._top + this._$firstVisibleElement._height <= visibleAreaTop) {
 					this._$firstVisibleElement = this._$firstVisibleElement._next;
 				}
@@ -566,6 +856,7 @@
 
 			// Prepend leading elements now visible.
 			while (this._$firstVisibleElement._previous &&
+					this._$firstVisibleElement._previous !== this._$firstLoadedElement._previous &&
 					this._$firstVisibleElement._previous._top + this._$firstVisibleElement._previous._height > visibleAreaTop) {
 				this._$firstVisibleElement._previous.prependTo(this._$wrapper);
 				this._$firstVisibleElement = this._$firstVisibleElement._previous;
@@ -584,6 +875,7 @@
 
 			// Append trailing elements now visible.
 			while (this._$lastVisibleElement._next &&
+					this._$lastVisibleElement._next !== this._$lastLoadedElement._next &&
 					this._$lastVisibleElement._next._top < visibleAreaBottom) {
 				this._$lastVisibleElement._next.appendTo(this._$wrapper);
 				this._$lastVisibleElement = this._$lastVisibleElement._next;
