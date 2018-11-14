@@ -180,6 +180,22 @@
 
 	VirtualList.prototype = {
 
+		getFirstElement: function() {
+			return this._$firstElement;
+		},
+
+		getFirstVisibleElement: function() {
+			return this._$firstVisibleElement;
+		},
+
+		getLastElement: function() {
+			return this._$lastElement;
+		},
+
+		getLastVisibleElement: function() {
+			return this._$lastVisibleElement;
+		},
+
 		prependElementStart: function() {
 			this._prependedElementsBuffer = document.createDocumentFragment();
 
