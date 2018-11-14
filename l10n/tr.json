@@ -171,6 +171,7 @@
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{user1}, {user2}, {user3} ve {user4} ile görüşme (Süre {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "{user1}, {user2}, {user3}, {user4} ve {user5} ile görüşme (Süre {duration})",
     "Talk to %s" : "%s ile görüşün",
+    "Password request: %s" : "Parola isteği: %s",
     "_%n other guest_::_%n other guests_" : ["%n diğer ziyaretçi","%n diğer konuk"],
     ", " : ",",
     "%s invited you to a conversation." : "%s sizi bir görüşmeye çağırdı.",
@@ -202,6 +203,8 @@
     "{user} wants to talk with you" : "{user} sizinle görüşmek istiyor",
     "A group call has started in {call}" : "{call} içinde bir grup görüşmesi başlatıldı",
     "A group call has started" : "Bir grup görüşmesi başlatıldı",
+    "{email} requested the password to access {file}" : "{email} adresinden {file} dosyasına erişim parolası istendi",
+    "Someone requested the password to access {file}" : "Bir kişi {file} dosyasına erişmek için parola istedi",
     "Invalid date, date format must be YYYY-MM-DD" : "Tarih geçersiz. Tarih biçimi YYYY-AA-GG olmalıdır",
     "Conversation not found" : "Görüşme bulunamadı",
     "Path is already shared with this room" : "Bu yol bu görüşme ile zaten paylaşılmış",
@@ -266,6 +269,9 @@
     "A guest mentioned you in a group conversation: %s" : "Bir konuk bir grup görüşmesinde sizden bahsetti: %s",
     "A guest mentioned you in a group conversation: {call}" : "Bir konuk bir grup görüşmesinde sizden bahsetti: {call}",
     "A guest mentioned you in a group conversation" : "Bir konuk bir grup görüşmesinde sizden bahsetti",
+    "TURN candidate generation failed, please check the settings." : "TURN adayı üretilemedi, lütfen ayarları denetleyin.",
+    "The TURN server settings are valid." : "TURN sunucu ayarları geçerli.",
+    "Checking TURN server {server}" : "{server} TURN sunucusu denetleniyor",
     "Password request by %s" : "1%s tarafından parola isteği",
     "{email} requested the password to access a share" : "{email} bir paylaşıma erişmek için parola isteğinde bulundu"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
