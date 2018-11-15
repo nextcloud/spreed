@@ -387,7 +387,7 @@
 			this._$wrapper.appendTo(this._$container);
 
 			// Reset wrapper background
-			this._$wrapperBackground.height(0);
+			this._setWrapperBackgroundHeight(0);
 
 			this._loadInitialElements($initialElement);
 
@@ -559,10 +559,7 @@
 
 			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
 
-			// Although getting the height with jQuery < 3.X rounds to the
-			// nearest integer setting the height respects the given float
-			// number.
-			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
+			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
 			// Note that the order of "first/last" is not the same for the main
 			// elements and the elements passed to this method.
@@ -640,10 +637,7 @@
 
 			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
 
-			// Although getting the height with jQuery < 3.X rounds to the
-			// nearest integer setting the height respects the given float
-			// number.
-			this._$wrapperBackground.height(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
+			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
 			if (!this._$firstLoadedElement) {
 				this._$firstLoadedElement = $firstElementToLoad;
@@ -782,6 +776,21 @@
 			var marginBottom = Math.max(0, parseFloat($element.css('margin-bottom')));
 
 			return this._getElementOuterHeightWithoutMargins($element) + marginTop + marginBottom;
+		},
+
+		_setWrapperBackgroundHeight: function(height) {
+			// Although getting the height with jQuery < 3.X rounds to the
+			// nearest integer setting the height respects the given float
+			// number.
+			this._$wrapperBackground.height(height);
+
+			// If the container is scrollable set its "tabindex" attribute so it
+			// is included in the sequential keyboard navigation.
+			if (this._getElementHeight(this._$wrapperBackground) > this._getElementHeight(this._$container)) {
+				this._$container.attr('tabindex', 0);
+			} else {
+				this._$container.removeAttr('tabindex');
+			}
 		},
 
 		/**
