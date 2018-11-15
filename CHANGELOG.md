@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0.1 – 2018-11-15
+### Added
+- Add an option to test the TURN configuration in the admin settings
+  [#1294](https://github.com/nextcloud/spreed/pull/1294)
+
+### Changed
+- Improve the notifications when a share password is requested
+  [#1296](https://github.com/nextcloud/spreed/pull/1296)
+- Do not show an error when a file is shared a second time into a conversation
+  [#1295](https://github.com/nextcloud/spreed/pull/1295)
+
+### Fixed
+- Custom Signaling, STUN and TURN configurations are not loaded for the user requesting the password for a share
+  [#1297](https://github.com/nextcloud/spreed/pull/1297)
+- Fix position of the contacts menu when clicking on the avatar of a chat author
+  [#1293](https://github.com/nextcloud/spreed/pull/1293)
+- Avatars in messages/mentions by guests show the guest avatar instead of the user
+  [#1292](https://github.com/nextcloud/spreed/pull/1292)
+- Information about user state in a call is bugged
+  [#1291](https://github.com/nextcloud/spreed/pull/1291)
+- Wrong conversation name of password requests in the details sidebar
+  [#1290](https://github.com/nextcloud/spreed/pull/1290)
+- Fix rendering, reloading and interaction with the participant list
+  [#1222](https://github.com/nextcloud/spreed/pull/1222)
+  [#1289](https://github.com/nextcloud/spreed/pull/1289)
+
 ## 4.0.0 – 2018-09-06
 ### Added
 - Video verification for password protected email shares
