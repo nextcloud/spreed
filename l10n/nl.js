@@ -173,6 +173,7 @@ OC.L10N.register(
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Gesprek met {user1}, {user2}, {user3} en {user4} (Duur {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Gesprek met {user1}, {user2}, {user3}, {user4} en {user5} (Duur {duration})",
     "Talk to %s" : "Spreken met %s",
+    "Password request: %s" : "Wachtwoord aanvraag: %s",
     "_%n other guest_::_%n other guests_" : ["%n andere gast","%n andere gasten"],
     ", " : ", ",
     "%s invited you to a conversation." : "%s heeft je uitgenodigd voor een gesprek",
@@ -268,6 +269,7 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "Een gast vermeldde je in een groepsgesprek: %s",
     "A guest mentioned you in a group conversation: {call}" : "Een gast vermeldde je in een groepsgesprek: {call}",
     "A guest mentioned you in a group conversation" : "Een gast vermeldde je in een groepsgesprek",
+    "Checking TURN server {server}" : "Controleren TURN server {server}",
     "Password request by %s" : "Aanvraag wachtwoord door %s",
     "{email} requested the password to access a share" : "{email} vroeg een wachtwoord om een share te openen"
 },
