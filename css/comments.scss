@@ -77,6 +77,14 @@
 	color: grey;
 }
 
+/* Internal wrappers used by the virtual list. */
+#commentsTabView .comments .wrapper-background,
+#commentsTabView .comments .wrapper {
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
 #commentsTabView .comment {
 	position: relative;
 	margin-bottom: 30px;

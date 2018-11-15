@@ -31,6 +31,7 @@ script(
 		'views/roomlistview',
 		'views/sidebarview',
 		'views/tabview',
+		'views/virtuallist',
 		'richobjectstringparser',
 		'simplewebrtc',
 		'webrtc',

@@ -97,6 +97,7 @@ class TemplateLoader {
 		Util::addScript('spreed', 'views/roomlistview');
 		Util::addScript('spreed', 'views/sidebarview');
 		Util::addScript('spreed', 'views/tabview');
+		Util::addScript('spreed', 'views/virtuallist');
 		Util::addScript('spreed', 'richobjectstringparser');
 		Util::addScript('spreed', 'simplewebrtc');
 		Util::addScript('spreed', 'webrtc');

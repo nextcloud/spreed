@@ -241,12 +241,12 @@
 		onRender: function() {
 			delete this._lastAddedMessageModel;
 
-			this._$newestComment = $();
-
 			this.$el.find('.emptycontent').after(this.addCommentTemplate({}));
 
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			this.$container = this.$el.find('ul.comments');
+
+			this._virtualList = new OCA.SpreedMe.Views.VirtualList(this.$container);
 
 			if (OC.getCurrentUser().uid) {
 				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
@@ -308,56 +308,50 @@
 		 * be able to restore the scroll position when attached again.
 		 */
 		saveScrollPosition: function() {
-			var self = this;
-
 			if (_.isUndefined(this.$container)) {
 				return;
 			}
 
-			var containerHeight = this.$container.outerHeight();
-
-			this._$lastVisibleComment = this.$container.children('.comment').filter(function() {
-					return self._getCommentTopPosition($(this)) < containerHeight;
-			}).last();
+			this._savedScrollPosition = this.$container.scrollTop();
 		},
 
 		/**
 		 * Restores the scroll position of the message list to the last saved
 		 * position.
 		 *
-		 * When the scroll position is restored the size of the message list may
-		 * have changed (for example, if the chat view was detached from the
-		 * main view and attached to the sidebar); it is not possible to
-		 * guarantee that exactly the same messages that were visible when the
-		 * scroll position was saved will be visible when the scroll position is
-		 * restored. Due to this, restoring the scroll position just ensures
-		 * that the last message that was partially visible when it was saved
-		 * will be fully visible when it is restored.
+		 * Note that the saved scroll position is valid only if the chat view
+		 * was not resized since it was saved; restoring the scroll position
+		 * after the chat view was resized may or may not work as expected.
 		 */
 		restoreScrollPosition: function() {
-			if (_.isUndefined(this.$container) || _.isUndefined(this._$lastVisibleComment)) {
+			if (_.isUndefined(this.$container) || _.isUndefined(this._savedScrollPosition)) {
 				return;
 			}
 
-			var scrollBottom = this.$container.scrollTop();
+			this.$container.scrollTop(this._savedScrollPosition);
+		},
 
-			// When the last visible comment has a next sibling the scroll
-			// position is based on the top position of that next sibling.
-			// Basing it on the last visible comment top position and its height
-			// could cause the next sibling to be shown due to a negative margin
-			// "pulling it up" over the last visible comment bottom margin.
-			var $nextSibling = this._$lastVisibleComment.next();
-			if ($nextSibling.length > 0) {
-				// Substract 1px to ensure that it does not scroll into the next
-				// element (which would cause the next element to be fully shown
-				// if saving and restoring the scroll position again) due to
-				// rounding.
-				scrollBottom += this._getCommentTopPosition($nextSibling) - 1;
-			} else if (this._$lastVisibleComment.length > 0) {
-				scrollBottom += this._getCommentTopPosition(this._$lastVisibleComment) + this._getCommentOuterHeight(this._$lastVisibleComment);
+		/**
+		 * Reloads the message list.
+		 *
+		 * This needs to be called whenever the size of the chat view has
+		 * changed.
+		 *
+		 * When the message list is reloaded its size may have changed (for
+		 * example, if the chat view was detached from the main view and
+		 * attached to the sidebar); it is not possible to guarantee that
+		 * exactly the same messages that were visible before will be visible
+		 * after the message list is reloaded. Due to this, in those cases
+		 * reloading the message list just ensures that the last message that
+		 * was partially visible before will be fully visible after the message
+		 * list is reloaded.
+		 */
+		reloadMessageList: function() {
+			if (!this._virtualList) {
+				return;
 			}
 
-			this.$container.scrollTop(scrollBottom - this.$container.outerHeight());
+			this._virtualList.reload();
 		},
 
 		_formatItem: function(commentModel) {
@@ -393,16 +387,14 @@
 		},
 
 		_onAddModelStart: function() {
-			this._newMessagesBuffer = document.createDocumentFragment();
+			this._virtualList.appendElementStart();
 
-			this._scrollToNew = this._$newestComment.length === 0 || this._getCommentTopPosition(this._$newestComment) < this.$container.outerHeight();
+			this._scrollToNew = this._virtualList.getLastElement() === this._virtualList.getLastVisibleElement();
 		},
 
 		_onAddModel: function(model) {
 			var $el = $(this.commentTemplate(this._formatItem(model)));
-			// ParentNode.append() is not compatible with older browsers.
-			this._newMessagesBuffer.appendChild($el.get(0));
-			this._$newestComment = $el;
+			this._virtualList.appendElement($el);
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
 					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
@@ -435,44 +427,11 @@
 		_onAddModelEnd: function() {
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
-			this.$container.append(this._newMessagesBuffer);
-			delete this._newMessagesBuffer;
+			this._virtualList.appendElementEnd();
 
 			if (this._scrollToNew) {
-				var newestCommentHiddenHeight = (this._getCommentTopPosition(this._$newestComment) + this._getCommentOuterHeight(this._$newestComment)) - this.$container.outerHeight();
-				this.$container.scrollTop(this.$container.scrollTop() + newestCommentHiddenHeight);
+				this._virtualList.scrollTo(this._virtualList.getLastElement());
 			}
-		},
-
-		_getCommentTopPosition: function($element) {
-			// When the margin is positive, jQuery returns the proper top
-			// position of the element (that is, including the top margin).
-			// However, when it is negative, jQuery returns where the top
-			// position of the element would be if there was no margin. Grouped
-			// messages use a negative top margin to "pull them up" closer to
-			// the previous message, so in those cases the top position returned
-			// by jQuery is below the actual top position of the element.
-			var marginTop = parseInt($element.css('margin-top'));
-			if (marginTop >= 0) {
-				return $element.position().top;
-			}
-
-			return $element.position().top + marginTop;
-		},
-
-		_getCommentOuterHeight: function($element) {
-			// When the margin is positive, jQuery returns the proper outer
-			// height of the element. However, when it is negative, it
-			// substracts the negative margin from the overall height of the
-			// element. Grouped messages use a negative top margin to "pull them
-			// up" closer to the previous message, so in those cases the outer
-			// height returned by jQuery is smaller than the actual height.
-			var marginTop = parseInt($element.css('margin-top'));
-			if (marginTop >= 0) {
-				return $element.outerHeight(true);
-			}
-
-			return $element.outerHeight(true) - marginTop;
 		},
 
 		_getDateSeparator: function(timestamp) {
