@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.99.0 – 2018-11-15
+### Changed
+- Compatibility with Nextcloud 15 Beta/RC
+
 ## 4.0.1 – 2018-11-15
 ### Added
 - Add an option to test the TURN configuration in the admin settings
