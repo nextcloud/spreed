@@ -74,6 +74,7 @@ OC.L10N.register(
     "No messages yet, start the conversation!" : "Ei vielä viestejä, aloita keskustelu!",
     "New message …" : "Uusi viesti …",
     "Send" : "Lähetä",
+    "Share" : "Jaa",
     "Guest" : "Vieras",
     "[Unknown user name]" : "[Tuntematon käyttäjänimi]",
     "Today" : "Tänään",
@@ -87,6 +88,7 @@ OC.L10N.register(
     "Demote from moderator" : "Alenna moderaattorista",
     "Promote to moderator" : "Ylennä moderaattoriksi",
     "Remove participant" : "Poista osallistuja",
+    "Error while removing user from room" : "Virhe poistaessa käyttäjää huoneesta",
     "Add participant …" : "Lisää osallistuja…",
     "Favorited" : "Lisätty suosikkeihin",
     "Remove from favorites" : "Poista suosikeista",
@@ -164,6 +166,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Puhelu käyttäjien {user1}, {user2} ja {user3} kesken (Kesto {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Puhelu käyttäjien {user1}, {user2}, {user3} ja {user4} kesken (Kesto {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Puhelu käyttäjien {user1}, {user2}, {user3}, {user4} ja {user5} kesken (Kesto {duration})",
+    "Password request: %s" : "Salasanapyyntö: %s",
     "_%n other guest_::_%n other guests_" : ["%n muu vieras","%n muuta vierasta"],
     ", " : ",",
     "%s invited you to a conversation." : "%s kutsui sinut keskusteluun.",
@@ -247,6 +250,7 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "Vieras mainitsi sinut ryhmäkeskustelussa: %s",
     "A guest mentioned you in a group conversation: {call}" : "Vieras mainitsi sinut ryhmäkeskustelussa: {call}",
     "A guest mentioned you in a group conversation" : "Vieras mainitsi sinut ryhmäkeskustelussa",
+    "The TURN server settings are valid." : "TURN-palvelimen asetukset ovat kelvolliset.",
     "{email} requested the password to access a share" : "{email} pyysi salasanaa käyttääkseen jakoa"
 },
 "nplurals=2; plural=(n != 1);");
