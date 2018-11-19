@@ -363,10 +363,6 @@
 			this.getRegion('tabContent').$el.addClass(this._selectedTabExtraClass);
 
 			this.triggerMethod('select:tab', tabId);
-
-			if (tabId === 'chat') {
-				this._tabContentViews[tabId].focusChatInput();
-			}
 		}
 
 	});
