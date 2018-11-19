@@ -614,6 +614,15 @@
 				guestNameModel: this._localStorageModel
 			});
 
+			// Focus the chat input when the chat tab is selected.
+			this._chatView.listenTo(this._sidebarView, 'select:tab', function(tabId) {
+				if (tabId !== 'chat') {
+					return;
+				}
+
+				this._chatView.focusChatInput();
+			}.bind(this));
+
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.stopReceivingMessages();
 			});
