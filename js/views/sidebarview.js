@@ -48,6 +48,13 @@
 	 * "setCallInfoView()" while new tabs can be added through "addTab()" and
 	 * removed through "removeTab()".
 	 *
+	 * Tabs can be selected programatically using "selectTab()".
+	 *
+	 * No matter if it is done programatically or by the user, selecting a tab
+	 * triggers the "select:tab" event with the ID of the tab as parameter;
+	 * selecting a new tab deselects the current tab, so before "select:tab" is
+	 * triggered "unselect:tab" is triggered with the ID of the previous tab.
+	 *
 	 * The SidebarView can be opened or closed programatically using "open()"
 	 * and "close()".
 	 *
@@ -83,6 +90,11 @@
 		events: {
 			'click @ui.trigger': 'toggle',
 			'click @ui.sidebar a.close': 'close',
+		},
+
+		childViewTriggers: {
+			'unselect:tab': 'unselect:tab',
+			'select:tab': 'select:tab',
 		},
 
 		template: Handlebars.compile(TEMPLATE),
