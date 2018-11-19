@@ -192,6 +192,10 @@
 			this.getChildView(this._currentTabId).setSelected(true);
 
 			this.triggerMethod('select:tabHeader', tabId);
+		},
+
+		getCurrentTabId: function() {
+			return this._currentTabId;
 		}
 
 	});
@@ -317,6 +321,15 @@
 			}
 
 			this._tabHeadersView.selectTabHeader(tabId);
+		},
+
+		/**
+		 * Returns the ID of the currently selected tab.
+		 *
+		 * @return {string} the ID of the currently selected tab.
+		 */
+		getCurrentTabId: function() {
+			return this._tabHeadersView.getCurrentTabId();
 		},
 
 		/**

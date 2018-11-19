@@ -218,6 +218,15 @@
 		},
 
 		/**
+		 * Returns the ID of the currently selected tab.
+		 *
+		 * @return {string} the ID of the currently selected tab.
+		 */
+		getCurrentTabId: function() {
+			return this._tabView.getCurrentTabId();
+		},
+
+		/**
 		 * Removes the tab for the given tabId.
 		 *
 		 * If the tab to be removed is the one currently selected and there are
