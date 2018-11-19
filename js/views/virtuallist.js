@@ -712,6 +712,13 @@
 		 * main one); detached elements can not be used, as the values to cache
 		 * would be invalid in that case.
 		 *
+		 * Although the element must be a child of the given wrapper the element
+		 * can be acting as a proxy for a different element (for example, the
+		 * given element could be a clone in a temporal wrapper and act as an
+		 * update proxy for another element in the main wrapper); in that case
+		 * the cached values will be set in the element proxied for instead of
+		 * in the given element.
+		 *
 		 * The element top position is relative to the wrapper, and the wrapper
 		 * top position plus the element top position is expected to place the
 		 * element at the proper offset from the top of the container.
@@ -720,17 +727,24 @@
 		 * @param {jQuery} $wrapper the parent wrapper of the element.
 		 */
 		_updateCache: function($element, $wrapper) {
-			$element._height = this._getElementOuterHeight($element);
+			var $elementToUpdate = $element;
+			if ($element._updateProxyFor) {
+				$elementToUpdate = $element._updateProxyFor;
+			}
+
+			delete $elementToUpdate._dirty;
+
+			$elementToUpdate._height = this._getElementOuterHeight($element);
 
 			// The top position of an element must be got from the element
 			// itself; it can not be based on the top position and height of the
 			// previous element, because the browser may merge/collapse the
 			// margins.
-			$element._top = $wrapper._top + this._getElementTopPosition($element);
-			$element._topRaw = $element._top;
+			$elementToUpdate._top = $wrapper._top + this._getElementTopPosition($element);
+			$elementToUpdate._topRaw = $elementToUpdate._top;
 			var marginTop = parseFloat($element.css('margin-top'));
 			if (marginTop < 0) {
-				$element._topRaw -= marginTop;
+				$elementToUpdate._topRaw -= marginTop;
 			}
 		},
 
