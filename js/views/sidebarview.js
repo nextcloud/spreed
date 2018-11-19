@@ -49,9 +49,13 @@
 	 * removed through "removeTab()".
 	 *
 	 * The SidebarView can be opened or closed programatically using "open()"
-	 * and "close()". It will delegate on "OC.Apps.showAppSidebar()" and
-	 * "OC.Apps.hideAppSidebar()", so it must be used along an "#app-content"
-	 * that takes into account the "with-app-sidebar" CSS class.
+	 * and "close()".
+	 *
+	 * No matter if it is done programatically or by the user, opening the
+	 * sidebar triggers the "open" and "opened" events, and closing
+	 * the sidebar triggers the "close" and "closed" events; in both cases the
+	 * first event is triggered when the animation starts and the second one
+	 * when the animation ends.
 	 *
 	 * In order for the user to be able to open the sidebar when it is closed,
 	 * the SidebarView shows a small icon ("#app-sidebar-trigger") on the right
@@ -139,13 +143,25 @@
 				return;
 			}
 
-			OC.Apps.showAppSidebar();
+			this.trigger('open');
+
+			this.getUI('sidebar').removeClass('disappear')
+					.show('slide', { direction: 'right' }, 300, function() {
+							this.trigger('opened');
+					}.bind(this));
 
 			this._open = true;
 		},
 
 		close: function() {
-			OC.Apps.hideAppSidebar();
+			this.trigger('close');
+
+			this.getUI('sidebar')
+					.hide('slide', { direction: 'right' }, 300, function() {
+							this.getUI('sidebar').addClass('disappear');
+
+							this.trigger('closed');
+					}.bind(this));
 
 			this._open = false;
 		},
