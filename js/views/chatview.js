@@ -335,7 +335,7 @@
 				return;
 			}
 
-			var scrollBottom = 0;
+			var scrollBottom = this.$container.scrollTop();
 
 			// When the last visible comment has a next sibling the scroll
 			// position is based on the top position of that next sibling.
@@ -348,9 +348,9 @@
 				// element (which would cause the next element to be fully shown
 				// if saving and restoring the scroll position again) due to
 				// rounding.
-				scrollBottom = this._getCommentTopPosition($nextSibling) - 1;
+				scrollBottom += this._getCommentTopPosition($nextSibling) - 1;
 			} else if (this._$lastVisibleComment.length > 0) {
-				scrollBottom = this._getCommentTopPosition(this._$lastVisibleComment) + this._getCommentOuterHeight(this._$lastVisibleComment);
+				scrollBottom += this._getCommentTopPosition(this._$lastVisibleComment) + this._getCommentOuterHeight(this._$lastVisibleComment);
 			}
 
 			this.$container.scrollTop(scrollBottom - this.$container.outerHeight());
