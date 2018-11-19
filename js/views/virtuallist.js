@@ -72,6 +72,12 @@
 	 * the position and size of all the elements, so in that case "reload()"
 	 * needs to be called.
 	 *
+	 * It is also possible to update single elements when their position and
+	 * size changes, but only in a very limited scenario: only for the first or
+	 * last loaded element and only while prepending or appending new elements.
+	 * This makes possible to "seam" the new elements to the existing ones by
+	 * changing the CSS classes of the existing ends if needed.
+	 *
 	 * Some operations on the virtual list, like reloading it, updating the
 	 * visible elements or scrolling to certain element, require that the
 	 * container is visible; if called while the container is hidden those
@@ -344,6 +350,33 @@
 		},
 
 		/**
+		 * Notifies the virtual list that the position and size of the given
+		 * element may have changed.
+		 *
+		 * Updating an element is only possible while new elements are being
+		 * prepended or appended, that is, between the calls to
+		 * "prepend/appendElementStart" and "prepend/appendElementEnd", and only
+		 * for the element at the end being modified.
+		 *
+		 * @param {jQuery} $element the element to update.
+		 */
+		updateElement: function($element) {
+			if (!this._prependedElementsBuffer && !this._appendedElementsBuffer) {
+				return;
+			}
+
+			if (this._prependedElementsBuffer && $element !== this._$firstLoadedElement) {
+				return;
+			}
+
+			if (this._appendedElementsBuffer && $element !== this._$lastLoadedElement) {
+				return;
+			}
+
+			$element._dirty = true;
+		},
+
+		/**
 		 * Reloads the list to adjust to the new size of the container.
 		 *
 		 * This needs to be called whenever the size of the container has
@@ -587,7 +620,41 @@
 			var $wrapper = $('<div class="wrapper"></div>');
 			$wrapper._top = 0;
 
+			var elementToUpdateOldHeight = 0;
+
 			var $firstExistingElement = $firstElementToLoad._next;
+
+			if ($firstExistingElement && $firstExistingElement._dirty) {
+				// If the first existing element needs to be updated it is
+				// loaded again along with the other elements to load; however,
+				// as the element is already loaded, its height needs to be
+				// removed from the overall height of the list and all the
+				// other elements after it.
+				elementToUpdateOldHeight = $firstExistingElement._height;
+
+				// If the element was visible appending it to the buffer would
+				// remove it from the main wrapper, so a clone that acts as a
+				// proxy for the real element is used instead.
+				var $firstExistingElementProxy = $firstExistingElement.clone();
+				$firstExistingElementProxy._previous = $firstExistingElement._previous;
+				$firstExistingElementProxy._next = $firstExistingElement._next;
+				$firstExistingElementProxy._updateProxyFor = $firstExistingElement;
+
+				// ParentNode.append() is not compatible with older browsers.
+				elementsBuffer.appendChild($firstExistingElementProxy.get(0));
+
+				$firstElementToLoad = $firstExistingElementProxy;
+
+				$firstExistingElement = $firstExistingElement._next;
+
+				if ($firstExistingElement) {
+					// If there is another element after the one to update then
+					// the height to remove is not the full height of the
+					// element, but just until the top raw position of its next
+					// element to account for collapsing margins.
+					elementToUpdateOldHeight = $firstExistingElement._topRaw;
+				}
+			}
 
 			if ($firstExistingElement) {
 				// The wrapper is already at the top, so no need to set its
@@ -604,7 +671,7 @@
 
 			$wrapper.prepend(elementsBuffer);
 
-			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad;
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad - elementToUpdateOldHeight;
 
 			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
@@ -667,6 +734,30 @@
 			var $wrapper = $('<div class="wrapper"></div>');
 			$wrapper._top = 0;
 
+			var elementToUpdateOldHeight = 0;
+
+			var $firstExistingElement = $firstElementToLoad._previous;
+			if ($firstExistingElement && $firstExistingElement._dirty) {
+				// If the first existing element needs to be updated it is
+				// loaded again along with the other elements to load; however,
+				// as the element is already loaded, its height needs to be
+				// removed from the overall height of the list.
+				elementToUpdateOldHeight = $firstExistingElement._height;
+
+				// If the element was visible appending it to the buffer would
+				// remove it from the main wrapper, so a clone that acts as a
+				// proxy for the real element is used instead.
+				var $firstExistingElementProxy = $firstExistingElement.clone();
+				$firstExistingElementProxy._previous = $firstExistingElement._previous;
+				$firstExistingElementProxy._next = $firstExistingElement._next;
+				$firstExistingElementProxy._updateProxyFor = $firstExistingElement;
+
+				// ParentNode.prepend() is not compatible with older browsers.
+				elementsBuffer.insertBefore($firstExistingElementProxy.get(0), elementsBuffer.firstChild);
+
+				$firstElementToLoad = $firstExistingElementProxy;
+			}
+
 			if ($firstElementToLoad._previous) {
 				$wrapper.css('top', $firstElementToLoad._previous._topRaw);
 				$wrapper._top = $firstElementToLoad._previous._topRaw;
@@ -682,7 +773,7 @@
 
 			$wrapper.append(elementsBuffer);
 
-			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad;
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad - elementToUpdateOldHeight;
 
 			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
