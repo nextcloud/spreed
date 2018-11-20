@@ -225,10 +225,6 @@
 	flex-direction: column;
 }
 
-#app-content-wrapper #commentsTabView .comment:first-child {
-	padding-top: 15px;
-}
-
 /* The lateral padding is set for each child instead of for the chat view as a
    whole to prevent showing the scroll bar padded from the border of the chat
    view (which could be fixed by using a negative margin and a positive padding
@@ -249,6 +245,15 @@
 
 	padding-left: 44px;
 	padding-right: 44px;
+}
+
+
+#app-content-wrapper #commentsTabView .comments .wrapper-background,
+#app-content-wrapper #commentsTabView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	left: 44px;
+	right: 44px;
 }
 
 /* Hide all siblings of the chat view when shown as the main view */
@@ -1221,6 +1226,14 @@ video {
 #app-sidebar #commentsTabView .comments {
 	padding-left: 15px;
 	padding-right: 15px;
+}
+
+#app-sidebar #commentsTabView .comments .wrapper-background,
+#app-sidebar #commentsTabView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	left: 15px;
+	right: 15px;
 }
 
 #app-sidebar #commentsTabView .newCommentForm {
