@@ -337,9 +337,14 @@
 		/**
 		 * Returns the ID of the currently selected tab.
 		 *
-		 * @return {string} the ID of the currently selected tab.
+		 * @return {string} the ID of the currently selected tab, or an empty
+		 *                  string if there is none.
 		 */
 		getCurrentTabId: function() {
+			if (this._tabHeadersView === null) {
+				return '';
+			}
+
 			return this._tabHeadersView.getCurrentTabId();
 		},
 
