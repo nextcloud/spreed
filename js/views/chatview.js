@@ -31,9 +31,6 @@
 
 	var ChatView = Marionette.View.extend({
 
-		temporaryNearMessages: 0,
-		sameAuthorMessages: 0,
-
 		className: 'chat',
 
 		lastComments: [],
@@ -238,7 +235,15 @@
 		},
 
 		onRender: function() {
-			delete this._lastAddedMessageModel;
+			delete this._lastAppendedMessageModel;
+			delete this._lastPrependedMessageModel;
+
+			delete this._$lastPrependedMessage;
+
+			this._newestTemporaryNearMessages = 0;
+			this._newestSameAuthorMessages = 0;
+			this._oldestTemporaryNearMessages = 0;
+			this._oldestSameAuthorMessages = 0;
 
 			this.$el.find('.emptycontent').after(this.addCommentTemplate({}));
 
@@ -490,58 +495,155 @@
 			});
 		},
 
-		_onAddModelStart: function() {
-			this._virtualList.appendElementStart();
+		_onAddModelStart: function(options) {
+			var append = true;
+			if (options && options.at === 0) {
+				append = false;
+			}
 
-			this._scrollToNew = this._virtualList.getLastElement() === this._virtualList.getLastVisibleElement();
+			if (append) {
+				this._virtualList.appendElementStart();
+			} else {
+				this._virtualList.prependElementStart();
+			}
+
+			// If there are no elements the virtual list will automatically
+			// scroll to the bottom when a new batch of elements is prepended;
+			// otherwise it will keep the current scroll position.
+			this._scrollToNew = false;
+
+			if (append) {
+				this._scrollToNew = this._virtualList.getLastElement() === this._virtualList.getLastVisibleElement();
+			}
 		},
 
-		_onAddModel: function(model) {
+		/**
+		 * Renders and adds a new chat message view for the model added to the
+		 * collection.
+		 *
+		 * This is expected to be called as a handler for "add" events in a
+		 * Backbone collection; models must be either appended or prepended to
+		 * the collection; there is no support for models inserted at an
+		 * arbitrary position. Moreover, when models are prepended to the
+		 * collection they must be prepended one by one; prepending a group of
+		 * several messages, even if they are properly sorted from oldest to
+		 * newest, is not supported. On the other hand, appending several models
+		 * at once is supported (but note that in this case this method will be
+		 * called once for each model anyway).
+		 *
+		 * @param {Backbone.Model} model the added model.
+		 * @param {Backbone.Collection} collection unused.
+		 * @param Array options "at === 0" to prepend, otherwise appends.
+		 */
+		_onAddModel: function(model, collection, options) {
+			var append = true;
+			if (options && options.at === 0) {
+				append = false;
+			}
+
 			var $el = $(this.commentTemplate(this._formatItem(model)));
-			this._virtualList.appendElement($el);
 
-			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
-				this._modelsAreTemporaryNear(this._lastAddedMessageModel, model, 3600) &&
-				this.sameAuthorMessages < 20
+			if (append) {
+				this._virtualList.appendElement($el);
+			} else {
+				this._virtualList.prependElement($el);
+			}
 
-			) {
-				this.sameAuthorMessages++;
-				if (this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
-					this.temporaryNearMessages < 5) {
-					$el.addClass('grouped');
+			if (append) {
+				if (this._modelsHaveSameActor(this._lastAppendedMessageModel, model) &&
+					this._modelsAreTemporaryNear(this._lastAppendedMessageModel, model, 3600) &&
+					this._newestSameAuthorMessages < 20
+				) {
+					this._newestSameAuthorMessages++;
 
-					this.temporaryNearMessages++;
+					if (this._modelsAreTemporaryNear(this._lastAppendedMessageModel, model) &&
+						this._newestTemporaryNearMessages < 5) {
+						$el.addClass('grouped');
+
+						this._newestTemporaryNearMessages++;
+					} else {
+						$el.addClass('same-author');
+						this._newestTemporaryNearMessages = 0;
+					}
 				} else {
-					$el.addClass('same-author');
-					this.temporaryNearMessages = 0;
+					this._newestSameAuthorMessages = 0;
+					this._newestTemporaryNearMessages = 0;
 				}
 			} else {
-				this.sameAuthorMessages = 0;
-				this.temporaryNearMessages = 0;
+				if (this._modelsHaveSameActor(this._lastPrependedMessageModel, model) &&
+					this._modelsAreTemporaryNear(this._lastPrependedMessageModel, model, 3600) &&
+					this._oldestSameAuthorMessages < 20
+				) {
+					this._oldestSameAuthorMessages++;
+
+					if (this._modelsAreTemporaryNear(this._lastPrependedMessageModel, model) &&
+						this._oldestTemporaryNearMessages < 5) {
+						this._$lastPrependedMessage.addClass('grouped');
+
+						this._oldestTemporaryNearMessages++;
+					} else {
+						this._$lastPrependedMessage.addClass('same-author');
+						this._oldestTemporaryNearMessages = 0;
+					}
+
+					// This is needed for the first existing comment, and it
+					// will be simply ignored for the comments being prepended.
+					this._virtualList.updateElement(this._$lastPrependedMessage);
+				} else {
+					this._oldestSameAuthorMessages = 0;
+					this._oldestTemporaryNearMessages = 0;
+				}
 			}
 
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
 			model.set('date', new Date(model.get('timestamp') * 1000));
 
-			if (!this._lastAddedMessageModel || !this._modelsHaveSameDate(this._lastAddedMessageModel, model)) {
+			if (!append || (!this._lastAppendedMessageModel || !this._modelsHaveSameDate(this._lastAppendedMessageModel, model))) {
 				$el.attr('data-date', this._getDateSeparator(model.get('date')));
 				$el.addClass('showDate');
 			}
 
-			// Keeping the model for the last added message is not only
-			// practical, but needed, as the models for previous messages are
-			// removed from the collection each time a new set of messages is
-			// received.
-			this._lastAddedMessageModel = model;
+			if (!append && this._modelsHaveSameDate(this._lastPrependedMessageModel, model)) {
+				this._$lastPrependedMessage.removeClass('showDate');
+				// This is needed for the first existing comment, and it will be
+				// simply ignored for the comments being prepended.
+				this._virtualList.updateElement(this._$lastPrependedMessage);
+			}
+
+			// Keeping the models for the last appended and prepended messages
+			// is not only practical, but needed, as the models for previous
+			// messages are removed from the collection each time a new set of
+			// messages is received.
+			if (append || !this._lastAppendedMessageModel) {
+				this._lastAppendedMessageModel = model;
+			}
+			if (!append || !this._lastPrependedMessageModel) {
+				this._lastPrependedMessageModel = model;
+			}
+
+			// The element for the last prepended message is kept to update it
+			// as needed when new messages are prepended.
+			if (!append|| !this._$lastPrependedMessage) {
+				this._$lastPrependedMessage = $el;
+			}
 
 			this._postRenderItem(model, $el);
 		},
 
-		_onAddModelEnd: function() {
+		_onAddModelEnd: function(options) {
+			var append = true;
+			if (options && options.at === 0) {
+				append = false;
+			}
+
 			this.$el.find('.emptycontent').toggleClass('hidden', true);
 
-			this._virtualList.appendElementEnd();
+			if (append) {
+				this._virtualList.appendElementEnd();
+			} else {
+				this._virtualList.prependElementEnd();
+			}
 
 			if (this._scrollToNew) {
 				this._virtualList.scrollTo(this._virtualList.getLastElement());
