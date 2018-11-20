@@ -48,7 +48,6 @@ use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 use OCP\Mail\IMailer;
-use OCP\Share;
 
 class RoomController extends OCSController {
 	/** @var string */
@@ -166,16 +165,16 @@ class RoomController extends OCSController {
 
 	/**
 	 * @param Room $room
-	 * @param Participant $participant
+	 * @param Participant $currentParticipant
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room, Participant $participant = null): array {
+	protected function formatRoom(Room $room, Participant $currentParticipant = null): array {
 
-		if ($participant instanceof Participant) {
-			$participantType = $participant->getParticipantType();
-			$participantFlags = $participant->getInCallFlags();
-			$favorite = $participant->isFavorite();
+		if ($currentParticipant instanceof Participant) {
+			$participantType = $currentParticipant->getParticipantType();
+			$participantFlags = $currentParticipant->getInCallFlags();
+			$favorite = $currentParticipant->isFavorite();
 		} else {
 			$participantType = Participant::GUEST;
 			$participantFlags = Participant::FLAG_DISCONNECTED;
@@ -218,12 +217,12 @@ class RoomController extends OCSController {
 			'lastMessage' => [],
 		];
 
-		if (!$participant instanceof Participant) {
+		if (!$currentParticipant instanceof Participant) {
 			return $roomData;
 		}
 
-		if ($participant->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
-			$roomData['notificationLevel'] = $participant->getNotificationLevel();
+		if ($currentParticipant->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
+			$roomData['notificationLevel'] = $currentParticipant->getNotificationLevel();
 		}
 
 		if ($room->getObjectType() === 'share:password') {
@@ -234,44 +233,46 @@ class RoomController extends OCSController {
 		$currentUser = $this->userManager->get($this->userId);
 		if ($currentUser instanceof IUser) {
 			$unreadSince = $this->chatManager->getUnreadMarker($room, $currentUser);
-			if ($participant instanceof Participant) {
-				$lastMention = $participant->getLastMention();
+			if ($currentParticipant instanceof Participant) {
+				$lastMention = $currentParticipant->getLastMention();
 				$roomData['unreadMention'] = $lastMention !== null && $unreadSince < $lastMention;
 			}
 			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $unreadSince);
 		}
 
-		// Sort by lastPing
-		/** @var array[] $participants */
-		$participants = $room->getParticipants();
-		$sortParticipants = function(array $participant1, array $participant2) {
-			return $participant2['lastPing'] - $participant1['lastPing'];
-		};
-		uasort($participants['users'], $sortParticipants);
-		uasort($participants['guests'], $sortParticipants);
-
+		$numActiveGuests = 0;
+		$cleanGuests = false;
 		$participantList = [];
-		foreach ($participants['users'] as $userId => $data) {
-			$user = $this->userManager->get((string) $userId);
-			if ($user instanceof IUser) {
-				$participantList[(string) $user->getUID()] = [
-					'name' => $user->getDisplayName(),
-					'type' => $data['participantType'],
-					'call' => $data['inCall'],
-				];
-			}
+		$participants = $room->getParticipants();
+		uasort($participants, function(Participant $participant1, Participant $participant2) {
+			return $participant2->getLastPing() - $participant1->getLastPing();
+		});
 
-			if ($data['sessionId'] !== '0' && $data['lastPing'] <= time() - 100) {
-				$room->leaveRoom((string) $userId);
+		foreach ($participants as $participant) {
+			if ($participant->isGuest()) {
+				if ($participant->getLastPing() <= time() - 100) {
+					$cleanGuests = true;
+				} else {
+					$numActiveGuests++;
+				}
+			} else {
+				$user = $this->userManager->get($participant->getUser());
+				if ($user instanceof IUser) {
+					$participantList[(string)$user->getUID()] = [
+						'name' => $user->getDisplayName(),
+						'type' => $participant->getParticipantType(),
+						'call' => $participant->getInCallFlags(),
+						'sessionId' => $participant->getSessionId(),
+					];
+				}
+
+				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= time() - 100) {
+					$room->leaveRoom($participant->getUser());
+				}
 			}
 		}
 
-		$activeGuests = array_filter($participants['guests'], function($data) {
-			return $data['lastPing'] > time() - 100;
-		});
-
-		$numActiveGuests = \count($activeGuests);
-		if ($numActiveGuests !== \count($participants['guests'])) {
+		if ($cleanGuests) {
 			$room->cleanGuestParticipants();
 		}
 
@@ -283,8 +284,8 @@ class RoomController extends OCSController {
 		}
 
 		$roomData = array_merge($roomData, [
-			'lastPing' => $participant->getLastPing(),
-			'sessionId' => $participant->getSessionId(),
+			'lastPing' => $currentParticipant->getLastPing(),
+			'sessionId' => $currentParticipant->getSessionId(),
 			'participants' => $participantList,
 			'numGuests' => $numActiveGuests,
 			'lastMessage' => $lastMessage,
@@ -705,7 +706,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantsLegacy();
 		$results = [];
 
 		foreach ($participants['users'] as $userId => $participant) {
@@ -759,7 +760,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantUserIds();
 
 		$updateRoomType = $room->getType() === Room::ONE_TO_ONE_CALL ? Room::GROUP_CALL : false;
 		$participantsToAdd = [];
@@ -769,7 +770,7 @@ class RoomController extends OCSController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			if (isset($participants['users'][$newParticipant])) {
+			if (\in_array($newParticipant, $participants, true)) {
 				return new DataResponse([]);
 			}
 
@@ -784,7 +785,7 @@ class RoomController extends OCSController {
 
 			$usersInGroup = $group->getUsers();
 			foreach ($usersInGroup as $user) {
-				if (isset($participants['users'][$user->getUID()])) {
+				if (\in_array($user->getUID(), $participants, true)) {
 					continue;
 				}
 

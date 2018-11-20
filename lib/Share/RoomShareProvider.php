@@ -938,14 +938,14 @@ class RoomShareProvider implements IShareProvider {
 					continue;
 				}
 
-				$userList = $room->getParticipants()['users'];
-				foreach ($userList as $uid => $participantData) {
-					$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
+				$userList = $room->getParticipantUserIds();
+				foreach ($userList as $uid) {
+					$users[$uid] = $users[$uid] ?? [];
 					$users[$uid][$row['id']] = $row;
 				}
 			} else if ($type === self::SHARE_TYPE_USERROOM && $currentAccess === true) {
 				$uid = $row['share_with'];
-				$users[$uid] = isset($users[$uid]) ? $users[$uid] : [];
+				$users[$uid] = $users[$uid] ?? [];
 				$users[$uid][$row['id']] = $row;
 			}
 		}

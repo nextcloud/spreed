@@ -113,17 +113,6 @@ class BackendNotifier{
 	}
 
 	/**
-	 * Return list of userids that are invited to a room.
-	 *
-	 * @param Room $room
-	 * @return array
-	 */
-	private function getRoomUserIds($room) {
-		$participants = $room->getParticipants();
-		return array_keys($participants['users']);
-	}
-
-	/**
 	 * The given users are now invited to a room.
 	 *
 	 * @param Room $room
@@ -142,7 +131,7 @@ class BackendNotifier{
 				'userids' => $userIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->getRoomUserIds($room),
+				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
 					'name' => $room->getName(),
 					'type' => $room->getType(),
@@ -166,7 +155,7 @@ class BackendNotifier{
 				'userids' => $userIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->getRoomUserIds($room),
+				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
 					'name' => $room->getName(),
 					'type' => $room->getType(),
@@ -190,7 +179,7 @@ class BackendNotifier{
 				'sessionids' => $sessionIds,
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
-				'alluserids' => $this->getRoomUserIds($room),
+				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
 					'name' => $room->getName(),
 					'type' => $room->getType(),
@@ -210,7 +199,7 @@ class BackendNotifier{
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'update',
 			'update' => [
-				'userids' => $this->getRoomUserIds($room),
+				'userids' => $room->getParticipantUserIds(),
 				'properties' => [
 					'name' => $room->getName(),
 					'type' => $room->getType(),
@@ -246,7 +235,7 @@ class BackendNotifier{
 		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantsLegacy();
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
 			$users[] = $participant;
@@ -284,7 +273,7 @@ class BackendNotifier{
 		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
-		$participants = $room->getParticipants();
+		$participants = $room->getParticipantsLegacy();
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
 			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {

@@ -210,32 +210,21 @@ class SignalingController extends OCSController {
 	 * @param Room $room
 	 * @return array[]
 	 */
-	protected function getUsersInRoom(Room $room) {
+	protected function getUsersInRoom(Room $room): array {
 		$usersInRoom = [];
 		$participants = $room->getParticipants(time() - 30);
-
-		foreach ($participants['users'] as $participant => $data) {
-			if ($data['sessionId'] === '0') {
+		foreach ($participants as $participant) {
+			if ($participant->getSessionId() === '0') {
 				// User is not active
 				continue;
 			}
 
 			$usersInRoom[] = [
-				'userId' => $participant,
+				'userId' => $participant->getUser(),
 				'roomId' => $room->getId(),
-				'lastPing' => $data['lastPing'],
-				'sessionId' => $data['sessionId'],
-				'inCall' => $data['inCall'],
-			];
-		}
-
-		foreach ($participants['guests'] as $data) {
-			$usersInRoom[] = [
-				'userId' => '',
-				'roomId' => $room->getId(),
-				'lastPing' => $data['lastPing'],
-				'sessionId' => $data['sessionId'],
-				'inCall' => $data['inCall'],
+				'lastPing' => $participant->getLastPing(),
+				'sessionId' => $participant->getSessionId(),
+				'inCall' => $participant->getInCallFlags(),
 			];
 		}
 

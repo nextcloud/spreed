@@ -71,8 +71,8 @@ class SearchPluginTest extends \Test\TestCase {
 		$room = $this->createMock(Room::class);
 
 		$room->expects($this->once())
-			->method('getParticipants')
-			->willReturn(['users' => [123 => [], 'foo' => [], 'bar' => []]]);
+			->method('getParticipantUserIds')
+			->willReturn(['123', 'foo', 'bar']);
 
 		$plugin = $this->getPlugin(['searchUsers']);
 		$plugin->setContext(['room' => $room]);

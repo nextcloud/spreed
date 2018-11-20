@@ -58,10 +58,9 @@ class SearchPlugin implements ISearchPlugin {
 	 * @since 13.0.0
 	 */
 	public function search($search, $limit, $offset, ISearchResult $searchResult) {
-		$participants = $this->room->getParticipants();
 
-		$this->searchUsers($search, array_map('strval', array_keys($participants['users'])), $searchResult);
 		// FIXME Handle guests
+		$this->searchUsers($search, $this->room->getParticipantUserIds(), $searchResult);
 
 		return false;
 	}

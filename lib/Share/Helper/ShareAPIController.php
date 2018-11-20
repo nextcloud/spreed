@@ -30,6 +30,7 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IL10N;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share\IShare;
 
@@ -94,10 +95,15 @@ class ShareAPIController {
 		// the other participant.
 		$roomName = $room->getName();
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$participantsList = $room->getParticipants()['users'];
-			unset($participantsList[$this->userId]);
-
-			$roomName = $this->userManager->get(key($participantsList))->getDisplayName();
+			$userIds = $room->getParticipantUserIds();
+			foreach ($userIds as $userId) {
+				if ($this->userId !== $userId) {
+					$user = $this->userManager->get($userId);
+					if ($user instanceof IUser) {
+						$roomName = $user->getDisplayName();
+					}
+				}
+			}
 		}
 
 		$result['share_with_displayname'] = $roomName;
