@@ -622,6 +622,55 @@
 				guestNameModel: this._localStorageModel
 			});
 
+			// Focus the chat input when the chat tab is selected.
+			this._chatView.listenTo(this._sidebarView, 'select:tab', function(tabId) {
+				if (tabId !== 'chat') {
+					return;
+				}
+
+				this._chatView.focusChatInput();
+			}.bind(this));
+
+			// Opening and closing the sidebar detachs its contents to perform
+			// the animation; detaching an element and attaching it again resets
+			// its scroll position, so the scroll position of the chat view
+			// needs to be saved before the sidebar is closed and restored again
+			// once the sidebar is opened.
+			this._chatView.listenTo(this._sidebarView, 'opened', function() {
+				if (this._sidebarView.getCurrentTabId() !== 'chat') {
+					return;
+				}
+
+				this._chatView.restoreScrollPosition();
+			}.bind(this));
+			this._chatView.listenTo(this._sidebarView, 'close', function() {
+				if (this._sidebarView.getCurrentTabId() !== 'chat') {
+					return;
+				}
+
+				this._chatView.saveScrollPosition();
+			}.bind(this));
+
+			// Selecting a different tab detachs the contents of the previous
+			// tab and attachs the contents of the new tab; detaching an element
+			// and attaching it again resets its scroll position, so the scroll
+			// position of the chat view needs to be saved when the chat tab is
+			// unselected and restored again when the chat tab is selected.
+			this._chatView.listenTo(this._sidebarView, 'unselect:tab', function(tabId) {
+				if (tabId !== 'chat') {
+					return;
+				}
+
+				this._chatView.saveScrollPosition();
+			}.bind(this));
+			this._chatView.listenTo(this._sidebarView, 'select:tab', function(tabId) {
+				if (tabId !== 'chat') {
+					return;
+				}
+
+				this._chatView.restoreScrollPosition();
+			}.bind(this));
+
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.stopReceivingMessages();
 			});

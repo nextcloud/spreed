@@ -48,10 +48,21 @@
 	 * "setCallInfoView()" while new tabs can be added through "addTab()" and
 	 * removed through "removeTab()".
 	 *
+	 * Tabs can be selected programatically using "selectTab()".
+	 *
+	 * No matter if it is done programatically or by the user, selecting a tab
+	 * triggers the "select:tab" event with the ID of the tab as parameter;
+	 * selecting a new tab deselects the current tab, so before "select:tab" is
+	 * triggered "unselect:tab" is triggered with the ID of the previous tab.
+	 *
 	 * The SidebarView can be opened or closed programatically using "open()"
-	 * and "close()". It will delegate on "OC.Apps.showAppSidebar()" and
-	 * "OC.Apps.hideAppSidebar()", so it must be used along an "#app-content"
-	 * that takes into account the "with-app-sidebar" CSS class.
+	 * and "close()".
+	 *
+	 * No matter if it is done programatically or by the user, opening the
+	 * sidebar triggers the "open" and "opened" events, and closing
+	 * the sidebar triggers the "close" and "closed" events; in both cases the
+	 * first event is triggered when the animation starts and the second one
+	 * when the animation ends.
 	 *
 	 * In order for the user to be able to open the sidebar when it is closed,
 	 * the SidebarView shows a small icon ("#app-sidebar-trigger") on the right
@@ -79,6 +90,11 @@
 		events: {
 			'click @ui.trigger': 'toggle',
 			'click @ui.sidebar a.close': 'close',
+		},
+
+		childViewTriggers: {
+			'unselect:tab': 'unselect:tab',
+			'select:tab': 'select:tab',
 		},
 
 		template: Handlebars.compile(TEMPLATE),
@@ -139,13 +155,25 @@
 				return;
 			}
 
-			OC.Apps.showAppSidebar();
+			this.trigger('open');
+
+			this.getUI('sidebar').removeClass('disappear')
+					.show('slide', { direction: 'right' }, 300, function() {
+							this.trigger('opened');
+					}.bind(this));
 
 			this._open = true;
 		},
 
 		close: function() {
-			OC.Apps.hideAppSidebar();
+			this.trigger('close');
+
+			this.getUI('sidebar')
+					.hide('slide', { direction: 'right' }, 300, function() {
+							this.getUI('sidebar').addClass('disappear');
+
+							this.trigger('closed');
+					}.bind(this));
 
 			this._open = false;
 		},
@@ -199,6 +227,15 @@
 		 */
 		selectTab: function(tabId) {
 			this._tabView.selectTab(tabId);
+		},
+
+		/**
+		 * Returns the ID of the currently selected tab.
+		 *
+		 * @return {string} the ID of the currently selected tab.
+		 */
+		getCurrentTabId: function() {
+			return this._tabView.getCurrentTabId();
 		},
 
 		/**
