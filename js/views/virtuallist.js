@@ -762,7 +762,10 @@
 		 * @param jQuery $element the jQuery element to get its height.
 		 */
 		_getElementHeight: function($element) {
-			return $element.get(0).getBoundingClientRect().height;
+			var paddingTop = parseFloat($element.css('padding-top'));
+			var paddingBottom = parseFloat($element.css('padding-bottom'));
+
+			return $element.get(0).getBoundingClientRect().height - paddingTop - paddingBottom;
 		},
 
 		/**
