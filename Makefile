@@ -31,8 +31,8 @@ install-npm-deps:
 install-npm-deps-dev:
 	npm install --deps
 
-build-js-templates:
-	handlebars -n OCA.VideoCalls.Admin.Templates js/admin/templates/ -f js/admin/templates.js
+build-js-templates: dev-setup
+	./node_modules/.bin/handlebars -n OCA.VideoCalls.Admin.Templates js/admin/templates/ -f js/admin/templates.js
 
 dev-setup: install-npm-deps-dev
 

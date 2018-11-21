@@ -13,6 +13,7 @@
   "author": "",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "handlebars": "^4.0.12",
     "jasmine": "^2.5.2",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.5.2",
