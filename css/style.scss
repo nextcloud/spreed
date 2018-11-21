@@ -838,10 +838,7 @@ video {
 }
 
 @include icon-black-white('menu-people', 'spreed', 1);
-
-.icon-no-password {
-	background-image: url('../img/no-password.svg?v=1');
-}
+@include icon-black-white('no-password', 'spreed', 1);
 
 #app-sidebar .close {
 	position: absolute;
