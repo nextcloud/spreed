@@ -31,6 +31,14 @@ pipeline:
     when:
       matrix:
         TESTS: check-app-compatbility
+  handlebars:
+    image: node
+    commands:
+      - npm install -g handlebars
+      - ./check-handlebars-templates.sh
+    when:
+      matrix:
+        TESTS: handlebars
   syntax-php7.0:
     image: nextcloudci/php7.0:php7.0-19
     environment:
@@ -193,6 +201,7 @@ matrix:
     - TESTS: eslint
     - TESTS: stylelint
     - TESTS: check-app-compatbility
+    - TESTS: handlebars
     - TESTS: syntax-php7.0
     - TESTS: signed-off-check
     - TESTS: php7.0
