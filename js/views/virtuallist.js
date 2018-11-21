@@ -211,6 +211,12 @@
 			return this._lastKnownScrollPosition;
 		},
 
+		isScrollable: function() {
+			// In Firefox the scroll bar appears once the contained element is
+			// at least 1 pixel larger than the container.
+			return this._getElementOuterHeight(this._$wrapperBackground) > (this._getElementHeight(this._$container) + 1);
+		},
+
 		prependElementStart: function() {
 			this._prependedElementsBuffer = document.createDocumentFragment();
 
@@ -830,7 +836,7 @@
 
 			// If the container is scrollable set its "tabindex" attribute so it
 			// is included in the sequential keyboard navigation.
-			if (this._getElementHeight(this._$wrapperBackground) > this._getElementHeight(this._$container)) {
+			if (this.isScrollable()) {
 				this._$container.attr('tabindex', 0);
 			} else {
 				this._$container.removeAttr('tabindex');
