@@ -183,6 +183,8 @@
 		},
 
 		selectTabHeader: function(tabId) {
+			this.triggerMethod('unselect:tabHeader', this._currentTabId);
+
 			if (this._currentTabId !== undefined) {
 				this.getChildView(this._currentTabId).setSelected(false);
 			}
@@ -192,6 +194,10 @@
 			this.getChildView(this._currentTabId).setSelected(true);
 
 			this.triggerMethod('select:tabHeader', tabId);
+		},
+
+		getCurrentTabId: function() {
+			return this._currentTabId;
 		}
 
 	});
@@ -202,6 +208,11 @@
 	 * A TabView contains a set of tab headers and a content area. When a header
 	 * is selected its associated content view is shown in the content area;
 	 * otherwise its content is hidden (although the header is always shown).
+	 *
+	 * Selecting a tab triggers the "select:tab" event with the ID of the tab as
+	 * parameter; selecting a new tab deselects the current tab, so before
+	 * "select:tab" is triggered "unselect:tab" is triggered with the ID of the
+	 * previous tab.
 	 */
 	var TabView = Marionette.View.extend({
 
@@ -211,6 +222,10 @@
 		regions: {
 			tabHeaders: '.tabHeaders',
 			tabContent: '.tab'
+		},
+
+		childViewTriggers: {
+			'unselect:tabHeader': 'unselect:tab',
 		},
 
 		template: Handlebars.compile(TEMPLATE_TAB_VIEW),
@@ -320,6 +335,20 @@
 		},
 
 		/**
+		 * Returns the ID of the currently selected tab.
+		 *
+		 * @return {string} the ID of the currently selected tab, or an empty
+		 *                  string if there is none.
+		 */
+		getCurrentTabId: function() {
+			if (this._tabHeadersView === null) {
+				return '';
+			}
+
+			return this._tabHeadersView.getCurrentTabId();
+		},
+
+		/**
 		 * Shows the content view associated to the selected tab header.
 		 *
 		 * Only for internal use as an event handler.
@@ -338,9 +367,7 @@
 			this._selectedTabExtraClass = 'tab-' + tabId;
 			this.getRegion('tabContent').$el.addClass(this._selectedTabExtraClass);
 
-			if (tabId === 'chat') {
-				this._tabContentViews[tabId].focusChatInput();
-			}
+			this.triggerMethod('select:tab', tabId);
 		}
 
 	});
