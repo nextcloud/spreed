@@ -283,19 +283,55 @@
 		},
 
 		/**
-		 * Restores the scroll position of the message list to the last saved
-		 * position.
+		 * Restores the scroll position of the message list.
+		 *
+		 * The scroll position is restored to the given position or, if none is
+		 * given, to the last saved position. If neither a scroll position is
+		 * given nor a scroll position was saved the current scroll position is
+		 * not modified.
 		 *
 		 * Note that the saved scroll position is valid only if the chat view
 		 * was not resized since it was saved; restoring the scroll position
 		 * after the chat view was resized may or may not work as expected.
+		 *
+		 * @param {number} scrollPosition the scroll position to restore to, or
+		 *                 undefined to restore to the last saved position.
 		 */
-		restoreScrollPosition: function() {
-			if (_.isUndefined(this.$container) || _.isUndefined(this._savedScrollPosition)) {
+		restoreScrollPosition: function(scrollPosition) {
+			if (_.isUndefined(this.$container) ||
+					(_.isUndefined(this._savedScrollPosition) && _.isUndefined(scrollPosition))) {
 				return;
 			}
 
-			this.$container.scrollTop(this._savedScrollPosition);
+			if (_.isUndefined(scrollPosition)) {
+				this.$container.scrollTop(this._savedScrollPosition);
+
+				return;
+			}
+
+			this.$container.scrollTop(scrollPosition);
+		},
+
+		/**
+		 * Returns the last known scroll position of the message list.
+		 *
+		 * Note that this value is updated asynchronously, so in some cases it
+		 * will not match the current scroll position of the message list.
+		 * Moreover, it could also be influenced in surprising ways, for
+		 * example, by animations that change the width of the message list.
+		 *
+		 * If possible, save the scroll position explicitly at a known safe
+		 * point to be able to restore to it instead of restoring to the value
+		 * returned by this method.
+		 *
+		 * @return {number} the last known scroll position of the message list.
+		 */
+		getLastKnownScrollPosition: function() {
+			if (_.isUndefined(this._virtualList)) {
+				return;
+			}
+
+			return this._virtualList.getLastKnownScrollPosition();
 		},
 
 		/**
