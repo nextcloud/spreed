@@ -86,6 +86,17 @@
 
 
 
+.talkCallInfoView .participants-1 .videoView,
+.talkCallInfoView .participants-2 .videoView {
+	/* Do not force the width to 200px, as otherwise the video is too tall and
+	 * overlaps too much with the promoted video. */
+	min-width: initial;
+	/* z-index of 10 would put the video on top of the close button. */
+	z-index: 1;
+}
+
+
+
 .talkCallInfoView .nameIndicator {
 	/* Reduce padding to bring the name closer to the bottom */
 	padding: 3px;

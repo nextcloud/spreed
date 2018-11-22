@@ -161,6 +161,11 @@
 		},
 
 		render: function() {
+			// Detach the MediaControlsView before emptying its ancestor to
+			// prevent internal listeners in MediaControlsView from becoming
+			// unusable.
+			OCA.SpreedMe.app._mediaControlsView.$el.detach();
+
 			this.$el.empty();
 			this._$callContainerWrapper = null;
 
@@ -172,8 +177,18 @@
 
 			this.$el.append(this._$callContainerWrapper);
 			$('#call-container-wrapper').append('<div id="call-container"></div>');
-			$('#call-container').append('<div id="videos"></div>');
+			$('#call-container').append('<div id="videos"><div id="localVideoContainer" class="videoView videoContainer"></div></div>');
 			$('#call-container').append('<div id="screens"></div>');
+
+			$('#localVideoContainer').append(
+				'<video id="localVideo"></video>' +
+				'<div class="avatar-container hidden">' +
+				'	<div class="avatar"></div>' +
+				'</div>');
+
+			OCA.SpreedMe.app._mediaControlsView.render();
+			OCA.SpreedMe.app._mediaControlsView.hideScreensharingButton();
+			$('#localVideoContainer').append(OCA.SpreedMe.app._mediaControlsView.$el);
 
 			this.$el.append(this._callButton.$el);
 		},
