@@ -72,6 +72,15 @@
 	 * the position and size of all the elements, so in that case "reload()"
 	 * needs to be called.
 	 *
+	 * Some operations on the virtual list, like reloading it, updating the
+	 * visible elements or scrolling to certain element, require that the
+	 * container is visible; if called while the container is hidden those
+	 * operations will just be ignored.
+	 *
+	 * Adding new elements is still possible while the virtual list is hidden,
+	 * but note that "reload()" must be explicitly called once the container is
+	 * visible again for the added elements to be loaded.
+	 *
 	 *
 	 *
 	 * Internal description:
@@ -259,6 +268,12 @@
 		},
 
 		prependElementEnd: function() {
+			if (this._isContainerHidden()) {
+				delete this._prependedElementsBuffer;
+
+				return;
+			}
+
 			// If the prepended elements are not immediately before the first
 			// loaded element there is nothing to load now; they will be loaded
 			// as needed with the other pending elements.
@@ -288,6 +303,12 @@
 		},
 
 		appendElementEnd: function() {
+			if (this._isContainerHidden()) {
+				delete this._prependedElementsBuffer;
+
+				return;
+			}
+
 			// If the appended elements are not immediately after the last
 			// loaded element there is nothing to load now; they will be loaded
 			// as needed with the other pending elements.
@@ -331,7 +352,8 @@
 		 *
 		 * On the other hand, when only the height has changed no reload is
 		 * needed; in that case the visibility of the elements is updated based
-		 * on the new height.
+		 * on the new height. If some elements were added to the list while its
+		 * container was hidden they will be loaded too without a full reload.
 		 *
 		 * Reloading the list requires to recalculate the position and size of
 		 * all the elements. The initial call reloads the last visible element
@@ -349,10 +371,19 @@
 		 * elements is a float.
 		 */
 		reload: function() {
+			if (this._isContainerHidden()) {
+				return;
+			}
+
 			if (this._lastContainerWidth === this._$container.width()) {
 				// If the width is the same the cache is still valid, so no need
 				// for a full reload.
 				this.updateVisibleElements();
+
+				if (this._$firstLoadedElement !== this._$firstElement ||
+						this._$lastLoadedElement !== this._$lastElement) {
+					this._queueLoadOfPendingElements();
+				}
 
 				return;
 			}
@@ -471,6 +502,10 @@
 			// (much :-) ) jank.
 			this._pendingLoad = setTimeout(function() {
 				delete this._pendingLoad;
+
+				if (this._isContainerHidden()) {
+					return;
+				}
 
 				var numberOfElementsToLoad = 200;
 				numberOfElementsToLoad -= this._loadPreviousPendingElements(numberOfElementsToLoad/2);
@@ -814,6 +849,10 @@
 		 * of a pixel would be wrongly shown or hidden.
 		 */
 		updateVisibleElements: function() {
+			if (this._isContainerHidden()) {
+				return;
+			}
+
 			if (!this._$firstVisibleElement && !this._$firstLoadedElement) {
 				return;
 			}
@@ -915,6 +954,10 @@
 			this._$wrapper.appendTo(this._$container);
 		},
 
+		_isContainerHidden: function() {
+			return this._$container.is(":hidden");
+		},
+
 		/**
 		 * Scroll the list to the given element.
 		 *
@@ -924,6 +967,10 @@
 		 * @param {jQuery} $element the element of the list to scroll to.
 		 */
 		scrollTo: function($element) {
+			if (this._isContainerHidden()) {
+				return;
+			}
+
 			if (!this._isLoaded($element)) {
 				return;
 			}
