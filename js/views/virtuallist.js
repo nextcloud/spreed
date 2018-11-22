@@ -174,6 +174,8 @@
 
 		var self = this;
 		this._$container.on('scroll', function() {
+			self._lastKnownScrollPosition = self._$container.scrollTop();
+
 			self.updateVisibleElements();
 		});
 	};
@@ -194,6 +196,10 @@
 
 		getLastVisibleElement: function() {
 			return this._$lastVisibleElement;
+		},
+
+		getLastKnownScrollPosition: function() {
+			return this._lastKnownScrollPosition;
 		},
 
 		prependElementStart: function() {
