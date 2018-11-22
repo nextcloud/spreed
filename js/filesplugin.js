@@ -161,8 +161,37 @@
 
 			this.$el.append(this._$talkSidebar);
 			$('#talk-sidebar').append('<div id="call-container"></div>');
-			$('#call-container').append('<div id="videos"></div>');
+			$('#call-container').append('<div id="videos"><div id="localVideoContainer" class="videoView videoContainer"></div></div>');
 			$('#call-container').append('<div id="screens"></div>');
+
+			$('#localVideoContainer').append(
+				'<video id="localVideo"></video>' +
+				'<div class="avatar-container hidden">' +
+				'	<div class="avatar"></div>' +
+				'</div>' +
+				'<div class="nameIndicator">' +
+				'	<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Mute audio (m)') + '"></button>' +
+				'	<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Disable video (v)') + '"></button>' +
+// 				'	<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Share screen') + '"></button>' +
+// 				'	<div id="screensharing-menu" class="app-navigation-entry-menu">' +
+// 				'		<ul>' +
+// 				'			<li>' +
+// 				'				<button id="show-screen-button">' +
+// 				'					<span class="icon-screen"></span>' +
+// 				'					<span>' + t('spreed', 'Show your screen') + '</span>' +
+// 				'				</button>' +
+// 				'			</li>' +
+// 				'			<li>' +
+// 				'				<button id="stop-screen-button">' +
+// 				'					<span class="icon-screen-off"></span>' +
+// 				'					<span>' + t('spreed', 'Stop screensharing') + '</span>' +
+// 				'				</button>' +
+// 				'			</li>' +
+// 				'		</ul>' +
+// 				'	</div>' +
+				'</div>');
+
+			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 
 			this.$el.append(this._callButton.$el);
 		},

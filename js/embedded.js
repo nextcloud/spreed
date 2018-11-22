@@ -81,36 +81,36 @@
 // 			this.registerLocalVideoButtonHandlers();
 		},
 
-// 		registerLocalVideoButtonHandlers: function() {
-// 			$('#hideVideo').click(function() {
-// 				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
-// 					// don't allow clicking the video toggle
-// 					// when no video ever was streamed (that
-// 					// means that permission wasn't granted
-// 					// yet or there is no video available at
-// 					// all)
-// 					console.log('video can not be enabled - there was no stream available before');
-// 					return;
-// 				}
-// 				if ($(this).hasClass('video-disabled')) {
-// 					OCA.SpreedMe.app.enableVideo();
-// 					localStorage.removeItem("videoDisabled");
-// 				} else {
-// 					OCA.SpreedMe.app.disableVideo();
-// 					localStorage.setItem("videoDisabled", true);
-// 				}
-// 			});
-// 
-// 			$('#mute').click(function() {
-// 				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
-// 					OCA.SpreedMe.app.disableAudio();
-// 					localStorage.setItem("audioDisabled", true);
-// 				} else {
-// 					OCA.SpreedMe.app.enableAudio();
-// 					localStorage.removeItem("audioDisabled");
-// 				}
-// 			});
-// 
+		registerLocalVideoButtonHandlers: function() {
+			$('#hideVideo').click(function() {
+				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
+					// don't allow clicking the video toggle
+					// when no video ever was streamed (that
+					// means that permission wasn't granted
+					// yet or there is no video available at
+					// all)
+					console.log('video can not be enabled - there was no stream available before');
+					return;
+				}
+				if ($(this).hasClass('video-disabled')) {
+					OCA.SpreedMe.app.enableVideo();
+					localStorage.removeItem("videoDisabled");
+				} else {
+					OCA.SpreedMe.app.disableVideo();
+					localStorage.setItem("videoDisabled", true);
+				}
+			});
+
+			$('#mute').click(function() {
+				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
+					OCA.SpreedMe.app.disableAudio();
+					localStorage.setItem("audioDisabled", true);
+				} else {
+					OCA.SpreedMe.app.enableAudio();
+					localStorage.removeItem("audioDisabled");
+				}
+			});
+
 // 			$('#video-fullscreen').click(function() {
 // 				if (this.fullscreenDisabled) {
 // 					this.enableFullscreen();
@@ -189,7 +189,7 @@
 // 			$("#stop-screen-button").on('click', function() {
 // 				OCA.SpreedMe.webrtc.stopScreenShare();
 // 			});
-// 		},
+		},
 
 		/**
 		 * @param {string} token
