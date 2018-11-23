@@ -363,7 +363,6 @@ var spreedPeerConnectionTable = [];
 				var user = usersInCallMapping[id];
 				if (user && !userHasStreams(user)) {
 					console.log("User has no stream", id);
-					return;
 				}
 
 				// Indicator for username
