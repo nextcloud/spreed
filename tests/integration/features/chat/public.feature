@@ -76,3 +76,55 @@ Feature: chat/public
       | public room | guests    | guest        |                          | Message 3 | []                |
       | public room | users     | participant2 | participant2-displayname | Message 2 | []                |
       | public room | users     | participant1 | participant1-displayname | Message 1 | []                |
+
+
+
+  Scenario: everyone in a public room receives a message with the name of the guest that sent it
+    Given user "participant1" creates room "public room"
+      | roomType | 3 |
+    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "guest" joins room "public room" with 200
+    When user "guest" sets her name to "The name of the guest" in room "public room" with 200
+    And user "guest" sends message "Message 1" to room "public room" with 201
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName      | message   | messageParameters |
+      | public room | guests    | guest   | The name of the guest | Message 1 | []                |
+    And user "participant2" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName      | message   | messageParameters |
+      | public room | guests    | guest   | The name of the guest | Message 1 | []                |
+    And user "guest" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName      | message   | messageParameters |
+      | public room | guests    | guest   | The name of the guest | Message 1 | []                |
+
+  Scenario: everyone in a public room receives a message with the updated name of the guest that sent it
+    Given user "participant1" creates room "public room"
+      | roomType | 3 |
+    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "guest" joins room "public room" with 200
+    When user "guest" sets her name to "The name of the guest" in room "public room" with 200
+    And user "guest" sends message "Message 1" to room "public room" with 201
+    And user "guest" sets her name to "The new name of the guest" in room "public room" with 200
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName          | message   | messageParameters |
+      | public room | guests    | guest   | The new name of the guest | Message 1 | []                |
+    And user "participant2" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName          | message   | messageParameters |
+      | public room | guests    | guest   | The new name of the guest | Message 1 | []                |
+    And user "guest" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName          | message   | messageParameters |
+      | public room | guests    | guest   | The new name of the guest | Message 1 | []                |
+
+  Scenario: everyone in a public room receives a message with the name of the guest that sent it before leaving the room
+    Given user "participant1" creates room "public room"
+      | roomType | 3 |
+    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "guest" joins room "public room" with 200
+    When user "guest" sets her name to "The name of the guest" in room "public room" with 200
+    And user "guest" sends message "Message 1" to room "public room" with 201
+    And user "guest" leaves room "public room" with 200
+    Then user "participant1" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName      | message   | messageParameters |
+      | public room | guests    | guest   | The name of the guest | Message 1 | []                |
+    And user "participant2" sees the following messages in room "public room" with 200
+      | room        | actorType | actorId | actorDisplayName      | message   | messageParameters |
+      | public room | guests    | guest   | The name of the guest | Message 1 | []                |

@@ -381,6 +381,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" sets her name to "([^"]*)" in room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $guest
+	 * @param string $name
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userSetsHerNameToInRoom($user, $name, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/guest/' . self::$identifierToToken[$identifier] . '/name',
+			new TableNode([['displayName', $name]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" joins call "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
