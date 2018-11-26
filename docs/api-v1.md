@@ -31,6 +31,8 @@
   * [Sending a new chat message](#sending-a-new-chat-message)
   * [Get mention autocomplete suggestions](#get-mention-autocomplete-suggestions)
   * [System messages](#system-messages)
+- [Search](#search)
+  * [Search chat messages](#search-chat-messages)
 - [Guests](#guests)
   * [Set display name](#set-display-name)
 - [Signaling](#signaling)
@@ -594,6 +596,46 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
+
+## Search
+
+### Search chat messages
+
+The search uses the server endpoint, so it is not available for guest users.
+
+* Method: `GET`
+* Endpoint: `/index.php/core/search` (from the root, it does not use the base OCS endpoint)
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `query` | string | The (sub)string to look for in chat messages
+    `inApps` | array | The apps in which perform the search; it should contain a single item with the value 'spreed'
+
+    - Header:
+
+        field | type | Description
+        ------|------|------------
+        `requesttoken` | string | The request token returned by a previous login
+
+* Response:
+    - Status code:
+        + `200 OK`
+
+    - Data:
+        Array of results, each result has at least:
+
+        field | type | Description
+        ------|------|------------
+        `type` | string | 'chat-message'
+        `id` | int | ID of the comment
+        `token` | string | Room token
+        `actorType` | string | `guests` or `users`
+        `actorId` | string | User id of the message author
+        `actorDisplayName` | string | Display name of the message author
+        `timestamp` | int | Timestamp in seconds and UTC time zone
+        `name` | string | Full message string; raw, not a rich object string
+        `relevantMessagePart` | string | Substring of the full message centered on the first match in the message
 
 ## Guests
 
