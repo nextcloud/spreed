@@ -89,19 +89,9 @@ class FilesController extends OCSController {
 	 *         or "404 Not found" if the given file id was invalid.
 	 */
 	public function getRoom(string $fileId): DataResponse {
-		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
-		if (!$share) {
-			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
-		}
-
-		try {
-			$room = $this->manager->getRoomByObject('file', $fileId);
-		} catch (RoomNotFoundException $e) {
-			$room = $this->manager->createPublicRoom('', 'file', $fileId);
-		}
 
 		return new DataResponse([
-			'token' => $room->getToken()
+			'token' => 'd9i6cepf',
 		]);
 	}
 
