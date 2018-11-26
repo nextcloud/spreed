@@ -148,7 +148,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `lastMessage` | message | Last message in a room if available, otherwise empty
         `objectType` | string | The type of object that the room is associated with; "share:password" if the room is used to request a password for a share, otherwise empty
         `objectId` | string | Share token if "objectType" is "share:password", otherwise empty
-       
+
 ### Get single room (also for guests)
 
 * Method: `GET`
@@ -573,7 +573,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `id` | string | The user id which should be sent as `@<id>` in the message
         `label` | string | The displayname of the user
         `source` | string | The type of the user, currently only `users`
-        
+
 ### System messages
 
 * `conversation_created` - {actor} created the conversation
@@ -592,7 +592,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
-        
+
 ## Guests
 
 ### Set display name
@@ -610,8 +610,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `404 Not Found` When the room is not found or the session does not exist in the room
         + `403 Forbidden` When the user is logged in
-        
-        
+
 ## Signaling
 
 ### Get signaling settings
@@ -628,13 +627,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `ticket` | string | Ticket for the external signaling server
 
     - STUN server
-    
+
        field | type | Description
        ------|------|------------
        `url` | string | STUN server URL
 
     - TURN server
-    
+
        field | type | Description
        ------|------|------------
        `url` | array | One element array with TURN server URL
