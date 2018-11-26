@@ -29,6 +29,8 @@
 - [Chat](#chat)
   * [Receive chat messages of a room](#receive-chat-messages-of-a-room)
   * [Sending a new chat message](#sending-a-new-chat-message)
+  * [Get mention autocomplete suggestions](#get-mention-autocomplete-suggestions)
+  * [System messages](#system-messages)
 - [Guests](#guests)
   * [Set display name](#set-display-name)
 - [Signaling](#signaling)
