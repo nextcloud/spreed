@@ -201,6 +201,20 @@ input#request-password-button:disabled ~ .icon {
 	padding-right: 15px;
 }
 
+#talk-sidebar #commentsTabView .comments .wrapper-background,
+#talk-sidebar #commentsTabView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	left: 15px;
+	right: 15px;
+}
+
+#talk-sidebar #commentsTabView .comments .wrapper {
+	/* Reset the rules set for ".wrapper" elements by "guest.scss" in server, as
+	 * they affect too the virtual list wrapper when they should not. */
+	width: auto;
+	margin-top: 0;
+}
 
 
 /* Unset conflicting rules from guest.css for the sidebar */
