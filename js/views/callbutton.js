@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  *
@@ -21,34 +21,33 @@
  *
  */
 
-(function(OCA, Marionette, Handlebars) {
+(function(OCA, Marionette) {
 
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE =
-		'{{#if isInCall}}' +
-		'	<button class="leave-call primary">' + t('spreed', 'Leave call') + '</button>' +
-		'{{else}}' +
-		'	{{#if hasCall}}' +
-		'	<button class="join-call call-ongoing primary">' + t('spreed', 'Join call') + '</button>' +
-		'	{{else}}' +
-		'	<button class="join-call primary">' + t('spreed', 'Start call') + '</button>' +
-		'	{{/if}}' +
-		'{{/if}}';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var CallButton  = Marionette.View.extend({
 
 		className: 'call-button',
 
-		template: Handlebars.compile(TEMPLATE),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['callbutton'](context);
+		},
 
 		templateContext: function() {
 			return {
 				isInCall: (this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0,
 				hasCall: this.model.get('hasCall'),
+				leaveCallText: t('spreed', 'Leave call'),
+				joinCallText: t('spreed', 'Join call'),
+				startCallText: t('spreed', 'Start call'),
 			};
 		},
 
@@ -91,4 +90,4 @@
 
 	OCA.SpreedMe.Views.CallButton = CallButton;
 
-})(OCA, Marionette, Handlebars);
+})(OCA, Marionette);
