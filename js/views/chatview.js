@@ -336,7 +336,7 @@
 
 			var formattedMessage = escapeHTML(commentModel.get('message')).replace(/\n/g, '<br/>');
 			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
-			formattedMessage = OCA.SpreedMe.RichObjectStringParser.parseMessage(
+			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
 				formattedMessage, commentModel.get('messageParameters'));
 
 			var data = _.extend({}, commentModel.attributes, {

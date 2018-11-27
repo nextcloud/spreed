@@ -11,7 +11,7 @@
 
 (function(OC, OCA, Handlebars) {
 
-	OCA.SpreedMe.RichObjectStringParser = {
+	OCA.SpreedMe.Views.RichObjectStringParser = {
 
 		_userLocalTemplate: '' +
 				'<span class="atwho-inserted" contenteditable="false">' +

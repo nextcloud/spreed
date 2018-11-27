@@ -94,12 +94,12 @@ class TemplateLoader {
 		Util::addScript('spreed', 'views/editabletextlabel');
 		Util::addScript('spreed', 'views/participantlistview');
 		Util::addScript('spreed', 'views/participantview');
+		Util::addScript('spreed', 'views/richobjectstringparser');
 		Util::addScript('spreed', 'views/roomlistview');
 		Util::addScript('spreed', 'views/sidebarview');
 		Util::addScript('spreed', 'views/tabview');
 		Util::addScript('spreed', 'views/templates');
 		Util::addScript('spreed', 'views/virtuallist');
-		Util::addScript('spreed', 'richobjectstringparser');
 		Util::addScript('spreed', 'simplewebrtc');
 		Util::addScript('spreed', 'webrtc');
 		Util::addScript('spreed', 'signaling');
