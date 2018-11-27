@@ -4,3 +4,5 @@
 export PATH=./node_modules/.bin/:$PATH
 
 handlebars -n OCA.VideoCalls.Admin.Templates js/admin/templates/ -f js/admin/templates.js
+
+handlebars -n OCA.SpreedMe.Views.Templates js/views/templates/ -f js/views/templates.js
