@@ -6,7 +6,7 @@ vendor_script('select2/select2');
 vendor_style('select2/select2');
 
 style('spreed', 'style');
-style('spreed', 'comments');
+style('spreed', 'chatview');
 style('spreed', 'autocomplete');
 script(
 	'spreed',

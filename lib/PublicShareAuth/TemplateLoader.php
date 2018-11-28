@@ -73,7 +73,7 @@ class TemplateLoader {
 
 		Util::addStyle('spreed', 'publicshareauth');
 		Util::addStyle('spreed', 'style');
-		Util::addStyle('spreed', 'comments');
+		Util::addStyle('spreed', 'chatview');
 		Util::addStyle('spreed', 'autocomplete');
 
 		Util::addScript('spreed', 'vendor/backbone/backbone-min');
