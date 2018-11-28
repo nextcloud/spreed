@@ -106,23 +106,19 @@
 	display: inline-block;
 }
 
-#activityTabView li.comment.collapsed .activitymessage,
 #chatView .comment.collapsed .message {
 	white-space: pre-wrap;
 }
 
-#activityTabView li.comment.collapsed .activitymessage,
 #chatView .comment.collapsed .message {
 	max-height: 70px;
 	overflow: hidden;
 }
 
-#activityTabView li.comment .message-overlay,
 #chatView .comment .message-overlay {
 	display: none;
 }
 
-#activityTabView li.comment.collapsed .message-overlay,
 #chatView .comment.collapsed .message-overlay {
 	display: block;
 	position: absolute;
@@ -230,10 +226,6 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	color: #e9322d;
 	border-color: #e9322d;
 	box-shadow: 0 0 6px #f8b9b7;
-}
-
-.app-files .action-comment {
-	padding: 16px 14px;
 }
 
 #chatView .comment.grouped .authorRow {
