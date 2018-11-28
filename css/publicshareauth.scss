@@ -175,7 +175,7 @@ input#request-password-button:disabled ~ .icon {
  * The list of messages should stretch to fill the available space at the bottom
  * of the right sidebar, so the height is cascaded using flex boxes.
  */
-#talk-sidebar #commentsTabView {
+#talk-sidebar #chatView {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -195,21 +195,21 @@ input#request-password-button:disabled ~ .icon {
 	position: relative;
 }
 
-#talk-sidebar #commentsTabView .newCommentRow,
-#talk-sidebar #commentsTabView .comments {
+#talk-sidebar #chatView .newCommentRow,
+#talk-sidebar #chatView .comments {
 	padding-left: 15px;
 	padding-right: 15px;
 }
 
-#talk-sidebar #commentsTabView .comments .wrapper-background,
-#talk-sidebar #commentsTabView .comments .wrapper {
+#talk-sidebar #chatView .comments .wrapper-background,
+#talk-sidebar #chatView .comments .wrapper {
 	/* Padding is not respected in the comment wrapper due to its absolute
 	 * positioning, so it must be set through its position. */
 	left: 15px;
 	right: 15px;
 }
 
-#talk-sidebar #commentsTabView .comments .wrapper {
+#talk-sidebar #chatView .comments .wrapper {
 	/* Reset the rules set for ".wrapper" elements by "guest.scss" in server, as
 	 * they affect too the virtual list wrapper when they should not. */
 	width: auto;

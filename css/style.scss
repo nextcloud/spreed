@@ -217,7 +217,7 @@
 	height: 100%;
 }
 
-#app-content-wrapper #commentsTabView {
+#app-content-wrapper #chatView {
 	width: 100%;
 	height: 100%;
 
@@ -230,12 +230,12 @@
    view (which could be fixed by using a negative margin and a positive padding
    in the list of messages) and to ensure that the contacts menu is not clipped
    due to overflowing the chat view on its left (much harder to fix). */
-#app-content-wrapper #commentsTabView .newCommentRow {
+#app-content-wrapper #chatView .newCommentRow {
 	padding-left: 44px;
 	padding-right: 44px;
 }
 
-#app-content-wrapper #commentsTabView .comments {
+#app-content-wrapper #chatView .comments {
 	overflow-y: auto;
 
 	/* Needed for proper calculation of comment positions in the scrolling
@@ -248,8 +248,8 @@
 }
 
 
-#app-content-wrapper #commentsTabView .comments .wrapper-background,
-#app-content-wrapper #commentsTabView .comments .wrapper {
+#app-content-wrapper #chatView .comments .wrapper-background,
+#app-content-wrapper #chatView .comments .wrapper {
 	/* Padding is not respected in the comment wrapper due to its absolute
 	 * positioning, so it must be set through its position. */
 	left: 44px;
@@ -257,7 +257,7 @@
 }
 
 /* Hide all siblings of the chat view when shown as the main view */
-#app-content-wrapper #commentsTabView ~ *:not(#video-fullscreen):not([id^=tooltip]) {
+#app-content-wrapper #chatView ~ *:not(#video-fullscreen):not([id^=tooltip]) {
 	display: none !important;
 }
 
@@ -1185,7 +1185,7 @@ video {
 	flex-grow: 1;
 }
 
-#app-sidebar #commentsTabView {
+#app-sidebar #chatView {
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -1219,21 +1219,21 @@ video {
 	padding-bottom: 0;
 }
 
-#app-sidebar #commentsTabView .newCommentRow,
-#app-sidebar #commentsTabView .comments {
+#app-sidebar #chatView .newCommentRow,
+#app-sidebar #chatView .comments {
 	padding-left: 15px;
 	padding-right: 15px;
 }
 
-#app-sidebar #commentsTabView .comments .wrapper-background,
-#app-sidebar #commentsTabView .comments .wrapper {
+#app-sidebar #chatView .comments .wrapper-background,
+#app-sidebar #chatView .comments .wrapper {
 	/* Padding is not respected in the comment wrapper due to its absolute
 	 * positioning, so it must be set through its position. */
 	left: 15px;
 	right: 15px;
 }
 
-#app-sidebar #commentsTabView .newCommentForm {
+#app-sidebar #chatView .newCommentForm {
 	/* Make room to show the "Add" button when chat is shown in the sidebar. */
 	margin-right: 44px;
 }

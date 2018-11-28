@@ -8,30 +8,30 @@
  *
  */
 
-#commentsTabView .comments,
-#commentsTabView .emptycontent {
+#chatView .comments,
+#chatView .emptycontent {
 	flex-grow: 1;
 }
 
-#commentsTabView .emptycontent {
+#chatView .emptycontent {
 	margin-top: 0;
 }
 
-#commentsTabView .newCommentForm {
+#chatView .newCommentForm {
 	position: relative;
 }
 
-#commentsTabView .newCommentForm .message {
+#chatView .newCommentForm .message {
 	width: calc(100% - 36px);
 	margin-left: 36px;
 	padding-right: 30px;
 	display: block;
 }
 
-#commentsTabView .newCommentForm .submit,
-#commentsTabView .newCommentForm .submitLoading,
-#commentsTabView .newCommentForm .share,
-#commentsTabView .newCommentForm .shareLoading {
+#chatView .newCommentForm .submit,
+#chatView .newCommentForm .submitLoading,
+#chatView .newCommentForm .share,
+#chatView .newCommentForm .shareLoading {
 	position: absolute;
 
 	width: 44px;
@@ -41,58 +41,58 @@
 	margin: 0;
 }
 
-#commentsTabView .newCommentForm .submit,
-#commentsTabView .newCommentForm .submitLoading {
+#chatView .newCommentForm .submit,
+#chatView .newCommentForm .submitLoading {
 	right: 0;
 }
 
-#commentsTabView .newCommentForm .share,
-#commentsTabView .newCommentForm .shareLoading {
+#chatView .newCommentForm .share,
+#chatView .newCommentForm .shareLoading {
 	right: -44px;
 }
 
-#commentsTabView .newCommentForm .submit,
-#commentsTabView .newCommentForm .share {
+#chatView .newCommentForm .submit,
+#chatView .newCommentForm .share {
 	background-color: transparent;
 	border: none;
 	opacity: .3;
 }
-#commentsTabView .newCommentForm .submit:hover,
-#commentsTabView .newCommentForm .submit:focus,
-#commentsTabView .newCommentForm .share:hover,
-#commentsTabView .newCommentForm .share:focus {
+#chatView .newCommentForm .submit:hover,
+#chatView .newCommentForm .submit:focus,
+#chatView .newCommentForm .share:hover,
+#chatView .newCommentForm .share:focus {
 	opacity: 1;
 }
 
-#commentsTabView .newCommentForm .cancel {
+#chatView .newCommentForm .cancel {
 	margin-right: 6px;
 }
 
-#commentsTabView .newCommentForm div.message {
+#chatView .newCommentForm div.message {
 	resize: none;
 }
 
-#commentsTabView .newCommentForm div.message:empty:before {
+#chatView .newCommentForm div.message:empty:before {
 	content: attr(data-placeholder);
 	color: grey;
 }
 
 /* Internal wrappers used by the virtual list. */
-#commentsTabView .comments .wrapper-background,
-#commentsTabView .comments .wrapper {
+#chatView .comments .wrapper-background,
+#chatView .comments .wrapper {
 	position: absolute;
 	left: 0;
 	right: 0;
 }
 
-#commentsTabView .comment {
+#chatView .comment {
 	position: relative;
 	margin-bottom: 30px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 }
 
-#commentsTabView .comment .avatar,
+#chatView .comment .avatar,
 .atwho-view-ul * .avatar{
 	width: 32px;
 	height: 32px;
@@ -100,30 +100,30 @@
 	margin-right: 5px;
 }
 
-#commentsTabView .comment .message .avatar,
+#chatView .comment .message .avatar,
 .atwho-view-ul * .avatar
 {
 	display: inline-block;
 }
 
 #activityTabView li.comment.collapsed .activitymessage,
-#commentsTabView .comment.collapsed .message {
+#chatView .comment.collapsed .message {
 	white-space: pre-wrap;
 }
 
 #activityTabView li.comment.collapsed .activitymessage,
-#commentsTabView .comment.collapsed .message {
+#chatView .comment.collapsed .message {
 	max-height: 70px;
 	overflow: hidden;
 }
 
 #activityTabView li.comment .message-overlay,
-#commentsTabView .comment .message-overlay {
+#chatView .comment .message-overlay {
 	display: none;
 }
 
 #activityTabView li.comment.collapsed .message-overlay,
-#commentsTabView .comment.collapsed .message-overlay {
+#chatView .comment.collapsed .message-overlay {
 	display: block;
 	position: absolute;
 	z-index: 2;
@@ -141,28 +141,28 @@
 	background-repeat: no-repeat;
 }
 
-#commentsTabView .authorRow>div {
+#chatView .authorRow>div {
 	display: inline-block;
 	vertical-align: middle;
 }
 
-#commentsTabView .authorRow>div.hidden {
+#chatView .authorRow>div.hidden {
 	display: none !important;
 }
 
 .atwho-view-ul * .avatar-name-wrapper,
-#commentsTabView .comment .authorRow {
+#chatView .comment .authorRow {
 	position: relative;
 	display: inline-flex;
 	align-items: center;
 	width: 100%;
 }
 
-#commentsTabView .comment .authorRow .contactsmenu-popover {
+#chatView .comment .authorRow .contactsmenu-popover {
 	top: 32px;
 }
 
-body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):not(.guestUser) {
+body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.guestUser) {
 	.avatar,
 	.avatar img,
 	.author {
@@ -180,14 +180,14 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	white-space: nowrap;
 }
 
-#commentsTabView .comment .author,
-#commentsTabView .comment .date {
+#chatView .comment .author,
+#chatView .comment .date {
 	color: var(--color-text-maxcontrast);
 }
-#commentsTabView .comment .author {
+#chatView .comment .author {
 	margin-left: 5px;
 }
-#commentsTabView .comment .date {
+#chatView .comment .date {
 	/* "margin-left: auto" aligns the block to the right, while
 	 * "text-align: right" aligns the text inside the block to the right, for
 	 * example, when it uses two lines due to a limited width. */
@@ -195,38 +195,38 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	text-align: right;
 }
 
-#commentsTabView .comments li .message {
+#chatView .comments li .message {
 	padding-left: 40px;
 }
 
-#commentsTabView .comment .action {
+#chatView .comment .action {
 	opacity: 0;
 	vertical-align: middle;
 	display: inline-block;
 }
 
-#commentsTabView .comment:hover .action {
+#chatView .comment:hover .action {
 	opacity: 0.3;
 }
 
-#commentsTabView .comment .action:hover {
+#chatView .comment .action:hover {
 	opacity: 1;
 }
 
-#commentsTabView .comment .action.delete {
+#chatView .comment .action.delete {
 	position: absolute;
 	right: 0;
 }
 
-#commentsTabView .comment.disabled {
+#chatView .comment.disabled {
 	opacity: 0.3;
 }
 
-#commentsTabView .comment.disabled .action {
+#chatView .comment.disabled .action {
 	visibility: hidden;
 }
 
-#commentsTabView .message.error {
+#chatView .message.error {
 	color: #e9322d;
 	border-color: #e9322d;
 	box-shadow: 0 0 6px #f8b9b7;
@@ -236,21 +236,21 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	padding: 16px 14px;
 }
 
-#commentsTabView .comment.grouped .authorRow {
+#chatView .comment.grouped .authorRow {
 	display: none;
 }
 
-#commentsTabView .comment.grouped {
+#chatView .comment.grouped {
 	margin-top: -20px;
 }
 
-#commentsTabView .comment.showDate {
+#chatView .comment.showDate {
 	margin-top: 40px;
 	border-top: 1px solid #dbdbdb;
 	padding-top: 10px;
 }
 
-#commentsTabView .comment.showDate:before {
+#chatView .comment.showDate:before {
 	content: attr(data-date);
 
 	position: absolute;
@@ -265,11 +265,11 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	background-color: #fff;
 }
 
-#commentsTabView .comment.showDate .authorRow {
+#chatView .comment.showDate .authorRow {
 	display: inline-flex;
 }
 
-#commentsTabView .comment .message .mention-user {
+#chatView .comment .message .mention-user {
 	/* Make the mention the positioning context of its child contacts menu */
 	position: relative;
 
@@ -298,7 +298,7 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	}
 }
 
-#commentsTabView .comment:not(.systemMessage) .message .mention-user {
+#chatView .comment:not(.systemMessage) .message .mention-user {
 	font-weight: bold;
 
 	&.currentUser {
@@ -307,50 +307,50 @@ body:not(#body-public) #commentsTabView .comment .authorRow:not(.currentUser):no
 	}
 }
 
-#commentsTabView .comment.systemMessage .message .mention-user {
+#chatView .comment.systemMessage .message .mention-user {
 	color: var(--color-main-text);
 }
 
 /* System messages have no author, so the author row only contains the date.
  * Instead of showing the date on its own row and the message below it the
  * message and the date are merged in a single row using flexboxes. */
-#commentsTabView .comment.systemMessage {
+#chatView .comment.systemMessage {
 	display: flex;
 	flex-direction: row;
 }
 
-#commentsTabView .comment.systemMessage .authorRow {
+#chatView .comment.systemMessage .authorRow {
 	order: 1;
 	flex-grow: 0;
 	width: auto;
 	padding-left: 10px;
 }
 
-#commentsTabView .comment.systemMessage .message {
+#chatView .comment.systemMessage .message {
 	order: 0;
 	flex-grow: 1;
 	color: var(--color-text-maxcontrast);
 }
 
-body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser),
-body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar,
-body:not(#body-public) #commentsTabView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar img {
+body:not(#body-public) #chatView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser),
+body:not(#body-public) #chatView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar,
+body:not(#body-public) #chatView .comment:not(.newCommentRow) .message .mention-user:not(.currentUser) .avatar img {
 	cursor: pointer;
 }
 
-#commentsTabView .comment .message .contactsmenu-popover {
+#chatView .comment .message .contactsmenu-popover {
 	left: -6px;
 	top: 24px;
 }
 
-#commentsTabView .comment .message .filePreviewContainer .filePreview {
+#chatView .comment .message .filePreviewContainer .filePreview {
 	/* The file preview can not be a block; otherwise it would fill the whole
 	 * width of the container and the loading icon would not be centered on the
 	 * image. */
 	display: inline-block;
 }
 
-#commentsTabView .comment .message .filePreviewContainer strong {
+#chatView .comment .message .filePreviewContainer strong {
 	/* As the file preview is an inline block the name is set as a block to
 	 * force it to be on its own line below the preview. */
 	display: block;
