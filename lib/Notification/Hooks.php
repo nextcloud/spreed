@@ -99,6 +99,10 @@ class Hooks {
 			return;
 		}
 
+		if ($room->getObjectType() === 'file') {
+			return;
+		}
+
 		$actor = $this->userSession->getUser();
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
