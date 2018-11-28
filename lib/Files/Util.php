@@ -35,6 +35,8 @@ class Util {
 	private $rootFolder;
 	/** @var IShareManager */
 	private $shareManager;
+	/** @var array[] */
+	private $accessLists = [];
 
 	/**
 	 * @param IRootFolder $rootFolder
@@ -46,6 +48,27 @@ class Util {
 	) {
 		$this->rootFolder = $rootFolder;
 		$this->shareManager = $shareManager;
+	}
+
+	public function getUsersWithAccessFile(string $fileId): array {
+		if (!isset($this->accessLists[$fileId])) {
+			$nodes = $this->rootFolder->getById($fileId);
+
+			if (empty($nodes)) {
+				return [];
+			}
+
+			$node = array_shift($nodes);
+			$accessList = $this->shareManager->getAccessList($node);
+
+			$this->accessLists[$fileId] = $accessList['users'];
+		}
+
+		return $this->accessLists[$fileId];
+	}
+
+	public function canUserAccessFile(string $fileId, string $userId): bool {
+		return \in_array($userId, $this->getUsersWithAccessFile($fileId), true);
 	}
 
 	/**

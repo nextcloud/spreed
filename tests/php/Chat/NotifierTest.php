@@ -25,6 +25,7 @@ namespace OCA\Spreed\Tests\php\Chat;
 
 use OCA\Spreed\Chat\Notifier;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\Files\Util;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -43,6 +44,9 @@ class NotifierTest extends \Test\TestCase {
 
 	/** @var \OCA\Spreed\Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
+
+	/** @var \OCA\Spreed\Files\Util|\PHPUnit_Framework_MockObject_MockObject */
+	protected $util;
 
 	/** @var \OCA\Spreed\Chat\Notifier */
 	protected $notifier;
@@ -65,9 +69,12 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager = $this->createMock(Manager::class);
 
+		$this->util = $this->createMock(Util::class);
+
 		$this->notifier = new Notifier($this->notificationManager,
 									   $this->userManager,
-									   $this->manager);
+									   $this->manager,
+									   $this->util);
 	}
 
 	private function newComment($id, $actorType, $actorId, $creationDateTime, $message) {
