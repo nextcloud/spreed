@@ -25,7 +25,9 @@
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var ChatView = Marionette.View.extend({
 
