@@ -93,7 +93,7 @@
 }
 
 #chatView .comment .avatar,
-.atwho-view-ul * .avatar{
+.atwho-view-ul .chat-view-mention-autocomplete .avatar{
 	width: 32px;
 	height: 32px;
 	line-height: 32px;
@@ -101,7 +101,7 @@
 }
 
 #chatView .comment .message .avatar,
-.atwho-view-ul * .avatar
+.atwho-view-ul .chat-view-mention-autocomplete .avatar
 {
 	display: inline-block;
 }
@@ -146,7 +146,7 @@
 	display: none !important;
 }
 
-.atwho-view-ul * .avatar-name-wrapper,
+.atwho-view-ul .chat-view-mention-autocomplete .avatar-name-wrapper,
 #chatView .comment .authorRow {
 	position: relative;
 	display: inline-flex;
@@ -166,13 +166,13 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	}
 }
 
-.atwho-view-ul .avatar-name-wrapper,
-.atwho-view-ul .avatar-name-wrapper .avatar,
-.atwho-view-ul .avatar-name-wrapper .avatar img {
+.atwho-view-ul .chat-view-mention-autocomplete .avatar-name-wrapper,
+.atwho-view-ul .chat-view-mention-autocomplete .avatar-name-wrapper .avatar,
+.atwho-view-ul .chat-view-mention-autocomplete .avatar-name-wrapper .avatar img {
 	cursor: pointer;
 }
 
-.atwho-view-ul * .avatar-name-wrapper {
+.atwho-view-ul .chat-view-mention-autocomplete .avatar-name-wrapper {
 	white-space: nowrap;
 }
 
