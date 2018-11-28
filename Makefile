@@ -42,6 +42,8 @@ appstore: clean install-deps
 	--exclude=bower.json \
 	--exclude=.bowerrc \
 	--exclude=/build \
+	--exclude=check-handlebars-templates.sh \
+	--exclude=compile-handlebars-templates.sh \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
@@ -52,6 +54,7 @@ appstore: clean install-deps
 	--exclude=.gitignore \
 	--exclude=.jscsrc \
 	--exclude=.jshintignore \
+	--exclude=js/views/templates \
 	--exclude=js/tests \
 	--exclude=karma.conf.js \
 	--exclude=l10n/no-php \
