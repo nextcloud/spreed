@@ -97,7 +97,8 @@ class FilesController extends OCSController {
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
 		} catch (RoomNotFoundException $e) {
-			$room = $this->manager->createPublicRoom('', 'file', $fileId);
+			$node = $share->getNode();
+			$room = $this->manager->createPublicRoom($node->getName(), 'file', $fileId);
 		}
 
 		return new DataResponse([

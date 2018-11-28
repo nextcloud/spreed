@@ -27,6 +27,7 @@ namespace OCA\Spreed\Files;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Share\IManager as ShareManager;
+use OCP\Share\IShare;
 
 class Util {
 
