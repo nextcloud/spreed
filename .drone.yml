@@ -17,7 +17,7 @@ pipeline:
     image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
       - DB=sqlite
     commands:
       # Pre-setup steps
@@ -43,7 +43,7 @@ pipeline:
     image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
       - DB=sqlite
     commands:
       # Pre-setup steps
@@ -59,7 +59,7 @@ pipeline:
     image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
       - DB=sqlite
     commands:
       # Pre-setup steps
@@ -75,7 +75,7 @@ pipeline:
     image: nextcloudci/php7.0:php7.0-19
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
       - DB=sqlite
     commands:
       # Pre-setup steps
@@ -95,7 +95,7 @@ pipeline:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
       - DB=sqlite
     commands:
       # Pre-setup steps
@@ -115,7 +115,7 @@ pipeline:
     image: nextcloudci/php7.2:php7.2-12
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
       - DB=sqlite
     commands:
       # Pre-setup steps
@@ -135,7 +135,7 @@ pipeline:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
     commands:
       # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -163,7 +163,7 @@ pipeline:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
     commands:
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
@@ -181,7 +181,7 @@ pipeline:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       - APP_NAME=spreed
-      - CORE_BRANCH=master
+      - CORE_BRANCH=stable15
     commands:
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
