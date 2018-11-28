@@ -89,7 +89,7 @@
 					sorter: function (q, items) { return items; }
 				},
 				displayTpl: function (item) {
-					return '<li>' +
+					return '<li class="chat-view-mention-autocomplete">' +
 						'<span class="avatar-name-wrapper">' +
 							'<span class="avatar" ' +
 									'data-user-id="' + escapeHTML(item.id) + '" ' +

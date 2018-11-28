@@ -616,7 +616,7 @@
 			this._messageCollection = new OCA.SpreedMe.Models.ChatMessageCollection(null, {token: null});
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
-				id: 'commentsTabView',
+				id: 'chatView',
 				guestNameModel: this._localStorageModel
 			});
 
