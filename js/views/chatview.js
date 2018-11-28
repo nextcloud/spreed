@@ -1,4 +1,4 @@
-/* global autosize, Handlebars, Marionette, moment, OC, OCA, OCP */
+/* global autosize, Marionette, moment, OC, OCA, OCP */
 
 /**
  *
@@ -21,51 +21,13 @@
  *
  */
 
-(function(OCA, OC, OCP, Marionette, Handlebars, autosize, moment) {
+(function(OCA, OC, OCP, Marionette, autosize, moment) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE =
-		'<ul class="comments">' +
-		'</ul>' +
-		'<div class="emptycontent"><div class="icon-comment"></div>' +
-		'<p>{{emptyResultLabel}}</p></div>' +
-		'<div class="loading hidden" style="height: 50px"></div>';
-
-	var ADD_COMMENT_TEMPLATE =
-		'<div class="newCommentRow comment">' +
-		'    <div class="authorRow currentUser">' +
-		'        <div class="avatar" data-user-id="{{actorId}}"></div>' +
-		'        {{#if actorId}}' +
-		'            <div class="author">{{actorDisplayName}}</div>' +
-		'        {{else}}' +
-		'            <div class="guest-name"></div>' +
-		'        {{/if}}' +
-		'    </div>' +
-		'    <form class="newCommentForm">' +
-		'        <div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>' +
-		'        <input class="submit icon-confirm has-tooltip" type="submit" value="" title="{{submitText}}"/>' +
-		'        <div class="submitLoading icon-loading-small hidden"></div>'+
-		'        {{#if actorId}}' +
-		'        <button class="share icon-add has-tooltip" title="{{shareText}}"></button>' +
-		'        <div class="shareLoading icon-loading-small hidden"></div>'+
-		'        {{/if}}' +
-		'    </form>' +
-		'</div>';
-
-	var COMMENT_TEMPLATE =
-		'<li class="comment{{#if isNotSystemMessage}}{{else}} systemMessage{{/if}}" data-id="{{id}}">' +
-		'    <div class="authorRow{{#if isUserAuthor}} currentUser{{/if}}{{#if isGuest}} guestUser{{/if}}">' +
-		'        {{#if isNotSystemMessage}}' +
-		'        <div class="avatar" data-user-id="{{#if isGuest}}{{else}}{{actorId}}{{/if}}" data-user-display-name="{{actorDisplayName}}"> </div>' +
-		'        <div class="author">{{actorDisplayName}}</div>' +
-		'        {{/if}}' +
-		'        <div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>' +
-		'    </div>' +
-		'    <div class="message">{{{formattedMessage}}}</div>' +
-		'</li>';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var ChatView = Marionette.View.extend({
 
@@ -201,14 +163,19 @@
 			document.execCommand('insertText', false, text);
 		},
 
-		template: Handlebars.compile(TEMPLATE),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when
+			// this view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['chatview'](context);
+		},
 		templateContext: {
 			emptyResultLabel: t('spreed', 'No messages yet, start the conversation!')
 		},
 
 		addCommentTemplate: function(params) {
 			if (!this._addCommentTemplate) {
-				this._addCommentTemplate = Handlebars.compile(ADD_COMMENT_TEMPLATE);
+				this._addCommentTemplate = OCA.Talk.Views.Templates['chatview_add_comment'];
 			}
 
 			return this._addCommentTemplate(_.extend({
@@ -222,7 +189,7 @@
 
 		commentTemplate: function(params) {
 			if (!this._commentTemplate) {
-				this._commentTemplate = Handlebars.compile(COMMENT_TEMPLATE);
+				this._commentTemplate = OCA.Talk.Views.Templates['chatview_comment'];
 			}
 
 			params = _.extend({
@@ -371,7 +338,7 @@
 
 			var formattedMessage = escapeHTML(commentModel.get('message')).replace(/\n/g, '<br/>');
 			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
-			formattedMessage = OCA.SpreedMe.RichObjectStringParser.parseMessage(
+			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
 				formattedMessage, commentModel.get('messageParameters'));
 
 			var data = _.extend({}, commentModel.attributes, {
@@ -756,4 +723,4 @@
 
 	OCA.SpreedMe.Views.ChatView = ChatView;
 
-})(OCA, OC, OCP, Marionette, Handlebars, autosize, moment);
+})(OCA, OC, OCP, Marionette, autosize, moment);

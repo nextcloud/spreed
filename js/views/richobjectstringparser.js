@@ -1,4 +1,4 @@
-/* global OC, OCA, Handlebars */
+/* global OC, OCA */
 
 /**
  * @copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -9,29 +9,9 @@
  * later. See the COPYING file.
  */
 
-(function(OC, OCA, Handlebars) {
+(function(OC, OCA) {
 
-	OCA.SpreedMe.RichObjectStringParser = {
-
-		_userLocalTemplate: '' +
-				'<span class="atwho-inserted" contenteditable="false">' +
-					'<span class="mention-user avatar-name-wrapper {{#if isCurrentUser}}currentUser{{/if}}">' +
-						'<span class="avatar" ' +
-								'data-user-id="{{id}}" ' +
-								'data-user-display-name="{{name}}">' +
-						'</span>' +
-						'<strong>{{name}}</strong>' +
-					'</span>' +
-				'</span>',
-
-		_filePreviewTemplate: '' +
-				'<a href="{{link}}" class="filePreviewContainer" target="_blank" rel="noopener noreferrer">' +
-					'<span class="filePreview" data-file-id="{{id}}"></span>' +
-					'<strong>{{name}}</strong>' +
-				'</a>',
-
-		_unknownTemplate: '<strong>{{name}}</strong>',
-		_unknownLinkTemplate: '<a href="{{link}}" class="external" target="_blank" rel="noopener noreferrer"><strong>{{name}}</strong></a>',
+	OCA.SpreedMe.Views.RichObjectStringParser = {
 
 		/**
 		 * @param {string} subject
@@ -69,7 +49,7 @@
 			switch (parameter.type) {
 				case 'user':
 					if (!this.userLocalTemplate) {
-						this.userLocalTemplate = Handlebars.compile(this._userLocalTemplate);
+						this.userLocalTemplate = OCA.Talk.Views.Templates['richobjectstringparser_userlocal'];
 					}
 					if (!parameter.name) {
 						parameter.name = parameter.id;
@@ -81,20 +61,20 @@
 
 				case 'file':
 					if (!this.filePreviewTemplate) {
-						this.filePreviewTemplate = Handlebars.compile(this._filePreviewTemplate);
+						this.filePreviewTemplate = OCA.Talk.Views.Templates['richobjectstringparser_filepreview'];
 					}
 					return this.filePreviewTemplate(parameter);
 
 				default:
 					if (!_.isUndefined(parameter.link)) {
 						if (!this.unknownLinkTemplate) {
-							this.unknownLinkTemplate = Handlebars.compile(this._unknownLinkTemplate);
+							this.unknownLinkTemplate = OCA.Talk.Views.Templates['richobjectstringparser_unknownlink'];
 						}
 						return this.unknownLinkTemplate(parameter);
 					}
 
 					if (!this.unknownTemplate) {
-						this.unknownTemplate = Handlebars.compile(this._unknownTemplate);
+						this.unknownTemplate = OCA.Talk.Views.Templates['richobjectstringparser_unknown'];
 					}
 					return this.unknownTemplate(parameter);
 			}
@@ -102,4 +82,4 @@
 
 	};
 
-})(OC, OCA, Handlebars);
+})(OC, OCA);
