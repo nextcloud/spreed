@@ -1,5 +1,5 @@
 (function() {
-  var template = Handlebars.template, templates = OCA.SpreedMe.Views.Templates = OCA.SpreedMe.Views.Templates || {};
+  var template = Handlebars.template, templates = OCA.Talk.Views.Templates = OCA.Talk.Views.Templates || {};
 templates['chatview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 

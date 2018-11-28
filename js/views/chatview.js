@@ -162,10 +162,10 @@
 		},
 
 		template: function(context) {
-			// OCA.SpreedMe.Views.Templates may not have been initialized when
+			// OCA.Talk.Views.Templates may not have been initialized when
 			// this view is initialized, so the template can not be directly
 			// assigned.
-			return OCA.SpreedMe.Views.Templates['chatview'](context);
+			return OCA.Talk.Views.Templates['chatview'](context);
 		},
 		templateContext: {
 			emptyResultLabel: t('spreed', 'No messages yet, start the conversation!')
@@ -173,7 +173,7 @@
 
 		addCommentTemplate: function(params) {
 			if (!this._addCommentTemplate) {
-				this._addCommentTemplate = OCA.SpreedMe.Views.Templates['chatview_add_comment'];
+				this._addCommentTemplate = OCA.Talk.Views.Templates['chatview_add_comment'];
 			}
 
 			return this._addCommentTemplate(_.extend({
@@ -187,7 +187,7 @@
 
 		commentTemplate: function(params) {
 			if (!this._commentTemplate) {
-				this._commentTemplate = OCA.SpreedMe.Views.Templates['chatview_comment'];
+				this._commentTemplate = OCA.Talk.Views.Templates['chatview_comment'];
 			}
 
 			params = _.extend({

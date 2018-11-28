@@ -49,7 +49,7 @@
 			switch (parameter.type) {
 				case 'user':
 					if (!this.userLocalTemplate) {
-						this.userLocalTemplate = OCA.SpreedMe.Views.Templates['richobjectstringparser_userlocal'];
+						this.userLocalTemplate = OCA.Talk.Views.Templates['richobjectstringparser_userlocal'];
 					}
 					if (!parameter.name) {
 						parameter.name = parameter.id;
@@ -61,20 +61,20 @@
 
 				case 'file':
 					if (!this.filePreviewTemplate) {
-						this.filePreviewTemplate = OCA.SpreedMe.Views.Templates['richobjectstringparser_filepreview'];
+						this.filePreviewTemplate = OCA.Talk.Views.Templates['richobjectstringparser_filepreview'];
 					}
 					return this.filePreviewTemplate(parameter);
 
 				default:
 					if (!_.isUndefined(parameter.link)) {
 						if (!this.unknownLinkTemplate) {
-							this.unknownLinkTemplate = OCA.SpreedMe.Views.Templates['richobjectstringparser_unknownlink'];
+							this.unknownLinkTemplate = OCA.Talk.Views.Templates['richobjectstringparser_unknownlink'];
 						}
 						return this.unknownLinkTemplate(parameter);
 					}
 
 					if (!this.unknownTemplate) {
-						this.unknownTemplate = OCA.SpreedMe.Views.Templates['richobjectstringparser_unknown'];
+						this.unknownTemplate = OCA.Talk.Views.Templates['richobjectstringparser_unknown'];
 					}
 					return this.unknownTemplate(parameter);
 			}
