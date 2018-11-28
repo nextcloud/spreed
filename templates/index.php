@@ -35,6 +35,7 @@ script(
 		'views/tabview',
 		'views/templates',
 		'views/virtuallist',
+		'sdputils',
 		'simplewebrtc',
 		'webrtc',
 		'signaling',
