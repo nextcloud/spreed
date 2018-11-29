@@ -540,8 +540,11 @@
 		this._startPullingMessages();
 	};
 
-	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(/*token*/) {
-		// Nothing to do anymore
+	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
+		if (token === this.currentRoomToken && !this.roomCollection) {
+			window.clearInterval(this.roomPoller);
+			this.roomPoller = null;
+		}
 	};
 
 	OCA.Talk.Signaling.Internal.prototype.sendCallMessage = function(data) {
