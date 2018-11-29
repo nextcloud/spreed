@@ -74,6 +74,7 @@
 		this.features = {};
 		this.pendingChatRequests = [];
 		this._lastChatMessagesFetch = null;
+		this.chatBatchSize = 10;
 	}
 
 	OCA.Talk.Signaling.Base = Base;
@@ -362,7 +363,8 @@
 	OCA.Talk.Signaling.Base.prototype._getChatRequestData = function(lastKnownMessageId) {
 		return {
 			lastKnownMessageId: lastKnownMessageId,
-			lookIntoFuture: 1
+			lookIntoFuture: 1,
+			limit: this.chatBatchSize
 		};
 	};
 
@@ -394,6 +396,14 @@
 		this.receiveMessagesAgain = true;
 		this.lastKnownMessageId = 0;
 
+		var room = OCA.SpreedMe.app.activeRoom;
+		if (room && room.attributes.lastMessage && room.attributes.lastMessage.id > this.chatBatchSize) {
+			this.lastKnownMessageId = room.attributes.lastMessage.id;
+			// Start loading at a multiple of the batch size to make sure we end up loading from "0" in the last request.
+			this.chatLoadingPosition = Math.max(0, this.lastKnownMessageId - (this.lastKnownMessageId % this.chatBatchSize));
+		} else {
+			this.chatLoadingPosition = -1;
+		}
 		this._receiveChatMessages();
 	};
 
@@ -410,7 +420,16 @@
 			return;
 		}
 
-		this.receiveChatMessages(this.lastKnownMessageId)
+		var position;
+		if (this.chatLoadingPosition >= 0) {
+			// Still loading initial messages (backwards).
+			position = this.chatLoadingPosition;
+		} else {
+			// All initial messages loaded, continue polling.
+			position = this.lastKnownMessageId;
+		}
+
+		this.receiveChatMessages(position)
 			.progress(this._messagesReceiveStart.bind(this))
 			.done(this._messagesReceiveSuccess.bind(this))
 			.fail(this._messagesReceiveError.bind(this));
@@ -421,9 +440,20 @@
 	};
 
 	OCA.Talk.Signaling.Base.prototype._messagesReceiveSuccess = function(messages, xhr) {
+		if (this.chatLoadingPosition >= 0) {
+			if (this.chatLoadingPosition > 0) {
+				// Still loading initial messages (backwards).
+				this.chatLoadingPosition = Math.max(0, this.chatLoadingPosition - this.chatBatchSize);
+			} else {
+				// Loaded last block of initial messages (backwards).
+				this.chatLoadingPosition = -1;
+			}
+		}
+
+		// Loading of new messages.
 		var lastKnownMessageId = xhr.getResponseHeader("X-Chat-Last-Given");
 		if (lastKnownMessageId !== null) {
-			this.lastKnownMessageId = lastKnownMessageId;
+			this.lastKnownMessageId = Math.max(this.lastKnownMessageId, lastKnownMessageId);
 		}
 
 		this._lastChatMessagesFetch = null;

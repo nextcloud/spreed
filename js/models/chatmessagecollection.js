@@ -51,6 +51,7 @@
 	var ChatMessageCollection = Backbone.Collection.extend({
 
 		model: OCA.SpreedMe.Models.ChatMessage,
+		comparator: 'id',
 
 		initialize: function(models, options) {
 			if (options.token === undefined) {

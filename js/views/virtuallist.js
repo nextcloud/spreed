@@ -285,7 +285,7 @@
 			// If the appended elements are not immediately after the last
 			// loaded element there is nothing to load now; they will be loaded
 			// as needed with the other pending elements.
-			if (this._$firstAppendedElement._previous !== this._$lastLoadedElement) {
+			if (!this._$firstAppendedElement || this._$firstAppendedElement._previous !== this._$lastLoadedElement) {
 				delete this._appendedElementsBuffer;
 
 				return;
