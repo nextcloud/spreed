@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars, $ */
+/* global Marionette, $ */
 
 /**
  *
@@ -21,52 +21,26 @@
  *
  */
 
-(function(OC, OCA, Marionette, Handlebars, $) {
+(function(OC, OCA, Marionette, $) {
 
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE =
-		'<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="{{muteAudioButtonTitle}}"></button>' +
-		'<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="{{hideVideoButtonTitle}}"></button>' +
-		'<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="{{screensharingButtonTitle}}"></button>' +
-		'<div id="screensharing-menu" class="app-navigation-entry-menu">' +
-		'	<ul>' +
-		'		<li id="share-screen-entry">' +
-		'			<button id="share-screen-button">' +
-		'				<span class="icon-screen"></span>' +
-		'				<span>{{shareScreenButtonTitle}}</span>' +
-		'			</button>' +
-		'		</li>' +
-		'		<li id="share-window-entry">' +
-		'			<button id="share-window-button">' +
-		'				<span class="icon-share-window"></span>' +
-		'				<span>{{shareWindowButtonTitle}}</span>' +
-		'			</button>' +
-		'		</li>' +
-		'		<li id="show-screen-entry">' +
-		'			<button id="show-screen-button">' +
-		'				<span class="icon-screen"></span>' +
-		'				<span>{{showScreenButtonTitle}}</span>' +
-		'			</button>' +
-		'		</li>' +
-		'		<li id="stop-screen-entry">' +
-		'			<button id="stop-screen-button">' +
-		'				<span class="icon-screen-off"></span>' +
-		'				<span>{{stopScreenButtonTitle}}</span>' +
-		'			</button>' +
-		'		</li>' +
-		'	</ul>' +
-		'</div>';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var MediaControlsView  = Marionette.View.extend({
 
 		tagName: 'div',
 		className: 'nameIndicator',
 
-		template: Handlebars.compile(TEMPLATE),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['mediacontrolsview'](context);
+		},
 
 		templateContext: function() {
 			return {
@@ -377,4 +351,4 @@
 
 	OCA.SpreedMe.Views.MediaControlsView = MediaControlsView;
 
-})(OC, OCA, Marionette, Handlebars, $);
+})(OC, OCA, Marionette, $);
