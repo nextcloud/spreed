@@ -74,43 +74,14 @@
 				'	<div class="avatar"></div>' +
 				'</div>' +
 				'<div class="nameIndicator">' +
-				'	<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Mute audio (m)') + '"></button>' +
-				'	<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Disable video (v)') + '"></button>' +
-				'	<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="' + t('spreed', 'Share screen') + '"></button>' +
-				'	<div id="screensharing-menu" class="app-navigation-entry-menu">' +
-				'		<ul>' +
-				'			<li id="share-screen-entry">' +
-				'				<button id="share-screen-button">' +
-				'					<span class="icon-screen"></span>' +
-				'					<span>' + t('spreed', 'Share whole screen') + '</span>' +
-				'				</button>' +
-				'			</li>' +
-				'			<li id="share-window-entry">' +
-				'				<button id="share-window-button">' +
-				'					<span class="icon-share-window"></span>' +
-				'					<span>' + t('spreed', 'Share a single window') + '</span>' +
-				'				</button>' +
-				'			</li>' +
-				'			<li id="show-screen-entry">' +
-				'				<button id="show-screen-button">' +
-				'					<span class="icon-screen"></span>' +
-				'					<span>' + t('spreed', 'Show your screen') + '</span>' +
-				'				</button>' +
-				'			</li>' +
-				'			<li id="stop-screen-entry">' +
-				'				<button id="stop-screen-button">' +
-				'					<span class="icon-screen-off"></span>' +
-				'					<span>' + t('spreed', 'Stop screensharing') + '</span>' +
-				'				</button>' +
-				'			</li>' +
-				'		</ul>' +
-				'	</div>' +
 				'</div>');
 
 			OCA.SpreedMe.app._emptyContentView.destroy();
 			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
 				el: '#talk-sidebar > #emptycontent'
 			});
+
+			$('#localVideoContainer .nameIndicator').replaceWith(OCA.SpreedMe.app._mediaControlsView.$el);
 
 			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 

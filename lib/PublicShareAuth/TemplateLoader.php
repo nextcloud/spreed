@@ -95,6 +95,7 @@ class TemplateLoader {
 		Util::addScript('spreed', 'views/chatview');
 		Util::addScript('spreed', 'views/editabletextlabel');
 		Util::addScript('spreed', 'views/emptycontentview');
+		Util::addScript('spreed', 'views/mediacontrolsview');
 		Util::addScript('spreed', 'views/participantlistview');
 		Util::addScript('spreed', 'views/participantview');
 		Util::addScript('spreed', 'views/richobjectstringparser');

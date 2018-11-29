@@ -29,6 +29,7 @@ script(
 		'views/chatview',
 		'views/editabletextlabel',
 		'views/emptycontentview',
+		'views/mediacontrolsview',
 		'views/participantlistview',
 		'views/participantview',
 		'views/richobjectstringparser',
@@ -76,37 +77,6 @@ script(
 				<div class="avatar"></div>
 			</div>
 			<div class="nameIndicator">
-				<button id="mute" class="icon-audio icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Mute audio (m)')) ?>"></button>
-				<button id="hideVideo" class="icon-video icon-white icon-shadow" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Disable video (v)')) ?>"></button>
-				<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
-				<div id="screensharing-menu" class="app-navigation-entry-menu">
-					<ul>
-						<li id="share-screen-entry">
-							<button id="share-screen-button">
-								<span class="icon-screen"></span>
-								<span><?php p($l->t('Share whole screen'));?></span>
-							</button>
-						</li>
-						<li id="share-window-entry">
-							<button id="share-window-button">
-								<span class="icon-share-window"></span>
-								<span><?php p($l->t('Share a single window'));?></span>
-							</button>
-						</li>
-						<li id="show-screen-entry">
-							<button id="show-screen-button">
-								<span class="icon-screen"></span>
-								<span><?php p($l->t('Show your screen'));?></span>
-							</button>
-						</li>
-						<li id="stop-screen-entry">
-							<button id="stop-screen-button">
-								<span class="icon-screen-off"></span>
-								<span><?php p($l->t('Stop screensharing'));?></span>
-							</button>
-						</li>
-					</ul>
-				</div>
 			</div>
 		</div>
 	</div>

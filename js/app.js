@@ -74,10 +74,6 @@
 		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
 		_participantsView: null,
 		displayedGuestNameHint: false,
-		audioDisabled: localStorage.getItem("audioDisabled"),
-		audioNotFound: false,
-		videoDisabled: localStorage.getItem("videoDisabled"),
-		videoNotFound: false,
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
@@ -210,34 +206,6 @@
 		},
 
 		registerLocalVideoButtonHandlers: function() {
-			$('#hideVideo').click(function() {
-				if (OCA.SpreedMe.app.videoNotFound) {
-					return;
-				}
-
-				if ($(this).hasClass('video-disabled')) {
-					OCA.SpreedMe.app.enableVideo();
-					localStorage.removeItem("videoDisabled");
-				} else {
-					OCA.SpreedMe.app.disableVideo();
-					localStorage.setItem("videoDisabled", true);
-				}
-			});
-
-			$('#mute').click(function() {
-				if (OCA.SpreedMe.app.audioNotFound) {
-					return;
-				}
-
-				if (!OCA.SpreedMe.app.audioDisabled) {
-					OCA.SpreedMe.app.disableAudio();
-					localStorage.setItem("audioDisabled", true);
-				} else {
-					OCA.SpreedMe.app.enableAudio();
-					localStorage.removeItem("audioDisabled");
-				}
-			});
-
 			$('#video-fullscreen').click(function() {
 				if (this.fullscreenDisabled) {
 					this.enableFullscreen();
@@ -245,119 +213,6 @@
 					this.disableFullscreen();
 				}
 			}.bind(this));
-
-			$('#screensharing-button').click(function() {
-				var webrtc = OCA.SpreedMe.webrtc;
-				if (!webrtc.capabilities.supportScreenSharing) {
-					if (window.location.protocol === 'https:') {
-						OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
-					} else {
-						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
-					}
-					return;
-				}
-
-				var splitShare = false;
-				if (window.navigator.userAgent.match('Firefox')) {
-					var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
-					splitShare = (ffver >= 52);
-				}
-
-				if (webrtc.getLocalScreen()) {
-					$('#share-screen-entry').addClass('hidden');
-					$('#share-window-entry').addClass('hidden');
-					$('#show-screen-entry').removeClass('hidden');
-					$('#stop-screen-entry').removeClass('hidden');
-					$('#screensharing-menu').toggleClass('open');
-				} else {
-					if (splitShare) {
-						$('#share-screen-entry').removeClass('hidden');
-						$('#share-window-entry').removeClass('hidden');
-						$('#show-screen-entry').addClass('hidden');
-						$('#stop-screen-entry').addClass('hidden');
-						$('#screensharing-menu').toggleClass('open');
-						return;
-					}
-
-					this.startShareScreen();
-				}
-			}.bind(this));
-
-			$("#share-screen-button").on('click', function() {
-				var webrtc = OCA.SpreedMe.webrtc;
-				if (!webrtc.getLocalScreen()) {
-					this.startShareScreen('screen');
-				}
-				$('#screensharing-menu').toggleClass('open', false);
-			}.bind(this));
-
-			$("#share-window-button").on('click', function() {
-				var webrtc = OCA.SpreedMe.webrtc;
-				if (!webrtc.getLocalScreen()) {
-					this.startShareScreen('window');
-				}
-				$('#screensharing-menu').toggleClass('open', false);
-			}.bind(this));
-
-			$("#show-screen-button").on('click', function() {
-				var webrtc = OCA.SpreedMe.webrtc;
-				if (webrtc.getLocalScreen()) {
-					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
-				}
-				$('#screensharing-menu').toggleClass('open', false);
-			}.bind(this));
-
-			$("#stop-screen-button").on('click', function() {
-				OCA.SpreedMe.webrtc.stopScreenShare();
-			});
-		},
-
-		startShareScreen: function(mode) {
-			var webrtc = OCA.SpreedMe.webrtc;
-			var screensharingButton = $('#screensharing-button');
-			screensharingButton.prop('disabled', true);
-			webrtc.shareScreen(mode, function(err) {
-				screensharingButton.prop('disabled', false);
-				if (!err) {
-					$('#screensharing-button').attr('data-original-title', t('spreed', 'Screensharing options'))
-						.removeClass('screensharing-disabled icon-screen-off')
-						.addClass('icon-screen');
-					return;
-				}
-
-				switch (err.name) {
-					case "HTTPS_REQUIRED":
-						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
-						break;
-					case "PERMISSION_DENIED":
-					case "NotAllowedError":
-					case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
-						break;
-					case "FF52_REQUIRED":
-						OC.Notification.showTemporary(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'));
-						break;
-					case "EXTENSION_UNAVAILABLE":
-						var  extensionURL = null;
-						if (!!window.chrome && !!window.chrome.webstore) {// Chrome
-							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
-						}
-
-						if (extensionURL) {
-							var text = t('spreed', 'Screensharing extension is required to share your screen.');
-							var element = $('<a>').attr('href', extensionURL).attr('target','_blank').text(text);
-
-							OC.Notification.showTemporary(element, {isHTML: true});
-						} else {
-							OC.Notification.showTemporary(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'));
-						}
-						break;
-					default:
-						OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
-						console.log("Could not start screensharing", err);
-						break;
-				}
-			});
 		},
 
 		_onKeyUp: function(event) {
@@ -375,19 +230,11 @@
 				switch (key) {
 					case 86: // 'v'
 						event.preventDefault();
-						if (this.videoDisabled) {
-							this.enableVideo();
-						} else {
-							this.disableVideo();
-						}
+						this._mediaControlsView.toggleVideo();
 						break;
 					case 77: // 'm'
 						event.preventDefault();
-						if (this.audioDisabled) {
-							this.enableAudio();
-						} else {
-							this.disableAudio();
-						}
+						this._mediaControlsView.toggleAudio();
 						break;
 					case 70: // 'f'
 						event.preventDefault();
@@ -703,6 +550,14 @@
 				$('#emptycontent').show();
 			});
 
+			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
+				app: this,
+				webrtc: OCA.SpreedMe.webrtc,
+				sharedScreens: OCA.SpreedMe.sharedScreens,
+			});
+			this._mediaControlsView.render();
+			$('#localVideoContainer .nameIndicator').replaceWith(this._mediaControlsView.$el);
+
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
@@ -766,6 +621,8 @@
 		setupWebRTC: function() {
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
+				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
+				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
 			}
 
 			if (!OCA.SpreedMe.webrtc.capabilities.support) {
@@ -812,29 +669,29 @@
 		},
 		initAudioVideoSettings: function(configuration) {
 			if (configuration.audio !== false) {
-				this.hasAudio();
+				this._mediaControlsView.hasAudio();
 
-				if (this.audioDisabled) {
-					this.disableAudio();
+				if (this._mediaControlsView.audioDisabled) {
+					this._mediaControlsView.disableAudio();
 				} else {
-					this.enableAudio();
+					this._mediaControlsView.enableAudio();
 				}
 			} else {
-				this.disableAudio();
-				this.hasNoAudio();
+				this._mediaControlsView.disableAudio();
+				this._mediaControlsView.hasNoAudio();
 			}
 
 			if (configuration.video !== false) {
-				this.hasVideo();
+				this._mediaControlsView.hasVideo();
 
-				if (this.videoDisabled) {
+				if (this._mediaControlsView.videoDisabled) {
 					this.disableVideo();
 				} else {
 					this.enableVideo();
 				}
 			} else {
 				this.disableVideo();
-				this.hasNoVideo();
+				this._mediaControlsView.hasNoVideo();
 			}
 		},
 		enableFullscreen: function() {
@@ -868,83 +725,21 @@
 
 			this.fullscreenDisabled = true;
 		},
-		enableAudioButton: function() {
-			$('#mute').attr('data-original-title', t('spreed', 'Mute audio (m)'))
-				.removeClass('audio-disabled icon-audio-off')
-				.addClass('icon-audio');
-		},
-		enableAudio: function() {
-			if (this.audioNotFound || !OCA.SpreedMe.webrtc) {
-				return;
-			}
-			OCA.SpreedMe.webrtc.unmute();
-			this.enableAudioButton();
-			this.audioDisabled = false;
-		},
-		disableAudioButton: function() {
-			$('#mute').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
-				.addClass('audio-disabled icon-audio-off')
-				.removeClass('icon-audio');
-		},
-		disableAudio: function() {
-			if (this.audioNotFound || !OCA.SpreedMe.webrtc) {
-				return;
-			}
-			OCA.SpreedMe.webrtc.mute();
-			this.disableAudioButton();
-			this.audioDisabled = true;
-		},
-		hasAudio: function() {
-			$('#mute').removeClass('no-audio-available');
-			this.enableAudioButton();
-			this.audioNotFound = false;
-		},
-		hasNoAudio: function() {
-			$('#mute').removeClass('audio-disabled icon-audio')
-				.addClass('no-audio-available icon-audio-off')
-				.attr('data-original-title', t('spreed', 'No audio'));
-			this.audioDisabled = true;
-			this.audioNotFound = true;
-		},
 		enableVideoUI: function() {
-			var $hideVideoButton = $('#hideVideo');
-			var $audioMuteButton = $('#mute');
-			var $screensharingButton = $('#screensharing-button');
-			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
-			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
-
-			$hideVideoButton.attr('data-original-title', t('spreed', 'Disable video (v)'))
-				.removeClass('local-video-disabled video-disabled icon-video-off')
-				.addClass('icon-video');
-			$audioMuteButton.removeClass('local-video-disabled');
-			$screensharingButton.removeClass('local-video-disabled');
+			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
+			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
 
 			avatarContainer.hide();
 			localVideo.show();
 		},
 		enableVideo: function() {
-			if (this.videoNotFound || !OCA.SpreedMe.webrtc) {
-				return;
+			if (this._mediaControlsView.enableVideo()) {
+				this.enableVideoUI();
 			}
-
-			OCA.SpreedMe.webrtc.resumeVideo();
-			this.enableVideoUI();
-			this.videoDisabled = false;
 		},
 		hideVideo: function() {
-			var $hideVideoButton = $('#hideVideo');
-			var $audioMuteButton = $('#mute');
-			var $screensharingButton = $('#screensharing-button');
-			var avatarContainer = $hideVideoButton.closest('.videoView').find('.avatar-container');
-			var localVideo = $hideVideoButton.closest('.videoView').find('#localVideo');
-
-			if (!$hideVideoButton.hasClass('no-video-available')) {
-				$hideVideoButton.attr('data-original-title', t('spreed', 'Enable video (v)'))
-					.addClass('local-video-disabled video-disabled icon-video-off')
-					.removeClass('icon-video');
-				$audioMuteButton.addClass('local-video-disabled');
-				$screensharingButton.addClass('local-video-disabled');
-			}
+			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
+			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
 
 			var avatar = avatarContainer.find('.avatar');
 			var guestName = localStorage.getItem("nick");
@@ -964,30 +759,13 @@
 			localVideo.hide();
 		},
 		disableVideo: function() {
-			if (this.videoNotFound || !OCA.SpreedMe.webrtc) {
-				return;
-			}
-
-			OCA.SpreedMe.webrtc.pauseVideo();
+			this._mediaControlsView.disableVideo();
+			// Always hide the video, even if "disableVideo" returned "false".
 			this.hideVideo();
-			this.videoDisabled = true;
 		},
-		hasVideo: function() {
-			$('#hideVideo').removeClass('no-video-available');
-			this.videoNotFound = false;
-		},
-		hasNoVideo: function() {
-			$('#hideVideo').removeClass('icon-video')
-				.addClass('no-video-available icon-video-off')
-				.attr('data-original-title', t('spreed', 'No Camera'));
-			this.videoDisabled = true;
-			this.videoNotFound = true;
-		},
+		// Called from webrtc.js
 		disableScreensharingButton: function() {
-			$('#screensharing-button').attr('data-original-title', t('spreed', 'Enable screensharing'))
-					.addClass('screensharing-disabled icon-screen-off')
-					.removeClass('icon-screen');
-			$('#screensharing-menu').toggleClass('open', false);
+			this._mediaControlsView.disableScreensharingButton();
 		},
 		setGuestName: function(name) {
 			$.ajax({
