@@ -822,13 +822,26 @@
 			uiChannel.trigger('document:click', event);
 		},
 		initAudioVideoSettings: function(configuration) {
-			if (this.audioDisabled) {
+			if (configuration.audio !== false) {
+				this.hasAudio();
+
+				if (this.audioDisabled) {
+					this.disableAudio();
+				} else {
+					this.enableAudio();
+				}
+			} else {
 				this.disableAudio();
+				this.hasNoAudio();
 			}
 
 			if (configuration.video !== false) {
+				this.hasVideo();
+
 				if (this.videoDisabled) {
 					this.disableVideo();
+				} else {
+					this.enableVideo();
 				}
 			} else {
 				this.disableVideo();

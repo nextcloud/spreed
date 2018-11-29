@@ -1347,28 +1347,6 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
 			}
 		});
-
-		OCA.SpreedMe.webrtc.on('localStream', function() {
-			console.log('localStream');
-
-			//Reset audio and video control panel
-			app.hasAudio();
-			app.hasVideo();
-
-			if (!app.videoDisabled) {
-				app.enableVideo();
-			}
-
-			if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
-				app.disableAudio();
-				app.hasNoAudio();
-			}
-
-			if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
-				app.disableVideo();
-				app.hasNoVideo();
-			}
-		});
 	}
 
 	OCA.SpreedMe.initWebRTC = initWebRTC;
