@@ -985,7 +985,6 @@
 		},
 		hasVideo: function() {
 			$('#hideVideo').removeClass('no-video-available');
-			this.enableVideoUI();
 			this.videoNotFound = false;
 		},
 		hasNoVideo: function() {
