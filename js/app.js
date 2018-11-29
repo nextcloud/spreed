@@ -73,8 +73,6 @@
 		_participants: null,
 		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
 		_participantsView: null,
-		/** @property {boolean} videoWasEnabledAtLeastOnce  */
-		videoWasEnabledAtLeastOnce: false,
 		displayedGuestNameHint: false,
 		audioDisabled: localStorage.getItem("audioDisabled"),
 		audioNotFound: false,
@@ -213,15 +211,10 @@
 
 		registerLocalVideoButtonHandlers: function() {
 			$('#hideVideo').click(function() {
-				if(!OCA.SpreedMe.app.videoWasEnabledAtLeastOnce) {
-					// don't allow clicking the video toggle
-					// when no video ever was streamed (that
-					// means that permission wasn't granted
-					// yet or there is no video available at
-					// all)
-					console.log('video can not be enabled - there was no stream available before');
+				if (OCA.SpreedMe.app.videoNotFound) {
 					return;
 				}
+
 				if ($(this).hasClass('video-disabled')) {
 					OCA.SpreedMe.app.enableVideo();
 					localStorage.removeItem("videoDisabled");
@@ -834,8 +827,8 @@
 					this.disableVideo();
 				}
 			} else {
-				this.videoWasEnabledAtLeastOnce = false;
 				this.disableVideo();
+				this.hasNoVideo();
 			}
 		},
 		enableFullscreen: function() {

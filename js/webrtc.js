@@ -1350,9 +1350,6 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localStream', function() {
 			console.log('localStream');
-			if (!app.videoWasEnabledAtLeastOnce) {
-				app.videoWasEnabledAtLeastOnce = true;
-			}
 
 			//Reset audio and video control panel
 			app.hasAudio();
