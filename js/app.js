@@ -281,6 +281,7 @@
 			}.bind(this));
 
 			$("#show-screen-button").on('click', function() {
+				var webrtc = OCA.SpreedMe.webrtc;
 				if (webrtc.getLocalScreen()) {
 					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
 					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
@@ -292,6 +293,7 @@
 			}.bind(this));
 
 			$("#show-window-button").on('click', function() {
+				var webrtc = OCA.SpreedMe.webrtc;
 				if (webrtc.getLocalScreen()) {
 					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
 					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
@@ -308,6 +310,7 @@
 		},
 
 		startShareScreen: function(mode) {
+			var webrtc = OCA.SpreedMe.webrtc;
 			var screensharingButton = $('#screensharing-button');
 			screensharingButton.prop('disabled', true);
 			webrtc.shareScreen(mode, function(err) {
