@@ -235,6 +235,10 @@
 				return false;
 			}
 
+			if (fileInfo.get('type') === 'dir') {
+				return false;
+			}
+
 			if (fileInfo.get('shareOwnerId')) {
 				// Shared with me
 				// TODO How to check that it is not a remote share? At least for

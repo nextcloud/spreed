@@ -78,6 +78,8 @@ class Util {
 	 * the file through a user, group, circle or room share (but not through a
 	 * public link, for example), or if she is the owner of such a share.
 	 *
+	 * Only files are taken into account; folders are ignored.
+	 *
 	 * @param string $fileId
 	 * @param string $userId
 	 * @return IShare|null
@@ -102,11 +104,17 @@ class Util {
 	/**
 	 * Returns any share of the node that the user has direct access to.
 	 *
+	 * Only files are taken into account; folders are ignored.
+	 *
 	 * @param Node $node
 	 * @param string $userId
 	 * @return IShare|null
 	 */
 	private function getAnyDirectShareOfNodeAccessibleByUser(Node $node, string $userId) {
+		if ($node->getType() === \OCP\Files\FileInfo::TYPE_FOLDER) {
+			return null;
+		}
+
 		$reshares = false;
 		$limit = 1;
 
