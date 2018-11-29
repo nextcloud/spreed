@@ -225,7 +225,11 @@
 			});
 
 			$('#mute').click(function() {
-				if (OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
+				if (OCA.SpreedMe.app.audioNotFound) {
+					return;
+				}
+
+				if (!OCA.SpreedMe.app.audioDisabled) {
 					OCA.SpreedMe.app.disableAudio();
 					localStorage.setItem("audioDisabled", true);
 				} else {
