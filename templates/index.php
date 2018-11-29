@@ -85,7 +85,13 @@ script(
 								<span><?php p($l->t('Show your screen'));?></span>
 							</button>
 						</li>
-						<li>
+						<li id="show-window-entry">
+							<button id="show-window-button">
+								<span class="icon-screen"></span>
+								<span><?php p($l->t('Show a single window'));?></span>
+							</button>
+						</li>
+						<li id="stop-screen-entry">
 							<button id="stop-screen-button">
 								<span class="icon-screen-off"></span>
 								<span><?php p($l->t('Stop screensharing'));?></span>

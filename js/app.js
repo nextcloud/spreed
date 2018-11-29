@@ -256,64 +256,100 @@
 					return;
 				}
 
+				var splitShare = false;
+				if (window.navigator.userAgent.match('Firefox')) {
+					var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
+					splitShare = (ffver >= 52);
+				}
+
+				// The parent CSS of the menu list items is using "display:block !important",
+				// so we need to also hide with "!important".
 				if (webrtc.getLocalScreen()) {
+					$('#show-window-entry').attr('style','display:none !important');
+					$('#stop-screen-entry').show();
 					$('#screensharing-menu').toggleClass('open');
 				} else {
-					var screensharingButton = $(this);
-					screensharingButton.prop('disabled', true);
-					webrtc.shareScreen(function(err) {
-						screensharingButton.prop('disabled', false);
-						if (!err) {
-							$('#screensharing-button').attr('data-original-title', t('spreed', 'Screensharing options'))
-								.removeClass('screensharing-disabled icon-screen-off')
-								.addClass('icon-screen');
-							return;
-						}
+					if (splitShare) {
+						$('#show-window-entry').show();
+						$('#stop-screen-entry').attr('style','display:none !important');
+						$('#screensharing-menu').toggleClass('open');
+						return;
+					}
 
-						switch (err.name) {
-							case "HTTPS_REQUIRED":
-								OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
-								break;
-							case "PERMISSION_DENIED":
-							case "NotAllowedError":
-							case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
-								break;
-							case "FF52_REQUIRED":
-								OC.Notification.showTemporary(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'));
-								break;
-							case "EXTENSION_UNAVAILABLE":
-								var  extensionURL = null;
-								if (!!window.chrome && !!window.chrome.webstore) {// Chrome
-									extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
-								}
-
-								if (extensionURL) {
-									var text = t('spreed', 'Screensharing extension is required to share your screen.');
-									var element = $('<a>').attr('href', extensionURL).attr('target','_blank').text(text);
-
-									OC.Notification.showTemporary(element, {isHTML: true});
-								} else {
-									OC.Notification.showTemporary(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'));
-								}
-								break;
-							default:
-								OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
-								console.log("Could not start screensharing", err);
-								break;
-						}
-					});
+					this.startShareScreen();
 				}
-			});
+			}.bind(this));
 
 			$("#show-screen-button").on('click', function() {
-				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-				OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
+				if (webrtc.getLocalScreen()) {
+					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
+					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
+				} else {
+					this.startShareScreen('screen');
+				}
 
 				$('#screensharing-menu').toggleClass('open', false);
-			});
+			}.bind(this));
+
+			$("#show-window-button").on('click', function() {
+				if (webrtc.getLocalScreen()) {
+					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
+					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
+				} else {
+					this.startShareScreen('window');
+				}
+
+				$('#screensharing-menu').toggleClass('open', false);
+			}.bind(this));
 
 			$("#stop-screen-button").on('click', function() {
 				OCA.SpreedMe.webrtc.stopScreenShare();
+			});
+		},
+
+		startShareScreen: function(mode) {
+			var screensharingButton = $('#screensharing-button');
+			screensharingButton.prop('disabled', true);
+			webrtc.shareScreen(mode, function(err) {
+				screensharingButton.prop('disabled', false);
+				if (!err) {
+					$('#screensharing-button').attr('data-original-title', t('spreed', 'Screensharing options'))
+						.removeClass('screensharing-disabled icon-screen-off')
+						.addClass('icon-screen');
+					return;
+				}
+
+				switch (err.name) {
+					case "HTTPS_REQUIRED":
+						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
+						break;
+					case "PERMISSION_DENIED":
+					case "NotAllowedError":
+					case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
+						break;
+					case "FF52_REQUIRED":
+						OC.Notification.showTemporary(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'));
+						break;
+					case "EXTENSION_UNAVAILABLE":
+						var  extensionURL = null;
+						if (!!window.chrome && !!window.chrome.webstore) {// Chrome
+							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
+						}
+
+						if (extensionURL) {
+							var text = t('spreed', 'Screensharing extension is required to share your screen.');
+							var element = $('<a>').attr('href', extensionURL).attr('target','_blank').text(text);
+
+							OC.Notification.showTemporary(element, {isHTML: true});
+						} else {
+							OC.Notification.showTemporary(t('spreed', 'Please use a different browser like Firefox or Chrome to share your screen.'));
+						}
+						break;
+					default:
+						OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
+						console.log("Could not start screensharing", err);
+						break;
+				}
 			});
 		},
 

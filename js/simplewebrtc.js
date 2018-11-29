@@ -3874,8 +3874,8 @@
 // cache for constraints and callback
 	var cache = {};
 
-	module.exports = function (constraints, cb) {
-		var hasConstraints = arguments.length === 2;
+	module.exports = function (mode, constraints, cb) {
+		var hasConstraints = arguments.length === 3;
 		var callback = hasConstraints ? cb : constraints;
 		var error;
 
@@ -3970,10 +3970,11 @@
 		} else if (window.navigator.userAgent.match('Firefox')) {
 			var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
 			if (ffver >= 52) {
+				mode = mode || 'window';
 				constraints = (hasConstraints && constraints) || {
 					video: {
-						mozMediaSource: 'window',
-						mediaSource: 'window'
+						mozMediaSource: mode,
+						mediaSource: mode
 					}
 				};
 				getUserMedia(constraints, function (err, stream) {
@@ -7607,9 +7608,9 @@
 		});
 	};
 
-	LocalMedia.prototype.startScreenShare = function (cb) {
+	LocalMedia.prototype.startScreenShare = function (mode, cb) {
 		var self = this;
-		getScreenMedia(function (err, stream) {
+		getScreenMedia(mode, function (err, stream) {
 			if (!err) {
 				self.localScreens.push(stream);
 
@@ -18295,8 +18296,8 @@
 		return this.getEl(this.config.remoteVideosEl);
 	};
 
-	SimpleWebRTC.prototype.shareScreen = function (cb) {
-		this.webrtc.startScreenShare(cb);
+	SimpleWebRTC.prototype.shareScreen = function (mode, cb) {
+		this.webrtc.startScreenShare(mode, cb);
 	};
 
 	SimpleWebRTC.prototype.getLocalScreen = function () {
