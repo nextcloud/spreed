@@ -492,7 +492,7 @@
 						// The public page supports only a single room, so the
 						// active room is already the room for the given token.
 						participants = self.activeRoom.get('participants');
-						self.setRoomMessageForGuest(participants);
+						self.setRoomMessageForGuest();
 					}
 					// Disable video when entering a room with more than 5 participants.
 					if (participants && Object.keys(participants).length > 5) {
@@ -621,7 +621,9 @@
 		restoreEmptyContent: function() {
 			this.setEmptyContentMessage.apply(this, this._lastEmptyContent);
 		},
-		setRoomMessageForGuest: function(participants) {
+		setRoomMessageForGuest: function() {
+			var participants = this.activeRoom.get('participants');
+
 			if (Object.keys(participants).length === 1) {
 				var participantId = '',
 					participantName = '';

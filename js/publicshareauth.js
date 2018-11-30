@@ -162,8 +162,7 @@
 					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
-					var participants = OCA.SpreedMe.app.activeRoom.get('participants');
-					OCA.SpreedMe.app.setRoomMessageForGuest(participants);
+					OCA.SpreedMe.app.setRoomMessageForGuest();
 
 					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
 
