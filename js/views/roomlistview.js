@@ -176,9 +176,6 @@
 			this.$el.find('.app-navigation-entry-link').attr('href', roomURL);
 
 			if (this.model.get('active')) {
-				if (!this.$el.hasClass('active')) {
-					this.addRoomMessage();
-				}
 				this.$el.addClass('active');
 			} else {
 				this.$el.removeClass('active');
@@ -331,64 +328,6 @@
 				token: token
 			}, OC.generateUrl('/call/' + token));
 		},
-		addRoomMessage: function() {
-			console.log('addRoomMessage');
-			var participants = this.model.get('participants');
-
-			switch(this.model.get('type')) {
-				case OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE:
-					var participantId = '',
-						participantName = '';
-
-					_.each(participants, function(data, userId) {
-						if (OC.getCurrentUser().uid !== userId) {
-							participantId = userId;
-							participantName = data.name;
-						}
-					});
-
-					OCA.SpreedMe.app.setEmptyContentMessage(
-						{ userId: participantId, displayName: participantName},
-						t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
-					);
-					break;
-				case OCA.SpreedMe.app.ROOM_TYPE_PUBLIC:
-				case OCA.SpreedMe.app.ROOM_TYPE_GROUP:
-					var icon = '',
-						message = '',
-						messageAdditional = '',
-						url = '';
-
-					if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
-						icon = 'icon-public';
-					} else {
-						icon = 'icon-contacts-dark';
-					}
-
-					message = t('spreed', 'Waiting for others to join the call …');
-
-					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
-						message = t('spreed', 'No other people in this call');
-						if (this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
-							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
-						}
-					}
-
-					if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
-						messageAdditional = t('spreed', 'Share this link to invite others!');
-						if (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) {
-							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar or share this link to invite others!');
-						}
-						url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
-					}
-
-					OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
-					break;
-				default:
-					console.log("Unknown room type", this.model.get('type'));
-					return;
-			}
-		}
 	});
 
 	var RoomListView = Marionette.CollectionView.extend({

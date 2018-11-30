@@ -493,6 +493,7 @@
 							}
 						});
 						participants = self.activeRoom.get('participants');
+						self.setRoomMessageForUser();
 					} else {
 						// The public page supports only a single room, so the
 						// active room is already the room for the given token.
@@ -625,6 +626,63 @@
 		},
 		restoreEmptyContent: function() {
 			this.setEmptyContentMessage.apply(this, this._lastEmptyContent);
+		},
+		setRoomMessageForUser: function() {
+			var participants = this.activeRoom.get('participants');
+
+			switch(this.activeRoom.get('type')) {
+				case OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE:
+					var participantId = '',
+						participantName = '';
+
+					_.each(participants, function(data, userId) {
+						if (OC.getCurrentUser().uid !== userId) {
+							participantId = userId;
+							participantName = data.name;
+						}
+					});
+
+					OCA.SpreedMe.app.setEmptyContentMessage(
+						{ userId: participantId, displayName: participantName},
+						t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
+					);
+					break;
+				case OCA.SpreedMe.app.ROOM_TYPE_PUBLIC:
+				case OCA.SpreedMe.app.ROOM_TYPE_GROUP:
+					var icon = '',
+						message = '',
+						messageAdditional = '',
+						url = '';
+
+					if (this.activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+						icon = 'icon-public';
+					} else {
+						icon = 'icon-contacts-dark';
+					}
+
+					message = t('spreed', 'Waiting for others to join the call …');
+
+					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
+						message = t('spreed', 'No other people in this call');
+						if (this.activeRoom.get('participantType') === 0 || this.activeRoom.get('participantType') === 1) {
+							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
+						}
+					}
+
+					if (this.activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+						messageAdditional = t('spreed', 'Share this link to invite others!');
+						if (this.activeRoom.get('participantType') === 1 || this.activeRoom.get('participantType') === 2) {
+							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar or share this link to invite others!');
+						}
+						url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.activeRoom.get('token'));
+					}
+
+					OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
+					break;
+				default:
+					console.log("Unknown room type", this.activeRoom.get('type'));
+					return;
+			}
 		},
 		setRoomMessageForGuest: function() {
 			var participants = this.activeRoom.get('participants');
