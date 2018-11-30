@@ -47,6 +47,11 @@
 		FLAG_WITH_AUDIO: 2,
 		FLAG_WITH_VIDEO: 4,
 
+		/* Must stay in sync with values in "lib/Room.php". */
+		ROOM_TYPE_ONE_TO_ONE: 1,
+		ROOM_TYPE_GROUP: 2,
+		ROOM_TYPE_PUBLIC: 3,
+
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 

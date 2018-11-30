@@ -29,11 +29,6 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	// These constants must match the values in "lib/Room.php".
-	var ROOM_TYPE_ONE_TO_ONE = 1;
-	var ROOM_TYPE_GROUP_CALL = 2;
-	var ROOM_TYPE_PUBLIC_CALL = 3;
-
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
 							'<div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
 							'{{#if isFavorite}}'+
@@ -218,7 +213,7 @@
 			this.ui.menu.toggleClass('open', this.menuShown);
 		},
 		checkSharingStatus: function() {
-			if (this.model.get('type') === ROOM_TYPE_ONE_TO_ONE) { // 1on1
+			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) { // 1on1
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
@@ -228,13 +223,13 @@
 						$(a).avatar($(a).data('user'), 32);
 					}
 				});
-			} else if (this.model.get('type') === ROOM_TYPE_GROUP_CALL) { // Group
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) { // Group
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-public-white').addClass('icon-contacts');
 				});
-			} else if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) { // Public room
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) { // Public room
 				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
@@ -341,7 +336,7 @@
 			var participants = this.model.get('participants');
 
 			switch(this.model.get('type')) {
-				case ROOM_TYPE_ONE_TO_ONE:
+				case OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE:
 					var participantId = '',
 						participantName = '';
 
@@ -357,14 +352,14 @@
 						t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
 					);
 					break;
-				case ROOM_TYPE_PUBLIC_CALL:
-				case ROOM_TYPE_GROUP_CALL:
+				case OCA.SpreedMe.app.ROOM_TYPE_PUBLIC:
+				case OCA.SpreedMe.app.ROOM_TYPE_GROUP:
 					var icon = '',
 						message = '',
 						messageAdditional = '',
 						url = '';
 
-					if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
+					if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
 						icon = 'icon-public';
 					} else {
 						icon = 'icon-contacts-dark';
@@ -379,7 +374,7 @@
 						}
 					}
 
-					if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
+					if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
 						messageAdditional = t('spreed', 'Share this link to invite others!');
 						if (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) {
 							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar or share this link to invite others!');
