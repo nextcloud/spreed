@@ -263,20 +263,18 @@
 					splitShare = (ffver >= 52);
 				}
 
-				// The parent CSS of the menu list items is using "display:block !important",
-				// so we need to also hide with "!important".
 				if (webrtc.getLocalScreen()) {
-					$('#share-screen-entry').attr('style','display:none !important');
-					$('#share-window-entry').attr('style','display:none !important');
-					$('#show-screen-entry').show();
-					$('#stop-screen-entry').show();
+					$('#share-screen-entry').addClass('hidden');
+					$('#share-window-entry').addClass('hidden');
+					$('#show-screen-entry').removeClass('hidden');
+					$('#stop-screen-entry').removeClass('hidden');
 					$('#screensharing-menu').toggleClass('open');
 				} else {
 					if (splitShare) {
-						$('#share-screen-entry').show();
-						$('#share-window-entry').show();
-						$('#show-screen-entry').attr('style','display:none !important');
-						$('#stop-screen-entry').attr('style','display:none !important');
+						$('#share-screen-entry').removeClass('hidden');
+						$('#share-window-entry').removeClass('hidden');
+						$('#show-screen-entry').addClass('hidden');
+						$('#stop-screen-entry').addClass('hidden');
 						$('#screensharing-menu').toggleClass('open');
 						return;
 					}
