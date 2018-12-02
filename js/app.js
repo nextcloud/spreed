@@ -628,6 +628,11 @@
 			this.setEmptyContentMessage.apply(this, this._lastEmptyContent);
 		},
 		setRoomMessageForUser: function() {
+			var icon = '';
+			var message = '';
+			var messageAdditional = '';
+			var url = '';
+
 			var participants = this.activeRoom.get('participants');
 
 			switch(this.activeRoom.get('type')) {
@@ -642,18 +647,12 @@
 						}
 					});
 
-					OCA.SpreedMe.app.setEmptyContentMessage(
-						{ userId: participantId, displayName: participantName},
-						t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
-					);
+					icon = { userId: participantId, displayName: participantName};
+
+					message = t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName});
 					break;
 				case OCA.SpreedMe.app.ROOM_TYPE_PUBLIC:
 				case OCA.SpreedMe.app.ROOM_TYPE_GROUP:
-					var icon = '',
-						message = '',
-						messageAdditional = '',
-						url = '';
-
 					if (this.activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
 						icon = 'icon-public';
 					} else {
@@ -676,13 +675,13 @@
 						}
 						url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.activeRoom.get('token'));
 					}
-
-					OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
 					break;
 				default:
 					console.log("Unknown room type", this.activeRoom.get('type'));
 					return;
 			}
+
+			OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
 		},
 		setRoomMessageForGuest: function() {
 			var participants = this.activeRoom.get('participants');
