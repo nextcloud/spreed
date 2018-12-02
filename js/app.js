@@ -687,7 +687,7 @@
 		setRoomMessageForGuest: function() {
 			var participants = this.activeRoom.get('participants');
 
-			if (Object.keys(participants).length === 1) {
+			if (Object.keys(participants).length === 1 && this.activeRoom.get('numGuests') === 1) {
 				var participantId = '',
 					participantName = '';
 
