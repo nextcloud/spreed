@@ -662,13 +662,15 @@
 				message = t('spreed', 'Waiting for others to join the call …');
 			}
 
-			if (this.activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP &&
-					(this.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER || this.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR)) {
+			var canModerate = this.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||
+								this.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR;
+
+			if (this.activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP && canModerate) {
 				messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
 			} else if (this.activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
 				messageAdditional = t('spreed', 'Share this link to invite others!');
 
-				if (this.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER || this.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR) {
+				if (canModerate) {
 					messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar or share this link to invite others!');
 				}
 
