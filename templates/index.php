@@ -106,9 +106,9 @@ script(
 	<div id="screens"></div>
 
 		<div id="emptycontent">
-			<div id="emptycontent-icon" class="icon-video"></div>
+			<div id="emptycontent-icon" class="icon-talk"></div>
 			<h2><?php p($l->t('Join a conversation or start a new one')) ?></h2>
-			<p class="uploadmessage"></p>
+			<p class="emptycontent-additional"><?php p($l->t('Say hi to your friends and colleagues!')) ?></p>
 			<div id="shareRoomContainer" class="" style="display: inline-flex">
 				<input id="shareRoomInput" class="share-room-input hidden" readonly="readonly" type="text"/>
 				<div id="shareRoomClipboardButton" class="shareRoomClipboard icon-clippy hidden" data-clipboard-target="#shareRoomInput"></div>
