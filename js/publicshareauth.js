@@ -82,7 +82,7 @@
 				'			<li id="share-screen-entry">' +
 				'				<button id="share-screen-button">' +
 				'					<span class="icon-screen"></span>' +
-				'					<span>' + t('spreed', 'Share your screen') + '</span>' +
+				'					<span>' + t('spreed', 'Share whole screen') + '</span>' +
 				'				</button>' +
 				'			</li>' +
 				'			<li id="share-window-entry">' +

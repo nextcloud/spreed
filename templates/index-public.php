@@ -75,7 +75,7 @@ script(
 							<li id="share-screen-entry">
 								<button id="share-screen-button">
 									<span class="icon-screen"></span>
-									<span><?php p($l->t('Share your screen'));?></span>
+									<span><?php p($l->t('Share whole screen'));?></span>
 								</button>
 							</li>
 							<li id="share-window-entry">
