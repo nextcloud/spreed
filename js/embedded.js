@@ -93,8 +93,6 @@
 
 		setEmptyContentMessage: function() {
 		},
-		restoreEmptyContent: function() {
-		},
 
 		initialize: function() {
 			if (OC.getCurrentUser().uid) {

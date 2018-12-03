@@ -82,8 +82,6 @@
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
-		_currentEmptyContent: null,
-		_lastEmptyContent: null,
 		_registerPageEvents: function() {
 			$('#select-participants').select2({
 				ajax: {
@@ -621,11 +619,6 @@
 
 			$emptyContent.find('h2').html(message);
 			$emptyContent.find('p').text(messageAdditional ? messageAdditional : '');
-			this._lastEmptyContent = this._currentEmptyContent;
-			this._currentEmptyContent = arguments;
-		},
-		restoreEmptyContent: function() {
-			this.setEmptyContentMessage.apply(this, this._lastEmptyContent);
 		},
 		setEmptyContentMessageWhenWaitingForOthersToJoinTheCall: function() {
 			var icon = '';
@@ -694,6 +687,13 @@
 				'icon-video-off',
 				t('spreed', 'WebRTC is not supported in your browser :-/'),
 				t('spreed', 'Please use a different browser like Firefox or Chrome')
+			);
+		},
+		setEmptyContentMessageWhenWaitingForMediaPermissions: function() {
+			OCA.SpreedMe.app.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'Waiting for camera and microphone permissions'),
+				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
 			);
 		},
 		initialize: function() {
@@ -887,6 +887,8 @@
 
 			if (!OCA.SpreedMe.webrtc.capabilities.support) {
 				this.setEmptyContentMessageWhenWebRtcIsNotSupported();
+			} else {
+				this.setEmptyContentMessageWhenWaitingForMediaPermissions();
 			}
 
 			OCA.SpreedMe.webrtc.startMedia(this.token);
@@ -899,7 +901,8 @@
 
 			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
-			this.restoreEmptyContent();
+
+			this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
 		},
 		startWithoutLocalMedia: function(isAudioEnabled, isVideoEnabled) {
 			if (this.callbackAfterMedia) {
@@ -917,6 +920,10 @@
 			this.disableVideo();
 			if (!isVideoEnabled) {
 				this.hasNoVideo();
+			}
+
+			if (OCA.SpreedMe.webrtc.capabilities.support) {
+				this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
 			}
 		},
 		_onPopState: function(params) {
