@@ -72,16 +72,22 @@ script(
 					<button id="screensharing-button" class="app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled" data-placement="top" data-toggle="tooltip" data-original-title="<?php p($l->t('Share screen')) ?>"></button>
 					<div id="screensharing-menu" class="app-navigation-entry-menu">
 						<ul>
-							<li>
-								<button id="show-screen-button">
+							<li id="share-screen-entry">
+								<button id="share-screen-button">
 									<span class="icon-screen"></span>
 									<span><?php p($l->t('Share your screen'));?></span>
 								</button>
 							</li>
-							<li id="show-window-entry">
-								<button id="show-window-button">
+							<li id="share-window-entry">
+								<button id="share-window-button">
 									<span class="icon-share-window"></span>
 									<span><?php p($l->t('Share a single window'));?></span>
+								</button>
+							</li>
+							<li id="show-screen-entry">
+								<button id="show-screen-button">
+									<span class="icon-screen"></span>
+									<span><?php p($l->t('Show your screen'));?></span>
 								</button>
 							</li>
 							<li id="stop-screen-entry">

@@ -265,12 +265,16 @@
 				// The parent CSS of the menu list items is using "display:block !important",
 				// so we need to also hide with "!important".
 				if (webrtc.getLocalScreen()) {
-					$('#show-window-entry').attr('style','display:none !important');
+					$('#share-screen-entry').attr('style','display:none !important');
+					$('#share-window-entry').attr('style','display:none !important');
+					$('#show-screen-entry').show();
 					$('#stop-screen-entry').show();
 					$('#screensharing-menu').toggleClass('open');
 				} else {
 					if (splitShare) {
-						$('#show-window-entry').show();
+						$('#share-screen-entry').show();
+						$('#share-window-entry').show();
+						$('#show-screen-entry').attr('style','display:none !important');
 						$('#stop-screen-entry').attr('style','display:none !important');
 						$('#screensharing-menu').toggleClass('open');
 						return;
@@ -280,27 +284,28 @@
 				}
 			}.bind(this));
 
+			$("#share-screen-button").on('click', function() {
+				var webrtc = OCA.SpreedMe.webrtc;
+				if (!webrtc.getLocalScreen()) {
+					this.startShareScreen('screen');
+				}
+				$('#screensharing-menu').toggleClass('open', false);
+			}.bind(this));
+
+			$("#share-window-button").on('click', function() {
+				var webrtc = OCA.SpreedMe.webrtc;
+				if (!webrtc.getLocalScreen()) {
+					this.startShareScreen('window');
+				}
+				$('#screensharing-menu').toggleClass('open', false);
+			}.bind(this));
+
 			$("#show-screen-button").on('click', function() {
 				var webrtc = OCA.SpreedMe.webrtc;
 				if (webrtc.getLocalScreen()) {
 					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
 					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
-				} else {
-					this.startShareScreen('screen');
 				}
-
-				$('#screensharing-menu').toggleClass('open', false);
-			}.bind(this));
-
-			$("#show-window-button").on('click', function() {
-				var webrtc = OCA.SpreedMe.webrtc;
-				if (webrtc.getLocalScreen()) {
-					var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-					OCA.SpreedMe.sharedScreens.switchScreenToId(currentUser);
-				} else {
-					this.startShareScreen('window');
-				}
-
 				$('#screensharing-menu').toggleClass('open', false);
 			}.bind(this));
 
