@@ -689,6 +689,13 @@
 
 			OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
 		},
+		setEmptyContentMessageWhenWebRtcIsNotSupported: function() {
+			OCA.SpreedMe.app.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'WebRTC is not supported in your browser :-/'),
+				t('spreed', 'Please use a different browser like Firefox or Chrome')
+			);
+		},
 		initialize: function() {
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
 			$('#content').append(this._sidebarView.$el);
@@ -877,6 +884,11 @@
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
 			}
+
+			if (!OCA.SpreedMe.webrtc.capabilities.support) {
+				this.setEmptyContentMessageWhenWebRtcIsNotSupported();
+			}
+
 			OCA.SpreedMe.webrtc.startMedia(this.token);
 		},
 		startLocalMedia: function(configuration) {

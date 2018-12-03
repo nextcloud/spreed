@@ -1038,15 +1038,6 @@ var spreedPeerConnectionTable = [];
 			app.restoreEmptyContent();
 		});
 
-		if(!OCA.SpreedMe.webrtc.capabilities.support) {
-			console.log('WebRTC not supported');
-			OCA.SpreedMe.app.setEmptyContentMessage(
-				'icon-video-off',
-				t('spreed', 'WebRTC is not supported in your browser :-/'),
-				t('spreed', 'Please use a different browser like Firefox or Chrome')
-			);
-		}
-
 		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
 			console.log('%s datachannel is open', channel.label);
 		});
