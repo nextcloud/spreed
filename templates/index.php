@@ -82,13 +82,13 @@ script(
 						<li>
 							<button id="show-screen-button">
 								<span class="icon-screen"></span>
-								<span><?php p($l->t('Show your screen'));?></span>
+								<span><?php p($l->t('Share your screen'));?></span>
 							</button>
 						</li>
 						<li id="show-window-entry">
 							<button id="show-window-button">
-								<span class="icon-screen"></span>
-								<span><?php p($l->t('Show a single window'));?></span>
+								<span class="icon-share-window"></span>
+								<span><?php p($l->t('Share a single window'));?></span>
 							</button>
 						</li>
 						<li id="stop-screen-entry">
