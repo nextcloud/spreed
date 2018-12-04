@@ -133,12 +133,30 @@ class Application extends App {
 
 		$dispatcher->addListener(Room::class . '::postJoinRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postJoinRoomGuest', $listener);
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
-		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
 		$dispatcher->addListener(GuestManager::class . '::updateName', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var Messages $messages */
+			$messages = $this->getContainer()->query(Messages::class);
+			$messages->addMessageForAllParticipants($room, 'refresh-participant-list');
+
+			// When "addMessageForAllParticipants" is called the participant is
+			// no longer in the room, so the message needs to be explicitly
+			// added for the participant.
+			$sessionId = $event->getArgument('sessionId');
+			if ($sessionId !== null && $sessionId !== '' && $sessionId !== '0') {
+				$messages->addMessage($sessionId, $sessionId, 'refresh-participant-list');
+			}
+		};
+
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 	}
 
 	protected function getBackendNotifier() {

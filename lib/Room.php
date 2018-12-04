@@ -557,6 +557,8 @@ class Room {
 			'user' => $user,
 		]));
 
+		$sessionId = $this->getSessionIdForUserId($user->getUID());
+
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
@@ -565,7 +567,26 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postRemoveUser', new GenericEvent($this, [
 			'user' => $user,
+			'sessionId' => $sessionId,
 		]));
+	}
+
+	/**
+	 * @param string $userId
+	 */
+	protected function getSessionIdForUserId(string $userId): string {
+		$query = $this->db->getQueryBuilder();
+		$query->select('session_id')
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
+		$result = $query->execute();
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return $row['session_id'];
 	}
 
 	/**
@@ -584,6 +605,7 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postRemoveBySession', new GenericEvent($this, [
 			'participant' => $participant,
+			'sessionId' => $participant->getSessionId(),
 		]));
 	}
 
@@ -647,6 +669,8 @@ class Room {
 			'userId' => $userId,
 		]));
 
+		$sessionId = $this->getSessionIdForUserId($userId);
+
 		// Reset session when leaving a normal room
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
@@ -668,6 +692,7 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
 			'selfJoin' => $selfJoined,
+			'sessionId' => $sessionId,
 		]));
 	}
 
