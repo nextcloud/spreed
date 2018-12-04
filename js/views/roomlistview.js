@@ -317,16 +317,11 @@
 			}
 
 			OCA.SpreedMe.app.connection.leaveCurrentRoom(true);
-			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 		},
 		joinRoom: function(e) {
 			e.preventDefault();
 			var token = this.ui.room.attr('data-token');
 			OCA.SpreedMe.app.connection.joinRoom(token);
-
-			OC.Util.History.pushState({
-				token: token
-			}, OC.generateUrl('/call/' + token));
 		},
 	});
 

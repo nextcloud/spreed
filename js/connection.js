@@ -31,9 +31,6 @@
 
 		_createCallSuccessHandle: function(ocsResponse) {
 			var token = ocsResponse.ocs.data.token;
-			OC.Util.History.pushState({
-				token: token
-			}, OC.generateUrl('/call/' + token));
 			this.joinRoom(token);
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
@@ -90,6 +87,13 @@
 			this.app.signaling.leaveCurrentRoom();
 			this.app.token = token;
 			this.app.signaling.joinRoom(token);
+
+			if (!OCA.Talk.PublicShareAuth) {
+				OC.Util.History.pushState({
+					token: token
+				}, OC.generateUrl('/call/' + token));
+			}
+
 			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
 		},
