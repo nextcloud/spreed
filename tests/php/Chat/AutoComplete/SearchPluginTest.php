@@ -22,6 +22,7 @@
 namespace OCA\Spreed\Tests\php\Chat;
 
 use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
+use OCA\Spreed\Files\Util;
 use OCA\Spreed\Room;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\IUser;
@@ -31,6 +32,9 @@ class SearchPluginTest extends \Test\TestCase {
 
 	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
+
+	/** @var Util|\PHPUnit_Framework_MockObject_MockObject */
+	protected $util;
 
 	/** @var string */
 	protected $userId;
@@ -42,6 +46,7 @@ class SearchPluginTest extends \Test\TestCase {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->util = $this->createMock(Util::class);
 		$this->userId = 'current';
 	}
 
@@ -53,6 +58,7 @@ class SearchPluginTest extends \Test\TestCase {
 		if (empty($methods)) {
 			return new SearchPlugin(
 				$this->userManager,
+				$this->util,
 				$this->userId
 			);
 		}
@@ -60,6 +66,7 @@ class SearchPluginTest extends \Test\TestCase {
 		return $this->getMockBuilder(SearchPlugin::class)
 			->setConstructorArgs([
 				$this->userManager,
+				$this->util,
 				$this->userId,
 			])
 			->setMethods($methods)

@@ -320,6 +320,19 @@ return [
 		],
 
 		/**
+		 * Files
+		 */
+		[
+			'name' => 'Files#getRoom',
+			'url' => '/api/{apiVersion}/file/{fileId}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'fileId' => '.+'
+			],
+		],
+
+		/**
 		 * Guest
 		 */
 		[

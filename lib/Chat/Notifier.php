@@ -25,6 +25,7 @@ namespace OCA\Spreed\Chat;
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Files\Util;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -51,12 +52,17 @@ class Notifier {
 	/** @var Manager */
 	private $manager;
 
+	/** @var Util */
+	private $util;
+
 	public function __construct(INotificationManager $notificationManager,
 								IUserManager $userManager,
-								Manager $manager) {
+								Manager $manager,
+								Util $util) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->util = $util;
 	}
 
 	/**
@@ -273,11 +279,17 @@ class Notifier {
 
 		try {
 			$room = $this->manager->getRoomById($comment->getObjectId());
-			$participant = $room->getParticipant($userId);
-			return $participant->getNotificationLevel() !== Participant::NOTIFY_NEVER;
 		} catch (RoomNotFoundException $e) {
 			return false;
+		}
+
+		try {
+			$participant = $room->getParticipant($userId);
+			return $participant->getNotificationLevel() !== Participant::NOTIFY_NEVER;
 		} catch (ParticipantNotFoundException $e) {
+			if ($room->getObjectType() === 'file') {
+				return $this->util->canUserAccessFile($room->getObjectId(), $userId);
+			}
 			return false;
 		}
 	}

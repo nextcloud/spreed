@@ -22,6 +22,7 @@
 namespace OCA\Spreed\Chat\AutoComplete;
 
 
+use OCA\Spreed\Files\Util;
 use OCA\Spreed\Room;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -33,6 +34,8 @@ class SearchPlugin implements ISearchPlugin {
 
 	/** @var IUserManager */
 	protected $userManager;
+	/** @var Util */
+	protected $util;
 
 	/** @var string */
 	protected $userId;
@@ -40,8 +43,9 @@ class SearchPlugin implements ISearchPlugin {
 	/** @var Room */
 	protected $room;
 
-	public function __construct(IUserManager $userManager, $userId) {
+	public function __construct(IUserManager $userManager, Util $util, $userId) {
 		$this->userManager = $userManager;
+		$this->util = $util;
 		$this->userId = $userId;
 	}
 
@@ -61,6 +65,13 @@ class SearchPlugin implements ISearchPlugin {
 
 		// FIXME Handle guests
 		$this->searchUsers($search, $this->room->getParticipantUserIds(), $searchResult);
+
+		if ($this->room->getObjectType() === 'file') {
+			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
+			if (!empty($usersWithFileAccess)) {
+				$this->searchUsers($search, $usersWithFileAccess, $searchResult);
+			}
+		}
 
 		return false;
 	}

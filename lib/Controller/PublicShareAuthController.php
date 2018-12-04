@@ -33,14 +33,14 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share;
-use OCP\Share\IManager as ShareManager;
+use OCP\Share\IManager as IShareManager;
 use OCP\Share\Exceptions\ShareNotFound;
 
 class PublicShareAuthController extends OCSController {
 
 	/** @var IUserManager */
 	private $userManager;
-	/** @var ShareManager */
+	/** @var IShareManager */
 	private $shareManager;
 	/** @var Manager */
 	private $manager;
@@ -49,14 +49,14 @@ class PublicShareAuthController extends OCSController {
 	 * @param string $appName
 	 * @param IRequest $request
 	 * @param IUserManager $userManager
-	 * @param ShareManager $shareManager
+	 * @param IShareManager $shareManager
 	 * @param Manager $manager
 	 */
 	public function __construct(
 			string $appName,
 			IRequest $request,
 			IUserManager $userManager,
-			ShareManager $shareManager,
+			IShareManager $shareManager,
 			Manager $manager
 	) {
 		parent::__construct($appName, $request);
