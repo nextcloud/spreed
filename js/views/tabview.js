@@ -179,7 +179,9 @@
 			// Remove the dummy target element that was replaced by the view
 			// when it was shown and that is restored back when the region is
 			// removed.
-			removedRegion.el.remove();
+			if (removedRegion.el.parentNode) {
+				removedRegion.el.parentNode.removeChild(removedRegion.el);
+			}
 		},
 
 		selectTabHeader: function(tabId) {
