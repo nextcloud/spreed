@@ -207,7 +207,7 @@ OC.L10N.register(
     "Video & audio-conferencing using WebRTC" : "Video- och ljudkonferens med WebRTC",
     "This call is password-protected" : "Detta samtal är lösenordsskyddat",
     "The password is wrong. Try again." : "Lösenordet är fel. Försök igen.",
-    "Show a single window" : "Visa ett fönster",
+    "Say hi to your friends and colleagues!" : "Säg hej till dina vänner och kollegor!",
     "Signaling server" : "Signalerar server",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
     "STUN servers" : "STUN-servrar",
