@@ -1024,7 +1024,7 @@ var spreedPeerConnectionTable = [];
 				console.log('Error while accessing microphone & camera: ', error.message || error.name);
 			}
 
-			app.startWithoutLocalMedia(webrtc.webrtc.isAudioEnabled(), webrtc.webrtc.isVideoEnabled());
+			app.startWithoutLocalMedia({audio: false, video: false});
 			OC.Notification.show(message, {
 				type: 'error',
 				timeout: 15,

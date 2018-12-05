@@ -787,23 +787,14 @@
 
 			localMediaChannel.trigger('startLocalMedia');
 		},
-		startWithoutLocalMedia: function(isAudioEnabled, isVideoEnabled) {
+		startWithoutLocalMedia: function(configuration) {
 			if (this.callbackAfterMedia) {
 				this.callbackAfterMedia(null);
 				this.callbackAfterMedia = null;
 			}
 
 			$('.videoView').removeClass('hidden');
-
-			this.disableAudio();
-			if (!isAudioEnabled) {
-				this.hasNoAudio();
-			}
-
-			this.disableVideo();
-			if (!isVideoEnabled) {
-				this.hasNoVideo();
-			}
+			this.initAudioVideoSettings(configuration);
 
 			if (OCA.SpreedMe.webrtc.capabilities.support) {
 				localMediaChannel.trigger('startWithoutLocalMedia');
