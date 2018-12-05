@@ -146,7 +146,7 @@ pipeline:
 
       # Run integration tests
       - cd tests/integration/
-      - bash run.sh
+      - bash run.sh $TESTS_INTEGRATION
     when:
       matrix:
         TESTS: php7.1-integration
@@ -159,7 +159,7 @@ pipeline:
     when:
       matrix:
         TESTS: jsunit
-  acceptance-chat:
+  acceptance:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       - APP_NAME=spreed
@@ -173,53 +173,82 @@ pipeline:
       - ln --symbolic `pwd` /var/www/html
 
       # Run acceptance tests
-      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-chat --selenium-server selenium:4444 allow-git-repository-modifications features/chat.feature
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance --selenium-server selenium:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
     when:
       matrix:
-        TESTS-ACCEPTANCE: chat
-  acceptance-conversation:
-    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-    commands:
-      # Pre-setup steps
-      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
-      - cp -R . ../server/apps/$APP_NAME
-      - cd ../server
-      - git submodule update --init
-      - ln --symbolic `pwd` /var/www/html
-
-      # Run acceptance tests
-      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-conversation --selenium-server selenium:4444 allow-git-repository-modifications features/conversation.feature
-    when:
-      matrix:
-        TESTS-ACCEPTANCE: conversation
+        TESTS: acceptance
 
 matrix:
   include:
+    # Checks
     - TESTS: eslint
     - TESTS: stylelint
     - TESTS: check-app-compatbility
     - TESTS: handlebars
     - TESTS: syntax-php7.0
     - TESTS: signed-off-check
+
+    # Unit tests
     - TESTS: php7.0
     - TESTS: php7.1
     - TESTS: php7.2
+    - TESTS: jsunit
+
+    # Integration tests sqlite
     - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/callapi
       DB: sqlite
     - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/chat
+      DB: sqlite
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/conversation
+      DB: sqlite
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/sharing
+      DB: sqlite
+
+    # Integration tests MySQL 5.7
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/callapi
       DB: mysql
       DATABASEHOST: mysql-5.7
     - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/chat
+      DB: mysql
+      DATABASEHOST: mysql-5.7
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/conversation
+      DB: mysql
+      DATABASEHOST: mysql-5.7
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/sharing
+      DB: mysql
+      DATABASEHOST: mysql-5.7
+
+    # Integration tests Postgres 10
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/callapi
       DB: pgsql
       DATABASEHOST: postgres-10
-    - TESTS: jsunit
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/chat
+      DB: pgsql
+      DATABASEHOST: postgres-10
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/conversation
+      DB: pgsql
+      DATABASEHOST: postgres-10
+    - TESTS: php7.1-integration
+      TESTS_INTEGRATION: features/sharing
+      DB: pgsql
+      DATABASEHOST: postgres-10
+
+    # Acceptance tests
     - TESTS: acceptance
-      TESTS-ACCEPTANCE: chat
+      TESTS_ACCEPTANCE: chat
     - TESTS: acceptance
-      TESTS-ACCEPTANCE: conversation
+      TESTS_ACCEPTANCE: conversation
 
 services:
   mysql-5.7:
