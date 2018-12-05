@@ -235,13 +235,9 @@
 			}
 		},
 		removeRoom: function() {
-			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
-				type: 'DELETE'
-			});
+			this.model.removeSelf();
 		},
 		deleteRoom: function() {
 			if (this.model.get('participantType') !== 1 &&
@@ -249,13 +245,9 @@
 				return;
 			}
 
-			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
-				type: 'DELETE'
-			});
+			this.model.destroy();
 		},
 		addRoomToFavorites: function() {
 			if (this.model.get('participantType') === 5) {
@@ -311,17 +303,10 @@
 				}
 			});
 		},
-		cleanupIfActiveRoom: function() {
-			if (!this.model.get('active')) {
-				return;
-			}
-
-			OCA.SpreedMe.app.connection.leaveCurrentRoom(true);
-		},
 		joinRoom: function(e) {
 			e.preventDefault();
-			var token = this.ui.room.attr('data-token');
-			OCA.SpreedMe.app.connection.joinRoom(token);
+
+			this.model.join();
 		},
 	});
 
