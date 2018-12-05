@@ -553,8 +553,15 @@ class Room {
 	 * @param IUser $user
 	 */
 	public function removeUser(IUser $user) {
+		try {
+			$participant = $this->getParticipant($user->getUID());
+		} catch (ParticipantNotFoundException $e) {
+			return;
+		}
+
 		$this->dispatcher->dispatch(self::class . '::preRemoveUser', new GenericEvent($this, [
 			'user' => $user,
+			'participant' => $participant,
 		]));
 
 		$query = $this->db->getQueryBuilder();
@@ -565,6 +572,7 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postRemoveUser', new GenericEvent($this, [
 			'user' => $user,
+			'participant' => $participant,
 		]));
 	}
 
@@ -643,8 +651,15 @@ class Room {
 	 * @param string $userId
 	 */
 	public function leaveRoom($userId) {
+		try {
+			$participant = $this->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			return;
+		}
+
 		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'participant' => $participant,
 		]));
 
 		// Reset session when leaving a normal room
@@ -667,6 +682,7 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'participant' => $participant,
 			'selfJoin' => $selfJoined,
 		]));
 	}
