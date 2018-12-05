@@ -212,9 +212,14 @@
 			// rendered again if new tabs were added, so in general this should
 			// be safe.
 			OCA.SpreedMe.app._chatView.$el.appendTo(this.$el);
-			OCA.SpreedMe.app._chatView.reloadMessageList();
 			OCA.SpreedMe.app._chatView.setTooltipContainer($('#app-sidebar'));
 			OCA.SpreedMe.app._chatView.focusChatInput();
+
+			// At this point the tab has not been made visible yet, so the
+			// reload needs to be delayed.
+			setTimeout(function() {
+				OCA.SpreedMe.app._chatView.reloadMessageList();
+			}, 0);
 		},
 
 		setAppStarted: function() {
