@@ -91,11 +91,6 @@
 				});
 		},
 
-		setEmptyContentMessage: function() {
-		},
-		restoreEmptyContent: function() {
-		},
-
 		initialize: function() {
 			if (OC.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
@@ -117,7 +112,7 @@
 			this.connection = new OCA.Talk.Connection(this);
 
 			$(window).unload(function () {
-				this.connection.leaveCurrentRoom(false);
+				this.connection.leaveCurrentRoom();
 				this.signaling.disconnect();
 			}.bind(this));
 

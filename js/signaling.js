@@ -629,7 +629,7 @@
 					// Request has been aborted. Ignore.
 				} else if (this.currentRoomToken) {
 					if (this.pullMessagesFails >= 3) {
-						OCA.SpreedMe.app.connection.leaveCurrentRoom(false);
+						OCA.SpreedMe.app.connection.leaveCurrentRoom();
 						return;
 					}
 

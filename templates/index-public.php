@@ -28,6 +28,7 @@ script(
 		'views/callinfoview',
 		'views/chatview',
 		'views/editabletextlabel',
+		'views/emptycontentview',
 		'views/participantlistview',
 		'views/participantview',
 		'views/richobjectstringparser',
@@ -108,6 +109,10 @@ script(
 			<div id="emptycontent-icon" class="icon-talk"></div>
 			<h2><?php p($l->t('Join a conversation or start a new one')) ?></h2>
 			<p class="emptycontent-additional"><?php p($l->t('Say hi to your friends and colleagues!')) ?></p>
+			<div id="shareRoomContainer" class="" style="display: inline-flex">
+				<input id="shareRoomInput" class="share-room-input hidden" readonly="readonly" type="text"/>
+				<div id="shareRoomClipboardButton" class="shareRoomClipboard icon-clippy hidden" data-clipboard-target="#shareRoomInput"></div>
+			</div>
 		</div>
 	</div>
 </div>

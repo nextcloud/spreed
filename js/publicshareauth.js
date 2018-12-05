@@ -107,6 +107,11 @@
 				'	</div>' +
 				'</div>');
 
+			OCA.SpreedMe.app._emptyContentView.destroy();
+			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
+				el: '#talk-sidebar > #emptycontent'
+			});
+
 			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 
 			$('body').addClass('talk-sidebar-enabled');
@@ -162,8 +167,7 @@
 					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
-					var participants = OCA.SpreedMe.app.activeRoom.get('participants');
-					OCA.SpreedMe.app.setRoomMessageForGuest(participants);
+					OCA.SpreedMe.app._emptyContentView.setActiveRoom(OCA.SpreedMe.app.activeRoom);
 
 					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
 

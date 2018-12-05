@@ -29,11 +29,6 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	// These constants must match the values in "lib/Room.php".
-	var ROOM_TYPE_ONE_TO_ONE = 1;
-	var ROOM_TYPE_GROUP_CALL = 2;
-	var ROOM_TYPE_PUBLIC_CALL = 3;
-
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
 							'<div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
 							'{{#if isFavorite}}'+
@@ -181,9 +176,6 @@
 			this.$el.find('.app-navigation-entry-link').attr('href', roomURL);
 
 			if (this.model.get('active')) {
-				if (!this.$el.hasClass('active')) {
-					this.addRoomMessage();
-				}
 				this.$el.addClass('active');
 			} else {
 				this.$el.removeClass('active');
@@ -218,7 +210,7 @@
 			this.ui.menu.toggleClass('open', this.menuShown);
 		},
 		checkSharingStatus: function() {
-			if (this.model.get('type') === ROOM_TYPE_ONE_TO_ONE) { // 1on1
+			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) { // 1on1
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
@@ -228,13 +220,13 @@
 						$(a).avatar($(a).data('user'), 32);
 					}
 				});
-			} else if (this.model.get('type') === ROOM_TYPE_GROUP_CALL) { // Group
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) { // Group
 				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-public-white').addClass('icon-contacts');
 				});
-			} else if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) { // Public room
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) { // Public room
 				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
 
 				_.each(this.$el.find('.avatar'), function(a) {
@@ -243,13 +235,9 @@
 			}
 		},
 		removeRoom: function() {
-			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/participants/self',
-				type: 'DELETE'
-			});
+			this.model.removeSelf();
 		},
 		deleteRoom: function() {
 			if (this.model.get('participantType') !== 1 &&
@@ -257,13 +245,9 @@
 				return;
 			}
 
-			this.cleanupIfActiveRoom();
 			this.$el.slideUp();
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token'),
-				type: 'DELETE'
-			});
+			this.model.destroy();
 		},
 		addRoomToFavorites: function() {
 			if (this.model.get('participantType') === 5) {
@@ -319,81 +303,11 @@
 				}
 			});
 		},
-		cleanupIfActiveRoom: function() {
-			if (!this.model.get('active')) {
-				return;
-			}
-
-			OCA.SpreedMe.app.connection.leaveCurrentRoom(true);
-			OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
-		},
 		joinRoom: function(e) {
 			e.preventDefault();
-			var token = this.ui.room.attr('data-token');
-			OCA.SpreedMe.app.connection.joinRoom(token);
 
-			OC.Util.History.pushState({
-				token: token
-			}, OC.generateUrl('/call/' + token));
+			this.model.join();
 		},
-		addRoomMessage: function() {
-			console.log('addRoomMessage');
-			var participants = this.model.get('participants');
-
-			switch(this.model.get('type')) {
-				case ROOM_TYPE_ONE_TO_ONE:
-					var participantId = '',
-						participantName = '';
-
-					_.each(participants, function(data, userId) {
-						if (OC.getCurrentUser().uid !== userId) {
-							participantId = userId;
-							participantName = data.name;
-						}
-					});
-
-					OCA.SpreedMe.app.setEmptyContentMessage(
-						{ userId: participantId, displayName: participantName},
-						t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
-					);
-					break;
-				case ROOM_TYPE_PUBLIC_CALL:
-				case ROOM_TYPE_GROUP_CALL:
-					var icon = '',
-						message = '',
-						messageAdditional = '',
-						url = '';
-
-					if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
-						icon = 'icon-public';
-					} else {
-						icon = 'icon-contacts-dark';
-					}
-
-					message = t('spreed', 'Waiting for others to join the call …');
-
-					if (OC.getCurrentUser().uid !== null && Object.keys(participants).length === 1) {
-						message = t('spreed', 'No other people in this call');
-						if (this.model.get('participantType') === 0 || this.model.get('participantType') === 1) {
-							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar');
-						}
-					}
-
-					if (this.model.get('type') === ROOM_TYPE_PUBLIC_CALL) {
-						messageAdditional = t('spreed', 'Share this link to invite others!');
-						if (this.model.get('participantType') === 1 || this.model.get('participantType') === 2) {
-							messageAdditional = t('spreed', 'You can invite others in the participant tab of the sidebar or share this link to invite others!');
-						}
-						url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this.model.get('token'));
-					}
-
-					OCA.SpreedMe.app.setEmptyContentMessage(icon, message, messageAdditional, url);
-					break;
-				default:
-					console.log("Unknown room type", this.model.get('type'));
-					return;
-			}
-		}
 	});
 
 	var RoomListView = Marionette.CollectionView.extend({

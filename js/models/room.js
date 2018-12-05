@@ -75,7 +75,27 @@
 			}
 
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
-		}
+		},
+		join: function() {
+			OCA.SpreedMe.app.connection.joinRoom(this.get('token'));
+		},
+		leave: function() {
+			if (!this.get('active')) {
+				return;
+			}
+
+			OCA.SpreedMe.app.connection.leaveCurrentRoom();
+		},
+		removeSelf: function() {
+			this.destroy({
+				url: this.url() + '/participants/self'
+			});
+		},
+		destroy: function(options) {
+			this.leave();
+
+			return Backbone.Model.prototype.destroy.call(this, options);
+		},
 	});
 
 	OCA.SpreedMe.Models.Room = Room;

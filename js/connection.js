@@ -20,7 +20,7 @@
 		});
 
 		this.app.signaling.on('roomChanged', function() {
-			this.leaveCurrentRoom(false);
+			this.leaveCurrentRoom();
 		}.bind(this));
 	}
 
@@ -31,9 +31,6 @@
 
 		_createCallSuccessHandle: function(ocsResponse) {
 			var token = ocsResponse.ocs.data.token;
-			OC.Util.History.pushState({
-				token: token
-			}, OC.generateUrl('/call/' + token));
 			this.joinRoom(token);
 		},
 		createOneToOneVideoCall: function(recipientUserId) {
@@ -90,17 +87,24 @@
 			this.app.signaling.leaveCurrentRoom();
 			this.app.token = token;
 			this.app.signaling.joinRoom(token);
+
+			if (!OCA.Talk.PublicShareAuth) {
+				OC.Util.History.pushState({
+					token: token
+				}, OC.generateUrl('/call/' + token));
+			}
+
 			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
 		},
-		leaveCurrentRoom: function(deleter) {
+		leaveCurrentRoom: function() {
 			$('#video-fullscreen').addClass('hidden');
 			this.app.signaling.leaveCurrentRoom();
 			if (!OCA.Talk.PublicShareAuth) {
 				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
 			}
 			$('#app-content, #talk-sidebar').removeClass('incall');
-			this.showRoomDeletedMessage(deleter);
+
 			roomsChannel.trigger('leaveCurrentRoom');
 		},
 		joinCall: function(token) {
@@ -130,19 +134,6 @@
 			this.app.signaling.syncRooms();
 			$('#app-content, #talk-sidebar').removeClass('incall');
 		},
-		showRoomDeletedMessage: function(deleter) {
-			if (deleter) {
-				this.app.setEmptyContentMessage(
-					'icon-video',
-					t('spreed', 'Join a conversation or start a new one')
-				);
-			} else {
-				this.app.setEmptyContentMessage(
-					'icon-video-off',
-					t('spreed', 'This conversation has ended')
-				);
-			}
-		}
 	};
 
 })(OCA, OC, $);

@@ -26,6 +26,7 @@
 	OCA.Talk = OCA.Talk || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
+	var localMediaChannel = Backbone.Radio.channel('localMedia');
 
 	OCA.Talk.Application = Marionette.Application.extend({
 		OWNER: 1,
@@ -46,6 +47,11 @@
 		FLAG_IN_CALL: 1,
 		FLAG_WITH_AUDIO: 2,
 		FLAG_WITH_VIDEO: 4,
+
+		/* Must stay in sync with values in "lib/Room.php". */
+		ROOM_TYPE_ONE_TO_ONE: 1,
+		ROOM_TYPE_GROUP: 2,
+		ROOM_TYPE_PUBLIC: 3,
 
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
@@ -77,8 +83,6 @@
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
-		_currentEmptyContent: null,
-		_lastEmptyContent: null,
 		_registerPageEvents: function() {
 			$('#select-participants').select2({
 				ajax: {
@@ -492,12 +496,13 @@
 						// The public page supports only a single room, so the
 						// active room is already the room for the given token.
 						participants = self.activeRoom.get('participants');
-						self.setRoomMessageForGuest(participants);
 					}
 					// Disable video when entering a room with more than 5 participants.
 					if (participants && Object.keys(participants).length > 5) {
 						self.disableVideo();
 					}
+
+					self._emptyContentView.setActiveRoom(self.activeRoom);
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
 
@@ -575,74 +580,11 @@
 			title += ' - ' + oc_defaults.title;
 			window.document.title = title;
 		},
-		/**
-		 *
-		 * @param {string|Object} icon
-		 * @param {string} icon.userId
-		 * @param {string} icon.displayName
-		 * @param {string} message
-		 * @param {string} [messageAdditional]
-		 * @param {string} [url]
-		 */
-		setEmptyContentMessage: function(icon, message, messageAdditional, url) {
-			var $icon = $('#emptycontent-icon'),
-				$emptyContent = $('#emptycontent');
-
-			//Remove previous icon and avatar from emptycontent
-			$icon.removeAttr('class').attr('class', '');
-			$icon.html('');
-
-			if (url) {
-				$('#shareRoomInput').removeClass('hidden').val(url);
-				$('#shareRoomClipboardButton').removeClass('hidden');
-			} else {
-				$('#shareRoomInput').addClass('hidden');
-				$('#shareRoomClipboardButton').addClass('hidden');
-			}
-
-			if (typeof icon === 'string') {
-				$icon.addClass(icon);
-			} else {
-				var $avatar = $('<div>');
-				$avatar.addClass('avatar room-avatar');
-				if (icon.userId !== icon.displayName) {
-					$avatar.avatar(icon.userId, 128, undefined, false, undefined, icon.displayName);
-				} else {
-					$avatar.avatar(icon.userId, 128);
-				}
-				$icon.append($avatar);
-			}
-
-			$emptyContent.find('h2').html(message);
-			$emptyContent.find('p').text(messageAdditional ? messageAdditional : '');
-			this._lastEmptyContent = this._currentEmptyContent;
-			this._currentEmptyContent = arguments;
-		},
-		restoreEmptyContent: function() {
-			this.setEmptyContentMessage.apply(this, this._lastEmptyContent);
-		},
-		setRoomMessageForGuest: function(participants) {
-			if (Object.keys(participants).length === 1) {
-				var participantId = '',
-					participantName = '';
-
-				_.each(participants, function(data, userId) {
-					if (OC.getCurrentUser().uid !== userId) {
-						participantId = userId;
-						participantName = data.name;
-					}
-				});
-
-				OCA.SpreedMe.app.setEmptyContentMessage(
-					{ userId: participantId, displayName: participantName},
-					t('spreed', 'Waiting for {participantName} to join the call …', {participantName: participantName})
-				);
-
-			} else {
-				OCA.SpreedMe.app.setEmptyContentMessage('icon-contacts-dark', t('spreed', 'Waiting for others to join the call …'));
-			}
-		},
 		initialize: function() {
+			this._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
+				el: '#app-content-wrapper > #emptycontent',
+			});
+
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
 			$('#content').append(this._sidebarView.$el);
 
@@ -783,7 +725,7 @@
 			}.bind(this));
 
 			$(window).unload(function () {
-				this.connection.leaveCurrentRoom(false);
+				this.connection.leaveCurrentRoom();
 				this.signaling.disconnect();
 			}.bind(this));
 
@@ -830,6 +772,13 @@
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
 			}
+
+			if (!OCA.SpreedMe.webrtc.capabilities.support) {
+				localMediaChannel.trigger('webRtcNotSupported');
+			} else {
+				localMediaChannel.trigger('waitingForPermissions');
+			}
+
 			OCA.SpreedMe.webrtc.startMedia(this.token);
 		},
 		startLocalMedia: function(configuration) {
@@ -840,7 +789,8 @@
 
 			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
-			this.restoreEmptyContent();
+
+			localMediaChannel.trigger('startLocalMedia');
 		},
 		startWithoutLocalMedia: function(isAudioEnabled, isVideoEnabled) {
 			if (this.callbackAfterMedia) {
@@ -858,6 +808,10 @@
 			this.disableVideo();
 			if (!isVideoEnabled) {
 				this.hasNoVideo();
+			}
+
+			if (OCA.SpreedMe.webrtc.capabilities.support) {
+				localMediaChannel.trigger('startWithoutLocalMedia');
 			}
 		},
 		_onPopState: function(params) {

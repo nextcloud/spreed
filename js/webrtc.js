@@ -314,12 +314,6 @@ var spreedPeerConnectionTable = [];
 		OCA.SpreedMe.webrtc = webrtc;
 
 		OCA.SpreedMe.webrtc.startMedia = function (token) {
-			app.setEmptyContentMessage(
-				'icon-video-off',
-				t('spreed', 'Waiting for camera and microphone permissions'),
-				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
-			);
-
 			webrtc.joinCall(token);
 		};
 
@@ -1035,17 +1029,7 @@ var spreedPeerConnectionTable = [];
 				type: 'error',
 				timeout: 15,
 			});
-			app.restoreEmptyContent();
 		});
-
-		if(!OCA.SpreedMe.webrtc.capabilities.support) {
-			console.log('WebRTC not supported');
-			OCA.SpreedMe.app.setEmptyContentMessage(
-				'icon-video-off',
-				t('spreed', 'WebRTC is not supported in your browser :-/'),
-				t('spreed', 'Please use a different browser like Firefox or Chrome')
-			);
-		}
 
 		OCA.SpreedMe.webrtc.on('channelOpen', function(channel) {
 			console.log('%s datachannel is open', channel.label);
