@@ -51,7 +51,7 @@ Feature: conversation
     And I see that the "You" conversation is active
     When I leave the "You" conversation
     Then I see that the "You" conversation is not shown in the list
-    And I see that the "Join a conversation or start a new one" empty content message is shown in the main view
+    And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
 
   Scenario: delete a one-to-one conversation
@@ -72,7 +72,7 @@ Feature: conversation
     When I act as John
     And I delete the "admin" conversation
     Then I see that the "admin" conversation is not shown in the list
-    And I see that the "Join a conversation or start a new one" empty content message is shown in the main view
+    And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
     And I act as Jane
     And I see that the "user0" conversation is not shown in the list
@@ -86,7 +86,7 @@ Feature: conversation
     And I see that the "You" conversation is active
     And I leave the "You" conversation
     And I see that the "You" conversation is not shown in the list
-    And I see that the "Join a conversation or start a new one" empty content message is shown in the main view
+    And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
     When I create a group conversation
     Then I see that the "You" conversation is active
@@ -107,7 +107,7 @@ Feature: conversation
     And I see that the number of participants shown in the list is "1"
     And I leave the "You" conversation
     And I see that the "You" conversation is not shown in the list
-    And I see that the "Join a conversation or start a new one" empty content message is shown in the main view
+    And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
     When I open the "admin" conversation
     Then I see that the "admin" conversation is active
