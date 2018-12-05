@@ -553,11 +553,16 @@ class Room {
 	 * @param IUser $user
 	 */
 	public function removeUser(IUser $user) {
+		try {
+			$participant = $this->getParticipant($user->getUID());
+		} catch (ParticipantNotFoundException $e) {
+			return;
+		}
+
 		$this->dispatcher->dispatch(self::class . '::preRemoveUser', new GenericEvent($this, [
 			'user' => $user,
+			'participant' => $participant,
 		]));
-
-		$sessionId = $this->getSessionIdForUserId($user->getUID());
 
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
@@ -567,26 +572,8 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postRemoveUser', new GenericEvent($this, [
 			'user' => $user,
-			'sessionId' => $sessionId,
+			'participant' => $participant,
 		]));
-	}
-
-	/**
-	 * @param string $userId
-	 */
-	protected function getSessionIdForUserId(string $userId): string {
-		$query = $this->db->getQueryBuilder();
-		$query->select('session_id')
-			->from('talk_participants')
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
-		$result = $query->execute();
-
-		$result = $query->execute();
-		$row = $result->fetch();
-		$result->closeCursor();
-
-		return $row['session_id'];
 	}
 
 	/**
@@ -605,7 +592,6 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postRemoveBySession', new GenericEvent($this, [
 			'participant' => $participant,
-			'sessionId' => $participant->getSessionId(),
 		]));
 	}
 
@@ -665,11 +651,16 @@ class Room {
 	 * @param string $userId
 	 */
 	public function leaveRoom($userId) {
+		try {
+			$participant = $this->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			return;
+		}
+
 		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'participant' => $participant,
 		]));
-
-		$sessionId = $this->getSessionIdForUserId($userId);
 
 		// Reset session when leaving a normal room
 		$query = $this->db->getQueryBuilder();
@@ -691,8 +682,8 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'participant' => $participant,
 			'selfJoin' => $selfJoined,
-			'sessionId' => $sessionId,
 		]));
 	}
 

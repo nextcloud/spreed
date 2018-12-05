@@ -148,9 +148,10 @@ class Application extends App {
 			// When "addMessageForAllParticipants" is called the participant is
 			// no longer in the room, so the message needs to be explicitly
 			// added for the participant.
-			$sessionId = $event->getArgument('sessionId');
-			if ($sessionId !== null && $sessionId !== '' && $sessionId !== '0') {
-				$messages->addMessage($sessionId, $sessionId, 'refresh-participant-list');
+			/** @var Participant $participant */
+			$participant = $event->getArgument('participant');
+			if ($participant->getSessionId() !== '0') {
+				$messages->addMessage($participant->getSessionId(), $participant->getSessionId(), 'refresh-participant-list');
 			}
 		};
 
@@ -159,9 +160,6 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
 
 		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
 			/** @var Messages $messages */
 			$messages = $this->getContainer()->query(Messages::class);
 			$participants = $event->getArgument('participants');
