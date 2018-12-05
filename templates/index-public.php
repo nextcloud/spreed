@@ -28,6 +28,7 @@ script(
 		'views/callinfoview',
 		'views/chatview',
 		'views/editabletextlabel',
+		'views/emptycontentview',
 		'views/participantlistview',
 		'views/participantview',
 		'views/richobjectstringparser',

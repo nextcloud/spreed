@@ -91,9 +91,6 @@
 				});
 		},
 
-		setEmptyContentMessage: function() {
-		},
-
 		initialize: function() {
 			if (OC.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
