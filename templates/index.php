@@ -8,6 +8,7 @@ vendor_style('select2/select2');
 style('spreed', 'style');
 style('spreed', 'chatview');
 style('spreed', 'autocomplete');
+style('spreed', 'video');
 script(
 	'spreed',
 	[
