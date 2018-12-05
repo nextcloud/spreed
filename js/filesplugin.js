@@ -251,6 +251,9 @@
 			}
 
 			var shareTypes = fileInfo.get('shareTypes').filter(function(shareType) {
+				// shareType could be an integer or a string depending on
+				// whether the Sharing tab was opened or not.
+				shareType = parseInt(shareType);
 				return shareType === OC.Share.SHARE_TYPE_USER ||
 						shareType === OC.Share.SHARE_TYPE_GROUP ||
 						shareType === OC.Share.SHARE_TYPE_CIRCLE ||
