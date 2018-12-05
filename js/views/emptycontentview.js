@@ -62,14 +62,31 @@
 
 			this.listenTo(roomsChannel, 'leaveCurrentRoom', this.setEmptyContentMessageWhenConversationEnded);
 
-			this.listenTo(localMediaChannel, 'webRtcNotSupported', this.setEmptyContentMessageWhenWebRtcIsNotSupported);
-			this.listenTo(localMediaChannel, 'waitingForPermissions', this.setEmptyContentMessageWhenWaitingForMediaPermissions);
-			this.listenTo(localMediaChannel, 'startLocalMedia', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
-			this.listenTo(localMediaChannel, 'startWithoutLocalMedia', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.listenTo(localMediaChannel, 'webRtcNotSupported', function() {
+				this._disableUpdatesOnActiveRoomChanges();
+
+				this.setEmptyContentMessageWhenWebRtcIsNotSupported();
+			});
+			this.listenTo(localMediaChannel, 'waitingForPermissions', function() {
+				this._disableUpdatesOnActiveRoomChanges();
+
+				this.setEmptyContentMessageWhenWaitingForMediaPermissions();
+			});
+			this.listenTo(localMediaChannel, 'startLocalMedia', function() {
+				this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
+
+				this._enableUpdatesOnActiveRoomChanges();
+			});
+			this.listenTo(localMediaChannel, 'startWithoutLocalMedia', function() {
+				this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
+
+				this._enableUpdatesOnActiveRoomChanges();
+			});
 		},
 
 		setActiveRoom: function(activeRoom) {
 			this.stopListening(this._activeRoom, 'destroy', this.setInitialEmptyContentMessage);
+			this._disableUpdatesOnActiveRoomChanges();
 
 			this._activeRoom = activeRoom;
 
@@ -79,6 +96,21 @@
 			// so when the room is destroyed the initial message overwrites the
 			// conversation ended message.
 			this.listenTo(this._activeRoom, 'destroy', this.setInitialEmptyContentMessage);
+			this._enableUpdatesOnActiveRoomChanges();
+		},
+
+		_disableUpdatesOnActiveRoomChanges: function() {
+			this.stopListening(this._activeRoom, 'change:participants', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.stopListening(this._activeRoom, 'change:numGuests', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.stopListening(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.stopListening(this._activeRoom, 'change:type', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+		},
+
+		_enableUpdatesOnActiveRoomChanges: function() {
+			this.listenTo(this._activeRoom, 'change:participants', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.listenTo(this._activeRoom, 'change:numGuests', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.listenTo(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+			this.listenTo(this._activeRoom, 'change:type', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 		},
 
 		/**
