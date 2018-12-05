@@ -75,6 +75,7 @@ class TemplateLoader {
 		Util::addStyle('spreed', 'style');
 		Util::addStyle('spreed', 'chatview');
 		Util::addStyle('spreed', 'autocomplete');
+		Util::addStyle('spreed', 'video');
 
 		Util::addScript('spreed', 'vendor/backbone/backbone-min');
 		Util::addScript('spreed', 'vendor/backbone.radio/build/backbone.radio.min');
