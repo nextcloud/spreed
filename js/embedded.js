@@ -115,7 +115,7 @@
 			this.connection = new OCA.Talk.Connection(this);
 
 			$(window).unload(function () {
-				this.connection.leaveCurrentRoom(false);
+				this.connection.leaveCurrentRoom();
 				this.signaling.disconnect();
 			}.bind(this));
 

@@ -84,7 +84,7 @@
 				return;
 			}
 
-			OCA.SpreedMe.app.connection.leaveCurrentRoom(true);
+			OCA.SpreedMe.app.connection.leaveCurrentRoom();
 		},
 		removeSelf: function() {
 			this.destroy({

@@ -483,6 +483,8 @@
 
 					var participants;
 					if (OC.getCurrentUser().uid) {
+						self.stopListening(self.activeRoom, 'destroy', self.setInitialEmptyContentMessage);
+
 						roomChannel.trigger('active', token);
 
 						self._rooms.forEach(function(room) {
@@ -492,6 +494,8 @@
 						});
 						participants = self.activeRoom.get('participants');
 						self.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
+
+						self.listenTo(self.activeRoom, 'destroy', self.setInitialEmptyContentMessage);
 					} else {
 						// The public page supports only a single room, so the
 						// active room is already the room for the given token.
@@ -620,6 +624,13 @@
 			$emptyContent.find('h2').html(message);
 			$emptyContent.find('p').text(messageAdditional ? messageAdditional : '');
 		},
+		setInitialEmptyContentMessage: function() {
+			OCA.SpreedMe.app.setEmptyContentMessage(
+				'icon-talk',
+				t('spreed', 'Join a conversation or start a new one'),
+				t('spreed', 'Say hi to your friends and colleagues!')
+			);
+		},
 		setEmptyContentMessageWhenWaitingForOthersToJoinTheCall: function() {
 			var icon = '';
 			var message = '';
@@ -694,6 +705,12 @@
 				'icon-video-off',
 				t('spreed', 'Waiting for camera and microphone permissions'),
 				t('spreed', 'Please, give your browser access to use your camera and microphone in order to use this app.')
+			);
+		},
+		setEmptyContentMessageWhenConversationEnded: function() {
+			OCA.SpreedMe.app.setEmptyContentMessage(
+				'icon-video-off',
+				t('spreed', 'This conversation has ended')
 			);
 		},
 		initialize: function() {
@@ -811,6 +828,8 @@
 			});
 
 			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
+				this.setEmptyContentMessageWhenConversationEnded();
+
 				this._chatView.$el.detach();
 				this._chatViewInMainView = false;
 
@@ -837,7 +856,7 @@
 			}.bind(this));
 
 			$(window).unload(function () {
-				this.connection.leaveCurrentRoom(false);
+				this.connection.leaveCurrentRoom();
 				this.signaling.disconnect();
 			}.bind(this));
 
