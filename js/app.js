@@ -65,6 +65,9 @@
 		/** @property {OCA.Talk.Signaling.base} signaling  */
 		signaling: null,
 
+		/** property {String} selector */
+		mainCallElementSelector: '#app-content',
+
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
 		/** @property {OCA.SpreedMe.Views.RoomListView} _roomsView  */

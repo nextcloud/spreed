@@ -24,7 +24,7 @@ var spreedPeerConnectionTable = [];
 			currentUsersNo = 1;
 		}
 
-		var $appContentElement = $('#app-content, #talk-sidebar'),
+		var $appContentElement = $(OCA.SpreedMe.app.mainCallElementSelector),
 			participantsClass = 'participants-' + currentUsersNo,
 			hadScreensharing = $appContentElement.hasClass('screensharing'),
 			hadSidebar = $appContentElement.hasClass('with-app-sidebar');
@@ -1157,7 +1157,7 @@ var spreedPeerConnectionTable = [];
 			// Check if there are still some screens
 			if (!document.getElementById('screens').hasChildNodes()) {
 				screenSharingActive = false;
-				$('#app-content, #talk-sidebar').removeClass('screensharing');
+				$(OCA.SpreedMe.app.mainCallElementSelector).removeClass('screensharing');
 				if (unpromotedSpeakerId) {
 					OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
 					unpromotedSpeakerId = null;
@@ -1183,7 +1183,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
 
 			screenSharingActive = true;
-			$('#app-content, #talk-sidebar').addClass('screensharing');
+			$(OCA.SpreedMe.app.mainCallElementSelector).addClass('screensharing');
 
 			var screens = document.getElementById('screens');
 			if (screens) {
