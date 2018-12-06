@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Files;
 
+use OCA\Spreed\Exceptions\UnauthorizedException;
 use OCA\Spreed\Room;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -35,8 +36,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * specific shared file, for example, when collaboratively editing it. The room
  * is persistent and can be accessed simultaneously by any user with direct
  * access (user, group, circle and room share, but not link share, for example)
- * to that file. The room has no owner, and there are no persistent participants
- * (it is a public room that users join and leave on each session).
+ * to that file. The room has no owner, although self joined users become
+ * persistent participants automatically when they join until they explicitly
+ * leave or no longer have access to the file.
  *
  * These rooms are associated to a "file" object, and their custom behaviour is
  * provided by calling the methods of this class as a response to different room
@@ -58,14 +60,22 @@ class Listener {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->preventUsersWithoutDirectAccessToTheFileFromJoining($room, $event->getArgument('userId'));
+			try {
+				$this->preventUsersWithoutDirectAccessToTheFileFromJoining($room, $event->getArgument('userId'));
+			} catch (UnauthorizedException $e) {
+				$event->setArgument('cancel', true);
+			}
 		};
 		$this->dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->preventGuestsFromJoining($room);
+			try {
+				$this->preventGuestsFromJoining($room);
+			} catch (UnauthorizedException $e) {
+				$event->setArgument('cancel', true);
+			}
 		};
 		$this->dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
 	}
@@ -82,7 +92,7 @@ class Listener {
 	 *
 	 * @param Room $room
 	 * @param string $userId
-	 * @throws \Exception
+	 * @throws UnauthorizedException
 	 */
 	public function preventUsersWithoutDirectAccessToTheFileFromJoining(Room $room, string $userId) {
 		if ($room->getObjectType() !== 'file') {
@@ -91,7 +101,7 @@ class Listener {
 
 		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
 		if (!$share) {
-			throw new \Exception('User does not have direct access to the file');
+			throw new UnauthorizedException('User does not have direct access to the file');
 		}
 	}
 
@@ -101,14 +111,14 @@ class Listener {
 	 * This method should be called before a guest joins a room.
 	 *
 	 * @param Room $room
-	 * @throws \Exception
+	 * @throws UnauthorizedException
 	 */
 	public function preventGuestsFromJoining(Room $room) {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}
 
-		throw new \Exception('Guests are not allowed in rooms for files');
+		throw new UnauthorizedException('Guests are not allowed in rooms for files');
 	}
 
 }

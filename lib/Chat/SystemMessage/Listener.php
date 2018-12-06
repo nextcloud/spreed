@@ -116,7 +116,7 @@ class Listener {
 			/** @var Room $room */
 			$room = $event->getSubject();
 			foreach ($participants as $participant) {
-				if ($userId !== $participant['userId']) {
+				if ($room->getObjectType() === 'file' || $userId !== $participant['userId']) {
 					$this->sendSystemMessage($room, 'user_added', ['user' => $participant['userId']]);
 				}
 			}

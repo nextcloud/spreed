@@ -157,7 +157,13 @@ class SystemMessage {
 		} else if ($message === 'user_added') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			$parsedMessage = $this->l->t('{actor} added {user}');
-			if ($currentUserIsActor) {
+			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You joined the conversation');
+				} else {
+					$parsedMessage = $this->l->t('{actor} joined the conversation');
+				}
+			} else if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
 			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
@@ -165,7 +171,11 @@ class SystemMessage {
 		} else if ($message === 'user_removed') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
-				$parsedMessage = $this->l->t('{actor} left the conversation');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You left the conversation');
+				} else {
+					$parsedMessage = $this->l->t('{actor} left the conversation');
+				}
 			} else {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
