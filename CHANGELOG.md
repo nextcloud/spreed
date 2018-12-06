@@ -1,6 +1,42 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.0.0-beta5 – 2018-12-06
+### Added
+- Chat and call option in the Files app sidebar
+  [#1323](https://github.com/nextcloud/spreed/pull/1323)
+  [#1312](https://github.com/nextcloud/spreed/pull/1312)
+- Users can now select for each conversation whether they want to be notified: always, on mention or never
+  [#1230](https://github.com/nextcloud/spreed/pull/1230)
+- Password protection via Talk now also works for link shares
+  [#1273](https://github.com/nextcloud/spreed/pull/1273)
+- Guests can now be promoted to moderators in on going calls
+  [#1078](https://github.com/nextcloud/spreed/pull/1078)
+- Groups can now be selected when adding participants and will add all members as participants
+  [#1268](https://github.com/nextcloud/spreed/pull/1268)
+- Email addresses can now be added to conversations which will make the room public and send the link via email
+  [#1090](https://github.com/nextcloud/spreed/pull/1090)
+- TURN server settings can now be tested in the admin settings
+  [#1177](https://github.com/nextcloud/spreed/pull/1177)
+
+### Changed
+- Improve performance of chats with multiple hundred messages
+  [#1271](https://github.com/nextcloud/spreed/pull/1271)
+
+### Fixed
+- Fix mentions for users with spaces in their user id
+  [#1254](https://github.com/nextcloud/spreed/pull/1254)
+- Fix avatars in messages by guests
+  [#1240](https://github.com/nextcloud/spreed/pull/1240)
+- Gracefully handle messages with more than 1000 characters
+  [#1229](https://github.com/nextcloud/spreed/pull/1229)
+- Stop signaling when leaving a conversation
+  [#1330](https://github.com/nextcloud/spreed/pull/1330)
+- Fix scroll position when the chat is moved to the sidebar
+  [#1302](https://github.com/nextcloud/spreed/pull/1302)
+- When a files is shared a second time into a chat no error is displayed
+  [#1196](https://github.com/nextcloud/spreed/pull/1196)
+
 ## 4.0.1 – 2018-11-15
 ### Added
 - Add an option to test the TURN configuration in the admin settings
