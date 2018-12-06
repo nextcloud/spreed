@@ -148,7 +148,7 @@
 			this.$el.empty();
 			this._$callContainerWrapper = null;
 
-			if (!OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(this.model)) {
+			if (!this.model || this.model.get('type') === 'dir') {
 				return;
 			}
 
@@ -261,6 +261,7 @@
 
 		initialize: function(options) {
 			this._roomForFileModel = options.roomForFileModel;
+			this._fileList = options.fileList;
 
 			this.listenTo(roomsChannel, 'joinedRoom', this.setActiveRoom);
 			this.listenTo(roomsChannel, 'leaveCurrentRoom', this.setActiveRoom);
@@ -287,12 +288,13 @@
 		/**
 		 * Returns whether the Talk tab can be displayed for the file.
 		 *
+		 * The tab is shown for all files except folders.
+		 *
 		 * @param OCA.Files.FileInfoModel fileInfo
 		 * @return True if the tab can be displayed, false otherwise.
-		 * @see OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile
 		 */
 		canDisplay: function(fileInfo) {
-			if (OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo)) {
+			if (fileInfo && fileInfo.get('type') !== 'dir') {
 				return true;
 			}
 
@@ -319,6 +321,16 @@
 		setFileInfo: function(fileInfo) {
 			if (!this._appStarted) {
 				this.model = fileInfo;
+
+				return;
+			}
+
+			if (!OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo)) {
+				this.model = null;
+
+				this._roomForFileModel.leave();
+
+				this._renderFileNotSharedUi();
 
 				return;
 			}
@@ -371,6 +383,8 @@
 
 			this._roomForFileModel.join(this.model.get('id'));
 
+			this.$el.find('.file-not-shared').remove();
+
 			// If the details view is rendered again after the chat view has
 			// been appended to this tab the chat view would stop working due to
 			// the element being removed instead of detached, which would make
@@ -388,6 +402,28 @@
 			setTimeout(function() {
 				OCA.SpreedMe.app._chatView.reloadMessageList();
 			}, 0);
+		},
+
+		_renderFileNotSharedUi: function() {
+			this.$el.empty();
+
+			var $fileNotSharedMessage = $(
+				'<div class="emptycontent file-not-shared">' +
+				'    <div class="icon icon-talk"></div>' +
+				'    <h2>' + t('spreed', 'Start a conversation') + '</h2>' +
+				'    <p>' + t('spreed', 'Share this file with others to discuss') + '</p>' +
+				'    <button class="primary">' + t('spreed', 'Share') + '</button>' +
+				'</div>');
+
+			$fileNotSharedMessage.find('button').click(function() {
+				// FileList.showDetailsView() is not used to prevent a
+				// reload of the preview, which would cause flickering (although
+				// the preview may be reloaded anyway if the share tab is opened
+				// for the first time...).
+				this._fileList._detailsView.selectTab('shareTabView');
+			}.bind(this));
+
+			this.$el.append($fileNotSharedMessage);
 		},
 
 		setActiveRoom: function(activeRoom) {
@@ -435,6 +471,11 @@
 		],
 
 		attach: function(fileList) {
+			// core sharing is disabled/not loaded
+			if (!OC.Share) {
+				return;
+			}
+
 			var self = this;
 			if (this.ignoreLists.indexOf(fileList.id) >= 0) {
 				return;
@@ -442,7 +483,7 @@
 
 			var roomForFileModel = new OCA.Talk.RoomForFileModel();
 			var talkCallDetailFileInfoView = new OCA.Talk.TalkCallDetailFileInfoView({ roomForFileModel: roomForFileModel, fileList: fileList });
-			var talkChatDetailTabView = new OCA.Talk.TalkChatDetailTabView({ roomForFileModel: roomForFileModel });
+			var talkChatDetailTabView = new OCA.Talk.TalkChatDetailTabView({ roomForFileModel: roomForFileModel, fileList: fileList });
 
 			OCA.SpreedMe.app.on('start', function() {
 				self.setupSignalingEventHandlers();
