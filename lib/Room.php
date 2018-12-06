@@ -27,6 +27,7 @@ namespace OCA\Spreed;
 
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\Exceptions\UnauthorizedException;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -596,24 +597,31 @@ class Room {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param IUser $user
 	 * @param string $password
 	 * @param bool $passedPasswordProtection
 	 * @return string
 	 * @throws InvalidPasswordException
+	 * @throws UnauthorizedException
 	 */
-	public function joinRoom($userId, $password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preJoinRoom', new GenericEvent($this, [
-			'userId' => $userId,
+	public function joinRoom(IUser $user, $password, $passedPasswordProtection = false) {
+		$event = new GenericEvent($this, [
+			'userId' => $user->getUID(),
 			'password' => $password,
 			'passedPasswordProtection' => $passedPasswordProtection,
-		]));
+		]);
+		$this->dispatcher->dispatch(self::class . '::preJoinRoom', $event);
+
+		if ($event->hasArgument('cancel') && $event->getArgument('cancel') === true) {
+			$this->removeUser($user);
+			throw new UnauthorizedException('Participant is not allowed to join');
+		}
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('session_id', $query->createParameter('session_id'))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($userId)));
+			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())));
 
 		$sessionId = $this->secureRandom->generate(255);
 		$query->setParameter('session_id', $sessionId);
@@ -626,7 +634,7 @@ class Room {
 
 			// User joining a public room, without being invited
 			$this->addUsers([
-				'userId' => $userId,
+				'userId' => $user->getUID(),
 				'participantType' => Participant::USER_SELF_JOINED,
 				'sessionId' => $sessionId,
 			]);
@@ -639,7 +647,7 @@ class Room {
 		}
 
 		$this->dispatcher->dispatch(self::class . '::postJoinRoom', new GenericEvent($this, [
-			'userId' => $userId,
+			'userId' => $user->getUID(),
 			'password' => $password,
 			'passedPasswordProtection' => $passedPasswordProtection,
 		]));
@@ -692,9 +700,15 @@ class Room {
 	 * @param bool $passedPasswordProtection
 	 * @return string
 	 * @throws InvalidPasswordException
+	 * @throws UnauthorizedException
 	 */
 	public function joinRoomGuest($password, $passedPasswordProtection = false) {
-		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', new GenericEvent($this));
+		$event = new GenericEvent($this);
+		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', $event);
+
+		if ($event->hasArgument('cancel') && $event->getArgument('cancel') === true) {
+			throw new UnauthorizedException('Participant is not allowed to join');
+		}
 
 		if (!$passedPasswordProtection && !$this->verifyPassword($password)['result']) {
 			throw new InvalidPasswordException();

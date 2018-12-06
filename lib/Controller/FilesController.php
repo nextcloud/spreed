@@ -78,7 +78,8 @@ class FilesController extends OCSController {
 	 * with the given file id. Unlike normal rooms in which the owner is the
 	 * user that created the room these are special rooms without owner
 	 * (although self joined users become persistent participants automatically
-	 * when they join until they explicitly leave).
+	 * when they join until they explicitly leave or no longer have access to
+	 * the file).
 	 *
 	 * In any case, to create or even get the token of the room, the file must
 	 * be shared and the user must have direct access to that file; an error

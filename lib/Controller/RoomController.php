@@ -31,6 +31,7 @@ use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Exceptions\UnauthorizedException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
@@ -1084,14 +1085,17 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$user = $this->userManager->get($this->userId);
 		try {
-			if ($this->userId !== null) {
-				$newSessionId = $room->joinRoom($this->userId, $password, $this->session->getPasswordForRoom($token) === $room->getToken());
+			if ($user instanceof IUser) {
+				$newSessionId = $room->joinRoom($user, $password, $this->session->getPasswordForRoom($token) === $room->getToken());
 			} else {
 				$newSessionId = $room->joinRoomGuest($password, $this->session->getPasswordForRoom($token) === $room->getToken());
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		} catch (UnauthorizedException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
 		$this->session->removePasswordForRoom($token);
