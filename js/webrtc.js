@@ -1024,7 +1024,7 @@ var spreedPeerConnectionTable = [];
 				console.log('Error while accessing microphone & camera: ', error.message || error.name);
 			}
 
-			app.startWithoutLocalMedia(webrtc.webrtc.isAudioEnabled(), webrtc.webrtc.isVideoEnabled());
+			app.startWithoutLocalMedia({audio: false, video: false});
 			OC.Notification.show(message, {
 				type: 'error',
 				timeout: 15,
@@ -1345,31 +1345,6 @@ var spreedPeerConnectionTable = [];
 
 			if (latestSpeakerId === data.id) {
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
-			}
-		});
-
-		OCA.SpreedMe.webrtc.on('localStream', function() {
-			console.log('localStream');
-			if (!app.videoWasEnabledAtLeastOnce) {
-				app.videoWasEnabledAtLeastOnce = true;
-			}
-
-			//Reset audio and video control panel
-			app.hasAudio();
-			app.hasVideo();
-
-			if (!app.videoDisabled) {
-				app.enableVideo();
-			}
-
-			if (!OCA.SpreedMe.webrtc.webrtc.isAudioEnabled()) {
-				app.disableAudio();
-				app.hasNoAudio();
-			}
-
-			if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
-				app.disableVideo();
-				app.hasNoVideo();
 			}
 		});
 	}
