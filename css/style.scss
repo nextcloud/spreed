@@ -126,12 +126,15 @@
 .select2-result .icon-contacts.avatar,
 .select2-result .icon-public-white.avatar,
 .select2-result .icon-mail.avatar,
-#app-navigation .icon-contacts,
 #app-navigation .app-navigation-entry-link .icon {
 	border-radius: 50%;
 	width: 32px;
 	height: 32px;
 	background-color: var(--color-background-darker);
+}
+
+.icon-file-white {
+	@include icon-color('file', 'filetypes', $color-white, 1, true);
 }
 
 #app-navigation .favorite-mark {
