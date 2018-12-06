@@ -35,8 +35,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * specific shared file, for example, when collaboratively editing it. The room
  * is persistent and can be accessed simultaneously by any user with direct
  * access (user, group, circle and room share, but not link share, for example)
- * to that file. The room has no owner, and there are no persistent participants
- * (it is a public room that users join and leave on each session).
+ * to that file. The room has no owner, although self joined users become
+ * persistent participants automatically when they join until they explicitly
+ * leave.
  *
  * These rooms are associated to a "file" object, and their custom behaviour is
  * provided by calling the methods of this class as a response to different room

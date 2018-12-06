@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Files\Util;
 use OCA\Spreed\Manager;
@@ -75,8 +76,9 @@ class FilesController extends OCSController {
 	 * If there is no room associated to the given file id a new room is
 	 * created; the new room is a public room associated with a "file" object
 	 * with the given file id. Unlike normal rooms in which the owner is the
-	 * user that created the room these are special rooms without owner or any
-	 * other persistent participant.
+	 * user that created the room these are special rooms without owner
+	 * (although self joined users become persistent participants automatically
+	 * when they join until they explicitly leave).
 	 *
 	 * In any case, to create or even get the token of the room, the file must
 	 * be shared and the user must have direct access to that file; an error
@@ -99,6 +101,12 @@ class FilesController extends OCSController {
 		} catch (RoomNotFoundException $e) {
 			$node = $share->getNode();
 			$room = $this->manager->createPublicRoom($node->getName(), 'file', $fileId);
+		}
+
+		try {
+			$room->getParticipant($this->currentUser);
+		} catch (ParticipantNotFoundException $e) {
+			$room->addUsers(['userId' => $this->currentUser]);
 		}
 
 		return new DataResponse([
