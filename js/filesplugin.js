@@ -563,6 +563,40 @@
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 				});
 			});
+
+			// Chromium seems to drop a stream when the element it is attached
+			// to is detached or reparented. The sidebar in the Files app is
+			// open and closed using a jQuery animation, which reparents the
+			// whole sidebar and then restores it at the end of the animation,
+			// so closing the sidebar breaks an ongoing call in Chromium. To
+			// prevent that, during a call the functions to open and close the
+			// sidebar are replaced with custom versions that do not use an
+			// animation.
+			var showAppSidebarOriginal = OC.Apps.showAppSidebar;
+			var hideAppSidebarOriginal = OC.Apps.hideAppSidebar;
+
+			var showAppSidebarDuringCall = function($el) {
+				var $appSidebar = $el || $('#app-sidebar');
+				$appSidebar.removeClass('disappear');
+				$('#app-content').trigger(new $.Event('appresized'));
+			};
+
+			var hideAppSidebarDuringCall = function($el) {
+				var $appSidebar = $el || $('#app-sidebar');
+				$appSidebar.addClass('disappear');
+				$('#app-content').trigger(new $.Event('appresized'));
+			};
+
+			OCA.SpreedMe.app.signaling.on('joinCall', function() {
+				OC.Apps.showAppSidebar = showAppSidebarDuringCall;
+				OC.Apps.hideAppSidebar = hideAppSidebarDuringCall;
+			});
+
+			OCA.SpreedMe.app.signaling.on('leaveCall', function() {
+				OC.Apps.showAppSidebar = showAppSidebarOriginal;
+				OC.Apps.hideAppSidebar = hideAppSidebarOriginal;
+			});
+
 		},
 
 		joinRoom: function(token) {
