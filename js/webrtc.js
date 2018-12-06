@@ -1120,6 +1120,8 @@ var spreedPeerConnectionTable = [];
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
+			var screens;
+
 			if (peer) {
 				if (peer.type === 'video') {
 					// a removed peer can't speak anymore ;)
@@ -1145,7 +1147,7 @@ var spreedPeerConnectionTable = [];
 				// handled differently.
 				OCA.SpreedMe.webrtc.emit('localScreenStopped');
 
-				var screens = document.getElementById('screens');
+				screens = document.getElementById('screens');
 				var localScreenContainer = document.getElementById('localScreenContainer');
 				if (screens && localScreenContainer) {
 					screens.removeChild(localScreenContainer);
@@ -1155,7 +1157,8 @@ var spreedPeerConnectionTable = [];
 			}
 
 			// Check if there are still some screens
-			if (!document.getElementById('screens').hasChildNodes()) {
+			screens = document.getElementById('screens');
+			if (!screens || !screens.hasChildNodes()) {
 				screenSharingActive = false;
 				$(OCA.SpreedMe.app.mainCallElementSelector).removeClass('screensharing');
 				if (unpromotedSpeakerId) {
