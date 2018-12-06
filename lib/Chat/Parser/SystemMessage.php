@@ -171,7 +171,11 @@ class SystemMessage {
 		} else if ($message === 'user_removed') {
 			$parsedParameters['user'] = $this->getUser($parameters['user']);
 			if ($parsedParameters['user']['id'] === $parsedParameters['actor']['id']) {
-				$parsedMessage = $this->l->t('{actor} left the conversation');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You left the conversation');
+				} else {
+					$parsedMessage = $this->l->t('{actor} left the conversation');
+				}
 			} else {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
