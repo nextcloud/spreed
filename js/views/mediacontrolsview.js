@@ -347,6 +347,10 @@
 			this.getUI('screensharingMenu').toggleClass('open', false);
 		},
 
+		hideScreensharingButton: function() {
+			this.getUI('screensharingButton').addClass('hidden');
+		},
+
 	});
 
 	OCA.SpreedMe.Views.MediaControlsView = MediaControlsView;

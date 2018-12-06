@@ -57,6 +57,7 @@ class TemplateLoader {
 		Util::addStyle('spreed', 'files');
 		Util::addStyle('spreed', 'chatview');
 		Util::addStyle('spreed', 'autocomplete');
+		Util::addStyle('spreed', 'video');
 
 		Util::addScript('spreed', 'vendor/backbone/backbone-min');
 		Util::addScript('spreed', 'vendor/backbone.radio/build/backbone.radio.min');
@@ -68,11 +69,16 @@ class TemplateLoader {
 		Util::addScript('spreed', 'models/chatmessagecollection');
 		Util::addScript('spreed', 'models/room');
 		Util::addScript('spreed', 'models/roomcollection');
+		Util::addScript('spreed', 'views/callbutton');
 		Util::addScript('spreed', 'views/chatview');
 		Util::addScript('spreed', 'views/editabletextlabel');
+		Util::addScript('spreed', 'views/emptycontentview');
+		Util::addScript('spreed', 'views/mediacontrolsview');
 		Util::addScript('spreed', 'views/richobjectstringparser');
 		Util::addScript('spreed', 'views/templates');
 		Util::addScript('spreed', 'views/virtuallist');
+		Util::addScript('spreed', 'simplewebrtc');
+		Util::addScript('spreed', 'webrtc');
 		Util::addScript('spreed', 'signaling');
 		Util::addScript('spreed', 'connection');
 		Util::addScript('spreed', 'embedded');

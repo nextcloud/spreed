@@ -53,6 +53,9 @@
 		/** @property {OCA.Talk.Signaling.base} signaling  */
 		signaling: null,
 
+		/** property {String} selector */
+		mainCallElementSelector: '#call-container',
+
 		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
 		_rooms: null,
 
@@ -79,6 +82,7 @@
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:participantFlags');
 
+					var participants;
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
 
@@ -87,6 +91,11 @@
 								self.activeRoom = room;
 							}
 						});
+						participants = self.activeRoom.get('participants');
+					}
+					// Disable video when entering a room with more than 5 participants.
+					if (participants && Object.keys(participants).length > 5) {
+						self.disableVideo();
 					}
 				});
 		},
@@ -106,6 +115,12 @@
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.stopReceivingMessages();
 			});
+
+			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
+				app: this,
+				webrtc: OCA.SpreedMe.webrtc,
+				sharedScreens: OCA.SpreedMe.sharedScreens,
+			});
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
@@ -117,6 +132,101 @@
 			}.bind(this));
 
 			this._registerPageEvents();
+		},
+
+		setupWebRTC: function() {
+			if (!OCA.SpreedMe.webrtc) {
+				OCA.SpreedMe.initWebRTC(this);
+				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
+			}
+			OCA.SpreedMe.webrtc.startMedia(this.token);
+		},
+		startLocalMedia: function(configuration) {
+			if (this.callbackAfterMedia) {
+				this.callbackAfterMedia(configuration);
+				this.callbackAfterMedia = null;
+			}
+
+			$('.videoView').removeClass('hidden');
+			this.initAudioVideoSettings(configuration);
+		},
+		startWithoutLocalMedia: function(configuration) {
+			if (this.callbackAfterMedia) {
+				this.callbackAfterMedia(null);
+				this.callbackAfterMedia = null;
+			}
+
+			$('.videoView').removeClass('hidden');
+			this.initAudioVideoSettings(configuration);
+		},
+		initAudioVideoSettings: function(configuration) {
+			if (configuration.audio !== false) {
+				this._mediaControlsView.hasAudio();
+
+				if (this._mediaControlsView.audioDisabled) {
+					this._mediaControlsView.disableAudio();
+				} else {
+					this._mediaControlsView.enableAudio();
+				}
+			} else {
+				this._mediaControlsView.disableAudio();
+				this._mediaControlsView.hasNoAudio();
+			}
+
+			if (configuration.video !== false) {
+				this._mediaControlsView.hasVideo();
+
+				if (this._mediaControlsView.videoDisabled) {
+					this.disableVideo();
+				} else {
+					this.enableVideo();
+				}
+			} else {
+				this.disableVideo();
+				this._mediaControlsView.hasNoVideo();
+			}
+		},
+		enableVideoUI: function() {
+			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
+			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
+
+			avatarContainer.hide();
+			localVideo.show();
+		},
+		enableVideo: function() {
+			if (this._mediaControlsView.enableVideo()) {
+				this.enableVideoUI();
+			}
+		},
+		hideVideo: function() {
+			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
+			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
+
+			var avatar = avatarContainer.find('.avatar');
+			var guestName = localStorage.getItem("nick");
+			if (OC.getCurrentUser().uid) {
+				avatar.avatar(OC.getCurrentUser().uid, 128);
+			} else {
+				avatar.imageplaceholder('?', guestName, 128);
+				avatar.css('background-color', '#b9b9b9');
+				if (this.displayedGuestNameHint === false) {
+					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
+					this.displayedGuestNameHint = true;
+				}
+			}
+
+			avatarContainer.removeClass('hidden');
+			avatarContainer.show();
+			localVideo.hide();
+		},
+		disableVideo: function() {
+			this._mediaControlsView.disableVideo();
+			// Always hide the video, even if "disableVideo" returned "false".
+			this.hideVideo();
+		},
+		// Called from webrtc.js
+		disableScreensharingButton: function() {
+			this._mediaControlsView.disableScreensharingButton();
 		},
 	});
 

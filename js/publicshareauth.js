@@ -76,6 +76,8 @@
 				'<div class="nameIndicator">' +
 				'</div>');
 
+			OCA.SpreedMe.app.mainCallElementSelector = '#talk-sidebar';
+
 			OCA.SpreedMe.app._emptyContentView.destroy();
 			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
 				el: '#talk-sidebar > #emptycontent'
