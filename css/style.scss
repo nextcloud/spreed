@@ -176,34 +176,8 @@
 	}
 }
 
-.public-room {
-	display: block !important;
-}
-
-.private-room,
 .hidden-important {
 	display: none !important;
-}
-
-.icon-clippy.public-room {
-	background-size: 16px;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	padding: 16px;
-}
-
-.icon-delete.public-room {
-	background-size: 16px;
-	position: absolute;
-	right: 0;
-	top: 4px;
-	padding: 16px;
-	opacity: .5;
-}
-
-.icon-clippy.public-room {
-	background-position-y: 8px !important;
 }
 
 /**
