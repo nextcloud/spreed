@@ -156,9 +156,9 @@
 		templateContext: function() {
 			var icon = '';
 			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
-				icon = 'icon-contacts';
+				icon = 'icon icon-contacts';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
-				icon = 'icon-public-white';
+				icon = 'icon icon-public-white';
 			}
 
 			// If a room is a one2one room it can not be removed from the list, only be deleted for both participants.
