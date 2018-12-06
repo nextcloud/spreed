@@ -215,7 +215,7 @@
 				url = window.location.protocol + '//' + window.location.host + OC.generateUrl('/call/' + this._activeRoom.get('token'));
 			}
 
-			if (this._activeRoom.get('objectType') === 'share:password') {
+			if (this._activeRoom.get('objectType') === 'share:password' || this._activeRoom.get('objectType') === 'file') {
 				messageAdditional = '';
 				url = '';
 			}

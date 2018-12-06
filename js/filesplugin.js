@@ -132,6 +132,10 @@
 				// Signaling uses its own event system, so Backbone methods can
 				// not be used.
 				OCA.SpreedMe.app.signaling.on('leaveCall', this._boundHideCallUi);
+
+				if (this._emptyContentView) {
+					this._emptyContentView.setActiveRoom(activeRoom);
+				}
 			}
 		},
 
@@ -152,6 +156,7 @@
 
 			this.$el.append(this._$callContainerWrapper);
 			$('#call-container-wrapper').append('<div id="call-container"></div>');
+			$('#call-container-wrapper').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p></p></div>');
 			$('#call-container').append('<div id="videos"><div id="localVideoContainer" class="videoView videoContainer"></div></div>');
 			$('#call-container').append('<div id="screens"></div>');
 
@@ -160,6 +165,13 @@
 				'<div class="avatar-container hidden">' +
 				'	<div class="avatar"></div>' +
 				'</div>');
+
+			if (this._emptyContentView) {
+				this._emptyContentView.destroy();
+			}
+			this._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
+				el: '#call-container-wrapper > #emptycontent',
+			});
 
 			OCA.SpreedMe.app._mediaControlsView.render();
 			OCA.SpreedMe.app._mediaControlsView.hideScreensharingButton();

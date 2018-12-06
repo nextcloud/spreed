@@ -15,6 +15,16 @@
 	margin-top: -15px;
 }
 
+.talkCallInfoView #call-container-wrapper #emptycontent-icon {
+	width: 128px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+
+.talkCallInfoView #call-container-wrapper #call-container.incall ~ #emptycontent {
+	display: none;
+}
+
 .talkCallInfoView #call-container-wrapper #call-container:not(.incall) {
 	display: none;
 }
