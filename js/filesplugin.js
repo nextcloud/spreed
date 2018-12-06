@@ -471,6 +471,11 @@
 		],
 
 		attach: function(fileList) {
+			// core sharing is disabled/not loaded
+			if (!OC.Share) {
+				return;
+			}
+
 			var self = this;
 			if (this.ignoreLists.indexOf(fileList.id) >= 0) {
 				return;
