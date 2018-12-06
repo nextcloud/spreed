@@ -211,8 +211,6 @@
 		},
 		checkSharingStatus: function() {
 			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) { // 1on1
-				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
-
 				_.each(this.$el.find('.avatar'), function(a) {
 					if ($(a).data('user-display-name')) {
 						$(a).avatar($(a).data('user'), 32, undefined, false, undefined, $(a).data('user-display-name'));
@@ -221,14 +219,10 @@
 					}
 				});
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) { // Group
-				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
-
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-public-white').addClass('icon-contacts');
 				});
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) { // Public room
-				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
-
 				_.each(this.$el.find('.avatar'), function(a) {
 					$(a).removeClass('icon-contacts').addClass('icon-public-white');
 				});
