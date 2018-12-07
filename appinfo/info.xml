@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>4.99.5</version>
+	<version>5.99.0</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -44,7 +44,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/contacts-menu.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="15" max-version="16" />
+		<nextcloud min-version="16" max-version="16" />
 	</dependencies>
 
 	<background-jobs>
