@@ -6,14 +6,14 @@
 
 ## Why is this so awesome?
 
-* :speech_balloon: **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.
-* :busts_in_silhouette: **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
-* :computer: **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer) or Chrome with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
-* :rocket: **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
-* :see_no_evil: **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
+* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.
+* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
+* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer) or Chrome with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
+* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
+* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
-* :raising_hand: [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
+* 🙋 [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
 If you have suggestions or problems, please [open an issue](https://github.com/nextcloud/spreed/issues) or contribute directly :)
 
@@ -24,7 +24,7 @@ Firefox | Chrome/Chromium | Edge | Safari | Opera
 ✔️ 52 or later | ✔️ 49 or later | ⏳ [Planned](https://github.com/nextcloud/spreed/issues/687) | ⏳ [Planned](https://github.com/nextcloud/spreed/issues/687) | ❌ Not planned yet
 
 
-### Installing
+## Installing for Production
 
 Nextcloud Talk is really easy to install. You just need to enable the app from the [Nextcloud App Store](https://apps.nextcloud.com/apps/spreed) and everything will work out of the box.
 
@@ -35,7 +35,29 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
 ## Development setup
 
-Simply clone this repository into the `apps` folder of your Nextcloud development instance. Then activate it through the apps management. :tada:
+1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
+2. Run `make dev-setup`
+3. Then activate it through the apps management. :tada:
+
+We are also available on [Freenode IRC #nextcloud-talk](https://webchat.freenode.net/?channels=nextcloud-talk), if you want to join the discussion.
+
+
+### Milestones and Branches
+
+#### Branches
+
+In the Talk app we have one branch per Nextcloud server version. stable* branches of the app should always work with the same branch of the Nextcloud server.
+This is only off close to releases of the server, to allow easier finishing of features, so we don't have to backport them.
+
+#### Milestones
+
+* 5.0.0 - **Numeric** milestones are settled and waiting for their release or some final polishing
+* 💙 Next Minor (15) - The **next minor** milestone is for issues/PR that go into the next Dot-Release for the given Nextcloud version (in the example 15 - e.g. 5.0.1)
+* 💚 Next Major - The **next major** milestone is for issues/PR that go into the next feature release for the new Major Nextcloud version (as there are Minors for 15, this would be 16)
+* 💛 Following Major - The **following major** milestone is for issues/PR that should be worked towards/on but didn't make it into the next major due to timing constraints
+* 💔 Backlog - The **backlog** milestone is assigned to all remaining issues
+
+You can always pick a task of any of the milestones and we will help you to get it into the assigned milestone or also an earlier one if time permits. It's just a matter of having an overview and better visibility what we think should be worked on, but it's not exclusive.
 
 
 ### Disabling internal camera/audio for testing
@@ -46,42 +68,4 @@ Simply clone this repository into the `apps` folder of your Nextcloud developmen
 
 ## Contribution Guidelines
 
-Please read the [Code of Conduct](https://nextcloud.com/community/code-of-conduct/). This document offers some guidance to ensure Nextcloud participants can cooperate effectively in a positive and inspiring atmosphere, and to explain how together we can strengthen and support each other.
-
-For more information please review the [guidelines for contributing](https://github.com/nextcloud/server/blob/master/CONTRIBUTING.md) to this repository.
-
-### Apply a license
-
-All contributions to this repository are considered to be licensed under
-the GNU AGPLv3 or any later version.
-
-Contributors to the Spreed app retain their copyright. Therefore we recommend
-to add following line to the header of a file, if you changed it substantially:
-
-```
-@copyright Copyright (c) <year>, <your name> (<your email address>)
-```
-
-For further information on how to add or update the license header correctly please have a look at [our licensing HowTo][applyalicense].
-
-### Sign your work
-
-We use the Developer Certificate of Origin (DCO) as a additional safeguard
-for the Nextcloud project. This is a well established and widely used
-mechanism to assure contributors have confirmed their right to license
-their contribution under the project's license.
-Please read [developer-certificate-of-origin][dcofile].
-If you can certify it, then just add a line to every git commit message:
-
-````
-  Signed-off-by: Random J Developer <random@developer.example.org>
-````
-
-Use your real name (sorry, no pseudonyms or anonymous contributions).
-If you set your `user.name` and `user.email` git configs, you can sign your
-commit automatically with `git commit -s`. You can also use git [aliases](https://git-scm.com/book/tr/v2/Git-Basics-Git-Aliases)
-like `git config --global alias.ci 'commit -s'`. Now you can commit with
-`git ci` and the commit will be signed.
-
-[dcofile]: https://github.com/nextcloud/server/blob/master/contribute/developer-certificate-of-origin
-[applyalicense]: https://github.com/nextcloud/server/blob/master/contribute/HowToApplyALicense.md
+For more information please see the [guidelines for contributing](https://github.com/nextcloud/spreed/blob/master/.github/contributing.md) to this repository.
