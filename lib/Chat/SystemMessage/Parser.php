@@ -83,6 +83,10 @@ class Parser {
 
 	public function parseMessage(IComment $comment): array {
 		$data = json_decode($comment->getMessage(), true);
+		if (!\is_array($data)) {
+			return [$comment->getMessage(), []];
+		}
+
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 
