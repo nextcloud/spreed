@@ -255,7 +255,7 @@ class SystemMessageTest extends TestCase {
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'user', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'actor'], 'actor', [
-				'{actor} left the conversation',
+				'You left the conversation',
 				['actor' => ['id' => 'actor', 'type' => 'user'], 'user' => ['id' => 'actor', 'type' => 'user']],
 			]],
 			['user_removed', ['user' => 'user'], 'user', [
