@@ -120,6 +120,7 @@ OC.L10N.register(
     "{user} mentioned you in a group conversation" : "{user} megemlített téged egy csoportos beszélgetésben",
     "A guest mentioned you in a group conversation: %s" : "Egy vendég megemlített téged egy csoportos beszélgetésben: %s",
     "A guest mentioned you in a group conversation: {call}" : "Egy vendég megemlített téged egy csoportos beszélgetésben: {call}",
-    "A guest mentioned you in a group conversation" : "Egy vendég megemlített téged egy csoportos beszélgetésben"
+    "A guest mentioned you in a group conversation" : "Egy vendég megemlített téged egy csoportos beszélgetésben",
+    "The TURN server settings are valid." : "A TURN szerver beállítása érvényes."
 },
 "nplurals=2; plural=(n != 1);");
