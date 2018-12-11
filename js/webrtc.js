@@ -1246,15 +1246,17 @@ var spreedPeerConnectionTable = [];
 			var signaling = OCA.SpreedMe.app.signaling;
 
 			var currentSessionId = signaling.getSessionid();
-			OCA.SpreedMe.webrtc.getPeers(null, 'video').forEach(function (existingPeer) {
-				if (existingPeer.id === currentSessionId) {
+			for (var sessionId in usersInCallMapping) {
+				if (!usersInCallMapping.hasOwnProperty(sessionId)) {
+					continue;
+				} else if (sessionId === currentSessionId) {
 					// Running with MCU, no need to create screensharing
 					// subscriber for client itself.
-					return;
+					continue;
 				}
 
-				createScreensharingPeer(signaling, existingPeer.id);
-			});
+				createScreensharingPeer(signaling, sessionId);
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
