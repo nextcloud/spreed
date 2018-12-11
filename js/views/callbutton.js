@@ -56,6 +56,7 @@
 		ui: {
 			'joinCallButton': 'button.join-call',
 			'leaveCallButton': 'button.leave-call',
+			'workingIcon': '.icon-loading-small',
 		},
 
 		events: {
@@ -96,10 +97,12 @@
 
 		_waitForCallToBeJoined: function() {
 			this.getUI('joinCallButton').prop('disabled', true);
+			this.getUI('workingIcon').removeClass('hidden');
 		},
 
 		_waitForCallToBeLeft: function() {
 			this.getUI('leaveCallButton').prop('disabled', true);
+			this.getUI('workingIcon').removeClass('hidden');
 		},
 
 	});

@@ -5,7 +5,7 @@ templates['callbutton'] = template({"1":function(container,depth0,helpers,partia
 
   return "<button class=\"leave-call primary\">"
     + container.escapeExpression(((helper = (helper = helpers.leaveCallText || (depth0 != null ? depth0.leaveCallText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"leaveCallText","hash":{},"data":data}) : helper)))
-    + "</button>\n";
+    + "<span class=\"icon icon-loading-small hidden\"></span></button>\n";
 },"3":function(container,depth0,helpers,partials,data) {
     var stack1;
 
@@ -15,13 +15,13 @@ templates['callbutton'] = template({"1":function(container,depth0,helpers,partia
 
   return "<button class=\"join-call call-ongoing primary\">"
     + container.escapeExpression(((helper = (helper = helpers.joinCallText || (depth0 != null ? depth0.joinCallText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"joinCallText","hash":{},"data":data}) : helper)))
-    + "</button>\n";
+    + "<span class=\"icon icon-loading-small hidden\"></span></button>\n";
 },"6":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "<button class=\"join-call primary\">"
     + container.escapeExpression(((helper = (helper = helpers.startCallText || (depth0 != null ? depth0.startCallText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"startCallText","hash":{},"data":data}) : helper)))
-    + "</button>\n";
+    + "<span class=\"icon icon-loading-small hidden\"></span></button>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 
