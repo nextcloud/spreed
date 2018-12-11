@@ -319,7 +319,7 @@
 						break;
 					case "EXTENSION_UNAVAILABLE":
 						var  extensionURL = null;
-						if (!!window.chrome && !!window.chrome.webstore) {// Chrome
+						if (!!window.chrome) {// Chrome
 							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
 						}
 
