@@ -3886,8 +3886,7 @@
 		}
 
 		if (window.navigator.userAgent.match('Chrome')) {
-			var chromematch = window.navigator.userAgent.match(/Chrome\/(.*)\b/);
-			var chromever = chromematch !== null ? parseInt(chromematch[1], 10) : "";
+			var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(\d+)\./)[1], 10);
 			var maxver = 33;
 			var isCef = !window.chrome;
 			// "known" crash in chrome 34 and 35 on linux
