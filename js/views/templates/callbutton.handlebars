@@ -1,9 +1,9 @@
 {{#if isInCall}}
-<button class="leave-call primary">{{leaveCallText}}</button>
+<button class="leave-call primary">{{leaveCallText}}<span class="icon icon-loading-small hidden"></span></button>
 {{else}}
 	{{#if hasCall}}
-<button class="join-call call-ongoing primary">{{joinCallText}}</button>
+<button class="join-call call-ongoing primary">{{joinCallText}}<span class="icon icon-loading-small hidden"></span></button>
 	{{else}}
-<button class="join-call primary">{{startCallText}}</button>
+<button class="join-call primary">{{startCallText}}<span class="icon icon-loading-small hidden"></span></button>
 	{{/if}}
 {{/if}}

@@ -30,6 +30,8 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 	OCA.Talk.Views = OCA.Talk.Views || {};
 
+	var roomsChannel = Backbone.Radio.channel('rooms');
+
 	var CallButton  = Marionette.View.extend({
 
 		className: 'call-button',
@@ -54,6 +56,7 @@
 		ui: {
 			'joinCallButton': 'button.join-call',
 			'leaveCallButton': 'button.leave-call',
+			'workingIcon': '.icon-loading-small',
 		},
 
 		events: {
@@ -76,6 +79,12 @@
 		 */
 		initialize: function(options) {
 			this._connection = options.connection;
+
+			// While joining or leaving a call the button is disabled; it will
+			// be rendered again and thus enabled once the operation finishes
+			// and the model changes.
+			this.listenTo(roomsChannel, 'joinCall', this._waitForCallToBeJoined);
+			this.listenTo(roomsChannel, 'leaveCurrentCall', this._waitForCallToBeLeft);
 		},
 
 		joinCall: function() {
@@ -84,6 +93,16 @@
 
 		leaveCall: function() {
 			this._connection.leaveCurrentCall();
+		},
+
+		_waitForCallToBeJoined: function() {
+			this.getUI('joinCallButton').prop('disabled', true);
+			this.getUI('workingIcon').removeClass('hidden');
+		},
+
+		_waitForCallToBeLeft: function() {
+			this.getUI('leaveCallButton').prop('disabled', true);
+			this.getUI('workingIcon').removeClass('hidden');
 		},
 
 	});
