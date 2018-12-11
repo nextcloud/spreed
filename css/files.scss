@@ -1,6 +1,28 @@
 #talkChatTabView .call-button {
 	text-align: center;
 	margin-bottom: 10px;
+
+	button {
+		padding-left: 26px;
+		padding-right: 26px;
+	}
+
+	.icon-loading-small {
+		/* Prevent the text from being moved when the icon is shown. */
+		position: absolute;
+
+		margin-left: 5px;
+		margin-top: 1px;
+
+		/* Unset the background image set by the server for loading icons inside
+		 * buttons, as in this case the pure CSS icon can be used instead of the
+		 * image. */
+		background-image: unset;
+
+		&.hidden {
+			display: none;
+		}
+	}
 }
 
 #talkChatTabView .file-not-shared button {
