@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.7 – 2018-12-11
+### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
+  
 ## 4.0.1 – 2018-11-15
 ### Added
 - Add an option to test the TURN configuration in the admin settings
@@ -26,6 +33,15 @@ All notable changes to this project will be documented in this file.
 - Fix rendering, reloading and interaction with the participant list
   [#1222](https://github.com/nextcloud/spreed/pull/1222)
   [#1289](https://github.com/nextcloud/spreed/pull/1289)
+
+## 3.2.6 – 2018-09-20
+### Fixed
+- Fix turn credential generation
+  [#1203](https://github.com/nextcloud/spreed/pull/1203)
+- Fix several inconsistencies with the internal api
+  [#1202](https://github.com/nextcloud/spreed/pull/1202)
+  [#1201](https://github.com/nextcloud/spreed/pull/1201)
+  [#1200](https://github.com/nextcloud/spreed/pull/1200)
 
 ## 4.0.0 – 2018-09-06
 ### Added
@@ -53,6 +69,10 @@ All notable changes to this project will be documented in this file.
   [#1176](https://github.com/nextcloud/spreed/pull/1176)
 - Do not turn all `@…` strings into a mention
   [#1118](https://github.com/nextcloud/spreed/pull/1118)
+
+## 3.2.5 – 2018-07-23
+### Fixed
+- Fix handling of malicious usernames while autocompleting in chat
 
 ## 3.2.4 – 2018-07-12
 ### Added
