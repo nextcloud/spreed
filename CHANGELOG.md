@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.7 – 2018-12-11
+### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
+
 ## 3.2.6 – 2018-09-20
 ### Fixed
 - Fix turn credential generation
