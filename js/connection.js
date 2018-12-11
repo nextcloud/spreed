@@ -112,6 +112,8 @@
 				return;
 			}
 
+			roomsChannel.trigger('joinCall', token);
+
 			var self = this;
 			this.app.callbackAfterMedia = function(configuration) {
 				var flags = OCA.SpreedMe.app.FLAG_IN_CALL;
@@ -130,6 +132,8 @@
 			this.app.setupWebRTC();
 		},
 		leaveCurrentCall: function() {
+			roomsChannel.trigger('leaveCurrentCall');
+
 			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.syncRooms();
 			$(this.app.mainCallElementSelector).removeClass('incall');
