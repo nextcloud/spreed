@@ -3886,9 +3886,10 @@
 		}
 
 		if (window.navigator.userAgent.match('Chrome')) {
-			var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(.*) /)[1], 10);
+			var chromematch = window.navigator.userAgent.match(/Chrome\/(.*)\b/);
+			var chromever = chromematch !== null ? parseInt(chromematch[1], 10) : "";
 			var maxver = 33;
-			var isCef = !window.chrome.webstore;
+			var isCef = !window.chrome;
 			// "known" crash in chrome 34 and 35 on linux
 			if (window.navigator.userAgent.match('Linux')) maxver = 35;
 
