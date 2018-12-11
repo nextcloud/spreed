@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0.2 – 2018-12-11
+### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
+- Fix broken chat when a file that was shared into a room is deleted
+  [#1352](https://github.com/nextcloud/spreed/pull/1352)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
+
 ## 3.2.7 – 2018-12-11
 ### Fixed
 - Fix screensharing in Chrome 71+ and other Chrome based browsers
