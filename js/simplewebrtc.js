@@ -3886,9 +3886,10 @@
 		}
 
 		if (window.navigator.userAgent.match('Chrome')) {
-			var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(.*) /)[1], 10);
+			var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(\d+)\./)[1], 10);
 			var maxver = 33;
-			var isCef = !window.chrome.webstore;
+			// Chrome 71 dropped support for "window.chrome.webstore;".
+			var isCef = (chromever < 71) && !window.chrome.webstore;
 			// "known" crash in chrome 34 and 35 on linux
 			if (window.navigator.userAgent.match('Linux')) maxver = 35;
 
