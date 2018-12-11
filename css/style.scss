@@ -126,12 +126,15 @@
 .select2-result .icon-contacts.avatar,
 .select2-result .icon-public-white.avatar,
 .select2-result .icon-mail.avatar,
-#app-navigation .icon-contacts,
-#app-navigation .app-navigation-entry-link .icon-public-white {
+#app-navigation .app-navigation-entry-link .icon {
 	border-radius: 50%;
 	width: 32px;
 	height: 32px;
 	background-color: var(--color-background-darker);
+}
+
+.icon-file-white {
+	@include icon-color('file', 'filetypes', $color-white, 1, true);
 }
 
 #app-navigation .favorite-mark {
@@ -176,34 +179,8 @@
 	}
 }
 
-.public-room {
-	display: block !important;
-}
-
-.private-room,
 .hidden-important {
 	display: none !important;
-}
-
-.icon-clippy.public-room {
-	background-size: 16px;
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	padding: 16px;
-}
-
-.icon-delete.public-room {
-	background-size: 16px;
-	position: absolute;
-	right: 0;
-	top: 4px;
-	padding: 16px;
-	opacity: .5;
-}
-
-.icon-clippy.public-room {
-	background-position-y: 8px !important;
 }
 
 /**

@@ -30,7 +30,7 @@
 	var uiChannel = Backbone.Radio.channel('ui');
 
 	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
-							'<div class="avatar" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
+							'<div class="avatar {{icon}}" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
 							'{{#if isFavorite}}'+
 							// The favorite mark can not be a child of the
 							// avatar, as it would be removed when the avatar is
@@ -154,9 +154,21 @@
 			});
 		},
 		templateContext: function() {
+			var icon = '';
+			if (this.model.get('objectType') === 'file') {
+				icon = 'icon icon-file-white';
+			} else if (this.model.get('objectType') === 'share:password') {
+				icon = 'icon icon-password-white';
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
+				icon = 'icon icon-contacts';
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+				icon = 'icon icon-public-white';
+			}
+
 			// If a room is a one2one room it can not be removed from the list, only be deleted for both participants.
 			var isRemovable = this.model.get('type') !== 1;
 			return {
+				icon: icon,
 				canFavorite: this.model.get('participantType') !== 5,
 				notifyAlways: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_ALWAYS,
 				notifyMention: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_MENTION,
@@ -170,7 +182,7 @@
 		onRender: function() {
 			var roomURL;
 
-			this.checkSharingStatus();
+			this.setAvatarIfNeeded();
 
 			roomURL = OC.generateUrl('/call/' + this.model.get('token'));
 			this.$el.find('.app-navigation-entry-link').attr('href', roomURL);
@@ -209,30 +221,18 @@
 		toggleMenuClass: function() {
 			this.ui.menu.toggleClass('open', this.menuShown);
 		},
-		checkSharingStatus: function() {
-			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) { // 1on1
-				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
-
-				_.each(this.$el.find('.avatar'), function(a) {
-					if ($(a).data('user-display-name')) {
-						$(a).avatar($(a).data('user'), 32, undefined, false, undefined, $(a).data('user-display-name'));
-					} else {
-						$(a).avatar($(a).data('user'), 32);
-					}
-				});
-			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) { // Group
-				this.$el.find('.public-room').removeClass('public-room').addClass('private-room');
-
-				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).removeClass('icon-public-white').addClass('icon-contacts');
-				});
-			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) { // Public room
-				this.$el.find('.private-room').removeClass('private-room').addClass('public-room');
-
-				_.each(this.$el.find('.avatar'), function(a) {
-					$(a).removeClass('icon-contacts').addClass('icon-public-white');
-				});
+		setAvatarIfNeeded: function() {
+			if (this.model.get('type') !== OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) {
+				return;
 			}
+
+			_.each(this.$el.find('.avatar'), function(a) {
+				if ($(a).data('user-display-name')) {
+					$(a).avatar($(a).data('user'), 32, undefined, false, undefined, $(a).data('user-display-name'));
+				} else {
+					$(a).avatar($(a).data('user'), 32);
+				}
+			});
 		},
 		removeRoom: function() {
 			this.$el.slideUp();
