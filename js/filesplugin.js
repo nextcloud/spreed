@@ -325,6 +325,8 @@
 				return;
 			}
 
+			this.$el.prepend('<div class="ui-not-ready-placeholder icon-loading"></div>');
+
 			OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo).then(function(supported) {
 				if (supported) {
 					this._setFileInfoWhenTalkSidebarIsSupportedForFile(fileInfo);
@@ -344,6 +346,8 @@
 
 		_setFileInfoWhenTalkSidebarIsSupportedForFile: function(fileInfo) {
 			if (this.model === fileInfo) {
+				this.$el.find('.ui-not-ready-placeholder').remove();
+
 				// If the tab was hidden and it is being shown again at this
 				// point the tab has not been made visible yet, so the
 				// operations need to be delayed. However, the scroll position
@@ -388,6 +392,18 @@
 
 				return;
 			}
+
+			// Keep the placeholder visible until the messages for the new room
+			// have been received to prevent showing the messages of the
+			// previous room.
+			// The message collection is updated by the signaling, so there are
+			// no "sync" events to listen to. Moreover, this relies on the fact
+			// that the rooms are never empty (as there will be always at least
+			// a system message for the creation of the room) and thus at least
+			// one model will be always added, triggering the "update" event.
+			OCA.SpreedMe.app._messageCollection.once('update', function() {
+				this.$el.find('.ui-not-ready-placeholder').remove();
+			}, this);
 
 			this._roomForFileModel.join(this.model.get('id'));
 

@@ -273,6 +273,14 @@
 	flex-grow: 1;
 }
 
+/* Hide other UI elements when there is a "UI not ready" placeholder. */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder ~ div,
+/* #chatView needs to be set explicitly to override the display property of
+ * "#app-sidebar #chatView". */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder ~ #chatView {
+	display: none;
+}
+
 #app-sidebar #chatView .comments {
 	padding-right: 15px;
 }
