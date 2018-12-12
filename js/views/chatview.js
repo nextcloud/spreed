@@ -646,7 +646,10 @@
 			} while(oldHtml !== html);
 			$comment.html(html);
 
-			return $comment.text();
+			var message = $comment.text();
+
+			// Little hack to replace the non-breaking space resulting from the editable div content with normal spaces
+			return decodeURI(encodeURI(message).replace(/%C2%A0/g, '%20'));
 		},
 
 		_onSubmitComment: function(e) {
