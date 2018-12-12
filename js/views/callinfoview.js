@@ -77,7 +77,6 @@
 		templateContext: function() {
 			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
-				isGuest: this.model.get('participantType') === 4,
 				canModerate: canModerate,
 				canFullModerate: this._canFullModerate(),
 				isPublic: this.model.get('type') === 3,
