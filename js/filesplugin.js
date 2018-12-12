@@ -266,7 +266,7 @@
 			this.listenTo(roomsChannel, 'joinedRoom', this.setActiveRoom);
 			this.listenTo(roomsChannel, 'leaveCurrentRoom', this.setActiveRoom);
 
-			this.$el.append('<div class="app-not-started-placeholder icon-loading"></div>');
+			this.$el.append('<div class="ui-not-ready-placeholder icon-loading"></div>');
 		},
 
 		/**
@@ -457,7 +457,7 @@
 		setAppStarted: function() {
 			this._appStarted = true;
 
-			this.$el.find('.app-not-started-placeholder').remove();
+			this.$el.find('.ui-not-ready-placeholder').remove();
 
 			// Set again the file info now that the app has started.
 			if (this.model !== null) {
