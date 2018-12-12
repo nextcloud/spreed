@@ -562,15 +562,7 @@
 				$inserted.html('@' + $this.data('user'));
 			});
 
-			var oldHtml;
-			var html = $comment.html();
-			do {
-				// replace works one by one
-				oldHtml = html;
-				html = oldHtml.replace("<br>", "\n");	// preserve line breaks
-			} while(oldHtml !== html);
-			$comment.html(html);
-
+			$comment.html($comment.html().replace(/<br>/g, "\n"));
 			var message = $comment.text();
 
 			// Little hack to replace the non-breaking space resulting from the editable div content with normal spaces
