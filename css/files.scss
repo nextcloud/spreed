@@ -268,9 +268,8 @@
 	padding-right: 0px;
 }
 
-#app-sidebar .tabsContainer .tab .app-not-started-placeholder {
-	/* Make the placeholder take the full tab height until the app is
-	 * started. */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder {
+	/* Make the placeholder take the full tab height until the UI is ready. */
 	flex-grow: 1;
 }
 
