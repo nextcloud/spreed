@@ -325,16 +325,24 @@
 				return;
 			}
 
-			if (!OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo)) {
-				this.model = null;
+			OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo).then(function(supported) {
+				if (supported) {
+					this._setFileInfoWhenTalkSidebarIsSupportedForFile(fileInfo);
+				} else {
+					this._setFileInfoWhenTalkSidebarIsNotSupportedForFile();
+				}
+			}.bind(this));
+		},
 
-				this._roomForFileModel.leave();
+		_setFileInfoWhenTalkSidebarIsNotSupportedForFile: function() {
+			this.model = null;
 
-				this._renderFileNotSharedUi();
+			this._roomForFileModel.leave();
 
-				return;
-			}
+			this._renderFileNotSharedUi();
+		},
 
+		_setFileInfoWhenTalkSidebarIsSupportedForFile: function(fileInfo) {
 			if (this.model === fileInfo) {
 				// If the tab was hidden and it is being shown again at this
 				// point the tab has not been made visible yet, so the
@@ -507,30 +515,52 @@
 		},
 
 		/**
-		 * Returns whether the Talk tab can be displayed for the file.
+		 * Returns whether the Talk sidebar is supported for the file or not.
 		 *
-		 * @return True if the file is shared with the current user or by the
-		 *         current user to another user (as a user, group...), false
-		 *         otherwise.
+		 * In some cases it is not possible to know if the Talk sidebar is
+		 * supported for the file or not just from the data in the FileInfo (for
+		 * example, for files in a folder shared by the current user). Due to
+		 * that a Promise is always returned; the Promise will be resolved as
+		 * soon as possible (in some cases, immediately) with either true or
+		 * false, depending on whether the Talk sidebar is supported for the
+		 * file or not.
+		 *
+		 * The Talk sidebar is supported for a file if the file is shared with
+		 * the current user or by the current user to another user (as a user,
+		 * group...), or if the file is a descendant of a folder that meets
+		 * those conditions.
+		 *
+		 * @param {OCA.Files.FileInfo}
+		 * @return {Promise}
 		 */
 		isTalkSidebarSupportedForFile: function(fileInfo) {
+			var deferred = $.Deferred();
+
 			if (!fileInfo) {
-				return false;
+				deferred.resolve(false);
+
+				return deferred.promise();
 			}
 
 			if (fileInfo.get('type') === 'dir') {
-				return false;
+				deferred.resolve(false);
+
+				return deferred.promise();
 			}
 
 			if (fileInfo.get('shareOwnerId')) {
 				// Shared with me
 				// TODO How to check that it is not a remote share? At least for
 				// local shares "shareTypes" is not defined when shared with me.
-				return true;
+				deferred.resolve(true);
+
+				return deferred.promise();
 			}
 
 			if (!fileInfo.get('shareTypes')) {
-				return false;
+				OCA.Talk.FilesPlugin._isRoomForFileAccessible(fileInfo.id, deferred);
+
+				return deferred.promise();
 			}
 
 			var shareTypes = fileInfo.get('shareTypes').filter(function(shareType) {
@@ -544,10 +574,41 @@
 			});
 
 			if (shareTypes.length === 0) {
-				return false;
+				OCA.Talk.FilesPlugin._isRoomForFileAccessible(fileInfo.id, deferred);
+
+				return deferred.promise();
 			}
 
-			return true;
+			deferred.resolve(true);
+
+			return deferred.promise();
+		},
+
+		/**
+		 * Resolves the Deferred with whether the room for the given file ID is
+		 * accessible or not.
+		 *
+		 * When it is not possible to know whether the Talk sidebar is supported
+		 * for a file or not only from the data in the FileInfo it is necessary
+		 * to query the server.
+		 *
+		 * @param {string} fileId
+		 * @param {Deferred} deferred
+		 */
+		_isRoomForFileAccessible: function(fileId, deferred) {
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1', 2) + 'file/' + fileId,
+				type: 'GET',
+				beforeSend: function(request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: function() {
+					deferred.resolve(true);
+				},
+				error: function() {
+					deferred.resolve(false);
+				}
+			});
 		},
 
 		setupSignalingEventHandlers: function() {
