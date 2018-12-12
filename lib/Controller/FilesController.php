@@ -84,8 +84,9 @@ class FilesController extends OCSController {
 	 * In any case, to create or even get the token of the room, the file must
 	 * be shared and the user must have direct access to that file; an error
 	 * is returned otherwise. A user has direct access to a file if she has
-	 * access to it through a user, group, circle or room share (but not through
-	 * a link share, for example), or if she is the owner of such a file.
+	 * access to it (or to an ancestor) through a user, group, circle or room
+	 * share (but not through a link share, for example), or if she is the owner
+	 * of such a file.
 	 *
 	 * @param string $fileId
 	 * @return DataResponse the status code is "200 OK" if a room is returned,

@@ -36,9 +36,9 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * specific shared file, for example, when collaboratively editing it. The room
  * is persistent and can be accessed simultaneously by any user with direct
  * access (user, group, circle and room share, but not link share, for example)
- * to that file. The room has no owner, although self joined users become
- * persistent participants automatically when they join until they explicitly
- * leave or no longer have access to the file.
+ * to that file (or to an ancestor). The room has no owner, although self joined
+ * users become persistent participants automatically when they join until they
+ * explicitly leave or no longer have access to the file.
  *
  * These rooms are associated to a "file" object, and their custom behaviour is
  * provided by calling the methods of this class as a response to different room
@@ -84,9 +84,9 @@ class Listener {
 	 * Prevents users from joining if they do not have direct access to the
 	 * file.
 	 *
-	 * A user has direct access to a file if she received the file through a
-	 * user, group, circle or room share (but not through a link share, for
-	 * example), or if she is the owner of such a file.
+	 * A user has direct access to a file if she received the file (or an
+	 * ancestor) through a user, group, circle or room share (but not through a
+	 * link share, for example), or if she is the owner of such a file.
 	 *
 	 * This method should be called before a user joins a room.
 	 *
