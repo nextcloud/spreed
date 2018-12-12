@@ -467,7 +467,7 @@
 			// Force initial rendering; changes in the room state will
 			// automatically render the button again from now on.
 			this._callButton.render();
-			this._callButton.$el.prependTo(this.$el);
+			this._callButton.$el.insertBefore(OCA.SpreedMe.app._chatView.$el);
 		},
 
 		setAppStarted: function() {
