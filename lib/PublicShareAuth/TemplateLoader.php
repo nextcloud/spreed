@@ -80,6 +80,7 @@ class TemplateLoader {
 		Util::addScript('spreed', 'vendor/backbone/backbone-min');
 		Util::addScript('spreed', 'vendor/backbone.radio/build/backbone.radio.min');
 		Util::addScript('spreed', 'vendor/backbone.marionette/lib/backbone.marionette.min');
+		Util::addScript('spreed', 'vendor/handlebars/handlebars.min');
 		Util::addScript('spreed', 'vendor/jshashes/hashes.min');
 		Util::addScript('spreed', 'vendor/Caret.js/dist/jquery.caret.min');
 		Util::addScript('spreed', 'vendor/At.js/dist/js/jquery.atwho.min');

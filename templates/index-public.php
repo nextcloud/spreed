@@ -15,6 +15,7 @@ script(
 		'vendor/backbone/backbone-min',
 		'vendor/backbone.radio/build/backbone.radio.min',
 		'vendor/backbone.marionette/lib/backbone.marionette.min',
+		'vendor/handlebars/handlebars.min',
 		'vendor/jshashes/hashes.min',
 		'vendor/Caret.js/dist/jquery.caret.min',
 		'vendor/At.js/dist/js/jquery.atwho.min',
