@@ -91,7 +91,7 @@ input[type="text"] {
 	 * the input just like clicking on the icon would do. To hint this behaviour
 	 * the opacity of the confirm icon is slightly increased in this case.
 	 */
-	&:focus + .icon-confirm {
+	&:focus + .icon-confirm:not(:disabled) {
 		opacity: .6;
 	}
 
@@ -108,9 +108,9 @@ input[type="text"] {
 
 		opacity: .3;
 
-		&:hover,
-		&:focus,
-		&:active {
+		&:hover:not(:disabled),
+		&:focus:not(:disabled),
+		&:active:not(:disabled) {
 			opacity: 1;
 		}
 	}
