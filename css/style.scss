@@ -134,7 +134,7 @@
 }
 
 .icon-file-white {
-	@include icon-color('file', 'filetypes', $color-white, 1, true);
+	@include icon-color('text', 'filetypes', $color-white, 1, true);
 }
 
 #app-navigation .favorite-mark {
