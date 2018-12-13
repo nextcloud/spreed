@@ -736,6 +736,14 @@
 				margin: 0;
 				background-color: transparent !important;
 				border: none;
+
+				opacity: .3;
+
+				&:hover,
+				&:focus,
+				&:active {
+					opacity: 1;
+				}
 			}
 		}
 	}
