@@ -706,6 +706,10 @@
 			.edit-button {
 				display: none;
 
+				/* Use the same bottom margin as h2 (defined in the server) to
+				 * align the button vertically with the label. */
+				margin-bottom: 12px;
+
 				.icon {
 					background-color: transparent;
 					border: none;
