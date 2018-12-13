@@ -27,6 +27,7 @@
 	OCA.Talk = OCA.Talk || {};
 
 	var roomChannel = Backbone.Radio.channel('rooms');
+	var localMediaChannel = Backbone.Radio.channel('localMedia');
 
 	OCA.Talk.Embedded = Marionette.Application.extend({
 		OWNER: 1,
@@ -139,6 +140,13 @@
 				OCA.SpreedMe.initWebRTC(this);
 				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
 			}
+
+			if (!OCA.SpreedMe.webrtc.capabilities.support) {
+				localMediaChannel.trigger('webRtcNotSupported');
+			} else {
+				localMediaChannel.trigger('waitingForPermissions');
+			}
+
 			OCA.SpreedMe.webrtc.startMedia(this.token);
 		},
 		startLocalMedia: function(configuration) {
@@ -149,6 +157,8 @@
 
 			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
+
+			localMediaChannel.trigger('startLocalMedia');
 		},
 		startWithoutLocalMedia: function(configuration) {
 			if (this.callbackAfterMedia) {
@@ -158,6 +168,10 @@
 
 			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
+
+			if (OCA.SpreedMe.webrtc.capabilities.support) {
+				localMediaChannel.trigger('startWithoutLocalMedia');
+			}
 		},
 		initAudioVideoSettings: function(configuration) {
 			if (configuration.audio !== false) {
