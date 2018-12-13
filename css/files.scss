@@ -268,10 +268,17 @@
 	padding-right: 0px;
 }
 
-#app-sidebar .tabsContainer .tab .app-not-started-placeholder {
-	/* Make the placeholder take the full tab height until the app is
-	 * started. */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder {
+	/* Make the placeholder take the full tab height until the UI is ready. */
 	flex-grow: 1;
+}
+
+/* Hide other UI elements when there is a "UI not ready" placeholder. */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder ~ div,
+/* #chatView needs to be set explicitly to override the display property of
+ * "#app-sidebar #chatView". */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder ~ #chatView {
+	display: none;
 }
 
 #app-sidebar #chatView .comments {

@@ -26,6 +26,7 @@ namespace OCA\Spreed\Files;
 
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
+use OCP\Files\NotFoundException;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 
@@ -77,6 +78,8 @@ class Util {
 	 * A user has direct access to a share and, thus, to a file, if she received
 	 * the file through a user, group, circle or room share (but not through a
 	 * public link, for example), or if she is the owner of such a share.
+	 * Note that this includes too files received as a descendant of a folder
+	 * that meets the above conditions.
 	 *
 	 * Only files are taken into account; folders are ignored.
 	 *
@@ -86,15 +89,26 @@ class Util {
 	 */
 	public function getAnyDirectShareOfFileAccessibleByUser(string $fileId, string $userId) {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
-		$fileById = $userFolder->getById($fileId);
-		if (empty($fileById)) {
+		$nodes = $userFolder->getById($fileId);
+		if (empty($nodes)) {
 			return null;
 		}
 
-		foreach ($fileById as $node) {
+		$nodes = array_filter($nodes, function($node) {
+			return $node->getType() === \OCP\Files\FileInfo::TYPE_FILE;
+		});
+
+		while (!empty($nodes)) {
+			$node = array_pop($nodes);
+
 			$share = $this->getAnyDirectShareOfNodeAccessibleByUser($node, $userId);
 			if ($share) {
 				return $share;
+			}
+
+			try {
+				$nodes[] = $node->getParent();
+			} catch (NotFoundException $e) {
 			}
 		}
 
@@ -104,17 +118,11 @@ class Util {
 	/**
 	 * Returns any share of the node that the user has direct access to.
 	 *
-	 * Only files are taken into account; folders are ignored.
-	 *
 	 * @param Node $node
 	 * @param string $userId
 	 * @return IShare|null
 	 */
 	private function getAnyDirectShareOfNodeAccessibleByUser(Node $node, string $userId) {
-		if ($node->getType() === \OCP\Files\FileInfo::TYPE_FOLDER) {
-			return null;
-		}
-
 		$reshares = false;
 		$limit = 1;
 

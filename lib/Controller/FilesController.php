@@ -31,8 +31,10 @@ use OCA\Spreed\Manager;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
+use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
+use OCP\Share\IShare;
 
 class FilesController extends OCSController {
 
@@ -84,12 +86,14 @@ class FilesController extends OCSController {
 	 * In any case, to create or even get the token of the room, the file must
 	 * be shared and the user must have direct access to that file; an error
 	 * is returned otherwise. A user has direct access to a file if she has
-	 * access to it through a user, group, circle or room share (but not through
-	 * a link share, for example), or if she is the owner of such a file.
+	 * access to it (or to an ancestor) through a user, group, circle or room
+	 * share (but not through a link share, for example), or if she is the owner
+	 * of such a file.
 	 *
 	 * @param string $fileId
 	 * @return DataResponse the status code is "200 OK" if a room is returned,
 	 *         or "404 Not found" if the given file id was invalid.
+	 * @throws OCSNotFoundException
 	 */
 	public function getRoom(string $fileId): DataResponse {
 		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
@@ -100,8 +104,12 @@ class FilesController extends OCSController {
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
 		} catch (RoomNotFoundException $e) {
-			$node = $share->getNode();
-			$room = $this->manager->createPublicRoom($node->getName(), 'file', $fileId);
+			try {
+				$name = $this->getFileName($share, $fileId);
+			} catch (NotFoundException $e) {
+				throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+			}
+			$room = $this->manager->createPublicRoom($name, 'file', $fileId);
 		}
 
 		try {
@@ -113,6 +121,34 @@ class FilesController extends OCSController {
 		return new DataResponse([
 			'token' => $room->getToken()
 		]);
+	}
+
+	/**
+	 * Returns the name of the file in the share.
+	 *
+	 * If the given share itself is a file its name is returned; otherwise the
+	 * file is looked for in the given shared folder and its name is returned.
+	 *
+	 * @param IShare $share
+	 * @param string $fileId
+	 * @return string
+	 * @throws NotFoundException
+	 */
+	private function getFileName(IShare $share, string $fileId): string {
+		$node = $share->getNode();
+
+		if ($node->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+			return $node->getName();
+		}
+
+		$fileById = $node->getById($fileId);
+
+		if (empty($fileById)) {
+			throw new NotFoundException('File not found in share');
+		}
+
+		$file = array_shift($fileById);
+		return $file->getName();
 	}
 
 }
