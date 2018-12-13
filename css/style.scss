@@ -72,6 +72,52 @@
 	height: 38px;
 }
 
+
+
+/**
+ * Confirm icon inside input field.
+ *
+ * The input and the icon should be direct children of a wrapper with a relative
+ * position. The input is expected to be as wide as its wrapper.
+ *
+ * It is assumed that the icon will have the standard width for buttons in
+ * inputs of 34px. However, further adjustments may be needed for the input and
+ * the padding depending on the context where they are used.
+ */
+input[type="text"] {
+	padding-right: 34px;
+
+	/* When the input is focused it is expected that pressing enter will confirm
+	 * the input just like clicking on the icon would do. To hint this behaviour
+	 * the opacity of the confirm icon is slightly increased in this case.
+	 */
+	&:focus + .icon-confirm {
+		opacity: .6;
+	}
+
+	& + .icon-confirm {
+		position: absolute;
+		top: 0;
+		/* Compensate for right margin of inputs set in the server. */
+		right: 3px;
+
+		/* Border and background color are removed to show only the icon inside
+		* the input. */
+		border: none;
+		background-color: transparent;
+
+		opacity: .3;
+
+		&:hover,
+		&:focus,
+		&:active {
+			opacity: 1;
+		}
+	}
+}
+
+
+
 /**
  * Sidebar styles
  */
@@ -693,31 +739,10 @@
 			margin-top: -2px;
 
 			input[type="text"] {
-				padding-right: 34px;
-
-				&:focus + .icon-confirm {
-					opacity: .6;
-				}
-
 				& + .icon-confirm {
-					position: absolute;
-					top: 0;
-					/* Compensate for right margin of inputs set in the
-					 * server. */
-					right: 3px;
-
-					border: none;
 					/* Needed to override an important rule set in the
 					 * server. */
 					background-color: transparent !important;
-
-					opacity: .3;
-
-					&:hover,
-					&:focus,
-					&:active {
-						opacity: 1;
-					}
 				}
 			}
 		}
