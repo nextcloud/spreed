@@ -663,6 +663,41 @@
  */
 .detailCallInfoContainer,
 .authorRow {
+	.editable-text-label {
+		.label-wrapper {
+			display: flex;
+			align-items: center;
+			.edit-button {
+				display: none;
+
+				/* Use the same bottom margin as h2 (defined in the server) to
+				 * align the button vertically with the label. */
+				margin-bottom: 12px;
+
+				.icon {
+					background-color: transparent;
+					border: none;
+					padding: 13px 22px;
+					margin: 0;
+				}
+			}
+			&:hover .edit-button {
+				display: block;
+			}
+		}
+		.input-wrapper {
+			display: flex;
+			align-items: center;
+
+			/* Pull up the wrapper slightly to prevent elements below it from
+			 * moving when it is shown. */
+			margin-top: -2px;
+		}
+		.label {
+			margin-left: 5px;
+		}
+	}
+
 	.room-name-container {
 		display: flex;
 
@@ -757,40 +792,6 @@
 	.guest-name p {
 		display: inline-block;
 		padding: 9px 0;
-	}
-	.editable-text-label {
-		.label-wrapper {
-			display: flex;
-			align-items: center;
-			.edit-button {
-				display: none;
-
-				/* Use the same bottom margin as h2 (defined in the server) to
-				 * align the button vertically with the label. */
-				margin-bottom: 12px;
-
-				.icon {
-					background-color: transparent;
-					border: none;
-					padding: 13px 22px;
-					margin: 0;
-				}
-			}
-			&:hover .edit-button {
-				display: block;
-			}
-		}
-		.input-wrapper {
-			display: flex;
-			align-items: center;
-
-			/* Pull up the wrapper slightly to prevent elements below it from
-			 * moving when it is shown. */
-			margin-top: -2px;
-		}
-		.label {
-			margin-left: 5px;
-		}
 	}
 
 	.call-controls-container {
