@@ -84,7 +84,8 @@
  * inputs of 34px. However, further adjustments may be needed for the input and
  * the padding depending on the context where they are used.
  */
-input[type="text"] {
+input[type="text"],
+input[type="password"] {
 	padding-right: 34px;
 
 	/* When the input is focused it is expected that pressing enter will confirm
@@ -897,6 +898,20 @@ input[type="text"] {
 		}
 		.password-button {
 			position: relative;
+
+			.password-form {
+				position: relative;
+
+				.password-confirm {
+					/* Inputs in menu items do not have a right margin, so it
+					 * does not need to be compensated. */
+					right: 0;
+
+					/* Needed to override an important rule set in the
+					 * server. */
+					background-color: transparent !important;
+				}
+			}
 		}
 	}
 }
