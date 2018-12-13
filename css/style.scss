@@ -724,6 +724,10 @@
 		.input-wrapper {
 			display: flex;
 			align-items: center;
+
+			/* Pull up the wrapper slightly to prevent elements below it from
+			 * moving when it is shown. */
+			margin-top: -2px;
 		}
 		.label {
 			margin-left: 5px;
