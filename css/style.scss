@@ -686,12 +686,40 @@
 			}
 		}
 		.input-wrapper {
-			display: flex;
-			align-items: center;
+			position: relative;
 
 			/* Pull up the wrapper slightly to prevent elements below it from
 			 * moving when it is shown. */
 			margin-top: -2px;
+
+			input[type="text"] {
+				padding-right: 34px;
+
+				&:focus + .icon-confirm {
+					opacity: .6;
+				}
+
+				& + .icon-confirm {
+					position: absolute;
+					top: 0;
+					/* Compensate for right margin of inputs set in the
+					 * server. */
+					right: 3px;
+
+					border: none;
+					/* Needed to override an important rule set in the
+					 * server. */
+					background-color: transparent !important;
+
+					opacity: .3;
+
+					&:hover,
+					&:focus,
+					&:active {
+						opacity: 1;
+					}
+				}
+			}
 		}
 		.label {
 			margin-left: 5px;
@@ -759,31 +787,20 @@
 				margin: 4px 0 4px 0 !important;
 				font-size: 15px;
 				font-weight: 300;
-				padding-right: 44px;
 				text-overflow: ellipsis;
 			}
 
 			.icon-confirm.confirm-button {
-				position: absolute;
-				right: 0;
-				top: 1px;
 				padding: 12px 21px;
 				margin: 0;
-				background-color: transparent !important;
-				border: none;
 			}
 
-			.username:focus + .icon-confirm.confirm-button {
-				opacity: .6;
-			}
+			input[type="text"] {
+				padding-right: 44px;
 
-			.username + .icon-confirm.confirm-button {
-				opacity: .3;
-
-				&:hover,
-				&:focus,
-				&:active {
-					opacity: 1;
+				& + .icon-confirm {
+					top: 1px;
+					right: 0;
 				}
 			}
 		}
