@@ -899,17 +899,24 @@ input[type="password"] {
 		.password-button {
 			position: relative;
 
-			.password-form {
-				position: relative;
+			.menuitem {
+				/* Override rule for menu items from server, as in this case
+				 * only the button in the password field is clickable, so the
+				 * pointer cursor should not be used for the whole item. */
+				cursor: default;
 
-				.password-confirm {
-					/* Inputs in menu items do not have a right margin, so it
-					 * does not need to be compensated. */
-					right: 0;
+				.password-form {
+					position: relative;
 
-					/* Needed to override an important rule set in the
-					 * server. */
-					background-color: transparent !important;
+					.password-confirm {
+						/* Inputs in menu items do not have a right margin, so
+						 * it does not need to be compensated. */
+						right: 0;
+
+						/* Needed to override an important rule set in the
+						 * server. */
+						background-color: transparent !important;
+					}
 				}
 			}
 		}
