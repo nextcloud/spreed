@@ -29,7 +29,14 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var TEMPLATE =
-		'<div class="room-name"></div>' +
+		'<div class="room-name-container">' +
+		'	<div class="room-name"></div>' +
+		'	{{#if isRoomForFile}}' +
+		'	<a class="file-link" href="{{fileLink}}" target="_blank" rel="noopener noreferrer" data-original-title="{{fileLinkTitle}}">' +
+		'		<span class="icon icon-file"></span>' +
+		'	</a>' +
+		'	{{/if}}' +
+		'</div>' +
 		'<div class="call-controls-container">' +
 		'	<div class="call-button"></div>' +
 		'{{#if canModerate}}' +
@@ -77,7 +84,9 @@
 		templateContext: function() {
 			var canModerate = this._canModerate();
 			return $.extend(this.model.toJSON(), {
-				isGuest: this.model.get('participantType') === 4,
+				isRoomForFile: this.model.get('objectType') === 'file',
+				fileLink: OC.generateUrl('/f/{fileId}', { fileId: this.model.get('objectId') }),
+				fileLinkTitle: t('spreed', 'Go to file'),
 				canModerate: canModerate,
 				canFullModerate: this._canFullModerate(),
 				isPublic: this.model.get('type') === 3,
@@ -88,6 +97,7 @@
 
 		ui: {
 			'roomName': 'div.room-name',
+			'fileLink': '.file-link',
 			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
@@ -222,6 +232,10 @@
 				trigger: 'hover',
 				title: (this.model.get('hasPassword')) ? t('spreed', 'Change password') : t('spreed', 'Set password')
 			});
+
+			// Set the body as the container to show the tooltip in front of the
+			// header.
+			this.ui.fileLink.tooltip({container: $('body')});
 
 			var self = this;
 			OC.registerMenu($(this.ui.passwordButton), $(this.ui.passwordMenu), function() {

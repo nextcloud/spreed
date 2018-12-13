@@ -134,7 +134,7 @@
 }
 
 .icon-file-white {
-	@include icon-color('file', 'filetypes', $color-white, 1, true);
+	@include icon-color('text', 'filetypes', $color-white, 1, true);
 }
 
 #app-navigation .favorite-mark {
@@ -661,9 +661,52 @@
  */
 .detailCallInfoContainer,
 .authorRow {
+	.room-name-container {
+		display: flex;
+
+		/* Prevent the room name from overlapping the button to close the
+		 * sidebar. */
+		margin-right: 29px;
+
+		a {
+			opacity: .6;
+
+			&:hover,
+			&:focus,
+			&:active {
+				opacity: 1;
+			}
+
+			/* The container height is 42px (line height of 30px and bottom
+			 * margin of 12px, both defined for h2 in the server), so clear the
+			 * extra height of the link below the icon; this limits the
+			 * clickable area to 44x44px, as otherwise it was too near the call
+			 * button. */
+			margin-bottom: 5px;
+
+			.icon {
+				display: block;
+
+				width: 44px;
+				height: 44px;
+
+				background-size: 24px;
+
+				/* Pull up the icon slightly to align it vertically with the
+				 * label, which has a line height of 30px (defined in the
+				 * server). */
+				margin-top: -7px;
+			}
+		}
+	}
+
 	.room-name {
 		display: block;
-		margin-right: 29px;
+
+		/* Limit the room name to the container width and prevent it from
+		 * wrapping the full label when using a flex display; this is needed for
+		 * the edit button and the ellipsis in the name to work as expected. */
+		overflow: hidden;
 
 		.label {
 			white-space: nowrap;
