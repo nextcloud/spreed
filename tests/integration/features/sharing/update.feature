@@ -508,18 +508,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | own one-to-one room |
-      | share_with_displayname | participant1-displayname |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -531,8 +521,6 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | own one-to-one room |
       | share_with_displayname | participant2-displayname |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -544,8 +532,6 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own one-to-one room |
       | share_with_displayname | participant1-displayname |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a one-to-one room invited to
     Given user "participant1" creates room "one-to-one room invited to"
@@ -555,18 +541,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room invited to |
-      | share_with_displayname | participant1-displayname |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -578,8 +554,6 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | one-to-one room invited to |
       | share_with_displayname | participant2-displayname |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -591,8 +565,6 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room invited to |
       | share_with_displayname | participant1-displayname |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with an owned group room
     Given user "participant2" creates room "own group room"
@@ -603,18 +575,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | own group room |
-      | share_with_displayname | Own group room |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -626,8 +588,6 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -639,8 +599,6 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | own group room |
       | share_with_displayname | Own group room |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a group room invited to
     Given user "participant1" creates room "group room invited to"
@@ -652,18 +610,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | group room invited to |
-      | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -675,8 +623,6 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -688,8 +634,6 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -701,8 +645,6 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a group room no longer invited to
     Given user "participant1" creates room "group room no longer invited to"
@@ -753,19 +695,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | own public room |
-      | share_with_displayname | Own public room |
-      | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -778,8 +709,6 @@ Feature: update
       | share_with             | own public room |
       | share_with_displayname | Own public room |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -792,8 +721,6 @@ Feature: update
       | share_with             | own public room |
       | share_with_displayname | Own public room |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -806,8 +733,6 @@ Feature: update
       | share_with             | own public room |
       | share_with_displayname | Own public room |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a public room invited to
     Given user "participant1" creates room "public room invited to"
@@ -819,19 +744,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | public room invited to |
-      | share_with_displayname | Public room invited to |
-      | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -844,8 +758,6 @@ Feature: update
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -858,8 +770,6 @@ Feature: update
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -872,8 +782,6 @@ Feature: update
       | share_with             | public room invited to |
       | share_with_displayname | Public room invited to |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a public room self joined to
     Given user "participant1" creates room "public room self joined to"
@@ -885,19 +793,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /welcome (2).txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/welcome (2).txt |
-      | file_target            | /welcome (2).txt |
-      | share_with             | public room self joined to |
-      | share_with_displayname | Public room self joined to |
-      | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -910,8 +807,6 @@ Feature: update
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -924,8 +819,6 @@ Feature: update
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -938,8 +831,6 @@ Feature: update
       | share_with             | public room self joined to |
       | share_with_displayname | Public room self joined to |
       | token                  | A_TOKEN |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a public room no longer joined to
     Given user "participant1" creates room "public room no longer joined to"
@@ -996,18 +887,8 @@ Feature: update
     When user "participant2" updates last share with
       | permissions            | 1 |
       | expireDate             | +3 days |
-    Then share is returned with
-      | uid_owner              | participant1 |
-      | displayname_owner      | participant1-displayname |
-      | path                   | /test/renamed.txt |
-      | item_type              | file |
-      | mimetype               | text/plain |
-      | storage_id             | shared::/test/renamed.txt |
-      | file_target            | /test/renamed.txt |
-      | share_with             | group room invited to |
-      | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -1019,8 +900,6 @@ Feature: update
       | file_target            | /welcome.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant2" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -1032,8 +911,6 @@ Feature: update
       | file_target            | /test/renamed.txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant1 |
@@ -1045,8 +922,6 @@ Feature: update
       | file_target            | /welcome (2).txt |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
-      | permissions            | 1 |
-      | expiration             | +3 days |
 
   Scenario: update received share with a room no longer invited to after moving it
     Given user "participant1" creates room "group room invited to"
@@ -1101,8 +976,8 @@ Feature: update
       | permissions            | 1 |
     When user "participant2" updates last share with
       | permissions            | 19 |
-    Then the OCS status code should be "404"
-    And the HTTP status code should be "200"
+    Then the OCS status code should be "403"
+    And the HTTP status code should be "401"
     And user "participant1" gets last share
     And share is returned with
       | uid_owner              | participant1 |
