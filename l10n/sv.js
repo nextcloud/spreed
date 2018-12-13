@@ -5,6 +5,7 @@ OC.L10N.register(
     "Delete server" : "Ta bort server",
     "Add new server" : "Lägg till ny server",
     "Saved" : "Sparad",
+    "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Du raderade alla STUN-servrar. Eftersom det nästan alltid behövs har en standard STUN-server lagts till.",
     "Shared secret" : "Delad hemlighet",
     "TURN server shared secret" : "TURN server delade hemlighet",
     "UDP and TCP" : "UDP och TCP",
