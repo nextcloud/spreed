@@ -736,7 +736,13 @@
 				margin: 0;
 				background-color: transparent !important;
 				border: none;
+			}
 
+			.username:focus + .icon-confirm.confirm-button {
+				opacity: .6;
+			}
+
+			.username + .icon-confirm.confirm-button {
 				opacity: .3;
 
 				&:hover,
