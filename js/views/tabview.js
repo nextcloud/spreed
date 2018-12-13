@@ -29,7 +29,8 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var TEMPLATE_TAB_HEADER_VIEW =
-		'<a href="#" class="{{icon}}">{{label}}</a>';
+		'<span class="icon {{icon}}"></span>' +
+		'<a href="#">{{label}}</a>';
 
 	var TEMPLATE_TAB_VIEW =
 		'<div class="tabHeaders">' +
