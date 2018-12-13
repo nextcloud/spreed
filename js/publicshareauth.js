@@ -63,7 +63,7 @@
 			$('#content').append($('footer'));
 
 			$('body').append('<div id="talk-sidebar" class="disappear"></div>');
-			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p></p></div>');
+			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 			$('#talk-sidebar').append('<div id="call-container"></div>');
 			$('#call-container').append('<div id="videos"><div id="localVideoContainer" class="videoView videoContainer"></div></div>');
 			$('#call-container').append('<div id="screens"></div>');
