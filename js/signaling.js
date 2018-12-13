@@ -33,6 +33,7 @@
 		this.features = {};
 		this.pendingChatRequests = [];
 		this._lastChatMessagesFetch = null;
+		this.chatBatchSize = 100;
 	}
 
 	OCA.Talk.Signaling.Base = Base;
@@ -318,6 +319,7 @@
 	OCA.Talk.Signaling.Base.prototype._getChatRequestData = function(lastKnownMessageId) {
 		return {
 			lastKnownMessageId: lastKnownMessageId,
+			limit: this.chatBatchSize,
 			lookIntoFuture: 1
 		};
 	};
@@ -386,7 +388,9 @@
 
 		this._waitTimeUntilRetry = 1;
 
-		if (this.receiveMessagesAgain) {
+		// Fetch more messages if PHP backend or a whole batch has been received
+		// (more messages might be available in this case).
+		if (this.receiveMessagesAgain || (messages && messages.length === this.chatBatchSize)) {
 			this._receiveChatMessages();
 		}
 
