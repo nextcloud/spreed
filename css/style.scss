@@ -72,6 +72,53 @@
 	height: 38px;
 }
 
+
+
+/**
+ * Confirm icon inside input field.
+ *
+ * The input and the icon should be direct children of a wrapper with a relative
+ * position. The input is expected to be as wide as its wrapper.
+ *
+ * It is assumed that the icon will have the standard width for buttons in
+ * inputs of 34px. However, further adjustments may be needed for the input and
+ * the padding depending on the context where they are used.
+ */
+input[type="text"],
+input[type="password"] {
+	padding-right: 34px;
+
+	/* When the input is focused it is expected that pressing enter will confirm
+	 * the input just like clicking on the icon would do. To hint this behaviour
+	 * the opacity of the confirm icon is slightly increased in this case.
+	 */
+	&:focus + .icon-confirm:not(:disabled) {
+		opacity: .6;
+	}
+
+	& + .icon-confirm {
+		position: absolute;
+		top: 0;
+		/* Compensate for right margin of inputs set in the server. */
+		right: 3px;
+
+		/* Border and background color are removed to show only the icon inside
+		* the input. */
+		border: none;
+		background-color: transparent;
+
+		opacity: .3;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled),
+		&:active:not(:disabled) {
+			opacity: 1;
+		}
+	}
+}
+
+
+
 /**
  * Sidebar styles
  */
@@ -663,6 +710,48 @@
  */
 .detailCallInfoContainer,
 .authorRow {
+	.editable-text-label {
+		.label-wrapper {
+			display: flex;
+			align-items: center;
+			.edit-button {
+				display: none;
+
+				/* Use the same bottom margin as h2 (defined in the server) to
+				 * align the button vertically with the label. */
+				margin-bottom: 12px;
+
+				.icon {
+					background-color: transparent;
+					border: none;
+					padding: 13px 22px;
+					margin: 0;
+				}
+			}
+			&:hover .edit-button {
+				display: block;
+			}
+		}
+		.input-wrapper {
+			position: relative;
+
+			/* Pull up the wrapper slightly to prevent elements below it from
+			 * moving when it is shown. */
+			margin-top: -2px;
+
+			input[type="text"] {
+				& + .icon-confirm {
+					/* Needed to override an important rule set in the
+					 * server. */
+					background-color: transparent !important;
+				}
+			}
+		}
+		.label {
+			margin-left: 5px;
+		}
+	}
+
 	.room-name-container {
 		display: flex;
 
@@ -724,18 +813,21 @@
 				margin: 4px 0 4px 0 !important;
 				font-size: 15px;
 				font-weight: 300;
-				padding-right: 44px;
 				text-overflow: ellipsis;
 			}
 
 			.icon-confirm.confirm-button {
-				position: absolute;
-				right: 0;
-				top: 2px;
 				padding: 12px 21px;
 				margin: 0;
-				background-color: transparent !important;
-				border: none;
+			}
+
+			input[type="text"] {
+				padding-right: 44px;
+
+				& + .icon-confirm {
+					top: 1px;
+					right: 0;
+				}
 			}
 		}
 	}
@@ -743,40 +835,6 @@
 	.guest-name p {
 		display: inline-block;
 		padding: 9px 0;
-	}
-	.editable-text-label {
-		.label-wrapper {
-			display: flex;
-			align-items: center;
-			.edit-button {
-				display: none;
-
-				/* Use the same bottom margin as h2 (defined in the server) to
-				 * align the button vertically with the label. */
-				margin-bottom: 12px;
-
-				.icon {
-					background-color: transparent;
-					border: none;
-					padding: 13px 22px;
-					margin: 0;
-				}
-			}
-			&:hover .edit-button {
-				display: block;
-			}
-		}
-		.input-wrapper {
-			display: flex;
-			align-items: center;
-
-			/* Pull up the wrapper slightly to prevent elements below it from
-			 * moving when it is shown. */
-			margin-top: -2px;
-		}
-		.label {
-			margin-left: 5px;
-		}
 	}
 
 	.call-controls-container {
@@ -840,6 +898,27 @@
 		}
 		.password-button {
 			position: relative;
+
+			.menuitem {
+				/* Override rule for menu items from server, as in this case
+				 * only the button in the password field is clickable, so the
+				 * pointer cursor should not be used for the whole item. */
+				cursor: default;
+
+				.password-form {
+					position: relative;
+
+					.password-confirm {
+						/* Inputs in menu items do not have a right margin, so
+						 * it does not need to be compensated. */
+						right: 0;
+
+						/* Needed to override an important rule set in the
+						 * server. */
+						background-color: transparent !important;
+					}
+				}
+			}
 		}
 	}
 }
