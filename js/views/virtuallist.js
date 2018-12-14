@@ -600,11 +600,11 @@
 
 			this._$container.append($wrapper);
 
-			var previousWrapperHeight = this._getElementHeight($wrapper);
+			var wrapperHeightWithoutElementsToLoad = this._getElementHeight($wrapper);
 
 			$wrapper.prepend(elementsBuffer);
 
-			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad;
 
 			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
@@ -678,11 +678,11 @@
 
 			this._$container.append($wrapper);
 
-			var previousWrapperHeight = this._getElementHeight($wrapper);
+			var wrapperHeightWithoutElementsToLoad = this._getElementHeight($wrapper);
 
 			$wrapper.append(elementsBuffer);
 
-			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad;
 
 			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
