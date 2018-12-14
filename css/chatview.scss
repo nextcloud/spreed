@@ -51,6 +51,9 @@
 	right: -44px;
 }
 
+#chatView .newCommentForm .message:focus + .submit:not(:hover):not(:focus) {
+	opacity: .6;
+}
 #chatView .newCommentForm .submit,
 #chatView .newCommentForm .share {
 	background-color: transparent;
