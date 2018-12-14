@@ -35,7 +35,9 @@ use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IServerContainer;
+use OCP\Security\IContentSecurityPolicyManager;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -65,6 +67,7 @@ class Application extends App {
 			$this->registerInternalSignalingHooks($dispatcher);
 		} else {
 			$this->registerSignalingBackendHooks($dispatcher);
+			$this->addContentSecurityPolicyForSignalingServers($servers);
 		}
 		$this->registerCallActivityHooks($dispatcher);
 		$this->registerRoomActivityHooks($dispatcher);
@@ -360,5 +363,30 @@ class Application extends App {
 			$roomShareProvider->deleteInRoom($room->getToken());
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+	}
+
+	protected function addContentSecurityPolicyForSignalingServers(array $servers) {
+		$csp = new ContentSecurityPolicy();
+		foreach ($servers as $server) {
+			$csp->addAllowedConnectDomain($this->getWebSocketDomainForSignalingServer($server['server']));
+		}
+		$cspManager = $this->getContainer()->query(IContentSecurityPolicyManager::class);
+		$cspManager->addDefaultPolicy($csp);
+	}
+
+	protected function getWebSocketDomainForSignalingServer(string $url): string {
+		// Copied from Standalone constructor in "js/signaling.js".
+
+		if (strpos($url, 'https://') === 0) {
+			$url = 'wss://' . substr($url, 8);
+		} else if (strpos($url, 'http://') === 0) {
+			$url = 'ws://' . substr($url, 7);
+		}
+		if (substr($url, -1) === "/") {
+			$url = substr($url, 0, -1);
+		}
+		$url = $url . '/spreed';
+
+		return $url;
 	}
 }
