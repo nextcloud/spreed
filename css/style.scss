@@ -705,6 +705,8 @@
 	.room-name {
 		display: block;
 
+		flex-grow: 1;
+
 		/* Limit the room name to the container width and prevent it from
 		 * wrapping the full label when using a flex display; this is needed for
 		 * the edit button and the ellipsis in the name to work as expected. */
