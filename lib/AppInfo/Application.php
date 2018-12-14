@@ -212,7 +212,10 @@ class Application extends App {
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
-			$notifier->participantsModified($room);
+			// TODO: The list of removed session ids should be passed through the event
+			// so the signaling server can optimize forwarding the message.
+			$sessionIds = [];
+			$notifier->participantsModified($room, $sessionIds);
 		});
 		$dispatcher->addListener(GuestManager::class . '::updateName', function(GenericEvent $event) {
 			/** @var BackendNotifier $notifier */
