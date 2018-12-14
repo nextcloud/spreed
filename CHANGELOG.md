@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 5.0.0-beta5 – 2018-12-06
+## 5.0.0 – 2018-12-14
 ### Added
 - Chat and call option in the Files app sidebar
   [#1323](https://github.com/nextcloud/spreed/pull/1323)
@@ -24,6 +24,8 @@ All notable changes to this project will be documented in this file.
   [#1271](https://github.com/nextcloud/spreed/pull/1271)
 
 ### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
 - Fix mentions for users with spaces in their user id
   [#1254](https://github.com/nextcloud/spreed/pull/1254)
 - Fix avatars in messages by guests
@@ -36,6 +38,8 @@ All notable changes to this project will be documented in this file.
   [#1302](https://github.com/nextcloud/spreed/pull/1302)
 - When a files is shared a second time into a chat no error is displayed
   [#1196](https://github.com/nextcloud/spreed/pull/1196)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
 
 ## 4.0.2 – 2018-12-11
 ### Fixed
