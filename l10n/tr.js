@@ -48,6 +48,7 @@ OC.L10N.register(
     "Share link" : "Bağlantıyı paylaş",
     "Change password" : "Parolayı değiştir",
     "Set password" : "Parolayı ayarla",
+    "Go to file" : "Dosyaya git",
     "Name" : "Ad",
     "Conversation name" : "Görüşme adı",
     "Rename" : "Yeniden adlandır",

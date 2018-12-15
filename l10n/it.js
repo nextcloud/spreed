@@ -48,6 +48,7 @@ OC.L10N.register(
     "Share link" : "Condividi collegamento",
     "Change password" : "Modifica password",
     "Set password" : "Imposta password",
+    "Go to file" : "Vai al file",
     "Name" : "Nome",
     "Conversation name" : "Nome della conversazione",
     "Rename" : "Rinomina",

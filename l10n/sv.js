@@ -44,6 +44,7 @@ OC.L10N.register(
     "Share link" : "Dela länk",
     "Change password" : "Byt lösenord",
     "Set password" : "Sätt lösenord",
+    "Go to file" : "Gå till fil",
     "Name" : "Namn",
     "Conversation name" : "Konversationens namn",
     "Rename" : "Byt namn",
