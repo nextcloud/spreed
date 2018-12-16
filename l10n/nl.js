@@ -48,6 +48,7 @@ OC.L10N.register(
     "Share link" : "Delen link",
     "Change password" : "Verander wachtwoord",
     "Set password" : "Stel je wachtwoord in",
+    "Go to file" : "Ga naar bestand",
     "Name" : "Naam",
     "Conversation name" : "Gespreksnaam",
     "Rename" : "Hernoemen",
