@@ -35,6 +35,8 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CustomInputSignalingController extends SignalingController {
 
@@ -76,6 +78,9 @@ class SignalingControllerTest extends \Test\TestCase {
 	/** @var string */
 	private $userId;
 
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
+
 	/** @var CustomInputSignalingController */
 	private $controller;
 
@@ -97,6 +102,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->dispatcher = \OC::$server->getEventDispatcher();
 		$this->recreateSignalingController();
 	}
 
@@ -110,6 +116,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->dbConnection,
 			$this->messages,
 			$this->userManager,
+			$this->dispatcher,
 			$this->userId
 		);
 	}
@@ -510,6 +517,63 @@ class SignalingControllerTest extends \Test\TestCase {
 			'error' => [
 				'code' => 'no_such_room',
 				'message' => 'The user is not invited to this room.',
+			],
+		], $result->getData());
+	}
+
+	public function testBackendRoomSessionFromEvent() {
+		$this->dispatcher->addListener(SignalingController::class . '::signalingBackendRoom', function(GenericEvent $event) {
+			$room = $event->getSubject();
+			$event->setArgument('roomSession', [
+				'foo' => 'bar',
+				'room' => $room->getToken(),
+			]);
+		});
+
+		$roomToken = 'the-room';
+		$roomName = 'the-room-name';
+		$room = $this->createMock(Room::class);
+		$this->manager->expects($this->once())
+			->method('getRoomByToken')
+			->with($roomToken)
+			->willReturn($room);
+
+		$participant = $this->createMock(Participant::class);
+		$room->expects($this->once())
+			->method('getName')
+			->willReturn($roomName);
+		$room->expects($this->once())
+			->method('getParticipant')
+			->with($this->userId)
+			->willReturn($participant);
+		$room->expects($this->atLeastOnce())
+			->method('getToken')
+			->willReturn($roomToken);
+		$room->expects($this->once())
+			->method('getType')
+			->willReturn(Room::ONE_TO_ONE_CALL);
+
+		$result = $this->performBackendRequest([
+			'type' => 'room',
+			'room' => [
+				'roomid' => $roomToken,
+				'userid' => $this->userId,
+				'sessionid' => '',
+			],
+		]);
+		$this->assertSame([
+			'type' => 'room',
+			'room' => [
+				'version' => '1.0',
+				'roomid' => $roomToken,
+				'properties' => [
+					'name' => $roomName,
+					'type' => Room::ONE_TO_ONE_CALL,
+				],
+				'session' => [
+					'foo' => 'bar',
+					'room' => $roomToken,
+				],
 			],
 		], $result->getData());
 	}
