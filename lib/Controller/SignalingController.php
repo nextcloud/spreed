@@ -37,6 +37,8 @@ use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SignalingController extends OCSController {
 	/** @var Config */
@@ -53,6 +55,8 @@ class SignalingController extends OCSController {
 	private $userId;
 	/** @var IUserManager */
 	private $userManager;
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
 
 	/**
 	 * @param string $appName
@@ -63,6 +67,7 @@ class SignalingController extends OCSController {
 	 * @param IDBConnection $connection
 	 * @param Messages $messages
 	 * @param IUserManager $userManager
+	 * @param EventDispatcherInterface $dispatcher
 	 * @param string $UserId
 	 */
 	public function __construct($appName,
@@ -73,6 +78,7 @@ class SignalingController extends OCSController {
 								IDBConnection $connection,
 								Messages $messages,
 								IUserManager $userManager,
+								EventDispatcherInterface $dispatcher,
 								$UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -81,6 +87,7 @@ class SignalingController extends OCSController {
 		$this->manager = $manager;
 		$this->messages = $messages;
 		$this->userManager = $userManager;
+		$this->dispatcher = $dispatcher;
 		$this->userId = $UserId;
 	}
 
@@ -411,6 +418,14 @@ class SignalingController extends OCSController {
 			}
 		}
 
+		$event = new GenericEvent($room, [
+			'action' => $action,
+			'participant' => $participant,
+			'sessionid' => $sessionId,
+			'userid' => $userId,
+		]);
+		$this->dispatcher->dispatch(self::class . '::signalingBackendRoom', $event);
+
 		$response = [
 			'type' => 'room',
 			'room' => [
@@ -422,6 +437,9 @@ class SignalingController extends OCSController {
 				],
 			],
 		];
+		if ($event->hasArgument('roomSession')) {
+			$response['room']['session'] = $event->getArgument('roomSession');
+		}
 		return new DataResponse($response);
 	}
 
