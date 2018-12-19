@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
@@ -203,7 +204,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$testUser->expects($this->any())
 			->method('getUID')
 			->willReturn($this->userId);
-		$room->removeUser($testUser);
+		$room->removeUser($testUser, Room::PARTICIPANT_REMOVED);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {

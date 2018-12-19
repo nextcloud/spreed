@@ -45,6 +45,9 @@ class Room {
 	public const GROUP_CALL = 2;
 	public const PUBLIC_CALL = 3;
 
+	public const PARTICIPANT_REMOVED = 'remove';
+	public const PARTICIPANT_LEFT = 'leave';
+
 	/** @var Manager */
 	private $manager;
 	/** @var IDBConnection */
@@ -516,8 +519,9 @@ class Room {
 
 	/**
 	 * @param IUser $user
+	 * @param string $reason
 	 */
-	public function removeUser(IUser $user): void {
+	public function removeUser(IUser $user, string $reason): void {
 		try {
 			$participant = $this->getParticipant($user->getUID());
 		} catch (ParticipantNotFoundException $e) {
@@ -527,6 +531,7 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::preRemoveUser', new GenericEvent($this, [
 			'user' => $user,
 			'participant' => $participant,
+			'reason' => $reason,
 		]));
 
 		$query = $this->db->getQueryBuilder();
@@ -538,15 +543,18 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postRemoveUser', new GenericEvent($this, [
 			'user' => $user,
 			'participant' => $participant,
+			'reason' => $reason,
 		]));
 	}
 
 	/**
 	 * @param Participant $participant
+	 * @param string $reason
 	 */
-	public function removeParticipantBySession(Participant $participant): void {
+	public function removeParticipantBySession(Participant $participant, string $reason): void {
 		$this->dispatcher->dispatch(self::class . '::preRemoveBySession', new GenericEvent($this, [
 			'participant' => $participant,
+			'reason' => $reason,
 		]));
 
 		$query = $this->db->getQueryBuilder();
@@ -557,6 +565,7 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::postRemoveBySession', new GenericEvent($this, [
 			'participant' => $participant,
+			'reason' => $reason,
 		]));
 	}
 
@@ -577,7 +586,7 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::preJoinRoom', $event);
 
 		if ($event->hasArgument('cancel') && $event->getArgument('cancel') === true) {
-			$this->removeUser($user);
+			$this->removeUser($user, self::PARTICIPANT_LEFT);
 			throw new UnauthorizedException('Participant is not allowed to join');
 		}
 
