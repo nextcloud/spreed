@@ -92,7 +92,9 @@ class ShareAPIController {
 		}
 
 		// The display name of one-to-one rooms is set to the display name of
-		// the other participant.
+		// the other participant, except on reshares to rooms that the user is
+		// not invited to, in which case the display name of both participants
+		// is used.
 		$roomName = $room->getName();
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$userIds = $room->getParticipantUserIds();
@@ -100,7 +102,7 @@ class ShareAPIController {
 				if ($this->userId !== $userId) {
 					$user = $this->userManager->get($userId);
 					if ($user instanceof IUser) {
-						$roomName = $user->getDisplayName();
+						$roomName = $roomName? $roomName . $this->l->t(', ') . $user->getDisplayName(): $user->getDisplayName();
 					}
 				}
 			}
