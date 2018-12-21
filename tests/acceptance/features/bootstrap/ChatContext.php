@@ -171,6 +171,15 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function formattedFilePreviewInChatMessage($chatAncestor, $number) {
+		return Locator::forThe()->css(".filePreviewContainer")->
+				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
+				describedAs("Formatted file preview in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function newChatMessageForm($chatAncestor) {
 		return Locator::forThe()->css(".newCommentForm")->
 				descendantOf(self::chatView($chatAncestor))->
@@ -196,6 +205,15 @@ class ChatContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function shareButton($chatAncestor) {
+		return Locator::forThe()->css(".share")->
+				descendantOf(self::newChatMessageForm($chatAncestor))->
+				describedAs("Share button");
+	}
+
+	/**
 	 * @When I send a new chat message with the text :message
 	 */
 	public function iSendANewChatMessageWith($message) {
@@ -209,6 +227,13 @@ class ChatContext implements Context, ActorAwareInterface {
 		}
 
 		$this->actor->find(self::newChatMessageInput($this->chatAncestor), 10)->setValue($message . "\r");
+	}
+
+	/**
+	 * @When I start the share operation
+	 */
+	public function iStartTheShareOperation() {
+		$this->actor->find(self::shareButton($this->chatAncestor), 10)->click();
 	}
 
 	/**
@@ -268,6 +293,13 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheMessageContainsAFormattedLinkTo($number, $url) {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedLinkInChatMessageTo($this->chatAncestor, $number, $url), 10));
+	}
+
+	/**
+	 * @Then I see that the message :number contains a formatted file preview
+	 */
+	public function iSeeThatTheMessageContainsAFormattedFilePreview($number) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedFilePreviewInChatMessage($this->chatAncestor, $number), 10));
 	}
 
 }

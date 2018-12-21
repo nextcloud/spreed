@@ -13,13 +13,16 @@ default:
 
         - FeatureContext
         - FileListContext
+        - FilePickerContext
         - FilesAppContext
+        - FilesAppSharingContext
         - LoginPageContext
 
         # Talk app contexts
         - ChatContext
         - ConversationInfoContext
         - ConversationListContext
+        - FilesAppRoomSharingContext
         - ParticipantListContext
         - TalkAppContext
 
