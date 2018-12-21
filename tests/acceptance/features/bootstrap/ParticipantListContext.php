@@ -38,6 +38,15 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function showParticipantDropdownButton() {
+		return Locator::forThe()->css(".oca-spreedme-add-person .select2-choice")->
+				descendantOf(self::participantsTabView())->
+				describedAs("Show participant dropdown button in the sidebar");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function participantsList() {
 		return Locator::forThe()->css(".participantWithList")->
 				descendantOf(self::participantsTabView())->
@@ -68,6 +77,14 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 	public function participantsListItems() {
 		return $this->actor->find(self::participantsList(), 10)
 					->getWrappedElement()->findAll('xpath', '/li');
+	}
+
+	/**
+	 * @When I add :participantName to the participants
+	 */
+	public function iAddToTheParticipants($participantName) {
+		$this->actor->find(self::showParticipantDropdownButton(), 10)->click();
+		$this->actor->find(TalkAppContext::itemInSelect2DropdownFor($participantName), 2)->click();
 	}
 
 	/**
