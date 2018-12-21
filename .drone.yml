@@ -266,6 +266,8 @@ matrix:
       TESTS_ACCEPTANCE: chat
     - TESTS: acceptance
       TESTS_ACCEPTANCE: conversation
+    - TESTS: acceptance
+      TESTS_ACCEPTANCE: room-shares
 
 services:
   mysql-5.7:
