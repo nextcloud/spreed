@@ -67,3 +67,35 @@ Feature: room-shares
     And I open the "Sharing" tab in the details view
     And I see that the "Sharing" tab in the details view is eventually loaded
     And I see that the file is shared with me in the conversation "Unnamed conversation" by "user0"
+
+  Scenario: share a file to a group room from the Sharing tab in the Files app
+    Given I act as John
+    And I am logged in
+    And I have opened the Talk app
+    And I create a group conversation
+    # Currently files can be shared with a room from the Files app only if the
+    # room has a name explicitly set.
+    And I rename the conversation to "Group conversation"
+    And I add "admin" to the participants
+    And I act as Jane
+    And I am logged in as the admin
+    And I have opened the Talk app
+    And I open the "Group conversation" conversation
+    When I act as John
+    And I open the Files app
+    And I share "welcome.txt" with "Group conversation"
+    And I see that the file is shared with "Group conversation (conversation)"
+    Then I have opened the Talk app
+    And I open the "Group conversation" conversation
+    And I see that the message 1 was sent by "user0" with the text "welcome.txt"
+    And I see that the message 1 contains a formatted file preview
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "welcome (2).txt"
+    And I see that the message 1 contains a formatted file preview
+    And I open the Files app
+    And I see that the file list contains a file named "welcome (2).txt"
+    And I open the details view for "welcome (2).txt"
+    And I see that the details view is open
+    And I open the "Sharing" tab in the details view
+    And I see that the "Sharing" tab in the details view is eventually loaded
+    And I see that the file is shared with me in the conversation "Group conversation" by "user0"
