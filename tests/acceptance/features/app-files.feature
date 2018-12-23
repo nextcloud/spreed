@@ -56,3 +56,28 @@ Feature: app-files
     And I close the details view
     And I open the details view for "Folder"
     And I see that the Chat tab header is not shown in the details view
+
+
+
+  Scenario: open Talk after joining a file room
+    Given I am logged in as the admin
+    And I share "welcome.txt" with "user0"
+    And I see that the file is shared with "user0"
+    And I open the Chat tab in the details view of the Files app
+    And I see that the chat is shown in the Chat tab
+    When I have opened the Talk app
+    Then I see that the "welcome.txt" conversation is shown in the list
+
+  Scenario: joining again a file room after leaving it from Talk
+    Given I am logged in as the admin
+    And I share "welcome.txt" with "user0"
+    And I see that the file is shared with "user0"
+    And I open the Chat tab in the details view of the Files app
+    And I see that the chat is shown in the Chat tab
+    And I have opened the Talk app
+    And I leave the "welcome.txt" conversation
+    And I see that the "welcome.txt" conversation is not shown in the list
+    When I open the Files app
+    And I open the details view for "welcome.txt"
+    And I open the Chat tab in the details view of the Files app
+    Then I see that the chat is shown in the Chat tab
