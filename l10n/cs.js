@@ -48,6 +48,7 @@ OC.L10N.register(
     "Share link" : "Sdílet odkaz",
     "Change password" : "Změnit heslo",
     "Set password" : "Nastavit heslo",
+    "Go to file" : "Přejít k souboru",
     "Name" : "Jméno",
     "Conversation name" : "Název konverzace",
     "Rename" : "Přejmenovat",
