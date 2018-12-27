@@ -106,6 +106,7 @@ OC.L10N.register(
     "Delete conversation" : "Beszélgetés törlése",
     "Close" : "Bezár",
     "Show screen" : "Képernyőd mutatása",
+    "Enable video" : "Videó engedélyezése",
     "Access to microphone & camera is only possible with HTTPS" : "A mikrofon és a kamera hozzáférése csak HTTPS-en lehetséges",
     "Please move your setup to HTTPS" : "Kérlek váltsd a konfigurációdat HTTPS-re",
     "Access to microphone & camera was denied" : "A kamera és a mikrofon hozzáférése letiltva",

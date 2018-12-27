@@ -118,6 +118,7 @@
     "Show screen" : "Visa skärm",
     "Enable video" : "Aktivera video",
     "Access to microphone & camera is only possible with HTTPS" : "Tillgång till mikrofon och kamera är endast möjligt via HTTPS",
+    "Please move your setup to HTTPS" : "Vänligen flytta din inställning till HTTPS",
     "Access to microphone & camera was denied" : "Tillgång till mikrofon och kamera blev nekad",
     "WebRTC is not supported in your browser" : "WebRTC är inte kompatibelt med din webbläsare",
     "Error while accessing microphone & camera" : "Kunde ej ansluta mikrofon och kamera",
