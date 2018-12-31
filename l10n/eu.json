@@ -25,6 +25,7 @@
     "Submit" : "Bidali",
     "Leave call" : "Deia utzi",
     "Join call" : "Deira lotu",
+    "Start call" : "Hasi deia",
     "Share link" : "Esteka partekatu",
     "Change password" : "Pasahitza aldatu",
     "Set password" : "Ezarri pasahitza",
@@ -66,7 +67,10 @@
     "Promote to moderator" : "Moderatzaile bihurtu zara",
     "Remove participant" : "Partehartzailea borratu",
     "Favorited" : "Gogokoa",
+    "Add to favorites" : "Gehitu gogokoetara",
+    "Always notify" : "Jakinarazi beti",
     "Never notify" : "Ez jakinarazi inoiz",
+    "Leave conversation" : "Atera elkarrizketatik",
     "Close" : "Itxi",
     "Show screen" : "Erakutsi pantaila",
     "Enable video" : "Aktibatu bideoa",
@@ -77,6 +81,7 @@
     "{participantName}'s screen" : "{participantName}-aren pantaila",
     "Guest's screen" : "Gonbidatuaren pantaila",
     "Your screen" : "Zure pantaila",
+    "a conversation" : "elkarrizketa bat",
     "(Duration %s)" : "(Luzera %s)",
     "You attended a call with {user1}" : "{user1}-k egindako deia hartuta",
     "_%n guest_::_%n guests_" : ["%n gonbidatu","%n gonbidatu"],
@@ -87,6 +92,7 @@
     "_%n other_::_%n others_" : ["beste %n ","beste %n "],
     "{actor} invited you to {call}" : "{actor} {call} deira gonbidatu zaitu",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong> hitzaldi </strong> bat edo <strong>dei</strong> bat duzu",
+    "You set a password" : "Pasahitz bat ezarri duzu",
     "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
     ", " : ", ",
     "Join now" : "Elkartu orain",
@@ -99,7 +105,12 @@
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzariak router baten atzean dauden erabiltzaileen IP helbideak jakiteko erabiltzen da.",
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzariak  firewall baten atzean dauden partehartzaileen trafikoa proxy bidez eramateko erabiltzen da",
+    "Android app" : "Android aplikazioa",
+    "iOS app" : "iOS aplikazioa",
     "(group)" : "(taldea)",
-    "and you" : "eta zu"
+    "and you" : "eta zu",
+    "… %s" : "… %s",
+    "%s …" : "%s …",
+    "… %s …" : "… %s …"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
