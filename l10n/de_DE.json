@@ -181,7 +181,7 @@
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Anruf mit {user1}, {user2} und {user3} (Dauer {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Anruf mit {user1}, {user2}, {user3} und {user4} (Dauer {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Anruf mit {user1}, {user2}, {user3}, {user4} und {user5} (Dauer {duration})",
-    "Talk to %s" : "Spreche mit %s",
+    "Talk to %s" : "Mit %s sprechen",
     "File is not shared, or shared but not with the user" : "Datei ist nicht geteilt oder nicht mit dem Nutzer geteilt",
     "Password request: %s" : "Passwortanforderung: %s",
     "_%n other guest_::_%n other guests_" : ["ein weiterer Gast","%n weitere Gäste"],
