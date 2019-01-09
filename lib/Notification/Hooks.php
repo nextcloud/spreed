@@ -58,7 +58,6 @@ class Hooks {
 		}
 		$actorId = $actor->getUID();
 
-
 		$notification = $this->notificationManager->createNotification();
 		$dateTime = new \DateTime();
 		try {
@@ -85,6 +84,30 @@ class Hooks {
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->logException($e, ['app' => 'spreed']);
 			}
+		}
+	}
+
+	/**
+	 * Room invitation: "{actor} invited you to {call}"
+	 *
+	 * @param Room $room
+	 */
+	public function markInvitationRead(Room $room) {
+		$currentUser = $this->userSession->getUser();
+		if (!$currentUser instanceof IUser) {
+			return;
+		}
+
+		$notification = $this->notificationManager->createNotification();
+		try {
+			$notification->setApp('spreed')
+				->setUser($currentUser->getUID())
+				->setObject('room', $room->getToken())
+				->setSubject('invitation');
+			$this->notificationManager->markProcessed($notification);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->logException($e, ['app' => 'spreed']);
+			return;
 		}
 	}
 
