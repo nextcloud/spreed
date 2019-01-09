@@ -378,6 +378,16 @@ class Application extends App {
 			$notificationHooks->generateCallNotifications($room);
 		};
 		$dispatcher->addListener(Room::class . '::preSessionJoinCall', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var \OCA\Spreed\Notification\Hooks $notificationHooks */
+			$notificationHooks = $this->getContainer()->query(\OCA\Spreed\Notification\Hooks::class);
+			$notificationHooks->markCallNotificationsRead($room);
+		};
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 	}
 
 	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {

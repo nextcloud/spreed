@@ -163,4 +163,28 @@ class Hooks {
 			}
 		}
 	}
+
+	/**
+	 * Call notification: "{user} wants to talk with you"
+	 *
+	 * @param Room $room
+	 */
+	public function markCallNotificationsRead(Room $room) {
+		$currentUser = $this->userSession->getUser();
+		if (!$currentUser instanceof IUser) {
+			return;
+		}
+
+		$notification = $this->notificationManager->createNotification();
+		try {
+			$notification->setApp('spreed')
+				->setUser($currentUser->getUID())
+				->setObject('call', $room->getToken())
+				->setSubject('call');
+			$this->notificationManager->markProcessed($notification);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->logException($e, ['app' => 'spreed']);
+			return;
+		}
+	}
 }
