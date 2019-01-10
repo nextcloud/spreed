@@ -14,7 +14,7 @@ pipeline:
       matrix:
         TESTS: stylelint
   check-app-compatbility:
-    image: nextcloudci/php7.0:php7.0-19
+    image: nextcloudci/php7.3:php7.3-1
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -39,8 +39,8 @@ pipeline:
     when:
       matrix:
         TESTS: handlebars
-  syntax-php7.0:
-    image: nextcloudci/php7.0:php7.0-19
+  syntax-php7.1:
+    image: nextcloudci/php7.1:php7.1-16
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -54,9 +54,25 @@ pipeline:
       - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
     when:
       matrix:
-        TESTS: syntax-php7.0
+        TESTS: syntax-php7.1
+  syntax-php7.3:
+    image: nextcloudci/php7.3:php7.3-1
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server
+      - composer install
+      - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
+    when:
+      matrix:
+        TESTS: syntax-php7.3
   signed-off-check:
-    image: nextcloudci/php7.0:php7.0-19
+    image: nextcloudci/php7.3:php7.3-1
     environment:
       - APP_NAME=spreed
       - CORE_BRANCH=master
@@ -71,26 +87,6 @@ pipeline:
     when:
       matrix:
         TESTS: signed-off-check
-  php7.0:
-    image: nextcloudci/php7.0:php7.0-19
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=master
-      - DB=sqlite
-    commands:
-      # Pre-setup steps
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server/
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run phpunit tests
-      - cd tests/php/
-      - phpunit --configuration phpunit.xml
-    when:
-      matrix:
-        TESTS: php7.0
   php7.1:
     image: nextcloudci/php7.1:php7.1-16
     environment:
@@ -131,6 +127,26 @@ pipeline:
     when:
       matrix:
         TESTS: php7.2
+  php7.3:
+    image: nextcloudci/php7.3:php7.3-1
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=master
+      - DB=sqlite
+    commands:
+      # Pre-setup steps
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - cd ../server/
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+    when:
+      matrix:
+        TESTS: php7.3
   php7.1-integration:
     image: nextcloudci/php7.1:php7.1-16
     environment:
@@ -185,13 +201,14 @@ matrix:
     - TESTS: stylelint
     - TESTS: check-app-compatbility
     - TESTS: handlebars
-    - TESTS: syntax-php7.0
+    - TESTS: syntax-php7.1
+    - TESTS: syntax-php7.3
     - TESTS: signed-off-check
 
     # Unit tests
-    - TESTS: php7.0
     - TESTS: php7.1
     - TESTS: php7.2
+    - TESTS: php7.3
     - TESTS: jsunit
 
     # Integration tests sqlite
