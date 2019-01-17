@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>5.99.0</version>
+	<version>5.99.1</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -68,6 +68,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\Commands</admin>
 		<admin-section>OCA\Spreed\Settings\Admin\Section</admin-section>
 	</settings>
 
