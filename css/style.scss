@@ -155,9 +155,7 @@ input[type="password"] {
 }
 
 .participantWithList .avatar,
-#app-navigation .avatar,
-#app-navigation .icon-contacts-dark,
-#app-navigation .app-navigation-entry-link .icon-public {
+#app-navigation .app-navigation-entry-link > .avatar {
 	position: absolute;
 	left: 6px;
 	top: 6px;
@@ -170,8 +168,8 @@ input[type="password"] {
 	margin: 0 !important;
 }
 
-.select2-result .icon-contacts.avatar,
-.select2-result .icon-public-white.avatar,
+.select2-result .icon-contacts-dark.avatar,
+.select2-result .icon-public.avatar,
 .select2-result .icon-mail.avatar,
 #app-navigation .app-navigation-entry-link .avatar.icon {
 	border-radius: 50%;
@@ -1069,4 +1067,13 @@ input[type="password"] {
  */
 #app-sidebar #participantsTabView .participant:last-child {
 	margin-bottom: 15px;
+}
+
+/**
+ * Dark-Theme fixes
+ */
+#app-navigation > ul > li > a:first-child {
+	img {
+		filter: none !important;
+	}
 }
