@@ -241,8 +241,8 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 
 #chatView .comment.showDate {
 	margin-top: 40px;
-	border-top: 1px solid #dbdbdb;
-	padding-top: 10px;
+	border-top: 1px solid var(--color-border);
+	padding-top: 20px;
 }
 
 #chatView .comment.showDate:before {
@@ -255,9 +255,10 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	padding: 0 7px 0 7px;
 
 	text-align: center;
+	white-space: nowrap;
 
-	color: #878787;
-	background-color: #fff;
+	color: var(--color-text-maxcontrast);
+	background-color: var(--color-main-background);
 }
 
 #chatView .comment.showDate .authorRow {

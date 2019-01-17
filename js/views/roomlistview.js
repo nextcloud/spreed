@@ -156,13 +156,13 @@
 		templateContext: function() {
 			var icon = '';
 			if (this.model.get('objectType') === 'file') {
-				icon = 'icon icon-file-white';
+				icon = 'icon icon-file';
 			} else if (this.model.get('objectType') === 'share:password') {
-				icon = 'icon icon-password-white';
+				icon = 'icon icon-password';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
-				icon = 'icon icon-contacts';
+				icon = 'icon icon-contacts-dark';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
-				icon = 'icon icon-public-white';
+				icon = 'icon icon-public';
 			}
 
 			// If a room is a one2one room it can not be removed from the list, only be deleted for both participants.
