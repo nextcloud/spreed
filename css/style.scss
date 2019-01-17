@@ -596,11 +596,11 @@ input[type="password"] {
 	flex-grow: 0;
 	padding: 12px;
 	text-align: center;
-	border-bottom: 1px solid $color-border;
+	border-bottom: 1px solid var(--color-border);
 	margin-bottom: 0;
 
 	.icon, a {
-		color: $color-main-text;
+		color: var(--color-main-text);
 		opacity: .5;
 	}
 }
