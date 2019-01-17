@@ -48,11 +48,11 @@
 		'		{{#if isPublic}}' +
 		'			<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
 		'			<div class="password-button">' +
-		'				<span class="button {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}}"></span>' +
+		'				<span class="button {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}}"></span>' +
 		'				<div class="popovermenu password-menu menu-right">' +
 		'					<ul>' +
 		'						<li>' +
-		'							<span class="menuitem {{#if hasPassword}}icon-password"{{else}}icon-no-password{{/if}} password-option">' +
+		'							<span class="menuitem {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}} password-option">' +
 		'								<form class="password-form">' +
 		'									<input class="password-input" required maxlength="200" type="password"' +
 		'				  						placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
