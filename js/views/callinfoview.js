@@ -66,6 +66,29 @@
 		'		{{/if}}' +
 		'	</div>' +
 		'{{/if}}' +
+		'<div class="talk-settings-button">' +
+		'		<span class="button icon-settings"></span>' +
+		'		<div class="popovermenu settings-menu menu-right">' +
+		'			<form class="settings-form">' +
+		'				<div>' +
+		'					<span class="menuitem icon-video settings-option">' +
+		'						<select id="videoSource" class="settings-input"></select>'+
+		'					</span>' +
+		'				</div>' +
+		'				<div>' +
+		'					<span class="menuitem icon-audio settings-option">' +
+		'						<select id="audioSource" class="settings-input"></select>'+
+		'					</span>' +
+		'				</div>' +
+		'				<div>' +
+		'					<span class="menuitem icon-speaker settings-option">' +
+		'						<select id="audioOutput" class="settings-input"></select>'+
+		'					</span>' +
+		'				</div>' +
+		'			<input type="submit" value="" class="icon icon-confirm settings-confirm"></input>'+
+		'		</form>' +
+		'	</div>' +
+		'</div>' +
 		'{{#if showShareLink}}' +
 		'	<div class="share-link-options">' +
 		'		<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
@@ -112,6 +135,10 @@
 			'passwordConfirm': '.password-confirm',
 
 			'menu': '.password-menu',
+
+			'settingsButton': '.talk-settings-button',
+			'settingsMenu': '.settings-menu',
+			'settingsInput': '.settings-input',
 		},
 
 		regions: {
@@ -126,6 +153,7 @@
 			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
+			'click @ui.settingsInput': 'settingsClicked',
 		},
 
 		modelEvents: {
@@ -242,6 +270,89 @@
 				$(self.ui.passwordInput).focus();
 			});
 
+			this.ui.settingsButton.tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: t('spreed', 'Settings')
+			});
+
+			OC.registerMenu($(this.ui.settingsButton), $(this.ui.settingsMenu), function() {
+				$(self.ui.settingsInput).focus();
+			});
+
+			this.initSettings();
+
+		},
+
+		gotSources: function(sourceInfos) {
+			var audioSelect = document.querySelector("select#audioSource");
+			var videoSelect = document.querySelector("select#videoSource");
+			var outputSelect = document.querySelector("select#audioOutput");
+
+			// clear the lists
+			$('#audioOutput').empty();
+			$('#audioSource').empty();
+			$('#videoSource').empty();
+
+			for (var i = 0; i != sourceInfos.length; ++i) {
+				var sourceInfo = sourceInfos[i];
+				var option = document.createElement("option");
+				option.value = sourceInfo.deviceId;
+				if (sourceInfo.kind === 'audioinput') {
+				  option.text = sourceInfo.label || 'microphone ' + (audioSelect.length + 1);
+				  audioSelect.appendChild(option);
+				} else if (sourceInfo.kind === 'videoinput') {
+				  option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
+				  videoSelect.appendChild(option);
+				} else if (sourceInfo.kind === 'audiooutput') {
+				  option.text = sourceInfo.label || 'speaker ' + (outputSelect.length + 1);
+				  outputSelect.appendChild(option);
+				}
+			}
+
+			// hide empty options
+			if ($('#audioOutput option').length === 0) {
+				$('#audioOutput').hide();
+			}
+			else {
+				var val = localStorage.getItem("audioOutput");
+				if (val !== null) {
+					$('#audioOutput').val(val);
+				}
+				outputSelect.onchange = OCA.SpreedMe.app.onAudioOutputChange;
+			}
+
+			if ($('#videoSource option').length === 0) {
+				$('#videoSource').hide();
+			}
+			else {
+				var val = localStorage.getItem("videoSource");
+				if (val !== null) {
+					$('#videoSource').val(val);
+				}
+				videoSelect.onchange = OCA.SpreedMe.app.onVideoSourceChange;
+			}
+
+			if ($('#audioSource option').length === 0) {
+				$('#audioSource').hide();
+			}
+			else {
+				var val = localStorage.getItem("audioSource");
+				if (val !== null) {
+					$('#audioSource').val(val);
+				}
+				audioSelect.onchange = OCA.SpreedMe.app.onAudioSourceChange;
+			}
+
+		},
+
+		initSettings: function() {
+			navigator.mediaDevices.enumerateDevices().then(this.gotSources);
+		},
+
+		settingsClicked: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
 		},
 
 		_canModerate: function() {

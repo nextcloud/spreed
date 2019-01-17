@@ -1072,6 +1072,11 @@ var spreedPeerConnectionTable = [];
 				return;
 			}
 
+			// set the output device
+			if (localStorage.getItem("audioOutput") !== null) {
+				video.setSinkId(localStorage.getItem("audioOutput"));
+			}
+
 			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
 			if (videoContainer.length) {
 				var userId = spreedMappingTable[peer.id];

@@ -218,6 +218,39 @@
 			}.bind(this));
 		},
 
+		onAudioOutputChange: function() {
+			localStorage.setItem("audioOutput", $('#audioOutput').val());
+
+		},
+
+		onAudioSourceChange: function() {
+			localStorage.setItem("audioSource", $('#audioSource').val());
+			OCA.SpreedMe.app.setMediaSource(localStorage.getItem("audioSource"), localStorage.getItem("videoSource"));
+		},
+
+		onVideoSourceChange: function() {
+			localStorage.setItem("videoSource", $('#videoSource').val());
+			OCA.SpreedMe.app.setMediaSource(localStorage.getItem("audioSource"), localStorage.getItem("videoSource"));
+		},
+
+		initMediaSources: function() {
+			OCA.SpreedMe.app.setMediaSource(localStorage.getItem("audioSource"), localStorage.getItem("videoSource"));
+		},
+
+		setMediaSource: function(audioSource, videoSource) {
+
+			if (typeof OCA.SpreedMe.webrtc !== 'undefined') {
+				OCA.SpreedMe.webrtc.config.media = {
+					audio: {
+						optional: [{sourceId: audioSource}]
+					},
+					video: {
+						optional: [{sourceId: videoSource}]
+					}
+				};
+			}
+		},
+
 		_onKeyUp: function(event) {
 			// Define which objects to check for the event properties.
 			var key = event.which;
