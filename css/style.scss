@@ -56,12 +56,12 @@
 }
 
 #oca-spreedme-add-room {
-	border-bottom: 1px solid $color-border;
+	border-bottom: 1px solid var(--color-border);
 }
 
 .oca-spreedme-add-person {
-	border: 1px solid $color-border;
-	border-radius: $border-radius;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
 }
 
 .contactsmenu-popover li > a > img {
