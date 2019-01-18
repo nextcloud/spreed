@@ -56,12 +56,12 @@
 }
 
 #oca-spreedme-add-room {
-	border-bottom: 1px solid $color-border;
+	border-bottom: 1px solid var(--color-border);
 }
 
 .oca-spreedme-add-person {
-	border: 1px solid $color-border;
-	border-radius: $border-radius;
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
 }
 
 .contactsmenu-popover li > a > img {
@@ -155,9 +155,7 @@ input[type="password"] {
 }
 
 .participantWithList .avatar,
-#app-navigation .avatar,
-#app-navigation .icon-contacts-dark,
-#app-navigation .app-navigation-entry-link .icon-public {
+#app-navigation .app-navigation-entry-link > .avatar {
 	position: absolute;
 	left: 6px;
 	top: 6px;
@@ -170,8 +168,8 @@ input[type="password"] {
 	margin: 0 !important;
 }
 
-.select2-result .icon-contacts.avatar,
-.select2-result .icon-public-white.avatar,
+.select2-result .icon-contacts-dark.avatar,
+.select2-result .icon-public.avatar,
 .select2-result .icon-mail.avatar,
 #app-navigation .app-navigation-entry-link .avatar.icon {
 	border-radius: 50%;
@@ -210,7 +208,6 @@ input[type="password"] {
 	span {
 		padding: 2px 5px;
 		border-radius: 10px;
-		background-color: nc-lighten($color-main-text, 90%);
 		font-weight: bold;
 	}
 
@@ -596,11 +593,11 @@ input[type="password"] {
 	flex-grow: 0;
 	padding: 12px;
 	text-align: center;
-	border-bottom: 1px solid $color-border;
+	border-bottom: 1px solid var(--color-border);
 	margin-bottom: 0;
 
 	.icon, a {
-		color: $color-main-text;
+		color: var(--color-main-text);
 		opacity: .5;
 	}
 }
@@ -1070,4 +1067,13 @@ input[type="password"] {
  */
 #app-sidebar #participantsTabView .participant:last-child {
 	margin-bottom: 15px;
+}
+
+/**
+ * Dark-Theme fixes
+ */
+#app-navigation > ul > li > a:first-child {
+	img {
+		filter: none !important;
+	}
 }
