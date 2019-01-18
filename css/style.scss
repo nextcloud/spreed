@@ -922,7 +922,64 @@ input[type="password"] {
 				}
 			}
 		}
+		.talk-settings-button {
+			position: relative;
+			
+			.button {
+				cursor: pointer;
+				width: 50px;
+				height: 50px;
+				display: block;
+				background-color: transparent;
+				border: none;
+				margin: 0;
+				opacity: .7;
+				&:hover,
+				&:focus,
+				&:active {
+					opacity: 1;
+				}
+			}
+		}
 	}
+}
+
+.icon-speaker {
+  background-image: url('../img/speaker.svg?v=1');
+  background-size: contain;
+}
+
+.settings-option {
+	background-position: left;
+	display: inline-block;
+    position: relative;
+    top: 3px;
+    margin-right: 5px;
+}
+
+.settings-input {
+	width: 90%;
+	margin-bottom: 10px;
+  background-image:
+    linear-gradient(45deg, transparent 50%, gray 50%),
+    linear-gradient(135deg, gray 50%, transparent 50%);
+  background-position:
+    calc(100% - 20px) calc(1em + 2px),
+    calc(100% - 15px) calc(1em + 2px),
+    calc(100% - 2.5em) 0.5em;
+  background-size:
+    5px 5px,
+    5px 5px,
+    1px 1.5em;
+  background-repeat: no-repeat;
+}
+
+.settings-menu {
+	padding: 10px;
+}
+
+.settings-confirm {
+	float: right;
 }
 
 /**

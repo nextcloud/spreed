@@ -68,33 +68,27 @@
 		'{{/if}}' +
 		'<div class="talk-settings-button">' +
 		'		<span class="button icon-settings"></span>' +
-		'		<div class="popovermenu settings-menu menu-right">' +
+		'</div>' +
+		'</div>' +
+		'		<div class="settings-menu hidden">' +
 		'			<form class="settings-form">' +
 		'				<div>' +
 		'					<span class="menuitem icon-video settings-option">' +
-		'						<select id="videoSource" class="settings-input"></select>'+
 		'					</span>' +
+		'					<select id="videoSource" class="settings-input"></select>'+
 		'				</div>' +
 		'				<div>' +
 		'					<span class="menuitem icon-audio settings-option">' +
-		'						<select id="audioSource" class="settings-input"></select>'+
 		'					</span>' +
+		'					<select id="audioSource" class="settings-input"></select>'+
 		'				</div>' +
 		'				<div>' +
 		'					<span class="menuitem icon-speaker settings-option">' +
-		'						<select id="audioOutput" class="settings-input"></select>'+
 		'					</span>' +
+		'					<select id="audioOutput" class="settings-input"></select>'+
 		'				</div>' +
-		'			<input type="submit" value="" class="icon icon-confirm settings-confirm"></input>'+
 		'		</form>' +
-		'	</div>' +
-		'</div>' +
-		'{{#if showShareLink}}' +
-		'	<div class="share-link-options">' +
-		'		<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
-		'	</div>' +
-		'{{/if}}' +
-		'</div>';
+		'	</div>';
 
 	var CallInfoView  = Marionette.View.extend({
 
@@ -153,7 +147,7 @@
 			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
-			'click @ui.settingsInput': 'settingsClicked',
+			'click @ui.settingsButton': 'settingsButtonClicked',
 		},
 
 		modelEvents: {
@@ -270,16 +264,6 @@
 				$(self.ui.passwordInput).focus();
 			});
 
-			this.ui.settingsButton.tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: t('spreed', 'Settings')
-			});
-
-			OC.registerMenu($(this.ui.settingsButton), $(this.ui.settingsMenu), function() {
-				$(self.ui.settingsInput).focus();
-			});
-
 			this.initSettings();
 
 		},
@@ -312,7 +296,10 @@
 
 			// hide empty options
 			if ($('#audioOutput option').length === 0) {
-				$('#audioOutput').hide();
+				var option = document.createElement("option");
+				option.value = sourceInfo.deviceId;
+				option.text = 'Default';
+			    outputSelect.appendChild(option);
 			}
 			else {
 				var val = localStorage.getItem("audioOutput");
@@ -350,9 +337,9 @@
 			navigator.mediaDevices.enumerateDevices().then(this.gotSources);
 		},
 
-		settingsClicked: function(e) {
+		settingsButtonClicked: function(e) {
 			e.preventDefault();
-			e.stopPropagation();
+			$('.settings-menu').toggle();
 		},
 
 		_canModerate: function() {
