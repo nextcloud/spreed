@@ -20,42 +20,16 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Model;
+namespace OCA\Spreed\Chat\Command;
 
-use OCP\AppFramework\Db\Entity;
 
-/**
- * @method void setName(string $name)
- * @method string getName()
- * @method void setCommand(string $command)
- * @method string getCommand()
- * @method void setScript(string $name)
- * @method string getScript()
- * @method void setOutput(int $output)
- * @method int getOutput()
- */
-class Command extends Entity {
+use OCA\Spreed\Model\Command;
+use OCA\Spreed\Room;
+use OCP\Comments\IComment;
 
-	public const OUTPUT_NONE = 0;
-	public const OUTPUT_USER = 1;
-	public const OUTPUT_ALL = 2;
+class DefaultExecutor {
 
-	/** @var string */
-	protected $name;
+	public function exec(Room $room, IComment $message, Command $command): void {
 
-	/** @var string */
-	protected $command;
-
-	/** @var string */
-	protected $script;
-
-	/** @var int */
-	protected $output;
-
-	public function __construct() {
-		$this->addType('name', 'string');
-		$this->addType('command', 'string');
-		$this->addType('script', 'string');
-		$this->addType('output', 'int');
 	}
 }

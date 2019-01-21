@@ -116,6 +116,10 @@ class ChatManager {
 		// comment
 		$comment->setVerb('comment');
 
+		$this->dispatcher->dispatch(self::class . '::preSendMessage', new GenericEvent($chat, [
+			'comment' => $comment,
+		]));
+
 		try {
 			$this->commentsManager->save($comment);
 

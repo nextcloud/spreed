@@ -35,7 +35,7 @@ class Version5099Date20190121102337 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @return null|ISchemaWrapper
 	 */
-	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options) {
+	public function changeSchema(IOutput $output, Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
@@ -51,18 +51,17 @@ class Version5099Date20190121102337 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 64,
 			]);
-			$table->addColumn('pattern', Type::STRING, [
+			$table->addColumn('command', Type::STRING, [
 				'notnull' => true,
-				'length' => 512,
+				'length' => 64,
 			]);
-			$table->addColumn('script', Type::STRING, [
+			$table->addColumn('script', Type::TEXT, [
 				'notnull' => true,
-				'length' => 512,
 			]);
 			$table->addColumn('output', Type::INTEGER, [
 				'notnull' => true,
 				'length' => 6,
-				'default' => 0,
+				'default' => 1,
 			]);
 
 			$table->setPrimaryKey(['id']);

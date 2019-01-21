@@ -25,6 +25,7 @@ namespace OCA\Spreed\AppInfo;
 use OCA\Spreed\Activity\Listener as ActivityListener;
 use OCA\Spreed\Capabilities;
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\Command\Listener as CommandListener;
 use OCA\Spreed\Chat\Listener as ChatListener;
 use OCA\Spreed\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Spreed\Config;
@@ -72,6 +73,7 @@ class Application extends App {
 		FilesTemplateLoader::register($dispatcher);
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
+		CommandListener::register($dispatcher);
 
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
