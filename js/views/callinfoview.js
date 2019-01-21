@@ -70,25 +70,28 @@
 		'		<span class="button icon-settings"></span>' +
 		'</div>' +
 		'</div>' +
-		'		<div class="settings-menu hidden">' +
-		'			<form class="settings-form">' +
-		'				<div>' +
-		'					<span class="menuitem icon-video settings-option">' +
-		'					</span>' +
-		'					<select id="videoSource" class="settings-input"></select>'+
-		'				</div>' +
-		'				<div>' +
-		'					<span class="menuitem icon-audio settings-option">' +
-		'					</span>' +
-		'					<select id="audioSource" class="settings-input"></select>'+
-		'				</div>' +
-		'				<div>' +
-		'					<span class="menuitem icon-speaker settings-option">' +
-		'					</span>' +
-		'					<select id="audioOutput" class="settings-input"></select>'+
-		'				</div>' +
-		'		</form>' +
-		'	</div>';
+		'<div class="settings-menu hidden">' +
+		'	<form class="settings-form">' +
+		'		{{#if canPublish}}' +
+		'		<div>' +
+		'			<span class="menuitem icon-video settings-option">' +
+		'			</span>' +
+		'			<select id="videoSource" class="settings-input"></select>'+
+		'		</div>' +
+		'		<div>' +
+		'			<span class="menuitem icon-audio settings-option">' +
+		'			</span>' +
+		'			<select id="audioSource" class="settings-input"></select>'+
+		'		</div>' +
+		'		{{/if}}' +
+		'		<div>' +
+		'			<span class="menuitem icon-speaker settings-option">' +
+		'			</span>' +
+		'			<select id="audioOutput" class="settings-input"></select>'+
+		'		</div>' +
+		'	</form>' +
+		'</div>';
+
 
 	var CallInfoView  = Marionette.View.extend({
 
@@ -108,6 +111,7 @@
 				canFullModerate: this._canFullModerate(),
 				isPublic: this.model.get('type') === 3,
 				showShareLink: !canModerate && this.model.get('type') === 3,
+				canPublish: OCA.SpreedMe.canPublish(),
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			});
 		},
@@ -282,10 +286,10 @@
 				var sourceInfo = sourceInfos[i];
 				var option = document.createElement("option");
 				option.value = sourceInfo.deviceId;
-				if (sourceInfo.kind === 'audioinput') {
+				if (sourceInfo.kind === 'audioinput' && audioSelect !== null) {
 				  option.text = sourceInfo.label || 'microphone ' + (audioSelect.length + 1);
 				  audioSelect.appendChild(option);
-				} else if (sourceInfo.kind === 'videoinput') {
+				} else if (sourceInfo.kind === 'videoinput' && videoSelect !== null) {
 				  option.text = sourceInfo.label || 'camera ' + (videoSelect.length + 1);
 				  videoSelect.appendChild(option);
 				} else if (sourceInfo.kind === 'audiooutput') {
