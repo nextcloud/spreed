@@ -344,6 +344,61 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+
+		/**
+		 * Commands
+		 */
+		// TODO turn into a resource after https://github.com/nextcloud/server/pull/13714 is merged
+		[
+			'name' => 'Command#index',
+			'url' => '/api/{apiVersion}/command',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'Command#create',
+			'url' => '/api/{apiVersion}/command',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'Command#show',
+			'url' => '/api/{apiVersion}/command/{id}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'id' => '^\d+$',
+			],
+		],
+		[
+			'name' => 'Command#update',
+			'url' => '/api/{apiVersion}/command/{id}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'id' => '^\d+$',
+			],
+		],
+		[
+			'name' => 'Command#destroy',
+			'url' => '/api/{apiVersion}/command/{id}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'id' => '^\d+$',
+			],
+		],
 	],
+
+	/**
+	 * TODO Enable after https://github.com/nextcloud/server/pull/13714 is merged
+	'ocs-resources' => [
+		'Command' => ['url' => '/api/{apiVersion}/command', 'requirements' => ['apiVersion' => 'v1']],
+	],
+	*/
 ];
 

@@ -23,12 +23,9 @@
 
 namespace OCA\Spreed\Controller;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Manager;
+use OCA\Spreed\Model\Command;
 use OCA\Spreed\Model\CommandMapper;
-use OCA\Spreed\Participant;
-use OCA\Spreed\TalkSession;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -53,13 +50,14 @@ class CommandController extends OCSController {
 	/**
 	 * @return DataResponse
 	 */
-	public function getAll(): DataResponse {
+	public function index(): DataResponse {
 		$commands = $this->commandMapper->findAll();
 
 		$result = [];
 		foreach ($commands as $command) {
 			$result[] = [
 				'id' => $command->getId(),
+				'name' => $command->getName(),
 				'pattern' => $command->getPattern(),
 				'script' => $command->getScript(),
 				'output' => $command->getOutput(),
@@ -67,6 +65,115 @@ class CommandController extends OCSController {
 		}
 
 		return new DataResponse($result);
+	}
+
+	/**
+	 * @param string $name
+	 * @param string $pattern
+	 * @param string $script
+	 * @param int $output
+	 * @return DataResponse
+	 */
+	public function create(string $name, string $pattern, string $script, int $output): DataResponse {
+		$command = new Command();
+
+		if (!\in_array($output, [Command::OUTPUT_NONE, Command::OUTPUT_USER, Command::OUTPUT_ALL], true)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		// FIXME Validate "bot name"
+		// FIXME Validate "pattern"
+		// FIXME Validate "script"
+
+		$command->setName($name);
+		$command->setName($pattern);
+		$command->setName($script);
+		$command->setName($output);
+
+		$this->commandMapper->insert($command);
+
+		return new DataResponse([
+			'id' => $command->getId(),
+			'name' => $command->getName(),
+			'pattern' => $command->getPattern(),
+			'script' => $command->getScript(),
+			'output' => $command->getOutput(),
+		]);
+	}
+
+	/**
+	 * @param int $id
+	 * @return DataResponse
+	 */
+	public function show(int $id): DataResponse {
+		try {
+			$command = $this->commandMapper->findById($id);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		return new DataResponse([
+			'id' => $command->getId(),
+			'name' => $command->getName(),
+			'pattern' => $command->getPattern(),
+			'script' => $command->getScript(),
+			'output' => $command->getOutput(),
+		]);
+	}
+
+	/**
+	 * @param int $id
+	 * @param string $name
+	 * @param string $pattern
+	 * @param string $script
+	 * @param int $output
+	 * @return DataResponse
+	 */
+	public function update(int $id, string $name, string $pattern, string $script, int $output): DataResponse {
+		try {
+			$command = $this->commandMapper->findById($id);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!\in_array($output, [Command::OUTPUT_NONE, Command::OUTPUT_USER, Command::OUTPUT_ALL], true)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		// FIXME Validate "bot name"
+		// FIXME Validate "pattern"
+		// FIXME Validate "script"
+
+		$command->setName($name);
+		$command->setName($pattern);
+		$command->setName($script);
+		$command->setName($output);
+
+		$this->commandMapper->update($command);
+
+		return new DataResponse([
+			'id' => $command->getId(),
+			'name' => $command->getName(),
+			'pattern' => $command->getPattern(),
+			'script' => $command->getScript(),
+			'output' => $command->getOutput(),
+		]);
+	}
+
+	/**
+	 * @param int $id
+	 * @return DataResponse
+	 */
+	public function destroy(int $id): DataResponse {
+		try {
+			$command = $this->commandMapper->findById($id);
+		} catch (DoesNotExistException $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$this->commandMapper->delete($command);
+
+		return new DataResponse();
 	}
 
 }

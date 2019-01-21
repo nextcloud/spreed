@@ -36,6 +36,10 @@ use OCP\AppFramework\Db\Entity;
  */
 class Command extends Entity {
 
+	public const OUTPUT_NONE = 0;
+	public const OUTPUT_USER = 1;
+	public const OUTPUT_ALL = 2;
+
 	/** @var string */
 	protected $name;
 

@@ -45,4 +45,18 @@ class CommandMapper extends QBMapper {
 
 		return $this->findEntities($qb);
 	}
+
+	/**
+	 * @param int $id
+	 * @return Command
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 */
+	public function findById(int $id): Command {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
+
+		return $this->findEntity($query);
+	}
 }
