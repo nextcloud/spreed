@@ -26,7 +26,13 @@
 		<input type="text" class="pattern" placeholder="t('spreed', 'Command pattern (e.g. `^help` to match all messages starting with help)')" :value="pattern" :aria-label="t('spreed', 'Command pattern')">
 		<input type="text" class="script" placeholder="/path/to/your/script" :value="script" :aria-label="t('spreed', 'Script to execute')">
 
-		<multiselect v-model="output" :options="outputOptions" :placeholder="t('spreed', 'Response visibility')" label="label" track-by="value" />
+		<multiselect
+			:value="selectedOutput"
+			:options="outputOptions"
+			:placeholder="t('spreed', 'Response visibility')"
+			label="label"
+			track-by="value"
+			@input="updateOutput" />
 	</div>
 </template>
 
@@ -45,12 +51,22 @@
 		],
 
 		computed: {
+			selectedOutput() {
+				return this.outputOptions.find(option => option.value === this.output)
+			},
 			outputOptions () {
 				return [
 					{ label: t('spreed', 'None'), value: 0 },
 					{ label: t('spreed', 'User'), value: 1 },
 					{ label: t('spreed', 'Everyone'), value: 2 },
 				];
+			}
+		},
+
+		methods: {
+			updateOutput: option => {
+				console.debug(option)
+				// send the option.value change to the database
 			}
 		},
 
