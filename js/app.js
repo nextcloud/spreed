@@ -553,6 +553,24 @@
 				$('#emptycontent').show();
 			});
 
+			this.listenTo(roomChannel, 'joinRoom', function(token) {
+				if (OCA.Talk.PublicShareAuth) {
+					return;
+				}
+
+				OC.Util.History.pushState({
+					token: token
+				}, OC.generateUrl('/call/' + token));
+			});
+
+			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
+				if (OCA.Talk.PublicShareAuth) {
+					return;
+				}
+
+				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+			});
+
 			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
 				app: this,
 				webrtc: OCA.SpreedMe.webrtc,
