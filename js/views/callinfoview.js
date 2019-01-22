@@ -66,6 +66,11 @@
 		'		{{/if}}' +
 		'	</div>' +
 		'{{/if}}' +
+		'{{#if showShareLink}}' +
+		'	<div class="share-link-options">' +
+		'		<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
+		'	</div>' +
+		'{{/if}}' +
 		'<div class="talk-settings-button">' +
 		'		<span class="button icon-settings"></span>' +
 		'</div>' +
