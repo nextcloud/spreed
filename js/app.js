@@ -558,6 +558,10 @@
 					return;
 				}
 
+				if (this._popingState) {
+					return;
+				}
+
 				OC.Util.History.pushState({
 					token: token
 				}, OC.generateUrl('/call/' + token));
@@ -680,7 +684,9 @@
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
+				this._popingState = true;
 				this.connection.joinRoom(params.token);
+				delete this._popingState;
 			}
 		},
 		onDocumentClick: function(event) {
