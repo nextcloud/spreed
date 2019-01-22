@@ -219,7 +219,7 @@
 		},
 
 		onAudioOutputChange: function() {
-			localStorage.setItem("audioOutput", $('#audioOutput').val());
+			localStorage.setItem('audioOutput', $('#audioOutput').val());
 
 		},
 
