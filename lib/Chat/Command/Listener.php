@@ -24,9 +24,12 @@ namespace OCA\Spreed\Chat\Command;
 
 
 use OCA\Spreed\Chat\ChatManager;
+use OCA\Spreed\Chat\MessageParser;
+use OCA\Spreed\Chat\Parser\Command;
 use OCA\Spreed\Model\CommandMapper;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
+use OCP\IUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -56,6 +59,37 @@ class Listener {
 				if (!$listener->executeCommands($event)) {
 					$listener->showHelp($event);
 				}
+			}
+		});
+
+		$this->dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
+			/** @var IComment $chatMessage */
+			$chatMessage = $event->getSubject();
+
+			if ($chatMessage->getVerb() !== 'command') {
+				return;
+			}
+
+			/** @var Command $parser */
+			$parser = \OC::$server->query(Command::class);
+
+			$user = $event->getArgument('user');
+			if ($user instanceof IUser) {
+				$parser->setUser($event->getArgument('user'));
+			}
+
+			try {
+				[$message, $parameters] = $parser->parseMessage($chatMessage);
+
+				$event->setArguments([
+					'message' => $message,
+					'parameters' => $parameters,
+				]);
+				$event->stopPropagation();
+			} catch (\OutOfBoundsException $e) {
+				// Unknown message, ignore
+			} catch (\RuntimeException $e) {
+				$event->stopPropagation();
 			}
 		});
 	}

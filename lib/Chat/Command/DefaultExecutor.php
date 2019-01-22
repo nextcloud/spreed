@@ -29,7 +29,37 @@ use OCP\Comments\IComment;
 
 class DefaultExecutor {
 
-	public function exec(Room $room, IComment $message, Command $command): void {
+	public const PLACEHOLDER_ROOM = '{ROOM}';
+	public const PLACEHOLDER_USER = '{USER}';
+	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
 
+	public function exec(Room $room, IComment $message, Command $command): void {
+		$arguments = '';
+		if (strpos($message->getMessage(), ' ') !== false) {
+			[, $arguments] = explode(' ', $message->getMessage(), 2);
+		}
+
+		$user = $message->getActorType() === 'users' ? $message->getActorId() : '';
+
+		$cmd = str_replace([
+			self::PLACEHOLDER_ROOM,
+			self::PLACEHOLDER_USER,
+			self::PLACEHOLDER_ARGUMENTS,
+		], [
+			$room->getToken(),
+			$user,
+			$arguments,
+		], $command->getScript());
+
+		$output = [];
+		exec($cmd, $output);
+
+		$message->setMessage(json_encode([
+			'user' => $user,
+			'visibility' => $command->getOutput(),
+			'output' => implode("\n", $output),
+		]));
+		$message->setActor('bot', $command->getName());
+		$message->setVerb('command');
 	}
 }
