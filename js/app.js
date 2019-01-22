@@ -572,7 +572,7 @@
 					return;
 				}
 
-				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
+				OC.Util.History.replaceState({}, OC.generateUrl('/apps/spreed'));
 			});
 
 			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
