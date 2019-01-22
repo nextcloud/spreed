@@ -88,11 +88,7 @@
 			this.app.token = token;
 			this.app.signaling.joinRoom(token);
 
-			if (!OCA.Talk.PublicShareAuth) {
-				OC.Util.History.pushState({
-					token: token
-				}, OC.generateUrl('/call/' + token));
-			}
+			roomsChannel.trigger('joinRoom', token);
 
 			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
@@ -100,9 +96,7 @@
 		leaveCurrentRoom: function() {
 			$('#video-fullscreen').addClass('hidden');
 			this.app.signaling.leaveCurrentRoom();
-			if (!OCA.Talk.PublicShareAuth) {
-				OC.Util.History.pushState({}, OC.generateUrl('/apps/spreed'));
-			}
+
 			$(this.app.mainCallElementSelector).removeClass('incall');
 
 			roomsChannel.trigger('leaveCurrentRoom');
