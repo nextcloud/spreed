@@ -168,9 +168,7 @@ input[type="password"] {
 	margin: 0 !important;
 }
 
-.select2-result .icon-contacts-dark.avatar,
-.select2-result .icon-public.avatar,
-.select2-result .icon-mail.avatar,
+.select2-result .avatar.icon,
 #app-navigation .app-navigation-entry-link .avatar.icon {
 	border-radius: 50%;
 	width: 32px;
@@ -217,8 +215,8 @@ input[type="password"] {
 		width: 22px !important;
 
 		span {
-			background-color: $color-primary;
-			color: $color-primary-text;
+			background-color: var(--color-primary);
+			color: var(--color-primary-text);
 		}
 	}
 }
@@ -1072,6 +1070,25 @@ input[type="password"] {
 /**
  * Dark-Theme fixes
  */
+.avatar.icon {
+	// We always want to use the white icons, this is why we don't use var(--color-white) here.
+	&.icon-public {
+		background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
+	}
+	&.icon-contacts {
+		background-image: url(icon-color-path('contacts', 'places', 'fff', 1, true));
+	}
+	&.icon-password {
+		background-image: url(icon-color-path('password', 'actions', 'fff', 1, true));
+	}
+	&.icon-file {
+		background-image: url(icon-color-path('text', 'filetypes', 'fff', 1, true));
+	}
+	&.icon-mail {
+		background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
+	}
+}
+
 #app-navigation > ul > li > a:first-child {
 	img {
 		filter: none !important;
