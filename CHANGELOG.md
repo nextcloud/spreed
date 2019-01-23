@@ -1,6 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.0.1 – 2019-01-23
+### Changed
+- Add a hook so the external signaling can set participant data
+  [#1418](https://github.com/nextcloud/spreed/pull/1418)
+  
+### Fixed
+- Fix dark theme for better accessibility
+  [#1451](https://github.com/nextcloud/spreed/pull/1451)
+- Correctly mark notifications as resolved when you join the room directly
+  [#1436](https://github.com/nextcloud/spreed/pull/1436)
+- Fix history back and forth in Talk and the Files app
+  [#1456](https://github.com/nextcloud/spreed/pull/1456)
+- Favorite icon has grey avatar shadow
+  [#1419](https://github.com/nextcloud/spreed/pull/1419)
+
 ## 5.0.0 – 2018-12-14
 ### Added
 - Chat and call option in the Files app sidebar
