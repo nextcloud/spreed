@@ -59,4 +59,20 @@ class CommandMapper extends QBMapper {
 
 		return $this->findEntity($query);
 	}
+
+	/**
+	 * @param string $app
+	 * @param string $cmd
+	 * @return Command
+	 * @throws \OCP\AppFramework\Db\DoesNotExistException
+	 */
+	public function find(string $app, string $cmd): Command {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('app', $query->createNamedParameter($app)))
+			->andWhere($query->expr()->eq('command', $query->createNamedParameter($cmd)));
+
+		return $this->findEntity($query);
+	}
 }

@@ -25,20 +25,32 @@ namespace OCA\Spreed\Model;
 use OCP\AppFramework\Db\Entity;
 
 /**
+ * @method void setApp(string $app)
+ * @method string getApp()
  * @method void setName(string $name)
  * @method string getName()
  * @method void setCommand(string $command)
  * @method string getCommand()
  * @method void setScript(string $name)
  * @method string getScript()
- * @method void setOutput(int $output)
- * @method int getOutput()
+ * @method void setResponse(int $response)
+ * @method int getResponse()
+ * @method void setEnabled(int $enabled)
+ * @method int getEnabled()
  */
 class Command extends Entity {
 
-	public const OUTPUT_NONE = 0;
-	public const OUTPUT_USER = 1;
-	public const OUTPUT_ALL = 2;
+	public const RESPONSE_NONE = 0;
+	public const RESPONSE_USER = 1;
+	public const RESPONSE_ALL = 2;
+
+	public const ENABLED_OFF = 0;
+	public const ENABLED_MODERATOR = 1;
+	public const ENABLED_USERS = 2;
+	public const ENABLED_ALL = 3;
+
+	/** @var string */
+	protected $app;
 
 	/** @var string */
 	protected $name;
@@ -50,12 +62,17 @@ class Command extends Entity {
 	protected $script;
 
 	/** @var int */
-	protected $output;
+	protected $response;
+
+	/** @var int */
+	protected $enabled;
 
 	public function __construct() {
+		$this->addType('app', 'string');
 		$this->addType('name', 'string');
 		$this->addType('command', 'string');
 		$this->addType('script', 'string');
-		$this->addType('output', 'int');
+		$this->addType('response', 'int');
+		$this->addType('enabled', 'int');
 	}
 }

@@ -47,6 +47,11 @@ class Version5099Date20190121102337 extends SimpleMigrationStep {
 				'notnull' => true,
 				'length' => 20,
 			]);
+			$table->addColumn('app', Type::STRING, [
+				'notnull' => false,
+				'length' => 64,
+				'default' => '',
+			]);
 			$table->addColumn('name', Type::STRING, [
 				'notnull' => true,
 				'length' => 64,
@@ -58,7 +63,12 @@ class Version5099Date20190121102337 extends SimpleMigrationStep {
 			$table->addColumn('script', Type::TEXT, [
 				'notnull' => true,
 			]);
-			$table->addColumn('output', Type::INTEGER, [
+			$table->addColumn('response', Type::INTEGER, [
+				'notnull' => true,
+				'length' => 6,
+				'default' => 1,
+			]);
+			$table->addColumn('enabled', Type::INTEGER, [
 				'notnull' => true,
 				'length' => 6,
 				'default' => 1,

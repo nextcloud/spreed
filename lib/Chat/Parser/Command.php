@@ -50,12 +50,12 @@ class Command {
 			throw new \OutOfBoundsException('Invalid message');
 		}
 
-		if ($data['visibility'] === \OCA\Spreed\Model\Command::OUTPUT_NONE) {
+		if ($data['visibility'] === \OCA\Spreed\Model\Command::RESPONSE_NONE) {
 			throw new \RuntimeException('Message should not print');
 		}
 
 		if ($this->recipient instanceof IUser &&
-			$data['visibility'] !== \OCA\Spreed\Model\Command::OUTPUT_ALL &&
+			$data['visibility'] !== \OCA\Spreed\Model\Command::RESPONSE_ALL &&
 			$data['user'] !== $this->recipient->getUID()) {
 			throw new \RuntimeException('Message should not print');
 		}
