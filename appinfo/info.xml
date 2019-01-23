@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>5.99.1</version>
+	<version>5.99.2</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -51,6 +51,15 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
 		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
 	</background-jobs>
+
+	<repair-steps>
+		<post-migration>
+			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+		</post-migration>
+		<install>
+			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+		</install>
+	</repair-steps>
 
 	<commands>
 		<command>OCA\Spreed\Command\Stun\Add</command>
