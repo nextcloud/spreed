@@ -61,14 +61,17 @@ class Application extends App {
 		$this->getContainer()->registerCapability(Capabilities::class);
 
 		$dispatcher = $server->getEventDispatcher();
+		/** @var Config $config */
 		$config = $server->query(Config::class);
+		$this->extendDefaultContentSecurityPolicy($config);
+
 		$servers = $config->getSignalingServers();
 		if (empty($servers)) {
 			$this->registerInternalSignalingHooks($dispatcher);
 		} else {
 			$this->registerSignalingBackendHooks($dispatcher);
-			$this->addContentSecurityPolicyForSignalingServers($servers);
 		}
+
 		$this->registerCallActivityHooks($dispatcher);
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerRoomInvitationHook($dispatcher);
@@ -416,28 +419,12 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 
-	protected function addContentSecurityPolicyForSignalingServers(array $servers) {
+	protected function extendDefaultContentSecurityPolicy(Config $config) {
 		$csp = new ContentSecurityPolicy();
-		foreach ($servers as $server) {
-			$csp->addAllowedConnectDomain($this->getWebSocketDomainForSignalingServer($server['server']));
+		foreach ($config->getAllServerUrlsForCSP() as $server) {
+			$csp->addAllowedConnectDomain($server);
 		}
-		$cspManager = $this->getContainer()->query(IContentSecurityPolicyManager::class);
+		$cspManager = $this->getContainer()->getServer()->getContentSecurityPolicyManager();
 		$cspManager->addDefaultPolicy($csp);
-	}
-
-	protected function getWebSocketDomainForSignalingServer(string $url): string {
-		// Copied from Standalone constructor in "js/signaling.js".
-
-		if (strpos($url, 'https://') === 0) {
-			$url = 'wss://' . substr($url, 8);
-		} else if (strpos($url, 'http://') === 0) {
-			$url = 'ws://' . substr($url, 7);
-		}
-		if (substr($url, -1) === "/") {
-			$url = substr($url, 0, -1);
-		}
-		$url = $url . '/spreed';
-
-		return $url;
 	}
 }
