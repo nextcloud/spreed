@@ -1,7 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 5.0.0-beta5 – 2018-12-06
+## 5.0.1 – 2019-01-23
+### Changed
+- Add a hook so the external signaling can set participant data
+  [#1418](https://github.com/nextcloud/spreed/pull/1418)
+  
+### Fixed
+- Fix dark theme for better accessibility
+  [#1451](https://github.com/nextcloud/spreed/pull/1451)
+- Correctly mark notifications as resolved when you join the room directly
+  [#1436](https://github.com/nextcloud/spreed/pull/1436)
+- Fix history back and forth in Talk and the Files app
+  [#1456](https://github.com/nextcloud/spreed/pull/1456)
+- Favorite icon has grey avatar shadow
+  [#1419](https://github.com/nextcloud/spreed/pull/1419)
+
+## 5.0.0 – 2018-12-14
 ### Added
 - Chat and call option in the Files app sidebar
   [#1323](https://github.com/nextcloud/spreed/pull/1323)
@@ -24,6 +39,8 @@ All notable changes to this project will be documented in this file.
   [#1271](https://github.com/nextcloud/spreed/pull/1271)
 
 ### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
 - Fix mentions for users with spaces in their user id
   [#1254](https://github.com/nextcloud/spreed/pull/1254)
 - Fix avatars in messages by guests
@@ -36,6 +53,24 @@ All notable changes to this project will be documented in this file.
   [#1302](https://github.com/nextcloud/spreed/pull/1302)
 - When a files is shared a second time into a chat no error is displayed
   [#1196](https://github.com/nextcloud/spreed/pull/1196)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
+
+## 4.0.2 – 2018-12-11
+### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
+- Fix broken chat when a file that was shared into a room is deleted
+  [#1352](https://github.com/nextcloud/spreed/pull/1352)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
+
+## 3.2.7 – 2018-12-11
+### Fixed
+- Fix screensharing in Chrome 71+ and other Chrome based browsers
+  [#1369](https://github.com/nextcloud/spreed/pull/1369)
+- Send initial screensharing stream to participants that don't publish video
+  [#1372](https://github.com/nextcloud/spreed/pull/1372)
 
 ## 4.0.1 – 2018-11-15
 ### Added
@@ -63,6 +98,15 @@ All notable changes to this project will be documented in this file.
   [#1222](https://github.com/nextcloud/spreed/pull/1222)
   [#1289](https://github.com/nextcloud/spreed/pull/1289)
 
+## 3.2.6 – 2018-09-20
+### Fixed
+- Fix turn credential generation
+  [#1203](https://github.com/nextcloud/spreed/pull/1203)
+- Fix several inconsistencies with the internal api
+  [#1202](https://github.com/nextcloud/spreed/pull/1202)
+  [#1201](https://github.com/nextcloud/spreed/pull/1201)
+  [#1200](https://github.com/nextcloud/spreed/pull/1200)
+
 ## 4.0.0 – 2018-09-06
 ### Added
 - Video verification for password protected email shares
@@ -89,6 +133,10 @@ All notable changes to this project will be documented in this file.
   [#1176](https://github.com/nextcloud/spreed/pull/1176)
 - Do not turn all `@…` strings into a mention
   [#1118](https://github.com/nextcloud/spreed/pull/1118)
+
+## 3.2.5 – 2018-07-23
+### Fixed
+- Fix handling of malicious usernames while autocompleting in chat
 
 ## 3.2.4 – 2018-07-12
 ### Added
@@ -334,5 +382,3 @@ All notable changes to this project will be documented in this file.
  - "Undefined index" log entry when visiting admin page
   [#151](https://github.com/nextcloud/spreed/pull/151)
   [#57](https://github.com/nextcloud/spreed/pull/57)
-
-
