@@ -217,6 +217,10 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
+		if ($comment->getActorType() === 'bots') {
+			$displayName = $this->prepareBotName($comment->getActorId());
+		}
+
 		list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
 
 		return new DataResponse([
@@ -307,6 +311,8 @@ class ChatController extends OCSController {
 				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
 			} else if ($comment->getActorType() === 'guests' && isset($guestNames[$comment->getActorId()])) {
 				$displayName = $guestNames[$comment->getActorId()];
+			} else if ($comment->getActorType() === 'bots') {
+				$displayName = $this->prepareBotName($comment->getActorId());
 			}
 
 			list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
@@ -381,5 +387,9 @@ class ChatController extends OCSController {
 			}
 		}
 		return $output;
+	}
+
+	protected function prepareBotName(string $actorId): string {
+		return $actorId . '-bot';
 	}
 }

@@ -512,7 +512,12 @@
 				}
 			};
 			$el.find('.authorRow .avatar').each(function() {
-				setAvatar($(this), 32);
+				if (model && model.get('actorType') === 'bots') {
+					$(this).imageplaceholder('>_', $(this).data('displayname'), 32);
+					$(this).css('background-color', '#363636');
+				} else {
+					setAvatar($(this), 32);
+				}
 			});
 			var inlineAvatars = $el.find('.message .avatar');
 			if ($($el.context).hasClass('message')) {

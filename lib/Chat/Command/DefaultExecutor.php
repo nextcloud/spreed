@@ -59,7 +59,7 @@ class DefaultExecutor {
 			'visibility' => $command->getOutput(),
 			'output' => implode("\n", $output),
 		]));
-		$message->setActor('bot', $command->getName());
+		$message->setActor('bots', $command->getName());
 		$message->setVerb('command');
 	}
 }
