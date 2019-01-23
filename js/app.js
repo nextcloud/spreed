@@ -553,6 +553,28 @@
 				$('#emptycontent').show();
 			});
 
+			this.listenTo(roomChannel, 'joinRoom', function(token) {
+				if (OCA.Talk.PublicShareAuth) {
+					return;
+				}
+
+				if (this._popingState) {
+					return;
+				}
+
+				OC.Util.History.pushState({
+					token: token
+				}, OC.generateUrl('/call/' + token));
+			});
+
+			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
+				if (OCA.Talk.PublicShareAuth) {
+					return;
+				}
+
+				OC.Util.History.replaceState({}, OC.generateUrl('/apps/spreed'));
+			});
+
 			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
 				app: this,
 				webrtc: OCA.SpreedMe.webrtc,
@@ -662,7 +684,9 @@
 		},
 		_onPopState: function(params) {
 			if (!_.isUndefined(params.token)) {
+				this._popingState = true;
 				this.connection.joinRoom(params.token);
+				delete this._popingState;
 			}
 		},
 		onDocumentClick: function(event) {
