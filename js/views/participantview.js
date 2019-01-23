@@ -146,9 +146,9 @@
 				},
 				formatResult: function (element) {
 					if (element.type === 'emails') {
-						return '<span><div class="avatar icon-mail"></div>' + escapeHTML(element.displayName) + '</span>';
+						return '<span><div class="avatar icon icon-mail"></div>' + escapeHTML(element.displayName) + '</span>';
 					} else if (element.type === 'groups') {
-						return '<span><div class="avatar icon-contacts-dark"></div>' + escapeHTML(element.displayName) + '</span>';
+						return '<span><div class="avatar icon icon-contacts"></div>' + escapeHTML(element.displayName) + '</span>';
 					}
 
 					return '<span><div class="avatar" data-user="' + escapeHTML(element.id) + '" data-user-display-name="' + escapeHTML(element.displayName) + '"></div>' + escapeHTML(element.displayName) + '</span>';
