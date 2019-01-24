@@ -115,6 +115,7 @@ class Config {
 	}
 
 	protected function getWebSocketDomainForSignalingServer(string $url): string {
+		$url .= '/';
 		if (strpos($url, 'https://') === 0) {
 			return 'wss://' . substr($url, 8, strpos($url, '/', 9) - 8);
 		}
