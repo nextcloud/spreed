@@ -576,6 +576,8 @@
 					return;
 				}
 
+				this.setPageTitle(null);
+
 				OC.Util.History.replaceState({}, OC.generateUrl('/apps/spreed'));
 			});
 
