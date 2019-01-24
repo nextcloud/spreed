@@ -325,6 +325,7 @@
 			var self = this;
 			this.signaling.syncRooms()
 				.then(function() {
+					self.stopListening(self.activeRoom, 'change:displayName');
 					self.stopListening(self.activeRoom, 'change:participantFlags');
 
 					var participants;
@@ -350,6 +351,9 @@
 					self._emptyContentView.setActiveRoom(self.activeRoom);
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
+					self.listenTo(self.activeRoom, 'change:displayName', function(model, value) {
+						self.setPageTitle(value);
+					});
 
 					self.updateContentsLayout();
 					self.listenTo(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
