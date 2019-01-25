@@ -63,12 +63,12 @@
 			$('#content').append($('footer'));
 
 			$('body').append('<div id="talk-sidebar" class="disappear"></div>');
-			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 			$('#talk-sidebar').append('<div id="call-container"></div>');
+			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 			$('#call-container').append('<div id="videos"></div>');
 			$('#call-container').append('<div id="screens"></div>');
 
-			OCA.SpreedMe.app.mainCallElementSelector = '#talk-sidebar';
+			OCA.SpreedMe.app.mainCallElementSelector = '#call-container';
 
 			OCA.SpreedMe.app._emptyContentView.destroy();
 			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
