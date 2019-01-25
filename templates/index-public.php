@@ -20,9 +20,6 @@ script('spreed', 'merged-guest');
 	<div id="app-content-wrapper">
 		<button id="video-fullscreen" class="icon-fullscreen force-icon-white-in-call icon-shadow public" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen (f)')) ?>"></button>
 
-		<div id="video-speaking">
-
-		</div>
 		<div id="videos">
 			<div class="videoView videoContainer hidden" id="localVideoContainer">
 				<video id="localVideo"></video>
