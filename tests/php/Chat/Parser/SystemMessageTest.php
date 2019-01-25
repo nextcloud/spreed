@@ -622,6 +622,9 @@ class SystemMessageTest extends TestCase {
 		$share->expects($this->once())
 			->method('getNode')
 			->willReturn($node);
+		$share->expects($this->once())
+			->method('getShareOwner')
+			->willReturn('owner');
 
 		$this->shareProvider->expects($this->once())
 			->method('getShareById')
@@ -635,9 +638,15 @@ class SystemMessageTest extends TestCase {
 			])
 			->willReturn('absolute-link-owner');
 
-		$this->userSession->expects($this->exactly(2))
+		$recipient = $this->createMock(IUser::class);
+		$recipient->expects($this->once())
+			->method('getUID')
+			->willReturn('owner');
+
+		$this->userSession->expects($this->once())
 			->method('getUser')
-			->willReturn($this->createMock(IUser::class));
+			->willReturn($recipient);
+
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -664,7 +673,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn($node);
 
 		$recipient = $this->createMock(IUser::class);
-		$recipient->expects($this->once())
+		$recipient->expects($this->exactly(2))
 			->method('getUID')
 			->willReturn('user');
 
@@ -699,12 +708,9 @@ class SystemMessageTest extends TestCase {
 			])
 			->willReturn('absolute-link-owner');
 
-		$this->userSession->expects($this->exactly(2))
+		$this->userSession->expects($this->once())
 			->method('getUser')
-			->willReturnOnConsecutiveCalls(
-				$recipient,
-				$this->createMock(IUser::class)
-			);
+			->willReturn($recipient);
 
 		$parser = $this->getParser();
 		$this->assertSame([
@@ -734,7 +740,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn($node);
 
 		$recipient = $this->createMock(IUser::class);
-		$recipient->expects($this->once())
+		$recipient->expects($this->exactly(2))
 			->method('getUID')
 			->willReturn('user');
 
@@ -757,12 +763,9 @@ class SystemMessageTest extends TestCase {
 		$this->url->expects($this->never())
 			->method('linkToRouteAbsolute');
 
-		$this->userSession->expects($this->exactly(2))
+		$this->userSession->expects($this->once())
 			->method('getUser')
-			->willReturnOnConsecutiveCalls(
-				$recipient,
-				$this->createMock(IUser::class)
-			);
+			->willReturn($recipient);
 
 		$parser = $this->getParser();
 		self::invokePrivate($parser, 'getFileFromShare', ['23']);

@@ -250,7 +250,7 @@ class SystemMessage {
 		$path = $name;
 
 		if ($this->recipient instanceof IUser) {
-			if ($this->userSession->getUser() !== $this->recipient) {
+			if ($share->getShareOwner() !== $this->recipient->getUID()) {
 				$userFolder = $this->rootFolder->getUserFolder($this->recipient->getUID());
 				if ($userFolder instanceof Node) {
 					$userNodes = $userFolder->getById($node->getId());
