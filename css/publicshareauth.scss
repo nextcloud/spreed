@@ -227,6 +227,10 @@ input#request-password-button:disabled ~ .icon {
 	margin: 0;
 }
 
+#talk-sidebar .button {
+	display: unset;
+}
+
 /* Unset conflicting rules from publicshareauth.css (core) for the sidebar */
 #talk-sidebar input[type="submit"],
 #talk-sidebar input.icon-confirm[type="submit"] {
