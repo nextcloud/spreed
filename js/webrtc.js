@@ -386,11 +386,11 @@ var spreedPeerConnectionTable = [];
 				mediaIndicator.className = 'mediaIndicator';
 
 				var muteIndicator = document.createElement('button');
-				muteIndicator.className = 'muteIndicator icon-white icon-shadow icon-audio-off audio-on';
+				muteIndicator.className = 'muteIndicator force-icon-white-in-call icon-shadow icon-audio-off audio-on';
 				muteIndicator.disabled = true;
 
 				var hideRemoteVideoButton = document.createElement('button');
-				hideRemoteVideoButton.className = 'hideRemoteVideo icon-white icon-shadow icon-video';
+				hideRemoteVideoButton.className = 'hideRemoteVideo force-icon-white-in-call icon-shadow icon-video';
 				hideRemoteVideoButton.setAttribute('style', 'display: none;');
 				hideRemoteVideoButton.setAttribute('data-original-title', t('spreed', 'Disable video'));
 				hideRemoteVideoButton.onclick = function() {
@@ -398,11 +398,11 @@ var spreedPeerConnectionTable = [];
 				};
 
 				var screenSharingIndicator = document.createElement('button');
-				screenSharingIndicator.className = 'screensharingIndicator icon-white icon-shadow icon-screen screen-off';
+				screenSharingIndicator.className = 'screensharingIndicator force-icon-white-in-call icon-shadow icon-screen screen-off';
 				screenSharingIndicator.setAttribute('data-original-title', t('spreed', 'Show screen'));
 
 				var iceFailedIndicator = document.createElement('button');
-				iceFailedIndicator.className = 'iceFailedIndicator icon-white icon-shadow icon-error not-failed';
+				iceFailedIndicator.className = 'iceFailedIndicator force-icon-white-in-call icon-shadow icon-error not-failed';
 				iceFailedIndicator.disabled = true;
 
 				$(hideRemoteVideoButton).tooltip({
