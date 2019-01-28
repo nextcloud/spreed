@@ -116,11 +116,11 @@ templates['chatview_comment'] = template({"1":function(container,depth0,helpers,
 templates['mediacontrolsview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<button id=\"mute\" class=\"icon-audio icon-white icon-shadow\" data-placement=\"top\" data-toggle=\"tooltip\" data-original-title=\""
+  return "<button id=\"mute\" class=\"icon-audio force-icon-white-in-call icon-shadow\" data-placement=\"top\" data-toggle=\"tooltip\" data-original-title=\""
     + alias4(((helper = (helper = helpers.muteAudioButtonTitle || (depth0 != null ? depth0.muteAudioButtonTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"muteAudioButtonTitle","hash":{},"data":data}) : helper)))
-    + "\"></button>\n<button id=\"hideVideo\" class=\"icon-video icon-white icon-shadow\" data-placement=\"top\" data-toggle=\"tooltip\" data-original-title=\""
+    + "\"></button>\n<button id=\"hideVideo\" class=\"icon-video force-icon-white-in-call icon-shadow\" data-placement=\"top\" data-toggle=\"tooltip\" data-original-title=\""
     + alias4(((helper = (helper = helpers.hideVideoButtonTitle || (depth0 != null ? depth0.hideVideoButtonTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"hideVideoButtonTitle","hash":{},"data":data}) : helper)))
-    + "\"></button>\n<button id=\"screensharing-button\" class=\"app-navigation-entry-utils-menu-button icon-screen-off icon-white icon-shadow screensharing-disabled\" data-placement=\"top\" data-toggle=\"tooltip\" data-original-title=\""
+    + "\"></button>\n<button id=\"screensharing-button\" class=\"app-navigation-entry-utils-menu-button icon-screen-off force-icon-white-in-call icon-shadow screensharing-disabled\" data-placement=\"top\" data-toggle=\"tooltip\" data-original-title=\""
     + alias4(((helper = (helper = helpers.screensharingButtonTitle || (depth0 != null ? depth0.screensharingButtonTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"screensharingButtonTitle","hash":{},"data":data}) : helper)))
     + "\"></button>\n<div id=\"screensharing-menu\" class=\"app-navigation-entry-menu\">\n	<ul>\n		<li id=\"share-screen-entry\">\n			<button id=\"share-screen-button\">\n				<span class=\"icon-screen\"></span>\n				<span>"
     + alias4(((helper = (helper = helpers.shareScreenButtonTitle || (depth0 != null ? depth0.shareScreenButtonTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"shareScreenButtonTitle","hash":{},"data":data}) : helper)))
