@@ -232,3 +232,9 @@ input#request-password-button:disabled ~ .icon {
 #talk-sidebar input.icon-confirm[type="submit"] {
 	top: unset;
 }
+
+/* Unset conflicting rules from guest.css for the sidebar */
+#talk-sidebar input[type="submit"].hidden,
+#talk-sidebar input.icon-confirm[type="submit"].hidden {
+	display: none;
+}
