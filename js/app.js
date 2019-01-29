@@ -303,7 +303,7 @@
 			// tile the video windows
 			var columns = Math.sqrt($('.videoContainer').length);
 			var rows = Math.ceil($('.videoContainer').length / columns);
-			var width = $('#videos').width() / columns;
+			var width = $('#videos').width() / Math.ceil(columns);
 			var height = $('#videos').height() / rows;
 
 			$('.videoContainer').each(function(index) {
