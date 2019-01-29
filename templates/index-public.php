@@ -5,49 +5,8 @@
 vendor_script('select2/select2');
 vendor_style('select2/select2');
 
-style('spreed', 'style');
-style('spreed', 'chatview');
-style('spreed', 'autocomplete');
-style('spreed', 'video');
-script(
-	'spreed',
-	[
-		'vendor/backbone/backbone-min',
-		'vendor/backbone.radio/build/backbone.radio.min',
-		'vendor/backbone.marionette/lib/backbone.marionette.min',
-		'vendor/handlebars/handlebars.min',
-		'vendor/jshashes/hashes.min',
-		'vendor/Caret.js/dist/jquery.caret.min',
-		'vendor/At.js/dist/js/jquery.atwho.min',
-		'models/chatmessage',
-		'models/chatmessagecollection',
-		'models/localstoragemodel',
-		'models/room',
-		'models/roomcollection',
-		'models/participant',
-		'models/participantcollection',
-		'views/callbutton',
-		'views/callinfoview',
-		'views/chatview',
-		'views/editabletextlabel',
-		'views/emptycontentview',
-		'views/mediacontrolsview',
-		'views/participantlistview',
-		'views/participantview',
-		'views/richobjectstringparser',
-		'views/roomlistview',
-		'views/sidebarview',
-		'views/tabview',
-		'views/templates',
-		'views/virtuallist',
-		'simplewebrtc',
-		'webrtc',
-		'signaling',
-		'connection',
-		'app',
-		'init',
-	]
-);
+style('spreed', 'merged');
+script('spreed', 'merged-guest');
 ?>
 
 <div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">
