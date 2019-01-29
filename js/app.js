@@ -206,6 +206,38 @@
 			this.registerLocalVideoButtonHandlers();
 
 			$(document).keyup(this._onKeyUp.bind(this));
+
+			$(window).resize(function() {
+
+				OCA.SpreedMe.app.tileVideos();
+			});
+
+			$('#video-tiled').click(function() {
+				$('#videos').removeClass('videos-bottom');
+				$('#videos').addClass('videos-center');
+
+				$('.videoContainer-dummy').remove();
+				OCA.SpreedMe.app.tileVideos();
+			}.bind(this));
+
+			$('#video-large').click(function() {
+				$('.videoContainer').addClass('videoLarge');
+				$('.videoContainer').removeClass('videoTiled');
+
+				if (OCA.SpreedMe.videos.getLatestSpeakerId() !== null) {
+					var containerId = OCA.SpreedMe.videos.getContainerId(OCA.SpreedMe.videos.getLatestSpeakerId());
+					$(containerId).addClass('promoted');
+				}
+
+				$('#videos').removeClass('videos-center');
+				$('#videos').addClass('videos-bottom');
+
+				$('.videoContainer').each(function(index) {
+					$(this).find('video').css('width', '');
+					$(this).find('video').css('height', '');
+				});
+
+			}.bind(this));
 		},
 
 		registerLocalVideoButtonHandlers: function() {
@@ -257,6 +289,27 @@
 						break;
 				}
 			}
+		},
+
+		tileVideos: function() {
+			if (!$('#videos').hasClass('videos-center')) {
+				return;
+			}
+
+			$('.videoContainer').addClass('videoTiled');
+			$('.videoContainer').removeClass('videoLarge');
+			$('.videoContainer').removeClass('promoted');
+
+			// tile the video windows
+			var columns = Math.sqrt($('.videoContainer').length);
+			var rows = Math.ceil($('.videoContainer').length / columns);
+			var width = $('#videos').width() / columns;
+			var height = $('#videos').height() / rows;
+
+			$('.videoContainer').each(function(index) {
+				$(this).find('video').css('width', width);
+				$(this).find('video').css('height', height);
+			});
 		},
 
 		_showRoomList: function() {
@@ -390,11 +443,17 @@
 				$('#videos').show();
 				$('#screens').show();
 				$('#emptycontent').hide();
+				$('#emptycontent').hide();
+				$('#video-tiled').show();
+				$('#video-large').show();
+				OCA.SpreedMe.app.tileVideos();
 			} else {
 				$('#video-speaking').hide();
 				$('#videos').hide();
 				$('#screens').hide();
 				$('#emptycontent').show();
+				$('#video-tiled').hide();
+				$('#video-large').hide();
 			}
 		},
 		updateSidebarWithActiveRoom: function() {

@@ -345,6 +345,9 @@ var spreedPeerConnectionTable = [];
 		};
 
 		OCA.SpreedMe.videos = {
+			getLatestSpeakerId: function() {
+				return latestSpeakerId;
+			},
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
 				return '#container_' + sanitizedId + '_video_incoming';
@@ -651,6 +654,11 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
+				if ($('#videos').hasClass('videos-center')) {
+					latestSpeakerId = id;
+					return;
+				}
+
 				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
 				if(newContainer.find('video').length === 0) {
 					console.warn('promote: no video found for ID', id);
@@ -678,6 +686,11 @@ var spreedPeerConnectionTable = [];
 				}
 			},
 			updateVideoContainerDummy: function(id) {
+				if ($('#videos').hasClass('videos-center')) {
+					$('.videoContainer-dummy').remove();
+					return;
+				}
+
 				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
 
 				$('.videoContainer-dummy').remove();
@@ -1106,6 +1119,7 @@ var spreedPeerConnectionTable = [];
 			} else {
 				OCA.SpreedMe.speakers.add(peer.id, true);
 			}
+			OCA.SpreedMe.app.tileVideos();
 		});
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){

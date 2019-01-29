@@ -1095,3 +1095,29 @@ input[type="password"] {
 		filter: none !important;
 	}
 }
+
+.icon-videolarge {
+    background-image: url('../img/videolarge.svg?v=1');
+}
+
+.icon-videotiled {
+    background-image: url('../img/videotiled.svg?v=1');
+}
+
+.videoLarge {
+
+}
+
+.videoTiled {
+	float: left;
+}
+
+.videoContainer.promoted {
+	position: absolute;
+	height: 100%;
+	z-index: 0;
+}
+
+.videoContainer.promoted video {
+	height: 100%;
+}
