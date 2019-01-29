@@ -71,45 +71,8 @@ class TemplateLoader {
 			return;
 		}
 
-		Util::addStyle('spreed', 'publicshareauth');
-		Util::addStyle('spreed', 'style');
-		Util::addStyle('spreed', 'chatview');
-		Util::addStyle('spreed', 'autocomplete');
-		Util::addStyle('spreed', 'video');
-
-		Util::addScript('spreed', 'vendor/backbone/backbone-min');
-		Util::addScript('spreed', 'vendor/backbone.radio/build/backbone.radio.min');
-		Util::addScript('spreed', 'vendor/backbone.marionette/lib/backbone.marionette.min');
-		Util::addScript('spreed', 'vendor/jshashes/hashes.min');
-		Util::addScript('spreed', 'vendor/Caret.js/dist/jquery.caret.min');
-		Util::addScript('spreed', 'vendor/At.js/dist/js/jquery.atwho.min');
-		Util::addScript('spreed', 'models/chatmessage');
-		Util::addScript('spreed', 'models/chatmessagecollection');
-		Util::addScript('spreed', 'models/localstoragemodel');
-		Util::addScript('spreed', 'models/room');
-		Util::addScript('spreed', 'models/roomcollection');
-		Util::addScript('spreed', 'models/participant');
-		Util::addScript('spreed', 'models/participantcollection');
-		Util::addScript('spreed', 'views/callbutton');
-		Util::addScript('spreed', 'views/callinfoview');
-		Util::addScript('spreed', 'views/chatview');
-		Util::addScript('spreed', 'views/editabletextlabel');
-		Util::addScript('spreed', 'views/emptycontentview');
-		Util::addScript('spreed', 'views/mediacontrolsview');
-		Util::addScript('spreed', 'views/participantlistview');
-		Util::addScript('spreed', 'views/participantview');
-		Util::addScript('spreed', 'views/richobjectstringparser');
-		Util::addScript('spreed', 'views/roomlistview');
-		Util::addScript('spreed', 'views/sidebarview');
-		Util::addScript('spreed', 'views/tabview');
-		Util::addScript('spreed', 'views/templates');
-		Util::addScript('spreed', 'views/virtuallist');
-		Util::addScript('spreed', 'simplewebrtc');
-		Util::addScript('spreed', 'webrtc');
-		Util::addScript('spreed', 'signaling');
-		Util::addScript('spreed', 'connection');
-		Util::addScript('spreed', 'app');
-		Util::addScript('spreed', 'publicshareauth');
+		Util::addStyle('spreed', 'merged-share-auth');
+		Util::addScript('spreed', 'merged-share-auth');
 	}
 
 }
