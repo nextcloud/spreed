@@ -297,7 +297,7 @@ Feature: get
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room not invited to |
-      | share_with_displayname | participant3-displayname, participant4-displayname |
+      | share_with_displayname | Private conversation|
 
   Scenario: get all shares and reshares of a user who reshared a file to an owned one-to-one room
     Given user "participant2" creates room "one-to-one room not invited to"
@@ -331,7 +331,7 @@ Feature: get
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room not invited to |
-      | share_with_displayname | participant2-displayname, participant3-displayname |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a user who reshared a file to a one-to-one room
     Given user "participant2" creates room "one-to-one room not invited to"
@@ -365,7 +365,7 @@ Feature: get
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room not invited to |
-      | share_with_displayname | participant2-displayname, participant3-displayname |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares of a file
     Given user "participant1" creates room "own group room"
@@ -478,7 +478,7 @@ Feature: get
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room not invited to |
-      | share_with_displayname | participant3-displayname, participant4-displayname |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a file reshared to a one-to-one room by its owner
     Given user "participant2" creates room "one-to-one room not invited to"
@@ -512,7 +512,7 @@ Feature: get
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room not invited to |
-      | share_with_displayname | participant2-displayname, participant3-displayname |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a file reshared to a one-to-one room by its second participant
     Given user "participant2" creates room "one-to-one room not invited to"
@@ -546,7 +546,7 @@ Feature: get
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
       | share_with             | one-to-one room not invited to |
-      | share_with_displayname | participant2-displayname, participant3-displayname |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares of a folder
     Given user "participant1" creates room "own group room"

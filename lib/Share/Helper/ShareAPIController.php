@@ -91,23 +91,28 @@ class ShareAPIController {
 			return $result;
 		}
 
-		// The display name of one-to-one rooms is set to the display name of
-		// the other participant, except on reshares to rooms that the user is
-		// not invited to, in which case the display name of both participants
-		// is used.
 		$roomName = $room->getName();
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$participantsList = $room->getParticipants()['users'];
-			unset($participantsList[$this->userId]);
 
-			$user = $this->userManager->get(key($participantsList));
-			if ($user instanceof IUser) {
-				$roomName = $user->getDisplayName();
+		try {
+			$room->getParticipant($this->userId);
+
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$participantsList = $room->getParticipants()['users'];
+				unset($participantsList[$this->userId]);
+
+				$user = $this->userManager->get(key($participantsList));
+				if ($user instanceof IUser) {
+					$roomName = $user->getDisplayName();
+				}
+			} else if ($roomName === '') {
+				$roomName = $this->l->t('Unnamed conversation');
 			}
+		} catch (ParticipantNotFoundException $e) {
+			// Do not leak the name of rooms the user is not a part of
+			$roomName = $this->l->t('Private conversation');
 		}
 
 		$result['share_with_displayname'] = $roomName;
-
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$result['token'] = $share->getToken();
 		}
