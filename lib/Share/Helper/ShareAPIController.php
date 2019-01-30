@@ -30,6 +30,7 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\IL10N;
+use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Share\IShare;
 
@@ -90,18 +91,28 @@ class ShareAPIController {
 			return $result;
 		}
 
-		// The display name of one-to-one rooms is set to the display name of
-		// the other participant.
 		$roomName = $room->getName();
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$participantsList = $room->getParticipants()['users'];
-			unset($participantsList[$this->userId]);
 
-			$roomName = $this->userManager->get(key($participantsList))->getDisplayName();
+		try {
+			$room->getParticipant($this->userId);
+
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$participantsList = $room->getParticipants()['users'];
+				unset($participantsList[$this->userId]);
+
+				$user = $this->userManager->get(key($participantsList));
+				if ($user instanceof IUser) {
+					$roomName = $user->getDisplayName();
+				}
+			} else if ($roomName === '') {
+				$roomName = $this->l->t('Unnamed conversation');
+			}
+		} catch (ParticipantNotFoundException $e) {
+			// Do not leak the name of rooms the user is not a part of
+			$roomName = $this->l->t('Private conversation');
 		}
 
 		$result['share_with_displayname'] = $roomName;
-
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$result['token'] = $share->getToken();
 		}
