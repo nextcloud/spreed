@@ -75,4 +75,19 @@ class Command extends Entity {
 		$this->addType('response', 'int');
 		$this->addType('enabled', 'int');
 	}
+
+	/**
+	 * @return array
+	 */
+	public function asArray(): array {
+		return [
+			'id' => $this->getId(),
+			'app' => $this->getApp(),
+			'name' => $this->getName(),
+			'command' => $this->getCommand(),
+			'script' => $this->getScript(),
+			'response' => $this->getResponse(),
+			'enabled' => $this->getEnabled(),
+		];
+	}
 }

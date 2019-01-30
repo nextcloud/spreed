@@ -100,16 +100,16 @@ class CommandService {
 	 */
 	public function update(int $id, string $cmd, string $name, string $script, int $response, int $enabled): Command {
 		$command = $this->mapper->findById($id);
+		if ($command->getApp() !== '' || $command->getCommand() === 'help') {
+			throw new \InvalidArgumentException('app', 0);
+		}
+
 		if (!\in_array($response, [Command::RESPONSE_NONE, Command::RESPONSE_USER, Command::RESPONSE_ALL], true)) {
 			throw new \InvalidArgumentException('response', 4);
 		}
 
 		if (!\in_array($enabled, [Command::ENABLED_OFF, Command::ENABLED_MODERATOR, Command::ENABLED_USERS, Command::ENABLED_ALL], true)) {
 			throw new \InvalidArgumentException('enabled', 5);
-		}
-
-		if ($command->getApp() !== '' || $command->getCommand() === 'help') {
-			throw new \InvalidArgumentException('app', 0);
 		}
 
 		if ($cmd !== $command->getCommand()) {
@@ -136,11 +136,18 @@ class CommandService {
 	 * @param int $id
 	 * @return Command
 	 * @throws DoesNotExistException
+	 * @throws \InvalidArgumentException
 	 */
 	public function delete(int $id): Command {
 		$command = $this->mapper->findById($id);
+
+		if ($command->getApp() !== '' || $command->getCommand() === 'help') {
+			throw new \InvalidArgumentException('app', 0);
+		}
+
 		return $this->mapper->delete($command);
 	}
+
 	/**
 	 * @param string $app
 	 * @param string $cmd
@@ -149,6 +156,14 @@ class CommandService {
 	 */
 	public function find(string $app, string $cmd): Command {
 		return $this->mapper->find($app, $cmd);
+	}
+
+	/**
+	 * @param string $app
+	 * @return Command[]
+	 */
+	public function findByApp(string $app): array {
+		return $this->mapper->findByApp($app);
 	}
 
 	/**

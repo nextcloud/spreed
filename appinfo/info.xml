@@ -62,6 +62,10 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</repair-steps>
 
 	<commands>
+		<command>OCA\Spreed\Command\Command\Add</command>
+		<command>OCA\Spreed\Command\Command\Delete</command>
+		<command>OCA\Spreed\Command\Command\ListCommand</command>
+		<command>OCA\Spreed\Command\Command\Update</command>
 		<command>OCA\Spreed\Command\Stun\Add</command>
 		<command>OCA\Spreed\Command\Stun\Delete</command>
 		<command>OCA\Spreed\Command\Stun\ListCommand</command>

@@ -23,6 +23,7 @@
 
 namespace OCA\Spreed\Controller;
 
+use OCA\Spreed\Model\Command;
 use OCA\Spreed\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
@@ -53,18 +54,9 @@ class CommandController extends OCSController {
 	public function index(): DataResponse {
 		$commands = $this->commandService->findAll();
 
-		$result = [];
-		foreach ($commands as $command) {
-			$result[] = [
-				'id' => $command->getId(),
-				'app' => $command->getApp(),
-				'name' => $command->getName(),
-				'pattern' => $command->getCommand(),
-				'script' => $command->getScript(),
-				'response' => $command->getResponse(),
-				'enabled' => $command->getEnabled(),
-			];
-		}
+		$result = array_map(function(Command $command) {
+			return $command->asArray();
+		}, $commands);
 
 		return new DataResponse($result);
 	}
@@ -84,15 +76,7 @@ class CommandController extends OCSController {
 			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
-		return new DataResponse([
-			'id' => $command->getId(),
-			'app' => $command->getApp(),
-			'name' => $command->getName(),
-			'pattern' => $command->getCommand(),
-			'script' => $command->getScript(),
-			'response' => $command->getResponse(),
-			'enabled' => $command->getEnabled(),
-		]);
+		return new DataResponse($command->asArray());
 	}
 
 	/**
@@ -104,6 +88,8 @@ class CommandController extends OCSController {
 			$this->commandService->delete($id);
 		} catch (DoesNotExistException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		} catch (\InvalidArgumentException $e) {
+			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();

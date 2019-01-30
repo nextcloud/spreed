@@ -38,12 +38,12 @@ class CommandMapper extends QBMapper {
 	 * @return Command[]
 	 */
 	public function findAll(): array {
-		$qb = $this->db->getQueryBuilder();
-		$qb->select('*')
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
 			->from($this->getTableName())
 			->orderBy('id', 'ASC');
 
-		return $this->findEntities($qb);
+		return $this->findEntities($query);
 	}
 
 	/**
@@ -58,6 +58,20 @@ class CommandMapper extends QBMapper {
 			->where($query->expr()->eq('id', $query->createNamedParameter($id)));
 
 		return $this->findEntity($query);
+	}
+
+	/**
+	 * @param string $app
+	 * @return Command[]
+	 */
+	public function findByApp(string $app): array {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from($this->getTableName())
+			->where($query->expr()->eq('app', $query->createNamedParameter($app)))
+			->orderBy('id', 'ASC');
+
+		return $this->findEntities($query);
 	}
 
 	/**
