@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0.3 – 2019-01-30
+### Fixed
+- Do not show room names when the user is not part of it 
+  [#1498](https://github.com/nextcloud/spreed/pull/1498)
+- Fix mentions when adding multiple directly after each other
+  [#1393](https://github.com/nextcloud/spreed/pull/1393)
+- Load more messages after loading the first batch when entering a room
+  [#1402](https://github.com/nextcloud/spreed/pull/1402)
+- Pass empty list of session ids when notifying about removed guests to avoid errors
+  [#1414](https://github.com/nextcloud/spreed/pull/1414)
+
 ## 3.2.8 – 2019-01-30
 ### Fixed
 - Fix mentions when adding multiple directly after each other
