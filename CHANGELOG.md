@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 3.2.8 – 2019-01-30
+### Fixed
+- Fix mentions when adding multiple directly after each other
+  [#1394](https://github.com/nextcloud/spreed/pull/1394)
+- Load more messages after loading the first batch when entering a room
+  [#1403](https://github.com/nextcloud/spreed/pull/1403)
+
 ## 4.0.2 – 2018-12-11
 ### Fixed
 - Fix screensharing in Chrome 71+ and other Chrome based browsers
