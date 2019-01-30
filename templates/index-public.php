@@ -19,8 +19,7 @@ script('spreed', 'merged-guest');
 
 	<div id="app-content-wrapper">
 		<button id="video-fullscreen" class="icon-fullscreen icon-white icon-shadow public" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen (f)')) ?>"></button>
-		<button id="video-tiled" class="icon-videotiled icon-white icon-shadow hidden" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Tiled')) ?>"></button>
-		<button id="video-large" class="icon-videolarge icon-white icon-shadow hidden" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Large')) ?>"></button>
+		<button id="video-tiled" class="icon-videotiled icon-white icon-shadow hidden" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('toggle Tile view')) ?>"></button>
 
 		<div id="video-speaking">
 
