@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.0.2 – 2019-01-30
+### Changed
+- Show autocompletion as soon as "@" is typed 
+  [#1483](https://github.com/nextcloud/spreed/pull/1483)
+
+### Fixed
+- Fix parse error on PHP 7.0
+  [#1493](https://github.com/nextcloud/spreed/pull/1493)
+- Add global Content Security Policy for signaling servers
+  [#1462](https://github.com/nextcloud/spreed/pull/1462)
+- Shared file messages show the name of the file as seen by the owner instead of by the current user
+  [#1487](https://github.com/nextcloud/spreed/pull/1487)
+- Multiple fixes for dark-theme
+  [#1494](https://github.com/nextcloud/spreed/pull/1494)
+  [#1472](https://github.com/nextcloud/spreed/pull/1472)
+  [#1486](https://github.com/nextcloud/spreed/pull/1486)
+- Do not show room names when the user is not part of it 
+  [#1497](https://github.com/nextcloud/spreed/pull/1497)
+  [#1495](https://github.com/nextcloud/spreed/pull/1495)
+- Fix page title not updated when room name is updated
+  [#1468](https://github.com/nextcloud/spreed/pull/1468)
+- Reduce the number of loaded JS and CSS files
+  [#1491](https://github.com/nextcloud/spreed/pull/1491)
+- Always use white icons for conversation images (also in dark-theme)
+  [#1463](https://github.com/nextcloud/spreed/pull/1463)
+- Fix submit button in public share authentication page
+  [#1481](https://github.com/nextcloud/spreed/pull/1481)
+
 ## 4.0.3 – 2019-01-30
 ### Fixed
 - Do not show room names when the user is not part of it 
