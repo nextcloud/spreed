@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-APP_NAME=notifications
+APP_NAME=spreed
 
 APP_INTEGRATION_DIR=$PWD
 ROOT_DIR=${APP_INTEGRATION_DIR}/../../../..
