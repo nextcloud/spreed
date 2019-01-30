@@ -305,7 +305,12 @@ input[type="password"] {
 	 * because the black icons are not visible on videos, especially when your camera is covered.
 	 */
 	&#hideVideo:not(.local-video-disabled) {
-		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+		&.icon-video {
+			background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+		}
+		&.icon-video-off {
+			background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+		}
 	}
 	&#mute:not(.local-video-disabled) {
 		&.icon-audio {
