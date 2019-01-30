@@ -298,43 +298,64 @@ input[type="password"] {
 	}
 }
 
-/* Use dark icons when not in a call (= white background) */
-#app-content:not(.incall):not(.screensharing) .icon-white.icon-shadow,
-#app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .icon-white.icon-shadow {
-	/* Still use white icons outside of calls when local video shows; otherwise
-	 * use dark icons.
-	 * There is no need to override "icon-video" and "icon-screensharing", as
-	 * they will never be shown with dark icons. */
-	&#hideVideo.local-video-disabled,
-	&#mute.local-video-disabled,
-	&#screensharing-button.local-video-disabled {
-		filter: none;
-	}
-	&#hideVideo.local-video-disabled {
-		background-image: var(--icon-video-off-000);
-	}
-	&#mute.local-video-disabled {
-		&.icon-audio-off {
-			background-image: var(--icon-audio-off-000);
+#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call,
+#app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .force-icon-white-in-call {
+	/*
+	 * Also force the white icons, when the video of the local participant is shown,
+	 * because the black icons are not visible on videos, especially when your camera is covered.
+	 */
+	&#hideVideo:not(.local-video-disabled) {
+		&.icon-video {
+			background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
 		}
+		&.icon-video-off {
+			background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+		}
+	}
+	&#mute:not(.local-video-disabled) {
 		&.icon-audio {
-			background-image: var(--icon-audio-000);
+			background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+		}
+		&.icon-audio-off {
+			background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
 		}
 	}
-	&#screensharing-button.local-video-disabled {
-		background-image: var(--icon-screen-off-000);
+	&#screensharing-button:not(.local-video-disabled) {
+		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
 	}
+}
 
+#app-content.incall .force-icon-white-in-call,
+#app-content.screensharing .force-icon-white-in-call,
+#app-content.incall ~ #app-sidebar-wrapper .force-icon-white-in-call,
+#app-content.screensharing ~ #app-sidebar-wrapper .force-icon-white-in-call {
+	/*
+	 * Force the white icon, independent from white/dark mode selection,
+	 * because those icons are presented on our black calling-screen.
+	 */
 	&.icon-menu-people {
-		background-image: var(--icon-spreed-menu-people-000);
+		background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1, false));
 	}
 	&.icon-fullscreen {
-		background-image: var(--icon-fullscreen-000);
+		background-image: url(icon-color-path('fullscreen', 'actions', 'fff', 1, true));
 	}
-
-	&.icon-menu-people,
-	&.icon-fullscreen {
-		filter: none;
+	&.icon-audio {
+		background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+	}
+	&.icon-audio-off {
+		background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+	}
+	&.icon-video {
+		background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+	}
+	&.icon-video-off {
+		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+	}
+	&.icon-screen {
+		background-image: url(icon-color-path('screen', 'actions', 'fff', 1, true));
+	}
+	&.icon-screen-off {
+		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
 	}
 }
 
@@ -1071,8 +1092,8 @@ input[type="password"] {
 /**
  * Dark-Theme fixes
  */
+// We always want to use the white icons, this is why we don't use var(--color-white) here.
 .avatar.icon {
-	// We always want to use the white icons, this is why we don't use var(--color-white) here.
 	&.icon-public {
 		background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
 	}
