@@ -32,7 +32,6 @@ use OCP\IRequest;
 
 class CommandController extends OCSController {
 
-
 	/** @var CommandService */
 	protected $commandService;
 
@@ -71,65 +70,14 @@ class CommandController extends OCSController {
 	}
 
 	/**
-	 * @param string $cmd
-	 * @param string $name
-	 * @param string $script
+	 * @param int $id
 	 * @param int $response
 	 * @param int $enabled
 	 * @return DataResponse
 	 */
-	public function create(string $cmd, string $name, string $script, int $response, int $enabled): DataResponse {
+	public function update(int $id, int $response, int $enabled): DataResponse {
 		try {
-			$command = $this->commandService->create('', $name, $cmd, $script, $response, $enabled);
-		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
-		}
-
-		return new DataResponse([
-			'id' => $command->getId(),
-			'app' => $command->getApp(),
-			'name' => $command->getName(),
-			'pattern' => $command->getCommand(),
-			'script' => $command->getScript(),
-			'response' => $command->getResponse(),
-			'enabled' => $command->getEnabled(),
-		]);
-	}
-
-	/**
-	 * @param int $id
-	 * @return DataResponse
-	 */
-	public function show(int $id): DataResponse {
-		try {
-			$command = $this->commandService->findById($id);
-		} catch (DoesNotExistException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		return new DataResponse([
-			'id' => $command->getId(),
-			'app' => $command->getApp(),
-			'name' => $command->getName(),
-			'pattern' => $command->getCommand(),
-			'script' => $command->getScript(),
-			'response' => $command->getResponse(),
-			'enabled' => $command->getEnabled(),
-		]);
-	}
-
-	/**
-	 * @param int $id
-	 * @param string $cmd
-	 * @param string $name
-	 * @param string $script
-	 * @param int $response
-	 * @param int $enabled
-	 * @return DataResponse
-	 */
-	public function update(int $id, string $cmd, string $name, string $script, int $response, int $enabled): DataResponse {
-		try {
-			$command = $this->commandService->update($id, $name,  $cmd, $script, $response, $enabled);
+			$command = $this->commandService->updateFromWeb($id, $response, $enabled);
 		} catch (DoesNotExistException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (\InvalidArgumentException $e) {

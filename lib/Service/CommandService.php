@@ -76,6 +76,19 @@ class CommandService {
 
 	/**
 	 * @param int $id
+	 * @param int $response
+	 * @param int $enabled
+	 * @return Command
+	 * @throws \InvalidArgumentException
+	 * @throws DoesNotExistException
+	 */
+	public function updateFromWeb(int $id, int $response, int $enabled): Command {
+		$command = $this->mapper->findById($id);
+		return $this->update($id, $command->getCommand(), $command->getName(), $command->getScript(), $response, $enabled);
+	}
+
+	/**
+	 * @param int $id
 	 * @param string $cmd
 	 * @param string $name
 	 * @param string $script
