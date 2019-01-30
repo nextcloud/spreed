@@ -29,7 +29,7 @@ OC.L10N.register(
     "Press Ctrl-C to copy." : "Tryck Ctrl-C för att kopiera.",
     "Error while getting the room ID" : "Fel vid mottagande av rum-ID",
     "Start a conversation" : "Starta en konversation",
-    "Share this file with others to discuss" : "Dela den här filen med andra att diskutera",
+    "Share this file with others to discuss" : "Dela den här filen med andra för att diskutera",
     "Share" : "Dela",
     "Request password" : "Begär lösenord",
     "Error requesting the password." : "Fel vid begäran av lösenord.",
