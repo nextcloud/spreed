@@ -40,7 +40,6 @@ use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
-use OCP\Mail\IMailer;
 
 class RoomControllerTest extends \Test\TestCase {
 
@@ -62,8 +61,6 @@ class RoomControllerTest extends \Test\TestCase {
 	protected $guestManager;
 	/** @var MessageParser|\PHPUnit_Framework_MockObject_MockObject */
 	protected $messageParser;
-	/** @var IMailer|\PHPUnit_Framework_MockObject_MockObject */
-	protected $mailer;
 	/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject */
 	private $l;
 
@@ -80,7 +77,6 @@ class RoomControllerTest extends \Test\TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
-		$this->mailer = $this->createMock(IMailer::class);
 		$this->l = $this->createMock(IL10N::class);
 	}
 
@@ -97,7 +93,6 @@ class RoomControllerTest extends \Test\TestCase {
 			$this->guestManager,
 			$this->chatManager,
 			$this->messageParser,
-			$this->mailer,
 			$this->l
 		);
 	}
