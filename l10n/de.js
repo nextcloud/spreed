@@ -219,6 +219,8 @@ OC.L10N.register(
     "A group call has started" : "Ein Gruppenanruf wurde gestartet",
     "{email} requested the password to access {file}" : "{email} hat das Passwort angefordert um auf {file} zuzugreifen",
     "Someone requested the password to access {file}" : "Jemand hat das Kennwort für den Zugriff auf {file} angefordert",
+    "Unnamed conversation" : "Unbenannte Unterhaltung",
+    "Private conversation" : "Private Unterhaltung",
     "Invalid date, date format must be YYYY-MM-DD" : "Ungültiges Datum, Zulässiges Datumsformat: YYYY-MM-DD",
     "Conversation not found" : "Unterhaltung nicht gefunden",
     "Path is already shared with this room" : "Pfad wurde bereits mit diesem Raum geteilt",
