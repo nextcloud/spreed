@@ -298,8 +298,7 @@ input[type="password"] {
 	}
 }
 
-#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call,
-#app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .force-icon-white-in-call {
+#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call {
 	/*
 	 * Also force the white icons, when the video of the local participant is shown,
 	 * because the black icons are not visible on videos, especially when your camera is covered.
