@@ -314,10 +314,12 @@ input[type="password"] {
 	}
 }
 
-/* Use white icon for the app navigation toggle when in a call */
+/* Use white icon for the app navigation toggle when in a call; this can not be
+ * integrated above because the navigation toggle is created by the core and
+ * does not include the Talk-specific "force-icon-white-in-call" CSS class. */
 #app-content.incall .icon-menu,
 #app-content.screensharing .icon-menu {
-	@include icon-color('menu', 'actions', $color-white, 1, true);
+	background-image: url(icon-color-path('menu', 'actions', 'fff', 1, true));
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
 
