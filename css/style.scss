@@ -312,6 +312,12 @@ input[type="password"] {
 	&.icon-fullscreen {
 		background-image: url(icon-color-path('fullscreen', 'actions', 'fff', 1, true));
 	}
+
+	/* ".force-icon-white-in-call" can be combined with ".icon-shadow" just like
+	 * ".icon-white". */
+	&.icon-shadow {
+		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+	}
 }
 
 /* Use white icon for the app navigation toggle when in a call; this can not be

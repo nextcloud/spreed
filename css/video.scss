@@ -357,21 +357,26 @@ video {
 	&#hideVideo:not(.local-video-disabled) {
 		&.icon-video {
 			background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		}
 		&.icon-video-off {
 			background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		}
 	}
 	&#mute:not(.local-video-disabled) {
 		&.icon-audio {
 			background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		}
 		&.icon-audio-off {
 			background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+			filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 		}
 	}
 	&#screensharing-button:not(.local-video-disabled) {
 		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 	}
 }
 
@@ -398,6 +403,12 @@ video {
 	}
 	&.icon-screen-off {
 		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+	}
+
+	/* ".force-icon-white-in-call" can be combined with ".icon-shadow" just like
+	 * ".icon-white". */
+	&.icon-shadow {
+		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 	}
 }
 
