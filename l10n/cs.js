@@ -219,6 +219,8 @@ OC.L10N.register(
     "A group call has started" : "Skupinový hovor zahájen",
     "{email} requested the password to access {file}" : "{email} požádal(a) o heslo pro přístup k {file}",
     "Someone requested the password to access {file}" : "Někdo požádal o heslo pro přístup k {file}",
+    "Unnamed conversation" : "Nenazvaná konverzace",
+    "Private conversation" : "Soukromá konverzace",
     "Invalid date, date format must be YYYY-MM-DD" : "Neplatné datum, je třeba aby formát byl RRRR-MM-DD",
     "Conversation not found" : "Konverzace nenalezena",
     "Path is already shared with this room" : "Umístění je už sdíleno s touto místností",
