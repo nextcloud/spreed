@@ -347,7 +347,9 @@ video {
 
 
 
-#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call {
+#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call,
+#talk-sidebar:not(.incall):not(.screensharing) .force-icon-white-in-call,
+#call-container:not(.incall):not(.screensharing) .force-icon-white-in-call {
 	/*
 	 * Also force the white icons, when the video of the local participant is shown,
 	 * because the black icons are not visible on videos, especially when your camera is covered.
@@ -373,8 +375,8 @@ video {
 	}
 }
 
-#app-content.incall .force-icon-white-in-call,
-#app-content.screensharing .force-icon-white-in-call {
+.incall .force-icon-white-in-call,
+.screensharing .force-icon-white-in-call {
 	/*
 	 * Force the white icon, independent from white/dark mode selection,
 	 * because those icons are presented on our black calling-screen.
