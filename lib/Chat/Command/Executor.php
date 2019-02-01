@@ -34,7 +34,7 @@ class Executor {
 	public const PLACEHOLDER_ROOM = '{ROOM}';
 	public const PLACEHOLDER_USER = '{USER}';
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
-
+	public const PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED = '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}';
 
 	/** @var EventDispatcherInterface */
 	protected $dispatcher;
@@ -44,11 +44,11 @@ class Executor {
 	}
 
 	public function exec(Room $room, IComment $message, Command $command, string $arguments): void {
-		if ($command->getApp() !== '') {
-			$output = $this->execApp($room, $message, $command, $arguments);
-		} else if ($command->getCommand() === 'help') {
+		if ($command->getApp() === '' && $command->getCommand() === 'help') {
 			$output = $this->execHelp($room, $message, $command, $arguments);
-		} else {
+		} else if ($command->getApp() !== '') {
+			$output = $this->execApp($room, $message, $command, $arguments);
+		} else  {
 			$output = $this->execShell($room, $message, $command, $arguments);
 		}
 
@@ -62,22 +62,27 @@ class Executor {
 		$message->setVerb('command');
 	}
 
-	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): string {
-		$output = '';
-
-		$this->dispatcher->dispatch(self::class . '::execApp', new GenericEvent($command, [
-			'room' => $room,
-			'message' => $message,
-			'arguments' => $arguments,
-			'output' => $output,
-		]));
-
-		return $output;
-	}
-
 	protected function execHelp(Room $room, IComment $message, Command $command, string $arguments): string {
 		// FIXME Implement a useful help
 		return $arguments;
+	}
+
+	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): string {
+		$event = $this->createEvent($command);
+		$event->setArguments([
+			'room' => $room,
+			'message' => $message,
+			'arguments' => $arguments,
+			'output' => '',
+		]);
+
+		$this->dispatcher->dispatch(self::class . '::execApp', $event);
+
+		return (string) $event->getArgument('output');
+	}
+
+	protected function createEvent(Command $command): GenericEvent {
+		return new GenericEvent($command);
 	}
 
 	protected function execShell(Room $room, IComment $message, Command $command, string $arguments): string {
@@ -87,15 +92,58 @@ class Executor {
 			self::PLACEHOLDER_ROOM,
 			self::PLACEHOLDER_USER,
 			self::PLACEHOLDER_ARGUMENTS,
+			self::PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED,
 		], [
-			$room->getToken(),
-			$user,
-			$arguments,
+			escapeshellarg($room->getToken()),
+			escapeshellarg($user),
+			$this->escapeArguments($arguments),
+			str_replace('"', '\\"', $arguments),
 		], $command->getScript());
 
+		return $this->wrapExec($cmd);
+	}
+
+	protected function escapeArguments(string $argumentString): string {
+		$arguments = explode(' ', $argumentString);
+
+		$result = [];
+		$buffer = [];
+		$quote = '';
+		foreach ($arguments as $argument) {
+			if ($quote === '') {
+				if (ltrim($argument, '"\'') === $argument) {
+					$result[] = escapeshellarg($argument);
+				} else {
+					$quote = $argument[0];
+					$temp = substr($argument, 1);
+					if (rtrim($temp, $quote) === $temp) {
+						$buffer[] = $temp;
+					} else {
+						$result[] = $quote . str_replace($quote, '\\'. $quote, substr($temp, 0, -1)) . $quote;
+						$quote = '';
+					}
+				}
+			} else if (rtrim($argument, $quote) === $argument) {
+				$buffer[] = $argument;
+			} else {
+				$buffer[] = substr($argument, 0, -1);
+
+				$result[] = $quote . str_replace($quote, '\\'. $quote, implode(' ', $buffer)) . $quote;
+				$quote = '';
+				$buffer = [];
+			}
+		}
+
+		if ($quote !== '') {
+			$result[] = escapeshellarg($quote . implode(' ', $buffer));
+		}
+
+		return implode(' ', $result);
+	}
+
+	protected function wrapExec(string $cmd): string {
 		$output = [];
 		exec($cmd, $output);
-
 		return implode("\n", $output);
 	}
 }
