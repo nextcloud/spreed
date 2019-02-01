@@ -217,6 +217,8 @@
     "A group call has started" : "Una chiamata di gruppo è iniziata",
     "{email} requested the password to access {file}" : "{email} ha richiesto la password per accedere a {file}",
     "Someone requested the password to access {file}" : "Qualcun ha richiesto la password per accedere a {file}",
+    "Unnamed conversation" : "Conversazione senza nome",
+    "Private conversation" : "Conversazione privata",
     "Invalid date, date format must be YYYY-MM-DD" : "Data non valida, il formato della data deve essere AAAA-MM-GG",
     "Conversation not found" : "Conversazione non trovata",
     "Path is already shared with this room" : "Il percorso è già condiviso con questa stanza",
