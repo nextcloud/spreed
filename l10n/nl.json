@@ -217,6 +217,8 @@
     "A group call has started" : "Een groepsgesprek is gestart",
     "{email} requested the password to access {file}" : "{email} vroeg een wachtwoord voor het benaderen van {file}",
     "Someone requested the password to access {file}" : "Iemand vroeg een wachtwoord voor het openen van bestand {file}",
+    "Unnamed conversation" : "Onbenoemd gesprek",
+    "Private conversation" : "Privégesprek",
     "Invalid date, date format must be YYYY-MM-DD" : "Ongeldige datum, formaat is YYYY-MM-DD",
     "Conversation not found" : "Gesprek niet gevonden.",
     "Path is already shared with this room" : "Pad is al gedeeld in deze ruimte",
