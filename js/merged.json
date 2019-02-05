@@ -25,6 +25,7 @@
   "views/sidebarview.js",
   "views/tabview.js",
   "views/templates.js",
+  "views/videoview.js",
   "views/virtuallist.js",
   "simplewebrtc.js",
   "webrtc.js",
