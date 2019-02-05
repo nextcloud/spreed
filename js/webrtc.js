@@ -166,8 +166,9 @@ var spreedPeerConnectionTable = [];
 
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 			spreedMappingTable[sessionId] = user.userId || user.userid;
-			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(sessionId));
-			if (videoContainer.length === 0) {
+
+			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
+			if (!videoView) {
 				OCA.SpreedMe.videos.add(sessionId);
 			}
 
@@ -405,7 +406,7 @@ var spreedPeerConnectionTable = [];
 
 				videoView.$el.prependTo($('#videos'));
 
-				return videoView.$el;
+				return videoView;
 			},
 			muteRemoteVideo: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -480,9 +481,9 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				var newContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
-				if (newContainer.length === 0) {
-					newContainer = $(OCA.SpreedMe.videos.add(peer.id));
+				var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
+				if (!videoView) {
+					videoView = OCA.SpreedMe.videos.add(peer.id);
 				}
 
 				// Initialize ice restart counter for peer
