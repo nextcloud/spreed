@@ -456,9 +456,7 @@ var spreedPeerConnectionTable = [];
 						.addClass('icon-video');
 				}
 
-				if (latestSpeakerId === id) {
-					OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
-				}
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(id);
 			},
 			remove: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -590,9 +588,7 @@ var spreedPeerConnectionTable = [];
 							break;
 					}
 
-					if (latestSpeakerId === peer.id) {
-						OCA.SpreedMe.speakers.updateVideoContainerDummy(peer.id);
-					}
+					OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(peer.id);
 				});
 
 				peer.pc.on('PeerConnectionTrace', function (event) {
@@ -670,6 +666,13 @@ var spreedPeerConnectionTable = [];
 					latestSpeakerId = null;
 					$('.videoContainer-dummy').remove();
 				}
+			},
+			updateVideoContainerDummyIfLatestSpeaker: function(id) {
+				if (latestSpeakerId !== id) {
+					return;
+				}
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
 			},
 			updateVideoContainerDummy: function(id) {
 				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
@@ -1283,9 +1286,7 @@ var spreedPeerConnectionTable = [];
 				}
 			}
 
-			if (latestSpeakerId === data.id) {
-				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
-			}
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 
 		// Peer is muted
@@ -1306,9 +1307,7 @@ var spreedPeerConnectionTable = [];
 				$el.removeClass('speaking');
 			}
 
-			if (latestSpeakerId === data.id) {
-				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
-			}
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 
 		// Peer is umuted
@@ -1328,9 +1327,7 @@ var spreedPeerConnectionTable = [];
 				muteIndicator.addClass('audio-on');
 			}
 
-			if (latestSpeakerId === data.id) {
-				OCA.SpreedMe.speakers.updateVideoContainerDummy(data.id);
-			}
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 	}
 
