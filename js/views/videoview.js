@@ -55,6 +55,7 @@
 
 		ui: {
 			'avatar': '.avatar',
+			'nameIndicator': '.nameIndicator',
 			'muteIndicator': '.muteIndicator',
 			'hideRemoteVideoButton': '.hideRemoteVideo',
 			'screenSharingIndicator': '.screensharingIndicator',
@@ -62,6 +63,8 @@
 		},
 
 		initialize: function() {
+			this._connectionStatus = ConnectionStatus.NEW;
+
 			this.render();
 
 			this.getUI('avatar').addClass('icon-loading');
@@ -89,13 +92,21 @@
 			});
 		},
 
-		setAvatar: function(userId, guestName) {
+		setParticipant: function(userId, participantName) {
 			if (userId && userId.length) {
 				this.getUI('avatar').avatar(userId, 128);
 			} else {
-				this.getUI('avatar').imageplaceholder('?', guestName, 128);
+				this.getUI('avatar').imageplaceholder('?', participantName, 128);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
+
+				// "Guest" placeholder is not shown until the initial connection
+				// for consistency with regular users.
+				if (this._connectionStatus !== ConnectionStatus.NEW) {
+					participantName = participantName || t('spreed', 'Guest');
+				}
 			}
+
+			this.getUI('nameIndicator').text(participantName);
 		},
 
 		/**
@@ -105,6 +116,8 @@
 		 *        status.
 		 */
 		setConnectionStatus: function(connectionStatus) {
+			this._connectionStatus = connectionStatus;
+
 			this.getUI('avatar').removeClass('icon-loading');
 			this.getUI('iceFailedIndicator').addClass('not-failed');
 
