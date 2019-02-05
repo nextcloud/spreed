@@ -179,6 +179,18 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @Then I see that the :conversation conversation is shown in the list
+	 */
+	public function iSeeThatTheConversationIsShownInTheList($conversation) {
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::conversationListItemFor($conversation),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The $conversation conversation is not shown yet in the list after $timeout seconds");
+		}
+	}
+
+	/**
 	 * @Then I see that the :conversation conversation is not shown in the list
 	 */
 	public function iSeeThatTheConversationIsNotShownInTheList($conversation) {

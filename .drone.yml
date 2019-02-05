@@ -263,6 +263,8 @@ matrix:
 
     # Acceptance tests
     - TESTS: acceptance
+      TESTS_ACCEPTANCE: app-files
+    - TESTS: acceptance
       TESTS_ACCEPTANCE: chat
     - TESTS: acceptance
       TESTS_ACCEPTANCE: conversation
