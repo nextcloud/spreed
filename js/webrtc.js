@@ -379,6 +379,7 @@ var spreedPeerConnectionTable = [];
 		};
 
 		OCA.SpreedMe.videos = {
+			videoViews: [],
 			getContainerId: function(id) {
 				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
 				return '#container_' + sanitizedId + '_video_incoming';
@@ -393,77 +394,18 @@ var spreedPeerConnectionTable = [];
 					console.log("User has no stream", id);
 				}
 
-				// Indicator for username
-				var userIndicator = document.createElement('div');
-				userIndicator.className = 'nameIndicator';
-
-				// Avatar for username
-				var avatar = document.createElement('div');
-				avatar.className = 'avatar icon-loading';
-
 				var userId = spreedMappingTable[id];
-				if (userId && userId.length) {
-					$(avatar).avatar(userId, 128);
-				} else {
-					$(avatar).imageplaceholder('?', undefined, 128);
-					$(avatar).css('background-color', '#b9b9b9');
-				}
 
-				$(avatar).css('opacity', '0.5');
-
-				var avatarContainer = document.createElement('div');
-				avatarContainer.className = 'avatar-container';
-				avatarContainer.appendChild(avatar);
-
-				// Media indicators
-				var mediaIndicator = document.createElement('div');
-				mediaIndicator.className = 'mediaIndicator';
-
-				var muteIndicator = document.createElement('button');
-				muteIndicator.className = 'muteIndicator force-icon-white-in-call icon-shadow icon-audio-off audio-on';
-				muteIndicator.disabled = true;
-
-				var hideRemoteVideoButton = document.createElement('button');
-				hideRemoteVideoButton.className = 'hideRemoteVideo force-icon-white-in-call icon-shadow icon-video';
-				hideRemoteVideoButton.setAttribute('style', 'display: none;');
-				hideRemoteVideoButton.setAttribute('data-original-title', t('spreed', 'Disable video'));
-				hideRemoteVideoButton.onclick = function() {
-					OCA.SpreedMe.videos._toggleRemoteVideo(id);
-				};
-
-				var screenSharingIndicator = document.createElement('button');
-				screenSharingIndicator.className = 'screensharingIndicator force-icon-white-in-call icon-shadow icon-screen screen-off';
-				screenSharingIndicator.setAttribute('data-original-title', t('spreed', 'Show screen'));
-
-				var iceFailedIndicator = document.createElement('button');
-				iceFailedIndicator.className = 'iceFailedIndicator force-icon-white-in-call icon-shadow icon-error not-failed';
-				iceFailedIndicator.disabled = true;
-
-				$(hideRemoteVideoButton).tooltip({
-					placement: 'top',
-					trigger: 'hover'
+				var videoView = new OCA.Talk.Views.VideoView({
+					peerId: id
 				});
+				videoView.setAvatar(userId);
 
-				$(screenSharingIndicator).tooltip({
-					placement: 'top',
-					trigger: 'hover'
-				});
+				OCA.SpreedMe.videos.videoViews[id] = videoView;
 
-				mediaIndicator.appendChild(muteIndicator);
-				mediaIndicator.appendChild(hideRemoteVideoButton);
-				mediaIndicator.appendChild(screenSharingIndicator);
-				mediaIndicator.appendChild(iceFailedIndicator);
+				videoView.$el.prependTo($('#videos'));
 
-				// Generic container
-				var container = document.createElement('div');
-				container.className = 'videoContainer';
-				container.id = 'container_' + id + '_video_incoming';
-				container.appendChild(avatarContainer);
-				container.appendChild(userIndicator);
-				container.appendChild(mediaIndicator);
-
-				$(container).prependTo($('#videos'));
-				return container;
+				return videoView.$el;
 			},
 			muteRemoteVideo: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -522,7 +464,13 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				$(OCA.SpreedMe.videos.getContainerId(id)).remove();
+				if (!OCA.SpreedMe.videos.videoViews[id]) {
+					return;
+				}
+
+				OCA.SpreedMe.videos.videoViews[id].$el.remove();
+
+				delete OCA.SpreedMe.videos.videoViews[id];
 			},
 			addPeer: function(peer) {
 				var signaling = OCA.SpreedMe.app.signaling;
