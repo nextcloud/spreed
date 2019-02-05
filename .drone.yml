@@ -187,6 +187,24 @@ pipeline:
     when:
       matrix:
         TESTS-ACCEPTANCE: conversation
+  acceptance-room-shares:
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    environment:
+      - APP_NAME=spreed
+      - CORE_BRANCH=stable14
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/$APP_NAME
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-room-shares --selenium-server selenium:4444 allow-git-repository-modifications features/room-shares.feature
+    when:
+      matrix:
+        TESTS-ACCEPTANCE: room-shares
 
 matrix:
   include:
@@ -211,6 +229,8 @@ matrix:
       TESTS-ACCEPTANCE: chat
     - TESTS: acceptance
       TESTS-ACCEPTANCE: conversation
+    - TESTS: acceptance
+      TESTS-ACCEPTANCE: room-shares
 
 services:
   mysql-5.7:

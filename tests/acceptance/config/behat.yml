@@ -13,13 +13,16 @@ default:
 
         - FeatureContext
         - FileListContext
+        - FilePickerContext
         - FilesAppContext
+        - FilesAppSharingContext
         - LoginPageContext
 
         # Talk app contexts
         - ChatContext
         - ConversationInfoContext
         - ConversationListContext
+        - FilesAppRoomSharingContext
         - ParticipantListContext
         - TalkAppContext
 
@@ -33,5 +36,8 @@ default:
           selenium2:
             wd_host: %selenium.server%
         Jane:
+          selenium2:
+            wd_host: %selenium.server%
+        Jim:
           selenium2:
             wd_host: %selenium.server%
