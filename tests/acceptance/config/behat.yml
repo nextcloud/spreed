@@ -22,6 +22,7 @@ default:
         - ChatContext
         - ConversationInfoContext
         - ConversationListContext
+        - FilesAppChatTabContext
         - FilesAppRoomSharingContext
         - ParticipantListContext
         - TalkAppContext
