@@ -269,6 +269,8 @@ matrix:
     - TESTS: acceptance
       TESTS_ACCEPTANCE: conversation
     - TESTS: acceptance
+      TESTS_ACCEPTANCE: public-share-auth
+    - TESTS: acceptance
       TESTS_ACCEPTANCE: room-shares
 
 services:
