@@ -471,7 +471,8 @@
 				return false;
 			}
 
-			return (model1.get('systemMessage').length === 0) === (model2.get('systemMessage').length === 0) &&
+			return model1.get('actorType') !== 'bots' &&
+				(model1.get('systemMessage').length === 0) === (model2.get('systemMessage').length === 0) &&
 				model1.get('actorId') === model2.get('actorId') &&
 				model1.get('actorType') === model2.get('actorType');
 		},
