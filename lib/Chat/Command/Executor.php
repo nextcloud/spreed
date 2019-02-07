@@ -25,7 +25,10 @@ namespace OCA\Spreed\Chat\Command;
 
 use OCA\Spreed\Model\Command;
 use OCA\Spreed\Room;
+use OCA\Spreed\Service\CommandService;
+use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
+use OCP\IL10N;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -39,13 +42,21 @@ class Executor {
 	/** @var EventDispatcherInterface */
 	protected $dispatcher;
 
-	public function __construct(EventDispatcherInterface $dispatcher) {
+	/** @var CommandService */
+	protected $commandService;
+
+	/** @var IL10N */
+	protected $l;
+
+	public function __construct(EventDispatcherInterface $dispatcher, CommandService $commandService, IL10N $l) {
 		$this->dispatcher = $dispatcher;
+		$this->commandService = $commandService;
+		$this->l = $l;
 	}
 
 	public function exec(Room $room, IComment $message, Command $command, string $arguments): void {
 		if ($command->getApp() === '' && $command->getCommand() === 'help') {
-			$output = $this->execHelp($room, $message, $command, $arguments);
+			$output = $this->execHelp($room, $message, $arguments);
 		} else if ($command->getApp() !== '') {
 			$output = $this->execApp($room, $message, $command, $arguments);
 		} else  {
@@ -62,9 +73,50 @@ class Executor {
 		$message->setVerb('command');
 	}
 
-	protected function execHelp(Room $room, IComment $message, Command $command, string $arguments): string {
+	protected function execHelp(Room $room, IComment $message, string $arguments): string {
+		if ($arguments !== '' && $arguments !== 'help') {
+			return $this->execHelpSingleCommand($room, $message, $arguments);
+		}
+
+		$helps = [];
+		$commands = $this->commandService->findAll();
+
+		foreach ($commands as $command) {
+			if ($command->getApp() !== '') {
+				$response = $this->execHelpSingleCommand($room, $message, $command->getApp() . ' ' . $command->getCommand());
+			} else {
+				if ($command->getCommand() === 'help') {
+					continue;
+				}
+				$response = $this->execHelpSingleCommand($room, $message, $command->getCommand());
+			}
+
+			$response = trim($response);
+			if (strpos($response, "\n")) {
+				$helps[] = substr($response, 0, strpos($response, "\n"));
+			} else {
+				$helps[] = $response;
+			}
+		}
+
 		// FIXME Implement a useful help
-		return $arguments;
+		return implode("\n", $helps);
+	}
+
+	protected function execHelpSingleCommand(Room $room, IComment $message, string $arguments): string {
+		try {
+			$input = explode(' ', $arguments, 2);
+			if (count($input) === 1) {
+				$command = $this->commandService->find('', $arguments);
+				return $this->execShell($room, $message, $command, '--help');
+			}
+
+			[$app, $cmd] = $input;
+			$command = $this->commandService->find($app, $cmd);
+			return $this->execApp($room, $message, $command, '--help');
+		} catch (DoesNotExistException $e) {
+			return $this->l->t('The command does not exist');
+		}
 	}
 
 	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): string {
