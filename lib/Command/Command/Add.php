@@ -84,13 +84,22 @@ class Add extends Base {
 		} catch (\InvalidArgumentException $e) {
 			switch ($e->getCode()) {
 				case 1:
-					$output->writeln('<error>The command already exists</error>');
+					$output->writeln('<error>The command already exists or is invalid</error>');
+					break;
+				case 2:
+					$output->writeln('<error>The name is invalid</error>');
+					break;
+				case 3:
+					$output->writeln('<error>The script is invalid</error>');
 					break;
 				case 4:
 					$output->writeln('<error>The response value is invalid</error>');
 					break;
 				case 5:
 					$output->writeln('<error>The enabled value is invalid</error>');
+					break;
+				default:
+					$output->writeln('<error>The command could not be added</error>');
 					break;
 			}
 			return 1;

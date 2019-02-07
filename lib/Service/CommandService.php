@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Service;
 
 
+use OCA\Spreed\Chat\Command\ShellExecutor;
 use OCA\Spreed\Model\Command;
 use OCA\Spreed\Model\CommandMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -32,8 +33,12 @@ class CommandService {
 	/** @var CommandMapper */
 	protected $mapper;
 
-	public function __construct(CommandMapper $mapper) {
+	/** @var ShellExecutor */
+	protected $shellExecutor;
+
+	public function __construct(CommandMapper $mapper, ShellExecutor $shellExecutor) {
 		$this->mapper = $mapper;
+		$this->shellExecutor = $shellExecutor;
 	}
 
 	/**
@@ -53,6 +58,22 @@ class CommandService {
 		} catch (DoesNotExistException $e) {
 		}
 
+		if (preg_match('/^[a-z0-9]{1..64}$/', $cmd)) {
+			throw new \InvalidArgumentException('command', 1);
+		}
+
+		if (preg_match('/^.{1..64}$/', $name)) {
+			throw new \InvalidArgumentException('name', 2);
+		}
+
+		if ($app === '' && $cmd !== 'help') {
+			try {
+				$this->shellExecutor->execShell($script, '--help');
+			} catch (\InvalidArgumentException $e) {
+				throw new \InvalidArgumentException('script', 3);
+			}
+		}
+
 		if (!\in_array($response, [Command::RESPONSE_NONE, Command::RESPONSE_USER, Command::RESPONSE_ALL], true)) {
 			throw new \InvalidArgumentException('response', 4);
 		}
@@ -64,9 +85,7 @@ class CommandService {
 		$command = new Command();
 		$command->setApp($app);
 		$command->setCommand($cmd);
-		// FIXME Validate "bot name"
 		$command->setName($name);
-		// FIXME Validate "script"
 		$command->setScript($script);
 		$command->setResponse($response);
 		$command->setEnabled($enabled);
@@ -102,6 +121,22 @@ class CommandService {
 		$command = $this->mapper->findById($id);
 		if ($command->getApp() !== '' || $command->getCommand() === 'help') {
 			throw new \InvalidArgumentException('app', 0);
+		}
+
+		if (preg_match('/^[a-z0-9]{1..64}$/', $cmd)) {
+			throw new \InvalidArgumentException('command', 1);
+		}
+
+		if (preg_match('/^.{1..64}$/', $name)) {
+			throw new \InvalidArgumentException('name', 2);
+		}
+
+		if ($command->getApp() === '') {
+			try {
+				$this->shellExecutor->execShell($script, '--help');
+			} catch (\InvalidArgumentException $e) {
+				throw new \InvalidArgumentException('script', 3);
+			}
 		}
 
 		if (!\in_array($response, [Command::RESPONSE_NONE, Command::RESPONSE_USER, Command::RESPONSE_ALL], true)) {

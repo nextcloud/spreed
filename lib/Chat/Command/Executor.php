@@ -29,6 +29,7 @@ use OCA\Spreed\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
 use OCP\IL10N;
+use OCP\ILogger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -42,15 +43,27 @@ class Executor {
 	/** @var EventDispatcherInterface */
 	protected $dispatcher;
 
+	/** @var ShellExecutor */
+	protected $shellExecutor;
+
 	/** @var CommandService */
 	protected $commandService;
+
+	/** @var ILogger */
+	protected $logger;
 
 	/** @var IL10N */
 	protected $l;
 
-	public function __construct(EventDispatcherInterface $dispatcher, CommandService $commandService, IL10N $l) {
+	public function __construct(EventDispatcherInterface $dispatcher,
+								ShellExecutor $shellExecutor,
+								CommandService $commandService,
+								ILogger $logger,
+								IL10N $l) {
 		$this->dispatcher = $dispatcher;
+		$this->shellExecutor = $shellExecutor;
 		$this->commandService = $commandService;
+		$this->logger = $logger;
 		$this->l = $l;
 	}
 
@@ -137,65 +150,17 @@ class Executor {
 		return new GenericEvent($command);
 	}
 
-	protected function execShell(Room $room, IComment $message, Command $command, string $arguments): string {
-		$user = $message->getActorType() === 'users' ? $message->getActorId() : '';
-
-		$cmd = str_replace([
-			self::PLACEHOLDER_ROOM,
-			self::PLACEHOLDER_USER,
-			self::PLACEHOLDER_ARGUMENTS,
-			self::PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED,
-		], [
-			escapeshellarg($room->getToken()),
-			escapeshellarg($user),
-			$this->escapeArguments($arguments),
-			str_replace('"', '\\"', $arguments),
-		], $command->getScript());
-
-		return $this->wrapExec($cmd);
-	}
-
-	protected function escapeArguments(string $argumentString): string {
-		$arguments = explode(' ', $argumentString);
-
-		$result = [];
-		$buffer = [];
-		$quote = '';
-		foreach ($arguments as $argument) {
-			if ($quote === '') {
-				if (ltrim($argument, '"\'') === $argument) {
-					$result[] = escapeshellarg($argument);
-				} else {
-					$quote = $argument[0];
-					$temp = substr($argument, 1);
-					if (rtrim($temp, $quote) === $temp) {
-						$buffer[] = $temp;
-					} else {
-						$result[] = $quote . str_replace($quote, '\\'. $quote, substr($temp, 0, -1)) . $quote;
-						$quote = '';
-					}
-				}
-			} else if (rtrim($argument, $quote) === $argument) {
-				$buffer[] = $argument;
-			} else {
-				$buffer[] = substr($argument, 0, -1);
-
-				$result[] = $quote . str_replace($quote, '\\'. $quote, implode(' ', $buffer)) . $quote;
-				$quote = '';
-				$buffer = [];
-			}
+	public function execShell(Room $room, IComment $message, Command $command, string $arguments): string {
+		try {
+			return $this->shellExecutor->execShell(
+				$command->getScript(),
+				$arguments,
+				$room->getToken(),
+				$message->getActorType() === 'users' ? $message->getActorId() : ''
+			);
+		} catch (\InvalidArgumentException $e) {
+			$this->logger->logException($e);
+			return '';
 		}
-
-		if ($quote !== '') {
-			$result[] = escapeshellarg($quote . implode(' ', $buffer));
-		}
-
-		return implode(' ', $result);
-	}
-
-	protected function wrapExec(string $cmd): string {
-		$output = [];
-		exec($cmd, $output);
-		return implode("\n", $output);
 	}
 }
