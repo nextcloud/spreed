@@ -35,6 +35,9 @@
 
 		className: 'chat',
 
+		lastComments: [],
+		currentLastComment: -1,
+
 		ui: {
 			'guestName': 'div.guest-name'
 		},
@@ -223,7 +226,7 @@
 			this.delegateEvents();
 			var $message = this.$el.find('.message');
 			$message.blur().focus();
-			$message.on('keydown input change', this._onTypeComment);
+			$message.on('keydown input change', _.bind(this._onTypeComment, this));
 
 			/**
 			 * Make sure we focus the actual content part not the placeholder.
@@ -618,6 +621,54 @@
 				$submitButton.click();
 				ev.preventDefault();
 			}
+
+			// Pressing Arrow-up/down in an empty/unchanged input brings back the last sent messages
+			if (this.lastComments.length !== 0 && !$field.atwho('isSelecting')) {
+				console.log('key');
+
+				if (ev.keyCode === 38 || ev.keyCode === 40) {
+					this._loopThroughLastComments(ev, $field);
+				} else {
+					this.currentLastComment = -1;
+				}
+			}
+		},
+
+		_loopThroughLastComments: function(ev, $field) {
+			if ($field.text().trim().length === 0 ||
+				this.currentLastComment !== -1) {
+
+				if (ev.keyCode === 38) {
+					this.currentLastComment++;
+				} else {
+					if (this.currentLastComment === -1) {
+						this.currentLastComment = this.lastComments.length - 1;
+					} else {
+						this.currentLastComment--;
+					}
+				}
+
+				if (typeof this.lastComments[this.currentLastComment] !== 'undefined') {
+					$field.html(this.lastComments[this.currentLastComment]);
+
+					/**
+					 * Jump to the end of the editable content:
+					 * https://stackoverflow.com/a/3866442
+					 */
+					var range = document.createRange();//Create a range (a range is a like the selection but invisible)
+					range.selectNodeContents(ev.target);//Select the entire contents of the element with the range
+					range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+					var selection = window.getSelection();//get the selection object (allows you to change selection)
+					selection.removeAllRanges();//remove any selections already made
+					selection.addRange(range);//make the range you have just created the visible selection
+				} else {
+					this.currentLastComment = -1;
+					$field.text('');
+				}
+
+				ev.preventDefault();
+			}
+
 		},
 
 		_commentBodyHTML2Plain: function($el) {
@@ -652,6 +703,13 @@
 			if (!message.length) {
 				return false;
 			}
+
+			var htmlComment = $commentField.html();
+			if (this.lastComments.length === 0 ||
+				this.lastComments[0] !== htmlComment) {
+				this.lastComments.unshift(htmlComment);
+			}
+			this.currentLastComment = -1;
 
 			$commentField.prop('contenteditable', false);
 			$submit.addClass('hidden');
