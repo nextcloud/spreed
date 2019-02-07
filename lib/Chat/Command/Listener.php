@@ -26,6 +26,8 @@ namespace OCA\Spreed\Chat\Command;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Chat\Parser\Command as CommandParser;
+use OCA\Spreed\Model\Command;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
@@ -52,13 +54,29 @@ class Listener {
 		$dispatcher->addListener(ChatManager::class . '::preSendMessage', function(GenericEvent $event) {
 			/** @var IComment $message */
 			$message = $event->getArgument('comment');
+			/** @var Participant $participant */
+			$participant = $event->getArgument('participant');
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
 			try {
+				/** @var Command $command */
+				/** @var string $arguments */
 				[$command, $arguments] = $listener->getCommand($message->getMessage());
 			} catch (DoesNotExistException $e) {
+				return;
+			}
+
+			if ($command->getEnabled() === Command::ENABLED_OFF) {
+				return;
+			}
+
+			if ($command->getEnabled() === Command::ENABLED_MODERATOR && !$participant->hasModeratorPermissions()) {
+				return;
+			}
+
+			if ($command->getEnabled() === Command::ENABLED_USERS && $participant->isGuest()) {
 				return;
 			}
 
@@ -102,7 +120,7 @@ class Listener {
 	 * @return array [Command, string]
 	 * @throws DoesNotExistException
 	 */
-	protected function getCommand(string $message): array {
+	public function getCommand(string $message): array {
 		[$app, $cmd, $arguments] = $this->matchesCommand($message);
 
 		if ($app === '') {
@@ -114,16 +132,10 @@ class Listener {
 		} catch (DoesNotExistException $e) {
 		}
 
-<<<<<<< HEAD
-	public function showHelp(GenericEvent $event): void {
-		// FIXME
-	}
-=======
 		try {
 			return [$this->commandService->find('',  $app), trim($cmd . ' ' . $arguments)];
 		} catch (DoesNotExistException $e) {
 		}
->>>>>>> d31315a3... Cleanup execution and trigger an event for apps
 
 		return [$this->commandService->find('',  'help'), trim($message)];
 	}

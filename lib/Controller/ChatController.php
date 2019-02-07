@@ -31,6 +31,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
@@ -65,9 +66,6 @@ class ChatController extends OCSController {
 
 	/** @var GuestManager */
 	private $guestManager;
-
-	/** @var Room */
-	protected $room;
 
 	/** @var string[] */
 	protected $guestNames;
@@ -127,30 +125,34 @@ class ChatController extends OCSController {
 	 * of that room).
 	 *
 	 * @param string $token the token for the Room.
-	 * @return \OCA\Spreed\Room|null the Room, or null if none was found.
+	 * @return array [Room, Participant]
+	 * @throws RoomNotFoundException
 	 */
-	private function getRoom(string $token): ?Room {
+	private function getRoomAndParticipant(string $token): array {
+		$session = $this->session->getSessionForRoom($token);
 		try {
-			$room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
-		} catch (RoomNotFoundException $exception) {
-			if ($this->userId === null) {
-				return null;
-			}
-
-			// For logged in users we search for rooms where they are real
-			// participants.
-			try {
-				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-				$room->getParticipant($this->userId);
-			} catch (RoomNotFoundException $exception) {
-				return null;
-			} catch (ParticipantNotFoundException $exception) {
-				return null;
-			}
+			$room = $this->manager->getRoomForSession($this->userId, $session);
+			$participant = $room->getParticipantBySession($session);
+			return [$room, $participant];
+		} catch (RoomNotFoundException $e) {
+		} catch (ParticipantNotFoundException $e) {
 		}
 
-		$this->room = $room;
-		return $room;
+		if ($this->userId === null) {
+			throw new RoomNotFoundException('Participant not found');
+		}
+
+		// For logged in users we search for rooms where they are real
+		// participants.
+		try {
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+			return [$room, $participant];
+		} catch (RoomNotFoundException $exception) {
+		} catch (ParticipantNotFoundException $exception) {
+		}
+
+		throw new RoomNotFoundException('Participant not found');
 	}
 
 	/**
@@ -169,8 +171,11 @@ class ChatController extends OCSController {
 	 *         found".
 	 */
 	public function sendMessage(string $token, string $message, string $actorDisplayName = ''): DataResponse {
-		$room = $this->getRoom($token);
-		if ($room === null) {
+		try {
+			/** @var Room $room */
+			/** @var Participant $participant */
+			[$room, $participant] = $this->getRoomAndParticipant($token);
+		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -210,7 +215,7 @@ class ChatController extends OCSController {
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);
+			$comment = $this->chatManager->sendMessage($room, $participant, $actorType, $actorId, $message, $creationDateTime);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
@@ -271,16 +276,19 @@ class ChatController extends OCSController {
 	 *         'message'.
 	 */
 	public function receiveMessages(string $token, int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30): DataResponse {
-		$room = $this->getRoom($token);
-		if ($room === null) {
+		try {
+			/** @var Room $room */
+			/** @var Participant $participant */
+			[$room, $participant] = $this->getRoomAndParticipant($token);
+		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
+
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
-		$sessionId = $this->session->getSessionForRoom($token);
-		if ($sessionId !== null) {
-			$room->ping($this->userId, $sessionId, $this->timeFactory->getTime());
+		if ($participant->getSessionId() !== '0') {
+			$room->ping($participant->getUser(), $participant->getSessionId(), $this->timeFactory->getTime());
 		}
 
 		$currentUser = $this->userManager->get($this->userId);
@@ -315,7 +323,7 @@ class ChatController extends OCSController {
 				$displayName = $this->prepareBotName($comment->getActorId());
 			}
 
-			list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
+			[$message, $messageParameters] = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
 
 			return [
 				'id' => (int) $comment->getId(),
@@ -347,8 +355,11 @@ class ChatController extends OCSController {
 	 * @return DataResponse
 	 */
 	public function mentions(string $token, string $search, int $limit = 20): DataResponse {
-		$room = $this->getRoom($token);
-		if ($room === null) {
+		try {
+			/** @var Room $room */
+			/** @var Participant $participant */
+			[$room, ] = $this->getRoomAndParticipant($token);
+		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
@@ -357,7 +368,7 @@ class ChatController extends OCSController {
 			'itemId' => $room->getId(),
 			'room' => $room,
 		]);
-		$this->searchPlugin->search((string) $search, $limit, 0, $this->searchResult);
+		$this->searchPlugin->search($search, $limit, 0, $this->searchResult);
 
 		$results = $this->searchResult->asArray();
 		$exactMatches = $results['exact'];
