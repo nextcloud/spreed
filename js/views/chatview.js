@@ -624,7 +624,6 @@
 
 			// Pressing Arrow-up/down in an empty/unchanged input brings back the last sent messages
 			if (this.lastComments.length !== 0 && !$field.atwho('isSelecting')) {
-				console.log('key');
 
 				if (ev.keyCode === 38 || ev.keyCode === 40) {
 					this._loopThroughLastComments(ev, $field);
