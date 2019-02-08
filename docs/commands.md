@@ -55,13 +55,13 @@ It should return a useful description, the first line is also displayed in a lis
 * `./occ` command used to add the command:
 
     ```
-    ./occ talk:command:add calc calculater "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3
+    ./occ talk:command:add calculator calculator "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3
     ```
     
 * User input by user `my user id` in the chat of room `index.php/call/4tf349j`:
     
     ```
-    /calc 1 + 2 + 3 + "hello"
+    /calculator 1 + 2 + 3 + "hello"
     ```
 
     
@@ -70,3 +70,17 @@ It should return a useful description, the first line is also displayed in a lis
     ```
     /path/to/calc.sh "1 + 2 + 3 + \"hello\"" '4tf349j' 'my user id'
     ```
+
+## Aliases
+
+It is also possible to define an alias for a command. This allows e.g. to get the `/help` command also with the german word `/hilfe`.
+
+An alias for the `/calculator` command from above could be created using the following command:
+
+```
+./occ talk:command:add calc calculator "alias:calculator" 1 3
+```
+
+Now `/calculator 1 + 2 + 3` and `/calc 1 + 2 + 3` result in the same message.
+
+**Note:** The enabled and response flag of the alias are ignored and the flags of the original command will be used and respected.

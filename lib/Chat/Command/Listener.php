@@ -64,6 +64,7 @@ class Listener {
 				/** @var Command $command */
 				/** @var string $arguments */
 				[$command, $arguments] = $listener->getCommand($message->getMessage());
+				$command = $listener->commandService->resolveAlias($command);
 			} catch (DoesNotExistException $e) {
 				return;
 			}
