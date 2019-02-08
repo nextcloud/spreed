@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<div id="chat_commands" class="section">
+	<div id="chat_commands" class="videocalls section">
 		<h2>{{ t('spreed', 'Commands') }}</h2>
 
 		<div>

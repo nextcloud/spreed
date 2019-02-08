@@ -21,57 +21,51 @@
  -->
 
 <template>
-	<div>
-		<input type="text" class="name" placeholder="t('spreed', 'Poster name')" :value="name" :aria-label="t('spreed', 'Poster name')">
-		<input type="text" class="pattern" placeholder="t('spreed', 'Command pattern (e.g. `^help` to match all messages starting with help)')" :value="pattern" :aria-label="t('spreed', 'Command pattern')">
-		<input type="text" class="script" placeholder="/path/to/your/script" :value="script" :aria-label="t('spreed', 'Script to execute')">
-
-		<multiselect
-			:value="selectedOutput"
-			:options="outputOptions"
-			:placeholder="t('spreed', 'Response visibility')"
-			label="label"
-			track-by="value"
-			@input="updateOutput" />
+	<div class="row">
+		<div class="name">{{name}}</div>
+		<div class="command">{{command}}</div>
+		<div class="script">{{script}}</div>
+		<div class="response">{{translatedResponse}}</div>
+		<div class="enabled">{{translatedEnabled}}</div>
 	</div>
 </template>
 
 <script>
-	import { Multiselect } from 'nextcloud-vue';
-
 	export default {
 		name: 'command',
 
 		props: [
 			'id',
 			'name',
-			'pattern',
+			'command',
 			'script',
-			'output'
+			'response',
+			'enabled'
 		],
 
 		computed: {
-			selectedOutput() {
-				return this.outputOptions.find(option => option.value === this.output)
+			translatedResponse () {
+				switch (this.response) {
+					case 0:
+						return t('spreed', 'None');
+					case 1:
+						return t('spreed', 'User');
+					default:
+						return t('spreed', 'Everyone');
+				}
 			},
-			outputOptions () {
-				return [
-					{ label: t('spreed', 'None'), value: 0 },
-					{ label: t('spreed', 'User'), value: 1 },
-					{ label: t('spreed', 'Everyone'), value: 2 },
-				];
+			translatedEnabled () {
+				switch (this.enabled) {
+					case 0:
+						return t('spreed', 'Disabled');
+					case 1:
+						return t('spreed', 'Moderators');
+					case 2:
+						return t('spreed', 'Users');
+					default:
+						return t('spreed', 'Everyone');
+				}
 			}
 		},
-
-		methods: {
-			updateOutput: option => {
-				console.debug(option)
-				// send the option.value change to the database
-			}
-		},
-
-		components: {
-			Multiselect
-		}
 	}
 </script>
