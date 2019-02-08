@@ -52,7 +52,7 @@ OC.L10N.register(
     "[Unknown user name]" : "[Ukjent brukernavn]",
     "Today" : "I dag",
     "Yesterday" : "I går",
-    "{relativeDate}, {absoluteDate}" : "{relativData}, {abosluttData}",
+    "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "Error occurred while sending message" : "Feil oppstod under foresendelse av melding",
     "Edit" : "Rediger",
     "Join a conversation or start a new one" : "Ta del i en samtale eller start en ny",
