@@ -164,7 +164,9 @@ class SignalingController extends OCSController {
 			}
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-			$room->ping($this->userId, $sessionId, time());
+
+			$pingTimestamp = time();
+			$room->ping($this->userId, $sessionId, $pingTimestamp);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 		}
@@ -204,7 +206,7 @@ class SignalingController extends OCSController {
 		try {
 			// Add an update of the room participants at the end of the waiting
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
+			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
 		} catch (RoomNotFoundException $e) {
 			$data[] = ['type' => 'usersInRoom', 'data' => []];
 			return new DataResponse($data, Http::STATUS_NOT_FOUND);
@@ -215,11 +217,18 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @param Room $room
+	 * @param int pingTimestamp
 	 * @return array[]
 	 */
-	protected function getUsersInRoom(Room $room): array {
+	protected function getUsersInRoom(Room $room, int $pingTimestamp): array {
 		$usersInRoom = [];
-		$participants = $room->getParticipants(time() - 30);
+		// Get participants active in the last 30 seconds, or since the last
+		// signaling ping of the current user if it was done more than 30
+		// seconds ago.
+		$timestamp = min(time() - 30, $pingTimestamp);
+		// "- 1" is needed because only the participants whose last ping is
+		// greater than the given timestamp are returned.
+		$participants = $room->getParticipants($timestamp - 1);
 		foreach ($participants as $participant) {
 			if ($participant->getSessionId() === '0') {
 				// User is not active
