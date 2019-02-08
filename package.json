@@ -13,7 +13,9 @@
   "author": "",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "attachmediastream": "^2.1.0",
     "handlebars": "^4.0.12",
+    "hark": "^1.2.3",
     "jasmine": "^2.5.2",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.5.2",
@@ -22,6 +24,12 @@
     "karma-jasmine": "^1.0.2",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-phantomjs-launcher": "^1.0.2",
-    "phantomjs-prebuilt": "^2.1.13"
+    "mockconsole": "0.0.1",
+    "phantomjs-prebuilt": "^2.1.13",
+    "rtcpeerconnection": "^8.4.0",
+    "util": "^0.11.1",
+    "webrtc-adapter": "^7.2.1",
+    "webrtcsupport": "^2.2.0",
+    "wildemitter": "^1.2.0"
   }
 }
