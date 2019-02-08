@@ -68,6 +68,20 @@ class Executor {
 	}
 
 	public function exec(Room $room, IComment $message, Command $command, string $arguments): void {
+		try {
+			$command = $this->commandService->resolveAlias($command);
+		} catch (DoesNotExistException $e) {
+			$user = $message->getActorType() === 'users' ? $message->getActorId() : '';
+			$message->setMessage(json_encode([
+				'user' => $user,
+				'visibility' => $command->getResponse(),
+				'output' => $e->getMessage(),
+			]));
+			$message->setActor('bots', $command->getName());
+			$message->setVerb('command');
+			return;
+		}
+
 		if ($command->getApp() === '' && $command->getCommand() === 'help') {
 			$output = $this->execHelp($room, $message, $arguments);
 		} else if ($command->getApp() !== '') {

@@ -58,30 +58,6 @@ class CommandService {
 		} catch (DoesNotExistException $e) {
 		}
 
-		if (preg_match('/^[a-z0-9]{1..64}$/', $cmd)) {
-			throw new \InvalidArgumentException('command', 1);
-		}
-
-		if (preg_match('/^.{1..64}$/', $name)) {
-			throw new \InvalidArgumentException('name', 2);
-		}
-
-		if ($app === '' && $cmd !== 'help') {
-			try {
-				$this->shellExecutor->execShell($script, '--help');
-			} catch (\InvalidArgumentException $e) {
-				throw new \InvalidArgumentException('script', 3);
-			}
-		}
-
-		if (!\in_array($response, [Command::RESPONSE_NONE, Command::RESPONSE_USER, Command::RESPONSE_ALL], true)) {
-			throw new \InvalidArgumentException('response', 4);
-		}
-
-		if (!\in_array($enabled, [Command::ENABLED_OFF, Command::ENABLED_MODERATOR, Command::ENABLED_USERS, Command::ENABLED_ALL], true)) {
-			throw new \InvalidArgumentException('enabled', 5);
-		}
-
 		$command = new Command();
 		$command->setApp($app);
 		$command->setCommand($cmd);
@@ -89,6 +65,8 @@ class CommandService {
 		$command->setScript($script);
 		$command->setResponse($response);
 		$command->setEnabled($enabled);
+
+		$this->validateCommand($command);
 
 		return $this->mapper->insert($command);
 	}
@@ -123,29 +101,10 @@ class CommandService {
 			throw new \InvalidArgumentException('app', 0);
 		}
 
-		if (preg_match('/^[a-z0-9]{1..64}$/', $cmd)) {
-			throw new \InvalidArgumentException('command', 1);
-		}
-
-		if (preg_match('/^.{1..64}$/', $name)) {
-			throw new \InvalidArgumentException('name', 2);
-		}
-
-		if ($command->getApp() === '') {
-			try {
-				$this->shellExecutor->execShell($script, '--help');
-			} catch (\InvalidArgumentException $e) {
-				throw new \InvalidArgumentException('script', 3);
-			}
-		}
-
-		if (!\in_array($response, [Command::RESPONSE_NONE, Command::RESPONSE_USER, Command::RESPONSE_ALL], true)) {
-			throw new \InvalidArgumentException('response', 4);
-		}
-
-		if (!\in_array($enabled, [Command::ENABLED_OFF, Command::ENABLED_MODERATOR, Command::ENABLED_USERS, Command::ENABLED_ALL], true)) {
-			throw new \InvalidArgumentException('enabled', 5);
-		}
+		$command->setName($name);
+		$command->setScript($script);
+		$command->setResponse($response);
+		$command->setEnabled($enabled);
 
 		if ($cmd !== $command->getCommand()) {
 			try {
@@ -156,15 +115,78 @@ class CommandService {
 			}
 		}
 
-		// FIXME Validate "bot name"
-		$command->setName($name);
-		// FIXME Validate "script"
-		$command->setScript($script);
-
-		$command->setResponse($response);
-		$command->setEnabled($enabled);
+		$this->validateCommand($command);
 
 		return $this->mapper->update($command);
+	}
+
+	/**
+	 * @param Command $command
+	 * @throws \InvalidArgumentException
+	 */
+	protected function validateCommand(Command $command): void {
+		if (preg_match('/^[a-z0-9]{1..64}$/', $command->getCommand())) {
+			throw new \InvalidArgumentException('command', 1);
+		}
+
+		if (preg_match('/^.{1..64}$/', $command->getName())) {
+			throw new \InvalidArgumentException('name', 2);
+		}
+
+		if ($command->getApp() === '') {
+			$script = $command->getScript();
+			if (strpos($script, 'alias:') === 0) {
+				try {
+					$this->resolveAlias($command);
+				} catch (DoesNotExistException $e) {
+					throw new \InvalidArgumentException('script', 3);
+				}
+			} else {
+				try {
+					$this->shellExecutor->execShell($script, '--help');
+				} catch (\InvalidArgumentException $e) {
+					throw new \InvalidArgumentException('script', 3);
+				}
+			}
+		}
+
+		if (!\in_array($command->getResponse(), [Command::RESPONSE_NONE, Command::RESPONSE_USER, Command::RESPONSE_ALL], true)) {
+			throw new \InvalidArgumentException('response', 4);
+		}
+
+		if (!\in_array($command->getEnabled(), [Command::ENABLED_OFF, Command::ENABLED_MODERATOR, Command::ENABLED_USERS, Command::ENABLED_ALL], true)) {
+			throw new \InvalidArgumentException('enabled', 5);
+		}
+	}
+
+	/**
+	 * @param Command $command
+	 * @return Command
+	 * @throws DoesNotExistException
+	 */
+	public function resolveAlias(Command $command): Command {
+		$script = $command->getScript();
+		if (strpos($script, 'alias:') === 0) {
+			$alias = explode(':', $script, 3);
+			if (isset($alias[2])) {
+				[, $app, $cmd] = $alias;
+			} else {
+				$app = '';
+				$cmd = $alias[1];
+			}
+
+			if ($app === $command->getApp() && $cmd === $command->getCommand()) {
+				throw new DoesNotExistException('The command is an alias for itself');
+			}
+
+			try {
+				return $this->find($app, $cmd);
+			} catch (DoesNotExistException $e) {
+				throw new DoesNotExistException('The command for ' . $command->getCommand() . ' does not exist');
+			}
+		}
+
+		return $command;
 	}
 
 	/**
