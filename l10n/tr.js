@@ -219,6 +219,8 @@ OC.L10N.register(
     "A group call has started" : "Bir grup görüşmesi başlatıldı",
     "{email} requested the password to access {file}" : "{email} adresinden {file} dosyasına erişim parolası istendi",
     "Someone requested the password to access {file}" : "Bir kişi {file} dosyasına erişmek için parola istedi",
+    "Unnamed conversation" : "Adlandırılmamış görüşme",
+    "Private conversation" : "Özel görüşme",
     "Invalid date, date format must be YYYY-MM-DD" : "Tarih geçersiz. Tarih biçimi YYYY-AA-GG olmalıdır",
     "Conversation not found" : "Görüşme bulunamadı",
     "Path is already shared with this room" : "Bu yol bu görüşme ile zaten paylaşılmış",
