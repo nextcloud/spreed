@@ -31,6 +31,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
@@ -45,8 +46,9 @@ use OCP\IUser;
 use OCP\IUserManager;
 use PHPUnit\Framework\Constraint\Callback;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
-class ChatControllerTest extends \Test\TestCase {
+class ChatControllerTest extends TestCase {
 
 	/** @var string */
 	private $userId;
@@ -76,7 +78,7 @@ class ChatControllerTest extends \Test\TestCase {
 	/** @var Room|MockObject */
 	protected $room;
 
-	/** @var \OCA\Spreed\Controller\ChatController */
+	/** @var ChatController */
 	private $controller;
 
 	/** @var Callback */
@@ -152,6 +154,12 @@ class ChatControllerTest extends \Test\TestCase {
 			->with($this->userId, 'testSpreedSession')
 			->willReturn($this->room);
 
+		$participant = $this->createMock(Participant::class);
+		$this->room->expects($this->once())
+			->method('getParticipantBySession')
+			->with('testSpreedSession')
+			->willReturn($participant);
+
 		$this->manager->expects($this->never())
 			->method('getRoomForParticipantByToken');
 
@@ -164,6 +172,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
+				$participant,
 				'users',
 				$this->userId,
 				'testMessage',
@@ -217,6 +226,12 @@ class ChatControllerTest extends \Test\TestCase {
 			->with('testToken', $this->userId)
 			->willReturn($this->room);
 
+		$participant = $this->createMock(Participant::class);
+		$this->room->expects($this->once())
+			->method('getParticipant')
+			->with($this->userId)
+			->willReturn($participant);
+
 		$this->room->expects($this->once())
 			->method('getParticipant')
 			->with($this->userId);
@@ -230,6 +245,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
+				$participant,
 				'users',
 				$this->userId,
 				'testMessage',
@@ -311,8 +327,11 @@ class ChatControllerTest extends \Test\TestCase {
 			->with($this->userId, 'testSpreedSession')
 			->willReturn($this->room);
 
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
+		$participant = $this->createMock(Participant::class);
+		$this->room->expects($this->once())
+			->method('getParticipantBySession')
+			->with('testSpreedSession')
+			->willReturn($participant);
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -323,6 +342,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
+				$participant,
 				'guests',
 				sha1('testSpreedSession'),
 				'testMessage',
@@ -408,7 +428,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testReceiveHistoryByUser() {
-		$this->session->expects($this->exactly(2))
+		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -466,7 +486,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom() {
-		$this->session->expects($this->exactly(2))
+		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn(null);
@@ -481,9 +501,11 @@ class ChatControllerTest extends \Test\TestCase {
 			->with('testToken', $this->userId)
 			->willReturn($this->room);
 
+		$participant = $this->createMock(Participant::class);
 		$this->room->expects($this->once())
 			->method('getParticipant')
-			->with($this->userId);
+			->with($this->userId)
+			->willReturn($participant);
 
 		$offset = 23;
 		$limit = 4;
@@ -676,7 +698,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testWaitForNewMessagesByUser() {
-		$this->session->expects($this->exactly(2))
+		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -740,7 +762,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutExpired() {
-		$this->session->expects($this->exactly(2))
+		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
@@ -778,7 +800,7 @@ class ChatControllerTest extends \Test\TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutTooLarge() {
-		$this->session->expects($this->exactly(2))
+		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');

@@ -26,6 +26,7 @@ namespace OCA\Spreed\Tests\php\Chat;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Chat\Notifier;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -33,8 +34,9 @@ use OCP\Comments\ICommentsManager;
 use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Test\TestCase;
 
-class ChatManagerTest extends \Test\TestCase {
+class ChatManagerTest extends TestCase {
 
 	/** @var CommentsManager|ICommentsManager|MockObject */
 	protected $commentsManager;
@@ -114,7 +116,9 @@ class ChatManagerTest extends \Test\TestCase {
 			->method('notifyMentionedUsers')
 			->with($chat, $comment);
 
-		$this->chatManager->sendMessage($chat, 'users', 'testUser', 'testMessage', $creationDateTime);
+		$participant = $this->createMock(Participant::class);
+
+		$this->chatManager->sendMessage($chat, $participant, 'users', 'testUser', 'testMessage', $creationDateTime);
 	}
 
 	public function testGetHistory() {
