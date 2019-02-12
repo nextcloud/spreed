@@ -361,6 +361,15 @@ class ChatController extends OCSController {
 		]);
 
 		$results = $this->prepareResultArray($results);
+
+		if ($search === '' || strpos('all', $search) !== false) {
+			array_unshift($results, [
+				'id' => 'all',
+				'label' => $this->l->t('Everyone'),
+				'source' => 'groups',
+			]);
+		}
+
 		return new DataResponse($results);
 	}
 

@@ -86,7 +86,11 @@
 						// highlighting loads the avatars.
 						var $li = $(li);
 						var $avatar = $li.find('.avatar');
-						$avatar.avatar($avatar.data('user-id'), 32);
+						if ($avatar.data('user-id') === 'all') {
+							$avatar.addClass('avatar icon icon-contacts');
+						} else {
+							$avatar.avatar($avatar.data('user-id'), 32);
+						}
 						return $li;
 					},
 					sorter: function (q, items) { return items; }
@@ -506,7 +510,11 @@
 
 			var setAvatar = function($element, size) {
 				if ($element.data('user-id')) {
-					$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
+					if ($element.data('user-id') === 'all') {
+						$element.addClass('avatar icon icon-contacts');
+					} else {
+						$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
+					}
 				} else {
 					$element.imageplaceholder('?', $element.data('displayname'), size);
 					$element.css('background-color', '#b9b9b9');
@@ -557,7 +565,7 @@
 				var $avatar = $this.find('.avatar');
 
 				var user = $avatar.data('user-id');
-				if (user !== OC.getCurrentUser().uid) {
+				if (user !== 'all' && user !== OC.getCurrentUser().uid) {
 					$this.contactsMenu(user, 0, $this);
 				}
 			});

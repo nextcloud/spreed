@@ -84,6 +84,12 @@ class Notifier {
 			return [];
 		}
 
+		$mentionedAll = array_search('all', $mentionedUserIds, true);
+
+		if ($mentionedAll !== false) {
+			$mentionedUserIds = $chat->getParticipantUserIds();
+		}
+
 		$notification = $this->createNotification($chat, $comment, 'mention');
 		foreach ($mentionedUserIds as $mentionedUserId) {
 			if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {

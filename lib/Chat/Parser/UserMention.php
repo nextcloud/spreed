@@ -25,6 +25,7 @@ namespace OCA\Spreed\Chat\Parser;
 
 use OCA\Spreed\Model\Message;
 use OCP\Comments\ICommentsManager;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
 
@@ -39,10 +40,15 @@ class UserMention {
 	/** @var IUserManager */
 	private $userManager;
 
+	/** @var IL10N */
+	private $l;
+
 	public function __construct(ICommentsManager $commentsManager,
-								IUserManager $userManager) {
+								IUserManager $userManager,
+								IL10N $l) {
 		$this->commentsManager = $commentsManager;
 		$this->userManager = $userManager;
+		$this->l = $l;
 	}
 
 	/**
@@ -67,7 +73,7 @@ class UserMention {
 
 		$mentions = $comment->getMentions();
 		foreach ($mentions as $mention) {
-			if ($mention['type'] === 'user') {
+			if ($mention['type'] === 'user' && $mention['id'] !== 'all') {
 				$user = $this->userManager->get($mention['id']);
 				if (!$user instanceof IUser) {
 					continue;
@@ -88,12 +94,16 @@ class UserMention {
 			$placeholder = strpos($mention['id'], ' ') !== false ? ('@"' . $mention['id'] . '"') : ('@' .  $mention['id']);
 			$message = str_replace($placeholder, '{' . $mentionParameterId . '}', $message);
 
-			try {
-				$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
-			} catch (\OutOfBoundsException $e) {
-				// There is no registered display name resolver for the mention
-				// type, so the client decides what to display.
-				$displayName = '';
+			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
+				$displayName = $this->l->t('Everyone');
+			} else {
+				try {
+					$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
+				} catch (\OutOfBoundsException $e) {
+					// There is no registered display name resolver for the mention
+					// type, so the client decides what to display.
+					$displayName = '';
+				}
 			}
 
 			$messageParameters[$mentionParameterId] = [
