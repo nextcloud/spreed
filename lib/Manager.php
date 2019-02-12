@@ -320,11 +320,11 @@ class Manager {
 
 	/**
 	 * @param string|null $userId
-	 * @param string $sessionId
+	 * @param string|null $sessionId
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForSession(?string $userId, string $sessionId): Room {
+	public function getRoomForSession(?string $userId, ?string $sessionId): Room {
 		if ($sessionId === '' || $sessionId === '0') {
 			throw new RoomNotFoundException();
 		}

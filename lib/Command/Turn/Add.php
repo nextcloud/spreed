@@ -81,8 +81,8 @@ class Add extends Base {
 			$output->writeln('<error>Server cannot be empty.</error>');
 			return 1;
 		}
-		if ($generate === false && $secret === null ||
-			$generate && $secret !== null) {
+		if (($generate === false && $secret === null) ||
+			($generate && $secret !== null)) {
 			$output->writeln('<error>You must provide --secret or --generate-secret.</error>');
 			return 1;
 		}
@@ -115,9 +115,10 @@ class Add extends Base {
 
 		$this->config->setAppValue('spreed', 'turn_servers', json_encode($servers));
 		$output->writeln('<info>Added ' . $server . '.</info>');
+		return 0;
 	}
 
-	protected function getUniqueSecret() {
+	protected function getUniqueSecret(): string {
 		return sha1(uniqid('', true));
 	}
 }

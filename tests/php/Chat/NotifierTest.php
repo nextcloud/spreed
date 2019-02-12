@@ -90,7 +90,7 @@ class NotifierTest extends \Test\TestCase {
 		$comment = $this->createMock(IComment::class);
 
 		$comment->method('getId')->willReturn($id);
-		$comment->method('getObjectId')->willReturn('roomId');
+		$comment->method('getObjectId')->willReturn(1234);
 		$comment->method('getActorType')->willReturn($actorType);
 		$comment->method('getActorId')->willReturn($actorId);
 		$comment->method('getCreationDateTime')->willReturn($creationDateTime);
@@ -160,7 +160,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
@@ -203,7 +203,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
@@ -247,7 +247,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
@@ -291,7 +291,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
@@ -335,7 +335,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager->expects($this->once())
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);
@@ -404,7 +404,7 @@ class NotifierTest extends \Test\TestCase {
 		$room = $this->createMock(Room::class);
 		$this->manager->expects($this->once())
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$room->expects($this->once())
@@ -470,7 +470,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->manager->expects($this->exactly(2))
 			->method('getRoomById')
-			->with('roomId')
+			->with(1234)
 			->willReturn($room);
 
 		$participant = $this->createMock(Participant::class);

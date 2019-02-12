@@ -112,9 +112,10 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn(Room::ONE_TO_ONE_CALL);
 		$room->expects($this->any())
 			->method('getId')
-			->willReturn(123);
+			->willReturn(1234);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
+			->with('roomToken')
 			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
@@ -151,7 +152,7 @@ class NotifierTest extends \Test\TestCase {
 				],
 				'call' => [
 					'type' => 'call',
-					'id' => 123,
+					'id' => 1234,
 					'name' => 'a conversation',
 					'call-type' => 'one2one'
 				],
@@ -170,6 +171,9 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getObjectType')
 			->willReturn('room');
+		$n->expects($this->once())
+			->method('getObjectId')
+			->willReturn('roomToken');
 
 		$this->notifier->prepare($n, 'de');
 	}
@@ -209,6 +213,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($name);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
+			->with('roomToken')
 			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
@@ -288,6 +293,9 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getObjectType')
 			->willReturn('room');
+		$n->expects($this->once())
+			->method('getObjectId')
+			->willReturn('roomToken');
 
 		$this->notifier->prepare($n, 'de');
 	}
@@ -300,7 +308,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} mentioned you in a private conversation',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'one2one'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'one2one'],
 					]
 				],
 			],
@@ -312,7 +320,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} mentioned you in a conversation',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'group'],
 					]
 				],
 			],
@@ -321,7 +329,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user mentioned you in a conversation',
 				['A deleted user mentioned you in a conversation',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'group'],
 					]
 				],
 				$deletedUser = true],
@@ -331,7 +339,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} mentioned you in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group']
 					]
 				],
 			],
@@ -340,7 +348,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user mentioned you in conversation Room name',
 				['A deleted user mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group']
 					]
 				],
 				$deletedUser = true],
@@ -350,7 +358,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} mentioned you in a conversation',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'public'],
 					]
 				],
 			],
@@ -359,7 +367,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user mentioned you in a conversation',
 				['A deleted user mentioned you in a conversation',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'public']
 					]
 				],
 				$deletedUser = true],
@@ -368,7 +376,7 @@ class NotifierTest extends \Test\TestCase {
 				'A guest mentioned you in a conversation',
 				['A guest mentioned you in a conversation',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'public']
 					]
 				],
 			],
@@ -378,7 +386,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} mentioned you in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']
 					]
 				],
 			],
@@ -387,7 +395,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user mentioned you in conversation Room name',
 				['A deleted user mentioned you in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']
 					]
 				],
 				$deletedUser = true],
@@ -395,7 +403,7 @@ class NotifierTest extends \Test\TestCase {
 				$isMention = true, Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
 				'A guest mentioned you in conversation Room name',
 				['A guest mentioned you in conversation {call}',
-					['call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']]
+					['call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']]
 				],
 			],
 
@@ -406,7 +414,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} sent you a private message',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'one2one'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'one2one'],
 					]
 				],
 			],
@@ -418,7 +426,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} sent a message in a conversation',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'group'],
 					]
 				],
 			],
@@ -427,7 +435,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user sent a message in a conversation',
 				['A deleted user sent a message in a conversation',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'group'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'group'],
 					]
 				],
 				$deletedUser = true],
@@ -437,7 +445,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} sent a message in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group']
 					]
 				],
 			],
@@ -446,7 +454,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user sent a message in conversation Room name',
 				['A deleted user sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'group']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'group']
 					]
 				],
 				$deletedUser = true],
@@ -456,7 +464,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} sent a message in a conversation',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public'],
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'public'],
 					]
 				],
 			],
@@ -465,7 +473,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user sent a message in a conversation',
 				['A deleted user sent a message in a conversation',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'public']
 					]
 				],
 				$deletedUser = true],
@@ -474,7 +482,7 @@ class NotifierTest extends \Test\TestCase {
 				'A guest sent a message in a conversation',
 				['A guest sent a message in a conversation',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'a conversation', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'a conversation', 'call-type' => 'public']
 					]
 				],
 			],
@@ -484,7 +492,7 @@ class NotifierTest extends \Test\TestCase {
 				['{user} sent a message in conversation {call}',
 					[
 						'user' => ['type' => 'user', 'id' => 'testUser', 'name' => 'Test user'],
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']
 					]
 				],
 			],
@@ -493,7 +501,7 @@ class NotifierTest extends \Test\TestCase {
 				'A deleted user sent a message in conversation Room name',
 				['A deleted user sent a message in conversation {call}',
 					[
-						'call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']
 					]
 				],
 				$deletedUser = true],
@@ -501,7 +509,7 @@ class NotifierTest extends \Test\TestCase {
 				$isMention = false, Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
 				'A guest sent a message in conversation Room name',
 				['A guest sent a message in conversation {call}',
-					['call' => ['type' => 'call', 'id' => 'testRoomId', 'name' => 'Room name', 'call-type' => 'public']]
+					['call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']]
 				],
 			]
 		];
@@ -534,17 +542,18 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($roomType);
 		$room->expects($this->any())
 			->method('getId')
-			->willReturn('testRoomId');
+			->willReturn(1234);
 		$room->expects($this->atLeastOnce())
 			->method('getName')
 			->willReturn($roomName);
 		if ($roomName !== '') {
 			$room->expects($this->atLeastOnce())
 				->method('getId')
-				->willReturn('testRoomId');
+				->willReturn(1234);
 		}
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
+			->with('roomToken')
 			->willReturn($room);
 
 		$this->lFactory->expects($this->once())
@@ -641,6 +650,9 @@ class NotifierTest extends \Test\TestCase {
 			->method('getObjectType')
 			->willReturn('chat');
 		$notification->expects($this->once())
+			->method('getObjectId')
+			->willReturn('roomToken');
+		$notification->expects($this->once())
 			->method('getMessageParameters')
 			->willReturn(['commentId' => '23']);
 
@@ -682,12 +694,20 @@ class NotifierTest extends \Test\TestCase {
 			$room = $this->createMock(Room::class);
 			$room->expects($this->never())
 				->method('getType');
+			$n->expects($this->once())
+				->method('getObjectId')
+				->willReturn('roomToken');
 			$this->manager->expects($this->once())
 				->method('getRoomByToken')
+				->with('roomToken')
 				->willReturn($room);
 		} else if ($validRoom === false) {
+			$n->expects($this->exactly(2))
+				->method('getObjectId')
+				->willReturn('roomToken');
 			$this->manager->expects($this->once())
 				->method('getRoomByToken')
+				->with('roomToken')
 				->willThrowException(new RoomNotFoundException());
 			$this->manager->expects($this->once())
 				->method('getRoomById')

@@ -82,7 +82,7 @@ class ChatManagerTest extends \Test\TestCase {
 
 		$this->commentsManager->expects($this->once())
 			->method('create')
-			->with('users', 'testUser', 'chat', 'testChatId')
+			->with('users', 'testUser', 'chat', 1234)
 			->willReturn($comment);
 
 		$comment->expects($this->once())
@@ -105,7 +105,7 @@ class ChatManagerTest extends \Test\TestCase {
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
-			->willReturn('testChatId');
+			->willReturn(1234);
 
 		$this->notifier->expects($this->once())
 			->method('notifyMentionedUsers')
@@ -126,11 +126,11 @@ class ChatManagerTest extends \Test\TestCase {
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
-			->willReturn('testChatId');
+			->willReturn(1234);
 
 		$this->commentsManager->expects($this->once())
 			->method('getForObjectSince')
-			->with('chat', 'testChatId', $offset, 'desc', $limit)
+			->with('chat', 1234, $offset, 'desc', $limit)
 			->willReturn($expected);
 
 		$comments = $this->chatManager->getHistory($chat, $offset, $limit);
@@ -151,11 +151,11 @@ class ChatManagerTest extends \Test\TestCase {
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
-			->willReturn('testChatId');
+			->willReturn(1234);
 
 		$this->commentsManager->expects($this->once())
 			->method('getForObjectSince')
-			->with('chat', 'testChatId', $offset, 'asc', $limit)
+			->with('chat', 1234, $offset, 'asc', $limit)
 			->willReturn($expected);
 
 		$this->notifier->expects($this->once())
@@ -186,11 +186,11 @@ class ChatManagerTest extends \Test\TestCase {
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
-			->willReturn('testChatId');
+			->willReturn(1234);
 
 		$this->commentsManager->expects($this->exactly(2))
 			->method('getForObjectSince')
-			->with('chat', 'testChatId', $offset, 'asc', $limit)
+			->with('chat', 1234, $offset, 'asc', $limit)
 			->willReturnOnConsecutiveCalls(
 				[],
 				$expected
@@ -216,11 +216,11 @@ class ChatManagerTest extends \Test\TestCase {
 		$chat = $this->createMock(Room::class);
 		$chat->expects($this->any())
 			->method('getId')
-			->willReturn('testChatId');
+			->willReturn(1234);
 
 		$this->commentsManager->expects($this->once())
 			->method('deleteCommentsAtObject')
-			->with('chat', 'testChatId');
+			->with('chat', 1234);
 
 		$this->notifier->expects($this->once())
 			->method('removePendingNotificationsForRoom')

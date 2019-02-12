@@ -987,11 +987,11 @@ class Room {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @param string $sessionId
 	 * @param int $timestamp
 	 */
-	public function ping(string $userId, string $sessionId, int $timestamp): void {
+	public function ping(?string $userId, string $sessionId, int $timestamp): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('last_ping', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))

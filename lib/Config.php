@@ -216,7 +216,7 @@ class Config {
 	public function getSignalingServers(): array {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
-		if (!is_array($signaling)) {
+		if (!is_array($signaling) || !isset($signaling['servers'])) {
 			return [];
 		}
 
