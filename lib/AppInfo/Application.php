@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
  *
@@ -37,7 +38,6 @@ use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IServerContainer;
-use OCP\Security\IContentSecurityPolicyManager;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -48,7 +48,7 @@ class Application extends App {
 		parent::__construct('spreed', $urlParams);
 	}
 
-	public function register() {
+	public function register(): void {
 		$server = $this->getContainer()->getServer();
 
 		$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
@@ -119,7 +119,7 @@ class Application extends App {
 		});
 	}
 
-	protected function registerClientLinks(IServerContainer $server) {
+	protected function registerClientLinks(IServerContainer $server): void {
 		if ($server->getAppManager()->isEnabledForUser('firstrunwizard')) {
 			/** @var IManager $settingManager */
 			$settingManager = $server->getSettingsManager();
@@ -127,7 +127,7 @@ class Application extends App {
 		}
 	}
 
-	protected function registerInternalSignalingHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerInternalSignalingHooks(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -180,13 +180,12 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 
-	protected function getBackendNotifier() {
+	protected function getBackendNotifier(): BackendNotifier {
 		return $this->getContainer()->query(BackendNotifier::class);
 	}
 
-	protected function registerSignalingBackendHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerSignalingBackendHooks(EventDispatcherInterface $dispatcher): void {
 		$dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -194,14 +193,12 @@ class Application extends App {
 			$notifier->roomInvited($room, $participants);
 		});
 		$dispatcher->addListener(Room::class . '::postSetName', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
 			$notifier->roomModified($room);
 		});
 		$dispatcher->addListener(Room::class . '::postSetParticipantType', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -210,7 +207,6 @@ class Application extends App {
 			$notifier->roomModified($room);
 		});
 		$dispatcher->addListener(Room::class . '::postSetParticipantTypeBySession', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -219,7 +215,6 @@ class Application extends App {
 			$notifier->roomModified($room);
 		});
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -227,7 +222,6 @@ class Application extends App {
 			$notifier->roomDeleted($room, $participants);
 		});
 		$dispatcher->addListener(Room::class . '::postRemoveUser', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -235,7 +229,6 @@ class Application extends App {
 			$notifier->roomsDisinvited($room, [$user->getUID()]);
 		});
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -243,7 +236,6 @@ class Application extends App {
 			$notifier->roomSessionsRemoved($room, [$participant->getSessionId()]);
 		});
 		$dispatcher->addListener(Room::class . '::postSessionJoinCall', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -252,7 +244,6 @@ class Application extends App {
 			$notifier->roomInCallChanged($room, $flags, [$sessionId]);
 		});
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -260,7 +251,6 @@ class Application extends App {
 			$notifier->roomInCallChanged($room, Participant::FLAG_DISCONNECTED, [$sessionId]);
 		});
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -268,7 +258,6 @@ class Application extends App {
 			$notifier->participantsModified($room, [$participant->getSessionId()]);
 		});
 		$dispatcher->addListener(Room::class . '::postCleanGuests', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -278,7 +267,6 @@ class Application extends App {
 			$notifier->participantsModified($room, $sessionIds);
 		});
 		$dispatcher->addListener(GuestManager::class . '::updateName', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -286,7 +274,6 @@ class Application extends App {
 			$notifier->participantsModified($room, [$sessionId]);
 		});
 		$dispatcher->addListener(ChatManager::class . '::sendMessage', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -299,7 +286,6 @@ class Application extends App {
 			$notifier->sendRoomMessage($room, $message);
 		});
 		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', function(GenericEvent $event) {
-			/** @var BackendNotifier $notifier */
 			$notifier = $this->getBackendNotifier();
 
 			$room = $event->getSubject();
@@ -313,7 +299,7 @@ class Application extends App {
 		});
 	}
 
-	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerCallActivityHooks(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -337,7 +323,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
 	}
 
-	protected function registerRoomActivityHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerRoomActivityHooks(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -348,7 +334,7 @@ class Application extends App {
 		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', $listener);
 	}
 
-	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher) {
+	protected function registerRoomInvitationHook(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -374,7 +360,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postJoinRoom', $listener);
 	}
 
-	protected function registerCallNotificationHook(EventDispatcherInterface $dispatcher) {
+	protected function registerCallNotificationHook(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -396,7 +382,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 	}
 
-	protected function registerChatHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerChatHooks(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -408,7 +394,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 
-	protected function registerRoomHooks(EventDispatcherInterface $dispatcher) {
+	protected function registerRoomHooks(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event)  {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -442,7 +428,7 @@ class Application extends App {
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 
-	protected function extendDefaultContentSecurityPolicy(Config $config) {
+	protected function extendDefaultContentSecurityPolicy(Config $config): void {
 		$csp = new ContentSecurityPolicy();
 		foreach ($config->getAllServerUrlsForCSP() as $server) {
 			$csp->addAllowedConnectDomain($server);

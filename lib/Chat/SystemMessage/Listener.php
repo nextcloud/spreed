@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -51,7 +52,11 @@ class Listener {
 	/** @var IUserSession */
 	protected $userSession;
 
-	public function __construct(EventDispatcherInterface $dispatcher, ChatManager $chatManager, Manager $roomManager, TalkSession $talkSession, IUserSession $userSession) {
+	public function __construct(EventDispatcherInterface $dispatcher,
+								ChatManager $chatManager,
+								Manager $roomManager,
+								TalkSession $talkSession,
+								IUserSession $userSession) {
 		$this->dispatcher = $dispatcher;
 		$this->chatManager = $chatManager;
 		$this->roomManager = $roomManager;
@@ -59,7 +64,7 @@ class Listener {
 		$this->userSession = $userSession;
 	}
 
-	public function register() {
+	public function register(): void {
 		$this->dispatcher->addListener(Room::class . '::preSessionJoinCall', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -188,7 +193,7 @@ class Listener {
 			}
 
 			try {
-				list($message, $parameters) = $parser->parseMessage($chatMessage);
+				[$message, $parameters] = $parser->parseMessage($chatMessage);
 
 				$event->setArguments([
 					'message' => $message,
@@ -201,7 +206,7 @@ class Listener {
 		});
 	}
 
-	protected function sendSystemMessage(Room $room, string $message, array $parameters = []) {
+	protected function sendSystemMessage(Room $room, string $message, array $parameters = []): void {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
 			$actorType = 'guests';

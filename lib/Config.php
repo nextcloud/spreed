@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
  *
@@ -23,7 +24,6 @@ namespace OCA\Spreed;
 
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
-use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class Config {
@@ -37,13 +37,6 @@ class Config {
 	/** @var ISecureRandom */
 	private $secureRandom;
 
-	/**
-	 * Config constructor.
-	 *
-	 * @param IConfig $config
-	 * @param ISecureRandom $secureRandom
-	 * @param ITimeFactory $timeFactory
-	 */
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
 								ITimeFactory $timeFactory) {
@@ -52,7 +45,7 @@ class Config {
 		$this->timeFactory = $timeFactory;
 	}
 
-	public function getSettings($userId) {
+	public function getSettings(?string $userId): array {
 		$stun = [];
 		$stunServer = $this->getStunServer();
 		if ($stunServer) {
@@ -233,7 +226,7 @@ class Config {
 	/**
 	 * @return string
 	 */
-	public function getSignalingSecret() {
+	public function getSignalingSecret(): string {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
 
@@ -248,7 +241,7 @@ class Config {
 	 * @param string $userId
 	 * @return string
 	 */
-	public function getSignalingTicket($userId) {
+	public function getSignalingTicket(?string $userId): string {
 		if (empty($userId)) {
 			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {
@@ -279,7 +272,7 @@ class Config {
 	 * @param string $ticket
 	 * @return bool
 	 */
-	public function validateSignalingTicket($userId, $ticket) {
+	public function validateSignalingTicket(?string $userId, string $ticket): bool {
 		if (empty($userId)) {
 			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {

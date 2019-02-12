@@ -81,7 +81,7 @@ class GuestManager {
 	 * @param string $displayName
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
-	public function updateName(Room $room, string $sessionId, string $displayName) {
+	public function updateName(Room $room, string $sessionId, string $displayName): void {
 		$sessionHash = sha1($sessionId);
 		$dispatchEvent = true;
 
@@ -157,7 +157,7 @@ class GuestManager {
 		return $map;
 	}
 
-	public function inviteByEmail(Room $room, string $email) {
+	public function inviteByEmail(Room $room, string $email): void {
 		$this->dispatcher->dispatch(self::class . '::preInviteByEmail', new GenericEvent($room, [
 			'email' => $email,
 		]));

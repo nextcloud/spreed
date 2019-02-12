@@ -35,14 +35,12 @@ class Delete extends Base {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 */
 	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
 	}
 
-	protected function configure() {
+	protected function configure(): void {
 		$this
 			->setName('talk:stun:delete')
 			->setDescription('Remove an existing STUN server.')
@@ -53,7 +51,7 @@ class Delete extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$server = $input->getArgument('server');
 
 		$config = $this->config->getAppValue('spreed', 'stun_servers');
@@ -80,5 +78,6 @@ class Delete extends Base {
 				$output->writeln('<info>There is nothing to delete.</info>');
 			}
 		}
+		return 0;
 	}
 }

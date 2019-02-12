@@ -36,7 +36,7 @@ class HookListener {
 	/**
 	 * @param IUser $user
 	 */
-	public function deleteUser(IUser $user) {
+	public function deleteUser(IUser $user): void {
 		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
 
 		foreach ($rooms as $room) {

@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -52,7 +51,7 @@ class Listener {
 		$this->dispatcher = $dispatcher;
 	}
 
-	public function register() {
+	public function register(): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -88,7 +87,7 @@ class Listener {
 	 * @param string $userId
 	 * @throws \OverflowException
 	 */
-	public function preventExtraUsersFromJoining(Room $room, string $userId) {
+	public function preventExtraUsersFromJoining(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
@@ -115,7 +114,7 @@ class Listener {
 	 * @param Room $room
 	 * @throws \OverflowException
 	 */
-	public function preventExtraGuestsFromJoining(Room $room) {
+	public function preventExtraGuestsFromJoining(Room $room): void {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
@@ -135,7 +134,7 @@ class Listener {
 	 *
 	 * @param Room $room
 	 */
-	public function destroyRoomOnParticipantLeave(Room $room) {
+	public function destroyRoomOnParticipantLeave(Room $room): void {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}

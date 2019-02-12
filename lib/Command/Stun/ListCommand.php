@@ -35,14 +35,12 @@ class ListCommand extends Base {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 */
 	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
 	}
 
-	protected function configure() {
+	protected function configure(): void {
 		parent::configure();
 
 		$this
@@ -50,7 +48,7 @@ class ListCommand extends Base {
 			->setDescription('List STUN servers.');
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$config = $this->config->getAppValue('spreed', 'stun_servers');
 		$servers = json_decode($config);
 		if (!is_array($servers)) {
@@ -58,5 +56,6 @@ class ListCommand extends Base {
 		}
 
 		$this->writeArrayInOutputFormat($input, $output, $servers);
+		return 0;
 	}
 }

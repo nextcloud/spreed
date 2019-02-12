@@ -39,7 +39,9 @@ class Hooks {
 	/** @var ILogger */
 	protected $logger;
 
-	public function __construct(IManager $notificationManager, IUserSession $userSession, ILogger $logger) {
+	public function __construct(IManager $notificationManager,
+								IUserSession $userSession,
+								ILogger $logger) {
 		$this->notificationManager = $notificationManager;
 		$this->userSession = $userSession;
 		$this->logger = $logger;
@@ -51,7 +53,7 @@ class Hooks {
 	 * @param Room $room
 	 * @param array[] $participants
 	 */
-	public function generateInvitation(Room $room, array $participants) {
+	public function generateInvitation(Room $room, array $participants): void {
 		$actor = $this->userSession->getUser();
 		if (!$actor instanceof IUser) {
 			return;
@@ -92,7 +94,7 @@ class Hooks {
 	 *
 	 * @param Room $room
 	 */
-	public function markInvitationRead(Room $room) {
+	public function markInvitationRead(Room $room): void {
 		$currentUser = $this->userSession->getUser();
 		if (!$currentUser instanceof IUser) {
 			return;
@@ -116,7 +118,7 @@ class Hooks {
 	 *
 	 * @param Room $room
 	 */
-	public function generateCallNotifications(Room $room) {
+	public function generateCallNotifications(Room $room): void {
 		if ($room->getActiveSince() instanceof \DateTime) {
 			// Call already active => No new notifications
 			return;
@@ -169,7 +171,7 @@ class Hooks {
 	 *
 	 * @param Room $room
 	 */
-	public function markCallNotificationsRead(Room $room) {
+	public function markCallNotificationsRead(Room $room): void {
 		$currentUser = $this->userSession->getUser();
 		if (!$currentUser instanceof IUser) {
 			return;

@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -40,11 +39,8 @@ class RoomPlugin implements ISearchPlugin {
 	/** @var IUserSession */
 	private $userSession;
 
-	/**
-	 * @param Manager manager
-	 * @param IUserSession userSession
-	 */
-	public function __construct(Manager $manager, IUserSession $userSession) {
+	public function __construct(Manager $manager,
+								IUserSession $userSession) {
 		$this->manager = $manager;
 		$this->userSession = $userSession;
 	}
@@ -52,7 +48,7 @@ class RoomPlugin implements ISearchPlugin {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function search($search, $limit, $offset, ISearchResult $searchResult) {
+	public function search($search, $limit, $offset, ISearchResult $searchResult): bool {
 		if (empty($search)) {
 			return false;
 		}

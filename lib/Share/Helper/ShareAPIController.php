@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -54,14 +53,6 @@ class ShareAPIController {
 	/** @var IL10N */
 	private $l;
 
-	/**
-	 * ShareAPIController constructor.
-	 *
-	 * @param string $UserId
-	 * @param IUserManager $userManager
-	 * @param Manager $manager
-	 * @param IL10N $l10n
-	 */
 	public function __construct(
 			string $UserId,
 			IUserManager $userManager,
@@ -131,8 +122,9 @@ class ShareAPIController {
 	 * @param string $shareWith
 	 * @param int $permissions
 	 * @param string $expireDate
+	 * @throws OCSNotFoundException
 	 */
-	public function createShare(IShare $share, string $shareWith, int $permissions, string $expireDate) {
+	public function createShare(IShare $share, string $shareWith, int $permissions, string $expireDate): void {
 		$share->setSharedWith($shareWith);
 		$share->setPermissions($permissions);
 

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -41,7 +42,7 @@ class StunServer implements ISettings {
 	/**
 	 * @return TemplateResponse
 	 */
-	public function getForm() {
+	public function getForm(): TemplateResponse {
 		$parameters = [
 			'stunServer' => $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443'])),
 		];
@@ -52,7 +53,7 @@ class StunServer implements ISettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'talk';
 	}
 
@@ -63,7 +64,7 @@ class StunServer implements ISettings {
 	 *
 	 * E.g.: 70
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 65;
 	}
 

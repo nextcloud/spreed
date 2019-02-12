@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -35,11 +36,8 @@ class Messages {
 	/** @var ITimeFactory */
 	protected $time;
 
-	/**
-	 * @param IDBConnection $db
-	 * @param ITimeFactory $time
-	 */
-	public function __construct(IDBConnection $db, ITimeFactory $time) {
+	public function __construct(IDBConnection $db,
+								ITimeFactory $time) {
 		$this->db = $db;
 		$this->time = $time;
 	}
@@ -47,7 +45,7 @@ class Messages {
 	/**
 	 * @param string[] $sessionIds
 	 */
-	public function deleteMessages(array $sessionIds) {
+	public function deleteMessages(array $sessionIds): void {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_signaling')
 			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
@@ -60,7 +58,7 @@ class Messages {
 	 * @param string $recipientSessionId
 	 * @param string $message
 	 */
-	public function addMessage($senderSessionId, $recipientSessionId, $message) {
+	public function addMessage(string $senderSessionId, string $recipientSessionId, string $message): void {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('talk_signaling')
 			->values(
@@ -78,7 +76,7 @@ class Messages {
 	 * @param Room $room
 	 * @param string $message
 	 */
-	public function addMessageForAllParticipants(Room $room, $message) {
+	public function addMessageForAllParticipants(Room $room, string $message): void {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('talk_signaling')
 			->values(
@@ -108,7 +106,7 @@ class Messages {
 	 * @param string $sessionId
 	 * @return array
 	 */
-	public function getAndDeleteMessages($sessionId) {
+	public function getAndDeleteMessages(string $sessionId): array {
 		$messages = [];
 		$time = $this->time->getTime() - 1;
 
@@ -138,7 +136,7 @@ class Messages {
 	 *
 	 * @param int $olderThan
 	 */
-	public function expireOlderThan($olderThan) {
+	public function expireOlderThan(int $olderThan): void {
 		$time = $this->time->getTime() - $olderThan;
 
 		$query = $this->db->getQueryBuilder();

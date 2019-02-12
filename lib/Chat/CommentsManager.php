@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -46,12 +47,12 @@ class CommentsManager extends Manager {
 	 * @return array
 	 */
 	public function getLastCommentDateByActor(
-		$objectType,
-		$objectId,
-		$verb,
-		$actorType,
+		string $objectType,
+		string $objectId,
+		string $verb,
+		string $actorType,
 		array $actors
-	) {
+	): array {
 		$lastComments = [];
 
 		$query = $this->dbConn->getQueryBuilder();

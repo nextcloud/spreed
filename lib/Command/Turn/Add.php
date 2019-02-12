@@ -36,14 +36,12 @@ class Add extends Base {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 */
 	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
 	}
 
-	protected function configure() {
+	protected function configure(): void {
 		$this
 			->setName('talk:turn:add')
 			->setDescription('Add a TURN server.')
@@ -68,7 +66,7 @@ class Add extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 		$secret = $input->getOption('secret');

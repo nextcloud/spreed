@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -108,7 +108,7 @@ class Notifier {
 	 * @param IComment $comment
 	 * @param string[] $mentionedUsers
 	 */
-	public function notifyOtherParticipant(Room $chat, IComment $comment, array $mentionedUsers) {
+	public function notifyOtherParticipant(Room $chat, IComment $comment, array $mentionedUsers): void {
 		$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_ALWAYS);
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
@@ -168,7 +168,7 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 */
-	public function removePendingNotificationsForRoom(Room $chat) {
+	public function removePendingNotificationsForRoom(Room $chat): void {
 		$notification = $this->notificationManager->createNotification();
 
 		// @todo this should be in the Notifications\Hooks
@@ -190,7 +190,7 @@ class Notifier {
 	 * @param Room $chat
 	 * @param string $userId
 	 */
-	public function markMentionNotificationsRead(Room $chat, $userId) {
+	public function markMentionNotificationsRead(Room $chat, ?string $userId): void {
 
 		if ($userId === null || $userId === '') {
 			return;
@@ -212,7 +212,7 @@ class Notifier {
 	 * @param IComment $comment
 	 * @return string[] the mentioned user IDs
 	 */
-	private function getMentionedUserIds(IComment $comment) {
+	private function getMentionedUserIds(IComment $comment): array {
 		$mentions = $comment->getMentions();
 
 		if (empty($mentions)) {
@@ -267,9 +267,9 @@ class Notifier {
 	 * @param IComment $comment
 	 * @return bool
 	 */
-	private function shouldUserBeNotified($userId, IComment $comment) {
+	private function shouldUserBeNotified($userId, IComment $comment): bool {
 		if ($userId === $comment->getActorId()) {
-			// Do not notify the user if they mentioned themself
+			// Do not notify the user if they mentioned themselves
 			return false;
 		}
 

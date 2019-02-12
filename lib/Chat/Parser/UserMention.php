@@ -39,7 +39,8 @@ class UserMention {
 	/** @var IUserManager */
 	private $userManager;
 
-	public function __construct(ICommentsManager $commentsManager, IUserManager $userManager) {
+	public function __construct(ICommentsManager $commentsManager,
+								IUserManager $userManager) {
 		$this->commentsManager = $commentsManager;
 		$this->userManager = $userManager;
 	}

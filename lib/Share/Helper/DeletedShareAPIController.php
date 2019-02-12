@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -49,13 +48,6 @@ class DeletedShareAPIController {
 	/** @var Manager */
 	private $manager;
 
-	/**
-	 * DeletedShareAPIController constructor.
-	 *
-	 * @param string $UserId
-	 * @param IUserManager $userManager
-	 * @param Manager $manager
-	 */
 	public function __construct(
 			string $UserId,
 			IUserManager $userManager,

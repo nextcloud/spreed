@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -35,7 +36,7 @@ class Listener {
 		$this->dispatcher = $dispatcher;
 	}
 
-	public function register() {
+	public function register(): void {
 		$this->dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
 			/** @var IComment $chatMessage */
 			$chatMessage = $event->getSubject();
@@ -46,7 +47,7 @@ class Listener {
 
 			/** @var UserMention $parser */
 			$parser = \OC::$server->query(UserMention::class);
-			list($message, $parameters) = $parser->parseMessage($chatMessage);
+			[$message, $parameters] = $parser->parseMessage($chatMessage);
 
 			$event->setArguments([
 				'message' => $message,

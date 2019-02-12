@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -37,19 +38,21 @@ class SearchPlugin implements ISearchPlugin {
 	/** @var Util */
 	protected $util;
 
-	/** @var string */
+	/** @var string|null */
 	protected $userId;
 
 	/** @var Room */
 	protected $room;
 
-	public function __construct(IUserManager $userManager, Util $util, $userId) {
+	public function __construct(IUserManager $userManager,
+								Util $util,
+								?string $userId) {
 		$this->userManager = $userManager;
 		$this->util = $util;
 		$this->userId = $userId;
 	}
 
-	public function setContext(array $context) {
+	public function setContext(array $context): void {
 		$this->room = $context['room'];
 	}
 
@@ -76,7 +79,7 @@ class SearchPlugin implements ISearchPlugin {
 		return false;
 	}
 
-	protected function searchUsers($search, array $userIds, ISearchResult $searchResult) {
+	protected function searchUsers(string $search, array $userIds, ISearchResult $searchResult): void {
 		$search = strtolower($search);
 
 		$matches = $exactMatches = [];
@@ -96,7 +99,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strpos(strtolower($userId), $search) !== false) {
+			if (stripos($userId, $search) !== false) {
 				$matches[] = $this->createResult('user', $userId, '');
 				continue;
 			}
@@ -111,7 +114,7 @@ class SearchPlugin implements ISearchPlugin {
 				continue;
 			}
 
-			if (strpos(strtolower($user->getDisplayName()), $search) !== false) {
+			if (stripos($user->getDisplayName(), $search) !== false) {
 				$matches[] = $this->createResult('user', $user->getUID(), $user->getDisplayName());
 				continue;
 			}
@@ -121,13 +124,7 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
-	/**
-	 * @param string $type
-	 * @param string $uid
-	 * @param string $name
-	 * @return array
-	 */
-	protected function createResult($type, $uid, $name) {
+	protected function createResult(string $type, string $uid, string $name): array {
 		if ($type === 'user' && $name === '') {
 			$user = $this->userManager->get($uid);
 			if ($user instanceof IUser) {

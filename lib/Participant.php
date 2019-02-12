@@ -28,22 +28,22 @@ use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
 class Participant {
-	const OWNER = 1;
-	const MODERATOR = 2;
-	const USER = 3;
-	const GUEST = 4;
-	const USER_SELF_JOINED = 5;
-	const GUEST_MODERATOR = 6;
+	public const OWNER = 1;
+	public const MODERATOR = 2;
+	public const USER = 3;
+	public const GUEST = 4;
+	public const USER_SELF_JOINED = 5;
+	public const GUEST_MODERATOR = 6;
 
-	const FLAG_DISCONNECTED = 0;
-	const FLAG_IN_CALL = 1;
-	const FLAG_WITH_AUDIO = 2;
-	const FLAG_WITH_VIDEO = 4;
+	public const FLAG_DISCONNECTED = 0;
+	public const FLAG_IN_CALL = 1;
+	public const FLAG_WITH_AUDIO = 2;
+	public const FLAG_WITH_VIDEO = 4;
 
-	const NOTIFY_DEFAULT = 0;
-	const NOTIFY_ALWAYS = 1;
-	const NOTIFY_MENTION = 2;
-	const NOTIFY_NEVER = 3;
+	public const NOTIFY_DEFAULT = 0;
+	public const NOTIFY_ALWAYS = 1;
+	public const NOTIFY_MENTION = 2;
+	public const NOTIFY_NEVER = 3;
 
 	/** @var IDBConnection */
 	protected $db;
@@ -66,7 +66,16 @@ class Participant {
 	/** @var \DateTime|null */
 	private $lastMention;
 
-	public function __construct(IDBConnection $db, Room $room, string $user, int $participantType, int $lastPing, string $sessionId, int $inCall, int $notificationLevel, bool $isFavorite, \DateTime $lastMention = null) {
+	public function __construct(IDBConnection $db,
+								Room $room,
+								string $user,
+								int $participantType,
+								int $lastPing,
+								string $sessionId,
+								int $inCall,
+								int $notificationLevel,
+								bool $isFavorite,
+								\DateTime $lastMention = null) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -114,7 +123,7 @@ class Participant {
 	/**
 	 * @return \DateTime|null
 	 */
-	public function getLastMention() {
+	public function getLastMention(): ?\DateTime {
 		return $this->lastMention;
 	}
 

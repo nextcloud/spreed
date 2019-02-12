@@ -53,7 +53,11 @@ abstract class Base implements IProvider {
 	/** @var string[] */
 	protected $displayNames = [];
 
-	public function __construct(IFactory $languageFactory, IURLGenerator $url, IManager $activityManager, IUserManager $userManager, Manager $manager) {
+	public function __construct(IFactory $languageFactory,
+								IURLGenerator $url,
+								IManager $activityManager,
+								IUserManager $userManager,
+								Manager $manager) {
 		$this->languageFactory = $languageFactory;
 		$this->url = $url;
 		$this->activityManager = $activityManager;
@@ -86,7 +90,7 @@ abstract class Base implements IProvider {
 	 * @param array $parameters
 	 * @throws \InvalidArgumentException
 	 */
-	protected function setSubjects(IEvent $event, string $subject, array $parameters) {
+	protected function setSubjects(IEvent $event, string $subject, array $parameters): void {
 		$placeholders = $replacements = [];
 		foreach ($parameters as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
@@ -97,11 +101,6 @@ abstract class Base implements IProvider {
 			->setRichSubject($subject, $parameters);
 	}
 
-	/**
-	 * @param IL10N $l
-	 * @param Room $room
-	 * @return array
-	 */
 	protected function getRoom(IL10N $l, Room $room): array {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
@@ -124,11 +123,6 @@ abstract class Base implements IProvider {
 		];
 	}
 
-	/**
-	 * @param IL10N $l
-	 * @param int $roomId
-	 * @return array
-	 */
 	protected function getFormerRoom(IL10N $l, int $roomId): array {
 		return [
 			'type' => 'call',
@@ -138,10 +132,6 @@ abstract class Base implements IProvider {
 		];
 	}
 
-	/**
-	 * @param string $uid
-	 * @return array
-	 */
 	protected function getUser(string $uid): array {
 		if (!isset($this->displayNames[$uid])) {
 			$this->displayNames[$uid] = $this->getDisplayName($uid);
@@ -154,10 +144,6 @@ abstract class Base implements IProvider {
 		];
 	}
 
-	/**
-	 * @param string $uid
-	 * @return string
-	 */
 	protected function getDisplayName(string $uid): string {
 		$user = $this->userManager->get($uid);
 		if ($user instanceof IUser) {

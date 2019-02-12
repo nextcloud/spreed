@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -45,7 +44,7 @@ class TemplateLoader {
 		$this->dispatcher = $dispatcher;
 	}
 
-	public function register() {
+	public function register(): void {
 		$listener = function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
@@ -66,7 +65,7 @@ class TemplateLoader {
 	 *
 	 * @param IShare $share
 	 */
-	public function loadRequestPasswordByTalkUi(IShare $share) {
+	public function loadRequestPasswordByTalkUi(IShare $share): void {
 		if (!$share->getSendPasswordByTalk()) {
 			return;
 		}
