@@ -292,6 +292,21 @@ var spreedPeerConnectionTable = [];
 			webrtc.leaveCall();
 		});
 
+		signaling.on('message', function (message) {
+			if (message.type !== 'offer') {
+				return;
+			}
+
+			var peers = OCA.SpreedMe.webrtc.webrtc.peers;
+			var stalePeer = peers.find(function(peer) {
+				return peer.id === message.from && peer.sid !== message.sid;
+			});
+
+			if (stalePeer) {
+				usersChanged(signaling, [], [stalePeer.id]);
+			}
+		});
+
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
