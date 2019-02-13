@@ -77,7 +77,11 @@ class Config {
 		$signaling = [];
 		$servers = $this->getSignalingServers();
 		if (!empty($servers)) {
-			$signaling = $servers[mt_rand(0, count($servers) - 1)];
+			try {
+				$signaling = $servers[random_int(0, count($servers) - 1)];
+			} catch (\Exception $e) {
+				$signaling = $servers[0];
+			}
 			$signaling = $signaling['server'];
 		}
 
@@ -90,22 +94,68 @@ class Config {
 	}
 
 	/**
-	 * @return string
+	 * @return string[]
 	 */
-	public function getStunServer() {
+	public function getAllServerUrlsForCSP(): array {
+		$urls = [];
+
+		foreach ($this->getStunServers() as $server) {
+			$urls[] = $server;
+		}
+
+		foreach ($this->getTurnServers() as $server) {
+			$urls[] = $server['server'];
+		}
+
+		foreach ($this->getSignalingServers() as $server) {
+			$urls[] = $this->getWebSocketDomainForSignalingServer($server['server']);
+		}
+
+		return $urls;
+	}
+
+	protected function getWebSocketDomainForSignalingServer(string $url): string {
+		if (strpos($url, 'https://') === 0) {
+			return 'wss://' . substr($url, 8, strpos($url, '/', 9) - 8);
+		}
+
+		if (strpos($url, 'http://') === 0) {
+			return 'ws://' . substr($url, 7, strpos($url, '/', 8) - 7);
+		}
+
+		$protocol = strpos($url, '://');
+		if ($protocol !== false) {
+			return substr($url, $protocol + 3, strpos($url, '/', $protocol + 3) - $protocol - 3);
+		}
+
+		return substr($url, 0, strpos($url, '/'));
+	}
+
+	/**
+	 * @return string[]
+	 */
+	protected function getStunServers(): array {
 		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
 		$servers = json_decode($config, true);
 
-		if ($servers === null) {
-			return $config ?: 'stun.nextcloud.com:443';
-		}
-
 		if (is_array($servers) && !empty($servers)) {
-			// For now we use a random server from the list
-			return $servers[mt_rand(0, count($servers) - 1)];
+			return $servers;
 		}
 
-		return 'stun.nextcloud.com:443';
+		return ['stun.nextcloud.com:443'];
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStunServer(): string {
+		$servers = $this->getStunServers();
+		// For now we use a random server from the list
+		try {
+			return $servers[random_int(0, count($servers) - 1)];
+		} catch (\Exception $e) {
+			return $servers[0];
+		}
 	}
 
 	/**
@@ -113,11 +163,26 @@ class Config {
 	 *
 	 * @return array
 	 */
-	public function getTurnSettings() {
+	protected function getTurnServers(): array {
 		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config, true);
 
 		if ($servers === null || empty($servers) || !is_array($servers)) {
+			return [];
+		}
+
+		return $servers;
+	}
+
+	/**
+	 * Generates a username and password for the TURN server
+	 *
+	 * @return array
+	 */
+	public function getTurnSettings(): array {
+		$servers = $this->getTurnServers();
+
+		if (empty($servers)) {
 			return [
 				'server' => '',
 				'username' => '',
@@ -127,13 +192,17 @@ class Config {
 		}
 
 		// For now we use a random server from the list
-		$server = $servers[mt_rand(0, count($servers) - 1)];
+		try {
+			$server = $servers[random_int(0, count($servers) - 1)];
+		} catch (\Exception $e) {
+			$server = $servers[0];
+		}
 
 		// Credentials are valid for 24h
 		// FIXME add the TTL to the response and properly reconnect then
 		$timestamp = $this->timeFactory->getTime() + 86400;
 		$rnd = $this->secureRandom->generate(16);
-		$username = (string) $timestamp . ':' . $rnd;
+		$username = $timestamp . ':' . $rnd;
 		$password = base64_encode(hash_hmac('sha1', $username, $server['secret'], true));
 
 		return array(
@@ -150,7 +219,7 @@ class Config {
 	 *
 	 * @return array
 	 */
-	public function getSignalingServers() {
+	public function getSignalingServers(): array {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
 		if (!is_array($signaling)) {

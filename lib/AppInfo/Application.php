@@ -35,7 +35,9 @@ use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
+use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\IServerContainer;
+use OCP\Security\IContentSecurityPolicyManager;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -59,13 +61,17 @@ class Application extends App {
 		$this->getContainer()->registerCapability(Capabilities::class);
 
 		$dispatcher = $server->getEventDispatcher();
+		/** @var Config $config */
 		$config = $server->query(Config::class);
+		$this->extendDefaultContentSecurityPolicy($config);
+
 		$servers = $config->getSignalingServers();
 		if (empty($servers)) {
 			$this->registerInternalSignalingHooks($dispatcher);
 		} else {
 			$this->registerSignalingBackendHooks($dispatcher);
 		}
+
 		$this->registerCallActivityHooks($dispatcher);
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerRoomInvitationHook($dispatcher);
@@ -360,5 +366,14 @@ class Application extends App {
 			$roomShareProvider->deleteInRoom($room->getToken());
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+	}
+
+	protected function extendDefaultContentSecurityPolicy(Config $config) {
+		$csp = new ContentSecurityPolicy();
+		foreach ($config->getAllServerUrlsForCSP() as $server) {
+			$csp->addAllowedConnectDomain($server);
+		}
+		$cspManager = $this->getContainer()->getServer()->getContentSecurityPolicyManager();
+		$cspManager->addDefaultPolicy($csp);
 	}
 }
