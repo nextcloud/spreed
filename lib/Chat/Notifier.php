@@ -278,7 +278,7 @@ class Notifier {
 		}
 
 		try {
-			$room = $this->manager->getRoomById($comment->getObjectId());
+			$room = $this->manager->getRoomById((int) $comment->getObjectId());
 		} catch (RoomNotFoundException $e) {
 			return false;
 		}
