@@ -35,33 +35,37 @@ use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUserManager;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class RoomControllerTest extends \Test\TestCase {
 
 	/** @var string */
 	private $userId;
-	/** @var TalkSession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var TalkSession|MockObject */
 	private $talkSession;
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var IGroupManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IGroupManager|MockObject */
 	protected $groupManager;
-	/** @var ILogger|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ILogger|MockObject */
 	protected $logger;
-	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
-	/** @var ChatManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ChatManager|MockObject */
 	protected $chatManager;
-	/** @var GuestManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var GuestManager|MockObject */
 	protected $guestManager;
-	/** @var MessageParser|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var MessageParser|MockObject */
 	protected $messageParser;
-	/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
+	/** @var IL10N|MockObject */
 	private $l;
 
 
@@ -77,6 +81,7 @@ class RoomControllerTest extends \Test\TestCase {
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->l = $this->createMock(IL10N::class);
 	}
 
@@ -93,6 +98,7 @@ class RoomControllerTest extends \Test\TestCase {
 			$this->guestManager,
 			$this->chatManager,
 			$this->messageParser,
+			$this->timeFactory,
 			$this->l
 		);
 	}

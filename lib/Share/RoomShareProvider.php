@@ -195,7 +195,7 @@ class RoomShareProvider implements IShareProvider {
 			->setValue('file_target', $qb->createNamedParameter($target))
 			->setValue('permissions', $qb->createNamedParameter($permissions))
 			->setValue('token', $qb->createNamedParameter($token))
-			->setValue('stime', $qb->createNamedParameter(time()));
+			->setValue('stime', $qb->createNamedParameter($this->timeFactory->getTime()));
 
 		if ($expirationDate !== null) {
 			$qb->setValue('expiration', $qb->createNamedParameter($expirationDate, 'datetime'));

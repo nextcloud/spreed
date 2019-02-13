@@ -276,7 +276,7 @@ class ChatController extends OCSController {
 
 		$sessionId = $this->session->getSessionForRoom($token);
 		if ($sessionId !== null) {
-			$room->ping($this->userId, $sessionId, time());
+			$room->ping($this->userId, $sessionId, $this->timeFactory->getTime());
 		}
 
 		$currentUser = $this->userManager->get($this->userId);

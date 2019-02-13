@@ -34,6 +34,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -56,12 +57,14 @@ class SignalingController extends OCSController {
 	private $dbConnection;
 	/** @var Messages */
 	private $messages;
-	/** @var string|null */
-	private $userId;
 	/** @var IUserManager */
 	private $userManager;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var ITimeFactory */
+	private $timeFactory;
+	/** @var string|null */
+	private $userId;
 
 	public function __construct(string $appName,
 								IRequest $request,
@@ -72,6 +75,7 @@ class SignalingController extends OCSController {
 								Messages $messages,
 								IUserManager $userManager,
 								EventDispatcherInterface $dispatcher,
+								ITimeFactory $timeFactory,
 								?string $UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
@@ -81,6 +85,7 @@ class SignalingController extends OCSController {
 		$this->messages = $messages;
 		$this->userManager = $userManager;
 		$this->dispatcher = $dispatcher;
+		$this->timeFactory = $timeFactory;
 		$this->userId = $UserId;
 	}
 
@@ -158,7 +163,7 @@ class SignalingController extends OCSController {
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
 
-			$pingTimestamp = time();
+			$pingTimestamp = $this->timeFactory->getTime();
 			$room->ping($this->userId, $sessionId, $pingTimestamp);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
@@ -219,7 +224,7 @@ class SignalingController extends OCSController {
 		// to include other participants pinging almost at the same time as the
 		// current user), or since the last signaling ping of the current user
 		// if it was done more than 40 seconds ago.
-		$timestamp = min(time() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
+		$timestamp = min($this->timeFactory->getTime() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
 		// "- 1" is needed because only the participants whose last ping is
 		// greater than the given timestamp are returned.
 		$participants = $room->getParticipants($timestamp - 1);
@@ -413,7 +418,7 @@ class SignalingController extends OCSController {
 		if ($action === 'join') {
 			// Rooms get sorted by last ping time for users, so make sure to
 			// update when a user joins a room.
-			$room->ping($userId, $sessionId, time());
+			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
 		} else if ($action === 'leave') {
 			if (!empty($userId)) {
 				$room->leaveRoom($userId);
@@ -460,7 +465,7 @@ class SignalingController extends OCSController {
 			]);
 		}
 
-		$now = time();
+		$now = $this->timeFactory->getTime();
 		foreach ($request['entries'] as $entry) {
 			if (array_key_exists('userid', $entry)) {
 				$room->ping($entry['userid'], $entry['sessionid'], $now);

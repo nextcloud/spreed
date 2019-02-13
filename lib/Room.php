@@ -29,6 +29,7 @@ namespace OCA\Spreed;
 use OCA\Spreed\Exceptions\InvalidPasswordException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\UnauthorizedException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
@@ -52,6 +53,8 @@ class Room {
 	private $secureRandom;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var ITimeFactory */
+	private $timeFactory;
 	/** @var IHasher */
 	private $hasher;
 
@@ -87,6 +90,7 @@ class Room {
 								IDBConnection $db,
 								ISecureRandom $secureRandom,
 								EventDispatcherInterface $dispatcher,
+								ITimeFactory $timeFactory,
 								IHasher $hasher,
 								int $id,
 								int $type,
@@ -103,6 +107,7 @@ class Room {
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
 		$this->dispatcher = $dispatcher;
+		$this->timeFactory = $timeFactory;
 		$this->hasher = $hasher;
 		$this->id = $id;
 		$this->type = $type;
@@ -768,7 +773,7 @@ class Room {
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->emptyString('user_id'))
-			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter(time() - 100, IQueryBuilder::PARAM_INT)));
+			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter($this->timeFactory->getTime() - 100, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
 		$this->dispatcher->dispatch(self::class . '::postCleanGuests', new GenericEvent($this));

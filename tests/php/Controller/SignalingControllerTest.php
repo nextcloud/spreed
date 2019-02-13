@@ -35,6 +35,7 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -59,25 +60,20 @@ class SignalingControllerTest extends \Test\TestCase {
 
 	/** @var Config */
 	private $config;
-
-	/** @var TalkSession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var TalkSession|MockObject */
 	private $session;
-
-	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
-
-	/** @var IDBConnection|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IDBConnection|MockObject */
 	protected $dbConnection;
-
-	/** @var Messages|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Messages|MockObject */
 	protected $messages;
-
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
 	/** @var string */
 	private $userId;
-
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 
@@ -102,6 +98,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->dispatcher = \OC::$server->getEventDispatcher();
 		$this->recreateSignalingController();
 	}
@@ -117,6 +114,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->messages,
 			$this->userManager,
 			$this->dispatcher,
+			$this->timeFactory,
 			$this->userId
 		);
 	}
