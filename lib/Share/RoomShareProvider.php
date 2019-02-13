@@ -31,6 +31,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Folder;
 use OCP\Files\Node;
@@ -63,36 +64,35 @@ class RoomShareProvider implements IShareProvider {
 
 	/** @var IDBConnection */
 	private $dbConnection;
-
 	/** @var ISecureRandom */
 	private $secureRandom;
-
 	/** @var IShareManager */
 	private $shareManager;
-
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
-
-	/** @var IL10N */
-	private $l;
-
 	/** @var Manager */
 	private $manager;
+	/** @var ITimeFactory */
+	protected $timeFactory;
+	/** @var IL10N */
+	private $l;
 
 	public function __construct(
 			IDBConnection $connection,
 			ISecureRandom $secureRandom,
 			IShareManager $shareManager,
 			EventDispatcherInterface $dispatcher,
-			IL10N $l,
-			Manager $manager
+			Manager $manager,
+			ITimeFactory $timeFactory,
+			IL10N $l
 	) {
 		$this->dbConnection = $connection;
 		$this->secureRandom = $secureRandom;
 		$this->shareManager = $shareManager;
 		$this->dispatcher = $dispatcher;
-		$this->l = $l;
 		$this->manager = $manager;
+		$this->timeFactory = $timeFactory;
+		$this->l = $l;
 	}
 
 	/**
@@ -245,7 +245,7 @@ class RoomShareProvider implements IShareProvider {
 			->setTarget($data['file_target'])
 			->setToken($data['token']);
 
-		$shareTime = new \DateTime();
+		$shareTime = $this->timeFactory->getDateTime();
 		$shareTime->setTimestamp((int)$data['stime']);
 		$share->setShareTime($shareTime);
 		$share->setSharedWith($data['share_with']);

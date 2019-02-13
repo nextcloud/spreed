@@ -37,6 +37,7 @@ use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\Signaling\Messages;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IServerContainer;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -327,7 +328,9 @@ class Application extends App {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$room->setLastActivity(new \DateTime());
+			/** @var ITimeFactory $timeFactory */
+			$timeFactory = $this->getContainer()->query(ITimeFactory::class);
+			$room->setLastActivity($timeFactory->getDateTime());
 		};
 
 		$dispatcher->addListener(ChatManager::class . '::sendMessage', $listener);

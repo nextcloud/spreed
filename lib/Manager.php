@@ -25,6 +25,7 @@ namespace OCA\Spreed;
 
 use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -45,6 +46,8 @@ class Manager {
 	private $commentsManager;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 	/** @var IHasher */
 	private $hasher;
 
@@ -53,12 +56,14 @@ class Manager {
 								ISecureRandom $secureRandom,
 								CommentsManager $commentsManager,
 								EventDispatcherInterface $dispatcher,
+								ITimeFactory $timeFactory,
 								IHasher $hasher) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
+		$this->timeFactory = $timeFactory;
 		$this->hasher = $hasher;
 	}
 
@@ -82,12 +87,12 @@ class Manager {
 	public function createRoomObject(array $row): Room {
 		$activeSince = null;
 		if (!empty($row['active_since'])) {
-			$activeSince = new \DateTime($row['active_since']);
+			$activeSince = $this->timeFactory->getDateTime($row['active_since']);
 		}
 
 		$lastActivity = null;
 		if (!empty($row['last_activity'])) {
-			$lastActivity = new \DateTime($row['last_activity']);
+			$lastActivity = $this->timeFactory->getDateTime($row['last_activity']);
 		}
 
 		$lastMessage = null;
@@ -114,7 +119,7 @@ class Manager {
 	public function createParticipantObject(Room $room, array $row): Participant {
 		$lastMention = null;
 		if (!empty($row['last_mention'])) {
-			$lastMention = new \DateTime($row['last_mention']);
+			$lastMention = $this->timeFactory->getDateTime($row['last_mention']);
 		}
 
 		return new Participant($this->db, $room, (string) $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], (string) $row['session_id'], (int) $row['in_call'], (int) $row['notification_level'], (bool) $row['favorite'], $lastMention);
