@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -34,10 +35,6 @@ class Section implements IIconSection {
 	/** @var IURLGenerator */
 	private $url;
 
-	/**
-	 * @param IURLGenerator $url
-	 * @param IL10N $l
-	 */
 	public function __construct(IURLGenerator $url, IL10N $l) {
 		$this->url = $url;
 		$this->l = $l;
@@ -50,7 +47,7 @@ class Section implements IIconSection {
 	 * @returns string
 	 * @since 12
 	 */
-	public function getIcon() {
+	public function getIcon(): string {
 		return $this->url->imagePath('spreed', 'app-dark.svg');
 	}
 
@@ -61,7 +58,7 @@ class Section implements IIconSection {
 	 * @returns string
 	 * @since 9.1
 	 */
-	public function getID() {
+	public function getID(): string {
 		return 'talk';
 	}
 
@@ -72,7 +69,7 @@ class Section implements IIconSection {
 	 * @return string
 	 * @since 9.1
 	 */
-	public function getName() {
+	public function getName(): string {
 		return $this->l->t('Talk');
 	}
 
@@ -84,7 +81,7 @@ class Section implements IIconSection {
 	 * E.g.: 70
 	 * @since 9.1
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 70;
 	}
 }

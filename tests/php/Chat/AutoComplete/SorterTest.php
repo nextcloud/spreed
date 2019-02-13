@@ -84,12 +84,12 @@ class SorterTest extends \Test\TestCase {
 	public function testSort($toSort, $comments, $expected) {
 		$this->commentsManager->expects(isset($toSort['users']) ? $this->once() : $this->never())
 			->method('getLastCommentDateByActor')
-			->with('chat', 23, 'comment', 'users', $this->anything())
+			->with('chat', '23', 'comment', 'users', $this->anything())
 			->willReturn($comments);
 
 		$this->sorter->sort($toSort, [
 			'itemType' => 'chat',
-			'itemId' => 23,
+			'itemId' => '23',
 		]);
 		$this->assertSame($expected, $toSort);
 	}

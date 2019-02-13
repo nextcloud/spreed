@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -56,7 +55,7 @@ class Listener {
 		$this->util = $util;
 	}
 
-	public function register() {
+	public function register(): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
@@ -94,7 +93,7 @@ class Listener {
 	 * @param string $userId
 	 * @throws UnauthorizedException
 	 */
-	public function preventUsersWithoutDirectAccessToTheFileFromJoining(Room $room, string $userId) {
+	public function preventUsersWithoutDirectAccessToTheFileFromJoining(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}
@@ -113,7 +112,7 @@ class Listener {
 	 * @param Room $room
 	 * @throws UnauthorizedException
 	 */
-	public function preventGuestsFromJoining(Room $room) {
+	public function preventGuestsFromJoining(Room $room): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}

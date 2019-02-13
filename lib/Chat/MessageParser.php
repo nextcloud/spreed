@@ -42,7 +42,7 @@ class MessageParser {
 		$this->dispatcher = $dispatcher;
 	}
 
-	public function parseMessage(Room $room, IComment $chatMessage, IL10N $l, IUser $user = null): array {
+	public function parseMessage(Room $room, IComment $chatMessage, IL10N $l, ?IUser $user): array {
 		$event = new GenericEvent($chatMessage, [
 			'room' => $room,
 			'user' => $user,

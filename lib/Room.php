@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -38,10 +39,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Room {
-	const UNKNOWN_CALL = -1;
-	const ONE_TO_ONE_CALL = 1;
-	const GROUP_CALL = 2;
-	const PUBLIC_CALL = 3;
+	public const UNKNOWN_CALL = -1;
+	public const ONE_TO_ONE_CALL = 1;
+	public const GROUP_CALL = 2;
+	public const PUBLIC_CALL = 3;
 
 	/** @var Manager */
 	private $manager;
@@ -82,27 +83,22 @@ class Room {
 	/** @var Participant */
 	protected $participant;
 
-	/**
-	 * Room constructor.
-	 *
-	 * @param Manager $manager
-	 * @param IDBConnection $db
-	 * @param ISecureRandom $secureRandom
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param IHasher $hasher
-	 * @param int $id
-	 * @param int $type
-	 * @param string $token
-	 * @param string $name
-	 * @param string $password
-	 * @param int $activeGuests
-	 * @param \DateTime|null $activeSince
-	 * @param \DateTime|null $lastActivity
-	 * @param IComment|null $lastMessage
-	 * @param string $objectType
-	 * @param string $objectId
-	 */
-	public function __construct(Manager $manager, IDBConnection $db, ISecureRandom $secureRandom, EventDispatcherInterface $dispatcher, IHasher $hasher, $id, $type, $token, $name, $password, $activeGuests, \DateTime $activeSince = null, \DateTime $lastActivity = null, IComment $lastMessage = null, $objectType = '', $objectId = '') {
+	public function __construct(Manager $manager,
+								IDBConnection $db,
+								ISecureRandom $secureRandom,
+								EventDispatcherInterface $dispatcher,
+								IHasher $hasher,
+								int $id,
+								int $type,
+								string $token,
+								string $name,
+								string $password,
+								int $activeGuests,
+								\DateTime $activeSince = null,
+								\DateTime $lastActivity = null,
+								IComment $lastMessage = null,
+								string $objectType = '',
+								string $objectId = '') {
 		$this->manager = $manager;
 		$this->db = $db;
 		$this->secureRandom = $secureRandom;
@@ -121,80 +117,47 @@ class Room {
 		$this->objectId = $objectId;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getId() {
+	public function getId(): int {
 		return $this->id;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getType() {
+	public function getType(): int {
 		return $this->type;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getToken() {
+	public function getToken(): string {
 		return $this->token;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getName() {
+	public function getName(): string {
 		return $this->name;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getActiveGuests() {
+	public function getActiveGuests(): int {
 		return $this->activeGuests;
 	}
 
-	/**
-	 * @return \DateTime|null
-	 */
-	public function getActiveSince() {
+	public function getActiveSince(): ?\DateTime {
 		return $this->activeSince;
 	}
 
-	/**
-	 * @return \DateTime|null
-	 */
-	public function getLastActivity() {
+	public function getLastActivity(): ?\DateTime {
 		return $this->lastActivity;
 	}
 
-	/**
-	 * @return IComment|null
-	 */
-	public function getLastMessage() {
+	public function getLastMessage(): ?IComment {
 		return $this->lastMessage;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getObjectType() {
+	public function getObjectType(): string {
 		return $this->objectType;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getObjectId() {
+	public function getObjectId(): string {
 		return $this->objectId;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function hasPassword() {
+	public function hasPassword(): bool {
 		return $this->password !== '';
 	}
 
@@ -202,11 +165,7 @@ class Room {
 		return $this->password;
 	}
 
-	/**
-	 * @param string $userId
-	 * @param Participant $participant
-	 */
-	public function setParticipant($userId, Participant $participant) {
+	public function setParticipant(?string $userId, Participant $participant): void {
 		$this->currentUser = $userId;
 		$this->participant = $participant;
 	}
@@ -216,7 +175,7 @@ class Room {
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
-	public function getParticipant($userId) {
+	public function getParticipant(?string $userId): Participant {
 		if (!is_string($userId) || $userId === '') {
 			throw new ParticipantNotFoundException('Not a user');
 		}
@@ -251,7 +210,7 @@ class Room {
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
-	public function getParticipantBySession($sessionId) {
+	public function getParticipantBySession(string $sessionId): Participant {
 		if (!is_string($sessionId) || $sessionId === '' || $sessionId === '0') {
 			throw new ParticipantNotFoundException('Not a user');
 		}
@@ -272,7 +231,7 @@ class Room {
 		return $this->manager->createParticipantObject($this, $row);
 	}
 
-	public function deleteRoom() {
+	public function deleteRoom(): void {
 		$participants = $this->getParticipantsLegacy();
 		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', new GenericEvent($this, [
 			'participants' => $participants,
@@ -298,7 +257,7 @@ class Room {
 	 * @param string $newName Currently it is only allowed to rename: self::GROUP_CALL, self::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setName($newName) {
+	public function setName(string $newName): bool {
 		$oldName = $this->getName();
 		if ($newName === $oldName) {
 			return true;
@@ -334,7 +293,7 @@ class Room {
 	 * @param string $password Currently it is only allowed to have a password for Room::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setPassword($password) {
+	public function setPassword(string $password): bool {
 		if ($this->getType() !== self::PUBLIC_CALL) {
 			return false;
 		}
@@ -363,7 +322,7 @@ class Room {
 	 * @param \DateTime $now
 	 * @return bool
 	 */
-	public function setLastActivity(\DateTime $now) {
+	public function setLastActivity(\DateTime $now): bool {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
 			->set('last_activity', $query->createNamedParameter($now, 'datetime'))
@@ -380,7 +339,7 @@ class Room {
 	 * @param bool $isGuest
 	 * @return bool
 	 */
-	public function setActiveSince(\DateTime $since, $isGuest) {
+	public function setActiveSince(\DateTime $since, bool $isGuest): bool {
 
 		if ($isGuest && $this->getType() === self::PUBLIC_CALL) {
 			$query = $this->db->getQueryBuilder();
@@ -408,7 +367,7 @@ class Room {
 		return true;
 	}
 
-	public function setLastMessage(IComment $message) {
+	public function setLastMessage(IComment $message): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
 			->set('last_message', $query->createNamedParameter((int) $message->getId()))
@@ -416,7 +375,7 @@ class Room {
 		$query->execute();
 	}
 
-	public function resetActiveSince() {
+	public function resetActiveSince(): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
 			->set('active_guests', $query->createNamedParameter(0))
@@ -429,7 +388,7 @@ class Room {
 	 * @param int $newType Currently it is only allowed to change to: self::GROUP_CALL, self::PUBLIC_CALL
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function changeType($newType) {
+	public function changeType(int $newType): bool {
 		$newType = (int) $newType;
 		if ($newType === $this->getType()) {
 			return true;
@@ -474,7 +433,7 @@ class Room {
 	/**
 	 * @param array[] ...$participants
 	 */
-	public function addUsers(array ...$participants) {
+	public function addUsers(array ...$participants): void {
 		$this->dispatcher->dispatch(self::class . '::preAddUsers', new GenericEvent($this, [
 			'users' => $participants,
 		]));
@@ -493,8 +452,8 @@ class Room {
 
 		foreach ($participants as $participant) {
 			$query->setParameter('user_id', $participant['userId'])
-				->setParameter('session_id', isset($participant['sessionId']) ? $participant['sessionId'] : '0')
-				->setParameter('participant_type', isset($participant['participantType']) ? $participant['participantType'] : Participant::USER, IQueryBuilder::PARAM_INT);
+				->setParameter('session_id', $participant['sessionId'] ?? '0')
+				->setParameter('participant_type', $participant['participantType'] ?? Participant::USER, IQueryBuilder::PARAM_INT);
 
 			$query->execute();
 		}
@@ -508,7 +467,7 @@ class Room {
 	 * @param string $participant
 	 * @param int $participantType
 	 */
-	public function setParticipantType($participant, $participantType) {
+	public function setParticipantType(string $participant, int $participantType): void {
 		$this->dispatcher->dispatch(self::class . '::preSetParticipantType', new GenericEvent($this, [
 			'user' => $participant,
 			'newType' => $participantType,
@@ -531,7 +490,7 @@ class Room {
 	 * @param Participant $participant
 	 * @param int $participantType
 	 */
-	public function setParticipantTypeBySession(Participant $participant, int $participantType) {
+	public function setParticipantTypeBySession(Participant $participant, int $participantType): void {
 		$this->dispatcher->dispatch(self::class . '::preSetParticipantTypeBySession', new GenericEvent($this, [
 			'participant' => $participant,
 			'newType' => $participantType,
@@ -553,7 +512,7 @@ class Room {
 	/**
 	 * @param IUser $user
 	 */
-	public function removeUser(IUser $user) {
+	public function removeUser(IUser $user): void {
 		try {
 			$participant = $this->getParticipant($user->getUID());
 		} catch (ParticipantNotFoundException $e) {
@@ -580,7 +539,7 @@ class Room {
 	/**
 	 * @param Participant $participant
 	 */
-	public function removeParticipantBySession(Participant $participant) {
+	public function removeParticipantBySession(Participant $participant): void {
 		$this->dispatcher->dispatch(self::class . '::preRemoveBySession', new GenericEvent($this, [
 			'participant' => $participant,
 		]));
@@ -604,7 +563,7 @@ class Room {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoom(IUser $user, $password, $passedPasswordProtection = false) {
+	public function joinRoom(IUser $user, string $password, bool $passedPasswordProtection = false): string {
 		$event = new GenericEvent($this, [
 			'userId' => $user->getUID(),
 			'password' => $password,
@@ -658,7 +617,7 @@ class Room {
 	/**
 	 * @param string $userId
 	 */
-	public function leaveRoom($userId) {
+	public function leaveRoom(string $userId): void {
 		try {
 			$participant = $this->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
@@ -702,7 +661,7 @@ class Room {
 	 * @throws InvalidPasswordException
 	 * @throws UnauthorizedException
 	 */
-	public function joinRoomGuest($password, $passedPasswordProtection = false) {
+	public function joinRoomGuest(string $password, bool $passedPasswordProtection = false): string {
 		$event = new GenericEvent($this);
 		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', $event);
 
@@ -731,7 +690,7 @@ class Room {
 	}
 
 
-	public function changeInCall(string $sessionId, int $flags) {
+	public function changeInCall(string $sessionId, int $flags): void {
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
 			$this->dispatcher->dispatch(self::class . '::preSessionJoinCall', new GenericEvent($this, [
 				'sessionId' => $sessionId,
@@ -766,7 +725,7 @@ class Room {
 	 * @param string $password
 	 * @return array
 	 */
-	public function verifyPassword($password) {
+	public function verifyPassword(string $password): array {
 		$event = new GenericEvent($this, [
 			'password' => $password
 		]);
@@ -790,7 +749,7 @@ class Room {
 	 * @param string $sessionId
 	 * @return bool
 	 */
-	protected function isSessionUnique($sessionId) {
+	protected function isSessionUnique(string $sessionId): bool {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_sessions')
 			->from('talk_participants')
@@ -802,7 +761,7 @@ class Room {
 		return $numSessions === 1;
 	}
 
-	public function cleanGuestParticipants() {
+	public function cleanGuestParticipants(): void {
 		$this->dispatcher->dispatch(self::class . '::preCleanGuests', new GenericEvent($this));
 
 		$query = $this->db->getQueryBuilder();
@@ -819,7 +778,7 @@ class Room {
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return Participant[]
 	 */
-	public function getParticipants($lastPing = 0): array {
+	public function getParticipants(int $lastPing = 0): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_participants')
@@ -845,7 +804,7 @@ class Room {
 	 * @return array[] Array of users with [users => [userId => [lastPing, sessionId]], guests => [[lastPing, sessionId]]]
 	 * @deprecated Use self::getParticipants() instead
 	 */
-	public function getParticipantsLegacy($lastPing = 0): array {
+	public function getParticipantsLegacy(int $lastPing = 0): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_participants')
@@ -933,7 +892,7 @@ class Room {
 	/**
 	 * @return string[]
 	 */
-	public function getActiveSessions() {
+	public function getActiveSessions(): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('session_id')
 			->from('talk_participants')
@@ -954,7 +913,7 @@ class Room {
 	 * Get all user ids which are participants in a room but currently not in the call
 	 * @return string[]
 	 */
-	public function getNotInCallUserIds() {
+	public function getNotInCallUserIds(): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('user_id')
 			->from('talk_participants')
@@ -975,7 +934,7 @@ class Room {
 	/**
 	 * @return bool
 	 */
-	public function hasSessionsInCall() {
+	public function hasSessionsInCall(): bool {
 		$query = $this->db->getQueryBuilder();
 		$query->select('session_id')
 			->from('talk_participants')
@@ -994,7 +953,7 @@ class Room {
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
 	 * @return int
 	 */
-	public function getNumberOfParticipants($ignoreGuests = true, $lastPing = 0) {
+	public function getNumberOfParticipants(bool $ignoreGuests = true, int $lastPing = 0): int {
 		$query = $this->db->getQueryBuilder();
 		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_participants')
 			->from('talk_participants')
@@ -1018,7 +977,7 @@ class Room {
 		return isset($row['num_participants']) ? (int) $row['num_participants'] : 0;
 	}
 
-	public function markUsersAsMentioned(array $userIds, \DateTime $time) {
+	public function markUsersAsMentioned(array $userIds, \DateTime $time): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('last_mention', $query->createNamedParameter($time, 'datetime'))
@@ -1028,11 +987,11 @@ class Room {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @param string $sessionId
 	 * @param int $timestamp
 	 */
-	public function ping($userId, $sessionId, $timestamp) {
+	public function ping(?string $userId, string $sessionId, int $timestamp): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
 			->set('last_ping', $query->createNamedParameter($timestamp, IQueryBuilder::PARAM_INT))

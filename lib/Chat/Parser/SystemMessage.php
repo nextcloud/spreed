@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -78,13 +79,13 @@ class SystemMessage {
 		$this->recipient = $this->userSession->getUser();
 	}
 
-	public function setUserInfo(IL10N $l, IUser $user = null) {
+	public function setUserInfo(IL10N $l, ?IUser $user): void {
 		$this->l = $l;
 		$this->recipient = $user;
 		$this->sessionId = null;
 	}
 
-	public function setGuestInfo(IL10N $l, string $sessionId = null) {
+	public function setGuestInfo(IL10N $l, ?string $sessionId): void {
 		$this->l = $l;
 		$this->recipient = null;
 		$this->sessionId = $sessionId;

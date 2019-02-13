@@ -371,7 +371,7 @@ class ChatController extends OCSController {
 		$this->autoCompleteManager->registerSorter(Sorter::class);
 		$this->autoCompleteManager->runSorters(['talk_chat_participants'], $results, [
 			'itemType' => 'chat',
-			'itemId' => $room->getId(),
+			'itemId' => (string) $room->getId(),
 		]);
 
 		$results = $this->prepareResultArray($results);

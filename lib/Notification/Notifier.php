@@ -182,7 +182,7 @@ class Notifier implements INotifier {
 		}
 
 		$recipient = $this->userManager->get($notification->getUser());
-		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($room, $comment, $l, $recipient);
+		[$richMessage, $richMessageParameters] = $this->messageParser->parseMessage($room, $comment, $l, $recipient);
 
 		$placeholders = $replacements = [];
 		foreach ($richMessageParameters as $placeholder => $parameter) {
@@ -267,7 +267,7 @@ class Notifier implements INotifier {
 	 * @return string
 	 * @throws \InvalidArgumentException
 	 */
-	protected function getRoomType(Room $room) {
+	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				return 'one2one';

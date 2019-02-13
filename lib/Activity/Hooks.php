@@ -47,7 +47,11 @@ class Hooks {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	public function __construct(IManager $activityManager, IUserSession $userSession, ChatManager $chatManager, ILogger $logger, ITimeFactory $timeFactory) {
+	public function __construct(IManager $activityManager,
+								IUserSession $userSession,
+								ChatManager $chatManager,
+								ILogger $logger,
+								ITimeFactory $timeFactory) {
 		$this->activityManager = $activityManager;
 		$this->userSession = $userSession;
 		$this->chatManager = $chatManager;
@@ -55,12 +59,7 @@ class Hooks {
 		$this->timeFactory = $timeFactory;
 	}
 
-	/**
-	 * Mark the user as (in)active for a call
-	 *
-	 * @param Room $room
-	 */
-	public function setActive(Room $room) {
+	public function setActive(Room $room): void {
 		$room->setActiveSince(new \DateTime(), !$this->userSession->isLoggedIn());
 	}
 
@@ -133,7 +132,7 @@ class Hooks {
 	 * @param Room $room
 	 * @param array[] $participants
 	 */
-	public function generateInvitationActivity(Room $room, array $participants) {
+	public function generateInvitationActivity(Room $room, array $participants): void {
 		$actor = $this->userSession->getUser();
 		if (!$actor instanceof IUser) {
 			return;

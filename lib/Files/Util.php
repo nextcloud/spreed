@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -39,14 +38,8 @@ class Util {
 	/** @var array[] */
 	private $accessLists = [];
 
-	/**
-	 * @param IRootFolder $rootFolder
-	 * @param IShareManager $shareManager
-	 */
-	public function __construct(
-			IRootFolder $rootFolder,
-			IShareManager $shareManager
-	) {
+	public function __construct(IRootFolder $rootFolder,
+			IShareManager $shareManager) {
 		$this->rootFolder = $rootFolder;
 		$this->shareManager = $shareManager;
 	}
@@ -87,7 +80,7 @@ class Util {
 	 * @param string $userId
 	 * @return IShare|null
 	 */
-	public function getAnyDirectShareOfFileAccessibleByUser(string $fileId, string $userId) {
+	public function getAnyDirectShareOfFileAccessibleByUser(string $fileId, string $userId): ?IShare {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 		$nodes = $userFolder->getById($fileId);
 		if (empty($nodes)) {
@@ -122,7 +115,7 @@ class Util {
 	 * @param string $userId
 	 * @return IShare|null
 	 */
-	private function getAnyDirectShareOfNodeAccessibleByUser(Node $node, string $userId) {
+	private function getAnyDirectShareOfNodeAccessibleByUser(Node $node, string $userId): ?IShare {
 		$reshares = false;
 		$limit = 1;
 

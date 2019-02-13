@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
  *
@@ -38,7 +39,7 @@ class SignalingServer implements ISettings {
 	/**
 	 * @return TemplateResponse
 	 */
-	public function getForm() {
+	public function getForm(): TemplateResponse {
 		$parameters = [
 			'signalingServers' => $this->config->getAppValue('spreed', 'signaling_servers'),
 		];
@@ -49,7 +50,7 @@ class SignalingServer implements ISettings {
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'talk';
 	}
 
@@ -60,7 +61,7 @@ class SignalingServer implements ISettings {
 	 *
 	 * E.g.: 70
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 75;
 	}
 

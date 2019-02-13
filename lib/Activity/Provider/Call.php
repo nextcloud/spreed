@@ -36,7 +36,7 @@ class Call extends Base {
 	 * @since 11.0.0
 	 */
 	public function parse($language, IEvent $event, IEvent $previousEvent = null): IEvent {
-		$event = parent::preParse($event);
+		$event = $this->preParse($event);
 
 		if ($event->getSubject() === 'call') {
 			$l = $this->languageFactory->get('spreed', $language);

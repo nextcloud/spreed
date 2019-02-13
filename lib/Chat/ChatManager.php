@@ -50,11 +50,6 @@ class ChatManager {
 	/** @var Notifier */
 	private $notifier;
 
-	/**
-	 * @param CommentsManager $commentsManager
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param Notifier $notifier
-	 */
 	public function __construct(CommentsManager $commentsManager,
 								EventDispatcherInterface $dispatcher,
 								Notifier $notifier) {
@@ -74,7 +69,7 @@ class ChatManager {
 	 * @param bool $sendNotifications
 	 * @return IComment
 	 */
-	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
+	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
@@ -108,7 +103,7 @@ class ChatManager {
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime): IComment {
+	public function sendMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
@@ -184,7 +179,7 @@ class ChatManager {
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, $offset, $limit, $timeout, $user): array {
+	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user): array {
 		if ($user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
@@ -211,7 +206,7 @@ class ChatManager {
 	 *
 	 * @param Room $chat
 	 */
-	public function deleteMessages(Room $chat) {
+	public function deleteMessages(Room $chat): void {
 		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);

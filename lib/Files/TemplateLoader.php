@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -26,7 +25,6 @@ namespace OCA\Spreed\Files;
 
 use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Helper class to add the Talk UI to the sidebar of the Files app.
@@ -40,11 +38,8 @@ class TemplateLoader {
 		$this->dispatcher = $dispatcher;
 	}
 
-	public function register() {
-		$listener = function() {
-			$this->loadTalkSidebarForFilesApp();
-		};
-		$this->dispatcher->addListener('OCA\Files::loadAdditionalScripts', $listener);
+	public function register(): void {
+		$this->dispatcher->addListener('OCA\Files::loadAdditionalScripts', [$this, 'loadTalkSidebarForFilesApp']);
 	}
 
 	/**
@@ -53,7 +48,7 @@ class TemplateLoader {
 	 * This method should be called when loading additional scripts for the
 	 * Files app.
 	 */
-	public function loadTalkSidebarForFilesApp() {
+	public static function loadTalkSidebarForFilesApp(): void {
 		Util::addStyle('spreed', 'merged-files');
 		Util::addScript('spreed', 'merged-files');
 	}

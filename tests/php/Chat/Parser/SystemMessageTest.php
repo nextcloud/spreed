@@ -451,7 +451,6 @@ class SystemMessageTest extends TestCase {
 
 	public function dataParseMessageThrows(): array {
 		return [
-			[null],
 			['not json'],
 			[json_encode('not a json array')],
 			[json_encode(['message' => 'unkown_subject', 'parameters' => []])],

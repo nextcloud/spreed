@@ -48,7 +48,7 @@ class CustomBackendNotifier extends BackendNotifier {
 		$this->requests = [];
 	}
 
-	protected function doRequest(string $url, array $params) {
+	protected function doRequest(string $url, array $params): void {
 		$this->requests[] = [
 			'url' => $url,
 			'params' => $params,
@@ -65,7 +65,7 @@ class CustomApplication extends Application {
 		$this->notifier = $notifier;
 	}
 
-	protected function getBackendNotifier() {
+	protected function getBackendNotifier(): BackendNotifier {
 		return $this->notifier;
 	}
 

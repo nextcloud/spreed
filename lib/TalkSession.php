@@ -34,44 +34,31 @@ class TalkSession {
 		$this->session = $session;
 	}
 
-	/**
-	 * @param string $token
-	 * @return string|null
-	 */
-	public function getSessionForRoom(string $token) {
+	public function getSessionForRoom(string $token): ?string {
 		return $this->getValue('spreed-session', $token);
 	}
 
-	public function setSessionForRoom(string $token, string $sessionId) {
+	public function setSessionForRoom(string $token, string $sessionId): void {
 		$this->setValue('spreed-session', $token, $sessionId);
 	}
 
-	public function removeSessionForRoom(string $token) {
+	public function removeSessionForRoom(string $token): void {
 		$this->removeValue('spreed-session', $token);
 	}
 
-	/**
-	 * @param string $token
-	 * @return string|null
-	 */
-	public function getPasswordForRoom(string $token) {
+	public function getPasswordForRoom(string $token): ?string {
 		return $this->getValue('spreed-password', $token);
 	}
 
-	public function setPasswordForRoom(string $token, string $password) {
+	public function setPasswordForRoom(string $token, string $password): void {
 		$this->setValue('spreed-password', $token, $password);
 	}
 
-	public function removePasswordForRoom(string $token) {
+	public function removePasswordForRoom(string $token): void {
 		$this->removeValue('spreed-password', $token);
 	}
 
-	/**
-	 * @param string $key
-	 * @param string $token
-	 * @return string|null
-	 */
-	protected function getValue(string $key, string $token) {
+	protected function getValue(string $key, string $token): ?string {
 		$values = $this->session->get($key);
 		if ($values === null) {
 			return null;
@@ -88,7 +75,7 @@ class TalkSession {
 		return $values[$token];
 	}
 
-	protected function setValue(string $key, string $token, string $value) {
+	protected function setValue(string $key, string $token, string $value): void {
 		$values = $this->session->get($key);
 		if ($values === null) {
 			$values = [];
@@ -104,7 +91,7 @@ class TalkSession {
 		$this->session->set($key, json_encode($values));
 	}
 
-	protected function removeValue(string $key, string $token) {
+	protected function removeValue(string $key, string $token): void {
 		$values = $this->session->get($key);
 		if ($values === null) {
 			$values = [];
