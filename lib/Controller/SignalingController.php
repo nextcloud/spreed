@@ -42,6 +42,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SignalingController extends OCSController {
+
+	/** @var int */
+	private const PULL_MESSAGES_TIMEOUT = 30;
+
 	/** @var Config */
 	private $config;
 	/** @var TalkSession */
@@ -143,7 +147,7 @@ class SignalingController extends OCSController {
 		}
 
 		$data = [];
-		$seconds = 30;
+		$seconds = self::PULL_MESSAGES_TIMEOUT;
 
 		try {
 			$sessionId = $this->session->getSessionForRoom($token);
@@ -211,10 +215,11 @@ class SignalingController extends OCSController {
 	 */
 	protected function getUsersInRoom(Room $room, int $pingTimestamp): array {
 		$usersInRoom = [];
-		// Get participants active in the last 30 seconds, or since the last
-		// signaling ping of the current user if it was done more than 30
-		// seconds ago.
-		$timestamp = min(time() - 30, $pingTimestamp);
+		// Get participants active in the last 40 seconds (an extra time is used
+		// to include other participants pinging almost at the same time as the
+		// current user), or since the last signaling ping of the current user
+		// if it was done more than 40 seconds ago.
+		$timestamp = min(time() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
 		// "- 1" is needed because only the participants whose last ping is
 		// greater than the given timestamp are returned.
 		$participants = $room->getParticipants($timestamp - 1);
