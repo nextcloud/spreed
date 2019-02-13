@@ -34,12 +34,12 @@ class Messages {
 	protected $db;
 
 	/** @var ITimeFactory */
-	protected $time;
+	protected $timeFactory;
 
 	public function __construct(IDBConnection $db,
-								ITimeFactory $time) {
+								ITimeFactory $timeFactory) {
 		$this->db = $db;
-		$this->time = $time;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -65,7 +65,7 @@ class Messages {
 				[
 					'sender' => $query->createNamedParameter($senderSessionId),
 					'recipient' => $query->createNamedParameter($recipientSessionId),
-					'timestamp' => $query->createNamedParameter($this->time->getTime()),
+					'timestamp' => $query->createNamedParameter($this->timeFactory->getTime()),
 					'message' => $query->createNamedParameter($message),
 				]
 			);
@@ -83,7 +83,7 @@ class Messages {
 				[
 					'sender' => $query->createParameter('sender'),
 					'recipient' => $query->createParameter('recipient'),
-					'timestamp' => $query->createNamedParameter($this->time->getTime()),
+					'timestamp' => $query->createNamedParameter($this->timeFactory->getTime()),
 					'message' => $query->createNamedParameter($message),
 				]
 			);
@@ -108,7 +108,7 @@ class Messages {
 	 */
 	public function getAndDeleteMessages(string $sessionId): array {
 		$messages = [];
-		$time = $this->time->getTime() - 1;
+		$time = $this->timeFactory->getTime() - 1;
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
@@ -137,7 +137,7 @@ class Messages {
 	 * @param int $olderThan
 	 */
 	public function expireOlderThan(int $olderThan): void {
-		$time = $this->time->getTime() - $olderThan;
+		$time = $this->timeFactory->getTime() - $olderThan;
 
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_signaling')

@@ -40,6 +40,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\ILogger;
@@ -68,6 +69,8 @@ class RoomController extends OCSController {
 	private $chatManager;
 	/** @var MessageParser */
 	private $messageParser;
+	/** @var ITimeFactory */
+	private $timeFactory;
 	/** @var IL10N */
 	private $l10n;
 
@@ -82,6 +85,7 @@ class RoomController extends OCSController {
 								GuestManager $guestManager,
 								ChatManager $chatManager,
 								MessageParser $messageParser,
+								ITimeFactory $timeFactory,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -93,6 +97,7 @@ class RoomController extends OCSController {
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->messageParser = $messageParser;
+		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
 	}
 
@@ -199,7 +204,7 @@ class RoomController extends OCSController {
 			// Deprecated, use participantFlags instead.
 			'participantInCall' => ($currentParticipant->getInCallFlags() & Participant::FLAG_IN_CALL) !== 0,
 			'participantFlags' => $currentParticipant->getInCallFlags(),
-			'count' => $room->getNumberOfParticipants(false, time() - 30),
+			'count' => $room->getNumberOfParticipants(false, $this->timeFactory->getTime() - 30),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,
 			'isFavorite' => $currentParticipant->isFavorite(),
@@ -239,7 +244,7 @@ class RoomController extends OCSController {
 
 		foreach ($participants as $participant) {
 			if ($participant->isGuest()) {
-				if ($participant->getLastPing() <= time() - 100) {
+				if ($participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
 					$cleanGuests = true;
 				} else {
 					$numActiveGuests++;
@@ -255,7 +260,7 @@ class RoomController extends OCSController {
 					];
 				}
 
-				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= time() - 100) {
+				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
 					$room->leaveRoom($participant->getUser());
 				}
 			}
@@ -1090,7 +1095,7 @@ class RoomController extends OCSController {
 
 		$this->session->removePasswordForRoom($token);
 		$this->session->setSessionForRoom($token, $newSessionId);
-		$room->ping($this->userId, $newSessionId, time());
+		$room->ping($this->userId, $newSessionId, $this->timeFactory->getTime());
 
 		return new DataResponse([
 			'sessionId' => $newSessionId,

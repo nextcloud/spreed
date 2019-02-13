@@ -34,6 +34,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
 class CallController extends OCSController {
@@ -41,6 +42,8 @@ class CallController extends OCSController {
 	private $userId;
 	/** @var TalkSession */
 	private $session;
+	/** @var ITimeFactory */
+	private $timeFactory;
 	/** @var Manager */
 	private $manager;
 
@@ -48,10 +51,12 @@ class CallController extends OCSController {
 								?string $UserId,
 								IRequest $request,
 								TalkSession $session,
+								ITimeFactory $timeFactory,
 								Manager $manager) {
 		parent::__construct($appName, $request);
 		$this->userId = $UserId;
 		$this->session = $session;
+		$this->timeFactory = $timeFactory;
 		$this->manager = $manager;
 	}
 
@@ -85,7 +90,7 @@ class CallController extends OCSController {
 		}
 
 		$result = [];
-		$participants = $room->getParticipants(time() - 30);
+		$participants = $room->getParticipants($this->timeFactory->getTime() - 30);
 		foreach ($participants as $participant) {
 			if ($participant->getSessionId() === '0' || $participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
 				// User is not active in call
