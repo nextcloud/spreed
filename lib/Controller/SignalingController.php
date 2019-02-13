@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -58,19 +59,7 @@ class SignalingController extends OCSController {
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param Config $config
-	 * @param TalkSession $session
-	 * @param Manager $manager
-	 * @param IDBConnection $connection
-	 * @param Messages $messages
-	 * @param IUserManager $userManager
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param string $UserId
-	 */
-	public function __construct($appName,
+	public function __construct(string $appName,
 								IRequest $request,
 								Config $config,
 								TalkSession $session,
@@ -79,7 +68,7 @@ class SignalingController extends OCSController {
 								Messages $messages,
 								IUserManager $userManager,
 								EventDispatcherInterface $dispatcher,
-								$UserId) {
+								?string $UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->session = $session;
@@ -99,7 +88,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function getSettings() {
+	public function getSettings(): DataResponse {
 		return new DataResponse($this->config->getSettings($this->userId));
 	}
 
@@ -110,7 +99,7 @@ class SignalingController extends OCSController {
 	 * @param string $messages
 	 * @return DataResponse
 	 */
-	public function signaling($token, $messages) {
+	public function signaling(string $token, string $messages): DataResponse {
 		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -147,7 +136,7 @@ class SignalingController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function pullMessages($token) {
+	public function pullMessages(string $token): DataResponse {
 		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -256,11 +245,12 @@ class SignalingController extends OCSController {
 	 * and the body of the request, calculated with the shared secret from the
 	 * configuration.
 	 *
+	 * @param string $data
 	 * @return bool
 	 */
-	private function validateBackendRequest($data) {
-		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM']) ||
-			!isset($_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
+	private function validateBackendRequest(string $data): bool {
+		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM'],
+			  $_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
 			return false;
 		}
 		$random = $_SERVER['HTTP_SPREED_SIGNALING_RANDOM'];
@@ -281,7 +271,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @return string
 	 */
-	protected function getInputStream() {
+	protected function getInputStream(): string {
 		return file_get_contents('php://input');
 	}
 
@@ -296,7 +286,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function backend() {
+	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
 			return new DataResponse([
@@ -309,7 +299,7 @@ class SignalingController extends OCSController {
 		}
 
 		$message = json_decode($json, true);
-		switch (isset($message['type']) ? $message['type'] : "") {
+		switch ($message['type'] ?? '') {
 			case 'auth':
 				// Query authentication information about a user.
 				return $this->backendAuth($message['auth']);
@@ -330,7 +320,7 @@ class SignalingController extends OCSController {
 		}
 	}
 
-	private function backendAuth($auth) {
+	private function backendAuth(array $auth): DataResponse {
 		$params = $auth['params'];
 		$userId = $params['userid'];
 		if (!$this->config->validateSignalingTicket($userId, $params['ticket'])) {
@@ -371,7 +361,7 @@ class SignalingController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	private function backendRoom($roomRequest) {
+	private function backendRoom(array $roomRequest): DataResponse {
 		$roomId = $roomRequest['roomid'];
 		$userId = $roomRequest['userid'];
 		$sessionId = $roomRequest['sessionid'];
@@ -399,7 +389,7 @@ class SignalingController extends OCSController {
 			}
 		}
 
-		if (empty($participant)) {
+		if ($participant === null) {
 			// User was not invited to the room, check for access to public room.
 			try {
 				$participant = $room->getParticipantBySession($sessionId);
@@ -422,7 +412,7 @@ class SignalingController extends OCSController {
 		} else if ($action === 'leave') {
 			if (!empty($userId)) {
 				$room->leaveRoom($userId);
-			} else if (!empty($participant)) {
+			} else if ($participant !== null) {
 				$room->removeParticipantBySession($participant);
 			}
 		}
@@ -452,7 +442,7 @@ class SignalingController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	private function backendPing($request) {
+	private function backendPing(array $request): DataResponse {
 		try {
 			$room = $this->manager->getRoomByToken($request['roomid']);
 		} catch (RoomNotFoundException $e) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -41,11 +42,8 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	/** @var IConfig */
 	protected $config;
 
-	/**
-	 * @param IDBConnection $db
-	 * @param IConfig $config
-	 */
-	public function __construct(IDBConnection $db, IConfig $config) {
+	public function __construct(IDBConnection $db,
+								IConfig $config) {
 		$this->db = $db;
 		$this->config = $config;
 	}
@@ -57,7 +55,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
 	 */
-	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 		$table = $schema->getTable('spreedme_room_participants');
@@ -79,7 +77,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 
 		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0
@@ -125,7 +123,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @param int[] $one2oneRooms List of one2one room ids
 	 * @return int Number of updated participants
 	 */
-	protected function makeOne2OneParticipantsOwners(array $one2oneRooms) {
+	protected function makeOne2OneParticipantsOwners(array $one2oneRooms): int {
 		$update = $this->db->getQueryBuilder();
 
 		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {
@@ -145,7 +143,7 @@ class Version2001Date20170707115443 extends SimpleMigrationStep {
 	 * @param int[] $one2oneRooms List of one2one room ids which should not be touched
 	 * @return int Number of updated participants
 	 */
-	protected function makeGroupParticipantsModerators(array $one2oneRooms) {
+	protected function makeGroupParticipantsModerators(array $one2oneRooms): int {
 		$update = $this->db->getQueryBuilder();
 
 		if (!$this->db->getDatabasePlatform() instanceof PostgreSqlPlatform) {

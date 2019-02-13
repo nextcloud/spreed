@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joachim Bauch <bauch@struktur.de>
  *
@@ -29,21 +30,20 @@ use OCP\Migration\IOutput;
 
 class Version3003Date20180722152733 extends SimpleMigrationStep {
 
+	/**
+	 * @param IOutput $output
+	 * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
+	 * @param array $options
+	 * @return null|ISchemaWrapper
+	 * @since 13.0.0
+	 */
+	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
+		/** @var ISchemaWrapper $schema */
+		$schema = $schemaClosure();
 
-    /**
-     * @param IOutput $output
-     * @param \Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
-     * @param array $options
-     * @return null|ISchemaWrapper
-     * @since 13.0.0
-     */
-    public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
-        /** @var ISchemaWrapper $schema */
-        $schema = $schemaClosure();
+		$table = $schema->getTable('talk_participants');
+		$table->dropColumn('in_call');
 
-        $table = $schema->getTable('talk_participants');
-        $table->dropColumn('in_call');
-
-        return $schema;
-    }
+		return $schema;
+	}
 }

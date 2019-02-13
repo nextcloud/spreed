@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -45,13 +44,6 @@ class PublicShareAuthController extends OCSController {
 	/** @var Manager */
 	private $manager;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param IUserManager $userManager
-	 * @param IShareManager $shareManager
-	 * @param Manager $manager
-	 */
 	public function __construct(
 			string $appName,
 			IRequest $request,
