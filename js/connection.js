@@ -19,6 +19,12 @@
 			selectParticipants.removeClass('error');
 		});
 
+		this.app.signaling.on('joinRoom', function(joinedToken) {
+			if (joinedToken === this.app.token) {
+				this.app.syncAndSetActiveRoom(joinedToken);
+			}
+		}.bind(this));
+
 		this.app.signaling.on('roomChanged', function() {
 			this.leaveCurrentRoom();
 		}.bind(this));
@@ -94,7 +100,6 @@
 
 			roomsChannel.trigger('joinRoom', token);
 
-			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
 		},
 		leaveCurrentRoom: function() {
