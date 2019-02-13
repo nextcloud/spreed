@@ -40,11 +40,30 @@
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
-			name: '',
+			id: '',
 			token: '',
+			name: '',
+			type: 0,
+			displayName: '',
+			objectType: '',
+			objectId: '',
+			participantType: 0,
+			participantFlags: 0,
 			count: 0,
-			active: false,
-			lastPing: 0
+			hasPassword: false,
+			hasCall: false,
+			lastActivity: 0,
+			unreadMessages: 0,
+			unreadMention: false,
+			isFavorite: false,
+			notificationLevel: 0,
+			lastPing: 0,
+			sessionId: '0',
+			participants: [],
+			numGuests: 0,
+			guestList: '',
+			lastMessage: [],
+			active: false
 		},
 		url: function() {
 			return OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.get('token');
