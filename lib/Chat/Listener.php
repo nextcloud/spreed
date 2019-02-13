@@ -29,15 +29,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
-
-	public function __construct(EventDispatcherInterface $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
-
-	public function register(): void {
-		$this->dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
 			/** @var IComment $chatMessage */
 			$chatMessage = $event->getSubject();
 

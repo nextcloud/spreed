@@ -29,8 +29,10 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
-class Hooks {
+class Listener {
 
 	/** @var IManager */
 	protected $activityManager;
@@ -57,6 +59,40 @@ class Hooks {
 		$this->chatManager = $chatManager;
 		$this->logger = $logger;
 		$this->timeFactory = $timeFactory;
+	}
+
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->setActive($room);
+		};
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->generateCallActivity($room);
+		};
+		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->generateInvitationActivity($room, $event->getArgument('users'));
+		};
+		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
 	}
 
 	public function setActive(Room $room): void {

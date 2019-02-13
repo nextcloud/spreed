@@ -24,13 +24,21 @@ namespace OCA\Spreed;
 
 use OCP\IUser;
 
-class HookListener {
+class Listener {
 
 	/** @var Manager */
 	protected $manager;
 
 	public function __construct(Manager $manager) {
 		$this->manager = $manager;
+	}
+
+	public static function register(): void {
+		\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->deleteUser($user);
+		});
 	}
 
 	/**

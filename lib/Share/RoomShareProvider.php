@@ -95,6 +95,40 @@ class RoomShareProvider implements IShareProvider {
 		$this->l = $l;
 	}
 
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$listener = function(GenericEvent $event)  {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			if ($event->getArgument('selfJoin')) {
+				/** @var self $roomShareProvider */
+				$roomShareProvider = \OC::$server->query(self::class);
+				$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('userId'));
+			}
+		};
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $roomShareProvider */
+			$roomShareProvider = \OC::$server->query(self::class);
+			$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('user')->getUID());
+		};
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $roomShareProvider */
+			$roomShareProvider = \OC::$server->query(self::class);
+			$roomShareProvider->deleteInRoom($room->getToken());
+		};
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+	}
+
 	/**
 	 * Return the identifier of this provider.
 	 *

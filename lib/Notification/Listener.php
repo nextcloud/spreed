@@ -28,8 +28,10 @@ use OCP\Notification\IManager;
 use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
-class Hooks {
+class Listener {
 
 	/** @var IManager */
 	protected $notificationManager;
@@ -48,6 +50,48 @@ class Hooks {
 		$this->userSession = $userSession;
 		$this->timeFactory = $timeFactory;
 		$this->logger = $logger;
+	}
+
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->generateInvitation($room, $event->getArgument('users'));
+		};
+		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->markInvitationRead($room);
+		};
+		$dispatcher->addListener(Room::class . '::postJoinRoom', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->generateCallNotifications($room);
+		};
+		$dispatcher->addListener(Room::class . '::preSessionJoinCall', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->markCallNotificationsRead($room);
+		};
+		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 	}
 
 	/**
