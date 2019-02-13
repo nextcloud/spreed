@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Chat;
 
 use OCA\Spreed\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
@@ -49,13 +50,17 @@ class ChatManager {
 	private $dispatcher;
 	/** @var Notifier */
 	private $notifier;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 
 	public function __construct(CommentsManager $commentsManager,
 								EventDispatcherInterface $dispatcher,
-								Notifier $notifier) {
+								Notifier $notifier,
+								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->notifier = $notifier;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -137,7 +142,7 @@ class ChatManager {
 	public function getUnreadMarker(Room $chat, IUser $user): \DateTime {
 		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
 		if ($marker === null) {
-			$marker = new \DateTime('2000-01-01');
+			$marker = $this->timeFactory->getDateTime('2000-01-01');
 		}
 		return $marker;
 	}
@@ -188,7 +193,7 @@ class ChatManager {
 		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
 
 		if ($user instanceof IUser) {
-			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), new  \DateTime(), $user);
+			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), $this->timeFactory->getDateTime(), $user);
 		}
 
 		while (empty($comments) && $elapsedTime < $timeout) {

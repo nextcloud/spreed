@@ -28,6 +28,7 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\OCS\OCSNotFoundException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -43,13 +44,12 @@ class ShareAPIController {
 
 	/** @var string */
 	private $userId;
-
 	/** @var IUserManager */
 	private $userManager;
-
 	/** @var Manager */
 	private $manager;
-
+	/** @var ITimeFactory */
+	protected $timeFactory;
 	/** @var IL10N */
 	private $l;
 
@@ -57,11 +57,13 @@ class ShareAPIController {
 			string $UserId,
 			IUserManager $userManager,
 			Manager $manager,
+			ITimeFactory $timeFactory,
 			IL10N $l10n
 	) {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->timeFactory = $timeFactory;
 		$this->l = $l10n;
 	}
 
@@ -151,7 +153,7 @@ class ShareAPIController {
 	 */
 	private function parseDate(string $expireDate): \DateTime {
 		try {
-			$date = new \DateTime($expireDate);
+			$date = $this->timeFactory->getDateTime($expireDate);
 		} catch (\Exception $e) {
 			throw new \Exception('Invalid date. Format must be YYYY-MM-DD');
 		}

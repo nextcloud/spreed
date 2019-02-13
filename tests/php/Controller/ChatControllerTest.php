@@ -35,6 +35,7 @@ use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
@@ -49,38 +50,30 @@ class ChatControllerTest extends \Test\TestCase {
 
 	/** @var string */
 	private $userId;
-
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-
-	/** @var TalkSession|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var TalkSession|MockObject */
 	private $session;
-
-	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
-
-	/** @var ChatManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ChatManager|MockObject */
 	protected $chatManager;
-
-	/** @var GuestManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var GuestManager|MockObject */
 	protected $guestManager;
-
-	/** @var MessageParser|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var MessageParser|MockObject */
 	protected $messageParser;
-
-	/** @var IManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IManager|MockObject */
 	protected $autoCompleteManager;
-
-	/** @var SearchPlugin|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var SearchPlugin|MockObject */
 	protected $searchPlugin;
-
-	/** @var ISearchResult|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ISearchResult|MockObject */
 	protected $searchResult;
-
-	/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
+	/** @var IL10N|MockObject */
 	private $l;
 
-	/** @var Room|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Room|MockObject */
 	protected $room;
 
 	/** @var \OCA\Spreed\Controller\ChatController */
@@ -102,6 +95,7 @@ class ChatControllerTest extends \Test\TestCase {
 		$this->autoCompleteManager = $this->createMock(IManager::class);
 		$this->searchPlugin = $this->createMock(SearchPlugin::class);
 		$this->searchResult = $this->createMock(ISearchResult::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->l = $this->createMock(IL10N::class);
 
 		$this->room = $this->createMock(Room::class);
@@ -130,6 +124,7 @@ class ChatControllerTest extends \Test\TestCase {
 			$this->autoCompleteManager,
 			$this->searchPlugin,
 			$this->searchResult,
+			$this->timeFactory,
 			$this->l
 		);
 	}
@@ -161,6 +156,9 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getRoomForParticipantByToken');
 
 		$date = new \DateTime();
+		$this->timeFactory->expects($this->once())
+			->method('getDateTime')
+			->willReturn($date);
 		/** @var IComment|MockObject $comment */
 		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
@@ -224,6 +222,9 @@ class ChatControllerTest extends \Test\TestCase {
 			->with($this->userId);
 
 		$date = new \DateTime();
+		$this->timeFactory->expects($this->once())
+			->method('getDateTime')
+			->willReturn($date);
 		/** @var IComment|MockObject $comment */
 		$comment = $this->newComment(23, 'user', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
@@ -314,6 +315,9 @@ class ChatControllerTest extends \Test\TestCase {
 			->method('getRoomForParticipantByToken');
 
 		$date = new \DateTime();
+		$this->timeFactory->expects($this->once())
+			->method('getDateTime')
+			->willReturn($date);
 		/** @var IComment|MockObject $comment */
 		$comment = $this->newComment(64, 'guest', sha1('testSpreedSession'), $date, 'testMessage');
 		$this->chatManager->expects($this->once())

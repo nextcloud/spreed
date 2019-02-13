@@ -36,6 +36,7 @@ use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
@@ -85,6 +86,8 @@ class ChatController extends OCSController {
 
 	/** @var IL10N */
 	private $l;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -98,6 +101,7 @@ class ChatController extends OCSController {
 								IManager $autoCompleteManager,
 								SearchPlugin $searchPlugin,
 								ISearchResult $searchResult,
+								ITimeFactory $timeFactory,
 								IL10N $l) {
 		parent::__construct($appName, $request);
 
@@ -111,6 +115,7 @@ class ChatController extends OCSController {
 		$this->autoCompleteManager = $autoCompleteManager;
 		$this->searchPlugin = $searchPlugin;
 		$this->searchResult = $searchResult;
+		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 	}
 
@@ -202,7 +207,7 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$creationDateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
 			$comment = $this->chatManager->sendMessage($room, $actorType, $actorId, $message, $creationDateTime);

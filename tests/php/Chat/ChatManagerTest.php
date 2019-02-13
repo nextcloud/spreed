@@ -27,22 +27,23 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Chat\Notifier;
 use OCA\Spreed\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ChatManagerTest extends \Test\TestCase {
 
-	/** @var CommentsManager|ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var CommentsManager|ICommentsManager|MockObject */
 	protected $commentsManager;
-
-	/** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var EventDispatcherInterface|MockObject */
 	protected $dispatcher;
-
-	/** @var Notifier|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Notifier|MockObject */
 	protected $notifier;
-
+	/** @var ITimeFactory|MockObject */
+	protected $timeFactory;
 	/** @var ChatManager */
 	protected $chatManager;
 
@@ -52,10 +53,12 @@ class ChatManagerTest extends \Test\TestCase {
 		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 		$this->notifier = $this->createMock(Notifier::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 
 		$this->chatManager = new ChatManager($this->commentsManager,
 											 $this->dispatcher,
-											 $this->notifier);
+											 $this->notifier,
+											 $this->timeFactory);
 	}
 
 	private function newComment($id, $actorType, $actorId, $creationDateTime, $message) {

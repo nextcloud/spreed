@@ -35,6 +35,7 @@ use OCP\ILogger;
 use OCP\IUser;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CustomBackendNotifier extends BackendNotifier {
 
@@ -78,10 +79,10 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	/** @var Config */
 	private $config;
-
 	/** @var ISecureRandom */
 	private $secureRandom;
-
+	/** @var ITimeFactory|MockObject */
+	private $timeFactory;
 	/** @var CustomBackendNotifier */
 	private $controller;
 
@@ -90,6 +91,10 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	/** @var string */
 	private $userId;
+	/** @var string */
+	private $signalingSecret;
+	/** @var string */
+	private $baseUrl;
 
 	public function setUp() {
 		parent::setUp();
@@ -98,7 +103,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$this->userId = 'testUser';
 		$this->secureRandom = \OC::$server->getSecureRandom();
-		$timeFactory = $this->createMock(ITimeFactory::class);
+		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$config = \OC::$server->getConfig();
 		$this->signalingSecret = 'the-signaling-secret';
 		$this->baseUrl = 'https://localhost/signaling';
@@ -111,7 +116,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		]));
 
-		$this->config = new Config($config, $this->secureRandom, $timeFactory);
+		$this->config = new Config($config, $this->secureRandom, $this->timeFactory);
 		$this->recreateBackendNotifier();
 
 		$app = new CustomApplication();
@@ -124,7 +129,15 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$dbConnection = \OC::$server->getDatabaseConnection();
 		$dispatcher = \OC::$server->getEventDispatcher();
-		$this->manager = new Manager($dbConnection, $config, $this->secureRandom, $this->createMock(CommentsManager::class), $dispatcher, $this->createMock(IHasher::class));
+		$this->manager = new Manager(
+			$dbConnection,
+			$config,
+			$this->secureRandom,
+			$this->createMock(CommentsManager::class),
+			$dispatcher,
+			$this->timeFactory,
+			$this->createMock(IHasher::class)
+		);
 	}
 
 	private function recreateBackendNotifier() {
@@ -140,8 +153,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		if (empty($random) || strlen($random) < 32) {
 			return false;
 		}
-		$hash = hash_hmac('sha256', $random . $data, $this->signalingSecret);
-		return $hash;
+		return hash_hmac('sha256', $random . $data, $this->signalingSecret);
 	}
 
 	private function validateBackendRequest($expectedUrl, $request) {
@@ -189,8 +201,9 @@ class BackendNotifierTest extends \Test\TestCase {
 			'userId' => $this->userId,
 		]);
 		$this->controller->clearRequests();
+		/** @var IUser|MockObject $testUser */
 		$testUser = $this->createMock(IUser::class);
-		$testUser
+		$testUser->expects($this->any())
 			->method('getUID')
 			->willReturn($this->userId);
 		$room->removeUser($testUser);

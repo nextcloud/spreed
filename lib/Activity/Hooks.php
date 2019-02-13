@@ -60,7 +60,7 @@ class Hooks {
 	}
 
 	public function setActive(Room $room): void {
-		$room->setActiveSince(new \DateTime(), !$this->userSession->isLoggedIn());
+		$room->setActiveSince($this->timeFactory->getDateTime(), !$this->userSession->isLoggedIn());
 	}
 
 	/**
@@ -109,7 +109,7 @@ class Hooks {
 				'guests' => $room->getActiveGuests(),
 				'duration' => $duration,
 			],
-		]), new \DateTime(), false);
+		]), $this->timeFactory->getDateTime(), false);
 
 		foreach ($userIds as $userId) {
 			try {

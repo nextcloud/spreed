@@ -31,6 +31,7 @@ use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCA\Spreed\TalkSession;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IUser;
 use OCP\IUserSession;
@@ -51,17 +52,21 @@ class Listener {
 	protected $talkSession;
 	/** @var IUserSession */
 	protected $userSession;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 
 	public function __construct(EventDispatcherInterface $dispatcher,
 								ChatManager $chatManager,
 								Manager $roomManager,
 								TalkSession $talkSession,
-								IUserSession $userSession) {
+								IUserSession $userSession,
+								ITimeFactory $timeFactory) {
 		$this->dispatcher = $dispatcher;
 		$this->chatManager = $chatManager;
 		$this->roomManager = $roomManager;
 		$this->talkSession = $talkSession;
 		$this->userSession = $userSession;
+		$this->timeFactory = $timeFactory;
 	}
 
 	public function register(): void {
@@ -220,7 +225,7 @@ class Listener {
 		$this->chatManager->addSystemMessage(
 			$room, $actorType, $actorId,
 			json_encode(['message' => $message, 'parameters' => $parameters]),
-			new \DateTime(), $message === 'file_shared'
+			$this->timeFactory->getDateTime(), $message === 'file_shared'
 		);
 	}
 }

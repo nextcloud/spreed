@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Notification;
 
 use OCA\Spreed\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Notification\IManager;
 use OCP\ILogger;
 use OCP\IUser;
@@ -32,18 +33,20 @@ class Hooks {
 
 	/** @var IManager */
 	protected $notificationManager;
-
 	/** @var IUserSession */
 	protected $userSession;
-
+	/** @var ITimeFactory */
+	protected $timeFactory;
 	/** @var ILogger */
 	protected $logger;
 
 	public function __construct(IManager $notificationManager,
 								IUserSession $userSession,
+								ITimeFactory $timeFactory,
 								ILogger $logger) {
 		$this->notificationManager = $notificationManager;
 		$this->userSession = $userSession;
+		$this->timeFactory = $timeFactory;
 		$this->logger = $logger;
 	}
 
@@ -61,7 +64,7 @@ class Hooks {
 		$actorId = $actor->getUID();
 
 		$notification = $this->notificationManager->createNotification();
-		$dateTime = new \DateTime();
+		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			$notification->setApp('spreed')
 				->setDateTime($dateTime)
@@ -132,7 +135,7 @@ class Hooks {
 		$actorId = $actor instanceof IUser ? $actor->getUID() :'';
 
 		$notification = $this->notificationManager->createNotification();
-		$dateTime = new \DateTime();
+		$dateTime = $this->timeFactory->getDateTime();
 		try {
 			// Remove all old notifications for this room
 			$notification->setApp('spreed')
