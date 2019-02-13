@@ -219,6 +219,8 @@ OC.L10N.register(
     "A group call has started" : "Групни разговор је започет",
     "{email} requested the password to access {file}" : "{email} је затражио приступ фајлу {file}",
     "Someone requested the password to access {file}" : "Неко је затражио приступ фајлу {file}",
+    "Unnamed conversation" : "Неименовани разговор",
+    "Private conversation" : "Приватни разговор",
     "Invalid date, date format must be YYYY-MM-DD" : "Неисправан датим, формат датума мора бити ГГГГ-ММ-ДД",
     "Conversation not found" : "Разговор није нађен",
     "Path is already shared with this room" : "Путања је већ подељена са овом собом",
