@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -43,15 +44,8 @@ class CallController extends OCSController {
 	/** @var Manager */
 	private $manager;
 
-	/**
-	 * @param string $appName
-	 * @param string $UserId
-	 * @param IRequest $request
-	 * @param TalkSession $session
-	 * @param Manager $manager
-	 */
-	public function __construct($appName,
-								$UserId,
+	public function __construct(string $appName,
+								?string $UserId,
 								IRequest $request,
 								TalkSession $session,
 								Manager $manager) {
@@ -117,7 +111,7 @@ class CallController extends OCSController {
 	 * @param int|null $flags
 	 * @return DataResponse
 	 */
-	public function joinCall(string $token, $flags): DataResponse {
+	public function joinCall(string $token, ?int $flags): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		} catch (RoomNotFoundException $e) {

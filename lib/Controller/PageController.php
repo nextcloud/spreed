@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -35,6 +36,7 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\ILogger;
@@ -43,7 +45,7 @@ use OCP\IURLGenerator;
 use OCP\Notification\IManager;
 
 class PageController extends Controller {
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 	/** @var RoomController */
 	private $api;
@@ -60,23 +62,11 @@ class PageController extends Controller {
 	/** @var Config */
 	private $config;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param RoomController $api
-	 * @param TalkSession $session
-	 * @param string $UserId
-	 * @param ILogger $logger
-	 * @param Manager $manager
-	 * @param IURLGenerator $url
-	 * @param IManager $notificationManager
-	 * @param Config $config
-	 */
-	public function __construct($appName,
+	public function __construct(string $appName,
 								IRequest $request,
 								RoomController $api,
 								TalkSession $session,
-								$UserId,
+								?string $UserId,
 								ILogger $logger,
 								Manager $manager,
 								IURLGenerator $url,
@@ -104,7 +94,7 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	public function index($token = '', $callUser = '', $password = '') {
+	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
 		if ($this->userId === null) {
 			return $this->guestEnterRoom($token, $password);
 		}
@@ -157,9 +147,8 @@ class PageController extends Controller {
 						if ($passwordVerification['url'] === '') {
 							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 						}
-						else {
-							return new RedirectResponse($passwordVerification['url']);
-						}
+
+						return new RedirectResponse($passwordVerification['url']);
 					}
 				}
 			}
@@ -179,7 +168,7 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
-		$csp->allowEvalScript(true);
+		$csp->allowEvalScript();
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -190,7 +179,7 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	protected function guestEnterRoom($token, $password) {
+	protected function guestEnterRoom(string $token, string $password): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
 			if ($room->getType() !== Room::PUBLIC_CALL) {
@@ -212,9 +201,8 @@ class PageController extends Controller {
 				if ($passwordVerification['url'] === '') {
 					return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 				}
-				else {
-					return new RedirectResponse($passwordVerification['url']);
-				}
+
+				return new RedirectResponse($passwordVerification['url']);
 			}
 		}
 
@@ -232,11 +220,7 @@ class PageController extends Controller {
 		return $response;
 	}
 
-	/**
-	 * @param string $token
-	 * @return RedirectResponse
-	 */
-	protected function showCall($token) {
+	protected function showCall(string $token): RedirectResponse {
 		// These redirects are already done outside of this method
 		if ($this->userId === null) {
 			try {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -45,7 +46,7 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
 	 */
-	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
@@ -67,7 +68,7 @@ class Version3003Date20180718112436 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		$update = $this->connection->getQueryBuilder();
 		$update->update('talk_rooms')
 			->set('last_activity', $update->createParameter('activity'))

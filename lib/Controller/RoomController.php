@@ -48,10 +48,9 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use OCP\Mail\IMailer;
 
 class RoomController extends OCSController {
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 	/** @var TalkSession */
 	private $session;
@@ -72,8 +71,8 @@ class RoomController extends OCSController {
 	/** @var IL10N */
 	private $l10n;
 
-	public function __construct($appName,
-								$UserId,
+	public function __construct(string $appName,
+								?string $UserId,
 								IRequest $request,
 								TalkSession $session,
 								IUserManager $userManager,
@@ -125,7 +124,7 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getRoom($token): DataResponse {
+	public function getRoom(string $token): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
 
@@ -151,7 +150,7 @@ class RoomController extends OCSController {
 	 * @return array
 	 * @throws RoomNotFoundException
 	 */
-	protected function formatRoom(Room $room, Participant $currentParticipant = null): array {
+	protected function formatRoom(Room $room, ?Participant $currentParticipant): array {
 		$roomData = [
 			'id' => $room->getId(),
 			'token' => $room->getToken(),
@@ -310,10 +309,12 @@ class RoomController extends OCSController {
 
 			/** @noinspection PhpMissingBreakStatementInspection */
 			case Room::PUBLIC_CALL:
-				if ($currentParticipant->isGuest() && $numGuestParticipants) {
-					$guestString = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
-				} else if ($numGuestParticipants) {
-					$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+				if ($numGuestParticipants) {
+					if ($currentParticipant->isGuest()) {
+						$guestString = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
+					} else {
+						$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
+					}
 				}
 
 			// no break;
@@ -355,11 +356,11 @@ class RoomController extends OCSController {
 	/**
 	 * @param Room $room
 	 * @param IComment $lastMessage
-	 * @param IUser $currentUser
+	 * @param IUser|null $currentUser
 	 * @return array
 	 */
-	protected function formatLastMessage(Room $room, IComment $lastMessage, IUser $currentUser = null): array {
-		list($message, $messageParameters) = $this->messageParser->parseMessage($room, $lastMessage, $this->l10n, $currentUser);
+	protected function formatLastMessage(Room $room, IComment $lastMessage, ?IUser $currentUser): array {
+		[$message, $messageParameters] = $this->messageParser->parseMessage($room, $lastMessage, $this->l10n, $currentUser);
 
 		$displayName = '';
 
@@ -814,7 +815,7 @@ class RoomController extends OCSController {
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
-	public function inviteEmailToRoom($token, $newParticipant): DataResponse {
+	public function inviteEmailToRoom(string $token, string $newParticipant): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 			$participant = $room->getParticipant($this->userId);
@@ -1132,7 +1133,7 @@ class RoomController extends OCSController {
 	 * @param string|null $sessionId
 	 * @return DataResponse
 	 */
-	public function promoteModerator(string $token, $participant, $sessionId): DataResponse {
+	public function promoteModerator(string $token, ?string $participant, ?string $sessionId): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 			if ($this->userId !== null) {
@@ -1198,7 +1199,7 @@ class RoomController extends OCSController {
 	 * @param string|null $sessionId
 	 * @return DataResponse
 	 */
-	public function demoteModerator(string $token, $participant, $sessionId): DataResponse {
+	public function demoteModerator(string $token, ?string $participant, ?string $sessionId): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 			if ($this->userId !== null) {

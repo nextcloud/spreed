@@ -46,7 +46,7 @@ class CustomInputSignalingController extends SignalingController {
 		$this->inputStream = $data;
 	}
 
-	protected function getInputStream() {
+	protected function getInputStream(): string {
 		return $this->inputStream;
 	}
 

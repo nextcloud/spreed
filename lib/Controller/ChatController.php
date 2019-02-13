@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -86,23 +86,8 @@ class ChatController extends OCSController {
 	/** @var IL10N */
 	private $l;
 
-	/**
-	 * @param string $appName
-	 * @param string $UserId
-	 * @param IRequest $request
-	 * @param IUserManager $userManager
-	 * @param TalkSession $session
-	 * @param Manager $manager
-	 * @param ChatManager $chatManager
-	 * @param GuestManager $guestManager
-	 * @param MessageParser $messageParser
-	 * @param IManager $autoCompleteManager
-	 * @param SearchPlugin $searchPlugin
-	 * @param ISearchResult $searchResult
-	 * @param IL10N $l
-	 */
 	public function __construct(string $appName,
-								$UserId,
+								?string $UserId,
 								IRequest $request,
 								IUserManager $userManager,
 								TalkSession $session,
@@ -139,7 +124,7 @@ class ChatController extends OCSController {
 	 * @param string $token the token for the Room.
 	 * @return \OCA\Spreed\Room|null the Room, or null if none was found.
 	 */
-	private function getRoom($token) {
+	private function getRoom(string $token): ?Room {
 		try {
 			$room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
 		} catch (RoomNotFoundException $exception) {
@@ -178,7 +163,7 @@ class ChatController extends OCSController {
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
-	public function sendMessage($token, $message, $actorDisplayName = '') {
+	public function sendMessage(string $token, string $message, string $actorDisplayName = ''): DataResponse {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -276,7 +261,7 @@ class ChatController extends OCSController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages($token, $lookIntoFuture, $limit = 100, $lastKnownMessageId = 0, $timeout = 30) {
+	public function receiveMessages(string $token, int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30): DataResponse {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -350,7 +335,7 @@ class ChatController extends OCSController {
 	 * @param int $limit
 	 * @return DataResponse
 	 */
-	public function mentions($token, $search, $limit = 20) {
+	public function mentions(string $token, string $search, int $limit = 20): DataResponse {
 		$room = $this->getRoom($token);
 		if ($room === null) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
@@ -379,7 +364,7 @@ class ChatController extends OCSController {
 	}
 
 
-	protected function prepareResultArray(array $results) {
+	protected function prepareResultArray(array $results): array {
 		$output = [];
 		foreach ($results as $type => $subResult) {
 			foreach ($subResult as $result) {
