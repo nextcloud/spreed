@@ -43,7 +43,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class SignalingController extends OCSController {
 
 	/** @var int */
-	private const PULL_MESSAGES_TIMEOUT = 30;
+	const PULL_MESSAGES_TIMEOUT = 30;
 
 	/** @var Config */
 	private $config;
