@@ -27,7 +27,6 @@ use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
@@ -58,20 +57,6 @@ class CustomBackendNotifier extends BackendNotifier {
 
 }
 
-class CustomApplication extends Application {
-
-	private $notifier;
-
-	public function setBackendNotifier($notifier) {
-		$this->notifier = $notifier;
-	}
-
-	protected function getBackendNotifier(): BackendNotifier {
-		return $this->notifier;
-	}
-
-}
-
 /**
  * @group DB
  */
@@ -96,10 +81,13 @@ class BackendNotifierTest extends \Test\TestCase {
 	/** @var string */
 	private $baseUrl;
 
+	/** @var Application */
+	protected $app;
+	/** @var BackendNotifier */
+	protected $originalBackendNotifier;
+
 	public function setUp() {
 		parent::setUp();
-		// Make sure necessary database tables are set up.
-		\OC_App::updateApp('spreed');
 
 		$this->userId = 'testUser';
 		$this->secureRandom = \OC::$server->getSecureRandom();
@@ -119,11 +107,12 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->config = new Config($config, $this->secureRandom, $this->timeFactory);
 		$this->recreateBackendNotifier();
 
-		$app = new CustomApplication();
-		$app->setBackendNotifier($this->controller);
-		$app->register();
 
-		\OC::$server->registerService(BackendNotifier::class, function() {
+		$this->app = new Application();
+		$this->app->register();
+
+		$this->originalBackendNotifier = $this->app->getContainer()->query(BackendNotifier::class);
+		$this->app->getContainer()->registerService(BackendNotifier::class, function() {
 			return $this->controller;
 		});
 
@@ -138,6 +127,13 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->timeFactory,
 			$this->createMock(IHasher::class)
 		);
+	}
+
+	public function tearDown() {
+		$this->app->getContainer()->registerService(BackendNotifier::class, function() {
+			return $this->originalBackendNotifier;
+		});
+		parent::tearDown();
 	}
 
 	private function recreateBackendNotifier() {
@@ -178,6 +174,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$bodies = array_map(function($request) use ($room) {
 			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
 		}, $requests);
+
 		$this->assertContains([
 			'type' => 'invite',
 			'invite' => [

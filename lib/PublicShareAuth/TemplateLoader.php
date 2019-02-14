@@ -37,20 +37,13 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class TemplateLoader {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
-
-	public function __construct(EventDispatcherInterface $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
-
-	public function register(): void {
+	public static function register(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
-			$this->loadRequestPasswordByTalkUi($share);
+			self::loadRequestPasswordByTalkUi($share);
 		};
-		$this->dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts::publicShareAuth', $listener);
+		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts::publicShareAuth', $listener);
 	}
 
 	/**
@@ -65,7 +58,7 @@ class TemplateLoader {
 	 *
 	 * @param IShare $share
 	 */
-	public function loadRequestPasswordByTalkUi(IShare $share): void {
+	public static function loadRequestPasswordByTalkUi(IShare $share): void {
 		if (!$share->getSendPasswordByTalk()) {
 			return;
 		}

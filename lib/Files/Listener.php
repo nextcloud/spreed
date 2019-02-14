@@ -45,38 +45,38 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Listener {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
 	/** @var Util */
 	protected $util;
 
-	public function __construct(EventDispatcherInterface $dispatcher, Util $util) {
-		$this->dispatcher = $dispatcher;
+	public function __construct(Util $util) {
 		$this->util = $util;
 	}
 
-	public function register(): void {
+	public static function register(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
 			try {
-				$this->preventUsersWithoutDirectAccessToTheFileFromJoining($room, $event->getArgument('userId'));
+				$listener->preventUsersWithoutDirectAccessToTheFileFromJoining($room, $event->getArgument('userId'));
 			} catch (UnauthorizedException $e) {
 				$event->setArgument('cancel', true);
 			}
 		};
-		$this->dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
 			try {
-				$this->preventGuestsFromJoining($room);
+				self::preventGuestsFromJoining($room);
 			} catch (UnauthorizedException $e) {
 				$event->setArgument('cancel', true);
 			}
 		};
-		$this->dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Listener {
 	 * @param Room $room
 	 * @throws UnauthorizedException
 	 */
-	public function preventGuestsFromJoining(Room $room): void {
+	protected static function preventGuestsFromJoining(Room $room): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}

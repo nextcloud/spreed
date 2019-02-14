@@ -31,15 +31,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class TemplateLoader {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
-
-	public function __construct(EventDispatcherInterface $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
-
-	public function register(): void {
-		$this->dispatcher->addListener('OCA\Files::loadAdditionalScripts', [$this, 'loadTalkSidebarForFilesApp']);
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
+			self::loadTalkSidebarForFilesApp();
+		});
 	}
 
 	/**
