@@ -215,7 +215,7 @@ class Room {
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
-	public function getParticipantBySession(string $sessionId): Participant {
+	public function getParticipantBySession(?string $sessionId): Participant {
 		if (!is_string($sessionId) || $sessionId === '' || $sessionId === '0') {
 			throw new ParticipantNotFoundException('Not a user');
 		}
