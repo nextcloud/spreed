@@ -227,7 +227,7 @@
     "This call is password-protected" : "Ta rozmowa jest zabezpieczona hasłem",
     "The password is wrong. Try again." : "Błędne hasło. Spróbuj ponownie.",
     "Signaling server" : "Serwer sygnałowy",
-    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Zewnętrzny serwer sygnałowy może zostać opcjonalnie użyty dla większych instalacji. Zostaw puste aby używać serwera wewnętrznego.",
+    "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Zewnętrzny serwer sygnałowy może zostać opcjonalnie użyty dla większych instalacji. Zostaw puste, aby używać serwera wewnętrznego.",
     "STUN servers" : "Serwery STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Serwer STUN jest wykorzystywany do określania publicznego adresu IP uczestników znajdujących się za routerem.",
     "TURN server" : "TURN serwer",
