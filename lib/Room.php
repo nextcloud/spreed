@@ -176,7 +176,7 @@ class Room {
 	}
 
 	/**
-	 * @param string $userId
+	 * @param string|null $userId
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
@@ -211,7 +211,7 @@ class Room {
 	}
 
 	/**
-	 * @param string $sessionId
+	 * @param string|null $sessionId
 	 * @return Participant
 	 * @throws ParticipantNotFoundException When the user is not a participant
 	 */
