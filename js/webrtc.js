@@ -659,8 +659,10 @@ var spreedPeerConnectionTable = [];
 
 				spreedListofSpeakers[id] = (new Date()).getTime();
 
-				// set speaking class
-				$(OCA.SpreedMe.videos.getContainerId(id)).addClass('speaking');
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (videoView) {
+					videoView.setSpeaking(true);
+				}
 
 				if (latestSpeakerId === id) {
 					return;
@@ -677,8 +679,10 @@ var spreedPeerConnectionTable = [];
 					delete spreedListofSpeakers[id];
 				}
 
-				// remove speaking class
-				$(OCA.SpreedMe.videos.getContainerId(id)).removeClass('speaking');
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (videoView) {
+					videoView.setSpeaking(false);
+				}
 
 				if (latestSpeakerId !== id) {
 					return;
