@@ -381,10 +381,6 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.videos = {
 			videoViews: [],
-			getContainerId: function(id) {
-				var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-				return '#container_' + sanitizedId + '_video_incoming';
-			},
 			add: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
@@ -689,7 +685,7 @@ var spreedPeerConnectionTable = [];
 					}
 
 					var currentTime = spreedListofSpeakers[currentId];
-					if (currentTime > mostRecentTime && $(OCA.SpreedMe.videos.getContainerId(currentId)).length > 0) {
+					if (currentTime > mostRecentTime && OCA.SpreedMe.videos.videoViews[currentId]) {
 						mostRecentTime = currentTime;
 						mostRecentId = currentId;
 					}
