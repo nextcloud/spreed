@@ -66,6 +66,7 @@
 		},
 
 		events: {
+			'click @ui.hideRemoteVideoButton': 'toggleVideo',
 			'click @ui.screenSharingIndicator': 'switchToScreen',
 		},
 
@@ -89,16 +90,6 @@
 		},
 
 		onRender: function() {
-			this.getUI('hideRemoteVideoButton').get(0).onclick = function() {
-				if (this._videoEnabled) {
-					this.setVideoEnabled(false);
-				} else {
-					this.setVideoEnabled(true);
-				}
-
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.options.peerId);
-			}.bind(this);
-
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
 				trigger: 'hover'
@@ -242,6 +233,16 @@
 					.addClass('icon-video');
 		},
 
+		toggleVideo: function() {
+			if (this._videoEnabled) {
+				this.setVideoEnabled(false);
+			} else {
+				this.setVideoEnabled(true);
+			}
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.options.peerId);
+		},
+
 		setPromoted: function(promoted) {
 			this.$el.toggleClass('promoted', promoted);
 		},
@@ -290,7 +291,7 @@
 			// forced with a parameter, but the tooltip would have to be
 			// explicitly set on the new element anyway. Due to this the click
 			// handler is explicitly copied too.
-			$dummy.find('.hideRemoteVideo').get(0).onclick = this.getUI('hideRemoteVideoButton').get(0).onclick;
+			$dummy.find('.hideRemoteVideo').click(this.toggleVideo.bind(this));
 			$dummy.find('.hideRemoteVideo').tooltip({
 				placement: 'top',
 				trigger: 'hover'
