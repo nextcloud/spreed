@@ -408,30 +408,6 @@ var spreedPeerConnectionTable = [];
 
 				return videoView;
 			},
-			muteRemoteVideo: function(id) {
-				if (!(typeof id === 'string' || id instanceof String)) {
-					return;
-				}
-
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (!videoView) {
-					return;
-				}
-
-				videoView.setVideoAvailable(false);
-			},
-			unmuteRemoteVideo: function(id) {
-				if (!(typeof id === 'string' || id instanceof String)) {
-					return;
-				}
-
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (!videoView) {
-					return;
-				}
-
-				videoView.setVideoAvailable(true);
-			},
 			remove: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
@@ -1261,10 +1237,13 @@ var spreedPeerConnectionTable = [];
 		// Peer is muted
 		OCA.SpreedMe.webrtc.on('mute', function(data) {
 			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
+			if (!videoView) {
+				return;
+			}
 
 			if (data.name === 'video') {
-				OCA.SpreedMe.videos.muteRemoteVideo(data.id);
-			} else if (videoView) {
+				videoView.setVideoAvailable(false);
+			} else {
 				videoView.setAudioAvailable(false);
 			}
 
@@ -1274,10 +1253,13 @@ var spreedPeerConnectionTable = [];
 		// Peer is umuted
 		OCA.SpreedMe.webrtc.on('unmute', function(data) {
 			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
+			if (!videoView) {
+				return;
+			}
 
 			if (data.name === 'video') {
-				OCA.SpreedMe.videos.unmuteRemoteVideo(data.id);
-			} else if (videoView) {
+				videoView.setVideoAvailable(true);
+			} else {
 				videoView.setAudioAvailable(true);
 			}
 
