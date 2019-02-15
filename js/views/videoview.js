@@ -241,6 +241,10 @@
 					.addClass('icon-video');
 		},
 
+		setPromoted: function(promoted) {
+			this.$el.toggleClass('promoted', promoted);
+		},
+
 		setScreenAvailable: function(screenAvailable) {
 			if (!screenAvailable) {
 				this.getUI('screenSharingIndicator')
