@@ -413,50 +413,24 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (!videoView) {
+					return;
+				}
 
-				$container.find('.avatar-container').show();
-				$container.find('video').hide();
-				$container.find('.hideRemoteVideo').hide();
+				videoView.setVideoAvailable(false);
 			},
 			unmuteRemoteVideo: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
 				}
 
-				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
-
-				var $hideRemoteVideoButton = $container.find('.hideRemoteVideo');
-				$hideRemoteVideoButton.show();
-
-				if ($hideRemoteVideoButton.hasClass('icon-video')) {
-					$container.find('.avatar-container').hide();
-					$container.find('video').show();
-				}
-			},
-			_toggleRemoteVideo: function(id) {
-				if (!(typeof id === 'string' || id instanceof String)) {
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (!videoView) {
 					return;
 				}
 
-				var $container = $(OCA.SpreedMe.videos.getContainerId(id));
-
-				var $hideRemoteVideoButton = $container.find('.hideRemoteVideo');
-				if ($hideRemoteVideoButton.hasClass('icon-video')) {
-					$container.find('.avatar-container').show();
-					$container.find('video').hide();
-					$hideRemoteVideoButton.attr('data-original-title', t('spreed', 'Enable video'))
-						.removeClass('icon-video')
-						.addClass('icon-video-off');
-				} else {
-					$container.find('.avatar-container').hide();
-					$container.find('video').show();
-					$hideRemoteVideoButton.attr('data-original-title', t('spreed', 'Disable video'))
-						.removeClass('icon-video-off')
-						.addClass('icon-video');
-				}
-
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(id);
+				videoView.setVideoAvailable(true);
 			},
 			remove: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -1070,8 +1044,7 @@ var spreedPeerConnectionTable = [];
 			}
 
 			var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
-			var videoContainer = $(OCA.SpreedMe.videos.getContainerId(peer.id));
-			if (videoContainer.length) {
+			if (videoView) {
 				var userId = spreedMappingTable[peer.id];
 				var guestName = guestNamesTable[peer.id];
 
@@ -1082,10 +1055,7 @@ var spreedPeerConnectionTable = [];
 
 				videoView.setParticipant(userId, participantName);
 
-				$(videoContainer).prepend(video);
-				video.oncontextmenu = function() {
-					return false;
-				};
+				videoView.setVideoElement(video);
 			}
 
 			var otherSpeakerPromoted = false;
@@ -1121,10 +1091,9 @@ var spreedPeerConnectionTable = [];
 					// a removed peer can't speak anymore ;)
 					OCA.SpreedMe.speakers.remove(peer.id, true);
 
-					var videoContainer = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId(peer));
-					var el = document.getElementById(OCA.SpreedMe.webrtc.getDomId(peer));
-					if (videoContainer && el) {
-						videoContainer.removeChild(el);
+					var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
+					if (videoView) {
+						videoView.setVideoElement(null);
 					}
 				} else if (peer.type === 'screen') {
 					var remotes = document.getElementById('screens');
