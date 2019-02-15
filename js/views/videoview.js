@@ -54,6 +54,8 @@
 		template: OCA.Talk.Views.Templates['videoview'],
 
 		ui: {
+			'video': 'video',
+			'avatarContainer': '.avatar-container',
 			'avatar': '.avatar',
 			'nameIndicator': '.nameIndicator',
 			'muteIndicator': '.muteIndicator',
@@ -64,6 +66,10 @@
 
 		initialize: function() {
 			this._connectionStatus = ConnectionStatus.NEW;
+
+			// Video is enabled by default, even if it is not initially
+			// available.
+			this._videoEnabled = true;
 
 			this.render();
 
@@ -78,7 +84,13 @@
 
 		onRender: function() {
 			this.getUI('hideRemoteVideoButton').get(0).onclick = function() {
-				OCA.SpreedMe.videos._toggleRemoteVideo(this.options.peerId);
+				if (this._videoEnabled) {
+					this.setVideoEnabled(false);
+				} else {
+					this.setVideoEnabled(true);
+				}
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.options.peerId);
 			}.bind(this);
 
 			this.getUI('hideRemoteVideoButton').tooltip({
@@ -144,6 +156,65 @@
 
 				return;
 			}
+		},
+
+		/**
+		 * Sets the element with the video stream.
+		 *
+		 * @param HTMLVideoElement|null videoElement the element to set, or null
+		 *        to remove the current one.
+		 */
+		setVideoElement: function(videoElement) {
+			this.getUI('video').remove();
+
+			if (videoElement) {
+				this.$el.prepend(videoElement);
+
+				videoElement.oncontextmenu = function() {
+					return false;
+				};
+			}
+
+			this.bindUIElements();
+		},
+
+		setVideoAvailable: function(videoAvailable) {
+			if (!videoAvailable) {
+				this.getUI('avatarContainer').show();
+				this.getUI('video').hide();
+				this.getUI('hideRemoteVideoButton').hide();
+
+				return;
+			}
+
+			this.getUI('hideRemoteVideoButton').show();
+
+			if (this._videoEnabled) {
+				this.getUI('avatarContainer').hide();
+				this.getUI('video').show();
+			}
+		},
+
+		setVideoEnabled: function(videoEnabled) {
+			this._videoEnabled = videoEnabled;
+
+			if (!videoEnabled) {
+				this.getUI('avatarContainer').show();
+				this.getUI('video').hide();
+				this.getUI('hideRemoteVideoButton')
+						.attr('data-original-title', t('spreed', 'Enable video'))
+						.removeClass('icon-video')
+						.addClass('icon-video-off');
+
+				return;
+			}
+
+			this.getUI('avatarContainer').hide();
+			this.getUI('video').show();
+			this.getUI('hideRemoteVideoButton')
+					.attr('data-original-title', t('spreed', 'Disable video'))
+					.removeClass('icon-video-off')
+					.addClass('icon-video');
 		},
 
 	});
