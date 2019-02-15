@@ -591,27 +591,29 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
-				if(newContainer.find('video').length === 0) {
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (!videoView) {
 					console.warn('promote: no video found for ID', id);
 					return;
 				}
 
-				if (latestSpeakerId !== null) {
-					// move old video to new location
-					var oldContainer = $(OCA.SpreedMe.videos.getContainerId(latestSpeakerId));
-					oldContainer.removeClass('promoted');
+				var oldVideoView = OCA.SpreedMe.videos.videoViews[latestSpeakerId];
+				if (oldVideoView) {
+					oldVideoView.setPromoted(false);
 				}
 
-				newContainer.addClass('promoted');
+				videoView.setPromoted(true);
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
 
 				latestSpeakerId = id;
 			},
 			unpromoteLatestSpeaker: function() {
 				if (latestSpeakerId) {
-					var oldContainer = $(OCA.SpreedMe.videos.getContainerId(latestSpeakerId));
-					oldContainer.removeClass('promoted');
+					var oldVideoView = OCA.SpreedMe.videos.videoViews[latestSpeakerId];
+					if (oldVideoView) {
+						oldVideoView.setPromoted(false);
+					}
+
 					unpromotedSpeakerId = latestSpeakerId;
 					latestSpeakerId = null;
 					$('.videoContainer-dummy').remove();
