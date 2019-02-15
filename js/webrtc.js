@@ -760,9 +760,14 @@ var spreedPeerConnectionTable = [];
 					}
 				}
 
-				// Add screen visible icon to video container
-				$('#videos').find('.screensharingIndicator').removeClass('screen-visible');
-				$(OCA.SpreedMe.videos.getContainerId(id)).find('.screensharingIndicator').addClass('screen-visible');
+				var oldVideoView = OCA.SpreedMe.videos.videoViews[latestScreenId];
+				if (oldVideoView) {
+					oldVideoView.setScreenVisible(false);
+				}
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (videoView) {
+					videoView.setScreenVisible(true);
+				}
 
 				latestScreenId = id;
 			},
@@ -775,16 +780,10 @@ var spreedPeerConnectionTable = [];
 
 				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
 				if (currentUser !== id) {
-					var screensharingIndicator = $(OCA.SpreedMe.videos.getContainerId(id)).find('.screensharingIndicator');
-					screensharingIndicator.removeClass('screen-off');
-					screensharingIndicator.addClass('screen-on');
-
-					screensharingIndicator.click(function() {
-						if (!this.classList.contains('screen-visible')) {
-							OCA.SpreedMe.sharedScreens.switchScreenToId(id);
-						}
-						$(this).tooltip('hide');
-					});
+					var videoView = OCA.SpreedMe.videos.videoViews[id];
+					if (videoView) {
+						videoView.setScreenAvailable(true);
+					}
 				}
 
 				OCA.SpreedMe.sharedScreens.switchScreenToId(id);
@@ -796,9 +795,10 @@ var spreedPeerConnectionTable = [];
 
 				delete spreedListofSharedScreens[id];
 
-				var screensharingIndicator = $(OCA.SpreedMe.videos.getContainerId(id)).find('.screensharingIndicator');
-				screensharingIndicator.addClass('screen-off');
-				screensharingIndicator.removeClass('screen-on');
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (videoView) {
+					videoView.setScreenAvailable(false);
+				}
 
 				var mostRecentTime = 0,
 					mostRecentId = null;

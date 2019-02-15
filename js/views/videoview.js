@@ -64,12 +64,17 @@
 			'iceFailedIndicator': '.iceFailedIndicator',
 		},
 
+		events: {
+			'click @ui.screenSharingIndicator': 'switchToScreen',
+		},
+
 		initialize: function() {
 			this._connectionStatus = ConnectionStatus.NEW;
 
 			// Video is enabled by default, even if it is not initially
 			// available.
 			this._videoEnabled = true;
+			this._screenVisible = false;
 
 			this.render();
 
@@ -234,6 +239,34 @@
 					.attr('data-original-title', t('spreed', 'Disable video'))
 					.removeClass('icon-video-off')
 					.addClass('icon-video');
+		},
+
+		setScreenAvailable: function(screenAvailable) {
+			if (!screenAvailable) {
+				this.getUI('screenSharingIndicator')
+						.removeClass('screen-on')
+						.addClass('screen-off');
+
+				return;
+			}
+
+			this.getUI('screenSharingIndicator')
+					.removeClass('screen-off')
+					.addClass('screen-on');
+		},
+
+		setScreenVisible: function(screenVisible) {
+			this._screenVisible = screenVisible;
+
+			this.getUI('screenSharingIndicator').toggleClass('screen-visible', screenVisible);
+		},
+
+		switchToScreen: function() {
+			if (!this._screenVisible) {
+				OCA.SpreedMe.sharedScreens.switchScreenToId(this.options.peerId);
+			}
+
+			this.getUI('screenSharingIndicator').tooltip('hide');
 		},
 
 	});
