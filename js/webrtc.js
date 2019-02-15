@@ -1260,20 +1260,12 @@ var spreedPeerConnectionTable = [];
 
 		// Peer is muted
 		OCA.SpreedMe.webrtc.on('mute', function(data) {
-			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
-					id: data.id,
-					type: 'video',
-					broadcaster: false
-				}));
-			var $el = $(el);
+			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
 
 			if (data.name === 'video') {
 				OCA.SpreedMe.videos.muteRemoteVideo(data.id);
-			} else {
-				var muteIndicator = $el.find('.muteIndicator');
-				muteIndicator.removeClass('audio-on');
-				muteIndicator.addClass('audio-off');
-				$el.removeClass('speaking');
+			} else if (videoView) {
+				videoView.setAudioAvailable(false);
 			}
 
 			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
@@ -1281,19 +1273,12 @@ var spreedPeerConnectionTable = [];
 
 		// Peer is umuted
 		OCA.SpreedMe.webrtc.on('unmute', function(data) {
-			var el = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
-					id: data.id,
-					type: 'video',
-					broadcaster: false
-				}));
-			var $el = $(el);
+			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
 
 			if (data.name === 'video') {
 				OCA.SpreedMe.videos.unmuteRemoteVideo(data.id);
-			} else {
-				var muteIndicator = $el.find('.muteIndicator');
-				muteIndicator.removeClass('audio-off');
-				muteIndicator.addClass('audio-on');
+			} else if (videoView) {
+				videoView.setAudioAvailable(true);
 			}
 
 			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
