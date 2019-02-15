@@ -158,6 +158,21 @@
 			}
 		},
 
+		setAudioAvailable: function(audioAvailable) {
+			if (!audioAvailable) {
+				this.getUI('muteIndicator')
+						.removeClass('audio-on')
+						.addClass('audio-off');
+				this.$el.removeClass('speaking');
+
+				return;
+			}
+
+			this.getUI('muteIndicator')
+					.removeClass('audio-off')
+					.addClass('audio-on');
+		},
+
 		/**
 		 * Sets the element with the video stream.
 		 *
