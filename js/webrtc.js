@@ -491,21 +491,24 @@ var spreedPeerConnectionTable = [];
 
 				peer.pc.on('iceConnectionStateChange', function () {
 					var userId = spreedMappingTable[peer.id];
-					var avatar = $(newContainer).find('.avatar');
 					var nameIndicator = $(newContainer).find('.nameIndicator');
-					var mediaIndicator = $(newContainer).find('.mediaIndicator');
-					avatar.removeClass('icon-loading');
-					mediaIndicator.find('.iceFailedIndicator').addClass('not-failed');
 
 					switch (peer.pc.iceConnectionState) {
 						case 'checking':
-							avatar.addClass('icon-loading');
 							console.log('Connecting to peer...');
+
+							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CHECKING);
 							break;
 						case 'connected':
 						case 'completed': // on caller side
 							console.log('Connection established.');
-							avatar.css('opacity', '1');
+
+							if (peer.pc.iceConnectionState === 'connected') {
+								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CONNECTED);
+							} else {
+								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.COMPLETED);
+							}
+
 							// Ensure that the peer name is shown, as the name
 							// indicator for registered users without microphone
 							// nor camera will not be updated later.
@@ -535,13 +538,17 @@ var spreedPeerConnectionTable = [];
 							break;
 						case 'disconnected':
 							console.log('Disconnected.');
+
 							if (!signaling.hasFeature("mcu")) {
 								// ICE failures will be handled in "iceFailed"
 								// below for MCU installations.
+								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED);
+
 								setTimeout(function() {
 									// If the peer is still disconnected after 5 seconds we try ICE restart.
 									if(peer.pc.iceConnectionState === 'disconnected') {
-										avatar.addClass('icon-loading');
+										videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
+
 										if (spreedPeerConnectionTable[peer.id] < 5) {
 											if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
 												peer.pc.pc.peerconnection.signalingState === 'stable') {
@@ -556,11 +563,13 @@ var spreedPeerConnectionTable = [];
 							break;
 						case 'failed':
 							console.log('Connection failed.');
+
 							if (!signaling.hasFeature("mcu")) {
 								// ICE failures will be handled in "iceFailed"
 								// below for MCU installations.
 								if (spreedPeerConnectionTable[peer.id] < 5) {
-									avatar.addClass('icon-loading');
+									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
+
 									if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
 										peer.pc.pc.peerconnection.signalingState === 'stable') {
 										spreedPeerConnectionTable[peer.id] ++;
@@ -569,13 +578,15 @@ var spreedPeerConnectionTable = [];
 									}
 								} else {
 									console.log('ICE failed after 5 tries.');
-									mediaIndicator.children().hide();
-									mediaIndicator.find('.iceFailedIndicator').removeClass('not-failed').show();
+
+									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED_NO_RESTART);
 								}
 							}
 							break;
 						case 'closed':
 							console.log('Connection closed.');
+
+							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CLOSED);
 							break;
 					}
 

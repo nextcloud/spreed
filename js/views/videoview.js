@@ -30,6 +30,18 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 	OCA.Talk.Views = OCA.Talk.Views || {};
 
+	var ConnectionStatus = {
+		NEW: 'new',
+		CHECKING: 'checking',
+		CONNECTED: 'connected',
+		COMPLETED: 'completed',
+		DISCONNECTED: 'disconnected',
+		DISCONNECTED_LONG: 'disconnected-long',
+		FAILED: 'failed',
+		FAILED_NO_RESTART: 'failed-no-restart',
+		CLOSED: 'closed',
+	};
+
 	var VideoView = Marionette.View.extend({
 
 		tagName: 'div',
@@ -43,8 +55,10 @@
 
 		ui: {
 			'avatar': '.avatar',
+			'muteIndicator': '.muteIndicator',
 			'hideRemoteVideoButton': '.hideRemoteVideo',
 			'screenSharingIndicator': '.screensharingIndicator',
+			'iceFailedIndicator': '.iceFailedIndicator',
 		},
 
 		initialize: function() {
@@ -84,8 +98,44 @@
 			}
 		},
 
+		/**
+		 * Sets the current status of the connection.
+		 *
+		 * @param OCA.Talk.Views.VideoView.ConnectionStatus the connection
+		 *        status.
+		 */
+		setConnectionStatus: function(connectionStatus) {
+			this.getUI('avatar').removeClass('icon-loading');
+			this.getUI('iceFailedIndicator').addClass('not-failed');
+
+			if (connectionStatus === ConnectionStatus.CHECKING ||
+					connectionStatus === ConnectionStatus.DISCONNECTED_LONG ||
+					connectionStatus === ConnectionStatus.FAILED) {
+				this.getUI('avatar').addClass('icon-loading');
+
+				return;
+			}
+
+			if (connectionStatus === ConnectionStatus.CONNECTED ||
+					connectionStatus === ConnectionStatus.COMPLETED) {
+				this.getUI('avatar').css('opacity', '1');
+
+				return;
+			}
+
+			if (connectionStatus === ConnectionStatus.FAILED_NO_RESTART) {
+				this.getUI('muteIndicator').hide();
+				this.getUI('hideRemoteVideoButton').hide();
+				this.getUI('screenSharingIndicator').hide();
+				this.getUI('iceFailedIndicator').removeClass('not-failed');
+
+				return;
+			}
+		},
+
 	});
 
 	OCA.Talk.Views.VideoView = VideoView;
+	OCA.Talk.Views.VideoView.ConnectionStatus = ConnectionStatus;
 
 })(OCA, Marionette);
