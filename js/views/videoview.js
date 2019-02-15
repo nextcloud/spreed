@@ -163,7 +163,7 @@
 				this.getUI('muteIndicator')
 						.removeClass('audio-on')
 						.addClass('audio-off');
-				this.$el.removeClass('speaking');
+				this.setSpeaking(false);
 
 				return;
 			}
@@ -171,6 +171,10 @@
 			this.getUI('muteIndicator')
 					.removeClass('audio-off')
 					.addClass('audio-on');
+		},
+
+		setSpeaking: function(speaking) {
+			this.$el.toggleClass('speaking', speaking);
 		},
 
 		/**
