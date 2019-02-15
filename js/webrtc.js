@@ -636,7 +636,6 @@ var spreedPeerConnectionTable = [];
 						.addClass('videoContainer videoContainer-dummy')
 						.append(newContainer.find('.nameIndicator').clone())
 						.append(newContainer.find('.mediaIndicator').clone())
-						.append(newContainer.find('.speakingIndicator').clone())
 					);
 
 				// Cloning does not copy event handlers by default; it could be
