@@ -58,6 +58,7 @@
 			'avatarContainer': '.avatar-container',
 			'avatar': '.avatar',
 			'nameIndicator': '.nameIndicator',
+			'mediaIndicator': '.mediaIndicator',
 			'muteIndicator': '.muteIndicator',
 			'hideRemoteVideoButton': '.hideRemoteVideo',
 			'screenSharingIndicator': '.screensharingIndicator',
@@ -271,6 +272,31 @@
 			}
 
 			this.getUI('screenSharingIndicator').tooltip('hide');
+		},
+
+		/**
+		 * Creates a dummy video container element to show the indicators when
+		 * this video view is promoted.
+		 *
+		 * @return jQuery The jQuery wrapper for the dummy element.
+		 */
+		newDummyVideoContainer: function() {
+			var $dummy = $('<div>')
+					.addClass('videoContainer videoContainer-dummy')
+					.append(this.getUI('nameIndicator').clone())
+					.append(this.getUI('mediaIndicator').clone());
+
+			// Cloning does not copy event handlers by default; it could be
+			// forced with a parameter, but the tooltip would have to be
+			// explicitly set on the new element anyway. Due to this the click
+			// handler is explicitly copied too.
+			$dummy.find('.hideRemoteVideo').get(0).onclick = this.getUI('hideRemoteVideoButton').get(0).onclick;
+			$dummy.find('.hideRemoteVideo').tooltip({
+				placement: 'top',
+				trigger: 'hover'
+			});
+
+			return $dummy;
 		},
 
 	});

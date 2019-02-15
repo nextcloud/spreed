@@ -627,26 +627,12 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.speakers.updateVideoContainerDummy(id);
 			},
 			updateVideoContainerDummy: function(id) {
-				var newContainer = $(OCA.SpreedMe.videos.getContainerId(id));
-
 				$('.videoContainer-dummy').remove();
 
-				newContainer.after(
-					$('<div>')
-						.addClass('videoContainer videoContainer-dummy')
-						.append(newContainer.find('.nameIndicator').clone())
-						.append(newContainer.find('.mediaIndicator').clone())
-					);
-
-				// Cloning does not copy event handlers by default; it could be
-				// forced with a parameter, but the tooltip would have to be
-				// explicitly set on the new element anyway. Due to this the
-				// click handler is explicitly copied too.
-				$('.videoContainer-dummy').find('.hideRemoteVideo').get(0).onclick = newContainer.find('.hideRemoteVideo').get(0).onclick;
-				$('.videoContainer-dummy').find('.hideRemoteVideo').tooltip({
-					placement: 'top',
-					trigger: 'hover'
-				});
+				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				if (videoView) {
+					videoView.$el.after(videoView.newDummyVideoContainer());
+				}
 			},
 			add: function(id, notPromote) {
 				if (!(typeof id === 'string' || id instanceof String)) {
