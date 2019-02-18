@@ -87,11 +87,8 @@
 			this._audioNotFound = false;
 			this._videoNotFound = false;
 
-			if (localStorage.getItem("audioDisabled")) {
-				this.disableAudio();
-			}
-
-			this._videoDisabled = localStorage.getItem("videoDisabled");
+			this.audioDisabled = localStorage.getItem("audioDisabled");
+			this.videoDisabled = localStorage.getItem("videoDisabled");
 		},
 
 		setWebRtc: function(webrtc) {
