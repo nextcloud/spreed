@@ -17,6 +17,7 @@
   "views/mediacontrolsview.js",
   "views/richobjectstringparser.js",
   "views/templates.js",
+  "views/videoview.js",
   "views/virtuallist.js",
   "simplewebrtc.js",
   "webrtc.js",
