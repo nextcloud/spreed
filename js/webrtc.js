@@ -1191,21 +1191,13 @@ var spreedPeerConnectionTable = [];
 			}
 
 			//Screen
-			var screen = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
-					id: data.id,
-					type: 'screen',
-					broadcaster: false
-				}));
+			var screenView = OCA.SpreedMe.sharedScreens.screenViews[data.id];
+			if (screenView) {
+				screenView.setParticipantName(data.name);
+			}
 
-			var screenNameIndicator = $(screen).find('.nameIndicator');
-
-			if (!data.name) {
-				screenNameIndicator.text(t('spreed', "Guest's screen"));
-			} else {
-				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
-				if (!data.userid) {
-					guestNamesTable[data.id] = data.name;
-				}
+			if (!data.userid && data.name) {
+				guestNamesTable[data.id] = data.name;
 			}
 
 			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
