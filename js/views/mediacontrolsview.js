@@ -167,38 +167,30 @@
 			}
 		},
 
-		disableVideo: function() {
+		setVideoEnabled: function(videoEnabled) {
 			if (!this._videoAvailable || !this._webrtc) {
 				return false;
 			}
 
-			this._webrtc.pauseVideo();
+			if (videoEnabled) {
+				this._webrtc.resumeVideo();
 
-			this.getUI('videoButton').attr('data-original-title', t('spreed', 'Enable video (v)'))
-				.addClass('local-video-disabled video-disabled icon-video-off')
-				.removeClass('icon-video');
-			this.getUI('audioButton').addClass('local-video-disabled');
-			this.getUI('screensharingButton').addClass('local-video-disabled');
+				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Disable video (v)'))
+					.removeClass('local-video-disabled video-disabled icon-video-off')
+					.addClass('icon-video');
+				this.getUI('audioButton').removeClass('local-video-disabled');
+				this.getUI('screensharingButton').removeClass('local-video-disabled');
+			} else {
+				this._webrtc.pauseVideo();
 
-			this.videoEnabled = false;
-
-			return true;
-		},
-
-		enableVideo: function() {
-			if (!this._videoAvailable || !this._webrtc) {
-				return false;
+				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Enable video (v)'))
+					.addClass('local-video-disabled video-disabled icon-video-off')
+					.removeClass('icon-video');
+				this.getUI('audioButton').addClass('local-video-disabled');
+				this.getUI('screensharingButton').addClass('local-video-disabled');
 			}
 
-			this._webrtc.resumeVideo();
-
-			this.getUI('videoButton').attr('data-original-title', t('spreed', 'Disable video (v)'))
-				.removeClass('local-video-disabled video-disabled icon-video-off')
-				.addClass('icon-video');
-			this.getUI('audioButton').removeClass('local-video-disabled');
-			this.getUI('screensharingButton').removeClass('local-video-disabled');
-
-			this.videoEnabled = true;
+			this.videoEnabled = videoEnabled;
 
 			return true;
 		},

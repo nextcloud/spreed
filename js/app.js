@@ -758,7 +758,7 @@
 			this.fullscreenDisabled = true;
 		},
 		enableVideo: function() {
-			if (!this._mediaControlsView.enableVideo()) {
+			if (!this._mediaControlsView.setVideoEnabled(true)) {
 				return;
 			}
 
@@ -769,7 +769,7 @@
 			localVideo.show();
 		},
 		disableVideo: function() {
-			if (!this._mediaControlsView.disableVideo()) {
+			if (!this._mediaControlsView.setVideoEnabled(false)) {
 				return;
 			}
 
