@@ -100,7 +100,7 @@
 		},
 
 		toggleAudio: function() {
-			if (this.audioNotFound) {
+			if (this._audioNotFound) {
 				return;
 			}
 
@@ -114,7 +114,7 @@
 		},
 
 		disableAudio: function() {
-			if (this.audioNotFound || !this._webrtc) {
+			if (this._audioNotFound || !this._webrtc) {
 				return;
 			}
 
@@ -128,7 +128,7 @@
 		},
 
 		enableAudio: function() {
-			if (this.audioNotFound || !this._webrtc) {
+			if (this._audioNotFound || !this._webrtc) {
 				return;
 			}
 
@@ -147,7 +147,7 @@
 				.removeClass('audio-disabled icon-audio-off')
 				.addClass('icon-audio');
 
-			this.audioNotFound = false;
+			this._audioNotFound = false;
 		},
 
 		hasNoAudio: function() {
@@ -156,11 +156,11 @@
 				.attr('data-original-title', t('spreed', 'No audio'));
 
 			this.audioDisabled = true;
-			this.audioNotFound = true;
+			this._audioNotFound = true;
 		},
 
 		toggleVideo: function() {
-			if (this.videoNotFound) {
+			if (this._videoNotFound) {
 				return;
 			}
 
@@ -174,7 +174,7 @@
 		},
 
 		disableVideo: function() {
-			if (this.videoNotFound || !this._webrtc) {
+			if (this._videoNotFound || !this._webrtc) {
 				return false;
 			}
 
@@ -194,7 +194,7 @@
 		},
 
 		enableVideo: function() {
-			if (this.videoNotFound || !this._webrtc) {
+			if (this._videoNotFound || !this._webrtc) {
 				return false;
 			}
 
@@ -214,7 +214,7 @@
 		hasVideo: function() {
 			this.getUI('videoButton').removeClass('no-video-available');
 
-			this.videoNotFound = false;
+			this._videoNotFound = false;
 		},
 
 		hasNoVideo: function() {
@@ -223,7 +223,7 @@
 				.attr('data-original-title', t('spreed', 'No Camera'));
 
 			this.videoDisabled = true;
-			this.videoNotFound = true;
+			this._videoNotFound = true;
 		},
 
 		toggleScreensharingMenu: function() {
