@@ -91,7 +91,7 @@
 				this.disableAudio();
 			}
 
-			this._videoDisabled = localStorage.getItem("videoDisabled");
+			this.videoDisabled = localStorage.getItem("videoDisabled");
 		},
 
 		setWebRtc: function(webrtc) {
