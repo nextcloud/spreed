@@ -180,7 +180,7 @@
 			if (configuration.audio !== false) {
 				this._mediaControlsView.hasAudio();
 
-				if (this._mediaControlsView.audioDisabled) {
+				if (!this._mediaControlsView.audioEnabled) {
 					this._mediaControlsView.disableAudio();
 				} else {
 					this._mediaControlsView.enableAudio();
