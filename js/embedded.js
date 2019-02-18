@@ -111,11 +111,13 @@
 				this.stopReceivingMessages();
 			});
 
-			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
+			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				app: this,
 				webrtc: OCA.SpreedMe.webrtc,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
+
+			this._mediaControlsView = this._localVideoView._mediaControlsView;
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
