@@ -710,18 +710,9 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.sharedScreens = {
 			screenViews: [],
-			getContainerId: function(id) {
-				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-				if (currentUser === id) {
-					return '#localScreenContainer';
-				} else {
-					var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-					return '#container_' + sanitizedId + '_screen_incoming';
-				}
-			},
 			switchScreenToId: function(id) {
-				var selectedScreen = $(OCA.SpreedMe.sharedScreens.getContainerId(id));
-				if(selectedScreen.find('video').length === 0) {
+				var screenView = OCA.SpreedMe.sharedScreens.screenViews[id];
+				if (!screenView) {
 					console.warn('promote: no screen video found for ID', id);
 					return;
 				}
@@ -730,7 +721,6 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				var screenContainerId = null;
 				for (var currentId in spreedListofSharedScreens) {
 					// skip loop if the property is from prototype
 					if (!spreedListofSharedScreens.hasOwnProperty(currentId)) {
@@ -742,11 +732,11 @@ var spreedPeerConnectionTable = [];
 						continue;
 					}
 
-					screenContainerId = OCA.SpreedMe.sharedScreens.getContainerId(currentId);
+					screenView = OCA.SpreedMe.sharedScreens.screenViews[currentId];
 					if (currentId === id) {
-						$(screenContainerId).removeClass('hidden');
+						screenView.$el.removeClass('hidden');
 					} else {
-						$(screenContainerId).addClass('hidden');
+						screenView.$el.addClass('hidden');
 					}
 				}
 
