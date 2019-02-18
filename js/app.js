@@ -704,12 +704,12 @@
 				this._mediaControlsView.hasAudio();
 
 				if (!this._mediaControlsView.audioEnabled) {
-					this._mediaControlsView.disableAudio();
+					this._mediaControlsView.setAudioEnabled(false);
 				} else {
-					this._mediaControlsView.enableAudio();
+					this._mediaControlsView.setAudioEnabled(true);
 				}
 			} else {
-				this._mediaControlsView.disableAudio();
+				this._mediaControlsView.setAudioEnabled(false);
 				this._mediaControlsView.hasNoAudio();
 			}
 

@@ -105,40 +105,34 @@
 			}
 
 			if (this.audioEnabled) {
-				this.disableAudio();
+				this.setAudioEnabled(false);
 				localStorage.setItem('audioDisabled', true);
 			} else {
-				this.enableAudio();
+				this.setAudioEnabled(true);
 				localStorage.removeItem('audioDisabled');
 			}
 		},
 
-		disableAudio: function() {
+		setAudioEnabled: function(audioEnabled) {
 			if (!this._audioAvailable || !this._webrtc) {
 				return;
 			}
 
-			this._webrtc.mute();
+			if (audioEnabled) {
+				this._webrtc.unmute();
 
-			this.getUI('audioButton').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
-				.addClass('audio-disabled icon-audio-off')
-				.removeClass('icon-audio');
+				this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
+					.removeClass('audio-disabled icon-audio-off')
+					.addClass('icon-audio');
+			} else {
+				this._webrtc.mute();
 
-			this.audioEnabled = false;
-		},
-
-		enableAudio: function() {
-			if (!this._audioAvailable || !this._webrtc) {
-				return;
+				this.getUI('audioButton').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
+					.addClass('audio-disabled icon-audio-off')
+					.removeClass('icon-audio');
 			}
 
-			this._webrtc.unmute();
-
-			this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
-				.removeClass('audio-disabled icon-audio-off')
-				.addClass('icon-audio');
-
-			this.audioEnabled = true;
+			this.audioEnabled = audioEnabled;
 		},
 
 		hasAudio: function() {
