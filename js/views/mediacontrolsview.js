@@ -174,13 +174,11 @@
 
 			this._webrtc.pauseVideo();
 
-			if (!this.getUI('videoButton').hasClass('no-video-available')) {
-				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Enable video (v)'))
-					.addClass('local-video-disabled video-disabled icon-video-off')
-					.removeClass('icon-video');
-				this.getUI('audioButton').addClass('local-video-disabled');
-				this.getUI('screensharingButton').addClass('local-video-disabled');
-			}
+			this.getUI('videoButton').attr('data-original-title', t('spreed', 'Enable video (v)'))
+				.addClass('local-video-disabled video-disabled icon-video-off')
+				.removeClass('icon-video');
+			this.getUI('audioButton').addClass('local-video-disabled');
+			this.getUI('screensharingButton').addClass('local-video-disabled');
 
 			this.videoEnabled = false;
 
