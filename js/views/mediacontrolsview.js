@@ -87,10 +87,7 @@
 			this._audioNotFound = false;
 			this._videoNotFound = false;
 
-			if (localStorage.getItem("audioDisabled")) {
-				this.disableAudio();
-			}
-
+			this.audioDisabled = localStorage.getItem("audioDisabled");
 			this.videoDisabled = localStorage.getItem("videoDisabled");
 		},
 
