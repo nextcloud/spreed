@@ -196,23 +196,21 @@
 		},
 
 		/**
-		 * Sets the video as available.
+		 * Sets the video as available or not available.
 		 *
 		 * "setVideoEnabled(bool)" is expected to be called with the appropriate
 		 * value after the video is set as available.
 		 */
-		hasVideo: function() {
-			this.getUI('videoButton').removeClass('no-video-available');
+		setVideoAvailable: function(videoAvailable) {
+			if (videoAvailable) {
+				this.getUI('videoButton').removeClass('no-video-available');
+			} else {
+				this.getUI('videoButton').removeClass('icon-video')
+					.addClass('no-video-available icon-video-off')
+					.attr('data-original-title', t('spreed', 'No Camera'));
+			}
 
-			this._videoAvailable = true;
-		},
-
-		hasNoVideo: function() {
-			this.getUI('videoButton').removeClass('icon-video')
-				.addClass('no-video-available icon-video-off')
-				.attr('data-original-title', t('spreed', 'No Camera'));
-
-			this._videoAvailable = false;
+			this._videoAvailable = videoAvailable;
 		},
 
 		toggleScreensharingMenu: function() {
