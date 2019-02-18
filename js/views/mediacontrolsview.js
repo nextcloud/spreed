@@ -164,12 +164,12 @@
 				return;
 			}
 
-			if (!this.videoEnabled) {
-				this._app.enableVideo();
-				localStorage.removeItem('videoDisabled');
-			} else {
+			if (this.videoEnabled) {
 				this._app.disableVideo();
 				localStorage.setItem('videoDisabled', true);
+			} else {
+				this._app.enableVideo();
+				localStorage.removeItem('videoDisabled');
 			}
 		},
 
