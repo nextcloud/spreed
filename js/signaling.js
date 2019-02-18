@@ -859,9 +859,9 @@
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.doSend = function(msg, callback) {
-		if (!this.connected && msg.type !== "hello") {
-			// Defer sending any messages until the hello rsponse has been
-			// received.
+		if (!this.connected && msg.type !== "hello" || this.socket === null) {
+			// Defer sending any messages until the hello response has been
+			// received and when the socket is open
 			this.pendingMessages.push([msg, callback]);
 			return;
 		}
