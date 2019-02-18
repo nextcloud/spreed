@@ -136,23 +136,21 @@
 		},
 
 		/**
-		 * Sets the audio as available.
+		 * Sets the audio as available or not available.
 		 *
 		 * "setAudioEnabled(bool)" is expected to be called with the appropriate
 		 * value after the audio is set as available.
 		 */
-		hasAudio: function() {
-			this.getUI('audioButton').removeClass('no-audio-available');
+		setAudioAvailable: function(audioAvailable) {
+			if (audioAvailable) {
+				this.getUI('audioButton').removeClass('no-audio-available');
+			} else {
+				this.getUI('audioButton').removeClass('audio-disabled icon-audio')
+					.addClass('no-audio-available icon-audio-off')
+					.attr('data-original-title', t('spreed', 'No audio'));
+			}
 
-			this._audioAvailable = true;
-		},
-
-		hasNoAudio: function() {
-			this.getUI('audioButton').removeClass('audio-disabled icon-audio')
-				.addClass('no-audio-available icon-audio-off')
-				.attr('data-original-title', t('spreed', 'No audio'));
-
-			this._audioAvailable = false;
+			this._audioAvailable = audioAvailable;
 		},
 
 		toggleVideo: function() {
