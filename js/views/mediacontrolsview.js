@@ -87,8 +87,8 @@
 			this._audioNotFound = false;
 			this._videoNotFound = false;
 
-			this.audioDisabled = localStorage.getItem("audioDisabled");
-			this.videoDisabled = localStorage.getItem("videoDisabled");
+			this.audioDisabled = localStorage.getItem('audioDisabled');
+			this.videoDisabled = localStorage.getItem('videoDisabled');
 		},
 
 		setWebRtc: function(webrtc) {
@@ -106,10 +106,10 @@
 
 			if (!this.audioDisabled) {
 				this.disableAudio();
-				localStorage.setItem("audioDisabled", true);
+				localStorage.setItem('audioDisabled', true);
 			} else {
 				this.enableAudio();
-				localStorage.removeItem("audioDisabled");
+				localStorage.removeItem('audioDisabled');
 			}
 		},
 
@@ -166,10 +166,10 @@
 
 			if (this.videoDisabled) {
 				this._app.enableVideo();
-				localStorage.removeItem("videoDisabled");
+				localStorage.removeItem('videoDisabled');
 			} else {
 				this._app.disableVideo();
-				localStorage.setItem("videoDisabled", true);
+				localStorage.setItem('videoDisabled', true);
 			}
 		},
 
@@ -304,17 +304,17 @@
 				}
 
 				switch (err.name) {
-					case "HTTPS_REQUIRED":
+					case 'HTTPS_REQUIRED':
 						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
 						break;
-					case "PERMISSION_DENIED":
-					case "NotAllowedError":
-					case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
+					case 'PERMISSION_DENIED':
+					case 'NotAllowedError':
+					case 'CEF_GETSCREENMEDIA_CANCELED':  // Experimental, may go away in the future.
 						break;
-					case "FF52_REQUIRED":
+					case 'FF52_REQUIRED':
 						OC.Notification.showTemporary(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'));
 						break;
-					case "EXTENSION_UNAVAILABLE":
+					case 'EXTENSION_UNAVAILABLE':
 						var  extensionURL = null;
 						if (window.chrome) {// Chrome
 							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
@@ -331,7 +331,7 @@
 						break;
 					default:
 						OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
-						console.log("Could not start screensharing", err);
+						console.log('Could not start screensharing', err);
 						break;
 				}
 			}.bind(this));
