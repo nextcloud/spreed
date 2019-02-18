@@ -1066,10 +1066,11 @@ var spreedPeerConnectionTable = [];
 						videoView.setVideoElement(null);
 					}
 				} else if (peer.type === 'screen') {
-					var remotes = document.getElementById('screens');
-					var screenContainer = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId(peer));
-					if (remotes && screenContainer) {
-						remotes.removeChild(screenContainer);
+					var screenView = OCA.SpreedMe.sharedScreens.screenViews[peer.id];
+					if (screenView) {
+						screenView.$el.remove();
+
+						delete OCA.SpreedMe.sharedScreens.screenViews[peer.id];
 					}
 
 					OCA.SpreedMe.sharedScreens.remove(peer.id);
@@ -1080,10 +1081,11 @@ var spreedPeerConnectionTable = [];
 				// handled differently.
 				OCA.SpreedMe.webrtc.emit('localScreenStopped');
 
-				screens = document.getElementById('screens');
-				var localScreenContainer = document.getElementById('localScreenContainer');
-				if (screens && localScreenContainer) {
-					screens.removeChild(localScreenContainer);
+				var screenView = OCA.SpreedMe.sharedScreens.screenViews[OCA.SpreedMe.webrtc.connection.getSessionid()];
+				if (screenView) {
+					screenView.$el.remove();
+
+					delete OCA.SpreedMe.sharedScreens.screenViews[OCA.SpreedMe.webrtc.connection.getSessionid()];
 				}
 
 				OCA.SpreedMe.sharedScreens.remove(OCA.SpreedMe.webrtc.connection.getSessionid());
