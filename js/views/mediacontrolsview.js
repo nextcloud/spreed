@@ -149,7 +149,6 @@
 				.addClass('no-audio-available icon-audio-off')
 				.attr('data-original-title', t('spreed', 'No audio'));
 
-			this.audioEnabled = false;
 			this._audioAvailable = false;
 		},
 
@@ -206,7 +205,6 @@
 				.addClass('no-video-available icon-video-off')
 				.attr('data-original-title', t('spreed', 'No Camera'));
 
-			this.videoEnabled = false;
 			this._videoAvailable = false;
 		},
 
