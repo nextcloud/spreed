@@ -88,7 +88,7 @@
 			this._videoAvailable = true;
 
 			this.audioEnabled = !localStorage.getItem('audioDisabled');
-			this.videoDisabled = localStorage.getItem('videoDisabled');
+			this.videoEnabled = !localStorage.getItem('videoDisabled');
 		},
 
 		setWebRtc: function(webrtc) {
@@ -164,7 +164,7 @@
 				return;
 			}
 
-			if (this.videoDisabled) {
+			if (!this.videoEnabled) {
 				this._app.enableVideo();
 				localStorage.removeItem('videoDisabled');
 			} else {
@@ -188,7 +188,7 @@
 				this.getUI('screensharingButton').addClass('local-video-disabled');
 			}
 
-			this.videoDisabled = true;
+			this.videoEnabled = false;
 
 			return true;
 		},
@@ -206,7 +206,7 @@
 			this.getUI('audioButton').removeClass('local-video-disabled');
 			this.getUI('screensharingButton').removeClass('local-video-disabled');
 
-			this.videoDisabled = false;
+			this.videoEnabled = true;
 
 			return true;
 		},
@@ -222,7 +222,7 @@
 				.addClass('no-video-available icon-video-off')
 				.attr('data-original-title', t('spreed', 'No Camera'));
 
-			this.videoDisabled = true;
+			this.videoEnabled = false;
 			this._videoAvailable = false;
 		},
 
