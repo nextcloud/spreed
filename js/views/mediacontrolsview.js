@@ -135,11 +135,14 @@
 			this.audioEnabled = audioEnabled;
 		},
 
+		/**
+		 * Sets the audio as available.
+		 *
+		 * "setAudioEnabled(bool)" is expected to be called with the appropriate
+		 * value after the audio is set as available.
+		 */
 		hasAudio: function() {
 			this.getUI('audioButton').removeClass('no-audio-available');
-			this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
-				.removeClass('audio-disabled icon-audio-off')
-				.addClass('icon-audio');
 
 			this._audioAvailable = true;
 		},
@@ -194,6 +197,12 @@
 			return true;
 		},
 
+		/**
+		 * Sets the video as available.
+		 *
+		 * "setVideoEnabled(bool)" is expected to be called with the appropriate
+		 * value after the video is set as available.
+		 */
 		hasVideo: function() {
 			this.getUI('videoButton').removeClass('no-video-available');
 
