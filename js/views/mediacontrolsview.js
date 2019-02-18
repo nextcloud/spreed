@@ -85,7 +85,7 @@
 			this._sharedScreens = options.sharedScreens;
 
 			this._audioAvailable = true;
-			this._videoNotFound = false;
+			this._videoAvailable = true;
 
 			this.audioDisabled = localStorage.getItem('audioDisabled');
 			this.videoDisabled = localStorage.getItem('videoDisabled');
@@ -160,7 +160,7 @@
 		},
 
 		toggleVideo: function() {
-			if (this._videoNotFound) {
+			if (!this._videoAvailable) {
 				return;
 			}
 
@@ -174,7 +174,7 @@
 		},
 
 		disableVideo: function() {
-			if (this._videoNotFound || !this._webrtc) {
+			if (!this._videoAvailable || !this._webrtc) {
 				return false;
 			}
 
@@ -194,7 +194,7 @@
 		},
 
 		enableVideo: function() {
-			if (this._videoNotFound || !this._webrtc) {
+			if (!this._videoAvailable || !this._webrtc) {
 				return false;
 			}
 
@@ -214,7 +214,7 @@
 		hasVideo: function() {
 			this.getUI('videoButton').removeClass('no-video-available');
 
-			this._videoNotFound = false;
+			this._videoAvailable = true;
 		},
 
 		hasNoVideo: function() {
@@ -223,7 +223,7 @@
 				.attr('data-original-title', t('spreed', 'No Camera'));
 
 			this.videoDisabled = true;
-			this._videoNotFound = true;
+			this._videoAvailable = false;
 		},
 
 		toggleScreensharingMenu: function() {
