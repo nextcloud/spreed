@@ -84,7 +84,7 @@
 			this._webrtc = options.webrtc;
 			this._sharedScreens = options.sharedScreens;
 
-			this._audioNotFound = false;
+			this._audioAvailable = true;
 			this._videoNotFound = false;
 
 			this.audioDisabled = localStorage.getItem('audioDisabled');
@@ -100,7 +100,7 @@
 		},
 
 		toggleAudio: function() {
-			if (this._audioNotFound) {
+			if (!this._audioAvailable) {
 				return;
 			}
 
@@ -114,7 +114,7 @@
 		},
 
 		disableAudio: function() {
-			if (this._audioNotFound || !this._webrtc) {
+			if (!this._audioAvailable || !this._webrtc) {
 				return;
 			}
 
@@ -128,7 +128,7 @@
 		},
 
 		enableAudio: function() {
-			if (this._audioNotFound || !this._webrtc) {
+			if (!this._audioAvailable || !this._webrtc) {
 				return;
 			}
 
@@ -147,7 +147,7 @@
 				.removeClass('audio-disabled icon-audio-off')
 				.addClass('icon-audio');
 
-			this._audioNotFound = false;
+			this._audioAvailable = true;
 		},
 
 		hasNoAudio: function() {
@@ -156,7 +156,7 @@
 				.attr('data-original-title', t('spreed', 'No audio'));
 
 			this.audioDisabled = true;
-			this._audioNotFound = true;
+			this._audioAvailable = false;
 		},
 
 		toggleVideo: function() {
