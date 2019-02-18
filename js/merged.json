@@ -22,6 +22,7 @@
   "views/participantview.js",
   "views/richobjectstringparser.js",
   "views/roomlistview.js",
+  "views/screenview.js",
   "views/sidebarview.js",
   "views/tabview.js",
   "views/templates.js",

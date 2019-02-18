@@ -709,6 +709,7 @@ var spreedPeerConnectionTable = [];
 		};
 
 		OCA.SpreedMe.sharedScreens = {
+			screenViews: [],
 			getContainerId: function(id) {
 				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
 				if (currentUser === id) {
@@ -1122,37 +1123,25 @@ var spreedPeerConnectionTable = [];
 
 			var screens = document.getElementById('screens');
 			if (screens) {
-				// Indicator for username
-				var userIndicator = document.createElement('div');
-				userIndicator.className = 'nameIndicator';
+				var screenView = new OCA.Talk.Views.ScreenView({
+					peerId: peer? peer.id: undefined
+				});
+				screenView.setVideoElement(video);
+
 				if (peer) {
-					var guestName = guestNamesTable[peer.id];
-					if (peer.nick) {
-						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: peer.nick});
-					} else if (guestName && guestName.length > 0) {
-						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: guestName});
-					} else {
-						userIndicator.textContent = t('spreed', "Guest's screen");
-					}
-				} else {
-					userIndicator.textContent = t('spreed', 'Your screen');
+					var participantName = peer.nick || guestNamesTable[peer.id];
+					screenView.setParticipantName(participantName);
 				}
 
-				// Generic container
-				var container = document.createElement('div');
-				container.className = 'screenContainer';
-				container.id = peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer';
-				container.appendChild(video);
-				container.appendChild(userIndicator);
-				video.oncontextmenu = function() {
-					return false;
-				};
-
-				$(container).prependTo($('#screens'));
+				screenView.$el.prependTo($('#screens'));
 
 				if (peer) {
+					OCA.SpreedMe.sharedScreens.screenViews[peer.id] = screenView;
+
 					OCA.SpreedMe.sharedScreens.add(peer.id);
 				} else {
+					OCA.SpreedMe.sharedScreens.screenViews[OCA.SpreedMe.webrtc.connection.getSessionid()] = screenView;
+
 					OCA.SpreedMe.sharedScreens.add(OCA.SpreedMe.webrtc.connection.getSessionid());
 				}
 			}
