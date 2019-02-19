@@ -44,7 +44,9 @@ class Listener {
 	/** @var Executor */
 	protected $executor;
 
-	public function __construct(EventDispatcherInterface $dispatcher, CommandService $commandService, Executor $executor) {
+	public function __construct(EventDispatcherInterface $dispatcher,
+								CommandService $commandService,
+								Executor $executor) {
 		$this->dispatcher = $dispatcher;
 		$this->commandService = $commandService;
 		$this->executor = $executor;
