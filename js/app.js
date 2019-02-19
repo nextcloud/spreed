@@ -600,7 +600,7 @@
 				// participants.
 				var participants = this.activeRoom.get('participants');
 				if (participants && Object.keys(participants).length > 5) {
-					this.disableVideo();
+					this.setVideoEnabled(false);
 				}
 			}.bind(this));
 
@@ -717,12 +717,12 @@
 				this._mediaControlsView.setVideoAvailable(true);
 
 				if (!this._mediaControlsView.videoEnabled) {
-					this.disableVideo();
+					this.setVideoEnabled(false);
 				} else {
-					this.enableVideo();
+					this.setVideoEnabled(true);
 				}
 			} else {
-				this.disableVideo();
+				this.setVideoEnabled(false);
 				this._mediaControlsView.setVideoAvailable(false);
 			}
 		},
@@ -757,24 +757,20 @@
 
 			this.fullscreenDisabled = true;
 		},
-		enableVideo: function() {
-			if (!this._mediaControlsView.setVideoEnabled(true)) {
+		setVideoEnabled: function(videoEnabled) {
+			if (!this._mediaControlsView.setVideoEnabled(videoEnabled)) {
 				return;
 			}
 
 			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
 			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
 
-			avatarContainer.addClass('hidden');
-			localVideo.removeClass('hidden');
-		},
-		disableVideo: function() {
-			if (!this._mediaControlsView.setVideoEnabled(false)) {
+			if (videoEnabled) {
+				avatarContainer.addClass('hidden');
+				localVideo.removeClass('hidden');
+
 				return;
 			}
-
-			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
-			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
 
 			var userId = OC.getCurrentUser().uid;
 			var guestName = localStorage.getItem("nick");

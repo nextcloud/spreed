@@ -159,10 +159,10 @@
 			}
 
 			if (this.videoEnabled) {
-				this._app.disableVideo();
+				this._app.setVideoEnabled(false);
 				localStorage.setItem('videoDisabled', true);
 			} else {
-				this._app.enableVideo();
+				this._app.setVideoEnabled(true);
 				localStorage.removeItem('videoDisabled');
 			}
 		},
