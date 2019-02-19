@@ -158,7 +158,6 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			localMediaChannel.trigger('startLocalMedia');
@@ -169,7 +168,6 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			if (OCA.SpreedMe.webrtc.capabilities.support) {
