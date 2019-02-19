@@ -76,7 +76,6 @@
 		_participants: null,
 		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
 		_participantsView: null,
-		displayedGuestNameHint: false,
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
@@ -781,9 +780,9 @@
 			var guestName = localStorage.getItem("nick");
 			this._localVideoView.setAvatar(userId, guestName);
 
-			if (!userId && this.displayedGuestNameHint === false) {
+			if (!userId && !this._displayedGuestNameHint) {
 				OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
-				this.displayedGuestNameHint = true;
+				this._displayedGuestNameHint = true;
 			}
 
 			avatarContainer.removeClass('hidden');
