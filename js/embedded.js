@@ -222,17 +222,13 @@
 			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
 			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
 
-			var avatar = avatarContainer.find('.avatar');
+			var userId = OC.getCurrentUser().uid;
 			var guestName = localStorage.getItem("nick");
-			if (OC.getCurrentUser().uid) {
-				avatar.avatar(OC.getCurrentUser().uid, 128);
-			} else {
-				avatar.imageplaceholder('?', guestName, 128);
-				avatar.css('background-color', '#b9b9b9');
-				if (this.displayedGuestNameHint === false) {
-					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
-					this.displayedGuestNameHint = true;
-				}
+			this._localVideoView.setAvatar(userId, guestName);
+
+			if (!userId && this.displayedGuestNameHint === false) {
+				OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
+				this.displayedGuestNameHint = true;
 			}
 
 			avatarContainer.removeClass('hidden');

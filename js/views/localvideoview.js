@@ -45,6 +45,7 @@
 		},
 
 		ui: {
+			'avatar': '.avatar',
 			'nameIndicator': '.nameIndicator',
 		},
 
@@ -77,6 +78,15 @@
 			// Attach the child views again (or for the first time) after the
 			// template has been rendered.
 			this.showChildView('mediaControls', this._mediaControlsView, { replaceElement: true } );
+		},
+
+		setAvatar: function(userId, guestName) {
+			if (userId && userId.length) {
+				this.getUI('avatar').avatar(userId, 128);
+			} else {
+				this.getUI('avatar').imageplaceholder('?', guestName, 128);
+				this.getUI('avatar').css('background-color', '#b9b9b9');
+			}
 		},
 
 	});
