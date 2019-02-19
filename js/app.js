@@ -766,8 +766,8 @@
 			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
 			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
 
-			avatarContainer.hide();
-			localVideo.show();
+			avatarContainer.addClass('hidden');
+			localVideo.removeClass('hidden');
 		},
 		disableVideo: function() {
 			if (!this._mediaControlsView.setVideoEnabled(false)) {
@@ -791,8 +791,7 @@
 			}
 
 			avatarContainer.removeClass('hidden');
-			avatarContainer.show();
-			localVideo.hide();
+			localVideo.addClass('hidden');
 		},
 		// Called from webrtc.js
 		disableScreensharingButton: function() {
