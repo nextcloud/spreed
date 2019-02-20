@@ -24,8 +24,10 @@ namespace OCA\Spreed\Notification;
 
 
 use OCA\Spreed\Chat\MessageParser;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
@@ -111,6 +113,13 @@ class Notifier implements INotifier {
 			}
 		}
 
+		try {
+			$participant = $room->getParticipant($notification->getUser());
+		} catch (ParticipantNotFoundException $e) {
+			// Room does not exist
+			throw new \InvalidArgumentException('User is not part of the room anymore');
+		}
+
 		$notification
 			->setIcon($this->url->getAbsoluteURL($this->url->imagePath('spreed', 'app-dark.svg')))
 			->setLink($this->url->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()]));
@@ -126,7 +135,7 @@ class Notifier implements INotifier {
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'mention' ||  $subject === 'chat') {
-			return $this->parseChatMessage($notification, $room, $l);
+			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
 		throw new \InvalidArgumentException('Unknown subject');
@@ -135,11 +144,12 @@ class Notifier implements INotifier {
 	/**
 	 * @param INotification $notification
 	 * @param Room $room
+	 * @param Participant $participant
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseChatMessage(INotification $notification, Room $room, IL10N $l): INotification {
+	protected function parseChatMessage(INotification $notification, Room $room, Participant $participant, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'chat') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
@@ -181,11 +191,15 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown comment');
 		}
 
-		$recipient = $this->userManager->get($notification->getUser());
-		[$richMessage, $richMessageParameters] = $this->messageParser->parseMessage($room, $comment, $l, $recipient);
+		$message = MessageParser::createMessage($room, $participant, $comment, $l);
+		$this->messageParser->parseMessage($message);
+
+		if (!$message->getVisibility()) {
+			throw new \InvalidArgumentException('Invisible comment');
+		}
 
 		$placeholders = $replacements = [];
-		foreach ($richMessageParameters as $placeholder => $parameter) {
+		foreach ($message->getMessageParameters() as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'user') {
 				$replacements[] = '@' . $parameter['name'];
@@ -194,8 +208,8 @@ class Notifier implements INotifier {
 			}
 		}
 
-		$notification->setParsedMessage(str_replace($placeholders, $replacements, $richMessage));
-		$notification->setRichMessage($richMessage, $richMessageParameters);
+		$notification->setParsedMessage(str_replace($placeholders, $replacements, $message->getMessage()));
+		$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
 
 		$richSubjectParameters = [
 			'user' => $richSubjectUser,

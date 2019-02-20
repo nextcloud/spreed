@@ -22,46 +22,32 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat\Parser;
 
-use OCP\Comments\IComment;
-use OCP\IUser;
-use OCP\IUserSession;
+use OCA\Spreed\Model\Message;
 
 class Command {
-
-	/** @var ?IUser */
-	protected $recipient;
-
-	public function __construct(IUserSession $userSession) {
-		$this->recipient = $userSession->getUser();
-	}
-
-	public function setUser(IUser $user): void {
-		$this->recipient = $user;
-	}
-
 	/**
-	 * @param IComment $comment
-	 * @return array
+	 * @param Message $message
 	 * @throws \OutOfBoundsException
 	 */
-	public function parseMessage(IComment $comment): array {
+	public function parseMessage(Message $message): void {
+		$comment = $message->getComment();
 		$data = json_decode($comment->getMessage(), true);
 		if (!\is_array($data)) {
 			throw new \OutOfBoundsException('Invalid message');
 		}
 
 		if ($data['visibility'] === \OCA\Spreed\Model\Command::RESPONSE_NONE) {
-			throw new \RuntimeException('Message should not print');
+			$message->setVisibility(false);
+			return;
 		}
 
-		if ($this->recipient instanceof IUser &&
-			$data['visibility'] !== \OCA\Spreed\Model\Command::RESPONSE_ALL &&
-			$data['user'] !== $this->recipient->getUID()) {
-			throw new \RuntimeException('Message should not print');
+		$participant = $message->getParticipant();
+		if ($data['visibility'] !== \OCA\Spreed\Model\Command::RESPONSE_ALL &&
+			  $data['user'] !== $participant->getUser()) {
+			$message->setVisibility(false);
+			return;
 		}
 
-		$comment->setMessage($data['output']);
-
-		return [$data['output'], []];
+		$message->setMessage($data['output'], []);
 	}
 }

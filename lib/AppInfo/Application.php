@@ -26,7 +26,7 @@ use OCA\Spreed\Activity\Listener as ActivityListener;
 use OCA\Spreed\Capabilities;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\Command\Listener as CommandListener;
-use OCA\Spreed\Chat\Listener as ChatListener;
+use OCA\Spreed\Chat\Parser\Listener as ParserListener;
 use OCA\Spreed\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
@@ -66,7 +66,7 @@ class Application extends App {
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
-		ChatListener::register($dispatcher);
+		ParserListener::register($dispatcher);
 		PublicShareAuthListener::register($dispatcher);
 		PublicShareAuthTemplateLoader::register($dispatcher);
 		FilesListener::register($dispatcher);

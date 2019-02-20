@@ -179,8 +179,6 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$currentUser = null;
-		$displayName = '';
 		if ($this->userId === null) {
 			$actorType = 'guests';
 			$sessionId = $this->session->getSessionForRoom($token);
@@ -193,19 +191,10 @@ class ChatController extends OCSController {
 
 			if ($sessionId && $actorDisplayName) {
 				$this->guestManager->updateName($room, $sessionId, $actorDisplayName);
-				$displayName = $actorDisplayName;
-			} else if ($sessionId) {
-				try {
-					$displayName = $this->guestManager->getNameBySessionHash($actorId);
-				} catch (ParticipantNotFoundException $e) {
-					$displayName = '';
-				}
 			}
 		} else {
 			$actorType = 'users';
 			$actorId = $this->userId;
-			$currentUser = $this->userManager->get($this->userId);
-			$displayName = $currentUser instanceof IUser ? $currentUser->getDisplayName() : '';
 		}
 
 		if (!$actorId) {
@@ -222,22 +211,23 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		if ($comment->getActorType() === 'bots') {
-			$displayName = $this->prepareBotName($comment->getActorId());
-		}
+		$chatMessage = MessageParser::createMessage($room, $participant, $comment, $this->l);
+		$this->messageParser->parseMessage($chatMessage);
 
-		list($message, $messageParameters) = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
+		if (!$chatMessage->getVisibility()) {
+			return new DataResponse([], Http::STATUS_CREATED);
+		}
 
 		return new DataResponse([
 			'id' => (int) $comment->getId(),
-			'token' => $token,
-			'actorType' => $comment->getActorType(),
-			'actorId' => $comment->getActorId(),
-			'actorDisplayName' => $displayName,
+			'token' => $room->getToken(),
+			'actorType' => $chatMessage->getActorType(),
+			'actorId' => $chatMessage->getActorId(),
+			'actorDisplayName' => $chatMessage->getActorDisplayName(),
 			'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
-			'message' => $message,
-			'messageParameters' => $messageParameters,
-			'systemMessage' => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
+			'message' => $chatMessage->getMessage(),
+			'messageParameters' => $chatMessage->getMessageParameters(),
+			'systemMessage' => $chatMessage->getMessageType() === 'system' ? $comment->getMessage() : '',
 		], Http::STATUS_CREATED);
 	}
 
@@ -302,41 +292,30 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
 
-		$guestSessions = [];
+		$messages = [];
 		foreach ($comments as $comment) {
-			if ($comment->getActorType() !== 'guests') {
+			$message = MessageParser::createMessage($room, $participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
+
+			if (!$message->getVisibility()) {
 				continue;
 			}
 
-			$guestSessions[] = $comment->getActorId();
+			$messages[] = [
+				'id' => (int) $comment->getId(),
+				'token' => $room->getToken(),
+				'actorType' => $message->getActorType(),
+				'actorId' => $message->getActorId(),
+				'actorDisplayName' => $message->getActorDisplayName(),
+				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+				'message' => $message->getMessage(),
+				'messageParameters' => $message->getMessageParameters(),
+				'systemMessage' => $message->getMessageType() === 'system' ? $comment->getMessage() : '',
+			];
 		}
 
-		$guestNames = !empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
-		$response = new DataResponse(array_map(function (IComment $comment) use ($room, $token, $guestNames, $currentUser) {
-			$displayName = '';
-			if ($comment->getActorType() === 'users') {
-				$user = $this->userManager->get($comment->getActorId());
-				$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
-			} else if ($comment->getActorType() === 'guests' && isset($guestNames[$comment->getActorId()])) {
-				$displayName = $guestNames[$comment->getActorId()];
-			} else if ($comment->getActorType() === 'bots') {
-				$displayName = $this->prepareBotName($comment->getActorId());
-			}
 
-			[$message, $messageParameters] = $this->messageParser->parseMessage($room, $comment, $this->l, $currentUser);
-
-			return [
-				'id' => (int) $comment->getId(),
-				'token' => $token,
-				'actorType' => $comment->getActorType(),
-				'actorId' => $comment->getActorId(),
-				'actorDisplayName' => $displayName,
-				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
-				'message' => $message,
-				'messageParameters' => $messageParameters,
-				'systemMessage' => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
-			];
-		}, $comments), Http::STATUS_OK);
+		$response = new DataResponse($messages, Http::STATUS_OK);
 
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
@@ -398,9 +377,5 @@ class ChatController extends OCSController {
 			}
 		}
 		return $output;
-	}
-
-	protected function prepareBotName(string $actorId): string {
-		return $actorId . '-bot';
 	}
 }

@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Chat\Parser\Command as CommandParser;
 use OCA\Spreed\Model\Command;
+use OCA\Spreed\Model\Message;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -84,37 +85,6 @@ class Listener {
 			}
 
 			$listener->executor->exec($event->getSubject(), $message, $command, $arguments);
-		});
-
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var IComment $chatMessage */
-			$chatMessage = $event->getSubject();
-
-			if ($chatMessage->getVerb() !== 'command') {
-				return;
-			}
-
-			/** @var CommandParser $parser */
-			$parser = \OC::$server->query(CommandParser::class);
-
-			$user = $event->getArgument('user');
-			if ($user instanceof IUser) {
-				$parser->setUser($event->getArgument('user'));
-			}
-
-			try {
-				[$message, $parameters] = $parser->parseMessage($chatMessage);
-
-				$event->setArguments([
-					'message' => $message,
-					'parameters' => $parameters,
-				]);
-				$event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
-				// Unknown message, ignore
-			} catch (\RuntimeException $e) {
-				$event->stopPropagation();
-			}
 		});
 	}
 
