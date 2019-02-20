@@ -136,7 +136,7 @@
 							});
 							results.push({
 								id: "create-public-room",
-								displayName: t('spreed', '{name} (public)', { name: shortenedName }),
+								displayName: shortenedName,
 								type: "createPublicRoom"
 							});
 						}
@@ -152,7 +152,7 @@
 				},
 				formatResult: function (element) {
 					if (element.type === "createPublicRoom") {
-						return '<span><div class="avatar icon icon-public"></div>' + escapeHTML(element.displayName) + '</span>';
+						return '<span><div class="avatar icon icon-public"></div>' + t('spreed', '{name} (public)', { name: element.displayName }) + '</span>';
 					}
 
 					if (element.type === "createGroupRoom" || element.type === 'group') {

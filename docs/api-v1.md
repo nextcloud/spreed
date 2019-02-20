@@ -174,7 +174,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `400 Bad Request` When the name is too long
+        + `400 Bad Request` When the name is too long or empty
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the room could not be found for the participant
         + `405 Method Not Allowed` When the room is a one to one room

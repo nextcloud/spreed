@@ -185,7 +185,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					$this->userId,
 				],
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -218,7 +218,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				'alluserids' => [
 				],
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -239,7 +239,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				'userids' => [
 				],
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],

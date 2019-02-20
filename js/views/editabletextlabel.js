@@ -219,6 +219,9 @@
 					this.modelSaveOptions.success.apply(this, arguments);
 				}
 			}, this);
+			options.error = _.bind(function() {
+				this.hideInput();
+			}, this);
 
 			this.model.save(this.modelAttribute, newText, options);
 		},

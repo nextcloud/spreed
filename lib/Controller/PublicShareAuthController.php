@@ -31,6 +31,7 @@ use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Share;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\Exceptions\ShareNotFound;
@@ -41,6 +42,8 @@ class PublicShareAuthController extends OCSController {
 	private $userManager;
 	/** @var IShareManager */
 	private $shareManager;
+	/** @var IUserSession */
+	private $userSession;
 	/** @var Manager */
 	private $manager;
 
@@ -49,11 +52,13 @@ class PublicShareAuthController extends OCSController {
 			IRequest $request,
 			IUserManager $userManager,
 			IShareManager $shareManager,
+			IUserSession $userSession,
 			Manager $manager
 	) {
 		parent::__construct($appName, $request);
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
+		$this->userSession = $userSession;
 		$this->manager = $manager;
 	}
 
@@ -106,10 +111,13 @@ class PublicShareAuthController extends OCSController {
 			'participantType' => Participant::OWNER,
 		]);
 
+		$user = $this->userSession->getUser();
+		$userId = $user instanceof IUser ? $user->getUID() : '';
+
 		return new DataResponse([
 			'token' => $room->getToken(),
 			'name' => $room->getName(),
-			'displayName' => $room->getName(),
+			'displayName' => $room->getDisplayName($userId),
 		], Http::STATUS_CREATED);
 	}
 }

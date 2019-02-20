@@ -336,7 +336,7 @@ class ChatController extends OCSController {
 		try {
 			/** @var Room $room */
 			/** @var Participant $participant */
-			[$room, ] = $this->getRoomAndParticipant($token);
+			[$room, $participant] = $this->getRoomAndParticipant($token);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -364,7 +364,7 @@ class ChatController extends OCSController {
 		if ($search === '' || strpos('all', $search) !== false) {
 			array_unshift($results, [
 				'id' => 'all',
-				'label' => $room->getName() ?: $this->l->t('Conversation'),
+				'label' => $room->getDisplayName($participant->getUser()),
 				'source' => 'calls',
 			]);
 		}

@@ -101,7 +101,7 @@ abstract class Base implements IProvider {
 			->setRichSubject($subject, $parameters);
 	}
 
-	protected function getRoom(IL10N $l, Room $room): array {
+	protected function getRoom(Room $room, string $userId): array {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				$stringType = 'one2one';
@@ -118,7 +118,7 @@ abstract class Base implements IProvider {
 		return [
 			'type' => 'call',
 			'id' => $room->getId(),
-			'name' => $room->getName() ?: $l->t('a conversation'),
+			'name' => $room->getDisplayName($userId),
 			'call-type' => $stringType,
 		];
 	}

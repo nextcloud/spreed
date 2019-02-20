@@ -441,7 +441,7 @@ class SignalingController extends OCSController {
 				'version' => '1.0',
 				'roomid' => $room->getToken(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName((string) $userId),
 					'type' => $room->getType(),
 				],
 			],

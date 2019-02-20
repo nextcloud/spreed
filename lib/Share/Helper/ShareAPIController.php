@@ -84,32 +84,7 @@ class ShareAPIController {
 			return $result;
 		}
 
-		$roomName = $room->getName();
-		try {
-			$room->getParticipant($this->userId);
-
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$userIds = $room->getParticipantUserIds();
-				foreach ($userIds as $userId) {
-					if ($this->userId === $userId) {
-						continue;
-					}
-
-					$user = $this->userManager->get($userId);
-					if ($user instanceof IUser) {
-						$roomName = $user->getDisplayName();
-						break;
-					}
-				}
-			} else if ($roomName === '') {
-				$roomName = $this->l->t('Unnamed conversation');
-			}
-		} catch (ParticipantNotFoundException $e) {
-			// Do not leak the name of rooms the user is not a part of
-			$roomName = $this->l->t('Private conversation');
-		}
-
-		$result['share_with_displayname'] = $roomName;
+		$result['share_with_displayname'] = $room->getDisplayName($this->userId);
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$result['token'] = $share->getToken();
 		}

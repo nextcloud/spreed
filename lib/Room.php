@@ -138,6 +138,10 @@ class Room {
 		return $this->name;
 	}
 
+	public function getDisplayName(string $userId): string {
+		return $this->manager->resolveRoomDisplayName($this, $userId);
+	}
+
 	public function getActiveGuests(): int {
 		return $this->activeGuests;
 	}
@@ -271,8 +275,6 @@ class Room {
 		if ($this->getType() === self::ONE_TO_ONE_CALL) {
 			return false;
 		}
-
-		$oldName = $this->getName();
 
 		$this->dispatcher->dispatch(self::class . '::preSetName', new GenericEvent($this, [
 			'newName' => $newName,

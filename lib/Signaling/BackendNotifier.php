@@ -132,7 +132,7 @@ class BackendNotifier {
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -156,7 +156,7 @@ class BackendNotifier {
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -180,7 +180,7 @@ class BackendNotifier {
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -200,7 +200,7 @@ class BackendNotifier {
 			'update' => [
 				'userids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],

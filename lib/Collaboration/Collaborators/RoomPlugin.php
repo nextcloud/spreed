@@ -53,14 +53,16 @@ class RoomPlugin implements ISearchPlugin {
 			return false;
 		}
 
+		$userId = $this->userSession->getUser()->getUID();
+
 		$result = ['wide' => [], 'exact' => []];
 
-		$rooms = $this->manager->getRoomsForParticipant($this->userSession->getUser()->getUID());
+		$rooms = $this->manager->getRoomsForParticipant($userId);
 		foreach ($rooms as $room) {
 			if (stripos($room->getName(), $search) !== false) {
-				$item = $this->roomToSearchResultItem($room);
+				$item = $this->roomToSearchResultItem($room, $userId);
 
-				if (strtolower($room->getName()) === strtolower($search)) {
+				if (strtolower($item['label']) === strtolower($search)) {
 					$result['exact'][] = $item;
 				} else {
 					$result['wide'][] = $item;
@@ -74,14 +76,10 @@ class RoomPlugin implements ISearchPlugin {
 		return false;
 	}
 
-	/**
-	 * @param Room $room
-	 * @return array
-	 */
-	private function roomToSearchResultItem(Room $room): array {
+	private function roomToSearchResultItem(Room $room, string $userId): array {
 		return
 		[
-			'label' => $room->getName(),
+			'label' => $room->getDisplayName($userId),
 			'value' => [
 				'shareType' => Share::SHARE_TYPE_ROOM,
 				'shareWith' => $room->getToken()
