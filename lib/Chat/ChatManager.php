@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
@@ -102,19 +103,26 @@ class ChatManager {
 	 * Sends a new message to the given chat.
 	 *
 	 * @param Room $chat
+	 * @param Participant $participant
 	 * @param string $actorType
 	 * @param string $actorId
 	 * @param string $message
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
+	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
 		// comment
 		$comment->setVerb('comment');
+
+		$this->dispatcher->dispatch(self::class . '::preSendMessage', new GenericEvent($chat, [
+			'comment' => $comment,
+			'room' => $chat,
+			'participant' => $participant,
+		]));
 
 		try {
 			$this->commentsManager->save($comment);
@@ -132,6 +140,8 @@ class ChatManager {
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
 				'comment' => $comment,
+				'room' => $chat,
+				'participant' => $participant,
 			]));
 		} catch (NotFoundException $e) {
 		}

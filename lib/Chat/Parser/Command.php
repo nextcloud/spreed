@@ -20,32 +20,34 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat;
+namespace OCA\Spreed\Chat\Parser;
 
-use OCA\Spreed\Chat\Parser\UserMention;
-use OCP\Comments\IComment;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCA\Spreed\Model\Message;
 
-class Listener {
+class Command {
+	/**
+	 * @param Message $message
+	 * @throws \OutOfBoundsException
+	 */
+	public function parseMessage(Message $message): void {
+		$comment = $message->getComment();
+		$data = json_decode($comment->getMessage(), true);
+		if (!\is_array($data)) {
+			throw new \OutOfBoundsException('Invalid message');
+		}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var IComment $chatMessage */
-			$chatMessage = $event->getSubject();
+		if ($data['visibility'] === \OCA\Spreed\Model\Command::RESPONSE_NONE) {
+			$message->setVisibility(false);
+			return;
+		}
 
-			if ($chatMessage->getVerb() !== 'comment') {
-				return;
-			}
+		$participant = $message->getParticipant();
+		if ($data['visibility'] !== \OCA\Spreed\Model\Command::RESPONSE_ALL &&
+			  $data['user'] !== $participant->getUser()) {
+			$message->setVisibility(false);
+			return;
+		}
 
-			/** @var UserMention $parser */
-			$parser = \OC::$server->query(UserMention::class);
-			[$message, $parameters] = $parser->parseMessage($chatMessage);
-
-			$event->setArguments([
-				'message' => $message,
-				'parameters' => $parameters,
-			]);
-		}, -100);
+		$message->setMessage($data['output'], []);
 	}
 }

@@ -471,7 +471,8 @@
 				return false;
 			}
 
-			return (model1.get('systemMessage').length === 0) === (model2.get('systemMessage').length === 0) &&
+			return model1.get('actorType') !== 'bots' &&
+				(model1.get('systemMessage').length === 0) === (model2.get('systemMessage').length === 0) &&
 				model1.get('actorId') === model2.get('actorId') &&
 				model1.get('actorType') === model2.get('actorType');
 		},
@@ -512,7 +513,12 @@
 				}
 			};
 			$el.find('.authorRow .avatar').each(function() {
-				setAvatar($(this), 32);
+				if (model && model.get('actorType') === 'bots') {
+					$(this).imageplaceholder('>_', $(this).data('displayname'), 32);
+					$(this).css('background-color', '#363636');
+				} else {
+					setAvatar($(this), 32);
+				}
 			});
 			var inlineAvatars = $el.find('.message .avatar');
 			if ($($el.context).hasClass('message')) {

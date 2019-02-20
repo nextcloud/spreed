@@ -25,6 +25,7 @@ namespace OCA\Spreed\Chat\Parser;
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
+use OCA\Spreed\Model\Message;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
@@ -79,25 +80,17 @@ class SystemMessage {
 		$this->recipient = $this->userSession->getUser();
 	}
 
-	public function setUserInfo(IL10N $l, ?IUser $user): void {
-		$this->l = $l;
-		$this->recipient = $user;
-		$this->sessionId = null;
-	}
-
-	public function setGuestInfo(IL10N $l, ?string $sessionId): void {
-		$this->l = $l;
-		$this->recipient = null;
+	public function setGuestInfo(?string $sessionId): void {
 		$this->sessionId = $sessionId;
 	}
 
 	/**
-	 * @param IComment $comment
-	 * @return array
+	 * @param Message $chatMessage
 	 * @throws \OutOfBoundsException
 	 */
-	public function parseMessage(IComment $comment): array {
-		$data = json_decode($comment->getMessage(), true);
+	public function parseMessage(Message $chatMessage): void {
+		$comment = $chatMessage->getComment();
+		$data = json_decode($chatMessage->getMessage(), true);
 		if (!\is_array($data)) {
 			throw new \OutOfBoundsException('Invalid message');
 		}
@@ -105,8 +98,15 @@ class SystemMessage {
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 		$parsedParameters = ['actor' => $this->getActor($comment)];
-		$currentUserIsActor = ($this->recipient instanceof IUser && $parsedParameters['actor']['type'] === 'user' && $this->recipient->getUID() === $parsedParameters['actor']['id']) ||
-			($this->sessionId !== null && $parsedParameters['actor']['type'] === 'guest' && $this->sessionId === $parsedParameters['actor']['id']);
+
+		$participant = $chatMessage->getParticipant();
+		if (!$participant->isGuest()) {
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
+				$participant->getUser() === $parsedParameters['actor']['id'];
+		} else {
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
+				sha1($participant->getSessionId()) === $parsedParameters['actor']['id'];
+		}
 
 		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
@@ -221,7 +221,7 @@ class SystemMessage {
 			try {
 				$parsedParameters['file'] = $this->getFileFromShare($parameters['share']);
 				$parsedMessage = '{file}';
-				$comment->setVerb('comment');
+				$chatMessage->setMessageType('comment');
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
@@ -233,8 +233,7 @@ class SystemMessage {
 		}
 
 		$comment->setMessage($message);
-
-		return [$parsedMessage, $parsedParameters];
+		$chatMessage->setMessage($parsedMessage, $parsedParameters);
 	}
 
 	/**

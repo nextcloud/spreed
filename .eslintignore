@@ -1,7 +1,10 @@
 /js/admin/sha1.js
+/js/admin/commands.js
+/js/admin/commands.js.map
 /js/tests/*
 /js/vendor/*
 /js/simplewebrtc.js
 /js/**/templates.js
 /karma.conf.js
 /tests/*
+/vue/*

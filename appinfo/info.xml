@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>5.99.0</version>
+	<version>5.99.2</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -52,7 +52,20 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
 	</background-jobs>
 
+	<repair-steps>
+		<post-migration>
+			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+		</post-migration>
+		<install>
+			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+		</install>
+	</repair-steps>
+
 	<commands>
+		<command>OCA\Spreed\Command\Command\Add</command>
+		<command>OCA\Spreed\Command\Command\Delete</command>
+		<command>OCA\Spreed\Command\Command\ListCommand</command>
+		<command>OCA\Spreed\Command\Command\Update</command>
 		<command>OCA\Spreed\Command\Stun\Add</command>
 		<command>OCA\Spreed\Command\Stun\Delete</command>
 		<command>OCA\Spreed\Command\Stun\ListCommand</command>
@@ -68,6 +81,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
 		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\Commands</admin>
 		<admin-section>OCA\Spreed\Settings\Admin\Section</admin-section>
 	</settings>
 

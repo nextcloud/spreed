@@ -344,6 +344,36 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+
+		/**
+		 * Commands
+		 */
+		[
+			'name' => 'Command#index',
+			'url' => '/api/{apiVersion}/command',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+			],
+		],
+		[
+			'name' => 'Command#update',
+			'url' => '/api/{apiVersion}/command/{id}',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'id' => '^\d+$',
+			],
+		],
+		[
+			'name' => 'Command#destroy',
+			'url' => '/api/{apiVersion}/command/{id}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'id' => '^\d+$',
+			],
+		],
 	],
 ];
 

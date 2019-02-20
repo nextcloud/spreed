@@ -23,7 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat\Parser;
 
-use OCP\Comments\IComment;
+use OCA\Spreed\Model\Message;
 use OCP\Comments\ICommentsManager;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -56,14 +56,12 @@ class UserMention {
 	 *   -name: the display name of the user, or an empty string if it could
 	 *     not be resolved.
 	 *
-	 * @param IComment $comment
-	 * @return array first element, the rich message; second element, the
-	 *         parameters of the rich message (or an empty array if there are no
-	 *         parameters).
+	 * @param Message $chatMessage
 	 */
-	public function parseMessage(IComment $comment): array {
-		$message = $comment->getMessage();
-		$messageParameters = [];
+	public function parseMessage(Message $chatMessage): void {
+		$comment = $chatMessage->getComment();
+		$message = $chatMessage->getMessage();
+		$messageParameters = $chatMessage->getMessageParameters();
 
 		$mentionTypeCount = [];
 
@@ -105,7 +103,7 @@ class UserMention {
 			];
 		}
 
-		return [$message, $messageParameters];
+		$chatMessage->setMessage($message, $messageParameters);
 	}
 
 }

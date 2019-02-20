@@ -272,7 +272,7 @@ class RoomController extends OCSController {
 
 		$lastMessage = $room->getLastMessage();
 		if ($lastMessage instanceof IComment) {
-			$lastMessage = $this->formatLastMessage($room, $lastMessage, $currentUser);
+			$lastMessage = $this->formatLastMessage($room, $currentParticipant, $lastMessage);
 		} else {
 			$lastMessage = [];
 		}
@@ -360,35 +360,27 @@ class RoomController extends OCSController {
 
 	/**
 	 * @param Room $room
+	 * @param Participant $participant
 	 * @param IComment $lastMessage
-	 * @param IUser|null $currentUser
 	 * @return array
 	 */
-	protected function formatLastMessage(Room $room, IComment $lastMessage, ?IUser $currentUser): array {
-		[$message, $messageParameters] = $this->messageParser->parseMessage($room, $lastMessage, $this->l10n, $currentUser);
+	protected function formatLastMessage(Room $room, Participant $participant, IComment $lastMessage): array {
+		$message = MessageParser::createMessage($room, $participant, $lastMessage, $this->l10n);
+		$this->messageParser->parseMessage($message);
 
-		$displayName = '';
-
-		$actorId = $lastMessage->getActorId();
-		$actorType = $lastMessage->getActorType();
-
-		if ($actorType === 'users') {
-			$user = $this->userManager->get($actorId);
-			$displayName = $user instanceof IUser ? $user->getDisplayName() : '';
-		} else if ($actorType === 'guests') {
-			$guestNames = !empty($actorId) ? $this->guestManager->getNamesBySessionHashes([$actorId]) : [];
-			$displayName = $guestNames[$actorId] ?? '';
+		if (!$message->getVisibility()) {
+			return [];
 		}
 
 		return [
 			'id' => (int) $lastMessage->getId(),
-			'actorType' => $actorType,
-			'actorId' => $actorId,
-			'actorDisplayName' => $displayName,
+			'actorType' => $message->getActorType(),
+			'actorId' => $message->getActorId(),
+			'actorDisplayName' => $message->getActorDisplayName(),
 			'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
-			'message' => $message,
-			'messageParameters' => $messageParameters,
-			'systemMessage' => $lastMessage->getVerb() === 'system' ? $lastMessage->getMessage() : '',
+			'message' => $message->getMessage(),
+			'messageParameters' => $message->getMessageParameters(),
+			'systemMessage' => $message->getMessageType() === 'system' ? $lastMessage->getMessage() : '',
 		];
 	}
 

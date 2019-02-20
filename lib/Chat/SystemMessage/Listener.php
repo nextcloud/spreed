@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Chat\Parser\SystemMessage;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Model\Message;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Share\RoomShareProvider;
@@ -207,41 +208,6 @@ class Listener {
 		};
 		$dispatcher->addListener('OCP\Share::postShare', $listener);
 		$dispatcher->addListener(RoomShareProvider::class . '::' . 'share_file_again', $listener);
-
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var IComment $chatMessage */
-			$chatMessage = $event->getSubject();
-
-			if ($chatMessage->getVerb() !== 'system') {
-				return;
-			}
-
-			/** @var SystemMessage $parser */
-			$parser = \OC::$server->query(SystemMessage::class);
-
-			$user = $event->getArgument('user');
-			if ($user instanceof IUser) {
-				$parser->setUserInfo($event->getArgument('l10n'), $event->getArgument('user'));
-			} else {
-				/** @var Room $room */
-				$room = $event->getArgument('room');
-				/** @var TalkSession $talkSession */
-				$talkSession = \OC::$server->query(TalkSession::class);
-				$parser->setGuestInfo($event->getArgument('l10n'), sha1($talkSession->getSessionForRoom($room->getToken())));
-			}
-
-			try {
-				[$message, $parameters] = $parser->parseMessage($chatMessage);
-
-				$event->setArguments([
-					'message' => $message,
-					'parameters' => $parameters,
-				]);
-				$event->stopPropagation();
-			} catch (\OutOfBoundsException $e) {
-				// Unknown message, ignore
-			}
-		});
 	}
 
 	protected function sendSystemMessage(Room $room, string $message, array $parameters = []): void {
