@@ -402,6 +402,7 @@ var spreedPeerConnectionTable = [];
 					peerId: id
 				});
 				videoView.setParticipant(userId);
+				videoView.setScreenAvailable(!!spreedListofSharedScreens[id]);
 
 				OCA.SpreedMe.videos.videoViews[id] = videoView;
 
