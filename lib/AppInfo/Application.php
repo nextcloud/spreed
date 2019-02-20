@@ -30,6 +30,7 @@ use OCA\Spreed\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
 use OCA\Spreed\Files\TemplateLoader as FilesTemplateLoader;
+use OCA\Spreed\FullTextSearch\FullTextSearchService;
 use OCA\Spreed\Listener;
 use OCA\Spreed\Notification\Listener as NotificationListener;
 use OCA\Spreed\Notification\Notifier;
@@ -135,5 +136,18 @@ class Application extends App {
 		}
 		$cspManager = $this->getContainer()->getServer()->getContentSecurityPolicyManager();
 		$cspManager->addDefaultPolicy($csp);
+	}
+
+	/**
+	 * @param EventDispatcherInterface $dispatcher
+	 */
+	protected function registerFullTextSearch(EventDispatcherInterface $dispatcher) {
+		$dispatcher->addListener(
+			ChatManager::class . '::sendMessage', function(GenericEvent $e) {
+			$fullTextSearchService = $this->getContainer()
+										  ->query(FullTextSearchService::class);
+			$fullTextSearchService->onSendMessage($e);
+		}
+		);
 	}
 }
