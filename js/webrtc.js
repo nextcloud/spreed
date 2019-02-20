@@ -442,7 +442,8 @@ var spreedPeerConnectionTable = [];
 				};
 
 				var screenSharingIndicator = document.createElement('button');
-				screenSharingIndicator.className = 'screensharingIndicator force-icon-white-in-call icon-shadow icon-screen screen-off';
+				var screenOnOffClass = !!spreedListofSharedScreens[id]? 'screen-on': 'screen-off';
+				screenSharingIndicator.className = 'screensharingIndicator force-icon-white-in-call icon-shadow icon-screen ' + screenOnOffClass;
 				screenSharingIndicator.setAttribute('data-original-title', t('spreed', 'Show screen'));
 
 				var iceFailedIndicator = document.createElement('button');
