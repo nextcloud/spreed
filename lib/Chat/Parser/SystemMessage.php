@@ -221,7 +221,7 @@ class SystemMessage {
 			try {
 				$parsedParameters['file'] = $this->getFileFromShare($parameters['share']);
 				$parsedMessage = '{file}';
-				$comment->setVerb('comment');
+				$chatMessage->setMessageType('comment');
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
