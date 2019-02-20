@@ -44,7 +44,6 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IUser;
 use OCP\IUserManager;
 
 class ChatController extends OCSController {
@@ -365,8 +364,8 @@ class ChatController extends OCSController {
 		if ($search === '' || strpos('all', $search) !== false) {
 			array_unshift($results, [
 				'id' => 'all',
-				'label' => $this->l->t('Everyone'),
-				'source' => 'groups',
+				'label' => $room->getName() ?: $this->l->t('Conversation'),
+				'source' => 'calls',
 			]);
 		}
 

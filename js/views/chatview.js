@@ -372,7 +372,7 @@
 				actorDisplayName === '') {
 				actorDisplayName = t('spreed', 'Guest');
 			}
-			if (actorDisplayName == null) {
+			if (actorDisplayName === null) {
 				actorDisplayName = t('spreed', '[Unknown user name]');
 			}
 
@@ -565,7 +565,7 @@
 				var $avatar = $this.find('.avatar');
 
 				var user = $avatar.data('user-id');
-				if (user !== 'all' && user !== OC.getCurrentUser().uid) {
+				if (user !== OC.getCurrentUser().uid) {
 					$this.contactsMenu(user, 0, $this);
 				}
 			});

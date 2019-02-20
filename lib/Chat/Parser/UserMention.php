@@ -24,6 +24,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Chat\Parser;
 
 use OCA\Spreed\Model\Message;
+use OCA\Spreed\Room;
 use OCP\Comments\ICommentsManager;
 use OCP\IL10N;
 use OCP\IUser;
@@ -73,7 +74,11 @@ class UserMention {
 
 		$mentions = $comment->getMentions();
 		foreach ($mentions as $mention) {
-			if ($mention['type'] === 'user' && $mention['id'] !== 'all') {
+			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
+				$mention['type'] = 'call';
+			}
+
+			if ($mention['type'] === 'user') {
 				$user = $this->userManager->get($mention['id']);
 				if (!$user instanceof IUser) {
 					continue;
@@ -94,8 +99,13 @@ class UserMention {
 			$placeholder = strpos($mention['id'], ' ') !== false ? ('@"' . $mention['id'] . '"') : ('@' .  $mention['id']);
 			$message = str_replace($placeholder, '{' . $mentionParameterId . '}', $message);
 
-			if ($mention['type'] === 'user' && $mention['id'] === 'all') {
-				$displayName = $this->l->t('Everyone');
+			if ($mention['type'] === 'call') {
+				$messageParameters[$mentionParameterId] = [
+					'type' => $mention['type'],
+					'id' => $chatMessage->getRoom()->getToken(),
+					'name' => $chatMessage->getRoom()->getName() ?: $this->l->t('Conversation'),
+					'call-type' => $this->getRoomType($chatMessage->getRoom()),
+				];
 			} else {
 				try {
 					$displayName = $this->commentsManager->resolveDisplayName($mention['type'], $mention['id']);
@@ -104,16 +114,33 @@ class UserMention {
 					// type, so the client decides what to display.
 					$displayName = '';
 				}
-			}
 
-			$messageParameters[$mentionParameterId] = [
-				'type' => $mention['type'],
-				'id' => $mention['id'],
-				'name' => $displayName
-			];
+				$messageParameters[$mentionParameterId] = [
+					'type' => $mention['type'],
+					'id' => $mention['id'],
+					'name' => $displayName,
+				];
+			}
 		}
 
 		$chatMessage->setMessage($message, $messageParameters);
 	}
 
+	/**
+	 * @param Room $room
+	 * @return string
+	 * @throws \InvalidArgumentException
+	 */
+	protected function getRoomType(Room $room): string {
+		switch ($room->getType()) {
+			case Room::ONE_TO_ONE_CALL:
+				return 'one2one';
+			case Room::GROUP_CALL:
+				return 'group';
+			case Room::PUBLIC_CALL:
+				return 'public';
+			default:
+				throw new \InvalidArgumentException('Unknown room type');
+		}
+	}
 }
