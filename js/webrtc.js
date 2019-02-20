@@ -326,7 +326,7 @@ var spreedPeerConnectionTable = [];
 				}
 			}
 
-			if (delayedCreatePeer[message.from]) {
+			if (message.roomType === 'video' && delayedCreatePeer[message.from]) {
 				clearTimeout(delayedCreatePeer[message.from]);
 				delete delayedCreatePeer[message.from];
 			}
