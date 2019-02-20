@@ -294,8 +294,9 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 		margin-right: 2px;
 
 		&.icon {
-			height: 18px !important;
-			width: 18px !important;
+			margin-top: -2px;
+			margin-left: 1px;
+			background-color: var(--color-background-darker);
 		}
 	}
 }
