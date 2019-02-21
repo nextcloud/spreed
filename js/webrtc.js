@@ -314,14 +314,19 @@ var spreedPeerConnectionTable = [];
 
 			var peers = OCA.SpreedMe.webrtc.webrtc.peers;
 			var stalePeer = peers.find(function(peer) {
-				return peer.id === message.from && peer.sid !== message.sid;
+				return peer.id === message.from && peer.type === message.roomType && peer.sid !== message.sid;
 			});
 
 			if (stalePeer) {
-				usersChanged(signaling, [], [stalePeer.id]);
+				stalePeer.end();
+
+				if (message.roomType === 'video') {
+					OCA.SpreedMe.speakers.remove(stalePeer.id, true);
+					OCA.SpreedMe.videos.remove(stalePeer.id);
+				}
 			}
 
-			if (delayedCreatePeer[message.from]) {
+			if (message.roomType === 'video' && delayedCreatePeer[message.from]) {
 				clearTimeout(delayedCreatePeer[message.from]);
 				delete delayedCreatePeer[message.from];
 			}
@@ -397,6 +402,7 @@ var spreedPeerConnectionTable = [];
 					peerId: id
 				});
 				videoView.setParticipant(userId);
+				videoView.setScreenAvailable(!!spreedListofSharedScreens[id]);
 
 				OCA.SpreedMe.videos.videoViews[id] = videoView;
 
