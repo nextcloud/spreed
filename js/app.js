@@ -791,9 +791,9 @@
 			localVideo.hide();
 		},
 		disableVideo: function() {
-			this._mediaControlsView.disableVideo();
-			// Always hide the video, even if "disableVideo" returned "false".
-			this.hideVideo();
+			if (this._mediaControlsView.disableVideo()) {
+				this.hideVideo();
+			}
 		},
 		// Called from webrtc.js
 		disableScreensharingButton: function() {
