@@ -49,6 +49,9 @@ class MessageParser {
 	/** @var GuestManager */
 	private $guestManager;
 
+	/** @var array */
+	protected $guestNames = [];
+
 	public function __construct(EventDispatcherInterface $dispatcher,
 								IUserManager $userManager,
 								GuestManager $guestManager) {
@@ -77,10 +80,15 @@ class MessageParser {
 		if ($comment->getActorType() === 'users') {
 			$user = $this->userManager->get($comment->getActorId());
 			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
-		} else if ($comment->getActorType() === 'guests' && isset($guestNames[$comment->getActorId()])) {
-			try {
-				$displayName = $this->guestManager->getNameBySessionHash($comment->getActorId());
-			} catch (ParticipantNotFoundException $e) {
+		} else if ($comment->getActorType() === 'guests') {
+			if (isset($guestNames[$comment->getActorId()])) {
+				$displayName = $this->guestNames[$comment->getActorId()];
+			} else {
+				try {
+					$displayName = $this->guestManager->getNameBySessionHash($comment->getActorId());
+				} catch (ParticipantNotFoundException $e) {
+				}
+				$this->guestNames[$comment->getActorId()] = $displayName;
 			}
 		} else if ($comment->getActorType() === 'bots') {
 			$displayName = $comment->getActorId() . '-bot';
