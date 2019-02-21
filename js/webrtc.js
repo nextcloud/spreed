@@ -76,15 +76,19 @@ var spreedPeerConnectionTable = [];
 			return;
 		}
 
-		if (!webrtc.webrtc.getPeers(sessionId, 'screen').length) {
-			if (useMcu) {
-				// TODO(jojo): Already create peer object to avoid duplicate offers.
-				// TODO(jojo): We should use "requestOffer" as with regular
-				// audio/video peers. Not possible right now as there is no way
-				// for clients to know that screensharing is active and an offer
-				// from the MCU should be requested.
-				webrtc.connection.sendOffer(sessionId, "screen");
-			} else {
+		var screenPeers = webrtc.webrtc.getPeers(sessionId, 'screen');
+		if (useMcu && !screenPeers.length) {
+			// TODO(jojo): Already create peer object to avoid duplicate offers.
+			// TODO(jojo): We should use "requestOffer" as with regular
+			// audio/video peers. Not possible right now as there is no way
+			// for clients to know that screensharing is active and an offer
+			// from the MCU should be requested.
+			webrtc.connection.sendOffer(sessionId, "screen");
+		} else if (!useMcu) {
+			var screenPeerSharedTo = screenPeers.find(function(screenPeer) {
+				return screenPeer.sharemyscreen === true;
+			});
+			if (!screenPeerSharedTo) {
 				var peer = webrtc.webrtc.createPeer({
 					id: sessionId,
 					type: 'screen',
