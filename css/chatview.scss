@@ -25,7 +25,15 @@
 	width: calc(100% - 36px);
 	margin-left: 36px;
 	padding-right: 30px;
-	display: block;
+	/**
+	 * The div needs to be inline-block, so Chrome/Chromium correctly insert
+	 * div-ed multi-line-text with new lines.
+	 * Otherwise they are just chained together on posting.
+	 *
+	 * See https://stackoverflow.com/a/24689420
+	 * See https://github.com/nextcloud/spreed/issues/1561
+	 */
+	display: inline-block;
 }
 
 #chatView .newCommentForm .submit,
