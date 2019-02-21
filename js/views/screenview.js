@@ -68,7 +68,7 @@
 			if (participantName) {
 				nameIndicator = t('spreed', "{participantName}'s screen", {participantName: participantName});
 			} else {
-				nameIndicator = t('spreed', "Guest's screen")
+				nameIndicator = t('spreed', "Guest's screen");
 			}
 
 			this.getUI('nameIndicator').text(nameIndicator);
@@ -77,7 +77,7 @@
 		/**
 		 * Sets the element with the video stream.
 		 *
-		 * @param HTMLVideoElement|null videoElement the element to set, or null
+		 * @param {HTMLVideoElement|null} videoElement the element to set, or null
 		 *        to remove the current one.
 		 */
 		setVideoElement: function(videoElement) {
