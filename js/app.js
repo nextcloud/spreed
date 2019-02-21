@@ -702,12 +702,7 @@
 		initAudioVideoSettings: function(configuration) {
 			if (configuration.audio !== false) {
 				this._mediaControlsView.setAudioAvailable(true);
-
-				if (!this._mediaControlsView.audioEnabled) {
-					this._mediaControlsView.setAudioEnabled(false);
-				} else {
-					this._mediaControlsView.setAudioEnabled(true);
-				}
+				this._mediaControlsView.setAudioEnabled(this._mediaControlsView.audioEnabled);
 			} else {
 				this._mediaControlsView.setAudioEnabled(false);
 				this._mediaControlsView.setAudioAvailable(false);
@@ -715,12 +710,7 @@
 
 			if (configuration.video !== false) {
 				this._mediaControlsView.setVideoAvailable(true);
-
-				if (!this._mediaControlsView.videoEnabled) {
-					this.setVideoEnabled(false);
-				} else {
-					this.setVideoEnabled(true);
-				}
+				this.setVideoEnabled(this._mediaControlsView.videoEnabled);
 			} else {
 				this.setVideoEnabled(false);
 				this._mediaControlsView.setVideoAvailable(false);
