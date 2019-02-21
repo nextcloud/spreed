@@ -16,6 +16,7 @@
   "views/emptycontentview.js",
   "views/mediacontrolsview.js",
   "views/richobjectstringparser.js",
+  "views/screenview.js",
   "views/templates.js",
   "views/videoview.js",
   "views/virtuallist.js",

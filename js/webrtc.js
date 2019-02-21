@@ -709,18 +709,10 @@ var spreedPeerConnectionTable = [];
 		};
 
 		OCA.SpreedMe.sharedScreens = {
-			getContainerId: function(id) {
-				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-				if (currentUser === id) {
-					return '#localScreenContainer';
-				} else {
-					var sanitizedId = id.replace(/[!"#$%&'()*+,.\/:;<=>?@[\\\]^`{|}~]/g, "\\$&");
-					return '#container_' + sanitizedId + '_screen_incoming';
-				}
-			},
+			screenViews: [],
 			switchScreenToId: function(id) {
-				var selectedScreen = $(OCA.SpreedMe.sharedScreens.getContainerId(id));
-				if(selectedScreen.find('video').length === 0) {
+				var screenView = OCA.SpreedMe.sharedScreens.screenViews[id];
+				if (!screenView) {
 					console.warn('promote: no screen video found for ID', id);
 					return;
 				}
@@ -729,7 +721,6 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				var screenContainerId = null;
 				for (var currentId in spreedListofSharedScreens) {
 					// skip loop if the property is from prototype
 					if (!spreedListofSharedScreens.hasOwnProperty(currentId)) {
@@ -741,11 +732,11 @@ var spreedPeerConnectionTable = [];
 						continue;
 					}
 
-					screenContainerId = OCA.SpreedMe.sharedScreens.getContainerId(currentId);
+					screenView = OCA.SpreedMe.sharedScreens.screenViews[currentId];
 					if (currentId === id) {
-						$(screenContainerId).removeClass('hidden');
+						screenView.$el.removeClass('hidden');
 					} else {
-						$(screenContainerId).addClass('hidden');
+						screenView.$el.addClass('hidden');
 					}
 				}
 
@@ -780,6 +771,13 @@ var spreedPeerConnectionTable = [];
 			remove: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
+				}
+
+				var screenView = OCA.SpreedMe.sharedScreens.screenViews[id];
+				if (screenView) {
+					screenView.$el.remove();
+
+					delete OCA.SpreedMe.sharedScreens.screenViews[id];
 				}
 
 				delete spreedListofSharedScreens[id];
@@ -1065,12 +1063,6 @@ var spreedPeerConnectionTable = [];
 						videoView.setVideoElement(null);
 					}
 				} else if (peer.type === 'screen') {
-					var remotes = document.getElementById('screens');
-					var screenContainer = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId(peer));
-					if (remotes && screenContainer) {
-						remotes.removeChild(screenContainer);
-					}
-
 					OCA.SpreedMe.sharedScreens.remove(peer.id);
 				}
 			} else if (video.id === 'localScreen') {
@@ -1078,12 +1070,6 @@ var spreedPeerConnectionTable = [];
 				// the generic "videoRemoved" API, but the stream must be
 				// handled differently.
 				OCA.SpreedMe.webrtc.emit('localScreenStopped');
-
-				screens = document.getElementById('screens');
-				var localScreenContainer = document.getElementById('localScreenContainer');
-				if (screens && localScreenContainer) {
-					screens.removeChild(localScreenContainer);
-				}
 
 				OCA.SpreedMe.sharedScreens.remove(OCA.SpreedMe.webrtc.connection.getSessionid());
 			}
@@ -1122,37 +1108,25 @@ var spreedPeerConnectionTable = [];
 
 			var screens = document.getElementById('screens');
 			if (screens) {
-				// Indicator for username
-				var userIndicator = document.createElement('div');
-				userIndicator.className = 'nameIndicator';
+				var screenView = new OCA.Talk.Views.ScreenView({
+					peerId: peer? peer.id: undefined
+				});
+				screenView.setVideoElement(video);
+
 				if (peer) {
-					var guestName = guestNamesTable[peer.id];
-					if (peer.nick) {
-						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: peer.nick});
-					} else if (guestName && guestName.length > 0) {
-						userIndicator.textContent = t('spreed', "{participantName}'s screen", {participantName: guestName});
-					} else {
-						userIndicator.textContent = t('spreed', "Guest's screen");
-					}
-				} else {
-					userIndicator.textContent = t('spreed', 'Your screen');
+					var participantName = peer.nick || guestNamesTable[peer.id];
+					screenView.setParticipantName(participantName);
 				}
 
-				// Generic container
-				var container = document.createElement('div');
-				container.className = 'screenContainer';
-				container.id = peer ? 'container_' + OCA.SpreedMe.webrtc.getDomId(peer) : 'localScreenContainer';
-				container.appendChild(video);
-				container.appendChild(userIndicator);
-				video.oncontextmenu = function() {
-					return false;
-				};
-
-				$(container).prependTo($('#screens'));
+				screenView.$el.prependTo($('#screens'));
 
 				if (peer) {
+					OCA.SpreedMe.sharedScreens.screenViews[peer.id] = screenView;
+
 					OCA.SpreedMe.sharedScreens.add(peer.id);
 				} else {
+					OCA.SpreedMe.sharedScreens.screenViews[OCA.SpreedMe.webrtc.connection.getSessionid()] = screenView;
+
 					OCA.SpreedMe.sharedScreens.add(OCA.SpreedMe.webrtc.connection.getSessionid());
 				}
 			}
@@ -1207,21 +1181,13 @@ var spreedPeerConnectionTable = [];
 			}
 
 			//Screen
-			var screen = document.getElementById('container_' + OCA.SpreedMe.webrtc.getDomId({
-					id: data.id,
-					type: 'screen',
-					broadcaster: false
-				}));
+			var screenView = OCA.SpreedMe.sharedScreens.screenViews[data.id];
+			if (screenView) {
+				screenView.setParticipantName(data.name);
+			}
 
-			var screenNameIndicator = $(screen).find('.nameIndicator');
-
-			if (!data.name) {
-				screenNameIndicator.text(t('spreed', "Guest's screen"));
-			} else {
-				screenNameIndicator.text(t('spreed', "{participantName}'s screen", {participantName: data.name}));
-				if (!data.userid) {
-					guestNamesTable[data.id] = data.name;
-				}
+			if (!data.userid && data.name) {
+				guestNamesTable[data.id] = data.name;
 			}
 
 			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
