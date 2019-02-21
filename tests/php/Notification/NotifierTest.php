@@ -21,10 +21,13 @@
 
 namespace OCA\Spreed\Tests\php\Notifications;
 
+use cogpowered\FineDiff\Granularity\Paragraph;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Model\Message;
 use OCA\Spreed\Notification\Notifier;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
@@ -546,6 +549,13 @@ class NotifierTest extends \Test\TestCase {
 		$room->expects($this->atLeastOnce())
 			->method('getName')
 			->willReturn($roomName);
+
+		$participant = $this->createMock(Participant::class);
+		$room->expects($this->once())
+			->method('getParticipant')
+			->with('recipient')
+			->willReturn($participant);
+
 		if ($roomName !== '') {
 			$room->expects($this->atLeastOnce())
 				->method('getId')
@@ -566,37 +576,23 @@ class NotifierTest extends \Test\TestCase {
 			$user->expects($this->once())
 				->method('getDisplayName')
 				->willReturn($displayName);
-			$this->userManager->expects($this->at(0))
+			$this->userManager->expects($this->once())
 				->method('get')
 				->with($subjectParameters['userId'])
 				->willReturn($user);
-			$recipient = $this->createMock(IUser::class);
-			$this->userManager->expects($this->at(1))
-				->method('get')
-				->with('recipient')
-				->willReturn($recipient);
 		} else if ($subjectParameters['userType'] === 'users' && $deletedUser) {
 			$user->expects($this->never())
 				->method('getDisplayName');
-			$this->userManager->expects($this->at(0))
+			$this->userManager->expects($this->once())
 				->method('get')
 				->with($subjectParameters['userId'])
 				->willReturn(null);
-
-			$recipient = $this->createMock(IUser::class);
-			$this->userManager->expects($this->at(1))
-				->method('get')
-				->with('recipient')
-				->willReturn($recipient);
 		} else {
 			$user->expects($this->never())
 				->method('getDisplayName');
 
-			$recipient = $this->createMock(IUser::class);
-			$this->userManager->expects($this->once())
-				->method('get')
-				->with('recipient')
-				->willReturn($recipient);
+			$this->userManager->expects($this->never())
+				->method('get');
 		}
 
 		$comment = $this->createMock(IComment::class);
@@ -604,16 +600,31 @@ class NotifierTest extends \Test\TestCase {
 			->method('get')
 			->with('23')
 			->willReturn($comment);
-		$this->messageParser->expects($this->once())
-			->method('parseMessage')
-			->with($room, $comment)
-			->willReturn(['Hi {mention-user1}', [
+
+		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->expects($this->exactly(2))
+			->method('getMessage')
+			->willReturn('Hi {mention-user1}');
+		$chatMessage->expects($this->exactly(2))
+			->method('getMessageParameters')
+			->willReturn([
 				'mention-user1' => [
 					'type' => 'user',
 					'id' => 'admin',
 					'name' => 'Administrator',
 				],
-			]]);
+			]);
+		$chatMessage->expects($this->once())
+			->method('getVisibility')
+			->willReturn(true);
+
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($room, $participant, $comment, $l)
+			->willReturn($chatMessage);
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($chatMessage);
 
 		$notification->expects($this->once())
 			->method('setIcon')
