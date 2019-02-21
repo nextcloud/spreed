@@ -198,27 +198,7 @@
 				return;
 			}
 
-			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
-			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
-
-			if (videoEnabled) {
-				avatarContainer.addClass('hidden');
-				localVideo.removeClass('hidden');
-
-				return;
-			}
-
-			var userId = OC.getCurrentUser().uid;
-			var guestName = localStorage.getItem("nick");
-			this._localVideoView.setAvatar(userId, guestName);
-
-			if (!userId && !this._displayedGuestNameHint) {
-				OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
-				this._displayedGuestNameHint = true;
-			}
-
-			avatarContainer.removeClass('hidden');
-			localVideo.addClass('hidden');
+			this._localVideoView.setVideoEnabled(videoEnabled);
 		},
 		// Called from webrtc.js
 		disableScreensharingButton: function() {

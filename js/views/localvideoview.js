@@ -45,6 +45,8 @@
 		},
 
 		ui: {
+			'video': 'video',
+			'avatarContainer': '.avatar-container',
 			'avatar': '.avatar',
 			'nameIndicator': '.nameIndicator',
 		},
@@ -87,6 +89,27 @@
 				this.getUI('avatar').imageplaceholder('?', guestName, 128);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
 			}
+		},
+
+		setVideoEnabled: function(videoEnabled) {
+			if (videoEnabled) {
+				this.getUI('avatarContainer').addClass('hidden');
+				this.getUI('video').removeClass('hidden');
+
+				return;
+			}
+
+			var userId = OC.getCurrentUser().uid;
+			var guestName = localStorage.getItem("nick");
+			this.setAvatar(userId, guestName);
+
+			if (!userId && !this._displayedGuestNameHint) {
+				OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
+				this._displayedGuestNameHint = true;
+			}
+
+			this.getUI('avatarContainer').removeClass('hidden');
+			this.getUI('video').addClass('hidden');
 		},
 
 	});
