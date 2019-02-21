@@ -132,6 +132,13 @@ templates['mediacontrolsview'] = template({"compiler":[7,">= 4.0.0"],"main":func
     + alias4(((helper = (helper = helpers.stopScreenButtonTitle || (depth0 != null ? depth0.stopScreenButtonTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"stopScreenButtonTitle","hash":{},"data":data}) : helper)))
     + "</span>\n			</button>\n		</li>\n	</ul>\n</div>\n";
 },"useData":true});
+templates['richobjectstringparser_call'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "<span class=\"atwho-inserted\" contenteditable=\"false\"><span class=\"mention-call avatar-name-wrapper currentUser\"><span class=\"avatar icon icon-contacts\" data-user-id=\"all\"></span><strong>"
+    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"name","hash":{},"data":data}) : helper)))
+    + "</strong></span></span>\n";
+},"useData":true});
 templates['richobjectstringparser_filepreview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 

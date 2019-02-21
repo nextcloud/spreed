@@ -1,0 +1,6 @@
+{{! The browser merges two consecutive spaces, so the spaces inside the mention
+    are removed to prevent a trailing space from being merged with the space
+    after the mention, and thus causing the mention to "touch" the following
+    text; "~" from Handlebars can not be used because it is not recursive, it
+    only applies to a single level }}
+<span class="atwho-inserted" contenteditable="false"><span class="mention-call avatar-name-wrapper currentUser"><span class="avatar icon icon-contacts" data-user-id="all"></span><strong>{{name}}</strong></span></span>

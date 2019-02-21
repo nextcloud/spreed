@@ -265,6 +265,7 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	display: inline-flex;
 }
 
+#chatView .comment .message .mention-call,
 #chatView .comment .message .mention-user {
 	/* Make the mention the positioning context of its child contacts menu */
 	position: relative;
@@ -291,9 +292,16 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 		margin-top: -4px;
 		margin-left: 0;
 		margin-right: 2px;
+
+		&.icon {
+			margin-top: -2px;
+			margin-left: 1px;
+			background-color: var(--color-background-darker);
+		}
 	}
 }
 
+#chatView .comment:not(.systemMessage) .message .mention-call,
 #chatView .comment:not(.systemMessage) .message .mention-user {
 	font-weight: bold;
 
@@ -303,6 +311,7 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	}
 }
 
+#chatView .comment.systemMessage .message .mention-call,
 #chatView .comment.systemMessage .message .mention-user {
 	color: var(--color-main-text);
 }
