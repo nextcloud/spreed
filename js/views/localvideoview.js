@@ -91,6 +91,10 @@
 			}
 		},
 
+		setSpeaking: function(speaking) {
+			this.$el.toggleClass('speaking', speaking);
+		},
+
 		setVideoEnabled: function(videoEnabled) {
 			if (videoEnabled) {
 				this.getUI('avatarContainer').addClass('hidden');
