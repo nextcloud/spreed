@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "Commands" : "Commandes",
+    "_videocalls section_::_chat_commands_" : ["Section conférences vidéo","chat_commands"],
     "None" : "Aucun",
     "User" : "Utilisateur",
     "Everyone" : "Tout le monde",
@@ -191,6 +192,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Appel avec {user1}, {user2} et {user3} (Durée {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Appel avec {user1}, {user2}, {user3} et {user4} (Durée {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Appel avec {user1}, {user2}, {user3}, {user4} et {user5} (Durée {duration})",
+    "Conversation" : "Conversation",
     "Talk to %s" : "Appel de %s",
     "File is not shared, or shared but not with the user" : "Le fichier n'est pas partagé, ou partagé mais pas avec cet utilisateur",
     "Password request: %s" : "Demande de mot de passe : %s",

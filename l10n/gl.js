@@ -192,6 +192,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Chamada con {user1}, {user2} e {user3} (Duración {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Chamada con {user1}, {user2}, {user3} e {user4} (Duración {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Chamada con {user1}, {user2}, {user3}, {user4} e {user5} (Duración {duration})",
+    "Conversation" : "Conversa",
     "Talk to %s" : "Falar con %s",
     "File is not shared, or shared but not with the user" : "O ficheiro non está compartido, ou compartido, pero non co usuario",
     "Password request: %s" : "Solicitude de contrasinal: %s",
