@@ -93,6 +93,7 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} pakvietė jus į {call}",
     "{actor} set a password" : "{actor} nustatė slaptažodį",
     "You set a password" : "Jūs nustatėte slaptažodį",
+    "{actor} removed the password" : "{actor} pašalino slaptažodį",
     "You removed the password" : "Jūs pašalinote slaptažodį",
     "{actor} added {user}" : "{actor} pridėjo naudotoją {user}",
     "You added {user}" : "Jūs pridėjote naudotoją {user}",

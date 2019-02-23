@@ -191,6 +191,7 @@ OC.L10N.register(
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Hovor s {user1}, {user2} a {user3} (trvání {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Hovor s {user1}, {user2}, {user3} a {user4} (trvání {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Hovor s {user1}, {user2}, {user3}, {user4} a {user5} (trvání {duration})",
+    "Conversation" : "Konverzace",
     "Talk to %s" : "Mluvit s %s",
     "File is not shared, or shared but not with the user" : "Soubor není sdílen, nebo je sdílený s jiným uživatelem",
     "Password request: %s" : "Požadavek na heslo: %s",
