@@ -190,6 +190,7 @@
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Rozmowa z {user1}, {user2} i {user3} (Czas trwania {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Rozmowa z {user1}, {user2}, {user3} i {user4} (Czas trwania {duration})",
     "Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration {duration})" : "Rozmowa z {user1}, {user2}, {user3}, {user4} i {user5} (Czas trwania {duration})",
+    "Conversation" : "Rozmowa",
     "Talk to %s" : "Rozmawiaj z %s",
     "File is not shared, or shared but not with the user" : "Plik nie jest udostępniony, albo nie jest dostępny dla użytkownika",
     "Password request: %s" : "Żądanie hasła: %s",
