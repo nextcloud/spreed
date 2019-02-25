@@ -365,7 +365,7 @@ class RoomController extends OCSController {
 	 * @return array
 	 */
 	protected function formatLastMessage(Room $room, Participant $participant, IComment $lastMessage): array {
-		$message = MessageParser::createMessage($room, $participant, $lastMessage, $this->l10n);
+		$message = $this->messageParser->createMessage($room, $participant, $lastMessage, $this->l10n);
 		$this->messageParser->parseMessage($message);
 
 		if (!$message->getVisibility()) {

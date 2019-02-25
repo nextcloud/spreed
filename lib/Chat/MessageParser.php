@@ -57,7 +57,7 @@ class MessageParser {
 		$this->guestManager = $guestManager;
 	}
 
-	public static function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
+	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
 		return new Message($room, $participant, $comment, $l);
 	}
 

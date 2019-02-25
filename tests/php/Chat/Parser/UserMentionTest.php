@@ -24,10 +24,15 @@ declare(strict_types=1);
 namespace OCA\Spreed\Tests\php\Chat\Parser;
 
 use OCA\Spreed\Chat\Parser\UserMention;
+use OCA\Spreed\Model\Message;
+use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class UserMentionTest extends \Test\TestCase {
 
@@ -38,7 +43,7 @@ class UserMentionTest extends \Test\TestCase {
 	protected $userManager;
 
 	/** @var UserMention */
-	protected $richMessageHelper;
+	protected $parser;
 
 	public function setUp() {
 		parent::setUp();
@@ -46,37 +51,44 @@ class UserMentionTest extends \Test\TestCase {
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 
-		$this->richMessageHelper = new UserMention($this->commentsManager, $this->userManager);
+		$this->parser = new UserMention($this->commentsManager, $this->userManager);
 	}
 
 	/**
-	 * @param string $message
 	 * @param array $mentions
-	 * @return \PHPUnit\Framework\MockObject\MockObject|IComment
+	 * @return MockObject|IComment
 	 */
-	private function newComment(string $message, array $mentions): IComment {
+	private function newComment(array $mentions): IComment {
 		$comment = $this->createMock(IComment::class);
 
-		$comment->method('getMessage')->willReturn($message);
 		$comment->method('getMentions')->willReturn($mentions);
 
 		return $comment;
 	}
 
 	public function testGetRichMessageWithoutEnrichableReferences() {
-		$comment = $this->newComment('Message without enrichable references', []);
+		$comment = $this->newComment([]);
 
-		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Message without enrichable references', []);
 
-		$this->assertEquals('Message without enrichable references', $message);
-		$this->assertEquals([], $messageParameters);
+		$this->parser->parseMessage($chatMessage);
+
+		$this->assertEquals('Message without enrichable references', $chatMessage->getMessage());
+		$this->assertEquals([], $chatMessage->getMessageParameters());
 	}
 
 	public function testGetRichMessageWithSingleMention() {
 		$mentions = [
 			['type'=>'user', 'id'=>'testUser'],
 		];
-		$comment = $this->newComment('Mention to @testUser', $mentions);
+		$comment = $this->newComment($mentions);
 
 		$this->commentsManager->expects($this->once())
 			->method('resolveDisplayName')
@@ -88,7 +100,16 @@ class UserMentionTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @testUser', []);
+
+		$this->parser->parseMessage($chatMessage);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -98,15 +119,15 @@ class UserMentionTest extends \Test\TestCase {
 			]
 		];
 
-		$this->assertEquals('Mention to {mention-user1}', $message);
-		$this->assertEquals($expectedMessageParameters, $messageParameters);
+		$this->assertEquals('Mention to {mention-user1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
 	public function testGetRichMessageWithDuplicatedMention() {
 		$mentions = [
 			['type'=>'user', 'id'=>'testUser'],
 		];
-		$comment = $this->newComment('Mention to @testUser and @testUser again', $mentions);
+		$comment = $this->newComment($mentions);
 
 		$this->commentsManager->expects($this->once())
 			->method('resolveDisplayName')
@@ -118,7 +139,16 @@ class UserMentionTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @testUser and @testUser again', []);
+
+		$this->parser->parseMessage($chatMessage);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -128,8 +158,8 @@ class UserMentionTest extends \Test\TestCase {
 			]
 		];
 
-		$this->assertEquals('Mention to {mention-user1} and {mention-user1} again', $message);
-		$this->assertEquals($expectedMessageParameters, $messageParameters);
+		$this->assertEquals('Mention to {mention-user1} and {mention-user1} again', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
 	public function testGetRichMessageWithSeveralMentions() {
@@ -138,7 +168,7 @@ class UserMentionTest extends \Test\TestCase {
 			['type'=>'user', 'id'=>'testUser2'],
 			['type'=>'user', 'id'=>'testUser3']
 		];
-		$comment = $this->newComment('Mention to @testUser1, @testUser2, @testUser1 again and @testUser3', $mentions);
+		$comment = $this->newComment($mentions);
 
 		$this->commentsManager->expects($this->exactly(3))
 			->method('resolveDisplayName')
@@ -162,7 +192,16 @@ class UserMentionTest extends \Test\TestCase {
 			)
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @testUser1, @testUser2, @testUser1 again and @testUser3', []);
+
+		$this->parser->parseMessage($chatMessage);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -182,8 +221,8 @@ class UserMentionTest extends \Test\TestCase {
 			]
 		];
 
-		$this->assertEquals('Mention to {mention-user1}, {mention-user2}, {mention-user1} again and {mention-user3}', $message);
-		$this->assertEquals($expectedMessageParameters, $messageParameters);
+		$this->assertEquals('Mention to {mention-user1}, {mention-user2}, {mention-user1} again and {mention-user3}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
 	public function testGetRichMessageWithNonExistingUserMention() {
@@ -191,7 +230,7 @@ class UserMentionTest extends \Test\TestCase {
 			['type'=>'user', 'id'=>'me'],
 			['type'=>'user', 'id'=>'testUser'],
 		];
-		$comment = $this->newComment('Mention @me to @testUser', $mentions);
+		$comment = $this->newComment($mentions);
 
 		$this->commentsManager->expects($this->once())
 			->method('resolveDisplayName')
@@ -208,7 +247,16 @@ class UserMentionTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention @me to @testUser', []);
+
+		$this->parser->parseMessage($chatMessage);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -218,15 +266,15 @@ class UserMentionTest extends \Test\TestCase {
 			]
 		];
 
-		$this->assertEquals('Mention @me to {mention-user1}', $message);
-		$this->assertEquals($expectedMessageParameters, $messageParameters);
+		$this->assertEquals('Mention @me to {mention-user1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
 	public function testGetRichMessageWhenDisplayNameCanNotBeResolved() {
 		$mentions = [
 			['type'=>'user', 'id'=>'testUser'],
 		];
-		$comment = $this->newComment('Mention to @testUser', $mentions);
+		$comment = $this->newComment($mentions);
 
 		$this->commentsManager->expects($this->once())
 			->method('resolveDisplayName')
@@ -237,7 +285,16 @@ class UserMentionTest extends \Test\TestCase {
 			->with('testUser')
 			->willReturn($this->createMock(IUser::class));
 
-		list($message, $messageParameters) = $this->richMessageHelper->parseMessage($comment);
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @testUser', []);
+
+		$this->parser->parseMessage($chatMessage);
 
 		$expectedMessageParameters = [
 			'mention-user1' => [
@@ -247,8 +304,8 @@ class UserMentionTest extends \Test\TestCase {
 			]
 		];
 
-		$this->assertEquals('Mention to {mention-user1}', $message);
-		$this->assertEquals($expectedMessageParameters, $messageParameters);
+		$this->assertEquals('Mention to {mention-user1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 
 }

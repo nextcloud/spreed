@@ -191,7 +191,7 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown comment');
 		}
 
-		$message = MessageParser::createMessage($room, $participant, $comment, $l);
+		$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
 		$this->messageParser->parseMessage($message);
 
 		if (!$message->getVisibility()) {

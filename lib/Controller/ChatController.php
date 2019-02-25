@@ -210,7 +210,7 @@ class ChatController extends OCSController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$chatMessage = MessageParser::createMessage($room, $participant, $comment, $this->l);
+		$chatMessage = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
 		$this->messageParser->parseMessage($chatMessage);
 
 		if (!$chatMessage->getVisibility()) {
@@ -293,7 +293,7 @@ class ChatController extends OCSController {
 
 		$messages = [];
 		foreach ($comments as $comment) {
-			$message = MessageParser::createMessage($room, $participant, $comment, $this->l);
+			$message = $this->messageParser->createMessage($room, $participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
 			if (!$message->getVisibility()) {
