@@ -317,6 +317,10 @@ var spreedPeerConnectionTable = [];
 
 			var peers = OCA.SpreedMe.webrtc.webrtc.peers;
 			var stalePeer = peers.find(function(peer) {
+				if (peer.sharemyscreen) {
+					return false;
+				}
+
 				return peer.id === message.from && peer.type === message.roomType && peer.sid !== message.sid;
 			});
 
