@@ -42,6 +42,8 @@ use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Notification\IManager;
 
 class PageController extends Controller {
@@ -50,7 +52,9 @@ class PageController extends Controller {
 	/** @var RoomController */
 	private $api;
 	/** @var TalkSession */
-	private $session;
+	private $talkSession;
+	/** @var IUserSession */
+	private $userSession;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -66,6 +70,7 @@ class PageController extends Controller {
 								IRequest $request,
 								RoomController $api,
 								TalkSession $session,
+								IUserSession $userSession,
 								?string $UserId,
 								ILogger $logger,
 								Manager $manager,
@@ -74,7 +79,8 @@ class PageController extends Controller {
 								Config $config) {
 		parent::__construct($appName, $request);
 		$this->api = $api;
-		$this->session = $session;
+		$this->talkSession = $session;
+		$this->userSession = $userSession;
 		$this->userId = $UserId;
 		$this->logger = $logger;
 		$this->manager = $manager;
@@ -95,26 +101,29 @@ class PageController extends Controller {
 	 * @throws HintException
 	 */
 	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
-		if ($this->userId === null) {
+		$user = $this->userSession->getUser();
+		if (!$user instanceof IUser) {
 			return $this->guestEnterRoom($token, $password);
+		}
+
+		if ($this->config->isDisabledForUser($user)) {
+			return new RedirectResponse(\OC_Util::getDefaultPageUrl());
 		}
 
 		if ($token !== '') {
 			$room = null;
 			try {
 				$room = $this->manager->getRoomByToken($token);
-				if ($this->userId !== null) {
-					$notification = $this->notificationManager->createNotification();
-					try {
-						$notification->setApp('spreed')
-							->setUser($this->userId)
-							->setObject('room', $room->getToken());
-						$this->notificationManager->markProcessed($notification);
-						$notification->setObject('call', $room->getToken());
-						$this->notificationManager->markProcessed($notification);
-					} catch (\InvalidArgumentException $e) {
-						$this->logger->logException($e, ['app' => 'spreed']);
-					}
+				$notification = $this->notificationManager->createNotification();
+				try {
+					$notification->setApp('spreed')
+						->setUser($this->userId)
+						->setObject('room', $room->getToken());
+					$this->notificationManager->markProcessed($notification);
+					$notification->setObject('call', $room->getToken());
+					$this->notificationManager->markProcessed($notification);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->logException($e, ['app' => 'spreed']);
 				}
 
 				// If the room is not a public room, check if the user is in the participants
@@ -126,7 +135,7 @@ class PageController extends Controller {
 				$token = '';
 			}
 
-			$this->session->removePasswordForRoom($token);
+			$this->talkSession->removePasswordForRoom($token);
 
 			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
@@ -142,7 +151,7 @@ class PageController extends Controller {
 					$passwordVerification = $room->verifyPassword($password);
 
 					if ($passwordVerification['result']) {
-						$this->session->setPasswordForRoom($token, $token);
+						$this->talkSession->setPasswordForRoom($token, $token);
 					} else {
 						if ($passwordVerification['url'] === '') {
 							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
@@ -191,12 +200,12 @@ class PageController extends Controller {
 			]));
 		}
 
-		$this->session->removePasswordForRoom($token);
+		$this->talkSession->removePasswordForRoom($token);
 		if ($room->hasPassword()) {
 			$passwordVerification = $room->verifyPassword($password);
 
 			if ($passwordVerification['result']) {
-				$this->session->setPasswordForRoom($token, $token);
+				$this->talkSession->setPasswordForRoom($token, $token);
 			} else {
 				if ($passwordVerification['url'] === '') {
 					return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
