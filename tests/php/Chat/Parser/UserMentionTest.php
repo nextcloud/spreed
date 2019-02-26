@@ -36,11 +36,12 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class UserMentionTest extends \Test\TestCase {
 
-	/** @var ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var ICommentsManager|MockObject */
 	protected $commentsManager;
-
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var IL10N|MockObject */
+	protected $l;
 
 	/** @var UserMention */
 	protected $parser;
@@ -50,8 +51,9 @@ class UserMentionTest extends \Test\TestCase {
 
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->l = $this->createMock(IL10N::class);
 
-		$this->parser = new UserMention($this->commentsManager, $this->userManager);
+		$this->parser = new UserMention($this->commentsManager, $this->userManager, $this->l);
 	}
 
 	/**
