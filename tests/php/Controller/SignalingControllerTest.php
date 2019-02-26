@@ -34,6 +34,7 @@ use OCA\Spreed\Signaling\Messages;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -92,13 +93,14 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->userId = 'testUser';
 		$this->secureRandom = \OC::$server->getSecureRandom();
 		$timeFactory = $this->createMock(ITimeFactory::class);
+		$groupManager = $this->createMock(IGroupManager::class);
 		$config = \OC::$server->getConfig();
 		$config->setAppValue('spreed', 'signaling_servers', json_encode([
 			'secret' => 'MySecretValue',
 		]));
 		$config->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
-		$this->config = new Config($config, $this->secureRandom, $timeFactory);
+		$this->config = new Config($config, $this->secureRandom, $groupManager, $timeFactory);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->manager = $this->createMock(Manager::class);

@@ -31,6 +31,7 @@ use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IUser;
@@ -95,6 +96,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		$this->userId = 'testUser';
 		$this->secureRandom = \OC::$server->getSecureRandom();
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
+		$groupManager = $this->createMock(IGroupManager::class);
 		$config = \OC::$server->getConfig();
 		$this->signalingSecret = 'the-signaling-secret';
 		$this->baseUrl = 'https://localhost/signaling';
@@ -107,7 +109,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			],
 		]));
 
-		$this->config = new Config($config, $this->secureRandom, $this->timeFactory);
+		$this->config = new Config($config, $this->secureRandom, $groupManager, $this->timeFactory);
 		$this->recreateBackendNotifier();
 
 

@@ -24,25 +24,48 @@ namespace OCA\Spreed;
 
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
+use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
 class Config {
 
 	/** @var IConfig */
 	protected $config;
-
 	/** @var ITimeFactory */
 	protected $timeFactory;
-
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
 
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
+								IGroupManager $groupManager,
 								ITimeFactory $timeFactory) {
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
+		$this->groupManager = $groupManager;
 		$this->timeFactory = $timeFactory;
+	}
+
+	/**
+	 * @return string[]
+	 */
+	public function getAllowedGroupIds(): array {
+		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
+	public function isDisabledForUser(IUser $user): bool {
+		$allowedGroups = $this->getAllowedGroupIds();
+		if (empty($allowedGroups)) {
+			return false;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return empty(array_intersect($allowedGroups, $userGroups));
 	}
 
 	public function getSettings(?string $userId): array {
