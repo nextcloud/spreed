@@ -96,14 +96,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		</providers>
 	</activity>
 
-	<navigations>
-		<navigation>
-			<name>Talk</name>
-			<route>spreed.Page.index</route>
-			<order>3</order>
-		</navigation>
-	</navigations>
-
 	<contactsmenu>
 		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>
 	</contactsmenu>
