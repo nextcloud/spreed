@@ -85,6 +85,13 @@ class Hooks {
 			return false;
 		}
 
+		$numGuests = $room->getActiveGuests();
+
+		if (!$room->resetActiveSince()) {
+			// Race-condition, the room was already reset.
+			return false;
+		}
+
 		$event = $this->activityManager->generateEvent();
 		try {
 			$event->setApp('spreed')
@@ -95,7 +102,7 @@ class Hooks {
 				->setSubject('call', [
 					'room' => $room->getId(),
 					'users' => $userIds,
-					'guests' => $room->getActiveGuests(),
+					'guests' => $numGuests,
 					'duration' => $duration,
 				]);
 		} catch (\InvalidArgumentException $e) {
@@ -107,7 +114,7 @@ class Hooks {
 			'message' => 'call_ended',
 			'parameters' => [
 				'users' => $userIds,
-				'guests' => $room->getActiveGuests(),
+				'guests' => $numGuests,
 				'duration' => $duration,
 			],
 		]), new \DateTime(), false);
@@ -123,7 +130,6 @@ class Hooks {
 			}
 		}
 
-		$room->resetActiveSince();
 		return true;
 	}
 
