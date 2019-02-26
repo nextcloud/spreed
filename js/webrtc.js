@@ -1041,12 +1041,12 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
 			sendDataChannelToAll('status', 'speaking');
-			$('#localVideoContainer').addClass('speaking');
+			OCA.SpreedMe.app._localVideoView.setSpeaking(true);
 		});
 
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			sendDataChannelToAll('status', 'stoppedSpeaking');
-			$('#localVideoContainer').removeClass('speaking');
+			OCA.SpreedMe.app._localVideoView.setSpeaking(false);
 		});
 
 		// a peer was removed

@@ -111,11 +111,13 @@
 				this.stopReceivingMessages();
 			});
 
-			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
+			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				app: this,
 				webrtc: OCA.SpreedMe.webrtc,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
+
+			this._mediaControlsView = this._localVideoView._mediaControlsView;
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
@@ -126,7 +128,7 @@
 				// participants.
 				var participants = this.activeRoom.get('participants');
 				if (participants && Object.keys(participants).length > 5) {
-					this.disableVideo();
+					this.setVideoEnabled(false);
 				}
 			}.bind(this));
 
@@ -158,7 +160,6 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			localMediaChannel.trigger('startLocalMedia');
@@ -169,7 +170,6 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			if (OCA.SpreedMe.webrtc.capabilities.support) {
@@ -178,68 +178,27 @@
 		},
 		initAudioVideoSettings: function(configuration) {
 			if (configuration.audio !== false) {
-				this._mediaControlsView.hasAudio();
-
-				if (this._mediaControlsView.audioDisabled) {
-					this._mediaControlsView.disableAudio();
-				} else {
-					this._mediaControlsView.enableAudio();
-				}
+				this._mediaControlsView.setAudioAvailable(true);
+				this._mediaControlsView.setAudioEnabled(this._mediaControlsView.audioEnabled);
 			} else {
-				this._mediaControlsView.disableAudio();
-				this._mediaControlsView.hasNoAudio();
+				this._mediaControlsView.setAudioEnabled(false);
+				this._mediaControlsView.setAudioAvailable(false);
 			}
 
 			if (configuration.video !== false) {
-				this._mediaControlsView.hasVideo();
-
-				if (this._mediaControlsView.videoDisabled) {
-					this.disableVideo();
-				} else {
-					this.enableVideo();
-				}
+				this._mediaControlsView.setVideoAvailable(true);
+				this.setVideoEnabled(this._mediaControlsView.videoEnabled);
 			} else {
-				this.disableVideo();
-				this._mediaControlsView.hasNoVideo();
+				this.setVideoEnabled(false);
+				this._mediaControlsView.setVideoAvailable(false);
 			}
 		},
-		enableVideoUI: function() {
-			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
-			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
-
-			avatarContainer.hide();
-			localVideo.show();
-		},
-		enableVideo: function() {
-			if (this._mediaControlsView.enableVideo()) {
-				this.enableVideoUI();
-			}
-		},
-		hideVideo: function() {
-			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
-			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
-
-			var avatar = avatarContainer.find('.avatar');
-			var guestName = localStorage.getItem("nick");
-			if (OC.getCurrentUser().uid) {
-				avatar.avatar(OC.getCurrentUser().uid, 128);
-			} else {
-				avatar.imageplaceholder('?', guestName, 128);
-				avatar.css('background-color', '#b9b9b9');
-				if (this.displayedGuestNameHint === false) {
-					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
-					this.displayedGuestNameHint = true;
-				}
+		setVideoEnabled: function(videoEnabled) {
+			if (!this._mediaControlsView.setVideoEnabled(videoEnabled)) {
+				return;
 			}
 
-			avatarContainer.removeClass('hidden');
-			avatarContainer.show();
-			localVideo.hide();
-		},
-		disableVideo: function() {
-			if (this._mediaControlsView.disableVideo()) {
-				this.hideVideo();
-			}
+			this._localVideoView.setVideoEnabled(videoEnabled);
 		},
 		// Called from webrtc.js
 		disableScreensharingButton: function() {

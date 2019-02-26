@@ -76,7 +76,6 @@
 		_participants: null,
 		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
 		_participantsView: null,
-		displayedGuestNameHint: false,
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
@@ -376,12 +375,10 @@
 			}
 
 			if (inCall) {
-				$('#video-speaking').show();
 				$('#videos').show();
 				$('#screens').show();
 				$('#emptycontent').hide();
 			} else {
-				$('#video-speaking').hide();
 				$('#videos').hide();
 				$('#screens').hide();
 				$('#emptycontent').show();
@@ -541,7 +538,6 @@
 				this._chatView.$el.detach();
 				this._chatViewInMainView = false;
 
-				$('#video-speaking').hide();
 				$('#videos').hide();
 				$('#screens').hide();
 				$('#emptycontent').show();
@@ -571,13 +567,17 @@
 				OC.Util.History.replaceState({}, OC.generateUrl('/apps/spreed'));
 			});
 
-			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
+			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				app: this,
 				webrtc: OCA.SpreedMe.webrtc,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
-			this._mediaControlsView.render();
-			$('#localVideoContainer .nameIndicator').replaceWith(this._mediaControlsView.$el);
+			this._localVideoView.render();
+			// Ensure that the local video is not visible in the initial page.
+			this._localVideoView.$el.addClass('hidden');
+			$('#videos').append(this._localVideoView.$el);
+
+			this._mediaControlsView = this._localVideoView._mediaControlsView;
 
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
@@ -600,7 +600,7 @@
 				// participants.
 				var participants = this.activeRoom.get('participants');
 				if (participants && Object.keys(participants).length > 5) {
-					this.disableVideo();
+					this.setVideoEnabled(false);
 				}
 			}.bind(this));
 
@@ -669,7 +669,7 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
+			this._localVideoView.$el.removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			localMediaChannel.trigger('startLocalMedia');
@@ -680,7 +680,7 @@
 				this.callbackAfterMedia = null;
 			}
 
-			$('.videoView').removeClass('hidden');
+			this._localVideoView.$el.removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
 			if (OCA.SpreedMe.webrtc.capabilities.support) {
@@ -701,29 +701,19 @@
 		},
 		initAudioVideoSettings: function(configuration) {
 			if (configuration.audio !== false) {
-				this._mediaControlsView.hasAudio();
-
-				if (this._mediaControlsView.audioDisabled) {
-					this._mediaControlsView.disableAudio();
-				} else {
-					this._mediaControlsView.enableAudio();
-				}
+				this._mediaControlsView.setAudioAvailable(true);
+				this._mediaControlsView.setAudioEnabled(this._mediaControlsView.audioEnabled);
 			} else {
-				this._mediaControlsView.disableAudio();
-				this._mediaControlsView.hasNoAudio();
+				this._mediaControlsView.setAudioEnabled(false);
+				this._mediaControlsView.setAudioAvailable(false);
 			}
 
 			if (configuration.video !== false) {
-				this._mediaControlsView.hasVideo();
-
-				if (this._mediaControlsView.videoDisabled) {
-					this.disableVideo();
-				} else {
-					this.enableVideo();
-				}
+				this._mediaControlsView.setVideoAvailable(true);
+				this.setVideoEnabled(this._mediaControlsView.videoEnabled);
 			} else {
-				this.disableVideo();
-				this._mediaControlsView.hasNoVideo();
+				this.setVideoEnabled(false);
+				this._mediaControlsView.setVideoAvailable(false);
 			}
 		},
 		enableFullscreen: function() {
@@ -757,43 +747,12 @@
 
 			this.fullscreenDisabled = true;
 		},
-		enableVideoUI: function() {
-			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
-			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
-
-			avatarContainer.hide();
-			localVideo.show();
-		},
-		enableVideo: function() {
-			if (this._mediaControlsView.enableVideo()) {
-				this.enableVideoUI();
-			}
-		},
-		hideVideo: function() {
-			var avatarContainer = this._mediaControlsView.$el.closest('.videoView').find('.avatar-container');
-			var localVideo = this._mediaControlsView.$el.closest('.videoView').find('#localVideo');
-
-			var avatar = avatarContainer.find('.avatar');
-			var guestName = localStorage.getItem("nick");
-			if (OC.getCurrentUser().uid) {
-				avatar.avatar(OC.getCurrentUser().uid, 128);
-			} else {
-				avatar.imageplaceholder('?', guestName, 128);
-				avatar.css('background-color', '#b9b9b9');
-				if (this.displayedGuestNameHint === false) {
-					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
-					this.displayedGuestNameHint = true;
-				}
+		setVideoEnabled: function(videoEnabled) {
+			if (!this._mediaControlsView.setVideoEnabled(videoEnabled)) {
+				return;
 			}
 
-			avatarContainer.removeClass('hidden');
-			avatarContainer.show();
-			localVideo.hide();
-		},
-		disableVideo: function() {
-			if (this._mediaControlsView.disableVideo()) {
-				this.hideVideo();
-			}
+			this._localVideoView.setVideoEnabled(videoEnabled);
 		},
 		// Called from webrtc.js
 		disableScreensharingButton: function() {
@@ -828,10 +787,7 @@
 			this._localStorageModel.fetch();
 		},
 		_onChangeGuestName: function(newDisplayName) {
-			var avatar = $('#localVideoContainer').find('.avatar');
-
-			avatar.imageplaceholder('?', newDisplayName, 128);
-			avatar.css('background-color', '#b9b9b9');
+			this._localVideoView.setAvatar(undefined, newDisplayName);
 
 			if (OCA.SpreedMe.webrtc) {
 				console.log('_onChangeGuestName.webrtc');

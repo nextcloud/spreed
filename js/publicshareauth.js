@@ -65,16 +65,8 @@
 			$('body').append('<div id="talk-sidebar" class="disappear"></div>');
 			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 			$('#talk-sidebar').append('<div id="call-container"></div>');
-			$('#call-container').append('<div id="videos"><div id="localVideoContainer" class="videoView videoContainer"></div></div>');
+			$('#call-container').append('<div id="videos"></div>');
 			$('#call-container').append('<div id="screens"></div>');
-
-			$('#localVideoContainer').append(
-				'<video id="localVideo"></video>' +
-				'<div class="avatar-container hidden">' +
-				'	<div class="avatar"></div>' +
-				'</div>' +
-				'<div class="nameIndicator">' +
-				'</div>');
 
 			OCA.SpreedMe.app.mainCallElementSelector = '#talk-sidebar';
 
@@ -83,7 +75,7 @@
 				el: '#talk-sidebar > #emptycontent'
 			});
 
-			$('#localVideoContainer .nameIndicator').replaceWith(OCA.SpreedMe.app._mediaControlsView.$el);
+			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
 
 			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 
