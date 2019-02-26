@@ -120,6 +120,13 @@ class Listener {
 			return false;
 		}
 
+		$numGuests = $room->getActiveGuests();
+
+		if (!$room->resetActiveSince()) {
+			// Race-condition, the room was already reset.
+			return false;
+		}
+
 		$event = $this->activityManager->generateEvent();
 		try {
 			$event->setApp('spreed')
@@ -130,7 +137,7 @@ class Listener {
 				->setSubject('call', [
 					'room' => $room->getId(),
 					'users' => $userIds,
-					'guests' => $room->getActiveGuests(),
+					'guests' => $numGuests,
 					'duration' => $duration,
 				]);
 		} catch (\InvalidArgumentException $e) {
@@ -142,7 +149,7 @@ class Listener {
 			'message' => 'call_ended',
 			'parameters' => [
 				'users' => $userIds,
-				'guests' => $room->getActiveGuests(),
+				'guests' => $numGuests,
 				'duration' => $duration,
 			],
 		]), $this->timeFactory->getDateTime(), false);
@@ -158,7 +165,6 @@ class Listener {
 			}
 		}
 
-		$room->resetActiveSince();
 		return true;
 	}
 
