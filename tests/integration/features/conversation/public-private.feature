@@ -7,6 +7,7 @@ Feature: public
   Scenario: Owner makes room private/public
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |
@@ -22,6 +23,7 @@ Feature: public
   Scenario: Moderator makes room private/public
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |
@@ -39,6 +41,7 @@ Feature: public
   Scenario: User makes room private/public
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |
@@ -59,6 +62,7 @@ Feature: public
   Scenario: Stranger makes room private/public
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |

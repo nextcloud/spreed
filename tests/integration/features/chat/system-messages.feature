@@ -10,6 +10,7 @@ Feature: System messages
   Scenario: Creating an empty room
     When user "participant1" creates room "room"
       | roomType | 2 |
+      | roomName | room |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | conversation_created |
@@ -17,6 +18,7 @@ Feature: System messages
   Scenario: Rename a room
     Given user "participant1" creates room "room"
       | roomType | 2 |
+      | roomName | room |
     When user "participant1" renames room "room" to "system test" with 200
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
@@ -26,6 +28,7 @@ Feature: System messages
   Scenario: Toggle guests
     Given user "participant1" creates room "room"
       | roomType | 2 |
+      | roomName | room |
     When user "participant1" makes room "room" public with 200
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
@@ -41,6 +44,7 @@ Feature: System messages
   Scenario: Toggle password
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" sets password "123456" for room "room" with 200
     Then user "participant1" sees the following system messages in room "room" with 200
       | room       | actorType | actorId      | actorDisplayName         | systemMessage |
@@ -75,6 +79,7 @@ Feature: System messages
   Scenario: Participant escalation
     Given user "participant1" creates room "room"
       | roomType | 2 |
+      | roomName | room |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | conversation_created |

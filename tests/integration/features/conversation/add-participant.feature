@@ -7,6 +7,7 @@ Feature: public
   Scenario: Owner invites a user
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
@@ -19,6 +20,7 @@ Feature: public
   Scenario: User invites a user
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
@@ -39,6 +41,7 @@ Feature: public
   Scenario: Moderator invites a user
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     When user "participant1" promotes "participant2" in room "room" with 200
     And user "participant1" is participant of the following rooms
@@ -62,6 +65,7 @@ Feature: public
   Scenario: Stranger invites a user
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant3" adds "participant2" to room "room" with 404
     Then user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |

@@ -11,6 +11,7 @@ Feature: hooks
   Scenario: invite user to group room after a file was shared
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" adds "participant2" to room "group room" with 200
@@ -29,6 +30,7 @@ Feature: hooks
   Scenario: join public room after a file was shared
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant2" joins room "public room" with 200
@@ -50,6 +52,7 @@ Feature: hooks
   Scenario: remove sharer from group room after sharing a file
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" removes "participant2" from room "group room" with 200
@@ -61,6 +64,7 @@ Feature: hooks
   Scenario: remove herself from group room after sharing a file
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" removes themselves from room "group room" with 200
@@ -72,6 +76,7 @@ Feature: hooks
   Scenario: leave group room after sharing a file
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
@@ -102,6 +107,7 @@ Feature: hooks
   Scenario: leave public room invited to after sharing a file
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant1" adds "participant2" to room "public room" with 200
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
@@ -134,6 +140,7 @@ Feature: hooks
   Scenario: leave public room self joined to after sharing a file
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant2" joins room "public room" with 200
     And user "participant2" shares "welcome.txt" with room "public room" with OCS 100
     When user "participant2" leaves room "public room" with 200
@@ -145,6 +152,7 @@ Feature: hooks
   Scenario: remove sharer from group room with other shares after sharing a file
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" creates folder "test"
@@ -176,6 +184,7 @@ Feature: hooks
   Scenario: remove sharer from group room after sharing a file and a receiver reshared it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "welcome (2).txt" with user "participant3" with OCS 100
@@ -220,6 +229,7 @@ Feature: hooks
   Scenario: remove sharee from group room after a file was shared
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -241,6 +251,7 @@ Feature: hooks
   Scenario: remove sharee from group room after a file was shared and the sharee moved it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -263,6 +274,7 @@ Feature: hooks
   Scenario: remove herself from group room after a file was shared
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -284,6 +296,7 @@ Feature: hooks
   Scenario: remove herself from group room after a file was shared and the sharee moved it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -306,6 +319,7 @@ Feature: hooks
   Scenario: leave public room self joined to after a file was shared
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant2" joins room "public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
@@ -328,6 +342,7 @@ Feature: hooks
   Scenario: leave public room self joined to after a file was shared and the sharee moved it
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant2" joins room "public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
@@ -351,6 +366,7 @@ Feature: hooks
   Scenario: remove sharee from group room with other sharees after a file was shared and the sharees moved it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -388,6 +404,7 @@ Feature: hooks
   Scenario: remove sharee from group room after a file was shared and the sharee reshared it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
@@ -430,6 +447,7 @@ Feature: hooks
   Scenario: add sharer again to group room after sharing a file and the sharer was removed from the room
     Given user "participant2" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant2" adds "participant1" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" removes "participant1" from room "group room" with 200
@@ -442,6 +460,7 @@ Feature: hooks
   Scenario: add sharer again to group room after sharing a file and the sharer removed herself from the room
     Given user "participant2" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant2" adds "participant1" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" removes themselves from room "group room" with 200
@@ -454,6 +473,7 @@ Feature: hooks
   Scenario: join public room again after sharing a file and the sharer left the room
     Given user "participant2" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" joins room "public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
     And user "participant1" leaves room "public room" with 200
@@ -468,6 +488,7 @@ Feature: hooks
   Scenario: add sharer again to group room after sharing a file and a receiver reshared it and the sharer was removed from the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant2" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "welcome (2).txt" with user "participant3" with OCS 100
@@ -513,6 +534,7 @@ Feature: hooks
   Scenario: add sharee again to group room after a file was shared and the sharee was removed from the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -534,6 +556,7 @@ Feature: hooks
   Scenario: add sharee again to group room after a file was shared and moved by the sharee and the sharee was removed from the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -556,6 +579,7 @@ Feature: hooks
   Scenario: add sharee again to group room after a file was shared and the sharee removed herself from the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -577,6 +601,7 @@ Feature: hooks
   Scenario: add sharee again to group room after a file was shared and moved by the sharee and the sharee removed herself from the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
@@ -599,6 +624,7 @@ Feature: hooks
   Scenario: join sharee again to public room after a file was shared and the sharee left the room
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant2" joins room "public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
@@ -621,6 +647,7 @@ Feature: hooks
   Scenario: join sharee again to public room after a file was shared and moved by the sharee and the sharee left the room
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room" to "Public room" with 200
     And user "participant2" joins room "public room" with 200
     And user "participant1" shares "welcome.txt" with room "public room" with OCS 100
@@ -646,6 +673,7 @@ Feature: hooks
   Scenario: add sharee again to group room after a file was shared and the sharee reshared it and the sharee was removed from the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
@@ -710,6 +738,7 @@ Feature: hooks
   Scenario: delete group room after sharing a file
     Given user "participant1" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "own group room" with 200
     And user "participant1" shares "welcome.txt" with room "own group room" with OCS 100
     When user "participant1" deletes room "own group room" with 200
@@ -721,6 +750,7 @@ Feature: hooks
   Scenario: delete public room after sharing a file
     Given user "participant1" creates room "own public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "own public room" with 200
     And user "participant3" joins room "own public room" with 200
     And user "participant1" shares "welcome.txt" with room "own public room" with OCS 100
@@ -735,6 +765,7 @@ Feature: hooks
   Scenario: delete room after a file was shared and the sharee moved it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
@@ -747,6 +778,7 @@ Feature: hooks
   Scenario: delete room after a file was shared and the sharee reshared it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
@@ -776,6 +808,7 @@ Feature: hooks
   Scenario: delete room after a file was shared and the sharee moved and reshared it
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" moves file "welcome (2).txt" to "renamed.txt"
@@ -806,12 +839,15 @@ Feature: hooks
   Scenario: delete room after sharing a file with several rooms
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" creates room "another group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "another group room" to "Another group room" with 200
     And user "participant1" creates room "yet another group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "yet another group room" to "Yet another group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant2" to room "another group room" with 200
@@ -870,6 +906,7 @@ Feature: hooks
   Scenario: delete user after sharing a file
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant2" shares "welcome.txt" with room "group room invited to" with OCS 100
     When user "participant2" is deleted
@@ -879,6 +916,7 @@ Feature: hooks
   Scenario: delete user after receiving a shared a file
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" adds "participant3" to room "group room invited to" with 200
@@ -910,6 +948,7 @@ Feature: hooks
   Scenario: delete user after receiving and moving a shared a file
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" adds "participant3" to room "group room invited to" with 200
@@ -942,6 +981,7 @@ Feature: hooks
   Scenario: delete user after resharing a file
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room invited to" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" adds "participant3" to room "group room invited to" with 200

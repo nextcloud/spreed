@@ -7,6 +7,7 @@ Feature: public
   Scenario: Owner promotes/demotes moderator
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant2" is participant of the following rooms
       | id   | type | participantType | participants |
@@ -23,6 +24,7 @@ Feature: public
   Scenario: Moderator promotes/demotes moderator
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of the following rooms
@@ -41,6 +43,7 @@ Feature: public
   Scenario: User promotes/demotes moderator
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant2" to room "room" with 200
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of the following rooms
@@ -62,6 +65,7 @@ Feature: public
   Scenario: Stranger promotes/demotes moderator
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" adds "participant3" to room "room" with 200
     And user "participant3" is participant of the following rooms
       | id   | type | participantType | participants |

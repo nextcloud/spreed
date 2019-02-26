@@ -9,6 +9,7 @@ Feature: move
   Scenario: move share to another folder
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -56,6 +57,7 @@ Feature: move
   Scenario: move share to received shared folder from a user in the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -106,6 +108,7 @@ Feature: move
   Scenario: move share to received shared folder from a user not in the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -156,6 +159,7 @@ Feature: move
   Scenario: move share to received shared folder which is also a received shared folder
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant3" creates folder "/test"
@@ -211,6 +215,7 @@ Feature: move
   Scenario: move received share to another folder
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -258,6 +263,7 @@ Feature: move
   Scenario: move received share to shared folder
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -272,6 +278,7 @@ Feature: move
   Scenario: move received share to received shared folder from a user in the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
@@ -316,6 +323,7 @@ Feature: move
   Scenario: move received share to received shared folder from a user not in the room
     Given user "participant1" creates room "group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
