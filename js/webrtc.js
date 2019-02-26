@@ -337,6 +337,13 @@ var spreedPeerConnectionTable = [];
 				clearTimeout(delayedCreatePeer[message.from]);
 				delete delayedCreatePeer[message.from];
 			}
+
+			// MCU screen offers do not include the "broadcaster" property,
+			// which is expected by SimpleWebRTC in screen offers from a remote
+			// peer, so it needs to be explicitly added.
+			if (signaling.hasFeature("mcu") && message.roomType === 'screen') {
+				message.broadcaster = message.from;
+			}
 		});
 
 		webrtc = new SimpleWebRTC({
