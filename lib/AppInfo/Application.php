@@ -62,7 +62,7 @@ class Application extends App {
 		$this->getContainer()->registerCapability(Capabilities::class);
 
 		$dispatcher = $server->getEventDispatcher();
-		Listener::register();
+		Listener::register($dispatcher);
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
