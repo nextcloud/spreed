@@ -59,8 +59,6 @@ class RoomController extends OCSController {
 	private $userManager;
 	/** @var IGroupManager */
 	private $groupManager;
-	/** @var ILogger */
-	private $logger;
 	/** @var Manager */
 	private $manager;
 	/** @var GuestManager */
@@ -80,7 +78,6 @@ class RoomController extends OCSController {
 								TalkSession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
-								ILogger $logger,
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
@@ -92,7 +89,6 @@ class RoomController extends OCSController {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
-		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
@@ -253,6 +249,12 @@ class RoomController extends OCSController {
 						'call' => $participant->getInCallFlags(),
 						'sessionId' => $participant->getSessionId(),
 					];
+
+					if ($room->getType() === Room::ONE_TO_ONE_CALL &&
+						  $user->getUID() !== $currentParticipant->getUser()) {
+						// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
+						$roomData['name'] = $user->getUID();
+					}
 				}
 
 				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
