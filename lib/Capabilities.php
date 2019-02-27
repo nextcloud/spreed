@@ -25,10 +25,28 @@ declare(strict_types=1);
 namespace OCA\Spreed;
 
 use OCP\Capabilities\IPublicCapability;
+use OCP\IUser;
+use OCP\IUserSession;
 
 class Capabilities implements IPublicCapability {
 
+	/** @var Config */
+	protected $config;
+	/** @var IUserSession */
+	protected $userSession;
+
+	public function __construct(Config $config,
+								IUserSession $userSession) {
+		$this->config = $config;
+		$this->userSession = $userSession;
+	}
+
 	public function getCapabilities(): array {
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser && $this->config->isDisabledForUser($user)) {
+			return [];
+		}
+
 		return [
 			'spreed' => [
 				'features' => [
