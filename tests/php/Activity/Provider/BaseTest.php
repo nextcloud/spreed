@@ -196,22 +196,16 @@ class BaseTest extends TestCase {
 			->method('getId')
 			->willReturn($id);
 		$room->expects($this->once())
-			->method('getName')
-			->willReturn($name);
-
-		$l = $this->createMock(IL10N::class);
-		$l->expects($this->any())
-			->method('t')
-			->willReturnCallback(function($text, $parameters = []) {
-				return vsprintf($text, $parameters);
-			});
+			->method('getDisplayName')
+			->with('user')
+			->willReturn($expectedName);
 
 		$this->assertEquals([
 			'type' => 'call',
 			'id' => $id,
 			'name' => $expectedName,
 			'call-type' => $expectedType,
-		], self::invokePrivate($provider, 'getRoom', [$l, $room]));
+		], self::invokePrivate($provider, 'getRoom', [$room, 'user']));
 	}
 
 	public function dataGetUser() {

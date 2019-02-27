@@ -59,7 +59,7 @@ class RoomPlugin implements ISearchPlugin {
 
 		$rooms = $this->manager->getRoomsForParticipant($userId);
 		foreach ($rooms as $room) {
-			if (stripos($room->getName(), $search) !== false) {
+			if (stripos($room->getDisplayName($userId), $search) !== false) {
 				$item = $this->roomToSearchResultItem($room, $userId);
 
 				if (strtolower($item['label']) === strtolower($search)) {
