@@ -1,0 +1,1119 @@
+/* The standard layout defined in the server includes a fixed header with a
+ * sticky sidebar. This causes the scroll bar for the main area to appear to the
+ * right of the sidebar, which looks confusing for the chat. Thus that layout is
+ * overridden with a full set of flex containers to cascade parent element
+ * height to the main view to limit the vertical scroll bar only to it (same
+ * thing done for the sidebar and the chat view). */
+#body-user,
+#body-public {
+	display: flex;
+	flex-direction: column;
+}
+
+#body-user #header,
+#body-public #header {
+	/* Override fixed position from server to include it in the flex layout */
+	position: static;
+	flex-shrink: 0;
+}
+
+#content {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Override "min-height: 100%" and "padding-top: 50px" set in server, as the
+	 * header is part of the flex layout and thus the whole body is not
+	 * available for the content. */
+	min-height: 0;
+	padding-top: 0;
+
+	/* Does not change anything in normal mode, but ensures that the element
+	 * will stretch to the full width in full screen mode. */
+	width: 100%;
+
+	/* Override margin used in server, as the header is part of the flex layout
+	 * and thus the content does not need to be pushed down. */
+	margin-top: 0;
+}
+
+#app-content {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-content-wrapper {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#oca-spreedme-add-room {
+	border-bottom: 1px solid var(--color-border);
+}
+
+.oca-spreedme-add-person {
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+}
+
+.contactsmenu-popover li > a > img {
+	/* The app uses border-box sizing, so the size of the icon is the
+	 * width/height plus the padding set by default in the server
+	 * (16px + 11px*2). */
+	width: 38px;
+	height: 38px;
+}
+
+
+
+/**
+ * Confirm icon inside input field.
+ *
+ * The input and the icon should be direct children of a wrapper with a relative
+ * position. The input is expected to be as wide as its wrapper.
+ *
+ * It is assumed that the icon will have the standard width for buttons in
+ * inputs of 34px. However, further adjustments may be needed for the input and
+ * the padding depending on the context where they are used.
+ */
+input[type="text"],
+input[type="password"] {
+	padding-right: 34px;
+
+	/* When the input is focused it is expected that pressing enter will confirm
+	 * the input just like clicking on the icon would do. To hint this behaviour
+	 * the opacity of the confirm icon is slightly increased in this case.
+	 */
+	&:focus + .icon-confirm:not(:disabled) {
+		opacity: .6;
+	}
+
+	& + .icon-confirm {
+		position: absolute;
+		top: 0;
+		/* Compensate for right margin of inputs set in the server. */
+		right: 3px;
+
+		/* Border and background color are removed to show only the icon inside
+		* the input. */
+		border: none;
+		background-color: transparent;
+
+		opacity: .3;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled),
+		&:active:not(:disabled) {
+			opacity: 1;
+		}
+	}
+}
+
+
+
+/**
+ * Sidebar styles
+ */
+
+#select2-drop {
+	margin-top: -44px !important;
+}
+#oca-spreedme-add-room .select2-container,
+.oca-spreedme-add-person .select2-container {
+	width: 100%;
+	margin: 0 !important;
+	border: none;
+	padding: 9px;
+}
+#oca-spreedme-add-room .select2-container .select2-choice,
+.oca-spreedme-add-person .select2-container .select2-choice {
+	border: none;
+	color: var(--color-text-maxcontrast) !important;
+}
+#oca-spreedme-add-room .select2-arrow,
+.oca-spreedme-add-person .select2-arrow {
+	display: none !important;
+}
+#select2-drop .select2-search input {
+	padding: 13px 12px 13px 43px !important;
+	width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	border: none;
+	background-image: none !important;
+}
+#select2-drop .select2-results .select2-result {
+	padding: 0;
+}
+
+.participantWithList .avatar,
+#app-navigation .app-navigation-entry-link > .avatar {
+	position: absolute;
+	left: 6px;
+	top: 6px;
+}
+
+.participantWithList li > a:first-child img,
+#app-navigation li > a:first-child img {
+	width: 32px !important;
+	height: 32px !important;
+	margin: 0 !important;
+}
+
+.select2-result .avatar.icon,
+#app-navigation .app-navigation-entry-link .avatar.icon {
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+	background-color: var(--color-background-darker);
+}
+
+.icon-file-white {
+	@include icon-color('text', 'filetypes', $color-white, 1, true);
+}
+
+#app-navigation .favorite-mark {
+	position: absolute;
+	/* 44px is the padding of the main entry link, and 16px the size (size, not
+	 * background size) of the icon, both defined in the server. */
+	left: calc(44px - 16px);
+	line-height: 100%;
+
+	.icon-favorite {
+		display: inline-block;
+		vertical-align: middle;
+
+		/* Show favorite icon in yellow instead of default black. */
+		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
+	}
+}
+
+#app-navigation .app-navigation-entry-utils-counter {
+	overflow: hidden;
+	text-align: right;
+	font-size: 9pt;
+	line-height: 44px;
+	padding: 0 12px; /* Same padding as all li > a in the app-navigation */
+
+	span {
+		padding: 2px 5px;
+		border-radius: 10px;
+		font-weight: bold;
+		background: #FDCD4D;
+	}
+
+	&.highlighted {
+		padding-right: 0;
+		text-align: center;
+		width: 22px !important;
+
+		span {
+			background-color: var(--color-primary);
+			color: var(--color-primary-text);
+		}
+	}
+}
+
+.hidden-important {
+	display: none !important;
+}
+
+/**
+ * Main view chat styles
+ */
+#app-content-wrapper {
+	height: 100%;
+}
+
+#app-content-wrapper #chatView {
+	width: 100%;
+	height: 100%;
+
+	display: flex;
+	flex-direction: column;
+}
+
+/* The lateral padding is set for each child instead of for the chat view as a
+   whole to prevent showing the scroll bar padded from the border of the chat
+   view (which could be fixed by using a negative margin and a positive padding
+   in the list of messages) and to ensure that the contacts menu is not clipped
+   due to overflowing the chat view on its left (much harder to fix). */
+#app-content-wrapper #chatView .newCommentRow {
+	padding-left: 44px;
+	padding-right: 44px;
+}
+
+#app-content-wrapper #chatView .comments {
+	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+
+	padding-left: 44px;
+	padding-right: 44px;
+}
+
+
+#app-content-wrapper #chatView .comments .wrapper-background,
+#app-content-wrapper #chatView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	left: 44px;
+	right: 44px;
+}
+
+/* Hide all siblings of the chat view when shown as the main view */
+#app-content-wrapper #chatView ~ *:not(#video-fullscreen):not([id^=tooltip]) {
+	display: none !important;
+}
+
+#emptycontent {
+	position: absolute;
+	z-index: 40;
+}
+
+#emptycontent-icon {
+	width: 128px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+
+
+#app-content ~ #app-sidebar-wrapper .icon-menu-people,
+#app-content .icon-fullscreen {
+	opacity: .5;
+
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
+#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call,
+#app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .force-icon-white-in-call {
+	/*
+	 * Also force the white icons, when the video of the local participant is shown,
+	 * because the black icons are not visible on videos, especially when your camera is covered.
+	 */
+	&#hideVideo:not(.local-video-disabled) {
+		&.icon-video {
+			background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+		}
+		&.icon-video-off {
+			background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+		}
+	}
+	&#mute:not(.local-video-disabled) {
+		&.icon-audio {
+			background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+		}
+		&.icon-audio-off {
+			background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+		}
+	}
+	&#screensharing-button:not(.local-video-disabled) {
+		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+	}
+}
+
+#app-content.incall .force-icon-white-in-call,
+#app-content.screensharing .force-icon-white-in-call,
+#app-content.incall ~ #app-sidebar-wrapper .force-icon-white-in-call,
+#app-content.screensharing ~ #app-sidebar-wrapper .force-icon-white-in-call {
+	/*
+	 * Force the white icon, independent from white/dark mode selection,
+	 * because those icons are presented on our black calling-screen.
+	 */
+	&.icon-menu-people {
+		background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1, false));
+	}
+	&.icon-fullscreen {
+		background-image: url(icon-color-path('fullscreen', 'actions', 'fff', 1, true));
+	}
+	&.icon-audio {
+		background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+	}
+	&.icon-audio-off {
+		background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+	}
+	&.icon-video {
+		background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+	}
+	&.icon-video-off {
+		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+	}
+	&.icon-screen {
+		background-image: url(icon-color-path('screen', 'actions', 'fff', 1, true));
+	}
+	&.icon-screen-off {
+		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+	}
+}
+
+/* Use white icon for the app navigation toggle when in a call */
+#app-content.incall .icon-menu,
+#app-content.screensharing .icon-menu {
+	@include icon-color('menu', 'actions', $color-white, 1, true);
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
+#video-fullscreen {
+	position: absolute;
+	top: 44px;
+	right: 0;
+	z-index: 90;
+}
+
+#video-fullscreen,
+#app-sidebar-trigger {
+	background-color: transparent;
+	border: none;
+	margin: 0;
+	width: 44px;
+	height: 44px;
+}
+
+
+
+/* Fullscreen handling */
+
+/* No switching between rooms in fullscreen, focus on the current call. */
+#content:-webkit-full-screen #app-navigation-toggle {
+	display: none !important;
+}
+#content:-moz-full-screen #app-navigation-toggle {
+	display: none !important;
+}
+#content:-ms-fullscreen #app-navigation-toggle {
+	display: none !important;
+}
+#content:fullscreen #app-navigation-toggle {
+	display: none !important;
+}
+
+#content:-webkit-full-screen #app-navigation {
+	display: none;
+}
+#content:-moz-full-screen #app-navigation {
+	display: none;
+}
+#content:-ms-fullscreen #app-navigation {
+	display: none;
+}
+#content:fullscreen #app-navigation {
+	display: none;
+}
+
+#content:-webkit-full-screen #app-content {
+	margin-left: 0;
+}
+#content:-moz-full-screen #app-content {
+	margin-left: 0;
+}
+#content:-ms-fullscreen #app-content {
+	margin-left: 0;
+}
+#content:fullscreen #app-content {
+	margin-left: 0;
+}
+
+/* Set the background of the content to the same colour as the app content and
+ * the app sidebar to prevent a black background from appearing when the sidebar
+ * is shown or hidden.
+ * During a call the background of the app content is black, but as the
+ * background of the content has the same colour of the sidebar and is a
+ * placeholder on its position it looks acceptable. */
+#content:-webkit-full-screen {
+	background-color: var(--color-main-background);
+}
+#content:-moz-full-screen {
+	background-color: var(--color-main-background);
+}
+#content:-ms-fullscreen {
+	background-color: var(--color-main-background);
+}
+#content:fullscreen {
+	background-color: var(--color-main-background);
+}
+
+
+.localmediaerror h2 {
+	color: red;
+	font-weight: bold;
+}
+
+.localmediaerror .emptycontent-additional {
+	display: none;
+}
+
+#app-navigation .utils {
+	padding: 0;
+}
+#app-navigation .utils .action {
+	display: inline-block;
+	padding: 22px;
+	cursor: pointer;
+	opacity: .3;
+}
+
+#app-navigation .app-navigation-entry-menu li {
+	width: auto !important;
+	float: inherit;
+}
+
+#app-navigation .app-navigation-entry-menu li.active {
+	box-shadow: inset 4px 0 var(--color-primary);
+	margin-left: -1px;
+	padding-left: 1px;
+}
+
+#app-navigation .app-navigation-entry-menu li div.separator {
+	border-bottom: 1px solid var(--color-border-dark);
+	margin: 0 10px;
+	width: 100%;
+}
+
+
+#app-navigation .app-navigation-entry-menu li button {
+	float: inherit !important;
+	margin: 0;
+	padding: 0;
+	width: 100% !important;
+	min-height: 44px;
+}
+
+#app-navigation .app-navigation-entry-menu input {
+	margin-left: 5px !important;
+	margin-top: -5px;
+	min-width: 150px;
+	padding-right: 26px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+#app-navigation .app-navigation-entry-menu input.first-option {
+	margin-top: 5px;
+}
+
+#app-navigation .app-navigation-entry-menu li span {
+	display: inline-block;
+	height: 36px;
+	line-height: 36px;
+	padding-right: 10px;
+	font-weight: 400;
+	float: left;
+}
+
+#app-navigation .app-navigation-entry-menu li span[class^='icon-'],
+#app-navigation .app-navigation-entry-menu li span[class*=' icon-'] {
+	padding: 16px;
+	box-sizing: border-box;
+}
+
+#app-navigation .app-navigation-entry-utils-menu-button {
+	display: inline-block;
+}
+
+/* The sidebar wrapper contains the trigger for the sidebar and the sidebar
+ * itself placed in columns. To prevent the trigger from taking up space for the
+ * app content the trigger width is removed from the wrapper by pushing its left
+ * margin. */
+#app-sidebar-wrapper {
+	display: flex;
+	margin-left: -44px;
+}
+
+#app-sidebar-trigger {
+	/* Higher than the z-index of the app-content */
+	z-index: 1050;
+	cursor: pointer;
+}
+
+/* Override server definitions to ensure that the sidebar is vertically
+ * stretched, as the header is part of the flex layout and its height does not
+ * need to be removed from the sidebar (specially in fullscreen mode where there
+ * is no header). */
+#app-sidebar {
+	position: static;
+	height: unset;
+	top: 0;
+}
+
+@include icon-black-white('menu-people', 'spreed', 1);
+@include icon-black-white('no-password', 'spreed', 1);
+@include icon-black-white('share-window', 'spreed', 1);
+
+#app-sidebar .close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 22px;
+	opacity: .3;
+	/* Higher index than the trigger to hide it when the sidebar is open */
+	z-index: 20;
+}
+
+#app-sidebar .close:hover,
+#app-sidebar .close:focus {
+	opacity: 1;
+}
+
+/* make blue header bar transparent in shared room */
+#body-public #app-content:not(.participants-1) #header.spreed-public {
+	background: transparent;
+}
+
+/* As the header is hidden (except for the logo), move the fullscreen button and
+ * sidebar to the top during calls */
+#body-public #app-content:not(.participants-1) #app-sidebar,
+#body-public #app-content:not(.participants-1) #app-sidebar-trigger,
+#body-public #app-content:not(.participants-1) #video-fullscreen {
+	top: 0;
+	z-index: 3000;
+}
+#body-public #app-content:not(.participants-1) #video-fullscreen {
+	top: 44px;
+}
+
+/**
+ * Right sidebar
+ */
+
+#app-sidebar .detailCallInfoContainer {
+	padding: 15px;
+	clear: both;
+}
+
+.tabHeaders {
+	display: inline-block;
+}
+
+/* START: move padding fixes and icons-for-tabs capability into core */
+.tabHeaders {
+	display: flex;
+	margin-top: 0;
+	margin-bottom: 10px;
+	min-height: 44px;
+
+	/* Prevent the chat view from vertically compressing the tab headers */
+	flex-shrink: 0;
+}
+
+.tabHeaders .tabHeader {
+	flex-basis: 50%;
+	flex-grow: 0;
+	padding: 12px;
+	text-align: center;
+	border-bottom: 1px solid var(--color-border);
+	margin-bottom: 0;
+
+	.icon, a {
+		color: var(--color-main-text);
+		opacity: .5;
+	}
+}
+
+.tabHeaders .tabHeader.selected,
+.tabHeaders .tabHeader:hover,
+.tabHeaders .tabHeader:focus {
+	.icon, a {
+		opacity: 1;
+	}
+}
+/* END: move padding fixes and icons-for-tabs capability into core */
+
+#app-sidebar.hidden {
+	display: none !important;
+}
+
+.participantWithList .participant-moderator-indicator {
+	color: var(--color-text-maxcontrast);
+	font-weight: 300;
+	padding-left: 5px;
+}
+
+.participantWithList .icon {
+	width: 16px;
+	display: inline-block;
+	opacity: .4;
+	margin-left: 5px;
+	margin-bottom: -4px;
+
+	&.hidden {
+		display: none;
+	}
+}
+
+.participantWithList .participant-offline {
+	& > a {
+		color: var(--color-text-maxcontrast);
+	}
+	.avatar {
+		opacity: .4;
+	}
+}
+
+.participantWithList li {
+	position: relative;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.participantWithList li > a {
+	display: block;
+	width: 100%;
+	line-height: 44px;
+	min-height: 44px;
+	overflow: hidden;
+	box-sizing: border-box;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	padding-left: 44px;
+	background-size: 16px 16px;
+	background: no-repeat 14px center;
+}
+
+
+
+/**
+ * App navigation utils, buttons and counters for drop down menu
+ */
+.participantWithList .participant-entry-utils {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 105;
+}
+
+.participantWithList .active > .participant-entry-utils li {
+	display: inline-block;
+}
+
+.participantWithList .participant-entry-utils li {
+	width: 44px;
+	height: 44px;
+}
+
+.participantWithList .participant-entry-utils button,
+.participantWithList .participant-entry-utils button + .icon-loading-small {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	box-shadow: none;
+}
+
+.participantWithList .participant-entry-utils-menu-button button {
+	border: 0;
+	opacity: .5;
+	background-color: transparent;
+}
+
+.participantWithList .participant-entry-utils-menu-button button:hover,
+.participantWithList .participant-entry-utils-menu-button button:focus {
+	opacity: 1;
+}
+
+/**
+ * Sidebar details view
+ */
+.detailCallInfoContainer,
+.authorRow {
+	.editable-text-label {
+		.label-wrapper {
+			display: flex;
+			align-items: center;
+			.edit-button {
+				display: none;
+
+				/* Use the same bottom margin as h2 (defined in the server) to
+				 * align the button vertically with the label. */
+				margin-bottom: 12px;
+
+				.icon {
+					background-color: transparent;
+					border: none;
+					padding: 13px 22px;
+					margin: 0;
+				}
+			}
+			&:hover .edit-button {
+				display: block;
+			}
+		}
+		.input-wrapper {
+			position: relative;
+
+			/* Pull up the wrapper slightly to prevent elements below it from
+			 * moving when it is shown. */
+			margin-top: -2px;
+
+			input[type="text"] {
+				& + .icon-confirm {
+					/* Needed to override an important rule set in the
+					 * server. */
+					background-color: transparent !important;
+				}
+			}
+		}
+		.label {
+			margin-left: 5px;
+		}
+	}
+
+	.room-name-container {
+		display: flex;
+
+		/* Prevent the room name from overlapping the button to close the
+		 * sidebar. */
+		margin-right: 29px;
+
+		a {
+			opacity: .6;
+
+			&:hover,
+			&:focus,
+			&:active {
+				opacity: 1;
+			}
+
+			/* The container height is 42px (line height of 30px and bottom
+			 * margin of 12px, both defined for h2 in the server), so clear the
+			 * extra height of the link below the icon; this limits the
+			 * clickable area to 44x44px, as otherwise it was too near the call
+			 * button. */
+			margin-bottom: 5px;
+
+			.icon {
+				display: block;
+
+				width: 44px;
+				height: 44px;
+
+				background-size: 24px;
+
+				/* Pull up the icon slightly to align it vertically with the
+				 * label, which has a line height of 30px (defined in the
+				 * server). */
+				margin-top: -7px;
+			}
+		}
+	}
+
+	.room-name {
+		display: block;
+
+		flex-grow: 1;
+
+		/* Limit the room name to the container width and prevent it from
+		 * wrapping the full label when using a flex display; this is needed for
+		 * the edit button and the ellipsis in the name to work as expected. */
+		overflow: hidden;
+
+		.label {
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+
+		.input-wrapper {
+			position: relative;
+
+			.username {
+				width: 100%;
+				margin: 4px 0 4px 0 !important;
+				font-size: 15px;
+				font-weight: 300;
+				text-overflow: ellipsis;
+			}
+
+			.icon-confirm.confirm-button {
+				padding: 12px 21px;
+				margin: 0;
+			}
+
+			input[type="text"] {
+				padding-right: 44px;
+
+				& + .icon-confirm {
+					top: 1px;
+					right: 0;
+				}
+			}
+		}
+	}
+
+	.guest-name p {
+		display: inline-block;
+		padding: 9px 0;
+	}
+
+	.call-controls-container {
+		display: flex;
+
+		.call-button,
+		.share-link-options {
+			flex-grow: 1;
+			flex-basis: 50%;
+		}
+
+		.call-button {
+			flex-grow: 0;
+
+			.join-call,
+			.leave-call {
+				width: 100%;
+				padding: 12px;
+			}
+
+			.icon-loading-small {
+				/* Prevent the text from being moved when the icon is shown. */
+				position: absolute;
+
+				margin-left: 5px;
+				margin-top: 1px;
+
+				/* Unset the background image set by the server for loading
+				 * icons inside buttons, as in this case the pure CSS icon can
+				 * be used instead of the image. */
+				background-image: unset;
+
+				&.hidden {
+					display: none;
+				}
+			}
+		}
+	}
+
+	.share-link-options {
+		display: flex;
+		align-items: center;
+		.link-checkbox-label {
+			white-space: nowrap;
+			padding: 12px;
+		}
+		.button {
+			cursor: pointer;
+			width: 44px;
+			height: 44px;
+			display: block;
+			background-color: transparent;
+			border: none;
+			margin: 0;
+			opacity: .5;
+			&:hover,
+			&:focus,
+			&:active {
+				opacity: 1;
+			}
+		}
+		.password-button {
+			position: relative;
+
+			.menuitem {
+				/* Override rule for menu items from server, as in this case
+				 * only the button in the password field is clickable, so the
+				 * pointer cursor should not be used for the whole item. */
+				cursor: default;
+
+				.password-form {
+					position: relative;
+
+					.password-confirm {
+						/* Inputs in menu items do not have a right margin, so
+						 * it does not need to be compensated. */
+						right: 0;
+
+						/* Needed to override an important rule set in the
+						 * server. */
+						background-color: transparent !important;
+					}
+				}
+			}
+		}
+	}
+}
+
+/**
+ * Cascade parent element height to the chat view in the sidebar to limit the
+ * vertical scroll bar only to the list of messages. Otherwise, the vertical
+ * scroll bar would be shown for the whole sidebar and everything would be
+ * moved when scrolling to see overflown messages.
+ *
+ * The list of messages should stretch to fill the available space at the bottom
+ * of the right sidebar, so the height is cascaded using flex boxes.
+ *
+ * It is horrible, I know (but better than using JavaScript ;-) ). Please
+ * improve it if you know how :-)
+ */
+#app-sidebar {
+	display: flex;
+	flex-direction: column;
+}
+
+#app-sidebar .tabs {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .tabsContainer {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .tab {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-sidebar #chatView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .comments {
+	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+}
+
+/**
+ * Place the scroll bar of the message list on the right edge of the sidebar,
+ * but keeping the padding of the tab view.
+ *
+ * The padding must be set on the left too to ensure that the contacts menu
+ * shown when clicking on an author name does not overflow the tab (as it would
+ * be hidden).
+ *
+ * The bottom padding is removed to extend the chat view to the bottom edge of
+ * the sidebar.
+ */
+#app-sidebar .tab-chat {
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+}
+
+#app-sidebar #chatView .newCommentRow,
+#app-sidebar #chatView .comments {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+#app-sidebar #chatView .comments .wrapper-background,
+#app-sidebar #chatView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	left: 15px;
+	right: 15px;
+}
+
+#app-sidebar #chatView .newCommentForm {
+	/* Make room to show the "Add" button when chat is shown in the sidebar. */
+	margin-right: 44px;
+}
+
+/**
+ * Limiting the scroll bar in the sidebar to the list of chat messages causes
+ * the scroll bar to be removed from the whole sidebar in other tabs too.
+ * Therefore, the scroll bars must be explicitly enabled in the other tab
+ * contents that need them.
+ */
+#app-sidebar #participantsTabView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+#app-sidebar .participantWithList {
+	overflow-y: auto;
+	padding-top: 8px;
+}
+
+#app-sidebar .participantWithList .participant:last-child {
+	/* Add room for the popovermenu on last user */
+	padding-bottom: 64px;
+}
+
+/**
+ * Place the scroll bar of the participants list on the right edge of the
+ * sidebar, but keeping the padding of the tab view.
+ *
+ * The bottom padding is removed to extend the participant view to the bottom
+ * edge of the sidebar.
+ */
+#app-sidebar .tab-participants {
+	padding-right: 0;
+	padding-bottom: 0;
+}
+
+/* Form needs margin, participant list needs padding
+ * So the form has margin from the right side, but the scroll bar of the
+ * participant list is directly on the right.
+ */
+#app-sidebar #participantsTabView form {
+	margin-right: 15px;
+}
+#app-sidebar #participantsTabView .participantWithList {
+	padding-right: 15px;
+}
+
+/**
+ * Add a little margin to the last participant so the list is nicely framed with
+ * the sides when fully scrolled to the bottom.
+ */
+#app-sidebar #participantsTabView .participant:last-child {
+	margin-bottom: 15px;
+}
+
+/**
+ * Dark-Theme fixes
+ */
+// We always want to use the white icons, this is why we don't use var(--color-white) here.
+.avatar.icon {
+	&.icon-public {
+		background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
+	}
+	&.icon-contacts {
+		background-image: url(icon-color-path('contacts', 'places', 'fff', 1, true));
+	}
+	&.icon-password {
+		background-image: url(icon-color-path('password', 'actions', 'fff', 1, true));
+	}
+	&.icon-file {
+		background-image: url(icon-color-path('text', 'filetypes', 'fff', 1, true));
+	}
+	&.icon-mail {
+		background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
+	}
+}
+
+#app-navigation > ul > li > a:first-child {
+	img {
+		filter: none !important;
+	}
+}

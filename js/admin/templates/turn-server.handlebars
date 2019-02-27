@@ -1,0 +1,15 @@
+<div class="turn-server">
+	<input type="text" class="server" placeholder="turn.example.org" value="{{server}}" aria-label="{{turnTXT}}">
+	<input type="text" class="secret" placeholder="{{sharedSecretTXT}}" value="{{secret}}" aria-label="{{sharedSecretDescTXT}}">
+	<select class="protocols" title="{{protocolsTXT}}">
+		{{#select protocols}}
+				<option value="udp,tcp">{{UDPTCPTXT}}</option>
+				<option value="udp">{{UDPTXT}}</option>
+				<option value="tcp">{{TCPTXT}}</option>
+		{{/select}}
+	</select>
+	<a class="icon icon-category-monitoring" title="{{testTXT}}"></a>
+	<a class="icon icon-delete" title="{{deleteTXT}}"></a>
+	<a class="icon icon-add" title="{{newTXT}}"></a>
+	<span class="icon icon-checkmark-color hidden" title="{{savedTXT}}"></span>
+</div>
