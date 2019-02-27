@@ -80,6 +80,15 @@ class TalkAppContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function searchInputInSelect2Dropdown() {
+		return Locator::forThe()->css(".select2-search .select2-input")->
+				descendantOf(self::select2Dropdown())->
+				describedAs("Search input in select2 dropdown in Talk app");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function itemInSelect2DropdownFor($text) {
 		return Locator::forThe()->xpath("//*[contains(concat(' ', normalize-space(@class), ' '), ' select2-result-label ')]//span/text()[normalize-space() = '$text']/ancestor::li")->
 				descendantOf(self::select2Dropdown())->

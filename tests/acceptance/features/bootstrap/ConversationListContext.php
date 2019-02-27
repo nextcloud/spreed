@@ -114,24 +114,46 @@ class ConversationListContext implements Context, ActorAwareInterface {
 	}
 
 	/**
-	 * @Given I create a group conversation
+	 * @Given I create a group conversation named :name
 	 */
-	public function iCreateAGroupConversation() {
+	public function iCreateAGroupConversationNamed($name) {
 		// When the Talk app is opened and there are no conversations the
 		// dropdown is automatically shown, and when the dropdown is shown
 		// clicking on the button to open it fails because it is covered by the
 		// search field of the dropdown. Due to that first it is assumed that
-		// the dropdown is shown and the item is directly clicked; if it was not
-		// shown, then it is explicitly shown and after that the item is
-		// clicked.
+		// the dropdown is shown and the item is searched and directly clicked;
+		// if it was not shown, then it is explicitly shown and after that the
+		// item is searched and clicked.
 		try {
-			$this->actor->find(TalkAppContext::itemInSelect2DropdownFor("New group conversation"), 2)->click();
+			$this->setValueForSearchInputInSelect2Dropdown($name);
+			$this->actor->find(TalkAppContext::itemInSelect2DropdownFor($name), 2)->click();
 		} catch (NoSuchElementException $exception) {
 			$this->actor->find(self::showCreateConversationDropdownButton(), 10)->click();
-			$this->actor->find(TalkAppContext::itemInSelect2DropdownFor("New group conversation"), 2)->click();
+			$this->setValueForSearchInputInSelect2Dropdown($name);
+			$this->actor->find(TalkAppContext::itemInSelect2DropdownFor($name), 2)->click();
 		}
 
 		$this->setChatAncestorForActor(TalkAppContext::mainView(), $this->actor);
+	}
+
+	private function setValueForSearchInputInSelect2Dropdown($value) {
+		// When "setValue" is used on an element, the Selenium2 driver for Mink
+		// used in the acceptance tests does not send only the given value; it
+		// prepends as many backspace and delete keys as needed to remove the
+		// current value and appends a tab key to leave/unfocus the field and
+		// ensure that the browsers triggers the change event. However, when the
+		// search input of select2 is left the dropdown is closed, which
+		// prevents choosing the filtered options. Due to this it is necessary
+		// to directly post the desired value to the WebDriverElement instead of
+		// through the MinkElement.
+		$minkElement = $this->actor->find(TalkAppContext::searchInputInSelect2Dropdown(), 2)->getWrappedElement();
+		$selenium2Driver = $this->actor->getSession()->getDriver();
+		$webDriverSession = $selenium2Driver->getWebDriverSession();
+		$webDriverElement = $webDriverSession->element('xpath', $minkElement->getXpath());
+		// It is assumed that the search input is empty, so no backspace or
+		// delete keys are sent to remove the previous content like done in the
+		// Selenium2 driver for Mink.
+		$webDriverElement->postValue(array('value' => array($value)));
 	}
 
 	/**
