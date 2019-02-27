@@ -44,12 +44,12 @@ Feature: conversation
     And I see that the "admin" conversation is not active
     And I see that the number of participants shown in the list is "1"
 
-  Scenario: leave a conversation
+  Scenario: delete a conversation
     Given I am logged in
     And I have opened the Talk app
     And I create a group conversation named "Group"
     And I see that the "Group" conversation is active
-    When I leave the "Group" conversation
+    When I delete the "Group" conversation
     Then I see that the "Group" conversation is not shown in the list
     And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
@@ -79,12 +79,36 @@ Feature: conversation
     And I see that the "This conversation has ended" empty content message is shown in the main view
     And I see that the sidebar is closed
 
-  Scenario: create a new conversation after leaving the active one
+  Scenario: leave a conversation
+    Given I act as John
+    And I am logged in
+    And I have opened the Talk app
+    And I create a group conversation named "Group"
+    And I add "admin" to the participants
+    And I see that the number of participants shown in the list is "2"
+    And I act as Jane
+    And I am logged in as the admin
+    And I have opened the Talk app
+    And I open the "Group" conversation
+    And I see that the "Group" conversation is active
+    And I see that the chat is shown in the main view
+    And I see that the sidebar is open
+    When I leave the "Group" conversation
+    Then I see that the "Group" conversation is not shown in the list
+    And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
+    And I see that the sidebar is closed
+    And I act as John
+    And I see that the number of participants shown in the list is "1"
+    And I see that the "Group" conversation is active
+    And I see that the chat is shown in the main view
+    And I see that the sidebar is open
+
+  Scenario: create a new conversation after deleting the active one
     Given I am logged in
     And I have opened the Talk app
     And I create a group conversation named "Group"
     And I see that the "Group" conversation is active
-    And I leave the "Group" conversation
+    And I delete the "Group" conversation
     And I see that the "Group" conversation is not shown in the list
     And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
@@ -95,7 +119,7 @@ Feature: conversation
     And I see that the number of participants shown in the list is "1"
     And I see that "user0" is shown in the list of participants as a moderator
 
-  Scenario: change to another conversation after leaving the active one
+  Scenario: change to another conversation after deleting the active one
     Given I am logged in
     And I have opened the Talk app
     And I create a one-to-one conversation with "admin"
@@ -105,7 +129,7 @@ Feature: conversation
     And I see that the "admin" conversation is not active
     And I see that the "Group" conversation is active
     And I see that the number of participants shown in the list is "1"
-    And I leave the "Group" conversation
+    And I delete the "Group" conversation
     And I see that the "Group conversation is not shown in the list
     And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed

@@ -88,7 +88,7 @@
 									'</button>'+
 								'</li>'+
 								'<li><div class="separator"></div></li>'+
-								'{{#if isRemovable}}'+
+								'{{#if isLeavable}}'+
 								'<li>'+
 									'<button class="remove-room-button">'+
 										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
@@ -165,17 +165,17 @@
 				icon = 'icon icon-public';
 			}
 
-			// If a room is a one2one room it can not be removed from the list, only be deleted for both participants.
-			var isRemovable = this.model.get('type') !== 1;
+			var isDeletable = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
+			var isLeavable = !isDeletable || (this.model.get('type') !== 1 && Object.keys(this.model.get('participants')).length > 1);
+
 			return {
 				icon: icon,
 				canFavorite: this.model.get('participantType') !== 5,
 				notifyAlways: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_ALWAYS,
 				notifyMention: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_MENTION,
 				notifyNever: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_NEVER,
-				isRemovable: isRemovable,
-				isDeletable: !isRemovable || ((this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
-					(Object.keys(this.model.get('participants')).length > 1 || this.model.get('numGuests') > 0)),
+				isLeavable: isLeavable,
+				isDeletable: isDeletable,
 				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages')
 			};
 		},
