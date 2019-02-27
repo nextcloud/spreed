@@ -632,8 +632,9 @@ class Room {
 
 	/**
 	 * @param string $userId
+	 * @param string|null $sessionId
 	 */
-	public function leaveRoom(string $userId): void {
+	public function leaveRoom(string $userId, ?string $sessionId = null): void {
 		try {
 			$participant = $this->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
@@ -642,6 +643,7 @@ class Room {
 
 		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'sessionId' => $sessionId,
 			'participant' => $participant,
 		]));
 
@@ -653,6 +655,9 @@ class Room {
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->neq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
+		if (!empty($sessionId)) {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
+		}
 		$query->execute();
 
 		// And kill session when leaving a self joined room
@@ -661,10 +666,14 @@ class Room {
 			->where($query->expr()->eq('user_id', $query->createNamedParameter($userId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->eq('participant_type', $query->createNamedParameter(Participant::USER_SELF_JOINED, IQueryBuilder::PARAM_INT)));
+		if (!empty($sessionId)) {
+			$query->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)));
+		}
 		$selfJoined = (bool) $query->execute();
 
 		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', new GenericEvent($this, [
 			'userId' => $userId,
+			'sessionId' => $sessionId,
 			'participant' => $participant,
 			'selfJoin' => $selfJoined,
 		]));

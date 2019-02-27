@@ -22,6 +22,7 @@
 
 namespace OCA\Spreed\Tests\php\Controller;
 
+use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Config;
 use OCA\Spreed\Controller\SignalingController;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
@@ -35,6 +36,8 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\IUser;
 use OCP\IUserManager;
+use OCP\Security\IHasher;
+use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -74,6 +77,8 @@ class SignalingControllerTest extends \Test\TestCase {
 	protected $timeFactory;
 	/** @var string */
 	private $userId;
+	/** @var ISecureRandom */
+	private $secureRandom;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 
@@ -84,7 +89,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		parent::setUp();
 
 		$this->userId = 'testUser';
-		$secureRandom = \OC::$server->getSecureRandom();
+		$this->secureRandom = \OC::$server->getSecureRandom();
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$config = \OC::$server->getConfig();
 		$config->setAppValue('spreed', 'signaling_servers', json_encode([
@@ -92,7 +97,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		]));
 		$config->setAppValue('spreed', 'signaling_ticket_secret', 'the-app-ticket-secret');
 		$config->setUserValue($this->userId, 'spreed', 'signaling_ticket_secret', 'the-user-ticket-secret');
-		$this->config = new Config($config, $secureRandom, $timeFactory);
+		$this->config = new Config($config, $this->secureRandom, $timeFactory);
 		$this->session = $this->createMock(TalkSession::class);
 		$this->dbConnection = \OC::$server->getDatabaseConnection();
 		$this->manager = $this->createMock(Manager::class);
@@ -678,6 +683,84 @@ class SignalingControllerTest extends \Test\TestCase {
 				'roomid' => $roomToken,
 			],
 		], $result->getData());
+	}
+
+
+	public function testLeaveRoomWithOldSession() {
+		// Make sure that leaving a user with an old session id doesn't remove
+		// the current user from the room if he re-joined in the meantime.
+		$dbConnection = \OC::$server->getDatabaseConnection();
+		$dispatcher = \OC::$server->getEventDispatcher();
+		$this->manager = new Manager(
+			$dbConnection,
+			\OC::$server->getConfig(),
+			$this->secureRandom,
+			$this->createMock(CommentsManager::class),
+			$dispatcher,
+			$this->timeFactory,
+			$this->createMock(IHasher::class)
+		);
+		$this->recreateSignalingController();
+
+		$testUser = $this->createMock(IUser::class);
+		$testUser->expects($this->any())
+			->method('getDisplayName')
+			->willReturn('Test User');
+		$testUser->expects($this->any())
+			->method('getUID')
+			->willReturn($this->userId);
+
+		$room = $this->manager->createPublicRoom();
+
+		// The user joined the room.
+		$oldSessionId = $room->joinRoom($testUser, '');
+		$result = $this->performBackendRequest([
+			'type' => 'room',
+			'room' => [
+				'roomid' => $room->getToken(),
+				'userid' => $this->userId,
+				'sessionid' => $oldSessionId,
+				'action' => 'join',
+			],
+		]);
+		$participant = $room->getParticipant($this->userId);
+		$this->assertEquals($oldSessionId, $participant->getSessionId());
+
+		// The user is reloading the browser which will join him with another
+		// session id.
+		$newSessionId = $room->joinRoom($testUser, '');
+		$room->addUsers([
+			'userId' => $this->userId,
+			'sessionId' => $this->userId,
+		]);
+		$result = $this->performBackendRequest([
+			'type' => 'room',
+			'room' => [
+				'roomid' => $room->getToken(),
+				'userid' => $this->userId,
+				'sessionid' => $newSessionId,
+				'action' => 'join',
+			],
+		]);
+
+		// Now the new session id is stored in the database.
+		$participant = $room->getParticipant($this->userId);
+		$this->assertEquals($newSessionId, $participant->getSessionId());
+
+		// Leaving the old session id...
+		$result = $this->performBackendRequest([
+			'type' => 'room',
+			'room' => [
+				'roomid' => $room->getToken(),
+				'userid' => $this->userId,
+				'sessionid' => $oldSessionId,
+				'action' => 'leave',
+			],
+		]);
+
+		// ...will keep the new session id in the database.
+		$participant = $room->getParticipant($this->userId);
+		$this->assertEquals($newSessionId, $participant->getSessionId());
 	}
 
 }
