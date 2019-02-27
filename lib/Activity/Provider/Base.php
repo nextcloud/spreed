@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Activity\Provider;
 
+use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
@@ -37,16 +38,14 @@ abstract class Base implements IProvider {
 
 	/** @var IFactory */
 	protected $languageFactory;
-
 	/** @var IURLGenerator */
 	protected $url;
-
+	/** @var Config */
+	protected $config;
 	/** @var IManager */
 	protected $activityManager;
-
 	/** @var IUserManager */
 	protected $userManager;
-
 	/** @var Manager */
 	protected $manager;
 
@@ -55,11 +54,13 @@ abstract class Base implements IProvider {
 
 	public function __construct(IFactory $languageFactory,
 								IURLGenerator $url,
+								Config $config,
 								IManager $activityManager,
 								IUserManager $userManager,
 								Manager $manager) {
 		$this->languageFactory = $languageFactory;
 		$this->url = $url;
+		$this->config = $config;
 		$this->activityManager = $activityManager;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
@@ -73,6 +74,11 @@ abstract class Base implements IProvider {
 	public function preParse(IEvent $event): IEvent {
 		if ($event->getApp() !== 'spreed') {
 			throw new \InvalidArgumentException('Wrong app');
+		}
+
+		$user = $this->userManager->get($event->getAffectedUser());
+		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
+			throw new \InvalidArgumentException('User can not user Talk');
 		}
 
 		if ($this->activityManager->getRequirePNG()) {

@@ -23,6 +23,7 @@ namespace OCA\Spreed\Tests\php\Activity\Provider;
 
 
 use OCA\Spreed\Activity\Provider\Invitation;
+use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
@@ -33,6 +34,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 /**
@@ -42,15 +44,17 @@ use Test\TestCase;
  */
 class InvitationTest extends TestCase {
 
-	/** @var IFactory|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IFactory|MockObject */
 	protected $l10nFactory;
-	/** @var IURLGenerator|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IURLGenerator|MockObject */
 	protected $url;
-	/** @var IManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Config|MockObject */
+	protected $config;
+	/** @var IManager|MockObject */
 	protected $activityManager;
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
 
 	public function setUp() {
@@ -58,6 +62,7 @@ class InvitationTest extends TestCase {
 
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
+		$this->config = $this->createMock(Config::class);
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->manager = $this->createMock(Manager::class);
@@ -65,7 +70,7 @@ class InvitationTest extends TestCase {
 
 	/**
 	 * @param string[] $methods
-	 * @return Invitation|\PHPUnit_Framework_MockObject_MockObject
+	 * @return Invitation|MockObject
 	 */
 	protected function getProvider(array $methods = []) {
 		if (!empty($methods)) {
@@ -73,6 +78,7 @@ class InvitationTest extends TestCase {
 				->setConstructorArgs([
 					$this->l10nFactory,
 					$this->url,
+					$this->config,
 					$this->activityManager,
 					$this->userManager,
 					$this->manager,
@@ -83,6 +89,7 @@ class InvitationTest extends TestCase {
 		return new Invitation(
 			$this->l10nFactory,
 			$this->url,
+			$this->config,
 			$this->activityManager,
 			$this->userManager,
 			$this->manager
@@ -93,7 +100,7 @@ class InvitationTest extends TestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testParseThrowsWrongSubject() {
-		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
@@ -101,6 +108,19 @@ class InvitationTest extends TestCase {
 		$event->expects($this->once())
 			->method('getSubject')
 			->willReturn('call');
+		$event->expects($this->once())
+			->method('getAffectedUser')
+			->willReturn('user');
+
+		$user = $this->createMock(IUser::class);
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('user')
+			->willReturn($user);
+		$this->config->expects($this->once())
+			->method('isDisabledForUser')
+			->with($user)
+			->willReturn(false);
 
 		$provider = $this->getProvider();
 		$provider->parse('en', $event);
@@ -124,7 +144,7 @@ class InvitationTest extends TestCase {
 	public function testParse($lang, $roomExists, array $params, array $expectedParams) {
 		$provider = $this->getProvider(['parseInvitation', 'setSubjects', 'getUser', 'getRoom', 'getFormerRoom']);
 
-		/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject $l */
+		/** @var IL10N|MockObject $l */
 		$l = $this->createMock(IL10N::class);
 		$l->expects($this->any())
 			->method('t')
@@ -132,7 +152,7 @@ class InvitationTest extends TestCase {
 				return vsprintf($text, $parameters);
 			});
 
-		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
@@ -143,18 +163,28 @@ class InvitationTest extends TestCase {
 		$event->expects($this->once())
 			->method('getSubjectParameters')
 			->willReturn($params);
+		$event->expects($this->exactly($roomExists ? 2 : 1))
+			->method('getAffectedUser')
+			->willReturn('user');
+
+		$user = $this->createMock(IUser::class);
+		$this->userManager->expects($this->once())
+			->method('get')
+			->with('user')
+			->willReturn($user);
+		$this->config->expects($this->once())
+			->method('isDisabledForUser')
+			->with($user)
+			->willReturn(false);
 
 		if ($roomExists) {
-			/** @var Room|\PHPUnit_Framework_MockObject_MockObject $room */
+			/** @var Room|MockObject $room */
 			$room = $this->createMock(Room::class);
 
 			$this->manager->expects($this->once())
 				->method('getRoomById')
 				->with($params['room'])
 				->willReturn($room);
-			$event->expects($this->once())
-				->method('getAffectedUser')
-				->willReturn('user');
 
 			$provider->expects($this->once())
 				->method('getRoom')

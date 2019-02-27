@@ -23,6 +23,7 @@ namespace OCA\Spreed\Tests\php\Activity\Provider;
 
 
 use OCA\Spreed\Activity\Provider\Base;
+use OCA\Spreed\Config;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\Activity\IEvent;
@@ -32,6 +33,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 /**
@@ -41,15 +43,17 @@ use Test\TestCase;
  */
 class BaseTest extends TestCase {
 
-	/** @var IFactory|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IFactory|MockObject */
 	protected $l10nFactory;
-	/** @var IURLGenerator|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IURLGenerator|MockObject */
 	protected $url;
-	/** @var IManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Config|MockObject */
+	protected $config;
+	/** @var IManager|MockObject */
 	protected $activityManager;
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
 
 	public function setUp() {
@@ -57,6 +61,7 @@ class BaseTest extends TestCase {
 
 		$this->l10nFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
+		$this->config = $this->createMock(Config::class);
 		$this->activityManager = $this->createMock(IManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->manager = $this->createMock(Manager::class);
@@ -64,7 +69,7 @@ class BaseTest extends TestCase {
 
 	/**
 	 * @param string[] $methods
-	 * @return Base|\PHPUnit_Framework_MockObject_MockObject
+	 * @return Base|MockObject
 	 */
 	protected function getProvider(array $methods = []) {
 		$methods[] = 'parse';
@@ -72,6 +77,7 @@ class BaseTest extends TestCase {
 			->setConstructorArgs([
 				$this->l10nFactory,
 				$this->url,
+				$this->config,
 				$this->activityManager,
 				$this->userManager,
 				$this->manager,
@@ -81,41 +87,76 @@ class BaseTest extends TestCase {
 	}
 
 
-	public function dataPreParse() {
+	public function dataPreParse(): array {
 		return [
-			[true, 'app-dark.png'],
-			[false, 'app-dark.svg'],
+			[false, true, true, 'app-dark.png'],
+			[true, true, false, 'app-dark.svg'],
+			[true, false, false, 'app-dark.svg'],
 		];
 	}
 
 	/**
 	 * @dataProvider dataPreParse
 	 *
+	 * @param bool $validUser
+	 * @param bool $disabledForUser
+	 * @param bool $png
+	 * @param string $imagePath
 	 */
-	public function testPreParse($png, $imagePath) {
-		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+	public function testPreParse(bool $validUser, bool $disabledForUser, bool $png, string $imagePath): void {
+		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
 			->willReturn('spreed');
 
-		$this->activityManager->expects($this->once())
-			->method('getRequirePNG')
-			->willReturn($png);
+		if ($validUser) {
+			$event->expects($this->once())
+				->method('getAffectedUser')
+				->willReturn('user');
 
-		$this->url->expects($this->once())
-			->method('imagePath')
-			->with('spreed', $imagePath)
-			->willReturn('imagePath');
-		$this->url->expects($this->once())
-			->method('getAbsoluteURL')
-			->with('imagePath')
-			->willReturn('getAbsoluteURL');
+			$user = $this->createMock(IUser::class);
+			$this->userManager->expects($this->once())
+				->method('get')
+				->with('user')
+				->willReturn($user);
+			$this->config->expects($this->once())
+				->method('isDisabledForUser')
+				->with($user)
+				->willReturn($disabledForUser);
+		} else {
+			$event->expects($this->once())
+				->method('getAffectedUser')
+				->willReturn('no-user');
+			$this->userManager->expects($this->once())
+				->method('get')
+				->with('no-user')
+				->willReturn(null);
+			$this->config->expects($this->never())
+				->method('isDisabledForUser');
+		}
 
-		$event->expects($this->once())
-			->method('setIcon')
-			->with('getAbsoluteURL')
-			->willReturnSelf();
+		if ($disabledForUser) {
+			$this->expectException(\InvalidArgumentException::class);
+		} else {
+			$this->activityManager->expects($this->once())
+				->method('getRequirePNG')
+				->willReturn($png);
+
+			$this->url->expects($this->once())
+				->method('imagePath')
+				->with('spreed', $imagePath)
+				->willReturn('imagePath');
+			$this->url->expects($this->once())
+				->method('getAbsoluteURL')
+				->with('imagePath')
+				->willReturn('getAbsoluteURL');
+
+			$event->expects($this->once())
+				->method('setIcon')
+				->with('getAbsoluteURL')
+				->willReturnSelf();
+		}
 
 		$provider = $this->getProvider();
 		$this->assertSame($event, static::invokePrivate($provider, 'preParse', [$event]));
@@ -125,7 +166,7 @@ class BaseTest extends TestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testPreParseThrows() {
-		/** @var IEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
 		$event->expects($this->once())
 			->method('getApp')
