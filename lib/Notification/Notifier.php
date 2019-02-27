@@ -24,6 +24,7 @@ namespace OCA\Spreed\Notification;
 
 
 use OCA\Spreed\Chat\MessageParser;
+use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
@@ -36,6 +37,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
@@ -47,41 +49,42 @@ class Notifier implements INotifier {
 
 	/** @var IFactory */
 	protected $lFactory;
-
 	/** @var IURLGenerator */
 	protected $url;
-
+	/** @var Config */
+	protected $config;
 	/** @var IUserManager */
 	protected $userManager;
-
 	/** @var IShareManager */
 	private $shareManager;
-
 	/** @var Manager */
 	protected $manager;
-
+	/** @var INotificationManager */
+	protected $notificationManager;
 	/** @var ICommentsManager */
 	protected $commentManager;
-
 	/** @var MessageParser */
 	protected $messageParser;
-
 	/** @var Definitions */
 	protected $definitions;
 
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,
+								Config $config,
 								IUserManager $userManager,
 								IShareManager $shareManager,
 								Manager $manager,
+								INotificationManager $notificationManager,
 								ICommentsManager $commentManager,
 								MessageParser $messageParser,
 								Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
+		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
+		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
 		$this->definitions = $definitions;
@@ -99,6 +102,13 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Incorrect app');
 		}
 
+		$userId = $notification->getUser();
+		$user = $this->userManager->get($userId);
+		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
+			$this->notificationManager->markProcessed($notification);
+			throw new \InvalidArgumentException('User can not use Talk');
+		}
+
 		$l = $this->lFactory->get('spreed', $languageCode);
 
 		try {
@@ -109,14 +119,16 @@ class Notifier implements INotifier {
 				$room = $this->manager->getRoomById((int) $notification->getObjectId());
 			} catch (RoomNotFoundException $e) {
 				// Room does not exist
+				$this->notificationManager->markProcessed($notification);
 				throw new \InvalidArgumentException('Invalid room');
 			}
 		}
 
 		try {
-			$participant = $room->getParticipant($notification->getUser());
+			$participant = $room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
 			// Room does not exist
+			$this->notificationManager->markProcessed($notification);
 			throw new \InvalidArgumentException('User is not part of the room anymore');
 		}
 
@@ -138,6 +150,7 @@ class Notifier implements INotifier {
 			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
+		$this->notificationManager->markProcessed($notification);
 		throw new \InvalidArgumentException('Unknown subject');
 	}
 

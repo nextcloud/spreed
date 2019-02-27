@@ -21,8 +21,8 @@
 
 namespace OCA\Spreed\Tests\php\Notifications;
 
-use cogpowered\FineDiff\Granularity\Paragraph;
 use OCA\Spreed\Chat\MessageParser;
+use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Model\Message;
@@ -36,6 +36,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\RichObjectStrings\Definitions;
 use OCP\Share\IManager as IShareManager;
@@ -43,21 +44,25 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class NotifierTest extends \Test\TestCase {
 
-	/** @var IFactory|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IFactory|MockObject */
 	protected $lFactory;
-	/** @var IURLGenerator|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IURLGenerator|MockObject */
 	protected $url;
-	/** @var IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Config|MockObject */
+	protected $config;
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-	/** @var IShareManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IShareManager|MockObject */
 	protected $shareManager;
-	/** @var Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
-	/** @var ICommentsManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var INotificationManager|MockObject */
+	protected $notificationManager;
+	/** @var ICommentsManager|MockObject */
 	protected $commentsManager;
-	/** @var MessageParser|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var MessageParser|MockObject */
 	protected $messageParser;
-	/** @var Definitions|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Definitions|MockObject */
 	protected $definitions;
 	/** @var Notifier */
 	protected $notifier;
@@ -67,9 +72,11 @@ class NotifierTest extends \Test\TestCase {
 
 		$this->lFactory = $this->createMock(IFactory::class);
 		$this->url = $this->createMock(IURLGenerator::class);
+		$this->config = $this->createMock(Config::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
+		$this->notificationManager = $this->createMock(INotificationManager::class);
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->definitions = $this->createMock(Definitions::class);
@@ -77,9 +84,11 @@ class NotifierTest extends \Test\TestCase {
 		$this->notifier = new Notifier(
 			$this->lFactory,
 			$this->url,
+			$this->config,
 			$this->userManager,
 			$this->shareManager,
 			$this->manager,
+			$this->notificationManager,
 			$this->commentsManager,
 			$this->messageParser,
 			$this->definitions
@@ -118,7 +127,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn(1234);
 		$room->expects($this->any())
 			->method('getDisplayName')
-			->with('user')
+			->with('recipient')
 			->willReturn($displayName);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
@@ -130,11 +139,16 @@ class NotifierTest extends \Test\TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
+		$recipient = $this->createMock(IUser::class);
+		$this->userManager->expects($this->at(0))
+			->method('get')
+			->with('recipient')
+			->willReturn($recipient);
 		$u = $this->createMock(IUser::class);
 		$u->expects($this->exactly(2))
 			->method('getDisplayName')
 			->willReturn($displayName);
-		$this->userManager->expects($this->once())
+		$this->userManager->expects($this->at(1))
 			->method('get')
 			->with($uid)
 			->willReturn($u);
@@ -168,7 +182,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$n->expects($this->exactly(2))
 			->method('getUser')
-			->willReturn('user');
+			->willReturn('recipient');
 		$n->expects($this->once())
 			->method('getApp')
 			->willReturn('spreed');
@@ -220,7 +234,7 @@ class NotifierTest extends \Test\TestCase {
 			->willReturn($type);
 		$room->expects($this->atLeastOnce())
 			->method('getDisplayName')
-			->with('user')
+			->with('recipient')
 			->willReturn($name);
 		$this->manager->expects($this->once())
 			->method('getRoomByToken')
@@ -232,11 +246,16 @@ class NotifierTest extends \Test\TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
+		$recipient = $this->createMock(IUser::class);
+		$this->userManager->expects($this->at(0))
+			->method('get')
+			->with('recipient')
+			->willReturn($recipient);
 		$u = $this->createMock(IUser::class);
 		$u->expects($this->exactly(2))
 			->method('getDisplayName')
 			->willReturn($displayName);
-		$this->userManager->expects($this->once())
+		$this->userManager->expects($this->at(1))
 			->method('get')
 			->with($uid)
 			->willReturn($u);
@@ -294,7 +313,7 @@ class NotifierTest extends \Test\TestCase {
 
 		$n->expects($this->exactly(2))
 			->method('getUser')
-			->willReturn('user');
+			->willReturn('recipient');
 		$n->expects($this->once())
 			->method('getApp')
 			->willReturn('spreed');
@@ -583,28 +602,31 @@ class NotifierTest extends \Test\TestCase {
 			->with('spreed', 'de')
 			->willReturn($l);
 
+		$recipient = $this->createMock(IUser::class);
+		$this->userManager->expects($this->at(0))
+			->method('get')
+			->with('recipient')
+			->willReturn($recipient);
+
 		$user = $this->createMock(IUser::class);
 		if ($subjectParameters['userType'] === 'users' && !$deletedUser) {
 			$user->expects($this->once())
 				->method('getDisplayName')
 				->willReturn($displayName);
-			$this->userManager->expects($this->once())
+			$this->userManager->expects($this->at(1))
 				->method('get')
 				->with($subjectParameters['userId'])
 				->willReturn($user);
 		} else if ($subjectParameters['userType'] === 'users' && $deletedUser) {
 			$user->expects($this->never())
 				->method('getDisplayName');
-			$this->userManager->expects($this->once())
+			$this->userManager->expects($this->at(1))
 				->method('get')
 				->with($subjectParameters['userId'])
 				->willReturn(null);
 		} else {
 			$user->expects($this->never())
 				->method('getDisplayName');
-
-			$this->userManager->expects($this->never())
-				->method('get');
 		}
 
 		$comment = $this->createMock(IComment::class);
@@ -684,12 +706,13 @@ class NotifierTest extends \Test\TestCase {
 
 	public function dataPrepareThrows() {
 		return [
-			['Incorrect app', 'invalid-app', null, null, null, null],
-			['Invalid room', 'spreed', false, null, null, null],
-			['Unknown subject', 'spreed', true, 'invalid-subject', null, null],
-			['Unknown object type', 'spreed', true, 'invitation', null, 'invalid-object-type'],
-			['Calling user does not exist anymore', 'spreed', true, 'invitation', ['admin'], 'room'],
-			['Unknown object type', 'spreed', true, 'mention', null, 'invalid-object-type'],
+			['Incorrect app', 'invalid-app', null, null, null, null, null],
+			['User can not use Talk', 'spreed', true, null, null, null, null],
+			['Invalid room', 'spreed', false, false, null, null, null],
+			['Unknown subject', 'spreed', false, true, 'invalid-subject', null, null],
+			['Unknown object type', 'spreed', false, true, 'invitation', null, 'invalid-object-type'],
+			['Calling user does not exist anymore', 'spreed', false, true, 'invitation', ['admin'], 'room'],
+			['Unknown object type', 'spreed', false, true, 'mention', null, 'invalid-object-type'],
 		];
 	}
 
@@ -700,12 +723,13 @@ class NotifierTest extends \Test\TestCase {
 	 *
 	 * @param string $message
 	 * @param string $app
+	 * @param bool|null $isDisabledForUser
 	 * @param bool|null $validRoom
 	 * @param string|null $subject
 	 * @param array|null $params
 	 * @param string|null $objectType
 	 */
-	public function testPrepareThrows($message, $app, $validRoom, $subject, $params, $objectType) {
+	public function testPrepareThrows($message, $app, $isDisabledForUser, $validRoom, $subject, $params, $objectType) {
 		/** @var INotification|MockObject $n */
 		$n = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
@@ -748,6 +772,26 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($validRoom !== true ? $this->never() : $this->once())
 			->method('setLink')
 			->willReturnSelf();
+
+		if ($isDisabledForUser === null) {
+			$n->expects($this->never())
+				->method('getUser');
+		} else {
+			$n->expects($this->once())
+				->method('getUser')
+				->willReturn('recipient');
+			$r = $this->createMock(IUser::class);
+			$this->userManager->expects($this->atLeastOnce())
+				->method('get')
+				->willReturnMap([
+					['recipient', $r],
+					['admin', null],
+				]);
+
+			$this->config->expects($this->once())
+				->method('isDisabledForUser')
+				->willReturn($isDisabledForUser);
+		}
 
 		$n->expects($this->once())
 			->method('getApp')
