@@ -34,6 +34,7 @@ use OCA\Spreed\Signaling\Messages;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
@@ -695,10 +696,12 @@ class SignalingControllerTest extends \Test\TestCase {
 			$dbConnection,
 			\OC::$server->getConfig(),
 			$this->secureRandom,
+			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
 			$dispatcher,
 			$this->timeFactory,
-			$this->createMock(IHasher::class)
+			$this->createMock(IHasher::class),
+			$this->createMock(IL10N::class)
 		);
 		$this->recreateSignalingController();
 
