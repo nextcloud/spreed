@@ -891,7 +891,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->removeUser($targetUser);
+		$room->removeUser($targetUser, Room::PARTICIPANT_REMOVED);
 		return new DataResponse([]);
 	}
 
@@ -919,7 +919,7 @@ class RoomController extends OCSController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			$room->removeUser($currentUser);
+			$room->removeUser($currentUser, Room::PARTICIPANT_LEFT);
 		}
 
 		return new DataResponse([]);
@@ -965,7 +965,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$room->removeParticipantBySession($targetParticipant);
+		$room->removeParticipantBySession($targetParticipant, Room::PARTICIPANT_REMOVED);
 		return new DataResponse([]);
 	}
 
@@ -1110,7 +1110,7 @@ class RoomController extends OCSController {
 
 			if ($this->userId === null) {
 				$participant = $room->getParticipantBySession($sessionId);
-				$room->removeParticipantBySession($participant);
+				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			} else {
 				$participant = $room->getParticipant($this->userId);
 				$room->leaveRoom($participant->getUser());

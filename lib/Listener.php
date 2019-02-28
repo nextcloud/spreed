@@ -51,7 +51,7 @@ class Listener {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
 				$room->deleteRoom();
 			} else {
-				$room->removeUser($user);
+				$room->removeUser($user, Room::PARTICIPANT_REMOVED);
 			}
 		}
 	}
