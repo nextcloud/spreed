@@ -422,7 +422,7 @@ class SignalingController extends OCSController {
 			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
 		} else if ($action === 'leave') {
 			if (!empty($userId)) {
-				$room->leaveRoom($userId);
+				$room->leaveRoom($userId, $sessionId);
 			} else if ($participant instanceof Participant) {
 				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			}
