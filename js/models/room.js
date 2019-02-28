@@ -75,7 +75,7 @@
 			// attributes hash to be set on the model.
 			return (result.ocs === undefined)? result : result.ocs.data;
 		},
-		validate: function(attributes, options) {
+		validate: function(attributes) {
 			if (!attributes.name) {
 				return t('spreed', 'Room name can not be empty');
 			}
