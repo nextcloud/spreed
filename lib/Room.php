@@ -973,6 +973,28 @@ class Room {
 		return (bool) $row;
 	}
 
+	public function getNumberOfModerators(bool $ignoreGuests = true): int {
+		$types = [
+			Participant::OWNER,
+			Participant::MODERATOR,
+		];
+		if (!$ignoreGuests) {
+			$types[] = Participant::GUEST_MODERATOR;
+		}
+
+		$query = $this->db->getQueryBuilder();
+		$query->select($query->func()->count('*', 'num_moderators'))
+			->from('talk_participants')
+			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->in('participant_type', $query->createNamedParameter($types, IQueryBuilder::PARAM_INT_ARRAY)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		return (int) ($row['num_moderators'] ?? 0);
+	}
+
 	/**
 	 * @param bool $ignoreGuests
 	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
@@ -980,7 +1002,7 @@ class Room {
 	 */
 	public function getNumberOfParticipants(bool $ignoreGuests = true, int $lastPing = 0): int {
 		$query = $this->db->getQueryBuilder();
-		$query->selectAlias($query->createFunction('COUNT(*)'), 'num_participants')
+		$query->select($query->func()->count('*', 'num_participants'))
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 
@@ -999,7 +1021,7 @@ class Room {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		return isset($row['num_participants']) ? (int) $row['num_participants'] : 0;
+		return (int) ($row['num_participants'] ?? 0);
 	}
 
 	public function markUsersAsMentioned(array $userIds, \DateTime $time): void {

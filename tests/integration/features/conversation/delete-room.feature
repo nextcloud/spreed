@@ -54,13 +54,3 @@ Feature: public
     When user "participant2" deletes room "room" with 404
     Then user "participant1" is participant of room "room"
     And user "participant2" is not participant of room "room"
-
-  Scenario: User1 creates a public room and deletes themself
-    Given user "participant1" creates room "room"
-      | roomType | 3 |
-      | roomName | room |
-    And user "participant1" is participant of room "room"
-    And user "participant2" is not participant of room "room"
-    And user "participant3" is not participant of room "room"
-    When user "participant1" removes "participant1" from room "room" with 403
-    Then user "participant1" is participant of room "room"
