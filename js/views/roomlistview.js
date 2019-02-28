@@ -237,7 +237,20 @@
 		removeRoom: function() {
 			this.$el.slideUp();
 
-			this.model.removeSelf();
+			this.model.removeSelf({
+				error: function(model, response) {
+					if (response.status === 400) {
+						OC.Notification.showTemporary(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'));
+
+						// Close the menu, as nothing changed and thus the item
+						// will not be rendered again.
+						this.menuShown = false;
+						this.toggleMenuClass();
+
+						this.$el.slideDown();
+					}
+				}.bind(this)
+			});
 		},
 		deleteRoom: function() {
 			if (this.model.get('participantType') !== 1 &&

@@ -110,12 +110,29 @@
 
 			OCA.SpreedMe.app.connection.leaveCurrentRoom();
 		},
-		removeSelf: function() {
-			this.destroy({
-				url: this.url() + '/participants/self'
+		removeSelf: function(options) {
+			var self = this;
+
+			// Removing self can fail, so wait for the server response to remove
+			// the model from its collection and to leave the room.
+			var success = options? options.success: undefined;
+			options = _.extend({}, options, {
+				url: this.url() + '/participants/self',
+				wait: true,
+				success: function() {
+					self.leave();
+
+					if (success) {
+						success.apply(this, arguments);
+					}
+				}
 			});
+
+			return Backbone.Model.prototype.destroy.call(this, options);
 		},
 		destroy: function(options) {
+			// Destroying a room is not expected to fail, so leave the room
+			// without waiting for the server response for a snappier UI.
 			this.leave();
 
 			return Backbone.Model.prototype.destroy.call(this, options);
