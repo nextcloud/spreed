@@ -97,6 +97,11 @@ class Listener {
 			$listener->sendSystemMessage($room, 'conversation_created');
 		});
 		$dispatcher->addListener(Room::class . '::postSetName', function(GenericEvent $event) {
+			if ($event->getArgument('oldName') === '' ||
+				  $event->getArgument('newName') === '') {
+				return;
+			}
+
 			/** @var Room $room */
 			$room = $event->getSubject();
 			/** @var self $listener */
