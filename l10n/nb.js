@@ -123,11 +123,6 @@ OC.L10N.register(
     "STUN servers" : "STUN-tjener",
     "A STUN server is used to determine the public IP address of participants behind a router." : "En STUN-tjener brukes til å fastsette den offentlige IP-adressen for deltagere bak en ruter.",
     "TURN server" : "TURN-tjener",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-tjeneren fungerer som mellomtjener for trafikk fra deltakere bak en brannmur.",
-    "(group)" : "(gruppe)",
-    "and you" : "og deg",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN-tjeneren fungerer som mellomtjener for trafikk fra deltakere bak en brannmur."
 },
 "nplurals=2; plural=(n != 1);");

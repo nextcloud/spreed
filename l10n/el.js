@@ -78,11 +78,6 @@ OC.L10N.register(
     "STUN servers" : "Διακομιστές STUN",
     "TURN server" : "Διακομιστής TURN",
     "Android app" : "Εφαρμογή Android",
-    "iOS app" : "Εφαρμογή iOS",
-    "(group)" : "(ομάδα)",
-    "and you" : "και εσείς",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …"
+    "iOS app" : "Εφαρμογή iOS"
 },
 "nplurals=2; plural=(n != 1);");

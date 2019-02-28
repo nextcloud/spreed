@@ -247,11 +247,10 @@
     "Join conversations at any time, any where, on any device." : "Придружите се разговорима било кад, било где, са било ког уређаја.",
     "Android app" : "Андроид апликација",
     "iOS app" : "iOS апликација",
-    "(group)" : "(група)",
-    "and you" : "и Ви",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "TURN candidate generation failed, please check the settings." : "Генерација TURN кандидата није успела, проверите подешавања.",
+    "The TURN server settings are valid." : "Поставке TURN сервера су исправне.",
+    "Checking TURN server {server}" : "Проверавам TURN сервер {server}",
+    "Password request by %s" : "%s упутио/ла захтев за лозинком",
     "%s mentioned you in a private conversation" : "%s Вас је споменуо/ла у приватном разговору",
     "%s mentioned you in a group conversation: %s" : "%s Вас је споменуо/ла у групном разговору %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} Вас је споменуо/ла у групном разговору: {call}",
@@ -263,10 +262,6 @@
     "A guest mentioned you in a group conversation: %s" : "Гост Вас је споменуо у групном разговору: %s",
     "A guest mentioned you in a group conversation: {call}" : "Гост Вас је споменуо у групном разговору: {call}",
     "A guest mentioned you in a group conversation" : "Гост Вас је споменуо у групном разговору",
-    "TURN candidate generation failed, please check the settings." : "Генерација TURN кандидата није успела, проверите подешавања.",
-    "The TURN server settings are valid." : "Поставке TURN сервера су исправне.",
-    "Checking TURN server {server}" : "Проверавам TURN сервер {server}",
-    "Password request by %s" : "%s упутио/ла захтев за лозинком",
     "{email} requested the password to access a share" : "{email} је захтевао/ла лозинку да приступу дељењу"
 },"pluralForm" :"nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
 }

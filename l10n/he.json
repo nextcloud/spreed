@@ -140,8 +140,6 @@
     "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר.",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
-    "(group)" : "(קבוצה)",
-    "and you" : "ואני",
     "Password request by %s" : "בקשת ססמה מאת %s",
     "{email} requested the password to access a share" : "התקבלה בקשה לססמת גישה לשיתוף על ידי {email}"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"

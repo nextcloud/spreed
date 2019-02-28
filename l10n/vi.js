@@ -193,11 +193,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị.",
     "Android app" : "Ứng dụng Android",
     "iOS app" : "Ứng dụng IOS",
-    "(group)" : "(nhóm)",
-    "and you" : "và bạn",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s… ",
+    "Password request by %s" : "Mật khẩu được yêu cầu bởi %s",
     "%s mentioned you in a private conversation" : "%sđã đề cập đến bạn trong cuộc trò chuyện riêng ",
     "%s mentioned you in a group conversation: %s" : "%sđã đề cập đến bạn trong cuộc trò chuyện nhóm: %s ",
     "{user} mentioned you in a group conversation: {call}" : "{user} đã đề cập đến bạn trong cuộc trò chuyện nhóm: {call}",
@@ -209,7 +205,6 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm: %s",
     "A guest mentioned you in a group conversation: {call}" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm: {call}",
     "A guest mentioned you in a group conversation" : "Một khách đã đề cập đến bạn trong cuộc trò chuyện nhóm",
-    "Password request by %s" : "Mật khẩu được yêu cầu bởi %s",
     "{email} requested the password to access a share" : "{email} đã yêu cầu mật khẩu để truy cập chia sẽ"
 },
 "nplurals=1; plural=0;");

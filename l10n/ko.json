@@ -100,11 +100,6 @@
     "STUN servers" : "STUN 서버",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
     "TURN server" : "TURN 서버",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 서버는 방화벽 뒤에 있는 참가자의 트래픽을 중계합니다.",
-    "(group)" : "(그룹)",
-    "and you" : "그리고 나",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …"
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 서버는 방화벽 뒤에 있는 참가자의 트래픽을 중계합니다."
 },"pluralForm" :"nplurals=1; plural=0;"
 }

@@ -142,8 +142,6 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר.",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
-    "(group)" : "(קבוצה)",
-    "and you" : "ואני",
     "Password request by %s" : "בקשת ססמה מאת %s",
     "{email} requested the password to access a share" : "התקבלה בקשה לססמת גישה לשיתוף על ידי {email}"
 },

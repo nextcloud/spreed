@@ -122,11 +122,6 @@ OC.L10N.register(
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
     "TURN server" : "Servidor TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
-    "(group)" : "(grupo)",
-    "and you" : "y tú",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ..."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
 },
 "nplurals=2; plural=(n != 1);");

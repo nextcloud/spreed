@@ -222,11 +222,10 @@
     "Join conversations at any time, any where, on any device." : "Taktu þátt í samtölum hvenær sem er, hvar sem er, á hvaða tæki sem er.",
     "Android app" : "Android-forrit",
     "iOS app" : "iOS-forrit",
-    "(group)" : "(hópur)",
-    "and you" : "og þú",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "TURN candidate generation failed, please check the settings." : "Mistókst að útbúa frumgerð af TURN-þjóni, athugaðu með stillingarnar.",
+    "The TURN server settings are valid." : "Stillingar TURN-þjónsins eru gildar.",
+    "Checking TURN server {server}" : "Athuga með TURN-þjóninn {server}",
+    "Password request by %s" : "Beiðni um lykilorð frá %s",
     "%s mentioned you in a private conversation" : "%s minntist á þig í einkasamtali",
     "%s mentioned you in a group conversation: %s" : "%s minntist á þig í hópsamtali: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} minntist á þig í hópsamtali: {call}",
@@ -238,10 +237,6 @@
     "A guest mentioned you in a group conversation: %s" : "Gestur minntist á þig í hópsamtali: %s",
     "A guest mentioned you in a group conversation: {call}" : "Gestur minntist á þig í hópsamtali: {call}",
     "A guest mentioned you in a group conversation" : "Gestur minntist á þig í hópsamtali",
-    "TURN candidate generation failed, please check the settings." : "Mistókst að útbúa frumgerð af TURN-þjóni, athugaðu með stillingarnar.",
-    "The TURN server settings are valid." : "Stillingar TURN-þjónsins eru gildar.",
-    "Checking TURN server {server}" : "Athuga með TURN-þjóninn {server}",
-    "Password request by %s" : "Beiðni um lykilorð frá %s",
     "{email} requested the password to access a share" : "{email} bað um lykilorðið til að fá aðgang að sameign"
 },"pluralForm" :"nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);"
 }

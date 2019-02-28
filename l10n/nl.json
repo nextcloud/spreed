@@ -236,11 +236,10 @@
     "Join conversations at any time, any where, on any device." : "Doe mee met gesprekken op elk tijdstip, overal met elk apparaat.",
     "Android app" : "Android app",
     "iOS app" : "iOS app",
-    "(group)" : "(groep)",
-    "and you" : "en jij",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "TURN candidate generation failed, please check the settings." : "TURN kandidaatgeneratie mislukt, controleer de instellingen.",
+    "The TURN server settings are valid." : "De TURN server instellingen zijn geldig.",
+    "Checking TURN server {server}" : "Controleren TURN server {server}",
+    "Password request by %s" : "Aanvraag wachtwoord door %s",
     "%s mentioned you in a private conversation" : "%s vermeldde je in een besloten gesprek",
     "%s mentioned you in a group conversation: %s" : "%s vermeldde je in een groepsgesprek: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} vermeldde je in een groepsgesprek: {call}",
@@ -252,10 +251,6 @@
     "A guest mentioned you in a group conversation: %s" : "Een gast vermeldde je in een groepsgesprek: %s",
     "A guest mentioned you in a group conversation: {call}" : "Een gast vermeldde je in een groepsgesprek: {call}",
     "A guest mentioned you in a group conversation" : "Een gast vermeldde je in een groepsgesprek",
-    "TURN candidate generation failed, please check the settings." : "TURN kandidaatgeneratie mislukt, controleer de instellingen.",
-    "The TURN server settings are valid." : "De TURN server instellingen zijn geldig.",
-    "Checking TURN server {server}" : "Controleren TURN server {server}",
-    "Password request by %s" : "Aanvraag wachtwoord door %s",
     "{email} requested the password to access a share" : "{email} vroeg een wachtwoord om een share te openen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

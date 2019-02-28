@@ -247,11 +247,10 @@
     "Join conversations at any time, any where, on any device." : "Nimm an Gesprächen teil, zu jeder Zeit, an jedem Ort und mit jedem Gerät.",
     "Android app" : "Android-App",
     "iOS app" : "iOS-App",
-    "(group)" : "(Gruppe)",
-    "and you" : "und Du",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ...",
+    "TURN candidate generation failed, please check the settings." : "TURN Kandidatengenerierung fehlgeschlagen, bitte überprüfe die Einstellungen.",
+    "The TURN server settings are valid." : "Die Einstellungen des TURN-Servers sind gültig.",
+    "Checking TURN server {server}" : "Prüfe TURN server {server}",
+    "Password request by %s" : "Passwort angefordert von %s",
     "%s mentioned you in a private conversation" : "%s hat dich in einer privaten Unterhaltung erwähnt",
     "%s mentioned you in a group conversation: %s" : "%s hat dich in einer Gruppenunterhaltung erwähnt: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} hat dich in einer Gruppenunterhaltung erwähnt: {call}",
@@ -263,10 +262,6 @@
     "A guest mentioned you in a group conversation: %s" : "Ein Gast hat dich in einer Gruppenunterhaltung erwähnt: %s",
     "A guest mentioned you in a group conversation: {call}" : "Ein Gast hat dich in einer Gruppenunterhaltung erwähnt: {call}",
     "A guest mentioned you in a group conversation" : "Ein Gast hat dich in einer Gruppenunterhaltung erwähnt",
-    "TURN candidate generation failed, please check the settings." : "TURN Kandidatengenerierung fehlgeschlagen, bitte überprüfe die Einstellungen.",
-    "The TURN server settings are valid." : "Die Einstellungen des TURN-Servers sind gültig.",
-    "Checking TURN server {server}" : "Prüfe TURN server {server}",
-    "Password request by %s" : "Passwort angefordert von %s",
     "{email} requested the password to access a share" : "{email} hat das Passwort angefordert um auf die Freigabe zuzugreifen"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

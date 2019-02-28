@@ -103,11 +103,6 @@ OC.L10N.register(
     "STUN servers" : "STUN სერვერები",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
     "TURN server" : "TURN სერვერი",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
-    "(group)" : "(ჯგუფი)",
-    "and you" : "და თქვენ",
-    "… %s" : "… %s",
-    "%s …" : "%s … ",
-    "… %s …" : "... %s ..."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად."
 },
 "nplurals=2; plural=(n!=1);");

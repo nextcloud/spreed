@@ -89,11 +89,6 @@ OC.L10N.register(
     "Talk to %s" : "Falar com %s",
     ", " : ",",
     "{user} wants to talk with you" : "{utilizador} quer falar consigo",
-    "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}",
-    "(group)" : "(grupo)",
-    "and you" : "e você",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ..."
+    "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}"
 },
 "nplurals=2; plural=(n != 1);");
