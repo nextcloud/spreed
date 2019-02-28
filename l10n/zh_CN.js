@@ -164,11 +164,6 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 服务器是用来为防火墙后面的参与者代理流量的。",
     "Join conversations at any time, any where, on any device." : "在任何设备上随时随地加入会话。",
     "Android app" : "Android 应用",
-    "iOS app" : "iOS 应用",
-    "(group)" : "（组）",
-    "and you" : "和您",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ..."
+    "iOS app" : "iOS 应用"
 },
 "nplurals=1; plural=0;");

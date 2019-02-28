@@ -221,11 +221,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Pripojte sa ku rozhovorom kedykoľvek, kdekoľvek, na hocijakom zariadení.",
     "Android app" : "Android apka",
     "iOS app" : "iOS apka",
-    "(group)" : "(skupina)",
-    "and you" : "a vy",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "Password request by %s" : "Heslo je požadované užívateľom %s",
     "%s mentioned you in a private conversation" : "%s Vás spomenul v súkromnom rozhovore",
     "%s mentioned you in a group conversation: %s" : "%s Vás spomenul v skupinovom rozhovore: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} Vás spomenul v skupinovom rozhovore {call}",
@@ -237,7 +233,6 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "Hosť Vás spomenul v skupinovom rozhovore: %s",
     "A guest mentioned you in a group conversation: {call}" : "Hosť Vás spomenul v skupinovom rozhovore: {call}",
     "A guest mentioned you in a group conversation" : "Hosť Vás spomenul v skupinovom rozhovore",
-    "Password request by %s" : "Heslo je požadované užívateľom %s",
     "{email} requested the password to access a share" : "{email} požiadal o heslo na prístup k zdieľaniu"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

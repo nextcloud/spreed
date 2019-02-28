@@ -246,11 +246,10 @@
     "Join conversations at any time, any where, on any device." : "Připojte se ke konverzacím kdykoli, kdekoli a z jakéhokoli zařízení.",
     "Android app" : "Aplikace pro Android",
     "iOS app" : "Aplikace pro iOS",
-    "(group)" : "(skupina)",
-    "and you" : "a vy",
-    "… %s" : "… %s",
-    "%s …" : "%s…",
-    "… %s …" : "… %s …",
+    "TURN candidate generation failed, please check the settings." : "Vytváření TURN kandidáta se nezdařilo, ověřte nastavení.",
+    "The TURN server settings are valid." : "Nastavení TURN serveru jsou platná.",
+    "Checking TURN server {server}" : "Kontroluje se TURN server {server}",
+    "Password request by %s" : "Požadavek na heslo od %s",
     "%s mentioned you in a private conversation" : "%s vás zmínil(a) v soukromé konverzaci",
     "%s mentioned you in a group conversation: %s" : "%s vás zmínil(a) ve skupinové konverzaci: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} vás zmínil(a) ve skupinové konverzaci: {call}",
@@ -262,10 +261,6 @@
     "A guest mentioned you in a group conversation: %s" : "Host vás zmínil ve skupinové konverzaci: %s",
     "A guest mentioned you in a group conversation: {call}" : "Host vás zmínil ve skupinové konverzaci: {call}",
     "A guest mentioned you in a group conversation" : "Host vás zmínil ve skupinové konverzaci",
-    "TURN candidate generation failed, please check the settings." : "Vytváření TURN kandidáta se nezdařilo, ověřte nastavení.",
-    "The TURN server settings are valid." : "Nastavení TURN serveru jsou platná.",
-    "Checking TURN server {server}" : "Kontroluje se TURN server {server}",
-    "Password request by %s" : "Požadavek na heslo od %s",
     "{email} requested the password to access a share" : "{email} požádal(a) o heslo pro přístup ke sdílení"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

@@ -151,11 +151,6 @@ OC.L10N.register(
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーは、ルーターを介した参加者のパブリックIPアドレスを決定するために使用されます。",
     "TURN server" : "TURNサーバー",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURNサーバーは参加者のファイアウォール越しの通信を中継します。",
-    "Join conversations at any time, any where, on any device." : "いつでも、どこでも、どのデバイスでも会話に参加できます。",
-    "(group)" : "(グループ)",
-    "and you" : "と自分",
-    "… %s" : "... %s",
-    "%s …" : "%s ...",
-    "… %s …" : "... %s ..."
+    "Join conversations at any time, any where, on any device." : "いつでも、どこでも、どのデバイスでも会話に参加できます。"
 },
 "nplurals=1; plural=0;");

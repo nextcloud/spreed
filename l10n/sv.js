@@ -244,11 +244,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Anslut dig till konversationer när som helst, var som helst och på valfri enhet.",
     "Android app" : "Android-app",
     "iOS app" : " iOS-app",
-    "(group)" : " (grupp)",
-    "and you" : "och du",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "Password request by %s" : "Lösenordet efterfrågas av %s",
     "%s mentioned you in a private conversation" : "%s nämnde dig i en privat konversation",
     "%s mentioned you in a group conversation: %s" : "%s nämnde dig i en gruppkonversation: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} nämnde dig i en gruppkonversation: {call}",
@@ -260,7 +256,6 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "En gäst nämnde dig i en gruppkonversation: %s",
     "A guest mentioned you in a group conversation: {call}" : "En gäst nämnde dig i en gruppkonversation: {call}",
     "A guest mentioned you in a group conversation" : "En gäst nämnde dig i en gruppkonversation",
-    "Password request by %s" : "Lösenordet efterfrågas av %s",
     "{email} requested the password to access a share" : "{email} begärde lösenordet för att komma åt en delning"
 },
 "nplurals=2; plural=(n != 1);");

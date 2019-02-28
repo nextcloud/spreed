@@ -159,19 +159,14 @@
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "A TURN szervert használjuk a proxyként a tűzfal mögötti felhasználókhoz.",
     "Android app" : "Android alkalmazás",
     "iOS app" : "iOS alkalmazás",
-    "(group)" : "(csoport)",
-    "and you" : "és te",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "The TURN server settings are valid." : "A TURN szerver beállítása érvényes.",
+    "Checking TURN server {server}" : "TURN szerver ellenőrzés {server}",
     "%s mentioned you in a group conversation: %s" : "%s megemlített téged egy csoportos beszélgetésben: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} megemlített téged egy csoportos beszélgetésben: {call}",
     "%s mentioned you in a group conversation" : "%s megemlített téged egy csoportos beszélgetésben",
     "{user} mentioned you in a group conversation" : "{user} megemlített téged egy csoportos beszélgetésben",
     "A guest mentioned you in a group conversation: %s" : "Egy vendég megemlített téged egy csoportos beszélgetésben: %s",
     "A guest mentioned you in a group conversation: {call}" : "Egy vendég megemlített téged egy csoportos beszélgetésben: {call}",
-    "A guest mentioned you in a group conversation" : "Egy vendég megemlített téged egy csoportos beszélgetésben",
-    "The TURN server settings are valid." : "A TURN szerver beállítása érvényes.",
-    "Checking TURN server {server}" : "TURN szerver ellenőrzés {server}"
+    "A guest mentioned you in a group conversation" : "Egy vendég megemlített téged egy csoportos beszélgetésben"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

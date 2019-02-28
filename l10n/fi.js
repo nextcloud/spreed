@@ -205,11 +205,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Liity keskusteluun milloin tahansa, mistä tahansa, miltä laitteelta tahansa.",
     "Android app" : "Android-sovellus",
     "iOS app" : "iOS-sovellus",
-    "(group)" : "(ryhmä)",
-    "and you" : "ja sinä",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "The TURN server settings are valid." : "TURN-palvelimen asetukset ovat kelvolliset.",
     "%s mentioned you in a private conversation" : "%s mainitsi sinut yksityskeskustelussa",
     "%s mentioned you in a group conversation: %s" : "%s mainitsi sinut ryhmäkeskustelussa: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} mainitsi sinut ryhmäkeskustelussa: {call}",
@@ -220,7 +216,6 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "Vieras mainitsi sinut ryhmäkeskustelussa: %s",
     "A guest mentioned you in a group conversation: {call}" : "Vieras mainitsi sinut ryhmäkeskustelussa: {call}",
     "A guest mentioned you in a group conversation" : "Vieras mainitsi sinut ryhmäkeskustelussa",
-    "The TURN server settings are valid." : "TURN-palvelimen asetukset ovat kelvolliset.",
     "{email} requested the password to access a share" : "{email} pyysi salasanaa käyttääkseen jakoa"
 },
 "nplurals=2; plural=(n != 1);");
