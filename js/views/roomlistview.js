@@ -165,7 +165,7 @@
 				icon = 'icon icon-public';
 			}
 
-			var isDeletable = this.model.get('participantType') === 1 || this.model.get('participantType') === 2;
+			var isDeletable = this.model.get('type') !== 1 && (this.model.get('participantType') === 1 || this.model.get('participantType') === 2);
 			var isLeavable = !isDeletable || (this.model.get('type') !== 1 && Object.keys(this.model.get('participants')).length > 1);
 
 			return {

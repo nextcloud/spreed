@@ -272,10 +272,6 @@ class Room {
 	public function setName(string $newName): bool {
 		$oldName = $this->getName();
 		if ($newName === $oldName) {
-			return true;
-		}
-
-		if ($this->getType() === self::ONE_TO_ONE_CALL) {
 			return false;
 		}
 
@@ -399,13 +395,16 @@ class Room {
 	}
 
 	/**
-	 * @param int $newType Currently it is only allowed to change to: self::GROUP_CALL, self::PUBLIC_CALL
+	 * @param int $newType Currently it is only allowed to change between `self::GROUP_CALL` and `self::PUBLIC_CALL`
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function changeType(int $newType): bool {
-		$newType = (int) $newType;
 		if ($newType === $this->getType()) {
 			return true;
+		}
+
+		if ($this->getType() === self::ONE_TO_ONE_CALL) {
+			return false;
 		}
 
 		if (!in_array($newType, [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
@@ -540,6 +539,10 @@ class Room {
 			'reason' => $reason,
 		]));
 
+		if ($this->getType() === self::ONE_TO_ONE_CALL) {
+			$this->setName($user->getUID());
+		}
+
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
@@ -551,6 +554,7 @@ class Room {
 			'participant' => $participant,
 			'reason' => $reason,
 		]));
+
 	}
 
 	/**
