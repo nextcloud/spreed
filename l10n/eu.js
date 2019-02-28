@@ -108,11 +108,6 @@ OC.L10N.register(
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzariak  firewall baten atzean dauden partehartzaileen trafikoa proxy bidez eramateko erabiltzen da",
     "Android app" : "Android aplikazioa",
-    "iOS app" : "iOS aplikazioa",
-    "(group)" : "(taldea)",
-    "and you" : "eta zu",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …"
+    "iOS app" : "iOS aplikazioa"
 },
 "nplurals=2; plural=(n != 1);");

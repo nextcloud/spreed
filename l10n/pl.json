@@ -247,11 +247,10 @@
     "Join conversations at any time, any where, on any device." : "Dołącz do rozmów w dowolnym czasie i dowolnym miejscu na dowolnym urządzeniu.",
     "Android app" : "Aplikacja na Androida",
     "iOS app" : "Aplikacja na iOS",
-    "(group)" : "(grupa)",
-    "and you" : "i ty",
-    "… %s" : "… %s",
-    "%s …" : "%s …",
-    "… %s …" : "… %s …",
+    "TURN candidate generation failed, please check the settings." : "Zgłoszenie kandydata TURN nie powiodło się, sprawdź ustawienia.",
+    "The TURN server settings are valid." : "Ustawienia serwera TURN są prawidłowe.",
+    "Checking TURN server {server}" : "Sprawdzanie serwera TURN {server}",
+    "Password request by %s" : "Żądanie hasła wg %s",
     "%s mentioned you in a private conversation" : "%s wspomniał o Tobie w prywatnej rozmowie ",
     "%s mentioned you in a group conversation: %s" : "%s wspomniał o Tobie w rozmowie grupowej: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} wspomniał o Tobie w rozmowie grupowej: {call}",
@@ -263,10 +262,6 @@
     "A guest mentioned you in a group conversation: %s" : "Gość wspomniał o Tobie w rozmowie grupowej: %s",
     "A guest mentioned you in a group conversation: {call}" : "Gość wspomniał o Tobie w rozmowie grupowej: {call}",
     "A guest mentioned you in a group conversation" : "Gość wspomniał o Tobie w rozmowie grupowej",
-    "TURN candidate generation failed, please check the settings." : "Zgłoszenie kandydata TURN nie powiodło się, sprawdź ustawienia.",
-    "The TURN server settings are valid." : "Ustawienia serwera TURN są prawidłowe.",
-    "Checking TURN server {server}" : "Sprawdzanie serwera TURN {server}",
-    "Password request by %s" : "Żądanie hasła wg %s",
     "{email} requested the password to access a share" : "{email} zażądał hasła, aby uzyskać dostęp do udziału"
 },"pluralForm" :"nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);"
 }
