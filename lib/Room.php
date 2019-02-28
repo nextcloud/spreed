@@ -443,6 +443,25 @@ class Room {
 		return true;
 	}
 
+	public function ensureOneToOneRoomIsFilled(): void {
+		if ($this->getType() !== self::ONE_TO_ONE_CALL) {
+			return;
+		}
+
+		if ($this->getName() === '') {
+			return;
+		}
+
+		if ($this->manager->isValidParticipant($this->getName())) {
+			$this->addUsers([
+				'userId' => $this->getName(),
+				'participantType' => Participant::OWNER,
+			]);
+		}
+
+		$this->setName('');
+	}
+
 	/**
 	 * @param array[] ...$participants
 	 */

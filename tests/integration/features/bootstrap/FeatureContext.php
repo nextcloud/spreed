@@ -188,13 +188,28 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode|null $formData
 	 */
 	public function userCreatesRoom($user, $identifier, TableNode $formData = null) {
+		$this->userCreatesRoomWith($user, $identifier, 201, $formData);
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" creates room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param int $statusCode
+	 * @param TableNode|null $formData
+	 */
+	public function userCreatesRoomWith($user, $identifier, $statusCode, TableNode $formData = null) {
 		$this->setCurrentUser($user);
 		$this->sendRequest('POST', '/apps/spreed/api/v1/room', $formData);
-		$this->assertStatusCode($this->response, 201);
+		$this->assertStatusCode($this->response, $statusCode);
 
 		$response = $this->getDataFromResponse($this->response);
-		self::$identifierToToken[$identifier] = $response['token'];
-		self::$tokenToIdentifier[$response['token']] = $identifier;
+
+		if ($statusCode === 201) {
+			self::$identifierToToken[$identifier] = $response['token'];
+			self::$tokenToIdentifier[$response['token']] = $identifier;
+		}
 	}
 
 	/**

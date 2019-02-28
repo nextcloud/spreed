@@ -141,6 +141,8 @@ class CallController extends OCSController {
 			}
 		}
 
+		$room->ensureOneToOneRoomIsFilled();
+
 		$sessionId = $participant->getSessionId();
 		if ($sessionId === '0') {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
