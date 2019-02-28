@@ -66,8 +66,15 @@ class SearchPlugin implements ISearchPlugin {
 	 */
 	public function search($search, $limit, $offset, ISearchResult $searchResult) {
 
+		$userIds = $this->room->getParticipantUserIds();
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL
+			&& $this->room->getName() !== '') {
+			// Add potential leavers of one-to-one rooms again.
+			$userIds[] = $this->room->getName();
+		}
+
 		// FIXME Handle guests
-		$this->searchUsers($search, $this->room->getParticipantUserIds(), $searchResult);
+		$this->searchUsers($search, $userIds, $searchResult);
 
 		if ($this->room->getObjectType() === 'file') {
 			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
