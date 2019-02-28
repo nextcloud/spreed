@@ -9,8 +9,10 @@ Feature: sharees
   Scenario: search empty name
     Given user "participant1" creates room "unnamed own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "own group room" to "Group room" with 200
     And user "participant1" creates room "own one-to-one room"
       | roomType | 1 |
@@ -37,6 +39,7 @@ Feature: sharees
   Scenario: search own group room with no matches
     Given user "participant1" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "own group room" to "Group room" with 200
     When user "participant1" gets sharees for
       | search | unmatched search term |
@@ -46,6 +49,7 @@ Feature: sharees
   Scenario: search own group room with single match
     Given user "participant1" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "own group room" to "Group room" with 200
     When user "participant1" gets sharees for
       | search | room |
@@ -56,6 +60,7 @@ Feature: sharees
   Scenario: search own group room with single exact match
     Given user "participant1" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "own group room" to "Group room" with 200
     When user "participant1" gets sharees for
       | search | group room |
@@ -66,9 +71,11 @@ Feature: sharees
   Scenario: search own group room with several matches
     Given user "participant1" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "own group room" to "Group room" with 200
     And user "participant1" creates room "another own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "another own group room" to "Another group room" with 200
     When user "participant1" gets sharees for
       | search | group room |
@@ -82,9 +89,11 @@ Feature: sharees
   Scenario: search group room not invited to
     Given user "participant1" creates room "group room not invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room not invited to" to "Group room" with 200
     And user "participant2" creates room "another group room not invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant2" renames room "another group room not invited to" to "Another group room" with 200
     When user "participant3" gets sharees for
       | search | group room |
@@ -94,6 +103,7 @@ Feature: sharees
   Scenario: search group room invited to with single match
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     When user "participant2" gets sharees for
@@ -105,6 +115,7 @@ Feature: sharees
   Scenario: search group room invited to with single exact match
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     When user "participant2" gets sharees for
@@ -116,10 +127,12 @@ Feature: sharees
   Scenario: search group room invited to with several matches
     Given user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" creates room "another group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "another group room invited to" to "Another group room" with 200
     And user "participant1" adds "participant2" to room "another group room invited to" with 200
     When user "participant2" gets sharees for
@@ -174,9 +187,11 @@ Feature: sharees
   Scenario: search public room not joined to
     Given user "participant1" creates room "public room not joined to"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room not joined to" to "Public room" with 200
     And user "participant2" creates room "another public room not joined to"
       | roomType | 3 |
+      | roomName | room |
     And user "participant2" renames room "another public room not joined to" to "Another public room" with 200
     When user "participant3" gets sharees for
       | search | public room |
@@ -186,6 +201,7 @@ Feature: sharees
   Scenario: search public room self joined to with single match
     Given user "participant1" creates room "public room self joined to"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room" with 200
     And user "participant2" joins room "public room self joined to" with 200
     When user "participant2" gets sharees for
@@ -197,6 +213,7 @@ Feature: sharees
   Scenario: search public room self joined to with single exact match
     Given user "participant1" creates room "public room self joined to"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room" with 200
     And user "participant2" joins room "public room self joined to" with 200
     When user "participant2" gets sharees for
@@ -208,10 +225,12 @@ Feature: sharees
   Scenario: search public room self joined to with several matches
     Given user "participant1" creates room "public room self joined to"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "public room self joined to" to "Public room" with 200
     And user "participant2" joins room "public room self joined to" with 200
     And user "participant1" creates room "another public room self joined to"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" renames room "another public room self joined to" to "Another public room" with 200
     And user "participant2" joins room "another public room self joined to" with 200
     When user "participant2" gets sharees for
@@ -230,21 +249,26 @@ Feature: sharees
     And user "participant1" renames room "group room invited to as member of a group" to "Room" with 200
     And user "participant1" creates room "group room invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room invited to" to "Group room" with 200
     And user "participant1" adds "participant2" to room "group room invited to" with 200
     And user "participant1" creates room "group room not invited to"
       | roomType | 2 |
+      | roomName | room |
     And user "participant1" renames room "group room not invited to" to "Group room not invited to" with 200
     And user "participant2" creates room "unnamed own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant2" creates room "own group room"
       | roomType | 2 |
+      | roomName | room |
     And user "participant2" renames room "own group room" to "Own group room" with 200
     And user "participant1" creates room "one-to-one room invited to"
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant2" creates room "own public room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant2" renames room "own public room" to "Own public room" with 200
     When user "participant2" gets sharees for
       | search | room |

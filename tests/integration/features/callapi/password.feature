@@ -12,6 +12,7 @@ Feature: callapi/public
   Scenario: User1 invites user2 to a public room and they can do everything
     When user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of room "room"
@@ -40,6 +41,7 @@ Feature: callapi/public
   Scenario: User1 invites user2 to a public room and user3 can not join without password
     When user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of room "room"
@@ -73,6 +75,7 @@ Feature: callapi/public
   Scenario: User1 invites user2 to a public room and user3 can join with password
     When user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of room "room"
@@ -107,6 +110,7 @@ Feature: callapi/public
   Scenario: User1 invites user2 to a public room and guest can not join without password
     When user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of room "room"
@@ -133,6 +137,7 @@ Feature: callapi/public
   Scenario: User1 invites user2 to a public room and guest can join with password
     When user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "room" with 200
     And user "participant1" adds "participant2" to room "room" with 200
     Then user "participant1" is participant of room "room"

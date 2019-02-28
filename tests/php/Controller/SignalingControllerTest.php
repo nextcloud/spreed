@@ -358,7 +358,8 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$room->expects($this->once())
-			->method('getName')
+			->method('getDisplayName')
+			->with($this->userId)
 			->willReturn($roomName);
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -404,7 +405,8 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$room->expects($this->once())
-			->method('getName')
+			->method('getDisplayName')
+			->with('')
 			->willReturn($roomName);
 		$room->expects($this->once())
 			->method('getParticipantBySession')
@@ -450,7 +452,8 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$room->expects($this->once())
-			->method('getName')
+			->method('getDisplayName')
+			->with($this->userId)
 			->willReturn($roomName);
 		$room->expects($this->once())
 			->method('getParticipant')
@@ -538,7 +541,8 @@ class SignalingControllerTest extends \Test\TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$room->expects($this->once())
-			->method('getName')
+			->method('getDisplayName')
+			->with($this->userId)
 			->willReturn($roomName);
 		$room->expects($this->once())
 			->method('getParticipant')

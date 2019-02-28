@@ -152,10 +152,13 @@ class InvitationTest extends TestCase {
 				->method('getRoomById')
 				->with($params['room'])
 				->willReturn($room);
+			$event->expects($this->once())
+				->method('getAffectedUser')
+				->willReturn('user');
 
 			$provider->expects($this->once())
 				->method('getRoom')
-				->with($l, $room)
+				->with($room, 'user')
 				->willReturn(['call-data']);
 		} else {
 			$this->manager->expects($this->once())

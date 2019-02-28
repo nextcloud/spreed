@@ -176,7 +176,7 @@ class Notifier implements INotifier {
 		$richSubjectCall = [
 			'type' => 'call',
 			'id' => $room->getId(),
-			'name' => $room->getName() !== '' ? $room->getName() : $l->t('a conversation'),
+			'name' => $room->getDisplayName($notification->getUser()),
 			'call-type' => $this->getRoomType($room),
 		];
 
@@ -221,42 +221,22 @@ class Notifier implements INotifier {
 				$subject = $l->t('{user} sent you a private message');
 			} else {
 				if ($richSubjectUser) {
-					if ($room->getName() !== '') {
-						$subject = $l->t('{user} sent a message in conversation {call}');
-					} else {
-						$subject = $l->t('{user} sent a message in a conversation');
-					}
+					$subject = $l->t('{user} sent a message in conversation {call}');
 				} else if (!$isGuest) {
-					if ($room->getName() !== '') {
-						$subject = $l->t('A deleted user sent a message in conversation {call}');
-					} else {
-						$subject = $l->t('A deleted user sent a message in a conversation');
-					}
-				} else if ($room->getName() !== '') {
-					$subject = $l->t('A guest sent a message in conversation {call}');
+					$subject = $l->t('A deleted user sent a message in conversation {call}');
 				} else {
-					$subject = $l->t('A guest sent a message in a conversation');
+					$subject = $l->t('A guest sent a message in conversation {call}');
 				}
 			}
 		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
 		} else {
 			if ($richSubjectUser) {
-				if ($room->getName() !== '') {
-					$subject = $l->t('{user} mentioned you in conversation {call}');
-				} else {
-					$subject = $l->t('{user} mentioned you in a conversation');
-				}
+				$subject = $l->t('{user} mentioned you in conversation {call}');
 			} else if (!$isGuest) {
-				if ($room->getName() !== '') {
-					$subject = $l->t('A deleted user mentioned you in conversation {call}');
-				} else {
-					$subject = $l->t('A deleted user mentioned you in a conversation');
-				}
-			} else if ($room->getName() !== '') {
-				$subject = $l->t('A guest mentioned you in conversation {call}');
+				$subject = $l->t('A deleted user mentioned you in conversation {call}');
 			} else {
-				$subject = $l->t('A guest mentioned you in a conversation');
+				$subject = $l->t('A guest mentioned you in conversation {call}');
 			}
 		}
 
@@ -314,6 +294,7 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Calling user does not exist anymore');
 		}
 
+		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$notification
 				->setParsedSubject(
@@ -329,54 +310,32 @@ class Notifier implements INotifier {
 						'call' => [
 							'type' => 'call',
 							'id' => $room->getId(),
-							'name' => $l->t('a conversation'),
+							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 						],
 					]
 				);
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $room->getName()])
-					)
-					->setRichSubject(
-						$l->t('{user} invited you to a group conversation: {call}'), [
-							'user' => [
-								'type' => 'user',
-								'id' => $uid,
-								'name' => $user->getDisplayName(),
-							],
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $room->getName(),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			} else {
-				$notification
-					->setParsedSubject(
-						$l->t('%s invited you to a group conversation', [$user->getDisplayName()])
-					)
-					->setRichSubject(
-						$l->t('{user} invited you to a group conversation'), [
-							'user' => [
-								'type' => 'user',
-								'id' => $uid,
-								'name' => $user->getDisplayName(),
-							],
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $l->t('a conversation'),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			}
+			$notification
+				->setParsedSubject(
+					$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $roomName])
+				)
+				->setRichSubject(
+					$l->t('{user} invited you to a group conversation: {call}'), [
+						'user' => [
+							'type' => 'user',
+							'id' => $uid,
+							'name' => $user->getDisplayName(),
+						],
+						'call' => [
+							'type' => 'call',
+							'id' => $room->getId(),
+							'name' => $roomName,
+							'call-type' => $this->getRoomType($room),
+						],
+					]
+				);
 		} else {
 			throw new \InvalidArgumentException('Unknown room type');
 		}
@@ -396,6 +355,7 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
+		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$parameters = $notification->getSubjectParameters();
 			$calleeId = $parameters['callee'];
@@ -415,7 +375,7 @@ class Notifier implements INotifier {
 							'call' => [
 								'type' => 'call',
 								'id' => $room->getId(),
-								'name' => $l->t('a conversation'),
+								'name' => $roomName,
 								'call-type' => $this->getRoomType($room),
 							],
 						]
@@ -425,33 +385,20 @@ class Notifier implements INotifier {
 			}
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						str_replace('{call}', $room->getName(), $l->t('A group call has started in {call}'))
-					)
-					->setRichSubject(
-						$l->t('A group call has started in {call}'), [
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $room->getName(),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			} else {
-				$notification
-					->setParsedSubject($l->t('A group call has started'))
-					->setRichSubject($l->t('A group call has started'), [
+			$notification
+				->setParsedSubject(
+					str_replace('{call}', $roomName, $l->t('A group call has started in {call}'))
+				)
+				->setRichSubject(
+					$l->t('A group call has started in {call}'), [
 						'call' => [
 							'type' => 'call',
 							'id' => $room->getId(),
-							'name' => $l->t('a conversation'),
+							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 						],
-					]);
-			}
+					]
+				);
 
 		} else {
 			throw new \InvalidArgumentException('Unknown room type');

@@ -3,7 +3,7 @@ Feature: chat
   Scenario: send a message
     Given I am logged in
     And I have opened the Talk app
-    And I create a group conversation
+    And I create a group conversation named "Group"
     And I see that the chat is shown in the main view
     When I send a new chat message with the text "Hello"
     Then I see that the message 1 was sent by "user0" with the text "Hello"
@@ -11,7 +11,7 @@ Feature: chat
   Scenario: send several messages
     Given I am logged in
     And I have opened the Talk app
-    And I create a group conversation
+    And I create a group conversation named "Group"
     And I see that the chat is shown in the main view
     When I send a new chat message with the text "Hello"
     And I send a new chat message with the text "World"
@@ -131,7 +131,7 @@ Feature: chat
   Scenario: mention another user
     Given I am logged in
     And I have opened the Talk app
-    And I create a group conversation
+    And I create a group conversation named "Group"
     And I see that the chat is shown in the main view
     When I send a new chat message with the text "Hello @admin"
     Then I see that the message 1 was sent by "user0" with the text "Hello admin"
@@ -140,7 +140,7 @@ Feature: chat
   Scenario: mention another user and a URL
     Given I am logged in
     And I have opened the Talk app
-    And I create a group conversation
+    And I create a group conversation named "Group"
     And I see that the chat is shown in the main view
     When I send a new chat message with the text "Hello @admin, check http://www.nextcloud.com"
     # As the message contains child HTML elements (due to the contacts menu for

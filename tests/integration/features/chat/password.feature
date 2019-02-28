@@ -7,6 +7,7 @@ Feature: chat/password
   Scenario: owner can send and receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     When user "participant1" sends message "Message 1" to room "public password protected room" with 201
     Then user "participant1" sees the following messages in room "public password protected room" with 200
@@ -16,6 +17,7 @@ Feature: chat/password
   Scenario: invited user can send and receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     And user "participant1" adds "participant2" to room "public password protected room" with 200
     When user "participant2" sends message "Message 1" to room "public password protected room" with 201
@@ -26,6 +28,7 @@ Feature: chat/password
   Scenario: not invited but joined with password user can send and receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     And user "participant3" joins room "public password protected room" with 200
       | password | foobar |
@@ -37,6 +40,7 @@ Feature: chat/password
   Scenario: not invited user can not send nor receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     When user "participant3" sends message "Message 1" to room "public password protected room" with 404
     And user "participant1" sends message "Message 2" to room "public password protected room" with 201
@@ -45,6 +49,7 @@ Feature: chat/password
   Scenario: joined with password guest can send and receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     And user "guest" joins room "public password protected room" with 200
       | password | foobar |
@@ -56,6 +61,7 @@ Feature: chat/password
   Scenario: not joined guest can not send nor receive chat messages to and from public password protected room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     When user "guest" sends message "Message 1" to room "public password protected room" with 404
     And user "participant1" sends message "Message 2" to room "public password protected room" with 201
@@ -64,6 +70,7 @@ Feature: chat/password
   Scenario: everyone in a public password protected room can receive messages from everyone in that room
     Given user "participant1" creates room "public password protected room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" sets password "foobar" for room "public password protected room" with 200
     And user "participant1" adds "participant2" to room "public password protected room" with 200
     And user "participant3" joins room "public password protected room" with 200

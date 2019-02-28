@@ -75,6 +75,11 @@
 			// attributes hash to be set on the model.
 			return (result.ocs === undefined)? result : result.ocs.data;
 		},
+		validate: function(attributes, options) {
+			if (!attributes.name) {
+				return t('spreed', 'Room name can not be empty');
+			}
+		},
 		sync: function(method, model, options) {
 			// When saving a model "Backbone.Model.save" calls "sync" with an
 			// "update" method, which by default sends a "PUT" request that

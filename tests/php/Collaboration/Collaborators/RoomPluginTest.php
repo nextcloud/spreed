@@ -81,7 +81,7 @@ class RoomPluginTest extends \Test\TestCase {
 			->willReturn($token);
 
 		$room->expects($this->any())
-			->method('getName')
+			->method('getDisplayName')
 			->willReturn($name);
 
 		return $room;

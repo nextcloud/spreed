@@ -59,8 +59,6 @@ class RoomController extends OCSController {
 	private $userManager;
 	/** @var IGroupManager */
 	private $groupManager;
-	/** @var ILogger */
-	private $logger;
 	/** @var Manager */
 	private $manager;
 	/** @var GuestManager */
@@ -80,7 +78,6 @@ class RoomController extends OCSController {
 								TalkSession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
-								ILogger $logger,
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
@@ -92,7 +89,6 @@ class RoomController extends OCSController {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
-		$this->logger = $logger;
 		$this->manager = $manager;
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
@@ -197,7 +193,7 @@ class RoomController extends OCSController {
 
 		$roomData = array_merge($roomData, [
 			'name' => $room->getName(),
-			'displayName' => $room->getName(),
+			'displayName' => $room->getDisplayName($currentParticipant->getUser()),
 			'objectType' => $room->getObjectType(),
 			'objectId' => $room->getObjectId(),
 			'participantType' => $currentParticipant->getParticipantType(),
@@ -217,11 +213,6 @@ class RoomController extends OCSController {
 			} else {
 				$roomData['notificationLevel'] = $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
 			}
-		}
-
-		if ($room->getObjectType() === 'share:password') {
-			// FIXME use an event
-			$roomData['displayName'] = $this->l10n->t('Password request: %s', [$room->getName()]);
 		}
 
 		$currentUser = $this->userManager->get($currentParticipant->getUser());
@@ -258,6 +249,12 @@ class RoomController extends OCSController {
 						'call' => $participant->getInCallFlags(),
 						'sessionId' => $participant->getSessionId(),
 					];
+
+					if ($room->getType() === Room::ONE_TO_ONE_CALL &&
+						  $user->getUID() !== $currentParticipant->getUser()) {
+						// FIXME This should not be done, but currently all the clients use it to get the avatar of the user …
+						$roomData['name'] = $user->getUID();
+					}
 				}
 
 				if ($participant->getSessionId() !== '0' && $participant->getLastPing() <= $this->timeFactory->getTime() - 100) {
@@ -284,76 +281,6 @@ class RoomController extends OCSController {
 			'numGuests' => $numActiveGuests,
 			'lastMessage' => $lastMessage,
 		]);
-
-		if (!$currentParticipant->isGuest()) {
-			unset($participantList[$currentParticipant->getUser()]);
-			$numOtherParticipants = \count($participantList);
-			$numGuestParticipants = $numActiveGuests;
-		} else {
-			$numOtherParticipants = \count($participantList);
-			$numGuestParticipants = $numActiveGuests - 1;
-		}
-
-		$guestString = '';
-		switch ($room->getType()) {
-			case Room::ONE_TO_ONE_CALL:
-				// As name of the room use the name of the other person participating
-				if ($numOtherParticipants === 1) {
-					// Only one other participant
-					reset($participantList);
-					$roomData['name'] = key($participantList);
-					$roomData['displayName'] = $participantList[$roomData['name']]['name'];
-				} else {
-					// Invalid user count, there must be exactly 2 users in each one2one room
-					$this->logger->warning('one2one room found with invalid participant count. Leaving room for everyone', [
-						'app' => 'spreed',
-					]);
-					$room->deleteRoom();
-				}
-				break;
-
-			/** @noinspection PhpMissingBreakStatementInspection */
-			case Room::PUBLIC_CALL:
-				if ($numGuestParticipants) {
-					if ($currentParticipant->isGuest()) {
-						$guestString = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
-					} else {
-						$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
-					}
-				}
-
-			// no break;
-
-			case Room::GROUP_CALL:
-				if ($room->getName() === '') {
-					// As name of the room use the names of the other participants
-					$participantList = array_map(function($participant) {
-						return $participant['name'];
-					}, $participantList);
-					if ($currentParticipant->isGuest()) {
-						$participantList[] = $this->l10n->t('You');
-					} else if ($numOtherParticipants === 0) {
-						$participantList = [$this->l10n->t('You')];
-					}
-
-					if ($guestString !== '') {
-						$participantList[] = $guestString;
-					}
-
-					$roomData['displayName'] = implode($this->l10n->t(', '), $participantList);
-				}
-				break;
-
-			default:
-				// Invalid room type
-				$this->logger->warning('Invalid room type found. Leaving room for everyone', [
-					'app' => 'spreed',
-				]);
-				$room->deleteRoom();
-				throw new RoomNotFoundException('The room type is unknown');
-		}
-
-		$roomData['guestList'] = $guestString;
 
 		return $roomData;
 	}
@@ -450,7 +377,7 @@ class RoomController extends OCSController {
 			return new DataResponse([
 				'token' => $room->getToken(),
 				'name' => $room->getName(),
-				'displayName' => $targetUser->getDisplayName(),
+				'displayName' => $room->getDisplayName($currentUser->getUID()),
 			], Http::STATUS_CREATED);
 		}
 	}
@@ -500,7 +427,7 @@ class RoomController extends OCSController {
 		return new DataResponse([
 			'token' => $room->getToken(),
 			'name' => $room->getName(),
-			'displayName' => $room->getName(),
+			'displayName' => $room->getDisplayName($currentUser->getUID()),
 		], Http::STATUS_CREATED);
 	}
 
@@ -512,6 +439,11 @@ class RoomController extends OCSController {
 	 * @return DataResponse
 	 */
 	protected function createEmptyRoom(string $roomName, bool $public = true): DataResponse {
+		$roomName = trim($roomName);
+		if ($roomName === '') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$currentUser = $this->userManager->get($this->userId);
 
 		if (!$currentUser instanceof IUser) {
@@ -532,7 +464,7 @@ class RoomController extends OCSController {
 		return new DataResponse([
 			'token' => $room->getToken(),
 			'name' => $room->getName(),
-			'displayName' => $room->getName(),
+			'displayName' => $room->getDisplayName($currentUser->getUID()),
 		], Http::STATUS_CREATED);
 	}
 
@@ -628,7 +560,9 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		if (strlen($roomName) > 200) {
+		$roomName = trim($roomName);
+
+		if ($roomName === '' || strlen($roomName) > 200) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

@@ -211,13 +211,27 @@
 				return;
 			}
 
+			// TODO This should show the error message instead of just hiding
+			// the input without changes.
+			var hideInputOnValidationError = function(/*model, error*/) {
+				this.hideInput();
+			}.bind(this);
+			this.model.listenToOnce(this.model, 'invalid', hideInputOnValidationError);
+
 			var options = _.clone(this.modelSaveOptions || {});
 			options.success = _.bind(function() {
+				this.model.stopListening(this.model, 'invalid', hideInputOnValidationError);
+
 				this.hideInput();
 
 				if (this.modelSaveOptions && _.isFunction(this.modelSaveOptions.success)) {
 					this.modelSaveOptions.success.apply(this, arguments);
 				}
+			}, this);
+			options.error = _.bind(function() {
+				this.model.stopListening(this.model, 'invalid', hideInputOnValidationError);
+
+				this.hideInput();
 			}, this);
 
 			this.model.save(this.modelAttribute, newText, options);

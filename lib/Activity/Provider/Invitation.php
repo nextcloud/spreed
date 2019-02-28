@@ -45,7 +45,7 @@ class Invitation extends Base {
 			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
 			try {
 				$room = $this->manager->getRoomById((int) $parameters['room']);
-				$roomParameter = $this->getRoom($l, $room);
+				$roomParameter = $this->getRoom($room, $event->getAffectedUser());
 			} catch (RoomNotFoundException $e) {
 			}
 

@@ -7,6 +7,7 @@ Feature: chat/public
   Scenario: message without enrichable references has empty parameters
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" sends message "Message without enrichable references" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                               | messageParameters |
@@ -15,6 +16,7 @@ Feature: chat/public
   Scenario: message with mention to valid user has mention parameter
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" sends message "Mention to @participant2" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                    | messageParameters |
@@ -23,6 +25,7 @@ Feature: chat/public
   Scenario: message with mention to invalid user has mention parameter
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" sends message "Mention to @unknownUser" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                    | messageParameters |
@@ -31,6 +34,7 @@ Feature: chat/public
   Scenario: message with duplicated mention has single mention parameter
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" sends message "Mention to @participant2 and @participant2 again" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                                              | messageParameters |
@@ -39,6 +43,7 @@ Feature: chat/public
   Scenario: message with mentions to several users has mention parameters
     Given user "participant1" creates room "public room"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" sends message "Mention to @participant2, @unknownUser, @participant2 again and @participant3" to room "public room" with 201
     Then user "participant1" sees the following messages in room "public room" with 200
       | room        | actorType | actorId      | actorDisplayName         | message                                                                                | messageParameters |

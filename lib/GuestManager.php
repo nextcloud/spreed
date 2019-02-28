@@ -171,7 +171,7 @@ class GuestManager {
 
 		$template = $this->mailer->createEMailTemplate('Talk.InviteByEmail', [
 			'invitee' => $invitee,
-			'roomName' => $room->getName(),
+			'roomName' => $room->getDisplayName(''),
 			'roomLink' => $link,
 		]);
 
@@ -191,17 +191,10 @@ class GuestManager {
 			$subject
 		);
 
-		if ($room->getName()) {
-			$template->addBodyButton(
-				$this->l->t('Join »%s«', [$room->getName()]),
-				$link
-			);
-		} else {
-			$template->addBodyButton(
-				$this->l->t('Join now'),
-				$link
-			);
-		}
+		$template->addBodyButton(
+			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
+			$link
+		);
 
 		$template->addFooter();
 

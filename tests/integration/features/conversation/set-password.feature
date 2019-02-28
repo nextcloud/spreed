@@ -7,6 +7,7 @@ Feature: public
   Scenario: Owner sets a room password
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |
@@ -21,6 +22,7 @@ Feature: public
   Scenario: Moderator sets a room password
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |
@@ -37,6 +39,7 @@ Feature: public
   Scenario: User sets a room password
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |
@@ -55,6 +58,7 @@ Feature: public
   Scenario: Stranger sets a room password
     Given user "participant1" creates room "room"
       | roomType | 3 |
+      | roomName | room |
     And user "participant1" is participant of the following rooms
       | id   | type | participantType | participants |
       | room | 3    | 1               | participant1-displayname |

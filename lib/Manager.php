@@ -29,6 +29,9 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -42,6 +45,8 @@ class Manager {
 	private $config;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IUserManager */
+	private $userManager;
 	/** @var CommentsManager */
 	private $commentsManager;
 	/** @var EventDispatcherInterface */
@@ -50,21 +55,27 @@ class Manager {
 	protected $timeFactory;
 	/** @var IHasher */
 	private $hasher;
+	/** @var IL10N */
+	private $l;
 
 	public function __construct(IDBConnection $db,
 								IConfig $config,
 								ISecureRandom $secureRandom,
+								IUserManager $userManager,
 								CommentsManager $commentsManager,
 								EventDispatcherInterface $dispatcher,
 								ITimeFactory $timeFactory,
-								IHasher $hasher) {
+								IHasher $hasher,
+								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
+		$this->userManager = $userManager;
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->hasher = $hasher;
+		$this->l = $l;
 	}
 
 	public function forAllRooms(callable $callback): void {
@@ -514,6 +525,57 @@ class Manager {
 		$result->closeCursor();
 
 		return $sessionIds;
+	}
+
+	public function resolveRoomDisplayName(Room $room, string $userId): string {
+		if ($room->getObjectType() === 'share:password') {
+			return $this->l->t('Password request: %s', [$room->getName()]);
+		}
+
+		if ($room->getName() === '') {
+			$room->setName($this->getRoomNameByParticipants($room));
+		}
+
+		// Set the room name to the other participant for one-to-one rooms
+		if ($userId !== '' && $room->getType() === Room::ONE_TO_ONE_CALL) {
+			$users = $room->getParticipantUserIds();
+			$otherParticipant = '';
+			$userIsParticipant = false;
+
+			foreach ($users as $participantId) {
+				if ($participantId !== $userId) {
+					$user = $this->userManager->get($participantId);
+					$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+				} else {
+					$userIsParticipant = true;
+				}
+			}
+
+			if (!$userIsParticipant) {
+				// Do not leak the name of rooms the user is not a part of
+				return $this->l->t('Private conversation');
+			}
+
+			return $otherParticipant;
+		}
+
+		return $room->getName();
+	}
+
+	protected function getRoomNameByParticipants(Room $room): string {
+		$users = $room->getParticipantUserIds();
+		$displayNames = [];
+
+		foreach ($users as $participantId) {
+			$user = $this->userManager->get($participantId);
+			$displayNames[] = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+		}
+
+		$roomName = implode(', ', $displayNames);
+		if (strlen($roomName) > 128) {
+			$roomName = substr($roomName, 120) . '…';
+		}
+		return $roomName;
 	}
 
 	/**

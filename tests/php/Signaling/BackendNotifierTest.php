@@ -31,8 +31,10 @@ use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
+use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -123,10 +125,12 @@ class BackendNotifierTest extends \Test\TestCase {
 			$dbConnection,
 			$config,
 			$this->secureRandom,
+			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
 			$dispatcher,
 			$this->timeFactory,
-			$this->createMock(IHasher::class)
+			$this->createMock(IHasher::class),
+			$this->createMock(IL10N::class)
 		);
 	}
 
@@ -186,7 +190,7 @@ class BackendNotifierTest extends \Test\TestCase {
 					$this->userId,
 				],
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -219,7 +223,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				'alluserids' => [
 				],
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -240,7 +244,7 @@ class BackendNotifierTest extends \Test\TestCase {
 				'userids' => [
 				],
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],

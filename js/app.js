@@ -111,16 +111,11 @@
 							});
 						});
 
-						//Add custom entry to create a new empty group or public room
+						// Add custom entry to create a new empty group or public room
 						if (OCA.SpreedMe.app._searchTerm === '') {
 							results.unshift({
-								id: "create-public-room",
-								displayName: t('spreed', 'New public conversation'),
-								type: "createPublicRoom"
-							});
-							results.unshift({
 								id: "create-group-room",
-								displayName: t('spreed', 'New group conversation'),
+								displayName: t('spreed', 'Enter name for a new conversation'),
 								type: "createGroupRoom"
 							});
 						} else {
@@ -136,7 +131,7 @@
 							});
 							results.push({
 								id: "create-public-room",
-								displayName: t('spreed', '{name} (public)', { name: shortenedName }),
+								displayName: shortenedName,
 								type: "createPublicRoom"
 							});
 						}
@@ -152,7 +147,7 @@
 				},
 				formatResult: function (element) {
 					if (element.type === "createPublicRoom") {
-						return '<span><div class="avatar icon icon-public"></div>' + escapeHTML(element.displayName) + '</span>';
+						return '<span><div class="avatar icon icon-public"></div>' + t('spreed', '{name} (public)', { name: element.displayName }) + '</span>';
 					}
 
 					if (element.type === "createGroupRoom" || element.type === 'group') {
@@ -175,10 +170,14 @@
 						this.connection.createGroupVideoCall(e.val, '');
 						break;
 					case 'createPublicRoom':
-						this.connection.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
+						if (OCA.SpreedMe.app._searchTerm !== '') {
+							this.connection.createPublicVideoCall(OCA.SpreedMe.app._searchTerm);
+						}
 						break;
 					case 'createGroupRoom':
-						this.connection.createGroupVideoCall('', OCA.SpreedMe.app._searchTerm);
+						if (OCA.SpreedMe.app._searchTerm !== '') {
+							this.connection.createGroupVideoCall('', OCA.SpreedMe.app._searchTerm);
+						}
 						break;
 					default:
 						console.log('Unknown type', e.object.type);

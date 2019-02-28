@@ -103,7 +103,7 @@ class UserMention {
 				$messageParameters[$mentionParameterId] = [
 					'type' => $mention['type'],
 					'id' => $chatMessage->getRoom()->getToken(),
-					'name' => $chatMessage->getRoom()->getName() ?: $this->l->t('Conversation'),
+					'name' => $chatMessage->getRoom()->getDisplayName($chatMessage->getParticipant()->getUser()),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
 				];
 			} else {

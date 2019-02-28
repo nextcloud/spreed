@@ -125,7 +125,7 @@ class Listener {
 			$event->setApp('spreed')
 				->setType('spreed')
 				->setAuthor('')
-				->setObject('room', $room->getId(), $room->getName())
+				->setObject('room', $room->getId())
 				->setTimestamp($this->timeFactory->getTime())
 				->setSubject('call', [
 					'room' => $room->getId(),
@@ -180,12 +180,11 @@ class Listener {
 			$event->setApp('spreed')
 				->setType('spreed')
 				->setAuthor($actorId)
-				->setObject('room', $room->getId(), $room->getName())
+				->setObject('room', $room->getId())
 				->setTimestamp($this->timeFactory->getTime())
 				->setSubject('invitation', [
 					'user' => $actor->getUID(),
 					'room' => $room->getId(),
-					'name' => $room->getName(),
 				]);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e, ['app' => 'spreed']);
@@ -199,7 +198,15 @@ class Listener {
 			}
 
 			try {
-				$event->setAffectedUser($participant['userId']);
+				$roomName = $room->getDisplayName($participant['userId']);
+				$event
+					->setObject('room', $room->getId(), $roomName)
+					->setSubject('invitation', [
+						'user' => $actor->getUID(),
+						'room' => $room->getId(),
+						'name' => $roomName,
+					])
+					->setAffectedUser($participant['userId']);
 				$this->activityManager->publish($event);
 			} catch (\InvalidArgumentException $e) {
 				$this->logger->logException($e, ['app' => 'spreed']);
