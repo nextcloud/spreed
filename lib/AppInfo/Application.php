@@ -32,6 +32,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
 use OCA\Spreed\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Spreed\Listener;
+use OCA\Spreed\Middleware\CanUseTalkMiddleware;
 use OCA\Spreed\Notification\Listener as NotificationListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\PublicShareAuth\Listener as PublicShareAuthListener;
@@ -53,6 +54,22 @@ class Application extends App {
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct('spreed', $urlParams);
+
+		$server = $this->getContainer()->getServer();
+		$this->getContainer()->registerService('CanUseTalkMiddleware', function() use ($server) {
+			/** @var Config $config */
+			$config = $server->query(Config::class);
+			$user = $server->getUserSession()->getUser();
+
+			return new CanUseTalkMiddleware(
+				!$user instanceof IUser ||
+				!$config->isDisabledForUser($user)
+			);
+		});
+		// This needs to be in the constructor,
+		// because otherwise the middleware is registered on a wrong object,
+		// when it is requested by the Router.
+		$this->getContainer()->registerMiddleWare('CanUseTalkMiddleware');
 	}
 
 	public function register(): void {

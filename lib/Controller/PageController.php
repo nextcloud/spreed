@@ -106,10 +106,6 @@ class PageController extends Controller {
 			return $this->guestEnterRoom($token, $password);
 		}
 
-		if ($this->config->isDisabledForUser($user)) {
-			return new RedirectResponse(\OC_Util::getDefaultPageUrl());
-		}
-
 		if ($token !== '') {
 			$room = null;
 			try {
