@@ -76,15 +76,19 @@ var spreedPeerConnectionTable = [];
 			return;
 		}
 
-		if (!webrtc.webrtc.getPeers(sessionId, 'screen').length) {
-			if (useMcu) {
-				// TODO(jojo): Already create peer object to avoid duplicate offers.
-				// TODO(jojo): We should use "requestOffer" as with regular
-				// audio/video peers. Not possible right now as there is no way
-				// for clients to know that screensharing is active and an offer
-				// from the MCU should be requested.
-				webrtc.connection.sendOffer(sessionId, "screen");
-			} else {
+		if (useMcu) {
+			// TODO(jojo): Already create peer object to avoid duplicate offers.
+			// TODO(jojo): We should use "requestOffer" as with regular
+			// audio/video peers. Not possible right now as there is no way
+			// for clients to know that screensharing is active and an offer
+			// from the MCU should be requested.
+			webrtc.connection.sendOffer(sessionId, "screen");
+		} else if (!useMcu) {
+			var screenPeers = webrtc.webrtc.getPeers(sessionId, 'screen');
+			var screenPeerSharedTo = screenPeers.find(function(screenPeer) {
+				return screenPeer.sharemyscreen === true;
+			});
+			if (!screenPeerSharedTo) {
 				var peer = webrtc.webrtc.createPeer({
 					id: sessionId,
 					type: 'screen',
@@ -314,6 +318,10 @@ var spreedPeerConnectionTable = [];
 
 			var peers = OCA.SpreedMe.webrtc.webrtc.peers;
 			var stalePeer = peers.find(function(peer) {
+				if (peer.sharemyscreen) {
+					return false;
+				}
+
 				return peer.id === message.from && peer.type === message.roomType && peer.sid !== message.sid;
 			});
 
@@ -329,6 +337,13 @@ var spreedPeerConnectionTable = [];
 			if (message.roomType === 'video' && delayedCreatePeer[message.from]) {
 				clearTimeout(delayedCreatePeer[message.from]);
 				delete delayedCreatePeer[message.from];
+			}
+
+			// MCU screen offers do not include the "broadcaster" property,
+			// which is expected by SimpleWebRTC in screen offers from a remote
+			// peer, so it needs to be explicitly added.
+			if (signaling.hasFeature("mcu") && message.roomType === 'screen') {
+				message.broadcaster = message.from;
 			}
 		});
 
