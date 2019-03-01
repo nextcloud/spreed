@@ -342,6 +342,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
+        + `400 Bad Request` When the participant is a moderator/owner and there are no other moderators/owners left.
         + `403 Forbidden` When the current user is not a moderator/owner
         + `403 Forbidden` When the participant to remove is an owner
         + `404 Not Found` When the room could not be found for the participant
@@ -373,6 +374,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
+        + `400 Bad Request` When the participant is a moderator/owner and there are no other moderators/owners left.
         + `404 Not Found` When the room could not be found for the participant
 
 ### Join a room (available for call and chat)
@@ -420,11 +422,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
+        + `400 Bad Request` When the participant to promote is not a normal user (type `3`)
         + `403 Forbidden` When the current user is not a moderator/owner
         + `403 Forbidden` When the participant to remove is an owner
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
-        + `412 Precondition Failed` When the participant to promote is not a normal user (type `3`)
 
 ### Demote a moderator to a user
 
@@ -439,10 +441,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
+        + `400 Bad Request` When the participant to demote is not a moderator (type `2`)
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the room could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
-        + `412 Precondition Failed` When the participant to demote is not a moderator (type `2`)
 
 
 ## Call management

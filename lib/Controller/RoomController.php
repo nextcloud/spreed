@@ -801,6 +801,11 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if ($currentParticipant->getUser() === $participant) {
+			// Removing self, abusing moderator power
+			return $this->removeSelfFromRoomLogic($room, $currentParticipant);
+		}
+
 		if (!$currentParticipant->hasModeratorPermissions()) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
@@ -838,23 +843,32 @@ class RoomController extends OCSController {
 	public function removeSelfFromRoom(string $token): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$room->getParticipant($this->userId); // Check if the participant is part of the room
+			$currentParticipant = $room->getParticipant($this->userId); // Check if the participant is part of the room
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		return $this->removeSelfFromRoomLogic($room, $currentParticipant);
+	}
+
+	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
 		if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
-		} else {
-			$currentUser = $this->userManager->get($this->userId);
-			if (!$currentUser instanceof IUser) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-
-			$room->removeUser($currentUser, Room::PARTICIPANT_LEFT);
+			return new DataResponse([]);
 		}
+
+		if ($participant->hasModeratorPermissions(false) && $room->getNumberOfModerators() === 1) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		$currentUser = $this->userManager->get($participant->getUser());
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		$room->removeUser($currentUser, Room::PARTICIPANT_LEFT);
 
 		return new DataResponse([]);
 	}
@@ -892,7 +906,7 @@ class RoomController extends OCSController {
 		}
 
 		if (!$targetParticipant->isGuest()) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		if ($targetParticipant->getSessionId() === $currentParticipant->getSessionId()) {
@@ -1098,7 +1112,7 @@ class RoomController extends OCSController {
 		}
 
 		if ($targetParticipant->getParticipantType() !== Participant::USER) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$room->setParticipantType($participant, Participant::MODERATOR);
@@ -1114,7 +1128,7 @@ class RoomController extends OCSController {
 		}
 
 		if ($targetParticipant->getParticipantType() !== Participant::GUEST) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$room->setParticipantTypeBySession($targetParticipant, Participant::GUEST_MODERATOR);
@@ -1168,7 +1182,7 @@ class RoomController extends OCSController {
 		}
 
 		if ($targetParticipant->getParticipantType() !== Participant::MODERATOR) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$room->setParticipantType($participant, Participant::USER);
@@ -1188,7 +1202,7 @@ class RoomController extends OCSController {
 		}
 
 		if ($targetParticipant->getParticipantType() !== Participant::GUEST_MODERATOR) {
-			return new DataResponse([], Http::STATUS_PRECONDITION_FAILED);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$room->setParticipantTypeBySession($targetParticipant, Participant::GUEST);
