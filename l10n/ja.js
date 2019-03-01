@@ -16,8 +16,6 @@ OC.L10N.register(
     "TCP only" : "TCP のみ",
     "Test server" : "テストサーバー",
     "TURN server protocols" : "TURNサーバープロトコル",
-    "New public conversation" : "新規公開会話",
-    "New group conversation" : "新規会議",
     "New conversation …" : "新規公話",
     "Participants" : "参加者",
     "Chat" : "チャット",
@@ -138,11 +136,8 @@ OC.L10N.register(
     "You allowed guests" : "あなたがゲストを許可しました",
     "You set a password" : "パスワードを設定する",
     "Talk to %s" : "%s と通話",
-    "_%n other guest_::_%n other guests_" : ["他のゲスト %n 名"],
-    ", " : "、",
     "{user} wants to talk with you" : "{user} からの通話要請があります",
     "A group call has started in {call}" : "{call} のグループ通話が開始されました",
-    "A group call has started" : "グループ通話が開始されました",
     "This call is password-protected" : "この通話はパスワードで保護されています",
     "The password is wrong. Try again." : "パスワードが違います。再入力してください",
     "Signaling server" : "シグナリングサーバー",
@@ -151,6 +146,11 @@ OC.L10N.register(
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUNサーバーは、ルーターを介した参加者のパブリックIPアドレスを決定するために使用されます。",
     "TURN server" : "TURNサーバー",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURNサーバーは参加者のファイアウォール越しの通信を中継します。",
-    "Join conversations at any time, any where, on any device." : "いつでも、どこでも、どのデバイスでも会話に参加できます。"
+    "Join conversations at any time, any where, on any device." : "いつでも、どこでも、どのデバイスでも会話に参加できます。",
+    "New public conversation" : "新規公開会話",
+    "New group conversation" : "新規会議",
+    "_%n other guest_::_%n other guests_" : ["他のゲスト %n 名"],
+    ", " : "、",
+    "A group call has started" : "グループ通話が開始されました"
 },
 "nplurals=1; plural=0;");

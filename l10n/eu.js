@@ -95,9 +95,6 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} {call} deira gonbidatu zaitu",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong> hitzaldi </strong> bat edo <strong>dei</strong> bat duzu",
     "You set a password" : "Pasahitz bat ezarri duzu",
-    "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
-    ", " : ", ",
-    "Join now" : "Elkartu orain",
     "Conversation not found" : "Elkarrizketa ez da aurkitu",
     "This call is password-protected" : "Deia pasahitzarekin babestua dago",
     "The password is wrong. Try again." : "Pasahitza gaizki dago. Saiatu berriz",
@@ -108,6 +105,9 @@ OC.L10N.register(
     "TURN server" : "TURN zerbitzaria",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN zerbitzariak  firewall baten atzean dauden partehartzaileen trafikoa proxy bidez eramateko erabiltzen da",
     "Android app" : "Android aplikazioa",
-    "iOS app" : "iOS aplikazioa"
+    "iOS app" : "iOS aplikazioa",
+    "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
+    ", " : ", ",
+    "Join now" : "Elkartu orain"
 },
 "nplurals=2; plural=(n != 1);");

@@ -8,8 +8,6 @@
     "UDP only" : "Tik UDP",
     "TCP only" : "Tik TCP",
     "TURN server protocols" : "TURN serverio protokolai",
-    "New public conversation" : "Naujas viešas pokalbis",
-    "New group conversation" : "Naujas grupės pokalbis",
     "New conversation …" : "Naujas pokalbis …",
     "Participants" : "Dalyviai",
     "Exit fullscreen (f)" : "Išeiti iš viso ekrano (f)",
@@ -100,8 +98,6 @@
     "You removed {user}" : "Jūs pašalinote naudotoją {user}",
     "{actor} removed you" : "{actor} jus pašalino",
     "%s (guest)" : "%s (svečias)",
-    "_%n other guest_::_%n other guests_" : ["ir dar %n svečias","ir dar %n svečiai","ir dar %n svečių","ir dar %n svečias"],
-    ", " : ", ",
     "%s invited you to a conversation." : "%s jus pakvietė į pokalbį.",
     "You were invited to a conversation." : "Jūs buvote pakviesti į pokalbį.",
     "{user} mentioned you in a private conversation" : "{user} jus paminėjo privačiame pokalbyje",
@@ -109,8 +105,6 @@
     "{user} invited you to a private conversation" : "{user} jus pakvietė į privatų pokalbį",
     "%s invited you to a group conversation: %s" : "%s jus pakvietė į grupės pokalbį: %s",
     "{user} invited you to a group conversation: {call}" : "{user} jus pakvietė į grupės pokalbį: {call}",
-    "%s invited you to a group conversation" : "%s jus pakvietė į grupės pokalbį",
-    "{user} invited you to a group conversation" : "{user} jus pakvietė į grupės pokalbį",
     "{user} wants to talk with you" : "{user} nori su jumis pasikalbėti",
     "Conversation not found" : "Pokalbis nerastas",
     "This call is password-protected" : "Šis skambutis yra apsaugotas slaptažodžiu",
@@ -119,6 +113,10 @@
     "TURN server" : "TURN serveris",
     "Android app" : "Android programėlė",
     "iOS app" : "iOS programėlė",
+    "New public conversation" : "Naujas viešas pokalbis",
+    "New group conversation" : "Naujas grupės pokalbis",
+    "_%n other guest_::_%n other guests_" : ["ir dar %n svečias","ir dar %n svečiai","ir dar %n svečių","ir dar %n svečias"],
+    ", " : ", ",
     "%s mentioned you in a private conversation" : "%s jus paminėjo privačiame pokalbyje",
     "%s mentioned you in a group conversation: %s" : "%s jus paminėjo grupės pokalbyje: %s",
     "{user} mentioned you in a group conversation: {call}" : "{user} jus paminėjo grupės pokalbyje: {call}",
@@ -129,6 +127,8 @@
     "You were mentioned in a group conversation by a deleted user" : "Ištrintas naudotojas jus paminėjo grupės pokalbyje",
     "A guest mentioned you in a group conversation: %s" : "Svečias jus paminėjo grupės pokalbyje: %s",
     "A guest mentioned you in a group conversation: {call}" : "Svečias jus paminėjo grupės pokalbyje: {call}",
-    "A guest mentioned you in a group conversation" : "Svečias jus paminėjo grupės pokalbyje"
+    "A guest mentioned you in a group conversation" : "Svečias jus paminėjo grupės pokalbyje",
+    "%s invited you to a group conversation" : "%s jus pakvietė į grupės pokalbį",
+    "{user} invited you to a group conversation" : "{user} jus pakvietė į grupės pokalbį"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }
