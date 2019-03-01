@@ -103,6 +103,19 @@ Feature: conversation
     And I see that the chat is shown in the main view
     And I see that the sidebar is open
 
+  Scenario: leave a conversation when there are no other moderators in the room
+    Given I am logged in
+    And I have opened the Talk app
+    And I create a group conversation named "Group"
+    And I add "admin" to the participants
+    And I see that the number of participants shown in the list is "2"
+    When I leave the "Group" conversation
+    Then I see that the "You need to promote a new moderator before you can leave the conversation." notification is shown
+    And I see that the number of participants shown in the list is "2"
+    And I see that the "Group" conversation is active
+    And I see that the chat is shown in the main view
+    And I see that the sidebar is open
+
   Scenario: create a new conversation after deleting the active one
     Given I am logged in
     And I have opened the Talk app

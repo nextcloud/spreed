@@ -17,6 +17,7 @@ default:
         - FilesAppContext
         - FilesAppSharingContext
         - LoginPageContext
+        - NotificationContext
         - PublicShareContext
 
         # Talk app contexts
