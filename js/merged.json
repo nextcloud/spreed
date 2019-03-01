@@ -32,6 +32,7 @@
   "webrtc.js",
   "signaling.js",
   "connection.js",
+  "fileuploader.js",
   "notifier.js",
   "app.js",
   "init.js"

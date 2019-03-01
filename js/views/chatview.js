@@ -238,6 +238,11 @@
 			this._initAutoComplete($message);
 
 			autosize(this.$el.find('.newCommentRow .message'));
+
+            /**
+             * Start file uploader.
+             */
+            OCA.Talk.FileUploader.init(OC.SpreedMe.app);
 		},
 
 		focusChatInput: function() {
