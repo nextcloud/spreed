@@ -134,6 +134,7 @@ Feature: create
   Scenario: create share with a group room not invited to
     Given user "participant2" creates room "group room not invited to"
       | roomType | 2 |
+      | roomName | room |
     When user "participant1" shares "welcome.txt" with room "group room not invited to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
@@ -291,6 +292,7 @@ Feature: create
   Scenario: create share with a public room not joined to
     Given user "participant2" creates room "public room not joined to"
       | roomType | 3 |
+      | roomName | room |
     When user "participant1" shares "welcome.txt" with room "public room not joined to"
     Then the OCS status code should be "404"
     And the HTTP status code should be "200"
