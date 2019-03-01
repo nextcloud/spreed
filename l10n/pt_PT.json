@@ -85,8 +85,8 @@
     "{actor} invited you to {call}" : "{actor} convidou-o para {chamada}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Foi convidado para uma sala de <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
     "Talk to %s" : "Falar com %s",
-    ", " : ",",
     "{user} wants to talk with you" : "{utilizador} quer falar consigo",
-    "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}"
+    "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}",
+    ", " : ","
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

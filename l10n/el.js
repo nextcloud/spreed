@@ -10,8 +10,6 @@ OC.L10N.register(
     "UDP only" : "Μόνο UDP",
     "TCP only" : "Μόνο TCP",
     "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
-    "New public conversation" : "Νέα δημόσια συνομιλία",
-    "New group conversation" : "Νέα ομαδική συζήτηση",
     "{name} (public)" : "{name} (δημόσιο)",
     "New conversation …" : "Νέα συζήτηση …",
     "Participants" : "Συμμετέχοντες",
@@ -72,12 +70,14 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "Το WebRTC δεν υποστηρίζεται από τον φυλλομετρητή σας",
     "Error while accessing microphone & camera" : "Σφάλμα κατά την πρόσβαση στο μικρόφωνο & την κάμερα",
     "_%n guest_::_%n guests_" : ["%n επισκέπτης","%n επισκέπτες"],
-    "_%n other guest_::_%n other guests_" : ["%n επισκέπτης","%n επισκέπτες"],
-    ", " : ", ",
     "{user} wants to talk with you" : "Ο {user} θέλει να σας μιλήσει",
     "STUN servers" : "Διακομιστές STUN",
     "TURN server" : "Διακομιστής TURN",
     "Android app" : "Εφαρμογή Android",
-    "iOS app" : "Εφαρμογή iOS"
+    "iOS app" : "Εφαρμογή iOS",
+    "New public conversation" : "Νέα δημόσια συνομιλία",
+    "New group conversation" : "Νέα ομαδική συζήτηση",
+    "_%n other guest_::_%n other guests_" : ["%n επισκέπτης","%n επισκέπτες"],
+    ", " : ", "
 },
 "nplurals=2; plural=(n != 1);");

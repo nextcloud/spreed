@@ -12,8 +12,6 @@
     "UDP only" : "UDP בלבד",
     "TCP only" : "TCP בלבד",
     "TURN server protocols" : "פרוטוקולים לשרתים מסוג TURN",
-    "New public conversation" : "דיון ציבורי חדש",
-    "New group conversation" : "דיון קבוצתי חדש",
     "New conversation …" : "דיון חדש…",
     "Participants" : "משתתפים",
     "Chat" : "צ׳אט",
@@ -125,10 +123,7 @@
     "{user} invited you to a private conversation" : "הוזמנת לדיון פרטי על ידי {user}",
     "%s invited you to a group conversation: %s" : "הוזמנת על ידי %s לדיון קבוצתי: %s",
     "{user} invited you to a group conversation: {call}" : "הוזמנת על ידי {user} לדיון קבוצתי: {call}",
-    "%s invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי %s",
-    "{user} invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי {user}",
     "A group call has started in {call}" : "החלה שיחה קבוצתית תחת {call}",
-    "A group call has started" : "החלה שיחה קבוצתית",
     "Video & audio-conferencing using WebRTC" : "דיון עם קול ותמונה באמצעות WebRTC",
     "This call is password-protected" : "שיחה זו מוגנת בססמה",
     "The password is wrong. Try again." : "הססמה שגויה. נא לנסות שוב.",
@@ -140,7 +135,12 @@
     "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר.",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
+    "New public conversation" : "דיון ציבורי חדש",
+    "New group conversation" : "דיון קבוצתי חדש",
     "Password request by %s" : "בקשת ססמה מאת %s",
+    "%s invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי %s",
+    "{user} invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי {user}",
+    "A group call has started" : "החלה שיחה קבוצתית",
     "{email} requested the password to access a share" : "התקבלה בקשה לססמת גישה לשיתוף על ידי {email}"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;"
 }

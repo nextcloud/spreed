@@ -12,8 +12,6 @@ OC.L10N.register(
     "UDP only" : "UDP únicamente",
     "TCP only" : "TCP únicamente",
     "TURN server protocols" : "Protocolos del servidor TURN",
-    "New public conversation" : "Nueva conversación pública",
-    "New group conversation" : "Nueva conversación de grupo",
     "New conversation …" : "Nueva conversación ...",
     "Participants" : "Participantes",
     "Chat" : "Chat",
@@ -110,11 +108,8 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} te ha invitado a {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Te invitaron a un cuarto de <strong>conversación</strong> o tuviste una <strong>llamada</strong>",
     "Talk to %s" : "Hablar con %s",
-    "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
-    ", " : ",",
     "{user} wants to talk with you" : "{user} quiere hablar contigo",
     "A group call has started in {call}" : "Una llamada en grupo ha iniciado en {call}",
-    "A group call has started" : "Una llamada en grupo ha iniciado",
     "This call is password-protected" : "Esta llamada está protegida con contraseña",
     "The password is wrong. Try again." : "La contraseña está equivoada. Por favor vuelve a intentarlo. ",
     "Signaling server" : "Señalizando al servidor",
@@ -122,6 +117,11 @@ OC.L10N.register(
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
     "TURN server" : "Servidor TURN",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. "
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "El servidor TURN se usa para concentrar el tráfico de participantes detras de un firewall. ",
+    "New public conversation" : "Nueva conversación pública",
+    "New group conversation" : "Nueva conversación de grupo",
+    "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
+    ", " : ",",
+    "A group call has started" : "Una llamada en grupo ha iniciado"
 },
 "nplurals=2; plural=(n != 1);");
