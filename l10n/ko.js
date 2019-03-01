@@ -90,11 +90,8 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} 님이 {call}에 초대함",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong>대화</strong>방에 초대받았거나 <strong>통화</strong>가 진행됨",
     "Talk to %s" : "%s 님과 대화",
-    "_%n other guest_::_%n other guests_" : ["다른 손님 %n명"],
-    ", " : ",",
     "{user} wants to talk with you" : "{user} 님이 여러분과 통화하려고 함",
     "A group call has started in {call}" : "그룹 통화가 {call}에 시작됨",
-    "A group call has started" : "그룹 통화가 시작됨",
     "This call is password-protected" : "이 통화가 암호로 보호되어 있음",
     "The password is wrong. Try again." : "암호가 잘못되었습니다. 다시 시도하십시오",
     "Signaling server" : "신호 서버",
@@ -102,6 +99,9 @@ OC.L10N.register(
     "STUN servers" : "STUN 서버",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
     "TURN server" : "TURN 서버",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 서버는 방화벽 뒤에 있는 참가자의 트래픽을 중계합니다."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 서버는 방화벽 뒤에 있는 참가자의 트래픽을 중계합니다.",
+    "_%n other guest_::_%n other guests_" : ["다른 손님 %n명"],
+    ", " : ",",
+    "A group call has started" : "그룹 통화가 시작됨"
 },
 "nplurals=1; plural=0;");

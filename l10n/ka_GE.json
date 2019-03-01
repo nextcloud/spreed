@@ -89,11 +89,8 @@
     "{actor} invited you to {call}" : "მოწვევა {call} ზარზე მომხმარებლისგან {actor}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "თქვენ დაგპატიჟეს ოთახში <strong>სასაუბროთ</strong> ან მიიღეთ <strong>ზარი</strong>",
     "Talk to %s" : "საუბარი მომხმარებელთან %s",
-    "_%n other guest_::_%n other guests_" : ["%n სხვა სტუმარი","%n სხვა სტუმარი"],
-    ", " : ",",
     "{user} wants to talk with you" : "{user} მომხმარებელს სურს თქვენთან საუბარი",
     "A group call has started in {call}" : "ჯგუფური ზარი დაიწყო {call}-ში",
-    "A group call has started" : "ჯგუფური ზარი დაწყებულია",
     "This call is password-protected" : "ეს ზარი დაცულია პაროლით",
     "The password is wrong. Try again." : "პაროლი არასწორია. სცადეთ ახლიდან.",
     "Signaling server" : "სერვერზე იგზავნება სიგნალი",
@@ -101,6 +98,9 @@
     "STUN servers" : "STUN სერვერები",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
     "TURN server" : "TURN სერვერი",
-    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად."
+    "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN სერვერი გამოიყენება ფაირვოლს უკან მყოფი მონაწილეების ტრეფიკის რწმუნებულებების გადასაცემად.",
+    "_%n other guest_::_%n other guests_" : ["%n სხვა სტუმარი","%n სხვა სტუმარი"],
+    ", " : ",",
+    "A group call has started" : "ჯგუფური ზარი დაწყებულია"
 },"pluralForm" :"nplurals=2; plural=(n!=1);"
 }
