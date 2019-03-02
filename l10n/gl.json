@@ -1,6 +1,6 @@
 { "translations": {
     "Commands" : "Ordes",
-    "_videocalls section_::_chat_commands_" : ["orde_na_conversa","ordes_na_conversa"],
+    "_videocalls section_::_chat_commands_" : ["Orde_na_conversa","Ordes_na_conversa"],
     "None" : "Ningún",
     "User" : "Usuario",
     "Everyone" : "Todos",
@@ -22,6 +22,7 @@
     "TCP only" : "Só TCP",
     "Test server" : "Comprobar servidor",
     "TURN server protocols" : "Protocolos de servidor TURN",
+    "Enter name for a new conversation" : "Introduza o nome dunha nova conversa",
     "{name} (public)" : "{name} (public)",
     "New conversation …" : "Nova conversa…",
     "Participants" : "Participantes",
@@ -38,6 +39,7 @@
     "Start a conversation" : "Comenzar unha conversa",
     "Share this file with others to discuss" : "Comparta este ficheiro cos demais para debater",
     "Share" : "Compartir",
+    "Room name can not be empty" : "O nome da sala non pode estar baleiro",
     "Request password" : "Solicitar contrasinal",
     "Error requesting the password." : "Produciuse un erro ao solicitar o contrasinal.",
     "Please enter the password for this call" : "Introduza o contrasinal desta chamada",
