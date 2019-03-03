@@ -128,6 +128,7 @@ OC.L10N.register(
     "Never notify" : "Ne jamais notifier",
     "Leave conversation" : "Quitter la conversation",
     "Delete conversation" : "Supprimer la conversation",
+    "You need to promote a new moderator before you can leave the conversation." : "Vous devez désigner un nouveau modérateur avant de quitter la conversation.",
     "Your screen" : "Votre écran",
     "{participantName}'s screen" : "Ecran de {participantName}",
     "Guest's screen" : "Ecran de l'invité",

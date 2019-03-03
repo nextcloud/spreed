@@ -127,6 +127,7 @@ OC.L10N.register(
     "Never notify" : "Nikdy neoznamovat",
     "Leave conversation" : "Opustit konverzaci",
     "Delete conversation" : "Smazat konverzaci",
+    "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
     "Your screen" : "Vaše obrazovka",
     "{participantName}'s screen" : "Obrazovka {participantName}",
     "Guest's screen" : "Obrazovka hosta",
