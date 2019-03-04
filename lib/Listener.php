@@ -22,22 +22,47 @@ declare(strict_types=1);
 
 namespace OCA\Spreed;
 
+use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
+use OCP\Collaboration\AutoComplete\IManager;
 use OCP\IUser;
+use OCP\IUserManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Listener {
 
 	/** @var Manager */
 	protected $manager;
+	/** @var IUserManager */
+	protected $userManager;
+	/** @var Config */
+	protected $config;
+	/** @var string[] */
+	protected $allowedGroupIds = [];
 
-	public function __construct(Manager $manager) {
+	public function __construct(Manager $manager,
+								IUserManager $userManager,
+								Config $config) {
 		$this->manager = $manager;
+		$this->userManager = $userManager;
+		$this->config = $config;
 	}
 
-	public static function register(): void {
+	public static function register(EventDispatcherInterface $dispatcher): void {
 		\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->deleteUser($user);
+		});
+
+		$dispatcher->addListener(IManager::class . '::filterResults', function(AutoCompleteEvent $event) {
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
+			if ($event->getItemType() !== 'call') {
+				return;
+			}
+
+			$event->setResults($listener->filterAutoCompletionResults($event->getResults()));
 		});
 	}
 
@@ -54,5 +79,37 @@ class Listener {
 				$room->removeUser($user, Room::PARTICIPANT_REMOVED);
 			}
 		}
+	}
+
+	public function filterAutoCompletionResults(array $results): array {
+		$this->allowedGroupIds = $this->config->getAllowedGroupIds();
+		if (empty($this->allowedGroupIds)) {
+			return $results;
+		}
+
+		if (!empty($results['groups'])) {
+			$results['groups'] = array_filter($results['groups'], [$this, 'filterGroupResult']);
+		}
+		if (!empty($results['exact']['groups'])) {
+			$results['exact']['groups'] = array_filter($results['exact']['groups'], [$this, 'filterGroupResult']);
+		}
+
+		if (!empty($results['users'])) {
+			$results['users'] = array_filter($results['users'], [$this, 'filterUserResult']);
+		}
+		if (!empty($results['exact']['users'])) {
+			$results['exact']['users'] = array_filter($results['exact']['users'], [$this, 'filterUserResult']);
+		}
+
+		return $results;
+	}
+
+	public function filterUserResult(array $result): bool {
+		$user = $this->userManager->get($result['value']['shareWith']);
+		return $user instanceof IUser && !$this->config->isDisabledForUser($user);
+	}
+
+	public function filterGroupResult(array $result): bool {
+		return \in_array($result['value']['shareWith'], $this->allowedGroupIds, true);
 	}
 }

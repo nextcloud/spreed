@@ -78,10 +78,11 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</commands>
 
 	<settings>
-		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
-		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
-		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\AllowedGroups</admin>
 		<admin>OCA\Spreed\Settings\Admin\Commands</admin>
+		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
 		<admin-section>OCA\Spreed\Settings\Admin\Section</admin-section>
 	</settings>
 
@@ -95,14 +96,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 			<provider>OCA\Spreed\Activity\Provider\Call</provider>
 		</providers>
 	</activity>
-
-	<navigations>
-		<navigation>
-			<name>Talk</name>
-			<route>spreed.Page.index</route>
-			<order>3</order>
-		</navigation>
-	</navigations>
 
 	<contactsmenu>
 		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>

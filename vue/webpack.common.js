@@ -4,6 +4,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 module.exports = {
 	entry: {
 		"admin/commands": path.join(__dirname, 'src', 'commands.js'),
+		"admin/allowed-groups": path.join(__dirname, 'src', 'allowed-groups.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, '../js'),

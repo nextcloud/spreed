@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018, Joas Schilling <coding@schilljs.com>
  *
@@ -24,13 +25,38 @@
 namespace OCA\Spreed\Tests\Unit;
 
 use OCA\Spreed\Capabilities;
+use OCA\Spreed\Config;
 use OCP\Capabilities\IPublicCapability;
+use OCP\IUser;
+use OCP\IUserSession;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class CapabilitiesTest extends TestCase {
 
-	public function testGetCapabilities() {
-		$capabilities = new Capabilities();
+	/** @var Config|MockObject */
+	protected $config;
+	/** @var IUserSession|MockObject */
+	protected $userSession;
+
+	public function setUp() {
+		parent::setUp();
+		$this->config = $this->createMock(Config::class);
+		$this->userSession = $this->createMock(IUserSession::class);
+	}
+
+	public function testGetCapabilitiesGuest(): void {
+		$capabilities = new Capabilities(
+			$this->config,
+			$this->userSession
+		);
+
+		$this->userSession->expects($this->once())
+			->method('getUser')
+			->willReturn(null);
+
+		$this->config->expects($this->never())
+			->method('isDisabledForUser');
 
 		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
 		$this->assertSame([
@@ -54,5 +80,65 @@ class CapabilitiesTest extends TestCase {
 				],
 			],
 		], $capabilities->getCapabilities());
+	}
+
+	public function testGetCapabilitiesUserAllowed(): void {
+		$capabilities = new Capabilities(
+			$this->config,
+			$this->userSession
+		);
+
+		$user = $this->createMock(IUser::class);
+		$this->userSession->expects($this->once())
+			->method('getUser')
+			->willReturn($user);
+
+		$this->config->expects($this->once())
+			->method('isDisabledForUser')
+			->with($user)
+			->willReturn(false);
+
+		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
+		$this->assertSame([
+			'spreed' => [
+				'features' => [
+					'audio',
+					'video',
+					'chat-v2',
+					'guest-signaling',
+					'empty-group-room',
+					'guest-display-names',
+					'multi-room-users',
+					'favorites',
+					'last-room-activity',
+					'no-ping',
+					'system-messages',
+					'mention-flag',
+					'in-call-flags',
+					'notification-levels',
+					'invite-groups-and-mails',
+				],
+			],
+		], $capabilities->getCapabilities());
+	}
+
+	public function testGetCapabilitiesUserDisallowed(): void {
+		$capabilities = new Capabilities(
+			$this->config,
+			$this->userSession
+		);
+
+		$user = $this->createMock(IUser::class);
+		$this->userSession->expects($this->once())
+			->method('getUser')
+			->willReturn($user);
+
+		$this->config->expects($this->once())
+			->method('isDisabledForUser')
+			->with($user)
+			->willReturn(true);
+
+		$this->assertInstanceOf(IPublicCapability::class, $capabilities);
+		$this->assertSame([], $capabilities->getCapabilities());
 	}
 }

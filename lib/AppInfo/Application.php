@@ -32,6 +32,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
 use OCA\Spreed\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Spreed\Listener;
+use OCA\Spreed\Middleware\CanUseTalkMiddleware;
 use OCA\Spreed\Notification\Listener as NotificationListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\PublicShareAuth\Listener as PublicShareAuthListener;
@@ -44,6 +45,7 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IServerContainer;
+use OCP\IUser;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -52,6 +54,22 @@ class Application extends App {
 
 	public function __construct(array $urlParams = []) {
 		parent::__construct('spreed', $urlParams);
+
+		$server = $this->getContainer()->getServer();
+		$this->getContainer()->registerService('CanUseTalkMiddleware', function() use ($server) {
+			/** @var Config $config */
+			$config = $server->query(Config::class);
+			$user = $server->getUserSession()->getUser();
+
+			return new CanUseTalkMiddleware(
+				!$user instanceof IUser ||
+				!$config->isDisabledForUser($user)
+			);
+		});
+		// This needs to be in the constructor,
+		// because otherwise the middleware is registered on a wrong object,
+		// when it is requested by the Router.
+		$this->getContainer()->registerMiddleWare('CanUseTalkMiddleware');
 	}
 
 	public function register(): void {
@@ -62,7 +80,7 @@ class Application extends App {
 		$this->getContainer()->registerCapability(Capabilities::class);
 
 		$dispatcher = $server->getEventDispatcher();
-		Listener::register();
+		Listener::register($dispatcher);
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
 		SystemMessageListener::register($dispatcher);
@@ -75,6 +93,7 @@ class Application extends App {
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);
 
+		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
 		$this->registerChatHooks($dispatcher);
 		$this->registerClientLinks($server);
@@ -100,6 +119,22 @@ class Application extends App {
 			$settingManager = $server->getSettingsManager();
 			$settingManager->registerSetting('personal', Personal::class);
 		}
+	}
+
+	protected function registerNavigationLink(IServerContainer $server): void {
+		$server->getNavigationManager()->add(function() use ($server) {
+			/** @var Config $config */
+			$config = $server->query(Config::class);
+			$user = $server->getUserSession()->getUser();
+			return [
+				'id' => 'spreed',
+				'name' => $server->getL10N('spreed')->t('Talk'),
+				'href' => $server->getURLGenerator()->linkToRouteAbsolute('spreed.Page.index'),
+				'icon' => $server->getURLGenerator()->imagePath('spreed', 'app.svg'),
+				'order' => 3,
+				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
+			];
+		});
 	}
 
 	protected function registerRoomActivityHooks(EventDispatcherInterface $dispatcher): void {

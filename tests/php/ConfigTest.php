@@ -23,7 +23,9 @@ namespace OCA\Spreed\Tests\php;
 use OCA\Spreed\Config;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\Security\ISecureRandom;
+use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
 class ConfigTest extends TestCase {
@@ -34,11 +36,13 @@ class ConfigTest extends TestCase {
 			'stun2.example.com:129',
 		];
 
-		/** @var \PHPUnit_Framework_MockObject_MockObject|ITimeFactory $timeFactory */
+		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
-		/** @var \PHPUnit_Framework_MockObject_MockObject|ISecureRandom $secureRandom */
+		/** @var MockObject|ISecureRandom $secureRandom */
 		$secureRandom = $this->createMock(ISecureRandom::class);
-		/** @var \PHPUnit_Framework_MockObject_MockObject|IConfig $config */
+		/** @var MockObject|IGroupManager $secureRandom */
+		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
 			->expects($this->once())
@@ -46,13 +50,13 @@ class ConfigTest extends TestCase {
 			->with('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']))
 			->willReturn(json_encode($servers));
 
-		$helper = new Config($config, $secureRandom, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
 		$this->assertTrue(in_array($helper->getStunServer(), $servers, true));
 	}
 
 	public function testGenerateTurnSettings() {
 
-		/** @var \PHPUnit_Framework_MockObject_MockObject|IConfig $config */
+		/** @var MockObject|IConfig $config */
 		$config = $this->createMock(IConfig::class);
 		$config
 			->expects($this->once())
@@ -71,21 +75,24 @@ class ConfigTest extends TestCase {
 				],
 			]));
 
-		/** @var \PHPUnit_Framework_MockObject_MockObject|ITimeFactory $timeFactory */
+		/** @var MockObject|ITimeFactory $timeFactory */
 		$timeFactory = $this->createMock(ITimeFactory::class);
 		$timeFactory
 			->expects($this->once())
 			->method('getTime')
 			->willReturn(1479743025);
 
-		/** @var \PHPUnit_Framework_MockObject_MockObject|ISecureRandom $secureRandom */
+		/** @var MockObject|IGroupManager $secureRandom */
+		$groupManager = $this->createMock(IGroupManager::class);
+
+		/** @var MockObject|ISecureRandom $secureRandom */
 		$secureRandom = $this->createMock(ISecureRandom::class);
 		$secureRandom
 			->expects($this->once())
 			->method('generate')
 			->with(16)
 			->willReturn('abcdefghijklmnop');
-		$helper = new Config($config, $secureRandom, $timeFactory);
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
 
 		//
 		$server = $helper->getTurnSettings();
