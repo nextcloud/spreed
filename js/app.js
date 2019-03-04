@@ -388,14 +388,14 @@
 
 			var flags = this.activeRoom.get('participantFlags') || 0;
 			var inCall = flags & OCA.SpreedMe.app.FLAG_IN_CALL !== 0;
-			if (inCall && this._chatViewInMainView === true) {
-				this._chatView.$el.detach();
-				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
-				this._sidebarView.selectTab('chat');
-				this._chatView.reloadMessageList();
-				this._chatView.setTooltipContainer(this._chatView.$el);
-				this._chatViewInMainView = false;
-			} else if (!inCall && !this._chatViewInMainView) {
+			if (inCall) {
+				this._showCallViewInMainView();
+			} else if (!inCall) {
+				this._showChatViewInMainView();
+			}
+		},
+		_showChatViewInMainView: function() {
+			if (!this._chatViewInMainView) {
 				this._sidebarView.removeTab('chat');
 				this._chatView.$el.prependTo('#app-content-wrapper');
 				this._chatView.reloadMessageList();
@@ -404,15 +404,31 @@
 				this._chatViewInMainView = true;
 			}
 
-			if (inCall) {
-				$('#videos').show();
-				$('#screens').show();
-				$('#emptycontent').hide();
-			} else {
-				$('#videos').hide();
-				$('#screens').hide();
-				$('#emptycontent').show();
+			$('#videos').hide();
+			$('#screens').hide();
+			$('#emptycontent').show();
+		},
+		_showCallViewInMainView: function() {
+			if (this._chatViewInMainView) {
+				this._chatView.$el.detach();
+				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
+				this._sidebarView.selectTab('chat');
+				this._chatView.reloadMessageList();
+				this._chatView.setTooltipContainer(this._chatView.$el);
+				this._chatViewInMainView = false;
 			}
+
+			$('#videos').show();
+			$('#screens').show();
+			$('#emptycontent').hide();
+		},
+		_showEmptyContentViewInMainView: function() {
+			this._chatView.$el.detach();
+			this._chatViewInMainView = false;
+
+			$('#videos').hide();
+			$('#screens').hide();
+			$('#emptycontent').show();
 		},
 		updateSidebarWithActiveRoom: function() {
 			this._sidebarView.enable();
@@ -574,12 +590,7 @@
 			});
 
 			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
-				this._chatView.$el.detach();
-				this._chatViewInMainView = false;
-
-				$('#videos').hide();
-				$('#screens').hide();
-				$('#emptycontent').show();
+				this._showEmptyContentViewInMainView();
 			});
 
 			this.listenTo(roomChannel, 'joinRoom', function(token) {
