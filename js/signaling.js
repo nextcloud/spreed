@@ -332,7 +332,7 @@
 			method: 'DELETE',
 			async: false,
 			success: function () {
-				this._trigger('leaveCall', [token]);
+				this._trigger('leaveCall', [token, keepToken]);
 				this._leaveCallSuccess(token);
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {

@@ -307,7 +307,15 @@ var spreedPeerConnectionTable = [];
 			});
 			usersInCallChanged(signaling, usersInCallMapping);
 		});
-		signaling.on('leaveCall', function () {
+		signaling.on('leaveCall', function (token, reconnect) {
+			// When the MCU is used and there is a connection error the call is
+			// left and then joined again to perform the reconnection. In those
+			// cases the call should be kept active from the point of view of
+			// WebRTC.
+			if (reconnect) {
+				return;
+			}
+
 			webrtc.leaveCall();
 		});
 
