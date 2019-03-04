@@ -34,6 +34,7 @@
 					 :disabled="loading"
 					 :multiple="true"
 					 :searchable="true"
+					 :tag-width="60"
 					 @search-change="searchGroup"
 					 :loading="loadingGroups"
 					 :show-no-options="false"
