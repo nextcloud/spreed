@@ -26,28 +26,30 @@ declare(strict_types=1);
 namespace OCA\Spreed\Settings\Admin;
 
 
+use OCA\Spreed\Config;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
 class StunServer implements ISettings {
 
-	/** @var IConfig */
+	/** @var Config */
 	private $config;
+	/** @var IInitialStateService */
+	private $initialStateService;
 
-	public function __construct(IConfig $config) {
+	public function __construct(Config $config,
+								IInitialStateService $initialStateService) {
 		$this->config = $config;
+		$this->initialStateService = $initialStateService;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$parameters = [
-			'stunServer' => $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443'])),
-		];
-
-		return new TemplateResponse('spreed', 'settings/admin/stun-server', $parameters, '');
+		$this->initialStateService->provideInitialState('talk', 'stun_servers', $this->config->getStunServers());
+		return new TemplateResponse('spreed', 'settings/admin/stun-server', [], '');
 	}
 
 	/**

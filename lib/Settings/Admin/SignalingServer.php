@@ -23,30 +23,34 @@ declare(strict_types=1);
 namespace OCA\Spreed\Settings\Admin;
 
 
+use OCA\Spreed\Config;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
 class SignalingServer implements ISettings {
 
-	/** @var IConfig */
+	/** @var Config */
 	private $config;
+	/** @var IInitialStateService */
+	private $initialStateService;
 
-	public function __construct(IConfig $config) {
+	public function __construct(Config $config,
+								IInitialStateService $initialStateService) {
 		$this->config = $config;
+		$this->initialStateService = $initialStateService;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$parameters = [
-			'signalingServers' => $this->config->getAppValue('spreed', 'signaling_servers'),
-		];
-
-		return new TemplateResponse('spreed', 'settings/admin/signaling-server', $parameters, '');
+		$this->initialStateService->provideInitialState('talk', 'signaling_servers', [
+			'servers' => $this->config->getSignalingServers(),
+			'secret' => $this->config->getSignalingSecret(),
+		]);
+		return new TemplateResponse('spreed', 'settings/admin/signaling-server', [], '');
 	}
-
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */

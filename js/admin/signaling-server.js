@@ -22,7 +22,7 @@
 		},
 
 		renderList: function() {
-			var data = this.$list.data('servers');
+			var data = OCP.InitialState.loadState('talk', 'signaling_servers');
 
 			var hasServers = false;
 			if (!_.isUndefined(data.secret)) {

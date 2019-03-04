@@ -31,7 +31,6 @@
 </template>
 
 <script>
-	import axios from 'nextcloud-axios';
 	import Command from './components/Command';
 
 	export default {
@@ -48,13 +47,7 @@
 		},
 
 		mounted () {
-			axios
-				.get(OC.linkToOCS('apps/spreed/api/v1', 2) + 'command')
-				.then(response => {
-					if (response.data.ocs.data.length !== 0) {
-						this.commands = response.data.ocs.data;
-					}
-				});
+			this.commands = OCP.InitialState.loadState('talk', 'commands');
 		}
 	}
 </script>
