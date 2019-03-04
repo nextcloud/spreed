@@ -45,7 +45,7 @@
 			<button class="button primary"
 					@click="saveChanges"
 					:disabled="loading">
-				{{ t('spreed', 'Save changes') }}
+				{{ saveButtonText }}
 			</button>
 		</p>
 	</div>
@@ -64,7 +64,8 @@
 				loading: false,
 				loadingGroups: false,
 				groups: [],
-				allowedGroups: []
+				allowedGroups: [],
+				saveButtonText: t('spreed', 'Save changes')
 			}
 		},
 
@@ -81,10 +82,17 @@
 
 			saveChanges () {
 				this.loading = true;
+				this.loadingGroups = true;
+				this.saveButtonText = t('spreed', 'Saving …');
 
 				OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(this.allowedGroups), {
 					success: function () {
 						this.loading = false;
+						this.loadingGroups = false;
+						this.saveButtonText = t('spreed', 'Saved!');
+						setTimeout(function() {
+							this.saveButtonText = t('spreed', 'Save changes');
+						}.bind(this), 5000);
 					}.bind(this)
 				});
 			}
