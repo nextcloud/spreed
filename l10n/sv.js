@@ -124,6 +124,7 @@ OC.L10N.register(
     "Never notify" : "Meddela aldrig",
     "Leave conversation" : "Lämna konversationen",
     "Delete conversation" : "Radera konversationen",
+    "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "Your screen" : "Din skärm",
     "{participantName}'s screen" : "{participantName}'s skärm",
     "Guest's screen" : "Gästskärm",
