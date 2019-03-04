@@ -5,6 +5,7 @@ module.exports = {
 	entry: {
 		"admin/commands": path.join(__dirname, 'src', 'commands.js'),
 		"admin/allowed-groups": path.join(__dirname, 'src', 'allowed-groups.js'),
+		"admin/stun-server": path.join(__dirname, 'src', 'stun-server.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, '../js'),
