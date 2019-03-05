@@ -1,6 +1,6 @@
 var util = require('util');
 var hark = require('hark');
-var getScreenMedia = require('getscreenmedia');
+var getScreenMedia = require('./getscreenmedia');
 var WildEmitter = require('wildemitter');
 var mockconsole = require('mockconsole');
 

@@ -1,7 +1,7 @@
 var util = require('util');
 var webrtcSupport = require('webrtcsupport');
 var mockconsole = require('mockconsole');
-var localMedia = require('localmedia');
+var localMedia = require('./localmedia');
 var Peer = require('./peer');
 
 
