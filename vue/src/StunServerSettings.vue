@@ -33,15 +33,18 @@
 
 		<p class="settings-hint">{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}</p>
 
-		<div class="stun-servers">
-			<StunServer
-				v-for="(server, index) in servers"
-				:server.sync="servers[index]"
-				:key="index"
-				:index="index"
-				:loading="loading"
-				@removeServer="removeServer" />
-		</div>
+		<ul class="stun-servers">
+			<transition-group name="fade" tag="li">
+				<StunServer
+					v-for="(server, index) in servers"
+					:server.sync="servers[index]"
+					:key="`server${index}`"
+					:index="index"
+					:loading="loading"
+					@removeServer="removeServer"
+					@update:server="debounceUpdateServers" />
+			</transition-group>
+		</ul>
 	</div>
 </template>
 
@@ -69,16 +72,6 @@ export default {
 		StunServer
 	},
 
-	watch: {
-		servers: debounce(function(cur, old) {
-			// ignore empty inputs and make sure the
-			// array was not empty before (initial load)
-			if (cur.join('') !== old.join('') && old.length !== 0) {
-				this.updateServers()
-			}
-		}, 1000)
-	},
-
 	methods: {
 		removeServer(index) {
 			this.servers.splice(index, 1);
@@ -94,6 +87,10 @@ export default {
 		addDefaultServer() {
 			this.servers.push('stun.nextcloud.com:443');
 		},
+
+		debounceUpdateServers: debounce(function() {
+			this.updateServers()
+		}, 1000),
 
 		async updateServers() {
 			this.loading = true
@@ -117,3 +114,14 @@ export default {
 	}
 }
 </script>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+	transition: opacity .5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+	opacity: 0;
+}
+</style>
