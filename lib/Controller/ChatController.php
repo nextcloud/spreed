@@ -361,7 +361,7 @@ class ChatController extends OCSController {
 
 		$results = $this->prepareResultArray($results);
 
-		if ($search === '' || strpos('all', $search) !== false) {
+		if (($search === '' || strpos('all', $search) !== false) && $room->getType() !== Room::ONE_TO_ONE_CALL) {
 			array_unshift($results, [
 				'id' => 'all',
 				'label' => $room->getDisplayName($participant->getUser()),
