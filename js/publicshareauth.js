@@ -150,12 +150,6 @@
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 
-					// Ensure that the elements are shown, as they could have
-					// been hidden if the password was already requested and
-					// that conversation ended in this same page.
-					$('#videos').show();
-					$('#screens').show();
-
 					self.showTalkSidebar();
 
 					OCA.SpreedMe.app.connection.joinCall(joinedRoomToken);
