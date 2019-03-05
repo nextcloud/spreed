@@ -2,11 +2,6 @@ var util = require('util');
 var webrtcSupport = require('webrtcsupport');
 var PeerConnection = require('rtcpeerconnection');
 var WildEmitter = require('wildemitter');
-var FileTransfer = require('filetransfer');
-
-// the inband-v1 protocol is sending metadata inband in a serialized JSON object
-// followed by the actual data. Receiver closes the datachannel upon completion
-var INBAND_FILETRANSFER_V1 = 'https://simplewebrtc.com/protocol/filetransfer#inband-v1';
 
 function isAllTracksEnded(stream) {
 	var isAllTracksEnded = true;
@@ -83,20 +78,6 @@ function Peer(options) {
 			self.pc.addStream(stream);
 		});
 	}
-
-	this.on('channelOpen', function (channel) {
-		if (channel.protocol === INBAND_FILETRANSFER_V1) {
-			channel.onmessage = function (event) {
-				var metadata = JSON.parse(event.data);
-				var receiver = new FileTransfer.Receiver();
-				receiver.receive(metadata, channel);
-				self.emit('fileTransfer', metadata, receiver);
-				receiver.on('receivedFile', function (file, metadata) {
-					receiver.channel.close();
-				});
-			};
-		}
-	});
 
 	// proxy events to parent
 	this.on('*', function () {
@@ -276,27 +257,6 @@ Peer.prototype.handleStreamRemoved = function () {
 Peer.prototype.handleDataChannelAdded = function (channel) {
 	this.channels[channel.label] = channel;
 	this._observeDataChannel(channel);
-};
-
-Peer.prototype.sendFile = function (file) {
-	var sender = new FileTransfer.Sender();
-	var dc = this.getDataChannel('filetransfer' + (new Date()).getTime(), {
-		protocol: INBAND_FILETRANSFER_V1
-	});
-	// override onopen
-	dc.onopen = function () {
-		dc.send(JSON.stringify({
-			size: file.size,
-			name: file.name
-		}));
-		sender.send(file, dc);
-	};
-	// override onclose
-	dc.onclose = function () {
-		console.log('sender received transfer');
-		sender.emit('complete');
-	};
-	return sender;
 };
 
 module.exports = Peer;

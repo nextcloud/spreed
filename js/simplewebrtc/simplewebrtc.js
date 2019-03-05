@@ -458,11 +458,4 @@ SimpleWebRTC.prototype.createRoom = function (name, cb) {
 	}
 };
 
-SimpleWebRTC.prototype.sendFile = function () {
-	if (!webrtcSupport.dataChannel) {
-		return this.emit('error', new Error('DataChannelNotSupported'));
-	}
-
-};
-
 module.exports = SimpleWebRTC;
