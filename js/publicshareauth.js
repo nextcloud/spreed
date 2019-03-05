@@ -128,13 +128,24 @@
 					return;
 				}
 
+				function setPageTitle(title) {
+					if (title) {
+						title += ' - ';
+					} else {
+						title = '';
+					}
+					title += t('spreed', 'Talk');
+					title += ' - ' + oc_defaults.title;
+					window.document.title = title;
+				};
+
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
 					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
 					OCA.SpreedMe.app._emptyContentView.setActiveRoom(OCA.SpreedMe.app.activeRoom);
 
-					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
+					setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
 
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
