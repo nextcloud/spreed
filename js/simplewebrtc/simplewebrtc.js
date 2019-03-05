@@ -3,7 +3,6 @@ var WildEmitter = require('wildemitter');
 var webrtcSupport = require('webrtcsupport');
 var attachMediaStream = require('attachmediastream');
 var mockconsole = require('mockconsole');
-var SocketIoConnection = require('./socketioconnection');
 
 function SimpleWebRTC(opts) {
 	var self = this;
@@ -66,9 +65,8 @@ function SimpleWebRTC(opts) {
 	// call WildEmitter constructor
 	WildEmitter.call(this);
 
-	// create default SocketIoConnection if it's not passed in
 	if (this.config.connection === null) {
-		connection = this.connection = new SocketIoConnection(this.config);
+		throw 'no connection object given in the configuration';
 	} else {
 		connection = this.connection = this.config.connection;
 	}
