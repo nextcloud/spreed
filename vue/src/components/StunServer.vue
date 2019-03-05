@@ -22,48 +22,47 @@
 
 <template>
 	<div class="stun-server">
-		<input type="text" name="stun_server" placeholder="stunserver:port" v-model="server" :aria-label="t('spreed', 'STUN server URL')" />
-		<a class="icon icon-delete" @click="deleteServer" :title="t('spreed', 'Delete servers')"></a>
-		<a class="icon icon-add" @click="addServer" :title="t('spreed', 'Add new servers')"></a>
-		<span class="icon icon-checkmark-color hidden" :title="t('spreed', 'Saved') "></span>
+		<input type="text" ref="stun_server" name="stun_server" placeholder="stunserver:port" :value="server" :disabled="loading" @input="update" :aria-label="t('spreed', 'STUN server URL')" />
+		<a class="icon icon-delete" @click="removeServer" v-tooltip.auto="t('spreed', 'Delete this server')" v-show="!loading"></a>
 	</div>
 
 </template>
 
 <script>
-	export default {
-		name: 'stun-server',
+import { Tooltip } from 'nextcloud-vue'
 
-		// props: [
-		// 	'server'
-		// ],
+export default {
+	name: 'stun-server',
 
-		data () {
-			return {
-				server: 's'
-			}
+	props: {
+		server: {
+			type: String,
+			default: '',
+			required: true
 		},
-
-		methods: {
-			deleteServer () {
-				console.log(this.server);
-				this.$emit('removeServer');
-			},
-
-			addServer () {
-				this.$emit('newServer');
-			},
-
-			saveServers () {
-
-			}
+		index: {
+			type: Number,
+			default: -1,
+			required: true
 		},
+		loading: {
+			type: Boolean,
+			default: false
+		}
+	},
 
-		// components: {
-		// 	Command
-		// },
+	directives: {
+		tooltip: Tooltip
+	},
 
-		mounted () {
+
+	methods: {
+		removeServer(event) {
+			this.$emit('removeServer', this.index)
+		},
+		update(event) {
+			this.$emit('update:server', event.target.value)
 		}
 	}
+}
 </script>
