@@ -1,8 +1,9 @@
 # Changelog
-# Version: 5.0.2.0
+# Version: 5.0.2.1
 
-**56522b0e** 
-Initial commit.
-- Use talk v5.0.2
-- Add notification for new messages.
-- Listen for active/idle user activities, and trigger notification accordingly.
+**61dc3c31**
+- Fix app instance.
+
+**97e1eb78**
+- Enable file dropping in chat view.
+It will upload and auto share inside the current room.
