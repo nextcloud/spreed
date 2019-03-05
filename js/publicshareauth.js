@@ -22,6 +22,8 @@
 (function(OCA) {
 	'use strict';
 
+	var roomsChannel = Backbone.Radio.channel('rooms');
+
 	OCA.Talk = OCA.Talk || {};
 	OCA.Talk.PublicShareAuth = {
 
@@ -70,14 +72,12 @@
 
 			OCA.SpreedMe.app.mainCallElementSelector = '#call-container';
 
-			OCA.SpreedMe.app._emptyContentView.destroy();
 			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
 				el: '#talk-sidebar > #emptycontent'
 			});
 
+			OCA.SpreedMe.app._localVideoView.render();
 			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
-
-			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 
 			$('body').addClass('talk-sidebar-enabled');
 		},
@@ -162,10 +162,13 @@
 				});
 			});
 
-			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
-				if (OCA.SpreedMe.app.token !== leftRoomToken) {
-					return;
-				}
+			// TODO This should listen to "leaveRoom" on signaling instead, but
+			// that would cause an ugly flicker due to the order in which the UI
+			// elements would be modified (as the empty content message and the
+			// "incall" CSS class are both modified when handling
+			// "leaveCurrentRoom").
+			roomsChannel.on('leaveCurrentRoom', function() {
+				OCA.SpreedMe.app._chatView.$el.detach();
 
 				self.leaveRoom();
 			});
@@ -199,7 +202,7 @@
 		},
 	};
 
-	OCA.SpreedMe.app = new OCA.Talk.Application();
+	OCA.SpreedMe.app = new OCA.Talk.Embedded();
 
 	OCA.SpreedMe.app.on('start', function() {
 		OCA.Talk.PublicShareAuth.init();
