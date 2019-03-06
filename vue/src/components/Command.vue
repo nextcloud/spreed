@@ -51,8 +51,8 @@ export default {
 
 	props: {
 		id: {
-			type: String,
-			default: ''
+			type: Number,
+			default: 0
 		},
 		name: {
 			type: String,
@@ -67,12 +67,12 @@ export default {
 			default: ''
 		},
 		response: {
-			type: String,
-			default: ''
+			type: Number,
+			default: 0
 		},
 		enabled: {
-			type: String,
-			default: ''
+			type: Number,
+			default: 0
 		}
 	},
 

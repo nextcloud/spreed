@@ -85,6 +85,7 @@ export default {
 			if (this.servers.length === 0) {
 				this.addDefaultServer()
 			}
+			this.debounceUpdateServers()
 		},
 
 		newServer() {
@@ -126,5 +127,8 @@ export default {
 .fade-enter,
 .fade-leave-to {
 	opacity: 0;
+}
+.icon {
+	display: inline-block;
 }
 </style>

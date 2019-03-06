@@ -1,7 +1,7 @@
 <?php
 /** @var array $_ */
 /** @var \OCP\IL10N $l */
-script('spreed', ['admin/init', 'admin/templates', 'admin/stun-server']);
+script('spreed', ['admin/stun-server']);
 style('spreed', ['settings-admin']);
 ?>
 
