@@ -192,6 +192,10 @@
 			}
 
 			this.bindUIElements();
+
+			// Hide the video until it is explicitly marked as available and
+			// enabled.
+			this.getUI('video').hide();
 		},
 
 		setVideoAvailable: function(videoAvailable) {
