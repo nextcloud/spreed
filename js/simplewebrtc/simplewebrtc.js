@@ -126,7 +126,7 @@ function SimpleWebRTC(opts) {
 	this.webrtc = new WebRTC(opts);
 
 	// attach a few methods from underlying lib to simple.
-	['mute', 'unmute', 'pauseVideo', 'resumeVideo', 'pause', 'resume', 'sendToAll', 'sendDirectlyToAll', 'getPeers'].forEach(function (method) {
+	['mute', 'unmute', 'pauseVideo', 'resumeVideo', 'pause', 'resume', 'sendToAll', 'sendDirectlyToAll', 'getPeers', 'createPeer', 'removePeers'].forEach(function (method) {
 		self[method] = self.webrtc[method].bind(self.webrtc);
 	});
 
@@ -207,24 +207,8 @@ function SimpleWebRTC(opts) {
 		self.emit('localScreenAdded', el);
 		self.connection.emit('shareScreen');
 
-		self.webrtc.peers.forEach(function (existingPeer) {
-			var peer;
-			if (existingPeer.type === 'video') {
-				peer = self.webrtc.createPeer({
-					id: existingPeer.id,
-					type: 'screen',
-					sharemyscreen: true,
-					enableDataChannels: false,
-					receiveMedia: {
-						offerToReceiveAudio: 0,
-						offerToReceiveVideo: 0
-					},
-					broadcaster: self.connection.getSessionid(),
-				});
-				self.emit('createdPeer', peer);
-				peer.start();
-			}
-		});
+		// NOTE: we don't create screen peers for existing video peers here,
+		// this is done by the application code in "webrtc.js".
 	});
 	this.webrtc.on('localScreenStopped', function (stream) {
 		if (self.getLocalScreen()) {
@@ -245,8 +229,6 @@ function SimpleWebRTC(opts) {
 			self.emit('remoteVolumeChange', peer, data.volume);
 		}
 	});
-
-	if (this.config.autoRequestMedia) this.startLocalVideo();
 }
 
 
@@ -256,9 +238,8 @@ SimpleWebRTC.prototype = Object.create(WildEmitter.prototype, {
 	}
 });
 
-SimpleWebRTC.prototype.leaveRoom = function () {
+SimpleWebRTC.prototype.leaveCall = function () {
 	if (this.roomName) {
-		this.connection.emit('leave');
 		while (this.webrtc.peers.length) {
 			this.webrtc.peers[0].end();
 		}
@@ -266,6 +247,7 @@ SimpleWebRTC.prototype.leaveRoom = function () {
 			this.stopScreenShare();
 		}
 		this.emit('leftRoom', this.roomName);
+		this.stopLocalVideo();
 		this.roomName = undefined;
 	}
 };
@@ -322,41 +304,10 @@ SimpleWebRTC.prototype.setVolumeForAll = function (volume) {
 	});
 };
 
-SimpleWebRTC.prototype.joinRoom = function (name, cb) {
-	var self = this;
+SimpleWebRTC.prototype.joinCall = function (name) {
+	if (this.config.autoRequestMedia) this.startLocalVideo();
 	this.roomName = name;
-	this.connection.emit('join', name, function (err, roomDescription) {
-		console.log('join CB', err, roomDescription);
-		if (err) {
-			self.emit('error', err);
-		} else {
-			var id,
-				client,
-				type,
-				peer;
-			for (id in roomDescription.clients) {
-				client = roomDescription.clients[id];
-				for (type in client) {
-					if (client[type]) {
-						peer = self.webrtc.createPeer({
-							id: id,
-							type: type,
-							enableDataChannels: self.config.enableDataChannels && type !== 'screen',
-							receiveMedia: {
-								offerToReceiveAudio: type !== 'screen' && self.config.receiveMedia.offerToReceiveAudio ? 1 : 0,
-								offerToReceiveVideo: self.config.receiveMedia.offerToReceiveVideo
-							}
-						});
-						self.emit('createdPeer', peer);
-						peer.start();
-					}
-				}
-			}
-		}
-
-		if (cb) cb(err, roomDescription);
-		self.emit('joinedRoom', name);
-	});
+	this.emit('joinedRoom', name);
 };
 
 SimpleWebRTC.prototype.getEl = function (idOrEl) {
@@ -373,6 +324,7 @@ SimpleWebRTC.prototype.startLocalVideo = function () {
 		if (err) {
 			self.emit('localMediaError', err);
 		} else {
+			self.emit('localMediaStarted', self.config.media);
 			attachMediaStream(stream, self.getLocalVideoContainer(), self.config.localVideo);
 		}
 	});
@@ -429,7 +381,11 @@ SimpleWebRTC.prototype.stopScreenShare = function () {
 	if (this.getLocalScreen()) {
 		this.webrtc.stopScreenShare();
 	}
+	// Notify peers were sending to.
 	this.webrtc.peers.forEach(function (peer) {
+		if (peer.type === 'screen' && peer.sharemyscreen) {
+			peer.send('unshareScreen');
+		}
 		if (peer.broadcaster) {
 			peer.end();
 		}
