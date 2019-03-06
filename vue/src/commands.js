@@ -29,7 +29,7 @@ Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
-new Vue({
+export default new Vue({
 	el: '#chat_commands',
 	render: h => h(Commands)
 })

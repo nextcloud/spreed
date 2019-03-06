@@ -64,6 +64,10 @@ import _ from 'lodash'
 export default {
 	name: 'App',
 
+	components: {
+		Multiselect
+	},
+
 	data() {
 		return {
 			loading: false,
@@ -74,15 +78,30 @@ export default {
 		}
 	},
 
+	mounted() {
+		this.loading = true
+		this.allowedGroups = OCP.InitialState.loadState('talk', 'allowed_groups')
+		this.groups = this.allowedGroups
+		this.loading = false
+
+		this.searchGroup('')
+	},
+
 	methods: {
 		searchGroup: _.debounce(function(query) {
 			this.loadingGroups = true
 			Axios.get(OC.linkToOCS(`cloud/groups?offset=0&search=${encodeURIComponent(query)}&limit=20`, 2))
 				.then(res => res.data.ocs)
 				.then(ocs => ocs.data.groups)
-				.then(groups => this.groups = _.sortedUniq(_.uniq(this.groups.concat(groups))))
-				.catch(err => console.error('could not search groups', err))
-				.then(() => this.loadingGroups = false)
+				.then(groups => {
+					this.groups = _.sortedUniq(_.uniq(this.groups.concat(groups)))
+				})
+				.catch(err => {
+					console.error('could not search groups', err)
+				})
+				.then(() => {
+					this.loadingGroups = false
+				})
 		}, 500),
 
 		saveChanges() {
@@ -101,19 +120,6 @@ export default {
 				}.bind(this)
 			})
 		}
-	},
-
-	components: {
-		Multiselect
-	},
-
-	mounted() {
-		this.loading = true
-		this.allowedGroups = OCP.InitialState.loadState('talk', 'allowed_groups')
-		this.groups = this.allowedGroups
-		this.loading = false
-
-		this.searchGroup('')
 	}
 }
 </script>

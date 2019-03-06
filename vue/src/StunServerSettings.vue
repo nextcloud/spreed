@@ -75,6 +75,10 @@ export default {
 		}
 	},
 
+	beforeMount() {
+		this.servers = OCP.InitialState.loadState('talk', 'stun_servers')
+	},
+
 	methods: {
 		removeServer(index) {
 			this.servers.splice(index, 1)
@@ -110,10 +114,6 @@ export default {
 				this.saved = false
 			}, 3000)
 		}
-	},
-
-	beforeMount() {
-		this.servers = OCP.InitialState.loadState('talk', 'stun_servers')
 	}
 }
 </script>
