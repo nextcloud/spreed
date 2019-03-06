@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -22,16 +23,15 @@
 namespace OCA\Spreed\Tests\php\Settings\Admin;
 
 use OCA\Spreed\Settings\Admin\Section;
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IURLGenerator;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class SectionTest extends \Test\TestCase {
 
-	/** @var IURLGenerator|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IURLGenerator|MockObject */
 	protected $url;
-	/** @var IL10N|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IL10N|MockObject */
 	protected $l;
 	/** @var Section */
 	protected $admin;
@@ -45,31 +45,27 @@ class SectionTest extends \Test\TestCase {
 		$this->admin = new Section($this->url, $this->l);
 	}
 
-	public function testGetID() {
-		$this->assertInternalType('string', $this->admin->getID());
+	public function testGetID(): void {
 		$this->assertNotEmpty($this->admin->getID());
 	}
 
-	public function testGetName() {
-		$this->l->expects($this->exactly(2))
+	public function testGetName(): void {
+		$this->l->expects($this->once())
 			->method('t')
 			->with('Talk')
 			->willReturnArgument(0);
-		$this->assertInternalType('string', $this->admin->getName());
 		$this->assertNotEmpty($this->admin->getName());
 	}
 
-	public function testGetIcon() {
-		$this->url->expects($this->exactly(2))
+	public function testGetIcon(): void {
+		$this->url->expects($this->once())
 			->method('imagePath')
 			->with('spreed', 'app-dark.svg')
 			->willReturn('apps/spreed/img/app-dark.svg');
-		$this->assertInternalType('string', $this->admin->getIcon());
 		$this->assertNotEmpty($this->admin->getIcon());
 	}
 
-	public function testGetPriority() {
-		$this->assertInternalType('int', $this->admin->getPriority());
+	public function testGetPriority(): void {
 		$this->assertGreaterThan(0, $this->admin->getPriority());
 	}
 }

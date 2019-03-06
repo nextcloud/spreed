@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -21,41 +22,49 @@
 
 namespace OCA\Spreed\Tests\php\Settings\Admin;
 
+use OCA\Spreed\Config;
 use OCA\Spreed\Settings\Admin\TurnServer;
-use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
+use OCP\IInitialStateService;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class TurnServerTest extends \Test\TestCase {
 
-	/** @var IConfig|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Config|MockObject */
 	protected $config;
+	/** @var IInitialStateService|MockObject */
+	protected $initialState;
 	/** @var TurnServer */
 	protected $admin;
 
 	public function setUp() {
 		parent::setUp();
 
-		$this->config = $this->createMock(IConfig::class);
+		$this->config = $this->createMock(Config::class);
+		$this->initialState = $this->createMock(IInitialStateService::class);
 
-		$this->admin = new TurnServer($this->config);
+		$this->admin = new TurnServer($this->config, $this->initialState);
 	}
 
-	public function testGetSection() {
-		$this->assertInternalType('string', $this->admin->getSection());
+	public function testGetSection(): void {
 		$this->assertNotEmpty($this->admin->getSection());
 	}
 
-	public function testGetPriority() {
-		$this->assertInternalType('int', $this->admin->getPriority());
+	public function testGetPriority(): void {
 		$this->assertGreaterThan(0, $this->admin->getPriority());
 	}
 
-	public function testGetForm() {
-		$form = $this->admin->getForm();
-		$this->assertInstanceOf(TemplateResponse::class, $form);
-		$this->assertSame('', $form->getRenderAs());
+	public function testGetForm(): void {
+		$this->config->expects($this->once())
+			->method('getTurnServers')
+			->willReturn(['getTurnServers']);
 
-		$params = $form->getParams();
-		$this->assertArrayHasKey('turnServer', $params);
+		$this->initialState->expects($this->once())
+			->method('provideInitialState')
+			->with('talk', 'turn_servers', ['getTurnServers']);
+
+		$form = $this->admin->getForm();
+		$this->assertSame('settings/admin/turn-server', $form->getTemplateName());
+		$this->assertSame('', $form->getRenderAs());
+		$this->assertCount(0, $form->getParams());
 	}
 }
