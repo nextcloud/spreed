@@ -221,22 +221,46 @@ LocalMedia.prototype._videoEnabled = function (bool) {
 // check if all audio streams are enabled
 LocalMedia.prototype.isAudioEnabled = function () {
 	var enabled = true;
+	var hasAudioTracks = false;
 	this.localStreams.forEach(function (stream) {
-		stream.getAudioTracks().forEach(function (track) {
-			enabled = enabled && track.enabled;
-		});
+		var audioTracks = stream.getAudioTracks();
+		if (audioTracks.length > 0) {
+			hasAudioTracks = true;
+			audioTracks.forEach(function (track) {
+				enabled = enabled && track.enabled;
+			});
+		}
 	});
+
+	// If no audioTracks were found, that means there is no microphone device.
+	// In that case, isAudioEnabled should return false.
+	if (!hasAudioTracks) {
+		return false;
+	}
+
 	return enabled;
 };
 
 // check if all video streams are enabled
 LocalMedia.prototype.isVideoEnabled = function () {
 	var enabled = true;
+	var hasVideoTracks = false;
 	this.localStreams.forEach(function (stream) {
-		stream.getVideoTracks().forEach(function (track) {
-			enabled = enabled && track.enabled;
-		});
+		var videoTracks = stream.getVideoTracks();
+		if (videoTracks.length > 0) {
+			hasVideoTracks = true;
+			videoTracks.forEach(function (track) {
+				enabled = enabled && track.enabled;
+			});
+		}
 	});
+
+	// If no videoTracks were found, that means there is no camera device.
+	// In that case, isVideoEnabled should return false.
+	if (!hasVideoTracks) {
+		return false;
+	}
+
 	return enabled;
 };
 
