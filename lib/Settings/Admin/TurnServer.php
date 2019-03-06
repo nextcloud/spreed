@@ -23,28 +23,30 @@ declare(strict_types=1);
 namespace OCA\Spreed\Settings\Admin;
 
 
+use OCA\Spreed\Config;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
 class TurnServer implements ISettings {
 
-	/** @var IConfig */
+	/** @var Config */
 	private $config;
+	/** @var IInitialStateService */
+	private $initialStateService;
 
-	public function __construct(IConfig $config) {
+	public function __construct(Config $config,
+								IInitialStateService $initialStateService) {
 		$this->config = $config;
+		$this->initialStateService = $initialStateService;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$parameters = [
-			'turnServer' => $this->config->getAppValue('spreed', 'turn_servers'),
-		];
-
-		return new TemplateResponse('spreed', 'settings/admin/turn-server', $parameters, '');
+		$this->initialStateService->provideInitialState('talk', 'turn_servers', $this->config->getTurnServers());
+		return new TemplateResponse('spreed', 'settings/admin/turn-server', [], '');
 	}
 
 	/**

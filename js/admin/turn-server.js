@@ -25,7 +25,7 @@
 		},
 
 		renderList: function() {
-			var servers = this.$list.data('servers');
+			var servers = OCP.InitialState.loadState('talk', 'turn_servers');
 
 			_.each(servers, function(server) {
 				this.$list.append(

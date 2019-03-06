@@ -151,7 +151,7 @@ class Config {
 	/**
 	 * @return string[]
 	 */
-	protected function getStunServers(): array {
+	public function getStunServers(): array {
 		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
 		$servers = json_decode($config, true);
 
@@ -180,7 +180,7 @@ class Config {
 	 *
 	 * @return array
 	 */
-	protected function getTurnServers(): array {
+	public function getTurnServers(): array {
 		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config, true);
 

@@ -23,15 +23,40 @@ declare(strict_types=1);
 namespace OCA\Spreed\Settings\Admin;
 
 
+use OCA\Spreed\Config;
+use OCA\Spreed\Model\Command;
+use OCA\Spreed\Service\CommandService;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
 class Commands implements ISettings {
+
+	/** @var CommandService */
+	private $commandService;
+	/** @var IInitialStateService */
+	private $initialStateService;
+
+	public function __construct(CommandService $commandService,
+								IInitialStateService $initialStateService) {
+		$this->commandService = $commandService;
+		$this->initialStateService = $initialStateService;
+	}
+
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
+
+		$commands = $this->commandService->findAll();
+
+		$result = array_map(function(Command $command) {
+			return $command->asArray();
+		}, $commands);
+
+		$this->initialStateService->provideInitialState('talk', 'commands', $result);
+
 		return new TemplateResponse('spreed', 'settings/admin/commands', [], '');
 	}
 
