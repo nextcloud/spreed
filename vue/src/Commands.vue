@@ -21,33 +21,48 @@
  -->
 
 <template>
-	<div id="chat_commands" class="videocalls section">
+	<div id="chat_commands" class="commands section">
 		<h2>{{ t('spreed', 'Commands') }}</h2>
 
-		<div>
-			<command v-for="command in commands" v-bind="command" :key="command.id"></command>
+		<div id="commands_list">
+			<div class="head name">
+				{{ t('spreed', 'Name') }}
+			</div>
+			<div class="head command">
+				{{ t('spreed', 'Command') }}
+			</div>
+			<div class="head script">
+				{{ t('spreed', 'Script') }}
+			</div>
+			<div class="head response">
+				{{ t('spreed', 'Response to') }}
+			</div>
+			<div class="head enabled">
+				{{ t('spreed', 'Enabled for') }}
+			</div>
+			<command v-for="command in commands" :key="command.id" v-bind="command" />
 		</div>
 	</div>
 </template>
 
 <script>
-	import Command from './components/Command';
+import Command from './components/Command'
 
-	export default {
-		name: 'app',
+export default {
+	name: 'App',
 
-		data () {
-			return {
-				commands: {}
-			}
-		},
+	components: {
+		Command
+	},
 
-		components: {
-			Command
-		},
-
-		mounted () {
-			this.commands = OCP.InitialState.loadState('talk', 'commands');
+	data() {
+		return {
+			commands: {}
 		}
+	},
+
+	mounted() {
+		this.commands = OCP.InitialState.loadState('talk', 'commands')
 	}
+}
 </script>
