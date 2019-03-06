@@ -21,6 +21,12 @@ build-js:
 build-js-production:
 	npm run build
 
+lint:
+	npm run lint
+
+lint-fix:
+	npm run lint:fix
+
 watch-js:
 	npm run watch
 

@@ -45,18 +45,36 @@ import { Fragment } from 'vue-fragment'
 
 export default {
 	name: 'Command',
-  	components: {
+	components: {
 		Fragment
 	},
 
-	props: [
-		'id',
-		'name',
-		'command',
-		'script',
-		'response',
-		'enabled'
-	],
+	props: {
+		id: {
+			type: String,
+			default: ''
+		},
+		name: {
+			type: String,
+			default: ''
+		},
+		command: {
+			type: String,
+			default: ''
+		},
+		script: {
+			type: String,
+			default: ''
+		},
+		response: {
+			type: String,
+			default: ''
+		},
+		enabled: {
+			type: String,
+			default: ''
+		}
+	},
 
 	computed: {
 		translatedResponse() {

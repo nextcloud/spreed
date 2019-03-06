@@ -1,4 +1,4 @@
-/*
+/**
  * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
@@ -20,15 +20,16 @@
  *
  */
 
-import Vue from 'vue';
-import AllowedGroups from './AllowedGroups';
+import Vue from 'vue'
+import AllowedGroups from './AllowedGroups'
 
-Vue.prototype.t = t;
-Vue.prototype.n = n;
-Vue.prototype.OC = OC;
-Vue.prototype.OCA = OCA;
+Vue.prototype.t = t
+Vue.prototype.n = n
+Vue.prototype.OC = OC
+Vue.prototype.OCA = OCA
+Vue.prototype.OCP = OCP
 
 new Vue({
 	el: '#allowed_groups',
 	render: h => h(AllowedGroups)
-});
+})

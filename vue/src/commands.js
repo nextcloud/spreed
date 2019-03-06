@@ -1,4 +1,4 @@
-/*
+/**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
@@ -20,15 +20,16 @@
  *
  */
 
-import Vue from 'vue';
-import Commands from './Commands';
+import Vue from 'vue'
+import Commands from './Commands'
 
-Vue.prototype.t = t;
-Vue.prototype.n = n;
-Vue.prototype.OC = OC;
-Vue.prototype.OCA = OCA;
+Vue.prototype.t = t
+Vue.prototype.n = n
+Vue.prototype.OC = OC
+Vue.prototype.OCA = OCA
+Vue.prototype.OCP = OCP
 
 new Vue({
 	el: '#chat_commands',
 	render: h => h(Commands)
-});
+})

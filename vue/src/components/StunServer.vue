@@ -22,17 +22,23 @@
 
 <template>
 	<div class="stun-server">
-		<input type="text" ref="stun_server" name="stun_server" placeholder="stunserver:port" :value="server" :disabled="loading" @input="update" :aria-label="t('spreed', 'STUN server URL')" />
-		<a class="icon icon-delete" @click="removeServer" v-tooltip.auto="t('spreed', 'Delete this server')" v-show="!loading"></a>
+		<input ref="stun_server" type="text" name="stun_server"
+			placeholder="stunserver:port" :value="server" :disabled="loading"
+			:aria-label="t('spreed', 'STUN server URL')" @input="update">
+		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Delete this server')" class="icon icon-delete"
+			@click="removeServer" />
 	</div>
-
 </template>
 
 <script>
 import { Tooltip } from 'nextcloud-vue'
 
 export default {
-	name: 'stun-server',
+	name: 'StunServer',
+
+	directives: {
+		tooltip: Tooltip
+	},
 
 	props: {
 		server: {
@@ -50,11 +56,6 @@ export default {
 			default: false
 		}
 	},
-
-	directives: {
-		tooltip: Tooltip
-	},
-
 
 	methods: {
 		removeServer(event) {

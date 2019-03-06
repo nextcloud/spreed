@@ -28,6 +28,12 @@ module.exports = {
 				exclude: /node_modules/
 			},
 			{
+				enforce: 'pre',
+				test: /\.(js|vue)$/,
+				loader: 'eslint-loader',
+				exclude: /node_modules/
+			},
+			{
 				test: /\.(png|jpg|gif|svg)$/,
 				loader: 'file-loader',
 				options: {

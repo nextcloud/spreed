@@ -24,21 +24,24 @@
 	<div id="stun_server" class="videocalls section">
 		<h2>
 			{{ t('spreed', 'STUN servers') }}
-			<span class="icon icon-checkmark-color" v-if="saved" :title="t('spreed', 'Saved')"></span>
-			<a class="icon icon-add" @click="newServer" v-else-if="!loading" v-tooltip.auto="t('spreed', 'Add a new server')">
+			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
+			<a v-else-if="!loading" v-tooltip.auto="t('spreed', 'Add a new server')" class="icon icon-add"
+				@click="newServer">
 				<span class="hidden-visually">{{ t('spreed', 'Add a new server') }}</span>
 			</a>
-			<span class="icon icon-loading-small" v-else></span>
+			<span v-else class="icon icon-loading-small" />
 		</h2>
 
-		<p class="settings-hint">{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}</p>
+		<p class="settings-hint">
+			{{ t('spreed', 'A STUN server is used to determine the public IP address of participants behind a router.') }}
+		</p>
 
 		<ul class="stun-servers">
 			<transition-group name="fade" tag="li">
-				<StunServer
+				<stun-server
 					v-for="(server, index) in servers"
-					:server.sync="servers[index]"
 					:key="`server${index}`"
+					:server.sync="servers[index]"
 					:index="index"
 					:loading="loading"
 					@removeServer="removeServer"
@@ -51,18 +54,10 @@
 <script>
 import { Tooltip } from 'nextcloud-vue'
 import debounce from 'debounce'
-import StunServer from './components/StunServer';
+import StunServer from './components/StunServer'
 
 export default {
-	name: 'app',
-
-	data () {
-		return {
-			servers: [],
-			loading: false,
-			saved: false
-		}
-	},
+	name: 'App',
 
 	directives: {
 		tooltip: Tooltip
@@ -72,20 +67,28 @@ export default {
 		StunServer
 	},
 
+	data() {
+		return {
+			servers: [],
+			loading: false,
+			saved: false
+		}
+	},
+
 	methods: {
 		removeServer(index) {
-			this.servers.splice(index, 1);
+			this.servers.splice(index, 1)
 			if (this.servers.length === 0) {
 				this.addDefaultServer()
 			}
 		},
 
 		newServer() {
-			this.servers.push('');
+			this.servers.push('')
 		},
 
 		addDefaultServer() {
-			this.servers.push('stun.nextcloud.com:443');
+			this.servers.push('stun.nextcloud.com:443')
 		},
 
 		debounceUpdateServers: debounce(function() {
@@ -109,8 +112,8 @@ export default {
 		}
 	},
 
-	beforeMount () {
-		this.servers = OCP.InitialState.loadState('talk', 'stun_servers');
+	beforeMount() {
+		this.servers = OCP.InitialState.loadState('talk', 'stun_servers')
 	}
 }
 </script>

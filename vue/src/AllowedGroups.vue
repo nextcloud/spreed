@@ -21,30 +21,35 @@
  -->
 
 <template>
-	<div class="videocalls section" id="allowed_groups">
+	<div id="allowed_groups" class="videocalls section">
 		<h2>{{ t('spreed', 'Limit to groups') }}</h2>
-		<p class="settings-hint">{{ t('spreed', 'When at least one group is selected, only people of the listed groups can be part of conversations.') }}</p>
-		<p class="settings-hint">{{ t('spreed', 'Guests can still join public conversations.') }}</p>
-		<p class="settings-hint">{{ t('spreed', 'Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}</p>
+		<p class="settings-hint">
+			{{ t('spreed', 'When at least one group is selected, only people of the listed groups can be part of conversations.') }}
+		</p>
+		<p class="settings-hint">
+			{{ t('spreed', 'Guests can still join public conversations.') }}
+		</p>
+		<p class="settings-hint">
+			{{ t('spreed', 'Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}
+		</p>
 
-		<Multiselect class="allowed-groups"
-					 v-model="allowedGroups"
-					 :options="groups"
-					 :placeholder="t('spreed', 'Limit app usage to groups.')"
-					 :disabled="loading"
-					 :multiple="true"
-					 :searchable="true"
-					 :tag-width="60"
-					 @search-change="searchGroup"
-					 :loading="loadingGroups"
-					 :show-no-options="false"
-					 :close-on-select="false">
-		</Multiselect>
+		<multiselect v-model="allowedGroups"
+			class="allowed-groups"
+			:options="groups"
+			:placeholder="t('spreed', 'Limit app usage to groups.')"
+			:disabled="loading"
+			:multiple="true"
+			:searchable="true"
+			:tag-width="60"
+			:loading="loadingGroups"
+			:show-no-options="false"
+			:close-on-select="false"
+			@search-change="searchGroup" />
 
 		<p>
 			<button class="button primary"
-					@click="saveChanges"
-					:disabled="loading">
+				:disabled="loading"
+				@click="saveChanges">
 				{{ saveButtonText }}
 			</button>
 		</p>
@@ -52,65 +57,65 @@
 </template>
 
 <script>
-	import Axios from 'nextcloud-axios'
-	import {Multiselect} from 'nextcloud-vue'
-	import _ from 'lodash'
+import Axios from 'nextcloud-axios'
+import { Multiselect } from 'nextcloud-vue'
+import _ from 'lodash'
 
-	export default {
-		name: 'app',
+export default {
+	name: 'App',
 
-		data () {
-			return {
-				loading: false,
-				loadingGroups: false,
-				groups: [],
-				allowedGroups: [],
-				saveButtonText: t('spreed', 'Save changes')
-			}
-		},
-
-		methods: {
-			searchGroup: _.debounce(function (query) {
-				this.loadingGroups = true;
-				Axios.get(OC.linkToOCS(`cloud/groups?offset=0&search=${encodeURIComponent(query)}&limit=20`, 2))
-					.then(res => res.data.ocs)
-					.then(ocs => ocs.data.groups)
-					.then(groups => this.groups = _.sortedUniq(_.uniq(this.groups.concat(groups))))
-					.catch(err => console.error('could not search groups', err))
-					.then(() => this.loadingGroups = false)
-			}, 500),
-
-			saveChanges () {
-				this.loading = true;
-				this.loadingGroups = true;
-				this.saveButtonText = t('spreed', 'Saving …');
-
-				OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(this.allowedGroups), {
-					success: function () {
-						this.loading = false;
-						this.loadingGroups = false;
-						this.saveButtonText = t('spreed', 'Saved!');
-						setTimeout(function() {
-							this.saveButtonText = t('spreed', 'Save changes');
-						}.bind(this), 5000);
-					}.bind(this)
-				});
-			}
-		},
-
-		components: {
-			Multiselect
-		},
-
-		mounted () {
-			this.loading = true;
-			this.allowedGroups = OCP.InitialState.loadState('talk', 'allowed_groups');
-			this.groups = this.allowedGroups;
-			this.loading = false;
-
-			this.searchGroup('');
+	data() {
+		return {
+			loading: false,
+			loadingGroups: false,
+			groups: [],
+			allowedGroups: [],
+			saveButtonText: t('spreed', 'Save changes')
 		}
+	},
+
+	methods: {
+		searchGroup: _.debounce(function(query) {
+			this.loadingGroups = true
+			Axios.get(OC.linkToOCS(`cloud/groups?offset=0&search=${encodeURIComponent(query)}&limit=20`, 2))
+				.then(res => res.data.ocs)
+				.then(ocs => ocs.data.groups)
+				.then(groups => this.groups = _.sortedUniq(_.uniq(this.groups.concat(groups))))
+				.catch(err => console.error('could not search groups', err))
+				.then(() => this.loadingGroups = false)
+		}, 500),
+
+		saveChanges() {
+			this.loading = true
+			this.loadingGroups = true
+			this.saveButtonText = t('spreed', 'Saving …')
+
+			OCP.AppConfig.setValue('spreed', 'allowed_groups', JSON.stringify(this.allowedGroups), {
+				success: function() {
+					this.loading = false
+					this.loadingGroups = false
+					this.saveButtonText = t('spreed', 'Saved!')
+					setTimeout(function() {
+						this.saveButtonText = t('spreed', 'Save changes')
+					}.bind(this), 5000)
+				}.bind(this)
+			})
+		}
+	},
+
+	components: {
+		Multiselect
+	},
+
+	mounted() {
+		this.loading = true
+		this.allowedGroups = OCP.InitialState.loadState('talk', 'allowed_groups')
+		this.groups = this.allowedGroups
+		this.loading = false
+
+		this.searchGroup('')
 	}
+}
 </script>
 
 <style>

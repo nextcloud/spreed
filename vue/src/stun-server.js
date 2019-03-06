@@ -1,4 +1,4 @@
-/*
+/**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
@@ -20,15 +20,16 @@
  *
  */
 
-import Vue from 'vue';
-import StunServerSettings from './StunServerSettings';
+import Vue from 'vue'
+import StunServerSettings from './StunServerSettings'
 
-Vue.prototype.t = t;
-Vue.prototype.n = n;
-Vue.prototype.OC = OC;
-Vue.prototype.OCA = OCA;
+Vue.prototype.t = t
+Vue.prototype.n = n
+Vue.prototype.OC = OC
+Vue.prototype.OCA = OCA
+Vue.prototype.OCP = OCP
 
 new Vue({
 	el: '#stun_server',
 	render: h => h(StunServerSettings)
-});
+})
