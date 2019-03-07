@@ -318,4 +318,11 @@ LocalMedia.prototype._stopAudioMonitor = function (stream) {
 	}
 };
 
+// fallback for old .localScreen behaviour
+Object.defineProperty(LocalMedia.prototype, 'localScreen', {
+	get: function () {
+		return this.localScreens.length > 0 ? this.localScreens[0] : null;
+	}
+});
+
 module.exports = LocalMedia;
