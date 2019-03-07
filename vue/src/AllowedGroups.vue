@@ -33,20 +33,20 @@
 			{{ t('spreed', 'Users that can not use Talk anymore will still be listed as participants in their previous conversations and also their chat messages will be kept.') }}
 		</p>
 
-		<multiselect v-model="allowedGroups"
-			class="allowed-groups"
-			:options="groups"
-			:placeholder="t('spreed', 'Limit app usage to groups.')"
-			:disabled="loading"
-			:multiple="true"
-			:searchable="true"
-			:tag-width="60"
-			:loading="loadingGroups"
-			:show-no-options="false"
-			:close-on-select="false"
-			@search-change="searchGroup" />
-
-		<p>
+		<p class="allowed-groups-settings-content">
+			<multiselect v-model="allowedGroups"
+				class="allowed-groups-select"
+				:options="groups"
+				:placeholder="t('spreed', 'Limit app usage to groups.')"
+				:disabled="loading"
+				:multiple="true"
+				:searchable="true"
+				:tag-width="60"
+				:loading="loadingGroups"
+				:show-no-options="false"
+				:close-on-select="false"
+				@search-change="searchGroup" />
+			
 			<button class="button primary"
 				:disabled="loading"
 				@click="saveChanges">
@@ -124,8 +124,16 @@ export default {
 }
 </script>
 
-<style>
-	.allowed-groups {
+<style lang="scss" scoped>
+.allowed-groups-settings-content {
+	display: flex;
+	align-items: center;
+
+	.allowed-groups-select {
 		width: 300px;
 	}
+	button {
+		margin-left: 10px;
+	}
+}
 </style>
