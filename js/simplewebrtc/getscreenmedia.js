@@ -1,5 +1,4 @@
 // getScreenMedia helper by @HenrikJoreteg
-var getUserMedia = require('getusermedia');
 
 // cache for constraints and callback
 var cache = {};
@@ -14,6 +13,14 @@ module.exports = function (mode, constraints, cb) {
 		error.name = 'HTTPS_REQUIRED';
 		return callback(error);
 	}
+
+	var getUserMedia = function(constraints, callback) {
+		window.navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
+			callback(null, stream);
+		}).catch(function(error) {
+			callback(error, null);
+		});
+	};
 
 	if (window.navigator.userAgent.match('Chrome')) {
 		var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(\d+)\./)[1], 10);
