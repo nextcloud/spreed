@@ -528,8 +528,8 @@ var spreedPeerConnectionTable = [];
 										videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
 
 										if (spreedPeerConnectionTable[peer.id] < 5) {
-											if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-												peer.pc.pc.peerconnection.signalingState === 'stable') {
+											if (peer.pc.pc.localDescription.type === 'offer' &&
+												peer.pc.pc.signalingState === 'stable') {
 												spreedPeerConnectionTable[peer.id] ++;
 												console.log('ICE restart.');
 												peer.icerestart();
@@ -548,8 +548,8 @@ var spreedPeerConnectionTable = [];
 								if (spreedPeerConnectionTable[peer.id] < 5) {
 									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
 
-									if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-										peer.pc.pc.peerconnection.signalingState === 'stable') {
+									if (peer.pc.pc.localDescription.type === 'offer' &&
+										peer.pc.pc.signalingState === 'stable') {
 										spreedPeerConnectionTable[peer.id] ++;
 										console.log('ICE restart.');
 										peer.icerestart();
@@ -855,7 +855,7 @@ var spreedPeerConnectionTable = [];
 
 		function checkPeerMedia(peer, track, mediaType) {
 			var defer = $.Deferred();
-			peer.pc.pc.getStats(track, function(stats) {
+			peer.pc.getStats(track, function(stats) {
 				var result = false;
 				Object.keys(stats).forEach(function(key) {
 					var value = stats[key];
