@@ -33,10 +33,10 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
+use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IUserSession;
 
 class SystemMessage {
 
@@ -44,6 +44,8 @@ class SystemMessage {
 	protected $userManager;
 	/** @var GuestManager */
 	protected $guestManager;
+	/** @var IPreviewManager */
+	protected $previewManager;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
 	/** @var IRootFolder */
@@ -60,11 +62,13 @@ class SystemMessage {
 
 	public function __construct(IUserManager $userManager,
 								GuestManager $guestManager,
+								IPreviewManager $previewManager,
 								RoomShareProvider $shareProvider,
 								IRootFolder $rootFolder,
 								IURLGenerator $url) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
+		$this->previewManager = $previewManager;
 		$this->shareProvider = $shareProvider;
 		$this->rootFolder = $rootFolder;
 		$this->url = $url;
@@ -274,6 +278,8 @@ class SystemMessage {
 			'name' => $name,
 			'path' => $path,
 			'link' => $url,
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
 		];
 	}
 
