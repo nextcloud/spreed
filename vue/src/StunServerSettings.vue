@@ -118,17 +118,17 @@ export default {
 	}
 }
 </script>
-<style>
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity .5s;
-}
 
-.fade-enter,
-.fade-leave-to {
-	opacity: 0;
+<style lang="scss">
+.turn-server {
+	height: 44px;
+	display: flex;
+	align-items: center;
 }
 .icon {
 	display: inline-block;
+	width: 44px;
+	height: 44px;
+	vertical-align: middle;
 }
 </style>

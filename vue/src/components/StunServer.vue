@@ -67,3 +67,11 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.stun-server {
+	height: 44px;
+	display: flex;
+	align-items: center;
+}
+</style>

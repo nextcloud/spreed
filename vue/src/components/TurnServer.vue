@@ -30,7 +30,7 @@
 			:aria-label="t('spreed', 'TURN server secret')" @input="updateSecret">
 
 		<select class="protocols" :value="protocols" :aria-label="t('spreed', 'TURN server protocols')"
-			@input="updateProtocols">
+			:disabled="loading" @input="updateProtocols">
 			<option value="udp">
 				{{ t('spreed', 'UDP only') }}
 			</option>
@@ -246,11 +246,10 @@ export default {
 }
 </script>
 
-<style>
-	.icon {
-		display: inline-block;
-		width: 44px;
-		height: 44px;
-		vertical-align: middle;
-	}
+<style lang="scss" scoped>
+.turn-server {
+	height: 44px;
+	display: flex;
+	align-items: center;
+}
 </style>

@@ -66,3 +66,19 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.commands.section {
+	#commands_list {
+		display: grid;
+		grid-template-columns: minmax(100px, 200px) minmax(100px, 200px)  1fr minmax(100px, 200px)  minmax(100px, 200px);
+		grid-column-gap: 5px;
+		grid-row-gap: 10px;
+		.head {
+			padding-bottom: 5px;
+			border-bottom: 1px solid var(--color-border);
+			font-weight: bold;
+		}
+	}
+}
+</style>

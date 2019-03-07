@@ -90,7 +90,11 @@ export default {
 		},
 
 		newServer() {
-			this.servers.push('')
+			this.servers.push({
+				server: '',
+				secret: '',
+				protocols: 'udp,tcp' // default to udp AND tcp
+			})
 		},
 
 		debounceUpdateServers: debounce(function() {
@@ -120,13 +124,13 @@ export default {
 				servers.push(data)
 			})
 
+			const self = this
+
 			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'turn_servers', JSON.stringify(servers), {
 				success() {
-					setTimeout(() => {
-						this.loading = false
-						this.toggleSave()
-					}, 2000)
+					self.loading = false
+					self.toggleSave()
 				}
 			})
 		},
@@ -140,18 +144,3 @@ export default {
 	}
 }
 </script>
-<style>
-.fade-enter-active,
-.fade-leave-active {
-	transition: opacity .5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-	opacity: 0;
-}
-
-.icon {
-	display: inline-block;
-}
-</style>
