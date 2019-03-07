@@ -115,7 +115,7 @@ LocalMedia.prototype.stopStream = function (stream) {
 	}
 };
 
-LocalMedia.prototype.startScreenShare = function (constraints, cb) {
+LocalMedia.prototype.startScreenShare = function (mode, constraints, cb) {
 	var self = this;
 
 	this.emit('localScreenRequested');
@@ -125,7 +125,7 @@ LocalMedia.prototype.startScreenShare = function (constraints, cb) {
 		constraints = null;
 	}
 
-	getScreenMedia(constraints, function (err, stream) {
+	getScreenMedia(mode, constraints, function (err, stream) {
 		if (!err) {
 			self.localScreens.push(stream);
 

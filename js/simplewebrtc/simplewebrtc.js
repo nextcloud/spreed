@@ -355,8 +355,8 @@ SimpleWebRTC.prototype.getRemoteVideoContainer = function () {
 	return this.getEl(this.config.remoteVideosEl);
 };
 
-SimpleWebRTC.prototype.shareScreen = function (cb) {
-	this.webrtc.startScreenShare(cb);
+SimpleWebRTC.prototype.shareScreen = function (mode, cb) {
+	this.webrtc.startScreenShare(mode, cb);
 };
 
 SimpleWebRTC.prototype.getLocalScreen = function () {
