@@ -34,6 +34,12 @@ install-npm-deps-dev:
 compile-handlebars-templates: dev-setup
 	bash compile-handlebars-templates.sh
 
+bundle-simplewebrtc: dev-setup
+	# webrtc-adapter uses JavaScript features not supported by browserify,
+	# so the sources need to be transformed using babel to a compatible
+	# version of JavaScript.
+	npx browserify --standalone SimpleWebRTC --transform [ babelify --global --presets [ @babel/env ] ] js/simplewebrtc/simplewebrtc.js > js/simplewebrtc/bundled.js
+
 dev-setup: install-npm-deps-dev
 
 appstore: clean install-deps
