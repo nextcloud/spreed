@@ -59,6 +59,15 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
 	this.emit('localStreamRequested', constraints);
 
 	navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+		// Although the promise should be resolved only if all the constraints
+		// are met Edge resolves it if both audio and video are requested but
+		// only audio is available.
+		if (constraints.video && stream.getVideoTracks().length === 0) {
+			constraints.video = false;
+			self.start(constraints, cb);
+			return;
+		}
+
 		if (constraints.audio && self.config.detectSpeakingEvents) {
 			self._setupAudioMonitor(stream, self.config.harkOptions);
 		}
