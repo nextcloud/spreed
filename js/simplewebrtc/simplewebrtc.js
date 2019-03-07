@@ -261,6 +261,14 @@ SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
 	var container = this.getRemoteVideoContainer();
 	var video = attachMediaStream(peer.stream);
 
+	// At least Firefox, Opera and Edge move the video to a wrong position
+	// instead of keeping it unchanged	when "transform: scaleX(1)" is used
+	// ("transform: scaleX(-1)" is fine); as it should have no effect the
+	// transform is removed.
+	if (video.style.transform === 'scaleX(1)') {
+		video.style.transform = '';
+	}
+
 	// store video element as part of peer for easy removal
 	peer.videoEl = video;
 	video.id = this.getDomId(peer);
