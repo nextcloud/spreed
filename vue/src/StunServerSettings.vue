@@ -102,11 +102,28 @@ export default {
 
 		async updateServers() {
 			this.loading = true
-			// TODO: your request instead of the timeout
-			setTimeout(() => {
-				this.loading = false
-				this.toggleSave()
-			}, 2000)
+			let servers = []
+
+			this.servers.forEach((server) => {
+
+				if (server.startsWith('https://')) {
+					server = server.substr(8)
+				} else if (server.startsWith('http://')) {
+					server = server.substr(7)
+				}
+
+				servers.push(server)
+			})
+
+			this.servers = servers
+			const self = this
+
+			OCP.AppConfig.setValue('spreed', 'stun_servers', JSON.stringify(servers), {
+				success() {
+					self.loading = false
+					self.toggleSave()
+				}
+			})
 		},
 
 		toggleSave() {

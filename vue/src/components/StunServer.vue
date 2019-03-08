@@ -25,6 +25,7 @@
 		<input ref="stun_server" type="text" name="stun_server"
 			placeholder="stunserver:port" :value="server" :disabled="loading"
 			:aria-label="t('spreed', 'STUN server URL')" @input="update">
+		<span v-show="!isValidServer" class="icon icon-error" />
 		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Delete this server')" class="icon icon-delete"
 			@click="removeServer" />
 	</div>
@@ -54,6 +55,25 @@ export default {
 		loading: {
 			type: Boolean,
 			default: false
+		}
+	},
+
+	computed: {
+		isValidServer() {
+			let server = this.server
+
+			// Remove HTTP or HTTPS protocol, if provided
+			if (server.startsWith('https://')) {
+				server = server.substr(8)
+			} else if (server.startsWith('http://')) {
+				server = server.substr(7)
+			}
+
+			const parts = server.split(':')
+
+			return parts.length === 2
+				&& parts[1].match(/^([1-9]\d{0,4})$/) !== null
+				&& parseInt(parts[1]) <= Math.pow(2, 16)
 		}
 	},
 
