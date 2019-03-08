@@ -1,6 +1,5 @@
 var util = require('util');
 var webrtcSupport = require('webrtcsupport');
-var PeerConnection = require('rtcpeerconnection');
 var WildEmitter = require('wildemitter');
 
 function isAllTracksEnded(stream) {
@@ -29,42 +28,33 @@ function Peer(options) {
 	this.channels = {};
 	this.pendingDCMessages = []; // key (datachannel label) -> value (array[pending messages])
 	this.sid = options.sid || Date.now().toString();
-	// Create an RTCPeerConnection via the polyfill
-	this.pc = new PeerConnection(this.parent.config.peerConnectionConfig, this.parent.config.peerConnectionConstraints);
-	this.pc.on('ice', this.onIceCandidate.bind(this));
-	this.pc.on('endOfCandidates', function (event) {
+	this.pc = new RTCPeerConnection(this.parent.config.peerConnectionConfig);
+	this.pc.addEventListener('icecandidate', this.onIceCandidate.bind(this));
+	this.pc.addEventListener('endofcandidates', function (event) {
 		self.send('endOfCandidates', event);
 	});
-	this.pc.on('offer', function (offer) {
-		if (self.parent.config.nick) offer.nick = self.parent.config.nick;
-		self.send('offer', offer);
-	});
-	this.pc.on('answer', function (answer) {
-		if (self.parent.config.nick) answer.nick = self.parent.config.nick;
-		self.send('answer', answer);
-	});
-	this.pc.on('addStream', this.handleRemoteStreamAdded.bind(this));
-	this.pc.on('addChannel', this.handleDataChannelAdded.bind(this));
-	this.pc.on('removeStream', this.handleStreamRemoved.bind(this));
+	this.pc.addEventListener('addstream', this.handleRemoteStreamAdded.bind(this));
+	this.pc.addEventListener('datachannel', this.handleDataChannelAdded.bind(this));
+	this.pc.addEventListener('removestream', this.handleStreamRemoved.bind(this));
 	// Just fire negotiation needed events for now
 	// When browser re-negotiation handling seems to work
 	// we can use this as the trigger for starting the offer/answer process
 	// automatically. We'll just leave it be for now while this stabalizes.
-	this.pc.on('negotiationNeeded', this.emit.bind(this, 'negotiationNeeded'));
-	this.pc.on('iceConnectionStateChange', this.emit.bind(this, 'iceConnectionStateChange'));
-	this.pc.on('iceConnectionStateChange', function () {
+	this.pc.addEventListener('negotiationneeded', this.emit.bind(this, 'negotiationNeeded'));
+	this.pc.addEventListener('iceconnectionstatechange', this.emit.bind(this, 'iceConnectionStateChange'));
+	this.pc.addEventListener('iceconnectionstatechange', function () {
 		switch (self.pc.iceConnectionState) {
 		case 'failed':
 			// currently, in chrome only the initiator goes to failed
 			// so we need to signal this to the peer
-			if (self.pc.pc.localDescription.type === 'offer') {
+			if (self.pc.localDescription.type === 'offer') {
 				self.parent.emit('iceFailed', self);
 				self.send('connectivityError');
 			}
 			break;
 		}
 	});
-	this.pc.on('signalingStateChange', this.emit.bind(this, 'signalingStateChange'));
+	this.pc.addEventListener('signalingstatechange', this.emit.bind(this, 'signalingStateChange'));
 	this.logger = this.parent.logger;
 
 	// handle screensharing/broadcast mode
@@ -88,6 +78,46 @@ function Peer(options) {
 
 util.inherits(Peer, WildEmitter);
 
+Peer.prototype.offer = function(options) {
+	this.pc.createOffer(options).then(function(offer) {
+		this.pc.setLocalDescription(offer).then(function() {
+			if (this.parent.config.nick) offer.nick = this.parent.config.nick;
+			this.send('offer', offer);
+		}.bind(this)).catch(function(error) {
+			console.warn("setLocalDescription for offer failed: ", error);
+		}.bind(this));
+	}.bind(this)).catch(function(error) {
+		console.warn("createOffer failed: ", error);
+	}.bind(this));
+};
+
+Peer.prototype.handleOffer = function (offer) {
+	this.pc.setRemoteDescription(offer).then(function() {
+		this.answer();
+	}.bind(this)).catch(function(error) {
+		console.warn("setRemoteDescription for offer failed: ", error);
+	}.bind(this));
+};
+
+Peer.prototype.answer = function() {
+	this.pc.createAnswer().then(function(answer) {
+		this.pc.setLocalDescription(answer).then(function() {
+			if (this.parent.config.nick) answer.nick = this.parent.config.nick;
+			this.send('answer', answer);
+		}.bind(this)).catch(function(error) {
+			console.warn("setLocalDescription for answer failed: ", error);
+		}.bind(this));
+	}.bind(this)).catch(function(error) {
+		console.warn("createAnswer failed: ", error);
+	}.bind(this));
+};
+
+Peer.prototype.handleAnswer = function (answer) {
+	this.pc.setRemoteDescription(answer).catch(function(error) {
+		console.warn("setRemoteDescription for answer failed: ", error);
+	}.bind(this));
+};
+
 Peer.prototype.handleMessage = function (message) {
 	var self = this;
 
@@ -98,21 +128,13 @@ Peer.prototype.handleMessage = function (message) {
 	if (message.type === 'offer') {
 		if (!this.nick) this.nick = message.payload.nick;
 		delete message.payload.nick;
-		this.pc.handleOffer(message.payload, function (err) {
-			if (err) {
-				return;
-			}
-			// auto-accept
-			self.pc.answer(function (err, sessionDescription) {
-				//self.send('answer', sessionDescription);
-			});
-		});
+		this.handleOffer(message.payload);
 	} else if (message.type === 'answer') {
 		if (!this.nick) this.nick = message.payload.nick;
 		delete message.payload.nick;
-		this.pc.handleAnswer(message.payload);
+		this.handleAnswer(message.payload);
 	} else if (message.type === 'candidate') {
-		this.pc.processIce(message.payload);
+		this.pc.addIceCandidate(message.payload.candidate);
 	} else if (message.type === 'connectivityError') {
 		this.parent.emit('connectivityError', self);
 	} else if (message.type === 'mute') {
@@ -120,7 +142,7 @@ Peer.prototype.handleMessage = function (message) {
 	} else if (message.type === 'unmute') {
 		this.parent.emit('unmute', {id: message.from, name: message.payload.name});
 	} else if (message.type === 'endOfCandidates') {
-		this.pc.pc.addIceCandidate(undefined);
+		this.pc.addIceCandidate('');
 	} else if (message.type === 'unshareScreen') {
 		this.parent.emit('unshareScreen', {id: message.from});
 		this.end();
@@ -195,7 +217,8 @@ Peer.prototype.getDataChannel = function (name, opts) {
 	return channel;
 };
 
-Peer.prototype.onIceCandidate = function (candidate) {
+Peer.prototype.onIceCandidate = function (event) {
+	var candidate = event.candidate;
 	if (this.closed) return;
 	if (candidate) {
 		var pcConfig = this.parent.config.peerConnectionConfig;
@@ -204,7 +227,16 @@ Peer.prototype.onIceCandidate = function (candidate) {
 				candidate.candidate.candidate.indexOf(pcConfig.iceTransports) < 0) {
 			this.logger.log('Ignoring ice candidate not matching pcConfig iceTransports type: ', pcConfig.iceTransports);
 		} else {
-			this.send('candidate', candidate);
+			// Retain legacy data structure for compatibility with
+			// mobile clients.
+			var expandedCandidate = {
+				candidate: {
+					candidate: candidate.candidate,
+					sdpMid: candidate.sdpMid,
+					sdpMLineIndex: candidate.sdpMLineIndex
+				}
+			};
+			this.send('candidate', expandedCandidate);
 		}
 	} else {
 		this.logger.log("End of candidates.");
@@ -222,15 +254,13 @@ Peer.prototype.start = function () {
 		this.getDataChannel('simplewebrtc');
 	}
 
-	this.pc.offer(this.receiveMedia, function (err, sessionDescription) {
-		//self.send('offer', sessionDescription);
-	});
+	this.offer(this.receiveMedia);
 };
 
 Peer.prototype.icerestart = function () {
 	var constraints = this.receiveMedia;
 	constraints.iceRestart = true;
-	this.pc.offer(constraints, function (err, success) { });
+	this.offer(constraints);
 };
 
 Peer.prototype.end = function () {
@@ -267,7 +297,8 @@ Peer.prototype.handleStreamRemoved = function () {
 	}
 };
 
-Peer.prototype.handleDataChannelAdded = function (channel) {
+Peer.prototype.handleDataChannelAdded = function (event) {
+	var channel = event.channel;
 	this.channels[channel.label] = channel;
 	this._observeDataChannel(channel);
 };

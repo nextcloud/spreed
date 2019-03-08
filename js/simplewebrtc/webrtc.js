@@ -14,9 +14,6 @@ function WebRTC(opts) {
 			peerConnectionConfig: {
 				iceServers: []
 			},
-			peerConnectionConstraints: {
-				optional: []
-			},
 			receiveMedia: {
 				offerToReceiveAudio: 1,
 				offerToReceiveVideo: 1
