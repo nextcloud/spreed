@@ -46,7 +46,7 @@
 				:show-no-options="false"
 				:close-on-select="false"
 				@search-change="searchGroup" />
-			
+
 			<button class="button primary"
 				:disabled="loading"
 				@click="saveChanges">

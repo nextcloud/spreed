@@ -29,13 +29,13 @@
 			placeholder="secret" :value="secret" :disabled="loading"
 			:aria-label="t('spreed', 'TURN server secret')" @input="updateSecret">
 
-		<select class="protocols" :value="protocols" :aria-label="t('spreed', 'TURN server protocols')"
-			:disabled="loading" @input="updateProtocols">
-			<option value="udp">
-				{{ t('spreed', 'UDP only') }}
-			</option>
+		<select class="protocols" :value="protocols" :disabled="loading"
+			:aria-label="t('spreed', 'TURN server protocols')" @input="updateProtocols">
 			<option value="udp,tcp">
 				{{ t('spreed', 'UDP and TCP') }}
+			</option>
+			<option value="udp">
+				{{ t('spreed', 'UDP only') }}
 			</option>
 			<option value="tcp">
 				{{ t('spreed', 'TCP only') }}
