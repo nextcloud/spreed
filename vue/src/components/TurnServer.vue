@@ -54,6 +54,7 @@
 import { Tooltip } from 'nextcloud-vue'
 import hmacSHA1 from 'crypto-js/hmac-sha1'
 import Base64 from 'crypto-js/enc-base64'
+import debounce from 'debounce'
 
 export default {
 	name: 'TurnServer',
@@ -113,9 +114,11 @@ export default {
 	},
 
 	methods: {
-		testServer(event) {
-			event.stopPropagation()
+		debounceTestServer: debounce(function() {
+			this.testServer()
+		}, 1000),
 
+		testServer() {
 			this.testing = true
 			this.testingError = false
 			this.testingSuccess = false
@@ -235,12 +238,15 @@ export default {
 		},
 		updateServer(event) {
 			this.$emit('update:server', event.target.value)
+			this.debounceTestServer()
 		},
 		updateSecret(event) {
 			this.$emit('update:secret', event.target.value)
+			this.debounceTestServer()
 		},
 		updateProtocols(event) {
 			this.$emit('update:protocols', event.target.value)
+			this.debounceTestServer()
 		}
 	}
 }
