@@ -24,7 +24,7 @@ module.exports = function (mode, constraints, cb) {
     });
   };
 
-  if (window.navigator.userAgent.match('Chrome')) {
+  if (navigator.webkitGetUserMedia) {
     var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(\d+)\./)[1], 10);
     var maxver = 33; // Chrome 71 dropped support for "window.chrome.webstore;".
 
@@ -156,6 +156,14 @@ module.exports = function (mode, constraints, cb) {
       error.name = 'FF52_REQUIRED';
       return callback(error);
     }
+  } else if (navigator.mediaDevices && navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)) {
+    navigator.mediaDevices.getDisplayMedia({
+      video: true
+    }).then(function (stream) {
+      callback(null, stream);
+    }).catch(function (error) {
+      callback(error, null);
+    });
   }
 };
 
