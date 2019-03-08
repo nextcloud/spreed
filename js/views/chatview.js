@@ -575,13 +575,18 @@
 			var previewSize = Math.ceil(128 * window.devicePixelRatio);
 
 			var defaultIconUrl = OC.imagePath('core', 'filetypes/file');
-			var previewUrl = OC.generateUrl(
-				'/core/preview?fileId={fileId}&x={width}&y={height}&forceIcon=true',
-				{
-					fileId: $filePreview.data('file-id'),
-					width: previewSize,
-					height: previewSize
-				});
+			var previewUrl = defaultIconUrl;
+			if ($filePreview.data('preview-available') === 'yes') {
+				previewUrl = OC.generateUrl(
+					'/core/preview?fileId={fileId}&x={width}&y={height}',
+					{
+						fileId: $filePreview.data('file-id'),
+						width: previewSize,
+						height: previewSize
+					});
+			} else {
+				previewUrl = OC.MimeType.getIconUrl($filePreview.data('mimetype'));
+			}
 
 			// If the default file icon can not be loaded either there is
 			// nothing else that can be done, just remove the loading icon

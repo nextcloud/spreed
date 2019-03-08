@@ -149,6 +149,10 @@ templates['richobjectstringparser_filepreview'] = template({"compiler":[7,">= 4.
     + alias4(((helper = (helper = helpers.link || (depth0 != null ? depth0.link : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"link","hash":{},"data":data}) : helper)))
     + "\" class=\"filePreviewContainer\" target=\"_blank\" rel=\"noopener noreferrer\">\n	<span class=\"filePreview\" data-file-id=\""
     + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\" data-mimetype=\""
+    + alias4(((helper = (helper = helpers.mimetype || (depth0 != null ? depth0.mimetype : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"mimetype","hash":{},"data":data}) : helper)))
+    + "\" data-preview-available=\""
+    + alias4(((helper = (helper = helpers["preview-available"] || (depth0 != null ? depth0["preview-available"] : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"preview-available","hash":{},"data":data}) : helper)))
     + "\"></span>\n	<strong>"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
     + "</strong>\n</a>\n";

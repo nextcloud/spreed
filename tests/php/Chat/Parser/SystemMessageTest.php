@@ -35,10 +35,10 @@ use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
+use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IUserSession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IShare;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -50,6 +50,8 @@ class SystemMessageTest extends TestCase {
 	protected $userManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var IPreviewManager|MockObject */
+	protected $previewManager;
 	/** @var RoomShareProvider|MockObject */
 	protected $shareProvider;
 	/** @var IRootFolder|MockObject */
@@ -64,6 +66,7 @@ class SystemMessageTest extends TestCase {
 
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
+		$this->previewManager = $this->createMock(IPreviewManager::class);
 		$this->shareProvider = $this->createMock(RoomShareProvider::class);
 		$this->rootFolder = $this->createMock(IRootFolder::class);
 		$this->url = $this->createMock(IURLGenerator::class);
@@ -91,6 +94,7 @@ class SystemMessageTest extends TestCase {
 				->setConstructorArgs([
 					$this->userManager,
 					$this->guestManager,
+					$this->previewManager,
 					$this->shareProvider,
 					$this->rootFolder,
 					$this->url,
@@ -103,6 +107,7 @@ class SystemMessageTest extends TestCase {
 		return new SystemMessage(
 			$this->userManager,
 			$this->guestManager,
+			$this->previewManager,
 			$this->shareProvider,
 			$this->rootFolder,
 			$this->url
@@ -426,6 +431,9 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getName')
 			->willReturn('name');
+		$node->expects($this->once())
+			->method('getMimeType')
+			->willReturn('text/plain');
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -447,6 +455,11 @@ class SystemMessageTest extends TestCase {
 			])
 			->willReturn('absolute-link');
 
+		$this->previewManager->expects($this->once())
+			->method('isAvailable')
+			->with($node)
+			->willReturn(true);
+
 		$participant = $this->createMock(Participant::class);
 		$participant->expects($this->once())
 			->method('isGuest')
@@ -459,6 +472,8 @@ class SystemMessageTest extends TestCase {
 			'name' => 'name',
 			'path' => 'name',
 			'link' => 'absolute-link',
+			'mimetype' => 'text/plain',
+			'preview-available' => 'yes',
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
@@ -473,6 +488,9 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getPath')
 			->willReturn('/owner/files/path/to/file/name');
+		$node->expects($this->once())
+			->method('getMimeType')
+			->willReturn('httpd/unix-directory');
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -486,6 +504,11 @@ class SystemMessageTest extends TestCase {
 			->method('getShareById')
 			->with('23')
 			->willReturn($share);
+
+		$this->previewManager->expects($this->once())
+			->method('isAvailable')
+			->with($node)
+			->willReturn(false);
 
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
@@ -509,6 +532,8 @@ class SystemMessageTest extends TestCase {
 			'name' => 'name',
 			'path' => 'path/to/file/name',
 			'link' => 'absolute-link-owner',
+			'mimetype' => 'httpd/unix-directory',
+			'preview-available' => 'no',
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
@@ -520,6 +545,9 @@ class SystemMessageTest extends TestCase {
 		$node->expects($this->once())
 			->method('getName')
 			->willReturn('name');
+		$node->expects($this->once())
+			->method('getMimeType')
+			->willReturn('application/octet-stream');
 
 		$share = $this->createMock(IShare::class);
 		$share->expects($this->once())
@@ -558,6 +586,11 @@ class SystemMessageTest extends TestCase {
 			->with('user')
 			->willReturn($userFolder);
 
+		$this->previewManager->expects($this->once())
+			->method('isAvailable')
+			->with($node)
+			->willReturn(false);
+
 		$this->url->expects($this->once())
 			->method('linkToRouteAbsolute')
 			->with('files.viewcontroller.showFile', [
@@ -572,6 +605,8 @@ class SystemMessageTest extends TestCase {
 			'name' => 'different',
 			'path' => 'Shared/different',
 			'link' => 'absolute-link-owner',
+			'mimetype' => 'application/octet-stream',
+			'preview-available' => 'no',
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
