@@ -218,6 +218,7 @@ OC.L10N.register(
     "Limit to groups" : "Limiter aux groupes",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Lorsqu'au moins un groupe est sélectionné, seules les personnes des groupes répertoriés peuvent participer aux conversations.",
     "Guests can still join public conversations." : "Les invités peuvent toujours rejoindre les conversations publiques.",
+    "Limit app usage to groups." : "Limiter l'utilisation de l'application aux groupes.",
     "Save changes" : "Enregistrer les modifications",
     "Saving …" : "Enregistrement ...",
     "Saved!" : "Enregistré !",
