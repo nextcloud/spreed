@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import SignalingServerSettings from './SignalingServerSettings'
+import SignalingServers from 'Views/SignalingServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -31,5 +31,6 @@ Vue.prototype.OCP = OCP
 
 export default new Vue({
 	el: '#signaling_server',
-	render: h => h(SignalingServerSettings)
+	name: 'SignalingServerSettings',
+	render: h => h(SignalingServers)
 })

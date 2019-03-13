@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import AllowedGroups from './AllowedGroups'
+import AllowedGroups from 'Views/AllowedGroups'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -31,5 +31,6 @@ Vue.prototype.OCP = OCP
 
 export default new Vue({
 	el: '#allowed_groups',
+	name: 'AllowedGroupsSettings',
 	render: h => h(AllowedGroups)
 })

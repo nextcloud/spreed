@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import TurnServerSettings from './TurnServerSettings'
+import TurnServers from 'Views/TurnServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -31,5 +31,6 @@ Vue.prototype.OCP = OCP
 
 export default new Vue({
 	el: '#turn_server',
-	render: h => h(TurnServerSettings)
+	name: 'TurnServerSettings',
+	render: h => h(TurnServers)
 })

@@ -46,10 +46,10 @@
 </template>
 
 <script>
-import Command from './components/Command'
+import Command from 'Components/Command'
 
 export default {
-	name: 'App',
+	name: 'Commands',
 
 	components: {
 		Command

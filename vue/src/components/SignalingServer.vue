@@ -25,9 +25,9 @@
 		<input ref="signaling_server" type="text" name="signaling_server"
 			placeholder="wss://signaling.example.org" :value="server" :disabled="loading"
 			:aria-label="t('spreed', 'TURN server URL')" @input="updateServer">
-		<!--<input :id="'verify' + index" type="checkbox" :name="'verify' + index"-->
-		<!--	class="checkbox verify" value="1" v-model="verify"-->
-		<!--	@input="updateVerify">-->
+		<input :id="'verify' + index" type="checkbox" :name="'verify' + index"
+			class="checkbox verify" :checked="verify"
+			@change="updateVerify">
 		<label :for="'verify' + index">{{ t('spreed', 'Validate SSL certificate') }}</label>
 
 		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Delete this server')" class="icon icon-delete"
@@ -75,7 +75,7 @@ export default {
 			this.$emit('update:server', event.target.value)
 		},
 		updateVerify(event) {
-			this.$emit('update:verify', event.target.value)
+			this.$emit('update:verify', event.target.checked)
 		}
 	}
 }

@@ -51,7 +51,8 @@ module.exports = {
 	plugins: [new VueLoaderPlugin()],
 	resolve: {
 		alias: {
-			vue$: 'vue/dist/vue.esm.js'
+			Components: path.resolve(__dirname, 'src/components/'),
+			Views: path.resolve(__dirname, 'src/views/')
 		},
 		extensions: ['*', '.js', '.vue', '.json']
 	}

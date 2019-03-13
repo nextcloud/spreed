@@ -62,7 +62,7 @@ import { Multiselect } from 'nextcloud-vue'
 import _ from 'lodash'
 
 export default {
-	name: 'App',
+	name: 'AllowedGroups',
 
 	components: {
 		Multiselect

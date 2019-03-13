@@ -53,9 +53,9 @@
 
 		<div class="signaling-secret">
 			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input type="text" name="signaling_secret" :disabled="loading"
-				:placeholder="t('spreed', 'Shared secret')" :value="secret"
-				:aria-label="t('spreed', 'Shared secret')" @update="debounceUpdateServers">
+			<input v-model="secret" type="text" name="signaling_secret"
+				:disabled="loading" :placeholder="t('spreed', 'Shared secret')"
+				:aria-label="t('spreed', 'Shared secret')" @input="debounceUpdateServers">
 		</div>
 	</div>
 </template>
@@ -63,10 +63,10 @@
 <script>
 import { Tooltip } from 'nextcloud-vue'
 import debounce from 'debounce'
-import SignalingServer from './components/SignalingServer'
+import SignalingServer from 'Components/SignalingServer'
 
 export default {
-	name: 'App',
+	name: 'SignalingServers',
 
 	directives: {
 		tooltip: Tooltip
@@ -110,33 +110,14 @@ export default {
 
 		async updateServers() {
 			this.loading = true
-			// TODO: your request instead of the timeout
-			setTimeout(() => {
-				this.loading = false
-				this.toggleSave()
-			}, 2000)
-			var servers = []
 
-			this.servers.forEach((server) => {
-				const data = {
-					server: server.server,
-					verify: server.verify
-				}
-
-				if (data.server === '') {
-					return
-				}
-
-				servers.push(data)
-			})
-
-			this.servers = servers
+			this.servers = this.servers.filter(server => server.server.trim() !== '')
 
 			const self = this
 
 			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
-				servers: servers,
+				servers: this.servers,
 				secret: this.secret
 			}), {
 				success() {

@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import StunServerSettings from './StunServerSettings'
+import StunServers from 'Views/StunServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -31,5 +31,6 @@ Vue.prototype.OCP = OCP
 
 export default new Vue({
 	el: '#stun_server',
-	render: h => h(StunServerSettings)
+	name: 'StunServerSettings',
+	render: h => h(StunServers)
 })

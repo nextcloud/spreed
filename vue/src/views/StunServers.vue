@@ -54,10 +54,10 @@
 <script>
 import { Tooltip } from 'nextcloud-vue'
 import debounce from 'debounce'
-import StunServer from './components/StunServer'
+import StunServer from 'Components/StunServer'
 
 export default {
-	name: 'App',
+	name: 'StunServers',
 
 	directives: {
 		tooltip: Tooltip
