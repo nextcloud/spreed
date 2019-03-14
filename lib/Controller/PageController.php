@@ -95,6 +95,20 @@ class PageController extends Controller {
 	 * @UseSession
 	 *
 	 * @param string $token
+	 * @return Response
+	 * @throws HintException
+	 */
+	public function showCall(string $token): Response {
+		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
+		return $this->index($token);
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @UseSession
+	 *
+	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
@@ -161,7 +175,7 @@ class PageController extends Controller {
 			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
 				$data = $response->getData();
-				return $this->showCall($data['token']);
+				return $this->redirectToConversation($data['token']);
 			}
 		}
 
@@ -225,7 +239,14 @@ class PageController extends Controller {
 		return $response;
 	}
 
-	protected function showCall(string $token): RedirectResponse {
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
+	 * @param string $token
+	 * @return RedirectResponse
+	 */
+	protected function redirectToConversation(string $token): RedirectResponse {
 		// These redirects are already done outside of this method
 		if ($this->userId === null) {
 			try {
