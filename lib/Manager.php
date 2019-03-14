@@ -384,18 +384,30 @@ class Manager {
 	public function getOne2OneRoom(string $participant1, string $participant2): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_rooms', 'r1')
-			->leftJoin('r1', 'talk_participants', 'p1', $query->expr()->andX(
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_participants', 'p1', $query->expr()->andX(
 				$query->expr()->eq('p1.user_id', $query->createNamedParameter($participant1)),
-				$query->expr()->eq('p1.room_id', 'r1.id')
+				$query->expr()->eq('p1.room_id', 'r.id')
 			))
-			->leftJoin('r1', 'talk_participants', 'p2', $query->expr()->andX(
+			->leftJoin('r', 'talk_participants', 'p2', $query->expr()->andX(
 				$query->expr()->eq('p2.user_id', $query->createNamedParameter($participant2)),
-				$query->expr()->eq('p2.room_id', 'r1.id')
+				$query->expr()->eq('p2.room_id', 'r.id')
 			))
-			->where($query->expr()->eq('r1.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNotNull('p1.user_id'))
-			->andWhere($query->expr()->isNotNull('p2.user_id'));
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->orX(
+				$query->expr()->andX(
+					$query->expr()->isNotNull('p1.user_id'),
+					$query->expr()->isNotNull('p2.user_id')
+				),
+				$query->expr()->andX(
+					$query->expr()->eq('r.name', $query->createNamedParameter($participant1)),
+					$query->expr()->isNotNull('p2.user_id')
+				),
+				$query->expr()->andX(
+					$query->expr()->isNotNull('p1.user_id'),
+					$query->expr()->eq('r.name', $query->createNamedParameter($participant2))
+				)
+			));
 
 		$result = $query->execute();
 		$row = $result->fetch();
@@ -532,7 +544,7 @@ class Manager {
 			return $this->l->t('Password request: %s', [$room->getName()]);
 		}
 
-		if ($room->getName() === '') {
+		if ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getName() === '') {
 			$room->setName($this->getRoomNameByParticipants($room));
 		}
 
@@ -554,6 +566,11 @@ class Manager {
 			if (!$userIsParticipant) {
 				// Do not leak the name of rooms the user is not a part of
 				return $this->l->t('Private conversation');
+			}
+
+			if ($otherParticipant === '' && $room->getName() !== '') {
+				$user = $this->userManager->get($room->getName());
+				$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
 			}
 
 			return $otherParticipant;
@@ -646,6 +663,10 @@ class Manager {
 			throw new \OutOfBoundsException();
 		}
 		return $token;
+	}
+
+	public function isValidParticipant(string $userId): bool {
+		return $this->userManager->userExists($userId);
 	}
 
 	protected function loadLastMessageInfo(IQueryBuilder $query): void {

@@ -54,7 +54,7 @@ Feature: conversation
     And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
 
-  Scenario: delete a one-to-one conversation
+  Scenario: leave a one-to-one conversation
     Given I act as John
     And I am logged in
     And I have opened the Talk app
@@ -70,14 +70,14 @@ Feature: conversation
     And I see that the chat is shown in the main view
     And I see that the sidebar is open
     When I act as John
-    And I delete the "admin" conversation
+    And I leave the "admin" conversation
     Then I see that the "admin" conversation is not shown in the list
     And I see that the "Join a conversation or start a new one Say hi to your friends and colleagues!" empty content message is shown in the main view
     And I see that the sidebar is closed
     And I act as Jane
-    And I see that the "user0" conversation is not shown in the list
-    And I see that the "This conversation has ended" empty content message is shown in the main view
-    And I see that the sidebar is closed
+    And I see that the "user0" conversation is shown in the list
+    And I see that the chat is shown in the main view
+    And I see that the sidebar is open
 
   Scenario: leave a conversation
     Given I act as John

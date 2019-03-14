@@ -65,6 +65,7 @@ class Capabilities implements IPublicCapability {
 					'in-call-flags',
 					'notification-levels',
 					'invite-groups-and-mails',
+					'locked-one-to-one-rooms',
 				],
 			],
 		];

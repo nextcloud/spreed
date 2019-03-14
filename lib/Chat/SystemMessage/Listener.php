@@ -97,6 +97,11 @@ class Listener {
 			$listener->sendSystemMessage($room, 'conversation_created');
 		});
 		$dispatcher->addListener(Room::class . '::postSetName', function(GenericEvent $event) {
+			if ($event->getArgument('oldName') === '' ||
+				  $event->getArgument('newName') === '') {
+				return;
+			}
+
 			/** @var Room $room */
 			$room = $event->getSubject();
 			/** @var self $listener */
@@ -141,6 +146,11 @@ class Listener {
 
 			/** @var Room $room */
 			$room = $event->getSubject();
+
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			foreach ($participants as $participant) {
@@ -154,6 +164,10 @@ class Listener {
 			$user = $event->getArgument('user');
 			/** @var Room $room */
 			$room = $event->getSubject();
+
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				return;
+			}
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);

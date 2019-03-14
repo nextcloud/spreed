@@ -22,9 +22,6 @@ Feature: sharees
     Then "exact rooms" sharees returned is empty
     And "rooms" sharees returned is empty
 
-  # One-to-one rooms do not have a name (and it can not be set) and are
-  # currently ignored by the sharees code (although supported by the sharing
-  # code).
   Scenario: search one-to-one room
     Given user "participant1" creates room "one-to-one room"
       | roomType | 1 |
@@ -32,8 +29,8 @@ Feature: sharees
     When user "participant1" gets sharees for
       | search | participant2 |
     Then "exact rooms" sharees returned is empty
-    And "rooms" sharees returned is empty
-
+    And "rooms" sharees returned are
+      | participant2-displayname | one-to-one room |
 
 
   Scenario: search own group room with no matches
@@ -256,7 +253,7 @@ Feature: sharees
       | roomType | 2 |
       | roomName | room |
     And user "participant1" renames room "group room not invited to" to "Group room not invited to" with 200
-    And user "participant2" creates room "unnamed own group room"
+    And user "participant2" creates room "case insensitive match"
       | roomType | 2 |
       | roomName | room |
     And user "participant2" creates room "own group room"
@@ -274,6 +271,7 @@ Feature: sharees
       | search | room |
     Then "exact rooms" sharees returned are
       | Room | group room invited to as member of a group |
+      | room | case insensitive match |
     And "rooms" sharees returned are
       | Group room | group room invited to |
       | Own group room | own group room |

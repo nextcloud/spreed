@@ -245,7 +245,7 @@
 		},
 
 		_canModerate: function() {
-			return this._canFullModerate() || this.model.get('participantType') === 6;
+			return this.model.get('type') !== 1 && (this._canFullModerate() || this.model.get('participantType') === 6);
 		},
 
 		_canFullModerate: function() {

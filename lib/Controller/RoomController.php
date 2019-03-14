@@ -363,6 +363,7 @@ class RoomController extends OCSController {
 		// If room exists: Reuse that one, otherwise create a new one.
 		try {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
+			$room->ensureOneToOneRoomIsFilled();
 			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
@@ -560,17 +561,18 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$roomName = trim($roomName);
 
 		if ($roomName === '' || strlen($roomName) > 200) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		if (!$room->setName($roomName)) {
-			return new DataResponse([], Http::STATUS_METHOD_NOT_ALLOWED);
-		}
-
-		return new DataResponse([]);
+		$room->setName($roomName);
+		return new DataResponse();
 	}
 
 	/**
@@ -596,6 +598,10 @@ class RoomController extends OCSController {
 
 		if (!$participant->hasModeratorPermissions()) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$room->deleteRoom();
@@ -682,9 +688,12 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$participants = $room->getParticipantUserIds();
 
-		$updateRoomType = $room->getType() === Room::ONE_TO_ONE_CALL ? Room::GROUP_CALL : false;
 		$participantsToAdd = [];
 		if ($source === 'users') {
 			$newUser = $this->userManager->get($newParticipant);
@@ -722,18 +731,16 @@ class RoomController extends OCSController {
 
 			\call_user_func_array([$room, 'addUsers'], $participantsToAdd);
 		} else if ($source === 'emails') {
+			$data = [];
+			if ($room->changeType(Room::PUBLIC_CALL)) {
+				$data = ['type' => $room->getType()];
+			}
+
 			$this->guestManager->inviteByEmail($room, $newParticipant);
-			$updateRoomType = $room->getType() !== Room::PUBLIC_CALL ? Room::PUBLIC_CALL : false;
+
+			return new DataResponse($data);
 		} else {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		if ($updateRoomType !== false) {
-			// In case a user is added to a one2one room, we change the call to a group room
-			// In case an email is added to a closed room, we change the call to a public room
-			$room->changeType($updateRoomType);
-
-			return new DataResponse(['type' => $room->getType()]);
 		}
 
 		return new DataResponse();
@@ -765,12 +772,13 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$data = [];
-		if ($room->getType() !== Room::PUBLIC_CALL) {
-			// In case a user is added to a one2one call, we change the call to a group call
-			// In case a guest is added to a non-public call, we change the call to a public call
-			$room->changeType(Room::PUBLIC_CALL);
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
 
+		$data = [];
+		// In case a guest is added to a non-public call, we change the call to a public call
+		if ($room->changeType(Room::PUBLIC_CALL)) {
 			$data = ['type' => $room->getType()];
 		}
 
@@ -811,8 +819,7 @@ class RoomController extends OCSController {
 		}
 
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$room->deleteRoom();
-			return new DataResponse([]);
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
@@ -854,13 +861,15 @@ class RoomController extends OCSController {
 	}
 
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
-		if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
+		if ($room->getType() !== Room::ONE_TO_ONE_CALL) {
+			if ($participant->hasModeratorPermissions(false)
+				&& $room->getNumberOfParticipants() > 1
+				&& $room->getNumberOfModerators() === 1) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		} else if ($room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
-			return new DataResponse([]);
-		}
-
-		if ($participant->hasModeratorPermissions(false) && $room->getNumberOfModerators() === 1) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			return new DataResponse();
 		}
 
 		$currentUser = $this->userManager->get($participant->getUser());
@@ -870,7 +879,7 @@ class RoomController extends OCSController {
 
 		$room->removeUser($currentUser, Room::PARTICIPANT_LEFT);
 
-		return new DataResponse([]);
+		return new DataResponse();
 	}
 
 	/**
@@ -937,8 +946,8 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($room->getType() !== Room::PUBLIC_CALL) {
-			$room->changeType(Room::PUBLIC_CALL);
+		if (!$room->changeType(Room::PUBLIC_CALL)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();
@@ -964,8 +973,8 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($room->getType() === Room::PUBLIC_CALL) {
-			$room->changeType(Room::GROUP_CALL);
+		if (!$room->changeType(Room::GROUP_CALL)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		return new DataResponse();

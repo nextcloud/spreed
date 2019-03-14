@@ -729,7 +729,10 @@ Feature: hooks
       | roomType | 1 |
       | invite   | participant2 |
     And user "participant1" shares "welcome.txt" with room "own one-to-one room" with OCS 100
-    When user "participant1" deletes room "own one-to-one room" with 200
+    When user "participant1" removes themselves from room "own one-to-one room" with 200
+    When user "participant2" removes themselves from room "own one-to-one room" with 200
+    And user "participant1" is not participant of room "own one-to-one room"
+    And user "participant2" is not participant of room "own one-to-one room"
     Then user "participant1" gets last share
     And the OCS status code should be "404"
     And user "participant2" gets last share

@@ -82,6 +82,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `notification-levels` - Users can select when they want to be notified in conversations
 * `invite-groups-and-mails` - Groups can be added to existing conversations via the add participant endpoint
 
+### 6.0
+* `locked-one-to-one-rooms` - One-to-one conversations are now locked to the users. Neither guests nor other participants can be added, so the options to do that should be hidden as well. Also a user can only leave a one-to-one room (not delete). It will be deleted when the other participant left too. If the other participant posts a new chat message or starts a call, the left-participant will be re-added.
+
 ## Room management
 
 ### Creating a new room

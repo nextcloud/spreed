@@ -90,7 +90,7 @@
 		 * the room; otherwise the form is hidden.
 		 */
 		_updateAddParticipantFormVisibility: function() {
-			if (!this.room ||
+			if (!this.room || this.room.get('type') === 1 ||
 					(this.room.get('participantType') !== OCA.SpreedMe.app.OWNER &&
 					this.room.get('participantType') !== OCA.SpreedMe.app.MODERATOR)) {
 				this.ui.addParticipantForm.hide();
