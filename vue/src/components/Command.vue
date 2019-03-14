@@ -21,51 +21,84 @@
  -->
 
 <template>
-	<div class="row">
-		<div class="name">{{name}}</div>
-		<div class="command">{{command}}</div>
-		<div class="script">{{script}}</div>
-		<div class="response">{{translatedResponse}}</div>
-		<div class="enabled">{{translatedEnabled}}</div>
-	</div>
+	<fragment>
+		<div class="name">
+			{{ name }}
+		</div>
+		<div class="command">
+			{{ command }}
+		</div>
+		<div class="script">
+			{{ script }}
+		</div>
+		<div class="response">
+			{{ translatedResponse }}
+		</div>
+		<div class="enabled">
+			{{ translatedEnabled }}
+		</div>
+	</fragment>
 </template>
 
 <script>
-	export default {
-		name: 'command',
+import { Fragment } from 'vue-fragment'
 
-		props: [
-			'id',
-			'name',
-			'command',
-			'script',
-			'response',
-			'enabled'
-		],
+export default {
+	name: 'Command',
+	components: {
+		Fragment
+	},
 
-		computed: {
-			translatedResponse () {
-				switch (this.response) {
-					case 0:
-						return t('spreed', 'None');
-					case 1:
-						return t('spreed', 'User');
-					default:
-						return t('spreed', 'Everyone');
-				}
-			},
-			translatedEnabled () {
-				switch (this.enabled) {
-					case 0:
-						return t('spreed', 'Disabled');
-					case 1:
-						return t('spreed', 'Moderators');
-					case 2:
-						return t('spreed', 'Users');
-					default:
-						return t('spreed', 'Everyone');
-				}
+	props: {
+		id: {
+			type: Number,
+			default: 0
+		},
+		name: {
+			type: String,
+			default: ''
+		},
+		command: {
+			type: String,
+			default: ''
+		},
+		script: {
+			type: String,
+			default: ''
+		},
+		response: {
+			type: Number,
+			default: 0
+		},
+		enabled: {
+			type: Number,
+			default: 0
+		}
+	},
+
+	computed: {
+		translatedResponse() {
+			switch (this.response) {
+			case 0:
+				return t('spreed', 'None')
+			case 1:
+				return t('spreed', 'User')
+			default:
+				return t('spreed', 'Everyone')
 			}
 		},
+		translatedEnabled() {
+			switch (this.enabled) {
+			case 0:
+				return t('spreed', 'Disabled')
+			case 1:
+				return t('spreed', 'Moderators')
+			case 2:
+				return t('spreed', 'Users')
+			default:
+				return t('spreed', 'Everyone')
+			}
+		}
 	}
+}
 </script>

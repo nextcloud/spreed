@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import Commands from 'Views/Commands'
+import TurnServers from 'Views/TurnServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -30,7 +30,7 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#chat_commands',
-	name: 'ChatCommandsSettings',
-	render: h => h(Commands)
+	el: '#turn_server',
+	name: 'TurnServerSettings',
+	render: h => h(TurnServers)
 })
