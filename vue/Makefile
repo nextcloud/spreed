@@ -9,6 +9,8 @@ all: dev-setup build-js-production
 
 dev-setup: clean clean-dev npm-init
 
+dependabot: dev-setup npm-update build-js-production
+
 npm-init:
 	npm install
 
@@ -31,8 +33,8 @@ watch-js:
 	npm run watch
 
 clean:
-	rm -f ../js/admin/commands.js
-	rm -f ../js/admin/commands.js.map
+	rm -f ../js/admin/*.js
+	rm -f ../js/admin/*.js.map
 	rm -rf $(build_dir)
 
 clean-dev:
