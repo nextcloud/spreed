@@ -653,31 +653,18 @@ class RoomController extends OCSController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
 	 *
-	 * @param string $token
 	 * @param string $newParticipant
 	 * @param string $source
 	 * @return DataResponse
 	 */
-	public function addParticipantToRoom(string $token, string $newParticipant, string $source = 'users'): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$currentParticipant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if (!$currentParticipant->hasModeratorPermissions(false)) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+	public function addParticipantToRoom(string $newParticipant, string $source = 'users'): DataResponse {
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$participants = $room->getParticipantUserIds();
+		$participants = $this->room->getParticipantUserIds();
 
 		$participantsToAdd = [];
 		if ($source === 'users') {
@@ -690,7 +677,7 @@ class RoomController extends OCSController {
 				return new DataResponse([]);
 			}
 
-			$room->addUsers([
+			$this->room->addUsers([
 				'userId' => $newUser->getUID(),
 			]);
 		} else if ($source === 'groups') {
@@ -714,14 +701,14 @@ class RoomController extends OCSController {
 				return new DataResponse([]);
 			}
 
-			\call_user_func_array([$room, 'addUsers'], $participantsToAdd);
+			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
 		} else if ($source === 'emails') {
 			$data = [];
-			if ($room->changeType(Room::PUBLIC_CALL)) {
-				$data = ['type' => $room->getType()];
+			if ($this->room->changeType(Room::PUBLIC_CALL)) {
+				$data = ['type' => $this->room->getType()];
 			}
 
-			$this->guestManager->inviteByEmail($room, $newParticipant);
+			$this->guestManager->inviteByEmail($this->room, $newParticipant);
 
 			return new DataResponse($data);
 		} else {
@@ -733,41 +720,28 @@ class RoomController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 * @RequireLoggedInModeratorParticipant
 	 *
-	 * @param string $token
 	 * @param string $newParticipant
 	 * @return DataResponse
 	 */
-	public function inviteEmailToRoom(string $token, string $newParticipant): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if (!$participant->hasModeratorPermissions(false)) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
+	public function inviteEmailToRoom(string $newParticipant): DataResponse {
 		$currentUser = $this->userManager->get($this->userId);
 		if (!$currentUser instanceof IUser) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		$data = [];
 		// In case a guest is added to a non-public call, we change the call to a public call
-		if ($room->changeType(Room::PUBLIC_CALL)) {
-			$data = ['type' => $room->getType()];
+		if ($this->room->changeType(Room::PUBLIC_CALL)) {
+			$data = ['type' => $this->room->getType()];
 		}
 
-		$this->guestManager->inviteByEmail($room, $newParticipant);
+		$this->guestManager->inviteByEmail($this->room, $newParticipant);
 
 		return new DataResponse($data);
 	}
@@ -904,25 +878,12 @@ class RoomController extends OCSController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function makePublic(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if (!$participant->hasModeratorPermissions(false)) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
-		if (!$room->changeType(Room::PUBLIC_CALL)) {
+	public function makePublic(): DataResponse {
+		if (!$this->room->changeType(Room::PUBLIC_CALL)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -931,25 +892,12 @@ class RoomController extends OCSController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInModeratorParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function makePrivate(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if (!$participant->hasModeratorPermissions(false)) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
-		if (!$room->changeType(Room::GROUP_CALL)) {
+	public function makePrivate(): DataResponse {
+		if (!$this->room->changeType(Room::GROUP_CALL)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

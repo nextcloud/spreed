@@ -27,6 +27,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Middleware\Exceptions\CanNotUseTalkException;
+use OCA\Spreed\Middleware\Exceptions\NotAModeratorException;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Controller;
@@ -73,14 +74,28 @@ class InjectionMiddleware extends Middleware {
 	 * @param string $methodName
 	 * @throws RoomNotFoundException
 	 * @throws ParticipantNotFoundException
+	 * @throws NotAModeratorException
 	 */
 	public function beforeController($controller, $methodName): void {
 		if ($this->reflector->hasAnnotation('RequireLoggedInParticipant')) {
 			$token = $this->request->getParam('token');
-
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$controller->setRoom($room);
 			$participant = $room->getParticipant($this->userId);
+
+			$controller->setRoom($room);
+			$controller->setParticipant($participant);
+		}
+
+		if ($this->reflector->hasAnnotation('RequireLoggedInModeratorParticipant')) {
+			$token = $this->request->getParam('token');
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			$participant = $room->getParticipant($this->userId);
+
+			if ($participant->hasModeratorPermissions(false)) {
+				throw new NotAModeratorException();
+			}
+
+			$controller->setRoom($room);
 			$controller->setParticipant($participant);
 		}
 
@@ -98,6 +113,14 @@ class InjectionMiddleware extends Middleware {
 			$exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
+			}
+
+			return new RedirectToDefaultAppResponse();
+		}
+
+		if ($exception instanceof NotAModeratorException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_FORBIDDEN);
 			}
 
 			return new RedirectToDefaultAppResponse();
