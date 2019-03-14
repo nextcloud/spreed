@@ -159,6 +159,8 @@
 				icon = 'icon icon-file';
 			} else if (this.model.get('objectType') === 'share:password') {
 				icon = 'icon icon-password';
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_CHANGELOG) {
+				icon = 'icon icon-changelog';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
 				icon = 'icon icon-contacts';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {

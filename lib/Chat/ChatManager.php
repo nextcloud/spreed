@@ -103,6 +103,34 @@ class ChatManager {
 	 * Sends a new message to the given chat.
 	 *
 	 * @param Room $chat
+	 * @param string $message
+	 * @return IComment
+	 */
+	public function addChangelogMessage(Room $chat, string $message): IComment {
+		$comment = $this->commentsManager->create('guests', 'changelog', 'chat', (string) $chat->getId());
+		$comment->setMessage($message);
+		$comment->setCreationDateTime($this->timeFactory->getDateTime());
+		$comment->setVerb('comment'); // Has to be comment, so it counts as unread message
+
+		try {
+			$this->commentsManager->save($comment);
+
+			// Update last_message
+			$chat->setLastMessage($comment);
+
+			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
+				'comment' => $comment,
+			]));
+		} catch (NotFoundException $e) {
+		}
+
+		return $comment;
+	}
+
+	/**
+	 * Sends a new message to the given chat.
+	 *
+	 * @param Room $chat
 	 * @param Participant $participant
 	 * @param string $actorType
 	 * @param string $actorId

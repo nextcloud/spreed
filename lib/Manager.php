@@ -23,7 +23,9 @@ declare(strict_types=1);
 namespace OCA\Spreed;
 
 
+use OCA\Spreed\Chat\Changelog;
 use OCA\Spreed\Chat\CommentsManager;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
@@ -450,6 +452,40 @@ class Manager {
 	}
 
 	/**
+	 * Makes sure the user is part of a changelog room and returns it
+	 *
+	 * @param string $userId
+	 * @return Room
+	 */
+	public function getChangelogRoom(string $userId): Room {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->where($query->expr()->eq('type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
+			$room->addUsers(['userId' => $userId]);
+			return $room;
+		}
+
+		$room = $this->createRoomObject($row);
+
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			$room->addUsers(['userId' => $userId]);
+		}
+
+		return $room;
+	}
+
+	/**
 	 * @param int $type
 	 * @param string $name
 	 * @param string $objectType
@@ -542,6 +578,9 @@ class Manager {
 	public function resolveRoomDisplayName(Room $room, string $userId): string {
 		if ($room->getObjectType() === 'share:password') {
 			return $this->l->t('Password request: %s', [$room->getName()]);
+		}
+		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			return $this->l->t('Talk updates ✅');
 		}
 
 		if ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getName() === '') {

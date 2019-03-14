@@ -52,6 +52,7 @@
 		ROOM_TYPE_ONE_TO_ONE: 1,
 		ROOM_TYPE_GROUP: 2,
 		ROOM_TYPE_PUBLIC: 3,
+		ROOM_TYPE_CHANGELOG: 4,
 
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,

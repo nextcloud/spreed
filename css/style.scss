@@ -181,6 +181,10 @@ input[type="password"] {
 	@include icon-color('text', 'filetypes', $color-white, 1, true);
 }
 
+.icon-changelog {
+	background-image: url('../img/changelog.svg');
+}
+
 #app-navigation .favorite-mark {
 	position: absolute;
 	/* 44px is the padding of the main entry link, and 16px the size (size, not
