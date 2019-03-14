@@ -72,6 +72,11 @@ class RoomController extends OCSController {
 	/** @var IL10N */
 	private $l10n;
 
+	/** @var Room */
+	private $room;
+	/** @var Participant */
+	private $participant;
+
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
@@ -95,6 +100,14 @@ class RoomController extends OCSController {
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
+	}
+
+	public function setRoom(Room $room): void {
+		$this->room = $room;
+	}
+
+	public function setParticipant(Participant $participant): void {
+		$this->participant = $participant;
 	}
 
 	/**
@@ -471,64 +484,36 @@ class RoomController extends OCSController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function addToFavorites(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$participant->setFavorite(true);
-
+	public function addToFavorites(): DataResponse {
+		$this->participant->setFavorite(true);
 		return new DataResponse([]);
 	}
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function removeFromFavorites(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		$participant->setFavorite(false);
-
+	public function removeFromFavorites(): DataResponse {
+		$this->participant->setFavorite(false);
 		return new DataResponse([]);
 	}
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
 	 *
-	 * @param string $token
 	 * @param int $level
 	 * @return DataResponse
 	 */
-	public function setNotificationLevel(string $token, int $level): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$currentParticipant = $room->getParticipant($this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
+	public function setNotificationLevel(int $level): DataResponse {
 
-		if (!$currentParticipant->setNotificationLevel($level)) {
+		if (!$this->participant->setNotificationLevel($level)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -843,21 +828,12 @@ class RoomController extends OCSController {
 
 	/**
 	 * @NoAdminRequired
+	 * @RequireLoggedInParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function removeSelfFromRoom(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$currentParticipant = $room->getParticipant($this->userId); // Check if the participant is part of the room
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		return $this->removeSelfFromRoomLogic($room, $currentParticipant);
+	public function removeSelfFromRoom(): DataResponse {
+		return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 	}
 
 	protected function removeSelfFromRoomLogic(Room $room, Participant $participant): DataResponse {
