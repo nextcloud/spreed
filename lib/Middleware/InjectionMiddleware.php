@@ -26,20 +26,16 @@ use OC\AppFramework\Utility\ControllerMethodReflector;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
-use OCA\Spreed\Middleware\Exceptions\CanNotUseTalkException;
 use OCA\Spreed\Middleware\Exceptions\NotAModeratorException;
-use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
-use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
-use OCP\IUser;
 use OCP\IUserSession;
 
 class InjectionMiddleware extends Middleware {
@@ -48,8 +44,6 @@ class InjectionMiddleware extends Middleware {
 	private $request;
 	/** @var ControllerMethodReflector */
 	private $reflector;
-	/** @var IUserSession */
-	private $userSession;
 	/** @var TalkSession */
 	private $talkSession;
 	/** @var Manager */
@@ -78,58 +72,51 @@ class InjectionMiddleware extends Middleware {
 	 */
 	public function beforeController($controller, $methodName): void {
 		if ($this->reflector->hasAnnotation('RequireLoggedInParticipant')) {
-			$token = $this->request->getParam('token');
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-
-			$controller->setRoom($room);
-			$controller->setParticipant($participant);
+			$this->getLoggedIn($controller, false);
 		}
 
 		if ($this->reflector->hasAnnotation('RequireLoggedInModeratorParticipant')) {
-			$token = $this->request->getParam('token');
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			$participant = $room->getParticipant($this->userId);
-
-			if ($participant->hasModeratorPermissions(false)) {
-				throw new NotAModeratorException();
-			}
-
-			$controller->setRoom($room);
-			$controller->setParticipant($participant);
+			$this->getLoggedIn($controller, true);
 		}
 
 		if ($this->reflector->hasAnnotation('RequireParticipant')) {
-			$token = $this->request->getParam('token');
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			if ($this->userId !== null) {
-				$participant = $room->getParticipant($this->userId);
-			} else {
-				$sessionId = $this->talkSession->getSessionForRoom($token);
-				$participant = $room->getParticipantBySession($sessionId);
-			}
-
-			$controller->setRoom($room);
-			$controller->setParticipant($participant);
+			$this->getLoggedInOrGuest($controller, false);
 		}
 
 		if ($this->reflector->hasAnnotation('RequireModeratorParticipant')) {
-			$token = $this->request->getParam('token');
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			if ($this->userId !== null) {
-				$participant = $room->getParticipant($this->userId);
-			} else {
-				$sessionId = $this->talkSession->getSessionForRoom($token);
-				$participant = $room->getParticipantBySession($sessionId);
-			}
-
-			if ($participant->hasModeratorPermissions()) {
-				throw new NotAModeratorException();
-			}
-
-			$controller->setRoom($room);
-			$controller->setParticipant($participant);
+			$this->getLoggedInOrGuest($controller, true);
 		}
+	}
+
+	protected function getLoggedIn(Controller $controller, bool $moderatorRequired): void {
+		$token = $this->request->getParam('token');
+		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$participant = $room->getParticipant($this->userId);
+
+		if ($moderatorRequired && !$participant->hasModeratorPermissions(false)) {
+			throw new NotAModeratorException();
+		}
+
+		$controller->setRoom($room);
+		$controller->setParticipant($participant);
+	}
+
+	protected function getLoggedInOrGuest(Controller $controller, bool $moderatorRequired): void {
+		$token = $this->request->getParam('token');
+		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		if ($this->userId !== null) {
+			$participant = $room->getParticipant($this->userId);
+		} else {
+			$sessionId = $this->talkSession->getSessionForRoom($token);
+			$participant = $room->getParticipantBySession($sessionId);
+		}
+
+		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
+			throw new NotAModeratorException();
+		}
+
+		$controller->setRoom($room);
+		$controller->setParticipant($participant);
 	}
 
 	/**
@@ -158,16 +145,5 @@ class InjectionMiddleware extends Middleware {
 		}
 
 		throw $exception;
-	}
-
-	protected function getRoomForParticipantByToken(string $token): Room {
-		return $this->manager->getRoomForParticipantByToken($token, $this->userId);
-	}
-
-	protected function getRoomForSession(string $token): Room {
-		return $this->manager->getRoomForSession(
-			$this->userId,
-			$this->talkSession->getSessionForRoom($token)
-		);
 	}
 }
