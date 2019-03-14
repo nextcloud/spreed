@@ -1,0 +1,141 @@
+<!--
+  - @copyright Copyright (c) 2019 Julius Härtl <jus@bitgrid.net>
+  -
+  - @author Julius Härtl <jus@bitgrid.net>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -
+  -->
+
+<template>
+	<Modal @close="close">
+		<div id="modal-inner" :class="{ 'icon-loading': loading }">
+			<div id="modal-content">
+			<h1>{{ t('spreed', 'Select a room to link to the collection') }}</h1>
+			<div id="room-list">
+				<ul v-if="!loading">
+					<li v-for="room in rooms" @click="selectedRoom=room.token" :class="{'selected': (selectedRoom === room.id) }">
+						<avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name"/>
+						<div class="avatar icon icon-contacts" v-else-if="room.type === types.ROOM_TYPE_GROUP"></div>
+						<div class="avatar icon icon-public icon-white" v-else-if="room.type === types.ROOM_TYPE_PUBLIC"></div>
+						<span>{{ room.displayName }}</span>
+					</li>
+				</ul>
+			</div>
+				<div id="modal-buttons">
+					<button v-if="!loading" @click="select" class="primary">{{ t('spreed', 'Select room') }}</button>
+				</div>
+			</div>
+		</div>
+	</Modal>
+</template>
+<style scoped>
+	#modal-inner {
+		width: 90vw;
+		max-width: 400px;
+		height: 50vh;
+		position: relative;
+	}
+	#modal-content {
+		position: absolute;
+		width: calc(100% - 40px);
+		height: calc(100% - 40px);
+		display: flex;
+		flex-direction: column;
+		padding: 20px;
+	}
+	#room-list {
+		overflow: scroll;
+		flex: 0 1 auto;
+	}
+	li {
+		padding: 6px;
+		border: 1px solid transparent;
+		display: flex;
+	}
+	li:hover, li:focus {
+		background-color: var(--color-background-dark);
+	}
+	li.selected {
+		border: 1px solid var(--color-primary);
+	}
+	.avatar.icon {
+		border-radius: 50%;
+		width: 32px;
+		height: 32px;
+		background-color: var(--color-background-darker);
+	}
+	li > span {
+		padding: 5px;
+	}
+	li > span,
+	.avatar {
+		vertical-align: middle;
+
+	}
+	#modal-buttons {
+		overflow: hidden;
+		height: 55px;
+	}
+	#modal-buttons .primary {
+		float: right;
+	}
+
+</style>
+<script>
+	/* global OC */
+	import { Modal } from 'nextcloud-vue/dist/Components/Modal'
+	import { Avatar } from 'nextcloud-vue/dist/Components/Avatar'
+	import axios from 'nextcloud-axios'
+
+
+	export default {
+		name: 'CollaborationView',
+		components: {
+			Modal, Avatar
+		},
+		data() {
+			return {
+				rooms: [],
+				selectedRoom: null,
+				loading: true,
+				// TODO: should be included once this is properly available
+				types: {
+					ROOM_TYPE_ONE_TO_ONE: 1,
+					ROOM_TYPE_GROUP: 2,
+					ROOM_TYPE_PUBLIC: 3
+				}
+			}
+		},
+		beforeMount() {
+			this.fetchRooms();
+		},
+		methods: {
+			fetchRooms() {
+				axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+					this.rooms = response.data.ocs.data
+					this.loading = false
+				})
+			},
+			close() {
+				this.$root.$emit('close');
+			},
+			select() {
+				this.$root.$emit('select', this.selectedRoom)
+			}
+		}
+	}
+</script>

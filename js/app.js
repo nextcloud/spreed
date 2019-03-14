@@ -288,6 +288,7 @@
 			});
 
 			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), icon: 'icon-contacts-dark' }, this._participantsView);
+			this._sidebarView.addTab('collections', { label: t('spreed', 'Collections'), icon: 'icon-' }, this._participantsView);
 		},
 		_hideParticipantList: function() {
 			this._sidebarView.removeTab('participants');

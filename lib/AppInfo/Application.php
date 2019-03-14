@@ -138,6 +138,9 @@ class Application extends App {
 		/** @var IResourceManager $resourceManager */
 		$resourceManager = $server->query(IResourceManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
+		\OC::$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
+			\OCP\Util::addScript('spreed', 'collections');
+		});
 	}
 
 	protected function registerClientLinks(IServerContainer $server): void {

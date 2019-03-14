@@ -7,6 +7,8 @@ vendor_style('select2/select2');
 
 style('spreed', 'merged');
 script('spreed', 'merged');
+
+\OC::$server->getEventDispatcher()->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts');
 ?>
 
 <div id="app" class="nc-enable-screensharing-extension" data-token="<?php p($_['token']) ?>">

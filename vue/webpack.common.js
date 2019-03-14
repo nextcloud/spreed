@@ -3,6 +3,8 @@ const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
 	entry: {
+		"collections": path.join(__dirname, 'src', 'collections.js'),
+		"collectionsintegration": path.join(__dirname, 'src', 'collectionsintegration.js'),
 		"admin/allowed-groups": path.join(__dirname, 'src', 'allowed-groups.js'),
 		"admin/commands": path.join(__dirname, 'src', 'commands.js'),
 		"admin/signaling-server": path.join(__dirname, 'src', 'signaling-server.js'),
@@ -65,6 +67,13 @@ module.exports = {
 			Components: path.resolve(__dirname, 'src/components/'),
 			Views: path.resolve(__dirname, 'src/views/')
 		},
-		extensions: ['*', '.js', '.vue', '.json']
+		extensions: ['*', '.js', '.vue', '.json'],
+		modules: [
+			path.resolve(__dirname),
+			path.resolve(__dirname, 'src'),
+			path.join(__dirname, 'node_modules'),
+			'node_modules'
+		]
+
 	}
 };
