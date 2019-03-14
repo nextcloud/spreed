@@ -17655,6 +17655,7 @@
 		this.channels = {};
 		this.pendingDCMessages = []; // key (datachannel label) -> value (array[pending messages])
 		this.sid = options.sid || Date.now().toString();
+		this._isChannelOpen = [];
 		// Create an RTCPeerConnection via the polyfill
 		this.pc = new PeerConnection(this.parent.config.peerConnectionConfig, this.parent.config.peerConnectionConstraints);
 		this.pc.on('ice', this.onIceCandidate.bind(this));
@@ -17798,11 +17799,10 @@
 		};
 		this.logger.log('sending via datachannel', channel, messageType, message);
 		var dc = this.getDataChannel(channel);
-		if (dc.readyState != 'open') {
-			if (!this.pendingDCMessages.hasOwnProperty(channel)) {
-				this.pendingDCMessages[channel] = [];
-			}
-			this.pendingDCMessages[channel].push(message);
+		if (!this._isChannelOpen[channel]) {
+			this._pendingDataChannelMessages = this._pendingDataChannelMessages || [];
+			this._pendingDataChannelMessages[channel] = this._pendingDataChannelMessages[channel] || [];
+			this._pendingDataChannelMessages[channel].push(message);
 			return false;
 		}
 		dc.send(JSON.stringify(message));
@@ -17812,21 +17812,23 @@
 // Internal method registering handlers for a data channel and emitting events on the peer
 	Peer.prototype._observeDataChannel = function (channel) {
 		var self = this;
-		channel.onclose = this.emit.bind(this, 'channelClose', channel);
+		channel.onclose = function (event) {
+			self._isChannelOpen[channel.label] = false;
+			self.emit.bind(self, 'channelClose', channel);
+		};
 		channel.onerror = this.emit.bind(this, 'channelError', channel);
 		channel.onmessage = function (event) {
 			self.emit('channelMessage', self, channel.label, JSON.parse(event.data), channel, event);
 		};
-		channel.onopen = function () {
-			self.emit('channelOpen', channel);
-			// Check if there are messages that could not be send
-			if (self.pendingDCMessages.hasOwnProperty(channel.label)) {
-				var pendingMessages = self.pendingDCMessages[channel.label];
-				for (var i = 0; i < pendingMessages.length; i++) {
-					self.sendDirectly(channel.label, pendingMessages[i].type, pendingMessages[i].payload);
-				}
-				self.pendingDCMessages[channel.label] = [];
+		channel.onopen = function (event) {
+			self._isChannelOpen[channel.label] = true;
+			if (self._pendingDataChannelMessages && self._pendingDataChannelMessages[channel.label]) {
+				self._pendingDataChannelMessages[channel.label].forEach(function (message) {
+					channel.send(JSON.stringify(message));
+				});
+				delete self._pendingDataChannelMessages[channel.label];
 			}
+			self.emit.bind(self, 'channelOpen', channel);
 		};
 	};
 
