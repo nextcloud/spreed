@@ -99,6 +99,23 @@ class InjectionMiddleware extends Middleware {
 			$controller->setParticipant($participant);
 		}
 
+		if ($this->reflector->hasAnnotation('RequireModeratorParticipant')) {
+			$token = $this->request->getParam('token');
+			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+			if ($this->userId !== null) {
+				$participant = $room->getParticipant($this->userId);
+			} else {
+				$sessionId = $this->talkSession->getSessionForRoom($token);
+				$participant = $room->getParticipantBySession($sessionId);
+			}
+
+			if ($participant->hasModeratorPermissions()) {
+				throw new NotAModeratorException();
+			}
+
+			$controller->setRoom($room);
+			$controller->setParticipant($participant);
+		}
 	}
 
 	/**
