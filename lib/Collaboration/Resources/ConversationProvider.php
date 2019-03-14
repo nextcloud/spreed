@@ -44,7 +44,7 @@ class ConversationProvider implements IProvider {
 			$room = $this->manager->getRoomByToken($resource->getId());
 
 			return [
-				'type' => 'file',
+				'type' => 'room',
 				'id' => $resource->getId(),
 				'name' => $room->getDisplayName(''),
 				'call-type' => $this->getRoomType($room),
