@@ -29,7 +29,7 @@
 
 	var uiChannel = Backbone.Radio.channel('ui');
 
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
+	var ITEM_TEMPLATE = '<div class="room-status-indicator"></div><a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
 							'<div class="avatar {{icon}}" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
 							'{{#if isFavorite}}'+
 							// The favorite mark can not be a child of the

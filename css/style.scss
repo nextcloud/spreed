@@ -1117,3 +1117,26 @@ input[type="password"] {
 		filter: none !important;
 	}
 }
+
+#app-navigation .room-status-indicator {
+	width: 10px;
+	height: 10px;
+	border-radius: 100%;
+	z-index: 999;
+	position: relative;
+	top: 27px;
+	left: 30px;
+	background: #a6a5a2;
+
+	&.online {
+		background: #4CDA65;
+	}
+
+	&.offline {
+		background: #a6a5a2;
+	}
+
+	&.away {
+		background: #ffb230;
+	}
+}
