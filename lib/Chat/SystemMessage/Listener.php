@@ -146,6 +146,11 @@ class Listener {
 
 			/** @var Room $room */
 			$room = $event->getSubject();
+
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			foreach ($participants as $participant) {
@@ -159,6 +164,10 @@ class Listener {
 			$user = $event->getArgument('user');
 			/** @var Room $room */
 			$room = $event->getSubject();
+
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				return;
+			}
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
