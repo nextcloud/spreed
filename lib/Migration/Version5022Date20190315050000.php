@@ -76,6 +76,8 @@ class Version5022Date20190315050000 extends SimpleMigrationStep
             'notnull' => true,
         ]);
 
+        $table->setPrimaryKey(['id']);
+
         return $schema;
     }
 }
