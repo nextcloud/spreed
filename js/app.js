@@ -679,6 +679,12 @@
              * This will hide UI elements for user under "Blind" group.
              */
             OCA.Talk.Blinder.init(this);
+
+            /**
+             * Start listening for user's status.
+             * Note: Updates user status indicator.
+             */
+            OCA.Talk.UserStatus.listen(OC.getCurrentUser().uid);
         },
         setupWebRTC: function () {
             if (!OCA.SpreedMe.webrtc) {
