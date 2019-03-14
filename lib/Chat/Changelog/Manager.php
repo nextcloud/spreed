@@ -65,10 +65,14 @@ class Manager {
 	public function updateChangelog(string $userId): void {
 		$room = $this->roomManager->getChangelogRoom($userId);
 
-		$changelogs = $this->getChangelogs();
-		$length = count($changelogs);
-		for ($i = $this->getChangelogForUser($userId); $i < $length; $i++) {
-			$this->chatManager->addChangelogMessage($room, $changelogs[$i]);
+		$logs = $this->getChangelogs();
+		$hasReceivedLog = $this->getChangelogForUser($userId);
+
+		foreach ($logs as $key => $changelog) {
+			if ($key < $hasReceivedLog) {
+				continue;
+			}
+			$this->chatManager->addChangelogMessage($room, $changelog);
 		}
 
 		$this->config->setUserValue($userId, 'spreed', 'changelog', count($this->getChangelogs()));
@@ -76,10 +80,7 @@ class Manager {
 
 	public function getChangelogs(): array {
 		return [
-			$this->l->t('Changelog 1'),
-			$this->l->t('Changelog 2'),
-			$this->l->t('Neues Icon'),
-//			$this->l->t('Changelog 4'),
+			$this->l->t("Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk."),
 		];
 	}
 }
