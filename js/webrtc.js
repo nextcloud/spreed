@@ -366,6 +366,11 @@ var spreedPeerConnectionTable = [];
 			enableDataChannels: true,
 			nick: OC.getCurrentUser().displayName
 		});
+		if (signaling.hasFeature('mcu')) {
+			// Force "Plan-B" semantics if the MCU is used, which doesn't support
+			// "Unified Plan" with SimpleWebRTC yet.
+			webrtc.webrtc.config.peerConnectionConfig.sdpSemantics = 'plan-b';
+		}
 		OCA.SpreedMe.webrtc = webrtc;
 
 		OCA.SpreedMe.webrtc.startMedia = function (token) {
