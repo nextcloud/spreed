@@ -560,30 +560,16 @@ class RoomController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 * @RequireParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getParticipants(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			if ($this->userId !== null) {
-				$participant = $room->getParticipant($this->userId);
-			} else {
-				$sessionId = $this->session->getSessionForRoom($token);
-				$participant = $room->getParticipantBySession($sessionId);
-			}
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($participant->getParticipantType() === Participant::GUEST) {
+	public function getParticipants(): DataResponse {
+		if ($this->participant->getParticipantType() === Participant::GUEST) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		$participants = $room->getParticipantsLegacy();
+		$participants = $this->room->getParticipantsLegacy();
 		$results = [];
 
 		foreach ($participants['users'] as $userId => $participant) {
@@ -712,41 +698,27 @@ class RoomController extends OCSController {
 
 	/**
 	 * @PublicPage
+	 * @RequireParticipant
 	 *
-	 * @param string $token
 	 * @param string $participant
 	 * @return DataResponse
 	 */
-	public function removeParticipantFromRoom(string $token, string $participant): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-			if ($this->userId !== null) {
-				$currentParticipant = $room->getParticipant($this->userId);
-			} else {
-				$sessionId = $this->session->getSessionForRoom($token);
-				$currentParticipant = $room->getParticipantBySession($sessionId);
-			}
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (ParticipantNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($currentParticipant->getUser() === $participant) {
+	public function removeParticipantFromRoom(string $participant): DataResponse {
+		if ($this->participant->getUser() === $participant) {
 			// Removing self, abusing moderator power
-			return $this->removeSelfFromRoomLogic($room, $currentParticipant);
+			return $this->removeSelfFromRoomLogic($this->room, $this->participant);
 		}
 
-		if (!$currentParticipant->hasModeratorPermissions()) {
+		if (!$this->participant->hasModeratorPermissions()) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}
 
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
 		try {
-			$targetParticipant = $room->getParticipant($participant);
+			$targetParticipant = $this->room->getParticipant($participant);
 		} catch (ParticipantNotFoundException $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -760,7 +732,7 @@ class RoomController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->removeUser($targetUser, Room::PARTICIPANT_REMOVED);
+		$this->room->removeUser($targetUser, Room::PARTICIPANT_REMOVED);
 		return new DataResponse([]);
 	}
 
@@ -987,7 +959,7 @@ class RoomController extends OCSController {
 	 * @param string|null $sessionId
 	 * @return DataResponse
 	 */
-	public function demoteModerator(string $token, ?string $participant, ?string $sessionId): DataResponse {
+	public function demoteModerator(?string $participant, ?string $sessionId): DataResponse {
 		if ($participant !== null) {
 			return $this->demoteUserFromModerator($this->room, $participant);
 		}
