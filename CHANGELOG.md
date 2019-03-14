@@ -1,9 +1,8 @@
 # Changelog
-# Version: 5.0.2.1
+# Version: 5.0.2.2
 
-**61dc3c31**
-- Fix app instance.
+**a6d9e64d** 
+- User status indicator.
 
-**97e1eb78**
-- Enable file dropping in chat view.
-It will upload and auto share inside the current room.
+**71607407** 
+- Disable chat search / contacts / participant forms if user is in "Blind" group.
