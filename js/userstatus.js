@@ -57,7 +57,7 @@
             });
 
             // Get chat rooms every 10 seconds.
-            $.doTimeout(3000, function () {
+            $.doTimeout(10000, function () {
 
                 self.getChatRooms();
                 return true;

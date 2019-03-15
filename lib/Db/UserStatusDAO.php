@@ -27,16 +27,14 @@ class UserStatusDAO
      */
     public function find($userId)
     {
-
         $tableName = 'talk_users_status';
 
         $qb = $this->db->getQueryBuilder();
 
         $qb->select('*')
            ->from($tableName)
-           ->where(
-               $qb->expr()->eq('user_id', $userId)
-           );
+           ->where('user_id = :userId')
+           ->setParameters([':userId' => $userId]);
 
         $cursor = $qb->execute();
         $row    = $cursor->fetch();
@@ -103,7 +101,6 @@ class UserStatusDAO
      */
     public function addStatus($userId, $status)
     {
-
         $tableName = 'talk_users_status';
 
         $qb = $this->db->getQueryBuilder();
@@ -132,17 +129,13 @@ class UserStatusDAO
 
         $qb = $this->db->getQueryBuilder();
 
-        $now = time();
-        $now = "$now";
+        $qb->delete($tableName)
+           ->where('user_id = :userId')
+           ->setParameters([':userId' => $userId]);
 
-        $qb->update($tableName)
-           ->set('status', strtolower($status))
-           ->set('updated_at', $now)
-           ->where(
-               $qb->expr()->eq('user_id', $userId)
-           );
+        $qb->execute();
 
-        return $qb->execute();
+        return $this->addStatus($userId, $status);
     }
 
     /**

@@ -2,7 +2,7 @@
 <info xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance"
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>spreed</id>
-    <name>Talk</name>`
+	<name>Talk</name>
 	<summary><![CDATA[Video & audio-conferencing using WebRTC]]></summary>
 	<description><![CDATA[Video & audio-conferencing using WebRTC
 
@@ -17,7 +17,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-    <version>5.0.2.2</version>
+    <version>5.0.2.2.1</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
