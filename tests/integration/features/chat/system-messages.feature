@@ -73,7 +73,6 @@ Feature: System messages
       | invite   | participant2 |
     Then user "participant1" sees the following system messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
-      | room | users     | participant1 | participant1-displayname | user_added |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
   Scenario: Participant escalation
