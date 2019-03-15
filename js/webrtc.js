@@ -851,15 +851,14 @@ var spreedPeerConnectionTable = [];
 
 		function checkPeerMedia(peer, track, mediaType) {
 			var defer = $.Deferred();
-			peer.pc.getStats(track, function(stats) {
+			peer.pc.getStats(track).then(function(stats) {
 				var result = false;
-				Object.keys(stats).forEach(function(key) {
-					var value = stats[key];
-					if (!result && !value || value.mediaType !== mediaType || !value.hasOwnProperty('bytesReceived')) {
+				stats.forEach(function(statsReport) {
+					if (!result && statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
 						return;
 					}
 
-					if (value.bytesReceived > 0) {
+					if (statsReport.bytesReceived > 0) {
 						OCA.SpreedMe.webrtc.emit('unmute', {
 							id: peer.id,
 							name: mediaType
