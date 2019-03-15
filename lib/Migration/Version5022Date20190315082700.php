@@ -28,10 +28,8 @@ use OCP\DB\ISchemaWrapper;
 use OCP\Migration\IOutput;
 use OCP\Migration\SimpleMigrationStep;
 
-class Version5022Date20190315050000 extends SimpleMigrationStep
+class Version5022Date20190315082700 extends SimpleMigrationStep
 {
-
-
     /**
      * @param IOutput $output
      * @param Closure $schemaClosure The `\Closure` returns a `ISchemaWrapper`
