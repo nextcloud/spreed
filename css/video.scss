@@ -319,6 +319,10 @@ video {
 	width: 32px;
 	height: 32px;
 	background-size: 22px;
+
+	&.hidden {
+		display: none;
+	}
 }
 
 .muteIndicator.audio-on,

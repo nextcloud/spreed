@@ -84,7 +84,7 @@
 			this.getUI('avatar').css('opacity', '0.5');
 
 			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
-			this.getUI('hideRemoteVideoButton').hide();
+			this.getUI('hideRemoteVideoButton').addClass('hidden');
 
 			this.getUI('screenSharingIndicator').attr('data-original-title', t('spreed', 'Show screen'));
 		},
@@ -146,9 +146,9 @@
 			}
 
 			if (connectionStatus === ConnectionStatus.FAILED_NO_RESTART) {
-				this.getUI('muteIndicator').hide();
-				this.getUI('hideRemoteVideoButton').hide();
-				this.getUI('screenSharingIndicator').hide();
+				this.getUI('muteIndicator').addClass('hidden');
+				this.getUI('hideRemoteVideoButton').addClass('hidden');
+				this.getUI('screenSharingIndicator').addClass('hidden');
 				this.getUI('iceFailedIndicator').removeClass('not-failed');
 
 				return;
@@ -195,23 +195,23 @@
 
 			// Hide the video until it is explicitly marked as available and
 			// enabled.
-			this.getUI('video').hide();
+			this.getUI('video').addClass('hidden');
 		},
 
 		setVideoAvailable: function(videoAvailable) {
 			if (!videoAvailable) {
-				this.getUI('avatarContainer').show();
-				this.getUI('video').hide();
-				this.getUI('hideRemoteVideoButton').hide();
+				this.getUI('avatarContainer').removeClass('hidden');
+				this.getUI('video').addClass('hidden');
+				this.getUI('hideRemoteVideoButton').addClass('hidden');
 
 				return;
 			}
 
-			this.getUI('hideRemoteVideoButton').show();
+			this.getUI('hideRemoteVideoButton').removeClass('hidden');
 
 			if (this._videoEnabled) {
-				this.getUI('avatarContainer').hide();
-				this.getUI('video').show();
+				this.getUI('avatarContainer').addClass('hidden');
+				this.getUI('video').removeClass('hidden');
 			}
 		},
 
@@ -219,8 +219,8 @@
 			this._videoEnabled = videoEnabled;
 
 			if (!videoEnabled) {
-				this.getUI('avatarContainer').show();
-				this.getUI('video').hide();
+				this.getUI('avatarContainer').removeClass('hidden');
+				this.getUI('video').addClass('hidden');
 				this.getUI('hideRemoteVideoButton')
 						.attr('data-original-title', t('spreed', 'Enable video'))
 						.removeClass('icon-video')
@@ -229,8 +229,8 @@
 				return;
 			}
 
-			this.getUI('avatarContainer').hide();
-			this.getUI('video').show();
+			this.getUI('avatarContainer').addClass('hidden');
+			this.getUI('video').removeClass('hidden');
 			this.getUI('hideRemoteVideoButton')
 					.attr('data-original-title', t('spreed', 'Disable video'))
 					.removeClass('icon-video-off')
