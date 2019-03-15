@@ -449,7 +449,6 @@ class ChatController extends OCSController
      */
     public function getUserStatus()
     {
-
         // Initialize user status DAO.
         $userStatusDAO = new UserStatusDAO($this->db);
 
