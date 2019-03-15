@@ -27,6 +27,7 @@ function Peer(options) {
 	this.enableDataChannels = options.enableDataChannels === undefined ? this.parent.config.enableDataChannels : options.enableDataChannels;
 	this.receiveMedia = options.receiveMedia || this.parent.config.receiveMedia;
 	this.channels = {};
+	this.pendingDCMessages = []; // key (datachannel label) -> value (array[pending messages])
 	this.sid = options.sid || Date.now().toString();
 	// Create an RTCPeerConnection via the polyfill
 	this.pc = new PeerConnection(this.parent.config.peerConnectionConfig, this.parent.config.peerConnectionConstraints);
@@ -147,7 +148,13 @@ Peer.prototype.sendDirectly = function (channel, messageType, payload) {
 	};
 	this.logger.log('sending via datachannel', channel, messageType, message);
 	var dc = this.getDataChannel(channel);
-	if (dc.readyState != 'open') return false;
+	if (dc.readyState != 'open') {
+		if (!this.pendingDCMessages.hasOwnProperty(channel)) {
+			this.pendingDCMessages[channel] = [];
+		}
+		this.pendingDCMessages[channel].push(message);
+		return false;
+	}
 	dc.send(JSON.stringify(message));
 	return true;
 };
@@ -160,7 +167,17 @@ Peer.prototype._observeDataChannel = function (channel) {
 	channel.onmessage = function (event) {
 		self.emit('channelMessage', self, channel.label, JSON.parse(event.data), channel, event);
 	};
-	channel.onopen = this.emit.bind(this, 'channelOpen', channel);
+	channel.onopen = function () {
+		self.emit('channelOpen', channel);
+		// Check if there are messages that could not be send
+		if (self.pendingDCMessages.hasOwnProperty(channel.label)) {
+			var pendingMessages = self.pendingDCMessages[channel.label];
+			for (var i = 0; i < pendingMessages.length; i++) {
+				self.sendDirectly(channel.label, pendingMessages[i].type, pendingMessages[i].payload);
+			}
+			self.pendingDCMessages[channel.label] = [];
+		}
+	};
 };
 
 // Fetch or create a data channel by the given name
