@@ -8,7 +8,6 @@ function SimpleWebRTC(opts) {
 	var self = this;
 	var options = opts || {};
 	var config = this.config = {
-			url: 'https://sandbox.simplewebrtc.com:443/',
 			socketio: {/* 'force new connection':true*/},
 			connection: null,
 			debug: false,
