@@ -195,13 +195,13 @@
 
 			// Hide the video until it is explicitly marked as available and
 			// enabled.
-			this.getUI('video').hide();
+			this.getUI('video').addClass('hidden');
 		},
 
 		setVideoAvailable: function(videoAvailable) {
 			if (!videoAvailable) {
 				this.getUI('avatarContainer').show();
-				this.getUI('video').hide();
+				this.getUI('video').addClass('hidden');
 				this.getUI('hideRemoteVideoButton').hide();
 
 				return;
@@ -211,7 +211,7 @@
 
 			if (this._videoEnabled) {
 				this.getUI('avatarContainer').hide();
-				this.getUI('video').show();
+				this.getUI('video').removeClass('hidden');
 			}
 		},
 
@@ -220,7 +220,7 @@
 
 			if (!videoEnabled) {
 				this.getUI('avatarContainer').show();
-				this.getUI('video').hide();
+				this.getUI('video').addClass('hidden');
 				this.getUI('hideRemoteVideoButton')
 						.attr('data-original-title', t('spreed', 'Enable video'))
 						.removeClass('icon-video')
@@ -230,7 +230,7 @@
 			}
 
 			this.getUI('avatarContainer').hide();
-			this.getUI('video').show();
+			this.getUI('video').removeClass('hidden');
 			this.getUI('hideRemoteVideoButton')
 					.attr('data-original-title', t('spreed', 'Disable video'))
 					.removeClass('icon-video-off')
