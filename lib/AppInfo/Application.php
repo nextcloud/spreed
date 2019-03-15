@@ -75,9 +75,9 @@ class Application extends App {
 			return new InjectionMiddleware(
 				$server->getRequest(),
 				$server->query(IControllerMethodReflector::class),
-				$server->query(TalkSession::class),
-				$server->query(Manager::class),
-				$server->query('userId')
+				$this->getContainer()->query(TalkSession::class),
+				$this->getContainer()->query(Manager::class),
+				$this->getContainer()->query('userId')
 			);
 		});
 
