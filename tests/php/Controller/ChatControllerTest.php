@@ -57,8 +57,6 @@ class ChatControllerTest extends TestCase {
 	protected $userManager;
 	/** @var TalkSession|MockObject */
 	private $session;
-	/** @var Manager|MockObject */
-	protected $manager;
 	/** @var ChatManager|MockObject */
 	protected $chatManager;
 	/** @var GuestManager|MockObject */
@@ -91,7 +89,6 @@ class ChatControllerTest extends TestCase {
 		$this->userId = 'testUser';
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->session = $this->createMock(TalkSession::class);
-		$this->manager = $this->createMock(Manager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
@@ -120,7 +117,6 @@ class ChatControllerTest extends TestCase {
 			$this->createMock(IRequest::class),
 			$this->userManager,
 			$this->session,
-			$this->manager,
 			$this->chatManager,
 			$this->guestManager,
 			$this->messageParser,
@@ -145,27 +141,10 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUser() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipantBySession')
-			->with('testSpreedSession')
-			->willReturn($participant);
 		$this->room->expects($this->once())
 			->method('getToken')
 			->willReturn('testToken');
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -216,7 +195,9 @@ class ChatControllerTest extends TestCase {
 			->method('parseMessage')
 			->with($chatMessage);
 
-		$response = $this->controller->sendMessage('testToken', 'testMessage');
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage');
 		$expected = new DataResponse([
 			'id' => 42,
 			'token' => 'testToken',
@@ -233,26 +214,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testSendMessageByUserNotJoinedButInRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->willThrowException(new RoomNotFoundException());
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->willReturn($this->room);
-
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipant')
-			->with($this->userId)
-			->willReturn($participant);
 		$this->room->expects($this->once())
 			->method('getToken')
 			->willReturn('testToken');
@@ -306,7 +268,9 @@ class ChatControllerTest extends TestCase {
 			->method('parseMessage')
 			->with($chatMessage);
 
-		$response = $this->controller->sendMessage('testToken', 'testMessage');
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage');
 		$expected = new DataResponse([
 			'id' => 23,
 			'token' => 'testToken',
@@ -322,56 +286,17 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendMessageByUserNotJoinedNorInRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->willReturn($this->room);
-
-		$this->room->expects($this->once())
-			->method('getParticipant')
-			->with($this->userId)
-			->will($this->throwException(new ParticipantNotFoundException()));
-
-		$this->chatManager->expects($this->never())
-			->method('sendMessage');
-
-		$response = $this->controller->sendMessage('testToken', 'testMessage');
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
-
-		$this->assertEquals($expected, $response);
-	}
-
 	public function testSendMessageByGuest() {
 		$this->userId = null;
 		$this->recreateChatController();
 
-		$this->session->expects($this->any())
+		$this->session->expects($this->once())
 			->method('getSessionForRoom')
 			->with('testToken')
 			->willReturn('testSpreedSession');
 
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipantBySession')
-			->with('testSpreedSession')
-			->willReturn($participant);
-		$this->room->expects($this->once())
+		$this->room->expects($this->exactly(2))
 			->method('getToken')
 			->willReturn('testToken');
 
@@ -424,7 +349,9 @@ class ChatControllerTest extends TestCase {
 			->method('parseMessage')
 			->with($chatMessage);
 
-		$response = $this->controller->sendMessage('testToken', 'testMessage');
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage');
 		$expected = new DataResponse([
 			'id' => 64,
 			'token' => 'testToken',
@@ -440,71 +367,7 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendMessageByGuestNotJoined() {
-		$this->userId = null;
-		$this->recreateChatController();
-
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
-		$this->chatManager->expects($this->never())
-			->method('sendMessage');
-
-		$response = $this->controller->sendMessage('testToken', 'testMessage');
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testSendMessageToInvalidRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->chatManager->expects($this->never())
-			->method('sendMessage');
-
-		$response = $this->controller->sendMessage('testToken', 'testMessage');
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
-
-		$this->assertEquals($expected, $response);
-	}
-
 	public function testReceiveHistoryByUser() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
 		$offset = 23;
 		$limit = 4;
 		$this->chatManager->expects($this->once())
@@ -518,9 +381,6 @@ class ChatControllerTest extends TestCase {
 			]);
 
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipantBySession')
-			->willReturn($participant);
 		$this->room->expects($this->exactly(4))
 			->method('getToken')
 			->willReturn('testToken');
@@ -565,7 +425,9 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('parseMessage');
 
-		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
 			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
 			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
@@ -578,26 +440,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->willReturn($this->room);
-
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipant')
-			->with($this->userId)
-			->willReturn($participant);
 		$this->room->expects($this->exactly(4))
 			->method('getToken')
 			->willReturn('testToken');
@@ -654,7 +497,9 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('parseMessage');
 
-		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
 			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
 			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
@@ -662,38 +507,6 @@ class ChatControllerTest extends TestCase {
 			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '']
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testReceiveMessagesByUserNotJoinedNorInRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->willReturn($this->room);
-
-		$this->room->expects($this->once())
-			->method('getParticipant')
-			->with($this->userId)
-			->will($this->throwException(new ParticipantNotFoundException()));
-
-		$limit = 5;
-		$offset = 23;
-		$this->chatManager->expects($this->never())
-			->method('getHistory');
-
-		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -702,23 +515,7 @@ class ChatControllerTest extends TestCase {
 		$this->userId = null;
 		$this->recreateChatController();
 
-		$this->session->expects($this->any())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipantBySession')
-			->willReturn($participant);
 		$this->room->expects($this->exactly(4))
 			->method('getToken')
 			->willReturn('testToken');
@@ -775,7 +572,9 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('parseMessage');
 
-		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
 			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
 			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
@@ -787,82 +586,13 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testReceiveMessagesByGuestNotJoined() {
-		$this->userId = null;
-		$this->recreateChatController();
-
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
-		$offset = 23;
-		$limit = 4;
-		$this->chatManager->expects($this->never())
-			->method('getHistory');
-
-		$response = $this->controller->receiveMessages('testToken', 0, $limit, $offset);
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testReceiveMessagesFromInvalidRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->chatManager->expects($this->never())
-			->method('getHistory');
-
-		$response = $this->controller->receiveMessages('testToken', 0);
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
-
-		$this->assertEquals($expected, $response);
-	}
-
 	public function testWaitForNewMessagesByUser() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
 			->willReturn('testUser');
 
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getParticipantBySession')
-			->willReturn($participant);
 		$this->room->expects($this->exactly(4))
 			->method('getToken')
 			->willReturn('testToken');
@@ -925,7 +655,9 @@ class ChatControllerTest extends TestCase {
 		$this->messageParser->expects($this->exactly(4))
 			->method('parseMessage');
 
-		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
 		$expected = new DataResponse([
 			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => ''],
 			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => ''],
@@ -938,19 +670,7 @@ class ChatControllerTest extends TestCase {
 	}
 
 	public function testWaitForNewMessagesTimeoutExpired() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
+		$participant = $this->createMock(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -969,26 +689,16 @@ class ChatControllerTest extends TestCase {
 			->with('testUser')
 			->willReturn($testUser);
 
-		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
 		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
 
 		$this->assertEquals($expected, $response);
 	}
 
 	public function testWaitForNewMessagesTimeoutTooLarge() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
+		$participant = $this->createMock(Participant::class);
 		$testUser = $this->createMock(IUser::class);
 		$testUser->expects($this->any())
 			->method('getUID')
@@ -1008,33 +718,10 @@ class ChatControllerTest extends TestCase {
 			->with('testUser')
 			->willReturn($testUser);
 
-		$response = $this->controller->receiveMessages('testToken', 1, $limit, $offset, $timeout);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
 		$expected = new DataResponse([], Http::STATUS_NOT_MODIFIED);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testWaitForNewMessagesFromInvalidRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn(null);
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, null)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->will($this->throwException(new RoomNotFoundException()));
-
-		$this->chatManager->expects($this->never())
-			->method('waitForNewMessages');
-
-		$response = $this->controller->receiveMessages('testToken', 1);
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
 
 		$this->assertEquals($expected, $response);
 	}
@@ -1061,19 +748,7 @@ class ChatControllerTest extends TestCase {
 	 * @dataProvider dataMentions
 	 */
 	public function testMentions($search, $limit, $result, $expected) {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willReturn($this->room);
-
-		$this->manager->expects($this->never())
-			->method('getRoomForParticipantByToken');
-
+		$participant = $this->createMock(Participant::class);
 		$this->room->expects($this->any())
 			->method('getId')
 			->willReturn(1234);
@@ -1090,36 +765,10 @@ class ChatControllerTest extends TestCase {
 			->method('asArray')
 			->willReturn($result);
 
-		$response = $this->controller->mentions('testToken', $search, $limit);
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->mentions($search, $limit);
 		$expected = new DataResponse($expected, Http::STATUS_OK);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testMentionsInvalidRoom() {
-		$this->session->expects($this->once())
-			->method('getSessionForRoom')
-			->with('testToken')
-			->willReturn('testSpreedSession');
-
-		$this->manager->expects($this->once())
-			->method('getRoomForSession')
-			->with($this->userId, 'testSpreedSession')
-			->willThrowException(new RoomNotFoundException());
-
-		$this->manager->expects($this->once())
-			->method('getRoomForParticipantByToken')
-			->with('testToken', $this->userId)
-			->willThrowException(new RoomNotFoundException());
-
-		$this->searchPlugin->expects($this->never())
-			->method('setContext');
-
-		$this->searchResult->expects($this->never())
-			->method('asArray');
-
-		$response = $this->controller->mentions('testToken', 'foo', 10);
-		$expected = new DataResponse([], Http::STATUS_NOT_FOUND);
 
 		$this->assertEquals($expected, $response);
 	}

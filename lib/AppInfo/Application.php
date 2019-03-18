@@ -32,7 +32,9 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
 use OCA\Spreed\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Spreed\Listener;
+use OCA\Spreed\Manager;
 use OCA\Spreed\Middleware\CanUseTalkMiddleware;
+use OCA\Spreed\Middleware\InjectionMiddleware;
 use OCA\Spreed\Notification\Listener as NotificationListener;
 use OCA\Spreed\Notification\Notifier;
 use OCA\Spreed\PublicShareAuth\Listener as PublicShareAuthListener;
@@ -41,8 +43,10 @@ use OCA\Spreed\Room;
 use OCA\Spreed\Settings\Personal;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCA\Spreed\Signaling\Listener as SignalingListener;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
+use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IServerContainer;
 use OCP\IUser;
@@ -66,10 +70,22 @@ class Application extends App {
 				!$config->isDisabledForUser($user)
 			);
 		});
+
+		$this->getContainer()->registerService('InjectionMiddleware', function() use ($server) {
+			return new InjectionMiddleware(
+				$server->getRequest(),
+				$server->query(IControllerMethodReflector::class),
+				$this->getContainer()->query(TalkSession::class),
+				$this->getContainer()->query(Manager::class),
+				$this->getContainer()->query('userId')
+			);
+		});
+
 		// This needs to be in the constructor,
 		// because otherwise the middleware is registered on a wrong object,
 		// when it is requested by the Router.
 		$this->getContainer()->registerMiddleWare('CanUseTalkMiddleware');
+		$this->getContainer()->registerMiddleWare('InjectionMiddleware');
 	}
 
 	public function register(): void {
