@@ -71,22 +71,6 @@ pipeline:
     when:
       matrix:
         TESTS: syntax-php7.3
-  signed-off-check:
-    image: nextcloudci/php7.3:php7.3-1
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=master
-      - DB=sqlite
-    commands:
-      # Pre-setup steps
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server
-      - php ./build/signed-off-checker.php
-    secrets: [ github_token ]
-    when:
-      matrix:
-        TESTS: signed-off-check
   php7.1:
     image: nextcloudci/php7.1:php7.1-16
     environment:
@@ -203,7 +187,6 @@ matrix:
     - TESTS: handlebars
     - TESTS: syntax-php7.1
     - TESTS: syntax-php7.3
-    - TESTS: signed-off-check
 
     # Unit tests
     - TESTS: php7.1
