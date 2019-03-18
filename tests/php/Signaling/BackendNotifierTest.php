@@ -137,6 +137,8 @@ class BackendNotifierTest extends \Test\TestCase {
 	}
 
 	public function tearDown() {
+		$config = \OC::$server->getConfig();
+		$config->deleteAppValue('spreed', 'signaling_servers');
 		$this->app->getContainer()->registerService(BackendNotifier::class, function() {
 			return $this->originalBackendNotifier;
 		});
