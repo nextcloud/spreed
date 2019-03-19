@@ -120,6 +120,11 @@
 		},
 
 		setActiveRoom: function(activeRoom) {
+			// Ignore reconnections to the same room.
+			if (this._activeRoom === activeRoom) {
+				return;
+			}
+
 			this.stopListening(this._activeRoom, 'change:participantFlags', this._updateCallContainer);
 			// Signaling uses its own event system, so Backbone methods can not
 			// be used.
@@ -444,6 +449,13 @@
 		},
 
 		setActiveRoom: function(activeRoom) {
+			// Ignore reconnections to the same room.
+			if (this._activeRoom === activeRoom) {
+				return;
+			}
+
+			this._activeRoom = activeRoom;
+
 			if (!activeRoom) {
 				if (this._callButton) {
 					this._callButton.$el.remove();
