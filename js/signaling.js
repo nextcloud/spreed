@@ -332,7 +332,7 @@
 			method: 'DELETE',
 			async: false,
 			success: function () {
-				this._trigger('leaveCall', [token]);
+				this._trigger('leaveCall', [token, keepToken]);
 				this._leaveCallSuccess(token);
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
@@ -633,6 +633,15 @@
 					// Request has been aborted. Ignore.
 				} else if (this.currentRoomToken) {
 					if (this.pullMessagesFails >= 3) {
+						if (OCA.SpreedMe.webrtc) {
+							// Force leaving the call in WebRTC; leaving the
+							// room indirectly runs
+							// signaling.leaveCurrentCall(), but if the
+							// signaling fails to leave the call no event will
+							// be triggered and the call will not be left from
+							// WebRTC point of view.
+							OCA.SpreedMe.webrtc.leaveCall();
+						}
 						OCA.SpreedMe.app.connection.leaveCurrentRoom();
 						return;
 					}
