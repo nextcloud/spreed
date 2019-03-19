@@ -39,18 +39,16 @@ use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IL10N;
-use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
 
-class RoomController extends OCSController {
+class RoomController extends AEnvironmentAwareController {
 	/** @var string|null */
 	private $userId;
 	/** @var TalkSession */
@@ -71,11 +69,6 @@ class RoomController extends OCSController {
 	private $timeFactory;
 	/** @var IL10N */
 	private $l10n;
-
-	/** @var Room */
-	private $room;
-	/** @var Participant */
-	private $participant;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -100,14 +93,6 @@ class RoomController extends OCSController {
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
-	}
-
-	public function setRoom(Room $room): void {
-		$this->room = $room;
-	}
-
-	public function setParticipant(Participant $participant): void {
-		$this->participant = $participant;
 	}
 
 	/**
@@ -138,7 +123,7 @@ class RoomController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getRoom(string $token): DataResponse {
+	public function getSingleRoom(string $token): DataResponse {
 		try {
 			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId, true);
 
@@ -177,6 +162,7 @@ class RoomController extends OCSController {
 			// Deprecated, use participantFlags instead.
 			'participantInCall' => false,
 			'participantFlags' => Participant::FLAG_DISCONNECTED,
+			'readOnly' => Room::READ_WRITE,
 			'count' => 0,
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
@@ -213,6 +199,7 @@ class RoomController extends OCSController {
 			// Deprecated, use participantFlags instead.
 			'participantInCall' => ($currentParticipant->getInCallFlags() & Participant::FLAG_IN_CALL) !== 0,
 			'participantFlags' => $currentParticipant->getInCallFlags(),
+			'readOnly' => $room->getReadOnly(),
 			'count' => $room->getNumberOfParticipants(false, $this->timeFactory->getTime() - 30),
 			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
 			'lastActivity' => $lastActivity,

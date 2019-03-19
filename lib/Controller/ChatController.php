@@ -28,12 +28,10 @@ use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\GuestManager;
-use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
@@ -43,7 +41,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 
-class ChatController extends OCSController {
+class ChatController extends AEnvironmentAwareController {
 
 	/** @var string */
 	private $userId;
@@ -80,11 +78,6 @@ class ChatController extends OCSController {
 	/** @var ITimeFactory */
 	protected $timeFactory;
 
-	/** @var Room */
-	private $room;
-	/** @var Participant */
-	private $participant;
-
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
@@ -113,17 +106,10 @@ class ChatController extends OCSController {
 		$this->l = $l;
 	}
 
-	public function setRoom(Room $room): void {
-		$this->room = $room;
-	}
-
-	public function setParticipant(Participant $participant): void {
-		$this->participant = $participant;
-	}
-
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
+	 * @RequireReadWriteConversation
 	 *
 	 * Sends a new chat message to the given room.
 	 *
@@ -280,6 +266,7 @@ class ChatController extends OCSController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
+	 * @RequireReadWriteConversation
 	 *
 	 * @param string $search
 	 * @param int $limit

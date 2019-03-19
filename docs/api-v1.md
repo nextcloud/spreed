@@ -45,6 +45,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `2` group
 * `3` public
 
+### Read-only states
+* `0` read-write
+* `1` read-only
+
 ### Participant types
 * `1` owner
 * `2` moderator
@@ -84,6 +88,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ### 6.0
 * `locked-one-to-one-rooms` - One-to-one conversations are now locked to the users. Neither guests nor other participants can be added, so the options to do that should be hidden as well. Also a user can only leave a one-to-one room (not delete). It will be deleted when the other participant left too. If the other participant posts a new chat message or starts a call, the left-participant will be re-added.
+* `read-only-rooms` - Rooms can be in `read-only` mode which means people can not do calls or write chat messages.
 
 ## Room management
 
@@ -137,6 +142,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `participantType` | int | Permissions level of the current user
         `participantInCall` | bool | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
         `participantFlags` | int | Flags of the current user (only available with `in-call-flags` capability)
+        `readOnly` | int | Read-only state for the current user (only available with `read-only-rooms` capability)
         `count` | int | Number of active users
         `numGuests` | int | Number of active guests
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)

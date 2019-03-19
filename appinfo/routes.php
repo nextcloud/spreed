@@ -146,7 +146,7 @@ return [
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'Room#getRoom',
+			'name' => 'Room#getSingleRoom',
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'GET',
 			'requirements' => [

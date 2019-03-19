@@ -45,6 +45,9 @@ class Room {
 	public const GROUP_CALL = 2;
 	public const PUBLIC_CALL = 3;
 
+	public const READ_WRITE = 0;
+	public const READ_ONLY = 1;
+
 	public const PARTICIPANT_REMOVED = 'remove';
 	public const PARTICIPANT_LEFT = 'leave';
 
@@ -65,6 +68,8 @@ class Room {
 	private $id;
 	/** @var int */
 	private $type;
+	/** @var int */
+	private $readOnly;
 	/** @var string */
 	private $token;
 	/** @var string */
@@ -97,6 +102,7 @@ class Room {
 								IHasher $hasher,
 								int $id,
 								int $type,
+								int $readOnly,
 								string $token,
 								string $name,
 								string $password,
@@ -114,6 +120,7 @@ class Room {
 		$this->hasher = $hasher;
 		$this->id = $id;
 		$this->type = $type;
+		$this->readOnly = $readOnly;
 		$this->token = $token;
 		$this->name = $name;
 		$this->password = $password;
@@ -131,6 +138,10 @@ class Room {
 
 	public function getType(): int {
 		return $this->type;
+	}
+
+	public function getReadOnly(): int {
+		return $this->readOnly;
 	}
 
 	public function getToken(): string {

@@ -78,6 +78,7 @@ class CapabilitiesTest extends TestCase {
 					'notification-levels',
 					'invite-groups-and-mails',
 					'locked-one-to-one-rooms',
+					'read-only-rooms',
 				],
 			],
 		], $capabilities->getCapabilities());
@@ -119,6 +120,7 @@ class CapabilitiesTest extends TestCase {
 					'notification-levels',
 					'invite-groups-and-mails',
 					'locked-one-to-one-rooms',
+					'read-only-rooms',
 				],
 			],
 		], $capabilities->getCapabilities());
