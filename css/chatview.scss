@@ -139,12 +139,11 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: -moz-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
-	background: -webkit-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
-	background: -o-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
-	background: -ms-linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
-	background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,1));
-	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#00FFFFFF', endColorstr='#FFFFFFFF');
+	background: -moz-linear-gradient(rgba(var(--color-main-background), 0), var(--color-main-background));
+	background: -webkit-linear-gradient(rgba(var(--color-main-background), 0), var(--color-main-background));
+	background: -o-linear-gradient(rgba(var(--color-main-background), 0), var(--color-main-background));
+	background: -ms-linear-gradient(rgba(var(--color-main-background), 0), var(--color-main-background));
+	background: linear-gradient(rgba(var(--color-main-background), 0), var(--color-main-background));
 	background-repeat: no-repeat;
 }
 
@@ -305,6 +304,22 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 			margin-top: -2px;
 			margin-left: 1px;
 			background-color: var(--color-background-darker);
+
+			&.icon-public {
+				background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
+			}
+			&.icon-contacts {
+				background-image: url(icon-color-path('contacts', 'places', 'fff', 1, true));
+			}
+			&.icon-password {
+				background-image: url(icon-color-path('password', 'actions', 'fff', 1, true));
+			}
+			&.icon-file {
+				background-image: url(icon-color-path('text', 'filetypes', 'fff', 1, true));
+			}
+			&.icon-mail {
+				background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
+			}
 		}
 	}
 }
