@@ -99,12 +99,15 @@
 			if (OC.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
+			} else {
+				this.initGuestName();
 			}
 
 			this._messageCollection = new OCA.SpreedMe.Models.ChatMessageCollection(null, {token: null});
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
-				id: 'chatView'
+				id: 'chatView',
+				guestNameModel: this._localStorageModel
 			});
 
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
@@ -122,6 +125,14 @@
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
+
+			this.signaling.on('joinRoom', function(/* token */) {
+				this.inRoom = true;
+				if (this.pendingNickChange) {
+					this.setGuestName(this.pendingNickChange);
+					delete this.pendingNickChange;
+				}
+			}.bind(this));
 
 			this.signaling.on('joinCall', function() {
 				// Disable video when joining a call in a room with more than 5
@@ -203,6 +214,42 @@
 		// Called from webrtc.js
 		disableScreensharingButton: function() {
 			this._mediaControlsView.disableScreensharingButton();
+		},
+		setGuestName: function(name) {
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/guest', 2) + this.token + '/name',
+				type: 'POST',
+				data: {
+					displayName: name
+				},
+				beforeSend: function (request) {
+					request.setRequestHeader('Accept', 'application/json');
+				},
+				success: function() {
+					this._onChangeGuestName(name);
+				}.bind(this)
+			});
+		},
+		initGuestName: function() {
+			this._localStorageModel = new OCA.SpreedMe.Models.LocalStorageModel({ nick: '' });
+			this._localStorageModel.on('change:nick', function(model, newDisplayName) {
+				if (!this.token || !this.inRoom) {
+					this.pendingNickChange = newDisplayName;
+					return;
+				}
+
+				this.setGuestName(newDisplayName);
+			}.bind(this));
+
+			this._localStorageModel.fetch();
+		},
+		_onChangeGuestName: function(newDisplayName) {
+			this._localVideoView.setAvatar(undefined, newDisplayName);
+
+			if (OCA.SpreedMe.webrtc) {
+				console.log('_onChangeGuestName.webrtc');
+				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);
+			}
 		},
 	});
 

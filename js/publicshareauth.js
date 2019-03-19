@@ -22,6 +22,8 @@
 (function(OCA) {
 	'use strict';
 
+	var roomsChannel = Backbone.Radio.channel('rooms');
+
 	OCA.Talk = OCA.Talk || {};
 	OCA.Talk.PublicShareAuth = {
 
@@ -63,21 +65,19 @@
 			$('#content').append($('footer'));
 
 			$('body').append('<div id="talk-sidebar" class="disappear"></div>');
-			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 			$('#talk-sidebar').append('<div id="call-container"></div>');
+			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 			$('#call-container').append('<div id="videos"></div>');
 			$('#call-container').append('<div id="screens"></div>');
 
-			OCA.SpreedMe.app.mainCallElementSelector = '#talk-sidebar';
+			OCA.SpreedMe.app.mainCallElementSelector = '#call-container';
 
-			OCA.SpreedMe.app._emptyContentView.destroy();
 			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
 				el: '#talk-sidebar > #emptycontent'
 			});
 
+			OCA.SpreedMe.app._localVideoView.render();
 			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
-
-			OCA.SpreedMe.app.registerLocalVideoButtonHandlers();
 
 			$('body').addClass('talk-sidebar-enabled');
 		},
@@ -128,22 +128,27 @@
 					return;
 				}
 
+				function setPageTitle(title) {
+					if (title) {
+						title += ' - ';
+					} else {
+						title = '';
+					}
+					title += t('spreed', 'Talk');
+					title += ' - ' + oc_defaults.title;
+					window.document.title = title;
+				};
+
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
 					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
 					OCA.SpreedMe.app._emptyContentView.setActiveRoom(OCA.SpreedMe.app.activeRoom);
 
-					OCA.SpreedMe.app.setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
+					setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
 
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
-
-					// Ensure that the elements are shown, as they could have
-					// been hidden if the password was already requested and
-					// that conversation ended in this same page.
-					$('#videos').show();
-					$('#screens').show();
 
 					self.showTalkSidebar();
 
@@ -151,10 +156,13 @@
 				});
 			});
 
-			OCA.SpreedMe.app.signaling.on('leaveRoom', function(leftRoomToken) {
-				if (OCA.SpreedMe.app.token !== leftRoomToken) {
-					return;
-				}
+			// TODO This should listen to "leaveRoom" on signaling instead, but
+			// that would cause an ugly flicker due to the order in which the UI
+			// elements would be modified (as the empty content message and the
+			// "incall" CSS class are both modified when handling
+			// "leaveCurrentRoom").
+			roomsChannel.on('leaveCurrentRoom', function() {
+				OCA.SpreedMe.app._chatView.$el.detach();
 
 				self.leaveRoom();
 			});
@@ -188,7 +196,7 @@
 		},
 	};
 
-	OCA.SpreedMe.app = new OCA.Talk.Application();
+	OCA.SpreedMe.app = new OCA.Talk.Embedded();
 
 	OCA.SpreedMe.app.on('start', function() {
 		OCA.Talk.PublicShareAuth.init();

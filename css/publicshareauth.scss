@@ -91,11 +91,11 @@ input#request-password-button:disabled ~ .icon {
 	margin-top: 10px;
 }
 
-#talk-sidebar.incall #emptycontent {
+#talk-sidebar #call-container.incall ~ #emptycontent {
 	display: none;
 }
 
-#talk-sidebar:not(.incall) #call-container {
+#talk-sidebar #call-container:not(.incall) {
 	display: none;
 }
 
@@ -145,13 +145,13 @@ input#request-password-button:disabled ~ .icon {
 }
 
 /* Screensharing in Talk sidebar */
-#talk-sidebar.screensharing #videos .videoContainer video {
+#talk-sidebar #call-container.screensharing #videos .videoContainer video {
 	max-height: 200px;
 	background-color: transparent;
 	box-shadow: 0;
 }
 
-#talk-sidebar.screensharing #screens {
+#talk-sidebar #call-container.screensharing #screens {
 	position: absolute;
 	width: 100%;
 	height: calc(100% - 200px);
@@ -159,7 +159,7 @@ input#request-password-button:disabled ~ .icon {
 	background-color: transparent;
 }
 
-#talk-sidebar.screensharing .screenContainer {
+#talk-sidebar #call-container.screensharing .screenContainer {
 	position: relative;
 	width: 100%;
 	height: 100%;
