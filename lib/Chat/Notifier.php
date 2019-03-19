@@ -87,7 +87,7 @@ class Notifier {
 		$mentionedAll = array_search('all', $mentionedUserIds, true);
 
 		if ($mentionedAll !== false) {
-			$mentionedUserIds = $chat->getParticipantUserIds();
+			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $chat->getParticipantUserIds()));
 		}
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
