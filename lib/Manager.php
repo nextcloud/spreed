@@ -471,6 +471,7 @@ class Manager {
 		if ($row === false) {
 			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
 			$room->addUsers(['userId' => $userId]);
+			$room->setReadOnly(Room::READ_ONLY);
 			return $room;
 		}
 
