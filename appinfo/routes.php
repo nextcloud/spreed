@@ -191,6 +191,15 @@ return [
 			],
 		],
 		[
+			'name' => 'Room#setReadOnly',
+			'url' => '/api/{apiVersion}/room/{token}/read-only',
+			'verb' => 'PUT',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
 			'name' => 'Room#setPassword',
 			'url' => '/api/{apiVersion}/room/{token}/password',
 			'verb' => 'PUT',

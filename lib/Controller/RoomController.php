@@ -810,6 +810,21 @@ class RoomController extends AEnvironmentAwareController {
 	}
 
 	/**
+	 * @NoAdminRequired
+	 * @RequireModeratorParticipant
+	 *
+	 * @param int $state
+	 * @return DataResponse
+	 */
+	public function setReadOnly(int $state): DataResponse {
+		if (!$this->room->setReadOnly($state)) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		return new DataResponse();
+	}
+
+	/**
 	 * @PublicPage
 	 * @RequireModeratorParticipant
 	 *

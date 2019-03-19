@@ -454,6 +454,48 @@ class Room {
 		return true;
 	}
 
+	/**
+	 * @param int $newState Currently it is only allowed to change between
+	 * 						`self::READ_ONLY` and `self::READ_WRITE`
+	 * 						Also it's only allowed on rooms of type
+	 * 						`self::GROUP_CALL` and `self::PUBLIC_CALL`
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setReadOnly(int $newState): bool {
+		$oldState = $this->getReadOnly();
+		if ($newState === $oldState) {
+			return true;
+		}
+
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+			return false;
+		}
+
+		if (!in_array($newState, [self::READ_ONLY, self::READ_WRITE], true)) {
+			return false;
+		}
+
+		$this->dispatcher->dispatch(self::class . '::preSetReadOnly', new GenericEvent($this, [
+			'newState' => $newState,
+			'oldState' => $oldState,
+		]));
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('read_only', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->readOnly = $newState;
+
+		$this->dispatcher->dispatch(self::class . '::postSetReadOnly', new GenericEvent($this, [
+			'newState' => $newState,
+			'oldState' => $oldState,
+		]));
+
+		return true;
+	}
+
 	public function ensureOneToOneRoomIsFilled(): void {
 		if ($this->getType() !== self::ONE_TO_ONE_CALL) {
 			return;

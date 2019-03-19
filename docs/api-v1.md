@@ -8,6 +8,8 @@
   * [Get user´s rooms](#get-user-s-rooms)
   * [Get single room (also for guests)](#get-single-room-also-for-guests)
   * [Rename a room](#rename-a-room)
+  * [Set read-only for a room](#set-read-only-for-a-room)
+  * [Set password for a room](#set-password-for-a-room)
   * [Delete a room](#delete-a-room)
   * [Allow guests in a room (public room)](#allow-guests-in-a-room-public-room)
   * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
@@ -187,6 +189,23 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the room could not be found for the participant
         + `405 Method Not Allowed` When the room is a one to one room
+
+### Set read-only for a room
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/read-only`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `state` | int | New state for the room
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `400 Bad Request` When the room type does not support read-only (only group and public room atm)
+        + `403 Forbidden` When the current user is not a moderator/owner or the room is not a public room
+        + `404 Not Found` When the room could not be found for the participant
 
 ### Set password for a room
 
