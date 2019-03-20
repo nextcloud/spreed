@@ -137,7 +137,7 @@
 					title += t('spreed', 'Talk');
 					title += ' - ' + oc_defaults.title;
 					window.document.title = title;
-				};
+				}
 
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
 					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
