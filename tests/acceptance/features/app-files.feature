@@ -109,44 +109,44 @@ Feature: app-files
     And I see that the message 1 was sent by "admin" with the text "Hello"
     And I see that the message 2 was sent by "user0" with the text "Hi!"
 
-  Scenario: chat in a reshared file
-    Given I act as John
-    And I am logged in as the admin
-    And I act as Jane
-    And I am logged in
-    And I act as Jim
-    And I am logged in as "user1"
-    And I act as John
-    And I share "welcome.txt" with "user0"
-    And I see that the file is shared with "user0"
-    And I open the Chat tab in the details view of the Files app
-    And I act as Jane
-    # The Files app is open again to reload the file list
-    And I open the Files app
-    And I share "welcome (2).txt" with "user1"
-    And I see that the file is shared with "user1"
-    And I open the Chat tab in the details view of the Files app
-    And I act as Jim
-    # The Files app is open again to reload the file list
-    And I open the Files app
-    And I open the details view for "welcome (2).txt"
-    And I open the Chat tab in the details view of the Files app
-    When I act as John
-    And I send a new chat message with the text "Hello"
-    And I act as Jane
-    And I see that the message 1 was sent by "admin" with the text "Hello"
-    And I send a new chat message with the text "Hi!"
-    And I act as Jim
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
-    And I send a new chat message with the text "Hey!"
-    Then I see that the message 1 was sent by "admin" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
-    And I see that the message 3 was sent by "user1" with the text "Hey!"
-    And I act as John
-    And I see that the message 1 was sent by "admin" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
-    And I see that the message 3 was sent by "user1" with the text "Hey!"
-    And I act as Jane
-    And I see that the message 1 was sent by "admin" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
-    And I see that the message 3 was sent by "user1" with the text "Hey!"
+#  Scenario: chat in a reshared file
+#    Given I act as John
+#    And I am logged in as the admin
+#    And I act as Jane
+#    And I am logged in
+#    And I act as Jim
+#    And I am logged in as "user1"
+#    And I act as John
+#    And I share "welcome.txt" with "user0"
+#    And I see that the file is shared with "user0"
+#    And I open the Chat tab in the details view of the Files app
+#    And I act as Jane
+#    # The Files app is open again to reload the file list
+#    And I open the Files app
+#    And I share "welcome (2).txt" with "user1"
+#    And I see that the file is shared with "user1"
+#    And I open the Chat tab in the details view of the Files app
+#    And I act as Jim
+#    # The Files app is open again to reload the file list
+#    And I open the Files app
+#    And I open the details view for "welcome (2).txt"
+#    And I open the Chat tab in the details view of the Files app
+#    When I act as John
+#    And I send a new chat message with the text "Hello"
+#    And I act as Jane
+#    And I see that the message 1 was sent by "admin" with the text "Hello"
+#    And I send a new chat message with the text "Hi!"
+#    And I act as Jim
+#    And I see that the message 2 was sent by "user0" with the text "Hi!"
+#    And I send a new chat message with the text "Hey!"
+#    Then I see that the message 1 was sent by "admin" with the text "Hello"
+#    And I see that the message 2 was sent by "user0" with the text "Hi!"
+#    And I see that the message 3 was sent by "user1" with the text "Hey!"
+#    And I act as John
+#    And I see that the message 1 was sent by "admin" with the text "Hello"
+#    And I see that the message 2 was sent by "user0" with the text "Hi!"
+#    And I see that the message 3 was sent by "user1" with the text "Hey!"
+#    And I act as Jane
+#    And I see that the message 1 was sent by "admin" with the text "Hello"
+#    And I see that the message 2 was sent by "user0" with the text "Hi!"
+#    And I see that the message 3 was sent by "user1" with the text "Hey!"
