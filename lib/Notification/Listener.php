@@ -57,6 +57,10 @@ class Listener {
 			/** @var Room $room */
 			$room = $event->getSubject();
 
+			if ($room->getObjectType() === 'file') {
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateInvitation($room, $event->getArgument('users'));
