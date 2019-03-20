@@ -360,6 +360,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $newState
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userChangesReadOnlyStateOfTheRoom($user, $newState, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/read-only',
+			new TableNode([['state', $newState === 'unlocks' ? 0 : 1]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" adds "([^"]*)" to room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
