@@ -152,6 +152,10 @@ class RoomShareProvider implements IShareProvider {
 			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}
 
+		if ($room->getReadOnly() === Room::READ_ONLY) {
+			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
+		}
+
 		try {
 			$room->getParticipant($share->getSharedBy());
 		} catch (ParticipantNotFoundException $e) {
