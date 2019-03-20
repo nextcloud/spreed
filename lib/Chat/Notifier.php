@@ -87,7 +87,7 @@ class Notifier {
 		$mentionedAll = array_search('all', $mentionedUserIds, true);
 
 		if ($mentionedAll !== false) {
-			$mentionedUserIds = $chat->getParticipantUserIds();
+			$mentionedUserIds = array_unique(array_merge($mentionedUserIds, $chat->getParticipantUserIds()));
 		}
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
@@ -293,8 +293,13 @@ class Notifier {
 			$participant = $room->getParticipant($userId);
 			return $participant->getNotificationLevel() !== Participant::NOTIFY_NEVER;
 		} catch (ParticipantNotFoundException $e) {
-			if ($room->getObjectType() === 'file') {
-				return $this->util->canUserAccessFile($room->getObjectId(), $userId);
+			if ($room->getObjectType() === 'file' && $this->util->canUserAccessFile($room->getObjectId(), $userId)) {
+				// Users are added on mentions in file-rooms,
+				// so they can see the room in their room list and
+				// the notification can be parsed and links to an existing room,
+				// where they are a participant of.
+				$room->addUsers(['userId' => $userId]);
+				return true;
 			}
 			return false;
 		}
