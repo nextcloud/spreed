@@ -1,15 +1,6 @@
 OC.L10N.register(
     "spreed",
     {
-    "Validate SSL certificate" : "Validar certificado SSL",
-    "Delete server" : "Apagar servidor",
-    "Add new server" : "Adicionar novo servidor",
-    "Saved" : "Gravado",
-    "Shared secret" : "Segredo partilhado",
-    "UDP and TCP" : "UDP e TCP",
-    "UDP only" : "Só UDP",
-    "TCP only" : "Só TCP",
-    "TURN server protocols" : "Protocolos do servidor TURN",
     "Participants" : "Participantes",
     "Chat" : "Conversa",
     "Talk" : "Falar",
@@ -89,6 +80,15 @@ OC.L10N.register(
     "Talk to %s" : "Falar com %s",
     "{user} wants to talk with you" : "{utilizador} quer falar consigo",
     "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}",
+    "Validate SSL certificate" : "Validar certificado SSL",
+    "TURN server protocols" : "Protocolos do servidor TURN",
+    "UDP and TCP" : "UDP e TCP",
+    "UDP only" : "Só UDP",
+    "TCP only" : "Só TCP",
+    "Saved" : "Gravado",
+    "Shared secret" : "Segredo partilhado",
+    "Delete server" : "Apagar servidor",
+    "Add new server" : "Adicionar novo servidor",
     ", " : ","
 },
 "nplurals=2; plural=(n != 1);");
