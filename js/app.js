@@ -678,7 +678,7 @@
              * Start Blind Group checker.
              * This will hide UI elements for user under "Blind" group.
              */
-            OCA.Talk.Blinder.init(this);
+            //OCA.Talk.Blinder.init(this);
 
             /**
              * Start listening for user's status.
