@@ -148,7 +148,8 @@
 
 		initialize: function() {
 			var nameAttribute = 'name';
-			if (this.model.get('objectType') === 'share:password') {
+			if (this.model.get('objectType') === 'share:password' ||
+				this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_CHANGELOG) {
 				nameAttribute = 'displayName';
 			}
 
@@ -271,9 +272,12 @@
 			// This has to be added below the "enable/disableEdition" calls as
 			// those calls render the view if needed, while the setters expect
 			// the view to be already rendered.
-			if (this.model.get('type') === 1) {
+			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) {
 				this._nameEditableTextLabel.setModelAttribute(undefined);
 				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation with {name}', {name: this.model.get('displayName')}));
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_CHANGELOG) {
+				this._nameEditableTextLabel.setModelAttribute(undefined);
+				this._nameEditableTextLabel.setLabelPlaceholder(this.model.get('displayName'));
 			} else {
 				this._nameEditableTextLabel.setModelAttribute('name');
 				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation name'));
