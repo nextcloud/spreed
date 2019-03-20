@@ -8,10 +8,10 @@
 		{{/if}}
 	</div>
 	<form class="newCommentForm">
-		<div contentEditable="true" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>
-		<input class="submit icon-confirm has-tooltip" type="submit" value="" title="{{submitText}}"/>
+	<div contentEditable="{{#if isReadOnly}}false{{else}}true{{/if}}" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>
+		<input class="submit icon-confirm has-tooltip" type="submit" {{#if isReadOnly}}disabled=""{{/if}} value="" title="{{submitText}}"/>
 		<div class="submitLoading icon-loading-small hidden"></div>
-		{{#if actorId}}
+		{{#if canShare}}
 		<button class="share icon-add has-tooltip" title="{{shareText}}"></button>
 		<div class="shareLoading icon-loading-small hidden"></div>
 		{{/if}}

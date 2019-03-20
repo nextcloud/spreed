@@ -52,6 +52,12 @@
 			'paste div.message': '_onPaste'
 		},
 
+		modelEvents: {
+			'change:readOnly': function() {
+				this.render();
+			}
+		},
+
 		initialize: function() {
 			this.listenTo(this.collection, 'reset', this.render);
 			this.listenTo(this.collection, 'add:start', this._onAddModelStart);
@@ -71,6 +77,10 @@
 			});
 
 			_.bindAll(this, '_onAutoComplete');
+		},
+
+		setRoom: function(model) {
+			this.model = model;
 		},
 
 		_initAutoComplete: function($target) {
@@ -182,12 +192,22 @@
 				this._addCommentTemplate = OCA.Talk.Views.Templates['chatview_add_comment'];
 			}
 
+			var isReadOnly = this.model.get('readOnly') === 1;
+			var newMessagePlaceholder = t('spreed', 'New message …');
+			var submitText = t('spreed', 'Send');
+			if (isReadOnly) {
+				newMessagePlaceholder = t('spreed', 'You can not send messages, because the conversation is locked.');
+				submitText = t('spreed', 'The conversation is locked.');
+			}
+
 			return this._addCommentTemplate(_.extend({
 				actorId: OC.getCurrentUser().uid,
 				actorDisplayName: OC.getCurrentUser().displayName,
-				newMessagePlaceholder: t('spreed', 'New message …'),
-				submitText: t('spreed', 'Send'),
-				shareText: t('spreed', 'Share')
+				newMessagePlaceholder: newMessagePlaceholder,
+				submitText: submitText,
+				shareText: t('spreed', 'Share'),
+				isReadOnly: isReadOnly,
+				canShare: !isReadOnly && OC.getCurrentUser().uid,
 			}, params));
 		},
 
