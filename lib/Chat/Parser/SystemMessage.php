@@ -27,6 +27,7 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Model\Message;
 use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
@@ -126,6 +127,16 @@ class SystemMessage {
 			}
 		} else if ($message === 'call_ended') {
 			[$parsedMessage, $parsedParameters] = $this->parseCall($parameters);
+		} else if ($message === 'read_only_off') {
+			$parsedMessage = $this->l->t('{actor} unlocked the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You unlocked the conversation');
+			}
+		} else if ($message === 'read_only') {
+			$parsedMessage = $this->l->t('{actor} locked the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You locked the conversation');
+			}
 		} else if ($message === 'guests_allowed') {
 			$parsedMessage = $this->l->t('{actor} allowed guests');
 			if ($currentUserIsActor) {

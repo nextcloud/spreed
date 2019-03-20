@@ -31,6 +31,8 @@
 - [Chat](#chat)
   * [Receive chat messages of a room](#receive-chat-messages-of-a-room)
   * [Sending a new chat message](#sending-a-new-chat-message)
+  * [Get mention autocomplete suggestions](#get-mention-autocomplete-suggestions)
+  * [System messages](#system-messages)
 - [Guests](#guests)
   * [Set display name](#set-display-name)
 - [Signaling](#signaling)
@@ -622,6 +624,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
+* `read_only_off` - {actor} unlocked the conversation
+* `read_only` - {actor} locked the conversation
         
 ## Guests
 

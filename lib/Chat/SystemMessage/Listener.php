@@ -138,6 +138,21 @@ class Listener {
 				$listener->sendSystemMessage($room, 'guests_disallowed', $event->getArguments());
 			}
 		});
+		$dispatcher->addListener(Room::class . '::postSetReadOnly', function(GenericEvent $event) {
+			$arguments = $event->getArguments();
+
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
+			if ($arguments['newType'] === Room::READ_ONLY) {
+				$listener->sendSystemMessage($room, 'read_only', $event->getArguments());
+			} else if ($arguments['newType'] === Room::READ_WRITE) {
+				$listener->sendSystemMessage($room, 'read_only_off', $event->getArguments());
+			}
+		});
 
 		$dispatcher->addListener(Room::class . '::postAddUsers', function(GenericEvent $event) {
 			$participants = $event->getArgument('users');
