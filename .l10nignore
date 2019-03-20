@@ -1,1 +1,4 @@
 js/admin/
+js/vendor/
+js/tests/
+build/
