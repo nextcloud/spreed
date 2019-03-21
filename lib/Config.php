@@ -102,6 +102,7 @@ class Config {
 		}
 
 		return [
+			'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
 			'server' => $signaling,
 			'ticket' => $this->getSignalingTicket($userId),
 			'stunservers' => $stun,
@@ -258,6 +259,10 @@ class Config {
 		}
 
 		return $signaling['secret'];
+	}
+
+	public function getHideSignalingWarning(): bool {
+		return $this->config->getAppValue('spreed', 'hide_signaling_warning', 'no') === 'yes';
 	}
 
 	/**
