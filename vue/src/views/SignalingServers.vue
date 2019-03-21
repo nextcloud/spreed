@@ -34,6 +34,9 @@
 
 		<p class="settings-hint">
 			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
+			{{ t('spreed', 'Please note that having a call with more than 4 participants without an external signaling server can have a bad calling experience.') }}
+			<a href="https://nextcloud.com/talk/" class="external" rel="noreferrer noopener"
+				target="_blank">{{ t('spreed', 'For more details on Nextcloud Talk options visit https://nextcloud.com/talk/') }} ↗</a>
 		</p>
 
 		<ul class="turn-servers">
@@ -56,6 +59,15 @@
 			<input v-model="secret" type="text" name="signaling_secret"
 				:disabled="loading" :placeholder="t('spreed', 'Shared secret')"
 				:aria-label="t('spreed', 'Shared secret')" @input="debounceUpdateServers">
+		</div>
+
+		<div v-if="!servers.length" class="signaling-warning">
+			<h4>{{ t('spreed', 'Hide warning about missing external signaling') }}</h4>
+
+			<input id="hide_warning" v-model="hideWarning" type="checkbox"
+				name="hide_warning" class="checkbox" :disabled="loading"
+				@change="updateHideWarning">
+			<label for="hide_warning">{{ t('spreed', 'Do not show a warning about the missing external signaling server in calls with more than 4 participants.') }}</label>
 		</div>
 	</div>
 </template>
@@ -80,6 +92,7 @@ export default {
 		return {
 			servers: [],
 			secret: '',
+			hideWarning: false,
 			loading: false,
 			saved: false
 		}
@@ -89,6 +102,7 @@ export default {
 		const state = OCP.InitialState.loadState('talk', 'signaling_servers')
 		this.servers = state.servers
 		this.secret = state.secret
+		this.hideWarning = state.hideWarning
 	},
 
 	methods: {
@@ -104,6 +118,18 @@ export default {
 			})
 		},
 
+		updateHideWarning() {
+			const self = this
+			self.loading = true
+
+			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
+				success() {
+					self.loading = false
+					self.toggleSave()
+				}
+			})
+		},
+
 		debounceUpdateServers: debounce(function() {
 			this.updateServers()
 		}, 1000),
@@ -114,8 +140,6 @@ export default {
 			this.servers = this.servers.filter(server => server.server.trim() !== '')
 
 			const self = this
-
-			this.loading = true
 			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
 				servers: this.servers,
 				secret: this.secret

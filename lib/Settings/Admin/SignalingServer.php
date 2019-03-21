@@ -48,6 +48,7 @@ class SignalingServer implements ISettings {
 		$this->initialStateService->provideInitialState('talk', 'signaling_servers', [
 			'servers' => $this->config->getSignalingServers(),
 			'secret' => $this->config->getSignalingSecret(),
+			'hideWarning' => $this->config->getHideSignalingWarning(),
 		]);
 		return new TemplateResponse('spreed', 'settings/admin/signaling-server', [], '');
 	}

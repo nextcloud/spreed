@@ -35,6 +35,11 @@
 		display: inline-block;
 	}
 
+	.signaling-warning label {
+		margin: 0;
+	}
+
+	.signaling-warning,
 	.signaling-secret {
 		margin-top: 20px;
 	}
