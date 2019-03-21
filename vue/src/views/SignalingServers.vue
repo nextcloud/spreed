@@ -34,10 +34,15 @@
 
 		<p class="settings-hint">
 			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
-			{{ t('spreed', 'Please note that having a call with more than 4 participants without an external signaling server can have a bad calling experience.') }}
-			<a href="https://nextcloud.com/talk/" class="external" rel="noreferrer noopener"
-				target="_blank">{{ t('spreed', 'For more details on Nextcloud Talk options visit https://nextcloud.com/talk/') }} ↗</a>
+			<span v-html="warningDescription" />
 		</p>
+
+		<div v-if="!servers.length" class="signaling-warning">
+			<input id="hide_warning" v-model="hideWarning" type="checkbox"
+				name="hide_warning" class="checkbox" :disabled="loading"
+				@change="updateHideWarning">
+			<label for="hide_warning">{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}</label>
+		</div>
 
 		<ul class="turn-servers">
 			<transition-group name="fade" tag="li">
@@ -59,15 +64,6 @@
 			<input v-model="secret" type="text" name="signaling_secret"
 				:disabled="loading" :placeholder="t('spreed', 'Shared secret')"
 				:aria-label="t('spreed', 'Shared secret')" @input="debounceUpdateServers">
-		</div>
-
-		<div v-if="!servers.length" class="signaling-warning">
-			<h4>{{ t('spreed', 'Hide warning about missing external signaling') }}</h4>
-
-			<input id="hide_warning" v-model="hideWarning" type="checkbox"
-				name="hide_warning" class="checkbox" :disabled="loading"
-				@change="updateHideWarning">
-			<label for="hide_warning">{{ t('spreed', 'Do not show a warning about the missing external signaling server in calls with more than 4 participants.') }}</label>
 		</div>
 	</div>
 </template>
@@ -95,6 +91,19 @@ export default {
 			hideWarning: false,
 			loading: false,
 			saved: false
+		}
+	},
+
+	computed: {
+		warningDescription() {
+			if (this.servers.length > 0) {
+				return ''
+			}
+
+			return t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices. Learn more about external signaling and other benefits of the Nextcloud Talk High Performance Back-end on {link}.', {
+				link: '<a href="https://nextcloud.com/talk/" class="external" '
+					+ 'rel="noreferrer noopener" target="_blank">nextcloud.com/talk ↗</a>'
+			}, undefined, { escape: false })
 		}
 	},
 

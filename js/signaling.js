@@ -556,7 +556,7 @@
 			return;
 		}
 
-		var warning = t('spreed', 'Having a call with more than 4 users without an external signaling server can have a bad impact on the call experience and slow down the operating system of the participants.');
+		var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
 
 		var isHTML = false;
 		if (OC.isUserAdmin()) {
@@ -564,8 +564,6 @@
 
 			isHTML = true;
 			warning = '<a href="' + OC.generateUrl('settings/admin/talk') + '" target="_blank">' + warning + '</a>';
-		} else {
-			warning += "\n" + t('spreed', 'Ask your system administrator to set up an external signaling server for a better call experience.');
 		}
 
 		OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning', isHTML: isHTML});
