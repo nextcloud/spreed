@@ -461,8 +461,9 @@
 	};
 
 	// Connection to the internal signaling server provided by the app.
-	function Internal(/*settings*/) {
+	function Internal(settings) {
 		OCA.Talk.Signaling.Base.prototype.constructor.apply(this, arguments);
+		this.hideWarning = settings.hideWarning;
 		this.spreedArrayConnection = [];
 
 		this.pullMessagesFails = 0;
@@ -542,6 +543,32 @@
 	OCA.Talk.Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 		this.sessionId = sessionId;
 		this._startPullingMessages();
+	};
+
+	OCA.Talk.Signaling.Internal.prototype._joinCallSuccess = function() {
+		if (this.hideWarning) {
+			return;
+		}
+
+		var numParticipants = Object.keys(OCA.SpreedMe.app.activeRoom.get('participants')).length +
+			OCA.SpreedMe.app.activeRoom.get('numGuests');
+		if (numParticipants <= 4) {
+			return;
+		}
+
+		var warning = t('spreed', 'Having a call with more than 4 users without an external signaling server can have a bad impact on the call experience and slow down the operating system of the participants.');
+
+		var isHTML = false;
+		if (OC.isUserAdmin()) {
+			warning += "\n" + t('spreed', 'Set up an external signaling server for a better call experience.');
+
+			isHTML = true;
+			warning = '<a href="' + OC.generateUrl('settings/admin/talk') + '" target="_blank">' + warning + '</a>';
+		} else {
+			warning += "\n" + t('spreed', 'Ask your system administrator to set up an external signaling server for a better call experience.');
+		}
+
+		OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning', isHTML: isHTML});
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
