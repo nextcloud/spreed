@@ -147,9 +147,9 @@ class Listener {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
-			if ($arguments['newType'] === Room::READ_ONLY) {
+			if ($arguments['newState'] === Room::READ_ONLY) {
 				$listener->sendSystemMessage($room, 'read_only', $event->getArguments());
-			} else if ($arguments['newType'] === Room::READ_WRITE) {
+			} else if ($arguments['newState'] === Room::READ_WRITE) {
 				$listener->sendSystemMessage($room, 'read_only_off', $event->getArguments());
 			}
 		});
