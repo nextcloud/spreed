@@ -1,5 +1,5 @@
 # Changelog
-# Version: 5.0.2.2.2
+# Version: 5.0.2.2.3
 
-*2b48b978*
-- Disable Blind group.
+*d1691807* 
+- Disable notifier, file drag&drop and user status if user is guest.
