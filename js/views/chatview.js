@@ -242,7 +242,7 @@
             /**
              * Start file uploader.
              */
-            OCA.Talk.FileUploader.init(OCA.SpreedMe.app);
+            if (OC.getCurrentUser().uid !== null) OCA.Talk.FileUploader.init(OCA.SpreedMe.app);
 		},
 
 		focusChatInput: function() {
