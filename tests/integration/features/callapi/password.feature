@@ -127,7 +127,7 @@ Feature: callapi/public
     And user "guest" joins call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
-    Then user "guest" leaves call "room" with 200
+    Then user "guest" leaves call "room" with 404
     Then user "participant1" sees 1 peers in call "room" with 200
     And user "guest" sees 0 peers in call "room" with 404
     Then user "participant1" leaves call "room" with 200

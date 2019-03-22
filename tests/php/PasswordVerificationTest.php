@@ -55,6 +55,7 @@ class PasswordVerificationTest extends TestCase {
 			$hasher,
 			1,
 			Room::PUBLIC_CALL,
+			Room::READ_WRITE,
 			'foobar',
 			'Test',
 			'passy',
