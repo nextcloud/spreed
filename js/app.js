@@ -76,6 +76,8 @@
 		_participants: null,
 		/** @property {OCA.SpreedMe.Views.ParticipantView} _participantsView  */
 		_participantsView: null,
+		/** @property {OCA.SpreedMe.Views.CollectionsView} _collectionsView */
+		_collectionsView: null,
 		fullscreenDisabled: true,
 		_searchTerm: '',
 		guestNick: null,
@@ -288,7 +290,17 @@
 			});
 
 			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), icon: 'icon-contacts-dark' }, this._participantsView);
-			this._sidebarView.addTab('collections', { label: t('spreed', 'Collections'), icon: 'icon-' }, this._participantsView);
+
+			this._collectionsView = new OCA.SpreedMe.Views.CollectionsView({
+				room: this.activeRoom,
+				id: 'collectionsTabView'
+			});
+			this._collectionsView.listenTo(this._rooms, 'change:active', function(model, active) {
+				if (active) {
+					this.setRoom(model);
+				}
+			});
+			this._sidebarView.addTab('collections', { label: t('spreed', 'Collections'), icon: 'icon-category-integration' }, this._collectionsView);
 		},
 		_hideParticipantList: function() {
 			this._sidebarView.removeTab('participants');
