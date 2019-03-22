@@ -28,15 +28,19 @@ use OCA\Spreed\Room;
 use OCP\Collaboration\Resources\IProvider;
 use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;
+use OCP\IURLGenerator;
 use OCP\IUser;
 
 class ConversationProvider implements IProvider {
 
 	/** @var Manager */
 	protected $manager;
+	/** @var IURLGenerator */
+	protected $urlGenerator;
 
-	public function __construct(Manager $manager) {
+	public function __construct(Manager $manager, IURLGenerator $urlGenerator) {
 		$this->manager = $manager;
+		$this->urlGenerator = $urlGenerator;
 	}
 
 	public function getResourceRichObject(IResource $resource): array {
@@ -48,6 +52,7 @@ class ConversationProvider implements IProvider {
 				'id' => $resource->getId(),
 				'name' => $room->getDisplayName(''),
 				'call-type' => $this->getRoomType($room),
+				'iconUrl' => $this->urlGenerator->imagePath('spreed', 'app-dark.svg')
 			];
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');
