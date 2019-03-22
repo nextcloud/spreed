@@ -502,11 +502,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$messages = $this->getDataFromResponse($this->response);
-		$messages = array_filter($messages, function(array $message) {
+		$actual = $this->getDataFromResponse($this->response);
+		$messages = [];
+		array_map(function(array $message) use (&$messages) {
 			// Filter out system messages
-			return $message['systemMessage'] === '';
-		});
+			if ($message['systemMessage'] === '') {
+				$messages[] = $message;
+			}
+		}, $actual);
 
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($messages);
