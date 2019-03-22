@@ -231,6 +231,7 @@
     "Shared secret" : "Secret partagé",
     "STUN servers" : "Serveurs STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur.",
+    "TURN servers" : "Serveurs TURN",
     "This call is password-protected" : "Cet appel est protégé par un mot de passe",
     "The password is wrong. Try again." : "Le mot de passe est incorrect. Veuillez réessayer.",
     "Specify commands the users can use in chats" : "Précise les commandes que les utilisateurs peuvent utiliser dans les discussions",
