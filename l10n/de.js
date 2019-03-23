@@ -26,6 +26,8 @@ OC.L10N.register(
     "Password" : "Passwort",
     "Cancel" : "Abbrechen",
     "Submit" : "Übermitteln",
+    "Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices." : "Anrufe mit mehr als 4 Teilnehmern ohne externen Signalisierungs-Server können Verbindungsprobleme haben und auf den Geräten hohe Last verursachen.",
+    "Set up an external signaling server for a better call experience." : "Richte für bessere Anrufe einen externen Signalisierungs-Server ein.",
     "Leave call" : "Anruf verlassen",
     "Join call" : "Anruf beitreten",
     "Start call" : "Anruf starten",
