@@ -234,6 +234,7 @@ OC.L10N.register(
     "STUN servers" : "Serveurs STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur.",
     "TURN servers" : "Serveurs TURN",
+    "A TURN server is used to proxy the traffic from participants behind a firewall." : "Un serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
     "This call is password-protected" : "Cet appel est protégé par un mot de passe",
     "The password is wrong. Try again." : "Le mot de passe est incorrect. Veuillez réessayer.",
     "Specify commands the users can use in chats" : "Précise les commandes que les utilisateurs peuvent utiliser dans les discussions",
