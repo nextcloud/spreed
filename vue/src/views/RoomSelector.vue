@@ -88,7 +88,8 @@
 	}
 	#modal-buttons {
 		overflow: hidden;
-		height: 55px;
+		height: 44px;
+		flex-shrink: 0;
 	}
 	#modal-buttons .primary {
 		float: right;

@@ -49,7 +49,7 @@ __webpack_nonce__ = btoa(OC.requestToken); // eslint-disable-line no-native-reas
 __webpack_public_path__ = OC.linkTo('spreed', 'js/');
 
 import Vue from 'vue';
-import CollaborationView from './components/CollaborationView';
+import CollaborationView from './views/CollaborationView';
 
 (function(OCP, OCA) {
 
