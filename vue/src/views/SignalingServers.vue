@@ -34,7 +34,7 @@
 
 		<p class="settings-hint">
 			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
-			<span v-html="warningDescription" />
+			<span v-if="!servers.length">{{ t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}</span>
 		</p>
 
 		<div v-if="!servers.length" class="signaling-warning">
@@ -91,19 +91,6 @@ export default {
 			hideWarning: false,
 			loading: false,
 			saved: false
-		}
-	},
-
-	computed: {
-		warningDescription() {
-			if (this.servers.length > 0) {
-				return ''
-			}
-
-			return t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices. Learn more about external signaling and other benefits of the Nextcloud Talk High Performance Back-end on {link}.', {
-				link: '<a href="https://nextcloud.com/talk/" class="external" '
-					+ 'rel="noreferrer noopener" target="_blank">nextcloud.com/talk ↗</a>'
-			}, undefined, { escape: false })
 		}
 	},
 
