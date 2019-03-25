@@ -27,7 +27,7 @@
 				<h1>{{ t('spreed', 'Select a room to link to the collection') }}</h1>
 				<div id="room-list">
 					<ul v-if="!loading">
-						<li v-for="room in rooms" :key="room.token" :class="{'selected': (selectedRoom === room.id) }"
+						<li v-for="room in availableRooms" :key="room.token" :class="{'selected': (selectedRoom === room.id) }"
 							@click="selectedRoom=room.token">
 							<avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name" />
 							<div v-else-if="room.type === types.ROOM_TYPE_GROUP" class="avatar icon icon-contacts" />
@@ -61,7 +61,7 @@
 		padding: 20px;
 	}
 	#room-list {
-		overflow: scroll;
+		overflow-y: scroll;
 		flex: 0 1 auto;
 	}
 	li {
@@ -138,6 +138,17 @@ export default {
 		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
+		}
+	},
+	computed: {
+		currentRoom() {
+			if (OCA.SpreedMe && OCA.SpreedMe.app.activeRoom) {
+				return OCA.SpreedMe.app.activeRoom.get('token')
+			}
+			return null
+		},
+		availableRooms() {
+			return this.rooms.filter((room) => room.token !== this.currentRoom)
 		}
 	}
 }
