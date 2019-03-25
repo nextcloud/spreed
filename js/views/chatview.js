@@ -192,7 +192,7 @@
 				this._addCommentTemplate = OCA.Talk.Views.Templates['chatview_add_comment'];
 			}
 
-			var isReadOnly = this.model.get('readOnly') === 1;
+			var isReadOnly = this.model && this.model.get('readOnly') === 1;
 			var newMessagePlaceholder = t('spreed', 'New message …');
 			var submitText = t('spreed', 'Send');
 			if (isReadOnly) {
