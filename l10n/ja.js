@@ -130,6 +130,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP と TCP",
     "UDP only" : "UDP のみ",
     "TCP only" : "TCP のみ",
+    "Save changes" : "変更を保存",
     "Saved" : "保存しました",
     "Shared secret" : "共有秘密鍵",
     "STUN servers" : "STUNサーバー",
