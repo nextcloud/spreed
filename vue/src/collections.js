@@ -45,13 +45,14 @@
 import Vue from 'vue'
 import RoomSelector from './views/RoomSelector'
 
-// eslint-disable-next-line
-__webpack_nonce__ = btoa(OC.requestToken)
-// eslint-disable-next-line
-__webpack_public_path__ = OC.linkTo('spreed', 'js/')
-
 // eslint-disable-next-line no-unexpected-multiline
-(function(OCP) {
+(function(OCP, OC) {
+
+	// eslint-disable-next-line
+	__webpack_nonce__ = btoa(OC.requestToken)
+	// eslint-disable-next-line
+	__webpack_public_path__ = OC.linkTo('spreed', 'js/')
+
 	Vue.prototype.t = t
 	Vue.prototype.n = n
 	Vue.prototype.OC = OC
@@ -82,4 +83,4 @@ __webpack_public_path__ = OC.linkTo('spreed', 'js/')
 		typeString: t('spreed', 'room'),
 		typeIconClass: 'icon-talk'
 	})
-})(window.OCP)
+})(window.OCP, window.OC)

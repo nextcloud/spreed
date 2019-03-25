@@ -23,13 +23,13 @@
 import Vue from 'vue'
 import CollaborationView from './views/CollaborationView'
 
-// eslint-disable-next-line
-__webpack_nonce__ = btoa(OC.requestToken)
-// eslint-disable-next-line
-__webpack_public_path__ = OC.linkTo('spreed', 'js/')
-
 // eslint-disable-next-line no-unexpected-multiline
 (function(OCP, OCA) {
+	// eslint-disable-next-line
+	__webpack_nonce__ = btoa(OC.requestToken)
+	// eslint-disable-next-line
+	__webpack_public_path__ = OC.linkTo('spreed', 'js/')
+
 	Vue.prototype.t = t
 	Vue.prototype.n = n
 	Vue.prototype.OC = OC

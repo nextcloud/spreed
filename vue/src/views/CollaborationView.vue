@@ -27,12 +27,6 @@
 	</div>
 </template>
 
-<style>
-#app-sidebar .tab-collections #shareWithList li {
-	display: flex;
-}
-</style>
-
 <script>
 import { CollectionList } from 'nextcloud-vue-collections'
 
