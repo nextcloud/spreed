@@ -1058,15 +1058,6 @@ input[type="password"] {
 }
 
 /**
- * Collections styling
- * TODO: should be done by the library
- */
-
-#app-sidebar .tab-collections #shareWithList li {
-	display: flex;
-}
-
-/**
  * Dark-Theme fixes
  */
 // We always want to use the white icons, this is why we don't use var(--color-white) here.

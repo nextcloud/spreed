@@ -42,18 +42,16 @@
  *
  */
 
-'use strict';
+import Vue from 'vue'
+import RoomSelector from './views/RoomSelector'
 
-/* global __webpack_nonce__ OC */
-__webpack_nonce__ = btoa(OC.requestToken); // eslint-disable-line no-native-reassign
-__webpack_public_path__ = OC.linkTo('spreed', 'js/');
+// eslint-disable-next-line
+__webpack_nonce__ = btoa(OC.requestToken)
+// eslint-disable-next-line
+__webpack_public_path__ = OC.linkTo('spreed', 'js/')
 
-import Vue from 'vue';
-import RoomSelector from './views/RoomSelector';
-
+// eslint-disable-next-line no-unexpected-multiline
 (function(OCP) {
-
-	Vue.prototype.$ = $
 	Vue.prototype.t = t
 	Vue.prototype.n = n
 	Vue.prototype.OC = OC
@@ -61,27 +59,27 @@ import RoomSelector from './views/RoomSelector';
 	OCP.Collaboration.registerType('room', {
 		action: () => {
 			return new Promise((resolve, reject) => {
-				const container = document.createElement('div');
-				container.id = 'spreed-room-select';
-				const body = document.getElementById('body-user');
-				body.append(container);
+				const container = document.createElement('div')
+				container.id = 'spreed-room-select'
+				const body = document.getElementById('body-user')
+				body.append(container)
 				const ComponentVM = new Vue({
-					render: h => h(RoomSelector),
-				});
-				ComponentVM.$mount(container);
+					render: h => h(RoomSelector)
+				})
+				ComponentVM.$mount(container)
 				ComponentVM.$root.$on('close', () => {
-					ComponentVM.$el.remove();
-					ComponentVM.$destroy();
-					reject();
-				});
+					ComponentVM.$el.remove()
+					ComponentVM.$destroy()
+					reject(new Error('User canceled resource selection'))
+				})
 				ComponentVM.$root.$on('select', (id) => {
-					resolve(id);
-					ComponentVM.$el.remove();
-					ComponentVM.$destroy();
-				});
-			});
+					resolve(id)
+					ComponentVM.$el.remove()
+					ComponentVM.$destroy()
+				})
+			})
 		},
 		typeString: t('spreed', 'room'),
 		typeIconClass: 'icon-talk'
-	});
-})(window.OCP);
+	})
+})(window.OCP)

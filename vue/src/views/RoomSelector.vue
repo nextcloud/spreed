@@ -21,26 +21,29 @@
   -->
 
 <template>
-	<Modal @close="close">
+	<modal @close="close">
 		<div id="modal-inner" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
-			<h1>{{ t('spreed', 'Select a room to link to the collection') }}</h1>
-			<div id="room-list">
-				<ul v-if="!loading">
-					<li v-for="room in rooms" @click="selectedRoom=room.token" :class="{'selected': (selectedRoom === room.id) }">
-						<avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name"/>
-						<div class="avatar icon icon-contacts" v-else-if="room.type === types.ROOM_TYPE_GROUP"></div>
-						<div class="avatar icon icon-public icon-white" v-else-if="room.type === types.ROOM_TYPE_PUBLIC"></div>
-						<span>{{ room.displayName }}</span>
-					</li>
-				</ul>
-			</div>
+				<h1>{{ t('spreed', 'Select a room to link to the collection') }}</h1>
+				<div id="room-list">
+					<ul v-if="!loading">
+						<li v-for="room in rooms" :key="room.token" :class="{'selected': (selectedRoom === room.id) }"
+							@click="selectedRoom=room.token">
+							<avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name" />
+							<div v-else-if="room.type === types.ROOM_TYPE_GROUP" class="avatar icon icon-contacts" />
+							<div v-else-if="room.type === types.ROOM_TYPE_PUBLIC" class="avatar icon icon-public icon-white" />
+							<span>{{ room.displayName }}</span>
+						</li>
+					</ul>
+				</div>
 				<div id="modal-buttons">
-					<button v-if="!loading" @click="select" class="primary">{{ t('spreed', 'Select room') }}</button>
+					<button v-if="!loading" class="primary" @click="select">
+						{{ t('spreed', 'Select room') }}
+					</button>
 				</div>
 			</div>
 		</div>
-	</Modal>
+	</modal>
 </template>
 <style scoped>
 	#modal-inner {
@@ -97,46 +100,45 @@
 
 </style>
 <script>
-	/* global OC */
-	import { Modal } from 'nextcloud-vue/dist/Components/Modal'
-	import { Avatar } from 'nextcloud-vue/dist/Components/Avatar'
-	import axios from 'nextcloud-axios'
+/* global OC */
+import { Modal } from 'nextcloud-vue/dist/Components/Modal'
+import { Avatar } from 'nextcloud-vue/dist/Components/Avatar'
+import axios from 'nextcloud-axios'
 
-
-	export default {
-		name: 'CollaborationView',
-		components: {
-			Modal, Avatar
-		},
-		data() {
-			return {
-				rooms: [],
-				selectedRoom: null,
-				loading: true,
-				// TODO: should be included once this is properly available
-				types: {
-					ROOM_TYPE_ONE_TO_ONE: 1,
-					ROOM_TYPE_GROUP: 2,
-					ROOM_TYPE_PUBLIC: 3
-				}
-			}
-		},
-		beforeMount() {
-			this.fetchRooms();
-		},
-		methods: {
-			fetchRooms() {
-				axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
-					this.rooms = response.data.ocs.data
-					this.loading = false
-				})
-			},
-			close() {
-				this.$root.$emit('close');
-			},
-			select() {
-				this.$root.$emit('select', this.selectedRoom)
+export default {
+	name: 'CollaborationView',
+	components: {
+		Modal, Avatar
+	},
+	data() {
+		return {
+			rooms: [],
+			selectedRoom: null,
+			loading: true,
+			// TODO: should be included once this is properly available
+			types: {
+				ROOM_TYPE_ONE_TO_ONE: 1,
+				ROOM_TYPE_GROUP: 2,
+				ROOM_TYPE_PUBLIC: 3
 			}
 		}
+	},
+	beforeMount() {
+		this.fetchRooms()
+	},
+	methods: {
+		fetchRooms() {
+			axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
+				this.rooms = response.data.ocs.data
+				this.loading = false
+			})
+		},
+		close() {
+			this.$root.$emit('close')
+		},
+		select() {
+			this.$root.$emit('select', this.selectedRoom)
+		}
 	}
+}
 </script>

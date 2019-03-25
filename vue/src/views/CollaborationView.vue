@@ -22,31 +22,38 @@
 
 <template>
 	<div>
-		<collection-list v-if="roomId" type="room" :id="roomId" :name="roomTitle"></collection-list>
+		<collection-list v-if="roomId" :id="roomId" type="room"
+			:name="roomTitle" />
 	</div>
 </template>
 
-<script>
-	import { CollectionList } from 'nextcloud-vue-collections';
+<style>
+#app-sidebar .tab-collections #shareWithList li {
+	display: flex;
+}
+</style>
 
-	export default {
-		name: 'CollaborationView',
-		computed: {
-			roomId() {
-				if (this.$root.model && this.$root.model.token) {
-					return '' + this.$root.model.token;
-				}
-				return null;
-			},
-			roomTitle() {
-				if (this.$root.model && this.$root.model.displayName) {
-					return '' + this.$root.model.displayName;
-				}
-				return '';
+<script>
+import { CollectionList } from 'nextcloud-vue-collections'
+
+export default {
+	name: 'CollaborationView',
+	components: {
+		CollectionList: CollectionList
+	},
+	computed: {
+		roomId() {
+			if (this.$root.model && this.$root.model.token) {
+				return '' + this.$root.model.token
 			}
+			return null
 		},
-		components: {
-			CollectionList: CollectionList
+		roomTitle() {
+			if (this.$root.model && this.$root.model.displayName) {
+				return '' + this.$root.model.displayName
+			}
+			return ''
 		}
 	}
+}
 </script>
