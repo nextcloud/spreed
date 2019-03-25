@@ -52,7 +52,7 @@ class ConversationProvider implements IProvider {
 				'id' => $resource->getId(),
 				'name' => $room->getDisplayName(''),
 				'call-type' => $this->getRoomType($room),
-				'iconUrl' => $this->urlGenerator->imagePath('spreed', 'app-dark.svg')
+				'iconUrl' => $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg')),
 			];
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');
@@ -65,7 +65,7 @@ class ConversationProvider implements IProvider {
 				$resource->getId(),
 				$user instanceof IUser ? $user->getUID() : null
 			);
-			return $room->getType() === Room::PUBLIC_CALL;
+			return $user instanceof IUser || $room->getType() === Room::PUBLIC_CALL;
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');
 		}
