@@ -123,6 +123,17 @@ export default {
 			}
 		}
 	},
+	computed: {
+		currentRoom() {
+			if (OCA.SpreedMe && OCA.SpreedMe.app.activeRoom) {
+				return OCA.SpreedMe.app.activeRoom.get('token')
+			}
+			return null
+		},
+		availableRooms() {
+			return this.rooms.filter((room) => room.token !== this.currentRoom)
+		}
+	},
 	beforeMount() {
 		this.fetchRooms()
 	},
@@ -138,17 +149,6 @@ export default {
 		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
-		}
-	},
-	computed: {
-		currentRoom() {
-			if (OCA.SpreedMe && OCA.SpreedMe.app.activeRoom) {
-				return OCA.SpreedMe.app.activeRoom.get('token')
-			}
-			return null
-		},
-		availableRooms() {
-			return this.rooms.filter((room) => room.token !== this.currentRoom)
 		}
 	}
 }
