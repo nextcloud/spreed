@@ -53,6 +53,7 @@ class ConversationProvider implements IProvider {
 				'name' => $room->getDisplayName(''),
 				'call-type' => $this->getRoomType($room),
 				'iconUrl' => $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg')),
+				'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()])
 			];
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');
