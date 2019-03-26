@@ -23,10 +23,14 @@ declare(strict_types=1);
 namespace OCA\Spreed\Middleware;
 
 use OC\AppFramework\Utility\ControllerMethodReflector;
+use OCA\Spreed\Controller\AEnvironmentAwareController;
+use OCA\Spreed\Controller\EnvironmentAwareTrait;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Middleware\Exceptions\NotAModeratorException;
+use OCA\Spreed\Middleware\Exceptions\ReadOnlyException;
+use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -69,8 +73,13 @@ class InjectionMiddleware extends Middleware {
 	 * @throws RoomNotFoundException
 	 * @throws ParticipantNotFoundException
 	 * @throws NotAModeratorException
+	 * @throws ReadOnlyException
 	 */
 	public function beforeController($controller, $methodName): void {
+		if (!$controller instanceof AEnvironmentAwareController) {
+			return;
+		}
+
 		if ($this->reflector->hasAnnotation('RequireLoggedInParticipant')) {
 			$this->getLoggedIn($controller, false);
 		}
@@ -86,9 +95,18 @@ class InjectionMiddleware extends Middleware {
 		if ($this->reflector->hasAnnotation('RequireModeratorParticipant')) {
 			$this->getLoggedInOrGuest($controller, true);
 		}
+
+		if ($this->reflector->hasAnnotation('RequireReadWriteConversation')) {
+			$this->checkReadOnlyState($controller);
+		}
 	}
 
-	protected function getLoggedIn(Controller $controller, bool $moderatorRequired): void {
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 * @param bool $moderatorRequired
+	 * @throws NotAModeratorException
+	 */
+	protected function getLoggedIn(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		$participant = $room->getParticipant($this->userId);
@@ -101,7 +119,12 @@ class InjectionMiddleware extends Middleware {
 		$controller->setParticipant($participant);
 	}
 
-	protected function getLoggedInOrGuest(Controller $controller, bool $moderatorRequired): void {
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 * @param bool $moderatorRequired
+	 * @throws NotAModeratorException
+	 */
+	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		if ($this->userId !== null) {
@@ -117,6 +140,17 @@ class InjectionMiddleware extends Middleware {
 
 		$controller->setRoom($room);
 		$controller->setParticipant($participant);
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 * @throws ReadOnlyException
+	 */
+	protected function checkReadOnlyState(AEnvironmentAwareController $controller): void {
+		$room = $controller->getRoom();
+		if (!$room instanceof Room || $room->getReadOnly() === Room::READ_ONLY) {
+			throw new ReadOnlyException();
+		}
 	}
 
 	/**
@@ -136,7 +170,8 @@ class InjectionMiddleware extends Middleware {
 			return new RedirectToDefaultAppResponse();
 		}
 
-		if ($exception instanceof NotAModeratorException) {
+		if ($exception instanceof NotAModeratorException ||
+			$exception instanceof ReadOnlyException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_FORBIDDEN);
 			}

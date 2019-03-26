@@ -59,6 +59,11 @@ class RoomPlugin implements ISearchPlugin {
 
 		$rooms = $this->manager->getRoomsForParticipant($userId);
 		foreach ($rooms as $room) {
+			if ($room->getReadOnly() === Room::READ_ONLY) {
+				// Can not add new shares to read-only rooms
+				continue;
+			}
+
 			if (stripos($room->getDisplayName($userId), $search) !== false) {
 				$item = $this->roomToSearchResultItem($room, $userId);
 

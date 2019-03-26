@@ -89,6 +89,7 @@
 						self._rooms.forEach(function(room) {
 							if (room.get('token') === token) {
 								self.activeRoom = room;
+								self._chatView.setRoom(room);
 							}
 						});
 					}
@@ -106,6 +107,7 @@
 			this._messageCollection = new OCA.SpreedMe.Models.ChatMessageCollection(null, {token: null});
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
+				model: this.activeRoom,
 				id: 'chatView',
 				guestNameModel: this._localStorageModel
 			});

@@ -1,9 +1,13 @@
 {{#if isInCall}}
-<button class="leave-call primary">{{leaveCallText}}<span class="icon icon-loading-small hidden"></span></button>
+	<button class="leave-call primary">{{leaveCallText}}<span class="icon icon-loading-small hidden"></span></button>
 {{else}}
-	{{#if hasCall}}
-<button class="join-call call-ongoing primary">{{joinCallText}}<span class="icon icon-loading-small hidden"></span></button>
+	{{#if isReadOnly}}
+		<button class="join-call primary has-tooltip" title="{{readOnlyText}}" disabled="">{{startCallText}}</button>
 	{{else}}
-<button class="join-call primary">{{startCallText}}<span class="icon icon-loading-small hidden"></span></button>
+		{{#if hasCall}}
+			<button class="join-call call-ongoing primary">{{joinCallText}}<span class="icon icon-loading-small hidden"></span></button>
+		{{else}}
+			<button class="join-call primary">{{startCallText}}<span class="icon icon-loading-small hidden"></span></button>
+		{{/if}}
 	{{/if}}
 {{/if}}

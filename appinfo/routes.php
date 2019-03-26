@@ -146,7 +146,7 @@ return [
 			'requirements' => ['apiVersion' => 'v1'],
 		],
 		[
-			'name' => 'Room#getRoom',
+			'name' => 'Room#getSingleRoom',
 			'url' => '/api/{apiVersion}/room/{token}',
 			'verb' => 'GET',
 			'requirements' => [
@@ -185,6 +185,15 @@ return [
 			'name' => 'Room#makePrivate',
 			'url' => '/api/{apiVersion}/room/{token}/public',
 			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
+		[
+			'name' => 'Room#setReadOnly',
+			'url' => '/api/{apiVersion}/room/{token}/read-only',
+			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
 				'token' => '^[a-z0-9]{4,30}$',

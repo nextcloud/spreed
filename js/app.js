@@ -402,6 +402,7 @@
 			});
 			this._sidebarView.setCallInfoView(callInfoView);
 
+			this._chatView.setRoom(this.activeRoom);
 			this._messageCollection.setRoomToken(this.activeRoom.get('token'));
 			this._messageCollection.receiveMessages();
 		},
@@ -437,6 +438,7 @@
 			this._messageCollection = new OCA.SpreedMe.Models.ChatMessageCollection(null, {token: null});
 			this._chatView = new OCA.SpreedMe.Views.ChatView({
 				collection: this._messageCollection,
+				model: this.activeRoom,
 				id: 'chatView',
 				guestNameModel: this._localStorageModel
 			});

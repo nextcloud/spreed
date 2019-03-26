@@ -360,6 +360,23 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" (locks|unlocks) room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $newState
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userChangesReadOnlyStateOfTheRoom($user, $newState, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/read-only',
+			new TableNode([['state', $newState === 'unlocks' ? 0 : 1]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" adds "([^"]*)" to room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
@@ -485,11 +502,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '?lookIntoFuture=0');
 		$this->assertStatusCode($this->response, $statusCode);
 
-		$messages = $this->getDataFromResponse($this->response);
-		$messages = array_filter($messages, function(array $message) {
+		$actual = $this->getDataFromResponse($this->response);
+		$messages = [];
+		array_map(function(array $message) use (&$messages) {
 			// Filter out system messages
-			return $message['systemMessage'] === '';
-		});
+			if ($message['systemMessage'] === '') {
+				$messages[] = $message;
+			}
+		}, $actual);
 
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($messages);

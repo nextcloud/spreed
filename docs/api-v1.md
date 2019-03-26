@@ -8,6 +8,8 @@
   * [Get user´s rooms](#get-user-s-rooms)
   * [Get single room (also for guests)](#get-single-room-also-for-guests)
   * [Rename a room](#rename-a-room)
+  * [Set read-only for a room](#set-read-only-for-a-room)
+  * [Set password for a room](#set-password-for-a-room)
   * [Delete a room](#delete-a-room)
   * [Allow guests in a room (public room)](#allow-guests-in-a-room-public-room)
   * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
@@ -29,6 +31,8 @@
 - [Chat](#chat)
   * [Receive chat messages of a room](#receive-chat-messages-of-a-room)
   * [Sending a new chat message](#sending-a-new-chat-message)
+  * [Get mention autocomplete suggestions](#get-mention-autocomplete-suggestions)
+  * [System messages](#system-messages)
 - [Guests](#guests)
   * [Set display name](#set-display-name)
 - [Signaling](#signaling)
@@ -44,6 +48,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `1` "one to one"
 * `2` group
 * `3` public
+
+### Read-only states
+* `0` read-write
+* `1` read-only
 
 ### Participant types
 * `1` owner
@@ -84,6 +92,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ### 6.0
 * `locked-one-to-one-rooms` - One-to-one conversations are now locked to the users. Neither guests nor other participants can be added, so the options to do that should be hidden as well. Also a user can only leave a one-to-one room (not delete). It will be deleted when the other participant left too. If the other participant posts a new chat message or starts a call, the left-participant will be re-added.
+* `read-only-rooms` - Rooms can be in `read-only` mode which means people can not do calls or write chat messages.
 
 ## Room management
 
@@ -137,6 +146,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `participantType` | int | Permissions level of the current user
         `participantInCall` | bool | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
         `participantFlags` | int | Flags of the current user (only available with `in-call-flags` capability)
+        `readOnly` | int | Read-only state for the current user (only available with `read-only-rooms` capability)
         `count` | int | Number of active users
         `numGuests` | int | Number of active guests
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)
@@ -181,6 +191,23 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `404 Not Found` When the room could not be found for the participant
         + `405 Method Not Allowed` When the room is a one to one room
+
+### Set read-only for a room
+
+* Method: `PUT`
+* Endpoint: `/room/{token}/read-only`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `state` | int | New state for the room
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `400 Bad Request` When the room type does not support read-only (only group and public room atm)
+        + `403 Forbidden` When the current user is not a moderator/owner or the room is not a public room
+        + `404 Not Found` When the room could not be found for the participant
 
 ### Set password for a room
 
@@ -597,6 +624,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
+* `read_only_off` - {actor} unlocked the conversation
+* `read_only` - {actor} locked the conversation
         
 ## Guests
 

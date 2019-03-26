@@ -68,10 +68,10 @@
 	border: none;
 	opacity: .3;
 }
-#chatView .newCommentForm .submit:hover,
-#chatView .newCommentForm .submit:focus,
-#chatView .newCommentForm .share:hover,
-#chatView .newCommentForm .share:focus {
+#chatView .newCommentForm .submit:hover:not(:disabled),
+#chatView .newCommentForm .submit:focus:not(:disabled),
+#chatView .newCommentForm .share:hover:not(:disabled),
+#chatView .newCommentForm .share:focus:not(:disabled) {
 	opacity: 1;
 }
 
