@@ -25,6 +25,7 @@ namespace OCA\Spreed\Collaboration\Resources;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Collaboration\Resources\IManager;
+use OCP\Collaboration\Resources\ResourceException;
 use OCP\IUser;
 use OCP\IUserManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -38,7 +39,11 @@ class Listener {
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
 
-			$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			try {
+				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			} catch (ResourceException $e) {
+				return;
+			}
 			$resourceManager->invalidateAccessCacheForResource($resource);
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
@@ -50,7 +55,11 @@ class Listener {
 			$resourceManager = \OC::$server->query(IManager::class);
 			/** @var IUserManager $userManager */
 			$userManager = \OC::$server->getUserManager();
-			$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			try {
+				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			} catch (ResourceException $e) {
+				return;
+			}
 
 			$participants = $event->getArgument('users');
 			foreach ($participants as $participant) {
@@ -71,7 +80,11 @@ class Listener {
 			$resourceManager = \OC::$server->query(IManager::class);
 			/** @var IUser $user */
 			$user = $event->getArgument('user');
-			$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			try {
+				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			} catch (ResourceException $e) {
+				return;
+			}
 
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 		};
@@ -84,7 +97,11 @@ class Listener {
 			$resourceManager = \OC::$server->query(IManager::class);
 			/** @var IUserManager $userManager */
 			$userManager = \OC::$server->getUserManager();
-			$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			try {
+				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			} catch (ResourceException $e) {
+				return;
+			}
 
 			/** @var Participant $participant */
 			$participant = $event->getArgument('participant');
@@ -99,7 +116,11 @@ class Listener {
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
 
-			$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			try {
+				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
+			} catch (ResourceException $e) {
+				return;
+			}
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, null);
 		};
 		$dispatcher->addListener(Room::class . '::postChangeType', $listener);
