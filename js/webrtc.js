@@ -467,7 +467,7 @@ var spreedPeerConnectionTable = [];
 				// Initialize ice restart counter for peer
 				spreedPeerConnectionTable[peer.id] = 0;
 
-				peer.pc.on('iceConnectionStateChange', function () {
+				peer.pc.addEventListener('iceconnectionstatechange', function () {
 					var userId = spreedMappingTable[peer.id];
 
 					switch (peer.pc.iceConnectionState) {
@@ -528,8 +528,8 @@ var spreedPeerConnectionTable = [];
 										videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
 
 										if (spreedPeerConnectionTable[peer.id] < 5) {
-											if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-												peer.pc.pc.peerconnection.signalingState === 'stable') {
+											if (peer.pc.localDescription.type === 'offer' &&
+												peer.pc.signalingState === 'stable') {
 												spreedPeerConnectionTable[peer.id] ++;
 												console.log('ICE restart.');
 												peer.icerestart();
@@ -548,8 +548,8 @@ var spreedPeerConnectionTable = [];
 								if (spreedPeerConnectionTable[peer.id] < 5) {
 									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
 
-									if (peer.pc.pc.peerconnection.localDescription.type === 'offer' &&
-										peer.pc.pc.peerconnection.signalingState === 'stable') {
+									if (peer.pc.localDescription.type === 'offer' &&
+										peer.pc.signalingState === 'stable') {
 										spreedPeerConnectionTable[peer.id] ++;
 										console.log('ICE restart.');
 										peer.icerestart();
@@ -569,10 +569,6 @@ var spreedPeerConnectionTable = [];
 					}
 
 					OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(peer.id);
-				});
-
-				peer.pc.on('PeerConnectionTrace', function (event) {
-					console.log('trace', event);
 				});
 			},
 			// The nick name below the avatar is distributed through the
@@ -855,15 +851,14 @@ var spreedPeerConnectionTable = [];
 
 		function checkPeerMedia(peer, track, mediaType) {
 			var defer = $.Deferred();
-			peer.pc.pc.getStats(track, function(stats) {
+			peer.pc.getStats(track).then(function(stats) {
 				var result = false;
-				Object.keys(stats).forEach(function(key) {
-					var value = stats[key];
-					if (!result && !value || value.mediaType !== mediaType || !value.hasOwnProperty('bytesReceived')) {
+				stats.forEach(function(statsReport) {
+					if (!result && statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
 						return;
 					}
 
-					if (value.bytesReceived > 0) {
+					if (statsReport.bytesReceived > 0) {
 						OCA.SpreedMe.webrtc.emit('unmute', {
 							id: peer.id,
 							name: mediaType

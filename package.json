@@ -13,7 +13,13 @@
   "author": "",
   "license": "AGPL-3.0",
   "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "attachmediastream": "^2.1.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.2.3",
     "handlebars": "^4.0.12",
+    "hark": "^1.2.3",
     "jasmine": "^2.5.2",
     "jasmine-ajax": "^3.2.0",
     "jasmine-core": "^2.5.2",
@@ -22,6 +28,11 @@
     "karma-jasmine": "^1.0.2",
     "karma-jasmine-ajax": "^0.1.13",
     "karma-phantomjs-launcher": "^1.0.2",
-    "phantomjs-prebuilt": "^2.1.13"
+    "mockconsole": "0.0.1",
+    "phantomjs-prebuilt": "^2.1.13",
+    "util": "^0.11.1",
+    "webrtc-adapter": "^7.2.1",
+    "webrtcsupport": "^2.2.0",
+    "wildemitter": "^1.2.0"
   }
 }
