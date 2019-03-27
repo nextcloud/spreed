@@ -1,7 +1,7 @@
 /js/admin/*
 /js/tests/*
 /js/vendor/*
-/js/simplewebrtc.js
+/js/simplewebrtc/*
 /js/**/templates.js
 /karma.conf.js
 /tests/*
