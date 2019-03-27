@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  *
