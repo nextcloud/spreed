@@ -232,6 +232,7 @@
     "Saved" : "Salvo",
     "Add a new server" : "Adicionar um novo servidor",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Um servidor de sinalização externo pode ser usado opcionalmente para grandes instalações. Deixe em branco para usar o servidor de sinalização interno.",
+    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Note que nas chamadas com mais de 4 participantes sem servidor de sinalização externa, podem haver problemas de conectividade e causar alta carga nos dispositivos participantes.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Não avisar sobre problemas de conectividade em chamadas com mais de 4 participantes",
     "Shared secret" : "Segredo compartilhado",
     "STUN servers" : "Servidores STUN",
