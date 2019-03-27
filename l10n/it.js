@@ -234,6 +234,7 @@ OC.L10N.register(
     "Saved" : "Salvato",
     "Add a new server" : "Aggiungi un nuovo server",
     "An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un server di segnalazione esterno può essere utilizzato facoltativamente per grandi installazioni. Lascia vuoto per utilizzare il server di segnalazione interno.",
+    "Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices." : "Nota che in caso di chiamate con più di 4 partecipanti senza un server di segnalazione esterno, i partecipanti possono riscontrare problemi di connettività e un utilizzo elevato di risorse sui propri dispositivi.",
     "Don't warn about connectivity issues in calls with more than 4 participants" : "Non avvisarmi dei problemi di connettività nelle chiamate con più di 4 partecipanti",
     "Shared secret" : "Segreto condiviso",
     "STUN servers" : "Server STUN",

@@ -62,6 +62,7 @@ OC.L10N.register(
     "moderator" : "moderatorius",
     "Remove participant" : "Šalinti dalyvį",
     "Add participant …" : "Pridėti dalyvį …",
+    "Favorited" : "Pažymėtas svarbiu",
     "Remove from favorites" : "Šalinti iš mėgstamų",
     "Add to favorites" : "Pridėti į mėgstamus",
     "Always notify" : "Visada pranešti",
