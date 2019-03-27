@@ -21,7 +21,7 @@
  *
  */
 
-(function(OC, OCA, Marionette, Handlebars) {
+(function(OC, OCA, Marionette) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -50,4 +50,4 @@
 
 	});
 
-})(OC, OCA, Marionette, Handlebars);
+})(OC, OCA, Marionette);
