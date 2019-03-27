@@ -126,10 +126,11 @@ class PageController extends Controller {
 	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
+	 * @param string $mode
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
+	public function index(string $token = '', string $callUser = '', string $password = '', string $mode = ''): Response {
 		$user = $this->userSession->getUser();
 		if (!$user instanceof IUser) {
 			return $this->guestEnterRoom($token, $password);
@@ -198,7 +199,7 @@ class PageController extends Controller {
 			'token' => $token,
 			'signaling-settings' => $this->config->getSettings($this->userId),
 		];
-		$response = new TemplateResponse($this->appName, 'index', $params);
+		$response = new TemplateResponse($this->appName, $mode === 'vue' ? 'vue' : 'index', $params);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');

@@ -10,6 +10,7 @@ module.exports = {
 		"admin/signaling-server": path.join(__dirname, 'src', 'signaling-server.js'),
 		"admin/stun-server": path.join(__dirname, 'src', 'stun-server.js'),
 		"admin/turn-server": path.join(__dirname, 'src', 'turn-server.js'),
+		"vue": path.join(__dirname, 'src', 'frontpage.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, '../js'),
