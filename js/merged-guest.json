@@ -3,6 +3,8 @@
   "vendor/jquery-dotimeout/jquery-dotimeout.min.js",
   "vendor/visibility/visibility.min.js",
   "vendor/underscore-string/underscore-string.js",
+  "vendor/paste.js/paste.js",
+  "vendor/chance/chance.js",
 
   "vendor/backbone/backbone-min.js",
   "vendor/backbone.radio/build/backbone.radio.min.js",

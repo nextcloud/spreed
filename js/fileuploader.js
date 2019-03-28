@@ -15,7 +15,9 @@
         app: null,
         talkDirectoryName: "Talk",
         chatViewSelector: "#chatView",
+        dropFileSelector: "file-drop",
         client: null,
+        uploadingElement: null,
 
         init: function (app) {
 
@@ -28,6 +30,7 @@
 
             self.createTalkFolder(function () {
                 self.initFileDrop();
+                self.copyPasteFile();
             });
         },
 
@@ -53,12 +56,16 @@
             });
 
             // Prepare uploading progress element.
-            var uploadingElement = chatViewElement.find(".uploading");
-            uploadingElement.css({
-                "padding": "10px 0",
-                "margin": "10px 0"
-            });
-            uploadingElement.hide();
+            if (_.isNull(self.uploadingElement)) {
+
+                self.uploadingElement = chatViewElement.find(".uploading");
+                self.uploadingElement.css({
+                    "padding": "10px 0",
+                    "margin": "10px 0"
+                });
+            }
+
+            self.uploadingElement.hide();
 
             // When file dropped.
             chatViewElement.on("drop", function (e) {
@@ -73,12 +80,7 @@
                             var file = e.originalEvent.dataTransfer.files[0];
 
                             // Upload file.
-                            uploadingElement.find(".uploadingMsg").text("Please wait. Uploading your file... File: " + file.name);
-                            uploadingElement.show("slow");
-
-                            self.uploadFile(file, function () {
-                                uploadingElement.hide("slow");
-                            });
+                            self.doUploadFile(file);
                         }
                     }
                 }
@@ -218,6 +220,92 @@
 
                 console.error("Unable to upload file.");
             });
+        },
+
+        /**
+         * Copy and paste image file.
+         * Auto uploads as well.
+         */
+        copyPasteFile: function () {
+
+            var self = this;
+
+            var formElement = $(".newCommentForm .message").first();
+            formElement.pastableContenteditable();
+
+            var chatViewElement = $("ul.comments").first();
+            chatViewElement.pastableNonInputable();
+
+            formElement.on("pasteImage", function (ev, data) {
+
+                self.doUploadFile(self.blobToFile(data.blob));
+            }).on("pasteImageError", function (ev, data) {
+                console.log("Unable to copy and paste your image.", data.message);
+            }).on("pasteText", function (ev, data) {
+                // Just text, do nothing.
+            });
+
+            chatViewElement.on("pasteImage", function (ev, data) {
+                self.doUploadFile(self.blobToFile(data.blob));
+            }).on("pasteImageError", function (ev, data) {
+                console.log("Unable to copy and paste your image.", data.message);
+            }).on("pasteText", function (ev, data) {
+                // Just text, do nothing.
+            });
+        },
+
+        /**
+         * Do an upload file.
+         * Updates DOM too!
+         *
+         * @param file
+         */
+        doUploadFile: function (file) {
+
+            var self = this;
+
+            self.uploadingElement.show("slow");
+            self.uploadingElement.find(".uploadingMsg").text("Please wait. Uploading your file... File: " + file.name);
+
+            setTimeout(function () {
+                self.uploadFile(file, function () {
+                    self.uploadingElement.hide("slow");
+                });
+            }, 1000);
+        },
+
+        /**
+         * Blob to file.
+         * Note: A Blob() is almost a File() - it's just missing the two properties below which we will add
+         *
+         * @param blob
+         * @param fileName
+         * @returns {*}
+         */
+        blobToFile: function (blob) {
+
+            blob.lastModifiedDate = new Date();
+
+            if (blob.type === "image/png") {
+                blob.name = this.generateRandomFileName() + ".png";
+            } else if (blob.type === "image/jpeg") {
+                blob.name = this.generateRandomFileName() + ".jpg";
+            } else if (blob.type === "image/gif") {
+                blob.name = this.generateRandomFileName() + ".gif";
+            } else {
+                blob.name = this.generateRandomFileName();
+            }
+
+            return blob;
+        },
+
+        /**
+         * Generate random name.
+         *
+         * @returns {string}
+         */
+        generateRandomFileName: function () {
+            return "paste" + "-" + chance.word() + "-" + chance.timestamp();
         }
     };
-})(OCA, OC, $, _);
+})(OCA, OC, $, _, chance);
