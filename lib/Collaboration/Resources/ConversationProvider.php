@@ -30,29 +30,44 @@ use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;
 use OCP\IURLGenerator;
 use OCP\IUser;
+use OCP\IUserSession;
 
 class ConversationProvider implements IProvider {
 
 	/** @var Manager */
 	protected $manager;
+	/** @var IUserSession */
+	protected $userSession;
 	/** @var IURLGenerator */
 	protected $urlGenerator;
 
-	public function __construct(Manager $manager, IURLGenerator $urlGenerator) {
+	public function __construct(Manager $manager,
+								IUserSession $userSession,
+								IURLGenerator $urlGenerator) {
 		$this->manager = $manager;
+		$this->userSession = $userSession;
 		$this->urlGenerator = $urlGenerator;
 	}
 
 	public function getResourceRichObject(IResource $resource): array {
 		try {
 			$room = $this->manager->getRoomByToken($resource->getId());
+			$user = $this->userSession->getUser();
+
+			$iconURL = $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg'));
+			/**
+			 * Disabled for now, because it would show a square avatar
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$iconURL = $this->urlGenerator->linkToRouteAbsolute('core.avatar.getAvatar', ['userId' => 'admin', 'size' => 32]);
+			}
+			 */
 
 			return [
 				'type' => 'room',
 				'id' => $resource->getId(),
-				'name' => $room->getDisplayName(''),
+				'name' => $room->getDisplayName($user instanceof IUser ? $user->getUID() : ''),
 				'call-type' => $this->getRoomType($room),
-				'iconUrl' => $this->urlGenerator->getAbsoluteURL($this->urlGenerator->imagePath('spreed', 'app-dark.svg')),
+				'iconUrl' => $iconURL,
 				'link' => $this->urlGenerator->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()])
 			];
 		} catch (RoomNotFoundException $e) {
