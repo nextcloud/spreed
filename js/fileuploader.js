@@ -56,14 +56,11 @@
             });
 
             // Prepare uploading progress element.
-            if (_.isNull(self.uploadingElement)) {
-
-                self.uploadingElement = chatViewElement.find(".uploading");
-                self.uploadingElement.css({
-                    "padding": "10px 0",
-                    "margin": "10px 0"
-                });
-            }
+            self.uploadingElement = chatViewElement.find(".uploading");
+            self.uploadingElement.css({
+                "padding": "10px 0",
+                "margin": "10px 0"
+            });
 
             self.uploadingElement.hide();
 
