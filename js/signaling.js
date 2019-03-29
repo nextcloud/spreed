@@ -573,9 +573,18 @@
 		} else if(data.type === 'offer') {
 			console.log("OFFER", data);
 		}
+
+		// The RTCSessionDescription removes custom payload attributes in it's toJSON
+		// method. The one value we set is the nick, so we need to toJSON and toObject
+		// the description and add the nick to the payload again.
+		// {@see https://developer.mozilla.org/en-US/docs/Web/API/RTCSessionDescription/toJSON}
+		var tempString =  JSON.stringify(data);
+		var tempData = JSON.parse(tempString);
+		tempData.payload.nick = data.payload.nick;
+
 		this.spreedArrayConnection.push({
 			ev: "message",
-			fn: JSON.stringify(data),
+			fn: JSON.stringify(tempData),
 			sessionId: this.sessionId
 		});
 	};
