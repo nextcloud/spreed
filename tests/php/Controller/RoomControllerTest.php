@@ -41,6 +41,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RoomControllerTest extends \Test\TestCase {
 
@@ -58,6 +59,8 @@ class RoomControllerTest extends \Test\TestCase {
 	protected $chatManager;
 	/** @var GuestManager|MockObject */
 	protected $guestManager;
+	/** @var EventDispatcherInterface|MockObject */
+	protected $dispatcher;
 	/** @var MessageParser|MockObject */
 	protected $messageParser;
 	/** @var ITimeFactory|MockObject */
@@ -76,6 +79,7 @@ class RoomControllerTest extends \Test\TestCase {
 		$this->manager = $this->createMock(Manager::class);
 		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->chatManager = $this->createMock(ChatManager::class);
+		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->l = $this->createMock(IL10N::class);
@@ -97,6 +101,7 @@ class RoomControllerTest extends \Test\TestCase {
 			$this->manager,
 			$this->guestManager,
 			$this->chatManager,
+			$this->dispatcher,
 			$this->messageParser,
 			$this->timeFactory,
 			$this->l
