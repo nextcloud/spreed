@@ -35,6 +35,10 @@ watch-js:
 clean:
 	rm -f ../js/admin/*.js
 	rm -f ../js/admin/*.js.map
+	rm -f ../js/collections.js
+	rm -f ../js/collections.js.map
+	rm -f ../js/collectionsintegration.js
+	rm -f ../js/collectionsintegration.js.map
 	rm -rf $(build_dir)
 
 clean-dev:

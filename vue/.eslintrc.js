@@ -31,13 +31,17 @@ module.exports = {
 	settings: {
 		'import/resolver': {
 			webpack: {
-				config: 'webpack.common.js'
+				config: './webpack.common.js',
+				'config-index': 1
 			},
 			node: {
 				paths: ['src'],
 				extensions: ['.js', '.vue']
 			}
-		}
+		},
+		'import/ignore': [
+			'node_modules'
+		]
 	},
 	plugins: ['vue', 'node'],
 	rules: {

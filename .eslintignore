@@ -1,4 +1,6 @@
 /js/admin/*
+/js/collections.js
+/js/collectionsintegration.js
 /js/tests/*
 /js/vendor/*
 /js/simplewebrtc/*

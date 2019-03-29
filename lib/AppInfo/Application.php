@@ -28,6 +28,8 @@ use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\Command\Listener as CommandListener;
 use OCA\Spreed\Chat\Parser\Listener as ParserListener;
 use OCA\Spreed\Chat\SystemMessage\Listener as SystemMessageListener;
+use OCA\Spreed\Collaboration\Resources\ConversationProvider;
+use OCA\Spreed\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
 use OCA\Spreed\Files\TemplateLoader as FilesTemplateLoader;
@@ -48,6 +50,7 @@ use OCP\AppFramework\App;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Collaboration\Resources\IManager as IResourceManager;
 use OCP\IServerContainer;
 use OCP\IUser;
 use OCP\Settings\IManager;
@@ -93,6 +96,7 @@ class Application extends App {
 
 		$this->extendDefaultContentSecurityPolicy();
 		$this->registerNotifier($server);
+		$this->registerCollaborationResourceProvider($server);
 		$this->getContainer()->registerCapability(Capabilities::class);
 
 		$dispatcher = $server->getEventDispatcher();
@@ -108,6 +112,7 @@ class Application extends App {
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);
+		ResourceListener::register($dispatcher);
 
 		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
@@ -126,6 +131,15 @@ class Application extends App {
 				'id' => 'spreed',
 				'name' => $l->t('Talk'),
 			];
+		});
+	}
+
+	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
+		/** @var IResourceManager $resourceManager */
+		$resourceManager = $server->query(IResourceManager::class);
+		$resourceManager->registerResourceProvider(ConversationProvider::class);
+		\OC::$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
+			\OCP\Util::addScript('spreed', 'collections');
 		});
 	}
 
