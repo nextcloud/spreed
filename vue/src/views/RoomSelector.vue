@@ -119,7 +119,8 @@ export default {
 			types: {
 				ROOM_TYPE_ONE_TO_ONE: 1,
 				ROOM_TYPE_GROUP: 2,
-				ROOM_TYPE_PUBLIC: 3
+				ROOM_TYPE_PUBLIC: 3,
+				ROOM_TYPE_CHANGELOG: 4
 			}
 		}
 	},
@@ -133,6 +134,7 @@ export default {
 		availableRooms() {
 			return this.rooms.filter((room) => {
 				return room.token !== this.currentRoom
+					&& room.type !== this.types.ROOM_TYPE_CHANGELOG
 					&& room.objectType !== 'file'
 					&& room.objectType !== 'share:password'
 			})
