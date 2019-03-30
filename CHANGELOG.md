@@ -1,5 +1,5 @@
 # Changelog
-# Version: 5.0.2.3.1
+# Version: 5.0.2.4
 
-*4438be2e*
-- Fix uploading msg not showing properly.
+*769e6f8d* 
+- Save msg as a draft and restore it if possible.
