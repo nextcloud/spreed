@@ -5,6 +5,7 @@ OC.L10N.register(
     "{name} (public)" : "{name} (public)",
     "New conversation …" : "Nouvelle conversation ...",
     "Participants" : "Participants",
+    "Collections" : "Albums",
     "Chat" : "Tchat",
     "Talk" : "Discussion",
     "Exit fullscreen (f)" : "Quitter le plein écran (f)",
