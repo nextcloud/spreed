@@ -54,7 +54,12 @@ class Listener {
 
 			/** @var Changelog $parser */
 			$parser = \OC::$server->query(Changelog::class);
-			$parser->parseMessage($message);
+			try {
+				$parser->parseMessage($message);
+				$event->stopPropagation();
+			} catch (\OutOfBoundsException $e) {
+				// Unknown message, ignore
+			}
 		}, -75);
 
 		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
