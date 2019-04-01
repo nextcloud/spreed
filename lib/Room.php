@@ -468,7 +468,7 @@ class Room {
 			return true;
 		}
 
-		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL, self::CHANGELOG_CONVERSATION], true)) {
 			return false;
 		}
 
