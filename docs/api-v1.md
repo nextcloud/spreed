@@ -49,6 +49,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `1` "one to one"
 * `2` group
 * `3` public
+* `4` changelog
 
 ### Read-only states
 * `0` read-write
