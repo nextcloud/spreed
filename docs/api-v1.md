@@ -62,6 +62,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `4` guest
 * `5` user following a public link
 
+### Actor types of chat messages
+* `guests` - guest users
+* `users` - logged-in users
+* `bots` - used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
 
 ## Capabilities
 
