@@ -109,11 +109,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->assertStatusCode($this->response, 200);
 
 		$rooms = $this->getDataFromResponse($this->response);
+
+		$rooms = array_filter($rooms, function($room) {
+			return $room['type'] !== 4;
+		});
+
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($rooms);
 			return;
 		}
-
 
 		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
 		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($room, $expectedRoom) {
@@ -165,6 +169,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$isParticipant = $isParticipant === 'is';
 
 		$rooms = $this->getDataFromResponse($this->response);
+
+		$rooms = array_filter($rooms, function($room) {
+			return $room['type'] !== 4;
+		});
 
 		if ($isParticipant) {
 			PHPUnit_Framework_Assert::assertNotEmpty($rooms);

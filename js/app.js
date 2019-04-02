@@ -52,6 +52,7 @@
 		ROOM_TYPE_ONE_TO_ONE: 1,
 		ROOM_TYPE_GROUP: 2,
 		ROOM_TYPE_PUBLIC: 3,
+		ROOM_TYPE_CHANGELOG: 4,
 
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
@@ -405,7 +406,9 @@
 			// happens it will overlap with the content area (the narrower the
 			// window the larger the overlap). Due to this the sidebar is opened
 			// automatically only if it will not overlap with the content area.
-			if ($(window).width() > 1111) {
+			if (this.activeRoom.get('type') === this.ROOM_TYPE_CHANGELOG) {
+				this._sidebarView.close();
+			} else if (this.activeRoom.get('type') !== this.ROOM_TYPE_CHANGELOG && $(window).width() > 1111) {
 				this._sidebarView.open();
 			}
 

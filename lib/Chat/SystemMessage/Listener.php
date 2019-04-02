@@ -144,6 +144,10 @@ class Listener {
 			/** @var Room $room */
 			$room = $event->getSubject();
 
+			if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+				return;
+			}
+
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 

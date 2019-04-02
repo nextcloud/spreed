@@ -63,10 +63,11 @@ class RemoveEmptyRooms extends TimedJob {
 	}
 
 	public function callback(Room $room): void {
-		if ($room->getType() === Room::ONE_TO_ONE_CALL && $room->getNumberOfParticipants(false) <= 1) {
-			$room->deleteRoom();
-			$this->numDeletedRooms++;
-		} else if ($room->getNumberOfParticipants(false) === 0 && $room->getObjectType() !== 'file') {
+		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			return;
+		}
+
+		if ($room->getNumberOfParticipants(false) === 0 && $room->getObjectType() !== 'file') {
 			$room->deleteRoom();
 			$this->numDeletedRooms++;
 		}

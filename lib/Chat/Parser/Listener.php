@@ -48,6 +48,24 @@ class Listener {
 			/** @var Message $message */
 			$message = $event->getSubject();
 
+			if ($message->getMessageType() !== 'comment') {
+				return;
+			}
+
+			/** @var Changelog $parser */
+			$parser = \OC::$server->query(Changelog::class);
+			try {
+				$parser->parseMessage($message);
+				$event->stopPropagation();
+			} catch (\OutOfBoundsException $e) {
+				// Unknown message, ignore
+			}
+		}, -75);
+
+		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
+			/** @var Message $message */
+			$message = $event->getSubject();
+
 			if ($message->getMessageType() !== 'system') {
 				return;
 			}

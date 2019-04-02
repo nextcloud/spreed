@@ -47,6 +47,8 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class RoomController extends AEnvironmentAwareController {
 	/** @var string|null */
@@ -63,6 +65,8 @@ class RoomController extends AEnvironmentAwareController {
 	private $guestManager;
 	/** @var ChatManager */
 	private $chatManager;
+	/** @var EventDispatcherInterface */
+	private $dispatcher;
 	/** @var MessageParser */
 	private $messageParser;
 	/** @var ITimeFactory */
@@ -79,6 +83,7 @@ class RoomController extends AEnvironmentAwareController {
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
+								EventDispatcherInterface $dispatcher,
 								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
 								IL10N $l10n) {
@@ -90,6 +95,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->manager = $manager;
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
+		$this->dispatcher = $dispatcher;
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
@@ -103,6 +109,10 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getRooms(): DataResponse {
+		$this->dispatcher->dispatch(self::class . '::preGetRooms', new GenericEvent(null, [
+			'userId' => $this->userId,
+		]));
+
 		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
 
 		$return = [];
@@ -740,7 +750,8 @@ class RoomController extends AEnvironmentAwareController {
 				&& $room->getNumberOfModerators() === 1) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
-		} else if ($room->getNumberOfParticipants() === 1) {
+		} else if ($room->getType() !== Room::CHANGELOG_CONVERSATION &&
+			$room->getNumberOfParticipants() === 1) {
 			$room->deleteRoom();
 			return new DataResponse();
 		}
