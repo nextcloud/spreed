@@ -362,10 +362,7 @@ var spreedPeerConnectionTable = [];
 			debug: false,
 			media: {
 				audio: true,
-				video: {
-					width: { max: 1280 },
-					height: { max: 720 }
-				}
+				video: true
 			},
 			autoAdjustMic: false,
 			audioFallback: true,
