@@ -63,6 +63,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	<commands>
 		<command>OCA\Spreed\Command\Command\Add</command>
+		<command>OCA\Spreed\Command\Command\AddSamples</command>
 		<command>OCA\Spreed\Command\Command\Delete</command>
 		<command>OCA\Spreed\Command\Command\ListCommand</command>
 		<command>OCA\Spreed\Command\Command\Update</command>
