@@ -4,6 +4,7 @@
   * [Conversation types](#conversation-types)
   * [Read-only states](#read-only-states)
   * [Participant types](#participant-types)
+  * [Actor types of chat messages](#actor-types-of-chat-messages)
 - [Conversation management](#conversation-management)
   * [Creating a new conversation](#creating-a-new-conversation)
   * [Get user´s conversations](#get-user-s-conversations)
