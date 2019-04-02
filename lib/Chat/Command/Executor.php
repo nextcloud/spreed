@@ -126,6 +126,10 @@ class Executor {
 			}
 		}
 
+		if (empty($helps)) {
+			return $this->l->t('There are currently no commands available.');
+		}
+
 		// FIXME Implement a useful help
 		return implode("\n", $helps);
 	}

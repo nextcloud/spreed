@@ -22,7 +22,15 @@
 
 <template>
 	<div id="chat_commands" class="commands section">
-		<h2>{{ t('spreed', 'Commands') }}</h2>
+		<h2>
+			{{ t('spreed', 'Commands') }}
+			<small>
+				{{ t('spreed', 'Beta') }}
+				<span class="icon icon-beta-feature" />
+			</small>
+		</h2>
+
+		<p class="settings-hint" v-html="commandHint" />
 
 		<div id="commands_list">
 			<div class="head name">
@@ -61,6 +69,14 @@ export default {
 		}
 	},
 
+	computed: {
+		commandHint() {
+			return t('spreed', 'Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>.', {
+				attributes: 'target="_blank" rel="noreferrer noopener" href="https://github.com/nextcloud/spreed/blob/master/docs/commands.md"'
+			}, undefined, { escape: false })
+		}
+	},
+
 	mounted() {
 		this.commands = OCP.InitialState.loadState('talk', 'commands')
 	}
@@ -78,6 +94,18 @@ export default {
 			padding-bottom: 5px;
 			border-bottom: 1px solid var(--color-border);
 			font-weight: bold;
+		}
+	}
+	small {
+		color: var(--color-warning);
+		border: 1px solid var(--color-warning);
+		border-radius: 16px;
+		padding: 0 9px;
+
+		.icon {
+			width: 16px;
+			height: 16px;
+			margin-bottom: 4px;
 		}
 	}
 }
