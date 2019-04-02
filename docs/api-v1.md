@@ -1,35 +1,36 @@
 # API v1 Documentation
 
 - [Constants](#constants)
-  * [Room types](#room-types)
+  * [Conversation types](#conversation-types)
+  * [Read-only states](#read-only-states)
   * [Participant types](#participant-types)
-- [Room management](#room-management)
-  * [Creating a new room](#creating-a-new-room)
-  * [Get user´s rooms](#get-user-s-rooms)
-  * [Get single room (also for guests)](#get-single-room-also-for-guests)
-  * [Rename a room](#rename-a-room)
-  * [Set read-only for a room](#set-read-only-for-a-room)
-  * [Set password for a room](#set-password-for-a-room)
-  * [Delete a room](#delete-a-room)
-  * [Allow guests in a room (public room)](#allow-guests-in-a-room-public-room)
-  * [Disallow guests in a room (group room)](#disallow-guests-in-a-room-group-room)
-  * [Add room to favorites](#add-room-to-favorites)
-  * [Remove room from favorites](#remove-room-from-favorites)
+- [Conversation management](#conversation-management)
+  * [Creating a new conversation](#creating-a-new-conversation)
+  * [Get user´s conversations](#get-user-s-conversations)
+  * [Get single conversation (also for guests)](#get-single-conversation-also-for-guests)
+  * [Rename a conversation](#rename-a-conversation)
+  * [Set read-only for a conversation](#set-read-only-for-a-conversation)
+  * [Set password for a conversation](#set-password-for-a-conversation)
+  * [Delete a conversation](#delete-a-conversation)
+  * [Allow guests in a conversation (public conversation)](#allow-guests-in-a-conversation-public-conversation)
+  * [Disallow guests in a conversation (group conversation)](#disallow-guests-in-a-conversation-group-conversation)
+  * [Add conversation to favorites](#add-conversation-to-favorites)
+  * [Remove conversation from favorites](#remove-conversation-from-favorites)
   * [Set notification level](#set-notification-level)
 - [Participant management](#participant-management)
-  * [Get list of participants in a room](#get-list-of-participants-in-a-room)
-  * [Add a participant to a room](#add-a-participant-to-a-room)
-  * [Delete a participant from a room](#delete-a-participant-from-a-room)
-  * [Remove yourself from a room](#remove-yourself-from-a-room)
+  * [Get list of participants in a conversation](#get-list-of-participants-in-a-conversation)
+  * [Add a participant to a conversation](#add-a-participant-to-a-conversation)
+  * [Delete a participant from a conversation](#delete-a-participant-from-a-conversation)
+  * [Remove yourself from a conversation](#remove-yourself-from-a-conversation)
   * [Promote a user to a moderator](#promote-a-user-to-a-moderator)
   * [Demote a moderator to a user](#demote-a-moderator-to-a-user)
 - [Call management](#call-management)
   * [Get list of connected participants](#get-list-of-connected-participants)
   * [Join a call](#join-a-call)
   * [Send ping to keep the call alive](#send-ping-to-keep-the-call-alive)
-  * [Leave a call (but staying in the room for future calls)](#leave-a-call-but-staying-in-the-room-for-future-calls)
+  * [Leave a call (but staying in the conversation for future calls)](#leave-a-call-but-staying-in-the-conversation-for-future-calls)
 - [Chat](#chat)
-  * [Receive chat messages of a room](#receive-chat-messages-of-a-room)
+  * [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
   * [Sending a new chat message](#sending-a-new-chat-message)
   * [Get mention autocomplete suggestions](#get-mention-autocomplete-suggestions)
   * [System messages](#system-messages)
@@ -44,7 +45,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Constants
 
-### Room types
+### Conversation types
 * `1` "one to one"
 * `2` group
 * `3` public
@@ -70,19 +71,19 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ### 3.1
 * `guest-signaling` - Guests can do signaling via api endpoints
-* `empty-group-room` - Group rooms can be created without inviting a Nextcloud user group by default
+* `empty-group-room` - Group conversations can be created without inviting a Nextcloud user group by default
 
 ### 3.2
 * `guest-display-names` - Display names of guests are stored in the database, can be set via API (not WebRTC only) and are used on returned comments/participants/etc.
-* `multi-room-users` - Users can be in multiple rooms at the same time now, therefor signaling now also requires the room/call token on the URL.
+* `multi-room-users` - Users can be in multiple conversations at the same time now, therefor signaling now also requires the conversation token on the URL.
 * `chat-v2` - Chat messages are now [Rich Object Strings](https://github.com/nextcloud/server/issues/1706) and pagination is available, the previous `chat` is not available anymore.
 
 ### 4.0
-* `favorites` - Rooms can be marked as favorites which will pin them to the top of the room list.
-* `last-room-activity` - Rooms have the `lastActivity` attribute and should be sorted by that instead of the last ping of the user.
+* `favorites` - Conversations can be marked as favorites which will pin them to the top of the conversation list.
+* `last-room-activity` - Conversations have the `lastActivity` attribute and should be sorted by that instead of the last ping of the user.
 * `no-ping` - The ping endpoint has been removed. Ping is updated with a call to fetch the signaling or chat messages instead.
 * `system-messages` - Chat messages have a `systemMessage` attribute and can be generated by the system
-* `mention-flag` - The room list populates the boolean `unreadMention` when the user was mentioned since their last visit
+* `mention-flag` - The conversation list populates the boolean `unreadMention` when the user was mentioned since their last visit
 * `in-call-flags` - A new flag `participantFlags` has been introduced and is replacing the `participantInCall` boolean.
 
 ### 5.0
@@ -91,12 +92,12 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `invite-groups-and-mails` - Groups can be added to existing conversations via the add participant endpoint
 
 ### 6.0
-* `locked-one-to-one-rooms` - One-to-one conversations are now locked to the users. Neither guests nor other participants can be added, so the options to do that should be hidden as well. Also a user can only leave a one-to-one room (not delete). It will be deleted when the other participant left too. If the other participant posts a new chat message or starts a call, the left-participant will be re-added.
-* `read-only-rooms` - Rooms can be in `read-only` mode which means people can not do calls or write chat messages.
+* `locked-one-to-one-rooms` - One-to-one conversations are now locked to the users. Neither guests nor other participants can be added, so the options to do that should be hidden as well. Also a user can only leave a one-to-one conversation (not delete). It will be deleted when the other participant left too. If the other participant posts a new chat message or starts a call, the left-participant will be re-added.
+* `read-only-rooms` - Conversations can be in `read-only` mode which means people can not do calls or write chat messages.
 
-## Room management
+## Conversation management
 
-### Creating a new room
+### Creating a new conversation
 
 * Method: `POST`
 * Endpoint: `/room`
@@ -106,13 +107,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     ------|------|------------
     `roomType` | int |
     `invite` | string | user id (`roomType = 1`), group id (`roomType = 2` - optional)
-    `roomName` | string | room name (Not available for `roomType = 1`)
+    `roomName` | string | conversation name (Not available for `roomType = 1`)
 
 * Response:
     - Header:
-        + `200 OK` when the "one to one" room already exists
-        + `201 Created` when the room was created
-        + `400 Bad Request` when an invalid room type was given
+        + `200 OK` when the "one to one" conversation already exists
+        + `201 Created` when the conversation was created
+        + `400 Bad Request` when an invalid conversation type was given
         + `401 Unauthorized` when the user is not logged in
         + `404 Not Found` when the user or group does not exist
 
@@ -120,11 +121,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
         field | type | Description
         ------|------|------------
-        `token` | string | Token identifier of the room which is used for further interaction
-        `name` | string | Name of the room (can also be empty)
+        `token` | string | Token identifier of the conversation which is used for further interaction
+        `name` | string | Name of the conversation (can also be empty)
         `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
 
-### Get user´s rooms
+### Get user´s conversations
 
 * Method: `GET`
 * Endpoint: `/room`
@@ -135,13 +136,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `401 Unauthorized` when the user is not logged in
 
     - Data:
-        Array of rooms, each room has at least:
+        Array of conversations, each conversation has at least:
 
         field | type | Description
         ------|------|------------
-        `token` | string | Token identifier of the room which is used for further interaction
+        `token` | string | Token identifier of the conversation which is used for further interaction
         `type` | int |
-        `name` | string | Name of the room (can also be empty)
+        `name` | string | Name of the conversation (can also be empty)
         `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
         `participantType` | int | Permissions level of the current user
         `participantInCall` | bool | Flag if the current user is in the call (deprecated, use `participantFlags` instead)
@@ -151,18 +152,18 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `numGuests` | int | Number of active guests
         `lastPing` | int | Timestamp of the last ping of the current user (should be used for sorting)
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
-        `hasPassword` | bool | Flag if the room has a password
-        `hasCall` | bool | Flag if the room has an active call
-        `lastActivity` | int | Timestamp of the last activity in the room, in seconds and UTC time zone
-        `isFavorite` | bool | Flag if the room is favorited by the user
+        `hasPassword` | bool | Flag if the conversation has a password
+        `hasCall` | bool | Flag if the conversation has an active call
+        `lastActivity` | int | Timestamp of the last activity in the conversation, in seconds and UTC time zone
+        `isFavorite` | bool | Flag if the conversation is favorited by the user
         `notificationLevel` | int | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
-        `unreadMessages` | int | Number of unread chat messages in the room (only available with `chat-v2` capability)
+        `unreadMessages` | int | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | Flag if the user was mentioned since their last visit
-        `lastMessage` | message | Last message in a room if available, otherwise empty
-        `objectType` | string | The type of object that the room is associated with; "share:password" if the room is used to request a password for a share, otherwise empty
+        `lastMessage` | message | Last message in a conversation if available, otherwise empty
+        `objectType` | string | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
         `objectId` | string | Share token if "objectType" is "share:password", otherwise empty
        
-### Get single room (also for guests)
+### Get single conversation (also for guests)
 
 * Method: `GET`
 * Endpoint: `/room/{token}`
@@ -170,11 +171,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
-    - Data: See array definition in `Get user´s rooms`
+    - Data: See array definition in `Get user´s conversations`
 
-### Rename a room
+### Rename a conversation
 
 * Method: `PUT`
 * Endpoint: `/room/{token}`
@@ -182,17 +183,17 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `roomName` | string | New name for the room (1-200 characters)
+    `roomName` | string | New name for the conversation (1-200 characters)
 
 * Response:
     - Header:
         + `200 OK`
         + `400 Bad Request` When the name is too long or empty
         + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the room could not be found for the participant
-        + `405 Method Not Allowed` When the room is a one to one room
+        + `404 Not Found` When the conversation could not be found for the participant
+        + `405 Method Not Allowed` When the conversation is a one to one conversation
 
-### Set read-only for a room
+### Set read-only for a conversation
 
 * Method: `PUT`
 * Endpoint: `/room/{token}/read-only`
@@ -200,16 +201,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `state` | int | New state for the room
+    `state` | int | New state for the conversation
 
 * Response:
     - Header:
         + `200 OK`
-        + `400 Bad Request` When the room type does not support read-only (only group and public room atm)
-        + `403 Forbidden` When the current user is not a moderator/owner or the room is not a public room
-        + `404 Not Found` When the room could not be found for the participant
+        + `400 Bad Request` When the conversation type does not support read-only (only group and public conversation atm)
+        + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Set password for a room
+### Set password for a conversation
 
 * Method: `PUT`
 * Endpoint: `/room/{token}/password`
@@ -217,15 +218,15 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `password` | string | New password for the room
+    `password` | string | New password for the conversation
 
 * Response:
     - Header:
         + `200 OK`
-        + `403 Forbidden` When the current user is not a moderator/owner or the room is not a public room
-        + `404 Not Found` When the room could not be found for the participant
+        + `403 Forbidden` When the current user is not a moderator/owner or the conversation is not a public conversation
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Delete a room
+### Delete a conversation
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}`
@@ -234,9 +235,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Allow guests in a room (public room)
+### Allow guests in a conversation (public conversation)
 
 * Method: `POST`
 * Endpoint: `/room/{token}/public`
@@ -245,9 +246,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Disallow guests in a room (group room)
+### Disallow guests in a conversation (group conversation)
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/public`
@@ -256,9 +257,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Set room password
+### Set conversation password
 
 * Method: `PUT`
 * Endpoint: `/room/{token}/password`
@@ -266,16 +267,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `password` | string | Set a new password for the room
+    `password` | string | Set a new password for the conversation
 
 * Response:
     - Header:
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
-        + `403 Forbidden` When the room is not a public room
-        + `404 Not Found` When the room could not be found for the participant
+        + `403 Forbidden` When the conversation is not a public conversation
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Add room to favorites
+### Add conversation to favorites
 
 * Method: `POST`
 * Endpoint: `/room/{token}/favorite`
@@ -283,9 +284,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant or the participant is a guest
+        + `404 Not Found` When the conversation could not be found for the participant or the participant is a guest
 
-### Remove room from favorites
+### Remove conversation from favorites
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/favorite`
@@ -293,7 +294,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant or the participant is a guest
+        + `404 Not Found` When the conversation could not be found for the participant or the participant is a guest
 
 ### Set notification level
 
@@ -309,11 +310,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `200 OK`
         + `400 Bad Request` When the the given level is invalid
-        + `404 Not Found` When the room could not be found for the participant or the participant is a guest
+        + `404 Not Found` When the conversation could not be found for the participant or the participant is a guest
 
 ## Participant management
 
-### Get list of participants in a room
+### Get list of participants in a conversation
 
 * Method: `GET`
 * Endpoint: `/room/{token}/participants`
@@ -321,7 +322,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
     - Data:
         Array of participants, each participant has at least:
@@ -334,7 +335,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `lastPing` | int | Timestamp of the last ping of the user (should be used for sorting)
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
 
-### Add a participant to a room
+### Add a participant to a conversation
 
 * Method: `POST`
 * Endpoint: `/room/{token}/participants`
@@ -350,16 +351,16 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `400 Bad Request` When the source type is unknown
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the user or group to add could not be found
 
     - Data:
 
         field | type | Description
         ------|------|------------
-        `type` | int | In case the room type changed, the new value is returned
+        `type` | int | In case the conversation type changed, the new value is returned
 
-### Delete a participant from a room
+### Delete a participant from a conversation
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants`
@@ -375,10 +376,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `400 Bad Request` When the participant is a moderator/owner and there are no other moderators/owners left.
         + `403 Forbidden` When the current user is not a moderator/owner
         + `403 Forbidden` When the participant to remove is an owner
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
 
-### Remove a guest from a room
+### Remove a guest from a conversation
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/guests`
@@ -393,10 +394,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `403 Forbidden` When the current user is not a moderator/owner
         + `403 Forbidden` When the target participant is not a guest
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the target participant could not be found
 
-### Remove yourself from a room
+### Remove yourself from a conversation
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/self`
@@ -405,9 +406,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `200 OK`
         + `400 Bad Request` When the participant is a moderator/owner and there are no other moderators/owners left.
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Join a room (available for call and chat)
+### Join a conversation (available for call and chat)
 
 * Method: `POST`
 * Endpoint: `/room/{token}/participants/active`
@@ -415,13 +416,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the room has `hasPassword` set to true.
+    `password` | string | Optional: Password is only required for users which are of type `4` or `5` and only when the conversation has `hasPassword` set to true.
 
 * Response:
     - Header:
         + `200 OK`
         + `403 Forbidden` When the password is required and didn't match
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
     - Data:
 
@@ -429,7 +430,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         ------|------|------------
         `sessionId` | string | 512 character long string
 
-### Leave a room (not available for call and chat anymore)
+### Leave a conversation (not available for call and chat anymore)
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/participants/active`
@@ -437,7 +438,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
 ### Promote a user to a moderator
 
@@ -455,7 +456,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `400 Bad Request` When the participant to promote is not a normal user (type `3`)
         + `403 Forbidden` When the current user is not a moderator/owner
         + `403 Forbidden` When the participant to remove is an owner
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
 
 ### Demote a moderator to a user
@@ -473,7 +474,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `400 Bad Request` When the participant to demote is not a moderator (type `2`)
         + `403 Forbidden` When the current user is not a moderator/owner
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
 
 
@@ -487,7 +488,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
     - Data:
         Array of participants, each participant has at least:
@@ -506,9 +507,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
-### Leave a call (but staying in the room for future calls and chat)
+### Leave a call (but staying in the conversation for future calls and chat)
 
 * Method: `DELETE`
 * Endpoint: `/call/{token}`
@@ -516,11 +517,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
 ## Chat
 
-### Receive chat messages of a room
+### Receive chat messages of a conversation
 
 * Method: `GET`
 * Endpoint: `/chat/{token}`
@@ -528,7 +529,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `lookIntoFuture` | int | `1` Poll and wait for new message or `0` get history of a room
+    `lookIntoFuture` | int | `1` Poll and wait for new message or `0` get history of a conversation
     `limit` | int | Number of chat messages to receive (100 by default, 200 at most)
     `timeout` | int | `$lookIntoFuture = 1` only, Number of seconds to wait for new messages (30 by default, 60 at most)
     `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
@@ -537,7 +538,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Status code:
         + `200 OK`
         + `304 Not Modified` When there were no older/newer messages
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
     - Header:
 
@@ -551,7 +552,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `id` | int | ID of the comment
-        `token` | string | Room token
+        `token` | string | Conversation token
         `actorType` | string | `guests` or `users`
         `actorId` | string | User id of the message author
         `actorDisplayName` | string | Display name of the message author
@@ -575,11 +576,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `201 Created`
         + `400 Bad Request` In case of any other error
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
         + `413 Payload Too Large` When the message was longer than the allowed limit of 1000 characters
 
     - Data:
-        The full message array of the new message, as defined in [Receive chat messages of a room](#receive-chat-messages-of-a-room)
+        The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
 
 ### Get mention autocomplete suggestions
 
@@ -595,7 +596,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `200 OK`
-        + `404 Not Found` When the room could not be found for the participant
+        + `404 Not Found` When the conversation could not be found for the participant
 
     - Data:
         Array of suggestions, each suggestion has at least:
@@ -642,7 +643,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the room is not found or the session does not exist in the room
+        + `404 Not Found` When the conversation is not found or the session does not exist in the conversation
         + `403 Forbidden` When the user is logged in
         
         
