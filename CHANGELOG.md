@@ -1,20 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 5.99.10 – 2019-04-02
+## 6.0.0 – 2019-04-DD
 ### Added
-- Administrators can now define commands which can be used in the chat. See [commands.md](https://github.com/nextcloud/spreed/blob/master/docs/commands.md) for more information
+- Administrators can now define commands which can be used in the chat. See [commands.md](https://github.com/nextcloud/spreed/blob/master/docs/commands.md) for more information. You can install some sample commands via the console.
   [#1453](https://github.com/nextcloud/spreed/pull/1453)
+  [#1662](https://github.com/nextcloud/spreed/pull/1662)
+- There is now a "Talk updates" conversation which will help the user to discover some features
+  [#1616](https://github.com/nextcloud/spreed/pull/1616)
+  [#1662](https://github.com/nextcloud/spreed/pull/1662)
 - `@all` mentions all participants in the conversation
   [#1531](https://github.com/nextcloud/spreed/pull/1531)
 - Allow to get the last sent message again with `arrow-up`
   [#1520](https://github.com/nextcloud/spreed/pull/1520)
+- Conversations can be added to the new Nextcloud 16 projects
+  [#1611](https://github.com/nextcloud/spreed/pull/1611)
+  [#1663](https://github.com/nextcloud/spreed/pull/1663)
 - Conversations associated to files now have a link to the file
   [#1387](https://github.com/nextcloud/spreed/pull/1387)
 - The Talk app can now be restricted to a group of users in the Talk administration settings
   [#1585](https://github.com/nextcloud/spreed/pull/1585)
 - Show a warning when a call has many participants and no external signaling server is used
   [#1649](https://github.com/nextcloud/spreed/pull/1649)
+- Added an easy-to-find option to copy the link of a conversation
+  [#1670](https://github.com/nextcloud/spreed/pull/1670)
 
 ### Changed
 - One-to-one conversations are now persistent and can not be turned into group conversations by accident. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore.
@@ -40,6 +49,8 @@ All notable changes to this project will be documented in this file.
   [#1426](https://github.com/nextcloud/spreed/pull/1426)
   [#1496](https://github.com/nextcloud/spreed/pull/1496)
   [#1502](https://github.com/nextcloud/spreed/pull/1502)
+- Fixed an issue when a link was posted into the chat at the end of a line
+  [#1666](https://github.com/nextcloud/spreed/pull/1666)
 
 ## 5.0.2 – 2019-01-30
 ### Changed
