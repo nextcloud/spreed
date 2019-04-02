@@ -1,7 +1,7 @@
 {
   "name": "spreed",
-  "version": "1.0.0",
-  "description": "This code is a proof of concept. Do not use it in production.",
+  "version": "6.0.0",
+  "description": "",
   "main": " ",
   "scripts": {
     "test": ""

@@ -1,6 +1,46 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.99.10 – 2019-04-02
+### Added
+- Administrators can now define commands which can be used in the chat. See [commands.md](https://github.com/nextcloud/spreed/blob/master/docs/commands.md) for more information
+  [#1453](https://github.com/nextcloud/spreed/pull/1453)
+- `@all` mentions all participants in the conversation
+  [#1531](https://github.com/nextcloud/spreed/pull/1531)
+- Allow to get the last sent message again with `arrow-up`
+  [#1520](https://github.com/nextcloud/spreed/pull/1520)
+- Conversations associated to files now have a link to the file
+  [#1387](https://github.com/nextcloud/spreed/pull/1387)
+- The Talk app can now be restricted to a group of users in the Talk administration settings
+  [#1585](https://github.com/nextcloud/spreed/pull/1585)
+- Show a warning when a call has many participants and no external signaling server is used
+  [#1649](https://github.com/nextcloud/spreed/pull/1649)
+
+### Changed
+- One-to-one conversations are now persistent and can not be turned into group conversations by accident. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore.
+  [#1591](https://github.com/nextcloud/spreed/pull/1591)
+  [#1588](https://github.com/nextcloud/spreed/pull/1588)
+- Conversations must have a name now
+  [#1567](https://github.com/nextcloud/spreed/pull/1567)
+
+### Fixed
+- Fix multiple race-conditions that could interrupt connections, end calls or prevent connections between single participants
+  [#1522](https://github.com/nextcloud/spreed/pull/1522)
+  [#1533](https://github.com/nextcloud/spreed/pull/1533)
+  [#1534](https://github.com/nextcloud/spreed/pull/1534)
+  [#1549](https://github.com/nextcloud/spreed/pull/1549)
+- Use better icons when a file without preview or a folder is shared into the chat
+  [#1601](https://github.com/nextcloud/spreed/pull/1601)
+- Prevent issues when two participants share their screens
+  [#1571](https://github.com/nextcloud/spreed/pull/1571)
+- Correctly remember last media state when reloading in a call
+  [#1548](https://github.com/nextcloud/spreed/pull/1548)
+  [#5174](https://github.com/nextcloud/spreed/pull/1574)
+- Do not show conversation names and other details if the user is not a participant
+  [#1426](https://github.com/nextcloud/spreed/pull/1426)
+  [#1496](https://github.com/nextcloud/spreed/pull/1496)
+  [#1502](https://github.com/nextcloud/spreed/pull/1502)
+
 ## 5.0.2 – 2019-01-30
 ### Changed
 - Show autocompletion as soon as "@" is typed 
