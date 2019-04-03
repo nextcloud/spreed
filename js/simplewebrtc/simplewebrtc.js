@@ -1,3 +1,5 @@
+/* global module */
+
 var WebRTC = require('./webrtc');
 var WildEmitter = require('wildemitter');
 var webrtcSupport = require('webrtcsupport');

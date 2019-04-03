@@ -1,3 +1,5 @@
+/* global module, chrome */
+
 // getScreenMedia helper by @HenrikJoreteg
 var getUserMedia = function(constraints, callback) {
 	window.navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {

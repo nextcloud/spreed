@@ -1,6 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.SimpleWebRTC = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
+/* global module, chrome */
 // getScreenMedia helper by @HenrikJoreteg
 var getUserMedia = function getUserMedia(constraints, callback) {
   window.navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
@@ -211,6 +212,7 @@ typeof window !== 'undefined' && window.addEventListener('message', function (ev
 },{}],2:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var util = require('util');
 
 var hark = require('hark');
@@ -573,6 +575,7 @@ module.exports = LocalMedia;
 },{"./getscreenmedia":1,"hark":9,"mockconsole":11,"util":8,"wildemitter":31}],3:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var util = require('util');
 
 var webrtcSupport = require('webrtcsupport');
@@ -899,6 +902,7 @@ module.exports = Peer;
 },{"util":8,"webrtcsupport":30,"wildemitter":31}],4:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var WebRTC = require('./webrtc');
 
 var WildEmitter = require('wildemitter');
@@ -1342,6 +1346,7 @@ module.exports = SimpleWebRTC;
 },{"./webrtc":5,"attachmediastream":6,"mockconsole":11,"webrtcsupport":30,"wildemitter":31}],5:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var util = require('util');
 
 var webrtcSupport = require('webrtcsupport');
