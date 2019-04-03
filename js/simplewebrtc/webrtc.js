@@ -65,7 +65,7 @@ function WebRTC(opts) {
 			self.peers.forEach(function (peer) {
 				if (peer.enableDataChannels) {
 					var dc = peer.getDataChannel('hark');
-					if (dc.readyState != 'open') {
+					if (dc.readyState !== 'open') {
 						return;
 					}
 					dc.send(JSON.stringify({type: 'speaking'}));
@@ -79,7 +79,7 @@ function WebRTC(opts) {
 			self.peers.forEach(function (peer) {
 				if (peer.enableDataChannels) {
 					var dc = peer.getDataChannel('hark');
-					if (dc.readyState != 'open') {
+					if (dc.readyState !== 'open') {
 						return;
 					}
 					dc.send(JSON.stringify({type: 'stoppedSpeaking'}));
@@ -93,7 +93,7 @@ function WebRTC(opts) {
 			self.peers.forEach(function (peer) {
 				if (peer.enableDataChannels) {
 					var dc = peer.getDataChannel('hark');
-					if (dc.readyState != 'open') {
+					if (dc.readyState !== 'open') {
 						return;
 					}
 					dc.send(JSON.stringify({type: 'volume', volume: volume }));

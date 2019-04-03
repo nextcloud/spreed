@@ -85,7 +85,7 @@ function SimpleWebRTC(opts) {
 		if (message.type === 'offer') {
 			if (peers.length) {
 				peers.forEach(function (p) {
-					if (p.sid == message.sid) {
+					if (p.sid === message.sid) {
 						peer = p;
 					}
 				});
@@ -227,7 +227,7 @@ function SimpleWebRTC(opts) {
 	});
 
 	this.webrtc.on('channelMessage', function (peer, label, data) {
-		if (data.type == 'volume') {
+		if (data.type === 'volume') {
 			self.emit('remoteVolumeChange', peer, data.volume);
 		}
 	});

@@ -185,7 +185,7 @@ Peer.prototype.sendDirectly = function (channel, messageType, payload) {
 	};
 	this.logger.log('sending via datachannel', channel, messageType, message);
 	var dc = this.getDataChannel(channel);
-	if (dc.readyState != 'open') {
+	if (dc.readyState !== 'open') {
 		if (!this.pendingDCMessages.hasOwnProperty(channel)) {
 			this.pendingDCMessages[channel] = [];
 		}

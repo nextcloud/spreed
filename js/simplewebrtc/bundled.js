@@ -146,7 +146,7 @@ module.exports = function (mode, constraints, cb) {
             window.clearInterval(polly);
           }
 
-          if (stream.currentTime == lastTime) {
+          if (stream.currentTime === lastTime) {
             window.clearInterval(polly);
 
             if (stream.onended) {
@@ -174,11 +174,11 @@ module.exports = function (mode, constraints, cb) {
 };
 
 typeof window !== 'undefined' && window.addEventListener('message', function (event) {
-  if (event.origin != window.location.origin && !event.isTrusted) {
+  if (event.origin !== window.location.origin && !event.isTrusted) {
     return;
   }
 
-  if (event.data.type == 'gotScreen' && cache[event.data.id]) {
+  if (event.data.type === 'gotScreen' && cache[event.data.id]) {
     var data = cache[event.data.id];
     var constraints = data[1];
     var callback = data[0];
@@ -209,7 +209,7 @@ typeof window !== 'undefined' && window.addEventListener('message', function (ev
       constraints.video.mandatory.chromeMediaSourceId = event.data.sourceId;
       getUserMedia(constraints, callback);
     }
-  } else if (event.data.type == 'getScreenPending') {
+  } else if (event.data.type === 'getScreenPending') {
     window.clearTimeout(event.data.id);
   }
 });
@@ -779,7 +779,7 @@ Peer.prototype.sendDirectly = function (channel, messageType, payload) {
   this.logger.log('sending via datachannel', channel, messageType, message);
   var dc = this.getDataChannel(channel);
 
-  if (dc.readyState != 'open') {
+  if (dc.readyState !== 'open') {
     if (!this.pendingDCMessages.hasOwnProperty(channel)) {
       this.pendingDCMessages[channel] = [];
     }
@@ -1023,7 +1023,7 @@ function SimpleWebRTC(opts) {
     if (message.type === 'offer') {
       if (peers.length) {
         peers.forEach(function (p) {
-          if (p.sid == message.sid) {
+          if (p.sid === message.sid) {
             peer = p;
           }
         }); //if (!peer) peer = peers[0]; // fallback for old protocol versions
@@ -1168,7 +1168,7 @@ function SimpleWebRTC(opts) {
 
   });
   this.webrtc.on('channelMessage', function (peer, label, data) {
-    if (data.type == 'volume') {
+    if (data.type === 'volume') {
       self.emit('remoteVolumeChange', peer, data.volume);
     }
   });
@@ -1463,7 +1463,7 @@ function WebRTC(opts) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
 
-          if (dc.readyState != 'open') {
+          if (dc.readyState !== 'open') {
             return;
           }
 
@@ -1481,7 +1481,7 @@ function WebRTC(opts) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
 
-          if (dc.readyState != 'open') {
+          if (dc.readyState !== 'open') {
             return;
           }
 
@@ -1501,7 +1501,7 @@ function WebRTC(opts) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
 
-          if (dc.readyState != 'open') {
+          if (dc.readyState !== 'open') {
             return;
           }
 
