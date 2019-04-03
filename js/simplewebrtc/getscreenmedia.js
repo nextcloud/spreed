@@ -29,7 +29,9 @@ module.exports = function (mode, constraints, cb) {
 		// Chrome 71 dropped support for "window.chrome.webstore;".
 		var isCef = (chromever < 71) && !window.chrome.webstore;
 		// "known" crash in chrome 34 and 35 on linux
-		if (window.navigator.userAgent.match('Linux')) maxver = 35;
+		if (window.navigator.userAgent.match('Linux')) {
+			maxver = 35;
+		}
 
 		// check that the extension is installed by looking for a
 		// sessionStorage variable that contains the extension id
@@ -124,7 +126,9 @@ module.exports = function (mode, constraints, cb) {
 				// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1045810
 				var lastTime = stream.currentTime;
 				var polly = window.setInterval(function () {
-					if (!stream) window.clearInterval(polly);
+					if (!stream) {
+						window.clearInterval(polly);
+					}
 					if (stream.currentTime == lastTime) {
 						window.clearInterval(polly);
 						if (stream.onended) {

@@ -31,10 +31,13 @@ module.exports = function (mode, constraints, cb) {
 
     var isCef = chromever < 71 && !window.chrome.webstore; // "known" crash in chrome 34 and 35 on linux
 
-    if (window.navigator.userAgent.match('Linux')) maxver = 35; // check that the extension is installed by looking for a
+    if (window.navigator.userAgent.match('Linux')) {
+      maxver = 35;
+    } // check that the extension is installed by looking for a
     // sessionStorage variable that contains the extension id
     // this has to be set after installation unless the contest
     // script does that
+
 
     if (sessionStorage.getScreenMediaJSExtensionId) {
       chrome.runtime.sendMessage(sessionStorage.getScreenMediaJSExtensionId, {
@@ -139,7 +142,9 @@ module.exports = function (mode, constraints, cb) {
 
         var lastTime = stream.currentTime;
         var polly = window.setInterval(function () {
-          if (!stream) window.clearInterval(polly);
+          if (!stream) {
+            window.clearInterval(polly);
+          }
 
           if (stream.currentTime == lastTime) {
             window.clearInterval(polly);
@@ -660,7 +665,10 @@ util.inherits(Peer, WildEmitter);
 Peer.prototype.offer = function (options) {
   this.pc.createOffer(options).then(function (offer) {
     this.pc.setLocalDescription(offer).then(function () {
-      if (this.parent.config.nick) offer.nick = this.parent.config.nick;
+      if (this.parent.config.nick) {
+        offer.nick = this.parent.config.nick;
+      }
+
       this.send('offer', offer);
     }.bind(this)).catch(function (error) {
       console.warn("setLocalDescription for offer failed: ", error);
@@ -681,7 +689,10 @@ Peer.prototype.handleOffer = function (offer) {
 Peer.prototype.answer = function () {
   this.pc.createAnswer().then(function (answer) {
     this.pc.setLocalDescription(answer).then(function () {
-      if (this.parent.config.nick) answer.nick = this.parent.config.nick;
+      if (this.parent.config.nick) {
+        answer.nick = this.parent.config.nick;
+      }
+
       this.send('answer', answer);
     }.bind(this)).catch(function (error) {
       console.warn("setLocalDescription for answer failed: ", error);
@@ -700,14 +711,23 @@ Peer.prototype.handleAnswer = function (answer) {
 Peer.prototype.handleMessage = function (message) {
   var self = this;
   this.logger.log('getting', message.type, message);
-  if (message.prefix) this.browserPrefix = message.prefix;
+
+  if (message.prefix) {
+    this.browserPrefix = message.prefix;
+  }
 
   if (message.type === 'offer') {
-    if (!this.nick) this.nick = message.payload.nick;
+    if (!this.nick) {
+      this.nick = message.payload.nick;
+    }
+
     delete message.payload.nick;
     this.handleOffer(message.payload);
   } else if (message.type === 'answer') {
-    if (!this.nick) this.nick = message.payload.nick;
+    if (!this.nick) {
+      this.nick = message.payload.nick;
+    }
+
     delete message.payload.nick;
     this.handleAnswer(message.payload);
   } else if (message.type === 'candidate') {
@@ -799,10 +819,17 @@ Peer.prototype._observeDataChannel = function (channel) {
 
 
 Peer.prototype.getDataChannel = function (name, opts) {
-  if (!webrtcSupport.supportDataChannel) return this.emit('error', new Error('createDataChannel not supported'));
+  if (!webrtcSupport.supportDataChannel) {
+    return this.emit('error', new Error('createDataChannel not supported'));
+  }
+
   var channel = this.channels[name];
   opts || (opts = {});
-  if (channel) return channel; // if we don't have one by this label, create it
+
+  if (channel) {
+    return channel;
+  } // if we don't have one by this label, create it
+
 
   channel = this.channels[name] = this.pc.createDataChannel(name, opts);
 
@@ -813,7 +840,10 @@ Peer.prototype.getDataChannel = function (name, opts) {
 
 Peer.prototype.onIceCandidate = function (event) {
   var candidate = event.candidate;
-  if (this.closed) return;
+
+  if (this.closed) {
+    return;
+  }
 
   if (candidate) {
     var pcConfig = this.parent.config.peerConnectionConfig;
@@ -856,7 +886,10 @@ Peer.prototype.icerestart = function () {
 };
 
 Peer.prototype.end = function () {
-  if (this.closed) return;
+  if (this.closed) {
+    return;
+  }
+
   this.pc.close();
   this.handleStreamRemoved();
 };
@@ -990,7 +1023,9 @@ function SimpleWebRTC(opts) {
     if (message.type === 'offer') {
       if (peers.length) {
         peers.forEach(function (p) {
-          if (p.sid == message.sid) peer = p;
+          if (p.sid == message.sid) {
+            peer = p;
+          }
         }); //if (!peer) peer = peers[0]; // fallback for old protocol versions
       }
 
@@ -1181,7 +1216,11 @@ SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
 
   peer.videoEl = video;
   video.id = this.getDomId(peer);
-  if (container) container.appendChild(video);
+
+  if (container) {
+    container.appendChild(video);
+  }
+
   this.emit('videoAdded', video, peer); // send our mute status to new peer if we're muted
   // currently called with a small delay because it arrives before
   // the video element is created otherwise (which happens after
@@ -1210,7 +1249,9 @@ SimpleWebRTC.prototype.handlePeerStreamRemoved = function (peer) {
     container.removeChild(videoEl);
   }
 
-  if (videoEl) this.emit('videoRemoved', videoEl, peer);
+  if (videoEl) {
+    this.emit('videoRemoved', videoEl, peer);
+  }
 };
 
 SimpleWebRTC.prototype.getDomId = function (peer) {
@@ -1220,12 +1261,17 @@ SimpleWebRTC.prototype.getDomId = function (peer) {
 
 SimpleWebRTC.prototype.setVolumeForAll = function (volume) {
   this.webrtc.peers.forEach(function (peer) {
-    if (peer.videoEl) peer.videoEl.volume = volume;
+    if (peer.videoEl) {
+      peer.videoEl.volume = volume;
+    }
   });
 };
 
 SimpleWebRTC.prototype.joinCall = function (name) {
-  if (this.config.autoRequestMedia) this.startLocalVideo();
+  if (this.config.autoRequestMedia) {
+    this.startLocalVideo();
+  }
+
   this.roomName = name;
   this.emit('joinedRoom', name);
 };
@@ -1416,7 +1462,11 @@ function WebRTC(opts) {
       self.peers.forEach(function (peer) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
-          if (dc.readyState != 'open') return;
+
+          if (dc.readyState != 'open') {
+            return;
+          }
+
           dc.send(JSON.stringify({
             type: 'speaking'
           }));
@@ -1430,7 +1480,11 @@ function WebRTC(opts) {
       self.peers.forEach(function (peer) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
-          if (dc.readyState != 'open') return;
+
+          if (dc.readyState != 'open') {
+            return;
+          }
+
           dc.send(JSON.stringify({
             type: 'stoppedSpeaking'
           }));
@@ -1446,7 +1500,11 @@ function WebRTC(opts) {
       self.peers.forEach(function (peer) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
-          if (dc.readyState != 'open') return;
+
+          if (dc.readyState != 'open') {
+            return;
+          }
+
           dc.send(JSON.stringify({
             type: 'volume',
             volume: volume
