@@ -27,6 +27,7 @@ use OCA\Spreed\Service\CommandService;
 use OC\Core\Command\Base;
 use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;
+use OCP\AppFramework\Db\DoesNotExistException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -53,21 +54,39 @@ class AddSamples extends Base {
 	}
 
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$commands = [];
 		try {
-			$commands[] = $this->service->create(
-				'',
-				'wiki',
-				'Wikipedia',
-				'php ' . $this->appManager->getAppPath('spreed') . '/sample-commands/wikipedia.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
-				Command::RESPONSE_ALL,
-				Command::ENABLED_ALL
-			);
+			$appPath = $this->appManager->getAppPath('spreed');
 		} catch (AppPathNotFoundException $e) {
 			$output->writeln('<error>Could not determine the spreed/ app directory.</error>');
 			return 1;
 		}
 
+		$commands = [];
+		try {
+			$this->service->find('', 'wiki');
+		} catch (DoesNotExistException $e) {
+			$commands[] = $this->service->create(
+				'',
+				'wiki',
+				'Wikipedia',
+				'php ' . $appPath . '/sample-commands/wikipedia.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
+				Command::RESPONSE_ALL,
+				Command::ENABLED_ALL
+			);
+		}
+
+		try {
+			$this->service->find('', 'hackernews');
+		} catch (DoesNotExistException $e) {
+			$commands[] = $this->service->create(
+				'',
+				'hackernews',
+				'Hacker News',
+				'php ' . $appPath . '/sample-commands/hackernews.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
+				Command::RESPONSE_ALL,
+				Command::ENABLED_ALL
+			);
+		}
 
 		$output->writeln('<info>Commands added</info>');
 		$output->writeln('');
