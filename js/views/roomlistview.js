@@ -68,6 +68,12 @@
 								'</li>'+
 								'{{/if}}'+
 								'{{/if}}'+
+								'<li>'+
+									'<button class="clipboard-button">'+
+										'<span class="icon-clippy"></span>'+
+										'<span>'+t('spreed', 'Copy link')+'</span>'+
+									'</button>'+
+								'</li>'+
 								'<li><div class="separator"></div></li>'+
 								'<li{{#if notifyAlways}} class="active"{{/if}}>'+
 									'<button class="notify-always-button">'+
@@ -196,6 +202,11 @@
 			}
 
 			this.toggleMenuClass();
+
+			var completeURL = window.location.protocol + '//' + window.location.host + roomURL;
+			this.ui.clipboardButton.attr('value', completeURL);
+			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
+			this.initClipboard();
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
@@ -211,6 +222,7 @@
 		ui: {
 			'room': '.app-navigation-entry-link',
 			'menu': '.app-navigation-entry-menu',
+			'clipboardButton': '.clipboard-button',
 			'menuList': '.app-navigation-entry-menu-list'
 		},
 		template: Handlebars.compile(ITEM_TEMPLATE),
@@ -323,6 +335,48 @@
 
 			this.model.join();
 		},
+
+		/**
+		 * Clipboard
+		 */
+		initClipboard: function() {
+			var clipboard = new Clipboard('.clipboard-button');
+			clipboard.on('success', function(e) {
+				var $input = $(e.trigger);
+				$input.tooltip('hide')
+					.attr('data-original-title', t('core', 'Link copied!'))
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function() {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('core', 'Copy link'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+			clipboard.on('error', function (e) {
+				var $input = $(e.trigger);
+				var actionMsg = '';
+				if (/iPhone|iPad/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Not supported!');
+				} else if (/Mac/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Press ⌘-C to copy.');
+				} else {
+					actionMsg = t('core', 'Press Ctrl-C to copy.');
+				}
+
+				$input.tooltip('hide')
+					.attr('data-original-title', actionMsg)
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function () {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreed', 'Copy link'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+		}
 	});
 
 	var RoomListView = Marionette.CollectionView.extend({
