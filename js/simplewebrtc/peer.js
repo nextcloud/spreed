@@ -246,8 +246,6 @@ Peer.prototype.onIceCandidate = function (event) {
 };
 
 Peer.prototype.start = function () {
-	var self = this;
-
 	// well, the webrtc api requires that we either
 	// a) create a datachannel a priori
 	// b) do a renegotiation later to add the SCTP m-line

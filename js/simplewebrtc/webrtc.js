@@ -10,7 +10,7 @@ var Peer = require('./peer');
 function WebRTC(opts) {
 	var self = this;
 	var options = opts || {};
-	var config = this.config = {
+	this.config = {
 			debug: false,
 			// makes the entire PC config overridable
 			peerConnectionConfig: {
@@ -83,7 +83,7 @@ function WebRTC(opts) {
 			});
 		}
 	});
-	this.on('volumeChange', function (volume, treshold) {
+	this.on('volumeChange', function (volume/*, treshold*/) {
 		if (!self.hardMuted) {
 			// FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
 			self.peers.forEach(function (peer) {

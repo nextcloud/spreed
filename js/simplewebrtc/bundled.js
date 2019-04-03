@@ -838,11 +838,10 @@ Peer.prototype.onIceCandidate = function (event) {
 };
 
 Peer.prototype.start = function () {
-  var self = this; // well, the webrtc api requires that we either
+  // well, the webrtc api requires that we either
   // a) create a datachannel a priori
   // b) do a renegotiation later to add the SCTP m-line
   // Let's do (a) first...
-
   if (this.enableDataChannels) {
     this.getDataChannel('simplewebrtc');
   }
@@ -1068,9 +1067,13 @@ function SimpleWebRTC(opts) {
     self.webrtc.config.peerConnectionConfig.iceServers = self.webrtc.config.peerConnectionConfig.iceServers.concat(args);
     self.emit('turnservers', args);
   });
-  this.webrtc.on('iceFailed', function (peer) {// local ice failure
+  this.webrtc.on('iceFailed', function ()
+  /*peer*/
+  {// local ice failure
   });
-  this.webrtc.on('connectivityError', function (peer) {// remote ice failure
+  this.webrtc.on('connectivityError', function ()
+  /*peer*/
+  {// remote ice failure
   }); // sending mute/unmute to all peers
 
   this.webrtc.on('audioOn', function () {
@@ -1095,8 +1098,7 @@ function SimpleWebRTC(opts) {
   }); // screensharing events
 
   this.webrtc.on('localScreen', function (stream) {
-    var item,
-        el = document.createElement('video'),
+    var el = document.createElement('video'),
         container = self.getRemoteVideoContainer();
 
     el.oncontextmenu = function () {
@@ -1114,7 +1116,9 @@ function SimpleWebRTC(opts) {
     self.connection.emit('shareScreen'); // NOTE: we don't create screen peers for existing video peers here,
     // this is done by the application code in "webrtc.js".
   });
-  this.webrtc.on('localScreenStopped', function (stream) {
+  this.webrtc.on('localScreenStopped', function ()
+  /*stream*/
+  {
     if (self.getLocalScreen()) {
       self.stopScreenShare();
     }
@@ -1360,7 +1364,7 @@ var Peer = require('./peer');
 function WebRTC(opts) {
   var self = this;
   var options = opts || {};
-  var config = this.config = {
+  this.config = {
     debug: false,
     // makes the entire PC config overridable
     peerConnectionConfig: {
@@ -1434,7 +1438,9 @@ function WebRTC(opts) {
       });
     }
   });
-  this.on('volumeChange', function (volume, treshold) {
+  this.on('volumeChange', function (volume
+  /*, treshold*/
+  ) {
     if (!self.hardMuted) {
       // FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
       self.peers.forEach(function (peer) {

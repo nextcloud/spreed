@@ -170,10 +170,10 @@ function SimpleWebRTC(opts) {
 		self.emit('turnservers', args);
 	});
 
-	this.webrtc.on('iceFailed', function (peer) {
+	this.webrtc.on('iceFailed', function (/*peer*/) {
 		// local ice failure
 	});
-	this.webrtc.on('connectivityError', function (peer) {
+	this.webrtc.on('connectivityError', function (/*peer*/) {
 		// remote ice failure
 	});
 
@@ -194,8 +194,7 @@ function SimpleWebRTC(opts) {
 
 	// screensharing events
 	this.webrtc.on('localScreen', function (stream) {
-		var item,
-			el = document.createElement('video'),
+		var el = document.createElement('video'),
 			container = self.getRemoteVideoContainer();
 
 		el.oncontextmenu = function () { return false; };
@@ -211,7 +210,7 @@ function SimpleWebRTC(opts) {
 		// NOTE: we don't create screen peers for existing video peers here,
 		// this is done by the application code in "webrtc.js".
 	});
-	this.webrtc.on('localScreenStopped', function (stream) {
+	this.webrtc.on('localScreenStopped', function (/*stream*/) {
 		if (self.getLocalScreen()) {
 			self.stopScreenShare();
 		}
