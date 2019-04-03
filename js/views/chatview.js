@@ -396,8 +396,9 @@
 				actorDisplayName = t('spreed', '[Unknown user name]');
 			}
 
-			var formattedMessage = escapeHTML(commentModel.get('message')).replace(/\n/g, '<br/>');
+			var formattedMessage = escapeHTML(commentModel.get('message'));
 			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
+			formattedMessage = formattedMessage.replace(/\n/g, '<br/>');
 			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
 				formattedMessage, commentModel.get('messageParameters'));
 
