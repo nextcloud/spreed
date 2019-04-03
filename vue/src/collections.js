@@ -80,7 +80,7 @@ import RoomSelector from './views/RoomSelector'
 				})
 			})
 		},
-		typeString: t('spreed', 'room'),
+		typeString: t('spreed', 'Link to a conversation'),
 		typeIconClass: 'icon-talk'
 	})
 })(window.OCP, window.OC)
