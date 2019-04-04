@@ -574,6 +574,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" gets the following candidate mentions in room "([^"]*)" for "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $search
+	 * @param string $statusCode
+	 * @param TableNode|null $formData
+	 */
+	public function userGetsTheFollowingCandidateMentionsInRoomFor($user, $identifier, $search, $statusCode, TableNode $formData = null) {
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier] . '/mentions?search=' . $search);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		$mentions = $this->getDataFromResponse($this->response);
+
+		if ($formData === null) {
+			PHPUnit_Framework_Assert::assertEmpty($mentions);
+			return;
+		}
+
+		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
+		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($mention) {
+			return [
+				'id' => (string) $mention['id'],
+				'label' => (string) $mention['label'],
+				'source' => (string) $mention['source'],
+			];
+		}, $mentions));
+	}
+
+	/**
 	 * Parses the xml answer to get the array of users returned.
 	 * @param ResponseInterface $response
 	 * @return array
