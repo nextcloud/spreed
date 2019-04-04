@@ -1,6 +1,7 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.SimpleWebRTC = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 "use strict";
 
+/* global module, chrome */
 // getScreenMedia helper by @HenrikJoreteg
 var getUserMedia = function getUserMedia(constraints, callback) {
   window.navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
@@ -30,10 +31,13 @@ module.exports = function (mode, constraints, cb) {
 
     var isCef = chromever < 71 && !window.chrome.webstore; // "known" crash in chrome 34 and 35 on linux
 
-    if (window.navigator.userAgent.match('Linux')) maxver = 35; // check that the extension is installed by looking for a
+    if (window.navigator.userAgent.match('Linux')) {
+      maxver = 35;
+    } // check that the extension is installed by looking for a
     // sessionStorage variable that contains the extension id
     // this has to be set after installation unless the contest
     // script does that
+
 
     if (sessionStorage.getScreenMediaJSExtensionId) {
       chrome.runtime.sendMessage(sessionStorage.getScreenMediaJSExtensionId, {
@@ -138,9 +142,11 @@ module.exports = function (mode, constraints, cb) {
 
         var lastTime = stream.currentTime;
         var polly = window.setInterval(function () {
-          if (!stream) window.clearInterval(polly);
+          if (!stream) {
+            window.clearInterval(polly);
+          }
 
-          if (stream.currentTime == lastTime) {
+          if (stream.currentTime === lastTime) {
             window.clearInterval(polly);
 
             if (stream.onended) {
@@ -168,11 +174,11 @@ module.exports = function (mode, constraints, cb) {
 };
 
 typeof window !== 'undefined' && window.addEventListener('message', function (event) {
-  if (event.origin != window.location.origin && !event.isTrusted) {
+  if (event.origin !== window.location.origin && !event.isTrusted) {
     return;
   }
 
-  if (event.data.type == 'gotScreen' && cache[event.data.id]) {
+  if (event.data.type === 'gotScreen' && cache[event.data.id]) {
     var data = cache[event.data.id];
     var constraints = data[1];
     var callback = data[0];
@@ -203,7 +209,7 @@ typeof window !== 'undefined' && window.addEventListener('message', function (ev
       constraints.video.mandatory.chromeMediaSourceId = event.data.sourceId;
       getUserMedia(constraints, callback);
     }
-  } else if (event.data.type == 'getScreenPending') {
+  } else if (event.data.type === 'getScreenPending') {
     window.clearTimeout(event.data.id);
   }
 });
@@ -211,6 +217,7 @@ typeof window !== 'undefined' && window.addEventListener('message', function (ev
 },{}],2:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var util = require('util');
 
 var hark = require('hark');
@@ -573,6 +580,7 @@ module.exports = LocalMedia;
 },{"./getscreenmedia":1,"hark":9,"mockconsole":11,"util":8,"wildemitter":31}],3:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var util = require('util');
 
 var webrtcSupport = require('webrtcsupport');
@@ -657,7 +665,10 @@ util.inherits(Peer, WildEmitter);
 Peer.prototype.offer = function (options) {
   this.pc.createOffer(options).then(function (offer) {
     this.pc.setLocalDescription(offer).then(function () {
-      if (this.parent.config.nick) offer.nick = this.parent.config.nick;
+      if (this.parent.config.nick) {
+        offer.nick = this.parent.config.nick;
+      }
+
       this.send('offer', offer);
     }.bind(this)).catch(function (error) {
       console.warn("setLocalDescription for offer failed: ", error);
@@ -678,7 +689,10 @@ Peer.prototype.handleOffer = function (offer) {
 Peer.prototype.answer = function () {
   this.pc.createAnswer().then(function (answer) {
     this.pc.setLocalDescription(answer).then(function () {
-      if (this.parent.config.nick) answer.nick = this.parent.config.nick;
+      if (this.parent.config.nick) {
+        answer.nick = this.parent.config.nick;
+      }
+
       this.send('answer', answer);
     }.bind(this)).catch(function (error) {
       console.warn("setLocalDescription for answer failed: ", error);
@@ -697,14 +711,23 @@ Peer.prototype.handleAnswer = function (answer) {
 Peer.prototype.handleMessage = function (message) {
   var self = this;
   this.logger.log('getting', message.type, message);
-  if (message.prefix) this.browserPrefix = message.prefix;
+
+  if (message.prefix) {
+    this.browserPrefix = message.prefix;
+  }
 
   if (message.type === 'offer') {
-    if (!this.nick) this.nick = message.payload.nick;
+    if (!this.nick) {
+      this.nick = message.payload.nick;
+    }
+
     delete message.payload.nick;
     this.handleOffer(message.payload);
   } else if (message.type === 'answer') {
-    if (!this.nick) this.nick = message.payload.nick;
+    if (!this.nick) {
+      this.nick = message.payload.nick;
+    }
+
     delete message.payload.nick;
     this.handleAnswer(message.payload);
   } else if (message.type === 'candidate') {
@@ -756,7 +779,7 @@ Peer.prototype.sendDirectly = function (channel, messageType, payload) {
   this.logger.log('sending via datachannel', channel, messageType, message);
   var dc = this.getDataChannel(channel);
 
-  if (dc.readyState != 'open') {
+  if (dc.readyState !== 'open') {
     if (!this.pendingDCMessages.hasOwnProperty(channel)) {
       this.pendingDCMessages[channel] = [];
     }
@@ -796,10 +819,17 @@ Peer.prototype._observeDataChannel = function (channel) {
 
 
 Peer.prototype.getDataChannel = function (name, opts) {
-  if (!webrtcSupport.supportDataChannel) return this.emit('error', new Error('createDataChannel not supported'));
+  if (!webrtcSupport.supportDataChannel) {
+    return this.emit('error', new Error('createDataChannel not supported'));
+  }
+
   var channel = this.channels[name];
   opts || (opts = {});
-  if (channel) return channel; // if we don't have one by this label, create it
+
+  if (channel) {
+    return channel;
+  } // if we don't have one by this label, create it
+
 
   channel = this.channels[name] = this.pc.createDataChannel(name, opts);
 
@@ -810,7 +840,10 @@ Peer.prototype.getDataChannel = function (name, opts) {
 
 Peer.prototype.onIceCandidate = function (event) {
   var candidate = event.candidate;
-  if (this.closed) return;
+
+  if (this.closed) {
+    return;
+  }
 
   if (candidate) {
     var pcConfig = this.parent.config.peerConnectionConfig;
@@ -835,11 +868,10 @@ Peer.prototype.onIceCandidate = function (event) {
 };
 
 Peer.prototype.start = function () {
-  var self = this; // well, the webrtc api requires that we either
+  // well, the webrtc api requires that we either
   // a) create a datachannel a priori
   // b) do a renegotiation later to add the SCTP m-line
   // Let's do (a) first...
-
   if (this.enableDataChannels) {
     this.getDataChannel('simplewebrtc');
   }
@@ -854,7 +886,10 @@ Peer.prototype.icerestart = function () {
 };
 
 Peer.prototype.end = function () {
-  if (this.closed) return;
+  if (this.closed) {
+    return;
+  }
+
   this.pc.close();
   this.handleStreamRemoved();
 };
@@ -899,6 +934,7 @@ module.exports = Peer;
 },{"util":8,"webrtcsupport":30,"wildemitter":31}],4:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var WebRTC = require('./webrtc');
 
 var WildEmitter = require('wildemitter');
@@ -987,7 +1023,9 @@ function SimpleWebRTC(opts) {
     if (message.type === 'offer') {
       if (peers.length) {
         peers.forEach(function (p) {
-          if (p.sid == message.sid) peer = p;
+          if (p.sid === message.sid) {
+            peer = p;
+          }
         }); //if (!peer) peer = peers[0]; // fallback for old protocol versions
       }
 
@@ -1064,9 +1102,13 @@ function SimpleWebRTC(opts) {
     self.webrtc.config.peerConnectionConfig.iceServers = self.webrtc.config.peerConnectionConfig.iceServers.concat(args);
     self.emit('turnservers', args);
   });
-  this.webrtc.on('iceFailed', function (peer) {// local ice failure
+  this.webrtc.on('iceFailed', function ()
+  /*peer*/
+  {// local ice failure
   });
-  this.webrtc.on('connectivityError', function (peer) {// remote ice failure
+  this.webrtc.on('connectivityError', function ()
+  /*peer*/
+  {// remote ice failure
   }); // sending mute/unmute to all peers
 
   this.webrtc.on('audioOn', function () {
@@ -1091,8 +1133,7 @@ function SimpleWebRTC(opts) {
   }); // screensharing events
 
   this.webrtc.on('localScreen', function (stream) {
-    var item,
-        el = document.createElement('video'),
+    var el = document.createElement('video'),
         container = self.getRemoteVideoContainer();
 
     el.oncontextmenu = function () {
@@ -1110,7 +1151,9 @@ function SimpleWebRTC(opts) {
     self.connection.emit('shareScreen'); // NOTE: we don't create screen peers for existing video peers here,
     // this is done by the application code in "webrtc.js".
   });
-  this.webrtc.on('localScreenStopped', function (stream) {
+  this.webrtc.on('localScreenStopped', function ()
+  /*stream*/
+  {
     if (self.getLocalScreen()) {
       self.stopScreenShare();
     }
@@ -1125,7 +1168,7 @@ function SimpleWebRTC(opts) {
 
   });
   this.webrtc.on('channelMessage', function (peer, label, data) {
-    if (data.type == 'volume') {
+    if (data.type === 'volume') {
       self.emit('remoteVolumeChange', peer, data.volume);
     }
   });
@@ -1173,7 +1216,11 @@ SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
 
   peer.videoEl = video;
   video.id = this.getDomId(peer);
-  if (container) container.appendChild(video);
+
+  if (container) {
+    container.appendChild(video);
+  }
+
   this.emit('videoAdded', video, peer); // send our mute status to new peer if we're muted
   // currently called with a small delay because it arrives before
   // the video element is created otherwise (which happens after
@@ -1202,7 +1249,9 @@ SimpleWebRTC.prototype.handlePeerStreamRemoved = function (peer) {
     container.removeChild(videoEl);
   }
 
-  if (videoEl) this.emit('videoRemoved', videoEl, peer);
+  if (videoEl) {
+    this.emit('videoRemoved', videoEl, peer);
+  }
 };
 
 SimpleWebRTC.prototype.getDomId = function (peer) {
@@ -1212,12 +1261,17 @@ SimpleWebRTC.prototype.getDomId = function (peer) {
 
 SimpleWebRTC.prototype.setVolumeForAll = function (volume) {
   this.webrtc.peers.forEach(function (peer) {
-    if (peer.videoEl) peer.videoEl.volume = volume;
+    if (peer.videoEl) {
+      peer.videoEl.volume = volume;
+    }
   });
 };
 
 SimpleWebRTC.prototype.joinCall = function (name) {
-  if (this.config.autoRequestMedia) this.startLocalVideo();
+  if (this.config.autoRequestMedia) {
+    this.startLocalVideo();
+  }
+
   this.roomName = name;
   this.emit('joinedRoom', name);
 };
@@ -1342,6 +1396,7 @@ module.exports = SimpleWebRTC;
 },{"./webrtc":5,"attachmediastream":6,"mockconsole":11,"webrtcsupport":30,"wildemitter":31}],5:[function(require,module,exports){
 "use strict";
 
+/* global module */
 var util = require('util');
 
 var webrtcSupport = require('webrtcsupport');
@@ -1355,7 +1410,7 @@ var Peer = require('./peer');
 function WebRTC(opts) {
   var self = this;
   var options = opts || {};
-  var config = this.config = {
+  this.config = {
     debug: false,
     // makes the entire PC config overridable
     peerConnectionConfig: {
@@ -1407,7 +1462,11 @@ function WebRTC(opts) {
       self.peers.forEach(function (peer) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
-          if (dc.readyState != 'open') return;
+
+          if (dc.readyState !== 'open') {
+            return;
+          }
+
           dc.send(JSON.stringify({
             type: 'speaking'
           }));
@@ -1421,7 +1480,11 @@ function WebRTC(opts) {
       self.peers.forEach(function (peer) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
-          if (dc.readyState != 'open') return;
+
+          if (dc.readyState !== 'open') {
+            return;
+          }
+
           dc.send(JSON.stringify({
             type: 'stoppedSpeaking'
           }));
@@ -1429,13 +1492,19 @@ function WebRTC(opts) {
       });
     }
   });
-  this.on('volumeChange', function (volume, treshold) {
+  this.on('volumeChange', function (volume
+  /*, treshold*/
+  ) {
     if (!self.hardMuted) {
       // FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
       self.peers.forEach(function (peer) {
         if (peer.enableDataChannels) {
           var dc = peer.getDataChannel('hark');
-          if (dc.readyState != 'open') return;
+
+          if (dc.readyState !== 'open') {
+            return;
+          }
+
           dc.send(JSON.stringify({
             type: 'volume',
             volume: volume

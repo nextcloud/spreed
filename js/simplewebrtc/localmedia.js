@@ -1,3 +1,5 @@
+/* global module */
+
 var util = require('util');
 var hark = require('hark');
 var getScreenMedia = require('./getscreenmedia');

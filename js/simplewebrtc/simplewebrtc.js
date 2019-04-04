@@ -1,3 +1,5 @@
+/* global module */
+
 var WebRTC = require('./webrtc');
 var WildEmitter = require('wildemitter');
 var webrtcSupport = require('webrtcsupport');
@@ -83,7 +85,9 @@ function SimpleWebRTC(opts) {
 		if (message.type === 'offer') {
 			if (peers.length) {
 				peers.forEach(function (p) {
-					if (p.sid == message.sid) peer = p;
+					if (p.sid === message.sid) {
+						peer = p;
+					}
 				});
 				//if (!peer) peer = peers[0]; // fallback for old protocol versions
 			}
@@ -168,10 +172,10 @@ function SimpleWebRTC(opts) {
 		self.emit('turnservers', args);
 	});
 
-	this.webrtc.on('iceFailed', function (peer) {
+	this.webrtc.on('iceFailed', function (/*peer*/) {
 		// local ice failure
 	});
-	this.webrtc.on('connectivityError', function (peer) {
+	this.webrtc.on('connectivityError', function (/*peer*/) {
 		// remote ice failure
 	});
 
@@ -192,8 +196,7 @@ function SimpleWebRTC(opts) {
 
 	// screensharing events
 	this.webrtc.on('localScreen', function (stream) {
-		var item,
-			el = document.createElement('video'),
+		var el = document.createElement('video'),
 			container = self.getRemoteVideoContainer();
 
 		el.oncontextmenu = function () { return false; };
@@ -209,7 +212,7 @@ function SimpleWebRTC(opts) {
 		// NOTE: we don't create screen peers for existing video peers here,
 		// this is done by the application code in "webrtc.js".
 	});
-	this.webrtc.on('localScreenStopped', function (stream) {
+	this.webrtc.on('localScreenStopped', function (/*stream*/) {
 		if (self.getLocalScreen()) {
 			self.stopScreenShare();
 		}
@@ -224,7 +227,7 @@ function SimpleWebRTC(opts) {
 	});
 
 	this.webrtc.on('channelMessage', function (peer, label, data) {
-		if (data.type == 'volume') {
+		if (data.type === 'volume') {
 			self.emit('remoteVolumeChange', peer, data.volume);
 		}
 	});
@@ -273,7 +276,9 @@ SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
 	peer.videoEl = video;
 	video.id = this.getDomId(peer);
 
-	if (container) container.appendChild(video);
+	if (container) {
+		container.appendChild(video);
+	}
 
 	this.emit('videoAdded', video, peer);
 
@@ -297,7 +302,9 @@ SimpleWebRTC.prototype.handlePeerStreamRemoved = function (peer) {
 	if (this.config.autoRemoveVideos && container && videoEl) {
 		container.removeChild(videoEl);
 	}
-	if (videoEl) this.emit('videoRemoved', videoEl, peer);
+	if (videoEl) {
+		this.emit('videoRemoved', videoEl, peer);
+	}
 };
 
 SimpleWebRTC.prototype.getDomId = function (peer) {
@@ -307,12 +314,16 @@ SimpleWebRTC.prototype.getDomId = function (peer) {
 // set volume on video tag for all peers takse a value between 0 and 1
 SimpleWebRTC.prototype.setVolumeForAll = function (volume) {
 	this.webrtc.peers.forEach(function (peer) {
-		if (peer.videoEl) peer.videoEl.volume = volume;
+		if (peer.videoEl) {
+			peer.videoEl.volume = volume;
+		}
 	});
 };
 
 SimpleWebRTC.prototype.joinCall = function (name) {
-	if (this.config.autoRequestMedia) this.startLocalVideo();
+	if (this.config.autoRequestMedia) {
+		this.startLocalVideo();
+	}
 	this.roomName = name;
 	this.emit('joinedRoom', name);
 };

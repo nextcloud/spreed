@@ -1,3 +1,5 @@
+/* global module */
+
 var util = require('util');
 var webrtcSupport = require('webrtcsupport');
 var WildEmitter = require('wildemitter');
@@ -81,7 +83,9 @@ util.inherits(Peer, WildEmitter);
 Peer.prototype.offer = function(options) {
 	this.pc.createOffer(options).then(function(offer) {
 		this.pc.setLocalDescription(offer).then(function() {
-			if (this.parent.config.nick) offer.nick = this.parent.config.nick;
+			if (this.parent.config.nick) {
+				offer.nick = this.parent.config.nick;
+			}
 			this.send('offer', offer);
 		}.bind(this)).catch(function(error) {
 			console.warn("setLocalDescription for offer failed: ", error);
@@ -102,7 +106,9 @@ Peer.prototype.handleOffer = function (offer) {
 Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
 		this.pc.setLocalDescription(answer).then(function() {
-			if (this.parent.config.nick) answer.nick = this.parent.config.nick;
+			if (this.parent.config.nick) {
+				answer.nick = this.parent.config.nick;
+			}
 			this.send('answer', answer);
 		}.bind(this)).catch(function(error) {
 			console.warn("setLocalDescription for answer failed: ", error);
@@ -123,14 +129,20 @@ Peer.prototype.handleMessage = function (message) {
 
 	this.logger.log('getting', message.type, message);
 
-	if (message.prefix) this.browserPrefix = message.prefix;
+	if (message.prefix) {
+		this.browserPrefix = message.prefix;
+	}
 
 	if (message.type === 'offer') {
-		if (!this.nick) this.nick = message.payload.nick;
+		if (!this.nick) {
+			this.nick = message.payload.nick;
+		}
 		delete message.payload.nick;
 		this.handleOffer(message.payload);
 	} else if (message.type === 'answer') {
-		if (!this.nick) this.nick = message.payload.nick;
+		if (!this.nick) {
+			this.nick = message.payload.nick;
+		}
 		delete message.payload.nick;
 		this.handleAnswer(message.payload);
 	} else if (message.type === 'candidate') {
@@ -173,7 +185,7 @@ Peer.prototype.sendDirectly = function (channel, messageType, payload) {
 	};
 	this.logger.log('sending via datachannel', channel, messageType, message);
 	var dc = this.getDataChannel(channel);
-	if (dc.readyState != 'open') {
+	if (dc.readyState !== 'open') {
 		if (!this.pendingDCMessages.hasOwnProperty(channel)) {
 			this.pendingDCMessages[channel] = [];
 		}
@@ -207,10 +219,14 @@ Peer.prototype._observeDataChannel = function (channel) {
 
 // Fetch or create a data channel by the given name
 Peer.prototype.getDataChannel = function (name, opts) {
-	if (!webrtcSupport.supportDataChannel) return this.emit('error', new Error('createDataChannel not supported'));
+	if (!webrtcSupport.supportDataChannel) {
+		return this.emit('error', new Error('createDataChannel not supported'));
+	}
 	var channel = this.channels[name];
 	opts || (opts = {});
-	if (channel) return channel;
+	if (channel) {
+		return channel;
+	}
 	// if we don't have one by this label, create it
 	channel = this.channels[name] = this.pc.createDataChannel(name, opts);
 	this._observeDataChannel(channel);
@@ -219,7 +235,9 @@ Peer.prototype.getDataChannel = function (name, opts) {
 
 Peer.prototype.onIceCandidate = function (event) {
 	var candidate = event.candidate;
-	if (this.closed) return;
+	if (this.closed) {
+		return;
+	}
 	if (candidate) {
 		var pcConfig = this.parent.config.peerConnectionConfig;
 		if (webrtcSupport.prefix === 'moz' && pcConfig && pcConfig.iceTransports &&
@@ -244,8 +262,6 @@ Peer.prototype.onIceCandidate = function (event) {
 };
 
 Peer.prototype.start = function () {
-	var self = this;
-
 	// well, the webrtc api requires that we either
 	// a) create a datachannel a priori
 	// b) do a renegotiation later to add the SCTP m-line
@@ -264,7 +280,9 @@ Peer.prototype.icerestart = function () {
 };
 
 Peer.prototype.end = function () {
-	if (this.closed) return;
+	if (this.closed) {
+		return;
+	}
 	this.pc.close();
 	this.handleStreamRemoved();
 };

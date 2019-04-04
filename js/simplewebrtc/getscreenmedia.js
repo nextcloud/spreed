@@ -1,3 +1,5 @@
+/* global module, chrome */
+
 // getScreenMedia helper by @HenrikJoreteg
 var getUserMedia = function(constraints, callback) {
 	window.navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
@@ -27,7 +29,9 @@ module.exports = function (mode, constraints, cb) {
 		// Chrome 71 dropped support for "window.chrome.webstore;".
 		var isCef = (chromever < 71) && !window.chrome.webstore;
 		// "known" crash in chrome 34 and 35 on linux
-		if (window.navigator.userAgent.match('Linux')) maxver = 35;
+		if (window.navigator.userAgent.match('Linux')) {
+			maxver = 35;
+		}
 
 		// check that the extension is installed by looking for a
 		// sessionStorage variable that contains the extension id
@@ -122,8 +126,10 @@ module.exports = function (mode, constraints, cb) {
 				// workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=1045810
 				var lastTime = stream.currentTime;
 				var polly = window.setInterval(function () {
-					if (!stream) window.clearInterval(polly);
-					if (stream.currentTime == lastTime) {
+					if (!stream) {
+						window.clearInterval(polly);
+					}
+					if (stream.currentTime === lastTime) {
 						window.clearInterval(polly);
 						if (stream.onended) {
 							stream.onended();
@@ -147,10 +153,10 @@ module.exports = function (mode, constraints, cb) {
 };
 
 typeof window !== 'undefined' && window.addEventListener('message', function (event) {
-	if (event.origin != window.location.origin && !event.isTrusted) {
+	if (event.origin !== window.location.origin && !event.isTrusted) {
 		return;
 	}
-	if (event.data.type == 'gotScreen' && cache[event.data.id]) {
+	if (event.data.type === 'gotScreen' && cache[event.data.id]) {
 		var data = cache[event.data.id];
 		var constraints = data[1];
 		var callback = data[0];
@@ -176,7 +182,7 @@ typeof window !== 'undefined' && window.addEventListener('message', function (ev
 			constraints.video.mandatory.chromeMediaSourceId = event.data.sourceId;
 			getUserMedia(constraints, callback);
 		}
-	} else if (event.data.type == 'getScreenPending') {
+	} else if (event.data.type === 'getScreenPending') {
 		window.clearTimeout(event.data.id);
 	}
 });

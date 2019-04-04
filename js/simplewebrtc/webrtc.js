@@ -1,3 +1,5 @@
+/* global module */
+
 var util = require('util');
 var webrtcSupport = require('webrtcsupport');
 var mockconsole = require('mockconsole');
@@ -8,7 +10,7 @@ var Peer = require('./peer');
 function WebRTC(opts) {
 	var self = this;
 	var options = opts || {};
-	var config = this.config = {
+	this.config = {
 			debug: false,
 			// makes the entire PC config overridable
 			peerConnectionConfig: {
@@ -63,7 +65,9 @@ function WebRTC(opts) {
 			self.peers.forEach(function (peer) {
 				if (peer.enableDataChannels) {
 					var dc = peer.getDataChannel('hark');
-					if (dc.readyState != 'open') return;
+					if (dc.readyState !== 'open') {
+						return;
+					}
 					dc.send(JSON.stringify({type: 'speaking'}));
 				}
 			});
@@ -75,19 +79,23 @@ function WebRTC(opts) {
 			self.peers.forEach(function (peer) {
 				if (peer.enableDataChannels) {
 					var dc = peer.getDataChannel('hark');
-					if (dc.readyState != 'open') return;
+					if (dc.readyState !== 'open') {
+						return;
+					}
 					dc.send(JSON.stringify({type: 'stoppedSpeaking'}));
 				}
 			});
 		}
 	});
-	this.on('volumeChange', function (volume, treshold) {
+	this.on('volumeChange', function (volume/*, treshold*/) {
 		if (!self.hardMuted) {
 			// FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
 			self.peers.forEach(function (peer) {
 				if (peer.enableDataChannels) {
 					var dc = peer.getDataChannel('hark');
-					if (dc.readyState != 'open') return;
+					if (dc.readyState !== 'open') {
+						return;
+					}
 					dc.send(JSON.stringify({type: 'volume', volume: volume }));
 				}
 			});
