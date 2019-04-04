@@ -407,6 +407,9 @@ video {
 	&.icon-screen-off {
 		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
 	}
+	&.icon-error {
+		background-image: url(icon-color-path('error', 'actions', 'fff', 1, true));
+	}
 
 	/* ".force-icon-white-in-call" can be combined with ".icon-shadow" just like
 	 * ".icon-white". */
