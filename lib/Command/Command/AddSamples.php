@@ -76,6 +76,32 @@ class AddSamples extends Base {
 		}
 
 		try {
+			$this->service->find('', 'calculator');
+		} catch (DoesNotExistException $e) {
+			$commands[] = $this->service->create(
+				'',
+				'calculator',
+				'Calculator',
+				$appPath . '/sample-commands/calc.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
+				Command::RESPONSE_USER,
+				Command::ENABLED_ALL
+			);
+		}
+
+		try {
+			$this->service->find('', 'calc');
+		} catch (DoesNotExistException $e) {
+			$commands[] = $this->service->create(
+				'',
+				'calc',
+				'Calculator',
+				'alias:calculator',
+				Command::RESPONSE_ALL,
+				Command::ENABLED_ALL
+			);
+		}
+
+		try {
 			$this->service->find('', 'hackernews');
 		} catch (DoesNotExistException $e) {
 			$commands[] = $this->service->create(
