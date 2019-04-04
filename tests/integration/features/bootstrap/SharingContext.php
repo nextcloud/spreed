@@ -195,6 +195,29 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user shares :path by link
+	 *
+	 * @param string $user
+	 * @param string $path
+	 * @param TableNode|null $body
+	 */
+	public function userSharesByLink(string $user, string $path, TableNode $body = null) {
+		$this->userSharesWith($user, $path, 3 /*Share::SHARE_TYPE_LINK*/, '', $body);
+	}
+
+	/**
+	 * @When user :user shares :path by link with OCS :statusCode
+	 *
+	 * @param string $user
+	 * @param string $path
+	 * @param int $statusCode
+	 */
+	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode) {
+		$this->userSharesByLink($user, $path);
+		$this->theOCSStatusCodeShouldBe($statusCode);
+	}
+
+	/**
 	 * @When user :user updates last share with
 	 *
 	 * @param string $user
