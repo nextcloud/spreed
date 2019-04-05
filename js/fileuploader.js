@@ -229,20 +229,10 @@
 
             var formElement = $(".newCommentForm .message").first();
             formElement.pastableContenteditable();
-
-            var chatViewElement = $("ul.comments").first();
-            chatViewElement.pastableNonInputable();
+            formElement.focus();
 
             formElement.on("pasteImage", function (ev, data) {
 
-                self.doUploadFile(self.blobToFile(data.blob));
-            }).on("pasteImageError", function (ev, data) {
-                console.log("Unable to copy and paste your image.", data.message);
-            }).on("pasteText", function (ev, data) {
-                // Just text, do nothing.
-            });
-
-            chatViewElement.on("pasteImage", function (ev, data) {
                 self.doUploadFile(self.blobToFile(data.blob));
             }).on("pasteImageError", function (ev, data) {
                 console.log("Unable to copy and paste your image.", data.message);
