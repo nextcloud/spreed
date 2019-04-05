@@ -158,6 +158,7 @@ function prepareDocker() {
 		--exclude="./data" \
 		--exclude="./data-autotest" \
 		--exclude="./tests" \
+		--exclude="node_modules" \
 		--directory=../../../../ \
 		.
 
