@@ -62,16 +62,17 @@ class SearchPlugin implements ISearchPlugin {
 	 * @since 13.0.0
 	 */
 	public function search($search, $limit, $offset, ISearchResult $searchResult) {
-
-		// FIXME Handle guests
-		$this->searchUsers($search, $this->room->getParticipantUserIds(), $searchResult);
-
 		if ($this->room->getObjectType() === 'file') {
 			$usersWithFileAccess = $this->util->getUsersWithAccessFile($this->room->getObjectId());
 			if (!empty($usersWithFileAccess)) {
 				$this->searchUsers($search, $usersWithFileAccess, $searchResult);
 			}
+
+			return false;
 		}
+
+		// FIXME Handle guests
+		$this->searchUsers($search, $this->room->getParticipantUserIds(), $searchResult);
 
 		return false;
 	}
