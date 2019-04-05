@@ -142,3 +142,25 @@ Feature: conversation/files
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant1" gets the room for path "welcome.txt" with 200
     When user "guest" joins room "file welcome.txt room" with 404
+
+
+
+  Scenario: owner of a shared file can join its room again after leaving it
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    And user "participant1" is participant of room "file welcome (2).txt room"
+    When user "participant1" leaves room "file welcome (2).txt room" with 200
+    And user "participant1" is not participant of room "file welcome (2).txt room"
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    Then user "participant1" is participant of room "file welcome (2).txt room"
+
+  Scenario: user with access to a file can join its room again after leaving it
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    And user "participant2" is participant of room "file welcome.txt room"
+    When user "participant2" leaves room "file welcome.txt room" with 200
+    And user "participant2" is not participant of room "file welcome.txt room"
+    And user "participant2" joins room "file welcome.txt room" with 200
+    Then user "participant2" is participant of room "file welcome.txt room"
