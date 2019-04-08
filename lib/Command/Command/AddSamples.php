@@ -73,6 +73,8 @@ class AddSamples extends Base {
 		$chmod = fileperms($appPath . '/sample-commands/calc.sh');
 		if (!($chmod & 0x0040 || $chmod & 0x0008 || $chmod & 0x0001)) {
 			$output->writeln('<error>sample-commands/calc.sh is not executable</error>');
+		} else if (!shell_exec('which bc')) {
+			$output->writeln('<error>Can not add calculator command, because Basic calculator package (bc - https://www.gnu.org/software/bc/) is missing</error>');
 		} else {
 			$this->installCommand(
 				$output,
