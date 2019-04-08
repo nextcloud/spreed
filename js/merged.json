@@ -1,4 +1,5 @@
 [
+  "vendor/momentjs/moment.js",
   "vendor/inotify/inotify.min.js",
   "vendor/jquery-dotimeout/jquery-dotimeout.min.js",
   "vendor/visibility/visibility.min.js",
