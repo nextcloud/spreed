@@ -684,7 +684,9 @@
              * Start listening for user's status.
              * Note: Updates user status indicator.
              */
-            if (OC.getCurrentUser().uid !== null) OCA.Talk.UserStatus.listen(OC.getCurrentUser().uid);
+            if (OC.getCurrentUser().uid !== null) {
+                OCA.Talk.UserStatus.init(this).listen(OC.getCurrentUser().uid);
+            }
         },
         setupWebRTC: function () {
             if (!OCA.SpreedMe.webrtc) {
