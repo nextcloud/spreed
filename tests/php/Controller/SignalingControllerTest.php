@@ -734,10 +734,6 @@ class SignalingControllerTest extends \Test\TestCase {
 		// The user is reloading the browser which will join him with another
 		// session id.
 		$newSessionId = $room->joinRoom($testUser, '');
-		$room->addUsers([
-			'userId' => $this->userId,
-			'sessionId' => $this->userId,
-		]);
 		$result = $this->performBackendRequest([
 			'type' => 'room',
 			'room' => [
