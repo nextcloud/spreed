@@ -211,6 +211,92 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @Then /^user "([^"]*)" gets the room for path "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $path
+	 * @param int $statusCode
+	 */
+	public function userGetsTheRoomForPath($user, $path, $statusCode) {
+		$fileId = $this->getFileIdForPath($user, $path);
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/file/' . $fileId);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+
+		$identifier = 'file ' . $path . ' room';
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
+	}
+
+	/**
+	 * @param string $user
+	 * @param string $path
+	 * @return int
+	 */
+	private function getFileIdForPath($user, $path) {
+		$this->currentUser = $user;
+
+		$url = "/$user/$path";
+
+		$headers = [];
+		$headers['Depth'] = 0;
+
+		$body = '<d:propfind xmlns:d="DAV:" xmlns:oc="http://owncloud.org/ns">' .
+				'	<d:prop>' .
+				'		<oc:fileid/>' .
+				'	</d:prop>' .
+				'</d:propfind>';
+
+		$this->sendingToDav('PROPFIND', $url, $headers, $body);
+
+		$this->assertStatusCode($this->response, 207);
+
+		$xmlResponse = simplexml_load_string($this->response->getBody());
+		$xmlResponse->registerXPathNamespace('oc', 'http://owncloud.org/ns');
+
+		return (int)$xmlResponse->xpath('//oc:fileid')[0];
+	}
+
+	/**
+	 * @param string $verb
+	 * @param string $url
+	 * @param array $headers
+	 * @param string $body
+	 */
+	private function sendingToDav(string $verb, string $url, array $headers = null, string $body = null) {
+		$fullUrl = $this->baseUrl . "remote.php/dav/files" . $url;
+		$client = new Client();
+		$options = [];
+		if ($this->currentUser === 'admin') {
+			$options['auth'] = 'admin';
+		} else {
+			$options['auth'] = [$this->currentUser, '123456'];
+		}
+		$options['headers'] = [
+			'OCS_APIREQUEST' => 'true'
+		];
+		if ($headers !== null) {
+			$options['headers'] = array_merge($options['headers'], $headers);
+		}
+		if ($body !== null) {
+			$options['body'] = $body;
+		}
+
+		try {
+			$this->response = $client->send($client->createRequest($verb, $fullUrl, $options));
+		} catch (GuzzleHttp\Exception\ClientException $ex) {
+			$this->response = $ex->getResponse();
+		}
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" joins room "([^"]*)" with (\d+)$/
 	 *
 	 * @param string $user
