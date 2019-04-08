@@ -601,6 +601,14 @@ input[type="password"] {
 }
 /* END: move padding fixes and icons-for-tabs capability into core */
 
+/* In Talk clicking on the selected tab header has no effect, so the pointer
+ * cursor should not be used. */
+.tabHeaders .tabHeader.selected,
+.tabHeaders .tabHeader.selected .icon,
+.tabHeaders .tabHeader.selected a {
+	cursor: default;
+}
+
 #app-sidebar.hidden {
 	display: none !important;
 }
