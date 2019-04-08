@@ -1,169 +1,947 @@
-pipeline:
-  eslint:
-    image: nextcloudci/eslint:eslint-1
-    commands:
-      - ./run-eslint.sh
-    when:
-      matrix:
-        TESTS: eslint
-  stylelint:
-    image: nextcloudci/stylelint:stylelint-1
-    commands:
-      - ./run-stylelint.sh
-    when:
-      matrix:
-        TESTS: stylelint
-  check-app-compatbility:
-    image: nextcloudci/php7.0:php7.0-19
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-      - DB=sqlite
-    commands:
-      # Pre-setup steps
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server
+kind: pipeline
+name: handlebars
 
-      # Code checker
-      - ./occ app:check-code $APP_NAME
-      - cd apps/$APP_NAME/
-    when:
-      matrix:
-        TESTS: check-app-compatbility
-  handlebars:
+steps:
+  - name: check-handlebars-templates
     image: node
     commands:
       - npm install -g handlebars
       - ./check-handlebars-templates.sh
-    when:
-      matrix:
-        TESTS: handlebars
-  syntax-php7.0:
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: eslint
+
+steps:
+  - name: eslint
+    image: nextcloudci/eslint:eslint-1
+    commands:
+      - ./run-eslint.sh
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: stylelint
+
+steps:
+  - name: eslint
+    image: nextcloudci/stylelint:stylelint-1
+    commands:
+      - ./run-stylelint.sh
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: compatibility
+
+steps:
+  - name: syntax-php7.0
     image: nextcloudci/php7.0:php7.0-19
     environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-      - DB=sqlite
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
     commands:
-      # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
       - composer install
       - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
-    when:
-      matrix:
-        TESTS: syntax-php7.0
-  signed-off-check:
-    image: nextcloudci/php7.0:php7.0-19
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-      - DB=sqlite
-    commands:
-      # Pre-setup steps
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server
-      - php ./build/signed-off-checker.php
-    secrets: [ github_token ]
-    when:
-      matrix:
-        TESTS: signed-off-check
-  php7.0:
-    image: nextcloudci/php7.0:php7.0-19
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-      - DB=sqlite
-    commands:
-      # Pre-setup steps
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server/
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run phpunit tests
-      - cd tests/php/
-      - phpunit --configuration phpunit.xml
-    when:
-      matrix:
-        TESTS: php7.0
-  php7.1:
-    image: nextcloudci/php7.1:php7.1-16
-    environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-      - DB=sqlite
-    commands:
-      # Pre-setup steps
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server/
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run phpunit tests
-      - cd tests/php/
-      - phpunit --configuration phpunit.xml
-    when:
-      matrix:
-        TESTS: php7.1
-  php7.2:
+  - name: syntax-php7.2
     image: nextcloudci/php7.2:php7.2-12
     environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
-      - DB=sqlite
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
     commands:
-      # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server/
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - composer install
+      - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
+  - name: app-code-check
+    image: nextcloudci/php7.2:php7.2-12
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:check-code $APP_NAME
+      - cd apps/$APP_NAME/
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-sqlite-php7.0
+
+steps:
+  - name: sqlite-php7.0
+    image: nextcloudci/php7.0:php7.0-19
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
       - ./occ app:enable $APP_NAME
       - cd apps/$APP_NAME
 
       # Run phpunit tests
       - cd tests/php/
       - phpunit --configuration phpunit.xml
-    when:
-      matrix:
-        TESTS: php7.2
-  php7.1-integration:
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-sqlite-php7.1
+
+steps:
+  - name: sqlite-php7.1
     image: nextcloudci/php7.1:php7.1-16
     environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
     commands:
-      # Pre-setup steps
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DB
-      - cd ../server/
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-sqlite-php7.2
+
+steps:
+  - name: sqlite-php7.2
+    image: nextcloudci/php7.2:php7.2-12
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-mysql-php7.0
+
+steps:
+  - name: mysql-php7.0
+    image: nextcloudci/php7.0:php7.0-19
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-mysql-php7.1
+
+steps:
+  - name: mysql-php7.1
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-mysql-php7.2
+
+steps:
+  - name: mysql-php7.2
+    image: nextcloudci/php7.2:php7.2-12
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-pgsql-php7.0
+
+steps:
+  - name: pgsql-php7.0
+    image: nextcloudci/php7.0:php7.0-19
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-pgsql-php7.1
+
+steps:
+  - name: pgsql-php7.1
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-pgsql-php7.2
+
+steps:
+  - name: pgsql-php7.2
+    image: nextcloudci/php7.2:php7.2-12
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-sqlite-callapi
+
+steps:
+  - name: integration-callapi
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
       - ./occ app:enable $APP_NAME
       - cd apps/$APP_NAME
 
       # Run integration tests
       - cd tests/integration/
-      - bash run.sh $TESTS_INTEGRATION
-    when:
-      matrix:
-        TESTS: php7.1-integration
-  jsunit:
-    image: nextcloudci/jsunit:jsunit-5
+      - bash run.sh features/callapi
+
+services:
+  - name: cache
+    image: redis
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-sqlite-chat
+
+steps:
+  - name: integration-chat
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
     commands:
-      - unset PHANTOMJS_BIN
-      - npm install
-      - node_modules/karma/bin/karma start --single-run
-    when:
-      matrix:
-        TESTS: jsunit
-  acceptance:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/chat
+
+services:
+  - name: cache
+    image: redis
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-sqlite-conversation
+
+steps:
+  - name: integration-conversation
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/conversation
+
+services:
+  - name: cache
+    image: redis
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-sqlite-sharing
+
+steps:
+  - name: integration-sharing
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: sqlite
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/sharing
+
+services:
+  - name: cache
+    image: redis
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-mysql-callapi
+
+steps:
+  - name: integration-callapi
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/callapi
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-mysql-chat
+
+steps:
+  - name: integration-chat
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/chat
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-mysql-conversation
+
+steps:
+  - name: integration-conversation
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/conversation
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-mysql-sharing
+
+steps:
+  - name: integration-sharing
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: mysql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/sharing
+
+services:
+  - name: cache
+    image: redis
+  - name: mysql
+    image: mysql:5.7.22
+    environment:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
+    tmpfs:
+      - /var/lib/mysql
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-pgsql-callapi
+
+steps:
+  - name: integration-callapi
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/callapi
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-pgsql-chat
+
+steps:
+  - name: integration-chat
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/chat
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-pgsql-conversation
+
+steps:
+  - name: integration-conversation
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/conversation
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: int-pgsql-sharing
+
+steps:
+  - name: integration-sharing
+    image: nextcloudci/php7.1:php7.1-16
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      DATABASEHOST: pgsql
+    commands:
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run integration tests
+      - cd tests/integration/
+      - bash run.sh features/sharing
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+#    - pull_request
+    - push
+
+---
+kind: pipeline
+name: acc-sqlite-app-files
+
+steps:
+  - name: acceptance-app-files
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
-      - APP_NAME=spreed
-      - CORE_BRANCH=stable15
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      SELENIUM_HOST: selenium
+      TESTS_ACCEPTANCE: app-files
     commands:
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
@@ -173,115 +951,184 @@ pipeline:
       - ln --symbolic `pwd` /var/www/html
 
       # Run acceptance tests
-      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance --selenium-server selenium:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
-    when:
-      matrix:
-        TESTS: acceptance
-
-matrix:
-  include:
-    # Checks
-    - TESTS: eslint
-    - TESTS: stylelint
-    - TESTS: check-app-compatbility
-    - TESTS: handlebars
-    - TESTS: syntax-php7.0
-    - TESTS: signed-off-check
-
-    # Unit tests
-    - TESTS: php7.0
-    - TESTS: php7.1
-    - TESTS: php7.2
-    - TESTS: jsunit
-
-    # Integration tests sqlite
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/callapi
-      DB: sqlite
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/chat
-      DB: sqlite
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/conversation
-      DB: sqlite
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/sharing
-      DB: sqlite
-
-    # Integration tests MySQL 5.7
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/callapi
-      DB: mysql
-      DATABASEHOST: mysql-5.7
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/chat
-      DB: mysql
-      DATABASEHOST: mysql-5.7
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/conversation
-      DB: mysql
-      DATABASEHOST: mysql-5.7
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/sharing
-      DB: mysql
-      DATABASEHOST: mysql-5.7
-
-    # Integration tests Postgres 10
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/callapi
-      DB: pgsql
-      DATABASEHOST: postgres-10
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/chat
-      DB: pgsql
-      DATABASEHOST: postgres-10
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/conversation
-      DB: pgsql
-      DATABASEHOST: postgres-10
-    - TESTS: php7.1-integration
-      TESTS_INTEGRATION: features/sharing
-      DB: pgsql
-      DATABASEHOST: postgres-10
-
-    # Acceptance tests
-    - TESTS: acceptance
-      TESTS_ACCEPTANCE: app-files
-    - TESTS: acceptance
-      TESTS_ACCEPTANCE: chat
-    - TESTS: acceptance
-      TESTS_ACCEPTANCE: conversation
-    - TESTS: acceptance
-      TESTS_ACCEPTANCE: public-share-auth
-    - TESTS: acceptance
-      TESTS_ACCEPTANCE: room-shares
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
 
 services:
-  mysql-5.7:
-    image: mysql:5.7
-    environment:
-      - MYSQL_ROOT_PASSWORD=owncloud
-      - MYSQL_USER=oc_autotest
-      - MYSQL_PASSWORD=owncloud
-      - MYSQL_DATABASE=oc_autotest
-    when:
-      matrix:
-        DATABASEHOST: mysql-5.7
-  postgres-10:
-    image: postgres:10
-    environment:
-      - POSTGRES_USER=oc_autotest
-      - POSTGRES_DB=oc_autotest_dummy
-      - POSTGRES_PASSWORD=
-    when:
-      matrix:
-        DATABASEHOST: postgres-10
-  selenium:
+  - name: selenium
     image: selenium/standalone-firefox:2.53.1-beryllium
     environment:
       # Reduce default log level for Selenium server (INFO) as it is too
       # verbose.
-      - JAVA_OPTS=-Dselenium.LOGGER.level=WARNING
-    when:
-      matrix:
-        TESTS: acceptance
+      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: acc-sqlite-chat
+
+steps:
+  - name: acceptance-chat
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      SELENIUM_HOST: selenium
+      TESTS_ACCEPTANCE: chat
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/$APP_NAME
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
+
+services:
+  - name: cache
+    image: redis
+  - name: selenium
+    image: selenium/standalone-firefox:2.53.1-beryllium
+    environment:
+      # Reduce default log level for Selenium server (INFO) as it is too
+      # verbose.
+      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: acc-sqlite-conversation
+
+steps:
+  - name: acceptance-conversation
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      SELENIUM_HOST: selenium
+      TESTS_ACCEPTANCE: conversation
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/$APP_NAME
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
+
+services:
+  - name: cache
+    image: redis
+  - name: selenium
+    image: selenium/standalone-firefox:2.53.1-beryllium
+    environment:
+      # Reduce default log level for Selenium server (INFO) as it is too
+      # verbose.
+      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: acc-sqlite-public-share-auth
+
+steps:
+  - name: acceptance-public-share-auth
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      SELENIUM_HOST: selenium
+      TESTS_ACCEPTANCE: public-share-auth
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/$APP_NAME
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
+
+services:
+  - name: cache
+    image: redis
+  - name: selenium
+    image: selenium/standalone-firefox:2.53.1-beryllium
+    environment:
+      # Reduce default log level for Selenium server (INFO) as it is too
+      # verbose.
+      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: acc-sqlite-room-shares
+
+steps:
+  - name: acceptance-room-shares
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: stable15
+      SELENIUM_HOST: selenium
+      TESTS_ACCEPTANCE: room-shares
+    commands:
+      # Pre-setup steps
+      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/$APP_NAME
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
+
+services:
+  - name: cache
+    image: redis
+  - name: selenium
+    image: selenium/standalone-firefox:2.53.1-beryllium
+    environment:
+      # Reduce default log level for Selenium server (INFO) as it is too
+      # verbose.
+      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
