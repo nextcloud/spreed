@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+CALCULATOR=$(which "bc")
+if ! [ -x "$CALCULATOR" ]; then
+  echo "Basic calculator package (bc - https://www.gnu.org/software/bc/) not found"
+  exit 1
+fi
+
 while test $# -gt 0; do
   case "$1" in
     --help)
@@ -15,13 +22,6 @@ while test $# -gt 0; do
       ;;
  esac
 done
-
-CALCULATOR=$(which "bc")
-if ! [ -x "$CALCULATOR" ]; then
-  echo "Basic calculator package (bc) not found"
-  exit 1
-fi
-
 
 set -f
 echo "$@ ="

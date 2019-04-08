@@ -40,6 +40,8 @@ class AddSamples extends Base {
 	/** @var IAppManager */
 	protected $appManager;
 
+	protected $commands = [];
+
 	public function __construct(CommandService $service, IAppManager $appManager) {
 		parent::__construct();
 		$this->service = $service;
@@ -61,61 +63,69 @@ class AddSamples extends Base {
 			return 1;
 		}
 
-		$commands = [];
-		try {
-			$this->service->find('', 'wiki');
-		} catch (DoesNotExistException $e) {
-			$commands[] = $this->service->create(
-				'',
-				'wiki',
-				'Wikipedia',
-				'php ' . $appPath . '/sample-commands/wikipedia.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
-				Command::RESPONSE_ALL,
-				Command::ENABLED_ALL
-			);
-		}
+		$this->installCommand(
+			$output,
+			'wiki',
+			'Wikipedia',
+			'php ' . $appPath . '/sample-commands/wikipedia.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"'
+		);
 
-		try {
-			$this->service->find('', 'calculator');
-		} catch (DoesNotExistException $e) {
-			$commands[] = $this->service->create(
-				'',
+		$chmod = fileperms($appPath . '/sample-commands/calc.sh');
+		if (!($chmod & 0x0040 || $chmod & 0x0008 || $chmod & 0x0001)) {
+			$output->writeln('<error>sample-commands/calc.sh is not executable</error>');
+		} else {
+			$this->installCommand(
+				$output,
 				'calculator',
 				'Calculator',
 				$appPath . '/sample-commands/calc.sh "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
-				Command::RESPONSE_USER,
-				Command::ENABLED_ALL
+				Command::RESPONSE_USER
 			);
-		}
 
-		try {
-			$this->service->find('', 'calc');
-		} catch (DoesNotExistException $e) {
-			$commands[] = $this->service->create(
-				'',
+			$this->installCommand(
+				$output,
 				'calc',
 				'Calculator',
-				'alias:calculator',
-				Command::RESPONSE_ALL,
-				Command::ENABLED_ALL
+				'alias:calculator'
 			);
 		}
 
-		try {
-			$this->service->find('', 'hackernews');
-		} catch (DoesNotExistException $e) {
-			$commands[] = $this->service->create(
-				'',
-				'hackernews',
-				'Hacker News',
-				'php ' . $appPath . '/sample-commands/hackernews.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"',
-				Command::RESPONSE_ALL,
-				Command::ENABLED_ALL
-			);
+
+		$this->installCommand(
+			$output,
+			'hackernews',
+			'Hacker News',
+			'php ' . $appPath . '/sample-commands/hackernews.php "{ARGUMENTS_DOUBLEQUOTE_ESCAPED}"'
+		);
+
+		if (empty($this->commands)) {
+			return 1;
 		}
 
 		$output->writeln('<info>Commands added</info>');
 		$output->writeln('');
-		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, $commands);
+		$this->renderCommands(Base::OUTPUT_FORMAT_PLAIN, $output, $this->commands);
+	}
+
+	protected function installCommand(OutputInterface $output, string $command, string $name, string $script, int $resonse = Command::RESPONSE_ALL, int $enable = Command::ENABLED_ALL): void {
+		try {
+			$this->service->find('', $command);
+			$output->writeln('<comment>Command ' . $command . ' already exists</comment>');
+			return;
+		} catch (DoesNotExistException $e) {
+		}
+
+		try {
+			$this->commands[] = $this->service->create(
+				'',
+				$command,
+				$name,
+				$script,
+				$resonse,
+				$enable
+			);
+		} catch (\InvalidArgumentException $e) {
+			$output->writeln('<error>An error occured while setting up the ' . $command . ' command</error>');
+		}
 	}
 }
