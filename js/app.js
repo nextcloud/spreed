@@ -42,6 +42,7 @@
 		NOTIFY_MENTION: 2,
 		NOTIFY_NEVER: 3,
 
+
 		/* Must stay in sync with values in "lib/Room.php". */
 		FLAG_DISCONNECTED: 0,
 		FLAG_IN_CALL: 1,
@@ -301,7 +302,7 @@
 					this.setRoom(model);
 				}
 			});
-			this._sidebarView.addTab('collections', { label: t('spreed', 'Collections'), icon: 'icon-category-integration' }, this._collectionsView);
+			this._sidebarView.addTab('collections', { label: t('spreed', 'Projects'), icon: 'icon-projects' }, this._collectionsView);
 		},
 		_hideParticipantList: function() {
 			this._sidebarView.removeTab('participants');

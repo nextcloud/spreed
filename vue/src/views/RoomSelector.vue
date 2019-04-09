@@ -24,7 +24,7 @@
 	<modal @close="close">
 		<div id="modal-inner" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
-				<h1>{{ t('spreed', 'Select a room to link to the collection') }}</h1>
+				<h1>{{ t('spreed', 'Select a conversation to add to the project') }}</h1>
 				<div id="room-list">
 					<ul v-if="!loading">
 						<li v-for="room in availableRooms" :key="room.token" :class="{selected: selectedRoom === room.token }"
@@ -38,7 +38,7 @@
 				</div>
 				<div id="modal-buttons">
 					<button v-if="!loading" class="primary" @click="select">
-						{{ t('spreed', 'Select room') }}
+						{{ t('spreed', 'Select conversation') }}
 					</button>
 				</div>
 			</div>
