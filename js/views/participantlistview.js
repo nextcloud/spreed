@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -21,60 +21,15 @@
  */
 
 
-(function(OC, OCA, Marionette, Handlebars) {
+(function(OC, OCA, Marionette) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var uiChannel = Backbone.Radio.channel('ui');
-
-	var ITEM_TEMPLATE = '' +
-		'<a class="participant-entry-link" href="#" data-sessionId="{{sessionId}}">' +
-			'<div class="avatar"></div>' +
-			' {{name}}' +
-			'{{#if participantIsOwner}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
-			'{{#if participantIsModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
-			'{{#if participantIsGuestModerator}}<span class="participant-moderator-indicator">(' + t('spreed', 'moderator') + ')</span>{{/if}}' +
-			'{{#if inCall}}<span class="icon icon-video"></span>{{/if}}' +
-		'</a>'+
-		'{{#if canModerate}}' +
-			'<div class="participant-entry-utils">'+
-				'<ul>'+
-					'<li class="participant-entry-utils-menu-button">' +
-						'<button class="icon icon-more"></button>' +
-						'<span class="icon icon-loading-small hidden"></span>' +
-					'</li>' +
-				'</ul>'+
-			'</div>'+
-			'<div class="popovermenu bubble menu">'+
-				'<ul class="popovermenu-list">'+
-					'{{#if canBeDemoted}}' +
-					'<li>' +
-						'<button class="demote-moderator">' +
-							'<span class="icon icon-star"></span>' +
-							'<span>' + t('spreed', 'Demote from moderator') + '</span>' +
-						'</button>' +
-					'</li>' +
-					'{{else}}' +
-						'{{#if canBePromoted}}' +
-						'<li>' +
-							'<button class="promote-moderator">' +
-								'<span class="icon icon-rename"></span>' +
-								'<span>' + t('spreed', 'Promote to moderator') + '</span>' +
-							'</button>' +
-						'</li>' +
-						'{{/if}}' +
-					'{{/if}}' +
-					'<li>' +
-						'<button class="remove-participant">' +
-							'<span class="icon icon-delete"></span>' +
-							'<span>' + t('spreed', 'Remove participant') + '</span>' +
-						'</button>' +
-					'</li>' +
-				'</ul>' +
-			'</div>' +
-		'{{/if}}';
 
 	OCA.SpreedMe.Views.ParticipantListView = Marionette.CollectionView.extend({
 		tagName: 'ul',
@@ -117,6 +72,12 @@
 					}
 				});
 			},
+			template: function(context) {
+				// OCA.Talk.Views.Templates may not have been initialized when this
+				// view is initialized, so the template can not be directly
+				// assigned.
+				return OCA.Talk.Views.Templates['participantlistview'](context);
+			},
 			templateContext: function() {
 				var isSelf = false,
 					isModerator = false;
@@ -148,7 +109,11 @@
 					participantIsUser: this.model.get('participantType') === OCA.SpreedMe.app.USER,
 					participantIsGuestModerator: this.model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR,
 					participantIsModerator: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR,
-					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER
+					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER,
+					moderatorIndicator: '(' + t('spreed', 'moderator') + ')',
+					demoteModeratorText: t('spreed', 'Demote from moderator'),
+					promoteModeratorText: t('spreed', 'Promote to moderator'),
+					removeParticipantText: t('spreed', 'Remove participant')
 				};
 			},
 			onRender: function() {
@@ -191,7 +156,6 @@
 				'menuButton': '.participant-entry-utils-menu-button button',
 				'menuButtonIconLoading': '.participant-entry-utils-menu-button .icon-loading-small'
 			},
-			template: Handlebars.compile(ITEM_TEMPLATE),
 			menuShown: false,
 			toggleMenu: function(e) {
 				e.preventDefault();
@@ -336,4 +300,4 @@
 		})
 	});
 
-})(OC, OCA, Marionette, Handlebars);
+})(OC, OCA, Marionette);
