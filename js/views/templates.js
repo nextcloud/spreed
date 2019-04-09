@@ -190,6 +190,54 @@ templates['chatview_comment'] = template({"1":function(container,depth0,helpers,
     + ((stack1 = ((helper = (helper = helpers.formattedMessage || (depth0 != null ? depth0.formattedMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"formattedMessage","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</div>\n</li>\n";
 },"useData":true});
+templates['editabletextlabel'] = template({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "	<div class=\"edit-button\"><span class=\"icon button icon-rename\" "
+    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.buttonTitle : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "></span></div>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return " title=\""
+    + container.escapeExpression(((helper = (helper = helpers.buttonTitle || (depth0 != null ? depth0.buttonTitle : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"buttonTitle","hash":{},"data":data}) : helper)))
+    + "\" ";
+},"4":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
+
+  return "<div class=\"input-wrapper hidden-important\">\n	<input class=\"username\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inputMaxLength : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " type=\"text\" value=\""
+    + container.escapeExpression(((helper = (helper = helpers.inputValue || (depth0 != null ? depth0.inputValue : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"inputValue","hash":{},"data":data}) : helper)))
+    + "\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inputPlaceholder : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ">\n	<input type=\"submit\" value=\"\" class=\"icon icon-confirm confirm-button\"></div>\n</div>\n";
+},"5":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return " maxlength=\""
+    + container.escapeExpression(((helper = (helper = helpers.inputMaxLength || (depth0 != null ? depth0.inputMaxLength : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"inputMaxLength","hash":{},"data":data}) : helper)))
+    + "\" ";
+},"7":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return " placeholder=\""
+    + container.escapeExpression(((helper = (helper = helpers.inputPlaceholder || (depth0 != null ? depth0.inputPlaceholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"inputPlaceholder","hash":{},"data":data}) : helper)))
+    + "\" ";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "<div class=\"label-wrapper\">\n	<"
+    + alias4(((helper = (helper = helpers.labelTagName || (depth0 != null ? depth0.labelTagName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"labelTagName","hash":{},"data":data}) : helper)))
+    + " class=\"label\">"
+    + alias4(((helper = (helper = helpers.text || (depth0 != null ? depth0.text : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"text","hash":{},"data":data}) : helper)))
+    + "</"
+    + alias4(((helper = (helper = helpers.labelTagName || (depth0 != null ? depth0.labelTagName : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"labelTagName","hash":{},"data":data}) : helper)))
+    + ">\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.editionEnabled : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</div>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.editionEnabled : depth0),{"name":"if","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"useData":true});
 templates['localvideoview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<video id=\"localVideo\"></video>\n<div class=\"avatar-container hidden\">\n	<div class=\"avatar\"></div>\n</div>\n<div class=\"nameIndicator\"></div>\n";
 },"useData":true});
