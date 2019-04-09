@@ -12,6 +12,14 @@
     OCA.Talk = OCA.Talk || {};
     OCA.Talk.UserStatus = {
 
+        app: null,
+
+        init: function (app) {
+            this.app = app;
+
+            return this;
+        },
+
         /**
          * Update user status.
          *
@@ -56,12 +64,9 @@
                 self.update(userId, "online");
             });
 
-            // Get chat rooms every 10 seconds.
-            $.doTimeout(10000, function () {
-
+            self.app.signaling.on("syncRooms", function () {
                 self.getChatRooms();
-                return true;
-            }, true);
+            });
         },
 
         /**

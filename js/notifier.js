@@ -57,6 +57,13 @@
         // The notification queue.
         notificationQueue: [],
 
+        // The number of minutes to mark user as inactive by moving out of focus.
+        // Within this limit, don't mark as inactive.
+        inactiveMinStart: 5,
+
+        // Last active.
+        dateLastActive: moment(),
+
         init: function (a) {
 
             // Set app instance.
@@ -99,27 +106,56 @@
             self.returnToRoom();
 
             // If user is away.
-            ifvisible.on("blur", function () {
-                self.leaveRoom();
+            var idleDurationInSeconds = this.inactiveMinStart * 60;
+            ifvisible.setIdleDuration(idleDurationInSeconds); // in seconds.
+
+            ifvisible.on("idle", function () {
+
+                // Do this when not in the page.
+                if (ifvisible.now("hidden")) {
+
+                    $.doTimeout("idleChecker", idleDurationInSeconds / 2, function () {
+                        self.leaveRoom();
+                        return true;
+                    });
+
+                    $.doTimeout("idleChecker", true);
+                }
             });
 
             // If user is back.
-            ifvisible.on("focus", function () {
-                // Do something!
+            ifvisible.on("wakeup", function () {
+
+                // Update date last active.
+                self.dateLastActive = moment();
+
+                // Cancel idle checker.
+                $.doTimeout("idleChecker");
             });
         },
 
         leaveRoom: function () {
 
             // Don't leave room if on call.
-            if (this.roomsInCall.length > 0) return;
+            if (this.roomsInCall.length > 0) {
+                return false;
+            }
+
+            // Only leave room, if user is inactive for the past {inactiveMinStart}
+            var now = moment();
+            var diffMins = now.diff(this.dateLastActive, "minutes");
+
+            // Still active
+            if (diffMins < this.inactiveMinStart) {
+                return false;
+            }
 
             previousRoomToken = app.signaling.currentRoomToken;
 
             // Delay a little bit.
-            $.doTimeout(300, function () {
+            setTimeout(function () {
                 app.connection.leaveCurrentRoom();
-            });
+            }, 300);
         },
 
         returnToRoom: function () {
@@ -310,4 +346,4 @@
             this.roomsInCall = _.without(this.roomsInCall, token);
         }
     }
-})(OCA, OC, $);
+})(OCA, OC, $, moment);
