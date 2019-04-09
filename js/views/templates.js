@@ -465,6 +465,13 @@ templates['roomlistview'] = template({"1":function(container,depth0,helpers,part
 templates['screenview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"nameIndicator\"></div>\n";
 },"useData":true});
+templates['sidebarview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "<div id=\"app-sidebar-trigger\" class=\"icon-menu-people force-icon-white-in-call icon-shadow\">\n</div>\n<div id=\"app-sidebar\" class=\"detailsView\">\n	<div class=\"detailCallInfoContainer\">\n	</div>\n	<div class=\"tabs\">\n	</div>\n	<a class=\"close icon-close\" href=\"#\"><span class=\"hidden-visually\">"
+    + container.escapeExpression(((helper = (helper = helpers.closeLabel || (depth0 != null ? depth0.closeLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"closeLabel","hash":{},"data":data}) : helper)))
+    + "</span></a>\n</div>\n";
+},"useData":true});
 templates['videoview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div class=\"avatar-container\">\n	<div class=\"avatar\"></div>\n</div>\n<div class=\"nameIndicator\"></div>\n<div class=\"mediaIndicator\">\n	<button class=\"muteIndicator force-icon-white-in-call icon-shadow icon-audio-off audio-on\" disabled=\"true\"/>\n	<button class=\"hideRemoteVideo force-icon-white-in-call icon-shadow icon-video\"/>\n	<button class=\"screensharingIndicator force-icon-white-in-call icon-shadow icon-screen screen-off\"/>\n	<button class=\"iceFailedIndicator force-icon-white-in-call icon-shadow icon-error not-failed\" disabled=\"true\"/>\n</div>\n";
 },"useData":true});
