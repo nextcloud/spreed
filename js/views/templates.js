@@ -310,6 +310,13 @@ templates['participantlistview'] = template({"1":function(container,depth0,helpe
     + "\n</a>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canModerate : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
+templates['participantview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper;
+
+  return "<form class=\"oca-spreedme-add-person\">\n	<input class=\"add-person-input\" type=\"text\" placeholder=\""
+    + container.escapeExpression(((helper = (helper = helpers.addParticipantInputPlaceholder || (depth0 != null ? depth0.addParticipantInputPlaceholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"addParticipantInputPlaceholder","hash":{},"data":data}) : helper)))
+    + "\"/>\n</form>\n<ul class=\"participantWithList\">\n</ul>\n";
+},"useData":true});
 templates['richobjectstringparser_call'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 
