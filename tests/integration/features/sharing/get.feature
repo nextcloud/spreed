@@ -672,7 +672,7 @@ Feature: get
     And user "participant3" shares "subfolder" with room "one-to-one room not invited to" with OCS 100
     # Only direct children are taken into account
     When user "participant1" gets all shares for "/test" and its subfiles
-    Then the list of returned shares has 3 shares
+    Then the list of returned shares has 5 shares
     And share 0 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
@@ -694,6 +694,20 @@ Feature: get
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And share 2 is returned with
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2-displayname |
+      | path                   | /test/subfolder |
+      | item_type              | folder |
+      | mimetype               | httpd/unix-directory |
+      | storage_id             | home::participant1 |
+      | file_target            | /subfolder |
+      | share_with             | participant3 |
+      | share_with_displayname | participant3-displayname |
+      | share_type             | 0 |
+      | permissions            | 31 |
+    And share 3 is returned with
       | uid_owner              | participant1 |
       | displayname_owner      | participant1-displayname |
       | path                   | /test/subfolder |
@@ -703,6 +717,20 @@ Feature: get
       | file_target            | /subfolder |
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
+      | permissions            | 31 |
+    And share 4 is returned with
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | uid_owner              | participant3 |
+      | displayname_owner      | participant3-displayname |
+      | path                   | /test/subfolder |
+      | path                   | /test/subfolder |
+      | item_type              | folder |
+      | mimetype               | httpd/unix-directory |
+      | storage_id             | home::participant1 |
+      | file_target            | /subfolder |
+      | share_with             | one-to-one room not invited to |
+      | share_with_displayname | Private conversation |
       | permissions            | 31 |
 
   Scenario: get all shares of a deleted folder
