@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  *
@@ -21,31 +21,27 @@
  *
  */
 
-(function(OCA, Marionette, Handlebars) {
+(function(OCA, Marionette) {
 
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE_TAB_HEADER_VIEW =
-		'<span class="icon {{icon}}"></span>' +
-		'<a href="#">{{label}}</a>';
-
-	var TEMPLATE_TAB_VIEW =
-		'<div class="tabHeaders">' +
-		'</div>' +
-		'<div class="tabsContainer">' +
-		'	<div class="tab">' +
-		'	</div>' +
-		'</div>';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var TabHeaderView  = Marionette.View.extend({
 
 		tagName: 'li',
 		className: 'tabHeader',
 
-		template: Handlebars.compile(TEMPLATE_TAB_HEADER_VIEW),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['tabview_header'](context);
+		},
+
 		templateContext: function() {
 			return {
 				label: this.getOption('label'),
@@ -231,7 +227,12 @@
 			'unselect:tabHeader': 'unselect:tab',
 		},
 
-		template: Handlebars.compile(TEMPLATE_TAB_VIEW),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['tabview'](context);
+		},
 
 		initialize: function() {
 			this._tabHeadersView = null;
@@ -377,4 +378,4 @@
 
 	OCA.SpreedMe.Views.TabView = TabView;
 
-})(OCA, Marionette, Handlebars);
+})(OCA, Marionette);
