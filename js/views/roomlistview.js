@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -21,97 +21,13 @@
  */
 
 
-(function(OC, OCA, Marionette, Handlebars, _, $) {
+(function(OC, OCA, Marionette, _, $) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var uiChannel = Backbone.Radio.channel('ui');
-
-	var ITEM_TEMPLATE = '<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
-							'<div class="avatar {{icon}}" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
-							'{{#if isFavorite}}'+
-							// The favorite mark can not be a child of the
-							// avatar, as it would be removed when the avatar is
-							// loaded.
-							'<div class="favorite-mark">' +
-								'<span class="icon icon-favorite" />' +
-								'<span class="hidden-visually">' + t('spreed', 'Favorited') + '</span>' +
-							'</div>' +
-							'{{/if}}' +
-							' {{displayName}}' +
-						'</a>'+
-						'<div class="app-navigation-entry-utils">'+
-							'<ul>'+
-								'{{#if unreadMention}}<li class="app-navigation-entry-utils-counter highlighted"><span>@</span></li>{{/if}}'+
-								'{{#if unreadMessages}}<li class="app-navigation-entry-utils-counter"><span>{{numUnreadMessages}}</span></li>{{/if}}'+
-								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
-							'</ul>'+
-						'</div>'+
-						'<div class="app-navigation-entry-menu">'+
-							'<ul class="app-navigation-entry-menu-list">'+
-								'{{#if canFavorite}}'+
-								'{{#if isFavorite}}'+
-								'<li>'+
-									'<button class="unfavorite-room-button">'+
-										'<span class="icon-star-dark"></span>'+
-										'<span>'+t('spreed', 'Remove from favorites')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{else}}'+
-								'<li>'+
-									'<button class="favorite-room-button">'+
-										'<span class="icon-starred"></span>'+
-										'<span>'+t('spreed', 'Add to favorites')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
-								'{{/if}}'+
-								'<li>'+
-									'<button class="clipboard-button">'+
-										'<span class="icon-clippy"></span>'+
-										'<span>'+t('spreed', 'Copy link')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li><div class="separator"></div></li>'+
-								'<li{{#if notifyAlways}} class="active"{{/if}}>'+
-									'<button class="notify-always-button">'+
-										'<span class="icon-sound"></span>'+
-										'<span>'+t('spreed', 'Always notify')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li{{#if notifyMention}} class="active"{{/if}}>'+
-									'<button class="notify-mention-button">'+
-										'<span class="icon-user"></span>'+
-										'<span>'+t('spreed', 'Notify on @-mention')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li{{#if notifyNever}} class="active"{{/if}}>'+
-									'<button class="notify-never-button">'+
-										'<span class="icon-sound-off"></span>'+
-										'<span>'+t('spreed', 'Never notify')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li><div class="separator"></div></li>'+
-								'{{#if isLeavable}}'+
-								'<li>'+
-									'<button class="remove-room-button">'+
-										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>'+t('spreed', 'Leave conversation')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
-								'{{#if isDeletable}}'+
-								'<li>'+
-									'<button class="delete-room-button">'+
-										'<span class="icon-delete"></span>'+
-										'<span>'+t('spreed', 'Delete conversation')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
-							'</ul>'+
-						'</div>';
 
 	var RoomItemView = Marionette.View.extend({
 		tagName: 'li',
@@ -159,6 +75,12 @@
 				}
 			});
 		},
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['roomlistview'](context);
+		},
 		templateContext: function() {
 			var icon = '';
 			if (this.model.get('objectType') === 'file') {
@@ -184,7 +106,16 @@
 				notifyNever: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_NEVER,
 				isLeavable: isLeavable,
 				isDeletable: isDeletable,
-				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages')
+				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages'),
+				favoriteMarkText: t('spreed', 'Favorited'),
+				unfavoriteRoomText: t('spreed', 'Remove from favorites'),
+				favoriteRoomText: t('spreed', 'Add to favorites'),
+				copyLinkText: t('spreed', 'Copy link'),
+				notifyAlwaysText: t('spreed', 'Always notify'),
+				notifyMentionText: t('spreed', 'Notify on @-mention'),
+				notifyNeverText: t('spreed', 'Never notify'),
+				leaveConversationText: t('spreed', 'Leave conversation'),
+				deleteConversationText: t('spreed', 'Delete conversation'),
 			};
 		},
 		onRender: function() {
@@ -225,7 +156,6 @@
 			'clipboardButton': '.clipboard-button',
 			'menuList': '.app-navigation-entry-menu-list'
 		},
-		template: Handlebars.compile(ITEM_TEMPLATE),
 		menuShown: false,
 		toggleMenu: function(e) {
 			e.preventDefault();
@@ -386,4 +316,4 @@
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;
 
-})(OC, OCA, Marionette, Handlebars, _, $);
+})(OC, OCA, Marionette, _, $);
