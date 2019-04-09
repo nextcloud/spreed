@@ -254,6 +254,13 @@ input#request-password-button:disabled ~ .icon {
 	padding-right: 34px;
 }
 
+/* Restore rules from style.scss (core) overriden by guest.css for the
+ * sidebar */
+#body-login #talk-sidebar a {
+	color: var(--color-main-text);
+	font-weight: inherit;
+}
+
 /* Unset conflicting rules from publicshareauth.css (core) for the sidebar */
 #talk-sidebar input[type="submit"],
 #talk-sidebar input.icon-confirm[type="submit"] {
