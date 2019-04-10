@@ -101,6 +101,13 @@
 			initialize: function() {
 				this.room = this.model.collection.room;
 
+				// When the type of the current participant changes the
+				// available actions on the participant shown by this item view
+				// change too, so the view should be rendered again.
+				this.listenTo(this.room, 'change:participantType', function() {
+					this.render();
+				});
+
 				this.listenTo(uiChannel, 'document:click', function(event) {
 					var target = $(event.target);
 					if (!target.closest('.popovermenu').is(this.ui.menu) && !target.is(this.ui.menuButton)) {
