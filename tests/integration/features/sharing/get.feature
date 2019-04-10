@@ -330,8 +330,8 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
-      | share_with_displayname | Private conversation|
+      | share_with             | private_conversation |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a user who reshared a file to an owned one-to-one room
     Given user "participant2" creates room "one-to-one room not invited to"
@@ -364,7 +364,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a user who reshared a file to a one-to-one room
@@ -398,7 +398,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares of a file
@@ -543,7 +543,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a file reshared to a one-to-one room by its owner
@@ -577,7 +577,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a file reshared to a one-to-one room by its second participant
@@ -611,7 +611,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a deleted file
@@ -729,7 +729,7 @@ Feature: get
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
       | file_target            | /subfolder |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
       | permissions            | 31 |
 

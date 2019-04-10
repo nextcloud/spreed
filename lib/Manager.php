@@ -583,13 +583,21 @@ class Manager {
 		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
 			return $this->l->t('Talk updates ✅');
 		}
+		if ($userId === '' && $room->getType() !== Room::PUBLIC_CALL) {
+			return $this->l->t('Private conversation');
+		}
+
 
 		if ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getName() === '') {
 			$room->setName($this->getRoomNameByParticipants($room));
 		}
 
 		// Set the room name to the other participant for one-to-one rooms
-		if ($userId !== '' && $room->getType() === Room::ONE_TO_ONE_CALL) {
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if ($userId === '') {
+				return $this->l->t('Private conversation');
+			}
+
 			$users = $room->getParticipantUserIds();
 			$otherParticipant = '';
 			$userIsParticipant = false;
@@ -614,6 +622,13 @@ class Manager {
 			}
 
 			return $otherParticipant;
+		}
+
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			// Do not leak the name of rooms the user is not a part of
+			return $this->l->t('Private conversation');
 		}
 
 		return $room->getName();
