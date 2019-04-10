@@ -216,6 +216,10 @@ input#request-password-button:disabled ~ .icon {
 	margin-top: 0;
 }
 
+#talk-sidebar #chatView .newCommentForm.with-add-button {
+	/* Make room to show the "Add" button if needed. */
+	margin-right: 44px;
+}
 
 /* Unset conflicting rules from guest.css for the sidebar */
 #talk-sidebar {
