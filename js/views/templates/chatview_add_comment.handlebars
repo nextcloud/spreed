@@ -7,8 +7,8 @@
 		<div class="guest-name"></div>
 		{{/if}}
 	</div>
-	<form class="newCommentForm">
-	<div contentEditable="{{#if isReadOnly}}false{{else}}true{{/if}}" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>
+	<form class="newCommentForm{{#if canShare}} with-add-button{{/if}}">
+		<div contentEditable="{{#if isReadOnly}}false{{else}}true{{/if}}" class="message" data-placeholder="{{newMessagePlaceholder}}">{{message}}</div>
 		<input class="submit icon-confirm has-tooltip" type="submit" {{#if isReadOnly}}disabled=""{{/if}} value="" title="{{submitText}}"/>
 		<div class="submitLoading icon-loading-small hidden"></div>
 		{{#if canShare}}

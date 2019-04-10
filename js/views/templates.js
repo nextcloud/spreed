@@ -55,12 +55,14 @@ templates['chatview_add_comment'] = template({"1":function(container,depth0,help
 },"3":function(container,depth0,helpers,partials,data) {
     return "		<div class=\"guest-name\"></div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
-    return "false";
+    return " with-add-button";
 },"7":function(container,depth0,helpers,partials,data) {
-    return "true";
+    return "false";
 },"9":function(container,depth0,helpers,partials,data) {
-    return "disabled=\"\"";
+    return "true";
 },"11":function(container,depth0,helpers,partials,data) {
+    return "disabled=\"\"";
+},"13":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "		<button class=\"share icon-add has-tooltip\" title=\""
@@ -73,18 +75,20 @@ templates['chatview_add_comment'] = template({"1":function(container,depth0,help
     + alias4(((helper = (helper = helpers.actorId || (depth0 != null ? depth0.actorId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"actorId","hash":{},"data":data}) : helper)))
     + "\"></div>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.actorId : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
-    + "	</div>\n	<form class=\"newCommentForm\">\n	<div contentEditable=\""
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isReadOnly : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.program(7, data, 0),"data":data})) != null ? stack1 : "")
+    + "	</div>\n	<form class=\"newCommentForm"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canShare : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\">\n		<div contentEditable=\""
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isReadOnly : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
     + "\" class=\"message\" data-placeholder=\""
     + alias4(((helper = (helper = helpers.newMessagePlaceholder || (depth0 != null ? depth0.newMessagePlaceholder : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"newMessagePlaceholder","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"message","hash":{},"data":data}) : helper)))
     + "</div>\n		<input class=\"submit icon-confirm has-tooltip\" type=\"submit\" "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isReadOnly : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isReadOnly : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + " value=\"\" title=\""
     + alias4(((helper = (helper = helpers.submitText || (depth0 != null ? depth0.submitText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"submitText","hash":{},"data":data}) : helper)))
     + "\"/>\n		<div class=\"submitLoading icon-loading-small hidden\"></div>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canShare : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canShare : depth0),{"name":"if","hash":{},"fn":container.program(13, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "	</form>\n</div>\n";
 },"useData":true});
 templates['chatview_comment'] = template({"1":function(container,depth0,helpers,partials,data) {
