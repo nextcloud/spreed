@@ -998,8 +998,9 @@ input[type="password"] {
 	right: 15px;
 }
 
-#app-sidebar #chatView .newCommentForm {
-	/* Make room to show the "Add" button when chat is shown in the sidebar. */
+#app-sidebar #chatView .newCommentForm.with-add-button {
+	/* Make room to show the "Add" button if needed when chat is shown in the
+	 * sidebar. */
 	margin-right: 44px;
 }
 
