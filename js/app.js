@@ -292,17 +292,6 @@
 			});
 
 			this._sidebarView.addTab('participants', { label: t('spreed', 'Participants'), icon: 'icon-contacts-dark' }, this._participantsView);
-
-			this._collectionsView = new OCA.SpreedMe.Views.CollectionsView({
-				room: this.activeRoom,
-				id: 'collectionsTabView'
-			});
-			this._collectionsView.listenTo(this._rooms, 'change:active', function(model, active) {
-				if (active) {
-					this.setRoom(model);
-				}
-			});
-			this._sidebarView.addTab('collections', { label: t('spreed', 'Projects'), icon: 'icon-projects' }, this._collectionsView);
 		},
 		_hideParticipantList: function() {
 			this._sidebarView.removeTab('participants');
@@ -312,6 +301,20 @@
 			delete this._participantsListChangedCallback;
 			delete this._participantsView;
 			delete this._participants;
+		},
+		_showCollectionsView: function() {
+			this._collectionsView = new OCA.SpreedMe.Views.CollectionsView({
+				room: this.activeRoom,
+				id: 'collectionsTabView'
+			});
+
+			this._collectionsView.listenTo(this._rooms, 'change:active', function(model, active) {
+				if (active) {
+					this.setRoom(model);
+				}
+			});
+
+			this._sidebarView.addTab('collections', { label: t('spreed', 'Projects'), icon: 'icon-projects' }, this._collectionsView);
 		},
 		/**
 		 * @param {string} token
@@ -640,6 +643,7 @@
 					}.bind(this));
 
 				this._showParticipantList();
+				this._showCollectionsView();
 			} else if (this.token) {
 				// The token is always defined in the public page (although not
 				// in the public share auth page).
