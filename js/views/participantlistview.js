@@ -99,6 +99,8 @@
 				},
 			},
 			initialize: function() {
+				this.room = this.model.collection.room;
+
 				this.listenTo(uiChannel, 'document:click', function(event) {
 					var target = $(event.target);
 					if (!target.closest('.popovermenu').is(this.ui.menu) && !target.is(this.ui.menuButton)) {
@@ -113,11 +115,11 @@
 					isModerator = false;
 				if (OC.getCurrentUser().uid) {
 					isSelf = this.model.get('userId') === OC.getCurrentUser().uid;
-					isModerator = OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.OWNER ||
-						OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.MODERATOR;
+					isModerator = this.room.get('participantType') === OCA.SpreedMe.app.OWNER ||
+						this.room.get('participantType') === OCA.SpreedMe.app.MODERATOR;
 				} else {
-					isSelf = this.model.get('sessionId') === OCA.SpreedMe.app.activeRoom.get('sessionId');
-					isModerator = OCA.SpreedMe.app.activeRoom.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR;
+					isSelf = this.model.get('sessionId') === this.room.get('sessionId');
+					isModerator = this.room.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR;
 				}
 
 				var canModerate = this.model.get('participantType') !== OCA.SpreedMe.app.OWNER &&       // can not moderate owners
@@ -221,7 +223,7 @@
 
 				$.ajax({
 					type: 'POST',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/moderators',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.room.get('token') + '/moderators',
 					data: data,
 					success: function() {
 						if (self.model.get('userId')) {
@@ -267,7 +269,7 @@
 
 				$.ajax({
 					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + '/moderators',
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.room.get('token') + '/moderators',
 					data:data,
 					success: function() {
 						if (self.model.get('userId')) {
@@ -309,7 +311,7 @@
 
 				$.ajax({
 					type: 'DELETE',
-					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + OCA.SpreedMe.app.activeRoom.get('token') + endpoint,
+					url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.room.get('token') + endpoint,
 					data: {
 						participant: participantId
 					},
