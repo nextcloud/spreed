@@ -2,7 +2,6 @@
   "vendor/backbone/backbone-min.js",
   "vendor/backbone.radio/build/backbone.radio.min.js",
   "vendor/backbone.marionette/lib/backbone.marionette.min.js",
-  "vendor/handlebars/handlebars.min.js",
   "vendor/jshashes/hashes.min.js",
   "vendor/Caret.js/dist/jquery.caret.min.js",
   "vendor/At.js/dist/js/jquery.atwho.min.js",
