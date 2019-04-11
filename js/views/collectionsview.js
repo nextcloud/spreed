@@ -29,7 +29,12 @@
 
 	OCA.SpreedMe.Views.CollectionsView = Marionette.View.extend({
 
-		template: '<div id="collectionsView"></div>',
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['collectionsview'](context);
+		},
 
 		initialize: function(options) {
 			this.room = options.room;

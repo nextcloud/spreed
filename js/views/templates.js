@@ -190,6 +190,9 @@ templates['chatview_comment'] = template({"1":function(container,depth0,helpers,
     + ((stack1 = ((helper = (helper = helpers.formattedMessage || (depth0 != null ? depth0.formattedMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"formattedMessage","hash":{},"data":data}) : helper))) != null ? stack1 : "")
     + "</div>\n</li>\n";
 },"useData":true});
+templates['collectionsview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    return "<div id=\"collectionsView\"></div>\n";
+},"useData":true});
 templates['editabletextlabel'] = template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
