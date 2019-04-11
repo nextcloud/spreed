@@ -6,10 +6,10 @@
 
 ## Why is this so awesome?
 
-* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.
+* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.
 * 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
 * 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
-* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
+* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.
 * 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
