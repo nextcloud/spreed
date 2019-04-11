@@ -1,6 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.0.3 – 2019-04-11
+### Changed
+- Remove some conversation informations for non-participants
+  [#1518](https://github.com/nextcloud/spreed/pull/1518)
+
+### Fixed
+- Fix duplicated call summary message when multiple people leave at the same time
+  [#1599](https://github.com/nextcloud/spreed/pull/1599)
+- Allow multiline text insertion in chrome-based browsers
+  [#1579](https://github.com/nextcloud/spreed/pull/1579)
+- Fix multiple race-conditions that could interrupt connections, end calls or prevent connections between single participants
+  [#1523](https://github.com/nextcloud/spreed/pull/1523)
+  [#1542](https://github.com/nextcloud/spreed/pull/1542)
+  [#1543](https://github.com/nextcloud/spreed/pull/1543)
+- Enable "Plan B" for chrome/chromium for better MCU support
+  [#1613](https://github.com/nextcloud/spreed/pull/1613)
+- Delay signaling messages when the socket is not yet opened
+  [#1551](https://github.com/nextcloud/spreed/pull/1551)
+- Correctly readd the default STUN server on empty values
+  [#1501](https://github.com/nextcloud/spreed/pull/1501)
+
+## 4.0.4 – 2019-04-11
+### Fixed
+- Enable "Plan B" for chrome/chromium for better MCU support
+  [#1614](https://github.com/nextcloud/spreed/pull/1614)
+- Delay signaling messages when the socket is not yet opened
+  [#1552](https://github.com/nextcloud/spreed/pull/1552)
+
 ## 5.0.2 – 2019-01-30
 ### Changed
 - Show autocompletion as soon as "@" is typed 
