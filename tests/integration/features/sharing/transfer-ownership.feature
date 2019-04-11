@@ -128,8 +128,8 @@ Feature: transfer-ownership
       | mimetype               | text/plain |
       | storage_id             | home::participant2 |
       | file_target            | /welcome.txt |
-      | share_with             | group room |
-      | share_with_displayname | Group room |
+      | share_with             | private_conversation |
+      | share_with_displayname | Private conversation |
     And user "participant3" gets last share
     And share is returned with
       | uid_owner              | participant2 |

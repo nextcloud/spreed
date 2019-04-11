@@ -64,7 +64,7 @@ class SharingContext implements Context {
 	 */
 	public function userCreatesFolder($user, $destination) {
 		$this->currentUser = $user;
-	
+
 		$url = "/$user/$destination/";
 
 		$this->sendingToDav('MKCOL', $url);
@@ -81,7 +81,7 @@ class SharingContext implements Context {
 	 */
 	public function userMovesFileTo(string $user, string $source, string $destination) {
 		$this->currentUser = $user;
-	
+
 		$url = "/$user/$source";
 
 		$headers = [];
@@ -111,7 +111,7 @@ class SharingContext implements Context {
 	 */
 	public function userDeletesFile($user, $file) {
 		$this->currentUser = $user;
-	
+
 		$url = "/$user/$file";
 
 		$this->sendingToDav('DELETE', $url);
@@ -587,7 +587,11 @@ class SharingContext implements Context {
 		if (array_key_exists('share_type', $expectedFields) &&
 				$expectedFields['share_type'] == 10 /* Share::SHARE_TYPE_ROOM */ &&
 				array_key_exists('share_with', $expectedFields)) {
-			$expectedFields['share_with'] = FeatureContext::getTokenForIdentifier($expectedFields['share_with']);
+			if ($expectedFields['share_with'] === 'private_conversation') {
+				$expectedFields['share_with'] = 'REGEXP /^private_conversation_[0-9a-f]{6}$/';
+			} else {
+				$expectedFields['share_with'] = FeatureContext::getTokenForIdentifier($expectedFields['share_with']);
+			}
 		}
 
 		foreach ($expectedFields as $field => $value) {

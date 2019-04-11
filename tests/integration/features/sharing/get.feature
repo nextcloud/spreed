@@ -330,8 +330,8 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
-      | share_with_displayname | Private conversation|
+      | share_with             | private_conversation |
+      | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a user who reshared a file to an owned one-to-one room
     Given user "participant2" creates room "one-to-one room not invited to"
@@ -364,7 +364,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a user who reshared a file to a one-to-one room
@@ -398,7 +398,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares of a file
@@ -543,7 +543,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a file reshared to a one-to-one room by its owner
@@ -577,7 +577,7 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
 
   Scenario: get all shares and reshares of a file reshared to a one-to-one room by its second participant
@@ -611,8 +611,153 @@ Feature: get
       | mimetype               | text/plain |
       | storage_id             | home::participant1 |
       | file_target            | /welcome (2).txt |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
+
+  Scenario: get all shares and reshares of a file reshared to a group room not invited to
+    Given user "participant2" creates room "group room not invited to"
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant2" renames room "group room not invited to" to "Group room not invited to" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with room "group room not invited to" with OCS 100
+    When user "participant1" gets all shares and reshares for "/welcome.txt"
+    Then the list of returned shares has 2 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant2 |
+      | share_with_displayname | participant2-displayname |
+      | share_type             | 0 |
+    And share 1 is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | private_conversation |
+      | share_with_displayname | Private conversation |
+
+  Scenario: get all shares and reshares of a file reshared to a public room not invited to
+    Given user "participant2" creates room "public room not invited to"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" renames room "public room not invited to" to "Public room not invited to" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with room "public room not invited to" with OCS 100
+    When user "participant1" gets all shares and reshares for "/welcome.txt"
+    Then the list of returned shares has 2 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant2 |
+      | share_with_displayname | participant2-displayname |
+      | share_type             | 0 |
+    And share 1 is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | private_conversation |
+      | share_with_displayname | Private conversation |
+      | token                  | A_TOKEN |
+
+  Scenario: get all shares and reshares of a file reshared to a public room invited to
+    Given user "participant2" creates room "public room invited to"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" renames room "public room invited to" to "Public room invited to" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with room "public room invited to" with OCS 100
+    And user "participant2" adds "participant1" to room "public room invited to" with 200
+    When user "participant1" gets all shares and reshares for "/welcome.txt"
+    Then the list of returned shares has 2 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant2 |
+      | share_with_displayname | participant2-displayname |
+      | share_type             | 0 |
+    And share 1 is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | public room invited to |
+      | share_with_displayname | Public room invited to |
+      | token                  | A_TOKEN |
+
+  Scenario: get all shares and reshares of a file reshared to a public room self-joined to
+    Given user "participant2" creates room "public room self-joined to"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant2" renames room "public room self-joined to" to "Public room self-joined to" with 200
+    And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" shares "welcome (2).txt" with room "public room self-joined to" with OCS 100
+    And user "participant1" joins room "public room self-joined to" with 200
+    When user "participant1" gets all shares and reshares for "/welcome.txt"
+    Then the list of returned shares has 2 shares
+    And share 0 is returned with
+      | uid_owner              | participant1 |
+      | displayname_owner      | participant1-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant2 |
+      | share_with_displayname | participant2-displayname |
+      | share_type             | 0 |
+    And share 1 is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2-displayname |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome.txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | home::participant1 |
+      | file_target            | /welcome (2).txt |
+      | share_with             | public room self-joined to |
+      | share_with_displayname | Public room self-joined to |
+      | token                  | A_TOKEN |
 
   Scenario: get all shares and reshares of a deleted file
     Given user "participant1" creates room "own group room"
@@ -729,7 +874,7 @@ Feature: get
       | mimetype               | httpd/unix-directory |
       | storage_id             | home::participant1 |
       | file_target            | /subfolder |
-      | share_with             | one-to-one room not invited to |
+      | share_with             | private_conversation |
       | share_with_displayname | Private conversation |
       | permissions            | 31 |
 
