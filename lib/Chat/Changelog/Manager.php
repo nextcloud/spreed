@@ -69,7 +69,7 @@ class Manager {
 		$hasReceivedLog = $this->getChangelogForUser($userId);
 
 		foreach ($logs as $key => $changelog) {
-			if ($key < $hasReceivedLog) {
+			if ($key < $hasReceivedLog || $changelog === '') {
 				continue;
 			}
 			$this->chatManager->addChangelogMessage($room, $changelog);
@@ -80,7 +80,17 @@ class Manager {
 
 	public function getChangelogs(): array {
 		return [
-			$this->l->t("Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk."),
+			$this->l->t(
+				"Welcome to Nextcloud Talk!\n"
+				. 'In this conversation you will be informed about new features available in Nextcloud Talk.'
+			),
+			$this->l->t('New in Talk 6'),
+			$this->l->t('* Microsoft Edge and Safari can now be used to participate in audio and video calls'),
+			$this->l->t('* One-to-one conversations are now persistent and can not be turned into group conversations by accident anymore. Also when one of the participants leaves the conversation, the conversation is not automatically deleted anymore. Only if both participants leave, the conversation is deleted from the server'),
+			$this->l->t('* You can now notify all participants by posting "@all" into the chat'),
+			$this->l->t('* With the "arrow-up" key you can repost your last message'),
+			$this->l->t('* Talk can now have commands, send "/help" as a chat message to see if your administrator configured some'),
+			$this->l->t('* With projects you can create quick links between conversations, files and other items'),
 		];
 	}
 }
