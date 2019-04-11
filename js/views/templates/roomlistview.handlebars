@@ -1,0 +1,83 @@
+<a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">
+	<div class="avatar {{icon}}" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>
+	{{#if isFavorite}}
+	{{! The favorite mark can not be a child of the
+		avatar, as it would be removed when the avatar is
+		loaded. }}
+	<div class="favorite-mark">
+		<span class="icon icon-favorite" />
+		<span class="hidden-visually">{{favoriteMarkText}}</span>
+	</div>
+	{{/if}}
+	{{displayName}}
+</a>
+<div class="app-navigation-entry-utils">
+	<ul>
+		{{#if unreadMention}}<li class="app-navigation-entry-utils-counter highlighted"><span>@</span></li>{{/if}}
+		{{#if unreadMessages}}<li class="app-navigation-entry-utils-counter"><span>{{numUnreadMessages}}</span></li>{{/if}}
+		<li class="app-navigation-entry-utils-menu-button"><button></button></li>
+	</ul>
+</div>
+<div class="app-navigation-entry-menu">
+	<ul class="app-navigation-entry-menu-list">
+		{{#if canFavorite}}
+		{{#if isFavorite}}
+		<li>
+			<button class="unfavorite-room-button">
+				<span class="icon-star-dark"></span>
+				<span>{{unfavoriteRoomText}}</span>
+			</button>
+		</li>
+		{{else}}
+		<li>
+			<button class="favorite-room-button">
+				<span class="icon-starred"></span>
+				<span>{{favoriteRoomText}}</span>
+			</button>
+		</li>
+		{{/if}}
+		{{/if}}
+		<li>
+			<button class="clipboard-button">
+				<span class="icon-clippy"></span>
+				<span>{{copyLinkText}}</span>
+			</button>
+		</li>
+		<li><div class="separator"></div></li>
+		<li{{#if notifyAlways}} class="active"{{/if}}>
+			<button class="notify-always-button">
+				<span class="icon-sound"></span>
+				<span>{{notifyAlwaysText}}</span>
+			</button>
+		</li>
+		<li{{#if notifyMention}} class="active"{{/if}}>
+			<button class="notify-mention-button">
+				<span class="icon-user"></span>
+				<span>{{notifyMentionText}}</span>
+			</button>
+		</li>
+		<li{{#if notifyNever}} class="active"{{/if}}>
+			<button class="notify-never-button">
+				<span class="icon-sound-off"></span>
+				<span>{{notifyNeverText}}</span>
+			</button>
+		</li>
+		<li><div class="separator"></div></li>
+		{{#if isLeavable}}
+		<li>
+			<button class="remove-room-button">
+				<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>
+				<span>{{leaveConversationText}}</span>
+			</button>
+		</li>
+		{{/if}}
+		{{#if isDeletable}}
+		<li>
+			<button class="delete-room-button">
+				<span class="icon-delete"></span>
+				<span>{{deleteConversationText}}</span>
+			</button>
+		</li>
+		{{/if}}
+	</ul>
+</div>
