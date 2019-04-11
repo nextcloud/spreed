@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 4.0.4 – 2019-04-11
+### Fixed
+- Enable "Plan B" for chrome/chromium for better MCU support
+  [#1614](https://github.com/nextcloud/spreed/pull/1614)
+- Delay signaling messages when the socket is not yet opened
+  [#1552](https://github.com/nextcloud/spreed/pull/1552)
+
 ## 4.0.3 – 2019-01-30
 ### Fixed
 - Do not show room names when the user is not part of it 
