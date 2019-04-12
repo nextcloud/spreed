@@ -27,7 +27,7 @@ do
     if ! diff -q "js/$entryFile.js" "js/$entryFile.back" &>/dev/null
     then
         echo "$entryFile.js build is NOT up-to-date! Please send the proper production build within the pull request"
-        diff -q "js/$entryFile.js" "js/$entryFile.back"
+        diff "js/$entryFile.js" "js/$entryFile.back"
         exit 2
     fi
     rm "js/$entryFile.back"
