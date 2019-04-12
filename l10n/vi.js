@@ -159,7 +159,6 @@ OC.L10N.register(
     "Invalid date, date format must be YYYY-MM-DD" : "Định dạng ngày không hợp lệ phải là YYYY-MM-DD",
     "Conversation not found" : "Không tìm thấy cuộc hội thoại",
     "Path is already shared with this room" : "Đường dẫn đã được chia sẻ với phòng này",
-    "Video & audio-conferencing using WebRTC" : "Video & hội nghị âm thanh bằng WebRTC",
     "TURN server URL" : "URL máy chủ TURN",
     "Validate SSL certificate" : "Xác thực chứng chỉ SSL",
     "STUN server URL" : "URL máy chủ STUN",
@@ -205,6 +204,7 @@ OC.L10N.register(
     "{user} invited you to a group conversation" : "{user} đã mời bạn tham gia cuộc trò chuyện nhóm",
     "A group call has started" : "Một cuộc gọi nhóm đã được thực hiện",
     "{email} requested the password to access a share" : "{email} đã yêu cầu mật khẩu để truy cập chia sẽ",
+    "Video & audio-conferencing using WebRTC" : "Video & hội nghị âm thanh bằng WebRTC",
     "Signaling server" : "Máy chủ đăng ký"
 },
 "nplurals=1; plural=0;");
