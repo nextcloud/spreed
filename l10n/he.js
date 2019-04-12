@@ -113,7 +113,6 @@ OC.L10N.register(
     "%s invited you to a group conversation: %s" : "הוזמנת על ידי %s לדיון קבוצתי: %s",
     "{user} invited you to a group conversation: {call}" : "הוזמנת על ידי {user} לדיון קבוצתי: {call}",
     "A group call has started in {call}" : "החלה שיחה קבוצתית תחת {call}",
-    "Video & audio-conferencing using WebRTC" : "דיון עם קול ותמונה באמצעות WebRTC",
     "TURN server URL" : "כתובת שרת TURN",
     "Validate SSL certificate" : "אימות אישור SSL",
     "STUN server URL" : "כתובת שרת STUN",
@@ -143,6 +142,7 @@ OC.L10N.register(
     "{user} invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי {user}",
     "A group call has started" : "החלה שיחה קבוצתית",
     "{email} requested the password to access a share" : "התקבלה בקשה לססמת גישה לשיתוף על ידי {email}",
+    "Video & audio-conferencing using WebRTC" : "דיון עם קול ותמונה באמצעות WebRTC",
     "Signaling server" : "שרת איתות"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");
