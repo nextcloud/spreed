@@ -61,7 +61,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -73,7 +73,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-1
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -85,7 +85,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-1
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -111,7 +111,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -141,7 +141,7 @@ steps:
     image: nextcloudci/php7.2:php7.2-12
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -171,7 +171,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-1
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -201,7 +201,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -245,7 +245,7 @@ steps:
     image: nextcloudci/php7.2:php7.2-12
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -289,7 +289,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-1
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -333,7 +333,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -375,7 +375,7 @@ steps:
     image: nextcloudci/php7.2:php7.2-12
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -417,7 +417,7 @@ steps:
     image: nextcloudci/php7.3:php7.3-1
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -459,7 +459,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -493,7 +493,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -527,7 +527,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -561,7 +561,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: sqlite
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -595,7 +595,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -639,7 +639,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -683,7 +683,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -727,7 +727,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: mysql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -771,7 +771,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -813,7 +813,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -855,7 +855,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -897,7 +897,7 @@ steps:
     image: nextcloudci/php7.1:php7.1-16
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       DATABASEHOST: pgsql
     commands:
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -939,7 +939,7 @@ steps:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: app-files
     commands:
@@ -978,7 +978,7 @@ steps:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: chat
     commands:
@@ -1019,7 +1019,7 @@ steps:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: conversation
     commands:
@@ -1060,7 +1060,7 @@ steps:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: public-share-auth
     commands:
@@ -1101,7 +1101,7 @@ steps:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable16
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: room-shares
     commands:
