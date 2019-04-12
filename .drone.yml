@@ -1,7 +1,11 @@
 kind: pipeline
-name: handlebars
+name: vuejs-and-handlebars
 
 steps:
+  - name: check-vuejs
+    image: node
+    commands:
+      - ./tests/vue-build.sh
   - name: check-handlebars-templates
     image: node
     commands:
