@@ -677,7 +677,7 @@
 				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
 			}
 
-			if (!OCA.SpreedMe.webrtc.capabilities.support) {
+			if (!OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {
 				localMediaChannel.trigger('webRtcNotSupported');
 			} else {
 				localMediaChannel.trigger('waitingForPermissions');
@@ -705,7 +705,7 @@
 			this._localVideoView.$el.removeClass('hidden');
 			this.initAudioVideoSettings(configuration);
 
-			if (OCA.SpreedMe.webrtc.capabilities.support) {
+			if (OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {
 				localMediaChannel.trigger('startWithoutLocalMedia');
 			}
 		},
