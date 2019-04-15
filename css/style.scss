@@ -389,10 +389,20 @@ input[type="password"] {
 	margin-left: 0;
 }
 #content:-ms-fullscreen #app-content {
-	margin-left: 0;
+	margin-left: 0 !important;
 }
 #content:fullscreen #app-content {
 	margin-left: 0;
+}
+
+#content:-ms-fullscreen #app-sidebar {
+	/* The sidebar height is unset in Talk to override the "100vh-50px" set in
+	 * server and force it to get the full height in fullscreen mode. However,
+	 * IE11 does not support "unset", so the height needs to be explicitly set
+	 * to 100%. */
+	height: 100%;
+	/* Remove the space added when IE is used to not overlap with the header. */
+	top: 0;
 }
 
 /* Set the background of the content to the same colour as the app content and
