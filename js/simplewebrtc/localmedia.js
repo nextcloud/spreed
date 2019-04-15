@@ -58,6 +58,17 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
 	var self = this;
 	var constraints = mediaConstraints || this.config.media;
 
+	if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+		var error = new Error('MediaStreamError');
+		error.name = 'NotSupportedError';
+
+		if (cb) {
+			return cb(error, null);
+		}
+
+		return;
+	}
+
 	this.emit('localStreamRequested', constraints);
 
 	navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
