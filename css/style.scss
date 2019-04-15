@@ -518,6 +518,12 @@ input[type="password"] {
 	top: 0;
 }
 
+/* The server sets the position of the sidebar as fixed when IE is used, so it
+ * needs to be pulled down to not overlap with the header. */
+.ie #app-sidebar {
+	top: $header-height;
+}
+
 @include icon-black-white('menu-people', 'spreed', 1);
 @include icon-black-white('no-password', 'spreed', 1);
 @include icon-black-white('share-window', 'spreed', 1);
