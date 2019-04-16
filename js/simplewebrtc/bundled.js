@@ -1154,9 +1154,7 @@ function SimpleWebRTC(opts) {
   this.webrtc.on('localScreenStopped', function ()
   /*stream*/
   {
-    if (self.getLocalScreen()) {
-      self.stopScreenShare();
-    }
+    self.stopScreenShare();
     /*
     self.connection.emit('unshareScreen');
     self.webrtc.peers.forEach(function (peer) {
@@ -1165,7 +1163,6 @@ function SimpleWebRTC(opts) {
     	}
     });
     */
-
   });
   this.webrtc.on('channelMessage', function (peer, label, data) {
     if (data.type === 'volume') {
