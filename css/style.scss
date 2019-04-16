@@ -805,10 +805,6 @@ input[type="password"] {
 		.input-wrapper {
 			position: relative;
 
-			/* Pull up the wrapper slightly to prevent elements below it from
-			 * moving when it is shown. */
-			margin-top: -2px;
-
 			.username {
 				width: 100%;
 				margin: 4px 0 4px 0 !important;
@@ -826,7 +822,7 @@ input[type="password"] {
 				padding-right: 44px;
 
 				& + .icon-confirm {
-					top: 1px;
+					top: 4px;
 					right: 0;
 				}
 			}
