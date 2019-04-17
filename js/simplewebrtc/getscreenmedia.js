@@ -34,7 +34,13 @@ module.exports = function (mode, constraints, cb) {
 		return callback(error);
 	}
 
-	if (navigator.webkitGetUserMedia) {
+	if (navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) {
+		navigator.mediaDevices.getDisplayMedia({video: true}).then(function(stream) {
+			callback(null, stream);
+		}).catch(function(error) {
+			callback(error, null);
+		});
+	} else if (navigator.webkitGetUserMedia) {
 		var chromever = parseInt(window.navigator.userAgent.match(/Chrome\/(\d+)\./)[1], 10);
 		var maxver = 33;
 		// Chrome 71 dropped support for "window.chrome.webstore;".
@@ -154,12 +160,6 @@ module.exports = function (mode, constraints, cb) {
 			error.name = 'FF52_REQUIRED';
 			return callback(error);
 		}
-	} else if (navigator.mediaDevices && navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)) {
-		navigator.mediaDevices.getDisplayMedia({video: true}).then(function(stream) {
-			callback(null, stream);
-		}).catch(function(error) {
-			callback(error, null);
-		});
 	}
 };
 
