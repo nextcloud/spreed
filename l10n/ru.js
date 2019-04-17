@@ -101,7 +101,7 @@ OC.L10N.register(
     "Remove from favorites" : "Удалить из избранного",
     "Add to favorites" : "Добавить в избранное",
     "Always notify" : "Всегда уведомлять",
-    "Notify on @-mention" : "Уведомлять при упоминании (@имя_пользователя)",
+    "Notify on @-mention" : "Уведомлять при @-упоминании",
     "Never notify" : "Не уведомлять",
     "Leave conversation" : "Покинуть беседу",
     "Delete conversation" : "Удалить обсуждение",
