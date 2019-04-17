@@ -965,13 +965,14 @@ var spreedPeerConnectionTable = [];
 			console.log('Access to microphone & camera failed', error);
 			hasLocalMedia = false;
 			var message;
-			if (error.name === "NotAllowedError") {
-				if (error.message && error.message.indexOf("Only secure origins") !== -1) {
-					message = t('spreed', 'Access to microphone & camera is only possible with HTTPS');
-					message += ': ' + t('spreed', 'Please move your setup to HTTPS');
-				} else {
-					message = t('spreed', 'Access to microphone & camera was denied');
-				}
+			if ((error.name === "NotSupportedError" &&
+					OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) ||
+				(error.name === "NotAllowedError" &&
+					error.message && error.message.indexOf("Only secure origins") !== -1)) {
+				message = t('spreed', 'Access to microphone & camera is only possible with HTTPS');
+				message += ': ' + t('spreed', 'Please move your setup to HTTPS');
+			} else if (error.name === "NotAllowedError") {
+				message = t('spreed', 'Access to microphone & camera was denied');
 			} else if(!OCA.SpreedMe.webrtc.capabilities.support) {
 				console.log('WebRTC not supported');
 

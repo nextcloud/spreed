@@ -4,6 +4,17 @@
 /* global module, chrome */
 // getScreenMedia helper by @HenrikJoreteg
 var getUserMedia = function getUserMedia(constraints, callback) {
+  if (!window.navigator || !window.navigator.mediaDevices || !window.navigator.mediaDevices.getUserMedia) {
+    var error = new Error('MediaStreamError');
+    error.name = 'NotSupportedError';
+
+    if (callback) {
+      callback(error, null);
+    }
+
+    return;
+  }
+
   window.navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     callback(null, stream);
   }).catch(function (error) {
@@ -276,6 +287,18 @@ util.inherits(LocalMedia, WildEmitter);
 LocalMedia.prototype.start = function (mediaConstraints, cb) {
   var self = this;
   var constraints = mediaConstraints || this.config.media;
+
+  if (!navigator || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    var error = new Error('MediaStreamError');
+    error.name = 'NotSupportedError';
+
+    if (cb) {
+      return cb(error, null);
+    }
+
+    return;
+  }
+
   this.emit('localStreamRequested', constraints);
   navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     // Although the promise should be resolved only if all the constraints

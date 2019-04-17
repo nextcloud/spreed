@@ -159,7 +159,7 @@
 				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
 			}
 
-			if (!OCA.SpreedMe.webrtc.capabilities.support) {
+			if (!OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {
 				localMediaChannel.trigger('webRtcNotSupported');
 			} else {
 				localMediaChannel.trigger('waitingForPermissions');
@@ -185,7 +185,7 @@
 
 			this.initAudioVideoSettings(configuration);
 
-			if (OCA.SpreedMe.webrtc.capabilities.support) {
+			if (OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {
 				localMediaChannel.trigger('startWithoutLocalMedia');
 			}
 		},

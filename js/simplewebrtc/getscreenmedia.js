@@ -2,6 +2,17 @@
 
 // getScreenMedia helper by @HenrikJoreteg
 var getUserMedia = function(constraints, callback) {
+	if (!window.navigator || !window.navigator.mediaDevices || !window.navigator.mediaDevices.getUserMedia) {
+		var error = new Error('MediaStreamError');
+		error.name = 'NotSupportedError';
+
+		if (callback) {
+			callback(error, null);
+		}
+
+		return;
+	}
+
 	window.navigator.mediaDevices.getUserMedia(constraints).then(function(stream) {
 		callback(null, stream);
 	}).catch(function(error) {
