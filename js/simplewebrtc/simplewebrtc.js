@@ -60,6 +60,16 @@ function SimpleWebRTC(opts) {
 		}
 	}
 
+	// Override screensharing support detection to fit the custom
+	// "getScreenMedia" module.
+	// Note that this is a coarse check; calling "getScreenMedia" may fail even
+	// if "supportScreenSharing" is true.
+	var screenSharingSupported =
+			(window.navigator.mediaDevices && window.navigator.mediaDevices.getDisplayMedia) ||
+			(window.navigator.webkitGetUserMedia) ||
+			(window.navigator.userAgent.match('Firefox'));
+	webrtcSupport.supportScreenSharing = window.location.protocol === 'https:' && screenSharingSupported;
+
 	// attach detected support for convenience
 	this.capabilities = webrtcSupport;
 

@@ -223,8 +223,11 @@
 				return;
 			}
 
+			// The standard "getDisplayMedia" does not support pre-filtering the
+			// type of display sources, so the unified menu is used in that case
+			// too.
 			var splitShare = false;
-			if (window.navigator.userAgent.match('Firefox')) {
+			if (window.navigator.userAgent.match('Firefox') && !window.navigator.mediaDevices.getDisplayMedia) {
 				var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
 				splitShare = (ffver >= 52);
 			}
