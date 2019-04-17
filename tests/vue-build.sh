@@ -20,6 +20,7 @@ set -e
 cd "vue"
 make
 cd ".."
+sleep 2m
 
 for entryFile in "${entryFiles[@]}"
 do
