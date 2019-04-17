@@ -16,6 +16,8 @@ do
 done
 
 npm --version
+npm update -g npm
+npm --version
 
 # Make the app
 set -e
