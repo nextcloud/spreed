@@ -134,6 +134,7 @@ OC.L10N.register(
     "{actor} invited you to {call}" : "{actor} vás pozval/a do {call}",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Byli jste pozváni ke <strong>konverzaci</strong> nebo vám někdo <strong>volal</strong>",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Vítejte v Nextcloud Talk!\nV této konverzaci budete informováni o nových funkcích, dostupných v Nextcloud Talk.",
+    "New in Talk 6" : "Nové v Talk 6",
     "There are currently no commands available." : "V tuto chvíli nejsou k dispozici žádné příkazy.",
     "The command does not exist" : "Příkaz neexistuje",
     "Talk updates ✅" : "Aktualizace Talk ✅",
