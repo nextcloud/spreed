@@ -1,6 +1,8 @@
 # Changelog
-# Version: 5.0.2.5
+# Version: 5.0.2.x
 
-*cd116ce8* When idle, leave room only if past inactiveMinStart. By default it's 5 minutes. And also leave room if not in the current page.
-*2d1c8cf0* Do get user status only if syncRooms event is fired.
-*85f6ffc3* Fix duplicate upload when copy+pasting a screenshot.
+*e754d53f* Update changelog.
+*b0f9e508* Virtually mention everyone when sending a message to a room. See: https://trello.com/c/a5bI3wMM
+*0db3cfb2* Update CHANGELOG.md
+*d77d095f* Disable certain notifications when joining a call, we can blank the "user is joining call". See: https://trello.com/c/4ptz9Ulf
+*7ebf3705* Do nothing when notification is clicked. See: https://trello.com/c/ISOyVFvx

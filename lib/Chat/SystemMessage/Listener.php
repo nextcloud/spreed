@@ -60,16 +60,8 @@ class Listener {
 	}
 
 	public function register() {
-		$this->dispatcher->addListener(Room::class . '::preSessionJoinCall', function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-			if ($room->hasSessionsInCall()) {
-				$this->sendSystemMessage($room, 'call_joined');
-			} else {
-				$this->sendSystemMessage($room, 'call_started');
-			}
-		});
-		$this->dispatcher->addListener(Room::class . '::postSessionLeaveCall', function(GenericEvent $event) {
+
+        $this->dispatcher->addListener(Room::class . '::postSessionLeaveCall', function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
 			$this->sendSystemMessage($room, 'call_left');

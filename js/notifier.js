@@ -298,7 +298,11 @@
             this.notifier.setTitle(message);
             this.notifier.notify({
                 title: title,
-                openurl: OC.generateUrl('call/' + token),
+                onclick: function () {
+
+                    // Do nothing.
+                    return false;
+                },
                 body: message
             }).player();
         },
