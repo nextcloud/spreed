@@ -15,6 +15,8 @@ do
     cp "js/$entryFile.js" "js/$entryFile.back"
 done
 
+npm --version
+
 # Make the app
 set -e
 cd "vue"
