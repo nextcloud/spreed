@@ -249,7 +249,9 @@
 
 			this.delegateEvents();
 			var $message = this.$el.find('.message');
-			$message.blur().focus();
+			if (window.outerHeight > 768) {
+				$message.blur().focus();
+			}
 			$message.on('keydown input change', _.bind(this._onTypeComment, this));
 
 			/**
