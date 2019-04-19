@@ -43,11 +43,13 @@ templates['chatview_add_comment'] = template({"1":function(container,depth0,help
 },"3":function(container,depth0,helpers,partials,data) {
     return "		<div class=\"guest-name\"></div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
-    var helper;
+        return " with-add-button";
+    }, "7": function (container, depth0, helpers, partials, data) {
+        var helper;
 
-  return "		<button class=\"share icon-add has-tooltip\" title=\""
-    + container.escapeExpression(((helper = (helper = helpers.shareText || (depth0 != null ? depth0.shareText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"shareText","hash":{},"data":data}) : helper)))
-    + "\"></button>\n		<div class=\"shareLoading icon-loading-small hidden\"></div>\n";
+        return "		<button class=\"share icon-add has-tooltip\" title=\""
+            + container.escapeExpression(((helper = (helper = helpers.shareText || (depth0 != null ? depth0.shareText : depth0)) != null ? helper : helpers.helperMissing), (typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}), {"name": "shareText", "hash": {}, "data": data}) : helper)))
+            + "\"></button>\n		<div class=\"shareLoading icon-loading-small hidden\"></div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -55,14 +57,16 @@ templates['chatview_add_comment'] = template({"1":function(container,depth0,help
     + alias4(((helper = (helper = helpers.actorId || (depth0 != null ? depth0.actorId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"actorId","hash":{},"data":data}) : helper)))
     + "\"></div>\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.actorId : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
-            + "	</div>\n<form class=\"newCommentForm\">\n		<div contentEditable=\"true\" class=\"message\" data-placeholder=\""
+            + "	</div>\n	<form class=\"newCommentForm"
+            + ((stack1 = helpers["if"].call(alias1, (depth0 != null ? depth0.actorId : depth0), {"name": "if", "hash": {}, "fn": container.program(5, data, 0), "inverse": container.noop, "data": data})) != null ? stack1 : "")
+            + "\">\n		<div contentEditable=\"true\" class=\"message\" data-placeholder=\""
     + alias4(((helper = (helper = helpers.newMessagePlaceholder || (depth0 != null ? depth0.newMessagePlaceholder : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"newMessagePlaceholder","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"message","hash":{},"data":data}) : helper)))
     + "</div>\n		<input class=\"submit icon-confirm has-tooltip\" type=\"submit\" value=\"\" title=\""
     + alias4(((helper = (helper = helpers.submitText || (depth0 != null ? depth0.submitText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"submitText","hash":{},"data":data}) : helper)))
     + "\"/>\n		<div class=\"submitLoading icon-loading-small hidden\"></div>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.actorId : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+            + ((stack1 = helpers["if"].call(alias1, (depth0 != null ? depth0.actorId : depth0), {"name": "if", "hash": {}, "fn": container.program(7, data, 0), "inverse": container.noop, "data": data})) != null ? stack1 : "")
     + "	</form>\n</div>\n";
 },"useData":true});
 templates['chatview_comment'] = template({"1":function(container,depth0,helpers,partials,data) {

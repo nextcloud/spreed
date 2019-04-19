@@ -169,7 +169,7 @@ video {
 .participants-1 .videoView,
 .participants-2 .videoView {
 	position: absolute;
-	width: 33%;
+  width: 22%;
 	min-width: 200px;
 	overflow:visible;
 	right: 0;
@@ -342,6 +342,86 @@ video {
 .iceFailedIndicator {
 	opacity: .8 !important;
 }
+
+
+#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call,
+#talk-sidebar:not(.incall):not(.screensharing) .force-icon-white-in-call,
+#call-container:not(.incall):not(.screensharing) .force-icon-white-in-call {
+  /*
+   * Also force the white icons, when the video of the local participant is shown,
+   * because the black icons are not visible on videos, especially when your camera is covered.
+   */
+  &#hideVideo:not(.local-video-disabled) {
+    &.icon-video {
+      background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+      filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+    }
+
+    &.icon-video-off {
+      background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+      filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+    }
+  }
+
+  &#mute:not(.local-video-disabled) {
+    &.icon-audio {
+      background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+      filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+    }
+
+    &.icon-audio-off {
+      background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+      filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+    }
+  }
+
+  &#screensharing-button:not(.local-video-disabled) {
+    background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+    filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+  }
+}
+
+.incall .force-icon-white-in-call,
+.screensharing .force-icon-white-in-call {
+  /*
+   * Force the white icon, independent from white/dark mode selection,
+   * because those icons are presented on our black calling-screen.
+   */
+  &.icon-audio {
+    background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+  }
+
+  &.icon-audio-off {
+    background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+  }
+
+  &.icon-video {
+    background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+  }
+
+  &.icon-video-off {
+    background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+  }
+
+  &.icon-screen {
+    background-image: url(icon-color-path('screen', 'actions', 'fff', 1, true));
+  }
+
+  &.icon-screen-off {
+    background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+  }
+
+  &.icon-error {
+    background-image: url(icon-color-path('error', 'actions', 'fff', 1, true));
+  }
+
+  /* ".force-icon-white-in-call" can be combined with ".icon-shadow" just like
+   * ".icon-white". */
+  &.icon-shadow {
+    filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+  }
+}
+
 
 
 

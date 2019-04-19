@@ -163,6 +163,13 @@
 	display: none;
 }
 
+/* Force the white icon during calls, independent from white/dark mode
+ * selection, because it is shown on the black calling screen. */
+#app-sidebar .icon-close.force-icon-white-in-call.icon-shadow {
+	background-image: url(icon-color-path('close', 'actions', 'fff', 1, true));
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
 
 
 
