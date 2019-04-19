@@ -328,7 +328,6 @@
                     self.stopListening(self.activeRoom, 'change:displayName');
                     self.stopListening(self.activeRoom, 'change:participantFlags');
 
-                    var participants;
                     if (OC.getCurrentUser().uid) {
                         roomChannel.trigger('active', token);
 
@@ -337,15 +336,6 @@
                                 self.activeRoom = room;
                             }
                         });
-                        participants = self.activeRoom.get('participants');
-                    } else {
-                        // The public page supports only a single room, so the
-                        // active room is already the room for the given token.
-                        participants = self.activeRoom.get('participants');
-                    }
-                    // Disable video when entering a room with more than 5 participants.
-                    if (participants && Object.keys(participants).length > 5) {
-                        self.disableVideo();
                     }
 
                     self._emptyContentView.setActiveRoom(self.activeRoom);
@@ -548,33 +538,13 @@
             });
 
             this.listenTo(roomChannel, 'leaveCurrentRoom', function () {
-
-                /**
-                 * Don't detach chatview.
-                 * This will help retain current chat items.
-                 *
-                 * @type {boolean}
-                 * @private
-                 * @author Oozman
-                 */
-                //this._chatView.$el.detach();
-
+                this._chatView.$el.detach();
                 this._chatViewInMainView = false;
 
                 $('#video-speaking').hide();
                 $('#videos').hide();
                 $('#screens').hide();
                 $('#emptycontent').show();
-
-                /**
-                 * Hide new comment box.
-                 * So, user will be force to join the room to send a chat.
-                 *
-                 * @type {boolean}
-                 * @private
-                 * @author Oozman
-                 */
-                $('#chatView .newCommentRow').hide();
             });
 
             this.listenTo(roomChannel, 'joinRoom', function (token) {
@@ -622,6 +592,15 @@
                 if (this.pendingNickChange) {
                     this.setGuestName(this.pendingNickChange);
                     delete this.pendingNickChange;
+                }
+            }.bind(this));
+
+            this.signaling.on('joinCall', function () {
+                // Disable video when joining a call in a room with more than 5
+                // participants.
+                var participants = this.activeRoom.get('participants');
+                if (participants && Object.keys(participants).length > 5) {
+                    this.disableVideo();
                 }
             }.bind(this));
 
@@ -831,9 +810,9 @@
             localVideo.hide();
         },
         disableVideo: function () {
-            this._mediaControlsView.disableVideo();
-            // Always hide the video, even if "disableVideo" returned "false".
-            this.hideVideo();
+            if (this._mediaControlsView.disableVideo()) {
+                this.hideVideo();
+            }
         },
         // Called from webrtc.js
         disableScreensharingButton: function () {
