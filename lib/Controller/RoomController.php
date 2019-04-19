@@ -41,13 +41,13 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\Comments\IComment;
+use OCP\IGroup;
+use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IGroup;
-use OCP\IGroupManager;
 use OCP\Mail\IMailer;
 
 class RoomController extends OCSController {
@@ -69,26 +69,9 @@ class RoomController extends OCSController {
 	private $chatManager;
 	/** @var MessageParser */
 	private $messageParser;
-	/** @var IMailer */
-	private $mailer;
 	/** @var IL10N */
 	private $l10n;
 
-	/**
-	 * @param string $appName
-	 * @param string $UserId
-	 * @param IRequest $request
-	 * @param TalkSession $session
-	 * @param IUserManager $userManager
-	 * @param IGroupManager $groupManager
-	 * @param ILogger $logger
-	 * @param Manager $manager
-	 * @param GuestManager $guestManager
-	 * @param ChatManager $chatManager
-	 * @param MessageParser $messageParser
-	 * @param IMailer $mailer
-	 * @param IL10N $l10n
-	 */
 	public function __construct($appName,
 								$UserId,
 								IRequest $request,
@@ -100,7 +83,6 @@ class RoomController extends OCSController {
 								GuestManager $guestManager,
 								ChatManager $chatManager,
 								MessageParser $messageParser,
-								IMailer $mailer,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
@@ -112,7 +94,6 @@ class RoomController extends OCSController {
 		$this->guestManager = $guestManager;
 		$this->chatManager = $chatManager;
 		$this->messageParser = $messageParser;
-		$this->mailer = $mailer;
 		$this->l10n = $l10n;
 	}
 
@@ -171,59 +152,67 @@ class RoomController extends OCSController {
 	 * @throws RoomNotFoundException
 	 */
 	protected function formatRoom(Room $room, Participant $currentParticipant = null): array {
-
-		if ($currentParticipant instanceof Participant) {
-			$participantType = $currentParticipant->getParticipantType();
-			$participantFlags = $currentParticipant->getInCallFlags();
-			$favorite = $currentParticipant->isFavorite();
-		} else {
-			$participantType = Participant::GUEST;
-			$participantFlags = Participant::FLAG_DISCONNECTED;
-			$favorite = false;
-		}
-		$participantInCall = ($participantFlags & Participant::FLAG_IN_CALL) !== 0;
-
-		$lastActivity = $room->getLastActivity();
-		if ($lastActivity instanceof \DateTimeInterface) {
-			$lastActivity = $lastActivity->getTimestamp();
-		} else {
-			$lastActivity = 0;
-		}
-
 		$roomData = [
-			'id' => $room->getId(),
-			'token' => $room->getToken(),
-			'type' => $room->getType(),
-			'name' => $room->getName(),
-			'displayName' => $room->getName(),
-			'objectType' => $room->getObjectType(),
-			'objectId' => $room->getObjectId(),
-			'participantType' => $participantType,
+            'id'                => $room->getId(),
+            'token'             => $room->getToken(),
+            'type'              => $room->getType(),
+            'name'              => '',
+            'displayName'       => '',
+            'objectType'        => '',
+            'objectId'          => '',
+            'participantType'   => Participant::GUEST,
 			// Deprecated, use participantFlags instead.
-			'participantInCall' => $participantInCall,
-			'participantFlags' => $participantFlags,
-			'count' => $room->getNumberOfParticipants(false, time() - 30),
-			'hasPassword' => $room->hasPassword(),
-			'hasCall' => $room->getActiveSince() instanceof \DateTimeInterface,
-			'lastActivity' => $lastActivity,
-			'unreadMessages' => 0,
-			'unreadMention' => false,
-			'isFavorite' => $favorite,
-			'notificationLevel' => $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION,
-			'lastPing' => 0,
-			'sessionId' => '0',
-			'participants' => [],
-			'numGuests' => 0,
-			'guestList' => '',
-			'lastMessage' => [],
+            'participantInCall' => false,
+            'participantFlags'  => Participant::FLAG_DISCONNECTED,
+            'count'             => 0,
+            'hasPassword'       => $room->hasPassword(),
+            'hasCall'           => false,
+            'lastActivity'      => 0,
+            'unreadMessages'    => 0,
+            'unreadMention'     => false,
+            'isFavorite'        => false,
+            'notificationLevel' => Participant::NOTIFY_NEVER,
+            'lastPing'          => 0,
+            'sessionId'         => '0',
+            'participants'      => [],
+            'numGuests'         => 0,
+            'guestList'         => '',
+            'lastMessage'       => [],
 		];
 
 		if (!$currentParticipant instanceof Participant) {
 			return $roomData;
 		}
 
-		if ($currentParticipant->getNotificationLevel() !== Participant::NOTIFY_DEFAULT) {
-			$roomData['notificationLevel'] = $currentParticipant->getNotificationLevel();
+        $lastActivity = $room->getLastActivity();
+        if ($lastActivity instanceof \DateTimeInterface) {
+            $lastActivity = $lastActivity->getTimestamp();
+        } else {
+            $lastActivity = 0;
+        }
+
+        $roomData = array_merge($roomData, [
+            'name'              => $room->getName(),
+            'displayName'       => $room->getName(),
+            'objectType'        => $room->getObjectType(),
+            'objectId'          => $room->getObjectId(),
+            'participantType'   => $currentParticipant->getParticipantType(),
+            // Deprecated, use participantFlags instead.
+            'participantInCall' => ($currentParticipant->getInCallFlags() & Participant::FLAG_IN_CALL) !== 0,
+            'participantFlags'  => $currentParticipant->getInCallFlags(),
+            'count'             => $room->getNumberOfParticipants(false, time() - 30),
+            'hasCall'           => $room->getActiveSince() instanceof \DateTimeInterface,
+            'lastActivity'      => $lastActivity,
+            'isFavorite'        => $currentParticipant->isFavorite(),
+            'notificationLevel' => $currentParticipant->getNotificationLevel(),
+        ]);
+
+        if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
+            if ($currentParticipant->isGuest()) {
+                $roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
+            } else {
+                $roomData['notificationLevel'] = $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
+            }
 		}
 
 		if ($room->getObjectType() === 'share:password') {
@@ -231,14 +220,13 @@ class RoomController extends OCSController {
 			$roomData['displayName'] = $this->l10n->t('Password request: %s', [$room->getName()]);
 		}
 
-		$currentUser = $this->userManager->get($this->userId);
+        $currentUser = $this->userManager->get($currentParticipant->getUser());
 		if ($currentUser instanceof IUser) {
 			$unreadSince = $this->chatManager->getUnreadMarker($room, $currentUser);
 			if ($currentParticipant instanceof Participant) {
 				$lastMention = $currentParticipant->getLastMention();
 				$roomData['unreadMention'] = $lastMention !== null && $unreadSince < $lastMention;
 			}
-
             $roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $unreadSince);
         }
 
@@ -293,8 +281,8 @@ class RoomController extends OCSController {
 			'lastMessage' => $lastMessage,
 		]);
 
-		if ($this->userId !== null) {
-			unset($participantList[$this->userId]);
+        if ( ! $currentParticipant->isGuest()) {
+            unset($participantList[$currentParticipant->getUser()]);
 			$numOtherParticipants = \count($participantList);
 			$numGuestParticipants = $numActiveGuests;
 		} else {
@@ -322,7 +310,7 @@ class RoomController extends OCSController {
 
 			/** @noinspection PhpMissingBreakStatementInspection */
 			case Room::PUBLIC_CALL:
-				if ($this->userId === null && $numGuestParticipants) {
+                if ($currentParticipant->isGuest() && $numGuestParticipants) {
 					$guestString = $this->l10n->n('%n other guest', '%n other guests', $numGuestParticipants);
 				} else if ($numGuestParticipants) {
 					$guestString = $this->l10n->n('%n guest', '%n guests', $numGuestParticipants);
@@ -336,7 +324,7 @@ class RoomController extends OCSController {
 					$participantList = array_map(function($participant) {
 						return $participant['name'];
 					}, $participantList);
-					if ($this->userId === null) {
+                    if ($currentParticipant->isGuest()) {
 						$participantList[] = $this->l10n->t('You');
 					} else if ($numOtherParticipants === 0) {
 						$participantList = [$this->l10n->t('You')];

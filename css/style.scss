@@ -299,33 +299,6 @@ input[type="password"] {
 	}
 }
 
-#app-content:not(.incall):not(.screensharing) .force-icon-white-in-call,
-#app-content:not(.incall):not(.screensharing) ~ #app-sidebar-wrapper .force-icon-white-in-call {
-	/*
-	 * Also force the white icons, when the video of the local participant is shown,
-	 * because the black icons are not visible on videos, especially when your camera is covered.
-	 */
-	&#hideVideo:not(.local-video-disabled) {
-		&.icon-video {
-			background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
-		}
-		&.icon-video-off {
-			background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
-		}
-	}
-	&#mute:not(.local-video-disabled) {
-		&.icon-audio {
-			background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
-		}
-		&.icon-audio-off {
-			background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
-		}
-	}
-	&#screensharing-button:not(.local-video-disabled) {
-		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
-	}
-}
-
 #app-content.incall .force-icon-white-in-call,
 #app-content.screensharing .force-icon-white-in-call,
 #app-content.incall ~ #app-sidebar-wrapper .force-icon-white-in-call,
@@ -340,30 +313,20 @@ input[type="password"] {
 	&.icon-fullscreen {
 		background-image: url(icon-color-path('fullscreen', 'actions', 'fff', 1, true));
 	}
-	&.icon-audio {
-		background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
-	}
-	&.icon-audio-off {
-		background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
-	}
-	&.icon-video {
-		background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
-	}
-	&.icon-video-off {
-		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
-	}
-	&.icon-screen {
-		background-image: url(icon-color-path('screen', 'actions', 'fff', 1, true));
-	}
-	&.icon-screen-off {
-		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+
+	/* ".force-icon-white-in-call" can be combined with ".icon-shadow" just like
+	 * ".icon-white". */
+	&.icon-shadow {
+		filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 	}
 }
 
-/* Use white icon for the app navigation toggle when in a call */
+/* Use white icon for the app navigation toggle when in a call; this can not be
+ * integrated above because the navigation toggle is created by the core and
+ * does not include the Talk-specific "force-icon-white-in-call" CSS class. */
 #app-content.incall .icon-menu,
 #app-content.screensharing .icon-menu {
-	@include icon-color('menu', 'actions', $color-white, 1, true);
+	background-image: url(icon-color-path('menu', 'actions', 'fff', 1, true));
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
 
@@ -735,10 +698,6 @@ input[type="password"] {
 			.edit-button {
 				display: none;
 
-				/* Use the same bottom margin as h2 (defined in the server) to
-				 * align the button vertically with the label. */
-				margin-bottom: 12px;
-
 				.icon {
 					background-color: transparent;
 					border: none;
@@ -752,10 +711,6 @@ input[type="password"] {
 		}
 		.input-wrapper {
 			position: relative;
-
-			/* Pull up the wrapper slightly to prevent elements below it from
-			 * moving when it is shown. */
-			margin-top: -2px;
 
 			input[type="text"] {
 				& + .icon-confirm {
@@ -819,14 +774,26 @@ input[type="password"] {
 		 * the edit button and the ellipsis in the name to work as expected. */
 		overflow: hidden;
 
-		.label {
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			overflow: hidden;
+		.label-wrapper {
+			.label {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
+
+			.edit-button {
+				/* Use the same bottom margin as h2 (defined in the server) to
+				 * align the button vertically with the label. */
+				margin-bottom: 12px;
+			}
 		}
 
 		.input-wrapper {
 			position: relative;
+
+			/* Pull up the wrapper slightly to prevent elements below it from
+			 * moving when it is shown. */
+			margin-top: -2px;
 
 			.username {
 				width: 100%;
@@ -1032,8 +999,9 @@ input[type="password"] {
 	right: 15px;
 }
 
-#app-sidebar #chatView .newCommentForm {
-	/* Make room to show the "Add" button when chat is shown in the sidebar. */
+#app-sidebar #chatView .newCommentForm.with-add-button {
+	/* Make room to show the "Add" button if needed when chat is shown in the
+	 * sidebar. */
 	margin-right: 44px;
 }
 

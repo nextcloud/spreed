@@ -216,6 +216,10 @@ input#request-password-button:disabled ~ .icon {
 	margin-top: 0;
 }
 
+#talk-sidebar #chatView .newCommentForm.with-add-button {
+  /* Make room to show the "Add" button if needed. */
+  margin-right: 44px;
+}
 
 /* Unset conflicting rules from guest.css for the sidebar */
 #talk-sidebar {
@@ -227,10 +231,50 @@ input#request-password-button:disabled ~ .icon {
 	margin: 0;
 }
 
+#talk-sidebar .button {
+  display: unset;
+}
+
+/* Restore rules from input.scss overriden by guest.css for the sidebar */
+#talk-sidebar input:not([type='range']) {
+  margin: 3px 3px 3px 0;
+  padding: 7px 6px;
+  font-size: 13px;
+  border: 1px solid var(--color-border-dark);
+  box-sizing: border-box;
+
+  &:not(:disabled):not(.primary) {
+    &:hover,
+    &:focus {
+      border-color: var(--color-primary-element);
+    }
+  }
+}
+
+#talk-sidebar input[type="text"],
+#talk-sidebar input[type="password"] {
+  width: 130px;
+
+  padding-right: 34px;
+}
+
+/* Restore rules from style.scss (core) overriden by guest.css for the
+ * sidebar */
+#body-login #talk-sidebar a {
+  color: var(--color-main-text);
+  font-weight: inherit;
+}
+
 /* Unset conflicting rules from publicshareauth.css (core) for the sidebar */
 #talk-sidebar input[type="submit"],
 #talk-sidebar input.icon-confirm[type="submit"] {
 	top: unset;
+}
+
+#talk-sidebar .guest-name input.icon-confirm[type="submit"] {
+  top: -5px;
+  right: 0px;
+  border: none;
 }
 
 /* Unset conflicting rules from guest.css for the sidebar */

@@ -24,8 +24,8 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Config;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
@@ -41,6 +41,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SignalingController extends OCSController {
+
+    /** @var int */
+    const PULL_MESSAGES_TIMEOUT = 30;
+
 	/** @var Config */
 	private $config;
 	/** @var TalkSession */
@@ -153,8 +157,8 @@ class SignalingController extends OCSController {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
 
-		$data = [];
-		$seconds = 30;
+        $data    = [];
+        $seconds = self::PULL_MESSAGES_TIMEOUT;
 
 		try {
 			$sessionId = $this->session->getSessionForRoom($token);
@@ -164,7 +168,9 @@ class SignalingController extends OCSController {
 			}
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-			$room->ping($this->userId, $sessionId, time());
+
+            $pingTimestamp = time();
+            $room->ping($this->userId, $sessionId, $pingTimestamp);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 		}
@@ -203,8 +209,8 @@ class SignalingController extends OCSController {
 
 		try {
 			// Add an update of the room participants at the end of the waiting
-			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
-			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room)];
+            $room   = $this->manager->getRoomForSession($this->userId, $sessionId);
+            $data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
 		} catch (RoomNotFoundException $e) {
 			$data[] = ['type' => 'usersInRoom', 'data' => []];
 			return new DataResponse($data, Http::STATUS_NOT_FOUND);
@@ -215,11 +221,21 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @param Room $room
+     * @param int pingTimestamp
+     *
 	 * @return array[]
-	 */
-	protected function getUsersInRoom(Room $room): array {
+     */
+    protected function getUsersInRoom(Room $room, int $pingTimestamp): array
+    {
 		$usersInRoom = [];
-		$participants = $room->getParticipants(time() - 30);
+        // Get participants active in the last 40 seconds (an extra time is used
+        // to include other participants pinging almost at the same time as the
+        // current user), or since the last signaling ping of the current user
+        // if it was done more than 40 seconds ago.
+        $timestamp = min(time() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
+        // "- 1" is needed because only the participants whose last ping is
+        // greater than the given timestamp are returned.
+        $participants = $room->getParticipants($timestamp - 1);
 		foreach ($participants as $participant) {
 			if ($participant->getSessionId() === '0') {
 				// User is not active

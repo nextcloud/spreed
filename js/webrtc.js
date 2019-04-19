@@ -17,6 +17,7 @@ var spreedPeerConnectionTable = [];
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
 	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
+    var delayedCreatePeer = [];
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -170,7 +171,20 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.videos.add(sessionId);
 			}
 
-			var peer;
+            var createPeer = function () {
+                var peer = webrtc.webrtc.createPeer({
+                    id: sessionId,
+                    type: "video",
+                    enableDataChannels: true,
+                    receiveMedia: {
+                        offerToReceiveAudio: 1,
+                        offerToReceiveVideo: 1
+                    }
+                });
+                webrtc.emit('createdPeer', peer);
+                peer.start();
+            };
+
 			if (!webrtc.webrtc.getPeers(sessionId, 'video').length) {
 				if (useMcu) {
 					// TODO(jojo): Already create peer object to avoid duplicate offers.
@@ -180,17 +194,17 @@ var spreedPeerConnectionTable = [];
 					// all the other participants), we decide who calls who by comparing
 					// the session ids of the users: "larger" ids call "smaller" ones.
 					console.log("Starting call with", user);
-					peer = webrtc.webrtc.createPeer({
-						id: sessionId,
-						type: "video",
-						enableDataChannels: true,
-						receiveMedia: {
-							offerToReceiveAudio: 1,
-							offerToReceiveVideo: 1
-						}
-					});
-					webrtc.emit('createdPeer', peer);
-					peer.start();
+                    createPeer();
+                } else if (userHasStreams(selfInCall) && userHasStreams(user) && sessionId > currentSessionId) {
+                    // If the remote peer is not aware that it was disconnected
+                    // from the current peer the remote peer will not send a new
+                    // offer; thus, if the current peer does not receive a new
+                    // offer in a reasonable time, the current peer calls the
+                    // remote peer instead of waiting to be called to
+                    // reestablish the connection.
+                    delayedCreatePeer[sessionId] = setTimeout(function () {
+                        createPeer();
+                    }, 10000);
 				}
 			}
 
@@ -292,6 +306,26 @@ var spreedPeerConnectionTable = [];
 			webrtc.leaveCall();
 		});
 
+        signaling.on('message', function (message) {
+            if (message.type !== 'offer') {
+                return;
+            }
+
+            var peers = OCA.SpreedMe.webrtc.webrtc.peers;
+            var stalePeer = peers.find(function (peer) {
+                return peer.id === message.from && peer.sid !== message.sid;
+            });
+
+            if (stalePeer) {
+                usersChanged(signaling, [], [stalePeer.id]);
+            }
+
+            if (delayedCreatePeer[message.from]) {
+                clearTimeout(delayedCreatePeer[message.from]);
+                delete delayedCreatePeer[message.from];
+            }
+        });
+
 		webrtc = new SimpleWebRTC({
 			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
@@ -311,6 +345,11 @@ var spreedPeerConnectionTable = [];
 			enableDataChannels: true,
 			nick: OC.getCurrentUser().displayName
 		});
+        if (signaling.hasFeature('mcu')) {
+            // Force "Plan-B" semantics if the MCU is used, which doesn't support
+            // "Unified Plan" with SimpleWebRTC yet.
+            webrtc.webrtc.config.peerConnectionConfig.sdpSemantics = 'plan-b';
+        }
 		OCA.SpreedMe.webrtc = webrtc;
 
 		OCA.SpreedMe.webrtc.startMedia = function (token) {

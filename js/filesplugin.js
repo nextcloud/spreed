@@ -207,7 +207,7 @@
 			// waiting for other participants it should be kept black. However,
 			// this would need to hook in "updateParticipantsUI" which is where
 			// the "incall" class is set.
-			$('#app-sidebar .icon-close').addClass('icon-white icon-shadow');
+            $('#app-sidebar .icon-close').addClass('force-icon-white-in-call icon-shadow');
 		},
 
 		_hideCallUi: function() {
@@ -221,7 +221,7 @@
 			});
 
 			// Restore the icon to close the sidebar.
-			$('#app-sidebar .icon-close').removeClass('icon-white icon-shadow');
+            $('#app-sidebar .icon-close').removeClass('force-icon-white-in-call icon-shadow');
 
 			if (!this._$callContainerWrapper || this._$callContainerWrapper.hasClass('hidden')) {
 				return;

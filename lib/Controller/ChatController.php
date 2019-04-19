@@ -27,7 +27,6 @@ use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
 use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Db\UserStatusDAO;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\GuestManager;
