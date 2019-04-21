@@ -271,7 +271,7 @@ OC.L10N.register(
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Serwer TURN jest używany do proxy dla przekazywania ruchu od uczestników za zaporą.",
     "%s Talk on your mobile devices" : "%s Rozmawiaj na urządzeniach mobilnych",
     "Join conversations at any time, any where, on any device." : "Dołącz do rozmów w dowolnym czasie i dowolnym miejscu na dowolnym urządzeniu.",
-    "Android app" : "Aplikacja na Androida",
+    "Android app" : "Aplikacja Android",
     "iOS app" : "Aplikacja na iOS",
     "Link to a conversation" : "Link do rozmowy",
     "Signaling server URL" : "Adres URL serwera sygnalizacyjnego",
