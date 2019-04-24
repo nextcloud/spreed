@@ -25,24 +25,19 @@ var spreedPeerConnectionTable = [];
 		}
 
 		var $appContentElement = $(OCA.SpreedMe.app.mainCallElementSelector),
-			participantsClass = 'participants-' + currentUsersNo,
-			hadScreensharing = $appContentElement.hasClass('screensharing'),
-			hadSidebar = $appContentElement.hasClass('with-app-sidebar');
-		if (!$appContentElement.hasClass(participantsClass)) {
-			$appContentElement.attr('class', '').addClass(participantsClass);
-			if (currentUsersNo > 1) {
-				$appContentElement.addClass('incall');
-			} else {
-				$appContentElement.removeClass('incall');
-			}
+			participantsClass = 'participants-' + currentUsersNo;
 
-			if (hadScreensharing) {
-				$appContentElement.addClass('screensharing');
-			}
+		var appContentElementClasses = $appContentElement.attr('class') || '';
+		var previousParticipantsClass = appContentElementClasses.match(/participants-\d+/g) || [];
+		previousParticipantsClass = previousParticipantsClass.join(' ');
 
-			if (hadSidebar) {
-				$appContentElement.addClass('with-app-sidebar');
-			}
+		$appContentElement.removeClass(previousParticipantsClass);
+		$appContentElement.addClass(participantsClass);
+
+		if (currentUsersNo > 1) {
+			$appContentElement.addClass('incall');
+		} else {
+			$appContentElement.removeClass('incall');
 		}
 	}
 
