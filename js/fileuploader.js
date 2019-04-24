@@ -42,7 +42,10 @@
             var self = this;
 
             var chatViewElement = $(self.chatViewSelector);
-            chatViewElement.prepend("<file-drop id='" + self.dropFileSelector + "'><file-drop");
+
+            if (!chatViewElement.has("#" + self.dropFileSelector)) {
+                chatViewElement.prepend("<file-drop id='" + self.dropFileSelector + "'><file-drop>");
+            }
 
             // Listen for dragged file if any.
             chatViewElement.on("dragover", function (e) {
