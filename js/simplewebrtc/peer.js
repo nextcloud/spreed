@@ -84,7 +84,14 @@ Peer.prototype.offer = function(options) {
 	this.pc.createOffer(options).then(function(offer) {
 		this.pc.setLocalDescription(offer).then(function() {
 			if (this.parent.config.nick) {
-				offer.nick = this.parent.config.nick;
+				// The offer is a RTCSessionDescription that only serializes
+				// its own attributes to JSON, so if extra attributes are needed
+				// a regular object has to be sent instead.
+				offer = {
+					type: offer.type,
+					sdp: offer.sdp,
+					nick: this.parent.config.nick,
+				};
 			}
 			this.send('offer', offer);
 		}.bind(this)).catch(function(error) {
@@ -107,7 +114,14 @@ Peer.prototype.answer = function() {
 	this.pc.createAnswer().then(function(answer) {
 		this.pc.setLocalDescription(answer).then(function() {
 			if (this.parent.config.nick) {
-				answer.nick = this.parent.config.nick;
+				// The answer is a RTCSessionDescription that only serializes
+				// its own attributes to JSON, so if extra attributes are needed
+				// a regular object has to be sent instead.
+				answer = {
+					type: answer.type,
+					sdp: answer.sdp,
+					nick: this.parent.config.nick,
+				};
 			}
 			this.send('answer', answer);
 		}.bind(this)).catch(function(error) {
