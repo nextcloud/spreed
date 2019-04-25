@@ -87,6 +87,11 @@ class Manager {
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
 			$room = $this->createRoomObject($row);
 			$callback($room);
 		}
@@ -160,6 +165,11 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
 			$room = $this->createRoomObject($row);
 			if ($participant !== null && isset($row['user_id'])) {
 				$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
@@ -199,6 +209,11 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -252,6 +267,11 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
 		$room = $this->createRoomObject($row);
 		if ($participant !== null && isset($row['user_id'])) {
 			$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
@@ -287,6 +307,11 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
 		return $this->createRoomObject($row);
 	}
 
@@ -306,6 +331,11 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -330,6 +360,11 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -363,6 +398,11 @@ class Manager {
 		}
 
 		if ((string) $userId !== $row['user_id']) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -416,6 +456,11 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
