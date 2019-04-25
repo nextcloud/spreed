@@ -1162,6 +1162,8 @@ var spreedPeerConnectionTable = [];
 			for (var sessionId in usersInCallMapping) {
 				if (!usersInCallMapping.hasOwnProperty(sessionId)) {
 					continue;
+				} else if (!usersInCallMapping[sessionId].inCall) {
+					continue;
 				} else if (sessionId === currentSessionId) {
 					// Running with MCU, no need to create screensharing
 					// subscriber for client itself.
