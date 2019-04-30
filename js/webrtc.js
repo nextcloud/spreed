@@ -851,7 +851,7 @@ var spreedPeerConnectionTable = [];
 			peer.pc.getStats(track).then(function(stats) {
 				var result = false;
 				stats.forEach(function(statsReport) {
-					if (!result && statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
+					if (result || statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
 						return;
 					}
 
