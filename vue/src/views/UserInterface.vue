@@ -33,6 +33,7 @@
 			</app-content>
 		</div>
 		<router-view />
+		<sidebar />
 	</div>
 </template>
 
@@ -48,6 +49,7 @@ import {
 	Conversation,
 	Participant
 } from '../constants'
+import Sidebar from './Sidebar'
 
 export default {
 	name: 'UserInterface',
@@ -56,7 +58,8 @@ export default {
 		AppContent,
 		AppNavigation,
 		// AppNavigationNew,
-		AppNavigationItem
+		AppNavigationItem,
+		Sidebar
 	},
 
 	data() {

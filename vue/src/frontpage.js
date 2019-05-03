@@ -43,13 +43,18 @@ const router = new VueRouter({
 	linkActiveClass: 'active',
 	routes: [
 		{
-			path: '/:index(index.php/)?apps/spreed',
+			path: '/:index(index.php)?',
 			component: Conversation,
 			props: true,
-			name: 'frontpageRoute',
+			name: 'baseRoute',
 			children: [
 				{
-					path: ':token',
+					path: 'apps/spreed',
+					name: 'frontpageRoute',
+					component: Conversation
+				},
+				{
+					path: 'call/:token',
 					name: 'conversationRoute',
 					component: Conversation
 				}

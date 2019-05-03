@@ -37,9 +37,6 @@ const mutations = {
 const getters = {
 	getConversations(state) {
 		return state.conversations
-	},
-	getNavigations(state) {
-		return state.conversations.forEach()
 	}
 }
 
