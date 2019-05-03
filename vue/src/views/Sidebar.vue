@@ -1,10 +1,9 @@
 <template>
-	<app-sidebar v-show="activeRoomToken" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
-		:starred.sync="activeRoom.isFavorite"
+	<app-sidebar v-show="conversationToken" :title="conversation.displayName" :starred.sync="conversation.isFavorite"
 		@close="show=false">
 		<template #action>
 			<button class="primary">
-				Button 1
+				{{ t('spreed', 'Start call') }}
 			</button>
 			<input id="link-checkbox" name="link-checkbox" class="checkbox link-checkbox"
 				type="checkbox">
@@ -56,12 +55,25 @@ export default {
 	},
 
 	computed: {
-		activeRoomToken() {
+		conversationToken() {
 			const t = this.$route.params.token
 			return _.isUndefined(t) ? '' : t
 		},
-		activeRoom() {
-			return this.$store.getConversations[this.activeRoomToken]
+		conversation() {
+			if (!this.conversationToken) {
+				return {}
+			}
+
+			return this.$store.getters.getConversations[this.conversationToken]
+		},
+		callButtonText() {
+			if (this.conversation.participantInCall) {
+				return t('spreed', 'Leave call')
+			}
+			if (this.conversation.hasCall) {
+				return t('spreed', 'Join call')
+			}
+			return t('spreed', 'Start call')
 		}
 	}
 }

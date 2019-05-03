@@ -3,17 +3,18 @@ module.exports = {
 	env: {
 		browser: true,
 		es6: true,
-		node: true
+		node: true,
+		jest: true
 	},
 	globals: {
 		oc_config: true,
-		oca_contacts: true,
+		appVersion: true,
 		n: true,
 		t: true,
 		OC: true,
 		OCA: true,
-		OCP: true,
-		Vue: true
+		Vue: true,
+		VueRouter: true
 	},
 	parserOptions: {
 		parser: 'babel-eslint',
@@ -31,17 +32,13 @@ module.exports = {
 	settings: {
 		'import/resolver': {
 			webpack: {
-				config: './webpack.common.js',
-				'config-index': 1
+				config: 'webpack.common.js'
 			},
 			node: {
 				paths: ['src'],
 				extensions: ['.js', '.vue']
 			}
-		},
-		'import/ignore': [
-			'node_modules'
-		]
+		}
 	},
 	plugins: ['vue', 'node'],
 	rules: {
@@ -95,3 +92,4 @@ module.exports = {
 		]
 	}
 }
+

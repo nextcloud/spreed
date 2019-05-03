@@ -100,7 +100,7 @@ class PageController extends Controller {
 	 */
 	public function showCall(string $token): Response {
 		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
-		return $this->index($token);
+		return $this->index($token, '', '', 'vue');
 	}
 
 	/**
