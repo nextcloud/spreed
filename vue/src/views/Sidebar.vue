@@ -64,6 +64,10 @@ export default {
 				return {}
 			}
 
+			if (!_.isUndefined(this.$store.getters.getConversations[this.conversationToken])) {
+				return {}
+			}
+
 			return this.$store.getters.getConversations[this.conversationToken]
 		},
 		callButtonText() {

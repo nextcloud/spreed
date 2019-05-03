@@ -3,8 +3,7 @@ module.exports = {
 	env: {
 		browser: true,
 		es6: true,
-		node: true,
-		jest: true
+		node: true
 	},
 	globals: {
 		oc_config: true,
@@ -13,6 +12,7 @@ module.exports = {
 		t: true,
 		OC: true,
 		OCA: true,
+		OCP: true,
 		Vue: true,
 		VueRouter: true
 	},
@@ -38,7 +38,10 @@ module.exports = {
 				paths: ['src'],
 				extensions: ['.js', '.vue']
 			}
-		}
+		},
+		'import/ignore': [
+			'node_modules'
+		]
 	},
 	plugins: ['vue', 'node'],
 	rules: {
