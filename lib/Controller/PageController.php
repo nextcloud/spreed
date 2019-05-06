@@ -109,6 +109,21 @@ class PageController extends Controller {
 	 * @UseSession
 	 *
 	 * @param string $token
+	 * @param string $password
+	 * @return Response
+	 * @throws HintException
+	 */
+	public function authenticatePassword(string $token, string $password = ''): Response {
+		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
+		return $this->index($token, '', $password);
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @UseSession
+	 *
+	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
