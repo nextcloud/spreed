@@ -4,3 +4,5 @@
 export PATH=./node_modules/.bin/:$PATH
 
 handlebars -n OCA.Talk.Views.Templates js/views/templates/ -f js/views/templates.js
+
+echo "OK"
