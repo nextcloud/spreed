@@ -3,6 +3,13 @@ build
 node_modules
 package-lock.json
 
+# Compiled JS
+/js/admin/*.js
+/js/admin/*.js.map
+/js/collections.js
+/js/collectionsintegration.js
+/js/*.js.map
+
 # Karma/jasmine coverage data
 coverage
 tests/php/coverage-html
