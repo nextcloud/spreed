@@ -44,10 +44,80 @@ class PublicConversationContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function passwordProtectedConversationWarning() {
+		return Locator::forThe()->xpath("//*[@class = 'warning-info' and normalize-space() = 'This conversation is password-protected']")->
+				describedAs("Password protected conversation warning in Authenticate page");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function passwordField() {
+		return Locator::forThe()->field("password")->
+				describedAs("Password field in Authenticate page");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function authenticateButton() {
+		return Locator::forThe()->id("password-submit")->
+				describedAs("Authenticate button in Authenticate page");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function wrongPasswordMessage() {
+		return Locator::forThe()->xpath("//*[@class = 'warning' and normalize-space() = 'The password is wrong. Try again.']")->
+				describedAs("Wrong password message in Authenticate page");
+	}
+
+	/**
 	 * @When I visit the public conversation link I wrote down
 	 */
 	public function iVisitThePublicConversationLinkIWroteDown() {
 		$this->actor->getSession()->visit($this->actor->getSharedNotebook()["public conversation link"]);
+	}
+
+	/**
+	 * @When I authenticate with password :password in public conversation
+	 */
+	public function iAuthenticateWithPasswordInPublicConversation($password) {
+		$this->actor->find(self::passwordField(), 10)->setValue($password);
+		$this->actor->find(self::authenticateButton())->click();
+	}
+
+	/**
+	 * @Then I see that the current page is the Authenticate page for the public conversation link I wrote down
+	 */
+	public function iSeeThatTheCurrentPageIsTheAuthenticatePageForThePublicConversationLinkIWroteDown() {
+		// The authenticate page for shared links in Files app has a special
+		// URL, but the authenticate page for public conversations does not, so
+		// it needs to be checked that the warning is shown instead.
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::passwordProtectedConversationWarning(),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The password protected conversation warning was not shown yet after $timeout seconds");
+		}
+	}
+
+	/**
+	 * @Then I see that the current page is the Wrong password page for the public conversation link I wrote down
+	 */
+	public function iSeeThatTheCurrentPageIsTheWrongPasswordPageForThePublicConversationLinkIWroteDown() {
+		// The authenticate page for shared links in Files app has a special
+		// URL, but the authenticate page for public conversations does not, so
+		// it needs to be checked that the warning is shown instead.
+		if (!WaitFor::elementToBeEventuallyShown(
+				$this->actor,
+				self::wrongPasswordMessage(),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The wrong password warning was not shown yet after $timeout seconds");
+		}
 	}
 
 	/**
