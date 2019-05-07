@@ -25,6 +25,10 @@ input[type="password"] + .icon-confirm {
 	position: absolute;
 	right: 15px;
 
+	/* Needed to honour the height set below for "input[type='submit']" by
+	 * overriding a rule set in the server. */
+	height: 45px;
+
 	border: none;
 	/* Needed to override an important rule set in the server. */
 	background-color: transparent !important;
