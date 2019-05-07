@@ -7,7 +7,7 @@
 <form method="post">
 	<fieldset class="warning">
 		<?php if (!isset($_['wrongpw'])){ ?>
-			<div class="warning-info"><?php p($l->t('This call is password-protected')); ?></div>
+			<div class="warning-info"><?php p($l->t('This conversation is password-protected')); ?></div>
 		<?php } else { ?>
 			<div class="warning"><?php p($l->t('The password is wrong. Try again.')); ?></div>
 		<?php } ?>
