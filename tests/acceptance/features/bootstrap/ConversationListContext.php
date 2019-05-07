@@ -136,6 +136,29 @@ class ConversationListContext implements Context, ActorAwareInterface {
 		$this->setChatAncestorForActor(TalkAppContext::mainView(), $this->actor);
 	}
 
+	/**
+	 * @Given I create a public conversation named :name
+	 */
+	public function iCreateAPublicConversationNamed($name) {
+		// When the Talk app is opened and there are no conversations the
+		// dropdown is automatically shown, and when the dropdown is shown
+		// clicking on the button to open it fails because it is covered by the
+		// search field of the dropdown. Due to that first it is assumed that
+		// the dropdown is shown and the item is searched and directly clicked;
+		// if it was not shown, then it is explicitly shown and after that the
+		// item is searched and clicked.
+		try {
+			$this->setValueForSearchInputInSelect2Dropdown($name);
+			$this->actor->find(TalkAppContext::itemInSelect2DropdownFor($name . " (public)"), 2)->click();
+		} catch (NoSuchElementException $exception) {
+			$this->actor->find(self::showCreateConversationDropdownButton(), 10)->click();
+			$this->setValueForSearchInputInSelect2Dropdown($name);
+			$this->actor->find(TalkAppContext::itemInSelect2DropdownFor($name . " (public)"), 2)->click();
+		}
+
+		$this->setChatAncestorForActor(TalkAppContext::mainView(), $this->actor);
+	}
+
 	private function setValueForSearchInputInSelect2Dropdown($value) {
 		// When "setValue" is used on an element, the Selenium2 driver for Mink
 		// used in the acceptance tests does not send only the given value; it
