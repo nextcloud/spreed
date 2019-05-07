@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  *
@@ -21,25 +21,13 @@
  *
  */
 
-(function(OCA, Marionette, Handlebars) {
+(function(OCA, Marionette) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE =
-		'<div class="label-wrapper">' +
-		'	<{{labelTagName}} class="label">{{text}}</{{labelTagName}}>' +
-		'	{{#if editionEnabled}}' +
-		'		<div class="edit-button"><span class="icon button icon-rename" {{#if buttonTitle}} title="{{buttonTitle}}" {{/if}}></span></div>' +
-		'	{{/if}}' +
-		'</div>' +
-		'{{#if editionEnabled}}' +
-		'	<div class="input-wrapper hidden-important">' +
-		'		<input class="username" {{#if inputMaxLength}} maxlength="{{inputMaxLength}}" {{/if}} type="text" value="{{inputValue}}" {{#if inputPlaceholder}} placeholder="{{inputPlaceholder}}" {{/if}}>'+
-		'		<input type="submit" value="" class="icon icon-confirm confirm-button"></div>'+
-		'	</div>' +
-		'{{/if}}';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	/**
 	 * View for an editable text label.
@@ -99,7 +87,12 @@
 			return modelEvents;
 		},
 
-		template: Handlebars.compile(TEMPLATE),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['editabletextlabel'](context);
+		},
 
 		templateContext: function() {
 			return {
@@ -211,13 +204,27 @@
 				return;
 			}
 
+			// TODO This should show the error message instead of just hiding
+			// the input without changes.
+			var hideInputOnValidationError = function(/*model, error*/) {
+				this.hideInput();
+			}.bind(this);
+			this.model.listenToOnce(this.model, 'invalid', hideInputOnValidationError);
+
 			var options = _.clone(this.modelSaveOptions || {});
 			options.success = _.bind(function() {
+				this.model.stopListening(this.model, 'invalid', hideInputOnValidationError);
+
 				this.hideInput();
 
 				if (this.modelSaveOptions && _.isFunction(this.modelSaveOptions.success)) {
 					this.modelSaveOptions.success.apply(this, arguments);
 				}
+			}, this);
+			options.error = _.bind(function() {
+				this.model.stopListening(this.model, 'invalid', hideInputOnValidationError);
+
+				this.hideInput();
 			}, this);
 
 			this.model.save(this.modelAttribute, newText, options);
@@ -227,4 +234,4 @@
 
 	OCA.SpreedMe.Views.EditableTextLabel = EditableTextLabel;
 
-})(OCA, Marionette, Handlebars);
+})(OCA, Marionette);

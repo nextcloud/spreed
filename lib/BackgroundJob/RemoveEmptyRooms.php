@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -41,7 +42,8 @@ class RemoveEmptyRooms extends TimedJob {
 
 	protected $numDeletedRooms = 0;
 
-	public function __construct(Manager $manager, ILogger $logger) {
+	public function __construct(Manager $manager,
+								ILogger $logger) {
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
 
@@ -49,7 +51,7 @@ class RemoveEmptyRooms extends TimedJob {
 		$this->logger = $logger;
 	}
 
-	protected function run($argument) {
+	protected function run($argument): void {
 		$this->manager->forAllRooms([$this, 'callback']);
 
 		if ($this->numDeletedRooms) {
@@ -60,11 +62,12 @@ class RemoveEmptyRooms extends TimedJob {
 		}
 	}
 
-	public function callback(Room $room) {
-		if ($room->getType() === Room::ONE_TO_ONE_CALL && $room->getNumberOfParticipants(false) <= 1) {
-			$room->deleteRoom();
-			$this->numDeletedRooms++;
-		} else if ($room->getNumberOfParticipants(false) === 0 && $room->getObjectType() !== 'file') {
+	public function callback(Room $room): void {
+		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			return;
+		}
+
+		if ($room->getNumberOfParticipants(false) === 0 && $room->getObjectType() !== 'file') {
 			$room->deleteRoom();
 			$this->numDeletedRooms++;
 		}

@@ -40,30 +40,30 @@
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
-            id: '',
+			id: '',
 			token: '',
-            name: '',
-            type: 0,
-            displayName: '',
-            objectType: '',
-            objectId: '',
-            participantType: 0,
-            participantFlags: 0,
+			name: '',
+			type: 0,
+			displayName: '',
+			objectType: '',
+			objectId: '',
+			participantType: 0,
+			participantFlags: 0,
 			count: 0,
-            hasPassword: false,
-            hasCall: false,
-            lastActivity: 0,
-            unreadMessages: 0,
-            unreadMention: false,
-            isFavorite: false,
-            notificationLevel: 0,
-            lastPing: 0,
-            sessionId: '0',
-            participants: [],
-            numGuests: 0,
-            guestList: '',
-            lastMessage: [],
-            active: false
+			hasPassword: false,
+			hasCall: false,
+			lastActivity: 0,
+			unreadMessages: 0,
+			unreadMention: false,
+			isFavorite: false,
+			notificationLevel: 0,
+			lastPing: 0,
+			sessionId: '0',
+			participants: [],
+			numGuests: 0,
+			guestList: '',
+			lastMessage: [],
+			active: false
 		},
 		url: function() {
 			return OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.get('token');
@@ -74,6 +74,11 @@
 			// "RoomCollection.parse", so the given result is already the
 			// attributes hash to be set on the model.
 			return (result.ocs === undefined)? result : result.ocs.data;
+		},
+		validate: function(attributes) {
+			if (!attributes.name) {
+				return t('spreed', 'Room name can not be empty');
+			}
 		},
 		sync: function(method, model, options) {
 			// When saving a model "Backbone.Model.save" calls "sync" with an
@@ -105,12 +110,29 @@
 
 			OCA.SpreedMe.app.connection.leaveCurrentRoom();
 		},
-		removeSelf: function() {
-			this.destroy({
-				url: this.url() + '/participants/self'
+		removeSelf: function(options) {
+			var self = this;
+
+			// Removing self can fail, so wait for the server response to remove
+			// the model from its collection and to leave the room.
+			var success = options? options.success: undefined;
+			options = _.extend({}, options, {
+				url: this.url() + '/participants/self',
+				wait: true,
+				success: function() {
+					self.leave();
+
+					if (success) {
+						success.apply(this, arguments);
+					}
+				}
 			});
+
+			return Backbone.Model.prototype.destroy.call(this, options);
 		},
 		destroy: function(options) {
+			// Destroying a room is not expected to fail, so leave the room
+			// without waiting for the server response for a snappier UI.
 			this.leave();
 
 			return Backbone.Model.prototype.destroy.call(this, options);

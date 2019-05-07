@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  * @copyright 2017 Ivan Sein <ivan@nextcloud.com>
  *
@@ -46,23 +46,17 @@ class CallProvider implements IProvider {
 	/** @var IL10N */
 	private $l10n;
 
-	/**
-	 * @param IActionFactory $actionFactory
-	 * @param IURLGenerator $urlGenerator
-	 * @param IUserManager $userManager
-	 * @param IL10N $l10n
-	 */
-	public function __construct(IActionFactory $actionFactory, IURLGenerator $urlGenerator, IL10N $l10n, IUserManager $userManager) {
+	public function __construct(IActionFactory $actionFactory,
+								IURLGenerator $urlGenerator,
+								IL10N $l10n,
+								IUserManager $userManager) {
 		$this->actionFactory = $actionFactory;
 		$this->urlGenerator = $urlGenerator;
 		$this->userManager = $userManager;
 		$this->l10n = $l10n;
 	}
 
-	/**
-	 * @param IEntry $entry
-	 */
-	public function process(IEntry $entry) {
+	public function process(IEntry $entry): void {
 		$uid = $entry->getProperty('UID');
 
 		if ($uid === null) {

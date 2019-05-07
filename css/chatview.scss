@@ -25,15 +25,15 @@
 	width: calc(100% - 36px);
 	margin-left: 36px;
 	padding-right: 30px;
-  /**
-   * The div needs to be inline-block, so Chrome/Chromium correctly insert
-   * div-ed multi-line-text with new lines.
-   * Otherwise they are just chained together on posting.
-   *
-   * See https://stackoverflow.com/a/24689420
-   * See https://github.com/nextcloud/spreed/issues/1561
-   */
-  display: inline-block;
+	/**
+	 * The div needs to be inline-block, so Chrome/Chromium correctly insert
+	 * div-ed multi-line-text with new lines.
+	 * Otherwise they are just chained together on posting.
+	 *
+	 * See https://stackoverflow.com/a/24689420
+	 * See https://github.com/nextcloud/spreed/issues/1561
+	 */
+	display: inline-block;
 }
 
 #chatView .newCommentForm .submit,
@@ -45,7 +45,7 @@
 	width: 44px;
 	height: 44px;
 
-  bottom: -1px;
+	bottom: -1px;
 	margin: 0;
 }
 
@@ -68,10 +68,10 @@
 	border: none;
 	opacity: .3;
 }
-#chatView .newCommentForm .submit:hover,
-#chatView .newCommentForm .submit:focus,
-#chatView .newCommentForm .share:hover,
-#chatView .newCommentForm .share:focus {
+#chatView .newCommentForm .submit:hover:not(:disabled),
+#chatView .newCommentForm .submit:focus:not(:disabled),
+#chatView .newCommentForm .share:hover:not(:disabled),
+#chatView .newCommentForm .share:focus:not(:disabled) {
 	opacity: 1;
 }
 
@@ -273,6 +273,7 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	display: inline-flex;
 }
 
+#chatView .comment .message .mention-call,
 #chatView .comment .message .mention-user {
 	/* Make the mention the positioning context of its child contacts menu */
 	position: relative;
@@ -299,9 +300,16 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 		margin-top: -4px;
 		margin-left: 0;
 		margin-right: 2px;
+
+		&.icon {
+			margin-top: -2px;
+			margin-left: 1px;
+			background-color: var(--color-background-darker);
+		}
 	}
 }
 
+#chatView .comment:not(.systemMessage) .message .mention-call,
 #chatView .comment:not(.systemMessage) .message .mention-user {
 	font-weight: bold;
 
@@ -311,6 +319,7 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	}
 }
 
+#chatView .comment.systemMessage .message .mention-call,
 #chatView .comment.systemMessage .message .mention-user {
 	color: var(--color-main-text);
 }

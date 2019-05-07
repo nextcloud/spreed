@@ -169,6 +169,7 @@ input[type="password"] {
 }
 
 .select2-result .avatar.icon,
+.atwho-view-ul .avatar.icon,
 #app-navigation .app-navigation-entry-link .avatar.icon {
 	border-radius: 50%;
 	width: 32px;
@@ -178,6 +179,10 @@ input[type="password"] {
 
 .icon-file-white {
 	@include icon-color('text', 'filetypes', $color-white, 1, true);
+}
+
+.icon-changelog {
+	background-image: url('../img/changelog.svg');
 }
 
 #app-navigation .favorite-mark {
@@ -207,7 +212,7 @@ input[type="password"] {
 		padding: 2px 5px;
 		border-radius: 10px;
 		font-weight: bold;
-		background: #FDCD4D;
+		background-color: var(--color-background-dark);
 	}
 
 	&.highlighted {
@@ -384,10 +389,20 @@ input[type="password"] {
 	margin-left: 0;
 }
 #content:-ms-fullscreen #app-content {
-	margin-left: 0;
+	margin-left: 0 !important;
 }
 #content:fullscreen #app-content {
 	margin-left: 0;
+}
+
+#content:-ms-fullscreen #app-sidebar {
+	/* The sidebar height is unset in Talk to override the "100vh-50px" set in
+	 * server and force it to get the full height in fullscreen mode. However,
+	 * IE11 does not support "unset", so the height needs to be explicitly set
+	 * to 100%. */
+	height: 100%;
+	/* Remove the space added when IE is used to not overlap with the header. */
+	top: 0;
 }
 
 /* Set the background of the content to the same colour as the app content and
@@ -481,6 +496,7 @@ input[type="password"] {
 #app-navigation .app-navigation-entry-menu li span[class*=' icon-'] {
 	padding: 16px;
 	box-sizing: border-box;
+	width: 36px;
 }
 
 #app-navigation .app-navigation-entry-utils-menu-button {
@@ -510,6 +526,12 @@ input[type="password"] {
 	position: static;
 	height: unset;
 	top: 0;
+}
+
+/* The server sets the position of the sidebar as fixed when IE is used, so it
+ * needs to be pulled down to not overlap with the header. */
+.ie #app-sidebar {
+	top: $header-height;
 }
 
 @include icon-black-white('menu-people', 'spreed', 1);
@@ -594,6 +616,14 @@ input[type="password"] {
 	}
 }
 /* END: move padding fixes and icons-for-tabs capability into core */
+
+/* In Talk clicking on the selected tab header has no effect, so the pointer
+ * cursor should not be used. */
+.tabHeaders .tabHeader.selected,
+.tabHeaders .tabHeader.selected .icon,
+.tabHeaders .tabHeader.selected a {
+	cursor: default;
+}
 
 #app-sidebar.hidden {
 	display: none !important;
@@ -791,10 +821,6 @@ input[type="password"] {
 		.input-wrapper {
 			position: relative;
 
-			/* Pull up the wrapper slightly to prevent elements below it from
-			 * moving when it is shown. */
-			margin-top: -2px;
-
 			.username {
 				width: 100%;
 				margin: 4px 0 4px 0 !important;
@@ -812,7 +838,7 @@ input[type="password"] {
 				padding-right: 44px;
 
 				& + .icon-confirm {
-					top: 1px;
+					top: 4px;
 					right: 0;
 				}
 			}
@@ -1083,28 +1109,5 @@ input[type="password"] {
 #app-navigation > ul > li > a:first-child {
 	img {
 		filter: none !important;
-	}
-}
-
-#app-navigation .room-status-indicator {
-	width: 10px;
-	height: 10px;
-	border-radius: 100%;
-	z-index: 999;
-	position: relative;
-	top: 27px;
-	left: 30px;
-	background: #a6a5a2;
-
-	&.online {
-		background: #4CDA65;
-	}
-
-	&.offline {
-		background: #a6a5a2;
-	}
-
-	&.away {
-		background: #ffb230;
 	}
 }

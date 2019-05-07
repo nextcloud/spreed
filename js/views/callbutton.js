@@ -45,11 +45,13 @@
 
 		templateContext: function() {
 			return {
+				isReadOnly: this.model.get('readOnly') === 1,
 				isInCall: (this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0,
 				hasCall: this.model.get('hasCall'),
 				leaveCallText: t('spreed', 'Leave call'),
 				joinCallText: t('spreed', 'Join call'),
 				startCallText: t('spreed', 'Start call'),
+				readOnlyText: t('spreed', 'Calls are disabled in this conversation.'),
 			};
 		},
 
@@ -69,6 +71,9 @@
 				this.render();
 			},
 			'change:participantFlags': function() {
+				this.render();
+			},
+			'change:readOnly': function() {
 				this.render();
 			},
 		},

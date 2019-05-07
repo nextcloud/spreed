@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -25,73 +26,34 @@
 
 namespace OCA\Spreed\Controller;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
-use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
-class CallController extends OCSController {
-	/** @var string */
-	private $userId;
-	/** @var TalkSession */
-	private $session;
-	/** @var Manager */
-	private $manager;
+class CallController extends AEnvironmentAwareController {
 
-	/**
-	 * @param string $appName
-	 * @param string $UserId
-	 * @param IRequest $request
-	 * @param TalkSession $session
-	 * @param Manager $manager
-	 */
-	public function __construct($appName,
-								$UserId,
+	/** @var ITimeFactory */
+	private $timeFactory;
+
+	public function __construct(string $appName,
 								IRequest $request,
-								TalkSession $session,
-								Manager $manager) {
+								ITimeFactory $timeFactory) {
 		parent::__construct($appName, $request);
-		$this->userId = $UserId;
-		$this->session = $session;
-		$this->manager = $manager;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
 	 * @PublicPage
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function getPeersForCall(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
-		} catch (RoomNotFoundException $e) {
-			if ($this->userId === null) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-
-			// For logged in users we search for rooms where they are real participants
-			try {
-				$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-				$room->getParticipant($this->userId);
-			} catch (RoomNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		}
-
-		if ($room->getToken() !== $token) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
+	public function getPeersForCall(): DataResponse {
 		$result = [];
-		$participants = $room->getParticipants(time() - 30);
+		$participants = $this->room->getParticipants($this->timeFactory->getTime() - 30);
 		foreach ($participants as $participant) {
 			if ($participant->getSessionId() === '0' || $participant->getInCallFlags() === Participant::FLAG_DISCONNECTED) {
 				// User is not active in call
@@ -100,7 +62,7 @@ class CallController extends OCSController {
 
 			$result[] = [
 				'userId' => $participant->getUser(),
-				'token' => $token,
+				'token' => $this->room->getToken(),
 				'lastPing' => $participant->getLastPing(),
 				'sessionId' => $participant->getSessionId(),
 			];
@@ -111,38 +73,16 @@ class CallController extends OCSController {
 
 	/**
 	 * @PublicPage
-	 * @UseSession
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
 	 *
-	 * @param string $token
 	 * @param int|null $flags
 	 * @return DataResponse
 	 */
-	public function joinCall(string $token, $flags): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
+	public function joinCall(?int $flags): DataResponse {
+		$this->room->ensureOneToOneRoomIsFilled();
 
-		if ($this->userId === null) {
-			if ($this->session->getSessionForRoom($token) === null) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-
-			try {
-				$participant = $room->getParticipantBySession($this->session->getSessionForRoom($token));
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		} else {
-			try {
-				$participant = $room->getParticipant($this->userId);
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		}
-
-		$sessionId = $participant->getSessionId();
+		$sessionId = $this->participant->getSessionId();
 		if ($sessionId === '0') {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
@@ -152,49 +92,24 @@ class CallController extends OCSController {
 			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
 		}
 
-		$room->changeInCall($sessionId, $flags);
+		$this->room->changeInCall($sessionId, $flags);
 
 		return new DataResponse();
 	}
 
 	/**
 	 * @PublicPage
-	 * @UseSession
+	 * @RequireParticipant
 	 *
-	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function leaveCall(string $token): DataResponse {
-		try {
-			$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-		} catch (RoomNotFoundException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($this->userId === null) {
-			if ($this->session->getSessionForRoom($token) === null) {
-				return new DataResponse();
-			}
-
-			try {
-				$participant = $room->getParticipantBySession($this->session->getSessionForRoom($token));
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		} else {
-			try {
-				$participant = $room->getParticipant($this->userId);
-			} catch (ParticipantNotFoundException $e) {
-				return new DataResponse([], Http::STATUS_NOT_FOUND);
-			}
-		}
-
-		$sessionId = $participant->getSessionId();
+	public function leaveCall(): DataResponse {
+		$sessionId = $this->participant->getSessionId();
 		if ($sessionId === '0') {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$room->changeInCall($sessionId, Participant::FLAG_DISCONNECTED);
+		$this->room->changeInCall($sessionId, Participant::FLAG_DISCONNECTED);
 
 		return new DataResponse();
 	}

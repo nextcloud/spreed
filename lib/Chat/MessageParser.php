@@ -23,10 +23,15 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\GuestManager;
+use OCA\Spreed\Model\Message;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IUser;
+use OCP\IUserManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -38,22 +43,61 @@ class MessageParser {
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 
-	public function __construct(EventDispatcherInterface $dispatcher) {
+	/** @var IUserManager */
+	private $userManager;
+
+	/** @var GuestManager */
+	private $guestManager;
+
+	/** @var array */
+	protected $guestNames = [];
+
+	public function __construct(EventDispatcherInterface $dispatcher,
+								IUserManager $userManager,
+								GuestManager $guestManager) {
 		$this->dispatcher = $dispatcher;
+		$this->userManager = $userManager;
+		$this->guestManager = $guestManager;
 	}
 
-	public function parseMessage(Room $room, IComment $chatMessage, IL10N $l, IUser $user = null): array {
-		$event = new GenericEvent($chatMessage, [
-			'room' => $room,
-			'user' => $user,
-			'l10n' => $l,
-		]);
-		$this->dispatcher->dispatch(self::class . '::parseMessage', $event);
+	public function createMessage(Room $room, Participant $participant, IComment $comment, IL10N $l): Message {
+		return new Message($room, $participant, $comment, $l);
+	}
 
-		if ($event->hasArgument('message')) {
-			return [$event->getArgument('message'), $event->getArgument('parameters')];
+	public function parseMessage(Message $message): void {
+		$message->setMessage($message->getComment()->getMessage(), []);
+		$message->setMessageType($message->getComment()->getVerb());
+		$this->setActor($message);
+
+		$event = new GenericEvent($message);
+		$this->dispatcher->dispatch(self::class . '::parseMessage', $event);
+	}
+
+	protected function setActor(Message $message): void {
+		$comment = $message->getComment();
+
+		$displayName = '';
+		if ($comment->getActorType() === 'users') {
+			$user = $this->userManager->get($comment->getActorId());
+			$displayName = $user instanceof IUser ? $user->getDisplayName() : $comment->getActorId();
+		} else if ($comment->getActorType() === 'guests') {
+			if (isset($guestNames[$comment->getActorId()])) {
+				$displayName = $this->guestNames[$comment->getActorId()];
+			} else {
+				try {
+					$displayName = $this->guestManager->getNameBySessionHash($comment->getActorId());
+				} catch (ParticipantNotFoundException $e) {
+				}
+				$this->guestNames[$comment->getActorId()] = $displayName;
+			}
+		} else if ($comment->getActorType() === 'bots') {
+			$displayName = $comment->getActorId() . '-bot';
 		}
 
-		return [$chatMessage->getMessage(), []];
+		$message->setActor(
+			$comment->getActorType(),
+			$comment->getActorId(),
+			$displayName
+		);
 	}
 }

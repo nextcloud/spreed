@@ -1,15 +1,15 @@
 <?php
 /** @var array $_ */
 /** @var \OCP\IL10N $l */
-script('spreed', ['admin/signaling-server', 'admin/templates']);
+script('spreed', ['admin/signaling-server']);
 style('spreed', ['settings-admin']);
 ?>
 
-<div class="videocalls section signaling-server">
-	<h2><?php p($l->t('Signaling server')) ?></h2>
+<div id="signaling_server" class="videocalls section">
+	<h2><?php p($l->t('Signaling servers')) ?></h2>
 	<p class="settings-hint"><?php p($l->t('An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server.')) ?></p>
 
-	<div class="signaling-servers" data-servers="<?php p($_['signalingServers']) ?>">
+	<div class="signaling-servers">
 	</div>
 
 	<div class="signaling-secret">

@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -45,37 +44,30 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Listener {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
-
-	public function __construct(EventDispatcherInterface $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
-
-	public function register() {
+	public static function register(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->preventExtraUsersFromJoining($room, $event->getArgument('userId'));
+			self::preventExtraUsersFromJoining($room, $event->getArgument('userId'));
 		};
-		$this->dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->preventExtraGuestsFromJoining($room);
+			self::preventExtraGuestsFromJoining($room);
 		};
-		$this->dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
 			$room = $event->getSubject();
-			$this->destroyRoomOnParticipantLeave($room);
+			self::destroyRoomOnParticipantLeave($room);
 		};
-		$this->dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$this->dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
-		$this->dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
-		$this->dispatcher->addListener(Room::class . '::postCleanGuests', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::class . '::postCleanGuests', $listener);
 	}
 
 	/**
@@ -88,7 +80,7 @@ class Listener {
 	 * @param string $userId
 	 * @throws \OverflowException
 	 */
-	public function preventExtraUsersFromJoining(Room $room, string $userId) {
+	public static function preventExtraUsersFromJoining(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
@@ -115,7 +107,7 @@ class Listener {
 	 * @param Room $room
 	 * @throws \OverflowException
 	 */
-	public function preventExtraGuestsFromJoining(Room $room) {
+	public static function preventExtraGuestsFromJoining(Room $room): void {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}
@@ -135,7 +127,7 @@ class Listener {
 	 *
 	 * @param Room $room
 	 */
-	public function destroyRoomOnParticipantLeave(Room $room) {
+	public static function destroyRoomOnParticipantLeave(Room $room): void {
 		if ($room->getObjectType() !== 'share:password') {
 			return;
 		}

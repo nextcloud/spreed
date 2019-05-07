@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
  *
@@ -22,34 +23,36 @@
 namespace OCA\Spreed\Settings\Admin;
 
 
+use OCA\Spreed\Config;
 use OCP\AppFramework\Http\TemplateResponse;
-use OCP\IConfig;
+use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
 class TurnServer implements ISettings {
 
-	/** @var IConfig */
+	/** @var Config */
 	private $config;
+	/** @var IInitialStateService */
+	private $initialStateService;
 
-	public function __construct(IConfig $config) {
+	public function __construct(Config $config,
+								IInitialStateService $initialStateService) {
 		$this->config = $config;
+		$this->initialStateService = $initialStateService;
 	}
 
 	/**
 	 * @return TemplateResponse
 	 */
-	public function getForm() {
-		$parameters = [
-			'turnServer' => $this->config->getAppValue('spreed', 'turn_servers'),
-		];
-
-		return new TemplateResponse('spreed', 'settings/admin/turn-server', $parameters, '');
+	public function getForm(): TemplateResponse {
+		$this->initialStateService->provideInitialState('talk', 'turn_servers', $this->config->getTurnServers());
+		return new TemplateResponse('spreed', 'settings/admin/turn-server', [], '');
 	}
 
 	/**
 	 * @return string the section ID, e.g. 'sharing'
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'talk';
 	}
 
@@ -60,7 +63,7 @@ class TurnServer implements ISettings {
 	 *
 	 * E.g.: 70
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 70;
 	}
 

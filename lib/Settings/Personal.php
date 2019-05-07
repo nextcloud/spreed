@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Julius Härtl <jus@bitgrid.net>
  *
@@ -32,19 +33,16 @@ class Personal implements ISettings {
 
 	/** @var IConfig */
 	private $config;
-	/** @var \OC_Defaults */
-	private $defaults;
 
-	public function __construct(IConfig $config, \OC_Defaults $defaults) {
+	public function __construct(IConfig $config) {
 		$this->config = $config;
-		$this->defaults = $defaults;
 	}
 
 	/**
 	 * @return TemplateResponse returns the instance with all parameters set, ready to be rendered
 	 * @since 9.1
 	 */
-	public function getForm() {
+	public function getForm(): TemplateResponse {
 		$parameters = [ 'clients' => $this->getClientLinks() ];
 		return new TemplateResponse('spreed', 'settings/personal/clients', $parameters);
 	}
@@ -53,7 +51,7 @@ class Personal implements ISettings {
 	 * @return string the section ID, e.g. 'sharing'
 	 * @since 9.1
 	 */
-	public function getSection() {
+	public function getSection(): string {
 		return 'sync-clients';
 	}
 
@@ -65,7 +63,7 @@ class Personal implements ISettings {
 	 * E.g.: 70
 	 * @since 9.1
 	 */
-	public function getPriority() {
+	public function getPriority(): int {
 		return 30;
 	}
 
@@ -74,7 +72,7 @@ class Personal implements ISettings {
 	 *
 	 * @return array
 	 */
-	private function getClientLinks() {
+	private function getClientLinks(): array {
 		$clients = [
 			'android' => $this->config->getSystemValue('talk_customclient_android', 'https://play.google.com/store/apps/details?id=com.nextcloud.talk2'),
 			'ios' => $this->config->getSystemValue('talk_customclient_ios', 'https://geo.itunes.apple.com/us/app/nextcloud-talk/id1296825574')

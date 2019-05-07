@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -24,16 +25,19 @@ namespace OCA\Spreed\Chat\Parser;
 
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
+use OCA\Spreed\Model\Message;
+use OCA\Spreed\Participant;
+use OCA\Spreed\Room;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
+use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
-use OCP\IUserSession;
 
 class SystemMessage {
 
@@ -41,8 +45,8 @@ class SystemMessage {
 	protected $userManager;
 	/** @var GuestManager */
 	protected $guestManager;
-	/** @var IUserSession */
-	protected $userSession;
+	/** @var IPreviewManager */
+	protected $previewManager;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
 	/** @var IRootFolder */
@@ -52,10 +56,6 @@ class SystemMessage {
 	/** @var IL10N */
 	protected $l;
 
-	/** @var null|IUser */
-	protected $recipient;
-	/** @var null|string */
-	protected $sessionId;
 	/** @var string[] */
 	protected $displayNames = [];
 	/** @var string[] */
@@ -63,40 +63,26 @@ class SystemMessage {
 
 	public function __construct(IUserManager $userManager,
 								GuestManager $guestManager,
-								IUserSession $userSession,
+								IPreviewManager $previewManager,
 								RoomShareProvider $shareProvider,
 								IRootFolder $rootFolder,
-								IURLGenerator $url,
-								IL10N $l) {
+								IURLGenerator $url) {
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
-		$this->userSession = $userSession;
+		$this->previewManager = $previewManager;
 		$this->shareProvider = $shareProvider;
 		$this->rootFolder = $rootFolder;
 		$this->url = $url;
-		$this->l = $l;
-		$this->recipient = $this->userSession->getUser();
-	}
-
-	public function setUserInfo(IL10N $l, IUser $user = null) {
-		$this->l = $l;
-		$this->recipient = $user;
-		$this->sessionId = null;
-	}
-
-	public function setGuestInfo(IL10N $l, string $sessionId = null) {
-		$this->l = $l;
-		$this->recipient = null;
-		$this->sessionId = $sessionId;
 	}
 
 	/**
-	 * @param IComment $comment
-	 * @return array
+	 * @param Message $chatMessage
 	 * @throws \OutOfBoundsException
 	 */
-	public function parseMessage(IComment $comment): array {
-		$data = json_decode($comment->getMessage(), true);
+	public function parseMessage(Message $chatMessage): void {
+		$this->l = $chatMessage->getL10n();
+		$comment = $chatMessage->getComment();
+		$data = json_decode($chatMessage->getMessage(), true);
 		if (!\is_array($data)) {
 			throw new \OutOfBoundsException('Invalid message');
 		}
@@ -104,8 +90,15 @@ class SystemMessage {
 		$message = $data['message'];
 		$parameters = $data['parameters'];
 		$parsedParameters = ['actor' => $this->getActor($comment)];
-		$currentUserIsActor = ($this->recipient instanceof IUser && $parsedParameters['actor']['type'] === 'user' && $this->recipient->getUID() === $parsedParameters['actor']['id']) ||
-			($this->sessionId !== null && $parsedParameters['actor']['type'] === 'guest' && $this->sessionId === $parsedParameters['actor']['id']);
+
+		$participant = $chatMessage->getParticipant();
+		if (!$participant->isGuest()) {
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'user' &&
+				$participant->getUser() === $parsedParameters['actor']['id'];
+		} else {
+			$currentUserIsActor = $parsedParameters['actor']['type'] === 'guest' &&
+				sha1($participant->getSessionId()) === $parsedParameters['actor']['id'];
+		}
 
 		if ($message === 'conversation_created') {
 			$parsedMessage = $this->l->t('{actor} created the conversation');
@@ -133,7 +126,17 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('You left the call');
 			}
 		} else if ($message === 'call_ended') {
-			list($parsedMessage, $parsedParameters) = $this->parseCall($parameters);
+			[$parsedMessage, $parsedParameters] = $this->parseCall($parameters);
+		} else if ($message === 'read_only_off') {
+			$parsedMessage = $this->l->t('{actor} unlocked the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You unlocked the conversation');
+			}
+		} else if ($message === 'read_only') {
+			$parsedMessage = $this->l->t('{actor} locked the conversation');
+			if ($currentUserIsActor) {
+				$parsedMessage = $this->l->t('You locked the conversation');
+			}
 		} else if ($message === 'guests_allowed') {
 			$parsedMessage = $this->l->t('{actor} allowed guests');
 			if ($currentUserIsActor) {
@@ -165,7 +168,7 @@ class SystemMessage {
 				}
 			} else if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You added {user}');
-			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
+			} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} added you');
 			}
 		} else if ($message === 'user_removed') {
@@ -180,7 +183,7 @@ class SystemMessage {
 				$parsedMessage = $this->l->t('{actor} removed {user}');
 				if ($currentUserIsActor) {
 					$parsedMessage = $this->l->t('You removed {user}');
-				} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
+				} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 					$parsedMessage = $this->l->t('{actor} removed you');
 				}
 			}
@@ -189,7 +192,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
+			} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 			}
 		} else if ($message === 'moderator_demoted') {
@@ -197,7 +200,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} else if ($this->recipient instanceof IUser && $this->recipient->getUID() === $parsedParameters['user']['id']) {
+			} else if (!$participant->isGuest() && $participant->getUser() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
 		} else if ($message === 'guest_moderator_promoted') {
@@ -205,7 +208,7 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} promoted {user} to moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You promoted {user} to moderator');
-			} else if ($this->sessionId !== null && $this->sessionId === $parsedParameters['user']['id']) {
+			} else if ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} promoted you to moderator');
 			}
 		} else if ($message === 'guest_moderator_demoted') {
@@ -213,14 +216,14 @@ class SystemMessage {
 			$parsedMessage = $this->l->t('{actor} demoted {user} from moderator');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You demoted {user} from moderator');
-			} else if ($this->sessionId !== null && $this->sessionId === $parsedParameters['user']['id']) {
+			} else if ($participant->isGuest() && $participant->getSessionId() === $parsedParameters['user']['id']) {
 				$parsedMessage = $this->l->t('{actor} demoted you from moderator');
 			}
 		} else if ($message === 'file_shared') {
 			try {
-				$parsedParameters['file'] = $this->getFileFromShare($parameters['share']);
+				$parsedParameters['file'] = $this->getFileFromShare($participant, $parameters['share']);
 				$parsedMessage = '{file}';
-				$comment->setVerb('comment');
+				$chatMessage->setMessageType('comment');
 			} catch (\Exception $e) {
 				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
 				if ($currentUserIsActor) {
@@ -232,26 +235,26 @@ class SystemMessage {
 		}
 
 		$comment->setMessage($message);
-
-		return [$parsedMessage, $parsedParameters];
+		$chatMessage->setMessage($parsedMessage, $parsedParameters);
 	}
 
 	/**
+	 * @param Participant $participant
 	 * @param string $shareId
 	 * @return array
 	 * @throws \OCP\Files\InvalidPathException
 	 * @throws \OCP\Files\NotFoundException
 	 * @throws \OCP\Share\Exceptions\ShareNotFound
 	 */
-	protected function getFileFromShare(string $shareId): array {
+	protected function getFileFromShare(Participant $participant, string $shareId): array {
 		$share = $this->shareProvider->getShareById($shareId);
 		$node = $share->getNode();
 		$name = $node->getName();
 		$path = $name;
 
-		if ($this->recipient instanceof IUser) {
-			if ($share->getShareOwner() !== $this->recipient->getUID()) {
-				$userFolder = $this->rootFolder->getUserFolder($this->recipient->getUID());
+		if (!$participant->isGuest()) {
+			if ($share->getShareOwner() !== $participant->getUser()) {
+				$userFolder = $this->rootFolder->getUserFolder($participant->getUser());
 				if ($userFolder instanceof Node) {
 					$userNodes = $userFolder->getById($node->getId());
 					if (empty($userNodes)) {
@@ -286,6 +289,8 @@ class SystemMessage {
 			'name' => $name,
 			'path' => $path,
 			'link' => $url,
+			'mimetype' => $node->getMimeType(),
+			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
 		];
 	}
 

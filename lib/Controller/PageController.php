@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -35,20 +36,25 @@ use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Http\RedirectResponse;
+use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 use OCP\Notification\IManager;
 
 class PageController extends Controller {
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 	/** @var RoomController */
 	private $api;
 	/** @var TalkSession */
-	private $session;
+	private $talkSession;
+	/** @var IUserSession */
+	private $userSession;
 	/** @var ILogger */
 	private $logger;
 	/** @var Manager */
@@ -60,23 +66,12 @@ class PageController extends Controller {
 	/** @var Config */
 	private $config;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param RoomController $api
-	 * @param TalkSession $session
-	 * @param string $UserId
-	 * @param ILogger $logger
-	 * @param Manager $manager
-	 * @param IURLGenerator $url
-	 * @param IManager $notificationManager
-	 * @param Config $config
-	 */
-	public function __construct($appName,
+	public function __construct(string $appName,
 								IRequest $request,
 								RoomController $api,
 								TalkSession $session,
-								$UserId,
+								IUserSession $userSession,
+								?string $UserId,
 								ILogger $logger,
 								Manager $manager,
 								IURLGenerator $url,
@@ -84,7 +79,8 @@ class PageController extends Controller {
 								Config $config) {
 		parent::__construct($appName, $request);
 		$this->api = $api;
-		$this->session = $session;
+		$this->talkSession = $session;
+		$this->userSession = $userSession;
 		$this->userId = $UserId;
 		$this->logger = $logger;
 		$this->manager = $manager;
@@ -99,13 +95,28 @@ class PageController extends Controller {
 	 * @UseSession
 	 *
 	 * @param string $token
+	 * @return Response
+	 * @throws HintException
+	 */
+	public function showCall(string $token): Response {
+		// This is the entry point from the `/call/{token}` URL which is hardcoded in the server.
+		return $this->index($token);
+	}
+
+	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 * @UseSession
+	 *
+	 * @param string $token
 	 * @param string $callUser
 	 * @param string $password
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	public function index($token = '', $callUser = '', $password = '') {
-		if ($this->userId === null) {
+	public function index(string $token = '', string $callUser = '', string $password = ''): Response {
+		$user = $this->userSession->getUser();
+		if (!$user instanceof IUser) {
 			return $this->guestEnterRoom($token, $password);
 		}
 
@@ -113,18 +124,16 @@ class PageController extends Controller {
 			$room = null;
 			try {
 				$room = $this->manager->getRoomByToken($token);
-				if ($this->userId !== null) {
-					$notification = $this->notificationManager->createNotification();
-					try {
-						$notification->setApp('spreed')
-							->setUser($this->userId)
-							->setObject('room', $room->getToken());
-						$this->notificationManager->markProcessed($notification);
-						$notification->setObject('call', $room->getToken());
-						$this->notificationManager->markProcessed($notification);
-					} catch (\InvalidArgumentException $e) {
-						$this->logger->logException($e, ['app' => 'spreed']);
-					}
+				$notification = $this->notificationManager->createNotification();
+				try {
+					$notification->setApp('spreed')
+						->setUser($this->userId)
+						->setObject('room', $room->getToken());
+					$this->notificationManager->markProcessed($notification);
+					$notification->setObject('call', $room->getToken());
+					$this->notificationManager->markProcessed($notification);
+				} catch (\InvalidArgumentException $e) {
+					$this->logger->logException($e, ['app' => 'spreed']);
 				}
 
 				// If the room is not a public room, check if the user is in the participants
@@ -136,7 +145,7 @@ class PageController extends Controller {
 				$token = '';
 			}
 
-			$this->session->removePasswordForRoom($token);
+			$this->talkSession->removePasswordForRoom($token);
 
 			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
@@ -152,14 +161,13 @@ class PageController extends Controller {
 					$passwordVerification = $room->verifyPassword($password);
 
 					if ($passwordVerification['result']) {
-						$this->session->setPasswordForRoom($token, $token);
+						$this->talkSession->setPasswordForRoom($token, $token);
 					} else {
 						if ($passwordVerification['url'] === '') {
 							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 						}
-						else {
-							return new RedirectResponse($passwordVerification['url']);
-						}
+
+						return new RedirectResponse($passwordVerification['url']);
 					}
 				}
 			}
@@ -167,7 +175,7 @@ class PageController extends Controller {
 			$response = $this->api->createRoom(Room::ONE_TO_ONE_CALL, $callUser);
 			if ($response->getStatus() !== Http::STATUS_NOT_FOUND) {
 				$data = $response->getData();
-				return $this->showCall($data['token']);
+				return $this->redirectToConversation($data['token']);
 			}
 		}
 
@@ -179,7 +187,6 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
-		$csp->allowEvalScript(true);
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
@@ -190,7 +197,7 @@ class PageController extends Controller {
 	 * @return TemplateResponse|RedirectResponse
 	 * @throws HintException
 	 */
-	protected function guestEnterRoom($token, $password) {
+	protected function guestEnterRoom(string $token, string $password): Response {
 		try {
 			$room = $this->manager->getRoomByToken($token);
 			if ($room->getType() !== Room::PUBLIC_CALL) {
@@ -202,19 +209,18 @@ class PageController extends Controller {
 			]));
 		}
 
-		$this->session->removePasswordForRoom($token);
+		$this->talkSession->removePasswordForRoom($token);
 		if ($room->hasPassword()) {
 			$passwordVerification = $room->verifyPassword($password);
 
 			if ($passwordVerification['result']) {
-				$this->session->setPasswordForRoom($token, $token);
+				$this->talkSession->setPasswordForRoom($token, $token);
 			} else {
 				if ($passwordVerification['url'] === '') {
 					return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
 				}
-				else {
-					return new RedirectResponse($passwordVerification['url']);
-				}
+
+				return new RedirectResponse($passwordVerification['url']);
 			}
 		}
 
@@ -227,16 +233,18 @@ class PageController extends Controller {
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');
 		$csp->addAllowedMediaDomain('blob:');
-		$csp->allowEvalScript(true);
 		$response->setContentSecurityPolicy($csp);
 		return $response;
 	}
 
 	/**
+	 * @PublicPage
+	 * @NoCSRFRequired
+	 *
 	 * @param string $token
 	 * @return RedirectResponse
 	 */
-	protected function showCall($token) {
+	protected function redirectToConversation(string $token): RedirectResponse {
 		// These redirects are already done outside of this method
 		if ($this->userId === null) {
 			try {

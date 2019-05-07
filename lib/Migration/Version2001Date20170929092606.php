@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -31,9 +32,6 @@ class Version2001Date20170929092606 extends SimpleMigrationStep {
 	/** @var IConfig */
 	protected $config;
 
-	/**
-	 * @param IConfig $config
-	 */
 	public function __construct(IConfig $config) {
 		$this->config = $config;
 	}
@@ -44,7 +42,7 @@ class Version2001Date20170929092606 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
-	public function preSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function preSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 		$stunServer = $this->config->getAppValue('spreed', 'stun_server', 'stun.nextcloud.com:443');
 		$turnServer = [
 			'server' => $this->config->getAppValue('spreed', 'turn_server'),

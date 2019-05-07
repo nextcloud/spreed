@@ -36,14 +36,12 @@ class Add extends Base {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 */
 	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
 	}
 
-	protected function configure() {
+	protected function configure(): void {
 		$this
 			->setName('talk:signaling:add')
 			->setDescription('Add an external signaling server.')
@@ -63,7 +61,7 @@ class Add extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$server = $input->getArgument('server');
 		$secret = $input->getArgument('secret');
 		$verify = $input->getOption('verify');
@@ -97,5 +95,6 @@ class Add extends Base {
 
 		$this->config->setAppValue('spreed', 'signaling_servers', json_encode($signaling));
 		$output->writeln('<info>Added signaling server ' . $server . '.</info>');
+		return 0;
 	}
 }

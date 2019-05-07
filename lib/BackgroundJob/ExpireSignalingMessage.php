@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -34,9 +35,6 @@ class ExpireSignalingMessage extends TimedJob {
 	/** @var Messages */
 	protected $messages;
 
-	/**
-	 * @param Messages $messages
-	 */
 	public function __construct(Messages $messages) {
 		// Every 5 minutes
 		$this->setInterval(60 * 5);
@@ -44,7 +42,7 @@ class ExpireSignalingMessage extends TimedJob {
 		$this->messages = $messages;
 	}
 
-	protected function run($argument) {
+	protected function run($argument): void {
 		$this->messages->expireOlderThan(5 * 60);
 	}
 }

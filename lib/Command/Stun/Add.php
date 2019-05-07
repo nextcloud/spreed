@@ -35,14 +35,12 @@ class Add extends Base {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 */
 	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
 	}
 
-	protected function configure() {
+	protected function configure(): void {
 		$this
 			->setName('talk:stun:add')
 			->setDescription('Add a new STUN server.')
@@ -53,7 +51,7 @@ class Add extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$server = $input->getArgument('server');
 		// check input, similar to stun-server.js
 		$host = parse_url($server, PHP_URL_HOST);
@@ -74,5 +72,6 @@ class Add extends Base {
 
 		$this->config->setAppValue('spreed', 'stun_servers', json_encode($servers));
 		$output->writeln('<info>Added ' . $server . '.</info>');
+		return 0;
 	}
 }

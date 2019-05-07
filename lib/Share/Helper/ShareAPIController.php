@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -29,6 +28,7 @@ use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
 use OCP\AppFramework\OCS\OCSNotFoundException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
@@ -44,33 +44,26 @@ class ShareAPIController {
 
 	/** @var string */
 	private $userId;
-
 	/** @var IUserManager */
 	private $userManager;
-
 	/** @var Manager */
 	private $manager;
-
+	/** @var ITimeFactory */
+	protected $timeFactory;
 	/** @var IL10N */
 	private $l;
 
-	/**
-	 * ShareAPIController constructor.
-	 *
-	 * @param string $UserId
-	 * @param IUserManager $userManager
-	 * @param Manager $manager
-	 * @param IL10N $l10n
-	 */
 	public function __construct(
 			string $UserId,
 			IUserManager $userManager,
 			Manager $manager,
+			ITimeFactory $timeFactory,
 			IL10N $l10n
 	) {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->timeFactory = $timeFactory;
 		$this->l = $l10n;
 	}
 
@@ -91,32 +84,15 @@ class ShareAPIController {
 			return $result;
 		}
 
-		$roomName = $room->getName();
+		$result['share_with_displayname'] = $room->getDisplayName($this->userId);
 		try {
 			$room->getParticipant($this->userId);
-
-			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-				$userIds = $room->getParticipantUserIds();
-				foreach ($userIds as $userId) {
-					if ($this->userId === $userId) {
-						continue;
-					}
-
-					$user = $this->userManager->get($userId);
-					if ($user instanceof IUser) {
-						$roomName = $user->getDisplayName();
-						break;
-					}
-				}
-			} else if ($roomName === '') {
-				$roomName = $this->l->t('Unnamed conversation');
-			}
 		} catch (ParticipantNotFoundException $e) {
-			// Do not leak the name of rooms the user is not a part of
-			$roomName = $this->l->t('Private conversation');
+			// Removing the conversation token from the leaked data if not a participant.
+			// Adding some unique but reproducable part to the share_with here
+			// so the avatars for conversations are distinguishable
+			$result['share_with'] = 'private_conversation_' . substr(sha1($room->getName() . $room->getId()), 0, 6);
 		}
-
-		$result['share_with_displayname'] = $roomName;
 		if ($room->getType() === Room::PUBLIC_CALL) {
 			$result['token'] = $share->getToken();
 		}
@@ -131,8 +107,9 @@ class ShareAPIController {
 	 * @param string $shareWith
 	 * @param int $permissions
 	 * @param string $expireDate
+	 * @throws OCSNotFoundException
 	 */
-	public function createShare(IShare $share, string $shareWith, int $permissions, string $expireDate) {
+	public function createShare(IShare $share, string $shareWith, int $permissions, string $expireDate): void {
 		$share->setSharedWith($shareWith);
 		$share->setPermissions($permissions);
 
@@ -159,7 +136,7 @@ class ShareAPIController {
 	 */
 	private function parseDate(string $expireDate): \DateTime {
 		try {
-			$date = new \DateTime($expireDate);
+			$date = $this->timeFactory->getDateTime($expireDate);
 		} catch (\Exception $e) {
 			throw new \Exception('Invalid date. Format must be YYYY-MM-DD');
 		}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -40,12 +41,9 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 	/** @var IGroupManager */
 	protected $groupManager;
 
-	/**
-	 * @param IDBConnection $connection
-	 * @param IConfig $config
-	 * @param IGroupManager $groupManager
-	 */
-	public function __construct(IDBConnection $connection, IConfig $config, IGroupManager $groupManager) {
+	public function __construct(IDBConnection $connection,
+								IConfig $config,
+								IGroupManager $groupManager) {
 		$this->connection = $connection;
 		$this->config = $config;
 		$this->groupManager = $groupManager;
@@ -57,7 +55,7 @@ class Version2000Date20171026140256 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 
 		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0

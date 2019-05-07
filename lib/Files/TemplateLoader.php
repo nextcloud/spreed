@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -24,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Files;
 
+use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -31,18 +31,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class TemplateLoader {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
-
-	public function __construct(EventDispatcherInterface $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
-
-	public function register() {
-		$listener = function() {
-			$this->loadTalkSidebarForFilesApp();
-		};
-		$this->dispatcher->addListener('OCA\Files::loadAdditionalScripts', $listener);
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
+			self::loadTalkSidebarForFilesApp();
+		});
 	}
 
 	/**
@@ -51,9 +43,9 @@ class TemplateLoader {
 	 * This method should be called when loading additional scripts for the
 	 * Files app.
 	 */
-	public function loadTalkSidebarForFilesApp() {
-		\OCP\Util::addStyle('spreed', 'merged-files');
-		\OCP\Util::addScript('spreed', 'merged-files');
+	public static function loadTalkSidebarForFilesApp(): void {
+		Util::addStyle('spreed', 'merged-files');
+		Util::addScript('spreed', 'merged-files');
 	}
 
 }

@@ -3,21 +3,20 @@
 	  xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
 	<id>spreed</id>
 	<name>Talk</name>
-	<summary><![CDATA[Video & audio-conferencing using WebRTC]]></summary>
-	<description><![CDATA[Video & audio-conferencing using WebRTC
+	<summary><![CDATA[Chat, video & audio-conferencing using WebRTC]]></summary>
+	<description><![CDATA[Chat, video & audio-conferencing using WebRTC
 
-* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.
+* 💬 **Chat integration!** Nextcloud Talk comes with a simple text chat. Allowing you to share files from your Nextcloud and mentioning other participants.
 * 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.
-* 💻 **Screen sharing!** Share your screen with participants of your call.
-* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.
-* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.
+* 💻 **Screen sharing!** Share your screen with participants of your call. You just need to use Firefox version 52 (or newer), latest Edge or Chrome 49 (or newer) with this [Chrome extension](https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol).
+* 🚀 **Integration with other Nextcloud apps** like Files, Contacts and Deck. More to come.
 
 And in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):
 * ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds
 
 	]]></description>
 
-    <version>5.0.3.1</version>
+	<version>6.0.0</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -44,7 +43,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/contacts-menu.png</screenshot>
 
 	<dependencies>
-		<nextcloud min-version="15" max-version="15" />
+		<nextcloud min-version="16" max-version="16" />
 	</dependencies>
 
 	<background-jobs>
@@ -52,7 +51,21 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
 	</background-jobs>
 
+	<repair-steps>
+		<post-migration>
+			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+		</post-migration>
+		<install>
+			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+		</install>
+	</repair-steps>
+
 	<commands>
+		<command>OCA\Spreed\Command\Command\Add</command>
+		<command>OCA\Spreed\Command\Command\AddSamples</command>
+		<command>OCA\Spreed\Command\Command\Delete</command>
+		<command>OCA\Spreed\Command\Command\ListCommand</command>
+		<command>OCA\Spreed\Command\Command\Update</command>
 		<command>OCA\Spreed\Command\Stun\Add</command>
 		<command>OCA\Spreed\Command\Stun\Delete</command>
 		<command>OCA\Spreed\Command\Stun\ListCommand</command>
@@ -65,9 +78,11 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</commands>
 
 	<settings>
-		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
-		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\AllowedGroups</admin>
+		<admin>OCA\Spreed\Settings\Admin\Commands</admin>
 		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
+		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
 		<admin-section>OCA\Spreed\Settings\Admin\Section</admin-section>
 	</settings>
 
@@ -81,14 +96,6 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 			<provider>OCA\Spreed\Activity\Provider\Call</provider>
 		</providers>
 	</activity>
-
-	<navigations>
-		<navigation>
-			<name>Talk</name>
-			<route>spreed.Page.index</route>
-			<order>3</order>
-		</navigation>
-	</navigations>
 
 	<contactsmenu>
 		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>
