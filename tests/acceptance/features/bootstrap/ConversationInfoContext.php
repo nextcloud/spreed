@@ -73,12 +73,33 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function copyLinkButton() {
+		return Locator::forThe()->css(".clipboard-button")->
+				descendantOf(self::conversationInfoContainer())->
+				describedAs("Copy link button in conversation info");
+	}
+
+	/**
 	 * @Given I rename the conversation to :newConversationName
 	 */
 	public function iRenameTheConversationTo($newConversationName) {
 		$this->actor->find(self::conversationNameLabel(), 10)->click();
 		$this->actor->find(self::editConversationNameButton(), 2)->click();
 		$this->actor->find(self::conversationNameTextInput(), 2)->setValue($newConversationName . "\r");
+	}
+
+	/**
+	 * @Given I write down the public conversation link
+	 */
+	public function iWriteDownThePublicConversationLink() {
+		$this->actor->find(self::copyLinkButton(), 10)->click();
+
+		// Clicking on the menu item copies the link to the clipboard, but it is
+		// not possible to access that value from the acceptance tests. Due to
+		// this the value of the attribute that holds the URL is used instead.
+		$this->actor->getSharedNotebook()["public conversation link"] = $this->actor->find(self::copyLinkButton(), 2)->getWrappedElement()->getAttribute("data-clipboard-text");
 	}
 
 }
