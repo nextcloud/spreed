@@ -5,6 +5,5 @@
 /js/tests/*
 /js/vendor/*
 /js/**/templates.js
-/karma.conf.js
 /tests/*
 /vue/*
