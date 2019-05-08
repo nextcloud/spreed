@@ -13,8 +13,8 @@
   "author": "",
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/preset-env": "^7.3.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "attachmediastream": "^2.1.0",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
