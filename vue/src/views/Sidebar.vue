@@ -60,6 +60,7 @@ export default {
 			return _.isUndefined(t) ? '' : t
 		},
 		conversation() {
+			console.log('conversation')
 			if (!this.conversationToken) {
 				return {}
 			}
@@ -68,9 +69,11 @@ export default {
 				return {}
 			}
 
+			console.log('result')
 			return this.$store.getters.getConversations[this.conversationToken]
 		},
 		callButtonText() {
+			console.log('callButtonText')
 			if (this.conversation.participantInCall) {
 				return t('spreed', 'Leave call')
 			}
