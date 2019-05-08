@@ -70,6 +70,9 @@ export default {
 			}
 
 			console.log('result')
+			console.log(this.$store.getters.getConversations)
+			console.log(this.conversationToken)
+			console.log(this.$store.getters.getConversationByToken(this.conversationToken))
 			return this.$store.getters.getConversations[this.conversationToken]
 		},
 		callButtonText() {

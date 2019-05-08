@@ -25,18 +25,21 @@ import Vue from 'vue'
 import _ from 'lodash'
 
 const state = {
-	conversations: {}
+	conversations: []
 }
 
 const mutations = {
 	addConversation(state, conversation) {
-		Vue.set(state.conversations, conversation.token, conversation)
+		state.conversations.push(conversation)
 	}
 }
 
 const getters = {
 	getConversations(state) {
 		return state.conversations
+	},
+	getConversationByToken: (state) => (token) => {
+		return state.conversations.find(c => c.token === token)
 	}
 }
 
