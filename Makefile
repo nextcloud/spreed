@@ -72,7 +72,8 @@ create-tag:
 	git tag -a v$(version) -m "Tagging the $(version) release."
 	git push origin v$(version)
 
-appstore: dev-setup build-js-production
+appstore:
+	rm -rf $(build_dir)
 	mkdir -p $(sign_dir)
 	rsync -a \
 	--exclude=bower.json \
