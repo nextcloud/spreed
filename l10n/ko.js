@@ -91,7 +91,6 @@ OC.L10N.register(
     "Shared secret" : "공유된 비밀 값",
     "STUN servers" : "STUN 서버",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN 서버는 라우터 뒤에 있는 참가자의 공인 IP 주소를 판단하는 데 사용합니다.",
-    "This call is password-protected" : "이 통화가 암호로 보호되어 있음",
     "The password is wrong. Try again." : "암호가 잘못되었습니다. 다시 시도하십시오",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "대규모 사용자가 필요한 경우 외부 신호 서버를 사용할 수 있습니다. 비워 두면 내장 신호 서버를 사용합니다.",
     "TURN server" : "TURN 서버",
@@ -102,6 +101,7 @@ OC.L10N.register(
     "_%n other guest_::_%n other guests_" : ["다른 손님 %n명"],
     ", " : ",",
     "A group call has started" : "그룹 통화가 시작됨",
+    "This call is password-protected" : "이 통화가 암호로 보호되어 있음",
     "Signaling server" : "신호 서버"
 },
 "nplurals=1; plural=0;");

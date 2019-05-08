@@ -112,7 +112,6 @@
     "Shared secret" : "Secreto compartido",
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
-    "This call is password-protected" : "Esta llamada está protegida con contraseña",
     "The password is wrong. Try again." : "La contraseña está equivoada. Por favor vuelve a intentarlo. ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "TURN server" : "Servidor TURN",
@@ -142,6 +141,7 @@
     "A group call has started" : "Una llamada en grupo ha iniciado",
     "Video & audio-conferencing using WebRTC" : "Video & audio conferencias usando WebRTC",
     "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Conferencias por audio & video usando WebRTC\n\n* 💬 **¡Integración con Chat !** Nextcloud Talk viene con un chat de texto simple desde la versión 13 de Nexcloud. Más características están planeadas para versiones futuras.\n* 👥 **¡Llamadas publicas, privadas y de gruppo!** Solo invita a alguien, a un grupo entero o envia una liga publica para invitar a una llamada.\n* 💻 **¡Compartir pantalla!** Comparte tu pantalla con los participantes de la llamada.\n* 🚀 **¡Integración con otras aplicaciones de Nextcloud!** Actualmente Contactos y usuarios – más por llegar.\n* 🙈 **¡No estamos reinventando la rueda!** Basado en la grandiosa libreria [simpleWebRTC](https://simplewebrtc.com/).\n\nY se está trabajando para [futuras versiones](https://github.com/nextcloud/spreed/milestones/):\n\n* ✋ [Llamadas federadas](https://github.com/nextcloud/spreed/issues/21), para llamar a personas en otros Nextclouds",
+    "This call is password-protected" : "Esta llamada está protegida con contraseña",
     "Signaling server" : "Señalizando al servidor"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
