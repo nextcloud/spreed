@@ -170,7 +170,6 @@ OC.L10N.register(
     "Shared secret" : "Chia sẽ mật khẩu",
     "STUN servers" : "Máy chủ STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Máy chủ STUN được sử dụng để xác định địa chỉ IP công khai của người tham gia phía sau bộ định tuyến.",
-    "This call is password-protected" : "Cuộc gọi này được bảo vệ bằng mật khẩu",
     "The password is wrong. Try again." : "Sai mật khẩu. Thử lại.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Một máy chủ báo hiệu bên ngoài có thể được sử dụng tùy chọn cho các cài đặt lớn hơn. Để trống để sử dụng máy chủ báo hiệu nội bộ.",
     "TURN server" : "Máy chủ TURN",
@@ -205,6 +204,7 @@ OC.L10N.register(
     "A group call has started" : "Một cuộc gọi nhóm đã được thực hiện",
     "{email} requested the password to access a share" : "{email} đã yêu cầu mật khẩu để truy cập chia sẽ",
     "Video & audio-conferencing using WebRTC" : "Video & hội nghị âm thanh bằng WebRTC",
+    "This call is password-protected" : "Cuộc gọi này được bảo vệ bằng mật khẩu",
     "Signaling server" : "Máy chủ đăng ký"
 },
 "nplurals=1; plural=0;");

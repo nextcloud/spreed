@@ -137,7 +137,6 @@
     "Add a new server" : "Pridėti naują serverį",
     "STUN servers" : "STUN serveriai",
     "TURN servers" : "TURN serveriai",
-    "This call is password-protected" : "Šis skambutis yra apsaugotas slaptažodžiu",
     "The password is wrong. Try again." : "Slaptažodis neteisingas. Bandykite dar kartą.",
     "TURN server" : "TURN serveris",
     "Android app" : "Android programėlė",
@@ -162,6 +161,7 @@
     "A guest mentioned you in a group conversation" : "Svečias jus paminėjo grupės pokalbyje",
     "%s invited you to a group conversation" : "%s jus pakvietė į grupės pokalbį",
     "{user} invited you to a group conversation" : "{user} jus pakvietė į grupės pokalbį",
-    "Unnamed conversation" : "Pokalbis be pavadinimo"
+    "Unnamed conversation" : "Pokalbis be pavadinimo",
+    "This call is password-protected" : "Šis skambutis yra apsaugotas slaptažodžiu"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }
