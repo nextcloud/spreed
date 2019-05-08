@@ -62,7 +62,6 @@ appstore: clean install-deps
 	--exclude=.jshintignore \
 	--exclude=js/views/templates \
 	--exclude=js/tests \
-	--exclude=karma.conf.js \
 	--exclude=l10n/no-php \
 	--exclude=.tx \
 	--exclude=Makefile \
