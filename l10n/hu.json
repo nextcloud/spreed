@@ -161,7 +161,6 @@
     "Shared secret" : "Megosztott titok",
     "STUN servers" : "STUN szerverek",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Egy STUN szervert használunk a router mögötti résztvevők IP címének megállapítására.",
-    "This call is password-protected" : "Ez a hívás jelszóval védett",
     "The password is wrong. Try again." : "Hibás jelszó, próbáld újra.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Külső jelzőszerver használata is lehetséges nagyobb telepítések esetén. Hagyd üresen a belső szerver használatához.",
     "TURN server" : "TURN kiszolgáló",
@@ -193,6 +192,7 @@
     "%s invited you to a group conversation" : "%s meghívtott téged egy csoportos beszélgetésbe",
     "{user} invited you to a group conversation" : "{user} meghívtott téged egy csoportos beszélgetésbe",
     "A group call has started" : "Csoportos hívás kezdődött",
+    "This call is password-protected" : "Ez a hívás jelszóval védett",
     "Signaling server" : "Jelző szerver",
     "Join now" : "Csatlakozás most"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

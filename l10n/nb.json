@@ -109,7 +109,6 @@
     "Shared secret" : "Delt hemmelighet",
     "STUN servers" : "STUN-server",
     "A STUN server is used to determine the public IP address of participants behind a router." : "En STUN-server brukes til å fastsette den offentlige IP-adressen for deltagere bak en ruter.",
-    "This call is password-protected" : "Denne samtalen er passordbeskyttet",
     "The password is wrong. Try again." : "Feil passord. Prøv igjen.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En ekstern signalserver kan alternativt brukes for større installasjoner. La stå tom for å bruke intern signalserver.",
     "TURN server" : "TURN-server",
@@ -126,6 +125,7 @@
     "_%n other guest_::_%n other guests_" : ["%n annen gjest","%n andre gjester"],
     ", " : ", ",
     "A group call has started" : "En gruppesamtale har blitt startet",
+    "This call is password-protected" : "Denne samtalen er passordbeskyttet",
     "Signaling server" : "Signalserver"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
