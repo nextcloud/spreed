@@ -15,7 +15,7 @@ all: dev-setup build-js-production
 
 dev-setup: clean-dev npm-init
 
-dependabot: dev-setup npm-update build-js-production
+dependabot: dev-setup npm-update build-js-production compile-handlebars-templates bundle-simplewebrtc
 
 release: appstore create-tag
 
@@ -72,7 +72,7 @@ create-tag:
 	git tag -a v$(version) -m "Tagging the $(version) release."
 	git push origin v$(version)
 
-appstore: dev-setup build-js-production compile-handlebars-templates bundle-simplewebrtc
+appstore: dev-setup build-js-production
 	mkdir -p $(sign_dir)
 	rsync -a \
 	--exclude=bower.json \
