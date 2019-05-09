@@ -57,6 +57,7 @@ It should return a useful description, the first line is also displayed in a lis
     ```
     ./occ talk:command:add calculator calculator "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3
     ```
+    Make sure to use the absolute path to your script.
     
 * User input by user `my user id` in the chat of room `index.php/call/4tf349j`:
     
