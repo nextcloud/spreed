@@ -261,6 +261,7 @@
     "A STUN server is used to determine the public IP address of participants behind a router." : "O servidor STUN usase para determinar o enderezo IP público dos participantes que se atopan detrás dun encamiñador.",
     "TURN servers" : "Servidores TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "Un servidor TURN usase como proxy no tráfico de participantes detrás dunha devasa.",
+    "This conversation is password-protected" : "Esta conversa está protexida con contrasinal ",
     "The password is wrong. Try again." : "O contrasinal é incorrecto. Ténteo de novo.",
     "Specify commands the users can use in chats" : "Especifique as ordes que poderán empregar os usuarios nas conversas",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Opcionalmente pode empregarse un servidor de sinalización externo para instalacións maiores. Deixeo baleiro para usar o servidor de sinalización interno.",
