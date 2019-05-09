@@ -261,6 +261,7 @@
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN 服务器用以探测路由器下的参与者的公网 IP 地址。",
     "TURN servers" : "TURN服务器",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "TURN 服务器是用来为防火墙后面的参与者代理流量的。",
+    "This conversation is password-protected" : "此会话受密码保护",
     "The password is wrong. Try again." : "密码错误。请重试。",
     "Specify commands the users can use in chats" : "指定用户可以在聊天中使用的命令",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部发信服务器。若使用内部发信服务器请留空。",

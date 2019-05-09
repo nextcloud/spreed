@@ -263,6 +263,7 @@ OC.L10N.register(
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un serveur STUN est utilisé pour déterminer l'adresse publique des participants situés derrière un routeur.",
     "TURN servers" : "Serveurs TURN",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "Un serveur TURN est utilisé comme serveur proxy pour le trafic des utilisateurs situés derrière un pare-feu.",
+    "This conversation is password-protected" : "Cette conversation est protégée par mot de passe",
     "The password is wrong. Try again." : "Le mot de passe est incorrect. Veuillez réessayer.",
     "Specify commands the users can use in chats" : "Précise les commandes que les utilisateurs peuvent utiliser dans les discussions",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un serveur de signal externe peut être utilisé de manière optionnelle pour les installations plus larges. Laissez le champ libre pour utiliser le serveur de signal interne.",
