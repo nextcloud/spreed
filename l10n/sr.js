@@ -5,6 +5,7 @@ OC.L10N.register(
     "{name} (public)" : "{name} (јавно)",
     "New conversation …" : "Ново ћаскање…",
     "Participants" : "Учесници",
+    "Projects" : "Пројекти",
     "Chat" : "Ћаскање",
     "Talk" : "Разговор",
     "Exit fullscreen (f)" : "Напусти цео екран (f)",
