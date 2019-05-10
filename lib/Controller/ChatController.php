@@ -200,6 +200,15 @@ class ChatController extends AEnvironmentAwareController {
 	 *   If messages have been returned (status=200) the new $lastKnownMessageId
 	 *   for the follow up query is available as `X-Chat-Last-Given` header.
 	 *
+	 * The limit specifies the maximum number of messages that will be returned,
+	 * although the actual number of returned messages could be lower if some
+	 * messages are not visible to the participant. Note that if none of the
+	 * messages are visible to the participant the returned number of messages
+	 * will be 0, yet the status will still be 200. Also note that
+	 * `X-Chat-Last-Given` may reference a message not visible and thus not
+	 * returned, but it should be used nevertheless as the $lastKnownMessageId
+	 * for the follow up query.
+	 *
 	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
 	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
