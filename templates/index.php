@@ -2,9 +2,6 @@
 /** @var \OCP\IL10N $l */
 /** @var array $_ */
 
-vendor_script('select2/select2');
-vendor_style('select2/select2');
-
 style('spreed', 'merged');
 script('spreed', 'merged');
 
