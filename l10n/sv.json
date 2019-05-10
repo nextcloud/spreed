@@ -260,6 +260,7 @@
     "A STUN server is used to determine the public IP address of participants behind a router." : "En STUN-server används för att bestämma den offentliga IP-adressen av deltagare bakom en router.",
     "TURN servers" : "TURN-servrar",
     "A TURN server is used to proxy the traffic from participants behind a firewall." : "En TURN-servern används för att tunnla trafiken för användare som sitter bakom en brandvägg.",
+    "This conversation is password-protected" : "Denna konversation är lösenordsskyddad",
     "The password is wrong. Try again." : "Lösenordet är fel. Försök igen.",
     "Specify commands the users can use in chats" : "Ange kommandon som användare kan använda i chattar",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "En extern signalserver kan eventuellt användas för större installationer. Lämna tomt för att använda den interna signalservern.",
