@@ -386,8 +386,7 @@
 		_formatItem: function(commentModel) {
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			var timestamp = commentModel.get('timestamp') * 1000,
-				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
+			var timestamp = commentModel.get('timestamp') * 1000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
 			if (commentModel.get('actorType') === 'guests' &&
@@ -407,8 +406,7 @@
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
 				timestamp: timestamp,
-				date: relativeDate ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LTS'),
-				relativeDate: relativeDate,
+				date: OC.Util.formatDate(timestamp, 'LT'),
 				altDate: OC.Util.formatDate(timestamp),
 				isNotSystemMessage: commentModel.get('systemMessage') === '',
 				formattedMessage: formattedMessage

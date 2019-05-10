@@ -4,7 +4,7 @@
 		<div class="avatar" data-user-id="{{#if isGuest}}{{else}}{{actorId}}{{/if}}" data-user-display-name="{{actorDisplayName}}"></div>
 		<div class="author">{{actorDisplayName}}</div>
 		{{/if}}
-		<div class="date has-tooltip{{#if relativeDate}} live-relative-timestamp{{/if}}" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>
+		<div class="date has-tooltip" data-timestamp="{{timestamp}}" title="{{altDate}}">{{date}}</div>
 	</div>
 	<div class="message">{{{formattedMessage}}}</div>
 </li>
