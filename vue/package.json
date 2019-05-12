@@ -20,7 +20,7 @@
     "nextcloud-vue-collections": "^0.4.0",
     "vue": "^2.6.10",
     "vue-fragment": "^1.5.1",
-    "vuex": "^3.1.0"
+    "vuex": "^3.1.1"
   },
   "browserslist": [
     "last 2 versions",
