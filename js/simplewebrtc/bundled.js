@@ -673,7 +673,9 @@ function Peer(options) {
     }
   } else {
     this.parent.localStreams.forEach(function (stream) {
-      self.pc.addStream(stream);
+      stream.getTracks().forEach(function (track) {
+        self.pc.addTrack(track, stream);
+      });
     });
   } // proxy events to parent
 
