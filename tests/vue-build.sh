@@ -15,16 +15,9 @@ do
     cp "js/$entryFile.js" "js/$entryFile.back"
 done
 
-npm --version
-npm update -g npm
-npm --version
-
 # Make the app
 set -e
-cd "vue"
-make
-cd ".."
-sleep 2m
+make build-js-production
 
 for entryFile in "${entryFiles[@]}"
 do
