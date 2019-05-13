@@ -717,6 +717,11 @@
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs;
 		this.joinedUsers = {};
 		this.rooms = [];
+		window.setInterval(function() {
+			// Update the room list all 30 seconds to check for new messages and
+			// mentions as well as marking them read via other devices.
+			this.internalSyncRooms();
+		}.bind(this), 30000);
 		this.connect();
 	}
 
