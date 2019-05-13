@@ -130,7 +130,8 @@ var spreedPeerConnectionTable = [];
 			receiveMedia: {
 				offerToReceiveAudio: 0,
 				offerToReceiveVideo: 0
-			}
+			},
+			sendVideoIfAvailable: signaling.getSendVideoIfAvailable()
 		});
 		webrtc.emit('createdPeer', ownPeer);
 		ownPeer.start();
@@ -184,7 +185,8 @@ var spreedPeerConnectionTable = [];
 					receiveMedia: {
 						offerToReceiveAudio: 1,
 						offerToReceiveVideo: 1
-					}
+					},
+					sendVideoIfAvailable: signaling.getSendVideoIfAvailable()
 				});
 				webrtc.emit('createdPeer', peer);
 				peer.start();
