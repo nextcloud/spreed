@@ -432,9 +432,10 @@
 
 		this._waitTimeUntilRetry = 1;
 
-		// Fetch more messages if PHP backend or a whole batch has been received
-		// (more messages might be available in this case).
-		if (this.receiveMessagesAgain || (messages && messages.length === this.chatBatchSize)) {
+		// Fetch more messages if PHP backend, or if the returned status is not
+		// "304 Not modified" (as in that case there could be more messages that
+		// need to be fetched).
+		if (this.receiveMessagesAgain || xhr.status !== 304) {
 			this._receiveChatMessages();
 		}
 
