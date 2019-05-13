@@ -76,6 +76,7 @@
 		this.pendingChatRequests = [];
 		this._lastChatMessagesFetch = null;
 		this.chatBatchSize = 100;
+		this._sendVideoIfAvailable = true;
 	}
 
 	OCA.Talk.Signaling.Base = Base;
@@ -297,6 +298,14 @@
 				}
 			}.bind(this)
 		});
+	};
+
+	OCA.Talk.Signaling.Base.prototype.getSendVideoIfAvailable = function() {
+		return this._sendVideoIfAvailable;
+	};
+
+	OCA.Talk.Signaling.Base.prototype.setSendVideoIfAvailable = function(sendVideoIfAvailable) {
+		this._sendVideoIfAvailable = sendVideoIfAvailable;
 	};
 
 	OCA.Talk.Signaling.Base.prototype._joinCallSuccess = function(/* token */) {

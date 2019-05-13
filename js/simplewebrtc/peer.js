@@ -25,6 +25,7 @@ function Peer(options) {
 	this.sharemyscreen = options.sharemyscreen || false;
 	this.browserPrefix = options.prefix;
 	this.stream = options.stream;
+	this.sendVideoIfAvailable = options.sendVideoIfAvailable === undefined ? true : options.sendVideoIfAvailable;
 	this.enableDataChannels = options.enableDataChannels === undefined ? this.parent.config.enableDataChannels : options.enableDataChannels;
 	this.receiveMedia = options.receiveMedia || this.parent.config.receiveMedia;
 	this.channels = {};
@@ -69,7 +70,9 @@ function Peer(options) {
 	} else {
 		this.parent.localStreams.forEach(function (stream) {
 			stream.getTracks().forEach(function (track) {
-				self.pc.addTrack(track, stream);
+				if (track.kind !== 'video' || self.sendVideoIfAvailable) {
+					self.pc.addTrack(track, stream);
+				}
 			});
 		});
 	}
