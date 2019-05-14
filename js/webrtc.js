@@ -936,7 +936,7 @@ var spreedPeerConnectionTable = [];
 			app.disableScreensharingButton();
 		});
 
-		var forceReconnect = function(signaling) {
+		var forceReconnect = function(signaling, flags) {
 			if (ownPeer) {
 				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
 				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
@@ -953,8 +953,25 @@ var spreedPeerConnectionTable = [];
 			// Reconnects with a new session id will trigger "usersChanged"
 			// with the users in the room and that will re-establish the
 			// peerconnection streams.
-			signaling.forceReconnect(true);
+			// If flags are undefined the current call flags are used.
+			signaling.forceReconnect(true, flags);
 		};
+
+		OCA.SpreedMe.webrtc.webrtc.on('videoOn', function () {
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (signaling.getSendVideoIfAvailable()) {
+				return;
+			}
+
+			// When enabling the local video if the video is not being sent a
+			// reconnection is forced to start sending it.
+			signaling.setSendVideoIfAvailable(true);
+
+			var flags = signaling.getCurrentCallFlags();
+			flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
+
+			forceReconnect(signaling, flags);
+		});
 
 		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
 			var signaling = OCA.SpreedMe.app.signaling;

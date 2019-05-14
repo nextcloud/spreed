@@ -135,6 +135,10 @@
 		return this.sessionId;
 	};
 
+	OCA.Talk.Signaling.Base.prototype.getCurrentCallFlags = function() {
+		return this.currentCallFlags;
+	};
+
 	OCA.Talk.Signaling.Base.prototype.disconnect = function() {
 		this.sessionId = '';
 		this.currentCallToken = null;
@@ -524,9 +528,13 @@
 		}
 	};
 
-	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(newSession) {
+	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
 		if (newSession) {
 			console.log('Forced reconnects with a new session are not supported in the internal signaling; same session as before will be used');
+		}
+
+		if (flags !== undefined) {
+			this.currentCallFlags = flags;
 		}
 
 		// FIXME Naive reconnection routine; as the same session is kept peers
@@ -846,7 +854,11 @@
 		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments);
 	};
 
-	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession) {
+	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
+		if (flags !== undefined) {
+			this.currentCallFlags = flags;
+		}
+
 		if (!this.connected) {
 			if (!newSession) {
 				// Not connected, will do reconnect anyway.
