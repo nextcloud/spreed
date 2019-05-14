@@ -524,8 +524,15 @@
 		}
 	};
 
-	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(/* newSession */) {
-		console.error("Forced reconnects are not supported with the internal signaling.");
+	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(newSession) {
+		if (newSession) {
+			console.log('Forced reconnects with a new session are not supported in the internal signaling; same session as before will be used');
+		}
+
+		// FIXME Naive reconnection routine; as the same session is kept peers
+		// must be explicitly ended before the reconnection is forced.
+		this.leaveCall(this.currentCallToken, true);
+		this.joinCall(this.currentCallToken);
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
