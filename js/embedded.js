@@ -192,6 +192,16 @@
 				localMediaChannel.trigger('waitingForPermissions');
 			}
 
+			var participants = this.activeRoom.get('participants');
+			var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
+					this.activeRoom.get('numGuests');
+			if (numberOfParticipantsAndGuests >= 5) {
+				this.signaling.setSendVideoIfAvailable(false);
+				this.setVideoEnabled(false);
+			} else {
+				this.signaling.setSendVideoIfAvailable(true);
+			}
+
 			OCA.SpreedMe.webrtc.startMedia(this.token);
 		},
 		startLocalMedia: function(configuration) {
