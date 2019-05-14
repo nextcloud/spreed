@@ -936,6 +936,26 @@ var spreedPeerConnectionTable = [];
 			app.disableScreensharingButton();
 		});
 
+		var forceReconnect = function(signaling) {
+			if (ownPeer) {
+				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
+				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+				OCA.SpreedMe.videos.remove(ownPeer.id);
+				delete spreedMappingTable[ownPeer.id];
+				ownPeer.end();
+				ownPeer = null;
+			}
+
+			usersChanged(signaling, [], previousUsersInRoom);
+			usersInCallMapping = {};
+			previousUsersInRoom = [];
+
+			// Reconnects with a new session id will trigger "usersChanged"
+			// with the users in the room and that will re-establish the
+			// peerconnection streams.
+			signaling.forceReconnect(true);
+		};
+
 		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
 			var signaling = OCA.SpreedMe.app.signaling;
 			if (!signaling.hasFeature("mcu")) {
@@ -946,21 +966,7 @@ var spreedPeerConnectionTable = [];
 
 			// For now assume the connection to the MCU is interrupted on ICE
 			// failures and force a reconnection of all streams.
-			if (ownPeer) {
-				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-				OCA.SpreedMe.videos.remove(ownPeer.id);
-				delete spreedMappingTable[ownPeer.id];
-				ownPeer.end();
-				ownPeer = null;
-			}
-			usersChanged(signaling, [], previousUsersInRoom);
-			usersInCallMapping = {};
-			previousUsersInRoom = [];
-			// Reconnects with a new session id will trigger "usersChanged"
-			// with the users in the room and that will re-establish the
-			// peerconnection streams.
-			signaling.forceReconnect(true);
+			forceReconnect(signaling);
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
