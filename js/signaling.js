@@ -125,6 +125,10 @@
 		}
 	};
 
+	OCA.Talk.Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
+		return !this.settings.hideWarning;
+	};
+
 	OCA.Talk.Signaling.Base.prototype.getSessionid = function() {
 		return this.sessionId;
 	};
@@ -544,21 +548,6 @@
 	OCA.Talk.Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 		this.sessionId = sessionId;
 		this._startPullingMessages();
-	};
-
-	OCA.Talk.Signaling.Internal.prototype._joinCallSuccess = function() {
-		if (this.hideWarning) {
-			return;
-		}
-
-		var numParticipants = Object.keys(OCA.SpreedMe.app.activeRoom.get('participants')).length +
-			OCA.SpreedMe.app.activeRoom.get('numGuests');
-		if (numParticipants <= 4) {
-			return;
-		}
-
-		var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
-		OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning' });
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
