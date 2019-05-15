@@ -137,6 +137,16 @@
 			}.bind(this));
 
 			this.signaling.on('joinCall', function() {
+				// Do not perform the initial adjustments when joining a call
+				// again due to a forced reconnection.
+				if (this._reconnectCallToken === this.activeRoom.get('token')) {
+					delete this._reconnectCallToken;
+
+					return;
+				}
+
+				delete this._reconnectCallToken;
+
 				// Disable video when joining a call in a room with more than 5
 				// participants.
 				var participants = this.activeRoom.get('participants');
@@ -149,6 +159,12 @@
 				if (this.signaling.isNoMcuWarningEnabled() && numberOfParticipantsAndGuests >= 5) {
 					var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
 					OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning' });
+				}
+			}.bind(this));
+
+			this.signaling.on('leaveCall', function (token, reconnect) {
+				if (reconnect) {
+					this._reconnectCallToken = token;
 				}
 			}.bind(this));
 
