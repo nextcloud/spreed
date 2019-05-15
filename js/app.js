@@ -623,6 +623,13 @@
 				if (participants && Object.keys(participants).length > 5) {
 					this.setVideoEnabled(false);
 				}
+
+				var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
+						this.activeRoom.get('numGuests');
+				if (this.signaling.isNoMcuWarningEnabled() && numberOfParticipantsAndGuests >= 5) {
+					var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
+					OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning' });
+				}
 			}.bind(this));
 
 			$(window).unload(function () {
