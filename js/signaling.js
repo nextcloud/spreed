@@ -70,6 +70,7 @@
 		this.sessionId = '';
 		this.currentRoomToken = null;
 		this.currentCallToken = null;
+		this.currentCallFlags = null;
 		this.handlers = {};
 		this.features = {};
 		this.pendingChatRequests = [];
@@ -136,6 +137,7 @@
 	OCA.Talk.Signaling.Base.prototype.disconnect = function() {
 		this.sessionId = '';
 		this.currentCallToken = null;
+		this.currentCallFlags = null;
 	};
 
 	OCA.Talk.Signaling.Base.prototype.hasFeature = function(feature) {
@@ -173,6 +175,7 @@
 		if (this.currentCallToken) {
 			this.leaveCall(this.currentCallToken);
 			this.currentCallToken = null;
+			this.currentCallFlags = null;
 		}
 	};
 
@@ -232,9 +235,10 @@
 				this._runPendingChatRequests();
 				if (this.currentCallToken === token) {
 					// We were in this call before, join again.
-					this.joinCall(token);
+					this.joinCall(token, this.currentCallFlags);
 				} else {
 					this.currentCallToken = null;
+					this.currentCallFlags = null;
 				}
 				this._joinRoomSuccess(token, result.ocs.data.sessionId);
 			}.bind(this),
@@ -311,6 +315,7 @@
 			},
 			success: function () {
 				this.currentCallToken = token;
+				this.currentCallFlags = flags;
 				this._trigger('joinCall', [token]);
 				this._joinCallSuccess(token);
 			}.bind(this),
@@ -341,6 +346,7 @@
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
 					this.currentCallToken = null;
+					this.currentCallFlags = null;
 				}
 			}.bind(this)
 		});
