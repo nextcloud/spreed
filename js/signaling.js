@@ -639,6 +639,8 @@
 					// Request has been aborted. Ignore.
 				} else if (this.currentRoomToken) {
 					if (this.pullMessagesFails >= 3) {
+						console.log('Stop pulling messages after repeated failures');
+
 						this._trigger('pullMessagesStoppedOnFail');
 
 						return;
