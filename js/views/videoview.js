@@ -102,17 +102,35 @@
 		},
 
 		setParticipant: function(userId, participantName) {
+			// Needed for guest avatars, as if no name is given the avatar
+			// should show "?" instead of the first letter of the "Guest"
+			// placeholder.
+			var rawParticipantName = participantName;
+
+			// "Guest" placeholder is not shown until the initial connection for
+			// consistency with regular users.
+			if (!(userId && userId.length) && this._connectionStatus !== ConnectionStatus.NEW) {
+				participantName = participantName || t('spreed', 'Guest');
+			}
+
+			if (this.hasOwnProperty('_userId') && this.hasOwnProperty('_rawParticipantName') && this.hasOwnProperty('_participantName') &&
+					userId === this._userId && rawParticipantName === this._rawParticipantName && participantName === this._participantName) {
+				// Do not set again the avatar if it has already been set to
+				// workaround the MCU setting the participant again and again
+				// and thus causing a loading icon to be shown on the avatar
+				// again and again.
+				return;
+			}
+
+			this._userId = userId;
+			this._rawParticipantName = rawParticipantName;
+			this._participantName = participantName;
+
 			if (userId && userId.length) {
 				this.getUI('avatar').avatar(userId, 128);
 			} else {
-				this.getUI('avatar').imageplaceholder('?', participantName, 128);
+				this.getUI('avatar').imageplaceholder('?', rawParticipantName, 128);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
-
-				// "Guest" placeholder is not shown until the initial connection
-				// for consistency with regular users.
-				if (this._connectionStatus !== ConnectionStatus.NEW) {
-					participantName = participantName || t('spreed', 'Guest');
-				}
 			}
 
 			this.getUI('nameIndicator').text(participantName);
