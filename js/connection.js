@@ -119,7 +119,7 @@
 					if (configuration.audio) {
 						flags |= OCA.SpreedMe.app.FLAG_WITH_AUDIO;
 					}
-					if (configuration.video) {
+					if (configuration.video && self.app.signaling.getSendVideoIfAvailable()) {
 						flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
 					}
 				}
