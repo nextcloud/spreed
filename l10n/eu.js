@@ -95,7 +95,6 @@ OC.L10N.register(
     "Shared secret" : "Partekatutako sekretua",
     "STUN servers" : "STUN zerbitzariak",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN zerbitzariak router baten atzean dauden erabiltzaileen IP helbideak jakiteko erabiltzen da.",
-    "This call is password-protected" : "Deia pasahitzarekin babestua dago",
     "The password is wrong. Try again." : "Pasahitza gaizki dago. Saiatu berriz",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Instalazio handientzako kanpo seinalizazio zerbitzaria erabil daiteke. Barne seinalizazio zerbitzaria erabiltzeko hutsik utzi",
     "TURN server" : "TURN zerbitzaria",
@@ -107,6 +106,7 @@ OC.L10N.register(
     "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
     "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
     ", " : ", ",
+    "This call is password-protected" : "Deia pasahitzarekin babestua dago",
     "Signaling server" : "Seinalizazio zerbitzaria ",
     "Join now" : "Elkartu orain"
 },

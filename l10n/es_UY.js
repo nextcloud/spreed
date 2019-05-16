@@ -84,7 +84,6 @@ OC.L10N.register(
     "Shared secret" : "Secreto compartido",
     "STUN servers" : "Servidores STUN",
     "A STUN server is used to determine the public IP address of participants behind a router." : "Un servidor STUN se está usando para determinar la IP pública de los participantes que estén detrás de un ruteador. ",
-    "This call is password-protected" : "Esta llamada está protegida con contraseña",
     "The password is wrong. Try again." : "La contraseña está equivoada. Por favor vuelve a intentarlo. ",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Un servidor externo de señalización puede ser, opcionalmente, utilizado para instalaciones más grandes. Déjalo vacío para usar el sevidor de señalización interno. ",
     "TURN server" : "Servidor TURN",
@@ -95,6 +94,7 @@ OC.L10N.register(
     "_%n other guest_::_%n other guests_" : [" %n otro invitado","%n otros invitados"],
     ", " : ",",
     "A group call has started" : "Una llamada en grupo ha iniciado",
+    "This call is password-protected" : "Esta llamada está protegida con contraseña",
     "Signaling server" : "Señalizando al servidor"
 },
 "nplurals=2; plural=(n != 1);");
