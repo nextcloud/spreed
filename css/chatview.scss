@@ -98,7 +98,7 @@
 
 #chatView .comment {
 	position: relative;
-	margin-bottom: 30px;
+	margin-bottom: 20px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
 }
@@ -200,10 +200,26 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	 * example, when it uses two lines due to a limited width. */
 	margin-left: auto;
 	text-align: right;
+	display: inline-block;
+	vertical-align: top;
 }
 
-#chatView .comments li .message {
+#chatView .comment.systemMessage:not(.grouped) {
+	margin-top: -10px;
+}
+
+#chatView .comment:not(.systemMessage):not(.grouped):not(.same-author) .date {
+	margin-top: -32px;
+}
+
+#chatView .comment.grouped .date {
+	display: none;
+}
+
+#chatView .comments:not(.systemMessage) li .message {
 	padding-left: 40px;
+	display: inline-block;
+	width: calc(100% - 80px);
 }
 
 #chatView .comment .action {
@@ -239,12 +255,14 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	box-shadow: 0 0 6px #f8b9b7;
 }
 
-#chatView .comment.grouped .authorRow {
+#chatView .comment.grouped .authorRow,
+#chatView .comment.same-author .authorRow {
 	display: none;
 }
 
-#chatView .comment.grouped {
-	margin-top: -20px;
+#chatView .comment.grouped,
+#chatView .comment.same-author {
+	margin-top: -15px;
 }
 
 #chatView .comment.showDate {
@@ -324,24 +342,7 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	color: var(--color-main-text);
 }
 
-/* System messages have no author, so the author row only contains the date.
- * Instead of showing the date on its own row and the message below it the
- * message and the date are merged in a single row using flexboxes. */
-#chatView .comment.systemMessage {
-	display: flex;
-	flex-direction: row;
-}
-
-#chatView .comment.systemMessage .authorRow {
-	order: 1;
-	flex-grow: 0;
-	width: auto;
-	padding-left: 10px;
-}
-
 #chatView .comment.systemMessage .message {
-	order: 0;
-	flex-grow: 1;
 	color: var(--color-text-maxcontrast);
 }
 
