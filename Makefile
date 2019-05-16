@@ -92,12 +92,16 @@ appstore:
 	--exclude=.jscsrc \
 	--exclude=.jshintignore \
 	--exclude=js/views/templates \
+	--exclude=js/**.js.map \
+	--include=js/simplewebrtc/bundled.js \
+	--exclude=js/simplewebrtc/*.js \
 	--exclude=js/tests \
 	--exclude=l10n/no-php \
-	--exclude=.tx \
+	--exclude=.l10nignore \
 	--exclude=Makefile \
 	--exclude=node_modules \
 	--exclude=package.json \
+	--exclude=package-lock.json \
 	--exclude=phpunit*xml \
 	--exclude=README.md \
 	--exclude=run-*lint.sh \
@@ -105,6 +109,8 @@ appstore:
 	--exclude=.stylelintrc \
 	--exclude=tests \
 	--exclude=.travis.yml \
+	--exclude=.tx \
+	--exclude=vue \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
