@@ -378,6 +378,16 @@ var spreedPeerConnectionTable = [];
 		}
 		OCA.SpreedMe.webrtc = webrtc;
 
+		signaling.on('pullMessagesStoppedOnFail', function() {
+			// Force leaving the call in WebRTC; when pulling messages stops due
+			// to failures the room is left, and leaving the room indirectly
+			// runs signaling.leaveCurrentCall(), but if the signaling fails to
+			// leave the call (which is likely due to the messages failing to be
+			// received) no event will be triggered and the call will not be
+			// left from WebRTC point of view.
+			webrtc.leaveCall();
+		});
+
 		OCA.SpreedMe.webrtc.startMedia = function (token) {
 			webrtc.joinCall(token);
 		};

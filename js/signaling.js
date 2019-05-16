@@ -125,6 +125,10 @@
 		}
 	};
 
+	OCA.Talk.Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
+		return !this.settings.hideWarning;
+	};
+
 	OCA.Talk.Signaling.Base.prototype.getSessionid = function() {
 		return this.sessionId;
 	};
@@ -546,21 +550,6 @@
 		this._startPullingMessages();
 	};
 
-	OCA.Talk.Signaling.Internal.prototype._joinCallSuccess = function() {
-		if (this.hideWarning) {
-			return;
-		}
-
-		var numParticipants = Object.keys(OCA.SpreedMe.app.activeRoom.get('participants')).length +
-			OCA.SpreedMe.app.activeRoom.get('numGuests');
-		if (numParticipants <= 4) {
-			return;
-		}
-
-		var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
-		OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning' });
-	};
-
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
 		if (token === this.currentRoomToken && !this.roomCollection) {
 			window.clearInterval(this.roomPoller);
@@ -650,16 +639,10 @@
 					// Request has been aborted. Ignore.
 				} else if (this.currentRoomToken) {
 					if (this.pullMessagesFails >= 3) {
-						if (OCA.SpreedMe.webrtc) {
-							// Force leaving the call in WebRTC; leaving the
-							// room indirectly runs
-							// signaling.leaveCurrentCall(), but if the
-							// signaling fails to leave the call no event will
-							// be triggered and the call will not be left from
-							// WebRTC point of view.
-							OCA.SpreedMe.webrtc.leaveCall();
-						}
-						OCA.SpreedMe.app.connection.leaveCurrentRoom();
+						console.log('Stop pulling messages after repeated failures');
+
+						this._trigger('pullMessagesStoppedOnFail');
+
 						return;
 					}
 
