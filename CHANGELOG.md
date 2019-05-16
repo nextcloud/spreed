@@ -1,6 +1,24 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.1 – 2019-05-16
+### Changed
+- Do not send black video by default in bigger calls
+  [#1830](https://github.com/nextcloud/spreed/pull/1830)
+  [#1827](https://github.com/nextcloud/spreed/pull/1827)
+- Improve the grouping of chat messages so more fit on the screen
+  [#1826](https://github.com/nextcloud/spreed/pull/1826)
+
+### Fixed
+- Fix password protected conversations
+  [#1775](https://github.com/nextcloud/spreed/pull/1775)
+- Fix chat not automatically loading new messages after a command was used with the external signaling server
+  [#1808](https://github.com/nextcloud/spreed/pull/1808)
+- Fix screensharing for users not in the call
+  [#1753](https://github.com/nextcloud/spreed/pull/1753)
+- Conversation list does not update with read/unread status using the external signaling server
+  [#1431](https://github.com/nextcloud/spreed/pull/1431)
+
 ## 6.0.0 – 2019-04-25
 ### Added
 - Administrators can now define commands which can be used in the chat. See [commands.md](https://github.com/nextcloud/spreed/blob/master/docs/commands.md) for more information. You can install some sample commands via the console.
