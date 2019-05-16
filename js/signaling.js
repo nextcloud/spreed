@@ -76,6 +76,7 @@
 		this.pendingChatRequests = [];
 		this._lastChatMessagesFetch = null;
 		this.chatBatchSize = 100;
+		this._sendVideoIfAvailable = true;
 	}
 
 	OCA.Talk.Signaling.Base = Base;
@@ -132,6 +133,10 @@
 
 	OCA.Talk.Signaling.Base.prototype.getSessionid = function() {
 		return this.sessionId;
+	};
+
+	OCA.Talk.Signaling.Base.prototype.getCurrentCallFlags = function() {
+		return this.currentCallFlags;
 	};
 
 	OCA.Talk.Signaling.Base.prototype.disconnect = function() {
@@ -297,6 +302,14 @@
 				}
 			}.bind(this)
 		});
+	};
+
+	OCA.Talk.Signaling.Base.prototype.getSendVideoIfAvailable = function() {
+		return this._sendVideoIfAvailable;
+	};
+
+	OCA.Talk.Signaling.Base.prototype.setSendVideoIfAvailable = function(sendVideoIfAvailable) {
+		this._sendVideoIfAvailable = sendVideoIfAvailable;
 	};
 
 	OCA.Talk.Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
@@ -515,8 +528,19 @@
 		}
 	};
 
-	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(/* newSession */) {
-		console.error("Forced reconnects are not supported with the internal signaling.");
+	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
+		if (newSession) {
+			console.log('Forced reconnects with a new session are not supported in the internal signaling; same session as before will be used');
+		}
+
+		if (flags !== undefined) {
+			this.currentCallFlags = flags;
+		}
+
+		// FIXME Naive reconnection routine; as the same session is kept peers
+		// must be explicitly ended before the reconnection is forced.
+		this.leaveCall(this.currentCallToken, true);
+		this.joinCall(this.currentCallToken);
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
@@ -830,7 +854,11 @@
 		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments);
 	};
 
-	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession) {
+	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
+		if (flags !== undefined) {
+			this.currentCallFlags = flags;
+		}
+
 		if (!this.connected) {
 			if (!newSession) {
 				// Not connected, will do reconnect anyway.

@@ -147,13 +147,17 @@
 
 				delete this._reconnectCallToken;
 
-				// Disable video when joining a call in a room with more than 5
-				// participants.
-				var participants = this.activeRoom.get('participants');
-				if (participants && Object.keys(participants).length > 5) {
+				if (this.activeRoom.get('type') === this.ROOM_TYPE_ONE_TO_ONE) {
+					this._mediaControlsView.setAudioEnabled(true);
 					this.setVideoEnabled(false);
+
+					return;
 				}
 
+				this._mediaControlsView.setAudioEnabled(false);
+				this.setVideoEnabled(false);
+
+				var participants = this.activeRoom.get('participants');
 				var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
 						this.activeRoom.get('numGuests');
 				if (this.signaling.isNoMcuWarningEnabled() && numberOfParticipantsAndGuests >= 5) {
@@ -186,6 +190,16 @@
 				localMediaChannel.trigger('webRtcNotSupported');
 			} else {
 				localMediaChannel.trigger('waitingForPermissions');
+			}
+
+			var participants = this.activeRoom.get('participants');
+			var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
+					this.activeRoom.get('numGuests');
+			if (numberOfParticipantsAndGuests >= 5) {
+				this.signaling.setSendVideoIfAvailable(false);
+				this.setVideoEnabled(false);
+			} else {
+				this.signaling.setSendVideoIfAvailable(true);
 			}
 
 			OCA.SpreedMe.webrtc.startMedia(this.token);

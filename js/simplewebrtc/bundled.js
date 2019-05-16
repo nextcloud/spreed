@@ -629,6 +629,7 @@ function Peer(options) {
   this.sharemyscreen = options.sharemyscreen || false;
   this.browserPrefix = options.prefix;
   this.stream = options.stream;
+  this.sendVideoIfAvailable = options.sendVideoIfAvailable === undefined ? true : options.sendVideoIfAvailable;
   this.enableDataChannels = options.enableDataChannels === undefined ? this.parent.config.enableDataChannels : options.enableDataChannels;
   this.receiveMedia = options.receiveMedia || this.parent.config.receiveMedia;
   this.channels = {};
@@ -673,7 +674,11 @@ function Peer(options) {
     }
   } else {
     this.parent.localStreams.forEach(function (stream) {
-      self.pc.addStream(stream);
+      stream.getTracks().forEach(function (track) {
+        if (track.kind !== 'video' || self.sendVideoIfAvailable) {
+          self.pc.addTrack(track, stream);
+        }
+      });
     });
   } // proxy events to parent
 
@@ -1079,7 +1084,8 @@ function SimpleWebRTC(opts) {
           type: message.roomType,
           enableDataChannels: self.config.enableDataChannels && message.roomType !== 'screen',
           sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
-          broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
+          broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null,
+          sendVideoIfAvailable: self.connection.getSendVideoIfAvailable()
         });
         self.emit('createdPeer', peer);
       }
