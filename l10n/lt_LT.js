@@ -113,6 +113,7 @@ OC.L10N.register(
     "You were invited to a conversation." : "Jūs buvote pakviesti į pokalbį.",
     "Click the button below to join." : "Norėdami prisijungti, spustelėkite mygtuką žemiau.",
     "Join »%s«" : "Prisijungti prie »%s«",
+    "Private conversation" : "Privatus pokalbis",
     "{user} mentioned you in a private conversation" : "{user} jus paminėjo privačiame pokalbyje",
     "%s invited you to a private conversation" : "%s jus pakvietė į privatų pokalbį",
     "{user} invited you to a private conversation" : "{user} jus pakvietė į privatų pokalbį",

@@ -85,6 +85,7 @@ OC.L10N.register(
     "No audio" : "无音频",
     "Disable video (v)" : "禁用视频（v）",
     "Enable video (v)" : "启用视频（v）",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "启用视频(v) - 当您第一次启用视频时您的连接将会被短暂中断",
     "No Camera" : "没有摄像机",
     "Screensharing is not supported by your browser." : "您的浏览器不支持屏幕共享。",
     "Screensharing requires the page to be loaded through HTTPS." : "屏幕共享需要页面通过 HTTPS 加载。",
