@@ -85,6 +85,7 @@ OC.L10N.register(
     "No audio" : "Sen son",
     "Disable video (v)" : "Desactivar o vídeo (v)",
     "Enable video (v)" : "Activar o vídeo (v)",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Activar vídeo (v): a súa conexión será interrompida brevemente ao activar o vídeo por primeira vez",
     "No Camera" : "Sen cámara",
     "Screensharing is not supported by your browser." : "O seu navegador non admite a extensión Screensharing.",
     "Screensharing requires the page to be loaded through HTTPS." : "Screensharing require que a páxina sexa cargada a través de HTTPS.",
