@@ -83,6 +83,7 @@
     "No audio" : "Ses yok",
     "Disable video (v)" : "Görüntüyü kapat (v)",
     "Enable video (v)" : "Görüntüyü aç (v)",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Görüntü kullanılsın (v) - Görüntü ilk kez etkinleştirilirken bağlantınız bir an kesilecek",
     "No Camera" : "Kamera Yok",
     "Screensharing is not supported by your browser." : "Web tarayıcınız ekran paylaşımını desteklemiyor.",
     "Screensharing requires the page to be loaded through HTTPS." : "Ekran paylaşımı için sayfa HTTPS kullanılarak yüklenmiş olmalıdır.",
