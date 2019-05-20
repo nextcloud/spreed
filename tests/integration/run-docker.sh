@@ -251,6 +251,15 @@ if [ "$1" = "--database-image" ]; then
 	shift 2
 fi
 
+# "-- tags XXX" option can be provided to limit the tests run to those with the
+# given Behat tags.
+TAGS=""
+if [ "$1" = "--tags" ]; then
+	TAGS="--tags $2"
+
+	shift 2
+fi
+
 # If no parameter is provided to this script all the integration tests are run.
 SCENARIO_TO_RUN=$1
 
@@ -261,4 +270,4 @@ prepareDocker
 
 echo "Running tests"
 # --tty is needed to get colourful output.
-docker exec --tty $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd nextcloud/apps/spreed/tests/integration && ./run.sh $SCENARIO_TO_RUN"
+docker exec --tty $NEXTCLOUD_LOCAL_CONTAINER bash -c "cd nextcloud/apps/spreed/tests/integration && ./run.sh $TAGS $SCENARIO_TO_RUN"
