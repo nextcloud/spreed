@@ -1,3 +1,4 @@
+@set-4
 Feature: sharees
   Background:
     Given user "participant1" exists
