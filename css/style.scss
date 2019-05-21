@@ -726,7 +726,13 @@ input[type="password"] {
 			display: flex;
 			align-items: center;
 			.edit-button {
-				display: none;
+				opacity: .3;
+
+				&:hover,
+				&:focus,
+				&:active {
+					opacity: 1;
+				}
 
 				.icon {
 					background-color: transparent;
@@ -734,9 +740,6 @@ input[type="password"] {
 					padding: 13px 22px;
 					margin: 0;
 				}
-			}
-			&:hover .edit-button {
-				display: block;
 			}
 		}
 		.input-wrapper {
