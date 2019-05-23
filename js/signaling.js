@@ -843,6 +843,7 @@
 			});
 		}
 		this.resumeId = null;
+		this.signalingRoomJoined = null;
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.disconnect = function() {
