@@ -458,18 +458,17 @@ var spreedPeerConnectionTable = [];
 			forceReconnect(signaling, flags);
 		});
 
-		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
+		var handleIceFailedWithMcu = function() {
 			var signaling = OCA.SpreedMe.app.signaling;
 			if (!signaling.hasFeature("mcu")) {
-				// ICE restarts will be handled by "iceConnectionStateChange"
-				// above.
+				// ICE restarts will be handled by "iceConnectionStateChange".
 				return;
 			}
 
 			// For now assume the connection to the MCU is interrupted on ICE
 			// failures and force a reconnection of all streams.
 			forceReconnect(signaling);
-		});
+		};
 
 		OCA.SpreedMe.videos = {
 			videoViews: [],
@@ -528,6 +527,13 @@ var spreedPeerConnectionTable = [];
 				if (peer.id === webrtc.connection.getSessionid()) {
 					console.log("Not adding video for own peer", peer);
 					OCA.SpreedMe.videos.startSendingNick(peer);
+					peer.pc.addEventListener('iceconnectionstatechange', function () {
+						switch (peer.pc.iceConnectionState) {
+							case 'failed':
+								handleIceFailedWithMcu();
+								break;
+						}
+					});
 					return;
 				}
 
@@ -631,6 +637,8 @@ var spreedPeerConnectionTable = [];
 
 									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED_NO_RESTART);
 								}
+							} else {
+								handleIceFailedWithMcu();
 							}
 							break;
 						case 'closed':
