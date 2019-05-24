@@ -1213,11 +1213,6 @@ function SimpleWebRTC(opts) {
     });
     */
   });
-  this.webrtc.on('channelMessage', function (peer, label, data) {
-    if (data.type === 'volume') {
-      self.emit('remoteVolumeChange', peer, data.volume);
-    }
-  });
 }
 
 SimpleWebRTC.prototype = Object.create(WildEmitter.prototype, {
@@ -1533,27 +1528,6 @@ function WebRTC(opts) {
 
           dc.send(JSON.stringify({
             type: 'stoppedSpeaking'
-          }));
-        }
-      });
-    }
-  });
-  this.on('volumeChange', function (volume
-  /*, treshold*/
-  ) {
-    if (!self.hardMuted) {
-      // FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
-      self.peers.forEach(function (peer) {
-        if (peer.enableDataChannels) {
-          var dc = peer.getDataChannel('hark');
-
-          if (dc.readyState !== 'open') {
-            return;
-          }
-
-          dc.send(JSON.stringify({
-            type: 'volume',
-            volume: volume
           }));
         }
       });
