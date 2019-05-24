@@ -421,6 +421,56 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.sendDirectlyToAll(channel, message, payload);
 		};
 
+		var forceReconnect = function(signaling, flags) {
+			if (ownPeer) {
+				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
+				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+				OCA.SpreedMe.videos.remove(ownPeer.id);
+				delete spreedMappingTable[ownPeer.id];
+				ownPeer.end();
+				ownPeer = null;
+			}
+
+			usersChanged(signaling, [], previousUsersInRoom);
+			usersInCallMapping = {};
+			previousUsersInRoom = [];
+
+			// Reconnects with a new session id will trigger "usersChanged"
+			// with the users in the room and that will re-establish the
+			// peerconnection streams.
+			// If flags are undefined the current call flags are used.
+			signaling.forceReconnect(true, flags);
+		};
+
+		OCA.SpreedMe.webrtc.webrtc.on('videoOn', function () {
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (signaling.getSendVideoIfAvailable()) {
+				return;
+			}
+
+			// When enabling the local video if the video is not being sent a
+			// reconnection is forced to start sending it.
+			signaling.setSendVideoIfAvailable(true);
+
+			var flags = signaling.getCurrentCallFlags();
+			flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
+
+			forceReconnect(signaling, flags);
+		});
+
+		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (!signaling.hasFeature("mcu")) {
+				// ICE restarts will be handled by "iceConnectionStateChange"
+				// above.
+				return;
+			}
+
+			// For now assume the connection to the MCU is interrupted on ICE
+			// failures and force a reconnection of all streams.
+			forceReconnect(signaling);
+		});
+
 		OCA.SpreedMe.videos = {
 			videoViews: [],
 			add: function(id) {
@@ -947,56 +997,6 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
 			app.disableScreensharingButton();
-		});
-
-		var forceReconnect = function(signaling, flags) {
-			if (ownPeer) {
-				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-				OCA.SpreedMe.videos.remove(ownPeer.id);
-				delete spreedMappingTable[ownPeer.id];
-				ownPeer.end();
-				ownPeer = null;
-			}
-
-			usersChanged(signaling, [], previousUsersInRoom);
-			usersInCallMapping = {};
-			previousUsersInRoom = [];
-
-			// Reconnects with a new session id will trigger "usersChanged"
-			// with the users in the room and that will re-establish the
-			// peerconnection streams.
-			// If flags are undefined the current call flags are used.
-			signaling.forceReconnect(true, flags);
-		};
-
-		OCA.SpreedMe.webrtc.webrtc.on('videoOn', function () {
-			var signaling = OCA.SpreedMe.app.signaling;
-			if (signaling.getSendVideoIfAvailable()) {
-				return;
-			}
-
-			// When enabling the local video if the video is not being sent a
-			// reconnection is forced to start sending it.
-			signaling.setSendVideoIfAvailable(true);
-
-			var flags = signaling.getCurrentCallFlags();
-			flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
-
-			forceReconnect(signaling, flags);
-		});
-
-		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
-			var signaling = OCA.SpreedMe.app.signaling;
-			if (!signaling.hasFeature("mcu")) {
-				// ICE restarts will be handled by "iceConnectionStateChange"
-				// above.
-				return;
-			}
-
-			// For now assume the connection to the MCU is interrupted on ICE
-			// failures and force a reconnection of all streams.
-			forceReconnect(signaling);
 		});
 
 		var localStreamRequestedTimeout = null;
