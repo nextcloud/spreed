@@ -843,6 +843,7 @@
 			});
 		}
 		this.resumeId = null;
+		this.signalingRoomJoined = null;
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.disconnect = function() {
@@ -1057,10 +1058,13 @@
 		}.bind(this));
 	};
 
-	OCA.Talk.Signaling.Standalone.prototype.joinCall = function(token) {
+	OCA.Talk.Signaling.Standalone.prototype.joinCall = function(token, flags) {
 		if (this.signalingRoomJoined !== token) {
 			console.log("Not joined room yet, not joining call", token);
-			this.pendingJoinCall = token;
+			this.pendingJoinCall = {
+				token: token,
+				flags: flags
+			};
 			return;
 		}
 
@@ -1080,8 +1084,8 @@
 	OCA.Talk.Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		console.log("Joined", data, token);
 		this.signalingRoomJoined = token;
-		if (token === this.pendingJoinCall) {
-			this.joinCall(this.pendingJoinCall);
+		if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
+			this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags);
 			this.pendingJoinCall = null;
 		}
 		if (this.roomCollection) {
