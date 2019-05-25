@@ -85,6 +85,7 @@ OC.L10N.register(
     "No audio" : "Inget ljud",
     "Disable video (v)" : "Inaktivera video (v)",
     "Enable video (v)" : "Aktivera video (v)",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Aktivera video (v) - Din anslutning får ett kort avbrott när du aktiverar videon för första gången",
     "No Camera" : "Ingen kamera",
     "Screensharing is not supported by your browser." : "Skärmdelning fungerar inte i din nuvarande webbläsare.",
     "Screensharing requires the page to be loaded through HTTPS." : "Skärmdelning kräver HTTPS",
