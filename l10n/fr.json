@@ -83,6 +83,7 @@
     "No audio" : "Pas de son",
     "Disable video (v)" : "Désactiver la vidéo (v)",
     "Enable video (v)" : "Activer la vidéo (v)",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Activer la vidéo (v) - Votre connexion sera brièvement interrompue lorsque vous activez la vidéo pour la première fois.",
     "No Camera" : "Pas de caméra",
     "Screensharing is not supported by your browser." : "Le partage d'écran n'est pas pris en charge par votre navigateur.",
     "Screensharing requires the page to be loaded through HTTPS." : "Le partage d'écran nécessite que la page soit chargée en HTTPS.",
