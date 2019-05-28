@@ -492,6 +492,11 @@
 				}
 
 				this._chatView.restoreScrollPosition();
+
+				// When the chat is attached again the message list needs to be
+				// reloaded to add the messages that could have been received
+				// while detached.
+				this._chatView.reloadMessageList();
 			}.bind(this));
 
 			// Opening or closing the sidebar changes the width of the main
