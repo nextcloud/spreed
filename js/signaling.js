@@ -192,6 +192,13 @@
 	};
 
 	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
+		/**
+         * Trigger a sync rooms event.
+         *
+         * @author Oozman
+         */
+		this._trigger("syncRooms");
+		
 		var defer = $.Deferred();
 		if (this.roomCollection && OC.getCurrentUser().uid) {
 			this.roomCollection.fetch({

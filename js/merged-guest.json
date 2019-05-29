@@ -1,4 +1,9 @@
 [
+  "vendor/inotify/inotify.min.js",
+  "vendor/jquery-dotimeout/jquery-dotimeout.min.js",
+  "vendor/visibility/visibility.min.js",
+  "vendor/underscore-string/underscore-string.js",
+  
   "vendor/backbone/backbone-min.js",
   "vendor/backbone.radio/build/backbone.radio.min.js",
   "vendor/backbone.marionette/lib/backbone.marionette.min.js",
@@ -31,6 +36,7 @@
   "webrtc.js",
   "signaling.js",
   "connection.js",
+  "notifier.js",
   "app.js",
   "init.js"
 ]
