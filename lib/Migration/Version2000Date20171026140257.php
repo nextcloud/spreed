@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -43,12 +44,9 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	/** @var string[] */
 	protected $tokens;
 
-	/**
-	 * @param IDBConnection $connection
-	 * @param IConfig $config
-	 * @param ISecureRandom $secureRandom
-	 */
-	public function __construct(IDBConnection $connection, IConfig $config, ISecureRandom $secureRandom) {
+	public function __construct(IDBConnection $connection,
+								IConfig $config,
+								ISecureRandom $secureRandom) {
 		$this->connection = $connection;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
@@ -61,7 +59,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 
 		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0
@@ -102,7 +100,7 @@ class Version2000Date20171026140257 extends SimpleMigrationStep {
 	 * @param string $chars
 	 * @return string
 	 */
-	protected function getNewToken($entropy, $chars) {
+	protected function getNewToken(int $entropy, string $chars): string {
 		$token = $this->secureRandom->generate($entropy, $chars);
 		while (isset($this->tokens[$token])) {
 			$token = $this->secureRandom->generate($entropy, $chars);

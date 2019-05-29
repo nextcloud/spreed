@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -31,6 +30,7 @@ use OCA\Spreed\Manager;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
+use OCP\Files\FileInfo;
 use OCP\Files\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
@@ -47,14 +47,6 @@ class FilesController extends OCSController {
 	/** @var IL10N */
 	private $l;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param string $userId
-	 * @param Manager $manager
-	 * @param Util $util
-	 * @param IL10N $l10n
-	 */
 	public function __construct(
 			string $appName,
 			IRequest $request,
@@ -137,7 +129,7 @@ class FilesController extends OCSController {
 	private function getFileName(IShare $share, string $fileId): string {
 		$node = $share->getNode();
 
-		if ($node->getType() === \OCP\Files\FileInfo::TYPE_FILE) {
+		if ($node->getType() === FileInfo::TYPE_FILE) {
 			return $node->getName();
 		}
 

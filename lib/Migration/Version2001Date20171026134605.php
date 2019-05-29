@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -41,11 +42,8 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/** @var IConfig */
 	protected $config;
 
-	/**
-	 * @param IDBConnection $connection
-	 * @param IConfig $config
-	 */
-	public function __construct(IDBConnection $connection, IConfig $config) {
+	public function __construct(IDBConnection $connection,
+								IConfig $config) {
 		$this->connection = $connection;
 		$this->config = $config;
 	}
@@ -57,7 +55,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 * @return null|ISchemaWrapper
 	 * @since 13.0.0
 	 */
-	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function changeSchema(IOutput $output, \Closure $schemaClosure, array $options): ?ISchemaWrapper {
 		/** @var ISchemaWrapper $schema */
 		$schema = $schemaClosure();
 
@@ -159,7 +157,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	 * @param array $options
 	 * @since 13.0.0
 	 */
-	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options) {
+	public function postSchemaChange(IOutput $output, \Closure $schemaClosure, array $options): void {
 
 		if (version_compare($this->config->getAppValue('spreed', 'installed_version', '0.0.0'), '2.0.0', '<')) {
 			// Migrations only work after 2.0.0
@@ -176,7 +174,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/**
 	 * @return int[]
 	 */
-	protected function copyRooms() {
+	protected function copyRooms(): array {
 		$roomIdMap = [];
 
 		$insert = $this->connection->getQueryBuilder();
@@ -211,7 +209,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/**
 	 * @param int[] $roomIdMap
 	 */
-	protected function copyParticipants(array $roomIdMap) {
+	protected function copyParticipants(array $roomIdMap): void {
 
 		$insert = $this->connection->getQueryBuilder();
 		if (!$this->connection->getDatabasePlatform() instanceof PostgreSqlPlatform) {
@@ -264,7 +262,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/**
 	 * @param int[] $roomIdMap
 	 */
-	protected function fixNotifications(array $roomIdMap) {
+	protected function fixNotifications(array $roomIdMap): void {
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('notifications')
@@ -309,7 +307,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/**
 	 * @param int[] $roomIdMap
 	 */
-	protected function fixActivities(array $roomIdMap) {
+	protected function fixActivities(array $roomIdMap): void {
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('activity')
@@ -371,7 +369,7 @@ class Version2001Date20171026134605 extends SimpleMigrationStep {
 	/**
 	 * @param int[] $roomIdMap
 	 */
-	protected function fixActivityMails(array $roomIdMap) {
+	protected function fixActivityMails(array $roomIdMap): void {
 
 		$update = $this->connection->getQueryBuilder();
 		$update->update('activity_mq')

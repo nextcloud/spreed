@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -38,20 +37,13 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class TemplateLoader {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
-
-	public function __construct(EventDispatcherInterface $dispatcher) {
-		$this->dispatcher = $dispatcher;
-	}
-
-	public function register() {
+	public static function register(EventDispatcherInterface $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');
-			$this->loadRequestPasswordByTalkUi($share);
+			self::loadRequestPasswordByTalkUi($share);
 		};
-		$this->dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts::publicShareAuth', $listener);
+		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts::publicShareAuth', $listener);
 	}
 
 	/**
@@ -66,7 +58,7 @@ class TemplateLoader {
 	 *
 	 * @param IShare $share
 	 */
-	public function loadRequestPasswordByTalkUi(IShare $share) {
+	public static function loadRequestPasswordByTalkUi(IShare $share): void {
 		if (!$share->getSendPasswordByTalk()) {
 			return;
 		}

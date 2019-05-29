@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
  *
@@ -22,11 +23,17 @@
 namespace OCA\Spreed;
 
 
+use OCA\Spreed\Chat\Changelog;
 use OCA\Spreed\Chat\CommentsManager;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use OCP\IL10N;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -40,39 +47,51 @@ class Manager {
 	private $config;
 	/** @var ISecureRandom */
 	private $secureRandom;
+	/** @var IUserManager */
+	private $userManager;
 	/** @var CommentsManager */
 	private $commentsManager;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 	/** @var IHasher */
 	private $hasher;
+	/** @var IL10N */
+	private $l;
 
-	/**
-	 * Manager constructor.
-	 *
-	 * @param IDBConnection $db
-	 * @param IConfig $config
-	 * @param ISecureRandom $secureRandom
-	 * @param CommentsManager $commentsManager
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param IHasher $hasher
-	 */
-	public function __construct(IDBConnection $db, IConfig $config, ISecureRandom $secureRandom, CommentsManager $commentsManager, EventDispatcherInterface $dispatcher, IHasher $hasher) {
+	public function __construct(IDBConnection $db,
+								IConfig $config,
+								ISecureRandom $secureRandom,
+								IUserManager $userManager,
+								CommentsManager $commentsManager,
+								EventDispatcherInterface $dispatcher,
+								ITimeFactory $timeFactory,
+								IHasher $hasher,
+								IL10N $l) {
 		$this->db = $db;
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
+		$this->userManager = $userManager;
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
+		$this->timeFactory = $timeFactory;
 		$this->hasher = $hasher;
+		$this->l = $l;
 	}
 
-	public function forAllRooms(callable $callback) {
+	public function forAllRooms(callable $callback): void {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms');
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
 			$room = $this->createRoomObject($row);
 			$callback($room);
 		}
@@ -83,15 +102,15 @@ class Manager {
 	 * @param array $row
 	 * @return Room
 	 */
-	public function createRoomObject(array $row) {
+	public function createRoomObject(array $row): Room {
 		$activeSince = null;
 		if (!empty($row['active_since'])) {
-			$activeSince = new \DateTime($row['active_since']);
+			$activeSince = $this->timeFactory->getDateTime($row['active_since']);
 		}
 
 		$lastActivity = null;
 		if (!empty($row['last_activity'])) {
-			$lastActivity = new \DateTime($row['last_activity']);
+			$lastActivity = $this->timeFactory->getDateTime($row['last_activity']);
 		}
 
 		$lastMessage = null;
@@ -107,7 +126,7 @@ class Manager {
 			]));
 		}
 
-		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->hasher, (int) $row['id'], (int) $row['type'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage, (string) $row['object_type'], (string) $row['object_id']);
+		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->timeFactory, $this->hasher, (int) $row['id'], (int) $row['type'], (int) $row['read_only'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage, (string) $row['object_type'], (string) $row['object_id']);
 	}
 
 	/**
@@ -115,10 +134,10 @@ class Manager {
 	 * @param array $row
 	 * @return Participant
 	 */
-	public function createParticipantObject(Room $room, array $row) {
+	public function createParticipantObject(Room $room, array $row): Participant {
 		$lastMention = null;
 		if (!empty($row['last_mention'])) {
-			$lastMention = new \DateTime($row['last_mention']);
+			$lastMention = $this->timeFactory->getDateTime($row['last_mention']);
 		}
 
 		return new Participant($this->db, $room, (string) $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], (string) $row['session_id'], (int) $row['in_call'], (int) $row['notification_level'], (bool) $row['favorite'], $lastMention);
@@ -129,7 +148,7 @@ class Manager {
 	 * @param bool $includeLastMessage
 	 * @return Room[]
 	 */
-	public function getRoomsForParticipant($participant, $includeLastMessage = false) {
+	public function getRoomsForParticipant(string $participant, bool $includeLastMessage = false): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')->addSelect('p.*')
 			->from('talk_rooms', 'r')
@@ -146,6 +165,11 @@ class Manager {
 		$result = $query->execute();
 		$rooms = [];
 		while ($row = $result->fetch()) {
+			if ($row['token'] === null) {
+				// FIXME Temporary solution for the Talk6 release
+				continue;
+			}
+
 			$room = $this->createRoomObject($row);
 			if ($participant !== null && isset($row['user_id'])) {
 				$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
@@ -165,7 +189,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForParticipant($roomId, $participant) {
+	public function getRoomForParticipant(int $roomId, ?string $participant): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms', 'r')
@@ -185,6 +209,11 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -210,7 +239,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForParticipantByToken($token, $participant, $includeLastMessage = false) {
+	public function getRoomForParticipantByToken(string $token, ?string $participant, bool $includeLastMessage = false): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('r.*')
 			->from('talk_rooms', 'r')
@@ -238,6 +267,11 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
 		$room = $this->createRoomObject($row);
 		if ($participant !== null && isset($row['user_id'])) {
 			$room->setParticipant($row['user_id'], $this->createParticipantObject($room, $row));
@@ -259,7 +293,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomById($roomId) {
+	public function getRoomById(int $roomId): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms')
@@ -273,6 +307,11 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
 		return $this->createRoomObject($row);
 	}
 
@@ -281,7 +320,7 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomByToken($token) {
+	public function getRoomByToken(string $token): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
 			->from('talk_rooms')
@@ -292,6 +331,11 @@ class Manager {
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -319,17 +363,22 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
 		return $this->createRoomObject($row);
 	}
 
 	/**
 	 * @param string|null $userId
-	 * @param string $sessionId
+	 * @param string|null $sessionId
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getRoomForSession($userId, $sessionId) {
-		if ((string) $sessionId === '' || $sessionId === '0') {
+	public function getRoomForSession(?string $userId, ?string $sessionId): Room {
+		if ($sessionId === '' || $sessionId === '0') {
 			throw new RoomNotFoundException();
 		}
 
@@ -352,6 +401,11 @@ class Manager {
 			throw new RoomNotFoundException();
 		}
 
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
+			throw new RoomNotFoundException();
+		}
+
 		$room = $this->createRoomObject($row);
 		$participant = $this->createParticipantObject($room, $row);
 		$room->setParticipant($row['user_id'], $participant);
@@ -369,27 +423,44 @@ class Manager {
 	 * @return Room
 	 * @throws RoomNotFoundException
 	 */
-	public function getOne2OneRoom($participant1, $participant2) {
+	public function getOne2OneRoom(string $participant1, string $participant2): Room {
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
-			->from('talk_rooms', 'r1')
-			->leftJoin('r1', 'talk_participants', 'p1', $query->expr()->andX(
+			->from('talk_rooms', 'r')
+			->leftJoin('r', 'talk_participants', 'p1', $query->expr()->andX(
 				$query->expr()->eq('p1.user_id', $query->createNamedParameter($participant1)),
-				$query->expr()->eq('p1.room_id', 'r1.id')
+				$query->expr()->eq('p1.room_id', 'r.id')
 			))
-			->leftJoin('r1', 'talk_participants', 'p2', $query->expr()->andX(
+			->leftJoin('r', 'talk_participants', 'p2', $query->expr()->andX(
 				$query->expr()->eq('p2.user_id', $query->createNamedParameter($participant2)),
-				$query->expr()->eq('p2.room_id', 'r1.id')
+				$query->expr()->eq('p2.room_id', 'r.id')
 			))
-			->where($query->expr()->eq('r1.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->isNotNull('p1.user_id'))
-			->andWhere($query->expr()->isNotNull('p2.user_id'));
+			->where($query->expr()->eq('r.type', $query->createNamedParameter(Room::ONE_TO_ONE_CALL, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->orX(
+				$query->expr()->andX(
+					$query->expr()->isNotNull('p1.user_id'),
+					$query->expr()->isNotNull('p2.user_id')
+				),
+				$query->expr()->andX(
+					$query->expr()->eq('r.name', $query->createNamedParameter($participant1)),
+					$query->expr()->isNotNull('p2.user_id')
+				),
+				$query->expr()->andX(
+					$query->expr()->isNotNull('p1.user_id'),
+					$query->expr()->eq('r.name', $query->createNamedParameter($participant2))
+				)
+			));
 
 		$result = $query->execute();
 		$row = $result->fetch();
 		$result->closeCursor();
 
 		if ($row === false) {
+			throw new RoomNotFoundException();
+		}
+
+		if ($row['token'] === null) {
+			// FIXME Temporary solution for the Talk6 release
 			throw new RoomNotFoundException();
 		}
 
@@ -401,7 +472,7 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createOne2OneRoom($objectType = '', $objectId = '') {
+	public function createOne2OneRoom(string $objectType = '', string $objectId = ''): Room {
 		return $this->createRoom(Room::ONE_TO_ONE_CALL, '', $objectType, $objectId);
 	}
 
@@ -411,7 +482,7 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createGroupRoom($name = '', $objectType = '', $objectId = '') {
+	public function createGroupRoom(string $name = '', string $objectType = '', string $objectId = ''): Room {
 		return $this->createRoom(Room::GROUP_CALL, $name, $objectType, $objectId);
 	}
 
@@ -421,8 +492,43 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	public function createPublicRoom($name = '', $objectType = '', $objectId = '') {
+	public function createPublicRoom(string $name = '', string $objectType = '', string $objectId = ''): Room {
 		return $this->createRoom(Room::PUBLIC_CALL, $name, $objectType, $objectId);
+	}
+
+	/**
+	 * Makes sure the user is part of a changelog room and returns it
+	 *
+	 * @param string $userId
+	 * @return Room
+	 */
+	public function getChangelogRoom(string $userId): Room {
+		$query = $this->db->getQueryBuilder();
+		$query->select('*')
+			->from('talk_rooms')
+			->where($query->expr()->eq('type', $query->createNamedParameter(Room::CHANGELOG_CONVERSATION, IQueryBuilder::PARAM_INT)))
+			->andWhere($query->expr()->eq('name', $query->createNamedParameter($userId)));
+
+		$result = $query->execute();
+		$row = $result->fetch();
+		$result->closeCursor();
+
+		if ($row === false) {
+			$room = $this->createRoom(Room::CHANGELOG_CONVERSATION, $userId);
+			$room->addUsers(['userId' => $userId]);
+			$room->setReadOnly(Room::READ_ONLY);
+			return $room;
+		}
+
+		$room = $this->createRoomObject($row);
+
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			$room->addUsers(['userId' => $userId]);
+		}
+
+		return $room;
 	}
 
 	/**
@@ -432,7 +538,7 @@ class Manager {
 	 * @param string $objectId
 	 * @return Room
 	 */
-	private function createRoom($type, $name = '', $objectType = '', $objectId = '') {
+	private function createRoom(int $type, string $name = '', string $objectType = '', string $objectId = ''): Room {
 		$token = $this->getNewToken();
 
 		$query = $this->db->getQueryBuilder();
@@ -461,10 +567,10 @@ class Manager {
 	}
 
 	/**
-	 * @param string $userId
-	 * @return string
+	 * @param string|null $userId
+	 * @return string|null
 	 */
-	public function getCurrentSessionId($userId) {
+	public function getCurrentSessionId(?string $userId): ?string {
 		if (empty($userId)) {
 			return null;
 		}
@@ -491,7 +597,7 @@ class Manager {
 	 * @param string $userId
 	 * @return string[]
 	 */
-	public function getSessionIdsForUser($userId) {
+	public function getSessionIdsForUser(?string $userId): array {
 		if (!is_string($userId) || $userId === '') {
 			// No deleting messages for guests
 			return [];
@@ -515,10 +621,84 @@ class Manager {
 		return $sessionIds;
 	}
 
+	public function resolveRoomDisplayName(Room $room, string $userId): string {
+		if ($room->getObjectType() === 'share:password') {
+			return $this->l->t('Password request: %s', [$room->getName()]);
+		}
+		if ($room->getType() === Room::CHANGELOG_CONVERSATION) {
+			return $this->l->t('Talk updates ✅');
+		}
+		if ($userId === '' && $room->getType() !== Room::PUBLIC_CALL) {
+			return $this->l->t('Private conversation');
+		}
+
+
+		if ($room->getType() !== Room::ONE_TO_ONE_CALL && $room->getName() === '') {
+			$room->setName($this->getRoomNameByParticipants($room));
+		}
+
+		// Set the room name to the other participant for one-to-one rooms
+		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			if ($userId === '') {
+				return $this->l->t('Private conversation');
+			}
+
+			$users = $room->getParticipantUserIds();
+			$otherParticipant = '';
+			$userIsParticipant = false;
+
+			foreach ($users as $participantId) {
+				if ($participantId !== $userId) {
+					$user = $this->userManager->get($participantId);
+					$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+				} else {
+					$userIsParticipant = true;
+				}
+			}
+
+			if (!$userIsParticipant) {
+				// Do not leak the name of rooms the user is not a part of
+				return $this->l->t('Private conversation');
+			}
+
+			if ($otherParticipant === '' && $room->getName() !== '') {
+				$user = $this->userManager->get($room->getName());
+				$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+			}
+
+			return $otherParticipant;
+		}
+
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			// Do not leak the name of rooms the user is not a part of
+			return $this->l->t('Private conversation');
+		}
+
+		return $room->getName();
+	}
+
+	protected function getRoomNameByParticipants(Room $room): string {
+		$users = $room->getParticipantUserIds();
+		$displayNames = [];
+
+		foreach ($users as $participantId) {
+			$user = $this->userManager->get($participantId);
+			$displayNames[] = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+		}
+
+		$roomName = implode(', ', $displayNames);
+		if (strlen($roomName) > 128) {
+			$roomName = substr($roomName, 120) . '…';
+		}
+		return $roomName;
+	}
+
 	/**
 	 * @return string
 	 */
-	protected function getNewToken() {
+	protected function getNewToken(): string {
 		$chars = str_replace(['l', '0', '1'], '', ISecureRandom::CHAR_LOWER . ISecureRandom::CHAR_DIGITS);
 		$entropy = (int) $this->config->getAppValue('spreed', 'token_entropy', 8);
 		$entropy = min(8, $entropy); // For update cases
@@ -557,7 +737,7 @@ class Manager {
 	 * @return string
 	 * @throws \OutOfBoundsException
 	 */
-	protected function generateNewToken(IQueryBuilder $query, $entropy, $chars) {
+	protected function generateNewToken(IQueryBuilder $query, int $entropy, string $chars): string {
 		$event = new GenericEvent(null, [
 			'entropy' => $entropy,
 			'chars' => $chars,
@@ -585,7 +765,11 @@ class Manager {
 		return $token;
 	}
 
-	protected function loadLastMessageInfo(IQueryBuilder $query) {
+	public function isValidParticipant(string $userId): bool {
+		return $this->userManager->userExists($userId);
+	}
+
+	protected function loadLastMessageInfo(IQueryBuilder $query): void {
 		$query->leftJoin('r','comments', 'c', $query->expr()->eq('r.last_message', 'c.id'));
 		$query->selectAlias('c.id', 'comment_id');
 		$query->addSelect('c.actor_id', 'c.actor_type', 'c.message', 'c.creation_timestamp', 'c.verb');

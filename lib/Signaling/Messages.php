@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joas Schilling <coding@schilljs.com>
  *
@@ -33,21 +34,18 @@ class Messages {
 	protected $db;
 
 	/** @var ITimeFactory */
-	protected $time;
+	protected $timeFactory;
 
-	/**
-	 * @param IDBConnection $db
-	 * @param ITimeFactory $time
-	 */
-	public function __construct(IDBConnection $db, ITimeFactory $time) {
+	public function __construct(IDBConnection $db,
+								ITimeFactory $timeFactory) {
 		$this->db = $db;
-		$this->time = $time;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
 	 * @param string[] $sessionIds
 	 */
-	public function deleteMessages(array $sessionIds) {
+	public function deleteMessages(array $sessionIds): void {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_signaling')
 			->where($query->expr()->in('recipient', $query->createNamedParameter($sessionIds, IQueryBuilder::PARAM_STR_ARRAY)))
@@ -60,14 +58,14 @@ class Messages {
 	 * @param string $recipientSessionId
 	 * @param string $message
 	 */
-	public function addMessage($senderSessionId, $recipientSessionId, $message) {
+	public function addMessage(string $senderSessionId, string $recipientSessionId, string $message): void {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('talk_signaling')
 			->values(
 				[
 					'sender' => $query->createNamedParameter($senderSessionId),
 					'recipient' => $query->createNamedParameter($recipientSessionId),
-					'timestamp' => $query->createNamedParameter($this->time->getTime()),
+					'timestamp' => $query->createNamedParameter($this->timeFactory->getTime()),
 					'message' => $query->createNamedParameter($message),
 				]
 			);
@@ -78,14 +76,14 @@ class Messages {
 	 * @param Room $room
 	 * @param string $message
 	 */
-	public function addMessageForAllParticipants(Room $room, $message) {
+	public function addMessageForAllParticipants(Room $room, string $message): void {
 		$query = $this->db->getQueryBuilder();
 		$query->insert('talk_signaling')
 			->values(
 				[
 					'sender' => $query->createParameter('sender'),
 					'recipient' => $query->createParameter('recipient'),
-					'timestamp' => $query->createNamedParameter($this->time->getTime()),
+					'timestamp' => $query->createNamedParameter($this->timeFactory->getTime()),
 					'message' => $query->createNamedParameter($message),
 				]
 			);
@@ -108,9 +106,9 @@ class Messages {
 	 * @param string $sessionId
 	 * @return array
 	 */
-	public function getAndDeleteMessages($sessionId) {
+	public function getAndDeleteMessages(string $sessionId): array {
 		$messages = [];
-		$time = $this->time->getTime() - 1;
+		$time = $this->timeFactory->getTime() - 1;
 
 		$query = $this->db->getQueryBuilder();
 		$query->select('*')
@@ -138,8 +136,8 @@ class Messages {
 	 *
 	 * @param int $olderThan
 	 */
-	public function expireOlderThan($olderThan) {
-		$time = $this->time->getTime() - $olderThan;
+	public function expireOlderThan(int $olderThan): void {
+		$time = $this->timeFactory->getTime() - $olderThan;
 
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_signaling')

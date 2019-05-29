@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2017 Joachim Bauch <bauch@struktur.de>
  *
@@ -30,7 +31,7 @@ use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 use OCP\Security\ISecureRandom;
 
-class BackendNotifier{
+class BackendNotifier {
 	/** @var Config */
 	private $config;
 	/** @var ILogger */
@@ -40,12 +41,6 @@ class BackendNotifier{
 	/** @var ISecureRandom */
 	private $secureRandom;
 
-	/**
-	 * @param Config $config
-	 * @param ILogger $logger
-	 * @param IClientService $clientService
-	 * @param ISecureRandom $secureRandom
-	 */
 	public function __construct(Config $config,
 								ILogger $logger,
 								IClientService $clientService,
@@ -59,8 +54,12 @@ class BackendNotifier{
 	/**
 	 * Perform actual network request to the signaling backend.
 	 * This can be overridden in tests.
+	 *
+	 * @param string $url
+	 * @param array $params
+	 * @throws \Exception
 	 */
-	protected function doRequest($url, $params) {
+	protected function doRequest(string $url, array $params): void {
 		if (defined('PHPUNIT_RUN')) {
 			// Don't perform network requests when running tests.
 			return;
@@ -77,14 +76,14 @@ class BackendNotifier{
 	 * @param array $data
 	 * @throws \Exception
 	 */
-	private function backendRequest($url, $data) {
+	private function backendRequest(string $url, array $data): void {
 		$servers = $this->config->getSignalingServers();
 		if (empty($servers)) {
 			return;
 		}
 
 		// We can use any server of the available backends.
-		$signaling = $servers[mt_rand(0, count($servers) - 1)];
+		$signaling = $servers[random_int(0, count($servers) - 1)];
 		$signaling['server'] = rtrim($signaling['server'], '/');
 		$url = rtrim($signaling['server'], '/') . $url;
 		if (strpos($url, 'wss://') === 0) {
@@ -116,10 +115,10 @@ class BackendNotifier{
 	 * The given users are now invited to a room.
 	 *
 	 * @param Room $room
-	 * @param array $users
+	 * @param array[] $users
 	 * @throws \Exception
 	 */
-	public function roomInvited($room, $users) {
+	public function roomInvited(Room $room, array $users): void {
 		$this->logger->info('Now invited to ' . $room->getToken() . ': ' . print_r($users, true), ['app' => 'spreed']);
 		$userIds = [];
 		foreach ($users as $user) {
@@ -133,7 +132,7 @@ class BackendNotifier{
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -144,10 +143,10 @@ class BackendNotifier{
 	 * The given users are no longer invited to a room.
 	 *
 	 * @param Room $room
-	 * @param array $userIds
+	 * @param string[] $userIds
 	 * @throws \Exception
 	 */
-	public function roomsDisinvited($room, $userIds) {
+	public function roomsDisinvited(Room $room, array $userIds): void {
 		$this->logger->info('No longer invited to ' . $room->getToken() . ': ' . print_r($userIds, true), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'disinvite',
@@ -157,7 +156,7 @@ class BackendNotifier{
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -168,10 +167,10 @@ class BackendNotifier{
 	 * The given sessions have been removed from a room.
 	 *
 	 * @param Room $room
-	 * @param array $sessionIds
+	 * @param string[] $sessionIds
 	 * @throws \Exception
 	 */
-	public function roomSessionsRemoved($room, $sessionIds) {
+	public function roomSessionsRemoved(Room $room, array $sessionIds): void {
 		$this->logger->info('Removed from ' . $room->getToken() . ': ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'disinvite',
@@ -181,7 +180,7 @@ class BackendNotifier{
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -194,14 +193,14 @@ class BackendNotifier{
 	 * @param Room $room
 	 * @throws \Exception
 	 */
-	public function roomModified($room) {
+	public function roomModified(Room $room): void {
 		$this->logger->info('Room modified: ' . $room->getToken(), ['app' => 'spreed']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'update',
 			'update' => [
 				'userids' => $room->getParticipantUserIds(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName(''),
 					'type' => $room->getType(),
 				],
 			],
@@ -212,9 +211,10 @@ class BackendNotifier{
 	 * The given room has been deleted.
 	 *
 	 * @param Room $room
+	 * @param array $participants
 	 * @throws \Exception
 	 */
-	public function roomDeleted($room, $participants) {
+	public function roomDeleted(Room $room, array $participants): void {
 		$this->logger->info('Room deleted: ' . $room->getToken(), ['app' => 'spreed']);
 		$userIds = array_keys($participants['users']);
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
@@ -229,9 +229,10 @@ class BackendNotifier{
 	 * The participant list of the given room has been modified.
 	 *
 	 * @param Room $room
+	 * @param string[] $sessionIds
 	 * @throws \Exception
 	 */
-	public function participantsModified($room, $sessionIds) {
+	public function participantsModified(Room $room, array $sessionIds): void {
 		$this->logger->info('Room participants modified: ' . $room->getToken() . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
@@ -239,7 +240,7 @@ class BackendNotifier{
 		foreach ($participants['users'] as $userId => $participant) {
 			$participant['userId'] = $userId;
 			$users[] = $participant;
-			if (in_array($participant['sessionId'], $sessionIds)) {
+			if (\in_array($participant['sessionId'], $sessionIds, true)) {
 				$changed[] = $participant;
 			}
 		}
@@ -248,7 +249,7 @@ class BackendNotifier{
 				$participant['participantType'] = Participant::GUEST;
 			}
 			$users[] = $participant;
-			if (in_array($participant['sessionId'], $sessionIds)) {
+			if (\in_array($participant['sessionId'], $sessionIds, true)) {
 				$changed[] = $participant;
 			}
 		}
@@ -266,10 +267,10 @@ class BackendNotifier{
 	 *
 	 * @param Room $room
 	 * @param int $flags
-	 * @param array $sessionids
+	 * @param string[] $sessionIds
 	 * @throws \Exception
 	 */
-	public function roomInCallChanged($room, $flags, $sessionIds) {
+	public function roomInCallChanged(Room $room, int $flags, array $sessionIds): void {
 		$this->logger->info('Room in-call status changed: ' . $room->getToken() . ' ' . $flags . ' ' . print_r($sessionIds, true), ['app' => 'spreed']);
 		$changed = [];
 		$users = [];
@@ -279,7 +280,7 @@ class BackendNotifier{
 			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
 				$users[] = $participant;
 			}
-			if (in_array($participant['sessionId'], $sessionIds)) {
+			if (\in_array($participant['sessionId'], $sessionIds, true)) {
 				$changed[] = $participant;
 			}
 		}
@@ -290,7 +291,7 @@ class BackendNotifier{
 			if ($participant['inCall'] !== Participant::FLAG_DISCONNECTED) {
 				$users[] = $participant;
 			}
-			if (in_array($participant['sessionId'], $sessionIds)) {
+			if (\in_array($participant['sessionId'], $sessionIds, true)) {
 				$changed[] = $participant;
 			}
 		}
@@ -311,8 +312,9 @@ class BackendNotifier{
 	 *
 	 * @param Room $room
 	 * @param array $message
+	 * @throws \Exception
 	 */
-	public function sendRoomMessage($room, $message) {
+	public function sendRoomMessage(Room $room, array $message): void {
 		$this->backendRequest('/api/v1/room/' . $room->getToken(), [
 			'type' => 'message',
 			'message' => [

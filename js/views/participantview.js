@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  *
@@ -21,18 +21,13 @@
  *
  */
 
-(function(OC, OCA, Marionette, Handlebars) {
+(function(OC, OCA, Marionette) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE = ''+
-		'<form class="oca-spreedme-add-person">'+
-		'	<input class="add-person-input" type="text" placeholder="'+t('spreed', 'Add participant …')+'"/>'+
-		'</form>'+
-		'<ul class="participantWithList">' +
-		'</ul>';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	OCA.SpreedMe.Views.ParticipantView = Marionette.View.extend({
 
@@ -48,7 +43,18 @@
 			participantList: '@ui.participantList'
 		},
 
-		template: Handlebars.compile(TEMPLATE),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['participantview'](context);
+		},
+
+		templateContext: function() {
+			return {
+				addParticipantInputPlaceholder: t('spreed', 'Add participant …'),
+			};
+		},
 
 		initialize: function(options) {
 			this.room = options.room;
@@ -90,7 +96,7 @@
 		 * the room; otherwise the form is hidden.
 		 */
 		_updateAddParticipantFormVisibility: function() {
-			if (!this.room ||
+			if (!this.room || this.room.get('type') === 1 ||
 					(this.room.get('participantType') !== OCA.SpreedMe.app.OWNER &&
 					this.room.get('participantType') !== OCA.SpreedMe.app.MODERATOR)) {
 				this.ui.addParticipantForm.hide();
@@ -185,4 +191,4 @@
 
 	});
 
-})(OC, OCA, Marionette, Handlebars);
+})(OC, OCA, Marionette);

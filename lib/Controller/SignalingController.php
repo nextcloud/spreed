@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
  *
@@ -24,15 +25,17 @@
 namespace OCA\Spreed\Controller;
 
 use OCA\Spreed\Config;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\Messages;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
@@ -42,8 +45,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SignalingController extends OCSController {
 
-    /** @var int */
-    const PULL_MESSAGES_TIMEOUT = 30;
+	/** @var int */
+	private const PULL_MESSAGES_TIMEOUT = 30;
 
 	/** @var Config */
 	private $config;
@@ -55,26 +58,16 @@ class SignalingController extends OCSController {
 	private $dbConnection;
 	/** @var Messages */
 	private $messages;
-	/** @var string|null */
-	private $userId;
 	/** @var IUserManager */
 	private $userManager;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
+	/** @var ITimeFactory */
+	private $timeFactory;
+	/** @var string|null */
+	private $userId;
 
-	/**
-	 * @param string $appName
-	 * @param IRequest $request
-	 * @param Config $config
-	 * @param TalkSession $session
-	 * @param Manager $manager
-	 * @param IDBConnection $connection
-	 * @param Messages $messages
-	 * @param IUserManager $userManager
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param string $UserId
-	 */
-	public function __construct($appName,
+	public function __construct(string $appName,
 								IRequest $request,
 								Config $config,
 								TalkSession $session,
@@ -83,7 +76,8 @@ class SignalingController extends OCSController {
 								Messages $messages,
 								IUserManager $userManager,
 								EventDispatcherInterface $dispatcher,
-								$UserId) {
+								ITimeFactory $timeFactory,
+								?string $UserId) {
 		parent::__construct($appName, $request);
 		$this->config = $config;
 		$this->session = $session;
@@ -92,6 +86,7 @@ class SignalingController extends OCSController {
 		$this->messages = $messages;
 		$this->userManager = $userManager;
 		$this->dispatcher = $dispatcher;
+		$this->timeFactory = $timeFactory;
 		$this->userId = $UserId;
 	}
 
@@ -103,7 +98,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function getSettings() {
+	public function getSettings(): DataResponse {
 		return new DataResponse($this->config->getSettings($this->userId));
 	}
 
@@ -114,7 +109,7 @@ class SignalingController extends OCSController {
 	 * @param string $messages
 	 * @return DataResponse
 	 */
-	public function signaling($token, $messages) {
+	public function signaling(string $token, string $messages): DataResponse {
 		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
@@ -151,14 +146,14 @@ class SignalingController extends OCSController {
 	 * @param string $token
 	 * @return DataResponse
 	 */
-	public function pullMessages($token) {
+	public function pullMessages(string $token): DataResponse {
 		$signaling = $this->config->getSignalingServers();
 		if (!empty($signaling)) {
 			return new DataResponse('Internal signaling disabled.', Http::STATUS_BAD_REQUEST);
 		}
 
-        $data    = [];
-        $seconds = self::PULL_MESSAGES_TIMEOUT;
+		$data = [];
+		$seconds = self::PULL_MESSAGES_TIMEOUT;
 
 		try {
 			$sessionId = $this->session->getSessionForRoom($token);
@@ -169,8 +164,8 @@ class SignalingController extends OCSController {
 
 			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
 
-            $pingTimestamp = time();
-            $room->ping($this->userId, $sessionId, $pingTimestamp);
+			$pingTimestamp = $this->timeFactory->getTime();
+			$room->ping($this->userId, $sessionId, $pingTimestamp);
 		} catch (RoomNotFoundException $e) {
 			return new DataResponse([['type' => 'usersInRoom', 'data' => []]], Http::STATUS_NOT_FOUND);
 		}
@@ -209,8 +204,8 @@ class SignalingController extends OCSController {
 
 		try {
 			// Add an update of the room participants at the end of the waiting
-            $room   = $this->manager->getRoomForSession($this->userId, $sessionId);
-            $data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
+			$room = $this->manager->getRoomForSession($this->userId, $sessionId);
+			$data[] = ['type' => 'usersInRoom', 'data' => $this->getUsersInRoom($room, $pingTimestamp)];
 		} catch (RoomNotFoundException $e) {
 			$data[] = ['type' => 'usersInRoom', 'data' => []];
 			return new DataResponse($data, Http::STATUS_NOT_FOUND);
@@ -221,21 +216,19 @@ class SignalingController extends OCSController {
 
 	/**
 	 * @param Room $room
-     * @param int pingTimestamp
-     *
+	 * @param int pingTimestamp
 	 * @return array[]
-     */
-    protected function getUsersInRoom(Room $room, int $pingTimestamp): array
-    {
+	 */
+	protected function getUsersInRoom(Room $room, int $pingTimestamp): array {
 		$usersInRoom = [];
-        // Get participants active in the last 40 seconds (an extra time is used
-        // to include other participants pinging almost at the same time as the
-        // current user), or since the last signaling ping of the current user
-        // if it was done more than 40 seconds ago.
-        $timestamp = min(time() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
-        // "- 1" is needed because only the participants whose last ping is
-        // greater than the given timestamp are returned.
-        $participants = $room->getParticipants($timestamp - 1);
+		// Get participants active in the last 40 seconds (an extra time is used
+		// to include other participants pinging almost at the same time as the
+		// current user), or since the last signaling ping of the current user
+		// if it was done more than 40 seconds ago.
+		$timestamp = min($this->timeFactory->getTime() - (self::PULL_MESSAGES_TIMEOUT + 10), $pingTimestamp);
+		// "- 1" is needed because only the participants whose last ping is
+		// greater than the given timestamp are returned.
+		$participants = $room->getParticipants($timestamp - 1);
 		foreach ($participants as $participant) {
 			if ($participant->getSessionId() === '0') {
 				// User is not active
@@ -263,11 +256,12 @@ class SignalingController extends OCSController {
 	 * and the body of the request, calculated with the shared secret from the
 	 * configuration.
 	 *
+	 * @param string $data
 	 * @return bool
 	 */
-	private function validateBackendRequest($data) {
-		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM']) ||
-			!isset($_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
+	private function validateBackendRequest(string $data): bool {
+		if (!isset($_SERVER['HTTP_SPREED_SIGNALING_RANDOM'],
+			  $_SERVER['HTTP_SPREED_SIGNALING_CHECKSUM'])) {
 			return false;
 		}
 		$random = $_SERVER['HTTP_SPREED_SIGNALING_RANDOM'];
@@ -288,7 +282,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @return string
 	 */
-	protected function getInputStream() {
+	protected function getInputStream(): string {
 		return file_get_contents('php://input');
 	}
 
@@ -303,7 +297,7 @@ class SignalingController extends OCSController {
 	 *
 	 * @return DataResponse
 	 */
-	public function backend() {
+	public function backend(): DataResponse {
 		$json = $this->getInputStream();
 		if (!$this->validateBackendRequest($json)) {
 			return new DataResponse([
@@ -316,7 +310,7 @@ class SignalingController extends OCSController {
 		}
 
 		$message = json_decode($json, true);
-		switch (isset($message['type']) ? $message['type'] : "") {
+		switch ($message['type'] ?? '') {
 			case 'auth':
 				// Query authentication information about a user.
 				return $this->backendAuth($message['auth']);
@@ -337,7 +331,7 @@ class SignalingController extends OCSController {
 		}
 	}
 
-	private function backendAuth($auth) {
+	private function backendAuth(array $auth): DataResponse {
 		$params = $auth['params'];
 		$userId = $params['userid'];
 		if (!$this->config->validateSignalingTicket($userId, $params['ticket'])) {
@@ -378,7 +372,7 @@ class SignalingController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	private function backendRoom($roomRequest) {
+	private function backendRoom(array $roomRequest): DataResponse {
 		$roomId = $roomRequest['roomid'];
 		$userId = $roomRequest['userid'];
 		$sessionId = $roomRequest['sessionid'];
@@ -406,7 +400,7 @@ class SignalingController extends OCSController {
 			}
 		}
 
-		if (empty($participant)) {
+		if (!$participant instanceof Participant) {
 			// User was not invited to the room, check for access to public room.
 			try {
 				$participant = $room->getParticipantBySession($sessionId);
@@ -425,12 +419,12 @@ class SignalingController extends OCSController {
 		if ($action === 'join') {
 			// Rooms get sorted by last ping time for users, so make sure to
 			// update when a user joins a room.
-			$room->ping($userId, $sessionId, time());
+			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
 		} else if ($action === 'leave') {
 			if (!empty($userId)) {
-				$room->leaveRoom($userId);
-			} else if (!empty($participant)) {
-				$room->removeParticipantBySession($participant);
+				$room->leaveRoom($userId, $sessionId);
+			} else if ($participant instanceof Participant) {
+				$room->removeParticipantBySession($participant, Room::PARTICIPANT_LEFT);
 			}
 		}
 
@@ -448,7 +442,7 @@ class SignalingController extends OCSController {
 				'version' => '1.0',
 				'roomid' => $room->getToken(),
 				'properties' => [
-					'name' => $room->getName(),
+					'name' => $room->getDisplayName((string) $userId),
 					'type' => $room->getType(),
 				],
 			],
@@ -459,7 +453,7 @@ class SignalingController extends OCSController {
 		return new DataResponse($response);
 	}
 
-	private function backendPing($request) {
+	private function backendPing(array $request): DataResponse {
 		try {
 			$room = $this->manager->getRoomByToken($request['roomid']);
 		} catch (RoomNotFoundException $e) {
@@ -472,7 +466,7 @@ class SignalingController extends OCSController {
 			]);
 		}
 
-		$now = time();
+		$now = $this->timeFactory->getTime();
 		foreach ($request['entries'] as $entry) {
 			if (array_key_exists('userid', $entry)) {
 				$room->ping($entry['userid'], $entry['sessionid'], $now);

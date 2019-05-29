@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -49,7 +50,7 @@ class Sorter implements ISorter {
 	 * @param array $context carries key 'itemType' and 'itemId' of the source object (e.g. a file)
 	 * @since 13.0.0
 	 */
-	public function sort(array &$sortArray, array $context) {
+	public function sort(array &$sortArray, array $context): void {
 		foreach ($sortArray as $type => &$byType) {
 			if ($type !== 'users') {
 				continue;

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Joachim Bauch <mail@joachim-bauch.de>
  *
@@ -23,6 +24,7 @@ namespace OCA\Spreed;
 
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IUser;
 use OCP\Security\ISecureRandom;
 
@@ -30,29 +32,43 @@ class Config {
 
 	/** @var IConfig */
 	protected $config;
-
 	/** @var ITimeFactory */
 	protected $timeFactory;
-
+	/** @var IGroupManager */
+	private $groupManager;
 	/** @var ISecureRandom */
 	private $secureRandom;
 
-	/**
-	 * Config constructor.
-	 *
-	 * @param IConfig $config
-	 * @param ISecureRandom $secureRandom
-	 * @param ITimeFactory $timeFactory
-	 */
 	public function __construct(IConfig $config,
 								ISecureRandom $secureRandom,
+								IGroupManager $groupManager,
 								ITimeFactory $timeFactory) {
 		$this->config = $config;
 		$this->secureRandom = $secureRandom;
+		$this->groupManager = $groupManager;
 		$this->timeFactory = $timeFactory;
 	}
 
-	public function getSettings($userId) {
+	/**
+	 * @return string[]
+	 */
+	public function getAllowedGroupIds(): array {
+		$groups = $this->config->getAppValue('spreed', 'allowed_groups', '[]');
+		$groups = json_decode($groups, true);
+		return \is_array($groups) ? $groups : [];
+	}
+
+	public function isDisabledForUser(IUser $user): bool {
+		$allowedGroups = $this->getAllowedGroupIds();
+		if (empty($allowedGroups)) {
+			return false;
+		}
+
+		$userGroups = $this->groupManager->getUserGroupIds($user);
+		return empty(array_intersect($allowedGroups, $userGroups));
+	}
+
+	public function getSettings(?string $userId): array {
 		$stun = [];
 		$stunServer = $this->getStunServer();
 		if ($stunServer) {
@@ -86,6 +102,7 @@ class Config {
 		}
 
 		return [
+			'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
 			'server' => $signaling,
 			'ticket' => $this->getSignalingTicket($userId),
 			'stunservers' => $stun,
@@ -135,11 +152,11 @@ class Config {
 	/**
 	 * @return string[]
 	 */
-	protected function getStunServers(): array {
+	public function getStunServers(): array {
 		$config = $this->config->getAppValue('spreed', 'stun_servers', json_encode(['stun.nextcloud.com:443']));
 		$servers = json_decode($config, true);
 
-        if (is_array($servers) && ! empty($servers)) {
+		if (is_array($servers) && !empty($servers)) {
 			return $servers;
 		}
 
@@ -164,7 +181,7 @@ class Config {
 	 *
 	 * @return array
 	 */
-	protected function getTurnServers(): array {
+	public function getTurnServers(): array {
 		$config = $this->config->getAppValue('spreed', 'turn_servers');
 		$servers = json_decode($config, true);
 
@@ -223,7 +240,7 @@ class Config {
 	public function getSignalingServers(): array {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
-		if (!is_array($signaling)) {
+		if (!is_array($signaling) || !isset($signaling['servers'])) {
 			return [];
 		}
 
@@ -233,7 +250,7 @@ class Config {
 	/**
 	 * @return string
 	 */
-	public function getSignalingSecret() {
+	public function getSignalingSecret(): string {
 		$config = $this->config->getAppValue('spreed', 'signaling_servers');
 		$signaling = json_decode($config, true);
 
@@ -244,11 +261,15 @@ class Config {
 		return $signaling['secret'];
 	}
 
+	public function getHideSignalingWarning(): bool {
+		return $this->config->getAppValue('spreed', 'hide_signaling_warning', 'no') === 'yes';
+	}
+
 	/**
 	 * @param string $userId
 	 * @return string
 	 */
-	public function getSignalingTicket($userId) {
+	public function getSignalingTicket(?string $userId): string {
 		if (empty($userId)) {
 			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {
@@ -279,7 +300,7 @@ class Config {
 	 * @param string $ticket
 	 * @return bool
 	 */
-	public function validateSignalingTicket($userId, $ticket) {
+	public function validateSignalingTicket(?string $userId, string $ticket): bool {
 		if (empty($userId)) {
 			$secret = $this->config->getAppValue('spreed', 'signaling_ticket_secret');
 		} else {

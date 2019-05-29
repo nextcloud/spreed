@@ -84,11 +84,11 @@
 			this._webrtc = options.webrtc;
 			this._sharedScreens = options.sharedScreens;
 
-			this._audioNotFound = false;
-			this._videoNotFound = false;
+			this._audioAvailable = true;
+			this._videoAvailable = true;
 
-			this.audioDisabled = localStorage.getItem("audioDisabled");
-			this.videoDisabled = localStorage.getItem("videoDisabled");
+			this.audioEnabled = !localStorage.getItem('audioDisabled');
+			this.videoEnabled = !localStorage.getItem('videoDisabled');
 		},
 
 		setWebRtc: function(webrtc) {
@@ -100,87 +100,89 @@
 		},
 
 		toggleAudio: function() {
-			if (this.audioNotFound) {
+			if (!this._audioAvailable) {
 				return;
 			}
 
-			if (!this.audioDisabled) {
-				this.disableAudio();
-				localStorage.setItem("audioDisabled", true);
+			if (this.audioEnabled) {
+				this.setAudioEnabled(false);
+				localStorage.setItem('audioDisabled', true);
 			} else {
-				this.enableAudio();
-				localStorage.removeItem("audioDisabled");
+				this.setAudioEnabled(true);
+				localStorage.removeItem('audioDisabled');
 			}
 		},
 
-		disableAudio: function() {
-			if (this.audioNotFound || !this._webrtc) {
+		setAudioEnabled: function(audioEnabled) {
+			if (!this._audioAvailable || !this._webrtc) {
 				return;
 			}
 
-			this._webrtc.mute();
+			if (audioEnabled) {
+				this._webrtc.unmute();
 
-			this.getUI('audioButton').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
-				.addClass('audio-disabled icon-audio-off')
-				.removeClass('icon-audio');
+				this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
+					.removeClass('audio-disabled icon-audio-off')
+					.addClass('icon-audio');
+			} else {
+				this._webrtc.mute();
 
-			this.audioDisabled = true;
-		},
-
-		enableAudio: function() {
-			if (this.audioNotFound || !this._webrtc) {
-				return;
+				this.getUI('audioButton').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
+					.addClass('audio-disabled icon-audio-off')
+					.removeClass('icon-audio');
 			}
 
-			this._webrtc.unmute();
-
-			this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
-				.removeClass('audio-disabled icon-audio-off')
-				.addClass('icon-audio');
-
-			this.audioDisabled = false;
+			this.audioEnabled = audioEnabled;
 		},
 
-		hasAudio: function() {
-			this.getUI('audioButton').removeClass('no-audio-available');
-			this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
-				.removeClass('audio-disabled icon-audio-off')
-				.addClass('icon-audio');
+		/**
+		 * Sets the audio as available or not available.
+		 *
+		 * "setAudioEnabled(bool)" is expected to be called with the appropriate
+		 * value after the audio is set as available.
+		 */
+		setAudioAvailable: function(audioAvailable) {
+			if (audioAvailable) {
+				this.getUI('audioButton').removeClass('no-audio-available');
+			} else {
+				this.getUI('audioButton').removeClass('audio-disabled icon-audio')
+					.addClass('no-audio-available icon-audio-off')
+					.attr('data-original-title', t('spreed', 'No audio'));
+			}
 
-			this.audioNotFound = false;
-		},
-
-		hasNoAudio: function() {
-			this.getUI('audioButton').removeClass('audio-disabled icon-audio')
-				.addClass('no-audio-available icon-audio-off')
-				.attr('data-original-title', t('spreed', 'No audio'));
-
-			this.audioDisabled = true;
-			this.audioNotFound = true;
+			this._audioAvailable = audioAvailable;
 		},
 
 		toggleVideo: function() {
-			if (this.videoNotFound) {
+			if (!this._videoAvailable) {
 				return;
 			}
 
-			if (this.videoDisabled) {
-				this._app.enableVideo();
-				localStorage.removeItem("videoDisabled");
+			if (this.videoEnabled) {
+				this._app.setVideoEnabled(false);
+				localStorage.setItem('videoDisabled', true);
 			} else {
-				this._app.disableVideo();
-				localStorage.setItem("videoDisabled", true);
+				this._app.setVideoEnabled(true);
+				localStorage.removeItem('videoDisabled');
 			}
 		},
 
-		disableVideo: function() {
-			if (this.videoNotFound || !this._webrtc) {
+		setVideoEnabled: function(videoEnabled) {
+			if (!this._videoAvailable || !this._webrtc) {
 				return false;
 			}
 
-			this._webrtc.pauseVideo();
+			if (videoEnabled) {
+				this._webrtc.resumeVideo();
 
-			if (!this.getUI('videoButton').hasClass('no-video-available')) {
+				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Disable video (v)'))
+					.removeClass('local-video-disabled video-disabled icon-video-off')
+					.addClass('icon-video');
+				this.getUI('audioButton').removeClass('local-video-disabled');
+				this.getUI('screensharingButton').removeClass('local-video-disabled');
+			} else {
+				this._webrtc.pauseVideo();
+
 				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Enable video (v)'))
 					.addClass('local-video-disabled video-disabled icon-video-off')
 					.removeClass('icon-video');
@@ -188,42 +190,27 @@
 				this.getUI('screensharingButton').addClass('local-video-disabled');
 			}
 
-			this.videoDisabled = true;
+			this.videoEnabled = videoEnabled;
 
 			return true;
 		},
 
-		enableVideo: function() {
-			if (this.videoNotFound || !this._webrtc) {
-				return false;
+		/**
+		 * Sets the video as available or not available.
+		 *
+		 * "setVideoEnabled(bool)" is expected to be called with the appropriate
+		 * value after the video is set as available.
+		 */
+		setVideoAvailable: function(videoAvailable) {
+			if (videoAvailable) {
+				this.getUI('videoButton').removeClass('no-video-available');
+			} else {
+				this.getUI('videoButton').removeClass('icon-video')
+					.addClass('no-video-available icon-video-off')
+					.attr('data-original-title', t('spreed', 'No Camera'));
 			}
 
-			this._webrtc.resumeVideo();
-
-			this.getUI('videoButton').attr('data-original-title', t('spreed', 'Disable video (v)'))
-				.removeClass('local-video-disabled video-disabled icon-video-off')
-				.addClass('icon-video');
-			this.getUI('audioButton').removeClass('local-video-disabled');
-			this.getUI('screensharingButton').removeClass('local-video-disabled');
-
-			this.videoDisabled = false;
-
-			return true;
-		},
-
-		hasVideo: function() {
-			this.getUI('videoButton').removeClass('no-video-available');
-
-			this.videoNotFound = false;
-		},
-
-		hasNoVideo: function() {
-			this.getUI('videoButton').removeClass('icon-video')
-				.addClass('no-video-available icon-video-off')
-				.attr('data-original-title', t('spreed', 'No Camera'));
-
-			this.videoDisabled = true;
-			this.videoNotFound = true;
+			this._videoAvailable = videoAvailable;
 		},
 
 		toggleScreensharingMenu: function() {
@@ -236,8 +223,11 @@
 				return;
 			}
 
+			// The standard "getDisplayMedia" does not support pre-filtering the
+			// type of display sources, so the unified menu is used in that case
+			// too.
 			var splitShare = false;
-			if (window.navigator.userAgent.match('Firefox')) {
+			if (window.navigator.userAgent.match('Firefox') && !window.navigator.mediaDevices.getDisplayMedia) {
 				var ffver = parseInt(window.navigator.userAgent.match(/Firefox\/(.*)/)[1], 10);
 				splitShare = (ffver >= 52);
 			}
@@ -304,17 +294,17 @@
 				}
 
 				switch (err.name) {
-					case "HTTPS_REQUIRED":
+					case 'HTTPS_REQUIRED':
 						OC.Notification.showTemporary(t('spreed', 'Screensharing requires the page to be loaded through HTTPS.'));
 						break;
-					case "PERMISSION_DENIED":
-					case "NotAllowedError":
-					case "CEF_GETSCREENMEDIA_CANCELED":  // Experimental, may go away in the future.
+					case 'PERMISSION_DENIED':
+					case 'NotAllowedError':
+					case 'CEF_GETSCREENMEDIA_CANCELED':  // Experimental, may go away in the future.
 						break;
-					case "FF52_REQUIRED":
+					case 'FF52_REQUIRED':
 						OC.Notification.showTemporary(t('spreed', 'Sharing your screen only works with Firefox version 52 or newer.'));
 						break;
-					case "EXTENSION_UNAVAILABLE":
+					case 'EXTENSION_UNAVAILABLE':
 						var  extensionURL = null;
 						if (window.chrome) {// Chrome
 							extensionURL = 'https://chrome.google.com/webstore/detail/screensharing-for-nextclo/kepnpjhambipllfmgmbapncekcmabkol';
@@ -331,7 +321,7 @@
 						break;
 					default:
 						OC.Notification.showTemporary(t('spreed', 'An error occurred while starting screensharing.'));
-						console.log("Could not start screensharing", err);
+						console.log('Could not start screensharing', err);
 						break;
 				}
 			}.bind(this));

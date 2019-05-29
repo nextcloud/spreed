@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -21,91 +21,13 @@
  */
 
 
-(function(OC, OCA, Marionette, Handlebars, _, $) {
+(function(OC, OCA, Marionette, _, $) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 
 	var uiChannel = Backbone.Radio.channel('ui');
-
-	var ITEM_TEMPLATE = '<div class="room-status-indicator"></div><a class="app-navigation-entry-link" href="#{{id}}" data-token="{{token}}">' +
-							'<div class="avatar {{icon}}" data-user="{{name}}" data-user-display-name="{{displayName}}"></div>' +
-							'{{#if isFavorite}}'+
-							// The favorite mark can not be a child of the
-							// avatar, as it would be removed when the avatar is
-							// loaded.
-							'<div class="favorite-mark">' +
-								'<span class="icon icon-favorite" />' +
-								'<span class="hidden-visually">' + t('spreed', 'Favorited') + '</span>' +
-							'</div>' +
-							'{{/if}}' +
-							' {{displayName}}' +
-						'</a>'+
-						'<div class="app-navigation-entry-utils">'+
-							'<ul>'+
-								'{{#if unreadMention}}<li class="app-navigation-entry-utils-counter highlighted"><span>@</span></li>{{/if}}'+
-								'{{#if unreadMessages}}<li class="app-navigation-entry-utils-counter"><span>{{numUnreadMessages}}</span></li>{{/if}}'+
-								'<li class="app-navigation-entry-utils-menu-button"><button></button></li>'+
-							'</ul>'+
-						'</div>'+
-						'<div class="app-navigation-entry-menu">'+
-							'<ul class="app-navigation-entry-menu-list">'+
-								'{{#if canFavorite}}'+
-								'{{#if isFavorite}}'+
-								'<li>'+
-									'<button class="unfavorite-room-button">'+
-										'<span class="icon-star-dark"></span>'+
-										'<span>'+t('spreed', 'Remove from favorites')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{else}}'+
-								'<li>'+
-									'<button class="favorite-room-button">'+
-										'<span class="icon-starred"></span>'+
-										'<span>'+t('spreed', 'Add to favorites')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
-								'{{/if}}'+
-								'<li><div class="separator"></div></li>'+
-								'<li{{#if notifyAlways}} class="active"{{/if}}>'+
-									'<button class="notify-always-button">'+
-										'<span class="icon-sound"></span>'+
-										'<span>'+t('spreed', 'Always notify')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li{{#if notifyMention}} class="active"{{/if}}>'+
-									'<button class="notify-mention-button">'+
-										'<span class="icon-user"></span>'+
-										'<span>'+t('spreed', 'Notify on @-mention')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li{{#if notifyNever}} class="active"{{/if}}>'+
-									'<button class="notify-never-button">'+
-										'<span class="icon-sound-off"></span>'+
-										'<span>'+t('spreed', 'Never notify')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'<li><div class="separator"></div></li>'+
-								'{{#if isRemovable}}'+
-								'<li>'+
-									'<button class="remove-room-button">'+
-										'<span class="{{#if isDeletable}}icon-close{{else}}icon-delete{{/if}}"></span>'+
-										'<span>'+t('spreed', 'Leave conversation')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
-								'{{#if isDeletable}}'+
-								'<li>'+
-									'<button class="delete-room-button">'+
-										'<span class="icon-delete"></span>'+
-										'<span>'+t('spreed', 'Delete conversation')+'</span>'+
-									'</button>'+
-								'</li>'+
-								'{{/if}}'+
-							'</ul>'+
-						'</div>';
 
 	var RoomItemView = Marionette.View.extend({
 		tagName: 'li',
@@ -153,30 +75,47 @@
 				}
 			});
 		},
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['roomlistview'](context);
+		},
 		templateContext: function() {
 			var icon = '';
 			if (this.model.get('objectType') === 'file') {
 				icon = 'icon icon-file';
 			} else if (this.model.get('objectType') === 'share:password') {
 				icon = 'icon icon-password';
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_CHANGELOG) {
+				icon = 'icon icon-changelog';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
 				icon = 'icon icon-contacts';
 			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
 				icon = 'icon icon-public';
 			}
 
-			// If a room is a one2one room it can not be removed from the list, only be deleted for both participants.
-			var isRemovable = this.model.get('type') !== 1;
+			var isDeletable = this.model.get('type') !== 1 && (this.model.get('participantType') === 1 || this.model.get('participantType') === 2);
+			var isLeavable = !isDeletable || (this.model.get('type') !== 1 && Object.keys(this.model.get('participants')).length > 1);
+
 			return {
 				icon: icon,
 				canFavorite: this.model.get('participantType') !== 5,
 				notifyAlways: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_ALWAYS,
 				notifyMention: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_MENTION,
 				notifyNever: this.model.get('notificationLevel') === OCA.SpreedMe.app.NOTIFY_NEVER,
-				isRemovable: isRemovable,
-				isDeletable: !isRemovable || ((this.model.get('participantType') === 1 || this.model.get('participantType') === 2) &&
-					(Object.keys(this.model.get('participants')).length > 1 || this.model.get('numGuests') > 0)),
-				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages')
+				isLeavable: isLeavable,
+				isDeletable: isDeletable,
+				numUnreadMessages: this.model.get('unreadMessages') > 99 ? '99+' : this.model.get('unreadMessages'),
+				favoriteMarkText: t('spreed', 'Favorited'),
+				unfavoriteRoomText: t('spreed', 'Remove from favorites'),
+				favoriteRoomText: t('spreed', 'Add to favorites'),
+				copyLinkText: t('spreed', 'Copy link'),
+				notifyAlwaysText: t('spreed', 'Always notify'),
+				notifyMentionText: t('spreed', 'Notify on @-mention'),
+				notifyNeverText: t('spreed', 'Never notify'),
+				leaveConversationText: t('spreed', 'Leave conversation'),
+				deleteConversationText: t('spreed', 'Delete conversation'),
 			};
 		},
 		onRender: function() {
@@ -194,6 +133,11 @@
 			}
 
 			this.toggleMenuClass();
+
+			var completeURL = window.location.protocol + '//' + window.location.host + roomURL;
+			this.ui.clipboardButton.attr('value', completeURL);
+			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
+			this.initClipboard();
 		},
 		events: {
 			'click .app-navigation-entry-utils-menu-button button': 'toggleMenu',
@@ -209,9 +153,9 @@
 		ui: {
 			'room': '.app-navigation-entry-link',
 			'menu': '.app-navigation-entry-menu',
+			'clipboardButton': '.clipboard-button',
 			'menuList': '.app-navigation-entry-menu-list'
 		},
-		template: Handlebars.compile(ITEM_TEMPLATE),
 		menuShown: false,
 		toggleMenu: function(e) {
 			e.preventDefault();
@@ -237,7 +181,20 @@
 		removeRoom: function() {
 			this.$el.slideUp();
 
-			this.model.removeSelf();
+			this.model.removeSelf({
+				error: function(model, response) {
+					if (response.status === 400) {
+						OC.Notification.showTemporary(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'));
+
+						// Close the menu, as nothing changed and thus the item
+						// will not be rendered again.
+						this.menuShown = false;
+						this.toggleMenuClass();
+
+						this.$el.slideDown();
+					}
+				}.bind(this)
+			});
 		},
 		deleteRoom: function() {
 			if (this.model.get('participantType') !== 1 &&
@@ -308,6 +265,48 @@
 
 			this.model.join();
 		},
+
+		/**
+		 * Clipboard
+		 */
+		initClipboard: function() {
+			var clipboard = new Clipboard('.clipboard-button');
+			clipboard.on('success', function(e) {
+				var $input = $(e.trigger);
+				$input.tooltip('hide')
+					.attr('data-original-title', t('core', 'Link copied!'))
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function() {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('core', 'Copy link'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+			clipboard.on('error', function (e) {
+				var $input = $(e.trigger);
+				var actionMsg = '';
+				if (/iPhone|iPad/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Not supported!');
+				} else if (/Mac/i.test(navigator.userAgent)) {
+					actionMsg = t('core', 'Press ⌘-C to copy.');
+				} else {
+					actionMsg = t('core', 'Press Ctrl-C to copy.');
+				}
+
+				$input.tooltip('hide')
+					.attr('data-original-title', actionMsg)
+					.tooltip('fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+				_.delay(function () {
+					$input.tooltip('hide')
+						.attr('data-original-title', t('spreed', 'Copy link'))
+						.tooltip('fixTitle');
+				}, 3000);
+			});
+		}
 	});
 
 	var RoomListView = Marionette.CollectionView.extend({
@@ -317,4 +316,4 @@
 
 	OCA.SpreedMe.Views.RoomListView = RoomListView;
 
-})(OC, OCA, Marionette, Handlebars, _, $);
+})(OC, OCA, Marionette, _, $);

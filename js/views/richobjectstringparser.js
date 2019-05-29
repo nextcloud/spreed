@@ -59,6 +59,13 @@
 					}
 					return this.userLocalTemplate(parameter);
 
+				case 'call':
+					if (!this.callTemplate) {
+						this.callTemplate = OCA.Talk.Views.Templates['richobjectstringparser_call'];
+					}
+
+					return this.callTemplate(parameter);
+
 				case 'file':
 					if (!this.filePreviewTemplate) {
 						this.filePreviewTemplate = OCA.Talk.Views.Templates['richobjectstringparser_filepreview'];

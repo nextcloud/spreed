@@ -1,4 +1,4 @@
-/* global Marionette, Handlebars */
+/* global Marionette */
 
 /**
  *
@@ -21,63 +21,25 @@
  *
  */
 
-(function(OC, OCA, Marionette, Handlebars, $, _) {
+(function(OC, OCA, Marionette, $, _) {
 
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
+	OCA.Talk = OCA.Talk || {};
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
-
-	var TEMPLATE =
-		'<div class="room-name-container">' +
-		'	<div class="room-name"></div>' +
-		'	{{#if isRoomForFile}}' +
-		'	<a class="file-link" href="{{fileLink}}" target="_blank" rel="noopener noreferrer" data-original-title="{{fileLinkTitle}}">' +
-		'		<span class="icon icon-file"></span>' +
-		'	</a>' +
-		'	{{/if}}' +
-		'</div>' +
-		'<div class="call-controls-container">' +
-		'	<div class="call-button"></div>' +
-		'{{#if canModerate}}' +
-		'	<div class="share-link-options">' +
-		'		{{#if canFullModerate}}' +
-		'		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">' +
-		'		<label for="link-checkbox" class="link-checkbox-label">' + t('spreed', 'Share link') + '</label>' +
-		'		{{/if}}' +
-		'		{{#if isPublic}}' +
-		'			<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
-		'			<div class="password-button">' +
-		'				<span class="button {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}}"></span>' +
-		'				<div class="popovermenu password-menu menu-right">' +
-		'					<ul>' +
-		'						<li>' +
-		'							<span class="menuitem {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}} password-option">' +
-		'								<form class="password-form">' +
-		'									<input class="password-input" required maxlength="200" type="password"' +
-		'				  						placeholder="{{#if hasPassword}}' + t('spreed', 'Change password') + '{{else}}' + t('spreed', 'Set password') + '{{/if}}">'+
-		'									<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm"></input>'+
-		'								</form>' +
-		'							</span>' +
-		'						</li>' +
-		'					</ul>' +
-		'				</div>' +
-		'			</div>' +
-		'		{{/if}}' +
-		'	</div>' +
-		'{{/if}}' +
-		'{{#if showShareLink}}' +
-		'	<div class="share-link-options">' +
-		'		<div class="clipboard-button"><span class="button icon-clippy"></span></div>' +
-		'	</div>' +
-		'{{/if}}' +
-		'</div>';
+	OCA.Talk.Views = OCA.Talk.Views || {};
 
 	var CallInfoView  = Marionette.View.extend({
 
 		tagName: 'div',
 
-		template: Handlebars.compile(TEMPLATE),
+		template: function(context) {
+			// OCA.Talk.Views.Templates may not have been initialized when this
+			// view is initialized, so the template can not be directly
+			// assigned.
+			return OCA.Talk.Views.Templates['callinfoview'](context);
+		},
 
 		renderTimeout: undefined,
 
@@ -89,7 +51,9 @@
 				fileLinkTitle: t('spreed', 'Go to file'),
 				canModerate: canModerate,
 				canFullModerate: this._canFullModerate(),
+				linkCheckboxLabel: t('spreed', 'Share link'),
 				isPublic: this.model.get('type') === 3,
+				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
 				showShareLink: !canModerate && this.model.get('type') === 3,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			});
@@ -148,7 +112,8 @@
 
 		initialize: function() {
 			var nameAttribute = 'name';
-			if (this.model.get('objectType') === 'share:password') {
+			if (this.model.get('objectType') === 'share:password' ||
+				this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_CHANGELOG) {
 				nameAttribute = 'displayName';
 			}
 
@@ -245,7 +210,7 @@
 		},
 
 		_canModerate: function() {
-			return this._canFullModerate() || this.model.get('participantType') === 6;
+			return this.model.get('type') !== 1 && (this._canFullModerate() || this.model.get('participantType') === 6);
 		},
 
 		_canFullModerate: function() {
@@ -271,9 +236,12 @@
 			// This has to be added below the "enable/disableEdition" calls as
 			// those calls render the view if needed, while the setters expect
 			// the view to be already rendered.
-			if (this.model.get('type') === 1) {
+			if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_ONE_TO_ONE) {
 				this._nameEditableTextLabel.setModelAttribute(undefined);
 				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation with {name}', {name: this.model.get('displayName')}));
+			} else if (this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_CHANGELOG) {
+				this._nameEditableTextLabel.setModelAttribute(undefined);
+				this._nameEditableTextLabel.setLabelPlaceholder(this.model.get('displayName'));
 			} else {
 				this._nameEditableTextLabel.setModelAttribute('name');
 				this._nameEditableTextLabel.setLabelPlaceholder(t('spreed', 'Conversation name'));
@@ -371,4 +339,4 @@
 
 	OCA.SpreedMe.Views.CallInfoView = CallInfoView;
 
-})(OC, OCA, Marionette, Handlebars, $, _);
+})(OC, OCA, Marionette, $, _);

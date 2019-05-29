@@ -44,7 +44,7 @@
 		 */
 		setRoom: function(room) {
 			this.stopListening(this.room, 'change:participants');
-			this.stopListening(this.room, 'change:guestList');
+			this.stopListening(this.room, 'change:numGuests');
 
 			this.room = room;
 			this.url = OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.room.get('token') + '/participants';
@@ -54,7 +54,7 @@
 			this.listenTo(this.room, 'change:participants', function() {
 				this.fetch();
 			});
-			this.listenTo(this.room, 'change:guestList', function() {
+			this.listenTo(this.room, 'change:numGuests', function() {
 				this.fetch();
 			});
 		},

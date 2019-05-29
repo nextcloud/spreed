@@ -36,7 +36,7 @@ class Invitation extends Base {
 	 * @since 11.0.0
 	 */
 	public function parse($language, IEvent $event, IEvent $previousEvent = null): IEvent {
-		$event = parent::preParse($event);
+		$event = $this->preParse($event);
 
 		if ($event->getSubject() === 'invitation') {
 			$l = $this->languageFactory->get('spreed', $language);
@@ -45,7 +45,7 @@ class Invitation extends Base {
 			$roomParameter = $this->getFormerRoom($l, (int) $parameters['room']);
 			try {
 				$room = $this->manager->getRoomById((int) $parameters['room']);
-				$roomParameter = $this->getRoom($l, $room);
+				$roomParameter = $this->getRoom($room, $event->getAffectedUser());
 			} catch (RoomNotFoundException $e) {
 			}
 

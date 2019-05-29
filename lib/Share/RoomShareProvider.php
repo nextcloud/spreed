@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -32,18 +31,18 @@ use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Folder;
-use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\IDBConnection;
 use OCP\IL10N;
-use OCP\IUserManager;
 use OCP\Security\ISecureRandom;
 use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
+use OCP\Share\IShareHelper;
 use OCP\Share\IShareProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -61,62 +60,73 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class RoomShareProvider implements IShareProvider {
 
 	// Special share type for user modified room shares
-	const SHARE_TYPE_USERROOM = 11;
+	public const SHARE_TYPE_USERROOM = 11;
 
 	/** @var IDBConnection */
 	private $dbConnection;
-
 	/** @var ISecureRandom */
 	private $secureRandom;
-
-	/** @var IUserManager */
-	private $userManager;
-
 	/** @var IShareManager */
 	private $shareManager;
-
-	/** @var IRootFolder */
-	private $rootFolder;
-
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
-
+	/** @var Manager */
+	private $manager;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 	/** @var IL10N */
 	private $l;
 
-	/** @var Manager */
-	private $manager;
-
-	/**
-	 * RoomShareProvider constructor.
-	 *
-	 * @param IDBConnection $connection
-	 * @param ISecureRandom $secureRandom
-	 * @param IUserManager $userManager
-	 * @param IShareManager $shareManager
-	 * @param IRootFolder $rootFolder
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param IL10N $l10n
-	 * @param Manager $manager
-	 */
 	public function __construct(
 			IDBConnection $connection,
 			ISecureRandom $secureRandom,
-			IUserManager $userManager,
 			IShareManager $shareManager,
-			IRootFolder $rootFolder,
 			EventDispatcherInterface $dispatcher,
-			IL10N $l,
-			Manager $manager
+			Manager $manager,
+			ITimeFactory $timeFactory,
+			IL10N $l
 	) {
 		$this->dbConnection = $connection;
 		$this->secureRandom = $secureRandom;
-		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
-		$this->rootFolder = $rootFolder;
 		$this->dispatcher = $dispatcher;
-		$this->l = $l;
 		$this->manager = $manager;
+		$this->timeFactory = $timeFactory;
+		$this->l = $l;
+	}
+
+	public static function register(EventDispatcherInterface $dispatcher): void {
+		$listener = function(GenericEvent $event)  {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			if ($event->getArgument('selfJoin')) {
+				/** @var self $roomShareProvider */
+				$roomShareProvider = \OC::$server->query(self::class);
+				$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('userId'));
+			}
+		};
+		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $roomShareProvider */
+			$roomShareProvider = \OC::$server->query(self::class);
+			$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('user')->getUID());
+		};
+		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+
+		$listener = function(GenericEvent $event) {
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $roomShareProvider */
+			$roomShareProvider = \OC::$server->query(self::class);
+			$roomShareProvider->deleteInRoom($room->getToken());
+		};
+		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}
 
 	/**
@@ -124,7 +134,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @return string Containing only [a-zA-Z0-9]
 	 */
-	public function identifier() {
+	public function identifier(): string {
 		return 'ocRoomShare';
 	}
 
@@ -135,11 +145,15 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare The share object
 	 * @throws GenericShareException
 	 */
-	public function create(IShare $share) {
+	public function create(IShare $share): IShare {
 		try {
 			$room = $this->manager->getRoomByToken($share->getSharedWith());
 		} catch (RoomNotFoundException $e) {
-			throw new GenericShareException("Room not found", $this->l->t('Conversation not found'), 404);
+			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
+		}
+
+		if ($room->getReadOnly() === Room::READ_ONLY) {
+			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}
 
 		try {
@@ -147,14 +161,14 @@ class RoomShareProvider implements IShareProvider {
 		} catch (ParticipantNotFoundException $e) {
 			// If the sharer is not a participant of the room even if the room
 			// exists the error is still "Room not found".
-			throw new GenericShareException("Room not found", $this->l->t('Conversation not found'), 404);
+			throw new GenericShareException('Room not found', $this->l->t('Conversation not found'), 404);
 		}
 
 		$existingShares = $this->getSharesByPath($share->getNode());
 		foreach ($existingShares as $existingShare) {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
 				$this->dispatcher->dispatch(self::class . '::' . 'share_file_again', new GenericEvent($existingShare));
-				throw new GenericShareException("Already shared", $this->l->t('Path is already shared with this room'), 403);
+				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this room'), 403);
 			}
 		}
 
@@ -205,7 +219,7 @@ class RoomShareProvider implements IShareProvider {
 			string $target,
 			int $permissions,
 			string $token,
-			\DateTime $expirationDate = null
+			?\DateTime $expirationDate
 	): int {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->insert('share')
@@ -219,7 +233,7 @@ class RoomShareProvider implements IShareProvider {
 			->setValue('file_target', $qb->createNamedParameter($target))
 			->setValue('permissions', $qb->createNamedParameter($permissions))
 			->setValue('token', $qb->createNamedParameter($token))
-			->setValue('stime', $qb->createNamedParameter(time()));
+			->setValue('stime', $qb->createNamedParameter($this->timeFactory->getTime()));
 
 		if ($expirationDate !== null) {
 			$qb->setValue('expiration', $qb->createNamedParameter($expirationDate, 'datetime'));
@@ -228,7 +242,7 @@ class RoomShareProvider implements IShareProvider {
 		$qb->execute();
 		$id = $qb->getLastInsertId();
 
-		return (int)$id;
+		return $id;
 	}
 
 	/**
@@ -238,7 +252,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return array
 	 * @throws ShareNotFound
 	 */
-	private function getRawShare(int $id) {
+	private function getRawShare(int $id): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('*')
 			->from('share')
@@ -261,7 +275,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param array $data
 	 * @return IShare
 	 */
-	private function createShareObject($data) {
+	private function createShareObject(array $data): IShare {
 		$share = $this->shareManager->newShare();
 		$share->setId((int)$data['id'])
 			->setShareType((int)$data['share_type'])
@@ -269,7 +283,7 @@ class RoomShareProvider implements IShareProvider {
 			->setTarget($data['file_target'])
 			->setToken($data['token']);
 
-		$shareTime = new \DateTime();
+		$shareTime = $this->timeFactory->getDateTime();
 		$shareTime->setTimestamp((int)$data['stime']);
 		$share->setShareTime($shareTime);
 		$share->setSharedWith($data['share_with']);
@@ -298,7 +312,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 * @return IShare The share object
 	 */
-	public function update(IShare $share) {
+	public function update(IShare $share): IShare {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->update('share')
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())))
@@ -341,7 +355,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @param IShare $share
 	 */
-	public function delete(IShare $share) {
+	public function delete(IShare $share): void {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->delete('share')
 			->where($qb->expr()->eq('id', $qb->createNamedParameter($share->getId())));
@@ -360,7 +374,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $share
 	 * @param string $recipient UserId of the recipient
 	 */
-	public function deleteFromSelf(IShare $share, $recipient) {
+	public function deleteFromSelf(IShare $share, $recipient): void {
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select(['id', 'permissions'])
@@ -452,7 +466,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $recipient userId of recipient
 	 * @return IShare
 	 */
-	public function move(IShare $share, $recipient) {
+	public function move(IShare $share, $recipient): IShare {
 		// Check if there is a userroom share
 		$qb = $this->dbConnection->getQueryBuilder();
 		$stmt = $qb->select('id')
@@ -507,7 +521,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param bool $reshares Also get the shares where $user is the owner instead of just the shares where $user is the initiator
 	 * @return IShare[]
 	 */
-	public function getSharesInFolder($userId, Folder $node, $reshares) {
+	public function getSharesInFolder($userId, Folder $node, $reshares): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('*')
 			->from('share', 's')
@@ -559,7 +573,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int $offset
 	 * @return IShare[]
 	 */
-	public function getSharesBy($userId, $shareType, $node, $reshares, $limit, $offset) {
+	public function getSharesBy($userId, $shareType, $node, $reshares, $limit, $offset): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('*')
 			->from('share');
@@ -609,7 +623,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare
 	 * @throws ShareNotFound
 	 */
-	public function getShareById($id, $recipientId = null) {
+	public function getShareById($id, $recipientId = null): IShare {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('s.*',
 			'f.fileid', 'f.path', 'f.permissions AS f_permissions', 'f.storage', 'f.path_hash',
@@ -711,7 +725,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param Node $path
 	 * @return IShare[]
 	 */
-	public function getSharesByPath(Node $path) {
+	public function getSharesByPath(Node $path): array {
 		$qb = $this->dbConnection->getQueryBuilder();
 
 		$cursor = $qb->select('*')
@@ -739,7 +753,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param int $offset
 	 * @return IShare[]
 	 */
-	public function getSharedWith($userId, $shareType, $node, $limit, $offset) {
+	public function getSharedWith($userId, $shareType, $node, $limit, $offset): array {
 		$allRooms = $this->manager->getRoomsForParticipant($userId);
 
 		/** @var IShare[] $shares */
@@ -808,7 +822,7 @@ class RoomShareProvider implements IShareProvider {
 		return $shares;
 	}
 
-	private function isAccessibleResult($data) {
+	private function isAccessibleResult(array $data): bool {
 		// exclude shares leading to deleted file entries
 		if ($data['fileid'] === null) {
 			return false;
@@ -833,7 +847,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @return IShare
 	 * @throws ShareNotFound
 	 */
-	public function getShareByToken($token) {
+	public function getShareByToken($token): IShare {
 		$qb = $this->dbConnection->getQueryBuilder();
 
 		$cursor = $qb->select('*')
@@ -869,7 +883,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $uid
 	 * @param int $shareType
 	 */
-	public function userDeleted($uid, $shareType) {
+	public function userDeleted($uid, $shareType): void {
 		// A deleted user is handled automatically by the room hooks due to the
 		// user being removed from the room.
 	}
@@ -881,7 +895,7 @@ class RoomShareProvider implements IShareProvider {
 	 *
 	 * @param string $gid
 	 */
-	public function groupDeleted($gid) {
+	public function groupDeleted($gid): void {
 	}
 
 	/**
@@ -892,7 +906,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $uid
 	 * @param string $gid
 	 */
-	public function userDeletedFromGroup($uid, $gid) {
+	public function userDeletedFromGroup($uid, $gid): void {
 	}
 
 	/**
@@ -966,7 +980,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param array $shares
 	 * @return array
 	 */
-	protected function filterSharesOfUser(array $shares) {
+	protected function filterSharesOfUser(array $shares): array {
 		// Room shares when the user has a share exception
 		foreach ($shares as $id => $share) {
 			$type = (int) $share['share_type'];
@@ -1005,7 +1019,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param IShare $parent
 	 * @return IShare[]
 	 */
-	public function getChildren(IShare $parent) {
+	public function getChildren(IShare $parent): array {
 		$children = [];
 
 		$qb = $this->dbConnection->getQueryBuilder();
@@ -1036,7 +1050,7 @@ class RoomShareProvider implements IShareProvider {
 	 * @param string $roomToken
 	 * @param string|null $user
 	 */
-	public function deleteInRoom(string $roomToken, string $user = null) {
+	public function deleteInRoom(string $roomToken, string $user = null): void {
 		//First delete all custom room shares for the original shares to be removed
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('id')

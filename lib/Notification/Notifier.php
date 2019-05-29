@@ -24,8 +24,11 @@ namespace OCA\Spreed\Notification;
 
 
 use OCA\Spreed\Chat\MessageParser;
+use OCA\Spreed\Config;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
@@ -34,6 +37,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
@@ -45,41 +49,42 @@ class Notifier implements INotifier {
 
 	/** @var IFactory */
 	protected $lFactory;
-
 	/** @var IURLGenerator */
 	protected $url;
-
+	/** @var Config */
+	protected $config;
 	/** @var IUserManager */
 	protected $userManager;
-
 	/** @var IShareManager */
 	private $shareManager;
-
 	/** @var Manager */
 	protected $manager;
-
+	/** @var INotificationManager */
+	protected $notificationManager;
 	/** @var ICommentsManager */
 	protected $commentManager;
-
 	/** @var MessageParser */
 	protected $messageParser;
-
 	/** @var Definitions */
 	protected $definitions;
 
 	public function __construct(IFactory $lFactory,
 								IURLGenerator $url,
+								Config $config,
 								IUserManager $userManager,
 								IShareManager $shareManager,
 								Manager $manager,
+								INotificationManager $notificationManager,
 								ICommentsManager $commentManager,
 								MessageParser $messageParser,
 								Definitions $definitions) {
 		$this->lFactory = $lFactory;
 		$this->url = $url;
+		$this->config = $config;
 		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
+		$this->notificationManager = $notificationManager;
 		$this->commentManager = $commentManager;
 		$this->messageParser = $messageParser;
 		$this->definitions = $definitions;
@@ -97,6 +102,13 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Incorrect app');
 		}
 
+		$userId = $notification->getUser();
+		$user = $this->userManager->get($userId);
+		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
+			$this->notificationManager->markProcessed($notification);
+			throw new \InvalidArgumentException('User can not use Talk');
+		}
+
 		$l = $this->lFactory->get('spreed', $languageCode);
 
 		try {
@@ -107,8 +119,17 @@ class Notifier implements INotifier {
 				$room = $this->manager->getRoomById((int) $notification->getObjectId());
 			} catch (RoomNotFoundException $e) {
 				// Room does not exist
+				$this->notificationManager->markProcessed($notification);
 				throw new \InvalidArgumentException('Invalid room');
 			}
+		}
+
+		try {
+			$participant = $room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			// Room does not exist
+			$this->notificationManager->markProcessed($notification);
+			throw new \InvalidArgumentException('User is not part of the room anymore');
 		}
 
 		$notification
@@ -126,20 +147,22 @@ class Notifier implements INotifier {
 			return $this->parseCall($notification, $room, $l);
 		}
 		if ($subject === 'mention' ||  $subject === 'chat') {
-			return $this->parseChatMessage($notification, $room, $l);
+			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
+		$this->notificationManager->markProcessed($notification);
 		throw new \InvalidArgumentException('Unknown subject');
 	}
 
 	/**
 	 * @param INotification $notification
 	 * @param Room $room
+	 * @param Participant $participant
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws \InvalidArgumentException
 	 */
-	protected function parseChatMessage(INotification $notification, Room $room, IL10N $l): INotification {
+	protected function parseChatMessage(INotification $notification, Room $room, Participant $participant, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'chat') {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
@@ -166,7 +189,7 @@ class Notifier implements INotifier {
 		$richSubjectCall = [
 			'type' => 'call',
 			'id' => $room->getId(),
-			'name' => $room->getName() !== '' ? $room->getName() : $l->t('a conversation'),
+			'name' => $room->getDisplayName($notification->getUser()),
 			'call-type' => $this->getRoomType($room),
 		];
 
@@ -181,11 +204,15 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown comment');
 		}
 
-		$recipient = $this->userManager->get($notification->getUser());
-		list($richMessage, $richMessageParameters) = $this->messageParser->parseMessage($room, $comment, $l, $recipient);
+		$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
+		$this->messageParser->parseMessage($message);
+
+		if (!$message->getVisibility()) {
+			throw new \InvalidArgumentException('Invisible comment');
+		}
 
 		$placeholders = $replacements = [];
-		foreach ($richMessageParameters as $placeholder => $parameter) {
+		foreach ($message->getMessageParameters() as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
 			if ($parameter['type'] === 'user') {
 				$replacements[] = '@' . $parameter['name'];
@@ -194,8 +221,8 @@ class Notifier implements INotifier {
 			}
 		}
 
-		$notification->setParsedMessage(str_replace($placeholders, $replacements, $richMessage));
-		$notification->setRichMessage($richMessage, $richMessageParameters);
+		$notification->setParsedMessage(str_replace($placeholders, $replacements, $message->getMessage()));
+		$notification->setRichMessage($message->getMessage(), $message->getMessageParameters());
 
 		$richSubjectParameters = [
 			'user' => $richSubjectUser,
@@ -207,42 +234,22 @@ class Notifier implements INotifier {
 				$subject = $l->t('{user} sent you a private message');
 			} else {
 				if ($richSubjectUser) {
-					if ($room->getName() !== '') {
-						$subject = $l->t('{user} sent a message in conversation {call}');
-					} else {
-						$subject = $l->t('{user} sent a message in a conversation');
-					}
+					$subject = $l->t('{user} sent a message in conversation {call}');
 				} else if (!$isGuest) {
-					if ($room->getName() !== '') {
-						$subject = $l->t('A deleted user sent a message in conversation {call}');
-					} else {
-						$subject = $l->t('A deleted user sent a message in a conversation');
-					}
-				} else if ($room->getName() !== '') {
-					$subject = $l->t('A guest sent a message in conversation {call}');
+					$subject = $l->t('A deleted user sent a message in conversation {call}');
 				} else {
-					$subject = $l->t('A guest sent a message in a conversation');
+					$subject = $l->t('A guest sent a message in conversation {call}');
 				}
 			}
 		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
 		} else {
 			if ($richSubjectUser) {
-				if ($room->getName() !== '') {
-					$subject = $l->t('{user} mentioned you in conversation {call}');
-				} else {
-					$subject = $l->t('{user} mentioned you in a conversation');
-				}
+				$subject = $l->t('{user} mentioned you in conversation {call}');
 			} else if (!$isGuest) {
-				if ($room->getName() !== '') {
-					$subject = $l->t('A deleted user mentioned you in conversation {call}');
-				} else {
-					$subject = $l->t('A deleted user mentioned you in a conversation');
-				}
-			} else if ($room->getName() !== '') {
-				$subject = $l->t('A guest mentioned you in conversation {call}');
+				$subject = $l->t('A deleted user mentioned you in conversation {call}');
 			} else {
-				$subject = $l->t('A guest mentioned you in a conversation');
+				$subject = $l->t('A guest mentioned you in conversation {call}');
 			}
 		}
 
@@ -267,7 +274,7 @@ class Notifier implements INotifier {
 	 * @return string
 	 * @throws \InvalidArgumentException
 	 */
-	protected function getRoomType(Room $room) {
+	protected function getRoomType(Room $room): string {
 		switch ($room->getType()) {
 			case Room::ONE_TO_ONE_CALL:
 				return 'one2one';
@@ -300,6 +307,7 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Calling user does not exist anymore');
 		}
 
+		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$notification
 				->setParsedSubject(
@@ -315,54 +323,32 @@ class Notifier implements INotifier {
 						'call' => [
 							'type' => 'call',
 							'id' => $room->getId(),
-							'name' => $l->t('a conversation'),
+							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 						],
 					]
 				);
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $room->getName()])
-					)
-					->setRichSubject(
-						$l->t('{user} invited you to a group conversation: {call}'), [
-							'user' => [
-								'type' => 'user',
-								'id' => $uid,
-								'name' => $user->getDisplayName(),
-							],
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $room->getName(),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			} else {
-				$notification
-					->setParsedSubject(
-						$l->t('%s invited you to a group conversation', [$user->getDisplayName()])
-					)
-					->setRichSubject(
-						$l->t('{user} invited you to a group conversation'), [
-							'user' => [
-								'type' => 'user',
-								'id' => $uid,
-								'name' => $user->getDisplayName(),
-							],
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $l->t('a conversation'),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			}
+			$notification
+				->setParsedSubject(
+					$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $roomName])
+				)
+				->setRichSubject(
+					$l->t('{user} invited you to a group conversation: {call}'), [
+						'user' => [
+							'type' => 'user',
+							'id' => $uid,
+							'name' => $user->getDisplayName(),
+						],
+						'call' => [
+							'type' => 'call',
+							'id' => $room->getId(),
+							'name' => $roomName,
+							'call-type' => $this->getRoomType($room),
+						],
+					]
+				);
 		} else {
 			throw new \InvalidArgumentException('Unknown room type');
 		}
@@ -382,6 +368,7 @@ class Notifier implements INotifier {
 			throw new \InvalidArgumentException('Unknown object type');
 		}
 
+		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$parameters = $notification->getSubjectParameters();
 			$calleeId = $parameters['callee'];
@@ -401,7 +388,7 @@ class Notifier implements INotifier {
 							'call' => [
 								'type' => 'call',
 								'id' => $room->getId(),
-								'name' => $l->t('a conversation'),
+								'name' => $roomName,
 								'call-type' => $this->getRoomType($room),
 							],
 						]
@@ -411,33 +398,20 @@ class Notifier implements INotifier {
 			}
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($room->getName() !== '') {
-				$notification
-					->setParsedSubject(
-						str_replace('{call}', $room->getName(), $l->t('A group call has started in {call}'))
-					)
-					->setRichSubject(
-						$l->t('A group call has started in {call}'), [
-							'call' => [
-								'type' => 'call',
-								'id' => $room->getId(),
-								'name' => $room->getName(),
-								'call-type' => $this->getRoomType($room),
-							],
-						]
-					);
-			} else {
-				$notification
-					->setParsedSubject($l->t('A group call has started'))
-					->setRichSubject($l->t('A group call has started'), [
+			$notification
+				->setParsedSubject(
+					str_replace('{call}', $roomName, $l->t('A group call has started in {call}'))
+				)
+				->setRichSubject(
+					$l->t('A group call has started in {call}'), [
 						'call' => [
 							'type' => 'call',
 							'id' => $room->getId(),
-							'name' => $l->t('a conversation'),
+							'name' => $roomName,
 							'call-type' => $this->getRoomType($room),
 						],
-					]);
-			}
+					]
+				);
 
 		} else {
 			throw new \InvalidArgumentException('Unknown room type');

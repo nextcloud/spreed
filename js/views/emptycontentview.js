@@ -92,10 +92,17 @@
 
 			this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
 
-			// The 'leaveCurrentRoom' is triggered before the 'destroy' event,
-			// so when the room is destroyed the initial message overwrites the
-			// conversation ended message.
-			this.listenTo(this._activeRoom, 'destroy', this.setInitialEmptyContentMessage);
+			this.listenTo(this._activeRoom, 'destroy', function() {
+				this.stopListening(this._activeRoom, 'destroy', this.setInitialEmptyContentMessage);
+				this._disableUpdatesOnActiveRoomChanges();
+
+				this._activeRoom = null;
+
+				// 'leaveCurrentRoom' is sometimes triggered before the
+				// 'destroy' event, so when the room is destroyed the initial
+				// message overwrites the conversation ended message.
+				this.setInitialEmptyContentMessage();
+			});
 			this._enableUpdatesOnActiveRoomChanges();
 		},
 
@@ -240,6 +247,13 @@
 		},
 
 		setEmptyContentMessageWhenConversationEnded: function() {
+			// 'leaveCurrentRoom' is sometimes triggered after the 'destroy'
+			// event, so do not overwrite the initial message with the
+			// conversation ended message.
+			if (!this._activeRoom) {
+				return;
+			}
+
 			this.setEmptyContentMessage(
 				'icon-video-off',
 				t('spreed', 'This conversation has ended')

@@ -36,14 +36,12 @@ class Add extends Base {
 	/** @var IConfig */
 	private $config;
 
-	/**
-	 */
 	public function __construct(IConfig $config) {
 		parent::__construct();
 		$this->config = $config;
 	}
 
-	protected function configure() {
+	protected function configure(): void {
 		$this
 			->setName('talk:turn:add')
 			->setDescription('Add a TURN server.')
@@ -68,7 +66,7 @@ class Add extends Base {
 			);
 	}
 
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): ?int {
 		$server = $input->getArgument('server');
 		$protocols = $input->getArgument('protocols');
 		$secret = $input->getOption('secret');
@@ -83,8 +81,8 @@ class Add extends Base {
 			$output->writeln('<error>Server cannot be empty.</error>');
 			return 1;
 		}
-		if ($generate === false && $secret === null ||
-			$generate && $secret !== null) {
+		if (($generate === false && $secret === null) ||
+			($generate && $secret !== null)) {
 			$output->writeln('<error>You must provide --secret or --generate-secret.</error>');
 			return 1;
 		}
@@ -117,9 +115,10 @@ class Add extends Base {
 
 		$this->config->setAppValue('spreed', 'turn_servers', json_encode($servers));
 		$output->writeln('<info>Added ' . $server . '.</info>');
+		return 0;
 	}
 
-	protected function getUniqueSecret() {
+	protected function getUniqueSecret(): string {
 		return sha1(uniqid('', true));
 	}
 }

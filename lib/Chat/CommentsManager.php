@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
  *
@@ -24,10 +25,27 @@ namespace OCA\Spreed\Chat;
 
 use OC\Comments\Comment;
 use OC\Comments\Manager;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IConfig;
+use OCP\IDBConnection;
+use OCP\ILogger;
 
 class CommentsManager extends Manager {
+
+	/** @var ITimeFactory */
+	protected $timeFactory;
+
+	public function __construct(
+		IDBConnection $db,
+		ILogger $logger,
+		IConfig $config,
+		ITimeFactory $timeFactory
+	) {
+		parent::__construct($db, $logger, $config);
+		$this->timeFactory = $timeFactory;
+	}
 
 	/**
 	 * @param array $data
@@ -46,12 +64,12 @@ class CommentsManager extends Manager {
 	 * @return array
 	 */
 	public function getLastCommentDateByActor(
-		$objectType,
-		$objectId,
-		$verb,
-		$actorType,
+		string $objectType,
+		string $objectId,
+		string $verb,
+		string $actorType,
 		array $actors
-	) {
+	): array {
 		$lastComments = [];
 
 		$query = $this->dbConn->getQueryBuilder();
@@ -67,7 +85,7 @@ class CommentsManager extends Manager {
 
 		$result = $query->execute();
 		while ($row = $result->fetch()) {
-			$lastComments[$row['actor_id']] = new \DateTime($row['last_comment']);
+			$lastComments[$row['actor_id']] = $this->timeFactory->getDateTime($row['last_comment']);
 		}
 		$result->closeCursor();
 

@@ -81,7 +81,7 @@ class GuestManager {
 	 * @param string $displayName
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
-	public function updateName(Room $room, string $sessionId, string $displayName) {
+	public function updateName(Room $room, string $sessionId, string $displayName): void {
 		$sessionHash = sha1($sessionId);
 		$dispatchEvent = true;
 
@@ -157,7 +157,7 @@ class GuestManager {
 		return $map;
 	}
 
-	public function inviteByEmail(Room $room, string $email) {
+	public function inviteByEmail(Room $room, string $email): void {
 		$this->dispatcher->dispatch(self::class . '::preInviteByEmail', new GenericEvent($room, [
 			'email' => $email,
 		]));
@@ -171,7 +171,7 @@ class GuestManager {
 
 		$template = $this->mailer->createEMailTemplate('Talk.InviteByEmail', [
 			'invitee' => $invitee,
-			'roomName' => $room->getName(),
+			'roomName' => $room->getDisplayName(''),
 			'roomLink' => $link,
 		]);
 
@@ -191,17 +191,10 @@ class GuestManager {
 			$subject
 		);
 
-		if ($room->getName()) {
-			$template->addBodyButton(
-				$this->l->t('Join »%s«', [$room->getName()]),
-				$link
-			);
-		} else {
-			$template->addBodyButton(
-				$this->l->t('Join now'),
-				$link
-			);
-		}
+		$template->addBodyButton(
+			$this->l->t('Join »%s«', [$room->getDisplayName('')]),
+			$link
+		);
 
 		$template->addFooter();
 

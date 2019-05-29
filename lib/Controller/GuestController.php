@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 /**
  *
  * @copyright Copyright (c) 2017, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -35,7 +35,7 @@ use OCP\IRequest;
 
 class GuestController extends OCSController {
 
-	/** @var string */
+	/** @var string|null */
 	private $userId;
 
 	/** @var TalkSession */
@@ -47,16 +47,8 @@ class GuestController extends OCSController {
 	/** @var GuestManager */
 	private $guestManager;
 
-	/**
-	 * @param string $appName
-	 * @param string $UserId
-	 * @param IRequest $request
-	 * @param TalkSession $session
-	 * @param Manager $roomManager
-	 * @param GuestManager $guestManager
-	 */
-	public function __construct($appName,
-								$UserId,
+	public function __construct(string $appName,
+								?string $UserId,
 								IRequest $request,
 								TalkSession $session,
 								Manager $roomManager,
@@ -77,7 +69,7 @@ class GuestController extends OCSController {
 	 * @param string $displayName
 	 * @return DataResponse
 	 */
-	public function setDisplayName($token, $displayName) {
+	public function setDisplayName(string $token, string $displayName): DataResponse {
 		if ($this->userId) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
 		}

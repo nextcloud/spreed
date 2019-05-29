@@ -23,7 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat;
 
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
@@ -49,18 +51,17 @@ class ChatManager {
 	private $dispatcher;
 	/** @var Notifier */
 	private $notifier;
+	/** @var ITimeFactory */
+	protected $timeFactory;
 
-	/**
-	 * @param CommentsManager $commentsManager
-	 * @param EventDispatcherInterface $dispatcher
-	 * @param Notifier $notifier
-	 */
 	public function __construct(CommentsManager $commentsManager,
 								EventDispatcherInterface $dispatcher,
-								Notifier $notifier) {
+								Notifier $notifier,
+								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
 		$this->dispatcher = $dispatcher;
 		$this->notifier = $notifier;
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -74,7 +75,7 @@ class ChatManager {
 	 * @param bool $sendNotifications
 	 * @return IComment
 	 */
-	public function addSystemMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
+	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
 		$comment->setCreationDateTime($creationDateTime);
@@ -102,19 +103,14 @@ class ChatManager {
 	 * Sends a new message to the given chat.
 	 *
 	 * @param Room $chat
-	 * @param string $actorType
-	 * @param string $actorId
 	 * @param string $message
-	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, $actorType, $actorId, $message, \DateTime $creationDateTime): IComment {
-		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
+	public function addChangelogMessage(Room $chat, string $message): IComment {
+		$comment = $this->commentsManager->create('guests', 'changelog', 'chat', (string) $chat->getId());
 		$comment->setMessage($message);
-		$comment->setCreationDateTime($creationDateTime);
-		// A verb ('comment', 'like'...) must be provided to be able to save a
-		// comment
-		$comment->setVerb('comment');
+		$comment->setCreationDateTime($this->timeFactory->getDateTime());
+		$comment->setVerb('comment'); // Has to be comment, so it counts as unread message
 
 		try {
 			$this->commentsManager->save($comment);
@@ -122,7 +118,47 @@ class ChatManager {
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-            $mentionedUsers = $this->notifier->virtuallyMentionEveryone($chat, $comment);
+			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
+				'comment' => $comment,
+			]));
+		} catch (NotFoundException $e) {
+		}
+
+		return $comment;
+	}
+
+	/**
+	 * Sends a new message to the given chat.
+	 *
+	 * @param Room $chat
+	 * @param Participant $participant
+	 * @param string $actorType
+	 * @param string $actorId
+	 * @param string $message
+	 * @param \DateTime $creationDateTime
+	 * @return IComment
+	 */
+	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
+		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
+		$comment->setMessage($message);
+		$comment->setCreationDateTime($creationDateTime);
+		// A verb ('comment', 'like'...) must be provided to be able to save a
+		// comment
+		$comment->setVerb('comment');
+
+		$this->dispatcher->dispatch(self::class . '::preSendMessage', new GenericEvent($chat, [
+			'comment' => $comment,
+			'room' => $chat,
+			'participant' => $participant,
+		]));
+
+		try {
+			$this->commentsManager->save($comment);
+
+			// Update last_message
+			$chat->setLastMessage($comment);
+
+			$mentionedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
 			if (!empty($mentionedUsers)) {
 				$chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
 			}
@@ -132,6 +168,8 @@ class ChatManager {
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
 				'comment' => $comment,
+				'room' => $chat,
+				'participant' => $participant,
 			]));
 		} catch (NotFoundException $e) {
 		}
@@ -142,7 +180,7 @@ class ChatManager {
 	public function getUnreadMarker(Room $chat, IUser $user): \DateTime {
 		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
 		if ($marker === null) {
-			$marker = new \DateTime('2000-01-01');
+			$marker = $this->timeFactory->getDateTime('2000-01-01');
 		}
 		return $marker;
 	}
@@ -184,7 +222,7 @@ class ChatManager {
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, $offset, $limit, $timeout, $user): array {
+	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user): array {
 		if ($user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
@@ -193,7 +231,7 @@ class ChatManager {
 		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
 
 		if ($user instanceof IUser) {
-			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), new  \DateTime(), $user);
+			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), $this->timeFactory->getDateTime(), $user);
 		}
 
 		while (empty($comments) && $elapsedTime < $timeout) {
@@ -211,7 +249,7 @@ class ChatManager {
 	 *
 	 * @param Room $chat
 	 */
-	public function deleteMessages(Room $chat) {
+	public function deleteMessages(Room $chat): void {
 		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
 
 		$this->notifier->removePendingNotificationsForRoom($chat);

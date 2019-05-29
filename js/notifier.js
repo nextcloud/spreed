@@ -75,7 +75,7 @@
 
             // Listen for sync room event.
             app.signaling.on("syncRooms", function () {
-
+                
                 self.getChatRooms();
                 self.checkNewMessagesInRooms();
                 self.checkUnreadMessagesInRooms();
@@ -211,9 +211,9 @@
         checkNewMessagesInRooms: function () {
 
             var self = this;
-
+            
             _.each(self.rooms, function (room) {
-
+                
                 $.ajax({
                     url: OC.linkToOCS('apps/spreed/api/v1', 2) + "chat/" + room.token,
                     type: "GET",
@@ -222,32 +222,34 @@
                         limit: 1
                     }
                 }).done(function (response) {
-
+                    
                     // Get latest message.
-                    var message = _.first(response.ocs.data);
+                    if (response) {
+                        var message = _.first(response.ocs.data);
 
-                    // This means, we have a new message.
-                    if (!_.isEqual(room.lastMessageId, message.id)) {
+                        // This means, we have a new message.
+                        if (!_.isEqual(room.lastMessageId, message.id)) {
 
-                        // Get the room index.
-                        var index = _.findIndex(self.rooms, function (r) {
-                            return r.token === room.token;
-                        });
+                            // Get the room index.
+                            var index = _.findIndex(self.rooms, function (r) {
+                                return r.token === room.token;
+                            });
 
-                        if (index > -1) {
+                            if (index > -1) {
 
-                            // Update last message id of this room.
-                            self.rooms[index] = {token: room.token, lastMessageId: message.id};
+                                // Update last message id of this room.
+                                self.rooms[index] = {token: room.token, lastMessageId: message.id};
 
-                            // Send a notification.
-                            // If not to own self.
-                            if (!_.isEqual(OC.getCurrentUser().displayName, message.actorDisplayName)) {
+                                // Send a notification.
+                                // If not to own self.
+                                if (!_.isEqual(OC.getCurrentUser().displayName, message.actorDisplayName)) {
 
-                                self.notificationQueue.push({
-                                    title: "New Message",
-                                    msg: "You have a new message from " + message.actorDisplayName,
-                                    token: room.token
-                                });
+                                    self.notificationQueue.push({
+                                        title: "New Message",
+                                        msg: "You have a new message from " + message.actorDisplayName,
+                                        token: room.token
+                                    });
+                                }
                             }
                         }
                     }

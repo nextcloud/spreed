@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -40,11 +39,8 @@ class RoomPlugin implements ISearchPlugin {
 	/** @var IUserSession */
 	private $userSession;
 
-	/**
-	 * @param Manager manager
-	 * @param IUserSession userSession
-	 */
-	public function __construct(Manager $manager, IUserSession $userSession) {
+	public function __construct(Manager $manager,
+								IUserSession $userSession) {
 		$this->manager = $manager;
 		$this->userSession = $userSession;
 	}
@@ -52,19 +48,26 @@ class RoomPlugin implements ISearchPlugin {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function search($search, $limit, $offset, ISearchResult $searchResult) {
+	public function search($search, $limit, $offset, ISearchResult $searchResult): bool {
 		if (empty($search)) {
 			return false;
 		}
 
+		$userId = $this->userSession->getUser()->getUID();
+
 		$result = ['wide' => [], 'exact' => []];
 
-		$rooms = $this->manager->getRoomsForParticipant($this->userSession->getUser()->getUID());
+		$rooms = $this->manager->getRoomsForParticipant($userId);
 		foreach ($rooms as $room) {
-			if (stripos($room->getName(), $search) !== false) {
-				$item = $this->roomToSearchResultItem($room);
+			if ($room->getReadOnly() === Room::READ_ONLY) {
+				// Can not add new shares to read-only rooms
+				continue;
+			}
 
-				if (strtolower($room->getName()) === strtolower($search)) {
+			if (stripos($room->getDisplayName($userId), $search) !== false) {
+				$item = $this->roomToSearchResultItem($room, $userId);
+
+				if (strtolower($item['label']) === strtolower($search)) {
 					$result['exact'][] = $item;
 				} else {
 					$result['wide'][] = $item;
@@ -78,14 +81,10 @@ class RoomPlugin implements ISearchPlugin {
 		return false;
 	}
 
-	/**
-	 * @param Room $room
-	 * @return array
-	 */
-	private function roomToSearchResultItem(Room $room): array {
+	private function roomToSearchResultItem(Room $room, string $userId): array {
 		return
 		[
-			'label' => $room->getName(),
+			'label' => $room->getDisplayName($userId),
 			'value' => [
 				'shareType' => Share::SHARE_TYPE_ROOM,
 				'shareWith' => $room->getToken()

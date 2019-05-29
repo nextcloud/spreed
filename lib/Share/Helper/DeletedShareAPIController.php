@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 /**
  *
  * @copyright Copyright (c) 2018, Daniel Calviño Sánchez (danxuliu@gmail.com)
@@ -42,27 +41,14 @@ class DeletedShareAPIController {
 
 	/** @var string */
 	private $userId;
-
-	/** @var IUserManager */
-	private $userManager;
-
 	/** @var Manager */
 	private $manager;
 
-	/**
-	 * DeletedShareAPIController constructor.
-	 *
-	 * @param string $UserId
-	 * @param IUserManager $userManager
-	 * @param Manager $manager
-	 */
 	public function __construct(
 			string $UserId,
-			IUserManager $userManager,
 			Manager $manager
 	) {
 		$this->userId = $UserId;
-		$this->userManager = $userManager;
 		$this->manager = $manager;
 	}
 
@@ -84,22 +70,7 @@ class DeletedShareAPIController {
 			return $result;
 		}
 
-		// The display name of one-to-one rooms is set to the display name of
-		// the other participant.
-		$roomName = $room->getName();
-		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-			$userIds = $room->getParticipantUserIds();
-			foreach ($userIds as $userId) {
-				if ($this->userId !== $userId) {
-					$user = $this->userManager->get($userId);
-					if ($user instanceof IUser) {
-						$roomName = $user->getDisplayName();
-					}
-				}
-			}
-		}
-
-		$result['share_with_displayname'] = $roomName;
+		$result['share_with_displayname'] = $room->getDisplayName($this->userId);
 
 		return $result;
 	}
