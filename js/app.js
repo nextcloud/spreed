@@ -605,70 +605,75 @@
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
-			this.connection = new OCA.Talk.Connection(this);
-			this.token = $('#app').attr('data-token');
+            this.connection = new OCA.Talk.Connection(this);
+            this.token = $('#app').attr('data-token');
 
-			this.signaling.on('joinRoom', function(/* token */) {
-				this.inRoom = true;
-				if (this.pendingNickChange) {
-					this.setGuestName(this.pendingNickChange);
-					delete this.pendingNickChange;
-				}
-			}.bind(this));
+            this.signaling.on('joinRoom', function (/* token */) {
+                this.inRoom = true;
+                if (this.pendingNickChange) {
+                    this.setGuestName(this.pendingNickChange);
+                    delete this.pendingNickChange;
+                }
+            }.bind(this));
 
-			this.signaling.on('joinCall', function() {
-				// Disable video when joining a call in a room with more than 5
-				// participants.
-				var participants = this.activeRoom.get('participants');
-				if (participants && Object.keys(participants).length > 5) {
-					this.setVideoEnabled(false);
-				}
-			}.bind(this));
+            this.signaling.on('joinCall', function () {
+                // Disable video when joining a call in a room with more than 5
+                // participants.
+                var participants = this.activeRoom.get('participants');
+                if (participants && Object.keys(participants).length > 5) {
+                    this.disableVideo();
+                }
+            }.bind(this));
 
-			$(window).unload(function () {
-				this.connection.leaveCurrentRoom();
-				this.signaling.disconnect();
-			}.bind(this));
+            $(window).unload(function () {
+                this.connection.leaveCurrentRoom();
+                this.signaling.disconnect();
+            }.bind(this));
 
-			if (OC.getCurrentUser().uid) {
-				this._showRoomList();
-				this.signaling.setRoomCollection(this._rooms)
-					.then(function(data) {
-						$('#app-navigation').removeClass('icon-loading');
-						this._roomsView.render();
+            if (OC.getCurrentUser().uid) {
+                this._showRoomList();
+                this.signaling.setRoomCollection(this._rooms)
+                    .then(function (data) {
+                        $('#app-navigation').removeClass('icon-loading');
+                        this._roomsView.render();
 
-						if (data.length === 0) {
-							$('#select-participants').select2('open');
-						}
-					}.bind(this));
+                        if (data.length === 0) {
+                            $('#select-participants').select2('open');
+                        }
+                    }.bind(this));
 
-				this._showParticipantList();
-				this._showCollectionsView();
-			} else if (this.token) {
-				// The token is always defined in the public page (although not
-				// in the public share auth page).
-				this.activeRoom = new OCA.SpreedMe.Models.Room({ token: this.token });
-				this.signaling.setRoom(this.activeRoom);
+                this._showParticipantList();
+            } else if (this.token) {
+                // The token is always defined in the public page (although not
+                // in the public share auth page).
+                this.activeRoom = new OCA.SpreedMe.Models.Room({token: this.token});
+                this.signaling.setRoom(this.activeRoom);
 
-				this.listenTo(this.activeRoom, 'change:participantType', function(model, participantType) {
-					if (participantType === OCA.SpreedMe.app.GUEST_MODERATOR) {
-						this._showParticipantList();
-						// The public page supports only a single room, so the
-						// active room has to be explicitly set as it will not
-						// be set in a 'change:active' event.
-						this._participantsView.setRoom(this.activeRoom);
-					} else {
-						this._hideParticipantList();
-					}
-				});
-			}
+                this.listenTo(this.activeRoom, 'change:participantType', function (model, participantType) {
+                    if (participantType === OCA.SpreedMe.app.GUEST_MODERATOR) {
+                        this._showParticipantList();
+                        // The public page supports only a single room, so the
+                        // active room has to be explicitly set as it will not
+                        // be set in a 'change:active' event.
+                        this._participantsView.setRoom(this.activeRoom);
+                    } else {
+                        this._hideParticipantList();
+                    }
+                });
+            }
 
-			this._registerPageEvents();
-			this.initShareRoomClipboard();
+            this._registerPageEvents();
+            this.initShareRoomClipboard();
 
-			if (this.token) {
-				this.connection.joinRoom(this.token);
-			}
+            if (this.token) {
+                this.connection.joinRoom(this.token);
+            }
+            
+            /**
+             * Start new message notifier.
+             */
+            if (OC.getCurrentUser().uid !== null) OCA.Talk.Notifier.init(this);
+    
 		},
 		setupWebRTC: function() {
 			if (!OCA.SpreedMe.webrtc) {

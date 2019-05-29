@@ -26,5 +26,6 @@
   "signaling.js",
   "connection.js",
   "embedded.js",
+  "app.js",
   "publicshareauth.js"
 ]
