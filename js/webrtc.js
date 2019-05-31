@@ -999,8 +999,45 @@ var spreedPeerConnectionTable = [];
 			forceReconnect(signaling);
 		});
 
+		var localStreamRequestedTimeout = null;
+		var localStreamRequestedTimeoutNotification = null;
+
+		var clearLocalStreamRequestedTimeoutAndHideNotification = function() {
+			clearTimeout(localStreamRequestedTimeout);
+			localStreamRequestedTimeout = null;
+
+			if (localStreamRequestedTimeoutNotification) {
+				OC.Notification.hide(localStreamRequestedTimeoutNotification);
+				localStreamRequestedTimeoutNotification = null;
+			}
+		};
+
+		// In some cases the browser may enter in a faulty state in which
+		// "getUserMedia" does not return neither successfully nor with an
+		// error. It is not possible to detect this except by guessing when some
+		// time passes and the user has not granted nor rejected the media
+		// permissions.
+		OCA.SpreedMe.webrtc.on('localStreamRequested', function () {
+			clearLocalStreamRequestedTimeoutAndHideNotification();
+
+			localStreamRequestedTimeout = setTimeout(function() {
+				// FIXME emit an event and handle it as needed instead of
+				// calling UI code from here.
+				localStreamRequestedTimeoutNotification = OC.Notification.show(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), { type: 'error' });
+			}, 10000);
+		});
+
+		signaling.on('leaveRoom', function(token) {
+			if (signaling.currentRoomToken === token) {
+				clearLocalStreamRequestedTimeoutAndHideNotification();
+			}
+		});
+
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
 			console.log('localMediaStarted');
+
+			clearLocalStreamRequestedTimeoutAndHideNotification();
+
 			app.startLocalMedia(configuration);
 			hasLocalMedia = true;
 			var signaling = OCA.SpreedMe.app.signaling;
@@ -1011,6 +1048,9 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
 			console.log('Access to microphone & camera failed', error);
+
+			clearLocalStreamRequestedTimeoutAndHideNotification();
+
 			hasLocalMedia = false;
 			var message;
 			if ((error.name === "NotSupportedError" &&
