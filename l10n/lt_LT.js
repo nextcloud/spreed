@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Enter name for a new conversation" : "Įveskite naujo pokalbio pavadinimą",
     "New conversation …" : "Naujas pokalbis …",
     "Participants" : "Dalyviai",
     "Exit fullscreen (f)" : "Išeiti iš viso ekrano (f)",
@@ -60,8 +61,10 @@ OC.L10N.register(
     "Stop screensharing" : "Stabdyti ekrano bendrinimą",
     "Mute audio (m)" : "Nutildyti garsą (m)",
     "Unmute audio (m)" : "Įjungti garsą (m)",
+    "No audio" : "Nėra jokio garso",
     "Disable video (v)" : "Išjungti vaizdą (v)",
     "Enable video (v)" : "Įjungti vaizdą (v)",
+    "No Camera" : "Nėra jokios kameros",
     "Screensharing is not supported by your browser." : "Jūsų naršyklė nepalaiko ekrano bendrinimo.",
     "Screensharing requires the page to be loaded through HTTPS." : "Ekrano bendrinimas reikalauja, kad puslapis būtų įkeltas per HTTPS.",
     "Screensharing options" : "Ekrano bendrinimo parinktys",

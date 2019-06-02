@@ -116,6 +116,7 @@
     "Close" : "关闭",
     "Show screen" : "显示屏幕",
     "Enable video" : "启用视频",
+    "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "耗时超出预期。媒体权限是否已被授予（或被拒绝）？如果已被授予，请重启您的浏览器，因为音视频当前无法工作",
     "Access to microphone & camera is only possible with HTTPS" : "仅使用 HTTPS 访问麦克风和摄像头",
     "Please move your setup to HTTPS" : "请将您的环境移至HTTPS",
     "Access to microphone & camera was denied" : "访问麦克风和摄像头被拒绝",
