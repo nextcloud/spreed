@@ -118,6 +118,7 @@ OC.L10N.register(
     "Close" : "Chiudi",
     "Show screen" : "Mostra schermo",
     "Enable video" : "Abilita video",
+    "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "L'operazione sta richiedendo più tempo del previsto. I permessi multimediali sono già stati accordati (o rifiutati)? Se sì, riavvia il browser, poiché audio e video non funzionano",
     "Access to microphone & camera is only possible with HTTPS" : "L'accesso a microfono e fotocamera è possibile solo con HTTPS",
     "Please move your setup to HTTPS" : "Sposta la tua configurazione su HTTPS",
     "Access to microphone & camera was denied" : "L'accesso a microfono e fotocamera è stato negato",
