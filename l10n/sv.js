@@ -118,6 +118,7 @@ OC.L10N.register(
     "Close" : "Stäng",
     "Show screen" : "Visa skärm",
     "Enable video" : "Aktivera video",
+    "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Det tar längre tid än väntat. Har mediarättigheter redan beviljats (eller avvisats)? Om ja, starta om din webbläsare, eftersom ljud och video misslyckas",
     "Access to microphone & camera is only possible with HTTPS" : "Tillgång till mikrofon och kamera är endast möjligt via HTTPS",
     "Please move your setup to HTTPS" : "Vänligen flytta din inställning till HTTPS",
     "Access to microphone & camera was denied" : "Tillgång till mikrofon och kamera blev nekad",
