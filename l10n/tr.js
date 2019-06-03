@@ -118,6 +118,7 @@ OC.L10N.register(
     "Close" : "Kapat",
     "Show screen" : "Ekranı görüntüle",
     "Enable video" : "Görüntü kullanılsın",
+    "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "İşlemin tamamlanması beklendiğinden uzun sürüyor. Ortam izinleri zaten verilmiş (ya da reddedilmiş) olabilir mi? Yanıt evet ise ses ve görüntülerde sorun çıkacağından lütfen web tarayıcınızı yeniden başlatın.",
     "Access to microphone & camera is only possible with HTTPS" : "Kamera ve mikrofona yalnız HTTPS üzerinden erişilebilir",
     "Please move your setup to HTTPS" : "Lütfen kurulumunuzu HTTPS üzerine geçirin",
     "Access to microphone & camera was denied" : "Mikrofon ve kameraya erişim izni reddedildi",
