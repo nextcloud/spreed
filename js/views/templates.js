@@ -278,7 +278,7 @@ templates['participantlistview'] = template({"1":function(container,depth0,helpe
 },"6":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "		<li>\n			<button class=\"demote-moderator\">\n				<span class=\"icon icon-star\"></span>\n				<span>"
+  return "		<li>\n			<button class=\"demote-moderator\">\n				<span class=\"icon icon-rename\"></span>\n				<span>"
     + container.escapeExpression(((helper = (helper = helpers.demoteModeratorText || (depth0 != null ? depth0.demoteModeratorText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"demoteModeratorText","hash":{},"data":data}) : helper)))
     + "</span>\n			</button>\n		</li>\n";
 },"8":function(container,depth0,helpers,partials,data) {
