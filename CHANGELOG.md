@@ -1,6 +1,29 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.2 – 2019-06-06
+### Fixed
+- Fix message list not reloaded after switching tabs in the sidebar
+  [#1867](https://github.com/nextcloud/spreed/pull/1867)
+- Show warning when browser silently fails to get user media
+  [#1874](https://github.com/nextcloud/spreed/pull/1874)
+- Fix view for participants without streams
+  [#1873](https://github.com/nextcloud/spreed/pull/1873)
+- Fix forced reconnection with external signaling
+  [#1850](https://github.com/nextcloud/spreed/pull/1850)
+- Do not send volume datachannel message
+  [#1849](https://github.com/nextcloud/spreed/pull/1849)
+
+
+## 5.0.4 – 2019-06-06
+### Fixed
+- Fix message list not reloaded after switching tabs in the sidebar
+  [#1867](https://github.com/nextcloud/spreed/pull/1867)
+- Fix multiple issues related to screensharing
+  [#1762](https://github.com/nextcloud/spreed/pull/1762)
+  [#1754](https://github.com/nextcloud/spreed/pull/1754)
+  [#1746](https://github.com/nextcloud/spreed/pull/1746)
+  
 ## 6.0.1 – 2019-05-16
 ### Changed
 - Do not send black video by default in bigger calls
