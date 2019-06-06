@@ -81,8 +81,6 @@
 			var self = this;
 			this.signaling.syncRooms()
 				.then(function() {
-					self.stopListening(self.activeRoom, 'change:participantFlags');
-
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
 
