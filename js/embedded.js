@@ -65,12 +65,7 @@
 		},
 
 		syncAndSetActiveRoom: function(token) {
-			this.signaling.syncRooms()
-				.then(function() {
-					if (OC.getCurrentUser().uid) {
-						roomChannel.trigger('active', token);
-					}
-				});
+			this.signaling.syncRooms();
 		},
 
 		initialize: function() {
