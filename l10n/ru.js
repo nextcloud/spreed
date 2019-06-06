@@ -118,6 +118,7 @@ OC.L10N.register(
     "Close" : "Закрыть",
     "Show screen" : "Показать экран",
     "Enable video" : "Включить видео",
+    "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Это занимает больше времени, чем ожидалось. Проверьте, установлены ли медиаразрешения браузера? Если да, пожалуйста, перезапустите браузер, так как аудио и видео не работают",
     "Access to microphone & camera is only possible with HTTPS" : "Доступ к микрофону и камере возможен только по HTTPS",
     "Please move your setup to HTTPS" : "Пожалуйста, перейдите к установке через HTTPS",
     "Access to microphone & camera was denied" : "Доступ к микрофону и камере был запрещён",
