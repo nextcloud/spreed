@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 5.0.4 – 2019-06-06
+### Fixed
+- Fix message list not reloaded after switching tabs in the sidebar
+  [#1867](https://github.com/nextcloud/spreed/pull/1867)
+- Fix multiple issues related to screensharing
+  [#1762](https://github.com/nextcloud/spreed/pull/1762)
+  [#1754](https://github.com/nextcloud/spreed/pull/1754)
+  [#1746](https://github.com/nextcloud/spreed/pull/1746)
+
 ## 5.0.3 – 2019-04-11
 ### Changed
 - Remove some conversation informations for non-participants
