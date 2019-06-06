@@ -116,6 +116,7 @@
     "Close" : "Zakończ",
     "Show screen" : "Pokaż ekran",
     "Enable video" : "Włącz wideo",
+    "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Trwa to dłużej niż oczekiwano. Czy uprawnienia do mediów zostały już przyznane (lub odrzucone)? Jeśli tak, to uruchom ponownie przeglądarkę, ponieważ audio i wideo nie działa poprawnie",
     "Access to microphone & camera is only possible with HTTPS" : "Dostęp do mikrofonu i kamery jest możliwy tylko przy użyciu protokołu HTTPS",
     "Please move your setup to HTTPS" : "Przenieś konfigurację do HTTPS",
     "Access to microphone & camera was denied" : "Odmówiono dostępu do mikrofonu i kamery",
