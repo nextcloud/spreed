@@ -613,7 +613,11 @@
 			this.connection = new OCA.Talk.Connection(this);
 			this.token = $('#app').attr('data-token');
 
-			this.signaling.on('joinRoom', function(/* token */) {
+			this.signaling.on('joinRoom', function(token) {
+				if (this.token !== token) {
+					return;
+				}
+
 				this.inRoom = true;
 				if (this.pendingNickChange) {
 					this.setGuestName(this.pendingNickChange);

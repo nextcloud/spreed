@@ -97,7 +97,11 @@
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
 
-			this.signaling.on('joinRoom', function(/* token */) {
+			this.signaling.on('joinRoom', function(token) {
+				if (this.token !== token) {
+					return;
+				}
+
 				this.inRoom = true;
 				if (this.pendingNickChange) {
 					this.setGuestName(this.pendingNickChange);
