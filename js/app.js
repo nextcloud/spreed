@@ -618,6 +618,8 @@
 					return;
 				}
 
+				this.syncAndSetActiveRoom(token);
+
 				this.inRoom = true;
 				if (this.pendingNickChange) {
 					this.setGuestName(this.pendingNickChange);
