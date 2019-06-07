@@ -64,10 +64,6 @@
 			});
 		},
 
-		syncAndSetActiveRoom: function(token) {
-			this.signaling.syncRooms();
-		},
-
 		initialize: function() {
 			if (!OC.getCurrentUser().uid) {
 				this.initGuestName();
