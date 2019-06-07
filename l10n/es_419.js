@@ -80,6 +80,7 @@ OC.L10N.register(
     "UDP and TCP" : "UDP y TCP",
     "UDP only" : "UDP únicamente",
     "TCP only" : "TCP únicamente",
+    "Save changes" : "Guardar cambios",
     "Saved" : "Guardado",
     "Shared secret" : "Secreto compartido",
     "STUN servers" : "Servidores STUN",
