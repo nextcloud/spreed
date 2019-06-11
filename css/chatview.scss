@@ -217,9 +217,12 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 }
 
 #chatView .comments li .message {
-	padding-left: 40px;
 	display: inline-block;
 	width: calc(100% - 80px);
+}
+
+#chatView .comments li:not(.systemMessage) .message {
+	padding-left: 40px;
 }
 
 #chatView .comment .action {
