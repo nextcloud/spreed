@@ -216,6 +216,12 @@ input#request-password-button:disabled ~ .icon {
 	margin-top: 0;
 }
 
+#talk-sidebar #chatView .comments .message {
+	/* The messages are left padded, but they also use "width: calc(100%...", so
+	 * the padding should be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
 #talk-sidebar #chatView .newCommentForm.with-add-button {
 	/* Make room to show the "Add" button if needed. */
 	margin-right: 44px;
