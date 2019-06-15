@@ -274,7 +274,7 @@ OC.L10N.register(
     "Join conversations at any time, any where, on any device." : "Anslut dig till konversationer när som helst, var som helst och på valfri enhet.",
     "Android app" : "Android-app",
     "iOS app" : " iOS-app",
-    "Link to a conversation" : "Länk till en konversation",
+    "Link to a conversation" : "Länka till en konversation",
     "Signaling server URL" : "Signalserver URL",
     "Delete server" : "Ta bort server",
     "Add new server" : "Lägg till ny server",
