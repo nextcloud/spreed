@@ -94,7 +94,6 @@
 
 			roomsChannel.trigger('joinRoom', token);
 
-			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
 		},
 		leaveCurrentRoom: function() {
