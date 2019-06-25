@@ -123,6 +123,10 @@ class UserMention {
 			}
 		}
 
+		if (strpos($message, '//') === 0) {
+			$message = substr($message, 1);
+		}
+
 		$chatMessage->setMessage($message, $messageParameters);
 	}
 
