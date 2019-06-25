@@ -57,9 +57,6 @@
 		/** property {String} selector */
 		mainCallElementSelector: '#call-container',
 
-		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
-		_rooms: null,
-
 		_registerPageEvents: function() {
 			// Initialize button tooltips
 			$('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).click(function() {
@@ -67,40 +64,8 @@
 			});
 		},
 
-		/**
-		 * @param {string} token
-		 */
-		_setRoomActive: function(token) {
-			if (OC.getCurrentUser().uid) {
-				this._rooms.forEach(function(room) {
-					room.set('active', room.get('token') === token);
-				});
-			}
-		},
-		syncAndSetActiveRoom: function(token) {
-			var self = this;
-			this.signaling.syncRooms()
-				.then(function() {
-					self.stopListening(self.activeRoom, 'change:participantFlags');
-
-					if (OC.getCurrentUser().uid) {
-						roomChannel.trigger('active', token);
-
-						self._rooms.forEach(function(room) {
-							if (room.get('token') === token) {
-								self.activeRoom = room;
-								self._chatView.setRoom(room);
-							}
-						});
-					}
-				});
-		},
-
 		initialize: function() {
-			if (OC.getCurrentUser().uid) {
-				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
-				this.listenTo(roomChannel, 'active', this._setRoomActive);
-			} else {
+			if (!OC.getCurrentUser().uid) {
 				this.initGuestName();
 			}
 
@@ -128,7 +93,11 @@
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
 
-			this.signaling.on('joinRoom', function(/* token */) {
+			this.signaling.on('joinRoom', function(token) {
+				if (this.token !== token) {
+					return;
+				}
+
 				this.inRoom = true;
 				if (this.pendingNickChange) {
 					this.setGuestName(this.pendingNickChange);
