@@ -663,7 +663,7 @@ class Manager {
 
 			if ($otherParticipant === '' && $room->getName() !== '') {
 				$user = $this->userManager->get($room->getName());
-				$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $participantId;
+				$otherParticipant = $user instanceof IUser ? $user->getDisplayName() : $this->l->t('Deleted user (%s)', $room->getName());
 			}
 
 			return $otherParticipant;
