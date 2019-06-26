@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.2 – 2019-06-27
+### Changed
+- Allows to copy and paste screen capture and upload it to “Talk” folder.
+
 ## 6.0.2 – 2019-06-06
 ### Fixed
 - Fix message list not reloaded after switching tabs in the sidebar
