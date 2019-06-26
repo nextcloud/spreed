@@ -164,8 +164,6 @@ templates['chatview_comment'] = template({"1":function(container,depth0,helpers,
     var helper;
 
   return container.escapeExpression(((helper = (helper = helpers.actorId || (depth0 != null ? depth0.actorId : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"actorId","hash":{},"data":data}) : helper)));
-},"12":function(container,depth0,helpers,partials,data) {
-    return " live-relative-timestamp";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -178,17 +176,15 @@ templates['chatview_comment'] = template({"1":function(container,depth0,helpers,
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isGuest : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\">\n"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isNotSystemMessage : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "		<div class=\"date has-tooltip"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.relativeDate : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\" data-timestamp=\""
+    + "	</div>\n	<div class=\"contentRow\">\n		<div class=\"message\">"
+    + ((stack1 = ((helper = (helper = helpers.formattedMessage || (depth0 != null ? depth0.formattedMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"formattedMessage","hash":{},"data":data}) : helper))) != null ? stack1 : "")
+    + "</div>\n		<div class=\"date has-tooltip\" data-timestamp=\""
     + alias4(((helper = (helper = helpers.timestamp || (depth0 != null ? depth0.timestamp : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"timestamp","hash":{},"data":data}) : helper)))
     + "\" title=\""
     + alias4(((helper = (helper = helpers.altDate || (depth0 != null ? depth0.altDate : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"altDate","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.date || (depth0 != null ? depth0.date : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"date","hash":{},"data":data}) : helper)))
-    + "</div>\n	</div>\n	<div class=\"message\">"
-    + ((stack1 = ((helper = (helper = helpers.formattedMessage || (depth0 != null ? depth0.formattedMessage : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"formattedMessage","hash":{},"data":data}) : helper))) != null ? stack1 : "")
-    + "</div>\n</li>\n";
+    + "</div>\n	</div>\n</li>\n";
 },"useData":true});
 templates['collectionsview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     return "<div id=\"collectionsView\"></div>\n";
@@ -282,7 +278,7 @@ templates['participantlistview'] = template({"1":function(container,depth0,helpe
 },"6":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "		<li>\n			<button class=\"demote-moderator\">\n				<span class=\"icon icon-star\"></span>\n				<span>"
+  return "		<li>\n			<button class=\"demote-moderator\">\n				<span class=\"icon icon-rename\"></span>\n				<span>"
     + container.escapeExpression(((helper = (helper = helpers.demoteModeratorText || (depth0 != null ? depth0.demoteModeratorText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"demoteModeratorText","hash":{},"data":data}) : helper)))
     + "</span>\n			</button>\n		</li>\n";
 },"8":function(container,depth0,helpers,partials,data) {

@@ -129,22 +129,6 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
-		[
-            'name'         => 'Chat#updateUserStatus',
-            'url'          => '/api/{apiVersion}/chat/update-user-status',
-            'verb'         => 'GET',
-            'requirements' => [
-                'apiVersion' => 'v1',
-            ],
-		],
-		[
-            'name'         => 'Chat#getUserStatus',
-            'url'          => '/api/{apiVersion}/chat/get-user-status',
-            'verb'         => 'GET',
-            'requirements' => [
-                'apiVersion' => 'v1',
-            ],
-        ],
 
 		/**
 		 * Room

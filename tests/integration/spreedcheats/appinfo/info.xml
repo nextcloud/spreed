@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<info>
+	<id>spreedcheats</id>
+	<name>Spreed cheats app for Intergration tests</name>
+	<namespace>SpreedCheats</namespace>
+	<description/>
+
+	<licence>AGPL</licence>
+	<author>Joas Schilling</author>
+	<version>2.1.0</version>
+
+	<types>
+		<logging/>
+	</types>
+
+	<dependencies>
+		<nextcloud min-version="17" max-version="17" />
+	</dependencies>
+</info>

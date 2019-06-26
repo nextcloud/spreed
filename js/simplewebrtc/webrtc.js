@@ -87,21 +87,6 @@ function WebRTC(opts) {
 			});
 		}
 	});
-	this.on('volumeChange', function (volume/*, treshold*/) {
-		if (!self.hardMuted) {
-			// FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
-			self.peers.forEach(function (peer) {
-				if (peer.enableDataChannels) {
-					var dc = peer.getDataChannel('hark');
-					if (dc.readyState !== 'open') {
-						return;
-					}
-					dc.send(JSON.stringify({type: 'volume', volume: volume }));
-				}
-			});
-		}
-	});
-
 	this.on('unshareScreen', function(message) {
 		// End peers we were receiving the screensharing stream from.
 		var peers = self.getPeers(message.from, 'screen');

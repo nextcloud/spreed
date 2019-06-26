@@ -28,7 +28,10 @@ module.exports = {
 			},
 			{
 				test: /\.vue$/,
-				loader: 'vue-loader'
+				loader: 'vue-loader',
+				options: {
+					hotReload: false // disables Hot Reload
+				}
 			},
 			{
 				test: /\.js$/,

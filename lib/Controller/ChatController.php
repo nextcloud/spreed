@@ -30,7 +30,6 @@ use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
-use OCA\Spreed\Manager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -40,7 +39,6 @@ use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
 use OCP\IL10N;
 use OCP\IRequest;
-use OCP\IUser;
 use OCP\IUserManager;
 
 class ChatController extends AEnvironmentAwareController {
@@ -53,9 +51,6 @@ class ChatController extends AEnvironmentAwareController {
 
 	/** @var TalkSession */
 	private $session;
-
-	/** @var Manager */
-    private $manager;
 
 	/** @var ChatManager */
 	private $chatManager;
@@ -88,7 +83,6 @@ class ChatController extends AEnvironmentAwareController {
 								IRequest $request,
 								IUserManager $userManager,
 								TalkSession $session,
-								Manager $manager,
 								ChatManager $chatManager,
 								GuestManager $guestManager,
 								MessageParser $messageParser,
@@ -102,7 +96,6 @@ class ChatController extends AEnvironmentAwareController {
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->session = $session;
-		$this->manager = $manager;
 		$this->chatManager = $chatManager;
 		$this->guestManager = $guestManager;
 		$this->messageParser = $messageParser;
@@ -112,44 +105,6 @@ class ChatController extends AEnvironmentAwareController {
 		$this->timeFactory = $timeFactory;
 		$this->l = $l;
 	}
-
-	/**
-     * Returns the Room for the current user.
-     *
-     * If the user is currently not joined to a room then the room with the
-     * given token is returned (provided that the current user is a participant
-     * of that room).
-     *
-     * @param string $token the token for the Room.
-     *
-     * @return \OCA\Spreed\Room|null the Room, or null if none was found.
-     */
-    private function getRoomFromToken($token)
-    {
-        try {
-            $room = $this->manager->getRoomForSession($this->userId, $this->session->getSessionForRoom($token));
-        } catch (RoomNotFoundException $exception) {
-            if ($this->userId === null) {
-                return null;
-            }
-
-            // For logged in users we search for rooms where they are real
-            // participants.
-            try {
-                $room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
-                $room->getParticipant($this->userId);
-            } catch (RoomNotFoundException $exception) {
-                return null;
-            } catch (ParticipantNotFoundException $exception) {
-                return null;
-            }
-        }
-
-        $this->room = $room;
-
-        return $room;
-    }
-
 
 	/**
 	 * @PublicPage
@@ -223,116 +178,99 @@ class ChatController extends AEnvironmentAwareController {
 	}
 
 	/**
-     * @PublicPage
-     *
-     * Receives chat messages from the given room.
-     *
-     * - Receiving the history ($lookIntoFuture=0):
-     *   The next $limit messages after $lastKnownMessageId will be returned.
-     *   The new $lastKnownMessageId for the follow up query is available as
-     *   `X-Chat-Last-Given` header.
-     *
-     * - Looking into the future ($lookIntoFuture=1):
-     *   If there are currently no messages the response will not be sent
-     *   immediately. Instead, HTTP connection will be kept open waiting for new
-     *   messages to arrive and, when they do, then the response will be sent. The
-     *   connection will not be kept open indefinitely, though; the number of
-     *   seconds to wait for new messages to arrive can be set using the timeout
-     *   parameter; the default timeout is 30 seconds, maximum timeout is 60
-     *   seconds. If the timeout ends a successful but empty response will be
-     *   sent.
-     *   If messages have been returned (status=200) the new $lastKnownMessageId
-     *   for the follow up query is available as `X-Chat-Last-Given` header.
-     *
-     * @param string $token              the room token
-     * @param int    $lookIntoFuture     Polling for new messages (1) or getting the history of the chat (0)
-     * @param int    $limit              Number of chat messages to receive (100 by default, 200 at most)
-     * @param int    $lastKnownMessageId The last known message (serves as offset)
-     * @param int    $timeout            Number of seconds to wait for new messages (30 by default, 30 at most)
-     *
-     * @return DataResponse an array of chat messages, "404 Not found" if the
-     *         room token was not valid or "304 Not modified" if there were no messages;
-     *         each chat message is an array with
-     *         fields 'id', 'token', 'actorType', 'actorId',
-     *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
-     *         'message'.
-     */
-    public function receiveMessages($token, $lookIntoFuture, $limit = 100, $lastKnownMessageId = 0, $timeout = 30)
-    {
-		$room = $this->getRoomFromToken($token);
-		
-        if ($room === null) {
-            return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-		
-        $limit   = min(200, $limit);
-        $timeout = min(30, $timeout);
+	 * @PublicPage
+	 * @RequireParticipant
+	 *
+	 * Receives chat messages from the given room.
+	 *
+	 * - Receiving the history ($lookIntoFuture=0):
+	 *   The next $limit messages after $lastKnownMessageId will be returned.
+	 *   The new $lastKnownMessageId for the follow up query is available as
+	 *   `X-Chat-Last-Given` header.
+	 *
+	 * - Looking into the future ($lookIntoFuture=1):
+	 *   If there are currently no messages the response will not be sent
+	 *   immediately. Instead, HTTP connection will be kept open waiting for new
+	 *   messages to arrive and, when they do, then the response will be sent. The
+	 *   connection will not be kept open indefinitely, though; the number of
+	 *   seconds to wait for new messages to arrive can be set using the timeout
+	 *   parameter; the default timeout is 30 seconds, maximum timeout is 60
+	 *   seconds. If the timeout ends a successful but empty response will be
+	 *   sent.
+	 *   If messages have been returned (status=200) the new $lastKnownMessageId
+	 *   for the follow up query is available as `X-Chat-Last-Given` header.
+	 *
+	 * The limit specifies the maximum number of messages that will be returned,
+	 * although the actual number of returned messages could be lower if some
+	 * messages are not visible to the participant. Note that if none of the
+	 * messages are visible to the participant the returned number of messages
+	 * will be 0, yet the status will still be 200. Also note that
+	 * `X-Chat-Last-Given` may reference a message not visible and thus not
+	 * returned, but it should be used nevertheless as the $lastKnownMessageId
+	 * for the follow up query.
+	 *
+	 * @param int $lookIntoFuture Polling for new messages (1) or getting the history of the chat (0)
+	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
+	 * @param int $lastKnownMessageId The last known message (serves as offset)
+	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
+	 * @return DataResponse an array of chat messages, "404 Not found" if the
+	 *         room token was not valid or "304 Not modified" if there were no messages;
+	 *         each chat message is an array with
+	 *         fields 'id', 'token', 'actorType', 'actorId',
+	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
+	 *         'message'.
+	 */
+	public function receiveMessages(int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30): DataResponse {
+		$limit = min(200, $limit);
+		$timeout = min(30, $timeout);
 
-		$sessionId = $this->session->getSessionForRoom($token);
-		
-        if ($sessionId !== null) {
-            $room->ping($this->userId, $sessionId, time());
-        }
-
-        $currentUser = $this->userManager->get($this->userId);
-        if ($lookIntoFuture) {
-            $comments = $this->chatManager->waitForNewMessages($room, $lastKnownMessageId, $limit, $timeout, $currentUser);
-        } else {
-            $comments = $this->chatManager->getHistory($room, $lastKnownMessageId, $limit);
-        }
-
-        if (empty($comments)) {
-            return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+		if ($this->participant->getSessionId() !== '0') {
+			$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
 		}
 
-        $guestSessions = [];
-        foreach ($comments as $comment) {
-            if ($comment->getActorType() !== 'guests') {
-                continue;
-            }
+		$currentUser = $this->userManager->get($this->userId);
+		if ($lookIntoFuture) {
+			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser);
+		} else {
+			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit);
+		}
 
-            $guestSessions[] = $comment->getActorId();
-        }
+		if (empty($comments)) {
+			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
+		}
 
-        $guestNames = ! empty($guestSessions) ? $this->guestManager->getNamesBySessionHashes($guestSessions) : [];
-        $response   = new DataResponse(array_map(function (IComment $comment) use ($room, $token, $guestNames, $currentUser) {
-            $displayName = '';
-            if ($comment->getActorType() === 'users') {
-                $user        = $this->userManager->get($comment->getActorId());
-                $displayName = $user instanceof IUser ? $user->getDisplayName() : '';
-            } else if ($comment->getActorType() === 'guests' && isset($guestNames[$comment->getActorId()])) {
-                $displayName = $guestNames[$comment->getActorId()];
-            }
+		$messages = [];
+		foreach ($comments as $comment) {
+			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+			$this->messageParser->parseMessage($message);
 
-			// Check relevance of code
-			
-            // list($message, $messageParameters) = $this->messageParser->parseMessageByRoomAndMessage(
-			// 	$room, 
-			// 	$comment, 
-			// 	$this->l, 
-			// 	$currentUser
-			// );
-		
-            return [
-                'id'                => (int)$comment->getId(),
-                'token'             => $token,
-                'actorType'         => $comment->getActorType(),
-                'actorId'           => $comment->getActorId(),
-                'actorDisplayName'  => $displayName,
-                'timestamp'         => $comment->getCreationDateTime()->getTimestamp(),
-                'message'           => $message,
-                'messageParameters' => $messageParameters,
-                'systemMessage'     => $comment->getVerb() === 'system' ? $comment->getMessage() : '',
-            ];
-		}, $comments), Http::STATUS_OK);
+			if (!$message->getVisibility()) {
+				continue;
+			}
 
-        $newLastKnown = end($comments);
-        if ($newLastKnown instanceof IComment) {
-            $response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
-        }
+			$messages[] = [
+				'id' => (int) $comment->getId(),
+				'token' => $this->room->getToken(),
+				'actorType' => $message->getActorType(),
+				'actorId' => $message->getActorId(),
+				'actorDisplayName' => $message->getActorDisplayName(),
+				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+				'message' => $message->getMessage(),
+				'messageParameters' => $message->getMessageParameters(),
+				'systemMessage' => $message->getMessageType() === 'system' ? $comment->getMessage() : '',
+			];
+		}
 
-        return $response;
-    }
+
+		$response = new DataResponse($messages, Http::STATUS_OK);
+
+		$newLastKnown = end($comments);
+		if ($newLastKnown instanceof IComment) {
+			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+		}
+
+		return $response;
+	}
 
 	/**
 	 * @PublicPage
@@ -389,48 +327,4 @@ class ChatController extends AEnvironmentAwareController {
 		}
 		return $output;
 	}
-
-	/**
-     * @NoAdminRequired
-     * Add or update user status.
-     *
-     * @return DataResponse
-     */
-    public function updateUserStatus()
-    {
-        // Initialize user status DAO.
-        $userStatusDAO = new UserStatusDAO($this->db);
-
-        // Get request parameters.
-        $userId = $this->request->getParam('userId', false);
-        $status = $this->request->getParam('status', false);
-
-        // Make sure parameters are valid.
-        if ( ! $userStatusDAO->validate($userId, $status)) {
-            return new DataResponse(null, Http::STATUS_FORBIDDEN);
-        }
-
-        $userStatus = $userStatusDAO->addOrUpdateStatus($userId, $status);
-
-        return new DataResponse($userStatus, Http::STATUS_OK);
-	}
-	
-	 /**
-     * @NoAdminRequired
-     * Get list of user status by userIds.
-     *
-     * @return DataResponse
-     */
-    public function getUserStatus()
-    {
-        // Initialize user status DAO.
-        $userStatusDAO = new UserStatusDAO($this->db);
-
-        // Get request parameters.
-        $userIds = $this->request->getParam('userIds', []);
-
-        $result = $userStatusDAO->findByUserIds($userIds);
-
-        return new DataResponse($result, Http::STATUS_OK);
-    }
 }

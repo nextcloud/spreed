@@ -70,11 +70,13 @@
 		this.sessionId = '';
 		this.currentRoomToken = null;
 		this.currentCallToken = null;
+		this.currentCallFlags = null;
 		this.handlers = {};
 		this.features = {};
 		this.pendingChatRequests = [];
 		this._lastChatMessagesFetch = null;
 		this.chatBatchSize = 100;
+		this._sendVideoIfAvailable = true;
 	}
 
 	OCA.Talk.Signaling.Base = Base;
@@ -125,13 +127,22 @@
 		}
 	};
 
+	OCA.Talk.Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
+		return !this.settings.hideWarning;
+	};
+
 	OCA.Talk.Signaling.Base.prototype.getSessionid = function() {
 		return this.sessionId;
+	};
+
+	OCA.Talk.Signaling.Base.prototype.getCurrentCallFlags = function() {
+		return this.currentCallFlags;
 	};
 
 	OCA.Talk.Signaling.Base.prototype.disconnect = function() {
 		this.sessionId = '';
 		this.currentCallToken = null;
+		this.currentCallFlags = null;
 	};
 
 	OCA.Talk.Signaling.Base.prototype.hasFeature = function(feature) {
@@ -169,6 +180,7 @@
 		if (this.currentCallToken) {
 			this.leaveCall(this.currentCallToken);
 			this.currentCallToken = null;
+			this.currentCallFlags = null;
 		}
 	};
 
@@ -192,13 +204,6 @@
 	};
 
 	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
-		/**
-         * Trigger a sync rooms event.
-         *
-         * @author Oozman
-         */
-		this._trigger("syncRooms");
-		
 		var defer = $.Deferred();
 		if (this.roomCollection && OC.getCurrentUser().uid) {
 			this.roomCollection.fetch({
@@ -235,9 +240,10 @@
 				this._runPendingChatRequests();
 				if (this.currentCallToken === token) {
 					// We were in this call before, join again.
-					this.joinCall(token);
+					this.joinCall(token, this.currentCallFlags);
 				} else {
 					this.currentCallToken = null;
+					this.currentCallFlags = null;
 				}
 				this._joinRoomSuccess(token, result.ocs.data.sessionId);
 			}.bind(this),
@@ -298,6 +304,14 @@
 		});
 	};
 
+	OCA.Talk.Signaling.Base.prototype.getSendVideoIfAvailable = function() {
+		return this._sendVideoIfAvailable;
+	};
+
+	OCA.Talk.Signaling.Base.prototype.setSendVideoIfAvailable = function(sendVideoIfAvailable) {
+		this._sendVideoIfAvailable = sendVideoIfAvailable;
+	};
+
 	OCA.Talk.Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
 		// Override in subclasses if necessary.
 	};
@@ -314,6 +328,7 @@
 			},
 			success: function () {
 				this.currentCallToken = token;
+				this.currentCallFlags = flags;
 				this._trigger('joinCall', [token]);
 				this._joinCallSuccess(token);
 			}.bind(this),
@@ -344,6 +359,7 @@
 				// We left the current call.
 				if (!keepToken && token === this.currentCallToken) {
 					this.currentCallToken = null;
+					this.currentCallFlags = null;
 				}
 			}.bind(this)
 		});
@@ -439,9 +455,10 @@
 
 		this._waitTimeUntilRetry = 1;
 
-		// Fetch more messages if PHP backend or a whole batch has been received
-		// (more messages might be available in this case).
-		if (this.receiveMessagesAgain || (messages && messages.length === this.chatBatchSize)) {
+		// Fetch more messages if PHP backend, or if the returned status is not
+		// "304 Not modified" (as in that case there could be more messages that
+		// need to be fetched).
+		if (this.receiveMessagesAgain || xhr.status !== 304) {
 			this._receiveChatMessages();
 		}
 
@@ -511,8 +528,19 @@
 		}
 	};
 
-	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(/* newSession */) {
-		console.error("Forced reconnects are not supported with the internal signaling.");
+	OCA.Talk.Signaling.Internal.prototype.forceReconnect = function(newSession, flags) {
+		if (newSession) {
+			console.log('Forced reconnects with a new session are not supported in the internal signaling; same session as before will be used');
+		}
+
+		if (flags !== undefined) {
+			this.currentCallFlags = flags;
+		}
+
+		// FIXME Naive reconnection routine; as the same session is kept peers
+		// must be explicitly ended before the reconnection is forced.
+		this.leaveCall(this.currentCallToken, true);
+		this.joinCall(this.currentCallToken);
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
@@ -550,21 +578,6 @@
 	OCA.Talk.Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
 		this.sessionId = sessionId;
 		this._startPullingMessages();
-	};
-
-	OCA.Talk.Signaling.Internal.prototype._joinCallSuccess = function() {
-		if (this.hideWarning) {
-			return;
-		}
-
-		var numParticipants = Object.keys(OCA.SpreedMe.app.activeRoom.get('participants')).length +
-			OCA.SpreedMe.app.activeRoom.get('numGuests');
-		if (numParticipants <= 4) {
-			return;
-		}
-
-		var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
-		OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning' });
 	};
 
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
@@ -656,16 +669,10 @@
 					// Request has been aborted. Ignore.
 				} else if (this.currentRoomToken) {
 					if (this.pullMessagesFails >= 3) {
-						if (OCA.SpreedMe.webrtc) {
-							// Force leaving the call in WebRTC; leaving the
-							// room indirectly runs
-							// signaling.leaveCurrentCall(), but if the
-							// signaling fails to leave the call no event will
-							// be triggered and the call will not be left from
-							// WebRTC point of view.
-							OCA.SpreedMe.webrtc.leaveCall();
-						}
-						OCA.SpreedMe.app.connection.leaveCurrentRoom();
+						console.log('Stop pulling messages after repeated failures');
+
+						this._trigger('pullMessagesStoppedOnFail');
+
 						return;
 					}
 
@@ -723,6 +730,11 @@
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs;
 		this.joinedUsers = {};
 		this.rooms = [];
+		window.setInterval(function() {
+			// Update the room list all 30 seconds to check for new messages and
+			// mentions as well as marking them read via other devices.
+			this.internalSyncRooms();
+		}.bind(this), 30000);
 		this.connect();
 	}
 
@@ -831,6 +843,7 @@
 			});
 		}
 		this.resumeId = null;
+		this.signalingRoomJoined = null;
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.disconnect = function() {
@@ -842,7 +855,11 @@
 		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments);
 	};
 
-	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession) {
+	OCA.Talk.Signaling.Standalone.prototype.forceReconnect = function(newSession, flags) {
+		if (flags !== undefined) {
+			this.currentCallFlags = flags;
+		}
+
 		if (!this.connected) {
 			if (!newSession) {
 				// Not connected, will do reconnect anyway.
@@ -1041,10 +1058,13 @@
 		}.bind(this));
 	};
 
-	OCA.Talk.Signaling.Standalone.prototype.joinCall = function(token) {
+	OCA.Talk.Signaling.Standalone.prototype.joinCall = function(token, flags) {
 		if (this.signalingRoomJoined !== token) {
 			console.log("Not joined room yet, not joining call", token);
-			this.pendingJoinCall = token;
+			this.pendingJoinCall = {
+				token: token,
+				flags: flags
+			};
 			return;
 		}
 
@@ -1064,8 +1084,8 @@
 	OCA.Talk.Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
 		console.log("Joined", data, token);
 		this.signalingRoomJoined = token;
-		if (token === this.pendingJoinCall) {
-			this.joinCall(this.pendingJoinCall);
+		if (this.pendingJoinCall && token === this.pendingJoinCall.token) {
+			this.joinCall(this.pendingJoinCall.token, this.pendingJoinCall.flags);
 			this.pendingJoinCall = null;
 		}
 		if (this.roomCollection) {

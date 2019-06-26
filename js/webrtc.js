@@ -130,7 +130,8 @@ var spreedPeerConnectionTable = [];
 			receiveMedia: {
 				offerToReceiveAudio: 0,
 				offerToReceiveVideo: 0
-			}
+			},
+			sendVideoIfAvailable: signaling.getSendVideoIfAvailable()
 		});
 		webrtc.emit('createdPeer', ownPeer);
 		ownPeer.start();
@@ -184,7 +185,8 @@ var spreedPeerConnectionTable = [];
 					receiveMedia: {
 						offerToReceiveAudio: 1,
 						offerToReceiveVideo: 1
-					}
+					},
+					sendVideoIfAvailable: signaling.getSendVideoIfAvailable()
 				});
 				webrtc.emit('createdPeer', peer);
 				peer.start();
@@ -378,6 +380,16 @@ var spreedPeerConnectionTable = [];
 		}
 		OCA.SpreedMe.webrtc = webrtc;
 
+		signaling.on('pullMessagesStoppedOnFail', function() {
+			// Force leaving the call in WebRTC; when pulling messages stops due
+			// to failures the room is left, and leaving the room indirectly
+			// runs signaling.leaveCurrentCall(), but if the signaling fails to
+			// leave the call (which is likely due to the messages failing to be
+			// received) no event will be triggered and the call will not be
+			// left from WebRTC point of view.
+			webrtc.leaveCall();
+		});
+
 		OCA.SpreedMe.webrtc.startMedia = function (token) {
 			webrtc.joinCall(token);
 		};
@@ -426,6 +438,19 @@ var spreedPeerConnectionTable = [];
 				var videoView = new OCA.Talk.Views.VideoView({
 					peerId: id
 				});
+
+				// When the MCU is used and the other participant has no streams
+				// or when no MCU is used and neither the local participant nor
+				// the other one has no streams there will be no Peer for that
+				// other participant, so the VideoView status will not be
+				// modified later and thus it needs to be fully set now.
+				if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
+						(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
+					videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.COMPLETED);
+					videoView.setAudioAvailable(false);
+					videoView.setVideoAvailable(false);
+				}
+
 				videoView.setParticipant(userId);
 				videoView.setScreenAvailable(!!spreedListofSharedScreens[id]);
 
@@ -851,7 +876,7 @@ var spreedPeerConnectionTable = [];
 			peer.pc.getStats(track).then(function(stats) {
 				var result = false;
 				stats.forEach(function(statsReport) {
-					if (!result && statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
+					if (result || statsReport.mediaType !== mediaType || !statsReport.hasOwnProperty('bytesReceived')) {
 						return;
 					}
 
@@ -924,6 +949,43 @@ var spreedPeerConnectionTable = [];
 			app.disableScreensharingButton();
 		});
 
+		var forceReconnect = function(signaling, flags) {
+			if (ownPeer) {
+				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
+				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+				OCA.SpreedMe.videos.remove(ownPeer.id);
+				delete spreedMappingTable[ownPeer.id];
+				ownPeer.end();
+				ownPeer = null;
+			}
+
+			usersChanged(signaling, [], previousUsersInRoom);
+			usersInCallMapping = {};
+			previousUsersInRoom = [];
+
+			// Reconnects with a new session id will trigger "usersChanged"
+			// with the users in the room and that will re-establish the
+			// peerconnection streams.
+			// If flags are undefined the current call flags are used.
+			signaling.forceReconnect(true, flags);
+		};
+
+		OCA.SpreedMe.webrtc.webrtc.on('videoOn', function () {
+			var signaling = OCA.SpreedMe.app.signaling;
+			if (signaling.getSendVideoIfAvailable()) {
+				return;
+			}
+
+			// When enabling the local video if the video is not being sent a
+			// reconnection is forced to start sending it.
+			signaling.setSendVideoIfAvailable(true);
+
+			var flags = signaling.getCurrentCallFlags();
+			flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
+
+			forceReconnect(signaling, flags);
+		});
+
 		OCA.SpreedMe.webrtc.webrtc.on('iceFailed', function (/* peer */) {
 			var signaling = OCA.SpreedMe.app.signaling;
 			if (!signaling.hasFeature("mcu")) {
@@ -934,25 +996,48 @@ var spreedPeerConnectionTable = [];
 
 			// For now assume the connection to the MCU is interrupted on ICE
 			// failures and force a reconnection of all streams.
-			if (ownPeer) {
-				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-				OCA.SpreedMe.videos.remove(ownPeer.id);
-				delete spreedMappingTable[ownPeer.id];
-				ownPeer.end();
-				ownPeer = null;
+			forceReconnect(signaling);
+		});
+
+		var localStreamRequestedTimeout = null;
+		var localStreamRequestedTimeoutNotification = null;
+
+		var clearLocalStreamRequestedTimeoutAndHideNotification = function() {
+			clearTimeout(localStreamRequestedTimeout);
+			localStreamRequestedTimeout = null;
+
+			if (localStreamRequestedTimeoutNotification) {
+				OC.Notification.hide(localStreamRequestedTimeoutNotification);
+				localStreamRequestedTimeoutNotification = null;
 			}
-			usersChanged(signaling, [], previousUsersInRoom);
-			usersInCallMapping = {};
-			previousUsersInRoom = [];
-			// Reconnects with a new session id will trigger "usersChanged"
-			// with the users in the room and that will re-establish the
-			// peerconnection streams.
-			signaling.forceReconnect(true);
+		};
+
+		// In some cases the browser may enter in a faulty state in which
+		// "getUserMedia" does not return neither successfully nor with an
+		// error. It is not possible to detect this except by guessing when some
+		// time passes and the user has not granted nor rejected the media
+		// permissions.
+		OCA.SpreedMe.webrtc.on('localStreamRequested', function () {
+			clearLocalStreamRequestedTimeoutAndHideNotification();
+
+			localStreamRequestedTimeout = setTimeout(function() {
+				// FIXME emit an event and handle it as needed instead of
+				// calling UI code from here.
+				localStreamRequestedTimeoutNotification = OC.Notification.show(t('spreed', 'This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing'), { type: 'error' });
+			}, 10000);
+		});
+
+		signaling.on('leaveRoom', function(token) {
+			if (signaling.currentRoomToken === token) {
+				clearLocalStreamRequestedTimeoutAndHideNotification();
+			}
 		});
 
 		OCA.SpreedMe.webrtc.on('localMediaStarted', function (configuration) {
 			console.log('localMediaStarted');
+
+			clearLocalStreamRequestedTimeoutAndHideNotification();
+
 			app.startLocalMedia(configuration);
 			hasLocalMedia = true;
 			var signaling = OCA.SpreedMe.app.signaling;
@@ -963,6 +1048,9 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localMediaError', function(error) {
 			console.log('Access to microphone & camera failed', error);
+
+			clearLocalStreamRequestedTimeoutAndHideNotification();
+
 			hasLocalMedia = false;
 			var message;
 			if ((error.name === "NotSupportedError" &&

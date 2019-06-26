@@ -31,7 +31,8 @@
 
 	var ChatView = Marionette.View.extend({
 
-		groupedMessages: 0,
+		temporaryNearMessages: 0,
+		sameAuthorMessages: 0,
 
 		className: 'chat',
 
@@ -386,8 +387,7 @@
 		_formatItem: function(commentModel) {
 			// PHP timestamp is second-based; JavaScript timestamp is
 			// millisecond based.
-			var timestamp = commentModel.get('timestamp') * 1000,
-				relativeDate = moment(timestamp, 'x').diff(moment()) > -86400000;
+			var timestamp = commentModel.get('timestamp') * 1000;
 
 			var actorDisplayName = commentModel.get('actorDisplayName');
 			if (commentModel.get('actorType') === 'guests' &&
@@ -407,8 +407,7 @@
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
 				timestamp: timestamp,
-				date: relativeDate ? OC.Util.relativeModifiedDate(timestamp) : OC.Util.formatDate(timestamp, 'LTS'),
-				relativeDate: relativeDate,
+				date: OC.Util.formatDate(timestamp, 'LT'),
 				altDate: OC.Util.formatDate(timestamp),
 				isNotSystemMessage: commentModel.get('systemMessage') === '',
 				formattedMessage: formattedMessage
@@ -427,13 +426,23 @@
 			this._virtualList.appendElement($el);
 
 			if (this._modelsHaveSameActor(this._lastAddedMessageModel, model) &&
-					this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
-					this.groupedMessages < 10) {
-				$el.addClass('grouped');
+				this._modelsAreTemporaryNear(this._lastAddedMessageModel, model, 3600) &&
+				this.sameAuthorMessages < 20
 
-				this.groupedMessages++;
+			) {
+				this.sameAuthorMessages++;
+				if (this._modelsAreTemporaryNear(this._lastAddedMessageModel, model) &&
+					this.temporaryNearMessages < 5) {
+					$el.addClass('grouped');
+
+					this.temporaryNearMessages++;
+				} else {
+					$el.addClass('same-author');
+					this.temporaryNearMessages = 0;
+				}
 			} else {
-				this.groupedMessages = 0;
+				this.sameAuthorMessages = 0;
+				this.temporaryNearMessages = 0;
 			}
 
 			// PHP timestamp is second-based; JavaScript timestamp is

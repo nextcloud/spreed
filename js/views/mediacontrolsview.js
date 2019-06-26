@@ -183,7 +183,7 @@
 			} else {
 				this._webrtc.pauseVideo();
 
-				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Enable video (v)'))
+				this.getUI('videoButton').attr('data-original-title', this._getEnableVideoButtonTitle())
 					.addClass('local-video-disabled video-disabled icon-video-off')
 					.removeClass('icon-video');
 				this.getUI('audioButton').addClass('local-video-disabled');
@@ -193,6 +193,14 @@
 			this.videoEnabled = videoEnabled;
 
 			return true;
+		},
+
+		_getEnableVideoButtonTitle: function() {
+			if (!this._app.signaling || this._app.signaling.getSendVideoIfAvailable()) {
+				return t('spreed', 'Enable video (v)');
+			}
+
+			return t('spreed', 'Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time');
 		},
 
 		/**

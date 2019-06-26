@@ -108,7 +108,8 @@ function SimpleWebRTC(opts) {
 					type: message.roomType,
 					enableDataChannels: self.config.enableDataChannels && message.roomType !== 'screen',
 					sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
-					broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
+					broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null,
+					sendVideoIfAvailable: self.connection.getSendVideoIfAvailable()
 				});
 				self.emit('createdPeer', peer);
 			}
@@ -232,12 +233,6 @@ function SimpleWebRTC(opts) {
 			}
 		});
 		*/
-	});
-
-	this.webrtc.on('channelMessage', function (peer, label, data) {
-		if (data.type === 'volume') {
-			self.emit('remoteVolumeChange', peer, data.volume);
-		}
 	});
 }
 

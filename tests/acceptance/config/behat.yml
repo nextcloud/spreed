@@ -1,0 +1,47 @@
+default:
+  autoload:
+    '': %paths.base%/../features/bootstrap
+  suites:
+    default:
+      paths:
+        - %paths.base%/../features
+      contexts:
+        # Base contexts
+        - ActorContext
+        - NextcloudTestServerContext:
+            nextcloudTestServerHelper: NextcloudTestServerLocalApacheHelper
+
+        - FeatureContext
+        - FileListContext
+        - FilePickerContext
+        - FilesAppContext
+        - FilesAppSharingContext
+        - LoginPageContext
+        - NotificationContext
+        - PublicShareContext
+
+        # Talk app contexts
+        - ChatContext
+        - ConversationInfoContext
+        - ConversationListContext
+        - FilesAppChatTabContext
+        - FilesAppRoomSharingContext
+        - ParticipantListContext
+        - PublicSharePasswordRequestContext
+        - TalkAppContext
+
+  extensions:
+    Behat\MinkExtension:
+      sessions:
+        default:
+          selenium2:
+            wd_host: %selenium.server%
+        John:
+          selenium2:
+            wd_host: %selenium.server%
+        Jane:
+          selenium2:
+            wd_host: %selenium.server%
+        Jim:
+          selenium2:
+            wd_host: %selenium.server%

@@ -22,6 +22,10 @@
 		this.app.signaling.on('roomChanged', function() {
 			this.leaveCurrentRoom();
 		}.bind(this));
+
+		this.app.signaling.on('pullMessagesStoppedOnFail', function() {
+			this.leaveCurrentRoom();
+		}.bind(this));
 	}
 
 	OCA.Talk.Connection = Connection;
@@ -90,7 +94,6 @@
 
 			roomsChannel.trigger('joinRoom', token);
 
-			this.app.syncAndSetActiveRoom(token);
 			$('#video-fullscreen').removeClass('hidden');
 		},
 		leaveCurrentRoom: function() {
@@ -115,7 +118,7 @@
 					if (configuration.audio) {
 						flags |= OCA.SpreedMe.app.FLAG_WITH_AUDIO;
 					}
-					if (configuration.video) {
+					if (configuration.video && self.app.signaling.getSendVideoIfAvailable()) {
 						flags |= OCA.SpreedMe.app.FLAG_WITH_VIDEO;
 					}
 				}

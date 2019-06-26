@@ -1,2 +1,11 @@
-/.DS_Store
-/.idea
+# Exclude npm stuff
+build
+node_modules
+
+# Karma/jasmine coverage data
+coverage
+tests/php/coverage-html
+tests/php/clover.xml
+tests/integration/vendor
+tests/integration/output
+.idea/

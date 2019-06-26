@@ -92,7 +92,6 @@ OC.L10N.register(
     "Shared secret" : "გაზიარებული საიდუმლო",
     "STUN servers" : "STUN სერვერები",
     "A STUN server is used to determine the public IP address of participants behind a router." : "STUN სერვერი როუტერს მიღმა მყოფი მონაწილეების ღია IP მისამართების დადგენისთვის.",
-    "This call is password-protected" : "ეს ზარი დაცულია პაროლით",
     "The password is wrong. Try again." : "პაროლი არასწორია. სცადეთ ახლიდან.",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "დიდი ინსტალაციებისთვის შესაძლებელია გარე სასიგნალო სერვერის გამოყენება. შიდა სიგნალის სერვერის გამოსაყენებლად დატოვეთ ცარიელი.",
     "TURN server" : "TURN სერვერი",
@@ -103,6 +102,7 @@ OC.L10N.register(
     "_%n other guest_::_%n other guests_" : ["%n სხვა სტუმარი","%n სხვა სტუმარი"],
     ", " : ",",
     "A group call has started" : "ჯგუფური ზარი დაწყებულია",
+    "This call is password-protected" : "ეს ზარი დაცულია პაროლით",
     "Signaling server" : "სერვერზე იგზავნება სიგნალი"
 },
 "nplurals=2; plural=(n!=1);");

@@ -1,0 +1,17 @@
+{
+  "name": "jshashes",
+  "version": "1.0.7",
+  "description": "A fast and independent hashing library pure JavaScript implemented (ES3 compliant) for both server and client side (MD5, SHA1, SHA256, SHA512, RIPEMD, HMAC and Base64)",
+  "keywords": ["hash", "md5", "sha1", "sha256", "hashes", "sha512", "RIPEMD", "base64", "hmac", "crc", "encoding", "algorithm"],
+  "author": "Tomas Aparicio <tomas@aparicio.me>",
+  "main": "hashes.js",
+  "ignore": [
+    "**/.*",
+    "bin",
+    "test",
+    "examples/server",
+    "package.json",
+    "Makefile",
+    "node_modules"
+  ]
+}

@@ -64,21 +64,6 @@ class MessageParser {
 		return new Message($room, $participant, $comment, $l);
 	}
 
-	public function parseMessageByRoomAndMessage(Room $room, IComment $chatMessage, IL10N $l, IUser $user = null): array {
-		$event = new GenericEvent($chatMessage, [
-			'room' => $room,
-			'user' => $user,
-			'l10n' => $l,
-		]);
-		$this->dispatcher->dispatch(self::class . '::parseMessage', $event);
-
-		if ($event->hasArgument('message')) {
-			return [$event->getArgument('message'), $event->getArgument('parameters')];
-		}
-
-		return [$chatMessage->getMessage(), []];
-	}
-
 	public function parseMessage(Message $message): void {
 		$message->setMessage($message->getComment()->getMessage(), []);
 		$message->setMessageType($message->getComment()->getVerb());

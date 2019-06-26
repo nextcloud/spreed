@@ -17,7 +17,7 @@ var getUserMedia = function getUserMedia(constraints, callback) {
 
   window.navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     callback(null, stream);
-  }).catch(function (error) {
+  })["catch"](function (error) {
     callback(error, null);
   });
 }; // cache for constraints and callback
@@ -41,7 +41,7 @@ module.exports = function (mode, constraints, cb) {
       video: true
     }).then(function (stream) {
       callback(null, stream);
-    }).catch(function (error) {
+    })["catch"](function (error) {
       callback(error, null);
     });
   } else if (navigator.webkitGetUserMedia) {
@@ -327,7 +327,7 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
     if (cb) {
       return cb(null, stream);
     }
-  }).catch(function (err) {
+  })["catch"](function (err) {
     // Fallback for users without a camera
     if (self.config.audioFallback && err.name === 'NotFoundError' && constraints.video !== false) {
       constraints.video = false;
@@ -629,6 +629,7 @@ function Peer(options) {
   this.sharemyscreen = options.sharemyscreen || false;
   this.browserPrefix = options.prefix;
   this.stream = options.stream;
+  this.sendVideoIfAvailable = options.sendVideoIfAvailable === undefined ? true : options.sendVideoIfAvailable;
   this.enableDataChannels = options.enableDataChannels === undefined ? this.parent.config.enableDataChannels : options.enableDataChannels;
   this.receiveMedia = options.receiveMedia || this.parent.config.receiveMedia;
   this.channels = {};
@@ -673,7 +674,11 @@ function Peer(options) {
     }
   } else {
     this.parent.localStreams.forEach(function (stream) {
-      self.pc.addStream(stream);
+      stream.getTracks().forEach(function (track) {
+        if (track.kind !== 'video' || self.sendVideoIfAvailable) {
+          self.pc.addTrack(track, stream);
+        }
+      });
     });
   } // proxy events to parent
 
@@ -700,10 +705,10 @@ Peer.prototype.offer = function (options) {
       }
 
       this.send('offer', offer);
-    }.bind(this)).catch(function (error) {
+    }.bind(this))["catch"](function (error) {
       console.warn("setLocalDescription for offer failed: ", error);
     }.bind(this));
-  }.bind(this)).catch(function (error) {
+  }.bind(this))["catch"](function (error) {
     console.warn("createOffer failed: ", error);
   }.bind(this));
 };
@@ -711,7 +716,7 @@ Peer.prototype.offer = function (options) {
 Peer.prototype.handleOffer = function (offer) {
   this.pc.setRemoteDescription(offer).then(function () {
     this.answer();
-  }.bind(this)).catch(function (error) {
+  }.bind(this))["catch"](function (error) {
     console.warn("setRemoteDescription for offer failed: ", error);
   }.bind(this));
 };
@@ -731,16 +736,16 @@ Peer.prototype.answer = function () {
       }
 
       this.send('answer', answer);
-    }.bind(this)).catch(function (error) {
+    }.bind(this))["catch"](function (error) {
       console.warn("setLocalDescription for answer failed: ", error);
     }.bind(this));
-  }.bind(this)).catch(function (error) {
+  }.bind(this))["catch"](function (error) {
     console.warn("createAnswer failed: ", error);
   }.bind(this));
 };
 
 Peer.prototype.handleAnswer = function (answer) {
-  this.pc.setRemoteDescription(answer).catch(function (error) {
+  this.pc.setRemoteDescription(answer)["catch"](function (error) {
     console.warn("setRemoteDescription for answer failed: ", error);
   }.bind(this));
 };
@@ -1079,7 +1084,8 @@ function SimpleWebRTC(opts) {
           type: message.roomType,
           enableDataChannels: self.config.enableDataChannels && message.roomType !== 'screen',
           sharemyscreen: message.roomType === 'screen' && !message.broadcaster,
-          broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null
+          broadcaster: message.roomType === 'screen' && !message.broadcaster ? self.connection.getSessionid() : null,
+          sendVideoIfAvailable: self.connection.getSendVideoIfAvailable()
         });
         self.emit('createdPeer', peer);
       }
@@ -1206,11 +1212,6 @@ function SimpleWebRTC(opts) {
     	}
     });
     */
-  });
-  this.webrtc.on('channelMessage', function (peer, label, data) {
-    if (data.type === 'volume') {
-      self.emit('remoteVolumeChange', peer, data.volume);
-    }
   });
 }
 
@@ -1527,27 +1528,6 @@ function WebRTC(opts) {
 
           dc.send(JSON.stringify({
             type: 'stoppedSpeaking'
-          }));
-        }
-      });
-    }
-  });
-  this.on('volumeChange', function (volume
-  /*, treshold*/
-  ) {
-    if (!self.hardMuted) {
-      // FIXME: should use sendDirectlyToAll, but currently has different semantics wrt payload
-      self.peers.forEach(function (peer) {
-        if (peer.enableDataChannels) {
-          var dc = peer.getDataChannel('hark');
-
-          if (dc.readyState !== 'open') {
-            return;
-          }
-
-          dc.send(JSON.stringify({
-            type: 'volume',
-            volume: volume
           }));
         }
       });
@@ -3718,11 +3698,11 @@ module.exports = function (window, edgeVersion) {
               });
               stream = streams[remoteMsid.stream];
             } else {
-              if (!streams.default) {
-                streams.default = new window.MediaStream();
+              if (!streams["default"]) {
+                streams["default"] = new window.MediaStream();
               }
 
-              stream = streams.default;
+              stream = streams["default"];
             }
 
             if (stream) {
@@ -3811,12 +3791,12 @@ module.exports = function (window, edgeVersion) {
             addTrackToStreamAndFireEvent(track, streams[remoteMsid.stream]);
             receiverList.push([track, rtpReceiver, streams[remoteMsid.stream]]);
           } else {
-            if (!streams.default) {
-              streams.default = new window.MediaStream();
+            if (!streams["default"]) {
+              streams["default"] = new window.MediaStream();
             }
 
-            addTrackToStreamAndFireEvent(track, streams.default);
-            receiverList.push([track, rtpReceiver, streams.default]);
+            addTrackToStreamAndFireEvent(track, streams["default"]);
+            receiverList.push([track, rtpReceiver, streams["default"]]);
           }
         } else {
           // FIXME: actually the receiver should be created later.
@@ -3970,7 +3950,7 @@ module.exports = function (window, edgeVersion) {
       newState = 'checking';
     } else if (states.disconnected > 0) {
       newState = 'disconnected';
-    } else if (states.new > 0) {
+    } else if (states["new"] > 0) {
       newState = 'new';
     } else if (states.connected > 0) {
       newState = 'connected';
@@ -4014,7 +3994,7 @@ module.exports = function (window, edgeVersion) {
       newState = 'connecting';
     } else if (states.disconnected > 0) {
       newState = 'disconnected';
-    } else if (states.new > 0) {
+    } else if (states["new"] > 0) {
       newState = 'new';
     } else if (states.connected > 0) {
       newState = 'connected';
@@ -5270,7 +5250,7 @@ var safariShim = _interopRequireWildcard(require("./safari/safari_shim"));
 
 var commonShim = _interopRequireWildcard(require("./common_shim"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
@@ -5318,6 +5298,7 @@ function adapterFactory() {
       chromeShim.shimOnTrack(window);
       chromeShim.shimAddTrackRemoveTrack(window);
       chromeShim.shimGetSendersWithDtmf(window);
+      chromeShim.shimGetStats(window);
       chromeShim.shimSenderReceiverGetStats(window);
       chromeShim.fixNegotiationNeeded(window);
       commonShim.shimRTCIceCandidate(window);
@@ -5415,6 +5396,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.shimMediaStream = shimMediaStream;
 exports.shimOnTrack = shimOnTrack;
 exports.shimGetSendersWithDtmf = shimGetSendersWithDtmf;
+exports.shimGetStats = shimGetStats;
 exports.shimSenderReceiverGetStats = shimSenderReceiverGetStats;
 exports.shimAddTrackRemoveTrackWithNative = shimAddTrackRemoveTrackWithNative;
 exports.shimAddTrackRemoveTrack = shimAddTrackRemoveTrack;
@@ -5439,53 +5421,9 @@ var _getusermedia = require("./getusermedia");
 
 var _getdisplaymedia = require("./getdisplaymedia");
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-/* iterates the stats graph recursively. */
-function walkStats(stats, base, resultSet) {
-  if (!base || resultSet.has(base.id)) {
-    return;
-  }
-
-  resultSet.set(base.id, base);
-  Object.keys(base).forEach(function (name) {
-    if (name.endsWith('Id')) {
-      walkStats(stats, stats.get(base[name]), resultSet);
-    } else if (name.endsWith('Ids')) {
-      base[name].forEach(function (id) {
-        walkStats(stats, stats.get(id), resultSet);
-      });
-    }
-  });
-}
-/* filter getStats for a sender/receiver track. */
-
-
-function filterStats(result, track, outbound) {
-  var streamStatsType = outbound ? 'outbound-rtp' : 'inbound-rtp';
-  var filteredResult = new Map();
-
-  if (track === null) {
-    return filteredResult;
-  }
-
-  var trackStats = [];
-  result.forEach(function (value) {
-    if (value.type === 'track' && value.trackIdentifier === track.id) {
-      trackStats.push(value);
-    }
-  });
-  trackStats.forEach(function (trackStat) {
-    result.forEach(function (stats) {
-      if (stats.type === streamStatsType && stats.trackId === trackStat.id) {
-        walkStats(result, stats, filteredResult);
-      }
-    });
-  });
-  return filteredResult;
-}
 
 function shimMediaStream(window) {
   window.MediaStream = window.MediaStream || window.webkitMediaStream;
@@ -5703,6 +5641,73 @@ function shimGetSendersWithDtmf(window) {
   }
 }
 
+function shimGetStats(window) {
+  if (!window.RTCPeerConnection) {
+    return;
+  }
+
+  var origGetStats = window.RTCPeerConnection.prototype.getStats;
+
+  window.RTCPeerConnection.prototype.getStats = function (selector, successCallback, errorCallback) {
+    var _this5 = this;
+
+    var args = arguments; // If selector is a function then we are in the old style stats so just
+    // pass back the original getStats format to avoid breaking old users.
+
+    if (arguments.length > 0 && typeof selector === 'function') {
+      return origGetStats.apply(this, arguments);
+    } // When spec-style getStats is supported, return those when called with
+    // either no arguments or the selector argument is null.
+
+
+    if (origGetStats.length === 0 && (arguments.length === 0 || typeof arguments[0] !== 'function')) {
+      return origGetStats.apply(this, []);
+    }
+
+    var fixChromeStats_ = function fixChromeStats_(response) {
+      var standardReport = {};
+      var reports = response.result();
+      reports.forEach(function (report) {
+        var standardStats = {
+          id: report.id,
+          timestamp: report.timestamp,
+          type: {
+            localcandidate: 'local-candidate',
+            remotecandidate: 'remote-candidate'
+          }[report.type] || report.type
+        };
+        report.names().forEach(function (name) {
+          standardStats[name] = report.stat(name);
+        });
+        standardReport[standardStats.id] = standardStats;
+      });
+      return standardReport;
+    }; // shim getStats with maplike support
+
+
+    var makeMapStats = function makeMapStats(stats) {
+      return new Map(Object.keys(stats).map(function (key) {
+        return [key, stats[key]];
+      }));
+    };
+
+    if (arguments.length >= 2) {
+      var successCallbackWrapper_ = function successCallbackWrapper_(response) {
+        args[1](makeMapStats(fixChromeStats_(response)));
+      };
+
+      return origGetStats.apply(this, [successCallbackWrapper_, arguments[0]]);
+    } // promise-support
+
+
+    return new Promise(function (resolve, reject) {
+      origGetStats.apply(_this5, [function (response) {
+        resolve(makeMapStats(fixChromeStats_(response)));
+      }, reject]);
+    }).then(successCallback, errorCallback);
+  };
+}
+
 function shimSenderReceiverGetStats(window) {
   if (!(_typeof(window) === 'object' && window.RTCPeerConnection && window.RTCRtpSender && window.RTCRtpReceiver)) {
     return;
@@ -5714,11 +5719,11 @@ function shimSenderReceiverGetStats(window) {
 
     if (origGetSenders) {
       window.RTCPeerConnection.prototype.getSenders = function () {
-        var _this5 = this;
+        var _this6 = this;
 
         var senders = origGetSenders.apply(this, []);
         senders.forEach(function (sender) {
-          return sender._pc = _this5;
+          return sender._pc = _this6;
         });
         return senders;
       };
@@ -5742,7 +5747,7 @@ function shimSenderReceiverGetStats(window) {
            *   send a track with the same id as sender.track as
            *   it is not possible to identify the RTCRtpSender.
            */
-          filterStats(result, sender.track, true)
+          utils.filterStats(result, sender.track, true)
         );
       });
     };
@@ -5754,11 +5759,11 @@ function shimSenderReceiverGetStats(window) {
 
     if (origGetReceivers) {
       window.RTCPeerConnection.prototype.getReceivers = function () {
-        var _this6 = this;
+        var _this7 = this;
 
         var receivers = origGetReceivers.apply(this, []);
         receivers.forEach(function (receiver) {
-          return receiver._pc = _this6;
+          return receiver._pc = _this7;
         });
         return receivers;
       };
@@ -5772,7 +5777,7 @@ function shimSenderReceiverGetStats(window) {
     window.RTCRtpReceiver.prototype.getStats = function () {
       var receiver = this;
       return this._pc.getStats().then(function (result) {
-        return filterStats(result, receiver.track, false);
+        return utils.filterStats(result, receiver.track, false);
       });
     };
   }
@@ -5831,11 +5836,11 @@ function shimAddTrackRemoveTrackWithNative(window) {
   // the interactions with legacy getLocalStreams behave as in other browsers.
   // Keeps a mapping stream.id => [stream, rtpsenders...]
   window.RTCPeerConnection.prototype.getLocalStreams = function () {
-    var _this7 = this;
+    var _this8 = this;
 
     this._shimmedLocalStreams = this._shimmedLocalStreams || {};
     return Object.keys(this._shimmedLocalStreams).map(function (streamId) {
-      return _this7._shimmedLocalStreams[streamId][0];
+      return _this8._shimmedLocalStreams[streamId][0];
     });
   };
 
@@ -5861,11 +5866,11 @@ function shimAddTrackRemoveTrackWithNative(window) {
   var origAddStream = window.RTCPeerConnection.prototype.addStream;
 
   window.RTCPeerConnection.prototype.addStream = function (stream) {
-    var _this8 = this;
+    var _this9 = this;
 
     this._shimmedLocalStreams = this._shimmedLocalStreams || {};
     stream.getTracks().forEach(function (track) {
-      var alreadyExists = _this8.getSenders().find(function (s) {
+      var alreadyExists = _this9.getSenders().find(function (s) {
         return s.track === track;
       });
 
@@ -5892,20 +5897,20 @@ function shimAddTrackRemoveTrackWithNative(window) {
   var origRemoveTrack = window.RTCPeerConnection.prototype.removeTrack;
 
   window.RTCPeerConnection.prototype.removeTrack = function (sender) {
-    var _this9 = this;
+    var _this10 = this;
 
     this._shimmedLocalStreams = this._shimmedLocalStreams || {};
 
     if (sender) {
       Object.keys(this._shimmedLocalStreams).forEach(function (streamId) {
-        var idx = _this9._shimmedLocalStreams[streamId].indexOf(sender);
+        var idx = _this10._shimmedLocalStreams[streamId].indexOf(sender);
 
         if (idx !== -1) {
-          _this9._shimmedLocalStreams[streamId].splice(idx, 1);
+          _this10._shimmedLocalStreams[streamId].splice(idx, 1);
         }
 
-        if (_this9._shimmedLocalStreams[streamId].length === 1) {
-          delete _this9._shimmedLocalStreams[streamId];
+        if (_this10._shimmedLocalStreams[streamId].length === 1) {
+          delete _this10._shimmedLocalStreams[streamId];
         }
       });
     }
@@ -5930,24 +5935,24 @@ function shimAddTrackRemoveTrack(window) {
   var origGetLocalStreams = window.RTCPeerConnection.prototype.getLocalStreams;
 
   window.RTCPeerConnection.prototype.getLocalStreams = function () {
-    var _this10 = this;
+    var _this11 = this;
 
     var nativeStreams = origGetLocalStreams.apply(this);
     this._reverseStreams = this._reverseStreams || {};
     return nativeStreams.map(function (stream) {
-      return _this10._reverseStreams[stream.id];
+      return _this11._reverseStreams[stream.id];
     });
   };
 
   var origAddStream = window.RTCPeerConnection.prototype.addStream;
 
   window.RTCPeerConnection.prototype.addStream = function (stream) {
-    var _this11 = this;
+    var _this12 = this;
 
     this._streams = this._streams || {};
     this._reverseStreams = this._reverseStreams || {};
     stream.getTracks().forEach(function (track) {
-      var alreadyExists = _this11.getSenders().find(function (s) {
+      var alreadyExists = _this12.getSenders().find(function (s) {
         return s.track === track;
       });
 
@@ -5978,7 +5983,7 @@ function shimAddTrackRemoveTrack(window) {
   };
 
   window.RTCPeerConnection.prototype.addTrack = function (track, stream) {
-    var _this12 = this;
+    var _this13 = this;
 
     if (this.signalingState === 'closed') {
       throw new DOMException('The RTCPeerConnection\'s signalingState is \'closed\'.', 'InvalidStateError');
@@ -6014,7 +6019,7 @@ function shimAddTrackRemoveTrack(window) {
       oldStream.addTrack(track); // Trigger ONN async.
 
       Promise.resolve().then(function () {
-        _this12.dispatchEvent(new Event('negotiationneeded'));
+        _this13.dispatchEvent(new Event('negotiationneeded'));
       });
     } else {
       var newStream = new window.MediaStream([track]);
@@ -6060,14 +6065,14 @@ function shimAddTrackRemoveTrack(window) {
     var nativeMethod = window.RTCPeerConnection.prototype[method];
 
     window.RTCPeerConnection.prototype[method] = function () {
-      var _this13 = this;
+      var _this14 = this;
 
       var args = arguments;
       var isLegacyCall = arguments.length && typeof arguments[0] === 'function';
 
       if (isLegacyCall) {
         return nativeMethod.apply(this, [function (description) {
-          var desc = replaceInternalStreamId(_this13, description);
+          var desc = replaceInternalStreamId(_this14, description);
           args[0].apply(null, [desc]);
         }, function (err) {
           if (args[1]) {
@@ -6077,7 +6082,7 @@ function shimAddTrackRemoveTrack(window) {
       }
 
       return nativeMethod.apply(this, arguments).then(function (description) {
-        return replaceInternalStreamId(_this13, description);
+        return replaceInternalStreamId(_this14, description);
       });
     };
   });
@@ -6107,7 +6112,7 @@ function shimAddTrackRemoveTrack(window) {
   });
 
   window.RTCPeerConnection.prototype.removeTrack = function (sender) {
-    var _this14 = this;
+    var _this15 = this;
 
     if (this.signalingState === 'closed') {
       throw new DOMException('The RTCPeerConnection\'s signalingState is \'closed\'.', 'InvalidStateError');
@@ -6129,12 +6134,12 @@ function shimAddTrackRemoveTrack(window) {
     this._streams = this._streams || {};
     var stream;
     Object.keys(this._streams).forEach(function (streamid) {
-      var hasTrack = _this14._streams[streamid].getTracks().find(function (track) {
+      var hasTrack = _this15._streams[streamid].getTracks().find(function (track) {
         return sender.track === track;
       });
 
       if (hasTrack) {
-        stream = _this14._streams[streamid];
+        stream = _this15._streams[streamid];
       }
     });
 
@@ -6161,68 +6166,7 @@ function shimPeerConnection(window) {
 
   if (!window.RTCPeerConnection) {
     return;
-  }
-
-  var origGetStats = window.RTCPeerConnection.prototype.getStats;
-
-  window.RTCPeerConnection.prototype.getStats = function (selector, successCallback, errorCallback) {
-    var _this15 = this;
-
-    var args = arguments; // If selector is a function then we are in the old style stats so just
-    // pass back the original getStats format to avoid breaking old users.
-
-    if (arguments.length > 0 && typeof selector === 'function') {
-      return origGetStats.apply(this, arguments);
-    } // When spec-style getStats is supported, return those when called with
-    // either no arguments or the selector argument is null.
-
-
-    if (origGetStats.length === 0 && (arguments.length === 0 || typeof arguments[0] !== 'function')) {
-      return origGetStats.apply(this, []);
-    }
-
-    var fixChromeStats_ = function fixChromeStats_(response) {
-      var standardReport = {};
-      var reports = response.result();
-      reports.forEach(function (report) {
-        var standardStats = {
-          id: report.id,
-          timestamp: report.timestamp,
-          type: {
-            localcandidate: 'local-candidate',
-            remotecandidate: 'remote-candidate'
-          }[report.type] || report.type
-        };
-        report.names().forEach(function (name) {
-          standardStats[name] = report.stat(name);
-        });
-        standardReport[standardStats.id] = standardStats;
-      });
-      return standardReport;
-    }; // shim getStats with maplike support
-
-
-    var makeMapStats = function makeMapStats(stats) {
-      return new Map(Object.keys(stats).map(function (key) {
-        return [key, stats[key]];
-      }));
-    };
-
-    if (arguments.length >= 2) {
-      var successCallbackWrapper_ = function successCallbackWrapper_(response) {
-        args[1](makeMapStats(fixChromeStats_(response)));
-      };
-
-      return origGetStats.apply(this, [successCallbackWrapper_, arguments[0]]);
-    } // promise-support
-
-
-    return new Promise(function (resolve, reject) {
-      origGetStats.apply(_this15, [function (response) {
-        resolve(makeMapStats(fixChromeStats_(response)));
-      }, reject]);
-    }).then(successCallback, errorCallback);
-  }; // shim implicit creation of RTCSessionDescription/RTCIceCandidate
+  } // shim implicit creation of RTCSessionDescription/RTCIceCandidate
 
 
   ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
@@ -6339,7 +6283,7 @@ exports.shimGetUserMedia = shimGetUserMedia;
 
 var utils = _interopRequireWildcard(require("../utils.js"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -6535,24 +6479,26 @@ function shimGetUserMedia(window) {
   // function which returns a Promise, it does not accept spec-style
   // constraints.
 
-  var origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+  if (navigator.mediaDevices.getUserMedia) {
+    var origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
 
-  navigator.mediaDevices.getUserMedia = function (cs) {
-    return shimConstraints_(cs, function (c) {
-      return origGetUserMedia(c).then(function (stream) {
-        if (c.audio && !stream.getAudioTracks().length || c.video && !stream.getVideoTracks().length) {
-          stream.getTracks().forEach(function (track) {
-            track.stop();
-          });
-          throw new DOMException('', 'NotFoundError');
-        }
+    navigator.mediaDevices.getUserMedia = function (cs) {
+      return shimConstraints_(cs, function (c) {
+        return origGetUserMedia(c).then(function (stream) {
+          if (c.audio && !stream.getAudioTracks().length || c.video && !stream.getVideoTracks().length) {
+            stream.getTracks().forEach(function (track) {
+              track.stop();
+            });
+            throw new DOMException('', 'NotFoundError');
+          }
 
-        return stream;
-      }, function (e) {
-        return Promise.reject(shimError_(e));
+          return stream;
+        }, function (e) {
+          return Promise.reject(shimError_(e));
+        });
       });
-    });
-  };
+    };
+  }
 }
 
 },{"../utils.js":29}],20:[function(require,module,exports){
@@ -6580,9 +6526,9 @@ var _sdp = _interopRequireDefault(require("sdp"));
 
 var utils = _interopRequireWildcard(require("./utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -6606,7 +6552,7 @@ function shimRTCIceCandidate(window) {
       // Augment the native candidate with the parsed fields.
       var nativeCandidate = new NativeRTCIceCandidate(args);
 
-      var parsedCandidate = _sdp.default.parseCandidate(args.candidate);
+      var parsedCandidate = _sdp["default"].parseCandidate(args.candidate);
 
       var augmentedCandidate = Object.assign(nativeCandidate, parsedCandidate); // Add a serializer that does not serialize the extra attributes.
 
@@ -6656,11 +6602,15 @@ function shimMaxMessageSize(window) {
   }
 
   var sctpInDescription = function sctpInDescription(description) {
-    var sections = _sdp.default.splitSections(description.sdp);
+    if (!description || !description.sdp) {
+      return false;
+    }
+
+    var sections = _sdp["default"].splitSections(description.sdp);
 
     sections.shift();
     return sections.some(function (mediaSection) {
-      var mLine = _sdp.default.parseMLine(mediaSection);
+      var mLine = _sdp["default"].parseMLine(mediaSection);
 
       return mLine && mLine.kind === 'application' && mLine.protocol.indexOf('SCTP') !== -1;
     });
@@ -6723,7 +6673,7 @@ function shimMaxMessageSize(window) {
       maxMessageSize = 65535;
     }
 
-    var match = _sdp.default.matchPrefix(description.sdp, 'a=max-message-size:');
+    var match = _sdp["default"].matchPrefix(description.sdp, 'a=max-message-size:');
 
     if (match.length > 0) {
       maxMessageSize = parseInt(match[0].substr(19), 10);
@@ -6943,9 +6893,9 @@ var _getusermedia = require("./getusermedia");
 
 var _getdisplaymedia = require("./getdisplaymedia");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function shimPeerConnection(window) {
   var browserDetails = utils.detectBrowser(window);
@@ -7003,7 +6953,7 @@ function shimPeerConnection(window) {
     window.RTCDTMFSender = window.RTCDtmfSender;
   }
 
-  var RTCPeerConnectionShim = (0, _rtcpeerconnectionShim.default)(window, browserDetails.version);
+  var RTCPeerConnectionShim = (0, _rtcpeerconnectionShim["default"])(window, browserDetails.version);
 
   window.RTCPeerConnection = function (config) {
     if (config && config.iceServers) {
@@ -7043,7 +6993,7 @@ exports.filterIceServers = filterIceServers;
 
 var utils = _interopRequireWildcard(require("../utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 // Edge does not like
 // 1) stun: filtered after 14393 unless ?transport=udp is present
@@ -7159,7 +7109,7 @@ function shimGetUserMedia(window) {
   var origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
 
   navigator.mediaDevices.getUserMedia = function (c) {
-    return origGetUserMedia(c).catch(function (e) {
+    return origGetUserMedia(c)["catch"](function (e) {
       return Promise.reject(shimError_(e));
     });
   };
@@ -7205,7 +7155,7 @@ var _getusermedia = require("./getusermedia");
 
 var _getdisplaymedia = require("./getdisplaymedia");
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -7456,7 +7406,7 @@ exports.shimGetUserMedia = shimGetUserMedia;
 
 var utils = _interopRequireWildcard(require("../utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -7542,7 +7492,7 @@ exports.shimCreateOfferLegacy = shimCreateOfferLegacy;
 
 var utils = _interopRequireWildcard(require("../utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -7866,7 +7816,7 @@ function shimCreateOfferLegacy(window) {
       }
 
       var audioTransceiver = this.getTransceivers().find(function (transceiver) {
-        return transceiver.sender.track && transceiver.sender.track.kind === 'audio';
+        return transceiver.receiver.track.kind === 'audio';
       });
 
       if (offerOptions.offerToReceiveAudio === false && audioTransceiver) {
@@ -7893,7 +7843,7 @@ function shimCreateOfferLegacy(window) {
       }
 
       var videoTransceiver = this.getTransceivers().find(function (transceiver) {
-        return transceiver.sender.track && transceiver.sender.track.kind === 'video';
+        return transceiver.receiver.track.kind === 'video';
       });
 
       if (offerOptions.offerToReceiveVideo === false && videoTransceiver) {
@@ -7942,6 +7892,8 @@ exports.log = log;
 exports.deprecated = deprecated;
 exports.detectBrowser = detectBrowser;
 exports.compactObject = compactObject;
+exports.walkStats = walkStats;
+exports.filterStats = filterStats;
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -8094,9 +8046,11 @@ function detectBrowser(window) {
     // Firefox.
     result.browser = 'firefox';
     result.version = extractVersion(navigator.userAgent, /Firefox\/(\d+)\./, 1);
-  } else if (navigator.webkitGetUserMedia) {
+  } else if (navigator.webkitGetUserMedia || window.isSecureContext === false && window.webkitRTCPeerConnection && !window.RTCIceGatherer) {
     // Chrome, Chromium, Webview, Opera.
     // Version matches Chrome/WebRTC version.
+    // Chrome 74 removed webkitGetUserMedia on http as well so we need the
+    // more complicated fallback to webkitRTCPeerConnection.
     result.browser = 'chrome';
     result.version = extractVersion(navigator.userAgent, /Chrom(e|ium)\/(\d+)\./, 2);
   } else if (navigator.mediaDevices && navigator.userAgent.match(/Edge\/(\d+).(\d+)$/)) {
@@ -8138,6 +8092,51 @@ function compactObject(data) {
 
     return Object.assign(accumulator, _defineProperty({}, key, value));
   }, {});
+}
+/* iterates the stats graph recursively. */
+
+
+function walkStats(stats, base, resultSet) {
+  if (!base || resultSet.has(base.id)) {
+    return;
+  }
+
+  resultSet.set(base.id, base);
+  Object.keys(base).forEach(function (name) {
+    if (name.endsWith('Id')) {
+      walkStats(stats, stats.get(base[name]), resultSet);
+    } else if (name.endsWith('Ids')) {
+      base[name].forEach(function (id) {
+        walkStats(stats, stats.get(id), resultSet);
+      });
+    }
+  });
+}
+/* filter getStats for a sender/receiver track. */
+
+
+function filterStats(result, track, outbound) {
+  var streamStatsType = outbound ? 'outbound-rtp' : 'inbound-rtp';
+  var filteredResult = new Map();
+
+  if (track === null) {
+    return filteredResult;
+  }
+
+  var trackStats = [];
+  result.forEach(function (value) {
+    if (value.type === 'track' && value.trackIdentifier === track.id) {
+      trackStats.push(value);
+    }
+  });
+  trackStats.forEach(function (trackStat) {
+    result.forEach(function (stats) {
+      if (stats.type === streamStatsType && stats.trackId === trackStat.id) {
+        walkStats(result, stats, filteredResult);
+      }
+    });
+  });
+  return filteredResult;
 }
 
 },{}],30:[function(require,module,exports){

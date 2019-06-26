@@ -57,9 +57,6 @@
 		/** property {String} selector */
 		mainCallElementSelector: '#call-container',
 
-		/** @property {OCA.SpreedMe.Models.RoomCollection} _rooms  */
-		_rooms: null,
-
 		_registerPageEvents: function() {
 			// Initialize button tooltips
 			$('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).click(function() {
@@ -67,40 +64,8 @@
 			});
 		},
 
-		/**
-		 * @param {string} token
-		 */
-		_setRoomActive: function(token) {
-			if (OC.getCurrentUser().uid) {
-				this._rooms.forEach(function(room) {
-					room.set('active', room.get('token') === token);
-				});
-			}
-		},
-		syncAndSetActiveRoom: function(token) {
-			var self = this;
-			this.signaling.syncRooms()
-				.then(function() {
-					self.stopListening(self.activeRoom, 'change:participantFlags');
-
-					if (OC.getCurrentUser().uid) {
-						roomChannel.trigger('active', token);
-
-						self._rooms.forEach(function(room) {
-							if (room.get('token') === token) {
-								self.activeRoom = room;
-								self._chatView.setRoom(room);
-							}
-						});
-					}
-				});
-		},
-
 		initialize: function() {
-			if (OC.getCurrentUser().uid) {
-				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
-				this.listenTo(roomChannel, 'active', this._setRoomActive);
-			} else {
+			if (!OC.getCurrentUser().uid) {
 				this.initGuestName();
 			}
 
@@ -128,7 +93,11 @@
 			this.signaling = OCA.Talk.Signaling.createConnection();
 			this.connection = new OCA.Talk.Connection(this);
 
-			this.signaling.on('joinRoom', function(/* token */) {
+			this.signaling.on('joinRoom', function(token) {
+				if (this.token !== token) {
+					return;
+				}
+
 				this.inRoom = true;
 				if (this.pendingNickChange) {
 					this.setGuestName(this.pendingNickChange);
@@ -137,11 +106,38 @@
 			}.bind(this));
 
 			this.signaling.on('joinCall', function() {
-				// Disable video when joining a call in a room with more than 5
-				// participants.
-				var participants = this.activeRoom.get('participants');
-				if (participants && Object.keys(participants).length > 5) {
+				// Do not perform the initial adjustments when joining a call
+				// again due to a forced reconnection.
+				if (this._reconnectCallToken === this.activeRoom.get('token')) {
+					delete this._reconnectCallToken;
+
+					return;
+				}
+
+				delete this._reconnectCallToken;
+
+				if (this.activeRoom.get('type') === this.ROOM_TYPE_ONE_TO_ONE) {
+					this._mediaControlsView.setAudioEnabled(true);
 					this.setVideoEnabled(false);
+
+					return;
+				}
+
+				this._mediaControlsView.setAudioEnabled(false);
+				this.setVideoEnabled(false);
+
+				var participants = this.activeRoom.get('participants');
+				var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
+						this.activeRoom.get('numGuests');
+				if (this.signaling.isNoMcuWarningEnabled() && numberOfParticipantsAndGuests >= 5) {
+					var warning = t('spreed', 'Calls with more than 4 participants without an external signaling server can experience connectivity issues and cause high load on participating devices.');
+					OC.Notification.showTemporary(warning, { timeout: 30, type: 'warning' });
+				}
+			}.bind(this));
+
+			this.signaling.on('leaveCall', function (token, reconnect) {
+				if (reconnect) {
+					this._reconnectCallToken = token;
 				}
 			}.bind(this));
 
@@ -163,6 +159,16 @@
 				localMediaChannel.trigger('webRtcNotSupported');
 			} else {
 				localMediaChannel.trigger('waitingForPermissions');
+			}
+
+			var participants = this.activeRoom.get('participants');
+			var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
+					this.activeRoom.get('numGuests');
+			if (numberOfParticipantsAndGuests >= 5) {
+				this.signaling.setSendVideoIfAvailable(false);
+				this.setVideoEnabled(false);
+			} else {
+				this.signaling.setSendVideoIfAvailable(true);
 			}
 
 			OCA.SpreedMe.webrtc.startMedia(this.token);

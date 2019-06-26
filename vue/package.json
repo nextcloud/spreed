@@ -1,0 +1,54 @@
+{
+  "name": "spreed",
+  "description": "",
+  "version": "6.0.0",
+  "author": "Joas Schilling <coding@schilljs.com>",
+  "license": "agpl",
+  "private": true,
+  "scripts": {
+    "dev": "webpack --config webpack.dev.js",
+    "watch": "webpack --progress --watch --config webpack.dev.js",
+    "build": "webpack --progress --hide-modules --config webpack.prod.js",
+    "lint": "eslint --ext .js,.vue src",
+    "lint:fix": "eslint --ext .js,.vue src --fix"
+  },
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "debounce": "^1.2.0",
+    "nextcloud-axios": "^0.2.0",
+    "nextcloud-vue": "^0.11.4",
+    "nextcloud-vue-collections": "^0.5.2",
+    "vue": "^2.6.10",
+    "vue-fragment": "^1.5.1",
+    "vuex": "^3.1.1"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 11"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/preset-env": "^7.4.5",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.0.0",
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-import-resolver-webpack": "^0.11.1",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^5.2.2",
+    "file-loader": "^4.0.0",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^7.1.0",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.34.0",
+    "webpack-cli": "^3.3.4",
+    "webpack-merge": "^4.2.1"
+  }
+}
