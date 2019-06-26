@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PhpCodeSniffer">
+    <phpcs_settings>
+      <PhpCSConfiguration tool_path="$USER_HOME$/Downloads/PHP_CodeSniffer-3.0.0RC2/PHP_CodeSniffer-3.0.0RC2/bin/phpcs" />
+    </phpcs_settings>
+  </component>
+</project>
