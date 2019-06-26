@@ -1,4 +1,6 @@
 [
+  "vendor/paste.js/paste.min.js",
+  "custom/copypaste.js",
   "vendor/backbone/backbone-min.js",
   "vendor/backbone.radio/build/backbone.radio.min.js",
   "vendor/backbone.marionette/lib/backbone.marionette.min.js",
