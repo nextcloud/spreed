@@ -250,6 +250,8 @@
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 			this.$container = this.$el.find('ul.comments');
 
+			this.$container.scroll(this._loadOlderMessagesOnScrollToTop.bind(this));
+
 			this._virtualList = new OCA.SpreedMe.Views.VirtualList(this.$container);
 
 			var avatarSize = 32;
@@ -433,6 +435,34 @@
 			this.$container.scrollTop(this.$container.scrollTop() + heightDifference);
 
 			this.reloadMessageList();
+		},
+
+		_loadOlderMessagesOnScrollToTop: function(event) {
+			if (!this.collection.canLoadOlderMessages()) {
+				return;
+			}
+
+			if (this.$container.scrollTop() > this.$container.outerHeight()) {
+				return;
+			}
+
+			this._loadOlderMessages();
+		},
+
+		_loadOlderMessages: function() {
+			if (this._loadOlderMessagesPromise === this.collection.loadOlderMessages()) {
+				return;
+			}
+
+			this._loadOlderMessagesPromise = this.collection.loadOlderMessages();
+			this._loadOlderMessagesPromise.then(function() {
+				delete this._loadOlderMessagesPromise;
+			}.bind(this)).fail(function() {
+				delete this._loadOlderMessagesPromise;
+
+				// Retry on failure.
+				this._loadOlderMessages();
+			}.bind(this));
 		},
 
 		_formatItem: function(commentModel) {
@@ -647,6 +677,13 @@
 
 			if (this._scrollToNew) {
 				this._virtualList.scrollTo(this._virtualList.getLastElement());
+			}
+
+			// Keep loading older messages until there is a scroll bar;
+			// otherwise the user would not be able to scroll to load further
+			// messages.
+			if (!this._virtualList.isScrollable() && this.collection.canLoadOlderMessages()) {
+				this._loadOlderMessages();
 			}
 		},
 

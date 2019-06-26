@@ -47,6 +47,12 @@
 	 * when new messages are received. Once enabled, the polling will go on
 	 * indefinitely. Due to this "stopReceivingMessages" must be called once
 	 * the ChatMessageCollection is no longer needed.
+	 *
+	 * Note that when "receiveMessages" is called it will first load the latest
+	 * messages already sent and, then, it will start to poll for new messages.
+	 * If further older messages needs to be loaded this can be done by calling
+	 * "loadOlderMessages"; whether there are still older messages or not can
+	 * be checked by calling "canLoadOlderMessages".
 	 */
 	var ChatMessageCollection = Backbone.Collection.extend({
 
@@ -89,6 +95,13 @@
 				this.signaling = null;
 			}
 
+			this._canLoadOlderMessages = true;
+
+			this._olderKnownMessageId = 0;
+			this._newerKnownMessageId = 0;
+
+			this._loadOlderMessagesPromise = null;
+
 			this.reset();
 		},
 
@@ -96,20 +109,117 @@
 			this.invoke('updateGuestName', {sessionId: sessionId, displayName: newDisplayName});
 		},
 
+		/**
+		 * Handle messages received by the signaling.
+		 */
 		_messagesReceived: function(messages) {
+			if (messages.length > 0) {
+				this._newerKnownMessageId = messages[messages.length - 1].id;
+			}
+
+			if (messages.length > 0 && !this._olderKnownMessageId) {
+				this._olderKnownMessageId = messages[0].id;
+			}
+
 			this.trigger('add:start');
 			this.set(messages);
 			this.trigger('add:end');
 		},
 
-		receiveMessages: function() {
-			if (this.signaling) {
-				this.signaling.on("chatMessagesReceived", this._handler);
-				this.signaling.startReceiveMessages();
+		canLoadOlderMessages: function() {
+			return this._canLoadOlderMessages;
+		},
+
+		/**
+		 * Loads the next batch of messages older than the oldest loaded
+		 * message.
+		 *
+		 * This method does not block; it returns a Promise that will be
+		 * resolved after the messages are loaded, or if there are no more
+		 * messages to load. In case of error, the Promise will be rejected.
+		 *
+		 * Several calls to this method may return the same Promise if the
+		 * previous load has not finished yet.
+		 *
+		 * @return {Promise} the promise that signals the end of the load.
+		 */
+		loadOlderMessages: function() {
+			if (this._loadOlderMessagesPromise) {
+				return this._loadOlderMessagesPromise;
 			}
+
+			var currentLoadOlderMessagesPromise = $.Deferred()
+			this._loadOlderMessagesPromise = currentLoadOlderMessagesPromise;
+
+			$.ajax({
+				url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + this.token,
+				method: 'GET',
+				data: {
+					lookIntoFuture: 0,
+					lastKnownMessageId: this._olderKnownMessageId,
+					limit: 50,
+				},
+				dataType: 'json',
+				success: function (data, status, request) {
+					if (status === "notmodified") {
+						this._canLoadOlderMessages = false;
+
+						currentLoadOlderMessagesPromise.resolve();
+
+						return;
+					}
+
+					// Remove the promise before resolving it to allow chained
+					// loads.
+					this._loadOlderMessagesPromise = null;
+
+					// The known message IDs are updated before the elements are
+					// actually set because "loadOlderMessages()" could be
+					// called again when the "add:start" and "add:end" events
+					// are handled.
+					if (data.ocs.data.length > 0) {
+						this._olderKnownMessageId = data.ocs.data[data.ocs.data.length - 1].id;
+					}
+
+					if (data.ocs.data.length > 0 && !this._newerKnownMessageId) {
+						this._newerKnownMessageId = data.ocs.data[0].id;
+					}
+
+					this.trigger('add:start', {at: 0});
+					// The elements are prepended one by one, as due to the
+					// parameters set by Backbone for the "add" event the chat
+					// view can not identify several elements prepended at once.
+					for (var i = 0; i<data.ocs.data.length; i++) {
+						this.set(data.ocs.data[i], {at: 0});
+					}
+					this.trigger('add:end', {at: 0});
+
+					currentLoadOlderMessagesPromise.resolve();
+				}.bind(this),
+				error: function (result) {
+					this._loadOlderMessagesPromise = null;
+
+					currentLoadOlderMessagesPromise.reject();
+				}.bind(this),
+			});
+
+			return this._loadOlderMessagesPromise;
+		},
+
+		receiveMessages: function() {
+			this._receiveMessages = true;
+
+			this.loadOlderMessages().then(function() {
+				if (this.signaling && this._receiveMessages) {
+					this.signaling.on("chatMessagesReceived", this._handler);
+					this.signaling.startReceiveMessages(this._newerKnownMessageId);
+				}
+			}.bind(this));
 		},
 
 		stopReceivingMessages: function() {
+			this._receiveMessages = false;
+
 			if (this.signaling) {
 				this.signaling.off("chatMessagesReceived", this._handler);
 				this.signaling.stopReceiveMessages();

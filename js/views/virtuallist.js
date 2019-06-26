@@ -621,6 +621,8 @@
 			$wrapper._top = 0;
 
 			var elementToUpdateOldHeight = 0;
+			var elementToUpdateOldHeightFromTopRaw = 0;
+			var elementToUpdateOldTopRaw = 0;
 
 			var $firstExistingElement = $firstElementToLoad._next;
 
@@ -631,6 +633,7 @@
 				// removed from the overall height of the list and all the
 				// other elements after it.
 				elementToUpdateOldHeight = $firstExistingElement._height;
+				elementToUpdateOldTopRaw = $firstExistingElement._topRaw;
 
 				// If the element was visible appending it to the buffer would
 				// remove it from the main wrapper, so a clone that acts as a
@@ -652,17 +655,20 @@
 					// the height to remove is not the full height of the
 					// element, but just until the top raw position of its next
 					// element to account for collapsing margins.
-					elementToUpdateOldHeight = $firstExistingElement._topRaw;
+					elementToUpdateOldHeight = $firstExistingElement._topRaw - $firstExistingElement._previous._topRaw;
 				}
 			}
 
+			var $firstExistingElementClone = null;
 			if ($firstExistingElement) {
 				// The wrapper is already at the top, so no need to set its
 				// position.
 
+				$firstExistingElementClone = $firstExistingElement.clone();
+
 				// Include the next element, as its position may change due to
 				// collapsing margins.
-				$wrapper.append($firstExistingElement.clone());
+				$wrapper.append($firstExistingElementClone);
 			}
 
 			this._$container.append($wrapper);
@@ -670,6 +676,14 @@
 			var wrapperHeightWithoutElementsToLoad = this._getElementHeight($wrapper);
 
 			$wrapper.prepend(elementsBuffer);
+
+			var firstExistingElementTopRawDifference = 0;
+			if ($firstExistingElement && $firstExistingElement._previous._dirty && $firstExistingElement._previous === this._$firstVisibleElement) {
+				// The clone is not a proxy
+				this._updateCache($firstExistingElementClone, $wrapper);
+				this._updateCache($firstElementToLoad, $wrapper);
+				firstExistingElementTopRawDifference = elementToUpdateOldHeight - ($firstExistingElementClone._topRaw - $firstElementToLoad._updateProxyFor._topRaw);
+			}
 
 			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad - elementToUpdateOldHeight;
 
@@ -725,7 +739,12 @@
 			// as it could "short circuit" before reaching the point where the
 			// wrapper position is updated.
 			if (this._$firstVisibleElement) {
-				this._$wrapper._top += wrapperHeightDifference;
+				// Adding the wrapperHeightDifference restores the wrapper
+				// position after the update of the scroll position, but it is
+				// necessary to add the first existing element top raw
+				// difference to restore its position when the previous element
+				// was also updated.
+				this._$wrapper._top += wrapperHeightDifference + firstExistingElementTopRawDifference;
 				this._$wrapper.css('top', this._$wrapper._top);
 			}
 		},
