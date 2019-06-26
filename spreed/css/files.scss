@@ -1,0 +1,312 @@
+#talkChatTabView .call-button {
+	text-align: center;
+	margin-bottom: 10px;
+
+	button {
+		padding-left: 26px;
+		padding-right: 26px;
+	}
+
+	.icon-loading-small {
+		/* Prevent the text from being moved when the icon is shown. */
+		position: absolute;
+
+		margin-left: 5px;
+		margin-top: 1px;
+
+		/* Unset the background image set by the server for loading icons inside
+		 * buttons, as in this case the pure CSS icon can be used instead of the
+		 * image. */
+		background-image: unset;
+
+		&.hidden {
+			display: none;
+		}
+	}
+}
+
+#talkChatTabView .file-not-shared button {
+	margin-top: 15px;
+}
+
+
+
+
+.talkCallInfoView #call-container-wrapper {
+	/* Overlap the padding from the sidebar itself to maximize the area of the
+	 * video as much as possible */
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-top: -15px;
+}
+
+.talkCallInfoView #call-container-wrapper #emptycontent-icon {
+	width: 128px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+
+.talkCallInfoView #call-container-wrapper #call-container.incall ~ #emptycontent {
+	display: none;
+}
+
+.talkCallInfoView #call-container-wrapper #call-container:not(.incall) {
+	display: none;
+}
+
+.talkCallInfoView #call-container-wrapper #call-container {
+	position: relative;
+
+	/* Show the call container in a 16/9 proportion based on the sidebar
+	 * width. This is the same proportion used for previews of images by the
+	 * SidebarPreviewManager. */
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+/* Video in Talk sidebar */
+.talkCallInfoView #call-container-wrapper #videos {
+	position: absolute;
+
+	flex-grow: 1;
+}
+
+.talkCallInfoView #call-container-wrapper .videoContainer {
+	/* The video container has some small padding to prevent the video from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+.talkCallInfoView #call-container-wrapper .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+.talkCallInfoView #call-container-wrapper .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+/* Screensharing in Talk sidebar */
+.talkCallInfoView #call-container-wrapper #screens {
+	display: none;
+}
+
+
+
+
+
+.talkCallInfoView #videos .videoContainer:not(.promoted) video {
+	/* Make the unpromoted videos smaller to not overlap too much the promoted
+	 * video */
+	max-height: 100px;
+}
+
+/* The avatars are requested with a size of 128px, so reduce it to not overlap
+ * too much the promoted video */
+.talkCallInfoView #videos .videoContainer:not(.promoted) .avatar,
+.talkCallInfoView #videos .videoContainer:not(.promoted) .avatar img {
+	width: 64px !important;
+	height: 64px !important;
+}
+
+
+
+.talkCallInfoView .participants-1 .videoView,
+.talkCallInfoView .participants-2 .videoView {
+	/* Do not force the width to 200px, as otherwise the video is too tall and
+	 * overlaps too much with the promoted video. */
+	min-width: initial;
+	/* z-index of 10 would put the video on top of the close button. */
+	z-index: 1;
+}
+
+
+
+.talkCallInfoView .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px;
+	/* Use default font size, as it takes too much space otherwise */
+	font-size: initial;
+}
+
+.talkCallInfoView .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px 35%;
+}
+
+
+
+.talkCallInfoView .mediaIndicator {
+	/* Move the media indicator closer to the bottom */
+	bottom: 16px;
+}
+
+
+
+
+
+/* Helper class to hide other info views during a call; this makes possible to
+ * restore their previous visibility once the call stops without having to keep
+ * track of their previous visibility. */
+#app-sidebar .hidden-by-call {
+	display: none;
+}
+
+/* Force the white icon during calls, independent from white/dark mode
+ * selection, because it is shown on the black calling screen. */
+#app-sidebar .icon-close.force-icon-white-in-call.icon-shadow {
+	background-image: url(icon-color-path('close', 'actions', 'fff', 1, true));
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+
+
+
+
+
+/**
+ * Cascade parent element height to the chat view in the sidebar to limit the
+ * vertical scroll bar only to the list of messages. Otherwise, the vertical
+ * scroll bar would be shown for the whole sidebar and everything would be
+ * moved when scrolling to see overflown messages.
+ *
+ * The list of messages should stretch to fill the available space at the bottom
+ * of the right sidebar, so the height is cascaded using flex boxes.
+ *
+ * It is horrible, I know (but better than using JavaScript ;-) ). Please
+ * improve it if you know how :-)
+ */
+#app-sidebar {
+	/* Override "display: block" set inline by jQuery. */
+	display: flex !important;
+	flex-direction: column;
+}
+
+#app-sidebar.disappear {
+	/* Override "display: flex !important" when the sidebar has to be hidden. */
+	display: none !important;
+}
+
+#app-sidebar .detailFileInfoContainer {
+	display: flex;
+	flex-direction: column;
+
+	flex-shrink: 0;
+}
+
+#app-sidebar .tabsContainer {
+	display: flex;
+	flex-direction: column;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .tab {
+	display: flex;
+	flex-direction: column;
+
+	flex-grow: 1;
+}
+
+#app-sidebar .tabsContainer.with-inner-scroll-bars,
+#app-sidebar .tabsContainer.with-inner-scroll-bars .tab {
+	overflow: hidden;
+}
+
+/* Force a minimum height to ensure that the chat view will be at least 300px
+ * height, even if the info view is large and the screen short; in that case a
+ * scroll bar will be shown for the sidebar, but even if that looks really bad
+ * it is better than an unusable chat view. */
+#app-sidebar .tabsContainer.force-minimum-height {
+	min-height: 300px;
+}
+
+#app-sidebar .tab.hidden {
+	display: none;
+}
+
+#app-sidebar #chatView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+}
+
+#app-sidebar #chatView .comments {
+	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+}
+
+/**
+ * Place the scroll bar of the message list on the right edge of the sidebar,
+ * but keeping the padding of the tab view.
+ *
+ * The padding must be set on the left too to ensure that the contacts menu
+ * shown when clicking on an author name does not overflow the tab (as it would
+ * be hidden).
+ *
+ * The bottom padding is removed to extend the chat view to the bottom edge of
+ * the sidebar.
+ */
+#app-sidebar .tab-chat {
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom: 0;
+}
+
+/* Hack needed to overcome the padding of the tab container and move the scroll
+ * bar of the messages list to the right border of the sidebar. */
+#app-sidebar .tabsContainer.with-inner-scroll-bars .tab {
+	padding-right: 0px;
+}
+
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder {
+	/* Make the placeholder take the full tab height until the UI is ready. */
+	flex-grow: 1;
+}
+
+/* Hide other UI elements when there is a "UI not ready" placeholder. */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder ~ div,
+/* #chatView needs to be set explicitly to override the display property of
+ * "#app-sidebar #chatView". */
+#app-sidebar .tabsContainer .tab .ui-not-ready-placeholder ~ #chatView {
+	display: none;
+}
+
+#app-sidebar #chatView .comments {
+	padding-right: 15px;
+}
+
+#app-sidebar #chatView .comments .wrapper-background,
+#app-sidebar #chatView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	right: 15px;
+}
+
+#app-sidebar #chatView .newCommentRow {
+	/* The details view in the Files app has a bottom padding of 15px, so the
+	 * general bottom margin used for comments should be reduced for the new
+	 * comment form. */
+	margin-bottom: 5px;
+}
+
+#app-sidebar #chatView .newCommentForm {
+	/* Make room to show the "Add" button when chat is shown in the sidebar. */
+	margin-right: 44px;
+}

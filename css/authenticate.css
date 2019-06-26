@@ -1,0 +1,53 @@
+form fieldset {
+	display: flex !important;
+	flex-direction: column;
+}
+
+#password {
+	margin-right: 0 !important;
+	height: 45px;
+	box-sizing: border-box;
+	flex: 1 1 auto;
+	width: 100% !important;
+	min-width: 0; /* FF hack for to override default value */
+
+	/* The padding needs to be set here instead of for "input[type="password"]"
+	 * elements to prevent being overriden by a more specific rule in the
+	 * server. */
+	padding-right: 44px;
+}
+
+input[type="password"]:focus + .icon-confirm:not(:disabled) {
+	opacity: .6;
+}
+
+input[type="password"] + .icon-confirm {
+	position: absolute;
+	right: 15px;
+
+	/* Needed to honour the height set below for "input[type='submit']" by
+	 * overriding a rule set in the server. */
+	height: 45px;
+
+	border: none;
+	/* Needed to override an important rule set in the server. */
+	background-color: transparent !important;
+
+	opacity: .3;
+}
+
+input[type="password"] + .icon-confirm:hover:not(:disabled),
+input[type="password"] + .icon-confirm:focus:not(:disabled),
+input[type="password"] + .icon-confirm:active:not(:disabled) {
+	opacity: 1;
+}
+
+input[type='submit'] {
+	width: 45px;
+	height: 45px;
+	margin-left: 0 !important;
+}
+
+fieldset > p {
+	display: inline-flex;
+}

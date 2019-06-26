@@ -1,0 +1,9 @@
+{
+    "name": "jshashes",
+    "main": "hashes.js",
+    "version": "1.0.5",
+    "scripts": [
+        "hashes.js",
+        "hashes.min.js"
+    ]
+}
