@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Chat\Command;
 
 
+use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Model\Command;
 use OCA\Spreed\Room;
 use OCA\Spreed\Service\CommandService;
@@ -76,7 +77,7 @@ class Executor {
 				'user' => $user,
 				'visibility' => $command->getResponse(),
 				'output' => $e->getMessage(),
-			]));
+			]), ChatManager::MAX_CHAT_LENGTH);
 			$message->setActor('bots', $command->getName());
 			$message->setVerb('command');
 			return;
@@ -95,7 +96,7 @@ class Executor {
 			'user' => $user,
 			'visibility' => $command->getResponse(),
 			'output' => $output,
-		]));
+		]), ChatManager::MAX_CHAT_LENGTH);
 		$message->setActor('bots', $command->getName());
 		$message->setVerb('command');
 	}
