@@ -879,10 +879,11 @@ class RoomController extends AEnvironmentAwareController {
 
 		$user = $this->userManager->get($this->userId);
 		try {
+			$result = $room->verifyPassword((string) $this->session->getPasswordForRoom($token));
 			if ($user instanceof IUser) {
-				$newSessionId = $room->joinRoom($user, $password, $this->session->getPasswordForRoom($token) === $room->getToken());
+				$newSessionId = $room->joinRoom($user, $password, $result['result']);
 			} else {
-				$newSessionId = $room->joinRoomGuest($password, $this->session->getPasswordForRoom($token) === $room->getToken());
+				$newSessionId = $room->joinRoomGuest($password, $result['result']);
 			}
 		} catch (InvalidPasswordException $e) {
 			return new DataResponse([], Http::STATUS_FORBIDDEN);
