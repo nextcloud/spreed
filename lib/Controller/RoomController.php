@@ -569,6 +569,7 @@ class RoomController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
 	 *
 	 * @return DataResponse
 	 */

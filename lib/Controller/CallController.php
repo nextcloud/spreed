@@ -48,6 +48,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
 	 *
 	 * @return DataResponse
 	 */
@@ -75,6 +76,7 @@ class CallController extends AEnvironmentAwareController {
 	 * @PublicPage
 	 * @RequireParticipant
 	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
 	 *
 	 * @param int|null $flags
 	 * @return DataResponse
@@ -100,6 +102,7 @@ class CallController extends AEnvironmentAwareController {
 	/**
 	 * @PublicPage
 	 * @RequireParticipant
+	 * @RequireModeratorOrNoLobby
 	 *
 	 * @return DataResponse
 	 */
