@@ -22,6 +22,7 @@ namespace OCA\Spreed\Tests\php;
 
 use OCA\Spreed\Manager;
 use OCA\Spreed\Room;
+use OCA\Spreed\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\Security\IHasher;
@@ -56,6 +57,7 @@ class PasswordVerificationTest extends TestCase {
 			1,
 			Room::PUBLIC_CALL,
 			Room::READ_WRITE,
+			Webinary::ALL_PARTICIPANTS,
 			'foobar',
 			'Test',
 			'passy',

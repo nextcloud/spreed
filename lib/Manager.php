@@ -140,6 +140,7 @@ class Manager {
 			(int) $row['id'],
 			(int) $row['type'],
 			(int) $row['read_only'],
+			(int) $row['lobby_state'],
 			$row['token'],
 			$row['name'],
 			$row['password'],

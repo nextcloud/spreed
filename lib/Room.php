@@ -71,6 +71,8 @@ class Room {
 	private $type;
 	/** @var int */
 	private $readOnly;
+	/** @var int */
+	private $lobbyState;
 	/** @var string */
 	private $token;
 	/** @var string */
@@ -104,6 +106,7 @@ class Room {
 								int $id,
 								int $type,
 								int $readOnly,
+								int $lobbyState,
 								string $token,
 								string $name,
 								string $password,
@@ -122,6 +125,7 @@ class Room {
 		$this->id = $id;
 		$this->type = $type;
 		$this->readOnly = $readOnly;
+		$this->lobbyState = $lobbyState;
 		$this->token = $token;
 		$this->name = $name;
 		$this->password = $password;
@@ -143,6 +147,10 @@ class Room {
 
 	public function getReadOnly(): int {
 		return $this->readOnly;
+	}
+
+	public function getLobbyState(): int {
+		return $this->lobbyState;
 	}
 
 	public function getToken(): string {
@@ -490,6 +498,49 @@ class Room {
 		$this->readOnly = $newState;
 
 		$this->dispatcher->dispatch(self::class . '::postSetReadOnly', new GenericEvent($this, [
+			'newState' => $newState,
+			'oldState' => $oldState,
+		]));
+
+		return true;
+	}
+
+	/**
+	 * @param int $newState Currently it is only allowed to change between
+	 * 						`Webinary::MODERATORS_ONLY` and `Webinary::ALL_PARTICIPANTS`
+	 * 						Also it's not allowed in one-to-one conversations,
+	 * 						file conversations and password request conversations.
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setLobbyState(int $newState): bool {
+		$oldState = $this->getLobbyState();
+
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+			return false;
+		}
+
+		if ($this->getObjectType() !== '') {
+			return false;
+		}
+
+		if (!in_array($newState, [Webinary::MODERATORS_ONLY, Webinary::ALL_PARTICIPANTS], true)) {
+			return false;
+		}
+
+		$this->dispatcher->dispatch(self::class . '::preSetLobbyState', new GenericEvent($this, [
+			'newState' => $newState,
+			'oldState' => $oldState,
+		]));
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('lobby_state', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->lobbyState = $newState;
+
+		$this->dispatcher->dispatch(self::class . '::postSetLobbyState', new GenericEvent($this, [
 			'newState' => $newState,
 			'oldState' => $oldState,
 		]));
