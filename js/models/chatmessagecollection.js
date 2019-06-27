@@ -214,6 +214,8 @@
 					this.signaling.on("chatMessagesReceived", this._handler);
 					this.signaling.startReceiveMessages(this._newerKnownMessageId);
 				}
+			}.bind(this)).fail(function() {
+				this.receiveMessages();
 			}.bind(this));
 		},
 
