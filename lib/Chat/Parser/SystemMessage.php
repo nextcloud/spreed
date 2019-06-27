@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Chat\Parser;
 
 
+use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\GuestManager;
 use OCA\Spreed\Model\Message;
@@ -234,7 +235,7 @@ class SystemMessage {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
 
-		$comment->setMessage($message);
+		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
 		$chatMessage->setMessage($parsedMessage, $parsedParameters);
 	}
 

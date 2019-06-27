@@ -45,6 +45,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class ChatManager {
 
+	public const MAX_CHAT_LENGTH = 32000;
+
 	/** @var CommentsManager|ICommentsManager */
 	private $commentsManager;
 	/** @var EventDispatcherInterface */
@@ -77,7 +79,7 @@ class ChatManager {
 	 */
 	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
-		$comment->setMessage($message);
+		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		$comment->setVerb('system');
 		try {
@@ -108,7 +110,8 @@ class ChatManager {
 	 */
 	public function addChangelogMessage(Room $chat, string $message): IComment {
 		$comment = $this->commentsManager->create('guests', 'changelog', 'chat', (string) $chat->getId());
-		$comment->setMessage($message);
+
+		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
 		$comment->setVerb('comment'); // Has to be comment, so it counts as unread message
 
@@ -140,7 +143,7 @@ class ChatManager {
 	 */
 	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
-		$comment->setMessage($message);
+		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
 		// comment
