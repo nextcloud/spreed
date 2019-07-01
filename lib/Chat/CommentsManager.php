@@ -52,7 +52,11 @@ class CommentsManager extends Manager {
 	 * @return IComment
 	 */
 	public function getCommentFromData(array $data): IComment {
-		return new Comment($this->normalizeDatabaseData($data));
+		$message = $data['message'];
+		unset($data['message']);
+		$comment = new Comment($this->normalizeDatabaseData($data));
+		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
+		return $comment;
 	}
 
 	/**
