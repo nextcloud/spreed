@@ -111,9 +111,10 @@
 				unfavoriteRoomText: t('spreed', 'Remove from favorites'),
 				favoriteRoomText: t('spreed', 'Add to favorites'),
 				copyLinkText: t('spreed', 'Copy link'),
-				notifyAlwaysText: t('spreed', 'Always notify'),
-				notifyMentionText: t('spreed', 'Notify on @-mention'),
-				notifyNeverText: t('spreed', 'Never notify'),
+				notificationCaptionText: t('spreed', 'Chat notifications'),
+				notifyAlwaysText: t('spreed', 'All messages'),
+				notifyMentionText: t('spreed', '@-mentions only'),
+				notifyNeverText: t('spreed', 'Off'),
 				leaveConversationText: t('spreed', 'Leave conversation'),
 				deleteConversationText: t('spreed', 'Delete conversation'),
 			};
