@@ -43,7 +43,7 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-
+	margin-right: -10px;
 	flex-grow: 1;
 }
 
@@ -346,7 +346,7 @@ input[type="password"] {
 #app-sidebar-trigger {
 	background-color: transparent;
 	border: none;
-	margin: 0;
+	margin: 0 10px 0 0;
 	width: 44px;
 	height: 44px;
 }
