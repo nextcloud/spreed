@@ -17,7 +17,7 @@ var getUserMedia = function getUserMedia(constraints, callback) {
 
   window.navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
     callback(null, stream);
-  })["catch"](function (error) {
+  }).catch(function (error) {
     callback(error, null);
   });
 }; // cache for constraints and callback
@@ -41,7 +41,7 @@ module.exports = function (mode, constraints, cb) {
       video: true
     }).then(function (stream) {
       callback(null, stream);
-    })["catch"](function (error) {
+    }).catch(function (error) {
       callback(error, null);
     });
   } else if (navigator.webkitGetUserMedia) {
@@ -327,7 +327,7 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
     if (cb) {
       return cb(null, stream);
     }
-  })["catch"](function (err) {
+  }).catch(function (err) {
     // Fallback for users without a camera
     if (self.config.audioFallback && err.name === 'NotFoundError' && constraints.video !== false) {
       constraints.video = false;
@@ -705,10 +705,10 @@ Peer.prototype.offer = function (options) {
       }
 
       this.send('offer', offer);
-    }.bind(this))["catch"](function (error) {
+    }.bind(this)).catch(function (error) {
       console.warn("setLocalDescription for offer failed: ", error);
     }.bind(this));
-  }.bind(this))["catch"](function (error) {
+  }.bind(this)).catch(function (error) {
     console.warn("createOffer failed: ", error);
   }.bind(this));
 };
@@ -716,7 +716,7 @@ Peer.prototype.offer = function (options) {
 Peer.prototype.handleOffer = function (offer) {
   this.pc.setRemoteDescription(offer).then(function () {
     this.answer();
-  }.bind(this))["catch"](function (error) {
+  }.bind(this)).catch(function (error) {
     console.warn("setRemoteDescription for offer failed: ", error);
   }.bind(this));
 };
@@ -736,16 +736,16 @@ Peer.prototype.answer = function () {
       }
 
       this.send('answer', answer);
-    }.bind(this))["catch"](function (error) {
+    }.bind(this)).catch(function (error) {
       console.warn("setLocalDescription for answer failed: ", error);
     }.bind(this));
-  }.bind(this))["catch"](function (error) {
+  }.bind(this)).catch(function (error) {
     console.warn("createAnswer failed: ", error);
   }.bind(this));
 };
 
 Peer.prototype.handleAnswer = function (answer) {
-  this.pc.setRemoteDescription(answer)["catch"](function (error) {
+  this.pc.setRemoteDescription(answer).catch(function (error) {
     console.warn("setRemoteDescription for answer failed: ", error);
   }.bind(this));
 };
@@ -3698,11 +3698,11 @@ module.exports = function (window, edgeVersion) {
               });
               stream = streams[remoteMsid.stream];
             } else {
-              if (!streams["default"]) {
-                streams["default"] = new window.MediaStream();
+              if (!streams.default) {
+                streams.default = new window.MediaStream();
               }
 
-              stream = streams["default"];
+              stream = streams.default;
             }
 
             if (stream) {
@@ -3791,12 +3791,12 @@ module.exports = function (window, edgeVersion) {
             addTrackToStreamAndFireEvent(track, streams[remoteMsid.stream]);
             receiverList.push([track, rtpReceiver, streams[remoteMsid.stream]]);
           } else {
-            if (!streams["default"]) {
-              streams["default"] = new window.MediaStream();
+            if (!streams.default) {
+              streams.default = new window.MediaStream();
             }
 
-            addTrackToStreamAndFireEvent(track, streams["default"]);
-            receiverList.push([track, rtpReceiver, streams["default"]]);
+            addTrackToStreamAndFireEvent(track, streams.default);
+            receiverList.push([track, rtpReceiver, streams.default]);
           }
         } else {
           // FIXME: actually the receiver should be created later.
@@ -3950,7 +3950,7 @@ module.exports = function (window, edgeVersion) {
       newState = 'checking';
     } else if (states.disconnected > 0) {
       newState = 'disconnected';
-    } else if (states["new"] > 0) {
+    } else if (states.new > 0) {
       newState = 'new';
     } else if (states.connected > 0) {
       newState = 'connected';
@@ -3994,7 +3994,7 @@ module.exports = function (window, edgeVersion) {
       newState = 'connecting';
     } else if (states.disconnected > 0) {
       newState = 'disconnected';
-    } else if (states["new"] > 0) {
+    } else if (states.new > 0) {
       newState = 'new';
     } else if (states.connected > 0) {
       newState = 'connected';
@@ -5250,7 +5250,7 @@ var safariShim = _interopRequireWildcard(require("./safari/safari_shim"));
 
 var commonShim = _interopRequireWildcard(require("./common_shim"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 /*
  *  Copyright (c) 2016 The WebRTC project authors. All Rights Reserved.
@@ -5421,7 +5421,7 @@ var _getusermedia = require("./getusermedia");
 
 var _getdisplaymedia = require("./getdisplaymedia");
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -6288,7 +6288,7 @@ exports.shimGetUserMedia = shimGetUserMedia;
 
 var utils = _interopRequireWildcard(require("../utils.js"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -6531,9 +6531,9 @@ var _sdp = _interopRequireDefault(require("sdp"));
 
 var utils = _interopRequireWildcard(require("./utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -6557,7 +6557,7 @@ function shimRTCIceCandidate(window) {
       // Augment the native candidate with the parsed fields.
       var nativeCandidate = new NativeRTCIceCandidate(args);
 
-      var parsedCandidate = _sdp["default"].parseCandidate(args.candidate);
+      var parsedCandidate = _sdp.default.parseCandidate(args.candidate);
 
       var augmentedCandidate = Object.assign(nativeCandidate, parsedCandidate); // Add a serializer that does not serialize the extra attributes.
 
@@ -6611,11 +6611,11 @@ function shimMaxMessageSize(window) {
       return false;
     }
 
-    var sections = _sdp["default"].splitSections(description.sdp);
+    var sections = _sdp.default.splitSections(description.sdp);
 
     sections.shift();
     return sections.some(function (mediaSection) {
-      var mLine = _sdp["default"].parseMLine(mediaSection);
+      var mLine = _sdp.default.parseMLine(mediaSection);
 
       return mLine && mLine.kind === 'application' && mLine.protocol.indexOf('SCTP') !== -1;
     });
@@ -6678,7 +6678,7 @@ function shimMaxMessageSize(window) {
       maxMessageSize = 65535;
     }
 
-    var match = _sdp["default"].matchPrefix(description.sdp, 'a=max-message-size:');
+    var match = _sdp.default.matchPrefix(description.sdp, 'a=max-message-size:');
 
     if (match.length > 0) {
       maxMessageSize = parseInt(match[0].substr(19), 10);
@@ -6898,9 +6898,9 @@ var _getusermedia = require("./getusermedia");
 
 var _getdisplaymedia = require("./getdisplaymedia");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function shimPeerConnection(window) {
   var browserDetails = utils.detectBrowser(window);
@@ -6958,7 +6958,7 @@ function shimPeerConnection(window) {
     window.RTCDTMFSender = window.RTCDtmfSender;
   }
 
-  var RTCPeerConnectionShim = (0, _rtcpeerconnectionShim["default"])(window, browserDetails.version);
+  var RTCPeerConnectionShim = (0, _rtcpeerconnectionShim.default)(window, browserDetails.version);
 
   window.RTCPeerConnection = function (config) {
     if (config && config.iceServers) {
@@ -6998,7 +6998,7 @@ exports.filterIceServers = filterIceServers;
 
 var utils = _interopRequireWildcard(require("../utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 // Edge does not like
 // 1) stun: filtered after 14393 unless ?transport=udp is present
@@ -7114,7 +7114,7 @@ function shimGetUserMedia(window) {
   var origGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
 
   navigator.mediaDevices.getUserMedia = function (c) {
-    return origGetUserMedia(c)["catch"](function (e) {
+    return origGetUserMedia(c).catch(function (e) {
       return Promise.reject(shimError_(e));
     });
   };
@@ -7160,7 +7160,7 @@ var _getusermedia = require("./getusermedia");
 
 var _getdisplaymedia = require("./getdisplaymedia");
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -7414,7 +7414,7 @@ exports.shimGetUserMedia = shimGetUserMedia;
 
 var utils = _interopRequireWildcard(require("../utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -7500,7 +7500,7 @@ exports.shimCreateOfferLegacy = shimCreateOfferLegacy;
 
 var utils = _interopRequireWildcard(require("../utils"));
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 

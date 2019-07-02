@@ -15,6 +15,7 @@
     "attachmediastream": "^2.1.0",
     "babelify": "^10.0.0",
     "browserify": "^16.2.3",
+    "browserslist-config-nextcloud": "0.0.1",
     "handlebars": "^4.1.2",
     "hark": "^1.2.3",
     "mockconsole": "0.0.1",
@@ -22,5 +23,8 @@
     "webrtc-adapter": "^7.2.4",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.1"
-  }
+  },
+  "browserslist": [
+    "extends browserslist-config-nextcloud"
+  ]
 }
