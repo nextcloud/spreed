@@ -6159,6 +6159,8 @@ function shimAddTrackRemoveTrack(window) {
 }
 
 function shimPeerConnection(window) {
+  var browserDetails = utils.detectBrowser(window);
+
   if (!window.RTCPeerConnection && window.webkitRTCPeerConnection) {
     // very basic support for old versions.
     window.RTCPeerConnection = window.webkitRTCPeerConnection;
@@ -6169,14 +6171,17 @@ function shimPeerConnection(window) {
   } // shim implicit creation of RTCSessionDescription/RTCIceCandidate
 
 
-  ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
-    var nativeMethod = window.RTCPeerConnection.prototype[method];
+  if (browserDetails.version < 53) {
+    ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
+      var nativeMethod = window.RTCPeerConnection.prototype[method];
 
-    window.RTCPeerConnection.prototype[method] = function () {
-      arguments[0] = new (method === 'addIceCandidate' ? window.RTCIceCandidate : window.RTCSessionDescription)(arguments[0]);
-      return nativeMethod.apply(this, arguments);
-    };
-  }); // support for addIceCandidate(null or undefined)
+      window.RTCPeerConnection.prototype[method] = function () {
+        arguments[0] = new (method === 'addIceCandidate' ? window.RTCIceCandidate : window.RTCSessionDescription)(arguments[0]);
+        return nativeMethod.apply(this, arguments);
+      };
+    });
+  } // support for addIceCandidate(null or undefined)
+
 
   var nativeAddIceCandidate = window.RTCPeerConnection.prototype.addIceCandidate;
 
@@ -7181,17 +7186,20 @@ function shimPeerConnection(window) {
   if (!window.RTCPeerConnection && window.mozRTCPeerConnection) {
     // very basic support for old versions.
     window.RTCPeerConnection = window.mozRTCPeerConnection;
-  } // shim away need for obsolete RTCIceCandidate/RTCSessionDescription.
+  }
 
+  if (browserDetails.version < 53) {
+    // shim away need for obsolete RTCIceCandidate/RTCSessionDescription.
+    ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
+      var nativeMethod = window.RTCPeerConnection.prototype[method];
 
-  ['setLocalDescription', 'setRemoteDescription', 'addIceCandidate'].forEach(function (method) {
-    var nativeMethod = window.RTCPeerConnection.prototype[method];
+      window.RTCPeerConnection.prototype[method] = function () {
+        arguments[0] = new (method === 'addIceCandidate' ? window.RTCIceCandidate : window.RTCSessionDescription)(arguments[0]);
+        return nativeMethod.apply(this, arguments);
+      };
+    });
+  } // support for addIceCandidate(null or undefined)
 
-    window.RTCPeerConnection.prototype[method] = function () {
-      arguments[0] = new (method === 'addIceCandidate' ? window.RTCIceCandidate : window.RTCSessionDescription)(arguments[0]);
-      return nativeMethod.apply(this, arguments);
-    };
-  }); // support for addIceCandidate(null or undefined)
 
   var nativeAddIceCandidate = window.RTCPeerConnection.prototype.addIceCandidate;
 
@@ -7523,9 +7531,14 @@ function shimLocalStreamsAPI(window) {
 
       if (!this._localStreams.includes(stream)) {
         this._localStreams.push(stream);
-      }
+      } // Try to emulate Chrome's behaviour of adding in audio-video order.
+      // Safari orders by track id.
 
-      stream.getTracks().forEach(function (track) {
+
+      stream.getAudioTracks().forEach(function (track) {
+        return _addTrack.call(_this, track, stream);
+      });
+      stream.getVideoTracks().forEach(function (track) {
         return _addTrack.call(_this, track, stream);
       });
     };
@@ -8061,6 +8074,7 @@ function detectBrowser(window) {
     // Safari.
     result.browser = 'safari';
     result.version = extractVersion(navigator.userAgent, /AppleWebKit\/(\d+)\./, 1);
+    result.supportsUnifiedPlan = window.RTCRtpTransceiver && 'currentDirection' in window.RTCRtpTransceiver.prototype;
   } else {
     // Default fallthrough: not supported.
     result.browser = 'Not a supported browser.';
@@ -8070,6 +8084,17 @@ function detectBrowser(window) {
   return result;
 }
 /**
+ * Checks if something is an object.
+ *
+ * @param {*} val The something you want to check.
+ * @return true if val is an object, false otherwise.
+ */
+
+
+function isObject(val) {
+  return Object.prototype.toString.call(val) === '[object Object]';
+}
+/**
  * Remove all empty objects and undefined values
  * from a nested object -- an enhanced and vanilla version
  * of Lodash's `compact`.
@@ -8077,14 +8102,14 @@ function detectBrowser(window) {
 
 
 function compactObject(data) {
-  if (_typeof(data) !== 'object') {
+  if (!isObject(data)) {
     return data;
   }
 
   return Object.keys(data).reduce(function (accumulator, key) {
-    var isObject = _typeof(data[key]) === 'object';
-    var value = isObject ? compactObject(data[key]) : data[key];
-    var isEmptyObject = isObject && !Object.keys(value).length;
+    var isObj = isObject(data[key]);
+    var value = isObj ? compactObject(data[key]) : data[key];
+    var isEmptyObject = isObj && !Object.keys(value).length;
 
     if (value === undefined || isEmptyObject) {
       return accumulator;
@@ -8279,10 +8304,13 @@ WildEmitter.mixin = function (constructor) {
 
 
     i = callbacks.indexOf(fn);
-    callbacks.splice(i, 1);
 
-    if (callbacks.length === 0) {
-      delete this.callbacks[event];
+    if (i !== -1) {
+      callbacks.splice(i, 1);
+
+      if (callbacks.length === 0) {
+        delete this.callbacks[event];
+      }
     }
 
     return this;
