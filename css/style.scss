@@ -1046,11 +1046,13 @@ input[type="password"] {
 #app-sidebar .participantWithList {
 	overflow-y: auto;
 	padding-top: 8px;
+	padding-bottom: 64px;
+
 }
 
 #app-sidebar .participantWithList .participant:last-child {
 	/* Add room for the popovermenu on last user */
-	padding-bottom: 64px;
+	padding-bottom: 94px;
 }
 
 /**
