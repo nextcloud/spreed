@@ -480,19 +480,17 @@ input[type="password"] {
 }
 
 #app-navigation .app-navigation-entry-menu-caption   {
-
-		font-weight: bold;
-		line-height: 44px;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		padding: 0px 36px 0px 36px;
-		// !important to overwrite specific hover and focus
-		opacity: .7;
-		box-shadow: none !important;
-		user-select: none;
-		pointer-events:none;
+	font-weight: bold;
+	line-height: 44px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	padding: 0 36px 0 36px;
+	// !important to overwrite specific hover and focus
+	opacity: .7;
+	box-shadow: none !important;
+	user-select: none;
+	pointer-events: none;
 }
-
 
 #app-navigation .app-navigation-entry-menu input.first-option {
 	margin-top: 5px;
