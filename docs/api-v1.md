@@ -583,7 +583,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `201 Created`
         + `400 Bad Request` In case of any other error
         + `404 Not Found` When the conversation could not be found for the participant
-        + `413 Payload Too Large` When the message was longer than the allowed limit of 1000 characters
+        + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
 
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)

@@ -146,7 +146,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'mention' ||  $subject === 'chat') {
+		if ($subject === 'mention' || $subject === 'chat') {
 			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
