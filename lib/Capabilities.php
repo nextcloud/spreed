@@ -24,27 +24,38 @@ declare(strict_types=1);
 
 namespace OCA\Spreed;
 
+use OCA\Spreed\Chat\ChatManager;
 use OCP\Capabilities\IPublicCapability;
+use OCP\IConfig;
 use OCP\IUser;
 use OCP\IUserSession;
 
 class Capabilities implements IPublicCapability {
 
+	/** @var IConfig */
+	protected $serverConfig;
 	/** @var Config */
-	protected $config;
+	protected $talkConfig;
 	/** @var IUserSession */
 	protected $userSession;
 
-	public function __construct(Config $config,
+	public function __construct(IConfig $serverConfig,
+								Config $talkConfig,
 								IUserSession $userSession) {
-		$this->config = $config;
+		$this->serverConfig = $serverConfig;
+		$this->talkConfig = $talkConfig;
 		$this->userSession = $userSession;
 	}
 
 	public function getCapabilities(): array {
 		$user = $this->userSession->getUser();
-		if ($user instanceof IUser && $this->config->isDisabledForUser($user)) {
+		if ($user instanceof IUser && $this->talkConfig->isDisabledForUser($user)) {
 			return [];
+		}
+
+		$maxChatLength = 1000;
+		if (version_compare($this->serverConfig->getSystemValueString('version', '0.0.0'), '16.0.2', '>=')) {
+			$maxChatLength = ChatManager::MAX_CHAT_LENGTH;
 		}
 
 		return [
@@ -67,6 +78,11 @@ class Capabilities implements IPublicCapability {
 					'invite-groups-and-mails',
 					'locked-one-to-one-rooms',
 					'read-only-rooms',
+				],
+				'config' => [
+					'chat' => [
+						'max-length' => $maxChatLength,
+					],
 				],
 			],
 		];
