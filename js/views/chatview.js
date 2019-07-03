@@ -79,14 +79,17 @@
 
 			_.bindAll(this, '_onAutoComplete');
 
-			 document.addEventListener('resize', function(event) { this.handleFormResize(event.initialFormHeight) })
+			 document.addEventListener('resize', function(event) {
+				 console.log(event.detail.prevFormHeight)
+				  this.handleFormResize(event.detail.prevFormHeight) 
+				})
 
 		},
 
-		handleFormResize : function (initialFormHeight) {
+		handleFormResize : function (prevFormHeight) {
 			var formHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight;
-			console.log('Initial form heigth: ' + initialFormHeight + ', actual form height: ' + formHeight)
-			if (initialFormHeight < formHeight) {
+			//console.log('Initial form heigth: ' + prevFormHeight + ', actual form height: ' + formHeight)
+			if (prevFormHeight < formHeight) {
 			this._virtualList.scrollToLastVisibleElement();
 			}
 		},
@@ -675,8 +678,8 @@
 
 		_onTypeComment: function(ev) {
 			
-			var initialFormHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight
-			var newMessageFieldResized = new CustomEvent('resize', {initialFormHeight : initialFormHeight});
+			var prevFormHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight
+			var newMessageFieldResized = new CustomEvent('resize', { detail : { prevFormHeight : prevFormHeight }});
 			document.dispatchEvent(newMessageFieldResized);
 
 			var $field = $(ev.target);
