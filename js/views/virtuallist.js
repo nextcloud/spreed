@@ -453,9 +453,6 @@
 				this._$container.scrollTop(this._$lastVisibleElement._top + this._$lastVisibleElement._height);
 			}
 
-			this.updateVisibleElements();
-
-			this._queueLoadOfPendingElements();
 		},
 
 		_loadInitialElements: function($initialElement) {
