@@ -427,21 +427,30 @@
 			this._setWrapperBackgroundHeight(0);
 
 			this._loadInitialElements($initialElement);
+			
+			this.scrollToLastVisiBleElement();
+
+			this.updateVisibleElements();
+
+			this._queueLoadOfPendingElements();
+		},
+
+		scrollToLastVisibleElement: function() {
 
 			// Scroll to the last visible element, or to the top of the next one
 			// to prevent it from becoming the last visible element when the
 			// visibilities are updated.
-			if ($initialElement._next) {
+			if (this._$lastVisibleElement._next) {
 				// The implicit "Math.floor()" on the scroll position when the
 				// browser has subpixel accuracy but uses int positions for
 				// scrolling ensures that the next element to the last visible
 				// one will not become visible (which could happen if the value
 				// was rounded instead).
-				this._$container.scrollTop($initialElement._next._top - this._getElementOuterHeightWithoutMargins(this._$container));
+				this._$container.scrollTop(this._$lastVisibleElement._next._top - this._getElementOuterHeightWithoutMargins(this._$container));
 			} else {
 				// As the last visible element is also the last element this
 				// simply scrolls the list to the bottom.
-				this._$container.scrollTop($initialElement._top + $initialElement._height);
+				this._$container.scrollTop(this._$lastVisibleElement._top + this._$lastVisibleElement._height);
 			}
 
 			this.updateVisibleElements();
