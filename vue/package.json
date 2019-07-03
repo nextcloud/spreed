@@ -23,8 +23,7 @@
     "vuex": "^3.1.1"
   },
   "browserslist": [
-    "last 2 versions",
-    "ie >= 11"
+    "extends browserslist-config-nextcloud"
   ],
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -32,6 +31,7 @@
     "@babel/preset-env": "^7.4.5",
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
+    "browserslist-config-nextcloud": "0.0.1",
     "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
