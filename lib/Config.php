@@ -141,6 +141,14 @@ class Config {
 			return 'ws://' . substr($url, 7, strpos($url, '/', 8) - 7);
 		}
 
+		if (strpos($url, 'wss://') === 0) {
+			return substr($url, 0, strpos($url, '/', 7));
+		}
+
+		if (strpos($url, 'ws://') === 0) {
+			return substr($url, 0, strpos($url, '/', 6));
+		}
+
 		$protocol = strpos($url, '://');
 		if ($protocol !== false) {
 			return substr($url, $protocol + 3, strpos($url, '/', $protocol + 3) - $protocol - 3);

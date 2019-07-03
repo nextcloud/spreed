@@ -112,4 +112,84 @@ class ConfigTest extends TestCase {
 			], $server);
 		}
 	}
+
+	public function dataGetWebSocketDomainForSignalingServer() {
+		return [
+			['http://blabla.nextcloud.com', 'ws://blabla.nextcloud.com'],
+			['http://blabla.nextcloud.com/', 'ws://blabla.nextcloud.com'],
+			['http://blabla.nextcloud.com/signaling', 'ws://blabla.nextcloud.com'],
+			['http://blabla.nextcloud.com/signaling/', 'ws://blabla.nextcloud.com'],
+			['http://blabla.nextcloud.com:80', 'ws://blabla.nextcloud.com:80'],
+			['http://blabla.nextcloud.com:80/', 'ws://blabla.nextcloud.com:80'],
+			['http://blabla.nextcloud.com:80/signaling', 'ws://blabla.nextcloud.com:80'],
+			['http://blabla.nextcloud.com:80/signaling/', 'ws://blabla.nextcloud.com:80'],
+			['http://blabla.nextcloud.com:8000', 'ws://blabla.nextcloud.com:8000'],
+			['http://blabla.nextcloud.com:8000/', 'ws://blabla.nextcloud.com:8000'],
+			['http://blabla.nextcloud.com:8000/signaling', 'ws://blabla.nextcloud.com:8000'],
+			['http://blabla.nextcloud.com:8000/signaling/', 'ws://blabla.nextcloud.com:8000'],
+
+			['https://blabla.nextcloud.com', 'wss://blabla.nextcloud.com'],
+			['https://blabla.nextcloud.com/', 'wss://blabla.nextcloud.com'],
+			['https://blabla.nextcloud.com/signaling', 'wss://blabla.nextcloud.com'],
+			['https://blabla.nextcloud.com/signaling/', 'wss://blabla.nextcloud.com'],
+			['https://blabla.nextcloud.com:443', 'wss://blabla.nextcloud.com:443'],
+			['https://blabla.nextcloud.com:443/', 'wss://blabla.nextcloud.com:443'],
+			['https://blabla.nextcloud.com:443/signaling', 'wss://blabla.nextcloud.com:443'],
+			['https://blabla.nextcloud.com:443/signaling/', 'wss://blabla.nextcloud.com:443'],
+			['https://blabla.nextcloud.com:8443', 'wss://blabla.nextcloud.com:8443'],
+			['https://blabla.nextcloud.com:8443/', 'wss://blabla.nextcloud.com:8443'],
+			['https://blabla.nextcloud.com:8443/signaling', 'wss://blabla.nextcloud.com:8443'],
+			['https://blabla.nextcloud.com:8443/signaling/', 'wss://blabla.nextcloud.com:8443'],
+
+			['ws://blabla.nextcloud.com', 'ws://blabla.nextcloud.com'],
+			['ws://blabla.nextcloud.com/', 'ws://blabla.nextcloud.com'],
+			['ws://blabla.nextcloud.com/signaling', 'ws://blabla.nextcloud.com'],
+			['ws://blabla.nextcloud.com/signaling/', 'ws://blabla.nextcloud.com'],
+			['ws://blabla.nextcloud.com:80', 'ws://blabla.nextcloud.com:80'],
+			['ws://blabla.nextcloud.com:80/', 'ws://blabla.nextcloud.com:80'],
+			['ws://blabla.nextcloud.com:80/signaling', 'ws://blabla.nextcloud.com:80'],
+			['ws://blabla.nextcloud.com:80/signaling/', 'ws://blabla.nextcloud.com:80'],
+			['ws://blabla.nextcloud.com:8000', 'ws://blabla.nextcloud.com:8000'],
+			['ws://blabla.nextcloud.com:8000/', 'ws://blabla.nextcloud.com:8000'],
+			['ws://blabla.nextcloud.com:8000/signaling', 'ws://blabla.nextcloud.com:8000'],
+			['ws://blabla.nextcloud.com:8000/signaling/', 'ws://blabla.nextcloud.com:8000'],
+
+			['wss://blabla.nextcloud.com', 'wss://blabla.nextcloud.com'],
+			['wss://blabla.nextcloud.com/', 'wss://blabla.nextcloud.com'],
+			['wss://blabla.nextcloud.com/signaling', 'wss://blabla.nextcloud.com'],
+			['wss://blabla.nextcloud.com/signaling/', 'wss://blabla.nextcloud.com'],
+			['wss://blabla.nextcloud.com:443', 'wss://blabla.nextcloud.com:443'],
+			['wss://blabla.nextcloud.com:443/', 'wss://blabla.nextcloud.com:443'],
+			['wss://blabla.nextcloud.com:443/signaling', 'wss://blabla.nextcloud.com:443'],
+			['wss://blabla.nextcloud.com:443/signaling/', 'wss://blabla.nextcloud.com:443'],
+			['wss://blabla.nextcloud.com:8443', 'wss://blabla.nextcloud.com:8443'],
+			['wss://blabla.nextcloud.com:8443/', 'wss://blabla.nextcloud.com:8443'],
+			['wss://blabla.nextcloud.com:8443/signaling', 'wss://blabla.nextcloud.com:8443'],
+			['wss://blabla.nextcloud.com:8443/signaling/', 'wss://blabla.nextcloud.com:8443'],
+		];
+	}
+
+	/**
+	 * @dataProvider dataGetWebSocketDomainForSignalingServer
+	 * @param string $url
+	 * @param string $expectedWebSocketDomain
+	 */
+	public function testGetWebSocketDomainForSignalingServer($url, $expectedWebSocketDomain) {
+		/** @var MockObject|ITimeFactory $timeFactory */
+		$timeFactory = $this->createMock(ITimeFactory::class);
+		/** @var MockObject|ISecureRandom $secureRandom */
+		$secureRandom = $this->createMock(ISecureRandom::class);
+		/** @var MockObject|IGroupManager $secureRandom */
+		$groupManager = $this->createMock(IGroupManager::class);
+		/** @var MockObject|IConfig $config */
+		$config = $this->createMock(IConfig::class);
+
+		$helper = new Config($config, $secureRandom, $groupManager, $timeFactory);
+
+		$this->assertEquals(
+			$expectedWebSocketDomain,
+			self::invokePrivate($helper, 'getWebSocketDomainForSignalingServer', [$url])
+		);
+	}
+
 }
