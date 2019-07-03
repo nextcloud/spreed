@@ -78,11 +78,24 @@
 			});
 
 			_.bindAll(this, '_onAutoComplete');
+
+			 document.addEventListener('resize', function(event) { this.handleFormResize(event.initialFormHeight) })
+
+		},
+
+		handleFormResize : function (initialFormHeight) {
+			let formHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight;
+			console.log('Initial form heigth: ' + initialFormHeight + ', actual form height: ' + formHeight)
+			if (initialFormHeight < formHeight) {
+			this._virtualList.scrollToLastVisibleElement();
+			}
 		},
 
 		setRoom: function(model) {
 			this.model = model;
 		},
+
+		
 
 		_initAutoComplete: function($target) {
 			var s = this;
@@ -661,6 +674,11 @@
 		},
 
 		_onTypeComment: function(ev) {
+			
+			var initialFormHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight
+			var newMessageFieldResized = new CustomEvent('resize', {initialFormHeight : initialFormHeight});
+			document.dispatchEvent(newMessageFieldResized);
+
 			var $field = $(ev.target);
 			var $submitButton = $field.data('submitButtonEl');
 			if (!$submitButton) {
