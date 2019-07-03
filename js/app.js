@@ -231,6 +231,13 @@
 				$('div[contenteditable=true]:focus').length === 0 &&
 				!event.ctrlKey) {
 
+				// When not in a call, only the f-shortcut is visible and can be used
+				var flags = this.activeRoom.get('participantFlags') || 0;
+				var inCall = (flags & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0;
+				if (!inCall && key !== 70) {
+					return;
+				}
+
 				// Actual shortcut handling
 				switch (key) {
 					case 86: // 'v'
