@@ -444,7 +444,9 @@ templates['roomlistview'] = template({"1":function(container,depth0,helpers,part
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canFavorite : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "		<li>\n			<button class=\"clipboard-button\">\n				<span class=\"icon-clippy\"></span>\n				<span>"
     + alias4(((helper = (helper = helpers.copyLinkText || (depth0 != null ? depth0.copyLinkText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"copyLinkText","hash":{},"data":data}) : helper)))
-    + "</span>\n			</button>\n		</li>\n		<li><div class=\"separator\"></div></li>\n		<li"
+    + "</span>\n			</button>\n		</li>\n		<li><div class=\"separator\"></div></li>\n		<li class=\"app-navigation-entry-menu-caption\">"
+    + alias4(((helper = (helper = helpers.notificationCaptionText || (depth0 != null ? depth0.notificationCaptionText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"notificationCaptionText","hash":{},"data":data}) : helper)))
+    + "</li>\n		<li"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.notifyAlways : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + ">\n			<button class=\"notify-always-button\">\n				<span class=\"icon-sound\"></span>\n				<span>"
     + alias4(((helper = (helper = helpers.notifyAlwaysText || (depth0 != null ? depth0.notifyAlwaysText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"notifyAlwaysText","hash":{},"data":data}) : helper)))
