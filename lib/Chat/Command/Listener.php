@@ -63,6 +63,10 @@ class Listener {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
+			if (strpos($message->getMessage(), '//') === 0) {
+				return;
+			}
+
 			try {
 				/** @var Command $command */
 				/** @var string $arguments */

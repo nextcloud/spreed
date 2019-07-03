@@ -31,3 +31,16 @@ Feature: chat/commands
       | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | group room | users     | participant1 | participant1-displayname | Message 2 | []                |
       | group room | users     | participant1 | participant1-displayname | Message 1 | []                |
+
+  Scenario: double slash escapes a command for everyone
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | roomName | room |
+    And user "participant1" adds "participant2" to room "group room" with 200
+    When user "participant1" sends message "//help" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | /help   | []                |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters |
+      | group room | users     | participant1 | participant1-displayname | /help   | []                |
