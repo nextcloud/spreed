@@ -84,7 +84,7 @@
 		},
 
 		handleFormResize : function (initialFormHeight) {
-			let formHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight;
+			var formHeight = document.getElementsByClassName('newCommentForm')[0].clientHeight;
 			console.log('Initial form heigth: ' + initialFormHeight + ', actual form height: ' + formHeight)
 			if (initialFormHeight < formHeight) {
 			this._virtualList.scrollToLastVisibleElement();
