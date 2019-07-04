@@ -62,6 +62,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `lastActivity` | int | Timestamp of the last activity in the conversation, in seconds and UTC time zone
         `isFavorite` | bool | Flag if the conversation is favorited by the user
         `notificationLevel` | int | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
+        `lobbyState` | int | Webinary lobby restriction (0-1), if the participant is a moderator they can always join the conversation (only available with `webinary-lobby` capability)
+        `lobbyTimer` | string | Datetime when the lobby will be automatically disabled ([Format: `Y-m-d\TH:i:sP`](https://www.php.net/manual/en/class.datetimeinterface.php#datetime.constants.atom)) (only available with `webinary-lobby` capability)
         `unreadMessages` | int | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | Flag if the user was mentioned since their last visit
         `lastReadMessage` | int | ID of the last read message in a room (only available with `chat-read-marker` capability)

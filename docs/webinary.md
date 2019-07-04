@@ -12,6 +12,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `state` | int | New state for the conversation
+    `timer` | string | Datetime when the lobby state is reset to all participants ([Format: `Y-m-d\TH:i:sP`](https://www.php.net/manual/en/class.datetimeinterface.php#datetime.constants.atom))
 
 * Response:
     - Header:

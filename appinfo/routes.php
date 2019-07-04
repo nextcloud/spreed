@@ -397,7 +397,7 @@ return [
 		 * Webinary
 		 */
 		[
-			'name' => 'Webinary#setLobbyState',
+			'name' => 'Webinary#setLobby',
 			'url' => '/api/{apiVersion}/room/{token}/webinary/lobby',
 			'verb' => 'PUT',
 			'requirements' => [

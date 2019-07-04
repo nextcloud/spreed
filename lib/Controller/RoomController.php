@@ -37,6 +37,7 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
+use OCA\Spreed\Webinary;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -201,6 +202,13 @@ class RoomController extends AEnvironmentAwareController {
 			$lastActivity = 0;
 		}
 
+		$lobbyTimer = $room->getLobbyTimer();
+		if ($lobbyTimer instanceof \DateTimeInterface) {
+			$lobbyTimer = $lobbyTimer->format(\DateTime::ATOM);
+		} else {
+			$lobbyTimer = '';
+		}
+
 		$roomData = array_merge($roomData, [
 			'name' => $room->getName(),
 			'displayName' => $room->getDisplayName($currentParticipant->getUser()),
@@ -216,6 +224,8 @@ class RoomController extends AEnvironmentAwareController {
 			'lastActivity' => $lastActivity,
 			'isFavorite' => $currentParticipant->isFavorite(),
 			'notificationLevel' => $currentParticipant->getNotificationLevel(),
+			'lobbyState' => $room->getLobbyState(),
+			'lobbyTimer' => $lobbyTimer,
 			'lastPing' => $currentParticipant->getLastPing(),
 			'sessionId' => $currentParticipant->getSessionId(),
 		]);

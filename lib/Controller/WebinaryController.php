@@ -26,13 +26,19 @@ namespace OCA\Spreed\Controller;
 
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
 class WebinaryController extends AEnvironmentAwareController {
 
+	/** @var ITimeFactory */
+	protected $timeFactory;
+
 	public function __construct(string $appName,
-								IRequest $request) {
+								IRequest $request,
+								ITimeFactory $timeFactory) {
 		parent::__construct($appName, $request);
+		$this->timeFactory = $timeFactory;
 	}
 
 	/**
@@ -40,10 +46,16 @@ class WebinaryController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 *
 	 * @param int $state
+	 * @param string $timer
 	 * @return DataResponse
 	 */
-	public function setLobbyState(int $state): DataResponse {
-		if (!$this->room->setLobbyState($state)) {
+	public function setLobby(int $state, ?string $timer = null): DataResponse {
+		$timerDateTime = null;
+		if (trim((string) $timer) !== '') {
+			$timerDateTime = $this->timeFactory->getDateTime($timer);
+		}
+
+		if (!$this->room->setLobby($state, $timerDateTime)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 

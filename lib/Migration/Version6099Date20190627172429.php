@@ -50,6 +50,9 @@ class Version6099Date20190627172429 extends SimpleMigrationStep {
 					'length' => 6,
 					'default' => 0,
 				]);
+				$table->addColumn('lobby_timer', Type::DATETIME, [
+					'notnull' => false,
+				]);
 			}
 		}
 
