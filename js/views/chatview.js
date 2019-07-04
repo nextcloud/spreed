@@ -253,7 +253,18 @@
 			if (window.outerHeight > 768) {
 				$message.blur().focus();
 			}
+			$message.on('keydown', function() {
+				// Track scroll position to be able to properly update it after
+				// the new message field shrinks as a result of pressing the
+				// delete or backspace keys.
+				this._scrollPositionOnLastKeyDown = this.$container.scrollTop();
+			}.bind(this));
 			$message.on('keydown input change', _.bind(this._onTypeComment, this));
+
+			// Before the 3.0.0 release jQuery rounded the height to the nearest
+			// integer, but Firefox has subpixel accuracy, so the height
+			// returned by jQuery can not be used in the calculations.
+			this._newMessageFieldHeight = $message.get(0).getBoundingClientRect().height;
 
 			/**
 			 * Make sure we focus the actual content part not the placeholder.
@@ -382,6 +393,31 @@
 			}
 
 			this._virtualList.reload();
+		},
+
+		/**
+		 * Scrolls the message list to keep the last visible message at the
+		 * bottom when the new message field height changes.
+		 *
+		 * @param {number} heightDifference The difference between the current
+		 *                 height of the new message field and the previous one.
+		 */
+		onNewMessageFieldHeightChange: function(heightDifference) {
+			if (heightDifference < 0) {
+				// When the new message field shrunks the message list may be
+				// automatically scrolled to fill the now empty space. For
+				// example, if the message list has 30px hidden at the bottom
+				// and the new message field shrunks 45px the message list is
+				// scrolled back 15px to align the bottom of its contents with
+				// the bottom of its new visible area. In that case the
+				// full height difference should not be scrolled back, only the
+				// part that has not been automatically scrolled yet.
+				heightDifference += this._scrollPositionOnLastKeyDown - this.$container.scrollTop();
+			}
+
+			this.$container.scrollTop(this.$container.scrollTop() + heightDifference);
+
+			this.reloadMessageList();
 		},
 
 		_formatItem: function(commentModel) {
@@ -666,6 +702,15 @@
 			if (!$submitButton) {
 				$submitButton = $field.closest('form').find('.submit');
 				$field.data('submitButtonEl', $submitButton);
+			}
+
+			var newMessageFieldOldHeight = this._newMessageFieldHeight;
+			// Before the 3.0.0 release jQuery rounded the height to the nearest
+			// integer, but Firefox has subpixel accuracy, so the height
+			// returned by jQuery can not be used in the calculations.
+			this._newMessageFieldHeight = $field.get(0).getBoundingClientRect().height;
+			if (this._newMessageFieldHeight !== newMessageFieldOldHeight) {
+				this.triggerMethod('newMessageFieldHeightChange', this._newMessageFieldHeight - newMessageFieldOldHeight);
 			}
 
 			// Submits form with Enter, but Shift+Enter is a new line. If the
