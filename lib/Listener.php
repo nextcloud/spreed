@@ -27,6 +27,7 @@ use OCP\Collaboration\AutoComplete\IManager;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
+use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Listener {
@@ -63,7 +64,7 @@ class Listener {
 			$listener->deleteUser($user);
 		});
 
-		\OC_Hook::connect('OC_User', 'logout', self::class, 'logoutUserStatic');
+		Util::connectHook('OC_User', 'logout', self::class, 'logoutUserStatic');
 
 		$dispatcher->addListener(IManager::class . '::filterResults', function(AutoCompleteEvent $event) {
 			/** @var self $listener */
