@@ -80,8 +80,6 @@ OC.L10N.register(
     "Favorited" : "Pažymėtas svarbiu",
     "Remove from favorites" : "Šalinti iš mėgstamų",
     "Add to favorites" : "Pridėti į mėgstamus",
-    "Always notify" : "Visada pranešti",
-    "Never notify" : "Niekada nepranešti",
     "Delete conversation" : "Ištrinti pokalbį",
     "Your screen" : "Jūsų ekranas",
     "Guest's screen" : "Svečio ekranas",
@@ -178,6 +176,8 @@ OC.L10N.register(
     "{email} requested the password to access a share" : "{email} užklausė slaptažodžio, kad gautų prieigą prie viešinio",
     "Unnamed conversation" : "Pokalbis be pavadinimo",
     "This call is password-protected" : "Šis skambutis yra apsaugotas slaptažodžiu",
+    "Always notify" : "Visada pranešti",
+    "Never notify" : "Niekada nepranešti",
     "{user} sent a message in a conversation" : "{user} išsiuntė žinutę į pokalbį",
     "A deleted user sent a message in a conversation" : "Ištrintas naudotojas išsiuntė žinutę į pokalbį",
     "A guest sent a message in a conversation" : "Svečias išsiuntė žinutę į pokalbį"

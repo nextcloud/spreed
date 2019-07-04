@@ -94,8 +94,6 @@ OC.L10N.register(
     "Favorited" : "Kedvenc",
     "Remove from favorites" : "Eltávolítás a kedvencekből",
     "Add to favorites" : "Hozzáadás a kedvencekhez ",
-    "Always notify" : "Mindig értesíts",
-    "Never notify" : "Sose értesíts",
     "Leave conversation" : "Kilépés a beszélgetésből",
     "Delete conversation" : "Beszélgetés törlése",
     "Your screen" : "Te képernyőd",
@@ -196,6 +194,8 @@ OC.L10N.register(
     "A group call has started" : "Csoportos hívás kezdődött",
     "This call is password-protected" : "Ez a hívás jelszóval védett",
     "Signaling server" : "Jelző szerver",
+    "Always notify" : "Mindig értesíts",
+    "Never notify" : "Sose értesíts",
     "Join now" : "Csatlakozás most"
 },
 "nplurals=2; plural=(n != 1);");

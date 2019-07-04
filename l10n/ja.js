@@ -86,7 +86,6 @@ OC.L10N.register(
     "Favorited" : "お気に入り済",
     "Remove from favorites" : "お気に入りから削除",
     "Add to favorites" : "お気に入りに追加",
-    "Always notify" : "常に通知する",
     "Leave conversation" : "会話を離れる",
     "Delete conversation" : "会話を削除",
     "Your screen" : "自画面",
@@ -152,6 +151,7 @@ OC.L10N.register(
     ", " : "、",
     "A group call has started" : "グループ通話が開始されました",
     "This call is password-protected" : "この通話はパスワードで保護されています",
-    "Signaling server" : "シグナリングサーバー"
+    "Signaling server" : "シグナリングサーバー",
+    "Always notify" : "常に通知する"
 },
 "nplurals=1; plural=0;");

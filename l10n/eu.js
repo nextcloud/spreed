@@ -60,8 +60,6 @@ OC.L10N.register(
     "Remove participant" : "Partehartzailea borratu",
     "Favorited" : "Gogokoa",
     "Add to favorites" : "Gehitu gogokoetara",
-    "Always notify" : "Jakinarazi beti",
-    "Never notify" : "Ez jakinarazi inoiz",
     "Leave conversation" : "Atera elkarrizketatik",
     "Your screen" : "Zure pantaila",
     "{participantName}'s screen" : "{participantName}-aren pantaila",
@@ -108,6 +106,8 @@ OC.L10N.register(
     ", " : ", ",
     "This call is password-protected" : "Deia pasahitzarekin babestua dago",
     "Signaling server" : "Seinalizazio zerbitzaria ",
+    "Always notify" : "Jakinarazi beti",
+    "Never notify" : "Ez jakinarazi inoiz",
     "Join now" : "Elkartu orain"
 },
 "nplurals=2; plural=(n != 1);");
