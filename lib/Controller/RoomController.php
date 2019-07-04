@@ -216,6 +216,8 @@ class RoomController extends AEnvironmentAwareController {
 			'lastActivity' => $lastActivity,
 			'isFavorite' => $currentParticipant->isFavorite(),
 			'notificationLevel' => $currentParticipant->getNotificationLevel(),
+			'lastPing' => $currentParticipant->getLastPing(),
+			'sessionId' => $currentParticipant->getSessionId(),
 		]);
 
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
@@ -224,6 +226,12 @@ class RoomController extends AEnvironmentAwareController {
 			} else {
 				$roomData['notificationLevel'] = $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
 			}
+		}
+
+		if ($room->getLobbyState() === Webinary::MODERATORS_ONLY &&
+			!$currentParticipant->hasModeratorPermissions()) {
+			// No participants and chat messages for users in the lobby.
+			return $roomData;
 		}
 
 		$currentUser = $this->userManager->get($currentParticipant->getUser());
@@ -295,8 +303,6 @@ class RoomController extends AEnvironmentAwareController {
 		}
 
 		$roomData = array_merge($roomData, [
-			'lastPing' => $currentParticipant->getLastPing(),
-			'sessionId' => $currentParticipant->getSessionId(),
 			'participants' => $participantList,
 			'numGuests' => $numActiveGuests,
 			'lastMessage' => $lastMessage,
