@@ -106,6 +106,8 @@ OC.L10N.register(
     "Favorited" : "Marqué comme favori",
     "Remove from favorites" : "Retirer des favoris",
     "Add to favorites" : "Ajouter aux favoris",
+    "All messages" : "Tous les messages",
+    "Off" : "Éteint",
     "Leave conversation" : "Quitter la conversation",
     "Delete conversation" : "Supprimer la conversation",
     "You need to promote a new moderator before you can leave the conversation." : "Vous devez désigner un nouveau modérateur avant de quitter la conversation.",
