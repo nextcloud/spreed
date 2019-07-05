@@ -1,4 +1,4 @@
-# Spreed Signaling API
+# External signaling API
 
 This document gives a rough overview on the API version 1.0 of the Spreed
 signaling server. Clients can use the signaling server to send realtime
@@ -14,7 +14,7 @@ For WebSockets, only the API described in this document is necessary. For COMET,
 an extension to this API is required to identify a (virtual) connection between
 multiple requests. The payload for COMET is the messages as described below.
 
-See [`api-v1.md`](api-v1.md) for the API of the regular PHP backend.
+See [Internal signaling API](internal-signaling.md) for the API of the regular PHP backend.
 
 
 ## Request

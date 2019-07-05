@@ -2,6 +2,9 @@
 build
 node_modules
 
+# Local docs
+/site
+
 # Karma/jasmine coverage data
 coverage
 tests/php/coverage-html

@@ -1,11 +1,15 @@
 # Chat commands
 
+!!! note
 
-## Admin defined commands
+    For security reasons commands can only be added via the
+    command line. `./occ  talk:command:add --help` gives you
+    a short overview of the required arguments, but they are
+    explained here in more depth.
 
-For security reasons commands can only be added via the command line. `./occ  talk:command:add --help` gives you a short overview of the required arguments, but they are explained here in more depth:
+---
 
-### "Add command" arguments
+## "Add command" arguments
 
 Argument | Allowed chars | Description
 ---|---|---
@@ -15,7 +19,7 @@ Argument | Allowed chars | Description
 `response` | 0-2 | Who should see the response: 0 - No one, 1 - User who executed the command, 2 - Everyone
 `enabled` | 0-3 |  Who can use the command: 0 - No one, 1 - Moderators of the room, 2 - Logged in users, 3 - Everyone
 
-### Script parameter
+## Script parameter
 
 Parameter | Description
 ---|---
@@ -24,11 +28,11 @@ Parameter | Description
 `{ARGUMENTS}` | Everything the user write after the actual command
 `{ARGUMENTS_DOUBLEQUOTE_ESCAPED}` | … but with double quotes `"` escaped.
 
-### Example
+## Example
 
 * `/path/to/calc.sh`:
 
-    ```
+```
     while test $# -gt 0; do
       case "$1" in
         --help)
@@ -43,13 +47,13 @@ Parameter | Description
           ;;
      esac
     done
-    
+
     set -f
     echo "$@ ="
     echo $(gnome-calculator --solve="$@")
-    ```
+```
     
-    Please note, that your command should also understand the argument `--help`.
+Please note, that your command should also understand the argument `--help`.
 It should return a useful description, the first line is also displayed in a list of all commands when the user just types `/help`.
 
 * `./occ` command used to add the command:
