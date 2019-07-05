@@ -460,6 +460,10 @@
 			// var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
 			var urlRegex = /(\s|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
 			return message.replace(urlRegex, function (_, leadingSpace, protocol, url, trailingSpace) {
+				if (url.substr(-1) === ')' && url.indexOf('(') === -1) {
+					url = url.substr(0, url.length - 1);
+					trailingSpace = ')' + trailingSpace;
+				}
 				var linkText = url;
 				// if (!protocol) {
 				// 	protocol = 'https://';
