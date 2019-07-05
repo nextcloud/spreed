@@ -452,12 +452,19 @@
 		},
 
 		_plainToRich: function(message) {
-			var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
+			/**
+			 * In Talk we only parse URLs with a protocol to avoid undesired
+			 * clickables like composer.json. Therefor the method and regex were
+			 * copied from OCP.Comments and adjusted accordingly.
+			 */
+			// var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
+			var urlRegex = /(\s|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
 			return message.replace(urlRegex, function (_, leadingSpace, protocol, url, trailingSpace) {
 				var linkText = url;
-				if (!protocol) {
-					protocol = 'https://';
-				} else if (protocol === 'http://') {
+				// if (!protocol) {
+				// 	protocol = 'https://';
+				// } else
+				if (protocol === 'http://') {
 					linkText = protocol + url;
 				}
 
