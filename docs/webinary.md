@@ -1,5 +1,11 @@
 # Webinary management
 
+Group and public conversations can be used to host webinaries. Those online meetings can have a lobby, which come with the following restrictions:
+* Only moderators can start/join a call
+* Only moderators can read and write chat messages
+* Normal users can only join the room. They then pull the room endpoint regularly for an update and should start the chat and signaling as well as allowing to join the call, once the lobby got disabled.
+
+
 Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
 ## Set lobby for a conversation
