@@ -435,7 +435,7 @@
 			}
 
 			var formattedMessage = escapeHTML(commentModel.get('message'));
-			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
+			formattedMessage = this._plainToRich(formattedMessage);
 			formattedMessage = formattedMessage.replace(/\n/g, '<br/>');
 			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
 				formattedMessage, commentModel.get('messageParameters'));
@@ -449,6 +449,20 @@
 				formattedMessage: formattedMessage
 			});
 			return data;
+		},
+
+		_plainToRich: function(message) {
+			var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
+			return message.replace(urlRegex, function (_, leadingSpace, protocol, url, trailingSpace) {
+				var linkText = url;
+				if (!protocol) {
+					protocol = 'https://';
+				} else if (protocol === 'http://') {
+					linkText = protocol + url;
+				}
+
+				return leadingSpace + '<a class="external" target="_blank" rel="noopener noreferrer" href="' + protocol + url + '">' + linkText + '</a>' + trailingSpace;
+			});
 		},
 
 		_onAddModelStart: function() {
