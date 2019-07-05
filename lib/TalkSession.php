@@ -34,6 +34,11 @@ class TalkSession {
 		$this->session = $session;
 	}
 
+	public function getAllActiveSessions(): array {
+		$sessions = $this->getValues('spreed-session');
+		return array_values($sessions);
+	}
+
 	public function getSessionForRoom(string $token): ?string {
 		return $this->getValue('spreed-session', $token);
 	}
@@ -58,16 +63,22 @@ class TalkSession {
 		$this->removeValue('spreed-password', $token);
 	}
 
-	protected function getValue(string $key, string $token): ?string {
+	protected function getValues(string $key): array {
 		$values = $this->session->get($key);
 		if ($values === null) {
-			return null;
+			return [];
 		}
 
 		$values = json_decode($values, true);
 		if ($values === null) {
-			return null;
+			return [];
 		}
+
+		return $values;
+	}
+
+	protected function getValue(string $key, string $token): ?string {
+		$values = $this->getValues($key);
 
 		if (!isset($values[$token])) {
 			return null;
