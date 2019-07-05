@@ -105,6 +105,8 @@ OC.L10N.register(
     "Favorited" : "Oblíbené",
     "Remove from favorites" : "Odebrat z oblíbených",
     "Add to favorites" : "Přidat do oblíbených",
+    "All messages" : "Všechny zprávy",
+    "Off" : "Vypnuto",
     "Leave conversation" : "Opustit konverzaci",
     "Delete conversation" : "Smazat konverzaci",
     "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
