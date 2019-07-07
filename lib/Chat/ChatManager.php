@@ -29,6 +29,8 @@ use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IDBConnection;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -43,215 +45,380 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  * When a message is saved the mentioned users are notified as needed, and
  * pending notifications are removed if the messages are deleted.
  */
-class ChatManager {
+class ChatManager
+{
 
-	/** @var CommentsManager|ICommentsManager */
-	private $commentsManager;
-	/** @var EventDispatcherInterface */
-	private $dispatcher;
-	/** @var Notifier */
-	private $notifier;
-	/** @var ITimeFactory */
-	protected $timeFactory;
+    /** @var CommentsManager|ICommentsManager */
+    private $commentsManager;
+    /** @var EventDispatcherInterface */
+    private $dispatcher;
+    /** @var Notifier */
+    private $notifier;
+    /** @var ITimeFactory */
+    protected $timeFactory;
 
-	public function __construct(CommentsManager $commentsManager,
-								EventDispatcherInterface $dispatcher,
-								Notifier $notifier,
-								ITimeFactory $timeFactory) {
-		$this->commentsManager = $commentsManager;
-		$this->dispatcher = $dispatcher;
-		$this->notifier = $notifier;
-		$this->timeFactory = $timeFactory;
-	}
+    private $db;
 
-	/**
-	 * Sends a new message to the given chat.
-	 *
-	 * @param Room $chat
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $message
-	 * @param \DateTime $creationDateTime
-	 * @param bool $sendNotifications
-	 * @return IComment
-	 */
-	public function addSystemMessage(Room $chat, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, bool $sendNotifications): IComment {
-		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
-		$comment->setMessage($message);
-		$comment->setCreationDateTime($creationDateTime);
-		$comment->setVerb('system');
-		try {
-			$this->commentsManager->save($comment);
+    public function __construct(
+        CommentsManager $commentsManager,
+        EventDispatcherInterface $dispatcher,
+        Notifier $notifier,
+        ITimeFactory $timeFactory,
+        IDBConnection $db
+    ) {
+        $this->commentsManager = $commentsManager;
+        $this->dispatcher      = $dispatcher;
+        $this->notifier        = $notifier;
+        $this->timeFactory     = $timeFactory;
+        $this->db              = $db;
+    }
 
-			// Update last_message
-			$chat->setLastMessage($comment);
+    /**
+     * Sends a new message to the given chat.
+     *
+     * @param  Room  $chat
+     * @param  string  $actorType
+     * @param  string  $actorId
+     * @param  string  $message
+     * @param  \DateTime  $creationDateTime
+     * @param  bool  $sendNotifications
+     *
+     * @return IComment
+     */
+    public function addSystemMessage(
+        Room $chat,
+        string $actorType,
+        string $actorId,
+        string $message,
+        \DateTime $creationDateTime,
+        bool $sendNotifications
+    ): IComment {
+        $comment = $this->commentsManager->create($actorType, $actorId, 'chat',
+            (string) $chat->getId());
+        $comment->setMessage($message);
+        $comment->setCreationDateTime($creationDateTime);
+        $comment->setVerb('system');
+        try {
+            $this->commentsManager->save($comment);
 
-			if ($sendNotifications) {
-				$this->notifier->notifyOtherParticipant($chat, $comment, []);
-			}
+            // Update last_message
+            $chat->setLastMessage($comment);
 
-			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
-				'comment' => $comment,
-			]));
-		} catch (NotFoundException $e) {
-		}
+            if ($sendNotifications) {
+                $this->notifier->notifyOtherParticipant($chat, $comment, []);
+            }
 
-		return $comment;
-	}
+            $this->dispatcher->dispatch(self::class.'::sendSystemMessage',
+                new GenericEvent($chat, [
+                    'comment' => $comment,
+                ]));
+        } catch (NotFoundException $e) {
+        }
 
-	/**
-	 * Sends a new message to the given chat.
-	 *
-	 * @param Room $chat
-	 * @param string $message
-	 * @return IComment
-	 */
-	public function addChangelogMessage(Room $chat, string $message): IComment {
-		$comment = $this->commentsManager->create('guests', 'changelog', 'chat', (string) $chat->getId());
-		$comment->setMessage($message);
-		$comment->setCreationDateTime($this->timeFactory->getDateTime());
-		$comment->setVerb('comment'); // Has to be comment, so it counts as unread message
+        return $comment;
+    }
 
-		try {
-			$this->commentsManager->save($comment);
+    /**
+     * Sends a new message to the given chat.
+     *
+     * @param  Room  $chat
+     * @param  string  $message
+     *
+     * @return IComment
+     */
+    public function addChangelogMessage(Room $chat, string $message): IComment
+    {
+        $comment = $this->commentsManager->create('guests', 'changelog', 'chat',
+            (string) $chat->getId());
+        $comment->setMessage($message);
+        $comment->setCreationDateTime($this->timeFactory->getDateTime());
+        $comment->setVerb('comment'); // Has to be comment, so it counts as unread message
 
-			// Update last_message
-			$chat->setLastMessage($comment);
+        try {
+            $this->commentsManager->save($comment);
 
-			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
-				'comment' => $comment,
-			]));
-		} catch (NotFoundException $e) {
-		}
+            // Update last_message
+            $chat->setLastMessage($comment);
 
-		return $comment;
-	}
+            $this->dispatcher->dispatch(self::class.'::sendSystemMessage',
+                new GenericEvent($chat, [
+                    'comment' => $comment,
+                ]));
+        } catch (NotFoundException $e) {
+        }
 
-	/**
-	 * Sends a new message to the given chat.
-	 *
-	 * @param Room $chat
-	 * @param Participant $participant
-	 * @param string $actorType
-	 * @param string $actorId
-	 * @param string $message
-	 * @param \DateTime $creationDateTime
-	 * @return IComment
-	 */
-	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
-		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
-		$comment->setMessage($message);
-		$comment->setCreationDateTime($creationDateTime);
-		// A verb ('comment', 'like'...) must be provided to be able to save a
-		// comment
-		$comment->setVerb('comment');
+        return $comment;
+    }
 
-		$this->dispatcher->dispatch(self::class . '::preSendMessage', new GenericEvent($chat, [
-			'comment' => $comment,
-			'room' => $chat,
-			'participant' => $participant,
-		]));
+    /**
+     * Sends a new message to the given chat.
+     *
+     * @param  Room  $chat
+     * @param  Participant  $participant
+     * @param  string  $actorType
+     * @param  string  $actorId
+     * @param  string  $message
+     * @param  \DateTime  $creationDateTime
+     *
+     * @return IComment
+     */
+    public function sendMessage(
+        Room $chat,
+        Participant $participant,
+        string $actorType,
+        string $actorId,
+        string $message,
+        \DateTime $creationDateTime
+    ): IComment {
+        $comment = $this->commentsManager->create($actorType, $actorId, 'chat',
+            (string) $chat->getId());
+        $comment->setMessage($message);
+        $comment->setCreationDateTime($creationDateTime);
+        // A verb ('comment', 'like'...) must be provided to be able to save a
+        // comment
+        $comment->setVerb('comment');
 
-		try {
-			$this->commentsManager->save($comment);
+        $this->dispatcher->dispatch(self::class.'::preSendMessage',
+            new GenericEvent($chat, [
+                'comment'     => $comment,
+                'room'        => $chat,
+                'participant' => $participant,
+            ]));
 
-			// Update last_message
-			$chat->setLastMessage($comment);
+        try {
+            $this->commentsManager->save($comment);
 
-			$mentionedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
-			if (!empty($mentionedUsers)) {
-				$chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
-			}
+            // Update last_message
+            $chat->setLastMessage($comment);
 
-			// User was not mentioned, send a normal notification
-			$this->notifier->notifyOtherParticipant($chat, $comment, $mentionedUsers);
+            $mentionedUsers = $this->notifier->notifyMentionedUsers($chat,
+                $comment);
+            if ( ! empty($mentionedUsers)) {
+                $chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
+            }
 
-			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
-				'comment' => $comment,
-				'room' => $chat,
-				'participant' => $participant,
-			]));
-		} catch (NotFoundException $e) {
-		}
+            // User was not mentioned, send a normal notification
+            $this->notifier->notifyOtherParticipant($chat, $comment,
+                $mentionedUsers);
 
-		return $comment;
-	}
+            $this->dispatcher->dispatch(self::class.'::sendMessage',
+                new GenericEvent($chat, [
+                    'comment'     => $comment,
+                    'room'        => $chat,
+                    'participant' => $participant,
+                ]));
+        } catch (NotFoundException $e) {
+        }
 
-	public function getUnreadMarker(Room $chat, IUser $user): \DateTime {
-		$marker = $this->commentsManager->getReadMark('chat', $chat->getId(), $user);
-		if ($marker === null) {
-			$marker = $this->timeFactory->getDateTime('2000-01-01');
-		}
-		return $marker;
-	}
+        return $comment;
+    }
 
-	public function getUnreadCount(Room $chat, \DateTime $unreadSince): int {
-		return $this->commentsManager->getNumberOfCommentsForObject('chat', $chat->getId(), $unreadSince, 'comment');
-	}
+    public function getUnreadMarker(Room $chat, IUser $user): \DateTime
+    {
+        $marker = $this->commentsManager->getReadMark('chat', $chat->getId(),
+            $user);
+        if ($marker === null) {
+            $marker = $this->timeFactory->getDateTime('2000-01-01');
+        }
 
-	/**
-	 * Receive the history of a chat
-	 *
-	 * @param Room $chat
-	 * @param int $offset Last known message id
-	 * @param int $limit
-	 * @return IComment[] the messages found (only the id, actor type and id,
-	 *         creation date and message are relevant), or an empty array if the
-	 *         timeout expired.
-	 */
-	public function getHistory(Room $chat, $offset, $limit): array {
-		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'desc', $limit);
-	}
+        return $marker;
+    }
 
-	/**
-	 * If there are currently no messages the response will not be sent
-	 * immediately. Instead, HTTP connection will be kept open waiting for new
-	 * messages to arrive and, when they do, then the response will be sent. The
-	 * connection will not be kept open indefinitely, though; the number of
-	 * seconds to wait for new messages to arrive can be set using the timeout
-	 * parameter; the default timeout is 30 seconds, maximum timeout is 60
-	 * seconds. If the timeout ends a successful but empty response will be
-	 * sent.
-	 *
-	 * @param Room $chat
-	 * @param int $offset Last known message id
-	 * @param int $limit
-	 * @param int $timeout
-	 * @param IUser|null $user
-	 * @return IComment[] the messages found (only the id, actor type and id,
-	 *         creation date and message are relevant), or an empty array if the
-	 *         timeout expired.
-	 */
-	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user): array {
-		if ($user instanceof IUser) {
-			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
-		}
-		$elapsedTime = 0;
+    public function getUnreadCount(Room $chat, \DateTime $unreadSince): int
+    {
+        return $this->commentsManager->getNumberOfCommentsForObject('chat',
+            $chat->getId(), $unreadSince, 'comment');
+    }
 
-		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
+    /**
+     * Receive the history of a chat
+     *
+     * @param  Room  $chat
+     * @param  int  $offset  Last known message id
+     * @param  int  $limit
+     *
+     * @return IComment[] the messages found (only the id, actor type and id,
+     *         creation date and message are relevant), or an empty array if the
+     *         timeout expired.
+     */
+    public function getHistory(Room $chat, $offset, $limit): array
+    {
+        return $this->commentsManager->getForObjectSince('chat',
+            (string) $chat->getId(), $offset, 'desc', $limit);
+    }
 
-		if ($user instanceof IUser) {
-			$this->commentsManager->setReadMark('chat', (string) $chat->getId(), $this->timeFactory->getDateTime(), $user);
-		}
+    /**
+     * If there are currently no messages the response will not be sent
+     * immediately. Instead, HTTP connection will be kept open waiting for new
+     * messages to arrive and, when they do, then the response will be sent. The
+     * connection will not be kept open indefinitely, though; the number of
+     * seconds to wait for new messages to arrive can be set using the timeout
+     * parameter; the default timeout is 30 seconds, maximum timeout is 60
+     * seconds. If the timeout ends a successful but empty response will be
+     * sent.
+     *
+     * @param  Room  $chat
+     * @param  int  $offset  Last known message id
+     * @param  int  $limit
+     * @param  int  $timeout
+     * @param  IUser|null  $user
+     *
+     * @return IComment[] the messages found (only the id, actor type and id,
+     *         creation date and message are relevant), or an empty array if the
+     *         timeout expired.
+     */
+    public function waitForNewMessages(
+        Room $chat,
+        int $offset,
+        int $limit,
+        int $timeout,
+        ?IUser $user
+    ): array {
+        if ($user instanceof IUser) {
+            $this->notifier->markMentionNotificationsRead($chat,
+                $user->getUID());
+        }
+        $elapsedTime = 0;
 
-		while (empty($comments) && $elapsedTime < $timeout) {
-			sleep(1);
-			$elapsedTime++;
+        $comments = $this->commentsManager->getForObjectSince('chat',
+            (string) $chat->getId(), $offset, 'asc', $limit);
 
-			$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
-		}
+        if ($user instanceof IUser) {
+            $this->commentsManager->setReadMark('chat', (string) $chat->getId(),
+                $this->timeFactory->getDateTime(), $user);
+        }
 
-		return $comments;
-	}
+        while (empty($comments) && $elapsedTime < $timeout) {
+            sleep(1);
+            $elapsedTime++;
 
-	/**
-	 * Deletes all the messages for the given chat.
-	 *
-	 * @param Room $chat
-	 */
-	public function deleteMessages(Room $chat): void {
-		$this->commentsManager->deleteCommentsAtObject('chat', (string) $chat->getId());
+            $comments = $this->commentsManager->getForObjectSince('chat',
+                (string) $chat->getId(), $offset, 'asc', $limit);
+        }
 
-		$this->notifier->removePendingNotificationsForRoom($chat);
-	}
+        return $comments;
+    }
+
+    /**
+     * Deletes all the messages for the given chat.
+     *
+     * @param  Room  $chat
+     */
+    public function deleteMessages(Room $chat): void
+    {
+        $this->commentsManager->deleteCommentsAtObject('chat',
+            (string) $chat->getId());
+
+        $this->notifier->removePendingNotificationsForRoom($chat);
+    }
+
+    /**
+     * Get rooms info and latest comment per room.
+     *
+     * @param $roomsInfo
+     *
+     * @return array
+     */
+    public function roomsInfo($roomsInfo)
+    {
+        $passedRooms      = [];
+        $passedRoomTokens = [];
+
+        // Lets reformat chatroom data.
+        foreach ($roomsInfo as $info) {
+            $passedRooms[]      = [
+                'token'        => $info['token'],
+                'last_message' => $info['last_message'],
+            ];
+            $passedRoomTokens[] = $info['token'];
+        }
+
+        // Get info of given chat rooms.
+        $qb = $this->db->getQueryBuilder();
+        $qb = $qb->select('*')
+            ->from('talk_rooms')
+            ->where(
+                $qb->expr()->in('token',
+                    $qb->createNamedParameter($passedRoomTokens,
+                        IQueryBuilder::PARAM_STR_ARRAY))
+            );
+
+        $cursor       = $qb->execute();
+        $fetchedRooms = $cursor->fetchAll();
+        $cursor->closeCursor();
+
+        // Get chat rooms with changes.
+        // Usually, if last_message has changed.
+        $roomChanges = [];
+        foreach ($fetchedRooms as $fetchedRoom) {
+            foreach ($passedRooms as $passedRoom) {
+                if ($fetchedRoom['token'] == $passedRoom['token']) {
+                    if ($fetchedRoom['last_message']
+                        !== $passedRoom['last_message']
+                    ) {
+                        $roomChanges[] = $fetchedRoom;
+                    }
+                }
+            }
+        }
+
+        // Get rooms with new comment.
+        $lastMessages = [];
+        foreach ($roomChanges as $roomChange) {
+            $lastMessages[] = (int) $roomChange['last_message'];
+        }
+
+        // Get comments of a given room.
+        $qb = $this->db->getQueryBuilder();
+        $qb = $qb->select('*')
+            ->from('comments')
+            ->where(
+                $qb->expr()->in('id',
+                    $qb->createNamedParameter($lastMessages,
+                        IQueryBuilder::PARAM_INT_ARRAY))
+            );
+
+        $cursor          = $qb->execute();
+        $fetchedComments = $cursor->fetchAll();
+        $cursor->closeCursor();
+
+        // Prepare response.
+        $response             = [];
+        $response['rooms']    = $fetchedRooms;
+        $response['comments'] = [];
+
+        // Attach latest comments.
+        foreach ($fetchedComments as $comment) {
+
+            $response['comments'][] = [
+                'actor_id'   => $comment['actor_id'],
+                'actor_type' => $comment['actor_type'],
+                'message'    => $this->generateCommentMsg($comment),
+            ];
+        }
+
+        return $response;
+    }
+
+    /**
+     * Generate a formatted comment message.
+     *
+     * @param $comment
+     *
+     * @return mixed|string
+     */
+    private function generateCommentMsg($comment) {
+
+        if($comment['verb'] == 'system') {
+            $msg = json_decode($comment['message'], true);
+
+            if($msg['message'] === 'file_shared') {
+                return $comment['actor_id'] . ' just shared a file.';
+            }
+        } elseif ($comment['verb'] === 'comment') {
+            return $comment['message'];
+        }
+
+        return 'You got a message.';
+    }
 }

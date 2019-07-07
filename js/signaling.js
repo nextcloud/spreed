@@ -204,6 +204,11 @@
 	};
 
 	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
+
+		// Fire notifier on syncRoom.
+		//this.emit("fireNotifier");
+		this._trigger("fireNotifier");
+
 		var defer = $.Deferred();
 		if (this.roomCollection && OC.getCurrentUser().uid) {
 			this.roomCollection.fetch({

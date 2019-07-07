@@ -16,6 +16,7 @@
 	// The above browsers are failing a lot of tests in the ES5
 	// test suite at http://test262.ecmascript.org.
 	"es3": true,
+	"es6": true,
 
 	"globals": {
 		"window": true,

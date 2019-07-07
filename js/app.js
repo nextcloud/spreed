@@ -703,7 +703,10 @@
             }
 
             // Enable Copy Paste feature.
-            OCA.Talk.CopyPaste.init(this);
+            if(OC.getCurrentUser().uid !== null) OCA.Talk.CopyPaste.init(this);
+
+            // Start new message notifier.
+            if (OC.getCurrentUser().uid !== null) OCA.Talk.Notifier.init(this);
         },
         setupWebRTC: function () {
             if (!OCA.SpreedMe.webrtc) {

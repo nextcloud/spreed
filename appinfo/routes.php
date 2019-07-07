@@ -129,6 +129,14 @@ return [
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],
+        [
+            'name' => 'Chat#roomsInfo',
+            'url' => '/api/{apiVersion}/chat/roomsInfo',
+            'verb' => 'POST',
+            'requirements' => [
+                'apiVersion' => 'v1'
+            ],
+        ],
 
 		/**
 		 * Room

@@ -1,6 +1,12 @@
 [
   "vendor/paste.js/paste.min.js",
+  "vendor/moment/moment.min.js",
+  "vendor/notify/notify.min.js",
+  "vendor/ifvisible.js/ifvisible.min.js",
+  "vendor/dotimeout.js/dotimeout.min.js",
+  "vendor/localforage/localforage.min.js",
   "custom/copypaste.js",
+  "custom/notifier.js",
   "vendor/backbone/backbone-min.js",
   "vendor/backbone.radio/build/backbone.radio.min.js",
   "vendor/backbone.marionette/lib/backbone.marionette.min.js",
