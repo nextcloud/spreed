@@ -435,7 +435,7 @@
 			}
 
 			var formattedMessage = escapeHTML(commentModel.get('message'));
-			formattedMessage = OCP.Comments.plainToRich(formattedMessage);
+			formattedMessage = this._plainToRich(formattedMessage);
 			formattedMessage = formattedMessage.replace(/\n/g, '<br/>');
 			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
 				formattedMessage, commentModel.get('messageParameters'));
@@ -449,6 +449,31 @@
 				formattedMessage: formattedMessage
 			});
 			return data;
+		},
+
+		_plainToRich: function(message) {
+			/**
+			 * In Talk we only parse URLs with a protocol to avoid undesired
+			 * clickables like composer.json. Therefor the method and regex were
+			 * copied from OCP.Comments and adjusted accordingly.
+			 */
+			// var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
+			var urlRegex = /(\s|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
+			return message.replace(urlRegex, function (_, leadingSpace, protocol, url, trailingSpace) {
+				if (url.substr(-1) === ')' && url.indexOf('(') === -1) {
+					url = url.substr(0, url.length - 1);
+					trailingSpace = ')' + trailingSpace;
+				}
+				var linkText = url;
+				// if (!protocol) {
+				// 	protocol = 'https://';
+				// } else
+				if (protocol === 'http://') {
+					linkText = protocol + url;
+				}
+
+				return leadingSpace + '<a class="external" target="_blank" rel="noopener noreferrer" href="' + protocol + url + '">' + linkText + '</a>' + trailingSpace;
+			});
 		},
 
 		_onAddModelStart: function() {
