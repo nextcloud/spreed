@@ -53,6 +53,14 @@ class SorterTest extends \Test\TestCase {
 		],
 	];
 
+	protected $user3 = [
+		'label' => 'ttle Sea',
+		'value' => [
+			'shareType' => 'user',
+			'shareWith' => 'ttle_sea',
+		],
+	];
+
 	public function setUp() {
 		parent::setUp();
 
@@ -66,22 +74,25 @@ class SorterTest extends \Test\TestCase {
 
 	public function dataSort(): array {
 		return [
-			'no user posted' => [['users' => [$this->user1, $this->user2]], [], ['users' => [$this->user1, $this->user2]]],
-			'second user posted' => [['users' => [$this->user1, $this->user2]], ['new_york' => new \DateTime('2000-01-01')], ['users' => [$this->user2, $this->user1]]],
-			'second user posted later' => [['users' => [$this->user1, $this->user2]], ['seattle' => new \DateTime('2017-01-01'), 'new_york' => new \DateTime('2018-01-01')], ['users' => [$this->user2, $this->user1]]],
-			'second user posted earlier' => [['users' => [$this->user1, $this->user2]], ['seattle' => new \DateTime('2018-01-01'), 'new_york' => new \DateTime('2017-01-01')], ['users' => [$this->user1, $this->user2]]],
-			'no users' => [['groups' => [$this->user1, $this->user2]], null, ['groups' => [$this->user1, $this->user2]]],
+			'no user posted' => ['', ['users' => [$this->user1, $this->user2]], [], ['users' => [$this->user1, $this->user2]]],
+			'second user posted' => ['', ['users' => [$this->user1, $this->user2]], ['new_york' => new \DateTime('2000-01-01')], ['users' => [$this->user2, $this->user1]]],
+			'second user posted later' => ['', ['users' => [$this->user1, $this->user2]], ['seattle' => new \DateTime('2017-01-01'), 'new_york' => new \DateTime('2018-01-01')], ['users' => [$this->user2, $this->user1]]],
+			'second user posted earlier' => ['', ['users' => [$this->user1, $this->user2]], ['seattle' => new \DateTime('2018-01-01'), 'new_york' => new \DateTime('2017-01-01')], ['users' => [$this->user1, $this->user2]]],
+			'starting match first1' => ['Sea', ['users' => [$this->user1, $this->user3]], [], ['users' => [$this->user1, $this->user3]]],
+			'starting match first2' => ['Sea', ['users' => [$this->user3, $this->user1]], [], ['users' => [$this->user1, $this->user3]]],
+			'no users' => ['', ['groups' => [$this->user1, $this->user2]], [], ['groups' => [$this->user1, $this->user2]]],
 		];
 	}
 
 	/**
 	 * @dataProvider dataSort
 	 *
+	 * @param string $search
 	 * @param array $toSort
 	 * @param array $comments
 	 * @param array $expected
 	 */
-	public function testSort($toSort, $comments, $expected) {
+	public function testSort(string $search, array $toSort, array $comments, array $expected) {
 		$this->commentsManager->expects(isset($toSort['users']) ? $this->once() : $this->never())
 			->method('getLastCommentDateByActor')
 			->with('chat', '23', 'comment', 'users', $this->anything())
@@ -90,6 +101,7 @@ class SorterTest extends \Test\TestCase {
 		$this->sorter->sort($toSort, [
 			'itemType' => 'chat',
 			'itemId' => '23',
+			'search' => $search,
 		]);
 		$this->assertSame($expected, $toSort);
 	}
