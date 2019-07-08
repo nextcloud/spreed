@@ -41,9 +41,13 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
 2. Run `make dev-setup`
 3. Then activate it through the apps management. :tada:
+4. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`
 
-We are also available on [Freenode IRC #nextcloud-talk](https://webchat.freenode.net/?channels=nextcloud-talk), if you want to join the discussion.
+We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
 
+### API documentation
+
+The API documentation is available at https://nextcloud-talk.readthedocs.io/en/latest/
 
 ### Milestones and Branches
 
@@ -63,10 +67,14 @@ This is only off close to releases of the server, to allow easier finishing of f
 You can always pick a task of any of the milestones and we will help you to get it into the assigned milestone or also an earlier one if time permits. It's just a matter of having an overview and better visibility what we think should be worked on, but it's not exclusive.
 
 
-### Disabling internal camera/audio for testing
+### Useful tricks for testing
 
 * Disable camera until reboot: `sudo modprobe -r uvcvideo`
 * Re-enable camera: `sudo modprobe uvcvideo`
+* Send fake-stream (audio and video) in firefox:
+  1. Open `about:config`
+  2. Search for `fake`
+  3. Toggle `media.navigator.streams.fake` to **true**
 
 
 ## Contribution Guidelines
