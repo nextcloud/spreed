@@ -3,7 +3,7 @@ name: vuejs-and-handlebars
 
 steps:
   - name: check-vuejs
-    image: node
+    image: node:lts
     commands:
       - ./tests/vue-build.sh
   - name: check-handlebars-templates
