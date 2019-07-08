@@ -30,7 +30,7 @@ Parameter | Description
 
 ## Example
 
-* `/path/to/calc.sh`:
+### Create `/path/to/calc.sh`
 
 ```
     while test $# -gt 0; do
@@ -56,12 +56,13 @@ Parameter | Description
 Please note, that your command should also understand the argument `--help`.
 It should return a useful description, the first line is also displayed in a list of all commands when the user just types `/help`.
 
-* `./occ` command used to add the command:
+### Register command
 
-    ```
-    ./occ talk:command:add calculator calculator "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3
-    ```
-    
+```
+./occ talk:command:add calculator calculator "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3
+```
+
+### Explanation
 * User input by user `my user id` in the chat of room `index.php/call/4tf349j`:
     
     ```
@@ -87,4 +88,7 @@ An alias for the `/calculator` command from above could be created using the fol
 
 Now `/calculator 1 + 2 + 3` and `/calc 1 + 2 + 3` result in the same message.
 
-**Note:** The enabled and response flag of the alias are ignored and the flags of the original command will be used and respected.
+
+!!! note
+
+    The enabled and response flag of the alias are ignored and the flags of the original command will be used and respected.
