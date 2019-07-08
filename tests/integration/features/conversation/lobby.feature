@@ -124,10 +124,10 @@ Feature: conversation/lobby
     When user "participant1" sets lobby state for room "room" to "moderators only" with 200
     Then user "participant1" sends message "Message 1" to room "room" with 201
     And user "participant2" sends message "Message 2" to room "room" with 201
-    And user "participant3" sends message "Message 3" to room "room" with 403
-    And user "participant4" sends message "Message 4" to room "room" with 403
+    And user "participant3" sends message "Message 3" to room "room" with 412
+    And user "participant4" sends message "Message 4" to room "room" with 412
     And user "guest" sends message "Message 5" to room "room" with 201
-    And user "guest2" sends message "Message 6" to room "room" with 403
+    And user "guest2" sends message "Message 6" to room "room" with 412
     And user "participant1" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room | guests    | guest        |                          | Message 5 | []                |
@@ -138,14 +138,14 @@ Feature: conversation/lobby
       | room | guests    | guest        |                          | Message 5 | []                |
       | room | users     | participant2 | participant2-displayname | Message 2 | []                |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                |
-    And user "participant3" sees the following messages in room "room" with 403
-    And user "participant4" sees the following messages in room "room" with 403
+    And user "participant3" sees the following messages in room "room" with 412
+    And user "participant4" sees the following messages in room "room" with 412
     And user "guest" sees the following messages in room "room" with 200
       | room | actorType | actorId      | actorDisplayName         | message   | messageParameters |
       | room | guests    | guest        |                          | Message 5 | []                |
       | room | users     | participant2 | participant2-displayname | Message 2 | []                |
       | room | users     | participant1 | participant1-displayname | Message 1 | []                |
-    And user "guest2" sees the following messages in room "room" with 403
+    And user "guest2" sees the following messages in room "room" with 412
 
   Scenario: lobby prevents calls for non moderators
     Given user "participant1" creates room "room"
@@ -164,16 +164,16 @@ Feature: conversation/lobby
     When user "participant1" sets lobby state for room "room" to "moderators only" with 200
     Then user "participant1" joins call "room" with 200
     And user "participant2" joins call "room" with 200
-    And user "participant3" joins call "room" with 403
-    And user "participant4" joins call "room" with 403
+    And user "participant3" joins call "room" with 412
+    And user "participant4" joins call "room" with 412
     And user "guest" joins call "room" with 200
-    And user "guest2" joins call "room" with 403
+    And user "guest2" joins call "room" with 412
     And user "participant1" sees 3 peers in call "room" with 200
     And user "participant2" sees 3 peers in call "room" with 200
-    And user "participant3" sees 0 peers in call "room" with 403
-    And user "participant4" sees 0 peers in call "room" with 403
+    And user "participant3" sees 0 peers in call "room" with 412
+    And user "participant4" sees 0 peers in call "room" with 412
     And user "guest" sees 3 peers in call "room" with 200
-    And user "guest2" sees 0 peers in call "room" with 403
+    And user "guest2" sees 0 peers in call "room" with 412
     And user "participant1" leaves call "room" with 200
     And user "participant2" leaves call "room" with 200
     And user "guest" leaves call "room" with 200

@@ -196,9 +196,16 @@ class InjectionMiddleware extends Middleware {
 			return new RedirectToDefaultAppResponse();
 		}
 
+		if ($exception instanceof LobbyException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_PRECONDITION_FAILED);
+			}
+
+			return new RedirectToDefaultAppResponse();
+		}
+
 		if ($exception instanceof NotAModeratorException ||
-			$exception instanceof ReadOnlyException ||
-			$exception instanceof LobbyException) {
+			$exception instanceof ReadOnlyException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_FORBIDDEN);
 			}
