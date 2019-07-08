@@ -417,8 +417,6 @@ class SignalingController extends OCSController {
 		}
 
 		if ($action === 'join') {
-			// Rooms get sorted by last ping time for users, so make sure to
-			// update when a user joins a room.
 			$room->ping($userId, $sessionId, $this->timeFactory->getTime());
 		} else if ($action === 'leave') {
 			if (!empty($userId)) {
