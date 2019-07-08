@@ -895,10 +895,9 @@ class RoomController extends AEnvironmentAwareController {
 		$this->session->removePasswordForRoom($token);
 		$this->session->setSessionForRoom($token, $newSessionId);
 		$room->ping($this->userId, $newSessionId, $this->timeFactory->getTime());
+		$currentParticipant = $room->getParticipantBySession($newSessionId);
 
-		return new DataResponse([
-			'sessionId' => $newSessionId,
-		]);
+		return new DataResponse($this->formatRoom($room, $currentParticipant));
 	}
 
 	/**
