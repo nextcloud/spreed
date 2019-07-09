@@ -10,21 +10,22 @@
   "author": "",
   "license": "AGPL-3.0",
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
     "attachmediastream": "^2.1.0",
     "babelify": "^10.0.0",
-    "browserify": "^16.2.3",
+    "browserify": "^16.3.0",
     "browserslist-config-nextcloud": "0.0.1",
     "handlebars": "^4.1.2",
     "hark": "^1.2.3",
     "mockconsole": "0.0.1",
     "util": "^0.11.1",
-    "webrtc-adapter": "^7.2.4",
+    "webrtc-adapter": "^7.2.5",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.1"
   },
   "browserslist": [
     "extends browserslist-config-nextcloud"
-  ]
+  ],
+  "dependencies": {}
 }
