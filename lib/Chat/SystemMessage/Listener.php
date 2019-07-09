@@ -32,6 +32,7 @@ use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Share\RoomShareProvider;
 use OCA\Spreed\TalkSession;
+use OCA\Spreed\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IUser;
@@ -155,6 +156,25 @@ class Listener {
 				$listener->sendSystemMessage($room, 'read_only', $event->getArguments());
 			} else if ($arguments['newState'] === Room::READ_WRITE) {
 				$listener->sendSystemMessage($room, 'read_only_off', $event->getArguments());
+			}
+		});
+		$dispatcher->addListener(Room::class . '::postSetLobbyState', function(GenericEvent $event) {
+			$arguments = $event->getArguments();
+
+			if ($arguments['newState'] === $arguments['oldState']) {
+				return;
+			}
+
+			/** @var Room $room */
+			$room = $event->getSubject();
+
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+
+			if ($arguments['newState'] === Webinary::ALL_PARTICIPANTS) {
+				$listener->sendSystemMessage($room, 'lobby_all_participants', $event->getArguments());
+			} else if ($arguments['newState'] === Webinary::MODERATORS_ONLY) {
+				$listener->sendSystemMessage($room, 'lobby_moderators_only', $event->getArguments());
 			}
 		});
 
