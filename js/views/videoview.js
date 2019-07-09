@@ -81,7 +81,7 @@
 			this.render();
 
 			this.getUI('avatar').addClass('icon-loading');
-			this.getUI('avatar').css('opacity', '0.5');
+			this.getUI('avatar').addClass('not-connected');
 
 			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
 			this.getUI('hideRemoteVideoButton').addClass('hidden');
@@ -146,6 +146,7 @@
 			this._connectionStatus = connectionStatus;
 
 			this.getUI('avatar').removeClass('icon-loading');
+			this.getUI('avatar').addClass('not-connected');
 			this.getUI('iceFailedIndicator').addClass('not-failed');
 
 			if (connectionStatus === ConnectionStatus.CHECKING ||
@@ -158,7 +159,7 @@
 
 			if (connectionStatus === ConnectionStatus.CONNECTED ||
 					connectionStatus === ConnectionStatus.COMPLETED) {
-				this.getUI('avatar').css('opacity', '1');
+				this.getUI('avatar').removeClass('not-connected');
 
 				return;
 			}

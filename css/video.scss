@@ -72,6 +72,10 @@ video {
 	box-shadow: 0 0 15px $color-box-shadow;
 }
 
+#videos .videoContainer .avatar.not-connected {
+	opacity: 0.5;
+}
+
 .participants-1 #videos .videoContainer video,
 .participants-2 #videos .videoContainer video {
 	padding: 0;
