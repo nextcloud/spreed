@@ -298,6 +298,7 @@ class ChatController extends AEnvironmentAwareController {
 		$this->autoCompleteManager->runSorters(['talk_chat_participants'], $results, [
 			'itemType' => 'chat',
 			'itemId' => (string) $this->room->getId(),
+			'search' => $search,
 		]);
 
 		$results = $this->prepareResultArray($results);
