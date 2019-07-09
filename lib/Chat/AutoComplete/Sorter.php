@@ -66,7 +66,20 @@ class Sorter implements ISorter {
 					return $suggestion['value']['shareWith'];
 			}, $byType));
 
-			usort($byType, function ($a, $b) use ($lastComments) {
+			$search = $context['search'];
+
+			usort($byType, function ($a, $b) use ($lastComments, $search) {
+				if ($search) {
+					// If the user searched for "Dani" we make sure "Daniel" comes before "Madani"
+					if (stripos($a['label'], $search) === 0) {
+						if (stripos($b['label'], $search) !== 0) {
+							return -1;
+						}
+					} else if (stripos($b['label'], $search) === 0) {
+						return 1;
+					}
+				}
+
 				if (!isset($lastComments[$b['value']['shareWith']])) {
 					return -1;
 				}
