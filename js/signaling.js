@@ -207,14 +207,14 @@
 		var defer = $.Deferred();
 		if (this.roomCollection && OC.getCurrentUser().uid) {
 			this.roomCollection.fetch({
-				success: function(data) {
-					defer.resolve(data);
+				success: function(roomCollection) {
+					defer.resolve(roomCollection);
 				}
 			});
 		} else if (this.room) {
 			this.room.fetch({
-				success: function(data) {
-					defer.resolve(data);
+				success: function(room) {
+					defer.resolve(room);
 				}
 			});
 		} else {
