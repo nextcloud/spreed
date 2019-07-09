@@ -1217,14 +1217,16 @@
 			return this._pendingSyncRooms;
 		}
 
-		var defer = $.Deferred();
-		this._pendingSyncRooms = OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments);
-		this._pendingSyncRooms.then(function(rooms) {
+		this._pendingSyncRooms = $.Deferred();
+		OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments).then(function(rooms) {
+			// Remove _pendingSyncRooms before resolving it to make possible to
+			// sync again from handlers if needed.
+			var pendingSyncRooms = this._pendingSyncRooms;
 			this._pendingSyncRooms = null;
 			this.rooms = rooms;
-			defer.resolve(rooms);
+			pendingSyncRooms.resolve(rooms);
 		}.bind(this));
-		return defer;
+		return this._pendingSyncRooms;
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.processRoomListEvent = function(data) {
