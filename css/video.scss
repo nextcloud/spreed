@@ -60,6 +60,13 @@ video {
 	filter: none;
 }
 
+#videos .videoContainer.not-connected {
+	video,
+	.avatar {
+		opacity: 0.5;
+	}
+}
+
 #videos .videoContainer:not(.promoted) video {
 	max-height: 200px;
 	max-width: 100%;
@@ -70,10 +77,6 @@ video {
 
 #videos .videoContainer .avatar {
 	box-shadow: 0 0 15px $color-box-shadow;
-}
-
-#videos .videoContainer .avatar.not-connected {
-	opacity: 0.5;
 }
 
 .participants-1 #videos .videoContainer video,
