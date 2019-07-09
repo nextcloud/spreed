@@ -1199,9 +1199,9 @@
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.syncRooms = function() {
-		if (this.pending_sync) {
+		if (this._pendingSyncRooms) {
 			// A sync request is already in progress, don't start another one.
-			return this.pending_sync;
+			return this._pendingSyncRooms;
 		}
 
 		// Never manually sync rooms, will be done based on notifications
@@ -1212,15 +1212,15 @@
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.internalSyncRooms = function() {
-		if (this.pending_sync) {
+		if (this._pendingSyncRooms) {
 			// A sync request is already in progress, don't start another one.
-			return this.pending_sync;
+			return this._pendingSyncRooms;
 		}
 
 		var defer = $.Deferred();
-		this.pending_sync = OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments);
-		this.pending_sync.then(function(rooms) {
-			this.pending_sync = null;
+		this._pendingSyncRooms = OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments);
+		this._pendingSyncRooms.then(function(rooms) {
+			this._pendingSyncRooms = null;
 			this.rooms = rooms;
 			defer.resolve(rooms);
 		}.bind(this));
