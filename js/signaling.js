@@ -209,12 +209,18 @@
 			this.roomCollection.fetch({
 				success: function(roomCollection) {
 					defer.resolve(roomCollection);
+				},
+				error: function(roomCollection, response) {
+					defer.reject(roomCollection, response);
 				}
 			});
 		} else if (this.room) {
 			this.room.fetch({
 				success: function(room) {
 					defer.resolve(room);
+				},
+				error: function(room, response) {
+					defer.reject(room, response);
 				}
 			});
 		} else {
@@ -1225,6 +1231,10 @@
 			this._pendingSyncRooms = null;
 			this.rooms = rooms;
 			pendingSyncRooms.resolve(rooms);
+		}.bind(this)).fail(function() {
+			var pendingSyncRooms = this._pendingSyncRooms;
+			this._pendingSyncRooms = null;
+			pendingSyncRooms.reject();
 		}.bind(this));
 		return this._pendingSyncRooms;
 	};
