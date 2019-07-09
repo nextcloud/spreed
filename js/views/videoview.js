@@ -148,7 +148,6 @@
 
 			this.$el.addClass('not-connected');
 
-			this.getUI('avatar').removeClass('icon-loading');
 			this.getUI('iceFailedIndicator').addClass('not-failed');
 
 			if (connectionStatus === ConnectionStatus.CHECKING ||
@@ -158,6 +157,8 @@
 
 				return;
 			}
+
+			this.getUI('avatar').removeClass('icon-loading');
 
 			if (connectionStatus === ConnectionStatus.CONNECTED ||
 					connectionStatus === ConnectionStatus.COMPLETED) {
