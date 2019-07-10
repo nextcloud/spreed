@@ -121,7 +121,16 @@ class Executor {
 
 			$response = trim($response);
 			if (strpos($response, "\n")) {
-				$helps[] = substr($response, 0, strpos($response, "\n"));
+				$tempHelp = substr($response, 0, strpos($response, "\n"));
+				if ($tempHelp === 'Description:') {
+					$hasHelpSection = strpos($response, "\nHelp:\n");
+					if ($hasHelpSection !== false) {
+						// Symfony console command with --help detected
+						$tempHelp = substr($response, $hasHelpSection + 7);
+						$tempHelp = substr($tempHelp, 0, strpos($tempHelp, "\n"));
+					}
+				}
+				$helps[] = $tempHelp;
 			} else {
 				$helps[] = $response;
 			}
@@ -140,7 +149,17 @@ class Executor {
 			$input = explode(' ', $arguments, 2);
 			if (count($input) === 1) {
 				$command = $this->commandService->find('', $arguments);
-				return $this->execShell($room, $message, $command, '--help');
+				$response = $this->execShell($room, $message, $command, '--help');
+
+				if (strpos($response, 'Description:') === 0) {
+					$hasHelpSection = strpos($response, "\nHelp:\n");
+					if ($hasHelpSection !== false) {
+						// Symfony console command with --help detected
+						$response = substr($response, $hasHelpSection + 7);
+					}
+				}
+
+				return $response;
 			}
 
 			[$app, $cmd] = $input;
