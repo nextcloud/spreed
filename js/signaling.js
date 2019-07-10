@@ -1224,6 +1224,12 @@
 		}
 
 		this._pendingSyncRooms = $.Deferred();
+		this._waitTimeUntilSyncRetry = 1;
+		this._internalSyncRoomsWithRetry();
+		return this._pendingSyncRooms;
+	};
+
+	OCA.Talk.Signaling.Standalone.prototype._internalSyncRoomsWithRetry = function() {
 		OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments).then(function(rooms) {
 			// Remove _pendingSyncRooms before resolving it to make possible to
 			// sync again from handlers if needed.
@@ -1232,11 +1238,13 @@
 			this.rooms = rooms;
 			pendingSyncRooms.resolve(rooms);
 		}.bind(this)).fail(function() {
-			var pendingSyncRooms = this._pendingSyncRooms;
-			this._pendingSyncRooms = null;
-			pendingSyncRooms.reject();
+			setTimeout(this._internalSyncRoomsWithRetry.bind(this), this._waitTimeUntilSyncRetry * 1000);
+
+			// Increase the wait time until retry to at most 8 seconds.
+			if (this._waitTimeUntilSyncRetry < 8) {
+				this._waitTimeUntilSyncRetry *= 2;
+			}
 		}.bind(this));
-		return this._pendingSyncRooms;
 	};
 
 	OCA.Talk.Signaling.Standalone.prototype.processRoomListEvent = function(data) {
