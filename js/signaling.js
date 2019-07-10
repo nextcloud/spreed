@@ -1015,8 +1015,10 @@
 		this._trigger("connect");
 		if (this.reconnected) {
 			// The list of rooms might have changed while we were not connected,
-			// so perform resync once.
-			this.internalSyncRooms();
+			// so perform resync once; force it to ensure that the resync is not
+			// waiting to retry a pending one failed due to a lack of
+			// connection.
+			this._forceInternalSyncRooms();
 			// Load any chat messages that might have been missed.
 			this._receiveChatMessages();
 		}
@@ -1229,7 +1231,37 @@
 		return this._pendingSyncRooms;
 	};
 
+	/**
+	 * Forces the synchronization of rooms.
+	 *
+	 * The rooms are synchronized immediately, even if the synchronization
+	 * failed before and there is a scheduled retry for later (which is
+	 * cancelled).
+	 *
+	 * Use sparingly, only when it is very likely that synchronizing again will
+	 * succeed despite having failed earlier (for example, after the Internet
+	 * connection has been restored).
+	 */
+	OCA.Talk.Signaling.Standalone.prototype._forceInternalSyncRooms = function() {
+		if (!this._pendingSyncRooms) {
+			return this.internalSyncRooms();
+		}
+
+		if (this._delayedInternalSyncRoomsWithRetry) {
+			clearTimeout(this._delayedInternalSyncRoomsWithRetry);
+			this._waitTimeUntilSyncRetry = 1;
+			this._internalSyncRoomsWithRetry();
+		} else {
+			// A synchronization is being performed right now, so there is
+			// nothing to do except for waiting.
+		}
+
+		return this._pendingSyncRooms;
+	};
+
 	OCA.Talk.Signaling.Standalone.prototype._internalSyncRoomsWithRetry = function() {
+		this._delayedInternalSyncRoomsWithRetry = null;
+
 		OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments).then(function(rooms) {
 			// Remove _pendingSyncRooms before resolving it to make possible to
 			// sync again from handlers if needed.
@@ -1238,7 +1270,7 @@
 			this.rooms = rooms;
 			pendingSyncRooms.resolve(rooms);
 		}.bind(this)).fail(function() {
-			setTimeout(this._internalSyncRoomsWithRetry.bind(this), this._waitTimeUntilSyncRetry * 1000);
+			this._delayedInternalSyncRoomsWithRetry = setTimeout(this._internalSyncRoomsWithRetry.bind(this), this._waitTimeUntilSyncRetry * 1000);
 
 			// Increase the wait time until retry to at most 8 seconds.
 			if (this._waitTimeUntilSyncRetry < 8) {
