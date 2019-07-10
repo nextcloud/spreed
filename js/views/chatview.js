@@ -606,14 +606,14 @@
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				if ($element.data('user-id')) {
+				if ($element.data('user-id') && $element.data('user-id').substr(0, 6) !== 'guest/') {
 					if ($element.data('user-id') === 'all') {
 						$element.addClass('avatar icon icon-contacts');
 					} else {
 						$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
 					}
 				} else {
-					$element.imageplaceholder('?', $element.data('displayname'), size);
+					$element.imageplaceholder('?', $element.data('user-display-name'), size);
 					$element.css('background-color', '#b9b9b9');
 				}
 			};
@@ -806,7 +806,7 @@
 				var $this = $(this),
 					$inserted = $this.parent(),
 					userId = $this.find('.avatar').data('user-id');
-				if (userId.indexOf(' ') !== -1) {
+				if (userId.indexOf(' ') !== -1 || userId.indexOf('guest/') === 0) {
 					$inserted.html('@"' + userId + '"');
 				} else {
 					$inserted.html('@' + userId);
