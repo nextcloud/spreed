@@ -438,7 +438,10 @@
 			formattedMessage = this._plainToRich(formattedMessage);
 			formattedMessage = formattedMessage.replace(/\n/g, '<br/>');
 			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
-				formattedMessage, commentModel.get('messageParameters'));
+				formattedMessage, commentModel.get('messageParameters'), {
+					userId: OC.getCurrentUser().uid,
+					sessionHash: this.model.get('hashedSessionId'),
+				});
 
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,

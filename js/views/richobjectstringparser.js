@@ -1,4 +1,4 @@
-/* global OC, OCA */
+/* global OCA */
 
 /**
  * @copyright (c) 2016 Joas Schilling <coding@schilljs.com>
@@ -9,16 +9,17 @@
  * later. See the COPYING file.
  */
 
-(function(OC, OCA) {
+(function(OCA) {
 
 	OCA.SpreedMe.Views.RichObjectStringParser = {
 
 		/**
 		 * @param {string} subject
 		 * @param {Object} parameters
+		 * @param {Object} context
 		 * @returns {string}
 		 */
-		parseMessage: function(subject, parameters) {
+		parseMessage: function(subject, parameters, context) {
 			var self = this,
 				regex = /\{([a-z0-9-]+)\}/gi,
 				matches = subject.match(regex);
@@ -31,7 +32,7 @@
 					return;
 				}
 
-				var parsed = self.parseParameter(parameters[parameter]);
+				var parsed = self.parseParameter(parameters[parameter], context);
 				subject = subject.replace('{' + parameter + '}', parsed);
 			});
 
@@ -44,8 +45,11 @@
 		 * @param {string} parameter.id
 		 * @param {string} parameter.name
 		 * @param {string} parameter.link
+		 * @param {Object} context
+		 * @param {string} context.userId
+		 * @param {string} context.sessionHash
 		 */
-		parseParameter: function(parameter) {
+		parseParameter: function(parameter, context) {
 			switch (parameter.type) {
 				case 'user':
 					if (!this.userLocalTemplate) {
@@ -54,8 +58,18 @@
 					if (!parameter.name) {
 						parameter.name = parameter.id;
 					}
-					if (OC.getCurrentUser().uid === parameter.id) {
+					if (context.userId === parameter.id) {
 						parameter.isCurrentUser = true;
+					}
+					return this.userLocalTemplate(parameter);
+				case 'guest':
+					if (!this.userLocalTemplate) {
+						this.userLocalTemplate = OCA.Talk.Views.Templates['richobjectstringparser_userlocal'];
+					}
+
+					parameter.isGuest = true;
+					if (!context.userId && context.sessionHash) {
+						parameter.isCurrentUser = 'guest/' + context.sessionHash === parameter.id;
 					}
 					return this.userLocalTemplate(parameter);
 
@@ -89,4 +103,4 @@
 
 	};
 
-})(OC, OCA);
+})(OCA);

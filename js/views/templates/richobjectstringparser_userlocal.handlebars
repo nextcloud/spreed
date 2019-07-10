@@ -3,4 +3,4 @@
     after the mention, and thus causing the mention to "touch" the following
     text; "~" from Handlebars can not be used because it is not recursive, it
     only applies to a single level }}
-<span class="atwho-inserted" contenteditable="false"><span class="mention-user avatar-name-wrapper {{#if isCurrentUser}}currentUser{{/if}}"><span class="avatar" data-user-id="{{id}}" data-user-display-name="{{name}}"></span><strong>{{name}}</strong></span></span>
+<span class="atwho-inserted" contenteditable="false"><span class="mention-user avatar-name-wrapper {{#if isCurrentUser}}currentUser{{/if}}"><span class="avatar" {{#if isGuest}}data-guest-session="{{id}}"{{else}}data-user-id="{{id}}"{{/if}} data-user-display-name="{{name}}"></span><strong>{{name}}</strong></span></span>
