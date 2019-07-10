@@ -85,7 +85,7 @@ class Listener {
 		$rooms = $this->manager->getRoomsForParticipant($user->getUID());
 
 		foreach ($rooms as $room) {
-			if ($room->getType() === Room::ONE_TO_ONE_CALL || $room->getNumberOfParticipants() === 1) {
+			if ($room->getNumberOfParticipants() === 1) {
 				$room->deleteRoom();
 			} else {
 				$room->removeUser($user, Room::PARTICIPANT_REMOVED);
