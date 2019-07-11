@@ -13,6 +13,7 @@
     "@babel/core": "^7.5.0",
     "@babel/preset-env": "^7.5.0",
     "attachmediastream": "^2.1.0",
+    "babel-plugin-add-module-exports": "^1.0.2",
     "babelify": "^10.0.0",
     "browserify": "^16.3.0",
     "browserslist-config-nextcloud": "0.0.1",
