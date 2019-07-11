@@ -5249,6 +5249,7 @@ var adapter = (0, _adapter_factory.adapterFactory)({
   window: window
 });
 exports["default"] = adapter;
+module.exports = exports.default;
 
 },{"./adapter_factory.js":16}],16:[function(require,module,exports){
 'use strict';
