@@ -136,6 +136,7 @@ class ChatControllerTest extends TestCase {
 		$comment->method('getActorId')->willReturn($actorId);
 		$comment->method('getCreationDateTime')->willReturn($creationDateTime);
 		$comment->method('getMessage')->willReturn($message);
+		$comment->method('getParentId')->willReturn('0');
 
 		return $comment;
 	}
@@ -185,6 +186,12 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
+		$chatMessage->expects($this->exactly(2))
+			->method('getComment')
+			->willReturn($comment);
+		$chatMessage->expects($this->once())
+			->method('getRoom')
+			->willReturn($this->room);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
@@ -258,6 +265,12 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
+		$chatMessage->expects($this->exactly(2))
+			->method('getComment')
+			->willReturn($comment);
+		$chatMessage->expects($this->once())
+			->method('getRoom')
+			->willReturn($this->room);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
@@ -339,6 +352,12 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
+		$chatMessage->expects($this->exactly(2))
+			->method('getComment')
+			->willReturn($comment);
+		$chatMessage->expects($this->once())
+			->method('getRoom')
+			->willReturn($this->room);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')

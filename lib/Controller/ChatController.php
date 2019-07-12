@@ -28,6 +28,7 @@ use OCA\Spreed\Chat\AutoComplete\Sorter;
 use OCA\Spreed\Chat\ChatManager;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\GuestManager;
+use OCA\Spreed\Model\Message;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Http;
@@ -37,6 +38,7 @@ use OCP\Collaboration\AutoComplete\IManager;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Comments\IComment;
 use OCP\Comments\MessageTooLongException;
+use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
@@ -118,11 +120,12 @@ class ChatController extends AEnvironmentAwareController {
 	 *
 	 * @param string $message the message to send
 	 * @param string $actorDisplayName for guests
+	 * @param int $replyTo Parent id which this message is a reply to
 	 * @return DataResponse the status code is "201 Created" if successful, and
 	 *         "404 Not found" if the room or session for a guest user was not
 	 *         found".
 	 */
-	public function sendMessage(string $message, string $actorDisplayName = ''): DataResponse {
+	public function sendMessage(string $message, string $actorDisplayName = '', int $replyTo = 0): DataResponse {
 
 		if ($this->userId === null) {
 			$actorType = 'guests';
@@ -146,11 +149,21 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		$parent = $parentMessage = null;
+		if ($replyTo !== 0) {
+			try {
+				$parent = $this->chatManager->getParentComment($this->room, (string) $replyTo);
+			} catch (NotFoundException $e) {
+				// Someone is trying to reply cross-rooms or to a non-existing message
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+		}
+
 		$this->room->ensureOneToOneRoomIsFilled();
 		$creationDateTime = $this->timeFactory->getDateTime('now', new \DateTimeZone('UTC'));
 
 		try {
-			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime);
+			$comment = $this->chatManager->sendMessage($this->room, $this->participant, $actorType, $actorId, $message, $creationDateTime, $parent);
 		} catch (MessageTooLongException $e) {
 			return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
 		} catch (\Exception $e) {
@@ -164,17 +177,11 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_CREATED);
 		}
 
-		return new DataResponse([
-			'id' => (int) $comment->getId(),
-			'token' => $this->room->getToken(),
-			'actorType' => $chatMessage->getActorType(),
-			'actorId' => $chatMessage->getActorId(),
-			'actorDisplayName' => $chatMessage->getActorDisplayName(),
-			'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
-			'message' => $chatMessage->getMessage(),
-			'messageParameters' => $chatMessage->getMessageParameters(),
-			'systemMessage' => $chatMessage->getMessageType() === 'system' ? $comment->getMessage() : '',
-		], Http::STATUS_CREATED);
+		$data = $this->messageToData($chatMessage);
+		if ($parentMessage instanceof Message) {
+			$data['parent'] = $this->messageToData($parentMessage);
+		}
+		return new DataResponse($data, Http::STATUS_CREATED);
 	}
 
 	/**
@@ -241,28 +248,76 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_MODIFIED);
 		}
 
-		$messages = [];
+		$i = 0;
+		$messages = $commentIdToIndex = $parentIds = [];
 		foreach ($comments as $comment) {
+			$id = (int) $comment->getId();
 			$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
 			$this->messageParser->parseMessage($message);
 
 			if (!$message->getVisibility()) {
+				$commentIdToIndex[$id] = null;
 				continue;
 			}
 
-			$messages[] = [
-				'id' => (int) $comment->getId(),
-				'token' => $this->room->getToken(),
-				'actorType' => $message->getActorType(),
-				'actorId' => $message->getActorId(),
-				'actorDisplayName' => $message->getActorDisplayName(),
-				'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
-				'message' => $message->getMessage(),
-				'messageParameters' => $message->getMessageParameters(),
-				'systemMessage' => $message->getMessageType() === 'system' ? $comment->getMessage() : '',
-			];
+			if ($comment->getParentId() !== '0') {
+				$parentIds[$id] = $comment->getParentId();
+			}
+
+			$messages[] = $this->messageToData($message);
+			$commentIdToIndex[$id] = $i;
+			$i++;
 		}
 
+		/**
+		 * Set the parent for reply-messages
+		 */
+		$loadedParents = [];
+		foreach ($parentIds as $commentId => $parentId) {
+			$commentKey = $commentIdToIndex[$commentId];
+
+			// Parent is already parsed in the message list
+			if (!empty($commentIdToIndex[$parentId])) {
+				$parentKey = $commentIdToIndex[$parentId];
+				$messages[$commentKey]['parent'] = $messages[$parentKey];
+
+				// We don't show nested parents…
+				unset($messages[$commentKey]['parent']['parent']);
+				continue;
+			}
+
+			// Parent was already loaded manually for another comment
+			if (!empty($loadedParents[$parentId])) {
+				$messages[$commentKey]['parent'] = $loadedParents[$parentId];
+				continue;
+			}
+
+			// Parent was not skipped due to visibility, so we need to manually grab it.
+			if (!isset($commentIdToIndex[$parentId])) {
+				try {
+					$comment = $this->chatManager->getParentComment($this->room, $parentId);
+					$message = $this->messageParser->createMessage($this->room, $this->participant, $comment, $this->l);
+					$this->messageParser->parseMessage($message);
+
+					if ($message->getVisibility()) {
+						$loadedParents[$parentId] = $this->messageToData($message);
+						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
+					} else {
+						$loadedParents[$parentId] = [
+							'id' => $parentId,
+							'deleted' => true,
+						];
+					}
+				} catch (NotFoundException $e) {
+				}
+			}
+
+			// Message is not visible to the user
+			$messages[$commentKey]['parent'] = [
+				'id' => $parentId,
+				'deleted' => true,
+			];
+		}
 
 		$response = new DataResponse($messages, Http::STATUS_OK);
 
@@ -275,6 +330,20 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $response;
+	}
+
+	protected function messageToData(Message $message): array {
+		return [
+			'id' => (int) $message->getComment()->getId(),
+			'token' => $message->getRoom()->getToken(),
+			'actorType' => $message->getActorType(),
+			'actorId' => $message->getActorId(),
+			'actorDisplayName' => $message->getActorDisplayName(),
+			'timestamp' => $message->getComment()->getCreationDateTime()->getTimestamp(),
+			'message' => $message->getMessage(),
+			'messageParameters' => $message->getMessageParameters(),
+			'systemMessage' => $message->getMessageType() === 'system' ? $message->getComment()->getMessage() : '',
+		];
 	}
 
 	/**
