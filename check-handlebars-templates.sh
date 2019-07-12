@@ -1,17 +1,9 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -e
 
-REPODIR=`git rev-parse --show-toplevel`
+# Compile Handlebars templates
+make compile-handlebars-templates
 
-cd $REPODIR
+git status
 
-bash compile-handlebars-templates.sh || exit 1
-
-if [[ $(git diff --name-only) ]]; then
-    echo "Please submit your compiled handlebars templates"
-    echo
-    git diff
-    exit 1
-fi
-
-echo "All up to date! Carry on :D"
-exit 0
+bash -c "[[ ! \"`git status --porcelain js/views/templates.js`\" ]] || ( echo 'Uncommitted changes in compiled Handlebar templates' && exit 1 )"
