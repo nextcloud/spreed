@@ -1,4 +1,4 @@
-/* global Marionette, $ */
+/* global Marionette */
 
 /**
  *
@@ -21,7 +21,7 @@
  *
  */
 
-(function(OC, OCA, Marionette, $) {
+(function(OC, OCA, Marionette) {
 
 	'use strict';
 
@@ -350,4 +350,4 @@
 
 	OCA.SpreedMe.Views.MediaControlsView = MediaControlsView;
 
-})(OC, OCA, Marionette, $);
+})(OC, OCA, Marionette);
