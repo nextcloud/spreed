@@ -18,6 +18,7 @@ title: Constants
 * `3` user
 * `4` guest
 * `5` user following a public link
+* `6` guest with moderator permissions
 
 ## Actor types of chat messages
 * `guests` - guest users
