@@ -9,6 +9,9 @@ steps:
       - ./check-handlebars-templates.sh
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -27,6 +30,9 @@ steps:
       - ./run-eslint.sh
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -45,6 +51,9 @@ steps:
       - ./run-stylelint.sh
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -95,6 +104,9 @@ steps:
       - cd apps/$APP_NAME/
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -125,6 +137,10 @@ steps:
       - phpunit --configuration phpunit.xml
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -155,6 +171,10 @@ steps:
       - phpunit --configuration phpunit.xml
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -185,6 +205,10 @@ steps:
       - phpunit --configuration phpunit.xml
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -229,6 +253,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -273,6 +301,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -317,6 +349,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -359,6 +395,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -401,6 +441,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -443,6 +487,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -477,6 +525,10 @@ services:
     image: redis
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -511,6 +563,10 @@ services:
     image: redis
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -545,6 +601,10 @@ services:
     image: redis
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -579,6 +639,10 @@ services:
     image: redis
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -623,6 +687,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -667,6 +735,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -711,6 +783,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -755,6 +831,10 @@ services:
       - /var/lib/mysql
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -797,6 +877,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -839,6 +923,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -881,6 +969,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -923,6 +1015,10 @@ services:
       - /var/lib/postgresql/data
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
+      - refs/heads/dependabot/*
   branch:
     - master
     - stable*
@@ -962,6 +1058,9 @@ services:
       JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -1003,6 +1102,9 @@ services:
       JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -1044,6 +1146,9 @@ services:
       JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -1085,6 +1190,9 @@ services:
       JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
@@ -1126,6 +1234,9 @@ services:
       JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
 
 trigger:
+  ref:
+    exclude:
+      - refs/heads/docs/*
   branch:
     - master
     - stable*
