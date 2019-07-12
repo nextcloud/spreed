@@ -681,13 +681,31 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
-		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($mention) {
-			return [
-				'id' => (string) $mention['id'],
-				'label' => (string) $mention['label'],
-				'source' => (string) $mention['source'],
-			];
-		}, $mentions));
+
+		foreach ($formData->getHash() as $key => $row) {
+			if ($row['id'] === 'GUEST_ID') {
+				PHPUnit_Framework_Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
+				$mentions[$key]['id'] = 'GUEST_ID';
+			}
+			PHPUnit_Framework_Assert::assertEquals($row, $mentions[$key]);
+		}
+	}
+
+	/**
+	 * @Then /^guest "([^"]*)" sets name to "([^"]*)" in room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $name
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function guestSetsName($user, $name, $identifier, $statusCode) {
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/guest/' . self::$identifierToToken[$identifier] . '/name',
+			new TableNode([['displayName', $name]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
 	}
 
 	/**
