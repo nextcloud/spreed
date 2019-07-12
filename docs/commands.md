@@ -15,7 +15,7 @@ Argument | Allowed chars | Description
 ---|---|---
 `cmd` | [a-z0-9] | The keyword the user has to type to run this command (min. 1, max. 64 characters)
 `name` | * | The author name of the response that is posted by the command (min. 1, max. 64 characters)
-`script` | * | Actual command that is being ran. The script must be executable by the user of your webserver. See the parameter table below for options. The script is invoked with `--help` as argument on set up, to check if it can be executed correctly.
+`script` | * | Actual command that is being ran. The script must be executable by the user of your webserver and has to use absolute paths only! See the parameter table below for options. The script is invoked with `--help` as argument on set up, to check if it can be executed correctly.
 `response` | 0-2 | Who should see the response: 0 - No one, 1 - User who executed the command, 2 - Everyone
 `enabled` | 0-3 |  Who can use the command: 0 - No one, 1 - Moderators of the room, 2 - Logged in users, 3 - Everyone
 
@@ -57,6 +57,9 @@ Please note, that your command should also understand the argument `--help`.
 It should return a useful description, the first line is also displayed in a list of all commands when the user just types `/help`.
 
 ### Register command
+
+
+Make sure to use the absolute path to your script when registering the command:
 
 ```
 ./occ talk:command:add calculator calculator "/path/to/calc.sh \"{ARGUMENTS_DOUBLEQUOTE_ESCAPED}\" {ROOM} {USER}" 1 3

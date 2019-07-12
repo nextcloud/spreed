@@ -62,7 +62,7 @@ class Update extends Base {
 			->addArgument(
 				'script',
 				InputArgument::REQUIRED,
-				'Script to execute'
+				'Script to execute (Must be using absolute paths only)'
 			)
 			->addArgument(
 				'response',
