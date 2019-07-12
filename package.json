@@ -9,6 +9,9 @@
   },
   "author": "",
   "license": "AGPL-3.0",
+  "scripts": {
+    "build": "make npm-init build-js-production bundle-simplewebrtc"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.0",
     "@babel/preset-env": "^7.5.0",
