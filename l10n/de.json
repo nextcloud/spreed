@@ -199,6 +199,7 @@
     "Join »%s«" : " »%s« beitreten",
     "Password request: %s" : "Passwortanforderung: %s",
     "Private conversation" : "Private Unterhaltung",
+    "Deleted user (%s)" : "Gelöschter Benutzer (%s)",
     "{user} sent you a private message" : "{user} hat Dir eine private Nachricht gesendet",
     "{user} sent a message in conversation {call}" : "{user} hat eine Nachricht in der Unterhaltung {call} gesendet",
     "A deleted user sent a message in conversation {call}" : "Ein gelöschter Benutzer hat eine Nachricht in der Unterhaltung {call} gesendet",

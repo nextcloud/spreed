@@ -201,6 +201,7 @@ OC.L10N.register(
     "Join »%s«" : "Unisciti a «%s»",
     "Password request: %s" : "Password richiesta: %s",
     "Private conversation" : "Conversazione privata",
+    "Deleted user (%s)" : "Utente eliminato (%s)",
     "{user} sent you a private message" : "{user} ti ha inviato un messaggio privato",
     "{user} sent a message in conversation {call}" : "{user} ha inviato un messaggio nella conversazione {call}",
     "A deleted user sent a message in conversation {call}" : "Un utente eliminato ha inviato un messaggio nella conversazione {call}",
