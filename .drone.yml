@@ -1,9 +1,14 @@
 kind: pipeline
-name: handlebars
+name: check-builds
 
 steps:
+  - name: check-simplewebrtc-bundle
+    image: node:lts
+    commands:
+      - make npm-init
+      - ./check-simplewebrtc-bundle.sh
   - name: check-handlebars-templates
-    image: node
+    image: node:lts
     commands:
       - npm install -g handlebars
       - ./check-handlebars-templates.sh
