@@ -128,6 +128,7 @@
     "{user} wants to talk with you" : "{user} nori su jumis pasikalbėti",
     "Someone requested the password to access {file}" : "Kažkas užklausė slaptažodį, kad gautų prieigą prie {file}",
     "Conversation not found" : "Pokalbis nerastas",
+    "Path is already shared with this room" : "Kelias jau yra bendrinamas su šiuo kambariu",
     "TURN server URL" : "TURN serverio URL",
     "Delete this server" : "Ištrinti šį serverį",
     "STUN server URL" : "STUN serverio URL",
