@@ -161,11 +161,15 @@ input[type="password"] {
 	top: 6px;
 }
 
-.participantWithList li > a:first-child img,
+.participantWithList > li > a:first-child > img,
 #app-navigation li > a:first-child img {
 	width: 32px !important;
 	height: 32px !important;
 	margin: 0 !important;
+}
+
+.participantWithList .contactsmenu-popover {
+	margin-left: 7px;
 }
 
 .select2-result .avatar.icon,
@@ -669,13 +673,13 @@ input[type="password"] {
 	}
 }
 
-.participantWithList li {
+.participantWithList > li {
 	position: relative;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-.participantWithList li > a {
+.participantWithList > li > a {
 	display: block;
 	width: 100%;
 	line-height: 44px;
@@ -1066,7 +1070,7 @@ input[type="password"] {
 
 #app-sidebar .participantWithList .participant:last-child {
 	/* Add room for the popovermenu on last user */
-	padding-bottom: 64px;
+	padding-bottom: 94px;
 }
 
 /**

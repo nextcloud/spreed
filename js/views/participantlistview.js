@@ -132,6 +132,12 @@
 					}
 				});
 
+				if (OC.getCurrentUser().uid && model.get('userId') &&
+					model.get('userId') !== OC.getCurrentUser().uid) {
+					this.$el.find('.participant-entry-link .avatar').contactsMenu(
+						model.get('userId'), 0, this.$el.find('.participant-entry-link'));
+				}
+
 				this.$el.attr('data-session-id', this.model.get('sessionId'));
 				this.$el.attr('data-participant', this.model.get('userId'));
 				this.$el.addClass('participant');
