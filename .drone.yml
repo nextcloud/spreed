@@ -7,6 +7,11 @@ steps:
     commands:
       - make npm-init
       - ./check-simplewebrtc-bundle.sh
+  - name: check-vuejs-builds
+    image: node:lts
+    commands:
+      - make npm-init
+      - ./check-vuejs-builds.sh
   - name: check-handlebars-templates
     image: node:lts
     commands:
