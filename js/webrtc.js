@@ -539,37 +539,40 @@ var spreedPeerConnectionTable = [];
 						case 'disconnected':
 							console.log('Disconnected.');
 
-							if (!signaling.hasFeature("mcu")) {
-								// ICE failures will be handled in "iceFailed"
-								// below for MCU installations.
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED);
+							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED);
 
-								setTimeout(function() {
+							setTimeout(function() {
+								if (peer.pc.iceConnectionState !== 'disconnected') {
+									return;
+								}
+
+								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
+
+								if (!signaling.hasFeature("mcu")) {
+									// ICE failures will be handled in "iceFailed"
+									// below for MCU installations.
+
 									// If the peer is still disconnected after 5 seconds we try ICE restart.
-									if(peer.pc.iceConnectionState === 'disconnected') {
-										videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
-
-										if (spreedPeerConnectionTable[peer.id] < 5) {
-											if (peer.pc.localDescription.type === 'offer' &&
-												peer.pc.signalingState === 'stable') {
-												spreedPeerConnectionTable[peer.id] ++;
-												console.log('ICE restart.');
-												peer.icerestart();
-											}
+									if (spreedPeerConnectionTable[peer.id] < 5) {
+										if (peer.pc.localDescription.type === 'offer' &&
+											peer.pc.signalingState === 'stable') {
+											spreedPeerConnectionTable[peer.id] ++;
+											console.log('ICE restart.');
+											peer.icerestart();
 										}
 									}
-								}, 5000);
-							}
+								}
+							}, 5000);
 							break;
 						case 'failed':
 							console.log('Connection failed.');
+
+							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
 
 							if (!signaling.hasFeature("mcu")) {
 								// ICE failures will be handled in "iceFailed"
 								// below for MCU installations.
 								if (spreedPeerConnectionTable[peer.id] < 5) {
-									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
-
 									if (peer.pc.localDescription.type === 'offer' &&
 										peer.pc.signalingState === 'stable') {
 										spreedPeerConnectionTable[peer.id] ++;

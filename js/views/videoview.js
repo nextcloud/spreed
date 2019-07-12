@@ -80,8 +80,9 @@
 
 			this.render();
 
+			this.$el.addClass('not-connected');
+
 			this.getUI('avatar').addClass('icon-loading');
-			this.getUI('avatar').css('opacity', '0.5');
 
 			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
 			this.getUI('hideRemoteVideoButton').addClass('hidden');
@@ -145,7 +146,8 @@
 		setConnectionStatus: function(connectionStatus) {
 			this._connectionStatus = connectionStatus;
 
-			this.getUI('avatar').removeClass('icon-loading');
+			this.$el.addClass('not-connected');
+
 			this.getUI('iceFailedIndicator').addClass('not-failed');
 
 			if (connectionStatus === ConnectionStatus.CHECKING ||
@@ -156,9 +158,11 @@
 				return;
 			}
 
+			this.getUI('avatar').removeClass('icon-loading');
+
 			if (connectionStatus === ConnectionStatus.CONNECTED ||
 					connectionStatus === ConnectionStatus.COMPLETED) {
-				this.getUI('avatar').css('opacity', '1');
+				this.$el.removeClass('not-connected');
 
 				return;
 			}

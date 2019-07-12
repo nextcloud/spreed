@@ -60,6 +60,13 @@ video {
 	filter: none;
 }
 
+#videos .videoContainer.not-connected {
+	video,
+	.avatar {
+		opacity: 0.5;
+	}
+}
+
 #videos .videoContainer:not(.promoted) video {
 	max-height: 200px;
 	max-width: 100%;
