@@ -1,4 +1,4 @@
-/* global Marionette, $ */
+/* global Marionette */
 
 /**
  *
@@ -21,7 +21,7 @@
  *
  */
 
-(function(OC, OCA, Marionette, $) {
+(function(OC, OCA, Marionette) {
 
 	'use strict';
 
@@ -320,7 +320,7 @@
 
 						if (extensionURL) {
 							var text = t('spreed', 'Screensharing extension is required to share your screen.');
-							var element = $('<a>').attr('href', extensionURL).attr('target','_blank').text(text);
+							var element = '<a href="' + extensionURL + '" target="_blank">' + escapeHTML(text) + '</a>';
 
 							OC.Notification.showTemporary(element, {isHTML: true});
 						} else {
@@ -350,4 +350,4 @@
 
 	OCA.SpreedMe.Views.MediaControlsView = MediaControlsView;
 
-})(OC, OCA, Marionette, $);
+})(OC, OCA, Marionette);
