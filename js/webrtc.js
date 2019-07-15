@@ -17,7 +17,7 @@ var spreedPeerConnectionTable = [];
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
 	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
-	var delayedCreatePeer = [];
+	var delayedConnectionToPeer = [];
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -209,7 +209,7 @@ var spreedPeerConnectionTable = [];
 					// offer in a reasonable time, the current peer calls the
 					// remote peer instead of waiting to be called to
 					// reestablish the connection.
-					delayedCreatePeer[sessionId] = setTimeout(function() {
+					delayedConnectionToPeer[sessionId] = setTimeout(function() {
 						createPeer();
 					}, 10000);
 				}
@@ -228,9 +228,9 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
-			if (delayedCreatePeer[sessionId]) {
-				clearTimeout(delayedCreatePeer[sessionId]);
-				delete delayedCreatePeer[sessionId];
+			if (delayedConnectionToPeer[sessionId]) {
+				clearTimeout(delayedConnectionToPeer[sessionId]);
+				delete delayedConnectionToPeer[sessionId];
 			}
 		});
 
@@ -348,9 +348,9 @@ var spreedPeerConnectionTable = [];
 				}
 			}
 
-			if (message.roomType === 'video' && delayedCreatePeer[message.from]) {
-				clearTimeout(delayedCreatePeer[message.from]);
-				delete delayedCreatePeer[message.from];
+			if (message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
+				clearTimeout(delayedConnectionToPeer[message.from]);
+				delete delayedConnectionToPeer[message.from];
 			}
 
 			if (!selfInCall) {
