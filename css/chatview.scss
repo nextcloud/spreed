@@ -216,10 +216,16 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 	display: none;
 }
 
-#chatView .comments:not(.systemMessage) li .message {
+#chatView .comments .authorRow,
+#chatView .comments li .message {
+	/* Makes the container slightly narrower in order not to cover the date on
+	 * the right side, thus allowing the date tooltip to be shown properly. */
+	width: calc(100% - 80px)
+}
+
+#chatView .comments li .message {
 	padding-left: 40px;
 	display: inline-block;
-	width: calc(100% - 80px);
 }
 
 #chatView .comment .action {
