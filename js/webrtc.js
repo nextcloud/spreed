@@ -228,6 +228,10 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
+			if (delayedCreatePeer[sessionId]) {
+				clearTimeout(delayedCreatePeer[sessionId]);
+				delete delayedCreatePeer[sessionId];
+			}
 		});
 
 		previousUsersInRoom = previousUsersInRoom.diff(disconnectedSessionIds);
