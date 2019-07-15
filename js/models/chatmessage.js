@@ -49,7 +49,8 @@
 			actorDisplayName: '',
 			timestamp: 0,
 			message: '',
-			messageParameters: []
+			messageParameters: [],
+			replyTo: 0
 		},
 
 		url: function() {
