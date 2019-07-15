@@ -349,6 +349,12 @@ var spreedPeerConnectionTable = [];
 				delete delayedCreatePeer[message.from];
 			}
 
+			if (!selfInCall) {
+				console.log('Offer received when not in the call, ignore');
+
+				message.type = 'offer-to-ignore';
+			}
+
 			// MCU screen offers do not include the "broadcaster" property,
 			// which is expected by SimpleWebRTC in screen offers from a remote
 			// peer, so it needs to be explicitly added.
