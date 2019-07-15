@@ -686,7 +686,7 @@ class NotifierTest extends \Test\TestCase {
 		$notification->expects($this->once())
 			->method('getApp')
 			->willReturn('spreed');
-		$notification->expects($this->exactly(2))
+		$notification->expects($this->atLeast(2))
 			->method('getSubject')
 			->willReturn($isMention ? 'mention'  : 'chat');
 		$notification->expects($this->once())

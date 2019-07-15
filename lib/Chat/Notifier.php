@@ -76,9 +76,10 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 * @param IComment $comment
+	 * @param string[] $alreadyNotifiedUsers
 	 * @return string[] Users that were mentioned
 	 */
-	public function notifyMentionedUsers(Room $chat, IComment $comment): array {
+	public function notifyMentionedUsers(Room $chat, IComment $comment, array $alreadyNotifiedUsers): array {
 		$mentionedUserIds = $this->getMentionedUserIds($comment);
 		if (empty($mentionedUserIds)) {
 			return [];
@@ -92,13 +93,48 @@ class Notifier {
 
 		$notification = $this->createNotification($chat, $comment, 'mention');
 		foreach ($mentionedUserIds as $mentionedUserId) {
+			if (in_array($mentionedUserId, $alreadyNotifiedUsers, true)) {
+				continue;
+			}
+
 			if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {
 				$notification->setUser($mentionedUserId);
 				$this->notificationManager->notify($notification);
+				$alreadyNotifiedUsers[] = $mentionedUserId;
 			}
 		}
 
-		return $mentionedUserIds;
+		return $alreadyNotifiedUsers;
+	}
+
+	/**
+	 * Notifies the author that wrote the comment which was replied to
+	 *
+	 * The comment must be a chat message comment. That is, its "objectId" must
+	 * be the room ID.
+	 *
+	 * The author of the message is notified only if he is still able to participate in the room
+	 *
+	 * @param Room $chat
+	 * @param IComment $comment
+	 * @param IComment $replyTo
+	 * @return string[] Users that were mentioned
+	 */
+	public function notifyReplyToAuthor(Room $chat, IComment $comment, IComment $replyTo): array {
+		if ($replyTo->getActorType() !== 'users') {
+			// No reply notification when the replyTo-author was not a user
+			return [];
+		}
+
+		if (!$this->shouldUserBeNotified($replyTo->getActorId(), $comment)) {
+			return [];
+		}
+
+		$notification = $this->createNotification($chat, $comment, 'reply');
+		$notification->setUser($replyTo->getActorId());
+		$this->notificationManager->notify($notification);
+
+		return [$replyTo->getActorId()];
 	}
 
 	/**
@@ -112,9 +148,9 @@ class Notifier {
 	 *
 	 * @param Room $chat
 	 * @param IComment $comment
-	 * @param string[] $mentionedUsers
+	 * @param string[] $alreadyNotifiedUsers
 	 */
-	public function notifyOtherParticipant(Room $chat, IComment $comment, array $mentionedUsers): void {
+	public function notifyOtherParticipant(Room $chat, IComment $comment, array $alreadyNotifiedUsers): void {
 		$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_ALWAYS);
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
@@ -128,7 +164,7 @@ class Notifier {
 				continue;
 			}
 
-			if (\in_array($participant->getUser(), $mentionedUsers, true)) {
+			if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
 				continue;
 			}
 
@@ -154,7 +190,7 @@ class Notifier {
 					continue;
 				}
 
-				if (\in_array($participant->getUser(), $mentionedUsers, true)) {
+				if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
 					continue;
 				}
 

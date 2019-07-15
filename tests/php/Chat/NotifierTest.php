@@ -174,7 +174,35 @@ class NotifierTest extends \Test\TestCase {
 			->method('notify')
 			->with($notification);
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
+	}
+
+	public function testNotNotifyMentionedUserIfReplyToAuthor() {
+		$comment = $this->newComment(108, 'users', 'testUser', new \DateTime('@' . 1000000016), 'Mention @anotherUser');
+
+		$room = $this->createMock(Room::class);
+		$room->expects($this->any())
+			->method('getToken')
+			->willReturn('Token123');
+
+		$notification = $this->newNotification($room, $comment);
+
+		$this->notificationManager->expects($this->once())
+			->method('createNotification')
+			->willReturn($notification);
+
+		$notification->expects($this->never())
+			->method('setUser');
+
+		$notification->expects($this->once())
+			->method('setMessage')
+			->with('comment')
+			->willReturnSelf();
+
+		$this->notificationManager->expects($this->never())
+			->method('notify');
+
+		$this->notifier->notifyMentionedUsers($room, $comment, ['anotherUser']);
 	}
 
 	public function testNotifyMentionedUsersByGuest() {
@@ -217,7 +245,7 @@ class NotifierTest extends \Test\TestCase {
 			->method('notify')
 			->with($notification);
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersWithLongMessageStartMention() {
@@ -261,7 +289,7 @@ class NotifierTest extends \Test\TestCase {
 			->method('notify')
 			->with($notification);
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersWithLongMessageMiddleMention() {
@@ -305,7 +333,7 @@ class NotifierTest extends \Test\TestCase {
 			->method('notify')
 			->with($notification);
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersWithLongMessageEndMention() {
@@ -349,7 +377,7 @@ class NotifierTest extends \Test\TestCase {
 			->method('notify')
 			->with($notification);
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersToSelf() {
@@ -369,7 +397,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->notificationManager->expects($this->never())
 			->method('notify');
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersToUnknownUser() {
@@ -390,7 +418,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->notificationManager->expects($this->never())
 			->method('notify');
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersToUserNotInvitedToChat() {
@@ -421,7 +449,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->notificationManager->expects($this->never())
 			->method('notify');
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersNoMentions() {
@@ -438,7 +466,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->notificationManager->expects($this->never())
 			->method('notify');
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testNotifyMentionedUsersSeveralMentions() {
@@ -487,7 +515,7 @@ class NotifierTest extends \Test\TestCase {
 				[ $notification ]
 			);
 
-		$this->notifier->notifyMentionedUsers($room, $comment);
+		$this->notifier->notifyMentionedUsers($room, $comment, []);
 	}
 
 	public function testRemovePendingNotificationsForRoom() {

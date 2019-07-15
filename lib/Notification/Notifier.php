@@ -165,7 +165,7 @@ class Notifier implements INotifier {
 			}
 			return $this->parseCall($notification, $room, $l);
 		}
-		if ($subject === 'mention' || $subject === 'chat') {
+		if ($subject === 'reply' || $subject === 'mention' || $subject === 'chat') {
 			return $this->parseChatMessage($notification, $room, $participant, $l);
 		}
 
@@ -251,25 +251,31 @@ class Notifier implements INotifier {
 		if ($notification->getSubject() === 'chat') {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 				$subject = $l->t('{user} sent you a private message');
+			} else if ($richSubjectUser) {
+				$subject = $l->t('{user} sent a message in conversation {call}');
+			} else if (!$isGuest) {
+				$subject = $l->t('A deleted user sent a message in conversation {call}');
 			} else {
-				if ($richSubjectUser) {
-					$subject = $l->t('{user} sent a message in conversation {call}');
-				} else if (!$isGuest) {
-					$subject = $l->t('A deleted user sent a message in conversation {call}');
-				} else {
-					$subject = $l->t('A guest sent a message in conversation {call}');
-				}
+				$subject = $l->t('A guest sent a message in conversation {call}');
+			}
+		} else if ($notification->getSubject() === 'reply') {
+			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$subject = $l->t('{user} replied to your private message');
+			} else if ($richSubjectUser) {
+				$subject = $l->t('{user} replied to your message in conversation {call}');
+			} else if (!$isGuest) {
+				$subject = $l->t('A deleted user replied to your message in conversation {call}');
+			} else {
+				$subject = $l->t('A guest replied to your message in conversation {call}');
 			}
 		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
+		} else if ($richSubjectUser) {
+			$subject = $l->t('{user} mentioned you in conversation {call}');
+		} else if (!$isGuest) {
+			$subject = $l->t('A deleted user mentioned you in conversation {call}');
 		} else {
-			if ($richSubjectUser) {
-				$subject = $l->t('{user} mentioned you in conversation {call}');
-			} else if (!$isGuest) {
-				$subject = $l->t('A deleted user mentioned you in conversation {call}');
-			} else {
-				$subject = $l->t('A guest mentioned you in conversation {call}');
-			}
+			$subject = $l->t('A guest mentioned you in conversation {call}');
 		}
 		$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 

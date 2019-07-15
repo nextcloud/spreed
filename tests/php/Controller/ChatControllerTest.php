@@ -436,6 +436,12 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
+				$chatMessage->expects($this->atLeastOnce())
+					->method('getComment')
+					->willReturn($comment);
+				$chatMessage->expects($this->once())
+					->method('getRoom')
+					->willReturn($room);
 
 				$i--;
 				return $chatMessage;
@@ -508,6 +514,12 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
+				$chatMessage->expects($this->atLeastOnce())
+					->method('getComment')
+					->willReturn($comment);
+				$chatMessage->expects($this->once())
+					->method('getRoom')
+					->willReturn($room);
 
 				$i--;
 				return $chatMessage;
@@ -583,6 +595,12 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
+				$chatMessage->expects($this->atLeastOnce())
+					->method('getComment')
+					->willReturn($comment);
+				$chatMessage->expects($this->once())
+					->method('getRoom')
+					->willReturn($room);
 
 				$i--;
 				return $chatMessage;
@@ -666,6 +684,12 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
+				$chatMessage->expects($this->atLeastOnce())
+					->method('getComment')
+					->willReturn($comment);
+				$chatMessage->expects($this->once())
+					->method('getRoom')
+					->willReturn($room);
 
 				$i++;
 				return $chatMessage;

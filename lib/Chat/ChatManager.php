@@ -166,13 +166,18 @@ class ChatManager {
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-			$mentionedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
-			if (!empty($mentionedUsers)) {
-				$chat->markUsersAsMentioned($mentionedUsers, (int) $comment->getId());
+			$alreadyNotifiedUsers = [];
+			if ($replyTo instanceof IComment) {
+				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo);
+			}
+
+			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers);
+			if (!empty($alreadyNotifiedUsers)) {
+				$chat->markUsersAsMentioned($alreadyNotifiedUsers, (int) $comment->getId());
 			}
 
 			// User was not mentioned, send a normal notification
-			$this->notifier->notifyOtherParticipant($chat, $comment, $mentionedUsers);
+			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers);
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
 				'comment' => $comment,
