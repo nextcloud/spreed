@@ -37,6 +37,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
@@ -125,8 +126,7 @@ class Notifier implements INotifier {
 		$userId = $notification->getUser();
 		$user = $this->userManager->get($userId);
 		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
-			$this->notificationManager->markProcessed($notification);
-			throw new \InvalidArgumentException('User can not use Talk');
+			throw new AlreadyProcessedException();
 		}
 
 		$l = $this->lFactory->get('spreed', $languageCode);
@@ -139,8 +139,7 @@ class Notifier implements INotifier {
 				$room = $this->manager->getRoomById((int) $notification->getObjectId());
 			} catch (RoomNotFoundException $e) {
 				// Room does not exist
-				$this->notificationManager->markProcessed($notification);
-				throw new \InvalidArgumentException('Invalid room');
+				throw new AlreadyProcessedException();
 			}
 		}
 
@@ -148,8 +147,7 @@ class Notifier implements INotifier {
 			$participant = $room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
 			// Room does not exist
-			$this->notificationManager->markProcessed($notification);
-			throw new \InvalidArgumentException('User is not part of the room anymore');
+			throw new AlreadyProcessedException();
 		}
 
 		$notification

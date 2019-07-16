@@ -36,6 +36,7 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\RichObjectStrings\Definitions;
@@ -707,8 +708,8 @@ class NotifierTest extends \Test\TestCase {
 	public function dataPrepareThrows() {
 		return [
 			['Incorrect app', 'invalid-app', null, null, null, null, null],
-			['User can not use Talk', 'spreed', true, null, null, null, null],
-			['Invalid room', 'spreed', false, false, null, null, null],
+			'User can not use Talk' => [AlreadyProcessedException::class, 'spreed', true, null, null, null, null],
+			'Invalid room' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null],
 			['Unknown subject', 'spreed', false, true, 'invalid-subject', null, null],
 			['Unknown object type', 'spreed', false, true, 'invitation', null, 'invalid-object-type'],
 			['Calling user does not exist anymore', 'spreed', false, true, 'invitation', ['admin'], 'room'],
@@ -806,8 +807,12 @@ class NotifierTest extends \Test\TestCase {
 			->method('getObjectType')
 			->willReturn($objectType);
 
-		$this->expectException(\InvalidArgumentException::class);
-		$this->expectExceptionMessage($message);
+		if ($message === AlreadyProcessedException::class) {
+			$this->expectException(AlreadyProcessedException::class);
+		} else {
+			$this->expectException(\InvalidArgumentException::class);
+			$this->expectExceptionMessage($message);
+		}
 		$this->notifier->prepare($n, 'de');
 	}
 }
