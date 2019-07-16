@@ -199,6 +199,7 @@
     "Join »%s«" : "加入 »%s«",
     "Password request: %s" : "密码请求: %s",
     "Private conversation" : "私有会话",
+    "Deleted user (%s)" : "已删除用户（%s）",
     "{user} sent you a private message" : "{user} 给您发了一条私信",
     "{user} sent a message in conversation {call}" : "{user} 在会话 {call} 中发了一条消息",
     "A deleted user sent a message in conversation {call}" : "一位已删除的用户在会话 {call} 中发了一条消息",
