@@ -712,7 +712,7 @@ class NotifierTest extends \Test\TestCase {
 			'Invalid room' => [AlreadyProcessedException::class, 'spreed', false, false, null, null, null],
 			['Unknown subject', 'spreed', false, true, 'invalid-subject', null, null],
 			['Unknown object type', 'spreed', false, true, 'invitation', null, 'invalid-object-type'],
-			['Calling user does not exist anymore', 'spreed', false, true, 'invitation', ['admin'], 'room'],
+			'Calling user does not exist anymore' => [AlreadyProcessedException::class, 'spreed', false, true, 'invitation', ['admin'], 'room'],
 			['Unknown object type', 'spreed', false, true, 'mention', null, 'invalid-object-type'],
 		];
 	}
