@@ -124,6 +124,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -154,6 +155,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -184,6 +186,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -214,6 +217,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -258,6 +262,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -302,6 +307,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -346,6 +352,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -388,6 +395,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -430,6 +438,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -472,6 +481,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -506,6 +516,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -540,6 +551,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -574,6 +586,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: sqlite
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -608,6 +621,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -652,6 +666,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -696,6 +711,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -740,6 +756,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: mysql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -784,6 +801,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -826,6 +844,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -868,6 +887,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -910,6 +930,7 @@ steps:
       CORE_BRANCH: master
       DATABASEHOST: pgsql
     commands:
+      - bash tests/drone-run-integration-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
       - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
       - cd ../server
@@ -953,6 +974,7 @@ steps:
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: app-files
     commands:
+      - bash tests/drone-run-acceptance-tests.sh || exit 0
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
       - cp -R . ../server/apps/$APP_NAME
@@ -992,6 +1014,7 @@ steps:
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: chat
     commands:
+      - bash tests/drone-run-acceptance-tests.sh || exit 0
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
       - cp -R . ../server/apps/$APP_NAME
@@ -1033,6 +1056,7 @@ steps:
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: conversation
     commands:
+      - bash tests/drone-run-acceptance-tests.sh || exit 0
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
       - cp -R . ../server/apps/$APP_NAME
@@ -1074,6 +1098,7 @@ steps:
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: public-share-auth
     commands:
+      - bash tests/drone-run-acceptance-tests.sh || exit 0
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
       - cp -R . ../server/apps/$APP_NAME
@@ -1115,6 +1140,7 @@ steps:
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: room-shares
     commands:
+      - bash tests/drone-run-acceptance-tests.sh || exit 0
       # Pre-setup steps
       - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
       - cp -R . ../server/apps/$APP_NAME
