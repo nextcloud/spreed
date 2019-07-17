@@ -813,6 +813,13 @@ class Room {
 			->set('in_call', $query->createNamedParameter($flags, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('session_id', $query->createNamedParameter($sessionId)))
 			->andWhere($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+
+		if ($flags !== Participant::FLAG_DISCONNECTED) {
+			$query->set('last_joined_call', $query->createNamedParameter(
+				$this->timeFactory->getDateTime(), IQueryBuilder::PARAM_DATE
+			));
+		}
+
 		$query->execute();
 
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
@@ -949,18 +956,18 @@ class Room {
 	}
 
 	/**
-	 * @param int $lastPing When the last ping is older than the given timestamp, the user is ignored
+	 * @param null|\DateTime $maxLastJoined When the "last joined call" is older than the given DateTime, the user is ignored
 	 * @return string[]
 	 */
-	public function getParticipantUserIds(int $lastPing = 0): array {
+	public function getParticipantUserIds(\DateTime $maxLastJoined = null): array {
 		$query = $this->db->getQueryBuilder();
 		$query->select('user_id')
 			->from('talk_participants')
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->nonEmptyString('user_id'));
 
-		if ($lastPing > 0) {
-			$query->andWhere($query->expr()->gt('last_ping', $query->createNamedParameter($lastPing, IQueryBuilder::PARAM_INT)));
+		if ($maxLastJoined instanceof \DateTimeInterface) {
+			$query->andWhere($query->expr()->gt('last_joined_call', $query->createNamedParameter($maxLastJoined, IQueryBuilder::PARAM_DATE)));
 		}
 
 		$result = $query->execute();
