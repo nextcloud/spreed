@@ -48,7 +48,6 @@ use OCA\Spreed\Share\RoomShareProvider;
 use OCA\Spreed\Signaling\Listener as SignalingListener;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\App;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IManager as IResourceManager;
