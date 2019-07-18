@@ -37,6 +37,8 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\L10N\IFactory;
+use OCP\Notification\AlreadyProcessedException;
+use OCP\Notification\IAction;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
@@ -91,13 +93,33 @@ class Notifier implements INotifier {
 	}
 
 	/**
+	 * Identifier of the notifier, only use [a-z0-9_]
+	 *
+	 * @return string
+	 * @since 17.0.0
+	 */
+	public function getID(): string {
+		return 'talk';
+	}
+
+	/**
+	 * Human readable name describing the notifier
+	 *
+	 * @return string
+	 * @since 17.0.0
+	 */
+	public function getName(): string {
+		return $this->lFactory->get('spreed')->t('Talk');
+	}
+
+	/**
 	 * @param INotification $notification
 	 * @param string $languageCode The code of the language that should be used to prepare the notification
 	 * @return INotification
 	 * @throws \InvalidArgumentException When the notification was not prepared by a notifier
 	 * @since 9.0.0
 	 */
-	public function prepare(INotification $notification, $languageCode): INotification {
+	public function prepare(INotification $notification, string $languageCode): INotification {
 		if ($notification->getApp() !== 'spreed') {
 			throw new \InvalidArgumentException('Incorrect app');
 		}
@@ -105,8 +127,7 @@ class Notifier implements INotifier {
 		$userId = $notification->getUser();
 		$user = $this->userManager->get($userId);
 		if (!$user instanceof IUser || $this->config->isDisabledForUser($user)) {
-			$this->notificationManager->markProcessed($notification);
-			throw new \InvalidArgumentException('User can not use Talk');
+			throw new AlreadyProcessedException();
 		}
 
 		$l = $this->lFactory->get('spreed', $languageCode);
@@ -119,8 +140,7 @@ class Notifier implements INotifier {
 				$room = $this->manager->getRoomById((int) $notification->getObjectId());
 			} catch (RoomNotFoundException $e) {
 				// Room does not exist
-				$this->notificationManager->markProcessed($notification);
-				throw new \InvalidArgumentException('Invalid room');
+				throw new AlreadyProcessedException();
 			}
 		}
 
@@ -128,8 +148,7 @@ class Notifier implements INotifier {
 			$participant = $room->getParticipant($userId);
 		} catch (ParticipantNotFoundException $e) {
 			// Room does not exist
-			$this->notificationManager->markProcessed($notification);
-			throw new \InvalidArgumentException('User is not part of the room anymore');
+			throw new AlreadyProcessedException();
 		}
 
 		$notification
@@ -195,20 +214,20 @@ class Notifier implements INotifier {
 
 		$messageParameters = $notification->getMessageParameters();
 		if (!isset($messageParameters['commentId'])) {
-			throw new \InvalidArgumentException('Unknown comment');
+			throw new AlreadyProcessedException();
 		}
 
 		try {
 			$comment = $this->commentManager->get($messageParameters['commentId']);
 		} catch (NotFoundException $e) {
-			throw new \InvalidArgumentException('Unknown comment');
+			throw new AlreadyProcessedException();
 		}
 
 		$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
 		$this->messageParser->parseMessage($message);
 
 		if (!$message->getVisibility()) {
-			throw new \InvalidArgumentException('Invisible comment');
+			throw new AlreadyProcessedException();
 		}
 
 		$placeholders = $replacements = [];
@@ -252,6 +271,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A guest mentioned you in conversation {call}');
 			}
 		}
+		$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 
 		if ($richSubjectParameters['user'] === null) {
 			unset($richSubjectParameters['user']);
@@ -293,6 +313,7 @@ class Notifier implements INotifier {
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws \InvalidArgumentException
+	 * @throws AlreadyProcessedException
 	 */
 	protected function parseInvitation(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'room') {
@@ -304,17 +325,22 @@ class Notifier implements INotifier {
 
 		$user = $this->userManager->get($uid);
 		if (!$user instanceof IUser) {
-			throw new \InvalidArgumentException('Calling user does not exist anymore');
+			throw new AlreadyProcessedException();
 		}
 
 		$roomName = $room->getDisplayName($notification->getUser());
 		if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+			$subject = $l->t('{user} invited you to a private conversation');
+			if ($room->hasSessionsInCall()) {
+				$notification = $this->addActionButton($notification, $l->t('Join call'));
+			} else {
+				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+			}
+
 			$notification
-				->setParsedSubject(
-					$l->t('%s invited you to a private conversation', [$user->getDisplayName()])
-				)
+				->setParsedSubject(str_replace('{user}', $user->getDisplayName(), $subject))
 				->setRichSubject(
-					$l->t('{user} invited you to a private conversation'), [
+					$subject, [
 						'user' => [
 							'type' => 'user',
 							'id' => $uid,
@@ -330,12 +356,17 @@ class Notifier implements INotifier {
 				);
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+			$subject = $l->t('{user} invited you to a group conversation: {call}');
+			if ($room->hasSessionsInCall()) {
+				$notification = $this->addActionButton($notification, $l->t('Join call'));
+			} else {
+				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+			}
+
 			$notification
-				->setParsedSubject(
-					$l->t('%s invited you to a group conversation: %s', [$user->getDisplayName(), $roomName])
-				)
+				->setParsedSubject(str_replace(['{user}', '{call}'], [$user->getDisplayName(), $roomName], $subject))
 				->setRichSubject(
-					$l->t('{user} invited you to a group conversation: {call}'), [
+					$subject, [
 						'user' => [
 							'type' => 'user',
 							'id' => $uid,
@@ -350,7 +381,7 @@ class Notifier implements INotifier {
 					]
 				);
 		} else {
-			throw new \InvalidArgumentException('Unknown room type');
+			throw new AlreadyProcessedException();
 		}
 
 		return $notification;
@@ -362,6 +393,7 @@ class Notifier implements INotifier {
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws \InvalidArgumentException
+	 * @throws AlreadyProcessedException
 	 */
 	protected function parseCall(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'call') {
@@ -374,12 +406,18 @@ class Notifier implements INotifier {
 			$calleeId = $parameters['callee'];
 			$user = $this->userManager->get($calleeId);
 			if ($user instanceof IUser) {
+				if ($room->hasSessionsInCall()) {
+					$notification = $this->addActionButton($notification, $l->t('Answer call'));
+					$subject = $l->t('{user} wants to talk with you');
+				} else {
+					$notification = $this->addActionButton($notification, $l->t('Call back'));
+					$subject = $l->t('You missed a call from {user}');
+				}
+
 				$notification
-					->setParsedSubject(
-						str_replace('{user}', $user->getDisplayName(), $l->t('{user} wants to talk with you'))
-					)
+					->setParsedSubject(str_replace('{user}', $user->getDisplayName(), $subject))
 					->setRichSubject(
-						$l->t('{user} wants to talk with you'), [
+						$subject, [
 							'user' => [
 								'type' => 'user',
 								'id' => $calleeId,
@@ -394,16 +432,22 @@ class Notifier implements INotifier {
 						]
 					);
 			} else {
-				throw new \InvalidArgumentException('Calling user does not exist anymore');
+				throw new AlreadyProcessedException();
 			}
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
+			if ($room->hasSessionsInCall()) {
+				$notification = $this->addActionButton($notification, $l->t('Join call'));
+				$subject = $l->t('A group call has started in {call}');
+			} else {
+				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
+				$subject = $l->t('You missed a group call in {call}');
+			}
+
 			$notification
-				->setParsedSubject(
-					str_replace('{call}', $roomName, $l->t('A group call has started in {call}'))
-				)
+				->setParsedSubject(str_replace('{call}', $roomName, $subject))
 				->setRichSubject(
-					$l->t('A group call has started in {call}'), [
+					$subject, [
 						'call' => [
 							'type' => 'call',
 							'id' => $room->getId(),
@@ -414,7 +458,7 @@ class Notifier implements INotifier {
 				);
 
 		} else {
-			throw new \InvalidArgumentException('Unknown room type');
+			throw new AlreadyProcessedException();
 		}
 
 		return $notification;
@@ -426,6 +470,7 @@ class Notifier implements INotifier {
 	 * @param IL10N $l
 	 * @return INotification
 	 * @throws \InvalidArgumentException
+	 * @throws AlreadyProcessedException
 	 */
 	protected function parsePasswordRequest(INotification $notification, Room $room, IL10N $l): INotification {
 		if ($notification->getObjectType() !== 'call') {
@@ -435,7 +480,7 @@ class Notifier implements INotifier {
 		try {
 			$share = $this->shareManager->getShareByToken($room->getObjectId());
 		} catch (ShareNotFound $e) {
-			throw new \InvalidArgumentException('Unknown share');
+			throw new AlreadyProcessedException();
 		}
 
 		try {
@@ -445,17 +490,27 @@ class Notifier implements INotifier {
 				'name' => $share->getNode()->getName(),
 			];
 		} catch (\OCP\Files\NotFoundException $e) {
-			throw new \InvalidArgumentException('Unknown file');
+			throw new AlreadyProcessedException();
+		}
+
+		$callIsActive = $room->hasSessionsInCall();
+		if ($callIsActive) {
+			$notification = $this->addActionButton($notification, $l->t('Answer call'));
+		} else {
+			$notification = $this->addActionButton($notification, $l->t('Call back'));
 		}
 
 		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
 			$sharedWith = $share->getSharedWith();
+			if ($callIsActive) {
+				$subject = $l->t('{email} is requesting the password to access {file}');
+			} else {
+				$subject = $l->t('{email} tried to requested the password to access {file}');
+			}
 
 			$notification
-				->setParsedSubject(str_replace(['{email}', '{file}'], [$sharedWith, $file['name']], $l->t('{email} requested the password to access {file}')))
-				->setRichSubject(
-					$l->t('{email} requested the password to access {file}'),
-					[
+				->setParsedSubject(str_replace(['{email}', '{file}'], [$sharedWith, $file['name']], $subject))
+				->setRichSubject($subject, [
 						'email' => [
 							'type' => 'email',
 							'id' => $sharedWith,
@@ -465,10 +520,28 @@ class Notifier implements INotifier {
 					]
 				);
 		} else {
+			if ($callIsActive) {
+				$subject = $l->t('Someone is requesting the password to access {file}');
+			} else {
+				$subject = $l->t('Someone tried to requested the password to access {file}');
+			}
+
 			$notification
-				->setParsedSubject(str_replace('{file}', $file['name'], $l->t('Someone requested the password to access {file}')))
-				->setRichSubject($l->t('Someone requested the password to access {file}'), ['file' => $file]);
+				->setParsedSubject(str_replace('{file}', $file['name'], $subject))
+				->setRichSubject($subject, ['file' => $file]);
 		}
+
+		return $notification;
+	}
+
+	protected function addActionButton(INotification $notification, string $label, bool $primary = true): INotification {
+		$action = $notification->createAction();
+		$action->setLabel($label)
+			->setParsedLabel($label)
+			->setLink($notification->getLink(), IAction::TYPE_WEB)
+			->setPrimary($primary);
+
+		$notification->addParsedAction($action);
 
 		return $notification;
 	}

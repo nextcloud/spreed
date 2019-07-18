@@ -48,7 +48,6 @@ use OCA\Spreed\Share\RoomShareProvider;
 use OCA\Spreed\Signaling\Listener as SignalingListener;
 use OCA\Spreed\TalkSession;
 use OCP\AppFramework\App;
-use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IManager as IResourceManager;
@@ -129,16 +128,7 @@ class Application extends App {
 
 	protected function registerNotifier(IServerContainer $server): void {
 		$manager = $server->getNotificationManager();
-		$manager->registerNotifier(function() use ($server) {
-			return $server->query(Notifier::class);
-		}, function() use ($server) {
-			$l = $server->getL10N('spreed');
-
-			return [
-				'id' => 'spreed',
-				'name' => $l->t('Talk'),
-			];
-		});
+		$manager->registerNotifierService(Notifier::class);
 	}
 
 	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
