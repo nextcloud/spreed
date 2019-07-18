@@ -434,13 +434,13 @@ LocalMedia.prototype.stopScreenShare = function (stream) {
 
 
 LocalMedia.prototype.mute = function () {
-  this._audioEnabled(false);
+  this._setAudioEnabled(false);
 
   this.emit('audioOff');
 };
 
 LocalMedia.prototype.unmute = function () {
-  this._audioEnabled(true);
+  this._setAudioEnabled(true);
 
   this.emit('audioOn');
 }; // Video controls
@@ -470,7 +470,8 @@ LocalMedia.prototype.resume = function () {
 }; // Internal methods for enabling/disabling audio/video
 
 
-LocalMedia.prototype._audioEnabled = function (bool) {
+LocalMedia.prototype._setAudioEnabled = function (bool) {
+  this._audioEnabled = bool;
   this.localStreams.forEach(function (stream) {
     stream.getAudioTracks().forEach(function (track) {
       track.enabled = !!bool;
