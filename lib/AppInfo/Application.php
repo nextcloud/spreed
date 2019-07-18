@@ -52,8 +52,10 @@ use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IManager as IResourceManager;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IServerContainer;
 use OCP\IUser;
+use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -95,7 +97,6 @@ class Application extends App {
 	public function register(): void {
 		$server = $this->getContainer()->getServer();
 
-		$this->extendDefaultContentSecurityPolicy();
 		$this->registerNotifier($server);
 		$this->registerCollaborationResourceProvider($server);
 		$this->getContainer()->registerCapability(Capabilities::class);
@@ -115,6 +116,10 @@ class Application extends App {
 		CommandListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
+
+		/** @var IEventDispatcher $newDispatcher */
+		$newDispatcher = $server->query(IEventDispatcher::class);
+		$newDispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
 
 		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
@@ -192,17 +197,5 @@ class Application extends App {
 			$chatManager->deleteMessages($room);
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
-	}
-
-	protected function extendDefaultContentSecurityPolicy(): void {
-		/** @var Config $config */
-		$config = $this->getContainer()->query(Config::class);
-
-		$csp = new ContentSecurityPolicy();
-		foreach ($config->getAllServerUrlsForCSP() as $server) {
-			$csp->addAllowedConnectDomain($server);
-		}
-		$cspManager = $this->getContainer()->getServer()->getContentSecurityPolicyManager();
-		$cspManager->addDefaultPolicy($csp);
 	}
 }
