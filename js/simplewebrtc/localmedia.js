@@ -40,6 +40,7 @@ function LocalMedia(opts) {
 	this._logerror = this.logger.error.bind(this.logger, 'LocalMedia:');
 
 	this.localStreams = [];
+	this._audioMonitorStreams = [];
 	this.localScreens = [];
 
 	if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -47,7 +48,6 @@ function LocalMedia(opts) {
 	}
 
 	this._audioMonitors = [];
-	this.on('localStreamStopped', this._stopAudioMonitor.bind(this));
 	this.on('localScreenStopped', this._stopAudioMonitor.bind(this));
 }
 
@@ -81,10 +81,14 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
 			return;
 		}
 
+		// The audio monitor stream is never disabled to be able to analyze it
+		// even when the stream sent is muted.
+		var audioMonitorStream = stream.clone();
 		if (constraints.audio && self.config.detectSpeakingEvents) {
-			self._setupAudioMonitor(stream, self.config.harkOptions);
+			self._setupAudioMonitor(audioMonitorStream, self.config.harkOptions);
 		}
 		self.localStreams.push(stream);
+		self._audioMonitorStreams.push(audioMonitorStream);
 
 		stream.getTracks().forEach(function (track) {
 			track.addEventListener('ended', function () {
@@ -292,6 +296,8 @@ LocalMedia.prototype._removeStream = function (stream) {
 	var idx = this.localStreams.indexOf(stream);
 	if (idx > -1) {
 		this.localStreams.splice(idx, 1);
+		this._stopAudioMonitor(this._audioMonitorStreams[idx]);
+		this._audioMonitorStreams.splice(idx, 1);
 		this.emit('localStreamStopped', stream);
 	} else {
 		idx = this.localScreens.indexOf(stream);
@@ -309,7 +315,13 @@ LocalMedia.prototype._setupAudioMonitor = function (stream, harkOptions) {
 	var timeout;
 
 	audio.on('speaking', function () {
-		self.emit('speaking');
+		self._speaking = true;
+
+		if (self._audioEnabled) {
+			self.emit('speaking');
+		} else {
+			self.emit('speakingWhileMuted');
+		}
 	});
 
 	audio.on('stopped_speaking', function () {
@@ -318,9 +330,30 @@ LocalMedia.prototype._setupAudioMonitor = function (stream, harkOptions) {
 		}
 
 		timeout = setTimeout(function () {
-			self.emit('stoppedSpeaking');
+			self._speaking = false;
+
+			if (self._audioEnabled) {
+				self.emit('stoppedSpeaking');
+			} else {
+				self.emit('stoppedSpeakingWhileMuted');
+			}
 		}, 1000);
 	});
+
+	self.on('audioOn', function() {
+		if (self._speaking) {
+			self.emit('stoppedSpeakingWhileMuted');
+			self.emit('speaking');
+		}
+	});
+
+	self.on('audioOff', function() {
+		if (self._speaking) {
+			self.emit('stoppedSpeaking');
+			self.emit('speakingWhileMuted');
+		}
+	});
+
 	audio.on('volume_change', function (volume, threshold) {
 		self.emit('volumeChange', volume, threshold);
 	});
