@@ -27,6 +27,7 @@
   "views/roomlistview.js",
   "views/screenview.js",
   "views/sidebarview.js",
+  "views/speakingwhilemutedwarner.js",
   "views/tabview.js",
   "views/templates.js",
   "views/videoview.js",
