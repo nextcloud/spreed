@@ -214,20 +214,20 @@ class Notifier implements INotifier {
 
 		$messageParameters = $notification->getMessageParameters();
 		if (!isset($messageParameters['commentId'])) {
-			throw new \InvalidArgumentException('Unknown comment');
+			throw new AlreadyProcessedException();
 		}
 
 		try {
 			$comment = $this->commentManager->get($messageParameters['commentId']);
 		} catch (NotFoundException $e) {
-			throw new \InvalidArgumentException('Unknown comment');
+			throw new AlreadyProcessedException();
 		}
 
 		$message = $this->messageParser->createMessage($room, $participant, $comment, $l);
 		$this->messageParser->parseMessage($message);
 
 		if (!$message->getVisibility()) {
-			throw new \InvalidArgumentException('Invisible comment');
+			throw new AlreadyProcessedException();
 		}
 
 		$placeholders = $replacements = [];
@@ -271,6 +271,7 @@ class Notifier implements INotifier {
 				$subject = $l->t('A guest mentioned you in conversation {call}');
 			}
 		}
+		$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 
 		if ($richSubjectParameters['user'] === null) {
 			unset($richSubjectParameters['user']);
@@ -332,6 +333,8 @@ class Notifier implements INotifier {
 			$subject = $l->t('{user} invited you to a private conversation');
 			if ($room->hasSessionsInCall()) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
+			} else {
+				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 			}
 
 			$notification
@@ -356,6 +359,8 @@ class Notifier implements INotifier {
 			$subject = $l->t('{user} invited you to a group conversation: {call}');
 			if ($room->hasSessionsInCall()) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
+			} else {
+				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 			}
 
 			$notification
@@ -405,6 +410,7 @@ class Notifier implements INotifier {
 					$notification = $this->addActionButton($notification, $l->t('Answer call'));
 					$subject = $l->t('{user} wants to talk with you');
 				} else {
+					$notification = $this->addActionButton($notification, $l->t('Call back'));
 					$subject = $l->t('You missed a call from {user}');
 				}
 
@@ -434,6 +440,7 @@ class Notifier implements INotifier {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
 				$subject = $l->t('A group call has started in {call}');
 			} else {
+				$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 				$subject = $l->t('You missed a group call in {call}');
 			}
 
@@ -489,6 +496,8 @@ class Notifier implements INotifier {
 		$callIsActive = $room->hasSessionsInCall();
 		if ($callIsActive) {
 			$notification = $this->addActionButton($notification, $l->t('Answer call'));
+		} else {
+			$notification = $this->addActionButton($notification, $l->t('Call back'));
 		}
 
 		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
@@ -522,17 +531,15 @@ class Notifier implements INotifier {
 				->setRichSubject($subject, ['file' => $file]);
 		}
 
-		$notification = $this->addActionButton($notification, $l->t('Answer call'));
-
 		return $notification;
 	}
 
-	protected function addActionButton(INotification $notification, string $label): INotification {
+	protected function addActionButton(INotification $notification, string $label, bool $primary = true): INotification {
 		$action = $notification->createAction();
 		$action->setLabel($label)
 			->setParsedLabel($label)
 			->setLink($notification->getLink(), IAction::TYPE_WEB)
-			->setPrimary(true);
+			->setPrimary($primary);
 
 		$notification->addParsedAction($action);
 
