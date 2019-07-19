@@ -673,6 +673,9 @@
 			error: function (jqXHR, textStatus/*, errorThrown*/) {
 				if (jqXHR.status === 0 && textStatus === 'abort') {
 					// Request has been aborted. Ignore.
+				} else if (jqXHR.status === 404 || jqXHR.status === 403) {
+					console.log('Stop pulling messages because room does not exist or is not accessible');
+					this._trigger('pullMessagesStoppedOnFail');
 				} else if (this.currentRoomToken) {
 					if (this.pullMessagesFails >= 3) {
 						console.log('Stop pulling messages after repeated failures');
