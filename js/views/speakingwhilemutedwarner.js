@@ -1,4 +1,4 @@
-/* global OC, OCA */
+/* global OC, OCA, Promise */
 
 /**
  *
@@ -90,7 +90,15 @@
 			if (!document.hidden) {
 				this._showNotification(message);
 			} else {
-				this._showBrowserNotification(message);
+				this._pendingBrowserNotification = true;
+
+				this._showBrowserNotification(message).catch(function() {
+					if (this._pendingBrowserNotification) {
+						this._pendingBrowserNotification = false;
+
+						this._showNotification(message);
+					}
+				}.bind(this));
 			}
 		},
 
@@ -103,33 +111,51 @@
 		},
 
 		_showBrowserNotification: function(message) {
-			if (this._browserNotification) {
-				return;
-			}
+			return new Promise(function(resolve, reject) {
+				if (this._browserNotification) {
+					resolve();
 
-			if (!Notification) {
-				// The browser does not support the Notification API.
-				return;
-			}
-
-			if (Notification.permission === 'denied') {
-				return;
-			}
-
-			if (Notification.permission === 'granted') {
-				this._browserNotification = new Notification(message);
-
-				return;
-			}
-
-			Notification.requestPermission().then(function(permission) {
-				if (permission === 'granted') {
-					this._browserNotification = new Notification(message);
+					return;
 				}
+
+				if (!Notification) {
+					// The browser does not support the Notification API.
+					reject();
+
+					return;
+				}
+
+				if (Notification.permission === 'denied') {
+					reject();
+
+					return;
+				}
+
+				if (Notification.permission === 'granted') {
+					this._pendingBrowserNotification = false;
+					this._browserNotification = new Notification(message);
+					resolve();
+
+					return;
+				}
+
+				Notification.requestPermission().then(function(permission) {
+					if (permission === 'granted') {
+						if (this._pendingBrowserNotification) {
+							this._pendingBrowserNotification = false;
+							this._browserNotification = new Notification(message);
+						}
+						resolve();
+					} else {
+						reject();
+					}
+				}.bind(this));
 			}.bind(this));
 		},
 
 		_hideWarning: function() {
+			this._pendingBrowserNotification = false;
+
 			if (this._notification) {
 				OC.Notification.hide(this._notification);
 
