@@ -197,14 +197,10 @@
     "{user} mentioned you in conversation {call}" : "{user} vás zmínil(a) ve skupinové konverzaci {call}",
     "A deleted user mentioned you in conversation {call}" : "Smazaný uživatel vás zmínil v konverzaci {call}",
     "A guest mentioned you in conversation {call}" : "Host vás zmínil v konverzaci {call}",
-    "%s invited you to a private conversation" : "%s vás pozval(a) do soukromé konverzace",
     "{user} invited you to a private conversation" : "{user} vás pozval(a) do soukromé konverzace",
-    "%s invited you to a group conversation: %s" : "%s vás pozval(a) do skupinové konverzace: %s",
     "{user} invited you to a group conversation: {call}" : "{user} vás pozval(a) do skupinové konverzace: {call}",
     "{user} wants to talk with you" : "{user} s vámi chce mluvit",
     "A group call has started in {call}" : "V {call} byl zahájen skupinový hovor",
-    "{email} requested the password to access {file}" : "{email} požádal(a) o heslo pro přístup k {file}",
-    "Someone requested the password to access {file}" : "Někdo požádal o heslo pro přístup k {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Neplatné datum, je třeba aby formát byl RRRR-MM-DD",
     "Conversation not found" : "Konverzace nenalezena",
     "Path is already shared with this room" : "Umístění je už sdíleno s touto místností",
@@ -288,6 +284,8 @@
     "A guest mentioned you in a group conversation: %s" : "Host vás zmínil ve skupinové konverzaci: %s",
     "A guest mentioned you in a group conversation: {call}" : "Host vás zmínil ve skupinové konverzaci: {call}",
     "A guest mentioned you in a group conversation" : "Host vás zmínil ve skupinové konverzaci",
+    "%s invited you to a private conversation" : "%s vás pozval(a) do soukromé konverzace",
+    "%s invited you to a group conversation: %s" : "%s vás pozval(a) do skupinové konverzace: %s",
     "%s invited you to a group conversation" : "%s vás pozval(a) do skupinové konverzace",
     "{user} invited you to a group conversation" : "{user} vás pozval(a) do skupinové konverzace",
     "A group call has started" : "Skupinový hovor zahájen",
@@ -306,6 +304,8 @@
     "A guest sent a message in a conversation" : "Host poslal zprávu v konverzaci",
     "{user} mentioned you in a conversation" : "{user} vás zmínil v konverzaci",
     "A deleted user mentioned you in a conversation" : "Smazaný uživatel vás zmínil v konverzaci",
-    "A guest mentioned you in a conversation" : "Host vás zmínil v konverzaci"
+    "A guest mentioned you in a conversation" : "Host vás zmínil v konverzaci",
+    "{email} requested the password to access {file}" : "{email} požádal(a) o heslo pro přístup k {file}",
+    "Someone requested the password to access {file}" : "Někdo požádal o heslo pro přístup k {file}"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

@@ -38,8 +38,6 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "WebRTC nuk mbështetet nga shfletuesi juaj.",
     "Error while accessing microphone & camera" : "gabim ",
     "_%n guest_::_%n guests_" : ["%n të ftuar","%n të ftuar"],
-    "%s invited you to a private conversation" : "%s ju ftoi në një bisedë private",
-    "%s invited you to a group conversation: %s" : "%s ju ftoi në një bisedë grupi: %s",
     "TURN server protocols" : "Protokollet e serverit TURN",
     "UDP and TCP" : "UDP dhe TCP",
     "UDP only" : "Vetëm UDP",
@@ -51,6 +49,8 @@ OC.L10N.register(
     "_%n other guest_::_%n other guests_" : ["%n përdorues të tjerë","%n të tjerë"],
     ", " : ",",
     "%s mentioned you in a group conversation: %s" : "%s ju përmendi në një bisedë grupi: %s",
-    "A guest mentioned you in a group conversation: %s" : "Një i ftuar ju përmendi në një bisedë grupi: %s"
+    "A guest mentioned you in a group conversation: %s" : "Një i ftuar ju përmendi në një bisedë grupi: %s",
+    "%s invited you to a private conversation" : "%s ju ftoi në një bisedë private",
+    "%s invited you to a group conversation: %s" : "%s ju ftoi në një bisedë grupi: %s"
 },
 "nplurals=2; plural=(n != 1);");

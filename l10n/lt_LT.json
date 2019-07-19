@@ -121,12 +121,9 @@
     "Private conversation" : "Privatus pokalbis",
     "{user} sent you a private message" : "{user} išsiuntė jums privačią žinutę",
     "{user} mentioned you in a private conversation" : "{user} jus paminėjo privačiame pokalbyje",
-    "%s invited you to a private conversation" : "%s jus pakvietė į privatų pokalbį",
     "{user} invited you to a private conversation" : "{user} jus pakvietė į privatų pokalbį",
-    "%s invited you to a group conversation: %s" : "%s jus pakvietė į grupės pokalbį: %s",
     "{user} invited you to a group conversation: {call}" : "{user} jus pakvietė į grupės pokalbį: {call}",
     "{user} wants to talk with you" : "{user} nori su jumis pasikalbėti",
-    "Someone requested the password to access {file}" : "Kažkas užklausė slaptažodį, kad gautų prieigą prie {file}",
     "Conversation not found" : "Pokalbis nerastas",
     "Path is already shared with this room" : "Kelias jau yra bendrinamas su šiuo kambariu",
     "TURN server URL" : "TURN serverio URL",
@@ -170,6 +167,8 @@
     "A guest mentioned you in a group conversation: %s" : "Svečias jus paminėjo grupės pokalbyje: %s",
     "A guest mentioned you in a group conversation: {call}" : "Svečias jus paminėjo grupės pokalbyje: {call}",
     "A guest mentioned you in a group conversation" : "Svečias jus paminėjo grupės pokalbyje",
+    "%s invited you to a private conversation" : "%s jus pakvietė į privatų pokalbį",
+    "%s invited you to a group conversation: %s" : "%s jus pakvietė į grupės pokalbį: %s",
     "%s invited you to a group conversation" : "%s jus pakvietė į grupės pokalbį",
     "{user} invited you to a group conversation" : "{user} jus pakvietė į grupės pokalbį",
     "{email} requested the password to access a share" : "{email} užklausė slaptažodžio, kad gautų prieigą prie viešinio",
@@ -179,6 +178,7 @@
     "Never notify" : "Niekada nepranešti",
     "{user} sent a message in a conversation" : "{user} išsiuntė žinutę į pokalbį",
     "A deleted user sent a message in a conversation" : "Ištrintas naudotojas išsiuntė žinutę į pokalbį",
-    "A guest sent a message in a conversation" : "Svečias išsiuntė žinutę į pokalbį"
+    "A guest sent a message in a conversation" : "Svečias išsiuntė žinutę į pokalbį",
+    "Someone requested the password to access {file}" : "Kažkas užklausė slaptažodį, kad gautų prieigą prie {file}"
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

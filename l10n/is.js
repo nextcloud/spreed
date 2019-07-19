@@ -198,14 +198,10 @@ OC.L10N.register(
     "{user} mentioned you in conversation {call}" : "{user} minntist á þig í samtali {call}",
     "A deleted user mentioned you in conversation {call}" : "Eyddur notandi minntist á þig í samtali {call}",
     "A guest mentioned you in conversation {call}" : "Gestur minntist á þig í samtali {call}",
-    "%s invited you to a private conversation" : "%s bauð þér að taka þátt í einkasímtali",
     "{user} invited you to a private conversation" : "{user} bauð þér að taka þátt í einkasímtali",
-    "%s invited you to a group conversation: %s" : "%s bauð þér að taka þátt í hópsímtali: %s",
     "{user} invited you to a group conversation: {call}" : "{user} bauð þér að taka þátt í hópsímtali: {call}",
     "{user} wants to talk with you" : "{user} vill tala við þig",
     "A group call has started in {call}" : "Hópsímtal er byrjað í {call}",
-    "{email} requested the password to access {file}" : "{email} bað um lykilorðið til að fá aðgang að {file}",
-    "Someone requested the password to access {file}" : "Einhver bað um lykilorðið til að fá aðgang að {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Ógild dagsetning, dagsetningasniðið verður að vera ÁÁÁÁ-MM-DD",
     "Conversation not found" : "Samtal fannst ekki",
     "Path is already shared with this room" : "Slóðinni er þegar deilt með þessu spjallsvæði",
@@ -288,6 +284,8 @@ OC.L10N.register(
     "A guest mentioned you in a group conversation: %s" : "Gestur minntist á þig í hópsamtali: %s",
     "A guest mentioned you in a group conversation: {call}" : "Gestur minntist á þig í hópsamtali: {call}",
     "A guest mentioned you in a group conversation" : "Gestur minntist á þig í hópsamtali",
+    "%s invited you to a private conversation" : "%s bauð þér að taka þátt í einkasímtali",
+    "%s invited you to a group conversation: %s" : "%s bauð þér að taka þátt í hópsímtali: %s",
     "%s invited you to a group conversation" : "%s bauð þér að taka þátt í hópsímtali",
     "{user} invited you to a group conversation" : "{user} bauð þér að taka þátt í hópsímtali",
     "A group call has started" : "Hópsímtal er byrjað",
@@ -306,6 +304,8 @@ OC.L10N.register(
     "A guest sent a message in a conversation" : "Gestur sendi skilaboð í samtali",
     "{user} mentioned you in a conversation" : "{user} minntist á þig í samtali",
     "A deleted user mentioned you in a conversation" : "Eyddur notandi minntist á þig í samtali",
-    "A guest mentioned you in a conversation" : "Gestur minntist á þig í samtali"
+    "A guest mentioned you in a conversation" : "Gestur minntist á þig í samtali",
+    "{email} requested the password to access {file}" : "{email} bað um lykilorðið til að fá aðgang að {file}",
+    "Someone requested the password to access {file}" : "Einhver bað um lykilorðið til að fá aðgang að {file}"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
