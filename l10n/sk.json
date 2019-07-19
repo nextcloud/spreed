@@ -130,7 +130,6 @@
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Boli ste pozvaný na <strong>rozhovor</strong>miestnosť alebo máte <strong>hovory</strong>",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Vitajte v Nextcloud Rozhovor!\nV tomto rozhovore budete informovaný o nových funkciách, ktoré sú dostupné v Nextcloud Rozhovor.",
     "New in Talk 6" : "Nové v Rozhovor 6",
-    "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edge a Safari môžu byť teraz používané na audio a video hovory.",
     "The command does not exist" : "Príkaz neexistuje",
     "Talk updates ✅" : "Aktualizácie Talk-u ✅",
     "{actor} created the conversation" : "Používateľ {actor} vytvoril rozhovor",
@@ -195,14 +194,10 @@
     "{user} mentioned you in conversation {call}" : "Používateľ {user} vás spomenul v rozhovore {call}",
     "A deleted user mentioned you in conversation {call}" : "Odstránený používateľ vás spomenul v rozhovore {call}",
     "A guest mentioned you in conversation {call}" : "Hosť vás spomenul v rozhovore {call}",
-    "%s invited you to a private conversation" : "Používateľ %s vás prizval ku súkromnému rozhovoru",
     "{user} invited you to a private conversation" : "Používateľ {user} vás prizval ku súkromnému rozhovoru",
-    "%s invited you to a group conversation: %s" : "Používateľ %s vás prizval ku skupinovému rozhovoru: %s",
     "{user} invited you to a group conversation: {call}" : "Používateľ {user} vás prizval ku skupinovému rozhovoru: {call}",
     "{user} wants to talk with you" : "{user}  sa s Vami chce rozprávať",
     "A group call has started in {call}" : "Skupinový hovor začal v {call}",
-    "{email} requested the password to access {file}" : "Používateľ {email} požiadal o heslo pre prístup k {file}",
-    "Someone requested the password to access {file}" : "Niekto požiadal o heslo pre prístup k {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Neplatný dátum, formát musí byť v tvare YYYY-MM-DD",
     "Conversation not found" : "Rozhovor sa nenašiel",
     "Path is already shared with this room" : "Umiestnenie je už tejto miestnosti sprístupnené",
@@ -259,6 +254,8 @@
     "A guest mentioned you in a group conversation: %s" : "Hosť vás spomenul v skupinovom rozhovore: %s",
     "A guest mentioned you in a group conversation: {call}" : "Hosť vás spomenul v skupinovom rozhovore: {call}",
     "A guest mentioned you in a group conversation" : "Hosť vás spomenul v skupinovom rozhovore",
+    "%s invited you to a private conversation" : "Používateľ %s vás prizval ku súkromnému rozhovoru",
+    "%s invited you to a group conversation: %s" : "Používateľ %s vás prizval ku skupinovému rozhovoru: %s",
     "%s invited you to a group conversation" : "Používateľ %s vás pozval ku skupinovému rozhovoru",
     "{user} invited you to a group conversation" : "Používateľ {user} vás pozval ku skupinovému rozhovoru",
     "A group call has started" : "Skupinový hovor sa začal",
@@ -277,6 +274,9 @@
     "A guest sent a message in a conversation" : "Hosť odoslal správu v rozhovore",
     "{user} mentioned you in a conversation" : "Používateľ {user} vás spomenul v rozhovore",
     "A deleted user mentioned you in a conversation" : "Odstránený používateľ vás spomenul v rozhovore",
-    "A guest mentioned you in a conversation" : "Hosť vás spomenul v rozhovore"
+    "A guest mentioned you in a conversation" : "Hosť vás spomenul v rozhovore",
+    "{email} requested the password to access {file}" : "Používateľ {email} požiadal o heslo pre prístup k {file}",
+    "Someone requested the password to access {file}" : "Niekto požiadal o heslo pre prístup k {file}",
+    "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edge a Safari môžu byť teraz používané na audio a video hovory."
 },"pluralForm" :"nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);"
 }
