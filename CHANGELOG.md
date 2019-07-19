@@ -1,6 +1,27 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.3 – 2019-07-22
+### Changed
+- Chat messages can now be longer than 1.000 characters
+  [#1901](https://github.com/nextcloud/spreed/pull/1901)
+- Users matching the autocomplete at the beginning of their name are now sorted to the top
+  [#1968](https://github.com/nextcloud/spreed/pull/1968)
+- Only strings starting with http:// or https:// are now made clickable as links
+  [#1965](https://github.com/nextcloud/spreed/pull/1965)
+
+### Fixed
+- Fix layout issues of the chat on the share authentication page
+  [#1901](https://github.com/nextcloud/spreed/pull/1901)
+- Fix issues with calls when a user logs out while being in a call
+  [#1947](https://github.com/nextcloud/spreed/pull/1947)
+- Fix a problem when joining a public conversation as a non-invited logged-in user
+  [#1914](https://github.com/nextcloud/spreed/pull/1914)
+- Fix missing tooltip with full date on timestamp for the first message of a user in a grouped block
+  [#1914](https://github.com/nextcloud/spreed/pull/1914)
+- Commands based on the Symfony Command component can now provide a useful help message
+  [#1901](https://github.com/nextcloud/spreed/pull/1901)
+
 ## 6.0.2 – 2019-06-06
 ### Fixed
 - Fix message list not reloaded after switching tabs in the sidebar
