@@ -42,6 +42,12 @@
 	 * as the WebRTC helper detects that the speaking has stopped; in this case
 	 * there is no delay, as the helper itself has a delay before emitting the
 	 * event.
+	 *
+	 * The way of warning the user changes depending on whether Talk is visible
+	 * or not; if it is visible the warning is shown in the Talk UI, but if it
+	 * is not it is shown using a browser notification, which will be visible
+	 * to the user even if the browser window is not in the foreground (provided
+	 * the user granted the permissions to receive notifications from the site).
 	 */
 	function SpeakingWhileMutedWarner() {
 		this._handleSpeakingWhileMutedBound = this._handleSpeakingWhileMuted.bind(this);
@@ -79,21 +85,62 @@
 		},
 
 		_showWarning: function() {
+			var message = t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you');
+
+			if (!document.hidden) {
+				this._showNotification(message);
+			} else {
+				this._showBrowserNotification(message);
+			}
+		},
+
+		_showNotification: function(message) {
 			if (this._notification) {
 				return;
 			}
 
-			this._notification = OC.Notification.show(t('spreed', 'You seem to be talking while muted, please unmute yourself for others to hear you'));
+			this._notification = OC.Notification.show(message);
 		},
 
-		_hideWarning: function() {
-			if (!this._notification) {
+		_showBrowserNotification: function(message) {
+			if (this._browserNotification) {
 				return;
 			}
 
-			OC.Notification.hide(this._notification);
+			if (!Notification) {
+				// The browser does not support the Notification API.
+				return;
+			}
 
-			this._notification = null;
+			if (Notification.permission === 'denied') {
+				return;
+			}
+
+			if (Notification.permission === 'granted') {
+				this._browserNotification = new Notification(message);
+
+				return;
+			}
+
+			Notification.requestPermission().then(function(permission) {
+				if (permission === 'granted') {
+					this._browserNotification = new Notification(message);
+				}
+			}.bind(this));
+		},
+
+		_hideWarning: function() {
+			if (this._notification) {
+				OC.Notification.hide(this._notification);
+
+				this._notification = null;
+			}
+
+			if (this._browserNotification) {
+				this._browserNotification.close();
+
+				this._browserNotification = null;
+			}
 		},
 
 	};
