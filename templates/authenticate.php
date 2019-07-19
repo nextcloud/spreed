@@ -6,7 +6,7 @@
 ?>
 <form method="post">
 	<fieldset class="warning">
-		<?php if (!isset($_['wrongpw'])){ ?>
+		<?php if (!$_['wrongpw']) { ?>
 			<div class="warning-info"><?php p($l->t('This conversation is password-protected')); ?></div>
 		<?php } else { ?>
 			<div class="warning"><?php p($l->t('The password is wrong. Try again.')); ?></div>
@@ -18,7 +18,7 @@
 				placeholder="<?php p($l->t('Password')); ?>" value=""
 				autocomplete="off" autocapitalize="off" autocorrect="off"
 				autofocus />
-			<input type="submit" id="password-submit" 
+			<input type="submit" id="password-submit"
 				class="svg icon-confirm input-button-inline" value="" disabled="disabled" />
 		</p>
 	</fieldset>
