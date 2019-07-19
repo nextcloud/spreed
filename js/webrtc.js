@@ -225,6 +225,10 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
+			if (delayedCreatePeer[sessionId]) {
+				clearTimeout(delayedCreatePeer[sessionId]);
+				delete delayedCreatePeer[sessionId];
+			}
 		});
 
 		previousUsersInRoom = previousUsersInRoom.diff(disconnectedSessionIds);
@@ -336,6 +340,12 @@ var spreedPeerConnectionTable = [];
 			if (message.roomType === 'video' && delayedCreatePeer[message.from]) {
 				clearTimeout(delayedCreatePeer[message.from]);
 				delete delayedCreatePeer[message.from];
+			}
+
+			if (!selfInCall) {
+				console.log('Offer received when not in the call, ignore');
+
+				message.type = 'offer-to-ignore';
 			}
 
 			// MCU screen offers do not include the "broadcaster" property,
