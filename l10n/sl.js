@@ -39,12 +39,9 @@ OC.L10N.register(
     "Error while accessing microphone & camera" : "Napaka pri dostopu do mikrofona in kamere",
     "a conversation" : "pogovor",
     "{actor} invited you to {call}" : "{actor} pošlje povabilo na {call}",
-    "* You can now notify all participants by posting \"@all\" into the chat" : "Vse udeležence je mogoče obvestiti z uporabo ukaza »@all« v klepetalnem oknu",
     "You created the conversation" : "Ustvarili ste pogovor",
     "You added {user}" : "Dodan je uporabnik {user}",
-    "%s invited you to a private conversation" : "%s pošlje povabilo za zasebni pogovor",
     "{user} invited you to a private conversation" : "{user} pošlje povabilo za zasebni pogovor",
-    "%s invited you to a group conversation: %s" : "%s pošlje povabilo na skupinski pogovor: %s",
     "{user} invited you to a group conversation: {call}" : "{user} pošlje povabilo na skupinski pogovor: {call}",
     "UDP and TCP" : "UDP in TCP",
     "UDP only" : "Samo UDP",
@@ -54,10 +51,13 @@ OC.L10N.register(
     "Add new server" : "Dodaj nov strežnik",
     "New public conversation" : "Nov javen pogovor",
     "New group conversation" : "Nov skupinski pogovor",
+    "%s invited you to a private conversation" : "%s pošlje povabilo za zasebni pogovor",
+    "%s invited you to a group conversation: %s" : "%s pošlje povabilo na skupinski pogovor: %s",
     "%s invited you to a group conversation" : "%s pošlje povabilo na skupinski pogovor",
     "{user} invited you to a group conversation" : "{user} pošlje povabilo na skupinski pogovor",
     "Always notify" : "Vedno obvesti",
     "Notify on @-mention" : "Obvesti ob omembi z @",
-    "Never notify" : "Nikoli ne obvesti"
+    "Never notify" : "Nikoli ne obvesti",
+    "* You can now notify all participants by posting \"@all\" into the chat" : "Vse udeležence je mogoče obvestiti z uporabo ukaza »@all« v klepetalnem oknu"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

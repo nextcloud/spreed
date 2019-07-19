@@ -123,7 +123,6 @@
     "_%n other_::_%n others_" : ["%n muu","%n muuta"],
     "{actor} invited you to {call}" : "{actor} kutsui sinut puheluun {call}",
     "New in Talk 6" : "Uutta Talkin 6-versiossa",
-    "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edgeä ja Safaria voi nyt käyttää ääni- ja videopuheluissa",
     "The command does not exist" : "Komentoa ei ole olemassa",
     "Talk updates ✅" : "Talk-päivitykset ✅",
     "{actor} created the conversation" : "{actor} loi keskustelun",
@@ -186,14 +185,10 @@
     "{user} mentioned you in conversation {call}" : "{user} mainitsi sinut keskustelussa {call}",
     "A deleted user mentioned you in conversation {call}" : "Poistettu käyttäjä mainitsi sinut keskustelussa {call}",
     "A guest mentioned you in conversation {call}" : "Vieras mainitsi sinut keskustelussa {call}",
-    "%s invited you to a private conversation" : "%s kutsui sinut yksityiskeskusteluun",
     "{user} invited you to a private conversation" : "{user} kutsui sinut yksityiskeskusteluun",
-    "%s invited you to a group conversation: %s" : "%s kutsui sinut ryhmäkeskusteluun: %s",
     "{user} invited you to a group conversation: {call}" : "{user} kutsui sinut ryhmäkeskusteluun: {call}",
     "{user} wants to talk with you" : "{user} haluaa puhua kanssasi",
     "A group call has started in {call}" : "Ryhmäpuhelu on alkanut puhelussa {call}",
-    "{email} requested the password to access {file}" : "{email} pyysi salasanaa voidakseen käsitellä tiedostoa {file}",
-    "Someone requested the password to access {file}" : "Joku pyysi salasanaa voidakseen käsitellä tiedostoa {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Virheellinen päiväys, päiväyksen muoto tulee olla YYYY-MM-DD",
     "Conversation not found" : "Keskustelua ei löydy",
     "Path is already shared with this room" : "Polku on jo jaettu tämän huoneen kesken",
@@ -258,6 +253,8 @@
     "A guest mentioned you in a group conversation: %s" : "Vieras mainitsi sinut ryhmäkeskustelussa: %s",
     "A guest mentioned you in a group conversation: {call}" : "Vieras mainitsi sinut ryhmäkeskustelussa: {call}",
     "A guest mentioned you in a group conversation" : "Vieras mainitsi sinut ryhmäkeskustelussa",
+    "%s invited you to a private conversation" : "%s kutsui sinut yksityiskeskusteluun",
+    "%s invited you to a group conversation: %s" : "%s kutsui sinut ryhmäkeskusteluun: %s",
     "%s invited you to a group conversation" : "%s kutsui sinut ryhmäkeskusteluun",
     "{user} invited you to a group conversation" : "{user} kutsui sinut ryhmäkeskusteluun",
     "A group call has started" : "Ryhmäpuhelu on alkanut",
@@ -274,6 +271,9 @@
     "A guest sent a message in a conversation" : "Vieras lähetti viestin keskusteluun",
     "{user} mentioned you in a conversation" : "{user} mainitsi sinut keskustelussa",
     "A deleted user mentioned you in a conversation" : "Poistettu käyttäjä mainitsi sinut keskustelussa",
-    "A guest mentioned you in a conversation" : "Vieras mainitsi sinut keskustelussa"
+    "A guest mentioned you in a conversation" : "Vieras mainitsi sinut keskustelussa",
+    "{email} requested the password to access {file}" : "{email} pyysi salasanaa voidakseen käsitellä tiedostoa {file}",
+    "Someone requested the password to access {file}" : "Joku pyysi salasanaa voidakseen käsitellä tiedostoa {file}",
+    "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edgeä ja Safaria voi nyt käyttää ääni- ja videopuheluissa"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
