@@ -112,7 +112,7 @@ class Listener {
 		}
 
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
-		$userIds = $room->getParticipantUserIds($activeSince->getTimestamp());
+		$userIds = $room->getParticipantUserIds($activeSince);
 
 		if (empty($userIds) || (\count($userIds) === 1 && $room->getActiveGuests() === 0)) {
 			// Single user pinged or guests only => no activity

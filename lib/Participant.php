@@ -65,6 +65,8 @@ class Participant {
 	private $isFavorite;
 	/** @var \DateTime|null */
 	private $lastMention;
+	/** @var \DateTime|null */
+	private $lastJoinedCall;
 
 	public function __construct(IDBConnection $db,
 								Room $room,
@@ -75,7 +77,8 @@ class Participant {
 								int $inCall,
 								int $notificationLevel,
 								bool $isFavorite,
-								\DateTime $lastMention = null) {
+								\DateTime $lastMention = null,
+								\DateTime $lastJoinedCall = null) {
 		$this->db = $db;
 		$this->room = $room;
 		$this->user = $user;
@@ -86,6 +89,7 @@ class Participant {
 		$this->notificationLevel = $notificationLevel;
 		$this->isFavorite = $isFavorite;
 		$this->lastMention = $lastMention;
+		$this->lastJoinedCall = $lastJoinedCall;
 	}
 
 	public function getUser(): string {
@@ -125,6 +129,13 @@ class Participant {
 	 */
 	public function getLastMention(): ?\DateTime {
 		return $this->lastMention;
+	}
+
+	/**
+	 * @return \DateTime|null
+	 */
+	public function getJoinedCall(): ?\DateTime {
+		return $this->lastJoinedCall;
 	}
 
 	public function isFavorite(): bool {

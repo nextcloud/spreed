@@ -126,7 +126,26 @@ class Manager {
 			]));
 		}
 
-		return new Room($this, $this->db, $this->secureRandom, $this->dispatcher, $this->timeFactory, $this->hasher, (int) $row['id'], (int) $row['type'], (int) $row['read_only'], $row['token'], $row['name'], $row['password'], (int) $row['active_guests'], $activeSince, $lastActivity, $lastMessage, (string) $row['object_type'], (string) $row['object_id']);
+		return new Room(
+			$this,
+			$this->db,
+			$this->secureRandom,
+			$this->dispatcher,
+			$this->timeFactory,
+			$this->hasher,
+			(int) $row['id'],
+			(int) $row['type'],
+			(int) $row['read_only'],
+			$row['token'],
+			$row['name'],
+			$row['password'],
+			(int) $row['active_guests'],
+			$activeSince,
+			$lastActivity,
+			$lastMessage,
+			(string) $row['object_type'],
+			(string) $row['object_id']
+		);
 	}
 
 	/**
@@ -140,7 +159,24 @@ class Manager {
 			$lastMention = $this->timeFactory->getDateTime($row['last_mention']);
 		}
 
-		return new Participant($this->db, $room, (string) $row['user_id'], (int) $row['participant_type'], (int) $row['last_ping'], (string) $row['session_id'], (int) $row['in_call'], (int) $row['notification_level'], (bool) $row['favorite'], $lastMention);
+		$lastJoinedCall = null;
+		if (!empty($row['last_joined_call'])) {
+			$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call']);
+		}
+
+		return new Participant(
+			$this->db,
+			$room,
+			(string) $row['user_id'],
+			(int) $row['participant_type'],
+			(int) $row['last_ping'],
+			(string) $row['session_id'],
+			(int) $row['in_call'],
+			(int) $row['notification_level'],
+			(bool) $row['favorite'],
+			$lastMention,
+			$lastJoinedCall
+		);
 	}
 
 	/**
