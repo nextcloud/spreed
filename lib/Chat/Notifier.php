@@ -30,9 +30,9 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Comments\IComment;
+use OCP\IUserManager;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
-use OCP\IUserManager;
 
 /**
  * Helper class for notifications related to user mentions in chat messages.
@@ -100,6 +100,59 @@ class Notifier {
 
 		return $mentionedUserIds;
 	}
+
+    /**
+     * Notify all participants in a room.
+     *
+     * @param  Room  $chat
+     * @param  IComment  $comment
+     *
+     * @return array
+     */
+    public function virtuallyMentionEveryone(
+        Room $chat,
+        IComment $comment
+    ): array {
+        $mentionedUserIds = $this->getAllParticipantUserIds($chat);
+
+        if (empty($mentionedUserIds)) {
+            return [];
+        }
+
+        $notification = $this->createNotification($chat, $comment, 'mention');
+        foreach ($mentionedUserIds as $mentionedUserId) {
+            if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {
+                $notification->setUser($mentionedUserId);
+                $this->notificationManager->notify($notification);
+            }
+        }
+
+        return $mentionedUserIds;
+    }
+
+    /**
+     * Get all participant user ids.
+     *
+     * @param  Room  $chat
+     *
+     * @return array
+     */
+    private function getAllParticipantUserIds(Room $chat)
+    {
+        $participants = $chat->getParticipants();
+
+        if (empty($participants)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($participants as $participant) {
+            $result[] = $participant->getUser();
+        }
+
+        return $result;
+    }
 
 	/**
 	 * Notifies the user mentioned in the comment.

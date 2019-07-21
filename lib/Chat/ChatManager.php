@@ -191,8 +191,8 @@ class ChatManager
             // Update last_message
             $chat->setLastMessage($comment);
 
-            $mentionedUsers = $this->notifier->notifyMentionedUsers($chat,
-                $comment);
+            $mentionedUsers = $this->notifier->virtuallyMentionEveryone($chat, $comment);
+
             if ( ! empty($mentionedUsers)) {
                 $chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
             }
