@@ -406,7 +406,7 @@ class Notifier implements INotifier {
 			$calleeId = $parameters['callee'];
 			$user = $this->userManager->get($calleeId);
 			if ($user instanceof IUser) {
-				if ($room->hasSessionsInCall()) {
+				if ($this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall()) {
 					$notification = $this->addActionButton($notification, $l->t('Answer call'));
 					$subject = $l->t('{user} wants to talk with you');
 				} else {
@@ -436,7 +436,7 @@ class Notifier implements INotifier {
 			}
 
 		} else if (\in_array($room->getType(), [Room::GROUP_CALL, Room::PUBLIC_CALL], true)) {
-			if ($room->hasSessionsInCall()) {
+			if ($this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall()) {
 				$notification = $this->addActionButton($notification, $l->t('Join call'));
 				$subject = $l->t('A group call has started in {call}');
 			} else {
@@ -493,7 +493,7 @@ class Notifier implements INotifier {
 			throw new AlreadyProcessedException();
 		}
 
-		$callIsActive = $room->hasSessionsInCall();
+		$callIsActive = $this->notificationManager->isPreparingPushNotification() || $room->hasSessionsInCall();
 		if ($callIsActive) {
 			$notification = $this->addActionButton($notification, $l->t('Answer call'));
 		} else {
