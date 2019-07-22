@@ -876,6 +876,8 @@
 			}
 
 			this._forceReconnect = true;
+			this.resumeId = null;
+			this.signalingRoomJoined = null;
 			return;
 		}
 
