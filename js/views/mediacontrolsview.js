@@ -56,6 +56,7 @@
 
 		ui: {
 			'audioButton': '#mute',
+			'volumeIndicator': '#muteWrapper .volume-indicator',
 			'videoButton': '#hideVideo',
 			'screensharingButton': '#screensharing-button',
 			'screensharingMenu': '#screensharing-menu',
@@ -84,6 +85,8 @@
 			this._webrtc = options.webrtc;
 			this._sharedScreens = options.sharedScreens;
 
+			this._handleVolumeChangeBound = this._handleVolumeChange.bind(this);
+
 			this._audioAvailable = true;
 			this._videoAvailable = true;
 
@@ -92,7 +95,13 @@
 		},
 
 		setWebRtc: function(webrtc) {
+			if (this._webrtc && this._webrtc.webrtc) {
+				this._webrtc.webrtc.off('volumeChange', this._handleVolumeChangeBound);
+			}
+
 			this._webrtc = webrtc;
+
+			this._webrtc.webrtc.on('volumeChange', this._handleVolumeChangeBound);
 		},
 
 		setSharedScreens: function(sharedScreens) {
@@ -151,6 +160,20 @@
 			}
 
 			this._audioAvailable = audioAvailable;
+		},
+
+		_handleVolumeChange: function(currentVolume, threshold) {
+			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
+			// system); for the volume indicator only sounds above the threshold
+			// are taken into account.
+			var currentVolumeProportion = 0;
+			if (currentVolume > threshold) {
+				currentVolumeProportion = (threshold - currentVolume) / threshold;
+			}
+
+			var maximumVolumeIndicatorHeight = this.getUI('volumeIndicator').parent().outerHeight() - (parseInt(this.getUI('volumeIndicator').css('bottom'), 10) * 2);
+
+			this.getUI('volumeIndicator').height(maximumVolumeIndicatorHeight * currentVolumeProportion);
 		},
 
 		toggleVideo: function() {
