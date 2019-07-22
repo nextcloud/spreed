@@ -458,11 +458,12 @@
 			 * copied from OCP.Comments and adjusted accordingly.
 			 */
 			// var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
-			var urlRegex = /(\s|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
-			return message.replace(urlRegex, function (_, leadingSpace, protocol, url, trailingSpace) {
+			var urlRegex = /(\s|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|$)/ig;
+			return message.replace(urlRegex, function (_, leadingSpace, protocol, url) {
+				var trailingClosingBracket = '';
 				if (url.substr(-1) === ')' && url.indexOf('(') === -1) {
 					url = url.substr(0, url.length - 1);
-					trailingSpace = ')' + trailingSpace;
+					trailingClosingBracket = ')';
 				}
 				var linkText = url;
 				// if (!protocol) {
@@ -472,7 +473,7 @@
 					linkText = protocol + url;
 				}
 
-				return leadingSpace + '<a class="external" target="_blank" rel="noopener noreferrer" href="' + protocol + url + '">' + linkText + '</a>' + trailingSpace;
+				return leadingSpace + '<a class="external" target="_blank" rel="noopener noreferrer" href="' + protocol + url + '">' + linkText + '</a>' + trailingClosingBracket;
 			});
 		},
 
