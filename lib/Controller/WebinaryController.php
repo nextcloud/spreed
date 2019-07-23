@@ -52,7 +52,12 @@ class WebinaryController extends AEnvironmentAwareController {
 	public function setLobby(int $state, ?string $timer = null): DataResponse {
 		$timerDateTime = null;
 		if (trim((string) $timer) !== '') {
-			$timerDateTime = $this->timeFactory->getDateTime($timer);
+			try {
+				$timerDateTime = $this->timeFactory->getDateTime($timer);
+				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
+			} catch (\Exception $e) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		if (!$this->room->setLobby($state, $timerDateTime)) {
