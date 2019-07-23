@@ -54,6 +54,7 @@
 		template: OCA.Talk.Views.Templates['videoview'],
 
 		ui: {
+			'audio': 'audio',
 			'video': 'video',
 			'avatarContainer': '.avatar-container',
 			'avatar': '.avatar',
@@ -175,6 +176,24 @@
 
 				return;
 			}
+		},
+
+		/**
+		 * Sets the element with the audio stream.
+		 *
+		 * @param HTMLVideoElement|null audioElement the element to set, or null
+		 *        to remove the current one.
+		 */
+		setAudioElement: function(audioElement) {
+			this.getUI('audio').remove();
+
+			if (audioElement) {
+				this.$el.prepend(audioElement);
+			}
+
+			this.bindUIElements();
+
+			this.getUI('audio').addClass('hidden');
 		},
 
 		setAudioAvailable: function(audioAvailable) {
