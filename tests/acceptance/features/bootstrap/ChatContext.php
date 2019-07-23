@@ -154,7 +154,10 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function formattedMentionInChatMessageOf($chatAncestor, $number, $user) {
-		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and normalize-space() = '$user']")->
+		// User mentions have an image avatar, but guest mentions have a plain
+		// text avatar, so the avatar needs to be excluded when matching the
+		// name.
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ')]//*[normalize-space() = '$user']/ancestor::span")->
 				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
 				describedAs("Formatted mention of $user in chat message $number in the list of received messages");
 	}
@@ -163,7 +166,10 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function formattedMentionInChatMessageOfAsCurrentUser($chatAncestor, $number, $user) {
-		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and contains(concat(' ', normalize-space(@class), ' '), ' currentUser ') and normalize-space() = '$user']")->
+		// User mentions have an image avatar, but guest mentions have a plain
+		// text avatar, so the avatar needs to be excluded when matching the
+		// name.
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and contains(concat(' ', normalize-space(@class), ' '), ' currentUser ')]//*[normalize-space() = '$user']/ancestor::span")->
 				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
 				describedAs("Formatted mention of $user as current user in chat message $number in the list of received messages");
 	}
@@ -184,6 +190,33 @@ class ChatContext implements Context, ActorAwareInterface {
 		return Locator::forThe()->css(".filePreviewContainer")->
 				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
 				describedAs("Formatted file preview in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function guestNameEditableTextLabel($chatAncestor) {
+		return Locator::forThe()->css(".guest-name.editable-text-label")->
+				descendantOf(self::chatView($chatAncestor))->
+				describedAs("Guest name editable text label");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function guestNameEditButton($chatAncestor) {
+		return Locator::forThe()->css(".edit-button")->
+				descendantOf(self::guestNameEditableTextLabel($chatAncestor))->
+				describedAs("Guest name edit button");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function guestNameInput($chatAncestor) {
+		return Locator::forThe()->css(".username")->
+				descendantOf(self::guestNameEditableTextLabel($chatAncestor))->
+				describedAs("Guest name input");
 	}
 
 	/**
@@ -244,9 +277,20 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function mentionAutocompleteCandidateFor($name) {
-		return Locator::forThe()->xpath("//li[contains(concat(' ', normalize-space(@class), ' '), ' chat-view-mention-autocomplete ') and normalize-space() = '$name']")->
+		// User mentions have an image avatar, but guest mentions have a plain
+		// text avatar, so the avatar needs to be excluded when matching the
+		// name.
+		return Locator::forThe()->xpath("//li[contains(concat(' ', normalize-space(@class), ' '), ' chat-view-mention-autocomplete ')]//*[normalize-space() = '$name']/ancestor::li")->
 				descendantOf(self::mentionAutocompleteContainer())->
 				describedAs("Mention autocomplete candidate for $name");
+	}
+
+	/**
+	 * @When I set my guest name to :name
+	 */
+	public function iSetMyGuestNameTo($name) {
+		$this->actor->find(self::guestNameEditButton($this->chatAncestor), 10)->click();
+		$this->actor->find(self::guestNameInput($this->chatAncestor), 2)->setValue($name . "\r");
 	}
 
 	/**
