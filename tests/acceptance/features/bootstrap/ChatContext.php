@@ -177,6 +177,15 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function formattedMentionInChatMessageOfAllParticipantsOf($chatAncestor, $number, $roomName) {
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-call ') and contains(concat(' ', normalize-space(@class), ' '), ' currentUser ') and normalize-space() = '$roomName']")->
+				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
+				describedAs("Formatted mention of all participants of $roomName in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function formattedLinkInChatMessageTo($chatAncestor, $number, $url) {
 		return Locator::forThe()->xpath("a[normalize-space(@href) = '$url']")->
 				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
@@ -403,6 +412,13 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheMessageContainsAFormattedMentionOfAsCurrentUser($number, $user) {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedMentionInChatMessageOfAsCurrentUser($this->chatAncestor, $number, $user), 10));
+	}
+
+	/**
+	 * @Then I see that the message :number contains a formatted mention of all participants of :roomName
+	 */
+	public function iSeeThatTheMessageContainsAFormattedMentionOfAllParticipantsOf($number, $roomName) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedMentionInChatMessageOfAllParticipantsOf($this->chatAncestor, $number, $roomName), 10));
 	}
 
 	/**

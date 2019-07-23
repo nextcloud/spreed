@@ -192,6 +192,27 @@ Feature: chat
     And I see that the message 1 was sent by "user0" with the text "Hello RRob"
     And I see that the message 1 contains a formatted mention of "Rob" as current user
 
+  Scenario: mention all users in a public room from the candidate mentions
+    Given I act as John
+    And I am logged in
+    And I have opened the Talk app
+    And I create a public conversation named "Public"
+    And I see that the chat is shown in the main view
+    And I write down the public conversation link
+    And I act as Jane
+    And I visit the public conversation link I wrote down
+    And I see that the current page is the public conversation link I wrote down
+    And I see that the chat is shown in the main view
+    When I act as John
+    And I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "Public"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "user0" with the text "Hello Public"
+    And I see that the message 1 contains a formatted mention of all participants of "Public"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello Public"
+    And I see that the message 1 contains a formatted mention of all participants of "Public"
+
   Scenario: mention another user and a URL
     Given I am logged in
     And I have opened the Talk app
