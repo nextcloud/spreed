@@ -530,7 +530,7 @@ class Room {
 	 * @return bool True when the change was valid, false otherwise
 	 */
 	public function setLobby(int $newState, ?\DateTime $dateTime): bool {
-		$oldState = $this->getLobbyState();
+		$oldState = $this->lobbyState;
 
 		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
 			return false;
