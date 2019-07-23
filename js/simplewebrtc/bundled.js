@@ -1244,8 +1244,16 @@ SimpleWebRTC.prototype.disconnect = function () {
 
 SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
   var self = this;
-  var container = this.getRemoteVideoContainer();
-  var video = attachMediaStream(peer.stream); // At least Firefox, Opera and Edge move the video to a wrong position
+  var container = this.getRemoteVideoContainer(); // If there is a video track Chromium does not play audio in a video element
+  // until the video track starts to play; an audio element is thus needed to
+  // play audio when the remote peer starts with the camera available but
+  // disabled.
+
+  var audio = attachMediaStream(peer.stream, null, {
+    audio: true
+  });
+  var video = attachMediaStream(peer.stream);
+  video.muted = true; // At least Firefox, Opera and Edge move the video to a wrong position
   // instead of keeping it unchanged	when "transform: scaleX(1)" is used
   // ("transform: scaleX(-1)" is fine); as it should have no effect the
   // transform is removed.
@@ -1255,14 +1263,17 @@ SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
   } // store video element as part of peer for easy removal
 
 
+  peer.audioEl = audio;
   peer.videoEl = video;
+  audio.id = this.getDomId(peer) + '-audio';
   video.id = this.getDomId(peer);
 
   if (container) {
+    container.appendChild(audio);
     container.appendChild(video);
   }
 
-  this.emit('videoAdded', video, peer); // send our mute status to new peer if we're muted
+  this.emit('videoAdded', video, audio, peer); // send our mute status to new peer if we're muted
   // currently called with a small delay because it arrives before
   // the video element is created otherwise (which happens after
   // the async setRemoteDescription-createAnswer)
@@ -1284,7 +1295,12 @@ SimpleWebRTC.prototype.handlePeerStreamAdded = function (peer) {
 
 SimpleWebRTC.prototype.handlePeerStreamRemoved = function (peer) {
   var container = this.getRemoteVideoContainer();
+  var audioEl = peer.audioEl;
   var videoEl = peer.videoEl;
+
+  if (this.config.autoRemoveVideos && container && audioEl) {
+    container.removeChild(audioEl);
+  }
 
   if (this.config.autoRemoveVideos && container && videoEl) {
     container.removeChild(videoEl);
@@ -1302,8 +1318,8 @@ SimpleWebRTC.prototype.getDomId = function (peer) {
 
 SimpleWebRTC.prototype.setVolumeForAll = function (volume) {
   this.webrtc.peers.forEach(function (peer) {
-    if (peer.videoEl) {
-      peer.videoEl.volume = volume;
+    if (peer.audioEl) {
+      peer.audioEl.volume = volume;
     }
   });
 };
