@@ -196,6 +196,12 @@ var spreedPeerConnectionTable = [];
 				if (useMcu) {
 					// TODO(jojo): Already create peer object to avoid duplicate offers.
 					webrtc.connection.requestOffer(user, "video");
+
+					delayedConnectionToPeer[user.sessionId] = setInterval(function() {
+						console.log('No offer received for new peer, request offer again');
+
+						webrtc.connection.requestOffer(user, 'video');
+					}, 10000);
 				} else if (userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
 					// To avoid overloading the user joining a room (who previously called
 					// all the other participants), we decide who calls who by comparing
@@ -613,6 +619,16 @@ var spreedPeerConnectionTable = [];
 
 									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED_NO_RESTART);
 								}
+							} else {
+								console.log('Request offer again');
+
+								signaling.requestOffer(peer.id, 'video');
+
+								delayedConnectionToPeer[peer.id] = setInterval(function() {
+									console.log('No offer received, request offer again');
+
+									signaling.requestOffer(peer.id, 'video');
+								}, 10000);
 							}
 							break;
 						case 'closed':
