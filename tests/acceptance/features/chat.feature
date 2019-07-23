@@ -147,6 +147,27 @@ Feature: chat
     And I see that the message 1 was sent by "user0" with the text "Hello admin"
     And I see that the message 1 contains a formatted mention of "admin" as current user
 
+  Scenario: mention another user from the candidate mentions
+    Given I act as John
+    And I am logged in
+    And I have opened the Talk app
+    And I create a one-to-one conversation with "admin"
+    And I see that the chat is shown in the main view
+    And I act as Jane
+    And I am logged in as the admin
+    And I have opened the Talk app
+    And I open the "user0" conversation
+    And I see that the chat is shown in the main view
+    When I act as John
+    And I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "admin"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "user0" with the text "Hello admin"
+    And I see that the message 1 contains a formatted mention of "admin"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello admin"
+    And I see that the message 1 contains a formatted mention of "admin" as current user
+
   Scenario: mention another user and a URL
     Given I am logged in
     And I have opened the Talk app

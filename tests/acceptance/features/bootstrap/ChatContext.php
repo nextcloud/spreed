@@ -207,6 +207,15 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function newChatMessageSendIcon($chatAncestor) {
+		return Locator::forThe()->css(".icon-confirm")->
+				descendantOf(self::newChatMessageForm($chatAncestor))->
+				describedAs("New chat message send icon");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function newChatMessageWorkingIcon($chatAncestor) {
 		return Locator::forThe()->css(".submitLoading")->
 				descendantOf(self::newChatMessageForm($chatAncestor))->
@@ -220,6 +229,54 @@ class ChatContext implements Context, ActorAwareInterface {
 		return Locator::forThe()->css(".share")->
 				descendantOf(self::newChatMessageForm($chatAncestor))->
 				describedAs("Share button");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function mentionAutocompleteContainer() {
+		// The container is added directly in the body, not in the chat view.
+		return Locator::forThe()->css(".atwho-container")->
+				describedAs("Mention autocomplete container");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function mentionAutocompleteCandidateFor($name) {
+		return Locator::forThe()->xpath("//li[contains(concat(' ', normalize-space(@class), ' '), ' chat-view-mention-autocomplete ') and normalize-space() = '$name']")->
+				descendantOf(self::mentionAutocompleteContainer())->
+				describedAs("Mention autocomplete candidate for $name");
+	}
+
+	/**
+	 * @When I type a new chat message with the text :message
+	 */
+	public function iTypeANewChatMessageWithTheText($message) {
+		// Instead of waiting for the input to be enabled before sending a new
+		// message it is easier to wait for the working icon to not be shown.
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::newChatMessageWorkingIcon($this->chatAncestor),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The working icon for the new message was still being shown after $timeout seconds");
+		}
+
+		$this->actor->find(self::newChatMessageInput($this->chatAncestor), 10)->setValue($message);
+	}
+
+	/**
+	 * @When I choose the candidate mention for :name
+	 */
+	public function iChooseTheCandidateMentionFor($name) {
+		$this->actor->find(self::mentionAutocompleteCandidateFor($name), 10)->click();
+	}
+
+	/**
+	 * @When I send the current chat message
+	 */
+	public function iSendTheCurrentChatMessage() {
+		$this->actor->find(self::newChatMessageSendIcon($this->chatAncestor), 10)->click();
 	}
 
 	/**
