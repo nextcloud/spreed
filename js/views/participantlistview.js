@@ -120,12 +120,13 @@
 				var model = this.model;
 				this.$el.find('.avatar').each(function() {
 					var $element = $(this);
+					var firstChar = $element.data('displayName') ? $element.data('displayName').substr(0, 1) : '?';
 
 					if (model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR) {
-						$element.imageplaceholder('M', model.get('displayName'), 32);
+						$element.imageplaceholder(firstChar, model.get('displayName'), 32);
 						$element.css('background-color', '#b9b9b9');
 					} else if (model.get('participantType') === OCA.SpreedMe.app.GUEST) {
-						$element.imageplaceholder('?', model.get('displayName'), 32);
+						$element.imageplaceholder(firstChar, model.get('displayName'), 32);
 						$element.css('background-color', '#b9b9b9');
 					} else {
 						$element.avatar(model.get('userId'), 32, undefined, false, undefined, model.get('displayName'));
