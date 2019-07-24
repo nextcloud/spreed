@@ -78,6 +78,7 @@ class Capabilities implements IPublicCapability {
 					'invite-groups-and-mails',
 					'locked-one-to-one-rooms',
 					'read-only-rooms',
+					'chat-read-marker',
 				],
 				'config' => [
 					'chat' => [
