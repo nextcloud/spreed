@@ -1,0 +1,192 @@
+Feature: chat/reply
+  Background:
+    Given user "participant1" exists
+    Given user "participant2" exists
+    Given user "participant3" exists
+    And group "attendees1" exists
+    And user "participant2" is member of group "attendees1"
+
+  Scenario: user can reply to own message
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+
+  Scenario: user can reply to other's messages
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    When user "participant2" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+
+  Scenario: several users can reply to the same message several times
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-2" on message "Message 1" to room "group room" with 201
+    And user "participant1" sends reply "Message 1-3" on message "Message 1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-4" on message "Message 1" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-4 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1-3 | []                | Message 1     |
+      | group room | users     | participant2 | participant2-displayname | Message 1-2 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-4 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1-3 | []                | Message 1     |
+      | group room | users     | participant2 | participant2-displayname | Message 1-2 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1 | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1   | []                |               |
+
+
+
+  Scenario: user can reply to private commands
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "/help" to room "group room" with 201
+    # In the tests the reference for the message to reply to is got from the
+    # messages originally sent, not from how they are returned by the server.
+    When user "participant1" sends reply "Message X-1" on message "/help" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message                                    | messageParameters | parentMessage                              |
+      | group room | users     | participant1 | participant1-displayname | Message X-1                                | []                | There are currently no commands available. |
+      | group room | bots      | talk         | talk-bot                 | There are currently no commands available. | []                |                                            |
+    And user "participant2" sees the following messages in room "group room" with 200
+
+  Scenario: user can reply to system messages
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    # The system messages need to be got so they are added to the list of known
+    # messages to reply to.
+    And user "participant1" sees the following system messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | systemMessage        |
+      | group room | users     | participant1 | participant1-displayname | user_added           |
+      | group room | users     | participant1 | participant1-displayname | conversation_created |
+    When user "participant1" sends reply "Message X-1" on message "conversation_created" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage                |
+      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | You created the conversation |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage                    |
+      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {actor} created the conversation |
+
+
+
+  Scenario: user can reply to own replies
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
+    When user "participant1" sends reply "Message 1-1-1" on message "Message 1-1" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1   | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1   | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+
+  Scenario: user can reply to other's replies
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
+    When user "participant1" sends reply "Message 1-1-1" on message "Message 1-1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-1-1-1" on message "Message 1-1-1" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-1-1 | []                | Message 1-1-1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1   | []                | Message 1-1   |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1     | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1       | []                |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message         | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-1-1 | []                | Message 1-1-1 |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1   | []                | Message 1-1   |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1     | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1       | []                |               |
+
+  Scenario: several users can reply to the same reply several times
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-1" on message "Message 1" to room "group room" with 201
+    When user "participant1" sends reply "Message 1-1-1" on message "Message 1-1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-1-2" on message "Message 1-1" to room "group room" with 201
+    And user "participant1" sends reply "Message 1-1-3" on message "Message 1-1" to room "group room" with 201
+    And user "participant2" sends reply "Message 1-1-4" on message "Message 1-1" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-4 | []                | Message 1-1   |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-3 | []                | Message 1-1   |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-2 | []                | Message 1-1   |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message       | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-4 | []                | Message 1-1   |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-3 | []                | Message 1-1   |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1-2 | []                | Message 1-1   |
+      | group room | users     | participant1 | participant1-displayname | Message 1-1-1 | []                | Message 1-1   |
+      | group room | users     | participant2 | participant2-displayname | Message 1-1   | []                | Message 1     |
+      | group room | users     | participant1 | participant1-displayname | Message 1     | []                |               |
+
+
+
+  Scenario: user can not reply when not in the room
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room" with 201
+    When user "participant3" sends reply "Message 1-1" on message "Message 1" to room "group room" with 404
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message   | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | Message 1 | []                |               |
+    And user "participant3" sees the following messages in room "group room" with 404
+
+
+
+  Scenario: user can not reply to a message from another room
+    Given user "participant1" creates room "group room1"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" creates room "group room2"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" sends message "Message 1" to room "group room1" with 201
+    When user "participant1" sends reply "Message 1-1" on message "Message 1" to room "group room2" with 400
+    Then user "participant1" sees the following messages in room "group room1" with 200
+      | room        | actorType | actorId      | actorDisplayName         | message   | messageParameters |
+      | group room1 | users     | participant1 | participant1-displayname | Message 1 | []                |
+    And user "participant1" sees the following messages in room "group room2" with 200

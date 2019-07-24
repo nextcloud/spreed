@@ -39,6 +39,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $tokenToIdentifier;
 	/** @var array[] */
 	protected static $sessionIdToUser;
+	/** @var array[] */
+	protected static $messages;
 
 	/** @var string */
 	protected $currentUser;
@@ -80,6 +82,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$identifierToToken = [];
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [];
+		self::$messages = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -582,6 +585,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$messages[$message] = $response['id'];
+		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" sends reply "([^"]*)" on message "([^"]*)" to room "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $reply
+	 * @param string $message
+	 * @param string $identifier
+	 * @param string $statusCode
+	 */
+	public function userSendsReplyToRoom($user, $reply, $message, $identifier, $statusCode) {
+		$replyTo = self::$messages[$message];
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'POST', '/apps/spreed/api/v1/chat/' . self::$identifierToToken[$identifier],
+			new TableNode([['message', $reply], ['replyTo', $replyTo]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+		sleep(1); // make sure Postgres manages the order of the messages
+
+		$response = $this->getDataFromResponse($this->response);
+		if (isset($response['id'])) {
+			self::$messages[$reply] = $response['id'];
+		}
 	}
 
 	/**
@@ -609,19 +643,24 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			PHPUnit_Framework_Assert::assertEmpty($messages);
 			return;
 		}
+		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
 
 		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
-		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($message) {
-			return [
+		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents) {
+			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
-				'actorType' => (string) $message['actorType'],
-				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: (string) $message['actorId'],
-				'actorDisplayName' => (string) $message['actorDisplayName'],
+				'actorType' => $message['actorType'],
+				'actorId' => ($message['actorType'] === 'guests')? self::$sessionIdToUser[$message['actorId']]: $message['actorId'],
+				'actorDisplayName' => $message['actorDisplayName'],
 				// TODO test timestamp; it may require using Runkit, php-timecop
 				// or something like that.
-				'message' => (string) $message['message'],
+				'message' => $message['message'],
 				'messageParameters' => json_encode($message['messageParameters']),
 			];
+			if ($includeParents) {
+				$data['parentMessage'] = $message['parent']['message'] ?? '';
+			}
+			return $data;
 		}, $messages));
 	}
 
@@ -641,6 +680,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$messages = array_filter($messages, function(array $message) {
 			return $message['systemMessage'] !== '';
 		});
+
+		foreach ($messages as $systemMessage) {
+			// Include the received system messages in the list of messages used
+			// for replies.
+			self::$messages[$systemMessage['systemMessage']] = $systemMessage['id'];
+		}
 
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($messages);
