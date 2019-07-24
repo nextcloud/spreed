@@ -138,6 +138,8 @@ class SystemMessage {
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You locked the conversation');
 			}
+		} else if ($message === 'lobby_timer_reached') {
+			$parsedMessage = $this->l->t('The conversation is now open to everyone');
 		} else if ($message === 'lobby_all_participants') {
 			$parsedMessage = $this->l->t('{actor} opened the conversation to everyone');
 			if ($currentUserIsActor) {

@@ -165,7 +165,7 @@ class Room {
 
 	protected function validateTimer(): void {
 		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			$this->setLobby(Webinary::ALL_PARTICIPANTS, null);
+			$this->setLobby(Webinary::ALL_PARTICIPANTS, null, true);
 		}
 	}
 
@@ -527,9 +527,10 @@ class Room {
 	 * 						Also it's not allowed in one-to-one conversations,
 	 * 						file conversations and password request conversations.
 	 * @param \DateTime|null $dateTime
+	 * @param bool $timerReached
 	 * @return bool True when the change was valid, false otherwise
 	 */
-	public function setLobby(int $newState, ?\DateTime $dateTime): bool {
+	public function setLobby(int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
 		$oldState = $this->lobbyState;
 
 		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
@@ -548,6 +549,7 @@ class Room {
 			'newState' => $newState,
 			'oldState' => $oldState,
 			'lobbyTimer' => $dateTime,
+			'timerReached' => $timerReached,
 		]));
 
 		$query = $this->db->getQueryBuilder();
@@ -563,6 +565,7 @@ class Room {
 			'newState' => $newState,
 			'oldState' => $oldState,
 			'lobbyTimer' => $dateTime,
+			'timerReached' => $timerReached,
 		]));
 
 		return true;

@@ -171,7 +171,9 @@ class Listener {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
-			if ($arguments['newState'] === Webinary::ALL_PARTICIPANTS) {
+			if ($arguments['timerReached']) {
+				$listener->sendSystemMessage($room, 'lobby_timer_reached', $event->getArguments());
+			} else if ($arguments['newState'] === Webinary::ALL_PARTICIPANTS) {
 				$listener->sendSystemMessage($room, 'lobby_all_participants', $event->getArguments());
 			} else if ($arguments['newState'] === Webinary::MODERATORS_ONLY) {
 				$listener->sendSystemMessage($room, 'lobby_moderators_only', $event->getArguments());
