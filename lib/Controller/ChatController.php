@@ -213,6 +213,8 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $limit Number of chat messages to receive (100 by default, 200 at most)
 	 * @param int $lastKnownMessageId The last known message (serves as offset)
 	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
+	 * @param int $setReadMarker Automatically set the last read marker when 1,
+	 *                           if your client does this itself via chat/{token}/read set to 0
 	 * @return DataResponse an array of chat messages, "404 Not found" if the
 	 *         room token was not valid or "304 Not modified" if there were no messages;
 	 *         each chat message is an array with
@@ -220,7 +222,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages(int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30): DataResponse {
+	public function receiveMessages(int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30, int $setReadMarker = 1): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
@@ -267,7 +269,9 @@ class ChatController extends AEnvironmentAwareController {
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
-			$this->participant->setLastReadMessage((int) $newLastKnown->getId());
+			if ($setReadMarker === 1) {
+				$this->participant->setLastReadMessage((int) $newLastKnown->getId());
+			}
 		}
 
 		return $response;
