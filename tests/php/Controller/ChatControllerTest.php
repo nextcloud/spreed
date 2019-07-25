@@ -220,6 +220,206 @@ class ChatControllerTest extends TestCase {
 		$this->assertEquals($expected, $response);
 	}
 
+	public function testSendReplyByUser() {
+		$participant = $this->createMock(Participant::class);
+		$this->room->expects($this->exactly(2))
+			->method('getToken')
+			->willReturn('testToken');
+
+		$date = new \DateTime();
+		$this->timeFactory->expects($this->once())
+			->method('getDateTime')
+			->willReturn($date);
+
+		/** @var IComment|MockObject $comment */
+		$parent = $this->newComment(23, 'user', $this->userId . '2', $date, 'testMessage original');
+
+		/** @var IComment|MockObject $comment */
+		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
+		$this->chatManager->expects($this->once())
+			->method('sendMessage')
+			->with($this->room,
+				$participant,
+				'users',
+				$this->userId,
+				'testMessage',
+				$this->newMessageDateTimeConstraint,
+				$parent
+			)
+			->willReturn($comment);
+		$this->chatManager->expects($this->once())
+			->method('getParentComment')
+			->with($this->room, 23)
+			->willReturn($parent);
+
+		$parentMessage = $this->createMock(Message::class);
+		$parentMessage->expects($this->once())
+			->method('getActorType')
+			->willReturn('user');
+		$parentMessage->expects($this->once())
+			->method('getActorId')
+			->willReturn($this->userId . '2');
+		$parentMessage->expects($this->once())
+			->method('getActorDisplayName')
+			->willReturn('displayName2');
+		$parentMessage->expects($this->once())
+			->method('getMessage')
+			->willReturn('parsedMessage2');
+		$parentMessage->expects($this->once())
+			->method('getMessageParameters')
+			->willReturn(['arg' => 'uments2']);
+		$parentMessage->expects($this->exactly(3))
+			->method('getMessageType')
+			->willReturn('comment');
+		$parentMessage->expects($this->exactly(2))
+			->method('getComment')
+			->willReturn($parent);
+		$parentMessage->expects($this->once())
+			->method('getRoom')
+			->willReturn($this->room);
+
+		$chatMessage = $this->createMock(Message::class);
+		$chatMessage->expects($this->once())
+			->method('getActorType')
+			->willReturn('user');
+		$chatMessage->expects($this->once())
+			->method('getActorId')
+			->willReturn($this->userId);
+		$chatMessage->expects($this->once())
+			->method('getActorDisplayName')
+			->willReturn('displayName');
+		$chatMessage->expects($this->once())
+			->method('getMessage')
+			->willReturn('parsedMessage');
+		$chatMessage->expects($this->once())
+			->method('getMessageParameters')
+			->willReturn(['arg' => 'uments']);
+		$chatMessage->expects($this->once())
+			->method('getMessageType')
+			->willReturn('comment');
+		$chatMessage->expects($this->once())
+			->method('getVisibility')
+			->willReturn(true);
+		$chatMessage->expects($this->exactly(2))
+			->method('getComment')
+			->willReturn($comment);
+		$chatMessage->expects($this->once())
+			->method('getRoom')
+			->willReturn($this->room);
+
+		$this->messageParser->expects($this->exactly(2))
+			->method('createMessage')
+			->withConsecutive(
+				[$this->room, $participant, $parent, $this->l],
+				[$this->room, $participant, $comment, $this->l]
+			)
+			->willReturnOnConsecutiveCalls($parentMessage, $chatMessage);
+
+		$this->messageParser->expects($this->exactly(2))
+			->method('parseMessage')
+			->withConsecutive([$parentMessage], [$chatMessage]);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage', '', 23);
+		$expected = new DataResponse([
+			'id' => 42,
+			'token' => 'testToken',
+			'actorType' => 'user',
+			'actorId' => $this->userId,
+			'actorDisplayName' => 'displayName',
+			'timestamp' => $date->getTimestamp(),
+			'message' => 'parsedMessage',
+			'messageParameters' => ['arg' => 'uments'],
+			'systemMessage' => '',
+			'parent' => [
+				'id' => 23,
+				'token' => 'testToken',
+				'actorType' => 'user',
+				'actorId' => $this->userId . '2',
+				'actorDisplayName' => 'displayName2',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage2',
+				'messageParameters' => ['arg' => 'uments2'],
+				'systemMessage' => '',
+			]
+		], Http::STATUS_CREATED);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testSendReplyByUserToCommand() {
+		$participant = $this->createMock(Participant::class);
+
+		$date = new \DateTime();
+		/** @var IComment|MockObject $comment */
+		$parent = $this->newComment(23, 'user', $this->userId . '2', $date, 'testMessage original');
+
+		$this->chatManager->expects($this->never())
+			->method('sendMessage');
+		$this->chatManager->expects($this->once())
+			->method('getParentComment')
+			->with($this->room, 23)
+			->willReturn($parent);
+
+		$parentMessage = $this->createMock(Message::class);
+		$parentMessage->expects($this->exactly(2))
+			->method('getMessageType')
+			->willReturn('command');
+
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($this->room, $participant, $parent, $this->l)
+			->willReturn($parentMessage);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($parentMessage);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage', '', 23);
+		$expected = new DataResponse([], Http::STATUS_BAD_REQUEST);
+
+		$this->assertEquals($expected, $response);
+	}
+
+	public function testSendReplyByUserToSystemMessage() {
+		$participant = $this->createMock(Participant::class);
+
+		$date = new \DateTime();
+		/** @var IComment|MockObject $comment */
+		$parent = $this->newComment(23, 'user', $this->userId . '2', $date, 'testMessage original');
+
+		$this->chatManager->expects($this->never())
+			->method('sendMessage');
+		$this->chatManager->expects($this->once())
+			->method('getParentComment')
+			->with($this->room, 23)
+			->willReturn($parent);
+
+		$parentMessage = $this->createMock(Message::class);
+		$parentMessage->expects($this->once())
+			->method('getMessageType')
+			->willReturn('system');
+
+		$this->messageParser->expects($this->once())
+			->method('createMessage')
+			->with($this->room, $participant, $parent, $this->l)
+			->willReturn($parentMessage);
+
+		$this->messageParser->expects($this->once())
+			->method('parseMessage')
+			->with($parentMessage);
+
+		$this->controller->setRoom($this->room);
+		$this->controller->setParticipant($participant);
+		$response = $this->controller->sendMessage('testMessage', '', 23);
+		$expected = new DataResponse([], Http::STATUS_BAD_REQUEST);
+
+		$this->assertEquals($expected, $response);
+	}
+
 	public function testSendMessageByUserNotJoinedButInRoom() {
 		$participant = $this->createMock(Participant::class);
 		$this->room->expects($this->once())

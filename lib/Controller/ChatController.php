@@ -157,6 +157,12 @@ class ChatController extends AEnvironmentAwareController {
 				// Someone is trying to reply cross-rooms or to a non-existing message
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
+
+			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
+			$this->messageParser->parseMessage($parentMessage);
+			if ($parentMessage->getMessageType() === 'system' || $parentMessage->getMessageType() === 'command') {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
 		}
 
 		$this->room->ensureOneToOneRoomIsFilled();
