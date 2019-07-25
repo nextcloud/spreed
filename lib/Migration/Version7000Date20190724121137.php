@@ -50,7 +50,7 @@ class Version7000Date20190724121137 extends SimpleMigrationStep {
 			->selectAlias($query->createFunction('MAX(' . $query->getColumnName('c.id') . ')'), 'last_mention_message')
 			->from('talk_participants', 'p')
 			->leftJoin('p', 'comments', 'c', $query->expr()->andX(
-				$query->expr()->eq('c.object_id', 'p.room_id'),
+				$query->expr()->eq('c.object_id', $query->expr()->castColumn('p.room_id', IQueryBuilder::PARAM_STR)),
 				$query->expr()->eq('c.object_type', $query->createNamedParameter('chat')),
 				$query->expr()->eq('c.creation_timestamp', 'p.last_mention')
 			))
