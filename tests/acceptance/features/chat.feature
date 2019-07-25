@@ -192,6 +192,57 @@ Feature: chat
     And I see that the message 1 was sent by "user0" with the text "Hello RRob"
     And I see that the message 1 contains a formatted mention of "Rob" as current user
 
+  Scenario: mention a guest that has not set her name yet from the candidate mentions
+    Given I act as John
+    And I am logged in
+    And I have opened the Talk app
+    And I create a public conversation named "Public"
+    And I see that the chat is shown in the main view
+    And I write down the public conversation link
+    And I act as Jane
+    And I visit the public conversation link I wrote down
+    And I see that the current page is the public conversation link I wrote down
+    And I see that the chat is shown in the main view
+    When I act as John
+    And I see that "Guest" is shown in the list of participants as a normal participant
+    And I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "Guest"
+    And I send the current chat message
+    # The generated avatar is plain text, so it appears in the message itself
+    Then I see that the message 1 was sent by "user0" with the text "Hello ?Guest"
+    And I see that the message 1 contains a formatted mention of "Guest"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello ?Guest"
+    And I see that the message 1 contains a formatted mention of "Guest" as current user
+
+  Scenario: mention a guest that has cleared her name from the candidate mentions
+    Given I act as John
+    And I am logged in
+    And I have opened the Talk app
+    And I create a public conversation named "Public"
+    And I see that the chat is shown in the main view
+    And I write down the public conversation link
+    And I act as Jane
+    And I visit the public conversation link I wrote down
+    And I see that the current page is the public conversation link I wrote down
+    And I see that the chat is shown in the main view
+    And I set my guest name to "Rob"
+    And I act as John
+    And I see that "Rob" is shown in the list of participants as a normal participant
+    And I act as Jane
+    And I set my guest name to ""
+    When I act as John
+    And I see that "Guest" is shown in the list of participants as a normal participant
+    And I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "Guest"
+    And I send the current chat message
+    # The generated avatar is plain text, so it appears in the message itself
+    Then I see that the message 1 was sent by "user0" with the text "Hello ?Guest"
+    And I see that the message 1 contains a formatted mention of "Guest"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello ?Guest"
+    And I see that the message 1 contains a formatted mention of "Guest" as current user
+
   Scenario: mention all users in a public room from the candidate mentions
     Given I act as John
     And I am logged in
