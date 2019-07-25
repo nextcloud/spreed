@@ -64,6 +64,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `notificationLevel` | int | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))
         `unreadMessages` | int | Number of unread chat messages in the conversation (only available with `chat-v2` capability)
         `unreadMention` | bool | Flag if the user was mentioned since their last visit
+        `lastReadMessage` | int | ID of the last read message in a room (only available with `chat-read-marker` capability)
         `lastMessage` | message | Last message in a conversation if available, otherwise empty
         `objectType` | string | The type of object that the conversation is associated with; "share:password" if the conversation is used to request a password for a share, otherwise empty
         `objectId` | string | Share token if "objectType" is "share:password", otherwise empty

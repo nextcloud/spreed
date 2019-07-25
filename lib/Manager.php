@@ -154,11 +154,6 @@ class Manager {
 	 * @return Participant
 	 */
 	public function createParticipantObject(Room $room, array $row): Participant {
-		$lastMention = null;
-		if (!empty($row['last_mention'])) {
-			$lastMention = $this->timeFactory->getDateTime($row['last_mention']);
-		}
-
 		$lastJoinedCall = null;
 		if (!empty($row['last_joined_call'])) {
 			$lastJoinedCall = $this->timeFactory->getDateTime($row['last_joined_call']);
@@ -174,7 +169,8 @@ class Manager {
 			(int) $row['in_call'],
 			(int) $row['notification_level'],
 			(bool) $row['favorite'],
-			$lastMention,
+			(int) $row['last_read_message'],
+			(int) $row['last_mention_message'],
 			$lastJoinedCall
 		);
 	}

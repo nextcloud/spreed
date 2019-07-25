@@ -177,6 +177,7 @@ class RoomController extends AEnvironmentAwareController {
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
 			'lastActivity' => 0,
+			'lastReadMessage' => 0,
 			'unreadMessages' => 0,
 			'unreadMention' => false,
 			'isFavorite' => false,
@@ -227,12 +228,21 @@ class RoomController extends AEnvironmentAwareController {
 
 		$currentUser = $this->userManager->get($currentParticipant->getUser());
 		if ($currentUser instanceof IUser) {
-			$unreadSince = $this->chatManager->getUnreadMarker($room, $currentUser);
-			if ($currentParticipant instanceof Participant) {
-				$lastMention = $currentParticipant->getLastMention();
-				$roomData['unreadMention'] = $lastMention !== null && $unreadSince < $lastMention;
+			$lastReadMessage = $currentParticipant->getLastReadMessage();
+			if ($lastReadMessage === -1) {
+				/*
+				 * Because the migration from the old comment_read_markers was
+				 * not possible in a programmatic way with a reasonable O(1) or O(n)
+				 * but only with O(user×chat), we do the conversion here.
+				 */
+				$lastReadMessage = $this->chatManager->getLastReadMessageFromLegacy($room, $currentUser);
+				$currentParticipant->setLastReadMessage($lastReadMessage);
 			}
-			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $unreadSince);
+			$roomData['unreadMessages'] = $this->chatManager->getUnreadCount($room, $lastReadMessage);
+
+			$lastMention = $currentParticipant->getLastMentionMessage();
+			$roomData['unreadMention'] = $lastMention !== 0 && $lastReadMessage < $lastMention;
+			$roomData['lastReadMessage'] = $lastReadMessage;
 		}
 
 		$numActiveGuests = 0;

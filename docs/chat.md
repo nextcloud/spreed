@@ -14,6 +14,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     `limit` | int | Number of chat messages to receive (100 by default, 200 at most)
     `timeout` | int | `$lookIntoFuture = 1` only, Number of seconds to wait for new messages (30 by default, 60 at most)
     `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
+    `setReadMarker` | int | `1` to automatically set the read timer after fetching the messages, use `0` when your client calls `Mark chat as read` manually. (Default: `1`)
 
 * Response:
     - Status code:
@@ -62,6 +63,24 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     - Data:
         The full message array of the new message, as defined in [Receive chat messages of a conversation](#receive-chat-messages-of-a-conversation)
+
+## Mark chat as read
+
+* Method: `POST`
+* Endpoint: `/chat/{token}/read`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `lastReadMessage` | int | The last read message ID
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the room could not be found for the participant,
+        or the participant is a guest.
+
+
 
 ## Get mention autocomplete suggestions
 

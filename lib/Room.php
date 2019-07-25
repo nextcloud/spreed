@@ -524,6 +524,11 @@ class Room {
 			'users' => $participants,
 		]));
 
+		$lastMessage = 0;
+		if ($this->getLastMessage() instanceof IComment) {
+			$lastMessage = (int) $this->getLastMessage()->getId();
+		}
+
 		$query = $this->db->getQueryBuilder();
 		$query->insert('talk_participants')
 			->values(
@@ -533,6 +538,7 @@ class Room {
 					'participant_type' => $query->createParameter('participant_type'),
 					'room_id' => $query->createNamedParameter($this->getId()),
 					'last_ping' => $query->createNamedParameter(0, IQueryBuilder::PARAM_INT),
+					'last_read_message' => $query->createNamedParameter($lastMessage, IQueryBuilder::PARAM_INT),
 				]
 			);
 
@@ -779,6 +785,11 @@ class Room {
 			throw new InvalidPasswordException();
 		}
 
+		$lastMessage = 0;
+		if ($this->getLastMessage() instanceof IComment) {
+			$lastMessage = (int) $this->getLastMessage()->getId();
+		}
+
 		$sessionId = $this->secureRandom->generate(255);
 		while (!$this->db->insertIfNotExist('*PREFIX*talk_participants', [
 			'user_id' => '',
@@ -786,6 +797,7 @@ class Room {
 			'last_ping' => 0,
 			'session_id' => $sessionId,
 			'participant_type' => Participant::GUEST,
+			'last_read_message' => $lastMessage,
 		], ['session_id'])) {
 			$sessionId = $this->secureRandom->generate(255);
 		}
@@ -1112,10 +1124,10 @@ class Room {
 		return (int) ($row['num_participants'] ?? 0);
 	}
 
-	public function markUsersAsMentioned(array $userIds, \DateTime $time): void {
+	public function markUsersAsMentioned(array $userIds, int $messageId): void {
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
-			->set('last_mention', $query->createNamedParameter($time, 'datetime'))
+			->set('last_mention_message', $query->createNamedParameter($messageId, IQueryBuilder::PARAM_INT))
 			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
 			->andWhere($query->expr()->in('user_id', $query->createNamedParameter($userIds, IQueryBuilder::PARAM_STR_ARRAY)));
 		$query->execute();

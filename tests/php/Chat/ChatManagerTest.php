@@ -218,6 +218,20 @@ class ChatManagerTest extends TestCase {
 		$this->assertEquals($expected, $comments);
 	}
 
+	public function testGetUnreadCount() {
+		/** @var Room|MockObject $chat */
+		$chat = $this->createMock(Room::class);
+		$chat->expects($this->once())
+			->method('getId')
+			->willReturn(23);
+
+		$this->commentsManager->expects($this->once())
+			->method('getNumberOfCommentsForObjectSinceComment')
+			->with('chat', 23, 42, 'comment');
+
+		$this->chatManager->getUnreadCount($chat, 42);
+	}
+
 	public function testDeleteMessages() {
 
 		$chat = $this->createMock(Room::class);
