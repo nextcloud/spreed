@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.4",
+    "@babel/preset-env": "^7.5.5",
     "attachmediastream": "^2.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babelify": "^10.0.0",
