@@ -54,6 +54,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     ------|------|------------
     `message` | string | The message the user wants to say
     `actorDisplayName` | string | Guest display name (ignored for logged in users)
+    `replyTo` | int | The message ID this message is a reply to (only allowed for messages from the same conversation and when the message type is not `system` or `command`)
 
 * Response:
     - Header:
