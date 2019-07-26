@@ -40,6 +40,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
         `systemMessage` | string | empty for normal chat message or the type of the system message (untranslated)
+        `messageType` | string | Currently known types are `comment`, `system` and `command`
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
 

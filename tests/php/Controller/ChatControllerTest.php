@@ -180,7 +180,7 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getMessageParameters')
 			->willReturn(['arg' => 'uments']);
-		$chatMessage->expects($this->once())
+		$chatMessage->expects($this->exactly(2))
 			->method('getMessageType')
 			->willReturn('comment');
 		$chatMessage->expects($this->once())
@@ -215,6 +215,7 @@ class ChatControllerTest extends TestCase {
 			'message' => 'parsedMessage',
 			'messageParameters' => ['arg' => 'uments'],
 			'systemMessage' => '',
+			'messageType' => 'comment',
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -268,7 +269,7 @@ class ChatControllerTest extends TestCase {
 		$parentMessage->expects($this->once())
 			->method('getMessageParameters')
 			->willReturn(['arg' => 'uments2']);
-		$parentMessage->expects($this->exactly(3))
+		$parentMessage->expects($this->exactly(4))
 			->method('getMessageType')
 			->willReturn('comment');
 		$parentMessage->expects($this->exactly(2))
@@ -294,7 +295,7 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getMessageParameters')
 			->willReturn(['arg' => 'uments']);
-		$chatMessage->expects($this->once())
+		$chatMessage->expects($this->exactly(2))
 			->method('getMessageType')
 			->willReturn('comment');
 		$chatMessage->expects($this->once())
@@ -332,6 +333,7 @@ class ChatControllerTest extends TestCase {
 			'message' => 'parsedMessage',
 			'messageParameters' => ['arg' => 'uments'],
 			'systemMessage' => '',
+			'messageType' => 'comment',
 			'parent' => [
 				'id' => 23,
 				'token' => 'testToken',
@@ -342,6 +344,7 @@ class ChatControllerTest extends TestCase {
 				'message' => 'parsedMessage2',
 				'messageParameters' => ['arg' => 'uments2'],
 				'systemMessage' => '',
+				'messageType' => 'comment',
 			]
 		], Http::STATUS_CREATED);
 
@@ -459,7 +462,7 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getMessageParameters')
 			->willReturn(['arg' => 'uments2']);
-		$chatMessage->expects($this->once())
+		$chatMessage->expects($this->exactly(2))
 			->method('getMessageType')
 			->willReturn('comment');
 		$chatMessage->expects($this->once())
@@ -494,6 +497,7 @@ class ChatControllerTest extends TestCase {
 			'message' => 'parsedMessage2',
 			'messageParameters' => ['arg' => 'uments2'],
 			'systemMessage' => '',
+			'messageType' => 'comment',
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -546,7 +550,7 @@ class ChatControllerTest extends TestCase {
 		$chatMessage->expects($this->once())
 			->method('getMessageParameters')
 			->willReturn(['arg' => 'uments3']);
-		$chatMessage->expects($this->once())
+		$chatMessage->expects($this->exactly(2))
 			->method('getMessageType')
 			->willReturn('comment');
 		$chatMessage->expects($this->once())
@@ -581,6 +585,7 @@ class ChatControllerTest extends TestCase {
 			'message' => 'parsedMessage3',
 			'messageParameters' => ['arg' => 'uments3'],
 			'systemMessage' => '',
+			'messageType' => 'comment',
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -630,7 +635,7 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getMessageParameters')
 					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->once())
+				$chatMessage->expects($this->exactly(2))
 					->method('getMessageType')
 					->willReturn('comment');
 				$chatMessage->expects($this->once())
@@ -654,10 +659,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => ''],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '']
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment']
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -708,7 +713,7 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getMessageParameters')
 					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->once())
+				$chatMessage->expects($this->exactly(2))
 					->method('getMessageType')
 					->willReturn('comment');
 				$chatMessage->expects($this->once())
@@ -732,10 +737,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => ''],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '']
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment']
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -789,7 +794,7 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getMessageParameters')
 					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->once())
+				$chatMessage->expects($this->exactly(2))
 					->method('getMessageType')
 					->willReturn('comment');
 				$chatMessage->expects($this->once())
@@ -813,10 +818,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => ''],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '']
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment']
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -878,7 +883,7 @@ class ChatControllerTest extends TestCase {
 				$chatMessage->expects($this->once())
 					->method('getMessageParameters')
 					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->once())
+				$chatMessage->expects($this->exactly(2))
 					->method('getMessageType')
 					->willReturn('comment');
 				$chatMessage->expects($this->once())
@@ -902,10 +907,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
 		$expected = new DataResponse([
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => ''],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => ''],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => ''],
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => ''],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 111);
 
