@@ -639,6 +639,13 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			}
 		}, $actual);
 
+		foreach ($messages as $message) {
+			// Include the received messages in the list of messages used for
+			// replies; this is needed to get special messages not explicitly
+			// sent like those for shared files.
+			self::$messages[$message['message']] = $message['id'];
+		}
+
 		if ($formData === null) {
 			PHPUnit_Framework_Assert::assertEmpty($messages);
 			return;
@@ -646,6 +653,11 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
 
 		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
+		for ($i = 0; $i < count($formData->getHash()); $i++) {
+			if ($formData->getHash()[$i]['messageParameters'] === '"IGNORE"') {
+				$messages[$i]['messageParameters'] = 'IGNORE';
+			}
+		}
 		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],

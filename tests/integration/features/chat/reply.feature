@@ -62,6 +62,34 @@ Feature: chat/reply
 
 
 
+  Scenario: user can reply to shared file messages
+    Given user "participant1" creates room "group room"
+      | roomType | 2 |
+      | invite   | attendees1 |
+    And user "participant1" shares "welcome.txt" with room "group room"
+    # The messages need to be got so the file message is added to the list of
+    # known messages to reply to.
+    # The file message parameters are not relevant for this test and are quite
+    # large, so they are simply ignored.
+    And user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message | messageParameters | parentMessage |
+      | group room | users     | participant1 | participant1-displayname | {file}  | "IGNORE"          |               |
+    When user "participant1" sends reply "Message X-1" on message "{file}" to room "group room" with 201
+    And user "participant2" sends reply "Message X-2" on message "{file}" to room "group room" with 201
+    Then user "participant1" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message X-2 | []                | {file}        |
+      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        |
+      | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               |
+    And user "participant2" sees the following messages in room "group room" with 200
+      | room       | actorType | actorId      | actorDisplayName         | message     | messageParameters | parentMessage |
+      | group room | users     | participant2 | participant2-displayname | Message X-2 | []                | {file}        |
+      | group room | users     | participant1 | participant1-displayname | Message X-1 | []                | {file}        |
+      | group room | users     | participant1 | participant1-displayname | {file}      | "IGNORE"          |               |
+
   Scenario: user can not reply to commands
     Given user "participant1" creates room "group room"
       | roomType | 2 |
