@@ -348,7 +348,7 @@ class ChatController extends AEnvironmentAwareController {
 			'timestamp' => $message->getComment()->getCreationDateTime()->getTimestamp(),
 			'message' => $message->getMessage(),
 			'messageParameters' => $message->getMessageParameters(),
-			'systemMessage' => $message->getMessageType() === 'system' ? $message->getComment()->getMessage() : '',
+			'systemMessage' => $message->getMessageType() === 'system' ? $message->getMessageRaw() : '',
 		];
 	}
 

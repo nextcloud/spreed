@@ -52,6 +52,9 @@ class Message {
 	/** @var string */
 	protected $message = '';
 
+	/** @var string */
+	protected $rawMessage = '';
+
 	/** @var array */
 	protected $parameters = [];
 
@@ -106,9 +109,10 @@ class Message {
 		return $this->visible;
 	}
 
-	public function setMessage(string $message, array $parameters): void {
+	public function setMessage(string $message, array $parameters, string $rawMessage = ''): void {
 		$this->message = $message;
 		$this->parameters = $parameters;
+		$this->rawMessage = $rawMessage;
 	}
 
 	public function getMessage(): string {
@@ -117,6 +121,10 @@ class Message {
 
 	public function getMessageParameters(): array {
 		return $this->parameters;
+	}
+
+	public function getMessageRaw(): string {
+		return $this->rawMessage;
 	}
 
 	public function setMessageType(string $type): void {
