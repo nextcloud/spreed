@@ -46,14 +46,14 @@ class WebinaryController extends AEnvironmentAwareController {
 	 * @RequireModeratorParticipant
 	 *
 	 * @param int $state
-	 * @param string $timer
+	 * @param int|null $timer
 	 * @return DataResponse
 	 */
-	public function setLobby(int $state, ?string $timer = null): DataResponse {
+	public function setLobby(int $state, ?int $timer = null): DataResponse {
 		$timerDateTime = null;
-		if (trim((string) $timer) !== '') {
+		if ($timer !== null && $timer > 0) {
 			try {
-				$timerDateTime = $this->timeFactory->getDateTime($timer);
+				$timerDateTime = $this->timeFactory->getDateTime('@' . $timer);
 				$timerDateTime->setTimezone(new \DateTimeZone('UTC'));
 			} catch (\Exception $e) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);

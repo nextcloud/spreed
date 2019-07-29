@@ -204,9 +204,9 @@ class RoomController extends AEnvironmentAwareController {
 
 		$lobbyTimer = $room->getLobbyTimer();
 		if ($lobbyTimer instanceof \DateTimeInterface) {
-			$lobbyTimer = $lobbyTimer->format(\DateTime::ATOM);
+			$lobbyTimer = $lobbyTimer->getTimestamp();
 		} else {
-			$lobbyTimer = '';
+			$lobbyTimer = 0;
 		}
 
 		$roomData = array_merge($roomData, [
