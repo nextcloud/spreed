@@ -179,7 +179,9 @@ class PageController extends Controller {
 						$this->talkSession->setPasswordForRoom($token, $token);
 					} else {
 						if ($passwordVerification['url'] === '') {
-							return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+							return new TemplateResponse($this->appName, 'authenticate', [
+								'wrongpw' => $password !== '',
+							], 'guest');
 						}
 
 						return new RedirectResponse($passwordVerification['url']);
@@ -232,7 +234,9 @@ class PageController extends Controller {
 				$this->talkSession->setPasswordForRoom($token, $token);
 			} else {
 				if ($passwordVerification['url'] === '') {
-					return new TemplateResponse($this->appName, 'authenticate', [], 'guest');
+					return new TemplateResponse($this->appName, 'authenticate', [
+						'wrongpw' => $password !== '',
+					], 'guest');
 				}
 
 				return new RedirectResponse($passwordVerification['url']);
