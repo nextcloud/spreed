@@ -458,10 +458,10 @@
 			 * copied from OCP.Comments and adjusted accordingly.
 			 */
 			// var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
-			var urlRegex = /(\s|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|$)/ig;
+			var urlRegex = /(\s|\(|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|\)|$)/ig;
 			return message.replace(urlRegex, function (_, leadingSpace, protocol, url) {
 				var trailingClosingBracket = '';
-				if (url.substr(-1) === ')' && url.indexOf('(') === -1) {
+				if (url.substr(-1) === ')' && (url.indexOf('(') === -1 || leadingSpace === '(')) {
 					url = url.substr(0, url.length - 1);
 					trailingClosingBracket = ')';
 				}
