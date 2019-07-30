@@ -138,16 +138,21 @@ class ChatManager {
 	 * @param string $actorType
 	 * @param string $actorId
 	 * @param string $message
+	 * @param IComment|null $replyTo
 	 * @param \DateTime $creationDateTime
 	 * @return IComment
 	 */
-	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime): IComment {
+	public function sendMessage(Room $chat, Participant $participant, string $actorType, string $actorId, string $message, \DateTime $creationDateTime, ?IComment $replyTo): IComment {
 		$comment = $this->commentsManager->create($actorType, $actorId, 'chat', (string) $chat->getId());
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		// A verb ('comment', 'like'...) must be provided to be able to save a
 		// comment
 		$comment->setVerb('comment');
+
+		if ($replyTo instanceof IComment) {
+			$comment->setParentId($replyTo->getId());
+		}
 
 		$this->dispatcher->dispatch(self::class . '::preSendMessage', new GenericEvent($chat, [
 			'comment' => $comment,
@@ -161,13 +166,18 @@ class ChatManager {
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-			$mentionedUsers = $this->notifier->notifyMentionedUsers($chat, $comment);
-			if (!empty($mentionedUsers)) {
-				$chat->markUsersAsMentioned($mentionedUsers, (int) $comment->getId());
+			$alreadyNotifiedUsers = [];
+			if ($replyTo instanceof IComment) {
+				$alreadyNotifiedUsers = $this->notifier->notifyReplyToAuthor($chat, $comment, $replyTo);
+			}
+
+			$alreadyNotifiedUsers = $this->notifier->notifyMentionedUsers($chat, $comment, $alreadyNotifiedUsers);
+			if (!empty($alreadyNotifiedUsers)) {
+				$chat->markUsersAsMentioned($alreadyNotifiedUsers, (int) $comment->getId());
 			}
 
 			// User was not mentioned, send a normal notification
-			$this->notifier->notifyOtherParticipant($chat, $comment, $mentionedUsers);
+			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers);
 
 			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
 				'comment' => $comment,
@@ -175,6 +185,22 @@ class ChatManager {
 				'participant' => $participant,
 			]));
 		} catch (NotFoundException $e) {
+		}
+
+		return $comment;
+	}
+
+	/**
+	 * @param Room $chat
+	 * @param string $parentId
+	 * @return IComment
+	 * @throws NotFoundException
+	 */
+	public function getParentComment(Room $chat, string $parentId): IComment {
+		$comment = $this->commentsManager->get($parentId);
+
+		if ($comment->getObjectType() !== 'chat' || $comment->getObjectId() !== (string) $chat->getId()) {
+			throw new NotFoundException('Parent not found in the right context');
 		}
 
 		return $comment;

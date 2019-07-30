@@ -235,8 +235,7 @@ class SystemMessage {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
 
-		$comment->setMessage($message, ChatManager::MAX_CHAT_LENGTH);
-		$chatMessage->setMessage($parsedMessage, $parsedParameters);
+		$chatMessage->setMessage($parsedMessage, $parsedParameters, $message);
 	}
 
 	/**

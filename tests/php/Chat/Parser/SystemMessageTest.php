@@ -368,17 +368,13 @@ class SystemMessageTest extends TestCase {
 				->method('getFileFromShare');
 		}
 
-		$comment->expects($this->once())
-			->method('setMessage')
-			->with($message);
-
 		/** @var Room|MockObject $room */
 		$room = $this->createMock(Room::class);
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
 		$chatMessage->setMessage(json_encode([
 			'message' => $message,
 			'parameters' => $parameters,
-		]), []);
+		]), [], $message);
 
 		$parser->parseMessage($chatMessage);
 

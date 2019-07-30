@@ -327,7 +327,8 @@ class RoomController extends AEnvironmentAwareController {
 			'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
 			'message' => $message->getMessage(),
 			'messageParameters' => $message->getMessageParameters(),
-			'systemMessage' => $message->getMessageType() === 'system' ? $lastMessage->getMessage() : '',
+			'systemMessage' => $message->getMessageType() === 'system' ? $message->getMessageRaw() : '',
+			'messageType' => $message->getMessageType(),
 		];
 	}
 

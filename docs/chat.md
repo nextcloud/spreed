@@ -40,6 +40,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `actorDisplayName` | string | Display name of the message author
         `timestamp` | int | Timestamp in seconds and UTC time zone
         `systemMessage` | string | empty for normal chat message or the type of the system message (untranslated)
+        `messageType` | string | Currently known types are `comment`, `system` and `command`
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
 
@@ -53,6 +54,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     ------|------|------------
     `message` | string | The message the user wants to say
     `actorDisplayName` | string | Guest display name (ignored for logged in users)
+    `replyTo` | int | The message ID this message is a reply to (only allowed for messages from the same conversation and when the message type is not `system` or `command`)
 
 * Response:
     - Header:
