@@ -1125,7 +1125,7 @@ var spreedPeerConnectionTable = [];
 			}
 		});
 
-		OCA.SpreedMe.webrtc.on('videoAdded', function(video, peer) {
+		OCA.SpreedMe.webrtc.on('videoAdded', function(video, audio, peer) {
 			console.log('VIDEO ADDED', peer);
 			if (peer.type === 'screen') {
 				OCA.SpreedMe.webrtc.emit('screenAdded', video, peer);
@@ -1145,6 +1145,7 @@ var spreedPeerConnectionTable = [];
 				videoView.setParticipant(userId, participantName);
 
 				videoView.setVideoElement(video);
+				videoView.setAudioElement(audio);
 			}
 
 			var otherSpeakerPromoted = false;
