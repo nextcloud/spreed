@@ -22,8 +22,10 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Collaboration\Resources;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCP\Collaboration\Resources\IProvider;
 use OCP\Collaboration\Resources\IResource;
@@ -76,14 +78,25 @@ class ConversationProvider implements IProvider {
 	}
 
 	public function canAccessResource(IResource $resource, IUser $user = null): bool {
+		$userId = $user instanceof IUser ? $user->getUID() : null;
+		if ($userId === null) {
+			throw new ResourceException('Guests are not supported at the moment');
+		}
+
 		try {
 			$room = $this->manager->getRoomForParticipantByToken(
 				$resource->getId(),
-				$user instanceof IUser ? $user->getUID() : null
+				$userId
 			);
-			return $user instanceof IUser || $room->getType() === Room::PUBLIC_CALL;
+
+			// Logged in users need to have a regular participant,
+			// before they can do anything with the room.
+			$participant = $room->getParticipant($userId);
+			return $participant->getParticipantType() !== Participant::USER_SELF_JOINED;
 		} catch (RoomNotFoundException $e) {
 			throw new ResourceException('Conversation not found');
+		} catch (ParticipantNotFoundException $e) {
+			throw new ResourceException('Participant not found');
 		}
 	}
 

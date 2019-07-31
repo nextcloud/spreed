@@ -54,6 +54,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<repair-steps>
 		<post-migration>
 			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+			<step>OCA\Spreed\Migration\ClearResourceAccessCache</step>
 		</post-migration>
 		<install>
 			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
