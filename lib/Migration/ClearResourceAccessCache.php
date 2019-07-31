@@ -58,6 +58,7 @@ class ClearResourceAccessCache implements IRepairStep {
 
 		if ($invalidatedCache === self::INVALIDATIONS) {
 			$output->info('Invalidation not required');
+			return;
 		}
 
 		$this->manager->invalidateAccessCacheForProvider($this->provider);
