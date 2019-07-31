@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 6.0.4 – 2019-07-31
+### Fixed
+- Audio missing in chromium when enabling video until a video is received
+  [#2058](https://github.com/nextcloud/spreed/pull/2058)
+- Correctly handle password public conversations in projects
+  [#2057](https://github.com/nextcloud/spreed/pull/2057)
+- Update the nextcloud-vue-collections library for better projects handling
+  [#2054](https://github.com/nextcloud/spreed/pull/2054)
+- Fix pending reconnections after WebSocket is reconnected
+  [#2033](https://github.com/nextcloud/spreed/pull/2033)
+
 ## 6.0.3 – 2019-07-22
 ### Changed
 - Chat messages can now be longer than 1.000 characters
