@@ -7862,7 +7862,9 @@ function shimLocalStreamsAPI(window) {
       });
     };
 
-    window.RTCPeerConnection.prototype.addTrack = function addTrack(track, stream) {
+    window.RTCPeerConnection.prototype.addTrack = function addTrack(track) {
+      var stream = arguments[1];
+
       if (stream) {
         if (!this._localStreams) {
           this._localStreams = [stream];
@@ -7871,7 +7873,7 @@ function shimLocalStreamsAPI(window) {
         }
       }
 
-      return _addTrack.call(this, track, stream);
+      return _addTrack.apply(this, arguments);
     };
   }
 
@@ -8124,9 +8126,7 @@ function shimRTCIceServerUrls(window) {
 
 function shimTrackEventTransceiver(window) {
   // Add event.transceiver member over deprecated event.receiver
-  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCPeerConnection && 'receiver' in window.RTCTrackEvent.prototype && // can't check 'transceiver' in window.RTCTrackEvent.prototype, as it is
-  // defined for some reason even when window.RTCTransceiver is not.
-  !window.RTCTransceiver) {
+  if ((typeof window === 'undefined' ? 'undefined' : _typeof(window)) === 'object' && window.RTCTrackEvent && 'receiver' in window.RTCTrackEvent.prototype && !('transceiver' in window.RTCTrackEvent.prototype)) {
     Object.defineProperty(window.RTCTrackEvent.prototype, 'transceiver', {
       get: function get() {
         return {
