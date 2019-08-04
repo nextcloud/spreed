@@ -7459,27 +7459,30 @@ function shimPeerConnection(window) {
       window.RTCPeerConnection.prototype[method] = methodObj[method];
     });
   } // support for addIceCandidate(null or undefined)
+  // as well as ignoring {sdpMid, candidate: ""}
 
 
-  var nativeAddIceCandidate = window.RTCPeerConnection.prototype.addIceCandidate;
+  if (browserDetails.version < 68) {
+    var nativeAddIceCandidate = window.RTCPeerConnection.prototype.addIceCandidate;
 
-  window.RTCPeerConnection.prototype.addIceCandidate = function addIceCandidate() {
-    if (!arguments[0]) {
-      if (arguments[1]) {
-        arguments[1].apply(null);
+    window.RTCPeerConnection.prototype.addIceCandidate = function addIceCandidate() {
+      if (!arguments[0]) {
+        if (arguments[1]) {
+          arguments[1].apply(null);
+        }
+
+        return Promise.resolve();
+      } // Firefox 68+ emits and processes {candidate: "", ...}, ignore
+      // in older versions.
+
+
+      if (arguments[0] && arguments[0].candidate === '') {
+        return Promise.resolve();
       }
 
-      return Promise.resolve();
-    } // Firefox 68+ emits and processes {candidate: "", ...}, ignore
-    // in older versions.
-
-
-    if (browserDetails.version < 68 && arguments[0] && arguments[0].candidate === '') {
-      return Promise.resolve();
-    }
-
-    return nativeAddIceCandidate.apply(this, arguments);
-  };
+      return nativeAddIceCandidate.apply(this, arguments);
+    };
+  }
 
   var modernStatsTypes = {
     inboundrtp: 'inbound-rtp',
