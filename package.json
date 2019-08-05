@@ -24,7 +24,7 @@
     "hark": "^1.2.3",
     "mockconsole": "0.0.1",
     "util": "^0.12.1",
-    "webrtc-adapter": "^7.2.8",
+    "webrtc-adapter": "^7.2.9",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.1"
   },
