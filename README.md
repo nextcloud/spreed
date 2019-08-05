@@ -39,8 +39,9 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 ## Development setup
 
 1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
-2. Run `make dev-setup`
-3. Then activate it through the apps management. :tada:
+2. Run `make dev-setup` to install the dependencies;
+3. Run `make build-js`
+4. Then activate it through the apps management. :tada:
 
 We are also available on [Freenode IRC #nextcloud-talk](https://webchat.freenode.net/?channels=nextcloud-talk), if you want to join the discussion.
 
