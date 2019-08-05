@@ -39,9 +39,10 @@ Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 ## Development setup
 
 1. Simply clone this repository into the `apps` folder of your Nextcloud development instance.
-2. Run `make dev-setup`
-3. Then activate it through the apps management. :tada:
-4. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`
+2. Run `make dev-setup` to install the dependencies;
+3. Run `make build-js`
+4. Then activate it through the apps management. :tada:
+5. To build the docs locally, install mkdocs locally: `apt install mkdocs mkdocs-bootstrap`
 
 We are also available on [our public Talk team conversation](https://cloud.nextcloud.com/call/c7fz9qpr), if you want to join the discussion.
 
