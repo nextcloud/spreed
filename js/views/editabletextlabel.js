@@ -114,6 +114,10 @@
 			this.mergeOptions(options, ['model', 'modelAttribute', 'modelSaveOptions', 'labelPlaceholder']);
 
 			this._editionEnabled = true;
+
+			// Needed to use "getUI" before the view is first rendered (even if
+			// no elements would exist at that point).
+			this.bindUIElements();
 		},
 
 		setModelAttribute: function(modelAttribute) {
