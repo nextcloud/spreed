@@ -206,6 +206,8 @@ OC.L10N.register(
     "{user} sent a message in conversation {call}" : "{user} ha enviado un mensaje en la conversación {call}",
     "A deleted user sent a message in conversation {call}" : "Un usuario eliminado envió un mensaje a la conversación {call}",
     "A guest sent a message in conversation {call}" : "Un invitado envió un mensaje a la conversación {call}",
+    "{user} replied to your private message" : "{user} respondió a su mensaje privado",
+    "{user} replied to your message in conversation {call}" : "{user} respondió a su mensaje privado en la conversación {call}",
     "{user} mentioned you in a private conversation" : "{user} te ha mencionado en una conversación privada",
     "{user} mentioned you in conversation {call}" : "{user} te ha mencionado en {call}",
     "A deleted user mentioned you in conversation {call}" : "Un usuario eliminado te ha mencionado en {call}",
