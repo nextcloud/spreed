@@ -32,7 +32,7 @@
     "babel-eslint": "^10.0.2",
     "babel-loader": "^8.0.6",
     "browserslist-config-nextcloud": "0.0.1",
-    "css-loader": "^3.1.0",
+    "css-loader": "^3.2.0",
     "eslint": "^5.16.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-import-resolver-webpack": "^0.11.1",
