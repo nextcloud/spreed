@@ -55,6 +55,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IServerContainer;
 use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
+use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -119,6 +120,7 @@ class Application extends App {
 		/** @var IEventDispatcher $newDispatcher */
 		$newDispatcher = $server->query(IEventDispatcher::class);
 		$newDispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
+		$newDispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
 
 		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
