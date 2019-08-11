@@ -18,7 +18,7 @@
     "attachmediastream": "^2.1.0",
     "babel-plugin-add-module-exports": "^1.0.2",
     "babelify": "^10.0.0",
-    "browserify": "^16.3.0",
+    "browserify": "^16.5.0",
     "browserslist-config-nextcloud": "0.0.1",
     "handlebars": "^4.1.2",
     "hark": "^1.2.3",
