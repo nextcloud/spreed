@@ -189,6 +189,7 @@ Feature: chat/mentions
   Scenario: get mentions in a file room with no other joined participant
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     When user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant1" joins room "file welcome.txt room" with 200
     And user "participant1" is participant of room "file welcome.txt room"
     And user "participant2" is not participant of room "file welcome.txt room"
     Then user "participant1" gets the following candidate mentions in room "file welcome.txt room" for "" with 200
@@ -199,8 +200,9 @@ Feature: chat/mentions
 
   Scenario: get mentions in a file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
-    When user "participant1" gets the room for path "welcome.txt" with 200
-    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    When user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    And user "participant2" joins room "file welcome (2).txt room" with 200
     And user "participant1" is participant of room "file welcome (2).txt room"
     And user "participant2" is participant of room "file welcome (2).txt room"
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 200
@@ -214,8 +216,9 @@ Feature: chat/mentions
 
   Scenario: get matched mentions in a file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
-    When user "participant1" gets the room for path "welcome.txt" with 200
-    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    When user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    And user "participant2" joins room "file welcome (2).txt room" with 200
     And user "participant1" is participant of room "file welcome (2).txt room"
     And user "participant2" is participant of room "file welcome (2).txt room"
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "part" with 200
@@ -227,8 +230,9 @@ Feature: chat/mentions
 
   Scenario: get unmatched mentions in a file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
-    When user "participant1" gets the room for path "welcome.txt" with 200
-    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    When user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    And user "participant2" joins room "file welcome (2).txt room" with 200
     And user "participant1" is participant of room "file welcome (2).txt room"
     And user "participant2" is participant of room "file welcome (2).txt room"
     Then user "participant1" gets the following candidate mentions in room "file welcome (2).txt room" for "unknown" with 200
@@ -236,8 +240,9 @@ Feature: chat/mentions
 
   Scenario: get mentions in a file room with a participant without access to the file
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
-    When user "participant1" gets the room for path "welcome.txt" with 200
-    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    When user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    And user "participant2" joins room "file welcome (2).txt room" with 200
     And user "participant1" is participant of room "file welcome (2).txt room"
     And user "participant2" is participant of room "file welcome (2).txt room"
     Then user "participant3" gets the following candidate mentions in room "file welcome (2).txt room" for "" with 404
@@ -245,6 +250,7 @@ Feature: chat/mentions
   Scenario: mention a participant with access to the file but not joined in a file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant1" joins room "file welcome.txt room" with 200
     And user "participant1" is participant of room "file welcome.txt room"
     And user "participant2" is not participant of room "file welcome.txt room"
     When user "participant1" sends message "hi @participant2" to room "file welcome.txt room" with 201
