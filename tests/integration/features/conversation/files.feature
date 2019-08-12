@@ -117,6 +117,15 @@ Feature: conversation/files
     When user "participant2" joins room "file test/renamed.txt room" with 200
     Then user "participant2" is participant of room "file test/renamed.txt room"
 
+  Scenario: user with access to a file in a reshared folder can join its room
+    Given user "participant1" creates folder "/test"
+    And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
+    And user "participant1" shares "test" with user "participant2" with OCS 100
+    And user "participant2" shares "test" with user "participant3" with OCS 100
+    And user "participant3" gets the room for path "test/renamed.txt" with 200
+    When user "participant3" joins room "file test/renamed.txt room" with 200
+    Then user "participant3" is participant of room "file test/renamed.txt room"
+
   Scenario: owner of a no longer shared file can not join its room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" gets the room for path "welcome (2).txt" with 200
@@ -142,6 +151,30 @@ Feature: conversation/files
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant1" gets the room for path "welcome.txt" with 200
     When user "guest" joins room "file welcome.txt room" with 404
+
+
+
+  Scenario: join room for file shared with group
+    Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    When user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    Then user "participant1" is participant of room "file welcome (2).txt room"
+    And user "participant2" is participant of room "file welcome (2).txt room"
+
+  Scenario: join room for file shared with user and group
+    Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
+    And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant3" gets the room for path "welcome (2).txt" with 200
+    When user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    And user "participant3" joins room "file welcome.txt room" with 200
+    Then user "participant1" is participant of room "file welcome (2).txt room"
+    And user "participant2" is participant of room "file welcome (2).txt room"
+    And user "participant3" is participant of room "file welcome (2).txt room"
 
 
 
