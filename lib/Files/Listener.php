@@ -23,6 +23,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Files;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\UnauthorizedException;
 use OCA\Spreed\Room;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -61,6 +62,7 @@ class Listener {
 
 			try {
 				$listener->preventUsersWithoutDirectAccessToTheFileFromJoining($room, $event->getArgument('userId'));
+				$listener->addUserAsPersistentParticipant($room, $event->getArgument('userId'));
 			} catch (UnauthorizedException $e) {
 				$event->setArgument('cancel', true);
 			}
@@ -101,6 +103,27 @@ class Listener {
 		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
 		if (!$share) {
 			throw new UnauthorizedException('User does not have direct access to the file');
+		}
+	}
+
+	/**
+	 * Add user as a persistent participant of a file room.
+	 *
+	 * This method should be called before a user joins a room, but only if the
+	 * user should be able to join the room.
+	 *
+	 * @param Room $room
+	 * @param string $userId
+	 */
+	public function addUserAsPersistentParticipant(Room $room, string $userId) {
+		if ($room->getObjectType() !== 'file') {
+			return;
+		}
+
+		try {
+			$room->getParticipant($userId);
+		} catch (ParticipantNotFoundException $e) {
+			$room->addUsers(['userId' => $userId]);
 		}
 	}
 

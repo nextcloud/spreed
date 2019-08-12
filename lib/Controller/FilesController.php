@@ -104,12 +104,6 @@ class FilesController extends OCSController {
 			$room = $this->manager->createPublicRoom($name, 'file', $fileId);
 		}
 
-		try {
-			$room->getParticipant($this->currentUser);
-		} catch (ParticipantNotFoundException $e) {
-			$room->addUsers(['userId' => $this->currentUser]);
-		}
-
 		return new DataResponse([
 			'token' => $room->getToken()
 		]);
