@@ -39,6 +39,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	protected static $tokenToIdentifier;
 	/** @var array[] */
 	protected static $sessionIdToUser;
+	/** @var array[] */
+	protected static $userToSessionId;
 
 	/** @var string */
 	protected $currentUser;
@@ -80,6 +82,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		self::$identifierToToken = [];
 		self::$tokenToIdentifier = [];
 		self::$sessionIdToUser = [];
+		self::$userToSessionId = [];
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
@@ -162,6 +165,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $identifier
 	 */
 	public function userIsParticipantOfRoom($user, $isParticipant, $identifier) {
+		if (substr($user, 0, strlen('guest')) === 'guest') {
+			$this->guestIsParticipantOfRoom($user, $isParticipant, $identifier);
+
+			return;
+		}
+
 		$this->setCurrentUser($user);
 		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
 		$this->assertStatusCode($this->response, 200);
@@ -186,6 +195,37 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		PHPUnit_Framework_Assert::assertEquals($isParticipant, false, 'Room ' . $identifier . ' not found in user´s room list');
+	}
+
+	/**
+	 * @param string $guest
+	 * @param string $isParticipant
+	 * @param string $identifier
+	 */
+	private function guestIsParticipantOfRoom($guest, $isParticipant, $identifier) {
+		$this->setCurrentUser($guest);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
+
+		$response = $this->getDataFromResponse($this->response);
+
+		$isParticipant = $isParticipant === 'is';
+
+		if ($isParticipant) {
+			$this->assertStatusCode($this->response, 200);
+			PHPUnit_Framework_Assert::assertEquals(self::$userToSessionId[$guest], sha1($response['sessionId']));
+
+			return;
+		}
+
+		if ($this->response->getStatusCode() === 200) {
+			// Public rooms can always be got, but if the guest is not a
+			// participant the sessionId will be 0.
+			PHPUnit_Framework_Assert::assertEquals(0, $response['sessionId']);
+
+			return;
+		}
+
+		$this->assertStatusCode($this->response, 404);
 	}
 
 	/**
@@ -342,6 +382,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// database, though, so the ID stored in the database and returned
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
+			self::$userToSessionId[$user] = sha1($response['sessionId']);
 		}
 	}
 
@@ -529,6 +570,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// database, though, so the ID stored in the database and returned
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
+			self::$userToSessionId[$user] = sha1($response['sessionId']);
 		}
 	}
 
