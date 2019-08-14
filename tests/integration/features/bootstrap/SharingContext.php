@@ -886,6 +886,13 @@ class SharingContext implements Context {
 	/**
 	 * @return string
 	 */
+	public function getLastShareToken(): string {
+		return (string)$this->lastCreatedShareData->data[0]->token;
+	}
+
+	/**
+	 * @return string
+	 */
 	private function getLastShareId(): string {
 		return (string)$this->lastCreatedShareData->data[0]->id;
 	}
