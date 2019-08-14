@@ -23,6 +23,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
@@ -65,6 +66,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array */
 	protected $createdGroups = [];
 
+	/** @var SharingContext */
+	private $sharingContext;
+
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
 	}
@@ -89,6 +93,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
+	}
+
+	/**
+	 * @BeforeScenario
+	 */
+	public function getOtherRequiredSiblingContexts(BeforeScenarioScope $scope) {
+		$environment = $scope->getEnvironment();
+
+		$this->sharingContext = $environment->getContext("SharingContext");
 	}
 
 	/**
@@ -360,6 +373,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" gets the room for last share with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 */
+	public function userGetsTheRoomForLastShare($user, $statusCode) {
+		$shareToken = $this->sharingContext->getLastShareToken();
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/publicshare/' . $shareToken);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+
+		$identifier = 'file last share room';
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
 	/**
