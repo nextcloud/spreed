@@ -1108,6 +1108,51 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 */
 
 	/**
+	 * @Given /^user "([^"]*)" logs in$/
+	 */
+	public function userLogsIn(string $user) {
+		$loginUrl = $this->baseUrl . '/login';
+
+		$cookieJar = $this->getUserCookieJar($user);
+
+		// Request a new session and extract CSRF token
+		$client = new Client();
+		$this->response = $client->get(
+			$loginUrl,
+			[
+				'cookies' => $cookieJar,
+			]
+		);
+
+		$requestToken = $this->extractRequestTokenFromResponse($this->response);
+
+		// Login and extract new token
+		$password = ($user === 'admin') ? 'admin' : '123456';
+		$client = new Client();
+		$this->response = $client->post(
+			$loginUrl,
+			[
+				'body' => [
+					'user' => $user,
+					'password' => $password,
+					'requesttoken' => $requestToken,
+				],
+				'cookies' => $cookieJar,
+			]
+		);
+
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	/**
+	 * @param ResponseInterface $response
+	 * @return string
+	 */
+	private function extractRequestTokenFromResponse(ResponseInterface $response): string {
+		return substr(preg_replace('/(.*)data-requesttoken="(.*)">(.*)/sm', '\2', $response->getBody()->getContents()), 0, 89);
+	}
+
+	/**
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
 	 * @param string $verb
 	 * @param string $url
