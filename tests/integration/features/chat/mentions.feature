@@ -321,3 +321,199 @@ Feature: chat/mentions
     And user "participant2" is not participant of room "file welcome.txt room"
     When user "participant1" sends message "hi @participant2" to room "file welcome.txt room" with 201
     Then user "participant2" is participant of room "file welcome.txt room"
+
+
+
+  Scenario: get mentions in a room for a file shared by link with no other joined participant
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    When user "participant1" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant2" is not participant of room "file last share room"
+    Then user "participant1" gets the following candidate mentions in room "file last share room" for "" with 200
+      | id           | label                    | source |
+      | all          | welcome.txt              | calls  |
+      | participant2 | participant2-displayname | users  |
+    And user "participant2" gets the following candidate mentions in room "file last share room" for "" with 404
+    And user "participant3" gets the following candidate mentions in room "file last share room" for "" with 404
+    And user "guest" gets the following candidate mentions in room "file last share room" for "" with 404
+
+  Scenario: get mentions in a room for a file shared by link
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" with user "participant4" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    When user "participant1" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    And user "participant2" joins room "file last share room" with 200
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant3" logs in
+    And user "participant3" gets the room for last share with 200
+    And user "participant3" joins room "file last share room" with 200
+    # Guests need to get the room (so the share token is stored in the session)
+    # to be able to join it.
+    And user "guest" gets the room for last share with 200
+    And user "guest" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant2" is participant of room "file last share room"
+    And user "participant3" is participant of room "file last share room"
+    And user "guest" is participant of room "file last share room"
+    Then user "participant1" gets the following candidate mentions in room "file last share room" for "" with 200
+      | id           | label                    | source |
+      | all          | welcome.txt              | calls  |
+      | participant2 | participant2-displayname | users  |
+      | participant4 | participant4-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+      | GUEST_ID     | Guest                    | guests |
+    And user "participant2" gets the following candidate mentions in room "file last share room" for "" with 200
+      | id           | label                    | source |
+      | all          | welcome.txt              | calls  |
+      | participant1 | participant1-displayname | users  |
+      | participant4 | participant4-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+      | GUEST_ID     | Guest                    | guests |
+    # Self-joined users can not mention users with access to the file that have
+    # not joined the room.
+    And user "participant3" gets the following candidate mentions in room "file last share room" for "" with 200
+      | id           | label                    | source |
+      | all          | welcome.txt              | calls  |
+      | participant1 | participant1-displayname | users  |
+      | participant2 | participant2-displayname | users  |
+      | GUEST_ID     | Guest                    | guests |
+    # Guests can not mention users with access to the file that have not joined
+    # the room.
+    And user "guest" gets the following candidate mentions in room "file last share room" for "" with 200
+      | id           | label                    | source |
+      | all          | welcome.txt              | calls  |
+      | participant1 | participant1-displayname | users  |
+      | participant2 | participant2-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+
+  Scenario: get matched mentions in a room for a file shared by link
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" with user "participant4" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    When user "participant2" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    And user "participant2" joins room "file last share room" with 200
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant3" logs in
+    And user "participant3" gets the room for last share with 200
+    And user "participant3" joins room "file last share room" with 200
+    # Guests need to get the room (so the share token is stored in the session)
+    # to be able to join it.
+    And user "guest" gets the room for last share with 200
+    And user "guest" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant2" is participant of room "file last share room"
+    And user "participant3" is participant of room "file last share room"
+    And user "guest" is participant of room "file last share room"
+    Then user "participant1" gets the following candidate mentions in room "file last share room" for "part" with 200
+      | id           | label                    | source |
+      | participant2 | participant2-displayname | users  |
+      | participant4 | participant4-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+    And user "participant2" gets the following candidate mentions in room "file last share room" for "part" with 200
+      | id           | label                    | source |
+      | participant1 | participant1-displayname | users  |
+      | participant4 | participant4-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+    # Self-joined users can not mention users with access to the file that have
+    # not joined the room.
+    And user "participant3" gets the following candidate mentions in room "file last share room" for "part" with 200
+      | id           | label                    | source |
+      | participant1 | participant1-displayname | users  |
+      | participant2 | participant2-displayname | users  |
+    # Guests can not mention users with access to the file that have not joined
+    # the room.
+    And user "guest" gets the following candidate mentions in room "file last share room" for "part" with 200
+      | id           | label                    | source |
+      | participant1 | participant1-displayname | users  |
+      | participant2 | participant2-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+
+  Scenario: get unmatched mentions in a room for a file shared by link
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" with user "participant4" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    When user "participant2" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    And user "participant2" joins room "file last share room" with 200
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant3" logs in
+    And user "participant3" gets the room for last share with 200
+    And user "participant3" joins room "file last share room" with 200
+    # Guests need to get the room (so the share token is stored in the session)
+    # to be able to join it.
+    And user "guest" gets the room for last share with 200
+    And user "guest" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant2" is participant of room "file last share room"
+    And user "participant3" is participant of room "file last share room"
+    And user "guest" is participant of room "file last share room"
+    Then user "participant1" gets the following candidate mentions in room "file last share room" for "unknown" with 200
+    And user "participant2" gets the following candidate mentions in room "file last share room" for "unknown" with 200
+    And user "participant3" gets the following candidate mentions in room "file last share room" for "unknown" with 200
+    And user "guest" gets the following candidate mentions in room "file last share room" for "unknown" with 200
+
+  Scenario: get mentions in a room for a file shared by link with a participant without access to the file and not joined
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    When user "participant2" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    And user "participant2" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant2" is participant of room "file last share room"
+    Then user "participant3" gets the following candidate mentions in room "file last share room" for "" with 404
+    And user "guest" gets the following candidate mentions in room "file last share room" for "" with 404
+
+  Scenario: mention a participant with access to the file but not joined in a room for a file shared by link
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    And user "participant1" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant2" is not participant of room "file last share room"
+    When user "participant1" sends message "hi @participant2" to room "file last share room" with 201
+    Then user "participant2" is participant of room "file last share room"
+
+  Scenario: mention a participant with access to the file but not joined by self-joined user and guest in a room for a file shared by link
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant3" logs in
+    And user "participant3" gets the room for last share with 200
+    And user "participant3" joins room "file last share room" with 200
+    # Guests need to get the room (so the share token is stored in the session)
+    # to be able to join it.
+    And user "guest" gets the room for last share with 200
+    And user "guest" joins room "file last share room" with 200
+    And user "participant2" is not participant of room "file last share room"
+    When user "participant3" sends message "hi @participant2" to room "file last share room" with 201
+    And user "guest" sends message "hello @participant2" to room "file last share room" with 201
+    Then user "participant2" is not participant of room "file last share room"
+
+  Scenario: mention a participant without access to the file but joined in a room for a file shared by link
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+    And user "participant1" gets the room for last share with 200
+    And user "participant1" joins room "file last share room" with 200
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant3" logs in
+    And user "participant3" gets the room for last share with 200
+    And user "participant3" joins room "file last share room" with 200
+    And user "participant1" is participant of room "file last share room"
+    And user "participant3" is participant of room "file last share room"
+    When user "participant1" sends message "hi @participant3" to room "file last share room" with 201
+    And user "participant3" leaves room "file last share room" with 200
+    Then user "participant3" is not participant of room "file last share room"
