@@ -249,6 +249,16 @@ Feature: conversation/files
     When user "participant2" joins room "file last share room" with 200
     Then user "participant2" is participant of room "file last share room"
 
+  Scenario: user without access to a file shared by link can join its room
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant2" logs in
+    And user "participant2" gets the room for last share with 200
+    When user "participant2" joins room "file last share room" with 200
+    Then user "participant2" is participant of room "file last share room"
+
   Scenario: guest can join the room of a file shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
     And user "guest" gets the room for last share with 200
@@ -295,6 +305,18 @@ Feature: conversation/files
     And user "participant2" is participant of room "file last share room"
     When user "participant2" leaves room "file last share room" with 200
     Then user "participant2" is participant of room "file last share room"
+
+  Scenario: user without access to a file shared by link is removed from its room after leaving it
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant2" logs in
+    And user "participant2" gets the room for last share with 200
+    And user "participant2" joins room "file last share room" with 200
+    And user "participant2" is participant of room "file last share room"
+    When user "participant2" leaves room "file last share room" with 200
+    Then user "participant2" is not participant of room "file last share room"
 
   Scenario: guest is removed from the room of a file shared by link after leaving it
     Given user "participant1" shares "welcome.txt" by link with OCS 100
@@ -345,6 +367,20 @@ Feature: conversation/files
   Scenario: user with access to a file shared by link can join its room again after removing self from it
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant1" shares "welcome.txt" by link with OCS 100
+    And user "participant2" gets the room for last share with 200
+    And user "participant2" joins room "file last share room" with 200
+    And user "participant2" is participant of room "file last share room"
+    When user "participant2" removes themselves from room "file last share room" with 200
+    And user "participant2" is not participant of room "file last share room"
+    And user "participant2" joins room "file last share room" with 200
+    Then user "participant2" is participant of room "file last share room"
+
+  Scenario: user without access to a file shared by link can join its room again after removing self from it
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant2" logs in
     And user "participant2" gets the room for last share with 200
     And user "participant2" joins room "file last share room" with 200
     And user "participant2" is participant of room "file last share room"
@@ -408,6 +444,21 @@ Feature: conversation/files
     # available to other types of shares after the shared link is deleted.
     And user "participant2" joins room "file last share room" with 200
     And user "participant2" is participant of room "file last share room"
+
+  Scenario: user is not participant of room for file no longer shared by link and without access to it
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant2" logs in
+    And user "participant2" gets the room for last share with 200
+    And user "participant2" joins room "file last share room" with 200
+    And user "participant2" leaves room "file last share room" with 200
+    And user "participant2" is not participant of room "file last share room"
+    When user "participant1" deletes last share
+    Then user "participant2" is not participant of room "file last share room"
+    And user "participant2" joins room "file last share room" with 404
+    And user "participant2" is not participant of room "file last share room"
 
   Scenario: guest is not participant of room for file no longer shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
