@@ -84,8 +84,6 @@ class SearchPlugin implements ISearchPlugin {
 			if (!empty($usersWithFileAccess)) {
 				$this->searchUsers($search, $usersWithFileAccess, $searchResult);
 			}
-
-			return false;
 		}
 
 		$userIds = $guestSessionHashes = [];
@@ -113,10 +111,16 @@ class SearchPlugin implements ISearchPlugin {
 	protected function searchUsers(string $search, array $userIds, ISearchResult $searchResult): void {
 		$search = strtolower($search);
 
+		$type = new SearchResultType('users');
+
 		$matches = $exactMatches = [];
 		foreach ($userIds as $userId) {
 			if ($this->userId !== '' && $this->userId === $userId) {
 				// Do not suggest the current user
+				continue;
+			}
+
+			if ($searchResult->hasResult($type, $userId)) {
 				continue;
 			}
 
@@ -151,7 +155,6 @@ class SearchPlugin implements ISearchPlugin {
 			}
 		}
 
-		$type = new SearchResultType('users');
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
