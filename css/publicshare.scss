@@ -1,0 +1,413 @@
+/* Special layout to include the Talk sidebar */
+
+/* The standard layout defined in the server includes a fixed header with a
+ * sticky sidebar. This causes the scroll bar for the main area to appear to the
+ * right of the sidebar, which looks confusing for the chat. Thus that layout is
+ * overridden with a full set of flex containers to cascade parent element
+ * height to the main view to limit the vertical scroll bar only to it (same
+ * thing done for the sidebar and the chat view). */
+#body-user,
+#body-public {
+	display: flex;
+	flex-direction: column;
+}
+
+#body-user #header,
+#body-public #header {
+	/* Override fixed position from server to include it in the flex layout */
+	position: static;
+	flex-shrink: 0;
+}
+
+#content {
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Override "min-height: 100%" and "padding-top: 50px" set in server, as the
+	 * header is part of the flex layout and thus the whole body is not
+	 * available for the content. */
+	min-height: 0;
+	padding-top: 0;
+
+	/* Does not change anything in normal mode, but ensures that the element
+	 * will stretch to the full width in full screen mode. */
+	width: 100%;
+
+	/* Override margin used in server, as the header is part of the flex layout
+	 * and thus the content does not need to be pushed down. */
+	margin-top: 0;
+}
+
+#app-content {
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	flex-grow: 1;
+
+	margin-right: 0;
+}
+
+#files-public-content {
+	flex-grow: 1;
+}
+
+
+
+/* Properties based on the app-sidebar */
+#talk-sidebar {
+	position: relative;
+	flex-shrink: 0;
+	width: 27vw;
+	min-width: 300px;
+
+	background: var(--color-main-background);
+	border-left: 1px solid var(--color-border);
+
+	overflow-x: hidden;
+	overflow-y: auto;
+	z-index: 500;
+
+	transition: 300ms width ease-in-out,
+				300ms min-width ease-in-out;
+}
+
+#talk-sidebar.disappear {
+	width: 0;
+	min-width: 0;
+	border-left-width: 0;
+}
+
+
+
+/* Talk sidebar */
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#talk-sidebar #emptycontent {
+	position: relative;
+
+	margin-top: 10px;
+}
+
+#talk-sidebar #call-container-wrapper {
+	/* Overlap the padding from the sidebar itself to maximize the area of the
+	 * video as much as possible */
+	margin-left: -15px;
+	margin-right: -15px;
+}
+
+#talk-sidebar #call-container-wrapper #emptycontent {
+	/* Compensate for the removed margins above. */
+	margin-left: 30px;
+	margin-right: 30px;
+
+	/* Override "width: 100%" set in server so margins are respected. */
+	width: auto;
+}
+
+#talk-sidebar #call-container-wrapper #emptycontent-icon {
+	width: 128px;
+	margin: 0 auto;
+	padding-bottom: 20px;
+}
+
+#talk-sidebar #call-container-wrapper #call-container.incall ~ #emptycontent {
+	display: none;
+}
+
+#talk-sidebar #call-container-wrapper #call-container:not(.incall) {
+	display: none;
+}
+
+#talk-sidebar #call-container-wrapper #call-container {
+	position: relative;
+
+	flex-grow: 1;
+
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
+	/* Show the call container in a 16/9 proportion based on the sidebar
+	 * width. This is the same proportion used for previews of images by the
+	 * SidebarPreviewManager. */
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+/* Video in Talk sidebar */
+#talk-sidebar #call-container-wrapper #videos {
+	flex-grow: 1;
+}
+
+#talk-sidebar #call-container-wrapper .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+/* Screensharing in Talk sidebar */
+#talk-sidebar #call-container-wrapper #screens {
+	display: none;
+}
+
+
+
+#talk-sidebar #videos .videoContainer:not(.promoted) video {
+	/* Make the unpromoted videos smaller to not overlap too much the promoted
+	 * video */
+	max-height: 100px;
+}
+
+/* The avatars are requested with a size of 128px, so reduce it to not overlap
+ * too much the promoted video */
+#talk-sidebar #videos .videoContainer:not(.promoted) .avatar,
+#talk-sidebar #videos .videoContainer:not(.promoted) .avatar img {
+	width: 64px !important;
+	height: 64px !important;
+}
+
+#talk-sidebar .participants-1 .videoView,
+#talk-sidebar .participants-2 .videoView {
+	/* Do not force the width to 200px, as otherwise the video is too tall and
+	 * overlaps too much with the promoted video. */
+	min-width: initial;
+	/* z-index of 10 would put the video on top of the close button. */
+	z-index: 1;
+}
+
+#talk-sidebar .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px;
+	/* Use default font size, as it takes too much space otherwise */
+	font-size: initial;
+}
+
+#talk-sidebar .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px 35%;
+}
+
+#talk-sidebar .mediaIndicator {
+	/* Move the media indicator closer to the bottom */
+	bottom: 16px;
+}
+
+
+
+#talk-sidebar .call-button {
+	text-align: center;
+	margin-top: 20px;
+	margin-bottom: 20px;
+
+	button {
+		padding-left: 26px;
+		padding-right: 26px;
+	}
+
+	.icon-loading-small {
+		/* Prevent the text from being moved when the icon is shown. */
+		position: absolute;
+
+		margin-left: 5px;
+		margin-top: 1px;
+
+		/* Unset the background image set by the server for loading icons inside
+		 * buttons, as in this case the pure CSS icon can be used instead of the
+		 * image. */
+		background-image: unset;
+
+		&.hidden {
+			display: none;
+		}
+	}
+}
+
+
+
+/**
+ * Cascade parent element height to the chat view in the sidebar to limit the
+ * vertical scroll bar only to the list of messages. Otherwise, the vertical
+ * scroll bar would be shown for the whole sidebar and everything would be
+ * moved when scrolling to see overflown messages.
+ *
+ * The list of messages should stretch to fill the available space at the bottom
+ * of the right sidebar, so the height is cascaded using flex boxes.
+ */
+#talk-sidebar #chatView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+}
+
+#talk-sidebar .comments {
+	overflow-y: auto;
+
+	/* Needed for proper calculation of comment positions in the scrolling
+	   container (as otherwise the comment position is calculated with respect
+	   to the closest ancestor with a relative position) */
+	position: relative;
+}
+
+#talk-sidebar #chatView .newCommentRow,
+#talk-sidebar #chatView .comments {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+#talk-sidebar #chatView .comments .wrapper-background,
+#talk-sidebar #chatView .comments .wrapper {
+	/* Padding is not respected in the comment wrapper due to its absolute
+	 * positioning, so it must be set through its position. */
+	left: 15px;
+	right: 15px;
+}
+
+#talk-sidebar #chatView .newCommentForm.with-add-button {
+	/* Make room to show the "Add" button if needed. */
+	margin-right: 44px;
+}
+
+
+
+/**
+ * Confirm icon inside input field.
+ *
+ * The input and the icon should be direct children of a wrapper with a relative
+ * position. The input is expected to be as wide as its wrapper.
+ *
+ * It is assumed that the icon will have the standard width for buttons in
+ * inputs of 34px. However, further adjustments may be needed for the input and
+ * the padding depending on the context where they are used.
+ *
+ * The confirm icon can have a sibling loading icon to switch to (by hiding one
+ * icon and showing the other) while the operation is in progress.
+ */
+input[type="text"],
+input[type="password"] {
+	padding-right: 34px;
+
+	/* When the input is focused it is expected that pressing enter will confirm
+	 * the input just like clicking on the icon would do. To hint this behaviour
+	 * the opacity of the confirm icon is slightly increased in this case.
+	 */
+	&:focus + .icon-confirm:not(:disabled) {
+		opacity: .6;
+	}
+
+	& + .icon-confirm {
+		position: absolute;
+		top: 0;
+		/* Compensate for right margin of inputs set in the server. */
+		right: 3px;
+
+		/* Border and background color are removed to show only the icon inside
+		* the input. */
+		border: none;
+		background-color: transparent;
+
+		opacity: .3;
+
+		&:hover:not(:disabled),
+		&:focus:not(:disabled),
+		&:active:not(:disabled) {
+			opacity: 1;
+		}
+
+		+ .icon-loading-small {
+			/* Mimic size set in server for confirm button. */
+			width: 34px;
+			height: 34px;
+			padding: 7px 6px;
+			margin-top: 3px;
+			margin-bottom: 3px;
+
+			position: absolute;
+			top: 0;
+			right: 3px;
+		}
+	}
+}
+
+
+
+.authorRow {
+	.editable-text-label {
+		.label-wrapper {
+			display: flex;
+			align-items: center;
+			.edit-button .icon {
+				background-color: transparent;
+				border: none;
+				padding: 13px 22px;
+				margin: 0;
+
+				opacity: .3;
+
+				&:hover,
+				&:focus,
+				&:active {
+					opacity: 1;
+				}
+			}
+		}
+		.input-wrapper {
+			position: relative;
+
+			.icon-confirm {
+				/* Needed to override an important rule set in the
+				 * server. */
+				background-color: transparent !important;
+			}
+		}
+		.label {
+			margin-left: 5px;
+		}
+	}
+
+	.guest-name p {
+		display: inline-block;
+		padding: 9px 0;
+	}
+
+	/* The specific locator is needed to have higher priority than other
+	 * important rules set in the server. */
+	input.checkbox + label.link-checkbox-label,
+	input.radio + label {
+		/* If ".icon-loading-small" is set hide the checkbox and show a
+		 * loading icon instead. */
+		&.icon-loading-small:before {
+			background-image: none !important;
+			background-color: transparent !important;
+			border-color: transparent !important;
+		}
+		&.icon-loading-small:after {
+			top: 22px;
+			left: 21px;
+		}
+	}
+}
+
+
+
+.hidden-important {
+	display: none !important;
+}
