@@ -61,6 +61,7 @@ OC.L10N.register(
     "WebRTC is not supported in your browser" : "Το WebRTC δεν υποστηρίζεται από τον φυλλομετρητή σας",
     "Error while accessing microphone & camera" : "Σφάλμα κατά την πρόσβαση στο μικρόφωνο & την κάμερα",
     "_%n guest_::_%n guests_" : ["%n επισκέπτης","%n επισκέπτες"],
+    "Private conversation" : "Ιδιωτική συνομιλία",
     "{user} wants to talk with you" : "Ο {user} θέλει να σας μιλήσει",
     "Validate SSL certificate" : "Επικυρώστε το πιστοποιητικό SSL",
     "TURN server protocols" : "Πρωτόκολλα διακομιστή TURN",
@@ -78,6 +79,7 @@ OC.L10N.register(
     "New public conversation" : "Νέα δημόσια συνομιλία",
     "New group conversation" : "Νέα ομαδική συζήτηση",
     "_%n other guest_::_%n other guests_" : ["%n επισκέπτης","%n επισκέπτες"],
-    ", " : ", "
+    ", " : ", ",
+    "Unnamed conversation" : "Ανώνυμη συνομιλία"
 },
 "nplurals=2; plural=(n != 1);");
