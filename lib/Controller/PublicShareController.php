@@ -33,6 +33,7 @@ use OCP\AppFramework\OCSController;
 use OCP\Files\FileInfo;
 use OCP\Files\NotFoundException;
 use OCP\IRequest;
+use OCP\ISession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
 use OCP\Share\IShare;
@@ -41,6 +42,8 @@ class PublicShareController extends OCSController {
 
 	/** @var ShareManager */
 	private $shareManager;
+	/** @var ISession */
+	private $session;
 	/** @var TalkSession */
 	private $talkSession;
 	/** @var Manager */
@@ -50,11 +53,13 @@ class PublicShareController extends OCSController {
 			$appName,
 			IRequest $request,
 			ShareManager $shareManager,
+			ISession $session,
 			TalkSession $talkSession,
 			Manager $manager
 	) {
 		parent::__construct($appName, $request);
 		$this->shareManager = $shareManager;
+		$this->session = $session;
 		$this->talkSession = $talkSession;
 		$this->manager = $manager;
 	}
@@ -89,6 +94,12 @@ class PublicShareController extends OCSController {
 	public function getRoom(string $shareToken) {
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
+			if ($share->getPassword() !== null) {
+				$shareId = $this->session->get('public_link_authenticated');
+				if ($share->getId() !== $shareId) {
+					throw new ShareNotFound();
+				}
+			}
 		} catch (ShareNotFound $e) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
