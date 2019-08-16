@@ -29,6 +29,7 @@ use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\Files\IRootFolder;
 use OCP\Files\Storage\IStorage;
+use OCP\ISession;
 use OCP\Share\IManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
@@ -94,11 +95,15 @@ class UtilTest extends TestCase {
 			->with($userId)
 			->willReturn($userFolder);
 
+		/** @var ISession|MockObject $session */
+		$session = $this->createMock(ISession::class);
+
 		/** @var IManager|MockObject $shareManager */
 		$shareManager = $this->createMock(IManager::class);
 
 		$util = new Util(
 			$rootFolder,
+			$session,
 			$shareManager
 		);
 		$result = $util->getGroupFolderNode($fileId, $userId);

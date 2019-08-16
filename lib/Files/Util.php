@@ -28,6 +28,7 @@ use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\ISession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
@@ -36,14 +37,18 @@ class Util {
 
 	/** @var IRootFolder */
 	private $rootFolder;
+	/** @var ISession */
+	private $session;
 	/** @var IShareManager */
 	private $shareManager;
 	/** @var array[] */
 	private $accessLists = [];
 
 	public function __construct(IRootFolder $rootFolder,
+			ISession $session,
 			IShareManager $shareManager) {
 		$this->rootFolder = $rootFolder;
+		$this->session = $session;
 		$this->shareManager = $shareManager;
 	}
 
@@ -70,7 +75,13 @@ class Util {
 
 	public function canGuestAccessFile(string $shareToken): bool {
 		try {
-			$this->shareManager->getShareByToken($shareToken);
+			$share = $this->shareManager->getShareByToken($shareToken);
+			if ($share->getPassword() !== null) {
+				$shareId = $this->session->get('public_link_authenticated');
+				if ($share->getId() !== $shareId) {
+					throw new ShareNotFound();
+				}
+			}
 			return true;
 		} catch (ShareNotFound $e) {
 			return false;
