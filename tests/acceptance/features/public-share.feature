@@ -207,3 +207,40 @@ Feature: public share
     # list is loaded before checking that there is no "welcome.txt" conversation
     And I see that the "Talk updates ✅" conversation is shown in the list
     And I see that the "welcome.txt" conversation is not shown in the list
+
+
+
+  Scenario: chat in the public share page of a link share
+    Given I act as John
+    And I am logged in
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I act as Jane
+    And I am logged in as the admin
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I act as Jim
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I set my guest name to "Rob"
+    When I act as John
+    And I send a new chat message with the text "Hello"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    And I act as Jim
+    And I see that the message 2 was sent by "admin" with the text "Hi!"
+    And I send a new chat message with the text "Hey!"
+    Then I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "admin" with the text "Hi!"
+    And I see that the message 3 was sent by "Rob" with the text "Hey!"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "admin" with the text "Hi!"
+    And I see that the message 3 was sent by "Rob" with the text "Hey!"
+    And I act as John
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "admin" with the text "Hi!"
+    And I see that the message 3 was sent by "Rob" with the text "Hey!"
