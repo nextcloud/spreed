@@ -1169,6 +1169,48 @@ trigger:
 
 ---
 kind: pipeline
+name: acc-sqlite-public-share
+
+steps:
+  - name: acceptance-public-share
+    image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      SELENIUM_HOST: selenium
+      TESTS_ACCEPTANCE: public-share
+    commands:
+      - bash tests/drone-run-acceptance-tests.sh || exit 0
+      # Pre-setup steps
+      - git clone --depth 1 -b $CORE_BRANCH https://github.com/nextcloud/server ../server
+      - cp -R . ../server/apps/$APP_NAME
+      - cd ../server
+      - git submodule update --init
+      - ln --symbolic `pwd` /var/www/html
+
+      # Run acceptance tests
+      - tests/acceptance/run-local.sh --acceptance-tests-dir apps/spreed/tests/acceptance --timeout-multiplier 10 --nextcloud-server-domain acceptance-$TESTS_ACCEPTANCE --selenium-server $SELENIUM_HOST:4444 allow-git-repository-modifications features/$TESTS_ACCEPTANCE.feature
+
+services:
+  - name: cache
+    image: redis
+  - name: selenium
+    image: selenium/standalone-firefox:2.53.1-beryllium
+    environment:
+      # Reduce default log level for Selenium server (INFO) as it is too
+      # verbose.
+      JAVA_OPTS: -Dselenium.LOGGER.level=WARNING
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
 name: acc-sqlite-public-share-auth
 
 steps:
