@@ -18,7 +18,6 @@ default:
         - FilesAppSharingContext
         - LoginPageContext
         - NotificationContext
-        - PublicShareContext
 
         # Talk app contexts
         - ChatContext
@@ -30,6 +29,7 @@ default:
         - PublicConversationContext
         - PublicSharePasswordRequestContext
         - TalkAppContext
+        - TalkPublicShareContext
 
   extensions:
     Behat\MinkExtension:
