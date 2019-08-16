@@ -204,9 +204,27 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function newChatMessageRow($chatAncestor) {
+		return Locator::forThe()->css(".newCommentRow")->
+				descendantOf(self::chatView($chatAncestor))->
+				describedAs("New chat message row");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function userNameLabel($chatAncestor) {
+		return Locator::forThe()->css(".author")->
+				descendantOf(self::newChatMessageRow($chatAncestor))->
+				describedAs("User name label");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function guestNameEditableTextLabel($chatAncestor) {
 		return Locator::forThe()->css(".guest-name.editable-text-label")->
-				descendantOf(self::chatView($chatAncestor))->
+				descendantOf(self::newChatMessageRow($chatAncestor))->
 				describedAs("Guest name editable text label");
 	}
 
@@ -233,7 +251,7 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public static function newChatMessageForm($chatAncestor) {
 		return Locator::forThe()->css(".newCommentForm")->
-				descendantOf(self::chatView($chatAncestor))->
+				descendantOf(self::newChatMessageRow($chatAncestor))->
 				describedAs("New chat message form");
 	}
 
@@ -362,6 +380,13 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheChatIsShownInTheMainView() {
 		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::chatView(TalkAppContext::mainView()), 10)->isVisible());
+	}
+
+	/**
+	 * @Then I see that the current participant is the user :user
+	 */
+	public function iSeeThatTheCurrentParticipantIsTheUser($user) {
+		PHPUnit_Framework_Assert::assertEquals($user, $this->actor->find(self::userNameLabel($this->chatAncestor), 10)->getText());
 	}
 
 	/**
