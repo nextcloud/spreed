@@ -221,3 +221,27 @@ Feature: app-files
     And I act as John
     And I see that the message 1 was sent by "user0" with the text "Hello"
     And I see that the message 2 was sent by "Guest" with the text "Hi!"
+
+
+
+  Scenario: chat in a file shared by link with a password
+    Given I act as John
+    And I am logged in
+    And I share the link for "welcome.txt" protected by the password "abcdef"
+    And I write down the shared link
+    And I open the Chat tab in the details view of the Files app
+    And I act as Jane
+    And I visit the shared link I wrote down
+    And I see that the current page is the Authenticate page for the shared link I wrote down
+    And I authenticate with password "abcdef"
+    And I see that the current page is the shared link I wrote down
+    When I act as John
+    And I send a new chat message with the text "Hello"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    Then I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "Guest" with the text "Hi!"
+    And I act as John
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "Guest" with the text "Hi!"
