@@ -86,3 +86,124 @@ Feature: public share
     # list is loaded before checking that there is no "welcome.txt" conversation
     And I see that the "Talk updates ✅" conversation is shown in the list
     Then I see that the "welcome.txt" conversation is not shown in the list
+
+
+
+  Scenario: mention a user that has direct access to a file shared by link
+    Given I act as John
+    And I am logged in as the admin
+    And I share "welcome.txt" with "user0"
+    And I see that the file is shared with "user0"
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    When I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "user0"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "admin" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0"
+    And I act as Jane
+    And I am logged in
+    And I have opened the Talk app
+    And I see that the "welcome.txt" conversation is shown in the list
+
+  Scenario: mention a user that has no direct access to a file shared by link
+    Given I act as John
+    And I am logged in as the admin
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    When I send a new chat message with the text "Hello @user0"
+    Then I see that the message 1 was sent by "admin" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0"
+    And I act as Jane
+    And I am logged in
+    And I have opened the Talk app
+    # Wait until the "Talk updates" conversation is shown to ensure that the
+    # list is loaded before checking that there is no "welcome.txt" conversation
+    And I see that the "Talk updates ✅" conversation is shown in the list
+    And I see that the "welcome.txt" conversation is not shown in the list
+
+  Scenario: mention a user that has no direct access to a file shared by link while the user is in the public share page
+    Given I act as John
+    And I am logged in
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I act as Jane
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    And I act as Jim
+    And I am logged in as the admin
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    When I act as Jane
+    And I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "admin"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "Guest" with the text "Hello admin"
+    And I see that the message 1 contains a formatted mention of "admin"
+    And I act as Jim
+    And I see that the message 1 was sent by "Guest" with the text "Hello admin"
+    And I see that the message 1 contains a formatted mention of "admin" as current user
+    # Leave the public share page from the original window by going to Talk and
+    # checking that the conversation is no longer shown
+    # Visit the Home page so the header shows again the list of apps
+    And I visit the Home page
+    And I have opened the Talk app
+    # Wait until the "Talk updates" conversation is shown to ensure that the
+    # list is loaded before checking that there is no "welcome.txt" conversation
+    And I see that the "Talk updates ✅" conversation is shown in the list
+    And I see that the "welcome.txt" conversation is not shown in the list
+
+  Scenario: mention another guest in the public share page
+    Given I act as John
+    And I am logged in
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I act as Jane
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    And I set my guest name to "Cat"
+    And I act as Jim
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    When I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "Cat"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "Guest" with the text "Hello CCat"
+    And I see that the message 1 contains a formatted mention of "Cat"
+    And I act as Jane
+    And I see that the message 1 was sent by "Guest" with the text "Hello CCat"
+    And I see that the message 1 contains a formatted mention of "Cat" as current user
+
+  Scenario: mention all users when a user with direct access has not joined yet the file room
+    Given I act as John
+    And I am logged in as the admin
+    And I share "welcome.txt" with "user0"
+    And I see that the file is shared with "user0"
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I act as Jane
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    And I see that the Talk sidebar is shown in the public share page
+    When I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "welcome.txt"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "Guest" with the text "Hello welcome.txt"
+    And I see that the message 1 contains a formatted mention of all participants of "welcome.txt"
+    And I act as Jim
+    And I am logged in
+    And I have opened the Talk app
+    # Wait until the "Talk updates" conversation is shown to ensure that the
+    # list is loaded before checking that there is no "welcome.txt" conversation
+    And I see that the "Talk updates ✅" conversation is shown in the list
+    And I see that the "welcome.txt" conversation is not shown in the list
