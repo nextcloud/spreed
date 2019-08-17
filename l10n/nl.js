@@ -90,7 +90,7 @@ OC.L10N.register(
     "Screensharing is not supported by your browser." : "Schermdelen wordt niet ondersteund door je browser.",
     "Screensharing requires the page to be loaded through HTTPS." : "Schermdelen vereist het over HTTPS laden van de pagina.",
     "Screensharing options" : "Schermdelen opties",
-    "Sharing your screen only works with Firefox version 52 or newer." : "Schermdelen werkt alleen met Firefox versie 52 of nieuwer.",
+    "Sharing your screen only works with Firefox version 52 or newer." : "Scherm delen werkt alleen met Firefox versie 52 of nieuwer.",
     "Screensharing extension is required to share your screen." : "Om je scherm te delen, heb je de schermdelen-extensie nodig.",
     "Please use a different browser like Firefox or Chrome to share your screen." : "Gebruik een andere browser, zoals Firefox of Chrome om je scherm te delen.",
     "An error occurred while starting screensharing." : "Er trad een fout op bij starten schermdelen.",
