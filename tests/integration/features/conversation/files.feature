@@ -87,6 +87,15 @@ Feature: conversation/files
     And user "participant3" is not participant of room "file last share room"
     And user "guest" is not participant of room "file last share room"
 
+  Scenario: get room for link share protected by password
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
+    When user "participant1" gets the room for last share with 404
+    And user "participant2" gets the room for last share with 404
+    And user "participant3" gets the room for last share with 404
+    And user "guest" gets the room for last share with 404
+
   Scenario: get room for link share of a folder
     Given user "participant1" creates folder "/test"
     And user "participant1" shares "test" by link with OCS 100
@@ -105,6 +114,12 @@ Feature: conversation/files
 
   Scenario: get room for file shared by link
     Given user "participant1" shares "welcome.txt" by link with OCS 100
+    When user "participant1" gets the room for path "welcome.txt" with 200
+    Then user "participant1" is not participant of room "file welcome.txt room"
+
+  Scenario: get room for file shared by link and protected by password
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+      | password | 123456 |
     When user "participant1" gets the room for path "welcome.txt" with 200
     Then user "participant1" is not participant of room "file welcome.txt room"
 
