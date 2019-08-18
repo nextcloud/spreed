@@ -119,7 +119,7 @@
     "Enable video" : "Inschakelen video",
     "This is taking longer than expected. Are the media permissions already granted (or rejected)? If yes please restart your browser, as audio and video are failing" : "Dit duurt langer dan verwacht. Zijn de mediatoestemmingen al verstrekt (of geweigerd)? Zo ja, herstart dan je browser, omdat audio en video niet lukken",
     "Access to microphone & camera is only possible with HTTPS" : "Toegang tot microfoon & camera is alleen mogelijk met HTTPS",
-    "Please move your setup to HTTPS" : "Stel alsjeblieft HTTPS in",
+    "Please move your setup to HTTPS" : "Stel de verbinding als HTTPS in",
     "Access to microphone & camera was denied" : "Toegang tot microfoon & camera geweigerd",
     "WebRTC is not supported in your browser" : "WebRTC wordt niet ondersteund door je browser",
     "Error while accessing microphone & camera" : "Fout bij benaderen microfoon & camera",
