@@ -298,7 +298,11 @@
 		 * Clipboard
 		 */
 		initClipboard: function() {
-			var clipboard = new Clipboard('.clipboard-button');
+			if (this.ui.clipboardButton.length === 0) {
+				return;
+			}
+
+			var clipboard = new Clipboard(this.ui.clipboardButton[0]);
 			clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
