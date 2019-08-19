@@ -302,7 +302,7 @@
 			this._tooltipContainer = tooltipContainer;
 
 			// Update tooltips
-			this.$el.find('.has-tooltip').tooltip('destroy');
+			this.$el.find('.has-tooltip').tooltip('dispose');
 			this.$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 		},
 
