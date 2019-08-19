@@ -278,7 +278,9 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public static function mentionAutocompleteContainer() {
 		// The container is added directly in the body, not in the chat view.
-		return Locator::forThe()->css(".atwho-container")->
+		// Moreover, there could be several atwho containers, so it needs to be
+		// got based on the elements that it contains.
+		return Locator::forThe()->xpath("//li[contains(concat(' ', normalize-space(@class), ' '), ' chat-view-mention-autocomplete ')]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' atwho-container ')]")->
 				describedAs("Mention autocomplete container");
 	}
 

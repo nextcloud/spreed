@@ -99,15 +99,21 @@ Feature: app-files
     And I open the details view for "welcome (2).txt"
     And I open the Chat tab in the details view of the Files app
     When I act as John
-    And I send a new chat message with the text "Hello"
+    And I send a new chat message with the text "Hello @user0"
     And I act as Jane
-    And I see that the message 1 was sent by "admin" with the text "Hello"
-    And I send a new chat message with the text "Hi!"
-    Then I see that the message 1 was sent by "admin" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I see that the message 1 was sent by "admin" with the text "Hello user0"
+    And I type a new chat message with the text "Hi @"
+    And I choose the candidate mention for "admin"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "admin" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0" as current user
+    And I see that the message 2 was sent by "user0" with the text "Hi admin"
+    And I see that the message 2 contains a formatted mention of "admin"
     And I act as John
-    And I see that the message 1 was sent by "admin" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I see that the message 1 was sent by "admin" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0"
+    And I see that the message 2 was sent by "user0" with the text "Hi admin"
+    And I see that the message 2 contains a formatted mention of "admin" as current user
 
 #  Scenario: chat in a reshared file
 #    Given I act as John
