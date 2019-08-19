@@ -195,7 +195,9 @@ class Listener {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			foreach ($participants as $participant) {
-				if ($room->getObjectType() === 'file' || $userId !== $participant['userId']) {
+				$userJoinedFileRoom = $room->getObjectType() === 'file' &&
+						(!array_key_exists('participantType', $participant) || $participant['participantType'] !== Participant::USER_SELF_JOINED);
+				if ($userJoinedFileRoom || $userId !== $participant['userId']) {
 					$listener->sendSystemMessage($room, 'user_added', ['user' => $participant['userId']]);
 				}
 			}
