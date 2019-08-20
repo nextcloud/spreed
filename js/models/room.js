@@ -39,6 +39,10 @@
 	 * "setPublic(isPublic, options)", and setting the password by calling
 	 * "save('password', password, options)" or
 	 * "setPassword(password, options)".
+	 *
+	 * After an attribute of a room is successfully saved all the rooms will be
+	 * fetched again, as the saving could have triggered changes in other
+	 * attributes too in the server.
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
@@ -123,6 +127,8 @@
 			// instead of a complete representation of the model.
 			options.patch = true;
 
+			options = this._wrapOptionsToFetchRoomsOnSuccess(options);
+
 			if (key === 'password') {
 				// Prevent the password from being stored in the attributes of
 				// this Room object; a "change:password" event will be always
@@ -132,6 +138,26 @@
 			}
 
 			return Backbone.Model.prototype.save.call(this, key, value, options);
+		},
+		_wrapOptionsToFetchRoomsOnSuccess: function(options) {
+			var success = options.success;
+
+			return _.extend(options, {
+				success: function() {
+					// When the external signaling server is used the rooms are
+					// automatically fetched after an attribute change. Due to
+					// this fetching the rooms is delegated to the signaling, as
+					// it will either immediately fetch the rooms when the
+					// internal signaling server is used or wait for the
+					// automatic fetch when the external signaling server is
+					// used.
+					OCA.SpreedMe.app.signaling.syncRooms();
+
+					if (success) {
+						success.apply(this, arguments);
+					}
+				}
+			});
 		},
 		sync: function(method, model, options) {
 			// When saving a model "Backbone.Model.save" calls "sync" with an
