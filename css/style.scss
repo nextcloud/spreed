@@ -913,6 +913,18 @@ input[type="password"] {
 		.link-checkbox-label {
 			white-space: nowrap;
 			padding: 12px;
+
+			/* If ".icon-loading-small" is set hide the checkbox and show a
+			 * loading icon instead */
+			&.icon-loading-small:before {
+				background-image: none !important;
+				background-color: transparent !important;
+				border-color: transparent !important;
+			}
+			&.icon-loading-small:after {
+				top: 21px;
+				left: 23px;
+			}
 		}
 		.button {
 			cursor: pointer;
