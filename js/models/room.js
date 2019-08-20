@@ -34,9 +34,11 @@
 	 * constructor options.
 	 *
 	 * Besides fetching the data from the server it supports renaming the room
-	 * by calling "save('name', nameToSet, options)", and making the room public
-	 * or private by calling "save('type', roomType, options)" or, preferably,
-	 * "setPublic(isPublic, options)".
+	 * by calling "save('name', nameToSet, options)", making the room public or
+	 * private by calling "save('type', roomType, options)" or, preferably,
+	 * "setPublic(isPublic, options)", and setting the password by calling
+	 * "save('password', password, options)" or
+	 * "setPassword(password, options)".
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
@@ -103,6 +105,7 @@
 
 			var supportedKeys = [
 				'name',
+				'password',
 				'type',
 			];
 
@@ -119,6 +122,14 @@
 			// "patch: true" is needed to send only the changed attribute
 			// instead of a complete representation of the model.
 			options.patch = true;
+
+			if (key === 'password') {
+				// Prevent the password from being stored in the attributes of
+				// this Room object; a "change:password" event will be always
+				// fired (with a value of "undefined", not the actual password
+				// value either).
+				options.unset = true;
+			}
 
 			return Backbone.Model.prototype.save.call(this, key, value, options);
 		},
@@ -152,12 +163,21 @@
 				options.url = this.url() + '/public';
 			}
 
+			if (method === 'patch' && options.attrs.password !== undefined) {
+				method = 'update';
+
+				options.url = this.url() + '/password';
+			}
+
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
 		},
 		setPublic: function(isPublic, options) {
 			var roomType = isPublic? OCA.SpreedMe.app.ROOM_TYPE_PUBLIC: OCA.SpreedMe.app.ROOM_TYPE_GROUP;
 
 			this.save('type', roomType, options);
+		},
+		setPassword: function(password, options) {
+			this.save('password', password, options);
 		},
 		join: function() {
 			OCA.SpreedMe.app.connection.joinRoom(this.get('token'));

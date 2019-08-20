@@ -265,13 +265,10 @@
 		 */
 		confirmPassword: function(e) {
 			e.preventDefault();
+
 			var newPassword = this.ui.passwordInput.val().trim();
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
-				type: 'PUT',
-				data: {
-					password: newPassword
-				},
+
+			this.model.setPassword(newPassword, {
 				success: function() {
 					this.ui.passwordInput.val('');
 					OC.hideMenus();
