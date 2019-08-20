@@ -34,9 +34,9 @@
 	 * constructor options.
 	 *
 	 * Besides fetching the data from the server it supports renaming the room
-	 * by calling "save('displayName', nameToSet, options)"; in this case the
-	 * options must contain, at least, "patch: true" (it may contain other
-	 * options like a success callback too if needed).
+	 * by calling "save('name', nameToSet, options)"; in this case the options
+	 * must contain, at least, "patch: true" (it may contain other options like
+	 * a success callback too if needed).
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
