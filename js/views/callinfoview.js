@@ -65,6 +65,7 @@
 			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
+			'linkCheckboxLabel': '.link-checkbox-label',
 
 			'callButton': 'div.call-button',
 
@@ -245,7 +246,23 @@
 		toggleLinkCheckbox: function() {
 			var isPublic = this.ui.linkCheckbox.prop('checked');
 
-			this.model.setPublic(isPublic);
+			this.ui.linkCheckbox.prop('disabled', true);
+			this.ui.linkCheckboxLabel.addClass('icon-loading-small');
+
+			this.model.setPublic(isPublic, {
+				wait: true,
+				error: function() {
+					this.ui.linkCheckbox.prop('checked', !isPublic);
+					this.ui.linkCheckbox.prop('disabled', false);
+					this.ui.linkCheckboxLabel.removeClass('icon-loading-small');
+
+					if (isPublic) {
+						OC.Notification.show(t('spreed', 'Error occurred while making the room public'), {type: 'error'});
+					} else {
+						OC.Notification.show(t('spreed', 'Error occurred while making the room private'), {type: 'error'});
+					}
+				}.bind(this)
+			});
 		},
 
 		/**
