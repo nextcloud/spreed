@@ -123,9 +123,9 @@
 				modelSaveOptions: {
 					patch: true,
 					success: function() {
-						// Renaming a room by setting "displayName" causes "name" to
-						// change too in the server, so the model has to be fetched
-						// again to get the changes.
+						// Renaming a room by setting "name" is not expected to
+						// change any other attribute in the server, but the
+						// model is fetched again anyway to be on the safe side.
 						this.model.fetch();
 					}.bind(this)
 				},
