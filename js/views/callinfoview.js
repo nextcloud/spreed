@@ -121,7 +121,6 @@
 				model: this.model,
 				modelAttribute: nameAttribute,
 				modelSaveOptions: {
-					patch: true,
 					success: function() {
 						// Renaming a room by setting "name" is not expected to
 						// change any other attribute in the server, but the

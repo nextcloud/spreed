@@ -34,9 +34,7 @@
 	 * constructor options.
 	 *
 	 * Besides fetching the data from the server it supports renaming the room
-	 * by calling "save('name', nameToSet, options)"; in this case the options
-	 * must contain, at least, "patch: true" (it may contain other options like
-	 * a success callback too if needed).
+	 * by calling "save('name', nameToSet, options)".
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
@@ -79,6 +77,31 @@
 			if (!attributes.name) {
 				return t('spreed', 'Room name can not be empty');
 			}
+		},
+		save: function(key, value, options) {
+			if (typeof key !== 'string') {
+				throw 'Room.save only supports single attributes';
+			}
+
+			var supportedKeys = [
+				'name',
+			];
+
+			if (supportedKeys.indexOf(key) === -1) {
+				throw 'Room.save does not support the "' + key + '" key';
+			}
+
+			if (options && options.patch !== undefined && !options.patch) {
+				throw 'Room.save does not support "options.patch = false"';
+			}
+
+			options = options || {};
+
+			// "patch: true" is needed to send only the changed attribute
+			// instead of a complete representation of the model.
+			options.patch = true;
+
+			return Backbone.Model.prototype.save.call(this, key, value, options);
 		},
 		sync: function(method, model, options) {
 			// When saving a model "Backbone.Model.save" calls "sync" with an
