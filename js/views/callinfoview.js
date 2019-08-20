@@ -125,7 +125,7 @@
 						// Renaming a room by setting "name" is not expected to
 						// change any other attribute in the server, but the
 						// model is fetched again anyway to be on the safe side.
-						this.model.fetch();
+						OCA.SpreedMe.app.signaling.syncRooms();
 					}.bind(this)
 				},
 
