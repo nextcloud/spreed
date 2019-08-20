@@ -108,15 +108,16 @@
 			// "update" method, which by default sends a "PUT" request that
 			// contains all the attributes of the model. In order to send only
 			// the attributes to be saved "patch: true" must be set in the
-			// options. However, this causes a "PATCH" request instead of a
-			// "PUT" request to be sent, so the "method" must be changed from
-			// "patch" to "update", as the backend expects a "PUT" request.
-			// Moreover, the endpoint to rename a room expects the name to be
-			// provided in a "roomName" attribute instead of a "name"
-			// attribute, so that has to be changed too.
+			// options. However, this causes a "PATCH" request to be sent, so
+			// the "method" must be changed from "patch" to "create", "update"
+			// or "delete" if the backend expects a "POST", "PUT" or "DELETE"
+			// request instead.
+
 			if (method === 'patch' && options.attrs.name !== undefined) {
 				method = 'update';
 
+				// The endpoint to rename a room expects the name to be provided
+				// in a "roomName" attribute instead of a "name" attribute.
 				options.attrs.roomName = options.attrs.name;
 				delete options.attrs.name;
 			}
