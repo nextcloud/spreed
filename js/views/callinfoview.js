@@ -243,7 +243,7 @@
 		 * Share link
 		 */
 		toggleLinkCheckbox: function() {
-			var isPublic = this.ui.linkCheckbox.attr('checked') === 'checked';
+			var isPublic = this.ui.linkCheckbox.prop('checked');
 
 			this.model.setPublic(isPublic);
 		},
