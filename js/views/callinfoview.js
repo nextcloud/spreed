@@ -251,11 +251,9 @@
 		 * Share link
 		 */
 		toggleLinkCheckbox: function() {
-			var shareLink = this.ui.linkCheckbox.attr('checked') === 'checked';
+			var isPublic = this.ui.linkCheckbox.attr('checked') === 'checked';
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-				type: shareLink ? 'POST' : 'DELETE',
+			this.model.setPublic(isPublic, {
 				success: function() {
 					OCA.SpreedMe.app.signaling.syncRooms();
 				}
