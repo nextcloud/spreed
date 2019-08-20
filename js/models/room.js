@@ -34,7 +34,9 @@
 	 * constructor options.
 	 *
 	 * Besides fetching the data from the server it supports renaming the room
-	 * by calling "save('name', nameToSet, options)".
+	 * by calling "save('name', nameToSet, options)", and making the room public
+	 * or private by calling "save('type', roomType, options)" or, preferably,
+	 * "setPublic(isPublic, options)".
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
@@ -77,6 +79,22 @@
 			if (!attributes.name) {
 				return t('spreed', 'Room name can not be empty');
 			}
+
+			if (attributes.type && this.attributes.type && attributes.type !== this.attributes.type) {
+				// These error messages are not expected to be ever shown to the
+				// user, so they are not internationalized.
+				if (this.attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_GROUP && this.attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+					return 'Room type can not be changed';
+				}
+
+				if (this.attributes.type === OCA.SpreedMe.app.ROOM_TYPE_GROUP && attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+					return 'Group room type can only be changed to public';
+				}
+
+				if (this.attributes.type === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC && attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
+					return 'Public room type can only be changed to group';
+				}
+			}
 		},
 		save: function(key, value, options) {
 			if (typeof key !== 'string') {
@@ -85,6 +103,7 @@
 
 			var supportedKeys = [
 				'name',
+				'type',
 			];
 
 			if (supportedKeys.indexOf(key) === -1) {
@@ -122,7 +141,23 @@
 				delete options.attrs.name;
 			}
 
+			if (method === 'patch' && options.attrs.type !== undefined) {
+				// The room type can only be changed between group and public.
+				if (options.attrs.type === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+					method = 'create';
+				} else {
+					method = 'delete';
+				}
+
+				options.url = this.url() + '/public';
+			}
+
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
+		},
+		setPublic: function(isPublic, options) {
+			var roomType = isPublic? OCA.SpreedMe.app.ROOM_TYPE_PUBLIC: OCA.SpreedMe.app.ROOM_TYPE_GROUP;
+
+			this.save('type', roomType, options);
 		},
 		join: function() {
 			OCA.SpreedMe.app.connection.joinRoom(this.get('token'));
