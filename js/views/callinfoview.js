@@ -120,14 +120,6 @@
 			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.model,
 				modelAttribute: nameAttribute,
-				modelSaveOptions: {
-					success: function() {
-						// Renaming a room by setting "name" is not expected to
-						// change any other attribute in the server, but the
-						// model is fetched again anyway to be on the safe side.
-						OCA.SpreedMe.app.signaling.syncRooms();
-					}.bind(this)
-				},
 
 				extraClassNames: 'room-name',
 				labelTagName: 'h2',
@@ -253,11 +245,7 @@
 		toggleLinkCheckbox: function() {
 			var isPublic = this.ui.linkCheckbox.attr('checked') === 'checked';
 
-			this.model.setPublic(isPublic, {
-				success: function() {
-					OCA.SpreedMe.app.signaling.syncRooms();
-				}
-			});
+			this.model.setPublic(isPublic);
 		},
 
 		/**
@@ -272,7 +260,6 @@
 				success: function() {
 					this.ui.passwordInput.val('');
 					OC.hideMenus();
-					OCA.SpreedMe.app.signaling.syncRooms();
 				}.bind(this),
 				error: function() {
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
