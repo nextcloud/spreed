@@ -210,7 +210,7 @@ templates['editabletextlabel'] = template({"1":function(container,depth0,helpers
     + container.escapeExpression(((helper = (helper = helpers.inputValue || (depth0 != null ? depth0.inputValue : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"inputValue","hash":{},"data":data}) : helper)))
     + "\" "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inputPlaceholder : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + ">\n	<input type=\"submit\" value=\"\" class=\"icon icon-confirm confirm-button\"></div>\n</div>\n";
+    + ">\n	<input type=\"submit\" value=\"\" class=\"icon icon-confirm confirm-button\">\n</div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
     var helper;
 
