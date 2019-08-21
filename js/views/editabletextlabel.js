@@ -51,6 +51,11 @@
 	 * "inputPlaceholder" and "buttonTitle" can be used to customize some
 	 * elements of the view.
 	 *
+	 * It is recommended, although not strictly needed, to wait for the server
+	 * response before setting the new attribute value in the model; otherwise,
+	 * in case of failure the label will show the new value of the attribute
+	 * even if it was not set in the server.
+	 *
 	 * After initialization, and once the view has been rendered, the
 	 * "modelAttribute" and "labelPlaceholder" options can be updated using the
 	 * "setModelAttribute" and "setLabelPlaceholder" methods.
@@ -72,6 +77,7 @@
 			inputWrapper: '.input-wrapper',
 			input: 'input.username',
 			confirmButton: '.confirm-button',
+			loadingIcon: '.icon-loading-small',
 		},
 
 		events: {
@@ -208,10 +214,21 @@
 				return;
 			}
 
+			this.ui.input.prop('disabled', true);
+			this.ui.confirmButton.addClass('hidden');
+			this.ui.loadingIcon.removeClass('hidden');
+
+			var restoreState = function() {
+				this.ui.input.prop('disabled', false);
+				this.ui.confirmButton.removeClass('hidden');
+				this.ui.loadingIcon.addClass('hidden');
+			}.bind(this);
+
 			// TODO This should show the error message instead of just hiding
 			// the input without changes.
 			var hideInputOnValidationError = function(/*model, error*/) {
 				this.hideInput();
+				restoreState();
 			}.bind(this);
 			this.model.listenToOnce(this.model, 'invalid', hideInputOnValidationError);
 
@@ -220,6 +237,7 @@
 				this.model.stopListening(this.model, 'invalid', hideInputOnValidationError);
 
 				this.hideInput();
+				restoreState();
 
 				if (this.modelSaveOptions && _.isFunction(this.modelSaveOptions.success)) {
 					this.modelSaveOptions.success.apply(this, arguments);
@@ -229,6 +247,11 @@
 				this.model.stopListening(this.model, 'invalid', hideInputOnValidationError);
 
 				this.hideInput();
+				restoreState();
+
+				if (this.modelSaveOptions && _.isFunction(this.modelSaveOptions.error)) {
+					this.modelSaveOptions.error.apply(this, arguments);
+				}
 			}, this);
 
 			this.model.save(this.modelAttribute, newText, options);
