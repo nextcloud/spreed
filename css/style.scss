@@ -791,12 +791,10 @@ input[type="password"] {
 		.input-wrapper {
 			position: relative;
 
-			input[type="text"] {
-				& + .icon-confirm {
-					/* Needed to override an important rule set in the
-					 * server. */
-					background-color: transparent !important;
-				}
+			.icon-confirm {
+				/* Needed to override an important rule set in the
+				 * server. */
+				background-color: transparent !important;
 			}
 		}
 		.label {
@@ -878,18 +876,16 @@ input[type="password"] {
 				text-overflow: ellipsis;
 			}
 
-			.icon-confirm.confirm-button {
-				padding: 12px 21px;
-				margin: 0;
-			}
-
 			input[type="text"] {
 				padding-right: 44px;
+			}
 
-				& + .icon-confirm {
-					top: 4px;
-					right: 0;
-				}
+			.icon-confirm {
+				top: 4px;
+				right: 0;
+
+				padding: 12px 21px;
+				margin: 0;
 			}
 		}
 	}
