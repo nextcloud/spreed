@@ -71,7 +71,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
     + "\"></span>\n			<div class=\"popovermenu password-menu menu-right\">\n				<ul>\n					<li>\n						<span class=\"menuitem "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
-    + " password-option\">\n							<form class=\"password-form\">\n								<input class=\"password-input\" required maxlength=\"200\" type=\"password\"\n									placeholder=\""
+    + " password-option\">\n							<form class=\"password-form\">\n								<input class=\"password-input\" maxlength=\"200\" type=\"password\"\n									placeholder=\""
     + container.escapeExpression(((helper = (helper = helpers.passwordInputPlaceholder || (depth0 != null ? depth0.passwordInputPlaceholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"passwordInputPlaceholder","hash":{},"data":data}) : helper)))
     + "\">\n								<input type=\"submit\" value=\"\" autocomplete=\"new-password\" class=\"icon icon-confirm password-confirm\"></input>\n								<span class=\"icon icon-loading-small password-loading hidden\"/>\n							</form>\n						</span>\n					</li>\n				</ul>\n			</div>\n		</div>\n";
 },"8":function(container,depth0,helpers,partials,data) {
