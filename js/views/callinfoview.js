@@ -122,6 +122,12 @@
 			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.model,
 				modelAttribute: nameAttribute,
+				modelSaveOptions: {
+					wait: true,
+					error: function() {
+						OC.Notification.show(t('spreed', 'Error occurred while renaming the room'), {type: 'error'});
+					}
+				},
 
 				extraClassNames: 'room-name',
 				labelTagName: 'h2',
