@@ -83,6 +83,9 @@
  * It is assumed that the icon will have the standard width for buttons in
  * inputs of 34px. However, further adjustments may be needed for the input and
  * the padding depending on the context where they are used.
+ *
+ * The confirm icon can have a sibling loading icon to switch to (by hiding one
+ * icon and showing the other) while the operation is in progress.
  */
 input[type="text"],
 input[type="password"] {
@@ -114,6 +117,32 @@ input[type="password"] {
 		&:active:not(:disabled) {
 			opacity: 1;
 		}
+
+		+ .icon-loading-small {
+			/* Mimic size set in server for confirm button. */
+			width: 34px;
+			height: 34px;
+			padding: 7px 6px;
+			margin-top: 3px;
+			margin-bottom: 3px;
+
+			position: absolute;
+			top: 0;
+			right: 3px;
+		}
+	}
+}
+
+.menuitem input[type="text"],
+.menuitem input[type="password"] {
+	& + .icon-confirm + .icon-loading-small {
+		/* Mimic size set in server for inputs in menu items. */
+		min-width: 44px;
+		max-height: 40px;
+		margin: 2px 0;
+
+		/* Override padding set in server for icons in menu items. */
+		padding: 7px 6px;
 	}
 }
 
@@ -936,11 +965,14 @@ input[type="password"] {
 				.password-form {
 					position: relative;
 
-					.password-confirm {
+					.password-confirm,
+					.password-loading {
 						/* Inputs in menu items do not have a right margin, so
 						 * it does not need to be compensated. */
 						right: 0;
+					}
 
+					.password-confirm {
 						/* Needed to override an important rule set in the
 						 * server. */
 						background-color: transparent !important;
