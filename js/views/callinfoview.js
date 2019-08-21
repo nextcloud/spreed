@@ -75,6 +75,7 @@
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm',
+			'passwordLoading': '.password-loading',
 
 			'menu': '.password-menu',
 		},
@@ -273,14 +274,28 @@
 
 			var newPassword = this.ui.passwordInput.val().trim();
 
+			this.ui.passwordInput.prop('disabled', true);
+			this.ui.passwordConfirm.addClass('hidden');
+			this.ui.passwordLoading.removeClass('hidden');
+
+			var restoreState = function() {
+				this.ui.passwordInput.prop('disabled', false);
+				this.ui.passwordConfirm.removeClass('hidden');
+				this.ui.passwordLoading.addClass('hidden');
+			}.bind(this);
+
 			this.model.setPassword(newPassword, {
+				wait: true,
 				success: function() {
 					this.ui.passwordInput.val('');
+					restoreState();
 					OC.hideMenus();
 				}.bind(this),
 				error: function() {
+					restoreState();
+
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
-				}
+				}.bind(this)
 			});
 		},
 
