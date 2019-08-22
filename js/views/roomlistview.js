@@ -270,8 +270,17 @@
 		 * Clipboard
 		 */
 		initClipboard: function() {
-			var clipboard = new Clipboard('.clipboard-button');
-			clipboard.on('success', function(e) {
+			if (this._clipboard) {
+				this._clipboard.destroy();
+				delete this._clipboard;
+			}
+
+			if (this.ui.clipboardButton.length === 0) {
+				return;
+			}
+
+			this._clipboard = new Clipboard(this.ui.clipboardButton[0]);
+			this._clipboard.on('success', function(e) {
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
 					.attr('data-original-title', t('core', 'Link copied!'))
@@ -284,7 +293,7 @@
 						.tooltip('_fixTitle');
 				}, 3000);
 			});
-			clipboard.on('error', function (e) {
+			this._clipboard.on('error', function (e) {
 				var $input = $(e.trigger);
 				var actionMsg = '';
 				if (/iPhone|iPad/i.test(navigator.userAgent)) {
