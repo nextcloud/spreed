@@ -275,13 +275,13 @@
 				var $input = $(e.trigger);
 				$input.tooltip('hide')
 					.attr('data-original-title', t('core', 'Link copied!'))
-					.tooltip('fixTitle')
+					.tooltip('_fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
 					$input.tooltip('hide')
 						.attr('data-original-title', t('core', 'Copy link'))
-						.tooltip('fixTitle');
+						.tooltip('_fixTitle');
 				}, 3000);
 			});
 			clipboard.on('error', function (e) {
@@ -297,13 +297,13 @@
 
 				$input.tooltip('hide')
 					.attr('data-original-title', actionMsg)
-					.tooltip('fixTitle')
+					.tooltip('_fixTitle')
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function () {
 					$input.tooltip('hide')
 						.attr('data-original-title', t('spreed', 'Copy link'))
-						.tooltip('fixTitle');
+						.tooltip('_fixTitle');
 				}, 3000);
 			});
 		}
