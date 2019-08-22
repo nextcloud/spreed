@@ -89,17 +89,25 @@ class FilesController extends OCSController {
 	 */
 	public function getRoom(string $fileId): DataResponse {
 		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
+		$groupFolder = null;
 		if (!$share) {
-			throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+			$groupFolder = $this->util->getGroupFolderNode($fileId, $this->currentUser);
+			if (!$groupFolder) {
+				throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+			}
 		}
 
 		try {
 			$room = $this->manager->getRoomByObject('file', $fileId);
 		} catch (RoomNotFoundException $e) {
-			try {
-				$name = $this->getFileName($share, $fileId);
-			} catch (NotFoundException $e) {
-				throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+			if ($share) {
+				try {
+					$name = $this->getFileName($share, $fileId);
+				} catch (NotFoundException $e) {
+					throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
+				}
+			} else {
+				$name = $groupFolder->getName();
 			}
 			$room = $this->manager->createPublicRoom($name, 'file', $fileId);
 		}

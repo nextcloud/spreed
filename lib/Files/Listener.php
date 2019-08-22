@@ -102,7 +102,10 @@ class Listener {
 
 		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($room->getObjectId(), $userId);
 		if (!$share) {
-			throw new UnauthorizedException('User does not have direct access to the file');
+			$groupFolder = $this->util->getGroupFolderNode($room->getObjectId(), $userId);
+			if (!$groupFolder) {
+				throw new UnauthorizedException('User does not have direct access to the file');
+			}
 		}
 	}
 
