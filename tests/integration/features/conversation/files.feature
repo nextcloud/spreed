@@ -19,8 +19,8 @@ Feature: conversation/files
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     When user "participant1" gets the room for path "welcome.txt" with 200
     And user "participant2" gets the room for path "welcome (2).txt" with 200
-    Then user "participant1" is participant of room "file welcome (2).txt room"
-    And user "participant2" is participant of room "file welcome (2).txt room"
+    Then user "participant1" is not participant of room "file welcome (2).txt room"
+    And user "participant2" is not participant of room "file welcome (2).txt room"
 
   Scenario: get room for folder shared with user
     Given user "participant1" creates folder "/test"
@@ -34,8 +34,8 @@ Feature: conversation/files
     And user "participant1" shares "test" with user "participant2" with OCS 100
     When user "participant1" gets the room for path "test/renamed.txt" with 200
     And user "participant2" gets the room for path "test/renamed.txt" with 200
-    Then user "participant1" is participant of room "file test/renamed.txt room"
-    And user "participant2" is participant of room "file test/renamed.txt room"
+    Then user "participant1" is not participant of room "file test/renamed.txt room"
+    And user "participant2" is not participant of room "file test/renamed.txt room"
 
   Scenario: get room for file in folder reshared with user
     Given user "participant1" creates folder "/test"
@@ -45,9 +45,9 @@ Feature: conversation/files
     When user "participant1" gets the room for path "test/renamed.txt" with 200
     And user "participant2" gets the room for path "test/renamed.txt" with 200
     And user "participant3" gets the room for path "test/renamed.txt" with 200
-    Then user "participant1" is participant of room "file test/renamed.txt room"
-    And user "participant2" is participant of room "file test/renamed.txt room"
-    And user "participant3" is participant of room "file test/renamed.txt room"
+    Then user "participant1" is not participant of room "file test/renamed.txt room"
+    And user "participant2" is not participant of room "file test/renamed.txt room"
+    And user "participant3" is not participant of room "file test/renamed.txt room"
 
   Scenario: get room for file no longer shared
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
@@ -60,8 +60,8 @@ Feature: conversation/files
     Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
     When user "participant1" gets the room for path "welcome.txt" with 200
     And user "participant2" gets the room for path "welcome (2).txt" with 200
-    Then user "participant1" is participant of room "file welcome (2).txt room"
-    And user "participant2" is participant of room "file welcome (2).txt room"
+    Then user "participant1" is not participant of room "file welcome (2).txt room"
+    And user "participant2" is not participant of room "file welcome (2).txt room"
 
   Scenario: get room for file shared with user and group
     Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
@@ -69,9 +69,9 @@ Feature: conversation/files
     When user "participant1" gets the room for path "welcome.txt" with 200
     And user "participant2" gets the room for path "welcome (2).txt" with 200
     And user "participant3" gets the room for path "welcome (2).txt" with 200
-    Then user "participant1" is participant of room "file welcome (2).txt room"
-    And user "participant2" is participant of room "file welcome (2).txt room"
-    And user "participant3" is participant of room "file welcome (2).txt room"
+    Then user "participant1" is not participant of room "file welcome (2).txt room"
+    And user "participant2" is not participant of room "file welcome (2).txt room"
+    And user "participant3" is not participant of room "file welcome (2).txt room"
 
 
 
@@ -84,8 +84,8 @@ Feature: conversation/files
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     When user "participant1" gets the room for path "welcome.txt" with 200
     And user "participant2" gets the room for path "welcome (2).txt" with 200
-    Then user "participant1" is participant of room "file welcome (2).txt room"
-    And user "participant2" is participant of room "file welcome (2).txt room"
+    Then user "participant1" is not participant of room "file welcome (2).txt room"
+    And user "participant2" is not participant of room "file welcome (2).txt room"
 
 
 
@@ -117,6 +117,15 @@ Feature: conversation/files
     When user "participant2" joins room "file test/renamed.txt room" with 200
     Then user "participant2" is participant of room "file test/renamed.txt room"
 
+  Scenario: user with access to a file in a reshared folder can join its room
+    Given user "participant1" creates folder "/test"
+    And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
+    And user "participant1" shares "test" with user "participant2" with OCS 100
+    And user "participant2" shares "test" with user "participant3" with OCS 100
+    And user "participant3" gets the room for path "test/renamed.txt" with 200
+    When user "participant3" joins room "file test/renamed.txt room" with 200
+    Then user "participant3" is participant of room "file test/renamed.txt room"
+
   Scenario: owner of a no longer shared file can not join its room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" gets the room for path "welcome (2).txt" with 200
@@ -145,22 +154,72 @@ Feature: conversation/files
 
 
 
-  Scenario: owner of a shared file can join its room again after leaving it
+  Scenario: join room for file shared with group
+    Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    When user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    Then user "participant1" is participant of room "file welcome (2).txt room"
+    And user "participant2" is participant of room "file welcome (2).txt room"
+
+  Scenario: join room for file shared with user and group
+    Given user "participant1" shares "welcome.txt" with group "group1" with OCS 100
+    And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant3" gets the room for path "welcome (2).txt" with 200
+    When user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    And user "participant3" joins room "file welcome.txt room" with 200
+    Then user "participant1" is participant of room "file welcome (2).txt room"
+    And user "participant2" is participant of room "file welcome (2).txt room"
+    And user "participant3" is participant of room "file welcome (2).txt room"
+
+
+
+  Scenario: owner of a shared file is not removed from its room after leaving it
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    # Note that the room token is got by a different user than the one that
+    # joins the room
     And user "participant2" gets the room for path "welcome (2).txt" with 200
     And user "participant1" joins room "file welcome (2).txt room" with 200
     And user "participant1" is participant of room "file welcome (2).txt room"
     When user "participant1" leaves room "file welcome (2).txt room" with 200
-    And user "participant1" is not participant of room "file welcome (2).txt room"
-    And user "participant1" joins room "file welcome (2).txt room" with 200
     Then user "participant1" is participant of room "file welcome (2).txt room"
 
-  Scenario: user with access to a file can join its room again after leaving it
+  Scenario: user with access to a file is not removed from its room after leaving it
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    # Note that the room token is got by a different user than the one that
+    # joins the room
     And user "participant1" gets the room for path "welcome.txt" with 200
     And user "participant2" joins room "file welcome.txt room" with 200
     And user "participant2" is participant of room "file welcome.txt room"
     When user "participant2" leaves room "file welcome.txt room" with 200
+    Then user "participant2" is participant of room "file welcome.txt room"
+
+
+
+  Scenario: owner of a shared file can join its room again after removing self from it
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    # Note that the room token is got by a different user than the one that
+    # joins the room
+    And user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    And user "participant1" is participant of room "file welcome (2).txt room"
+    When user "participant1" removes themselves from room "file welcome (2).txt room" with 200
+    And user "participant1" is not participant of room "file welcome (2).txt room"
+    And user "participant1" joins room "file welcome (2).txt room" with 200
+    Then user "participant1" is participant of room "file welcome (2).txt room"
+
+  Scenario: user with access to a file can join its room again after removing self from it
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    # Note that the room token is got by a different user than the one that
+    # joins the room
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    And user "participant2" is participant of room "file welcome.txt room"
+    When user "participant2" removes themselves from room "file welcome.txt room" with 200
     And user "participant2" is not participant of room "file welcome.txt room"
     And user "participant2" joins room "file welcome.txt room" with 200
     Then user "participant2" is participant of room "file welcome.txt room"
@@ -173,6 +232,8 @@ Feature: conversation/files
   Scenario: owner is not participant of room for file no longer shared
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant1" gets the room for path "welcome.txt" with 200
+    And user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant1" leaves room "file welcome.txt room" with 200
     And user "participant1" is participant of room "file welcome.txt room"
     When user "participant1" deletes last share
     Then user "participant1" is participant of room "file welcome.txt room"
@@ -182,6 +243,8 @@ Feature: conversation/files
   Scenario: user is not participant of room for file no longer with access to it
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
     And user "participant2" gets the room for path "welcome (2).txt" with 200
+    And user "participant2" joins room "file welcome (2).txt room" with 200
+    And user "participant2" leaves room "file welcome (2).txt room" with 200
     And user "participant2" is participant of room "file welcome (2).txt room"
     When user "participant1" deletes last share
     Then user "participant2" is participant of room "file welcome (2).txt room"
