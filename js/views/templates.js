@@ -481,7 +481,7 @@ templates['tabview_header'] = template({"compiler":[7,">= 4.0.0"],"main":functio
 
   return "<span class=\"icon "
     + alias4(((helper = (helper = helpers.icon || (depth0 != null ? depth0.icon : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"icon","hash":{},"data":data}) : helper)))
-    + "\"></span>\n<a href=\"#\">"
+    + "\"></span>\n<a href=\"#\" tabindex=\"-1\">"
     + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
     + "</a>\n";
 },"useData":true});
