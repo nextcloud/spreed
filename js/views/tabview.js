@@ -182,6 +182,10 @@
 		},
 
 		selectTabHeader: function(tabId) {
+			if (this._currentTabId === tabId) {
+				return;
+			}
+
 			this.triggerMethod('unselect:tabHeader', this._currentTabId);
 
 			if (this._currentTabId !== undefined) {
