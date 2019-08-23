@@ -55,15 +55,6 @@
 	flex-grow: 1;
 }
 
-#oca-spreedme-add-room {
-	border-bottom: 1px solid var(--color-border);
-}
-
-.oca-spreedme-add-person {
-	border: 1px solid var(--color-border);
-	border-radius: var(--border-radius);
-}
-
 .contactsmenu-popover li > a > img {
 	/* The app uses border-box sizing, so the size of the icon is the
 	 * width/height plus the padding set by default in the server
@@ -155,11 +146,36 @@ input[type="password"] {
 #select2-drop {
 	margin-top: -44px !important;
 }
+#oca-spreedme-add-room .select2-container {
+	border-bottom: 1px solid var(--color-border);
+
+	&.select2-container-active {
+		border-bottom-color: var(--color-border-dark);
+		border-right: 1px solid var(--color-border-dark);
+
+		.select2-choice,
+		.select2-default {
+			color: var(--color-text-light) !important;
+		}
+	}
+}
+.oca-spreedme-add-person .select2-container {
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+
+	&.select2-container-active {
+		border-color: var(--color-border-dark);
+
+		.select2-choice,
+		.select2-default {
+			color: var(--color-text-light) !important;
+		}
+	}
+}
 #oca-spreedme-add-room .select2-container,
 .oca-spreedme-add-person .select2-container {
 	width: 100%;
 	margin: 0 !important;
-	border: none;
 	padding: 9px;
 }
 #oca-spreedme-add-room .select2-container .select2-choice,
