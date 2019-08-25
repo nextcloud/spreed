@@ -45,12 +45,14 @@
 
 		templateContext: function() {
 			var canModerate = this._canModerate();
+			var canFullModerate = this._canFullModerate();
 			return $.extend(this.model.toJSON(), {
 				isRoomForFile: this.model.get('objectType') === 'file',
 				fileLink: OC.generateUrl('/f/{fileId}', { fileId: this.model.get('objectId') }),
 				fileLinkTitle: t('spreed', 'Go to file'),
+				showRoomModerationMenu: canModerate && canFullModerate,
 				canModerate: canModerate,
-				canFullModerate: this._canFullModerate(),
+				canFullModerate: canFullModerate,
 				linkCheckboxLabel: t('spreed', 'Share link'),
 				isPublic: this.model.get('type') === 3,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
@@ -76,6 +78,9 @@
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm',
 			'passwordLoading': '.password-loading',
+
+			'roomModerationButton': '.room-moderation-button .button',
+			'roomModerationMenu': '.room-moderation-button .menu',
 
 			'menu': '.password-menu',
 		},
@@ -205,6 +210,7 @@
 				$(self.ui.passwordInput).focus();
 			});
 
+			OC.registerMenu(this.ui.roomModerationButton, this.ui.roomModerationMenu);
 		},
 
 		_canModerate: function() {

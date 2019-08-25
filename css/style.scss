@@ -937,6 +937,7 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 
 	.call-controls-container {
 		display: flex;
+		align-items: center;
 
 		.call-button,
 		.share-link-options {
@@ -972,40 +973,32 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		}
 	}
 
+	.room-moderation-button {
+		/* Needed for proper positioning of the menu. */
+		position: relative;
+	}
+
+	.share-link-options .button,
+	.room-moderation-button .button {
+		cursor: pointer;
+		width: 44px;
+		height: 44px;
+		display: block;
+		background-color: transparent;
+		border: none;
+		margin: 0;
+		opacity: .5;
+
+		&:hover,
+		&:focus,
+		&:active {
+			opacity: 1;
+		}
+	}
+
 	.share-link-options {
 		display: flex;
 		align-items: center;
-		.link-checkbox-label {
-			white-space: nowrap;
-			padding: 12px;
-
-			/* If ".icon-loading-small" is set hide the checkbox and show a
-			 * loading icon instead */
-			&.icon-loading-small:before {
-				background-image: none !important;
-				background-color: transparent !important;
-				border-color: transparent !important;
-			}
-			&.icon-loading-small:after {
-				top: 21px;
-				left: 23px;
-			}
-		}
-		.button {
-			cursor: pointer;
-			width: 44px;
-			height: 44px;
-			display: block;
-			background-color: transparent;
-			border: none;
-			margin: 0;
-			opacity: .5;
-			&:hover,
-			&:focus,
-			&:active {
-				opacity: 1;
-			}
-		}
 		.password-button {
 			position: relative;
 
@@ -1032,6 +1025,22 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 					}
 				}
 			}
+		}
+	}
+
+	/* The specific locator is needed to have higher priority than other
+	 * important rules set in the server. */
+	input.checkbox + label.link-checkbox-label {
+		/* If ".icon-loading-small" is set hide the checkbox and show a
+		 * loading icon instead. */
+		&.icon-loading-small:before {
+			background-image: none !important;
+			background-color: transparent !important;
+			border-color: transparent !important;
+		}
+		&.icon-loading-small:after {
+			top: 22px;
+			left: 21px;
 		}
 	}
 }

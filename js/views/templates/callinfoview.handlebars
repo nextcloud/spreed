@@ -10,10 +10,6 @@
 	<div class="call-button"></div>
 	{{#if canModerate}}
 	<div class="share-link-options">
-		{{#if canFullModerate}}
-		<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">
-		<label for="link-checkbox" class="link-checkbox-label">{{linkCheckboxLabel}}</label>
-		{{/if}}
 		{{#if isPublic}}
 		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
 		<div class="password-button">
@@ -39,6 +35,25 @@
 	{{#if showShareLink}}
 	<div class="share-link-options">
 		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
+	</div>
+	{{/if}}
+	{{#if showRoomModerationMenu}}
+	<div class="room-moderation-button">
+		<div class="menutoggle">
+			<button class="button icon-more"></button>
+		</div>
+		<div class="popovermenu bubble menu">
+			<ul>
+				{{#if canFullModerate}}
+				<li>
+					<span class="menuitem">
+						<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">
+						<label for="link-checkbox" class="link-checkbox-label">{{linkCheckboxLabel}}</label>
+					</span>
+				</li>
+				{{/if}}
+			</ul>
+		</div>
 	</div>
 	{{/if}}
 </div>
