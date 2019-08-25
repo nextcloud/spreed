@@ -192,9 +192,9 @@ templates['collectionsview'] = template({"compiler":[7,">= 4.0.0"],"main":functi
 templates['editabletextlabel'] = template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "	<div class=\"edit-button\"><span class=\"icon button icon-rename\" "
+  return "	<div class=\"edit-button\"><button class=\"icon button icon-rename\" "
     + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.buttonTitle : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "></span></div>\n";
+    + "></button></div>\n";
 },"2":function(container,depth0,helpers,partials,data) {
     var helper;
 

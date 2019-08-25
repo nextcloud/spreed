@@ -770,20 +770,18 @@ input[type="password"] {
 		.label-wrapper {
 			display: flex;
 			align-items: center;
-			.edit-button {
+			.edit-button .icon {
+				background-color: transparent;
+				border: none;
+				padding: 13px 22px;
+				margin: 0;
+
 				opacity: .3;
 
 				&:hover,
 				&:focus,
 				&:active {
 					opacity: 1;
-				}
-
-				.icon {
-					background-color: transparent;
-					border: none;
-					padding: 13px 22px;
-					margin: 0;
 				}
 			}
 		}
