@@ -1,11 +1,11 @@
-<a class="participant-entry-link" href="#" data-sessionId="{{sessionId}}">
+<span class="participant-entry" data-sessionId="{{sessionId}}">
 	<div class="avatar"></div>
-	{{name}}
+	<span>{{name}}</span>
 	{{#if participantIsOwner}}<span class="participant-moderator-indicator">{{moderatorIndicator}}</span>{{/if}}
 	{{#if participantIsModerator}}<span class="participant-moderator-indicator">{{moderatorIndicator}}</span>{{/if}}
 	{{#if participantIsGuestModerator}}<span class="participant-moderator-indicator">{{moderatorIndicator}}</span>{{/if}}
 	{{#if inCall}}<span class="icon icon-video"></span>{{/if}}
-</a>
+</span>
 {{#if canModerate}}
 <div class="participant-entry-utils">
 	<ul>

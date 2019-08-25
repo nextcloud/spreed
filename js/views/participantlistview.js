@@ -134,8 +134,8 @@
 
 				if (OC.getCurrentUser().uid && model.get('userId') &&
 					model.get('userId') !== OC.getCurrentUser().uid) {
-					this.$el.find('.participant-entry-link .avatar').contactsMenu(
-						model.get('userId'), 0, this.$el.find('.participant-entry-link'));
+					this.$el.find('.participant-entry .avatar').contactsMenu(
+						model.get('userId'), 0, this.$el.find('.participant-entry'));
 				}
 
 				this.$el.attr('data-session-id', this.model.get('sessionId'));

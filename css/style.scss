@@ -709,7 +709,7 @@ input[type="password"] {
 }
 
 .participantWithList .participant-offline {
-	& > a {
+	& > span {
 		color: var(--color-text-maxcontrast);
 	}
 	.avatar {
@@ -723,7 +723,7 @@ input[type="password"] {
 	box-sizing: border-box;
 }
 
-.participantWithList > li > a {
+.participantWithList > li > span {
 	display: block;
 	width: 100%;
 	line-height: 44px;
