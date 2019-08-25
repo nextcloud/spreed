@@ -737,6 +737,13 @@ input[type="password"] {
 	background: no-repeat 14px center;
 }
 
+body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.guestUser) {
+	.avatar,
+	.avatar img {
+		cursor: pointer;
+	}
+}
+
 
 
 /**

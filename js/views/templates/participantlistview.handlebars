@@ -1,4 +1,4 @@
-<span class="participant-entry" data-sessionId="{{sessionId}}">
+<span class="participant-entry {{#if participantIsSelf}}currentUser{{/if}} {{#if participantIsGuestOrGuestModerator}}guestUser{{/if}}" data-sessionId="{{sessionId}}">
 	<div class="avatar"></div>
 	<span>{{name}}</span>
 	{{#if participantIsOwner}}<span class="participant-moderator-indicator">{{moderatorIndicator}}</span>{{/if}}
