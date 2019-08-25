@@ -64,7 +64,6 @@
 		ui: {
 			'roomName': 'div.room-name',
 			'fileLink': '.file-link',
-			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 			'linkCheckboxLabel': '.link-checkbox-label',
@@ -73,16 +72,12 @@
 
 			'passwordButton': '.password-button .button',
 			'passwordForm': '.password-form',
-			'passwordMenu': '.password-menu',
-			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm',
 			'passwordLoading': '.password-loading',
 
 			'roomModerationButton': '.room-moderation-button .button',
 			'roomModerationMenu': '.room-moderation-button .menu',
-
-			'menu': '.password-menu',
 		},
 
 		regions: {
