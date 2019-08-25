@@ -295,6 +295,7 @@
 					this.ui.passwordInput.val('');
 					restoreState();
 					OC.hideMenus();
+					this.ui.passwordButton.focus();
 				}.bind(this),
 				error: function() {
 					restoreState();
@@ -309,6 +310,7 @@
 			if (e.keyCode === 27) {
 				// ESC
 				OC.hideMenus();
+				this.ui.passwordButton.focus();
 			}
 		},
 

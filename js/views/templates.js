@@ -67,9 +67,9 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
 },"7":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "		<div class=\"clipboard-button\"><button class=\"button icon-clippy\"></button></div>\n		<div class=\"password-button\">\n			<span class=\"button "
+  return "		<div class=\"clipboard-button\"><button class=\"button icon-clippy\"></button></div>\n		<div class=\"password-button\">\n			<div class=\"menutoggle\"><button class=\"button "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
-    + "\"></span>\n			<div class=\"popovermenu password-menu menu-right\">\n				<ul>\n					<li>\n						<span class=\"menuitem "
+    + "\"></button></div>\n			<div class=\"popovermenu password-menu menu-right\">\n				<ul>\n					<li>\n						<span class=\"menuitem "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
     + " password-option\">\n							<form class=\"password-form\">\n								<input class=\"password-input\" maxlength=\"200\" type=\"password\"\n									placeholder=\""
     + container.escapeExpression(((helper = (helper = helpers.passwordInputPlaceholder || (depth0 != null ? depth0.passwordInputPlaceholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"passwordInputPlaceholder","hash":{},"data":data}) : helper)))
