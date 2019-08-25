@@ -12,23 +12,6 @@
 	<div class="share-link-options">
 		{{#if isPublic}}
 		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
-		<div class="password-button">
-			<div class="menutoggle"><button class="button {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}}"></button></div>
-			<div class="popovermenu password-menu menu-right">
-				<ul>
-					<li>
-						<span class="menuitem {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}} password-option">
-							<form class="password-form">
-								<input class="password-input" maxlength="200" type="password"
-									placeholder="{{passwordInputPlaceholder}}">
-								<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm"></input>
-								<span class="icon icon-loading-small password-loading hidden"/>
-							</form>
-						</span>
-					</li>
-				</ul>
-			</div>
-		</div>
 		{{/if}}
 	</div>
 	{{/if}}
@@ -49,6 +32,18 @@
 					<span class="menuitem">
 						<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">
 						<label for="link-checkbox" class="link-checkbox-label">{{linkCheckboxLabel}}</label>
+					</span>
+				</li>
+				{{/if}}
+				{{#if isPublic}}
+				<li>
+					<span class="menuitem {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}} password-option">
+						<form class="password-form">
+							<input class="password-input" maxlength="200" type="password"
+								placeholder="{{passwordInputPlaceholder}}">
+							<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm"></input>
+							<span class="icon icon-loading-small password-loading hidden"/>
+						</form>
 					</span>
 				</li>
 				{{/if}}

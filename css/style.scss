@@ -999,30 +999,59 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 	.share-link-options {
 		display: flex;
 		align-items: center;
-		.password-button {
-			position: relative;
+	}
 
-			.menuitem {
-				/* Override rule for menu items from server, as in this case
-				 * only the button in the password field is clickable, so the
-				 * pointer cursor should not be used for the whole item. */
-				cursor: default;
+	.room-moderation-button .menu {
+		/* Values copied from apps.scss in server. */
+		$popoveritem-height: 44px;
+		$popovericon-size: 16px;
+		$outter-margin: ($popoveritem-height - $popovericon-size) / 2;
 
-				.password-form {
-					position: relative;
+		/* The server sets a top/bottom margin to forms and inputs of the
+		 * first/last item in a menu, but that misaligns the left icon; this
+		 * sets the top/bottom margin to the whole item instead of only to the
+		 * forms or inputs. */
+		li:first-of-type {
+			> .menuitem.password-option {
 
-					.password-confirm,
-					.password-loading {
-						/* Inputs in menu items do not have a right margin, so
-						 * it does not need to be compensated. */
-						right: 0;
-					}
+				margin-top: $outter-margin - 2px; // minus the input margin
 
-					.password-confirm {
-						/* Needed to override an important rule set in the
-						 * server. */
-						background-color: transparent !important;
-					}
+				> form, > input {
+					margin-top: 0;
+				}
+			}
+		}
+		li:last-of-type {
+			> .menuitem.password-option {
+
+				margin-bottom: $outter-margin - 2px; // minus the input margin
+
+				> form, > input {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.menuitem.password-option {
+			/* Override rule for menu items from server, as in this case
+			 * only the button in the password field is clickable, so the
+			 * pointer cursor should not be used for the whole item. */
+			cursor: default;
+
+			.password-form {
+				position: relative;
+
+				.password-confirm,
+				.password-loading {
+					/* Inputs in menu items do not have a right margin, so
+					 * it does not need to be compensated. */
+					right: 0;
+				}
+
+				.password-confirm {
+					/* Needed to override an important rule set in the
+					 * server. */
+					background-color: transparent !important;
 				}
 			}
 		}

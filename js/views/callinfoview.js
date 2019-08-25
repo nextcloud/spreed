@@ -46,17 +46,18 @@
 		templateContext: function() {
 			var canModerate = this._canModerate();
 			var canFullModerate = this._canFullModerate();
+			var isPublic = this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC;
 			return $.extend(this.model.toJSON(), {
 				isRoomForFile: this.model.get('objectType') === 'file',
 				fileLink: OC.generateUrl('/f/{fileId}', { fileId: this.model.get('objectId') }),
 				fileLinkTitle: t('spreed', 'Go to file'),
-				showRoomModerationMenu: canModerate && canFullModerate,
+				showRoomModerationMenu: canModerate && (canFullModerate || isPublic),
 				canModerate: canModerate,
 				canFullModerate: canFullModerate,
 				linkCheckboxLabel: t('spreed', 'Share link'),
-				isPublic: this.model.get('type') === 3,
+				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
-				showShareLink: !canModerate && this.model.get('type') === 3,
+				showShareLink: !canModerate && isPublic,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			});
 		},
@@ -70,7 +71,6 @@
 
 			'callButton': 'div.call-button',
 
-			'passwordButton': '.password-button .button',
 			'passwordForm': '.password-form',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm',
@@ -88,7 +88,6 @@
 		events: {
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
 
-			'keyup @ui.passwordInput': 'keyUpPassword',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
 		},
@@ -181,20 +180,9 @@
 			});
 			this.initClipboard();
 
-			this.ui.passwordButton.tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: (this.model.get('hasPassword')) ? t('spreed', 'Change password') : t('spreed', 'Set password')
-			});
-
 			// Set the body as the container to show the tooltip in front of the
 			// header.
 			this.ui.fileLink.tooltip({container: $('body')});
-
-			var self = this;
-			OC.registerMenu($(this.ui.passwordButton), $(this.ui.passwordMenu), function() {
-				$(self.ui.passwordInput).focus();
-			});
 
 			OC.registerMenu(this.ui.roomModerationButton, this.ui.roomModerationMenu);
 		},
@@ -287,7 +275,7 @@
 					this.ui.passwordInput.val('');
 					restoreState();
 					OC.hideMenus();
-					this.ui.passwordButton.focus();
+					this.ui.roomModerationButton.focus();
 				}.bind(this),
 				error: function() {
 					restoreState();
@@ -295,15 +283,6 @@
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
 				}.bind(this)
 			});
-		},
-
-		keyUpPassword: function(e) {
-			e.preventDefault();
-			if (e.keyCode === 27) {
-				// ESC
-				OC.hideMenus();
-				this.ui.passwordButton.focus();
-			}
 		},
 
 		/**

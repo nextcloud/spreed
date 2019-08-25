@@ -84,10 +84,19 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
-	public static function passwordButton() {
-		return Locator::forThe()->css(".password-button")->
+	public static function roomModerationButton() {
+		return Locator::forThe()->css(".room-moderation-button")->
 				descendantOf(self::conversationInfoContainer())->
-				describedAs("Password button in conversation info");
+				describedAs("Room moderation button in conversation info");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function roomModerationMenu() {
+		return Locator::forThe()->css(".menu")->
+				descendantOf(self::roomModerationButton())->
+				describedAs("Room moderation menu in conversation info");
 	}
 
 	/**
@@ -95,8 +104,8 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	 */
 	public static function passwordIcon() {
 		return Locator::forThe()->css(".icon-password")->
-				descendantOf(self::passwordButton())->
-				describedAs("Password icon in conversation info");
+				descendantOf(self::roomModerationMenu())->
+				describedAs("Password icon in room moderation menu in conversation info");
 	}
 
 	/**
@@ -104,8 +113,8 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	 */
 	public static function noPasswordIcon() {
 		return Locator::forThe()->css(".icon-no-password")->
-				descendantOf(self::passwordButton())->
-				describedAs("No password icon in conversation info");
+				descendantOf(self::roomModerationMenu())->
+				describedAs("No password icon in room moderation menu in conversation info");
 	}
 
 	/**
@@ -113,8 +122,8 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	 */
 	public static function passwordField() {
 		return Locator::forThe()->css(".password-input")->
-				descendantOf(self::conversationInfoContainer())->
-				describedAs("Password field in conversation info");
+				descendantOf(self::roomModerationMenu())->
+				describedAs("Password field in room moderation menu in conversation info");
 	}
 
 	/**
@@ -142,7 +151,7 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	 * @When I protect the conversation with the password :password
 	 */
 	public function iProtectTheConversationWithThePassword($password) {
-		$this->actor->find(self::passwordButton(), 2)->click();
+		$this->showRoomModerationMenu();
 
 		$this->actor->find(self::passwordField(), 2)->setValue($password . "\r");
 	}
@@ -151,14 +160,38 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	 * @Then I see that the conversation is password protected
 	 */
 	public function iSeeThatTheConversationIsPasswordProtected() {
+		$this->showRoomModerationMenu();
+
 		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::passwordIcon(), 10)->isVisible(), "Password icon is visible");
+
+		// Hide menu again after checking the icon.
+		$this->actor->find(self::roomModerationButton(), 2)->click();
 	}
 
 	/**
 	 * @Then I see that the conversation is not password protected
 	 */
 	public function iSeeThatTheConversationIsNotPasswordProtected() {
+		$this->showRoomModerationMenu();
+
 		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::noPasswordIcon(), 10)->isVisible(), "No password icon is visible");
+
+		// Hide menu again after checking the icon.
+		$this->actor->find(self::roomModerationButton(), 2)->click();
+	}
+
+	private function showRoomModerationMenu() {
+		// The room moderation menu is hidden after clicking on an action of the
+		// menu. Therefore, if the menu is visible, wait a little just in case
+		// it is in the process of being hidden due to a previous action.
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::roomModerationMenu(),
+				$timeout = 5 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The room moderation menu is still shown after $timeout seconds");
+		}
+
+		$this->actor->find(self::roomModerationButton(), 10)->click();
 	}
 
 }
