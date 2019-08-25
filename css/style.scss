@@ -939,14 +939,13 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		display: flex;
 		align-items: center;
 
-		.call-button,
 		.share-link-options {
 			flex-grow: 1;
-			flex-basis: 50%;
 		}
 
 		.call-button {
 			flex-grow: 0;
+			flex-basis: 50%;
 
 			.join-call,
 			.leave-call {
