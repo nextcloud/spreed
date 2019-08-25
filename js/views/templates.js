@@ -469,7 +469,7 @@ templates['screenview'] = template({"compiler":[7,">= 4.0.0"],"main":function(co
 templates['sidebarview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "<div id=\"app-sidebar-trigger\" class=\"icon-menu-people force-icon-white-in-call icon-shadow\">\n</div>\n<div id=\"app-sidebar\" class=\"detailsView\">\n	<div class=\"detailCallInfoContainer\">\n	</div>\n	<div class=\"tabs\">\n	</div>\n	<a class=\"close icon-close\" href=\"#\"><span class=\"hidden-visually\">"
+  return "<button id=\"app-sidebar-trigger\" class=\"icon-menu-people force-icon-white-in-call icon-shadow\"></button>\n<div id=\"app-sidebar\" class=\"detailsView\">\n	<div class=\"detailCallInfoContainer\">\n	</div>\n	<div class=\"tabs\">\n	</div>\n	<a class=\"close icon-close\" href=\"#\"><span class=\"hidden-visually\">"
     + container.escapeExpression(((helper = (helper = helpers.closeLabel || (depth0 != null ? depth0.closeLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"closeLabel","hash":{},"data":data}) : helper)))
     + "</span></a>\n</div>\n";
 },"useData":true});
