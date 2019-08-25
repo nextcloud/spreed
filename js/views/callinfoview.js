@@ -89,7 +89,6 @@
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
 
 			'keyup @ui.passwordInput': 'keyUpPassword',
-			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
 		},
