@@ -939,10 +939,6 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		display: flex;
 		align-items: center;
 
-		.share-link-options {
-			flex-grow: 1;
-		}
-
 		.call-button {
 			flex-grow: 0;
 			flex-basis: 50%;
@@ -975,9 +971,12 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 	.room-moderation-button {
 		/* Needed for proper positioning of the menu. */
 		position: relative;
+
+		/* Position the button to the right end of its flex parent. */
+		margin-left: auto;
 	}
 
-	.share-link-options .button,
+	.clipboard-button .button,
 	.room-moderation-button .button {
 		cursor: pointer;
 		width: 44px;
@@ -993,11 +992,6 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		&:active {
 			opacity: 1;
 		}
-	}
-
-	.share-link-options {
-		display: flex;
-		align-items: center;
 	}
 
 	.room-moderation-button .menu {

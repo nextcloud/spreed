@@ -48,7 +48,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + alias4(((helper = (helper = helpers.fileLinkTitle || (depth0 != null ? depth0.fileLinkTitle : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"fileLinkTitle","hash":{},"data":data}) : helper)))
     + "\">\n		<span class=\"icon icon-file\"></span>\n	</a>\n";
 },"3":function(container,depth0,helpers,partials,data) {
-    return "	<div class=\"share-link-options\">\n		<div class=\"clipboard-button\"><button class=\"button icon-clippy\"></button></div>\n	</div>\n";
+    return "	<div class=\"clipboard-button\"><button class=\"button icon-clippy\"></button></div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
