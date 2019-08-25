@@ -8,14 +8,7 @@
 </div>
 <div class="call-controls-container">
 	<div class="call-button"></div>
-	{{#if canModerate}}
-	<div class="share-link-options">
-		{{#if isPublic}}
-		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
-		{{/if}}
-	</div>
-	{{/if}}
-	{{#if showShareLink}}
+	{{#if isPublic}}
 	<div class="share-link-options">
 		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
 	</div>

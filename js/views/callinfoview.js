@@ -52,12 +52,10 @@
 				fileLink: OC.generateUrl('/f/{fileId}', { fileId: this.model.get('objectId') }),
 				fileLinkTitle: t('spreed', 'Go to file'),
 				showRoomModerationMenu: canModerate && (canFullModerate || isPublic),
-				canModerate: canModerate,
 				canFullModerate: canFullModerate,
 				linkCheckboxLabel: t('spreed', 'Share link'),
 				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
-				showShareLink: !canModerate && isPublic,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			});
 		},
