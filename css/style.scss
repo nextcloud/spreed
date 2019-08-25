@@ -199,7 +199,6 @@ input[type="password"] {
 	padding: 0;
 }
 
-.participantWithList .avatar,
 #app-navigation .app-navigation-entry-link > .avatar {
 	position: absolute;
 	left: 6px;
@@ -735,6 +734,26 @@ input[type="password"] {
 	padding-left: 44px;
 	background-size: 16px 16px;
 	background: no-repeat 14px center;
+}
+
+.participantWithList > li > span > .avatar-wrapper {
+	position: absolute;
+	top: 6px;
+	left: 6px;
+
+	&:focus,
+	&:active {
+		border: 1px solid var(--color-border-dark);
+		border-radius: 50%;
+
+		/* Separate the border slightly from the avatar to make it more
+		 * noticeable. */
+		padding: 3px;
+
+		/* Compensate position for the border and the increased size. */
+		top: 2px;
+		left: 2px;
+	}
 }
 
 body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.guestUser) {

@@ -101,14 +101,18 @@
 					name = t('spreed', 'Guest');
 				}
 
+				var isGuestOrGuestModerator = this.model.get('participantType') === OCA.SpreedMe.app.GUEST || this.model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR;
+				var hasContactsMenu = OC.getCurrentUser().uid && !isSelf && !isGuestOrGuestModerator;
+
 				return {
 					canModerate: canModerate,
 					canBePromoted: this.model.get('participantType') === OCA.SpreedMe.app.USER || this.model.get('participantType') === OCA.SpreedMe.app.GUEST,
 					canBeDemoted: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR || this.model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR,
 					name: name,
+					participantHasContactsMenu: hasContactsMenu,
 					participantIsSelf: isSelf,
 					participantIsUser: this.model.get('participantType') === OCA.SpreedMe.app.USER,
-					participantIsGuestOrGuestModerator: this.model.get('participantType') === OCA.SpreedMe.app.GUEST || this.model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR,
+					participantIsGuestOrGuestModerator: isGuestOrGuestModerator,
 					participantIsGuestModerator: this.model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR,
 					participantIsModerator: this.model.get('participantType') === OCA.SpreedMe.app.MODERATOR,
 					participantIsOwner: this.model.get('participantType') === OCA.SpreedMe.app.OWNER,
@@ -138,6 +142,12 @@
 					model.get('userId') !== OC.getCurrentUser().uid) {
 					this.$el.find('.participant-entry .avatar').contactsMenu(
 						model.get('userId'), 0, this.$el.find('.participant-entry'));
+
+					this.$el.find('.participant-entry .avatar-wrapper').on('keyup', function(event) {
+						if (event.key === ' ' || event.key === 'Enter') {
+							$(this).find('.avatar').click();
+						}
+					});
 				}
 
 				this.$el.attr('data-session-id', this.model.get('sessionId'));

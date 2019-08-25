@@ -1,5 +1,5 @@
 <span class="participant-entry {{#if participantIsSelf}}currentUser{{/if}} {{#if participantIsGuestOrGuestModerator}}guestUser{{/if}}" data-sessionId="{{sessionId}}">
-	<div class="avatar"></div>
+	<div class="avatar-wrapper" {{#if participantHasContactsMenu}}tabindex="0"{{/if}}><div class="avatar"></div></div>
 	<span>{{name}}</span>
 	{{#if participantIsOwner}}<span class="participant-moderator-indicator">{{moderatorIndicator}}</span>{{/if}}
 	{{#if participantIsModerator}}<span class="participant-moderator-indicator">{{moderatorIndicator}}</span>{{/if}}
