@@ -95,7 +95,7 @@
 
 		modelEvents: {
 			'change:hasPassword': function() {
-				this.renderWhenInactive();
+				this.render();
 			},
 			'change:participantType': function() {
 				this._updateNameEditability();
@@ -107,7 +107,7 @@
 			'change:type': function() {
 				this._updateNameEditability();
 
-				this.renderWhenInactive();
+				this.render();
 			}
 		},
 
@@ -142,15 +142,6 @@
 			});
 
 			this._updateNameEditability();
-		},
-
-		renderWhenInactive: function() {
-			if (!OC._currentMenu || !OC._currentMenu.hasClass('password-menu') || this.ui.passwordInput.length === 0 || this.ui.passwordInput.val() === '') {
-				this.render();
-				return;
-			}
-
-			this.renderTimeout = setTimeout(_.bind(this.renderWhenInactive, this), 500);
 		},
 
 		onBeforeRender: function() {
