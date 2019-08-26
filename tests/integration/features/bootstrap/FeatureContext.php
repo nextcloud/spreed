@@ -215,7 +215,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($isParticipant) {
 			$this->assertStatusCode($this->response, 200);
-			PHPUnit_Framework_Assert::assertEquals(self::$userToSessionId[$guest], sha1($response['sessionId']));
+			PHPUnit_Framework_Assert::assertEquals(self::$userToSessionId[$guest], $response['sessionId']);
 
 			return;
 		}
@@ -385,7 +385,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// database, though, so the ID stored in the database and returned
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
-			self::$userToSessionId[$user] = sha1($response['sessionId']);
+			self::$userToSessionId[$user] = $response['sessionId'];
 		}
 	}
 
@@ -541,11 +541,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 */
 	public function userPromoteDemoteInRoom($user, $isPromotion, $participant, $identifier, $statusCode) {
+		$requestParameters = [['participant', $participant]];
+
+		if (substr($participant, 0, strlen('guest')) === 'guest') {
+			$sessionId = self::$userToSessionId[$participant];
+			$requestParameters = [['sessionId', $sessionId]];
+		}
+
 		$this->setCurrentUser($user);
 		$this->sendRequest(
 			$isPromotion === 'promotes' ? 'POST' : 'DELETE',
 			'/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/moderators',
-			new TableNode([['participant', $participant]])
+			new TableNode($requestParameters)
 		);
 		$this->assertStatusCode($this->response, $statusCode);
 	}
@@ -573,7 +580,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 			// database, though, so the ID stored in the database and returned
 			// in chat messages is a hashed version instead.
 			self::$sessionIdToUser[sha1($response['sessionId'])] = $user;
-			self::$userToSessionId[$user] = sha1($response['sessionId']);
+			self::$userToSessionId[$user] = $response['sessionId'];
 		}
 	}
 
