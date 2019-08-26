@@ -163,6 +163,17 @@ class Listener {
 			$room = $event->getSubject();
 			$notifier->roomModified($room);
 		});
+		$dispatcher->addListener(Room::class . '::postSetLobbyState', function(GenericEvent $event) {
+			if (self::isUsingInternalSignaling()) {
+				return;
+			}
+
+			/** @var BackendNotifier $notifier */
+			$notifier = \OC::$server->query(BackendNotifier::class);
+
+			$room = $event->getSubject();
+			$notifier->roomModified($room);
+		});
 		$dispatcher->addListener(Room::class . '::postSetParticipantType', function(GenericEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
