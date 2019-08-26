@@ -63,6 +63,8 @@
 			unreadMention: false,
 			isFavorite: false,
 			notificationLevel: 0,
+			lobbyState: 0,
+			lobbyTimer: 0,
 			lastPing: 0,
 			sessionId: '0',
 			participants: [],
@@ -113,6 +115,7 @@
 			}
 
 			var supportedKeys = [
+				'lobbyState',
 				'name',
 				'password',
 				'type',
@@ -200,6 +203,18 @@
 				options.url = this.url() + '/password';
 			}
 
+			if (method === 'patch' && options.attrs.lobbyState !== undefined) {
+				method = 'update';
+
+				options.url = this.url() + '/webinary/lobby';
+
+				// The endpoint to set the lobby state expects the state to be
+				// provided in a "state" attribute instead of a "lobbyState"
+				// attribute.
+				options.attrs.state = options.attrs.lobbyState;
+				delete options.attrs.lobbyState;
+			}
+
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
 		},
 		setPublic: function(isPublic, options) {
@@ -209,6 +224,9 @@
 		},
 		setPassword: function(password, options) {
 			this.save('password', password, options);
+		},
+		setLobbyState: function(lobbyState, options) {
+			this.save('lobbyState', lobbyState, options);
 		},
 		join: function() {
 			OCA.SpreedMe.app.connection.joinRoom(this.get('token'));

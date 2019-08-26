@@ -55,6 +55,10 @@
 		ROOM_TYPE_PUBLIC: 3,
 		ROOM_TYPE_CHANGELOG: 4,
 
+		/* Must stay in sync with values in "lib/Webinary.php". */
+		LOBBY_NONE: 0,
+		LOBBY_NON_MODERATORS: 1,
+
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 

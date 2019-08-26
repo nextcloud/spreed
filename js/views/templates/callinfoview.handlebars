@@ -38,6 +38,28 @@
 					</span>
 				</li>
 				{{/if}}
+				{{#if canFullModerate}}
+				<li>
+					<div class="separator"></div>
+				</li>
+				<li>
+					<span class="menuitem caption">
+						<span>{{enableForLabel}}</span>
+					</span>
+				</li>
+				<li>
+					<span class="menuitem">
+						<input name="lobby-state" id="all-participants" class="radio all-participants-radio" value="{{allParticipantsValue}}" {{#if lobbyStateAllParticipants}} checked="checked"{{/if}} type="radio">
+						<label for="all-participants" class="all-participants-label">{{allParticipantsLabel}}</label>
+					</span>
+				</li>
+				<li>
+					<span class="menuitem">
+						<input name="lobby-state" id="moderators-only" class="radio moderators-only-radio" value="{{moderatorsOnlyValue}}" {{#if lobbyStateModeratorsOnly}} checked="checked"{{/if}} type="radio">
+						<label for="moderators-only" class="moderators-only-label">{{moderatorsOnlyLabel}}</label>
+					</span>
+				</li>
+				{{/if}}
 			</ul>
 		</div>
 	</div>
