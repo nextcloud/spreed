@@ -255,6 +255,69 @@ class BackendNotifierTest extends \Test\TestCase {
 		], $bodies);
 	}
 
+	public function testRoomPasswordChanged() {
+		$room = $this->manager->createPublicRoom();
+		$room->setPassword('password');
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
+
+	public function testRoomTypeChanged() {
+		$room = $this->manager->createPublicRoom();
+		$room->changeType(Room::GROUP_CALL);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
+
+	public function testRoomReadOnlyChanged() {
+		$room = $this->manager->createPublicRoom();
+		$room->setReadOnly(Room::READ_ONLY);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
+
 	public function testRoomDelete() {
 		$room = $this->manager->createPublicRoom();
 		$room->addUsers([
