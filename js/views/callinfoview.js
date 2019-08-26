@@ -54,6 +54,7 @@
 				showRoomModerationMenu: canModerate && (canFullModerate || isPublic),
 				canFullModerate: canFullModerate,
 				linkCheckboxLabel: t('spreed', 'Share link'),
+				copyLinkLabel: t('spreed', 'Copy link'),
 				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
@@ -173,8 +174,8 @@
 			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
 			this.ui.clipboardButton.tooltip({
 				placement: 'bottom',
-				trigger: 'hover',
-				title: t('spreed', 'Copy link')
+				trigger: 'manual',
+				title: t('core', 'Link copied!')
 			});
 			this.initClipboard();
 
@@ -305,9 +306,7 @@
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('core', 'Copy link'))
-						.tooltip('_fixTitle');
+					$input.tooltip('hide');
 				}, 3000);
 			});
 			this._clipboard.on('error', function (e) {
@@ -327,9 +326,7 @@
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function () {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy link'))
-						.tooltip('_fixTitle');
+					$input.tooltip('hide');
 				}, 3000);
 			});
 		}

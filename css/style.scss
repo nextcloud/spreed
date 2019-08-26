@@ -976,10 +976,30 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		margin-left: auto;
 	}
 
-	.clipboard-button .button,
+	.clipboard-button button {
+		display: flex;
+		align-items: center;
+
+		> span {
+			cursor: pointer;
+
+			/* Override reduced opacity set for button icons in server, as the
+			* button is already dimmed. */
+			opacity: 1;
+		}
+
+		/* Override appearance set for button text in server, as this button has
+		 * no background. */
+		padding: 0;
+
+		> span {
+			color: var(--color-main-text);
+			font-weight: normal;
+		}
+	}
+
+	.clipboard-button button,
 	.room-moderation-button .button {
-		width: 44px;
-		height: 44px;
 		background-color: transparent;
 		border: none;
 		margin: 0;
@@ -990,6 +1010,12 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		&:active {
 			opacity: 1;
 		}
+	}
+
+	.clipboard-button .icon,
+	.room-moderation-button .button {
+		width: 44px;
+		height: 44px;
 	}
 
 	.room-moderation-button .menu {
