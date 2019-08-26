@@ -481,6 +481,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	}
 
 	/**
+	 * @When /^user "([^"]*)" sets lobby state for room "([^"]*)" to "([^"]*)" with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param string $identifier
+	 * @param string $lobbyState
+	 * @param string $statusCode
+	 * @param TableNode
+	 */
+	public function userSetsLobbyStateForRoomTo($user, $identifier, $lobbyState, $statusCode) {
+		if ($lobbyState === 'all participants') {
+			$lobbyState = 0;
+		} else if ($lobbyState === 'moderators only') {
+			$lobbyState = 1;
+		}
+
+		$this->setCurrentUser($user);
+		$this->sendRequest(
+			'PUT', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier] . '/webinary/lobby',
+			new TableNode([['state', $lobbyState]])
+		);
+		$this->assertStatusCode($this->response, $statusCode);
+	}
+
+	/**
 	 * @Then /^user "([^"]*)" makes room "([^"]*)" (public|private) with (\d+)$/
 	 *
 	 * @param string $user
