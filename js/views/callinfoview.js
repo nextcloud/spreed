@@ -120,15 +120,6 @@
 			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.model,
 				modelAttribute: nameAttribute,
-				modelSaveOptions: {
-					patch: true,
-					success: function() {
-						// Renaming a room by setting "displayName" causes "name" to
-						// change too in the server, so the model has to be fetched
-						// again to get the changes.
-						this.model.fetch();
-					}.bind(this)
-				},
 
 				extraClassNames: 'room-name',
 				labelTagName: 'h2',
@@ -252,15 +243,9 @@
 		 * Share link
 		 */
 		toggleLinkCheckbox: function() {
-			var shareLink = this.ui.linkCheckbox.attr('checked') === 'checked';
+			var isPublic = this.ui.linkCheckbox.attr('checked') === 'checked';
 
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/public',
-				type: shareLink ? 'POST' : 'DELETE',
-				success: function() {
-					OCA.SpreedMe.app.signaling.syncRooms();
-				}
-			});
+			this.model.setPublic(isPublic);
 		},
 
 		/**
@@ -268,17 +253,13 @@
 		 */
 		confirmPassword: function(e) {
 			e.preventDefault();
+
 			var newPassword = this.ui.passwordInput.val().trim();
-			$.ajax({
-				url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.model.get('token') + '/password',
-				type: 'PUT',
-				data: {
-					password: newPassword
-				},
+
+			this.model.setPassword(newPassword, {
 				success: function() {
 					this.ui.passwordInput.val('');
 					OC.hideMenus();
-					OCA.SpreedMe.app.signaling.syncRooms();
 				}.bind(this),
 				error: function() {
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});

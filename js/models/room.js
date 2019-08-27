@@ -34,9 +34,15 @@
 	 * constructor options.
 	 *
 	 * Besides fetching the data from the server it supports renaming the room
-	 * by calling "save('displayName', nameToSet, options)"; in this case the
-	 * options must contain, at least, "patch: true" (it may contain other
-	 * options like a success callback too if needed).
+	 * by calling "save('name', nameToSet, options)", making the room public or
+	 * private by calling "save('type', roomType, options)" or, preferably,
+	 * "setPublic(isPublic, options)", and setting the password by calling
+	 * "save('password', password, options)" or
+	 * "setPassword(password, options)".
+	 *
+	 * After an attribute of a room is successfully saved all the rooms will be
+	 * fetched again, as the saving could have triggered changes in other
+	 * attributes too in the server.
 	 */
 	var Room = Backbone.Model.extend({
 		defaults: {
@@ -79,26 +85,125 @@
 			if (!attributes.name) {
 				return t('spreed', 'Room name can not be empty');
 			}
+
+			if (attributes.type && this.attributes.type && attributes.type !== this.attributes.type) {
+				// These error messages are not expected to be ever shown to the
+				// user, so they are not internationalized.
+				if (this.attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_GROUP && this.attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+					return 'Room type can not be changed';
+				}
+
+				if (this.attributes.type === OCA.SpreedMe.app.ROOM_TYPE_GROUP && attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+					return 'Group room type can only be changed to public';
+				}
+
+				if (this.attributes.type === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC && attributes.type !== OCA.SpreedMe.app.ROOM_TYPE_GROUP) {
+					return 'Public room type can only be changed to group';
+				}
+			}
+		},
+		save: function(key, value, options) {
+			if (typeof key !== 'string') {
+				throw 'Room.save only supports single attributes';
+			}
+
+			var supportedKeys = [
+				'name',
+				'password',
+				'type',
+			];
+
+			if (supportedKeys.indexOf(key) === -1) {
+				throw 'Room.save does not support the "' + key + '" key';
+			}
+
+			if (options && options.patch !== undefined && !options.patch) {
+				throw 'Room.save does not support "options.patch = false"';
+			}
+
+			options = options || {};
+
+			// "patch: true" is needed to send only the changed attribute
+			// instead of a complete representation of the model.
+			options.patch = true;
+
+			options = this._wrapOptionsToFetchRoomsOnSuccess(options);
+
+			if (key === 'password') {
+				// Prevent the password from being stored in the attributes of
+				// this Room object; a "change:password" event will be always
+				// fired (with a value of "undefined", not the actual password
+				// value either).
+				options.unset = true;
+			}
+
+			return Backbone.Model.prototype.save.call(this, key, value, options);
+		},
+		_wrapOptionsToFetchRoomsOnSuccess: function(options) {
+			var success = options.success;
+
+			return _.extend(options, {
+				success: function() {
+					// When the external signaling server is used the rooms are
+					// automatically fetched after an attribute change. Due to
+					// this fetching the rooms is delegated to the signaling, as
+					// it will either immediately fetch the rooms when the
+					// internal signaling server is used or wait for the
+					// automatic fetch when the external signaling server is
+					// used.
+					OCA.SpreedMe.app.signaling.syncRooms();
+
+					if (success) {
+						success.apply(this, arguments);
+					}
+				}
+			});
 		},
 		sync: function(method, model, options) {
 			// When saving a model "Backbone.Model.save" calls "sync" with an
 			// "update" method, which by default sends a "PUT" request that
 			// contains all the attributes of the model. In order to send only
 			// the attributes to be saved "patch: true" must be set in the
-			// options. However, this causes a "PATCH" request instead of a
-			// "PUT" request to be sent, so the "method" must be changed from
-			// "patch" to "update", as the backend expects a "PUT" request.
-			// Moreover, the endpoint to rename a room expects the name to be
-			// provided in a "roomName" attribute instead of a "name"
-			// attribute, so that has to be changed too.
+			// options. However, this causes a "PATCH" request to be sent, so
+			// the "method" must be changed from "patch" to "create", "update"
+			// or "delete" if the backend expects a "POST", "PUT" or "DELETE"
+			// request instead.
+
 			if (method === 'patch' && options.attrs.name !== undefined) {
 				method = 'update';
 
+				// The endpoint to rename a room expects the name to be provided
+				// in a "roomName" attribute instead of a "name" attribute.
 				options.attrs.roomName = options.attrs.name;
 				delete options.attrs.name;
 			}
 
+			if (method === 'patch' && options.attrs.type !== undefined) {
+				// The room type can only be changed between group and public.
+				if (options.attrs.type === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+					method = 'create';
+				} else {
+					method = 'delete';
+				}
+
+				options.url = this.url() + '/public';
+			}
+
+			if (method === 'patch' && options.attrs.password !== undefined) {
+				method = 'update';
+
+				options.url = this.url() + '/password';
+			}
+
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
+		},
+		setPublic: function(isPublic, options) {
+			var roomType = isPublic? OCA.SpreedMe.app.ROOM_TYPE_PUBLIC: OCA.SpreedMe.app.ROOM_TYPE_GROUP;
+
+			this.save('type', roomType, options);
+		},
+		setPassword: function(password, options) {
+			this.save('password', password, options);
 		},
 		join: function() {
 			OCA.SpreedMe.app.connection.joinRoom(this.get('token'));
