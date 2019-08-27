@@ -27,6 +27,7 @@ use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -57,6 +58,8 @@ class Notifier implements INotifier {
 	protected $config;
 	/** @var IUserManager */
 	protected $userManager;
+	/** @var GuestManager */
+	protected $guestManager;
 	/** @var IShareManager */
 	private $shareManager;
 	/** @var Manager */
@@ -74,6 +77,7 @@ class Notifier implements INotifier {
 								IURLGenerator $url,
 								Config $config,
 								IUserManager $userManager,
+								GuestManager $guestManager,
 								IShareManager $shareManager,
 								Manager $manager,
 								INotificationManager $notificationManager,
@@ -84,6 +88,7 @@ class Notifier implements INotifier {
 		$this->url = $url;
 		$this->config = $config;
 		$this->userManager = $userManager;
+		$this->guestManager = $guestManager;
 		$this->shareManager = $shareManager;
 		$this->manager = $manager;
 		$this->notificationManager = $notificationManager;
@@ -256,7 +261,12 @@ class Notifier implements INotifier {
 			} else if (!$isGuest) {
 				$subject = $l->t('A deleted user sent a message in conversation {call}');
 			} else {
-				$subject = $l->t('A guest sent a message in conversation {call}');
+				try {
+					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+					$subject = $l->t('{guest} (guest) sent a message in conversation {call}');
+				} catch (ParticipantNotFoundException $e) {
+					$subject = $l->t('A guest sent a message in conversation {call}');
+				}
 			}
 		} else if ($notification->getSubject() === 'reply') {
 			if ($room->getType() === Room::ONE_TO_ONE_CALL) {
@@ -266,7 +276,12 @@ class Notifier implements INotifier {
 			} else if (!$isGuest) {
 				$subject = $l->t('A deleted user replied to your message in conversation {call}');
 			} else {
-				$subject = $l->t('A guest replied to your message in conversation {call}');
+				try {
+					$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+					$subject = $l->t('{guest} (guest) replied to your message in conversation {call}');
+				} catch (ParticipantNotFoundException $e) {
+					$subject = $l->t('A guest replied to your message in conversation {call}');
+				}
 			}
 		} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
 			$subject = $l->t('{user} mentioned you in a private conversation');
@@ -275,7 +290,12 @@ class Notifier implements INotifier {
 		} else if (!$isGuest) {
 			$subject = $l->t('A deleted user mentioned you in conversation {call}');
 		} else {
-			$subject = $l->t('A guest mentioned you in conversation {call}');
+			try {
+				$richSubjectParameters['guest'] = $this->getGuestParameter($comment->getActorId());
+				$subject = $l->t('{guest} (guest) mentioned you in conversation {call}');
+			} catch (ParticipantNotFoundException $e) {
+				$subject = $l->t('A guest mentioned you in conversation {call}');
+			}
 		}
 		$notification = $this->addActionButton($notification, $l->t('View chat'), false);
 
@@ -293,6 +313,24 @@ class Notifier implements INotifier {
 			->setRichSubject($subject, $richSubjectParameters);
 
 		return $notification;
+	}
+
+	/**
+	 * @param string $actorId
+	 * @return array
+	 * @throws ParticipantNotFoundException
+	 */
+	protected function getGuestParameter(string $actorId): array {
+		$name = $this->guestManager->getNameBySessionHash($actorId);
+		if (trim($name) === '') {
+			throw new ParticipantNotFoundException('Empty name');
+		}
+
+		return [
+			'type' => 'highlight',
+			'id' => $actorId,
+			'name' => $name,
+		];
 	}
 
 	/**

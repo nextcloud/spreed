@@ -23,7 +23,9 @@ namespace OCA\Spreed\Tests\php\Notifications;
 
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Config;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Model\Message;
 use OCA\Spreed\Notification\Notifier;
@@ -53,6 +55,8 @@ class NotifierTest extends \Test\TestCase {
 	protected $config;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var GuestManager|MockObject */
+	protected $guestManager;
 	/** @var IShareManager|MockObject */
 	protected $shareManager;
 	/** @var Manager|MockObject */
@@ -75,6 +79,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->url = $this->createMock(IURLGenerator::class);
 		$this->config = $this->createMock(Config::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
@@ -87,6 +92,7 @@ class NotifierTest extends \Test\TestCase {
 			$this->url,
 			$this->config,
 			$this->userManager,
+			$this->guestManager,
 			$this->shareManager,
 			$this->manager,
 			$this->notificationManager,
@@ -346,8 +352,6 @@ class NotifierTest extends \Test\TestCase {
 					]
 				],
 			],
-			// If the user is deleted in a one to one conversation the conversation is also
-			// deleted, and that in turn would delete the pending notification.
 			[
 				$isMention = true, Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Room name',
 				'Test user mentioned you in conversation Room name',
@@ -412,7 +416,7 @@ class NotifierTest extends \Test\TestCase {
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']
 					]
-				],
+				], false, null
 			],
 			[
 				$isMention = true, Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Room name',
@@ -435,10 +439,20 @@ class NotifierTest extends \Test\TestCase {
 				$deletedUser = true],
 			[
 				$isMention = true, Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
+				'MyNameIs (guest) mentioned you in conversation Room name',
+				['{guest} (guest) mentioned you in conversation {call}',
+					[
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'guest' => ['type' => 'highlight', 'id' => 'random-hash', 'name' => 'MyNameIs'],
+					]
+				], false, 'MyNameIs'
+			],
+			[
+				$isMention = true, Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
 				'A guest mentioned you in conversation Room name',
 				['A guest mentioned you in conversation {call}',
 					['call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']]
-				],
+				], false, ''
 			],
 
 			// Normal messages
@@ -452,8 +466,6 @@ class NotifierTest extends \Test\TestCase {
 					]
 				],
 			],
-			// If the user is deleted in a one to one conversation the conversation is also
-			// deleted, and that in turn would delete the pending notification.
 			[
 				$isMention = false, Room::GROUP_CALL,      ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Room name',
 				'Test user sent a message in conversation Room name',
@@ -518,7 +530,7 @@ class NotifierTest extends \Test\TestCase {
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']
 					]
-				],
+				], false, null
 			],
 			[
 				$isMention = false, Room::PUBLIC_CALL,     ['userType' => 'users', 'userId' => 'testUser'], 'Test user', 'Room name',
@@ -541,11 +553,21 @@ class NotifierTest extends \Test\TestCase {
 				$deletedUser = true],
 			[
 				$isMention = false, Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
+				'MyNameIs (guest) sent a message in conversation Room name',
+				['{guest} (guest) sent a message in conversation {call}',
+					[
+						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
+						'guest' => ['type' => 'highlight', 'id' => 'random-hash', 'name' => 'MyNameIs'],
+					]
+				], false, 'MyNameIs'
+			],
+			[
+				$isMention = false, Room::PUBLIC_CALL,     ['userType' => 'guests', 'userId' => 'testSpreedSession'], null,    'Room name',
 				'A guest sent a message in conversation Room name',
 				['A guest sent a message in conversation {call}',
 					['call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public']]
-				],
-			]
+				], false, ''
+			],
 		];
 	}
 
@@ -559,8 +581,9 @@ class NotifierTest extends \Test\TestCase {
 	 * @param string $parsedSubject
 	 * @param array $richSubject
 	 * @param bool $deletedUser
+	 * @param null|string $guestName
 	 */
-	public function testPrepareChatMessage(bool $isMention, int $roomType, array $subjectParameters, $displayName, string $roomName, string $parsedSubject, array $richSubject, bool $deletedUser = false) {
+	public function testPrepareChatMessage(bool $isMention, int $roomType, array $subjectParameters, $displayName, string $roomName, string $parsedSubject, array $richSubject, bool $deletedUser = false, ?string $guestName = null) {
 		/** @var INotification|MockObject $notification */
 		$notification = $this->createMock(INotification::class);
 		$l = $this->createMock(IL10N::class);
@@ -631,10 +654,25 @@ class NotifierTest extends \Test\TestCase {
 		}
 
 		$comment = $this->createMock(IComment::class);
+		$comment->expects($this->any())
+			->method('getActorId')
+			->willReturn('random-hash');
 		$this->commentsManager->expects($this->once())
 			->method('get')
 			->with('23')
 			->willReturn($comment);
+
+		if (is_string($guestName)) {
+			$this->guestManager->expects($this->once())
+				->method('getNameBySessionHash')
+				->with('random-hash')
+				->willReturn($guestName);
+		} else {
+			$this->guestManager->expects($this->any())
+				->method('getNameBySessionHash')
+				->with('random-hash')
+				->willThrowException(new ParticipantNotFoundException());
+		}
 
 		$chatMessage = $this->createMock(Message::class);
 		$chatMessage->expects($this->exactly(2))
