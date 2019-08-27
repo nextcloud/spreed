@@ -641,6 +641,7 @@
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
 					roomsChannel.trigger('joinedRoom', OCA.SpreedMe.app.activeRoom);
 
+					OCA.SpreedMe.app._chatView.setRoom(OCA.SpreedMe.app.activeRoom);
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 				});
