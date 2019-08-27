@@ -108,6 +108,10 @@
 					return 'Public room type can only be changed to group';
 				}
 			}
+
+			if (attributes.lobbyTimer && this.attributes.lobbyState !== OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
+				return 'Lobby timer can be set only when lobby state is non moderators';
+			}
 		},
 		save: function(key, value, options) {
 			if (typeof key !== 'string') {
@@ -116,6 +120,7 @@
 
 			var supportedKeys = [
 				'lobbyState',
+				'lobbyTimer',
 				'name',
 				'password',
 				'type',
@@ -215,6 +220,19 @@
 				delete options.attrs.lobbyState;
 			}
 
+			if (method === 'patch' && options.attrs.lobbyTimer !== undefined) {
+				method = 'update';
+
+				options.url = this.url() + '/webinary/lobby';
+
+				// The endpoint to set the lobby state expects the state and
+				// timer to be provided in "state" and "timer" attribute instead
+				// of "lobbyState" and "lobbyTimer" attributes.
+				options.attrs.state = this.attributes.lobbyState;
+				options.attrs.timer = options.attrs.lobbyTimer;
+				delete options.attrs.lobbyTimer;
+			}
+
 			return Backbone.Model.prototype.sync.call(this, method, model, options);
 		},
 		setPublic: function(isPublic, options) {
@@ -227,6 +245,9 @@
 		},
 		setLobbyState: function(lobbyState, options) {
 			this.save('lobbyState', lobbyState, options);
+		},
+		setLobbyTimer: function(lobbyTimer, options) {
+			this.save('lobbyTimer', lobbyTimer, options);
 		},
 		join: function() {
 			OCA.SpreedMe.app.connection.joinRoom(this.get('token'));

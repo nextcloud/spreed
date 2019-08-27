@@ -59,6 +59,17 @@
 						<label for="moderators-only" class="moderators-only-label">{{moderatorsOnlyLabel}}</label>
 					</span>
 				</li>
+				{{#if lobbyStateModeratorsOnly}}
+				<li>
+					<span class="menuitem icon-calendar lobby-timer-option">
+						<form class="lobby-timer-form">
+							<input class="lobby-timer-input datepicker" type="text" placeholder="{{lobbyTimerPlaceholder}}" value="{{lobbyTimerValue}}"></input>
+							<input type="submit" value="" class="icon icon-confirm lobby-timer-confirm"></input>
+							<span class="icon icon-loading-small lobby-timer-loading hidden"/>
+						</form>
+					</span>
+				</li>
+				{{/if}}
 				{{/if}}
 			</ul>
 		</div>

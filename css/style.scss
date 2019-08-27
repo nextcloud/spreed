@@ -1074,23 +1074,24 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 			}
 		}
 
-		.menuitem.password-option {
+		.menuitem.password-option,
+		.menuitem.lobby-timer-option {
 			/* Override rule for menu items from server, as in this case
 			 * only the button in the password field is clickable, so the
 			 * pointer cursor should not be used for the whole item. */
 			cursor: default;
 
-			.password-form {
+			form {
 				position: relative;
 
-				.password-confirm,
-				.password-loading {
+				.icon-confirm,
+				.icon-loading-small {
 					/* Inputs in menu items do not have a right margin, so
 					 * it does not need to be compensated. */
 					right: 0;
 				}
 
-				.password-confirm {
+				.icon-confirm {
 					/* Needed to override an important rule set in the
 					 * server. */
 					background-color: transparent !important;

@@ -100,7 +100,16 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateModeratorsOnly : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + " type=\"radio\">\n						<label for=\"moderators-only\" class=\"moderators-only-label\">"
     + alias4(((helper = (helper = helpers.moderatorsOnlyLabel || (depth0 != null ? depth0.moderatorsOnlyLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"moderatorsOnlyLabel","hash":{},"data":data}) : helper)))
-    + "</label>\n					</span>\n				</li>\n";
+    + "</label>\n					</span>\n				</li>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateModeratorsOnly : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"15":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+  return "				<li>\n					<span class=\"menuitem icon-calendar lobby-timer-option\">\n						<form class=\"lobby-timer-form\">\n							<input class=\"lobby-timer-input datepicker\" type=\"text\" placeholder=\""
+    + alias4(((helper = (helper = helpers.lobbyTimerPlaceholder || (depth0 != null ? depth0.lobbyTimerPlaceholder : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyTimerPlaceholder","hash":{},"data":data}) : helper)))
+    + "\" value=\""
+    + alias4(((helper = (helper = helpers.lobbyTimerValue || (depth0 != null ? depth0.lobbyTimerValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyTimerValue","hash":{},"data":data}) : helper)))
+    + "\"></input>\n							<input type=\"submit\" value=\"\" class=\"icon icon-confirm lobby-timer-confirm\"></input>\n							<span class=\"icon icon-loading-small lobby-timer-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
