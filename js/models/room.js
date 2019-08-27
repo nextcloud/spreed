@@ -265,6 +265,17 @@
 
 			return Backbone.Model.prototype.destroy.call(this, options);
 		},
+		isCurrentParticipantInLobby: function() {
+			var isModerator = this.get('participantType') !== OCA.SpreedMe.app.USER &&
+								this.get('participantType') !== OCA.SpreedMe.app.USERSELFJOINED &&
+								this.get('participantType') !== OCA.SpreedMe.app.GUEST;
+
+			if (this.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS && !isModerator) {
+				return true;
+			}
+
+			return false;
+		},
 	});
 
 	OCA.SpreedMe.Models.Room = Room;

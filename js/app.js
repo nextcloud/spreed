@@ -359,7 +359,9 @@
 			this.signaling.syncRooms()
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:displayName');
+					self.stopListening(self.activeRoom, 'change:participantType');
 					self.stopListening(self.activeRoom, 'change:participantFlags');
+					self.stopListening(self.activeRoom, 'change:lobbyState');
 
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
@@ -380,6 +382,10 @@
 
 					self.updateContentsLayout();
 					self.listenTo(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
+					self.listenTo(self.activeRoom, 'change:participantType', self.updateContentsLayout);
+					self.listenTo(self.activeRoom, 'change:participantType', self._updateSidebar);
+					self.listenTo(self.activeRoom, 'change:lobbyState', self.updateContentsLayout);
+					self.listenTo(self.activeRoom, 'change:lobbyState', self._updateSidebar);
 
 					self.updateSidebarWithActiveRoom();
 				});
@@ -387,6 +393,12 @@
 		updateContentsLayout: function() {
 			if (!this.activeRoom) {
 				// This should never happen, but just in case
+				return;
+			}
+
+			if (this.activeRoom.isCurrentParticipantInLobby()) {
+				this._showEmptyContentViewInMainView();
+
 				return;
 			}
 
@@ -434,8 +446,12 @@
 			$('#screens').hide();
 			$('#emptycontent').show();
 		},
-		updateSidebarWithActiveRoom: function() {
-			this._sidebarView.enable();
+		_updateSidebar: function() {
+			if (!this.activeRoom.isCurrentParticipantInLobby()) {
+				this._sidebarView.enable();
+			} else {
+				this._sidebarView.disable();
+			}
 
 			// The sidebar has a width of 27% of the window width and a minimum
 			// width of 300px. Therefore, when the window is 1111px wide or
@@ -449,6 +465,13 @@
 				this._sidebarView.open();
 			}
 
+			if (this.activeRoom.isCurrentParticipantInLobby()) {
+				this._messageCollection.stopReceivingMessages();
+			} else {
+				this._messageCollection.receiveMessages();
+			}
+		},
+		updateSidebarWithActiveRoom: function() {
 			var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
 				model: this.activeRoom,
 				guestNameModel: this._localStorageModel
@@ -457,7 +480,8 @@
 
 			this._chatView.setRoom(this.activeRoom);
 			this._messageCollection.setRoomToken(this.activeRoom.get('token'));
-			this._messageCollection.receiveMessages();
+
+			this._updateSidebar();
 		},
 		setPageTitle: function(title){
 			if (title) {
