@@ -117,6 +117,7 @@
 			this.stopListening(this._activeRoom, 'change:type', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 
 			this.stopListening(this._activeRoom, 'change:lobbyState', this.setEmptyContentMessageWhenWaitingInLobby);
+			this.stopListening(this._activeRoom, 'change:lobbyTimer', this.setEmptyContentMessageWhenWaitingInLobby);
 			this.stopListening(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingInLobby);
 		},
 
@@ -127,6 +128,7 @@
 			this.listenTo(this._activeRoom, 'change:type', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 
 			this.listenTo(this._activeRoom, 'change:lobbyState', this.setEmptyContentMessageWhenWaitingInLobby);
+			this.listenTo(this._activeRoom, 'change:lobbyTimer', this.setEmptyContentMessageWhenWaitingInLobby);
 			this.listenTo(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingInLobby);
 		},
 
@@ -190,10 +192,18 @@
 				icon = 'icon-contacts-dark';
 			}
 
+			var messageAdditional = t('spreed', 'Waiting for the conversation to be opened');
+			if (this._activeRoom.get('lobbyTimer')) {
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				var startTime = OC.Util.formatDate(this._activeRoom.get('lobbyTimer') * 1000);
+				messageAdditional = t('spreed', 'Waiting for the conversation to be opened. This meeting is scheduled for {startTime}', {startTime: startTime});
+			}
+
 			this.setEmptyContentMessage(
 				icon,
 				this._activeRoom.get('name'),
-				t('spreed', 'Waiting for the conversation to be opened')
+				messageAdditional
 			);
 		},
 
