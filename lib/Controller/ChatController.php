@@ -330,7 +330,7 @@ class ChatController extends AEnvironmentAwareController {
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
-			if ($setReadMarker === 1) {
+			if ($setReadMarker === 1 && $lookIntoFuture) {
 				$this->participant->setLastReadMessage((int) $newLastKnown->getId());
 			}
 		}
