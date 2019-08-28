@@ -243,7 +243,7 @@
 			if (OC.getCurrentUser().uid) {
 				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
 			} else {
-				this.$el.find('.avatar').imageplaceholder('?', this.getOption('guestNameModel').get('nick'), 128);
+				this.$el.find('.avatar').imageplaceholder('?', this.getOption('guestNameModel').get('nick'), 32);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
 				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
