@@ -97,14 +97,15 @@
 						// highlighting loads the avatars.
 						var $li = $(li);
 						var $avatar = $li.find('.avatar');
+						var avatarSize = 32;
 						if ($avatar.data('user-id') === 'all') {
 							$avatar.addClass('avatar icon icon-contacts');
 						} else if ($avatar.data('user-id') && $avatar.data('user-id').indexOf('guest/') !== 0) {
-							$avatar.avatar($avatar.data('user-id'), 32);
+							$avatar.avatar($avatar.data('user-id'), avatarSize);
 						} else {
 							var displayName = $avatar.data('user-display-name');
 							var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
-							$avatar.imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, 32);
+							$avatar.imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, avatarSize);
 							$avatar.css('background-color', '#b9b9b9');
 						}
 						return $li;
@@ -245,12 +246,13 @@
 
 			this._virtualList = new OCA.SpreedMe.Views.VirtualList(this.$container);
 
+			var avatarSize = 32;
 			if (OC.getCurrentUser().uid) {
-				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
+				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, avatarSize, undefined, false, undefined, OC.getCurrentUser().displayName);
 			} else {
 				var displayName = this.getOption('guestNameModel').get('nick');
 				var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
-				this.$el.find('.avatar').imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, 128);
+				this.$el.find('.avatar').imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, avatarSize);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
 				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
@@ -627,23 +629,25 @@
 				}
 			};
 			$el.find('.authorRow .avatar').each(function() {
+				var avatarSize = 32;
 				if (model && model.get('actorType') === 'bots') {
 					if (model.get('actorId') === 'changelog') {
 						$(this).addClass('icon icon-changelog');
 					} else {
-						$(this).imageplaceholder('>_', $(this).data('displayname'), 32);
+						$(this).imageplaceholder('>_', $(this).data('displayname'), avatarSize);
 						$(this).css('background-color', '#363636');
 					}
 				} else {
-					setAvatar($(this), 32);
+					setAvatar($(this), avatarSize);
 				}
 			});
 			var inlineAvatars = $el.find('.message .avatar');
 			if ($($el.context).hasClass('message')) {
 				inlineAvatars = $el.find('.avatar');
 			}
+			var inlineAvatarSize = 16;
 			inlineAvatars.each(function () {
-				setAvatar($(this), 16);
+				setAvatar($(this), inlineAvatarSize);
 			});
 
 			if (OC.getCurrentUser().uid &&
