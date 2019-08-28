@@ -250,7 +250,7 @@
 			} else {
 				var displayName = this.getOption('guestNameModel').get('nick');
 				var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
-				this.$el.find('.avatar').imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, 128);
+				this.$el.find('.avatar').imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, 32);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
 				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
