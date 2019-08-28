@@ -502,6 +502,7 @@ input[type="password"] {
 	padding-left: 1px;
 }
 
+.room-moderation-button .menu li div.separator,
 #app-navigation .app-navigation-entry-menu li div.separator {
 	border-bottom: 1px solid var(--color-border-dark);
 	margin: 0 10px;
@@ -1049,23 +1050,48 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 			}
 		}
 
-		.menuitem.password-option {
+		li {
+			> .separator {
+
+				margin-top: $outter-margin - 2px; // minus the input margin
+			}
+		}
+
+		.menuitem.caption,
+		.menuitem.caption > span {
+			/* Override rule for menu items from server, as in this case the
+			 * caption is not clickable. */
+			cursor: default;
+		}
+
+		.menuitem.caption {
+			font-weight: bold;
+
+			&:hover,
+			&:focus,
+			&:active {
+				opacity: 0.7 !important;
+			}
+		}
+
+		.menuitem.password-option,
+		.menuitem.lobby-timer-option {
 			/* Override rule for menu items from server, as in this case
 			 * only the button in the password field is clickable, so the
 			 * pointer cursor should not be used for the whole item. */
 			cursor: default;
 
-			.password-form {
+			form {
 				position: relative;
 
-				.password-confirm,
-				.password-loading {
+				.icon-confirm,
+				.icon-loading-small {
 					/* Inputs in menu items do not have a right margin, so
 					 * it does not need to be compensated. */
 					right: 0;
 				}
 
-				.password-confirm {
+				.icon-confirm {
 					/* Needed to override an important rule set in the
 					 * server. */
 					background-color: transparent !important;
@@ -1076,7 +1102,8 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 
 	/* The specific locator is needed to have higher priority than other
 	 * important rules set in the server. */
-	input.checkbox + label.link-checkbox-label {
+	input.checkbox + label.link-checkbox-label,
+	input.radio + label {
 		/* If ".icon-loading-small" is set hide the checkbox and show a
 		 * loading icon instead. */
 		&.icon-loading-small:before {

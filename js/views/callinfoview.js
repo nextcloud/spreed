@@ -55,6 +55,17 @@
 				canFullModerate: canFullModerate,
 				linkCheckboxLabel: t('spreed', 'Share link'),
 				copyLinkLabel: t('spreed', 'Copy link'),
+				enableForLabel: t('spreed', 'Enable for'),
+				allParticipantsLabel: t('spreed', 'All participants'),
+				moderatorsOnlyLabel: t('spreed', 'Moderators only'),
+				allParticipantsValue: OCA.SpreedMe.app.LOBBY_NONE,
+				moderatorsOnlyValue: OCA.SpreedMe.app.LOBBY_NON_MODERATORS,
+				lobbyStateAllParticipants: this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE,
+				lobbyStateModeratorsOnly: this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS,
+				lobbyTimerPlaceholder: t('spreed', 'Start time (optional)'),
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				lobbyTimerValue: this.model.get('lobbyTimer')? OC.Util.formatDate(this.model.get('lobbyTimer') * 1000, 'YYYY-MM-DD HH:mm:ss') : '',
 				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
@@ -77,6 +88,16 @@
 
 			'roomModerationButton': '.room-moderation-button .button',
 			'roomModerationMenu': '.room-moderation-button .menu',
+
+			'allParticipantsRadio': '.all-participants-radio',
+			'moderatorsOnlyRadio': '.moderators-only-radio',
+			'allParticipantsLabel': '.all-participants-label',
+			'moderatorsOnlyLabel': '.moderators-only-label',
+
+			'lobbyTimerForm': '.lobby-timer-form',
+			'lobbyTimerInput': '.lobby-timer-input',
+			'lobbyTimerConfirm': '.lobby-timer-confirm',
+			'lobbyTimerLoading': '.lobby-timer-loading',
 		},
 
 		regions: {
@@ -89,10 +110,22 @@
 
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
+
+			'click @ui.allParticipantsRadio': 'setLobbyStateAllParticipants',
+			'click @ui.moderatorsOnlyRadio': 'setLobbyStateModeratorsOnly',
+
+			'click @ui.lobbyTimerConfirm': 'confirmLobbyTimer',
+			'submit @ui.lobbyTimerForm': 'confirmLobbyTimer',
 		},
 
 		modelEvents: {
 			'change:hasPassword': function() {
+				this.render();
+			},
+			'change:lobbyState': function() {
+				this.render();
+			},
+			'change:lobbyTimer': function() {
 				this.render();
 			},
 			'change:participantType': function() {
@@ -280,6 +313,92 @@
 					restoreState();
 
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
+				}.bind(this)
+			});
+		},
+
+		setLobbyStateAllParticipants: function() {
+			this.ui.allParticipantsRadio.prop('disabled', true);
+			this.ui.allParticipantsLabel.addClass('icon-loading-small');
+
+			this.model.setLobbyState(OCA.SpreedMe.app.LOBBY_NONE, {
+				wait: true,
+				error: function() {
+					if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE) {
+						this.ui.allParticipantsRadio.prop('checked', true);
+					} else {
+						this.ui.moderatorsOnlyRadio.prop('checked', true);
+					}
+					this.ui.allParticipantsRadio.prop('disabled', false);
+					this.ui.allParticipantsLabel.removeClass('icon-loading-small');
+
+					OC.Notification.show(t('spreed', 'Error occurred while enabling for all participants'), {type: 'error'});
+				}.bind(this)
+			});
+		},
+
+		setLobbyStateModeratorsOnly: function() {
+			this.ui.moderatorsOnlyRadio.prop('disabled', true);
+			this.ui.moderatorsOnlyLabel.addClass('icon-loading-small');
+
+			this.model.setLobbyState(OCA.SpreedMe.app.LOBBY_NON_MODERATORS, {
+				wait: true,
+				error: function() {
+					if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE) {
+						this.ui.allParticipantsRadio.prop('checked', true);
+					} else {
+						this.ui.moderatorsOnlyRadio.prop('checked', true);
+					}
+					this.ui.moderatorsOnlyRadio.prop('disabled', false);
+					this.ui.moderatorsOnlyLabel.removeClass('icon-loading-small');
+
+					OC.Notification.show(t('spreed', 'Error occurred while enabling only for moderators'), {type: 'error'});
+				}.bind(this)
+			});
+		},
+
+		confirmLobbyTimer: function(e) {
+			e.preventDefault();
+
+			var lobbyTimerTimestamp = 0;
+
+			var lobbyTimerInputValue = this.ui.lobbyTimerInput.val().trim();
+			if (lobbyTimerInputValue) {
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				lobbyTimerTimestamp = Date.parse(lobbyTimerInputValue) / 1000;
+			}
+
+			if (isNaN(lobbyTimerTimestamp)) {
+				OC.Notification.show(t('spreed', 'Invalid start time format'), {type: 'error'});
+
+				return;
+			}
+
+			this.ui.lobbyTimerInput.prop('disabled', true);
+			this.ui.lobbyTimerConfirm.addClass('hidden');
+			this.ui.lobbyTimerLoading.removeClass('hidden');
+
+			var restoreState = function() {
+				this.ui.lobbyTimerInput.prop('disabled', false);
+				this.ui.lobbyTimerConfirm.removeClass('hidden');
+				this.ui.lobbyTimerLoading.addClass('hidden');
+			}.bind(this);
+
+			this.model.setLobbyTimer(lobbyTimerTimestamp, {
+				wait: true,
+				// The same lobby timer can be successfully set, which would not
+				// trigger a change event, so the state needs to be restored
+				// instead of relying on the view to be rendered again.
+				success: function() {
+					restoreState();
+					OC.hideMenus();
+					this.ui.roomModerationButton.focus();
+				}.bind(this),
+				error: function() {
+					restoreState();
+
+					OC.Notification.show(t('spreed', 'Error occurred while setting the lobby start time'), {type: 'error'});
 				}.bind(this)
 			});
 		},

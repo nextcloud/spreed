@@ -90,6 +90,7 @@ class CapabilitiesTest extends TestCase {
 					'locked-one-to-one-rooms',
 					'read-only-rooms',
 					'chat-read-marker',
+					'webinary-lobby',
 				],
 				'config' => [
 					'chat' => [
@@ -144,6 +145,7 @@ class CapabilitiesTest extends TestCase {
 					'locked-one-to-one-rooms',
 					'read-only-rooms',
 					'chat-read-marker',
+					'webinary-lobby',
 				],
 				'config' => [
 					'chat' => [

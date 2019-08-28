@@ -71,6 +71,10 @@ class Room {
 	private $type;
 	/** @var int */
 	private $readOnly;
+	/** @var int */
+	private $lobbyState;
+	/** @var \DateTime|null */
+	private $lobbyTimer;
 	/** @var string */
 	private $token;
 	/** @var string */
@@ -104,6 +108,7 @@ class Room {
 								int $id,
 								int $type,
 								int $readOnly,
+								int $lobbyState,
 								string $token,
 								string $name,
 								string $password,
@@ -111,6 +116,7 @@ class Room {
 								\DateTime $activeSince = null,
 								\DateTime $lastActivity = null,
 								IComment $lastMessage = null,
+								\DateTime $lobbyTimer = null,
 								string $objectType = '',
 								string $objectId = '') {
 		$this->manager = $manager;
@@ -122,6 +128,7 @@ class Room {
 		$this->id = $id;
 		$this->type = $type;
 		$this->readOnly = $readOnly;
+		$this->lobbyState = $lobbyState;
 		$this->token = $token;
 		$this->name = $name;
 		$this->password = $password;
@@ -129,6 +136,7 @@ class Room {
 		$this->activeSince = $activeSince;
 		$this->lastActivity = $lastActivity;
 		$this->lastMessage = $lastMessage;
+		$this->lobbyTimer = $lobbyTimer;
 		$this->objectType = $objectType;
 		$this->objectId = $objectId;
 	}
@@ -143,6 +151,22 @@ class Room {
 
 	public function getReadOnly(): int {
 		return $this->readOnly;
+	}
+
+	public function getLobbyState(): int {
+		$this->validateTimer();
+		return $this->lobbyState;
+	}
+
+	public function getLobbyTimer(): ?\DateTime {
+		$this->validateTimer();
+		return $this->lobbyTimer;
+	}
+
+	protected function validateTimer(): void {
+		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
+			$this->setLobby(Webinary::LOBBY_NONE, null, true);
+		}
 	}
 
 	public function getToken(): string {
@@ -492,6 +516,56 @@ class Room {
 		$this->dispatcher->dispatch(self::class . '::postSetReadOnly', new GenericEvent($this, [
 			'newState' => $newState,
 			'oldState' => $oldState,
+		]));
+
+		return true;
+	}
+
+	/**
+	 * @param int $newState Currently it is only allowed to change between
+	 * 						`Webinary::LOBBY_NON_MODERATORS` and `Webinary::LOBBY_NONE`
+	 * 						Also it's not allowed in one-to-one conversations,
+	 * 						file conversations and password request conversations.
+	 * @param \DateTime|null $dateTime
+	 * @param bool $timerReached
+	 * @return bool True when the change was valid, false otherwise
+	 */
+	public function setLobby(int $newState, ?\DateTime $dateTime, bool $timerReached = false): bool {
+		$oldState = $this->lobbyState;
+
+		if (!in_array($this->getType(), [self::GROUP_CALL, self::PUBLIC_CALL], true)) {
+			return false;
+		}
+
+		if ($this->getObjectType() !== '') {
+			return false;
+		}
+
+		if (!in_array($newState, [Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE], true)) {
+			return false;
+		}
+
+		$this->dispatcher->dispatch(self::class . '::preSetLobbyState', new GenericEvent($this, [
+			'newState' => $newState,
+			'oldState' => $oldState,
+			'lobbyTimer' => $dateTime,
+			'timerReached' => $timerReached,
+		]));
+
+		$query = $this->db->getQueryBuilder();
+		$query->update('talk_rooms')
+			->set('lobby_state', $query->createNamedParameter($newState, IQueryBuilder::PARAM_INT))
+			->set('lobby_timer', $query->createNamedParameter($dateTime, IQueryBuilder::PARAM_DATE))
+			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
+		$query->execute();
+
+		$this->lobbyState = $newState;
+
+		$this->dispatcher->dispatch(self::class . '::postSetLobbyState', new GenericEvent($this, [
+			'newState' => $newState,
+			'oldState' => $oldState,
+			'lobbyTimer' => $dateTime,
+			'timerReached' => $timerReached,
 		]));
 
 		return true;

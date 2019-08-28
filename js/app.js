@@ -55,6 +55,10 @@
 		ROOM_TYPE_PUBLIC: 3,
 		ROOM_TYPE_CHANGELOG: 4,
 
+		/* Must stay in sync with values in "lib/Webinary.php". */
+		LOBBY_NONE: 0,
+		LOBBY_NON_MODERATORS: 1,
+
 		/** @property {OCA.SpreedMe.Models.Room} activeRoom  */
 		activeRoom: null,
 
@@ -355,7 +359,9 @@
 			this.signaling.syncRooms()
 				.then(function() {
 					self.stopListening(self.activeRoom, 'change:displayName');
+					self.stopListening(self.activeRoom, 'change:participantType');
 					self.stopListening(self.activeRoom, 'change:participantFlags');
+					self.stopListening(self.activeRoom, 'change:lobbyState');
 
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
@@ -376,6 +382,10 @@
 
 					self.updateContentsLayout();
 					self.listenTo(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
+					self.listenTo(self.activeRoom, 'change:participantType', self.updateContentsLayout);
+					self.listenTo(self.activeRoom, 'change:participantType', self._updateSidebar);
+					self.listenTo(self.activeRoom, 'change:lobbyState', self.updateContentsLayout);
+					self.listenTo(self.activeRoom, 'change:lobbyState', self._updateSidebar);
 
 					self.updateSidebarWithActiveRoom();
 				});
@@ -386,16 +396,22 @@
 				return;
 			}
 
+			if (this.activeRoom.isCurrentParticipantInLobby()) {
+				this._showEmptyContentViewInMainView();
+
+				return;
+			}
+
 			var flags = this.activeRoom.get('participantFlags') || 0;
 			var inCall = flags & OCA.SpreedMe.app.FLAG_IN_CALL !== 0;
-			if (inCall && this._chatViewInMainView === true) {
-				this._chatView.$el.detach();
-				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
-				this._sidebarView.selectTab('chat');
-				this._chatView.reloadMessageList();
-				this._chatView.setTooltipContainer(this._chatView.$el);
-				this._chatViewInMainView = false;
-			} else if (!inCall && !this._chatViewInMainView) {
+			if (inCall) {
+				this._showCallViewInMainView();
+			} else if (!inCall) {
+				this._showChatViewInMainView();
+			}
+		},
+		_showChatViewInMainView: function() {
+			if (!this._chatViewInMainView) {
 				this._sidebarView.removeTab('chat');
 				this._chatView.$el.prependTo('#app-content-wrapper');
 				this._chatView.reloadMessageList();
@@ -404,18 +420,38 @@
 				this._chatViewInMainView = true;
 			}
 
-			if (inCall) {
-				$('#videos').show();
-				$('#screens').show();
-				$('#emptycontent').hide();
-			} else {
-				$('#videos').hide();
-				$('#screens').hide();
-				$('#emptycontent').show();
-			}
+			$('#videos').hide();
+			$('#screens').hide();
+			$('#emptycontent').show();
 		},
-		updateSidebarWithActiveRoom: function() {
-			this._sidebarView.enable();
+		_showCallViewInMainView: function() {
+			if (this._chatViewInMainView) {
+				this._chatView.$el.detach();
+				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
+				this._sidebarView.selectTab('chat');
+				this._chatView.reloadMessageList();
+				this._chatView.setTooltipContainer(this._chatView.$el);
+				this._chatViewInMainView = false;
+			}
+
+			$('#videos').show();
+			$('#screens').show();
+			$('#emptycontent').hide();
+		},
+		_showEmptyContentViewInMainView: function() {
+			this._chatView.$el.detach();
+			this._chatViewInMainView = false;
+
+			$('#videos').hide();
+			$('#screens').hide();
+			$('#emptycontent').show();
+		},
+		_updateSidebar: function() {
+			if (!this.activeRoom.isCurrentParticipantInLobby()) {
+				this._sidebarView.enable();
+			} else {
+				this._sidebarView.disable();
+			}
 
 			// The sidebar has a width of 27% of the window width and a minimum
 			// width of 300px. Therefore, when the window is 1111px wide or
@@ -429,6 +465,13 @@
 				this._sidebarView.open();
 			}
 
+			if (this.activeRoom.isCurrentParticipantInLobby()) {
+				this._messageCollection.stopReceivingMessages();
+			} else {
+				this._messageCollection.receiveMessages();
+			}
+		},
+		updateSidebarWithActiveRoom: function() {
 			var callInfoView = new OCA.SpreedMe.Views.CallInfoView({
 				model: this.activeRoom,
 				guestNameModel: this._localStorageModel
@@ -437,7 +480,8 @@
 
 			this._chatView.setRoom(this.activeRoom);
 			this._messageCollection.setRoomToken(this.activeRoom.get('token'));
-			this._messageCollection.receiveMessages();
+
+			this._updateSidebar();
 		},
 		setPageTitle: function(title){
 			if (title) {
@@ -574,12 +618,7 @@
 			});
 
 			this.listenTo(roomChannel, 'leaveCurrentRoom', function() {
-				this._chatView.$el.detach();
-				this._chatViewInMainView = false;
-
-				$('#videos').hide();
-				$('#screens').hide();
-				$('#emptycontent').show();
+				this._showEmptyContentViewInMainView();
 			});
 
 			this.listenTo(roomChannel, 'joinRoom', function(token) {

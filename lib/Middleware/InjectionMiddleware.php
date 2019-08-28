@@ -28,10 +28,12 @@ use OCA\Spreed\Controller\EnvironmentAwareTrait;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
 use OCA\Spreed\Exceptions\RoomNotFoundException;
 use OCA\Spreed\Manager;
+use OCA\Spreed\Middleware\Exceptions\LobbyException;
 use OCA\Spreed\Middleware\Exceptions\NotAModeratorException;
 use OCA\Spreed\Middleware\Exceptions\ReadOnlyException;
 use OCA\Spreed\Room;
 use OCA\Spreed\TalkSession;
+use OCA\Spreed\Webinary;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;
@@ -74,6 +76,7 @@ class InjectionMiddleware extends Middleware {
 	 * @throws ParticipantNotFoundException
 	 * @throws NotAModeratorException
 	 * @throws ReadOnlyException
+	 * @throws LobbyException
 	 */
 	public function beforeController($controller, $methodName): void {
 		if (!$controller instanceof AEnvironmentAwareController) {
@@ -99,6 +102,10 @@ class InjectionMiddleware extends Middleware {
 		if ($this->reflector->hasAnnotation('RequireReadWriteConversation')) {
 			$this->checkReadOnlyState($controller);
 		}
+
+		if ($this->reflector->hasAnnotation('RequireModeratorOrNoLobby')) {
+			$this->checkLobbyState($controller);
+		}
 	}
 
 	/**
@@ -109,37 +116,38 @@ class InjectionMiddleware extends Middleware {
 	protected function getLoggedIn(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$controller->setRoom($room);
+
 		$participant = $room->getParticipant($this->userId);
+		$controller->setParticipant($participant);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions(false)) {
 			throw new NotAModeratorException();
 		}
-
-		$controller->setRoom($room);
-		$controller->setParticipant($participant);
 	}
 
 	/**
 	 * @param AEnvironmentAwareController $controller
 	 * @param bool $moderatorRequired
 	 * @throws NotAModeratorException
+	 * @throws ParticipantNotFoundException
 	 */
 	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
+		$controller->setRoom($room);
+
 		if ($this->userId !== null) {
 			$participant = $room->getParticipant($this->userId);
 		} else {
 			$sessionId = $this->talkSession->getSessionForRoom($token);
 			$participant = $room->getParticipantBySession($sessionId);
 		}
+		$controller->setParticipant($participant);
 
 		if ($moderatorRequired && !$participant->hasModeratorPermissions()) {
 			throw new NotAModeratorException();
 		}
-
-		$controller->setRoom($room);
-		$controller->setParticipant($participant);
 	}
 
 	/**
@@ -150,6 +158,24 @@ class InjectionMiddleware extends Middleware {
 		$room = $controller->getRoom();
 		if (!$room instanceof Room || $room->getReadOnly() === Room::READ_ONLY) {
 			throw new ReadOnlyException();
+		}
+	}
+
+	/**
+	 * @param AEnvironmentAwareController $controller
+	 * @throws LobbyException
+	 */
+	protected function checkLobbyState(AEnvironmentAwareController $controller): void {
+		try {
+			$this->getLoggedInOrGuest($controller, true);
+			return;
+		} catch (NotAModeratorException $e) {
+		} catch (ParticipantNotFoundException $e) {
+		}
+
+		$room = $controller->getRoom();
+		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::LOBBY_NONE) {
+			throw new LobbyException();
 		}
 	}
 
@@ -165,6 +191,14 @@ class InjectionMiddleware extends Middleware {
 			$exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException('', Http::STATUS_NOT_FOUND);
+			}
+
+			return new RedirectToDefaultAppResponse();
+		}
+
+		if ($exception instanceof LobbyException) {
+			if ($controller instanceof OCSController) {
+				throw new OCSException('', Http::STATUS_PRECONDITION_FAILED);
 			}
 
 			return new RedirectToDefaultAppResponse();

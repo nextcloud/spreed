@@ -24,3 +24,7 @@ title: Constants
 * `guests` - guest users
 * `users` - logged-in users
 * `bots` - used by commands (actor-id is the used `/command`) and the changelog conversation (actor-id is `changelog`)
+
+## Webinary lobby states
+* `0` no lobby
+* `1` lobby for non moderators

@@ -30,6 +30,7 @@ use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
 use OCA\Spreed\TalkSession;
+use OCA\Spreed\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
@@ -302,6 +303,27 @@ class BackendNotifierTest extends \Test\TestCase {
 	public function testRoomReadOnlyChanged() {
 		$room = $this->manager->createPublicRoom();
 		$room->setReadOnly(Room::READ_ONLY);
+
+		$requests = $this->controller->getRequests();
+		$bodies = array_map(function($request) use ($room) {
+			return json_decode($this->validateBackendRequest($this->baseUrl . '/api/v1/room/' . $room->getToken(), $request), true);
+		}, $requests);
+		$this->assertContains([
+			'type' => 'update',
+			'update' => [
+				'userids' => [
+				],
+				'properties' => [
+					'name' => $room->getDisplayName(''),
+					'type' => $room->getType(),
+				],
+			],
+		], $bodies);
+	}
+
+	public function testRoomLobbyStateChanged() {
+		$room = $this->manager->createPublicRoom();
+		$room->setLobby(Webinary::LOBBY_NON_MODERATORS, null);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {

@@ -79,6 +79,7 @@ class Capabilities implements IPublicCapability {
 					'locked-one-to-one-rooms',
 					'read-only-rooms',
 					'chat-read-marker',
+					'webinary-lobby',
 				],
 				'config' => [
 					'chat' => [

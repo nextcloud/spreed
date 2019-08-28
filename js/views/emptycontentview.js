@@ -90,7 +90,11 @@
 
 			this._activeRoom = activeRoom;
 
-			this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
+			if (!this._activeRoom.isCurrentParticipantInLobby()) {
+				this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall();
+			} else {
+				this.setEmptyContentMessageWhenWaitingInLobby();
+			}
 
 			this.listenTo(this._activeRoom, 'destroy', function() {
 				this.stopListening(this._activeRoom, 'destroy', this.setInitialEmptyContentMessage);
@@ -111,6 +115,10 @@
 			this.stopListening(this._activeRoom, 'change:numGuests', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 			this.stopListening(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 			this.stopListening(this._activeRoom, 'change:type', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+
+			this.stopListening(this._activeRoom, 'change:lobbyState', this.setEmptyContentMessageWhenWaitingInLobby);
+			this.stopListening(this._activeRoom, 'change:lobbyTimer', this.setEmptyContentMessageWhenWaitingInLobby);
+			this.stopListening(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingInLobby);
 		},
 
 		_enableUpdatesOnActiveRoomChanges: function() {
@@ -118,6 +126,10 @@
 			this.listenTo(this._activeRoom, 'change:numGuests', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 			this.listenTo(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
 			this.listenTo(this._activeRoom, 'change:type', this.setEmptyContentMessageWhenWaitingForOthersToJoinTheCall);
+
+			this.listenTo(this._activeRoom, 'change:lobbyState', this.setEmptyContentMessageWhenWaitingInLobby);
+			this.listenTo(this._activeRoom, 'change:lobbyTimer', this.setEmptyContentMessageWhenWaitingInLobby);
+			this.listenTo(this._activeRoom, 'change:participantType', this.setEmptyContentMessageWhenWaitingInLobby);
 		},
 
 		/**
@@ -167,7 +179,39 @@
 			);
 		},
 
+		setEmptyContentMessageWhenWaitingInLobby: function() {
+			if (!this._activeRoom.isCurrentParticipantInLobby()) {
+				return;
+			}
+
+			var icon = '';
+
+			if (this._activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
+				icon = 'icon-public';
+			} else {
+				icon = 'icon-contacts-dark';
+			}
+
+			var messageAdditional = t('spreed', 'Waiting for the conversation to be opened');
+			if (this._activeRoom.get('lobbyTimer')) {
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				var startTime = OC.Util.formatDate(this._activeRoom.get('lobbyTimer') * 1000);
+				messageAdditional = t('spreed', 'Waiting for the conversation to be opened. This meeting is scheduled for {startTime}', {startTime: startTime});
+			}
+
+			this.setEmptyContentMessage(
+				icon,
+				this._activeRoom.get('name'),
+				messageAdditional
+			);
+		},
+
 		setEmptyContentMessageWhenWaitingForOthersToJoinTheCall: function() {
+			if (this._activeRoom.isCurrentParticipantInLobby()) {
+				return;
+			}
+
 			var icon = '';
 			var message = '';
 			var messageAdditional = '';
