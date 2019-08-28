@@ -657,6 +657,8 @@
 
 			this._mediaControlsView = this._localVideoView._mediaControlsView;
 
+			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._mediaControlsView);
+
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));
 		},
@@ -765,6 +767,7 @@
 				OCA.SpreedMe.initWebRTC(this);
 				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
 				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
+				this._speakingWhileMutedWarner.setWebRtc(OCA.SpreedMe.webrtc);
 			}
 
 			if (!OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {

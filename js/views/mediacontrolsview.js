@@ -162,6 +162,20 @@
 			this._audioAvailable = audioAvailable;
 		},
 
+		setSpeakingWhileMutedNotification: function(message) {
+			if (!message) {
+				this.getUI('audioButton').tooltip('dispose');
+
+				return;
+			}
+
+			this.getUI('audioButton').tooltip('hide')
+					.attr('data-original-title', message)
+					.tooltip('_fixTitle')
+					.tooltip({placement: 'bottom', trigger: 'manual'})
+					.tooltip('show');
+		},
+
 		_handleVolumeChange: function(currentVolume, threshold) {
 			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
 			// system); for the volume indicator only sounds above the threshold

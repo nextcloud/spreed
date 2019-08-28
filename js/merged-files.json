@@ -18,6 +18,7 @@
   "views/mediacontrolsview.js",
   "views/richobjectstringparser.js",
   "views/screenview.js",
+  "views/speakingwhilemutedwarner.js",
   "views/templates.js",
   "views/videoview.js",
   "views/virtuallist.js",
