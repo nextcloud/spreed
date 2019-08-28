@@ -937,15 +937,11 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 
 	.call-controls-container {
 		display: flex;
-
-		.call-button,
-		.share-link-options {
-			flex-grow: 1;
-			flex-basis: 50%;
-		}
+		align-items: center;
 
 		.call-button {
 			flex-grow: 0;
+			flex-basis: 50%;
 
 			.join-call,
 			.leave-call {
@@ -972,66 +968,125 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		}
 	}
 
-	.share-link-options {
+	.room-moderation-button {
+		/* Needed for proper positioning of the menu. */
+		position: relative;
+
+		/* Position the button to the right end of its flex parent. */
+		margin-left: auto;
+	}
+
+	.clipboard-button button {
 		display: flex;
 		align-items: center;
-		.link-checkbox-label {
-			white-space: nowrap;
-			padding: 12px;
 
-			/* If ".icon-loading-small" is set hide the checkbox and show a
-			 * loading icon instead */
-			&.icon-loading-small:before {
-				background-image: none !important;
-				background-color: transparent !important;
-				border-color: transparent !important;
-			}
-			&.icon-loading-small:after {
-				top: 21px;
-				left: 23px;
-			}
-		}
-		.button {
+		> span {
 			cursor: pointer;
-			width: 44px;
-			height: 44px;
-			display: block;
-			background-color: transparent;
-			border: none;
-			margin: 0;
-			opacity: .5;
-			&:hover,
-			&:focus,
-			&:active {
-				opacity: 1;
-			}
+
+			/* Override reduced opacity set for button icons in server, as the
+			* button is already dimmed. */
+			opacity: 1;
 		}
-		.password-button {
-			position: relative;
 
-			.menuitem {
-				/* Override rule for menu items from server, as in this case
-				 * only the button in the password field is clickable, so the
-				 * pointer cursor should not be used for the whole item. */
-				cursor: default;
+		/* Override appearance set for button text in server, as this button has
+		 * no background. */
+		padding: 0;
 
-				.password-form {
-					position: relative;
+		> span {
+			color: var(--color-main-text);
+			font-weight: normal;
+		}
+	}
 
-					.password-confirm,
-					.password-loading {
-						/* Inputs in menu items do not have a right margin, so
-						 * it does not need to be compensated. */
-						right: 0;
-					}
+	.clipboard-button button,
+	.room-moderation-button .button {
+		background-color: transparent;
+		border: none;
+		margin: 0;
+		opacity: .5;
 
-					.password-confirm {
-						/* Needed to override an important rule set in the
-						 * server. */
-						background-color: transparent !important;
-					}
+		&:hover,
+		&:focus,
+		&:active {
+			opacity: 1;
+		}
+	}
+
+	.clipboard-button .icon,
+	.room-moderation-button .button {
+		width: 44px;
+		height: 44px;
+	}
+
+	.room-moderation-button .menu {
+		/* Values copied from apps.scss in server. */
+		$popoveritem-height: 44px;
+		$popovericon-size: 16px;
+		$outter-margin: ($popoveritem-height - $popovericon-size) / 2;
+
+		/* The server sets a top/bottom margin to forms and inputs of the
+		 * first/last item in a menu, but that misaligns the left icon; this
+		 * sets the top/bottom margin to the whole item instead of only to the
+		 * forms or inputs. */
+		li:first-of-type {
+			> .menuitem.password-option {
+
+				margin-top: $outter-margin - 2px; // minus the input margin
+
+				> form, > input {
+					margin-top: 0;
 				}
 			}
+		}
+		li:last-of-type {
+			> .menuitem.password-option {
+
+				margin-bottom: $outter-margin - 2px; // minus the input margin
+
+				> form, > input {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		.menuitem.password-option {
+			/* Override rule for menu items from server, as in this case
+			 * only the button in the password field is clickable, so the
+			 * pointer cursor should not be used for the whole item. */
+			cursor: default;
+
+			.password-form {
+				position: relative;
+
+				.password-confirm,
+				.password-loading {
+					/* Inputs in menu items do not have a right margin, so
+					 * it does not need to be compensated. */
+					right: 0;
+				}
+
+				.password-confirm {
+					/* Needed to override an important rule set in the
+					 * server. */
+					background-color: transparent !important;
+				}
+			}
+		}
+	}
+
+	/* The specific locator is needed to have higher priority than other
+	 * important rules set in the server. */
+	input.checkbox + label.link-checkbox-label {
+		/* If ".icon-loading-small" is set hide the checkbox and show a
+		 * loading icon instead. */
+		&.icon-loading-small:before {
+			background-image: none !important;
+			background-color: transparent !important;
+			border-color: transparent !important;
+		}
+		&.icon-loading-small:after {
+			top: 22px;
+			left: 21px;
 		}
 	}
 }

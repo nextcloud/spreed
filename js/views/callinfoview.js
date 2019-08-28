@@ -45,16 +45,18 @@
 
 		templateContext: function() {
 			var canModerate = this._canModerate();
+			var canFullModerate = this._canFullModerate();
+			var isPublic = this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC;
 			return $.extend(this.model.toJSON(), {
 				isRoomForFile: this.model.get('objectType') === 'file',
 				fileLink: OC.generateUrl('/f/{fileId}', { fileId: this.model.get('objectId') }),
 				fileLinkTitle: t('spreed', 'Go to file'),
-				canModerate: canModerate,
-				canFullModerate: this._canFullModerate(),
+				showRoomModerationMenu: canModerate && (canFullModerate || isPublic),
+				canFullModerate: canFullModerate,
 				linkCheckboxLabel: t('spreed', 'Share link'),
-				isPublic: this.model.get('type') === 3,
+				copyLinkLabel: t('spreed', 'Copy link'),
+				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
-				showShareLink: !canModerate && this.model.get('type') === 3,
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
 			});
 		},
@@ -62,22 +64,19 @@
 		ui: {
 			'roomName': 'div.room-name',
 			'fileLink': '.file-link',
-			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
 			'linkCheckboxLabel': '.link-checkbox-label',
 
 			'callButton': 'div.call-button',
 
-			'passwordButton': '.password-button .button',
 			'passwordForm': '.password-form',
-			'passwordMenu': '.password-menu',
-			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm',
 			'passwordLoading': '.password-loading',
 
-			'menu': '.password-menu',
+			'roomModerationButton': '.room-moderation-button .button',
+			'roomModerationMenu': '.room-moderation-button .menu',
 		},
 
 		regions: {
@@ -88,14 +87,13 @@
 		events: {
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
 
-			'keyup @ui.passwordInput': 'keyUpPassword',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
 		},
 
 		modelEvents: {
 			'change:hasPassword': function() {
-				this.renderWhenInactive();
+				this.render();
 			},
 			'change:participantType': function() {
 				this._updateNameEditability();
@@ -107,7 +105,7 @@
 			'change:type': function() {
 				this._updateNameEditability();
 
-				this.renderWhenInactive();
+				this.render();
 			}
 		},
 
@@ -144,15 +142,6 @@
 			this._updateNameEditability();
 		},
 
-		renderWhenInactive: function() {
-			if (!OC._currentMenu || !OC._currentMenu.hasClass('password-menu') || this.ui.passwordInput.length === 0 || this.ui.passwordInput.val() === '') {
-				this.render();
-				return;
-			}
-
-			this.renderTimeout = setTimeout(_.bind(this.renderWhenInactive, this), 500);
-		},
-
 		onBeforeRender: function() {
 			// During the rendering the regions of this view are reset, which
 			// destroys its child views. If a child view has to be detached
@@ -185,26 +174,16 @@
 			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
 			this.ui.clipboardButton.tooltip({
 				placement: 'bottom',
-				trigger: 'hover',
-				title: t('spreed', 'Copy link')
+				trigger: 'manual',
+				title: t('core', 'Link copied!')
 			});
 			this.initClipboard();
-
-			this.ui.passwordButton.tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: (this.model.get('hasPassword')) ? t('spreed', 'Change password') : t('spreed', 'Set password')
-			});
 
 			// Set the body as the container to show the tooltip in front of the
 			// header.
 			this.ui.fileLink.tooltip({container: $('body')});
 
-			var self = this;
-			OC.registerMenu($(this.ui.passwordButton), $(this.ui.passwordMenu), function() {
-				$(self.ui.passwordInput).focus();
-			});
-
+			OC.registerMenu(this.ui.roomModerationButton, this.ui.roomModerationMenu);
 		},
 
 		_canModerate: function() {
@@ -295,7 +274,7 @@
 					this.ui.passwordInput.val('');
 					restoreState();
 					OC.hideMenus();
-					this.ui.passwordButton.focus();
+					this.ui.roomModerationButton.focus();
 				}.bind(this),
 				error: function() {
 					restoreState();
@@ -303,15 +282,6 @@
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
 				}.bind(this)
 			});
-		},
-
-		keyUpPassword: function(e) {
-			e.preventDefault();
-			if (e.keyCode === 27) {
-				// ESC
-				OC.hideMenus();
-				this.ui.passwordButton.focus();
-			}
 		},
 
 		/**
@@ -336,9 +306,7 @@
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function() {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('core', 'Copy link'))
-						.tooltip('_fixTitle');
+					$input.tooltip('hide');
 				}, 3000);
 			});
 			this._clipboard.on('error', function (e) {
@@ -358,9 +326,7 @@
 					.tooltip({placement: 'bottom', trigger: 'manual'})
 					.tooltip('show');
 				_.delay(function () {
-					$input.tooltip('hide')
-						.attr('data-original-title', t('spreed', 'Copy link'))
-						.tooltip('_fixTitle');
+					$input.tooltip('hide');
 				}, 3000);
 			});
 		}
