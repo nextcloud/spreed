@@ -154,9 +154,33 @@ class ChatContext implements Context, ActorAwareInterface {
 	 * @return Locator
 	 */
 	public static function formattedMentionInChatMessageOf($chatAncestor, $number, $user) {
-		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and normalize-space() = '$user']")->
+		// User mentions have an image avatar, but guest mentions have a plain
+		// text avatar, so the avatar needs to be excluded when matching the
+		// name.
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ')]//*[normalize-space() = '$user']/ancestor::span")->
 				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
 				describedAs("Formatted mention of $user in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function formattedMentionInChatMessageOfAsCurrentUser($chatAncestor, $number, $user) {
+		// User mentions have an image avatar, but guest mentions have a plain
+		// text avatar, so the avatar needs to be excluded when matching the
+		// name.
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-user ') and contains(concat(' ', normalize-space(@class), ' '), ' currentUser ')]//*[normalize-space() = '$user']/ancestor::span")->
+				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
+				describedAs("Formatted mention of $user as current user in chat message $number in the list of received messages");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function formattedMentionInChatMessageOfAllParticipantsOf($chatAncestor, $number, $roomName) {
+		return Locator::forThe()->xpath("span/span[contains(concat(' ', normalize-space(@class), ' '), ' mention-call ') and contains(concat(' ', normalize-space(@class), ' '), ' currentUser ') and normalize-space() = '$roomName']")->
+				descendantOf(self::textOfChatMessage($chatAncestor, $number))->
+				describedAs("Formatted mention of all participants of $roomName in chat message $number in the list of received messages");
 	}
 
 	/**
@@ -180,6 +204,33 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function guestNameEditableTextLabel($chatAncestor) {
+		return Locator::forThe()->css(".guest-name.editable-text-label")->
+				descendantOf(self::chatView($chatAncestor))->
+				describedAs("Guest name editable text label");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function guestNameEditButton($chatAncestor) {
+		return Locator::forThe()->css(".edit-button")->
+				descendantOf(self::guestNameEditableTextLabel($chatAncestor))->
+				describedAs("Guest name edit button");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function guestNameInput($chatAncestor) {
+		return Locator::forThe()->css(".username")->
+				descendantOf(self::guestNameEditableTextLabel($chatAncestor))->
+				describedAs("Guest name input");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function newChatMessageForm($chatAncestor) {
 		return Locator::forThe()->css(".newCommentForm")->
 				descendantOf(self::chatView($chatAncestor))->
@@ -198,6 +249,15 @@ class ChatContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
+	public static function newChatMessageSendIcon($chatAncestor) {
+		return Locator::forThe()->css(".icon-confirm")->
+				descendantOf(self::newChatMessageForm($chatAncestor))->
+				describedAs("New chat message send icon");
+	}
+
+	/**
+	 * @return Locator
+	 */
 	public static function newChatMessageWorkingIcon($chatAncestor) {
 		return Locator::forThe()->css(".submitLoading")->
 				descendantOf(self::newChatMessageForm($chatAncestor))->
@@ -211,6 +271,67 @@ class ChatContext implements Context, ActorAwareInterface {
 		return Locator::forThe()->css(".share")->
 				descendantOf(self::newChatMessageForm($chatAncestor))->
 				describedAs("Share button");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function mentionAutocompleteContainer() {
+		// The container is added directly in the body, not in the chat view.
+		// Moreover, there could be several atwho containers, so it needs to be
+		// got based on the elements that it contains.
+		return Locator::forThe()->xpath("//li[contains(concat(' ', normalize-space(@class), ' '), ' chat-view-mention-autocomplete ')]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' atwho-container ')]")->
+				describedAs("Mention autocomplete container");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function mentionAutocompleteCandidateFor($name) {
+		// User mentions have an image avatar, but guest mentions have a plain
+		// text avatar, so the avatar needs to be excluded when matching the
+		// name.
+		return Locator::forThe()->xpath("//li[contains(concat(' ', normalize-space(@class), ' '), ' chat-view-mention-autocomplete ')]//*[normalize-space() = '$name']/ancestor::li")->
+				descendantOf(self::mentionAutocompleteContainer())->
+				describedAs("Mention autocomplete candidate for $name");
+	}
+
+	/**
+	 * @When I set my guest name to :name
+	 */
+	public function iSetMyGuestNameTo($name) {
+		$this->actor->find(self::guestNameEditButton($this->chatAncestor), 10)->click();
+		$this->actor->find(self::guestNameInput($this->chatAncestor), 2)->setValue($name . "\r");
+	}
+
+	/**
+	 * @When I type a new chat message with the text :message
+	 */
+	public function iTypeANewChatMessageWithTheText($message) {
+		// Instead of waiting for the input to be enabled before sending a new
+		// message it is easier to wait for the working icon to not be shown.
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::newChatMessageWorkingIcon($this->chatAncestor),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("The working icon for the new message was still being shown after $timeout seconds");
+		}
+
+		$this->actor->find(self::newChatMessageInput($this->chatAncestor), 10)->setValue($message);
+	}
+
+	/**
+	 * @When I choose the candidate mention for :name
+	 */
+	public function iChooseTheCandidateMentionFor($name) {
+		$this->actor->find(self::mentionAutocompleteCandidateFor($name), 10)->click();
+	}
+
+	/**
+	 * @When I send the current chat message
+	 */
+	public function iSendTheCurrentChatMessage() {
+		$this->actor->find(self::newChatMessageSendIcon($this->chatAncestor), 10)->click();
 	}
 
 	/**
@@ -286,6 +407,20 @@ class ChatContext implements Context, ActorAwareInterface {
 	 */
 	public function iSeeThatTheMessageContainsAFormattedMentionOf($number, $user) {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedMentionInChatMessageOf($this->chatAncestor, $number, $user), 10));
+	}
+
+	/**
+	 * @Then I see that the message :number contains a formatted mention of :user as current user
+	 */
+	public function iSeeThatTheMessageContainsAFormattedMentionOfAsCurrentUser($number, $user) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedMentionInChatMessageOfAsCurrentUser($this->chatAncestor, $number, $user), 10));
+	}
+
+	/**
+	 * @Then I see that the message :number contains a formatted mention of all participants of :roomName
+	 */
+	public function iSeeThatTheMessageContainsAFormattedMentionOfAllParticipantsOf($number, $roomName) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::formattedMentionInChatMessageOfAllParticipantsOf($this->chatAncestor, $number, $roomName), 10));
 	}
 
 	/**

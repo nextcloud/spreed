@@ -51,6 +51,8 @@ class Manager {
 	private $userManager;
 	/** @var CommentsManager */
 	private $commentsManager;
+	/** @var TalkSession */
+	private $talkSession;
 	/** @var EventDispatcherInterface */
 	private $dispatcher;
 	/** @var ITimeFactory */
@@ -65,6 +67,7 @@ class Manager {
 								ISecureRandom $secureRandom,
 								IUserManager $userManager,
 								CommentsManager $commentsManager,
+								TalkSession $talkSession,
 								EventDispatcherInterface $dispatcher,
 								ITimeFactory $timeFactory,
 								IHasher $hasher,
@@ -74,6 +77,7 @@ class Manager {
 		$this->secureRandom = $secureRandom;
 		$this->userManager = $userManager;
 		$this->commentsManager = $commentsManager;
+		$this->talkSession = $talkSession;
 		$this->dispatcher = $dispatcher;
 		$this->timeFactory = $timeFactory;
 		$this->hasher = $hasher;
@@ -702,7 +706,12 @@ class Manager {
 		}
 
 		try {
-			$room->getParticipant($userId);
+			if ($userId === '') {
+				$sessionId = $this->talkSession->getSessionForRoom($room->getToken());
+				$room->getParticipantBySession($sessionId);
+			} else {
+				$room->getParticipant($userId);
+			}
 		} catch (ParticipantNotFoundException $e) {
 			// Do not leak the name of rooms the user is not a part of
 			return $this->l->t('Private conversation');

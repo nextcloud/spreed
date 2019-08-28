@@ -24,6 +24,8 @@ declare(strict_types=1);
 namespace OCA\Spreed\Tests\php\Chat\Parser;
 
 use OCA\Spreed\Chat\Parser\UserMention;
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Model\Message;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
@@ -40,6 +42,8 @@ class UserMentionTest extends \Test\TestCase {
 	protected $commentsManager;
 	/** @var IUserManager|MockObject */
 	protected $userManager;
+	/** @var GuestManager|MockObject */
+	protected $guestManager;
 	/** @var IL10N|MockObject */
 	protected $l;
 
@@ -51,9 +55,14 @@ class UserMentionTest extends \Test\TestCase {
 
 		$this->commentsManager = $this->createMock(ICommentsManager::class);
 		$this->userManager = $this->createMock(IUserManager::class);
+		$this->guestManager = $this->createMock(GuestManager::class);
 		$this->l = $this->createMock(IL10N::class);
 
-		$this->parser = new UserMention($this->commentsManager, $this->userManager, $this->l);
+		$this->parser = new UserMention(
+			$this->commentsManager,
+			$this->userManager,
+			$this->guestManager,
+			$this->l);
 	}
 
 	/**
@@ -307,6 +316,165 @@ class UserMentionTest extends \Test\TestCase {
 		];
 
 		$this->assertEquals('Mention to {mention-user1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	public function testGetRichMessageWithAtAll(): void {
+		$mentions = [
+			['type' => 'user', 'id' => 'all'],
+		];
+		$comment = $this->newComment($mentions);
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		$room->expects($this->once())
+			->method('getType')
+			->willReturn(Room::GROUP_CALL);
+		$room->expects($this->once())
+			->method('getToken')
+			->willReturn('token');
+		$room->expects($this->once())
+			->method('getDisplayName')
+			->willReturn('name');
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @all', []);
+
+		$this->parser->parseMessage($chatMessage);
+
+		$expectedMessageParameters = [
+			'mention-call1' => [
+				'type' => 'call',
+				'id' => 'token',
+				'name' => 'name',
+				'call-type' => 'group',
+			]
+		];
+
+		$this->assertEquals('Mention to {mention-call1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	public function testGetRichMessageWhenAGuestWithoutNameIsMentioned(): void {
+		$mentions = [
+			['type' => 'guest', 'id' => 'guest/123456'],
+		];
+		$comment = $this->newComment($mentions);
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+
+		$this->guestManager->expects($this->once())
+			->method('getNameBySessionHash')
+			->with('123456')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @"guest/123456"', []);
+
+		$this->parser->parseMessage($chatMessage);
+
+		$expectedMessageParameters = [
+			'mention-guest1' => [
+				'type' => 'guest',
+				'id' => 'guest/123456',
+				'name' => 'Guest',
+			]
+		];
+
+		$this->assertEquals('Mention to {mention-guest1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	public function testGetRichMessageWhenAGuestWithoutNameIsMentionedMultipleTimes(): void {
+		$mentions = [
+			['type' => 'guest', 'id' => 'guest/123456'],
+		];
+		$comment = $this->newComment($mentions);
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+
+		$this->guestManager->expects($this->once())
+			->method('getNameBySessionHash')
+			->with('123456')
+			->willThrowException(new ParticipantNotFoundException());
+		$this->l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @"guest/123456", and again @"guest/123456"', []);
+
+		$this->parser->parseMessage($chatMessage);
+
+		$expectedMessageParameters = [
+			'mention-guest1' => [
+				'type' => 'guest',
+				'id' => 'guest/123456',
+				'name' => 'Guest',
+			]
+		];
+
+		$this->assertEquals('Mention to {mention-guest1}, and again {mention-guest1}', $chatMessage->getMessage());
+		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
+	}
+
+	public function testGetRichMessageWhenAGuestWithANameIsMentionedMultipleTimes(): void {
+		$mentions = [
+			['type' => 'guest', 'id' => 'guest/abcdef'],
+		];
+		$comment = $this->newComment($mentions);
+
+		/** @var Room|MockObject $room */
+		$room = $this->createMock(Room::class);
+		/** @var Participant|MockObject $participant */
+		$participant = $this->createMock(Participant::class);
+		/** @var IL10N|MockObject $l */
+		$l = $this->createMock(IL10N::class);
+
+		$this->guestManager->expects($this->once())
+			->method('getNameBySessionHash')
+			->with('abcdef')
+			->willReturn('Name');
+		$this->l->expects($this->any())
+			->method('t')
+			->willReturnCallback(function($text, $parameters = []) {
+				return vsprintf($text, $parameters);
+			});
+
+		$chatMessage = new Message($room, $participant, $comment, $l);
+		$chatMessage->setMessage('Mention to @"guest/abcdef", and again @"guest/abcdef"', []);
+
+		$this->parser->parseMessage($chatMessage);
+
+		$expectedMessageParameters = [
+			'mention-guest1' => [
+				'type' => 'guest',
+				'id' => 'guest/abcdef',
+				'name' => 'Name',
+			]
+		];
+
+		$this->assertEquals('Mention to {mention-guest1}, and again {mention-guest1}', $chatMessage->getMessage());
 		$this->assertEquals($expectedMessageParameters, $chatMessage->getMessageParameters());
 	}
 

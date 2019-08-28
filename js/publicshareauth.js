@@ -147,6 +147,7 @@
 
 					setPageTitle(OCA.SpreedMe.app.activeRoom.get('displayName'));
 
+					OCA.SpreedMe.app._chatView.setRoom(OCA.SpreedMe.app.activeRoom);
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
 

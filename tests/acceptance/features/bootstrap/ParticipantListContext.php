@@ -115,4 +115,18 @@ class ParticipantListContext implements Context, ActorAwareInterface {
 		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::moderatorIndicatorFor($participantName), 10));
 	}
 
+	/**
+	 * @Then I see that :participantName is shown in the list of participants as a normal participant
+	 */
+	public function iSeeThatIsShownInTheListOfParticipantsAsANormalParticipant($participantName) {
+		PHPUnit_Framework_Assert::assertNotNull($this->actor->find(self::itemInParticipantsListFor($participantName), 10));
+
+		if (!WaitFor::elementToBeEventuallyNotShown(
+				$this->actor,
+				self::moderatorIndicatorFor($participantName),
+				$timeout = 10 * $this->actor->getFindTimeoutMultiplier())) {
+			PHPUnit_Framework_Assert::fail("Participant $participantName is still marked as a moderator after $timeout seconds but it should be a normal participant instead");
+		}
+	}
+
 }

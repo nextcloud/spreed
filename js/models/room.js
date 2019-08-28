@@ -1,4 +1,4 @@
-/* global Backbone, OCA */
+/* global Backbone, Hashes, OCA */
 
 /**
  * @author Christoph Wurst <christoph@winzerhof-wurst.at>
@@ -20,7 +20,7 @@
  *
  */
 
-(function(OCA, Backbone) {
+(function(OCA, Backbone, Hashes) {
 	'use strict';
 
 	OCA.SpreedMe = OCA.SpreedMe || {};
@@ -70,6 +70,11 @@
 			guestList: '',
 			lastMessage: [],
 			active: false
+		},
+		initialize: function() {
+			this.listenTo(this, 'change:sessionId', function() {
+				this.set('hashedSessionId', new Hashes.SHA1().hex(this.attributes.sessionId));
+			});
 		},
 		url: function() {
 			return OC.linkToOCS('apps/spreed/api/v1/room', 2) + this.get('token');
@@ -246,4 +251,4 @@
 
 	OCA.SpreedMe.Models.Room = Room;
 
-})(OCA, Backbone);
+})(OCA, Backbone, Hashes);

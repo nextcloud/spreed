@@ -132,16 +132,25 @@ Feature: chat/mentions
       | all          | room                     | calls  |
       | participant2 | participant2-displayname | users  |
       | participant3 | participant3-displayname | users  |
+      | GUEST_ID     | Guest                    | guests |
     And user "participant2" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source |
       | all          | room                     | calls  |
       | participant1 | participant1-displayname | users  |
       | participant3 | participant3-displayname | users  |
+      | GUEST_ID     | Guest                    | guests |
     And user "participant3" gets the following candidate mentions in room "public room" for "" with 200
       | id           | label                    | source |
       | all          | room                     | calls  |
       | participant1 | participant1-displayname | users  |
       | participant2 | participant2-displayname | users  |
+      | GUEST_ID     | Guest                    | guests |
+    And user "guest" gets the following candidate mentions in room "public room" for "" with 200
+      | id           | label                    | source |
+      | all          | room                     | calls  |
+      | participant1 | participant1-displayname | users  |
+      | participant2 | participant2-displayname | users  |
+      | participant3 | participant3-displayname | users  |
 
   Scenario: get matched mentions in a public room
     When user "participant1" creates room "public room"
@@ -162,6 +171,62 @@ Feature: chat/mentions
       | id           | label                    | source |
       | participant1 | participant1-displayname | users  |
       | participant2 | participant2-displayname | users  |
+    And user "guest" gets the following candidate mentions in room "public room" for "part" with 200
+      | id           | label                    | source |
+      | participant1 | participant1-displayname | users  |
+      | participant2 | participant2-displayname | users  |
+      | participant3 | participant3-displayname | users  |
+
+  Scenario: get matched guest mentions in a public room
+    When user "participant1" creates room "public room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant3" joins room "public room" with 200
+    And user "guest1" joins room "public room" with 200
+    And user "guest2" joins room "public room" with 200
+    Then user "participant1" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | Guest                    | guests |
+      | GUEST_ID     | Guest                    | guests |
+    And user "participant2" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | Guest                    | guests |
+      | GUEST_ID     | Guest                    | guests |
+    And user "participant3" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | Guest                    | guests |
+      | GUEST_ID     | Guest                    | guests |
+    And user "guest1" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | Guest                    | guests |
+    And user "guest2" gets the following candidate mentions in room "public room" for "uest" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | Guest                    | guests |
+
+  Scenario: get matched named guest mentions in a public room
+    When user "participant1" creates room "public room"
+      | roomType | 3 |
+      | roomName | room |
+    And user "participant1" adds "participant2" to room "public room" with 200
+    And user "participant3" joins room "public room" with 200
+    And user "guest1" joins room "public room" with 200
+    And guest "guest1" sets name to "FooBar" in room "public room" with 200
+    And user "guest2" joins room "public room" with 200
+    Then user "participant1" gets the following candidate mentions in room "public room" for "oob" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | FooBar                   | guests |
+    And user "participant2" gets the following candidate mentions in room "public room" for "oob" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | FooBar                   | guests |
+    And user "participant3" gets the following candidate mentions in room "public room" for "oob" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | FooBar                   | guests |
+    And user "guest1" gets the following candidate mentions in room "public room" for "oob" with 200
+      | id           | label                    | source |
+    And user "guest2" gets the following candidate mentions in room "public room" for "oob" with 200
+      | id           | label                    | source |
+      | GUEST_ID     | FooBar                   | guests |
 
   Scenario: get unmatched mentions in a public room
     When user "participant1" creates room "public room"
@@ -173,6 +238,7 @@ Feature: chat/mentions
     Then user "participant1" gets the following candidate mentions in room "public room" for "unknown" with 200
     And user "participant2" gets the following candidate mentions in room "public room" for "unknown" with 200
     And user "participant3" gets the following candidate mentions in room "public room" for "unknown" with 200
+    And user "guest" gets the following candidate mentions in room "public room" for "unknown" with 200
 
   Scenario: get mentions in a public room with a participant not in the room
     When user "participant1" creates room "public room"

@@ -99,8 +99,13 @@
 						var $avatar = $li.find('.avatar');
 						if ($avatar.data('user-id') === 'all') {
 							$avatar.addClass('avatar icon icon-contacts');
-						} else {
+						} else if ($avatar.data('user-id') && $avatar.data('user-id').indexOf('guest/') !== 0) {
 							$avatar.avatar($avatar.data('user-id'), 32);
+						} else {
+							var displayName = $avatar.data('user-display-name');
+							var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
+							$avatar.imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, 32);
+							$avatar.css('background-color', '#b9b9b9');
 						}
 						return $li;
 					},
@@ -243,7 +248,9 @@
 			if (OC.getCurrentUser().uid) {
 				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, 32, undefined, false, undefined, OC.getCurrentUser().displayName);
 			} else {
-				this.$el.find('.avatar').imageplaceholder('?', this.getOption('guestNameModel').get('nick'), 128);
+				var displayName = this.getOption('guestNameModel').get('nick');
+				var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
+				this.$el.find('.avatar').imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, 128);
 				this.$el.find('.avatar').css('background-color', '#b9b9b9');
 				this.showChildView('guestName', this._guestNameEditableTextLabel, { replaceElement: true, allowMissingEl: true } );
 			}
@@ -438,7 +445,10 @@
 			formattedMessage = this._plainToRich(formattedMessage);
 			formattedMessage = formattedMessage.replace(/\n/g, '<br/>');
 			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
-				formattedMessage, commentModel.get('messageParameters'));
+				formattedMessage, commentModel.get('messageParameters'), {
+					userId: OC.getCurrentUser().uid,
+					sessionHash: this.model.get('hashedSessionId'),
+				});
 
 			var data = _.extend({}, commentModel.attributes, {
 				actorDisplayName: actorDisplayName,
@@ -603,14 +613,16 @@
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				if ($element.data('user-id')) {
+				if ($element.data('user-id') && $element.data('user-id').substr(0, 6) !== 'guest/') {
 					if ($element.data('user-id') === 'all') {
 						$element.addClass('avatar icon icon-contacts');
 					} else {
 						$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
 					}
 				} else {
-					$element.imageplaceholder('?', $element.data('displayname'), size);
+					var displayName = $element.data('user-display-name');
+					var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
+					$element.imageplaceholder(customName ? customName.substr(0, 1) : '?', customName, size);
 					$element.css('background-color', '#b9b9b9');
 				}
 			};
@@ -803,7 +815,7 @@
 				var $this = $(this),
 					$inserted = $this.parent(),
 					userId = $this.find('.avatar').data('user-id');
-				if (userId.indexOf(' ') !== -1) {
+				if (userId.indexOf(' ') !== -1 || userId.indexOf('guest/') === 0) {
 					$inserted.html('@"' + userId + '"');
 				} else {
 					$inserted.html('@' + userId);

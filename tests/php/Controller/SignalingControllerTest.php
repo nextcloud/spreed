@@ -700,6 +700,7 @@ class SignalingControllerTest extends \Test\TestCase {
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
+			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$this->timeFactory,
 			$this->createMock(IHasher::class),

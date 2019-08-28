@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Chat\Parser;
 
+use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Model\Message;
 use OCA\Spreed\Room;
 use OCP\Comments\ICommentsManager;
@@ -37,18 +39,20 @@ class UserMention {
 
 	/** @var ICommentsManager */
 	private $commentsManager;
-
 	/** @var IUserManager */
 	private $userManager;
-
+	/** @var GuestManager */
+	private $guestManager;
 	/** @var IL10N */
 	private $l;
 
 	public function __construct(ICommentsManager $commentsManager,
 								IUserManager $userManager,
+								GuestManager $guestManager,
 								IL10N $l) {
 		$this->commentsManager = $commentsManager;
 		$this->userManager = $userManager;
+		$this->guestManager = $guestManager;
 		$this->l = $l;
 	}
 
@@ -96,7 +100,11 @@ class UserMention {
 			// index of the mentions of that type.
 			$mentionParameterId = 'mention-' . $mention['type'] . $mentionTypeCount[$mention['type']];
 
-			$placeholder = strpos($mention['id'], ' ') !== false ? ('@"' . $mention['id'] . '"') : ('@' .  $mention['id']);
+			if (strpos($mention['id'], ' ') !== false || strpos($mention['id'], 'guest/') === 0) {
+				$placeholder = '@"' . $mention['id'] . '"';
+			} else {
+				$placeholder = '@' .  $mention['id'];
+			}
 			$message = str_replace($placeholder, '{' . $mentionParameterId . '}', $message);
 
 			if ($mention['type'] === 'call') {
@@ -105,6 +113,18 @@ class UserMention {
 					'id' => $chatMessage->getRoom()->getToken(),
 					'name' => $chatMessage->getRoom()->getDisplayName($chatMessage->getParticipant()->getUser()),
 					'call-type' => $this->getRoomType($chatMessage->getRoom()),
+				];
+			} else if ($mention['type'] === 'guest') {
+				try {
+					$displayName = $this->guestManager->getNameBySessionHash(substr($mention['id'], strlen('guest/')));
+				} catch (ParticipantNotFoundException $e) {
+					$displayName = $this->l->t('Guest');
+				}
+
+				$messageParameters[$mentionParameterId] = [
+					'type' => $mention['type'],
+					'id' => $mention['id'],
+					'name' => $displayName,
 				];
 			} else {
 				try {

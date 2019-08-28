@@ -24,10 +24,13 @@ namespace OCA\Spreed\Chat\AutoComplete;
 
 
 use OCA\Spreed\Files\Util;
+use OCA\Spreed\GuestManager;
 use OCA\Spreed\Room;
+use OCA\Spreed\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
+use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
 
@@ -35,21 +38,32 @@ class SearchPlugin implements ISearchPlugin {
 
 	/** @var IUserManager */
 	protected $userManager;
+	/** @var GuestManager */
+	protected $guestManager;
+	/** @var TalkSession */
+	protected $talkSession;
 	/** @var Util */
 	protected $util;
-
 	/** @var string|null */
 	protected $userId;
+	/** @var IL10N */
+	protected $l;
 
 	/** @var Room */
 	protected $room;
 
 	public function __construct(IUserManager $userManager,
+								GuestManager $guestManager,
+								TalkSession $talkSession,
 								Util $util,
-								?string $userId) {
+								?string $userId,
+								IL10N $l) {
 		$this->userManager = $userManager;
+		$this->guestManager = $guestManager;
+		$this->talkSession = $talkSession;
 		$this->util = $util;
 		$this->userId = $userId;
+		$this->l = $l;
 	}
 
 	public function setContext(array $context): void {
@@ -74,15 +88,24 @@ class SearchPlugin implements ISearchPlugin {
 			return false;
 		}
 
-		$userIds = $this->room->getParticipantUserIds();
+		$userIds = $guestSessionHashes = [];
+		$participants = $this->room->getParticipants();
+		foreach ($participants as $participant) {
+			if ($participant->isGuest()) {
+				$guestSessionHashes[] = sha1($participant->getSessionId());
+			} else {
+				$userIds[] = $participant->getUser();
+			}
+		}
+
 		if ($this->room->getType() === Room::ONE_TO_ONE_CALL
 			&& $this->room->getName() !== '') {
 			// Add potential leavers of one-to-one rooms again.
 			$userIds[] = $this->room->getName();
 		}
 
-		// FIXME Handle guests
 		$this->searchUsers($search, $userIds, $searchResult);
+		$this->searchGuests($search, $guestSessionHashes, $searchResult);
 
 		return false;
 	}
@@ -132,6 +155,48 @@ class SearchPlugin implements ISearchPlugin {
 		$searchResult->addResultSet($type, $matches, $exactMatches);
 	}
 
+	protected function searchGuests(string $search, array $guestSessionHashes, ISearchResult $searchResult): void {
+		if (empty($guestSessionHashes)) {
+			$type = new SearchResultType('guests');
+			$searchResult->addResultSet($type, [], []);
+			return;
+		}
+
+		$search = strtolower($search);
+		$displayNames = $this->guestManager->getNamesBySessionHashes($guestSessionHashes);
+		$currentSessionHash = null;
+		if (!$this->userId) {
+			$currentSessionHash = sha1($this->talkSession->getSessionForRoom($this->room->getToken()));
+		}
+
+		$matches = $exactMatches = [];
+		foreach ($guestSessionHashes as $guestSessionHash) {
+			if ($currentSessionHash === $guestSessionHash) {
+				// Do not suggest the current guest
+				continue;
+			}
+
+			$name = $displayNames[$guestSessionHash] ?? $this->l->t('Guest');
+			if ($search === '') {
+				$matches[] = $this->createGuestResult($guestSessionHash, $name);
+				continue;
+			}
+
+			if (strtolower($name) === $search) {
+				$exactMatches[] = $this->createGuestResult($guestSessionHash, $name);
+				continue;
+			}
+
+			if (stripos($name, $search) !== false) {
+				$matches[] = $this->createGuestResult($guestSessionHash, $name);
+				continue;
+			}
+		}
+
+		$type = new SearchResultType('guests');
+		$searchResult->addResultSet($type, $matches, $exactMatches);
+	}
+
 	protected function createResult(string $type, string $uid, string $name): array {
 		if ($type === 'user' && $name === '') {
 			$user = $this->userManager->get($uid);
@@ -147,6 +212,16 @@ class SearchPlugin implements ISearchPlugin {
 			'value' => [
 				'shareType' => $type,
 				'shareWith' => $uid,
+			],
+		];
+	}
+
+	protected function createGuestResult(string $uid, string $name): array {
+		return [
+			'label' => $name,
+			'value' => [
+				'shareType' => 'guest',
+				'shareWith' => 'guest/' . $uid,
 			],
 		];
 	}

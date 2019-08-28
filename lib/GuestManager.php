@@ -128,7 +128,7 @@ class GuestManager {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		if (isset($row['display_name'])) {
+		if (isset($row['display_name']) && $row['display_name'] !== '') {
 			return $row['display_name'];
 		}
 
@@ -150,6 +150,10 @@ class GuestManager {
 		$map = [];
 
 		while ($row = $result->fetch()) {
+			if ($row['display_name'] === '') {
+				continue;
+			}
+
 			$map[$row['session_hash']] = $row['display_name'];
 		}
 		$result->closeCursor();

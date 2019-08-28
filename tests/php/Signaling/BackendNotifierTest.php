@@ -29,6 +29,7 @@ use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
 use OCA\Spreed\Signaling\BackendNotifier;
+use OCA\Spreed\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
@@ -129,6 +130,7 @@ class BackendNotifierTest extends \Test\TestCase {
 			$this->secureRandom,
 			$this->createMock(IUserManager::class),
 			$this->createMock(CommentsManager::class),
+			$this->createMock(TalkSession::class),
 			$dispatcher,
 			$this->timeFactory,
 			$this->createMock(IHasher::class),

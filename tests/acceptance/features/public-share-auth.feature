@@ -39,17 +39,24 @@ Feature: public share auth
     And I visit the shared link I wrote down
     And I see that the current page is the Authenticate page for the shared link I wrote down
     When I request the password
-    And I send a new chat message with the text "Hello"
-    And I see that the message 1 was sent by "Guest" with the text "Hello"
+    And I send a new chat message with the text "Hello @user0"
+    And I see that the message 1 was sent by "Guest" with the text "Hello user0"
     And I act as John
     And I have opened the Talk app
     And I open the "Password request: welcome.txt" conversation
-    And I send a new chat message with the text "Hi!"
-    Then I see that the message 1 was sent by "Guest" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I type a new chat message with the text "Hi @"
+    And I choose the candidate mention for "Guest"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "Guest" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0" as current user
+    # The generated avatar is plain text, so it appears in the message itself
+    And I see that the message 2 was sent by "user0" with the text "Hi ?Guest"
+    And I see that the message 2 contains a formatted mention of "Guest"
     And I act as Jane
-    And I see that the message 1 was sent by "Guest" with the text "Hello"
-    And I see that the message 2 was sent by "user0" with the text "Hi!"
+    And I see that the message 1 was sent by "Guest" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0"
+    And I see that the message 2 was sent by "user0" with the text "Hi ?Guest"
+    And I see that the message 2 contains a formatted mention of "Guest" as current user
 
   Scenario: access a link share with a password protected by Talk after a chat
     Given I act as John
