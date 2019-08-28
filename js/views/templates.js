@@ -67,9 +67,9 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
 },"7":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "		<div class=\"clipboard-button\"><span class=\"button icon-clippy\"></span></div>\n		<div class=\"password-button\">\n			<span class=\"button "
+  return "		<div class=\"clipboard-button\"><button class=\"button icon-clippy\"></button></div>\n		<div class=\"password-button\">\n			<div class=\"menutoggle\"><button class=\"button "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
-    + "\"></span>\n			<div class=\"popovermenu password-menu menu-right\">\n				<ul>\n					<li>\n						<span class=\"menuitem "
+    + "\"></button></div>\n			<div class=\"popovermenu password-menu menu-right\">\n				<ul>\n					<li>\n						<span class=\"menuitem "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(8, data, 0),"inverse":container.program(10, data, 0),"data":data})) != null ? stack1 : "")
     + " password-option\">\n							<form class=\"password-form\">\n								<input class=\"password-input\" maxlength=\"200\" type=\"password\"\n									placeholder=\""
     + container.escapeExpression(((helper = (helper = helpers.passwordInputPlaceholder || (depth0 != null ? depth0.passwordInputPlaceholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"passwordInputPlaceholder","hash":{},"data":data}) : helper)))
@@ -79,7 +79,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
 },"10":function(container,depth0,helpers,partials,data) {
     return "icon-no-password";
 },"12":function(container,depth0,helpers,partials,data) {
-    return "	<div class=\"share-link-options\">\n		<div class=\"clipboard-button\"><span class=\"button icon-clippy\"></span></div>\n	</div>\n";
+    return "	<div class=\"share-link-options\">\n		<div class=\"clipboard-button\"><button class=\"button icon-clippy\"></button></div>\n	</div>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
@@ -192,9 +192,9 @@ templates['collectionsview'] = template({"compiler":[7,">= 4.0.0"],"main":functi
 templates['editabletextlabel'] = template({"1":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return "	<div class=\"edit-button\"><span class=\"icon button icon-rename\" "
+  return "	<div class=\"edit-button\"><button class=\"icon button icon-rename\" "
     + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.buttonTitle : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "></span></div>\n";
+    + "></button></div>\n";
 },"2":function(container,depth0,helpers,partials,data) {
     var helper;
 
@@ -260,32 +260,38 @@ templates['mediacontrolsview'] = template({"compiler":[7,">= 4.0.0"],"main":func
     + "</span>\n			</button>\n		</li>\n	</ul>\n</div>\n";
 },"useData":true});
 templates['participantlistview'] = template({"1":function(container,depth0,helpers,partials,data) {
+    return "currentUser";
+},"3":function(container,depth0,helpers,partials,data) {
+    return "guestUser";
+},"5":function(container,depth0,helpers,partials,data) {
+    return "tabindex=\"0\"";
+},"7":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "<span class=\"participant-moderator-indicator\">"
     + container.escapeExpression(((helper = (helper = helpers.moderatorIndicator || (depth0 != null ? depth0.moderatorIndicator : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"moderatorIndicator","hash":{},"data":data}) : helper)))
     + "</span>";
-},"3":function(container,depth0,helpers,partials,data) {
+},"9":function(container,depth0,helpers,partials,data) {
     return "<span class=\"icon icon-video\"></span>";
-},"5":function(container,depth0,helpers,partials,data) {
+},"11":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
   return "<div class=\"participant-entry-utils\">\n	<ul>\n		<li class=\"participant-entry-utils-menu-button\">\n			<button class=\"icon icon-more\"></button>\n			<span class=\"icon icon-loading-small hidden\"></span>\n		</li>\n	</ul>\n</div>\n<div class=\"popovermenu bubble menu\">\n	<ul class=\"popovermenu-list\">\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canBeDemoted : depth0),{"name":"if","hash":{},"fn":container.program(6, data, 0),"inverse":container.program(8, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canBeDemoted : depth0),{"name":"if","hash":{},"fn":container.program(12, data, 0),"inverse":container.program(14, data, 0),"data":data})) != null ? stack1 : "")
     + "		<li>\n			<button class=\"remove-participant\">\n				<span class=\"icon icon-delete\"></span>\n				<span>"
     + container.escapeExpression(((helper = (helper = helpers.removeParticipantText || (depth0 != null ? depth0.removeParticipantText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"removeParticipantText","hash":{},"data":data}) : helper)))
     + "</span>\n			</button>\n		</li>\n	</ul>\n</div>\n";
-},"6":function(container,depth0,helpers,partials,data) {
+},"12":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "		<li>\n			<button class=\"demote-moderator\">\n				<span class=\"icon icon-rename\"></span>\n				<span>"
     + container.escapeExpression(((helper = (helper = helpers.demoteModeratorText || (depth0 != null ? depth0.demoteModeratorText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"demoteModeratorText","hash":{},"data":data}) : helper)))
     + "</span>\n			</button>\n		</li>\n";
-},"8":function(container,depth0,helpers,partials,data) {
+},"14":function(container,depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.canBePromoted : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
-},"9":function(container,depth0,helpers,partials,data) {
+  return ((stack1 = helpers["if"].call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.canBePromoted : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+},"15":function(container,depth0,helpers,partials,data) {
     var helper;
 
   return "		<li>\n			<button class=\"promote-moderator\">\n				<span class=\"icon icon-rename\"></span>\n				<span>"
@@ -294,20 +300,26 @@ templates['participantlistview'] = template({"1":function(container,depth0,helpe
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
-  return "<a class=\"participant-entry-link\" href=\"#\" data-sessionId=\""
+  return "<span class=\"participant-entry "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsSelf : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsGuestOrGuestModerator : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\" data-sessionId=\""
     + alias4(((helper = (helper = helpers.sessionId || (depth0 != null ? depth0.sessionId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"sessionId","hash":{},"data":data}) : helper)))
-    + "\">\n	<div class=\"avatar\"></div>\n	"
+    + "\">\n	<div class=\"avatar-wrapper\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantHasContactsMenu : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "><div class=\"avatar\"></div></div>\n	<span>"
     + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</span>\n	"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsOwner : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n	"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsOwner : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsModerator : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n	"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsModerator : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsGuestModerator : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\n	"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.participantIsGuestModerator : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n	"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inCall : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + "\n</a>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canModerate : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.inCall : depth0),{"name":"if","hash":{},"fn":container.program(9, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "\n</span>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canModerate : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"useData":true});
 templates['participantview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
@@ -469,7 +481,7 @@ templates['screenview'] = template({"compiler":[7,">= 4.0.0"],"main":function(co
 templates['sidebarview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "<div id=\"app-sidebar-trigger\" class=\"icon-menu-people force-icon-white-in-call icon-shadow\">\n</div>\n<div id=\"app-sidebar\" class=\"detailsView\">\n	<div class=\"detailCallInfoContainer\">\n	</div>\n	<div class=\"tabs\">\n	</div>\n	<a class=\"close icon-close\" href=\"#\"><span class=\"hidden-visually\">"
+  return "<button id=\"app-sidebar-trigger\" class=\"icon-menu-people force-icon-white-in-call icon-shadow\"></button>\n<div id=\"app-sidebar\" class=\"detailsView\">\n	<div class=\"detailCallInfoContainer\">\n	</div>\n	<div class=\"tabs\">\n	</div>\n	<a class=\"close icon-close\" href=\"#\"><span class=\"hidden-visually\">"
     + container.escapeExpression(((helper = (helper = helpers.closeLabel || (depth0 != null ? depth0.closeLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"closeLabel","hash":{},"data":data}) : helper)))
     + "</span></a>\n</div>\n";
 },"useData":true});
@@ -481,7 +493,7 @@ templates['tabview_header'] = template({"compiler":[7,">= 4.0.0"],"main":functio
 
   return "<span class=\"icon "
     + alias4(((helper = (helper = helpers.icon || (depth0 != null ? depth0.icon : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"icon","hash":{},"data":data}) : helper)))
-    + "\"></span>\n<a href=\"#\">"
+    + "\"></span>\n<a href=\"#\" tabindex=\"-1\">"
     + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
     + "</a>\n";
 },"useData":true});

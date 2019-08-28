@@ -34,6 +34,9 @@
 
 		tagName: 'li',
 		className: 'tabHeader',
+		attributes: {
+			tabindex: 0,
+		},
 
 		template: function(context) {
 			// OCA.Talk.Views.Templates may not have been initialized when this
@@ -52,14 +55,21 @@
 		events: {
 			'click': function() {
 				this.triggerMethod('click:tabHeader', this.getOption('tabId'));
-			}
+			},
+			'keyup': function(event) {
+				if (event.key === ' ' || event.key === 'Enter') {
+					this.triggerMethod('click:tabHeader', this.getOption('tabId'));
+				}
+			},
 		},
 
 		setSelected: function(selected) {
 			if (selected) {
 				this.$el.addClass('selected');
+				this.$el.attr('tabindex', '-1');
 			} else {
 				this.$el.removeClass('selected');
+				this.$el.attr('tabindex', '0');
 			}
 		}
 
@@ -182,6 +192,10 @@
 		},
 
 		selectTabHeader: function(tabId) {
+			if (this._currentTabId === tabId) {
+				return;
+			}
+
 			this.triggerMethod('unselect:tabHeader', this._currentTabId);
 
 			if (this._currentTabId !== undefined) {
