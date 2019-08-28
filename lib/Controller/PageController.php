@@ -160,8 +160,6 @@ class PageController extends Controller {
 				$token = '';
 			}
 
-			$this->talkSession->removePasswordForRoom($token);
-
 			if ($room instanceof Room && $room->hasPassword()) {
 				// If the user joined themselves or is not found, they need the password.
 				try {
@@ -172,12 +170,14 @@ class PageController extends Controller {
 				}
 
 				if ($requirePassword) {
+					$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
 
 					$passwordVerification = $room->verifyPassword($password);
 
 					if ($passwordVerification['result']) {
-						$this->talkSession->setPasswordForRoom($token, $token);
+						$this->talkSession->setPasswordForRoom($token, $password);
 					} else {
+						$this->talkSession->removePasswordForRoom($token);
 						if ($passwordVerification['url'] === '') {
 							return new TemplateResponse($this->appName, 'authenticate', [
 								'wrongpw' => $password !== '',
@@ -226,13 +226,14 @@ class PageController extends Controller {
 			]));
 		}
 
-		$this->talkSession->removePasswordForRoom($token);
 		if ($room->hasPassword()) {
-			$passwordVerification = $room->verifyPassword($password);
+			$password = $password !== '' ? $password : (string) $this->talkSession->getPasswordForRoom($token);
 
+			$passwordVerification = $room->verifyPassword($password);
 			if ($passwordVerification['result']) {
-				$this->talkSession->setPasswordForRoom($token, $token);
+				$this->talkSession->setPasswordForRoom($token, $password);
 			} else {
+				$this->talkSession->removePasswordForRoom($token);
 				if ($passwordVerification['url'] === '') {
 					return new TemplateResponse($this->appName, 'authenticate', [
 						'wrongpw' => $password !== '',
