@@ -188,9 +188,12 @@ class Util {
 		$nodes = array_filter($nodes, function(Node $node) {
 			return $node->getType() === FileInfo::TYPE_FILE;
 		});
+		if (empty($nodes)) {
+			return null;
+		}
 
 		/** @var Node $node */
-		$node = array_pop($nodes);
+		$node = array_shift($nodes);
 		try {
 			$storage = $node->getStorage();
 			if ($storage->instanceOfStorage(GroupFolderStorage::class)) {
