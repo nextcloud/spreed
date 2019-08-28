@@ -89,7 +89,7 @@
 
 			this._mediaControlsView = this._localVideoView._mediaControlsView;
 
-			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner();
+			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._mediaControlsView);
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();

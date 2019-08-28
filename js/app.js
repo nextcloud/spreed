@@ -618,7 +618,7 @@
 
 			this._mediaControlsView = this._localVideoView._mediaControlsView;
 
-			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner();
+			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._mediaControlsView);
 
 			$(document).on('click', this.onDocumentClick);
 			OC.Util.History.addOnPopStateHandler(_.bind(this._onPopState, this));

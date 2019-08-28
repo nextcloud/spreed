@@ -49,7 +49,8 @@
 	 * to the user even if the browser window is not in the foreground (provided
 	 * the user granted the permissions to receive notifications from the site).
 	 */
-	function SpeakingWhileMutedWarner() {
+	function SpeakingWhileMutedWarner(view) {
+		this._view = view;
 		this._handleSpeakingWhileMutedBound = this._handleSpeakingWhileMuted.bind(this);
 		this._handleStoppedSpeakingWhileMutedBound = this._handleStoppedSpeakingWhileMuted.bind(this);
 	}
@@ -107,7 +108,8 @@
 				return;
 			}
 
-			this._notification = OC.Notification.show(message);
+			this._view.setSpeakingWhileMutedNotification(message);
+			this._notification = true;
 		},
 
 		_showBrowserNotification: function(message) {
@@ -157,9 +159,9 @@
 			this._pendingBrowserNotification = false;
 
 			if (this._notification) {
-				OC.Notification.hide(this._notification);
+				this._view.setSpeakingWhileMutedNotification(null);
 
-				this._notification = null;
+				this._notification = false;
 			}
 
 			if (this._browserNotification) {
