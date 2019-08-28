@@ -127,6 +127,48 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function enableForAllParticipantsRadioButton() {
+		// forThe()->radioButton("All participants") can not be used here; that
+		// would return the radio button itself, but the element that the user
+		// interacts with is the label.
+		return Locator::forThe()->css(".all-participants-label")->
+				descendantOf(self::roomModerationMenu())->
+				describedAs("Enable for all participants button in room moderation menu in conversation info");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function enableForAllParticipantsRadioButtonInput() {
+		return Locator::forThe()->radioButton("All participants")->
+				descendantOf(self::roomModerationMenu())->
+				describedAs("Enable for all participants button input in room moderation menu in conversation info");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function enableForModeratorsOnlyRadioButton() {
+		// forThe()->radioButton("Moderators only") can not be used here; that
+		// would return the radio button itself, but the element that the user
+		// interacts with is the label.
+		return Locator::forThe()->css(".moderators-only-label")->
+				descendantOf(self::roomModerationMenu())->
+				describedAs("Enable for moderators only button in room moderation menu in conversation info");
+	}
+
+	/**
+	 * @return Locator
+	 */
+	public static function enableForModeratorsOnlyRadioButtonInput() {
+		return Locator::forThe()->radioButton("Moderators only")->
+				descendantOf(self::roomModerationMenu())->
+				describedAs("Enable for moderators only button input in room moderation menu in conversation info");
+	}
+
+	/**
 	 * @Given I rename the conversation to :newConversationName
 	 */
 	public function iRenameTheConversationTo($newConversationName) {
@@ -157,6 +199,24 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	}
 
 	/**
+	 * @When I enable the conversation for all participants
+	 */
+	public function iEnableTheConversationForAllParticipants() {
+		$this->showRoomModerationMenu();
+
+		$this->actor->find(self::enableForAllParticipantsRadioButton(), 2)->click();
+	}
+
+	/**
+	 * @When I enable the conversation for moderators only
+	 */
+	public function iEnableTheConversationForModeratorsOnly() {
+		$this->showRoomModerationMenu();
+
+		$this->actor->find(self::enableForModeratorsOnlyRadioButton(), 2)->click();
+	}
+
+	/**
 	 * @Then I see that the conversation is password protected
 	 */
 	public function iSeeThatTheConversationIsPasswordProtected() {
@@ -177,6 +237,30 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::noPasswordIcon(), 10)->isVisible(), "No password icon is visible");
 
 		// Hide menu again after checking the icon.
+		$this->actor->find(self::roomModerationButton(), 2)->click();
+	}
+
+	/**
+	 * @Then I see that the conversation is enabled for all participants
+	 */
+	public function iSeeThatTheConversationIsEnabledForAllParticipants() {
+		$this->showRoomModerationMenu();
+
+		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::enableForAllParticipantsRadioButtonInput(), 10)->isChecked(), "Enable for all participants radio button is checked");
+
+		// Hide menu again after checking the button.
+		$this->actor->find(self::roomModerationButton(), 2)->click();
+	}
+
+	/**
+	 * @Then I see that the conversation is enabled for moderators only
+	 */
+	public function iSeeThatTheConversationIsEnabledForModeratorsOnly() {
+		$this->showRoomModerationMenu();
+
+		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::enableForModeratorsOnlyRadioButtonInput(), 10)->isChecked(), "Enable for moderators only radio button is checked");
+
+		// Hide menu again after checking the button.
 		$this->actor->find(self::roomModerationButton(), 2)->click();
 	}
 
