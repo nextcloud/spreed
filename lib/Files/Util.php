@@ -23,6 +23,8 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Files;
 
+use OCA\GroupFolders\Mount\GroupFolderStorage;
+use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
@@ -88,7 +90,7 @@ class Util {
 		}
 
 		$nodes = array_filter($nodes, function($node) {
-			return $node->getType() === \OCP\Files\FileInfo::TYPE_FILE;
+			return $node->getType() === FileInfo::TYPE_FILE;
 		});
 
 		while (!empty($nodes)) {
@@ -164,6 +166,40 @@ class Util {
 		$shares = $this->shareManager->getSharedWith($userId, \OCP\Share::SHARE_TYPE_ROOM, $node, $limit);
 		if (\count($shares) > 0) {
 			return $shares[0];
+		}
+
+		return null;
+	}
+
+	/**
+	 * ...
+	 *
+	 * @param string $fileId
+	 * @param string $userId
+	 * @return Node|null
+	 */
+	public function getGroupFolderNode(string $fileId, string $userId): ?Node {
+		$userFolder = $this->rootFolder->getUserFolder($userId);
+		$nodes = $userFolder->getById($fileId);
+		if (empty($nodes)) {
+			return null;
+		}
+
+		$nodes = array_filter($nodes, function(Node $node) {
+			return $node->getType() === FileInfo::TYPE_FILE;
+		});
+		if (empty($nodes)) {
+			return null;
+		}
+
+		/** @var Node $node */
+		$node = array_shift($nodes);
+		try {
+			$storage = $node->getStorage();
+			if ($storage->instanceOfStorage(GroupFolderStorage::class)) {
+				return $node;
+			}
+		} catch (NotFoundException $e) {
 		}
 
 		return null;
