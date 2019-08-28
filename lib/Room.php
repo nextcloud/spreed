@@ -165,7 +165,7 @@ class Room {
 
 	protected function validateTimer(): void {
 		if ($this->lobbyTimer !== null && $this->lobbyTimer < $this->timeFactory->getDateTime()) {
-			$this->setLobby(Webinary::ALL_PARTICIPANTS, null, true);
+			$this->setLobby(Webinary::LOBBY_NONE, null, true);
 		}
 	}
 
@@ -523,7 +523,7 @@ class Room {
 
 	/**
 	 * @param int $newState Currently it is only allowed to change between
-	 * 						`Webinary::MODERATORS_ONLY` and `Webinary::ALL_PARTICIPANTS`
+	 * 						`Webinary::LOBBY_NON_MODERATORS` and `Webinary::LOBBY_NONE`
 	 * 						Also it's not allowed in one-to-one conversations,
 	 * 						file conversations and password request conversations.
 	 * @param \DateTime|null $dateTime
@@ -541,7 +541,7 @@ class Room {
 			return false;
 		}
 
-		if (!in_array($newState, [Webinary::MODERATORS_ONLY, Webinary::ALL_PARTICIPANTS], true)) {
+		if (!in_array($newState, [Webinary::LOBBY_NON_MODERATORS, Webinary::LOBBY_NONE], true)) {
 			return false;
 		}
 

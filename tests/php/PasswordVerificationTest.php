@@ -57,7 +57,7 @@ class PasswordVerificationTest extends TestCase {
 			1,
 			Room::PUBLIC_CALL,
 			Room::READ_WRITE,
-			Webinary::ALL_PARTICIPANTS,
+			Webinary::LOBBY_NONE,
 			'foobar',
 			'Test',
 			'passy',

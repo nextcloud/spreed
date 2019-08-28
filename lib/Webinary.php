@@ -25,7 +25,7 @@ namespace OCA\Spreed;
 
 class Webinary {
 
-	public const ALL_PARTICIPANTS = 0;
-	public const MODERATORS_ONLY = 1;
+	public const LOBBY_NONE = 0;
+	public const LOBBY_NON_MODERATORS = 1;
 
 }

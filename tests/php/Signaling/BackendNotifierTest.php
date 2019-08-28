@@ -323,7 +323,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	public function testRoomLobbyStateChanged() {
 		$room = $this->manager->createPublicRoom();
-		$room->setLobby(Webinary::MODERATORS_ONLY, null);
+		$room->setLobby(Webinary::LOBBY_NON_MODERATORS, null);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {

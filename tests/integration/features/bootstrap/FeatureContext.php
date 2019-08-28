@@ -490,9 +490,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param TableNode
 	 */
 	public function userSetsLobbyStateForRoomTo($user, $identifier, $lobbyState, $statusCode) {
-		if ($lobbyState === 'all participants') {
+		if ($lobbyState === 'no lobby') {
 			$lobbyState = 0;
-		} else if ($lobbyState === 'moderators only') {
+		} else if ($lobbyState === 'non moderators') {
 			$lobbyState = 1;
 		}
 

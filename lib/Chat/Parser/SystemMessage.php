@@ -140,12 +140,12 @@ class SystemMessage {
 			}
 		} else if ($message === 'lobby_timer_reached') {
 			$parsedMessage = $this->l->t('The conversation is now open to everyone');
-		} else if ($message === 'lobby_all_participants') {
+		} else if ($message === 'lobby_none') {
 			$parsedMessage = $this->l->t('{actor} opened the conversation to everyone');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You opened the conversation to everyone');
 			}
-		} else if ($message === 'lobby_moderators_only') {
+		} else if ($message === 'lobby_non_moderators') {
 			$parsedMessage = $this->l->t('{actor} restricted the conversation to moderators');
 			if ($currentUserIsActor) {
 				$parsedMessage = $this->l->t('You restricted the conversation to moderators');

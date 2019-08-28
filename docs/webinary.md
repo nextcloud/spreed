@@ -18,7 +18,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `state` | int | New state for the conversation
-    `timer` | int/null | Timestamp when the lobby state is reset to all participants
+    `timer` | int/null | Timestamp when the lobby state is reset to no lobby
 
 * Response:
     - Header:

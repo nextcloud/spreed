@@ -174,7 +174,7 @@ class InjectionMiddleware extends Middleware {
 		}
 
 		$room = $controller->getRoom();
-		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::ALL_PARTICIPANTS) {
+		if (!$room instanceof Room || $room->getLobbyState() !== Webinary::LOBBY_NONE) {
 			throw new LobbyException();
 		}
 	}
