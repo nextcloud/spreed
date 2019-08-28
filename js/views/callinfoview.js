@@ -65,6 +65,7 @@
 			'shareLinkOptions': '.share-link-options',
 			'clipboardButton': '.clipboard-button',
 			'linkCheckbox': '.link-checkbox',
+			'linkCheckboxLabel': '.link-checkbox-label',
 
 			'callButton': 'div.call-button',
 
@@ -74,6 +75,7 @@
 			'passwordOption': '.password-option',
 			'passwordInput': '.password-input',
 			'passwordConfirm': '.password-confirm',
+			'passwordLoading': '.password-loading',
 
 			'menu': '.password-menu',
 		},
@@ -120,6 +122,12 @@
 			this._nameEditableTextLabel = new OCA.SpreedMe.Views.EditableTextLabel({
 				model: this.model,
 				modelAttribute: nameAttribute,
+				modelSaveOptions: {
+					wait: true,
+					error: function() {
+						OC.Notification.show(t('spreed', 'Error occurred while renaming the room'), {type: 'error'});
+					}
+				},
 
 				extraClassNames: 'room-name',
 				labelTagName: 'h2',
@@ -243,9 +251,25 @@
 		 * Share link
 		 */
 		toggleLinkCheckbox: function() {
-			var isPublic = this.ui.linkCheckbox.attr('checked') === 'checked';
+			var isPublic = this.ui.linkCheckbox.prop('checked');
 
-			this.model.setPublic(isPublic);
+			this.ui.linkCheckbox.prop('disabled', true);
+			this.ui.linkCheckboxLabel.addClass('icon-loading-small');
+
+			this.model.setPublic(isPublic, {
+				wait: true,
+				error: function() {
+					this.ui.linkCheckbox.prop('checked', !isPublic);
+					this.ui.linkCheckbox.prop('disabled', false);
+					this.ui.linkCheckboxLabel.removeClass('icon-loading-small');
+
+					if (isPublic) {
+						OC.Notification.show(t('spreed', 'Error occurred while making the room public'), {type: 'error'});
+					} else {
+						OC.Notification.show(t('spreed', 'Error occurred while making the room private'), {type: 'error'});
+					}
+				}.bind(this)
+			});
 		},
 
 		/**
@@ -256,14 +280,28 @@
 
 			var newPassword = this.ui.passwordInput.val().trim();
 
+			this.ui.passwordInput.prop('disabled', true);
+			this.ui.passwordConfirm.addClass('hidden');
+			this.ui.passwordLoading.removeClass('hidden');
+
+			var restoreState = function() {
+				this.ui.passwordInput.prop('disabled', false);
+				this.ui.passwordConfirm.removeClass('hidden');
+				this.ui.passwordLoading.addClass('hidden');
+			}.bind(this);
+
 			this.model.setPassword(newPassword, {
+				wait: true,
 				success: function() {
 					this.ui.passwordInput.val('');
+					restoreState();
 					OC.hideMenus();
 				}.bind(this),
 				error: function() {
+					restoreState();
+
 					OC.Notification.show(t('spreed', 'Error occurred while setting password'), {type: 'error'});
-				}
+				}.bind(this)
 			});
 		},
 
