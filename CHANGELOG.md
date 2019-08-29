@@ -1,6 +1,43 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0.0-beta1 – 2019-08-29
+### Added
+- Added a simple Lobby: moderators can join and prepare a call/meeting while users and guests can not join yet
+  [#1926](https://github.com/nextcloud/spreed/pull/1926)
+- Allow to mention guest users
+  [#1974](https://github.com/nextcloud/spreed/pull/1974)
+- Added a voice level indicator and notify the user when they speak while they are muted
+  [#2016](https://github.com/nextcloud/spreed/pull/2016)
+- Change the read marker to work based on the message ID and allow clients to set it manually
+  [#1214](https://github.com/nextcloud/spreed/pull/1214)
+- Prepare the backend for replies to messages so the clients can implement it
+  [#2000](https://github.com/nextcloud/spreed/pull/2000)
+- Update SimpleWebRTC to the latest version
+
+### Changed
+- You can now escape commands to show them to your chat partners by prepending a second slash (e.g. //help)
+  [#1919](https://github.com/nextcloud/spreed/pull/1919)
+- One-to-one conversations are now only deleted if both users leave the conversation
+  [#1921](https://github.com/nextcloud/spreed/pull/1921)
+- Use the guests name in notifications instead of the anonymous "A guest" string
+  [#2104](https://github.com/nextcloud/spreed/pull/2104)
+
+### Fixed
+- Allow to have file based calls in folders mounted by the groupfolders app
+  [#2012](https://github.com/nextcloud/spreed/pull/2012)
+- Only list participants who joined the call in the call summary
+  [#2012](https://github.com/nextcloud/spreed/pull/2012)
+- Participants in the participant list now offer the contacts menu
+  [#1822](https://github.com/nextcloud/spreed/pull/1822)
+- Better UI feedback while moderator actions are performed
+  [#2117](https://github.com/nextcloud/spreed/pull/2117)
+- Make sure the external signaling server is informed about the new state changes (read-only, lobby, etc.)
+  [#2103](https://github.com/nextcloud/spreed/pull/2103)
+- Enable camera and microphone access in the Nextcloud 17 feature policy
+  [#2073](https://github.com/nextcloud/spreed/pull/2073)
+- Multiple Nextcloud 17 compatibility fixes
+
 ## 6.0.4 – 2019-07-31
 ### Fixed
 - Audio missing in chromium when enabling video until a video is received
