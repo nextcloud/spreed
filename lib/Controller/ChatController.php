@@ -245,6 +245,22 @@ class ChatController extends AEnvironmentAwareController {
 			$this->room->ping($this->participant->getUser(), $this->participant->getSessionId(), $this->timeFactory->getTime());
 		}
 
+		/**
+		 * Automatic last read message marking for old clients
+		 * This is pretty dumb and does not give the best and native feeling
+		 * you are used to from other chat apps. The clients should manually
+		 * set the read marker depending on the view port of the set of messages.
+		 *
+		 * We are only setting it automatically here for old clients and the
+		 * web UI, until it can be fixed in Vue. To not use too much broken data,
+		 * we only update the read marker to the last known id, when it is higher
+		 * then the current read marker.
+		 */
+		if ($lookIntoFuture && $setReadMarker === 1 &&
+			$lastKnownMessageId > $this->participant->getLastReadMessage()) {
+			$this->participant->setLastReadMessage($lastKnownMessageId);
+		}
+
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
 			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser);
@@ -332,9 +348,17 @@ class ChatController extends AEnvironmentAwareController {
 		$newLastKnown = end($comments);
 		if ($newLastKnown instanceof IComment) {
 			$response->addHeader('X-Chat-Last-Given', $newLastKnown->getId());
+			/**
+			 * This false set the read marker on new messages although you
+			 * navigated away to a different chat already. So we removed this
+			 * and instead update the read marker before your next waiting.
+			 * So when you are still there, it will just have a wrong read
+			 * marker for the time until your next request starts, while it will
+			 * not update the value, when you actually left the chat already.
 			if ($setReadMarker === 1 && $lookIntoFuture) {
 				$this->participant->setLastReadMessage((int) $newLastKnown->getId());
 			}
+			*/
 		}
 
 		return $response;
