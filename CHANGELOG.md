@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 7.0.0-beta1 – 2019-08-29
+## 7.0.0-beta.1 – 2019-08-29
 ### Added
 - Added a simple Lobby: moderators can join and prepare a call/meeting while users and guests can not join yet
   [#1926](https://github.com/nextcloud/spreed/pull/1926)
