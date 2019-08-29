@@ -48,7 +48,7 @@ class Setting implements ISetting {
 	 * @since 11.0.0
 	 */
 	public function getName(): string {
-		return $this->l->t('You were invited to a <strong>talk</strong> room or had a <strong>call</strong>');
+		return $this->l->t('You were invited to a <strong>conversation</strong> or had a <strong>call</strong>');
 	}
 
 	/**
