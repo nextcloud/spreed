@@ -83,6 +83,9 @@
  * It is assumed that the icon will have the standard width for buttons in
  * inputs of 34px. However, further adjustments may be needed for the input and
  * the padding depending on the context where they are used.
+ *
+ * The confirm icon can have a sibling loading icon to switch to (by hiding one
+ * icon and showing the other) while the operation is in progress.
  */
 input[type="text"],
 input[type="password"] {
@@ -114,6 +117,32 @@ input[type="password"] {
 		&:active:not(:disabled) {
 			opacity: 1;
 		}
+
+		+ .icon-loading-small {
+			/* Mimic size set in server for confirm button. */
+			width: 34px;
+			height: 34px;
+			padding: 7px 6px;
+			margin-top: 3px;
+			margin-bottom: 3px;
+
+			position: absolute;
+			top: 0;
+			right: 3px;
+		}
+	}
+}
+
+.menuitem input[type="text"],
+.menuitem input[type="password"] {
+	& + .icon-confirm + .icon-loading-small {
+		/* Mimic size set in server for inputs in menu items. */
+		min-width: 44px;
+		max-height: 40px;
+		margin: 2px 0;
+
+		/* Override padding set in server for icons in menu items. */
+		padding: 7px 6px;
 	}
 }
 
@@ -745,12 +774,10 @@ input[type="password"] {
 		.input-wrapper {
 			position: relative;
 
-			input[type="text"] {
-				& + .icon-confirm {
-					/* Needed to override an important rule set in the
-					 * server. */
-					background-color: transparent !important;
-				}
+			.icon-confirm {
+				/* Needed to override an important rule set in the
+				 * server. */
+				background-color: transparent !important;
 			}
 		}
 		.label {
@@ -832,18 +859,17 @@ input[type="password"] {
 				text-overflow: ellipsis;
 			}
 
-			.icon-confirm.confirm-button {
-				padding: 12px 21px;
-				margin: 0;
-			}
-
 			input[type="text"] {
 				padding-right: 44px;
+			}
 
-				& + .icon-confirm {
-					top: 4px;
-					right: 0;
-				}
+			.icon-confirm,
+			.icon-loading-small {
+				top: 4px;
+				right: 0;
+
+				padding: 12px 21px;
+				margin: 0;
 			}
 		}
 	}
@@ -896,6 +922,18 @@ input[type="password"] {
 		.link-checkbox-label {
 			white-space: nowrap;
 			padding: 12px;
+
+			/* If ".icon-loading-small" is set hide the checkbox and show a
+			 * loading icon instead */
+			&.icon-loading-small:before {
+				background-image: none !important;
+				background-color: transparent !important;
+				border-color: transparent !important;
+			}
+			&.icon-loading-small:after {
+				top: 21px;
+				left: 21px;
+			}
 		}
 		.button {
 			cursor: pointer;
@@ -924,11 +962,14 @@ input[type="password"] {
 				.password-form {
 					position: relative;
 
-					.password-confirm {
+					.password-confirm,
+					.password-loading {
 						/* Inputs in menu items do not have a right margin, so
 						 * it does not need to be compensated. */
 						right: 0;
+					}
 
+					.password-confirm {
 						/* Needed to override an important rule set in the
 						 * server. */
 						background-color: transparent !important;
