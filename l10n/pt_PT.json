@@ -74,7 +74,6 @@
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Esteve numa chamada com {utilizador1}, {utilizador2}, {utilizador3} e {utilizador4}",
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Esteve numa chamada com {utilizador1}, {utilizador2}, {utilizador3}, {utilizador4} e {utilizador5}",
     "{actor} invited you to {call}" : "{actor} convidou-o para {chamada}",
-    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Foi convidado para uma sala de <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
     "Talk to %s" : "Falar com %s",
     "{user} wants to talk with you" : "{utilizador} quer falar consigo",
     "A group call has started in {call}" : "Uma chamada de grupo começou em {chamada}",
@@ -87,6 +86,7 @@
     "Shared secret" : "Segredo partilhado",
     "Delete server" : "Apagar servidor",
     "Add new server" : "Adicionar novo servidor",
+    "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "Foi convidado para uma sala de <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
     ", " : ","
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
