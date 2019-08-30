@@ -153,10 +153,14 @@
 		setAudioAvailable: function(audioAvailable) {
 			if (audioAvailable) {
 				this.getUI('audioButton').removeClass('no-audio-available');
+
+				this.getUI('volumeIndicator').removeClass('hidden');
 			} else {
 				this.getUI('audioButton').removeClass('audio-disabled icon-audio')
 					.addClass('no-audio-available icon-audio-off')
 					.attr('data-original-title', t('spreed', 'No audio'));
+
+				this.getUI('volumeIndicator').addClass('hidden');
 			}
 
 			this._audioAvailable = audioAvailable;
