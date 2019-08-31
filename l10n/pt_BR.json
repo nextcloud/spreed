@@ -147,6 +147,7 @@
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Você atendeu uma chamada com {user1}, {user2}, {user3}, {user4} e {user5}",
     "_%n other_::_%n others_" : ["%n outro","%n outros"],
     "{actor} invited you to {call}" : "{actor} convidou você para {call}",
+    "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Você foi convidado para uma <strong>conversa</strong> ou recebeu uma <strong>chamada</strong>",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Bem-vindo ao Nextcloud Talk!\nNesta conversa, você será informado sobre os novos recursos disponíveis no Nextcloud Talk.",
     "New in Talk 6" : "Novidades no Talk 6",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Agora o Microsoft Edge e o Safari podem ser usados para participar de chamadas de áudio e vídeo",
