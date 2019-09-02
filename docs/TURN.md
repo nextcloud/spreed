@@ -67,7 +67,10 @@ no-multicast-peers
 
 !!! note
 
-    (D)TLS is currently not supported by Nextcloud Talk and does not have any real security benefit anyway. See the following discussions why (D)TLS for TURN has no real security benefit and why Nextcloud Talk is not supporting it: [https://github.com/coturn/coturn/issues/33](https://github.com/coturn/coturn/issues/33) and [https://github.com/nextcloud/spreed/issues/257](https://github.com/nextcloud/spreed/issues/257)
+    (D)TLS is currently not supported by Nextcloud Talk and does not have any real security benefit anyway. See the following discussions why (D)TLS for TURN has no real security benefit and why Nextcloud Talk is not supporting it:
+    
+    - [https://github.com/coturn/coturn/issues/33](https://github.com/coturn/coturn/issues/33)
+    - [https://github.com/nextcloud/spreed/issues/257](https://github.com/nextcloud/spreed/issues/257)
 
 - If your TURN server is running **not behind a NAT**, but with direct www connection and **static public IP**, than you can limit the IPs it listens at and answers with, by setting those as `listening-ip` and `relay-ip`. On larger deployments it is recommended to run your TURN server on a dedicated machine that is directly accessible from the internet.
 
