@@ -318,6 +318,10 @@
 		},
 
 		setLobbyStateAllParticipants: function() {
+			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE) {
+				return;
+			}
+
 			this.ui.allParticipantsRadio.prop('disabled', true);
 			this.ui.allParticipantsLabel.addClass('icon-loading-small');
 
@@ -338,6 +342,10 @@
 		},
 
 		setLobbyStateModeratorsOnly: function() {
+			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
+				return;
+			}
+
 			this.ui.moderatorsOnlyRadio.prop('disabled', true);
 			this.ui.moderatorsOnlyLabel.addClass('icon-loading-small');
 
