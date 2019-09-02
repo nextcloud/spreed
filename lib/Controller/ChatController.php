@@ -230,6 +230,7 @@ class ChatController extends AEnvironmentAwareController {
 	 * @param int $timeout Number of seconds to wait for new messages (30 by default, 30 at most)
 	 * @param int $setReadMarker Automatically set the last read marker when 1,
 	 *                           if your client does this itself via chat/{token}/read set to 0
+	 * @param int $includeLastKnown Include the $lastKnownMessageId in the messages when 1 (default 0)
 	 * @return DataResponse an array of chat messages, "404 Not found" if the
 	 *         room token was not valid or "304 Not modified" if there were no messages;
 	 *         each chat message is an array with
@@ -237,7 +238,7 @@ class ChatController extends AEnvironmentAwareController {
 	 *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
 	 *         'message'.
 	 */
-	public function receiveMessages(int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30, int $setReadMarker = 1): DataResponse {
+	public function receiveMessages(int $lookIntoFuture, int $limit = 100, int $lastKnownMessageId = 0, int $timeout = 30, int $setReadMarker = 1, int $includeLastKnown = 0): DataResponse {
 		$limit = min(200, $limit);
 		$timeout = min(30, $timeout);
 
@@ -263,9 +264,9 @@ class ChatController extends AEnvironmentAwareController {
 
 		$currentUser = $this->userManager->get($this->userId);
 		if ($lookIntoFuture) {
-			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser);
+			$comments = $this->chatManager->waitForNewMessages($this->room, $lastKnownMessageId, $limit, $timeout, $currentUser, (bool) $includeLastKnown);
 		} else {
-			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit);
+			$comments = $this->chatManager->getHistory($this->room, $lastKnownMessageId, $limit, (bool) $includeLastKnown);
 		}
 
 		if (empty($comments)) {

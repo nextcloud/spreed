@@ -187,7 +187,7 @@ class ChatManagerTest extends TestCase {
 			->with('chat', 1234, $offset, 'desc', $limit)
 			->willReturn($expected);
 
-		$comments = $this->chatManager->getHistory($chat, $offset, $limit);
+		$comments = $this->chatManager->getHistory($chat, $offset, $limit, false);
 
 		$this->assertEquals($expected, $comments);
 	}
@@ -222,7 +222,7 @@ class ChatManagerTest extends TestCase {
 			->method('getUID')
 			->willReturn('userId');
 
-		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user);
+		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user, false);
 
 		$this->assertEquals($expected, $comments);
 	}
@@ -260,7 +260,7 @@ class ChatManagerTest extends TestCase {
 			->method('getUID')
 			->willReturn('userId');
 
-		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user);
+		$comments = $this->chatManager->waitForNewMessages($chat, $offset, $limit, $timeout, $user, false);
 
 		$this->assertEquals($expected, $comments);
 	}

@@ -225,12 +225,13 @@ class ChatManager {
 	 * @param Room $chat
 	 * @param int $offset Last known message id
 	 * @param int $limit
+	 * @param bool $includeLastKnown
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function getHistory(Room $chat, $offset, $limit): array {
-		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'desc', $limit);
+	public function getHistory(Room $chat, int $offset, int $limit, bool $includeLastKnown): array {
+		return $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'desc', $limit, $includeLastKnown);
 	}
 
 	/**
@@ -248,23 +249,24 @@ class ChatManager {
 	 * @param int $limit
 	 * @param int $timeout
 	 * @param IUser|null $user
+	 * @param bool $includeLastKnown
 	 * @return IComment[] the messages found (only the id, actor type and id,
 	 *         creation date and message are relevant), or an empty array if the
 	 *         timeout expired.
 	 */
-	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user): array {
+	public function waitForNewMessages(Room $chat, int $offset, int $limit, int $timeout, ?IUser $user, bool $includeLastKnown): array {
 		if ($user instanceof IUser) {
 			$this->notifier->markMentionNotificationsRead($chat, $user->getUID());
 		}
 		$elapsedTime = 0;
 
-		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
+		$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
 
 		while (empty($comments) && $elapsedTime < $timeout) {
 			sleep(1);
 			$elapsedTime++;
 
-			$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit);
+			$comments = $this->commentsManager->getForObjectSince('chat', (string) $chat->getId(), $offset, 'asc', $limit, $includeLastKnown);
 		}
 
 		return $comments;
