@@ -27,3 +27,4 @@ nav:
       - 'Internal signaling API': 'internal-signaling.md'
       - 'External signaling API': 'standalone-signaling-api-v1.md'
   - Commands: 'commands.md'
+  - 'Configuring coTURN': 'TURN.md'
