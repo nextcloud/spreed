@@ -51,31 +51,8 @@ The configuration of Nextcloud Talk mainly depends on your desired usage:
 
 - Then uncomment/edit the following settings accordingly:
 
-         listening-port=<yourChosenPortNumber>
-         fingerprint
-         lt-cred-mech # Only on coTURN below v4.5.0.8!
-         use-auth-secret
-         static-auth-secret=<yourChosen/GeneratedSecret>
-         realm=your.domain.org
-         total-quota=100
-         bps-capacity=0
-         stale-nonce
-         no-loopback-peers # Only on coTURN below v4.5.1.0!
-         no-multicast-peers
-
-
-#### 3.1  (D)TLS configuration
-
-!!! note
-
-    (D)TLS is currently not supported by Nextcloud Talk and does not have any real security benefit anyway. Click here for more details.
-
-See the following discussions why **(D)TLS** for TURN has no real security benefit and that Nextcloud Talk is not supporting it: [https://github.com/coturn/coturn/issues/33](https://github.com/coturn/coturn/issues/33) and [https://github.com/nextcloud/spreed/issues/257](https://github.com/nextcloud/spreed/issues/257)
-
-When using (D)TLS, you need to provide the path to your certificate and key files, and it is highly recommended to adjust the cipher list:
-
 ```
-tls-listening-port=<yourChosenPortNumber>
+listening-port=<yourChosenPortNumber>
 fingerprint
 lt-cred-mech # Only on coTURN below v4.5.0.8!
 use-auth-secret
@@ -84,25 +61,17 @@ realm=your.domain.org
 total-quota=100
 bps-capacity=0
 stale-nonce
-cert=/path/to/your/cert.pem
-pkey=/path/to/your/privkey.pem
-cipher-list="ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AES:RSA+3DES:!ADH:!AECDH:!MD5"
-no-loopback-peers
-no-multicast-peers # Only on coTURN below v4.5.1.0!
+no-loopback-peers # Only on coTURN below v4.5.1.0!
+no-multicast-peers
 ```
 
-- Note that `listening-port`, `alt-listening-port`, `tls-listening-port` and `alt-tls-listening-port` can all be used for (D)TLS and plain text connections. It depends on the client request protocol only, TURN vs _TURNS_ (TURN over TLS). Hence there is usually no point to setup more then one port. Also Nextcloud Talk can only be configured to use a single port.
-- A working cipher example is provided above, that is also used within most other guides. But it makes totally sense to **use the cipher-list from your Nextcloud webserver** to have the same compatibility versus security versus performance for both.
-- If you want it damn secure, you can also configure a custom [Diffie-Hellman](https://en.wikipedia.org/wiki/Diffie–Hellman_key_exchange) file and/or disable TLSv1.0 + TLSv1.1. But again, it does not make much sense to handle it different here than for the webserver. Just decide how much compatibility you need and security/performance you want and configure webserver + coTURN the same:
+!!! note
 
-```
-dh-file=/path/to/your/dh.pem
-no-tlsv1
-no-tlsv1_1
-```
+    (D)TLS is currently not supported by Nextcloud Talk and does not have any real security benefit anyway. See the following discussions why (D)TLS for TURN has no real security benefit and why Nextcloud Talk is not supporting it:
+    
+    - [https://github.com/coturn/coturn/issues/33](https://github.com/coturn/coturn/issues/33)
+    - [https://github.com/nextcloud/spreed/issues/257](https://github.com/nextcloud/spreed/issues/257)
 
-#### 3. Continue with general coTURN configuration
-  
 - If your TURN server is running **not behind a NAT**, but with direct www connection and **static public IP**, than you can limit the IPs it listens at and answers with, by setting those as `listening-ip` and `relay-ip`. On larger deployments it is recommended to run your TURN server on a dedicated machine that is directly accessible from the internet.
 
 - The following settings can be used to adjust the **logging behaviour**. On SBCs with SDcards you may want to adjust this, as by default coTURN logs very verbose. The config file explains everything very well:
