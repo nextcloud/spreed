@@ -443,7 +443,7 @@ class NotifierTest extends \Test\TestCase {
 				['{guest} (guest) mentioned you in conversation {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
-						'guest' => ['type' => 'highlight', 'id' => 'random-hash', 'name' => 'MyNameIs'],
+						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
 					]
 				], false, 'MyNameIs'
 			],
@@ -557,7 +557,7 @@ class NotifierTest extends \Test\TestCase {
 				['{guest} (guest) sent a message in conversation {call}',
 					[
 						'call' => ['type' => 'call', 'id' => 1234, 'name' => 'Room name', 'call-type' => 'public'],
-						'guest' => ['type' => 'highlight', 'id' => 'random-hash', 'name' => 'MyNameIs'],
+						'guest' => ['type' => 'guest', 'id' => 'random-hash', 'name' => 'MyNameIs'],
 					]
 				], false, 'MyNameIs'
 			],
