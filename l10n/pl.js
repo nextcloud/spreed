@@ -149,6 +149,7 @@ OC.L10N.register(
     "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Brałeś udział w rozmowie z {user1}, {user2}, {user3}, {user4} i {user5}",
     "_%n other_::_%n others_" : ["innym","%ninnymi","%n innymi","%n innymi"],
     "{actor} invited you to {call}" : "{actor} zaprosił Cię do {call}",
+    "You were invited to a <strong>conversation</strong> or had a <strong>call</strong>" : "Zostałeś zaproszony do <strong>rozmowy</strong> lub miałeś <strong>połączenie</strong>",
     "Welcome to Nextcloud Talk!\nIn this conversation you will be informed about new features available in Nextcloud Talk." : "Witamy w Nextcloud Talk!\nW tej rozmowie będziesz informowany o nowych funkcjach dostępnych w Nextcloud Talk.",
     "New in Talk 6" : "Nowość w Talk 6",
     "- Microsoft Edge and Safari can now be used to participate in audio and video calls" : "- Microsoft Edge i Safari mogą być teraz używane do połączeń audio i wideo",
