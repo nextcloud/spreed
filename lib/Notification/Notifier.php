@@ -238,7 +238,7 @@ class Notifier implements INotifier {
 		$placeholders = $replacements = [];
 		foreach ($message->getMessageParameters() as $placeholder => $parameter) {
 			$placeholders[] = '{' . $placeholder . '}';
-			if ($parameter['type'] === 'user') {
+			if ($parameter['type'] === 'user' || $parameter['type'] === 'guest') {
 				$replacements[] = '@' . $parameter['name'];
 			} else {
 				$replacements[] = $parameter['name'];
@@ -327,7 +327,7 @@ class Notifier implements INotifier {
 		}
 
 		return [
-			'type' => 'highlight',
+			'type' => 'guest',
 			'id' => $actorId,
 			'name' => $name,
 		];
