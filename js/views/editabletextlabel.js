@@ -73,7 +73,7 @@
 		ui: {
 			labelWrapper: '.label-wrapper',
 			label: '.label',
-			editButton: '.edit-button',
+			editButton: '.edit-button button',
 			inputWrapper: '.input-wrapper',
 			input: 'input.username',
 			confirmButton: '.confirm-button',
@@ -81,6 +81,7 @@
 		},
 
 		events: {
+			'keydown @ui.editButton': 'preventConfirmEditOnNextInputKeyUp',
 			'click @ui.editButton': 'showInput',
 			'keyup @ui.input': 'handleInputKeyUp',
 			'click @ui.confirmButton': 'confirmEdit',
@@ -181,6 +182,34 @@
 			this.getUI('label').text(this._getText());
 		},
 
+		/**
+		 * Prevents the edition to be confirmed on the next key up event on the
+		 * input.
+		 *
+		 * When Enter is pressed in the edit button the default behaviour is to
+		 * trigger a click event which, in turn, shows and focus the input.
+		 * However, as the enter key is still pressed as soon as it is released
+		 * a key up event is triggered, now on the focused input, which would
+		 * confirm the edit and hide again the input.
+		 *
+		 * Note that confirming the edition is only prevented for the first key
+		 * up event. If the Enter key is kept pressed on an input the browser
+		 * periodically generates new key down and key up events; surprisingly
+		 * the "repeat" property of the event is "false", so it can not be
+		 * distinguished if the key is being kept pressed. Due to this it is not
+		 * possible to prevent confirming the edition until the Enter key is
+		 * actually released for the first time after showing the input.
+		 */
+		preventConfirmEditOnNextInputKeyUp: function(event) {
+			if (event.keyCode !== 13) {
+				return;
+			}
+
+			this.getUI('input').one('keyup', function(event) {
+				event.stopPropagation();
+			}.bind(this));
+		},
+
 		showInput: function() {
 			this.getUI('input').val(this.model.get(this.modelAttribute));
 
@@ -193,6 +222,8 @@
 		hideInput: function() {
 			this.getUI('labelWrapper').removeClass('hidden-important');
 			this.getUI('inputWrapper').addClass('hidden-important');
+
+			this.getUI('editButton').focus();
 		},
 
 		handleInputKeyUp: function(event) {

@@ -15,9 +15,9 @@
 		<label for="link-checkbox" class="link-checkbox-label">{{linkCheckboxLabel}}</label>
 		{{/if}}
 		{{#if isPublic}}
-		<div class="clipboard-button"><span class="button icon-clippy"></span></div>
+		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
 		<div class="password-button">
-			<span class="button {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}}"></span>
+			<div class="menutoggle"><button class="button {{#if hasPassword}}icon-password{{else}}icon-no-password{{/if}}"></button></div>
 			<div class="popovermenu password-menu menu-right">
 				<ul>
 					<li>
@@ -38,7 +38,7 @@
 	{{/if}}
 	{{#if showShareLink}}
 	<div class="share-link-options">
-		<div class="clipboard-button"><span class="button icon-clippy"></span></div>
+		<div class="clipboard-button"><button class="button icon-clippy"></button></div>
 	</div>
 	{{/if}}
 </div>

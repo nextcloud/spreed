@@ -89,7 +89,6 @@
 			'change @ui.linkCheckbox': 'toggleLinkCheckbox',
 
 			'keyup @ui.passwordInput': 'keyUpPassword',
-			'click @ui.passwordButton': 'showPasswordInput',
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
 		},
@@ -296,6 +295,7 @@
 					this.ui.passwordInput.val('');
 					restoreState();
 					OC.hideMenus();
+					this.ui.passwordButton.focus();
 				}.bind(this),
 				error: function() {
 					restoreState();
@@ -310,6 +310,7 @@
 			if (e.keyCode === 27) {
 				// ESC
 				OC.hideMenus();
+				this.ui.passwordButton.focus();
 			}
 		},
 
