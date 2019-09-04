@@ -198,7 +198,7 @@ class Executor {
 			);
 		} catch (\InvalidArgumentException $e) {
 			$this->logger->logException($e);
-			return '';
+			return $this->l->t('An error occurred while running the command. Please ask an administrator to check the logs.');
 		}
 	}
 }

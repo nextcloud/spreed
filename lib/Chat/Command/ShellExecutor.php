@@ -103,7 +103,7 @@ class ShellExecutor {
 		@exec($cmd, $output, $returnCode);
 
 		if ($returnCode) {
-			throw new \InvalidArgumentException('Chat command failed with return code: ' . $returnCode);
+			throw new \InvalidArgumentException('Chat command failed [Code: ' . $returnCode . ']: ' . $cmd);
 		}
 
 		return implode("\n", $output);
