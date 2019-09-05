@@ -22,11 +22,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Collaboration\Collaborators;
+namespace OCA\Talk\Tests\php\Collaboration\Collaborators;
 
-use OCA\Spreed\Collaboration\Collaborators\RoomPlugin;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Collaboration\Collaborators\RoomPlugin;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IUser;

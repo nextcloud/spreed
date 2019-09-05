@@ -22,9 +22,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed;
+namespace OCA\Talk;
 
-use OCA\Spreed\Chat\ChatManager;
+use OCA\Talk\Chat\ChatManager;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;

@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Settings;
+namespace OCA\Talk\Settings;
 
 
 use OCP\AppFramework\Http\TemplateResponse;

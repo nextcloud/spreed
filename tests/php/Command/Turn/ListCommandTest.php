@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Tests\php\Command\Turn;
+namespace OCA\Talk\Tests\php\Command\Turn;
 
-use OCA\Spreed\Command\Turn\ListCommand;
+use OCA\Talk\Command\Turn\ListCommand;
 use OCP\IConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

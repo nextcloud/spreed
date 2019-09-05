@@ -20,13 +20,13 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\AutoComplete;
+namespace OCA\Talk\Chat\AutoComplete;
 
 
-use OCA\Spreed\Files\Util;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Room;
-use OCA\Spreed\TalkSession;
+use OCA\Talk\Files\Util;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;

@@ -21,14 +21,14 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat;
+namespace OCA\Talk\Chat;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Files\Util;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Files\Util;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
@@ -38,7 +38,7 @@ use OCP\IUserManager;
  * Helper class for notifications related to user mentions in chat messages.
  *
  * This class uses the NotificationManager to create and remove the
- * notifications as needed; OCA\Spreed\Notification\Notifier is the one that
+ * notifications as needed; OCA\Talk\Notification\Notifier is the one that
  * prepares the notifications for display.
  */
 class Notifier {

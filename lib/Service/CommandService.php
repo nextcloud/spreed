@@ -20,12 +20,12 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Service;
+namespace OCA\Talk\Service;
 
 
-use OCA\Spreed\Chat\Command\ShellExecutor;
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Model\CommandMapper;
+use OCA\Talk\Chat\Command\ShellExecutor;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Model\CommandMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 class CommandService {

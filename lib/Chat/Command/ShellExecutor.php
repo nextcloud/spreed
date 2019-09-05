@@ -20,7 +20,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Command;
+namespace OCA\Talk\Chat\Command;
 
 
 class ShellExecutor {

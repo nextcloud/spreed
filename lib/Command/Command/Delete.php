@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Command\Command;
+namespace OCA\Talk\Command\Command;
 
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Service\CommandService;
 use OC\Core\Command\Base;
 use OCP\AppFramework\Db\DoesNotExistException;
 use Symfony\Component\Console\Input\InputArgument;

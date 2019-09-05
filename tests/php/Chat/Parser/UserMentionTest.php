@@ -21,14 +21,14 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat\Parser;
+namespace OCA\Talk\Tests\php\Chat\Parser;
 
-use OCA\Spreed\Chat\Parser\UserMention;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Chat\Parser\UserMention;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IL10N;

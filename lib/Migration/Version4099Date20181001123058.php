@@ -19,11 +19,11 @@ declare(strict_types=1);
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Migration;
+namespace OCA\Talk\Migration;
 
 use Closure;
 use Doctrine\DBAL\Types\Type;
-use OCA\Spreed\Participant;
+use OCA\Talk\Participant;
 use OCP\DB\ISchemaWrapper;
 use OCP\Migration\SimpleMigrationStep;
 use OCP\Migration\IOutput;

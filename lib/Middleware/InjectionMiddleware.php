@@ -20,20 +20,20 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Middleware;
+namespace OCA\Talk\Middleware;
 
 use OC\AppFramework\Utility\ControllerMethodReflector;
-use OCA\Spreed\Controller\AEnvironmentAwareController;
-use OCA\Spreed\Controller\EnvironmentAwareTrait;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Middleware\Exceptions\LobbyException;
-use OCA\Spreed\Middleware\Exceptions\NotAModeratorException;
-use OCA\Spreed\Middleware\Exceptions\ReadOnlyException;
-use OCA\Spreed\Room;
-use OCA\Spreed\TalkSession;
-use OCA\Spreed\Webinary;
+use OCA\Talk\Controller\AEnvironmentAwareController;
+use OCA\Talk\Controller\EnvironmentAwareTrait;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Middleware\Exceptions\LobbyException;
+use OCA\Talk\Middleware\Exceptions\NotAModeratorException;
+use OCA\Talk\Middleware\Exceptions\ReadOnlyException;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;

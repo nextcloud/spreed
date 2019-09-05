@@ -20,7 +20,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Middleware\Exceptions;
+namespace OCA\Talk\Middleware\Exceptions;
 
 use OCP\AppFramework\Http;
 

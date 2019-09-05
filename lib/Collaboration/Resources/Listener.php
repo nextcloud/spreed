@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Collaboration\Resources;
+namespace OCA\Talk\Collaboration\Resources;
 
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Collaboration\Resources\IManager;
 use OCP\Collaboration\Resources\ResourceException;
 use OCP\IUser;

@@ -20,7 +20,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Migration;
+namespace OCA\Talk\Migration;
 
 use Doctrine\DBAL\Schema\SchemaException;
 use OCP\DB\ISchemaWrapper;

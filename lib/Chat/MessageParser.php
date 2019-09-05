@@ -21,13 +21,13 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat;
+namespace OCA\Talk\Chat;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\IUser;

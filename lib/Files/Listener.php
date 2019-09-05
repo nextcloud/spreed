@@ -21,11 +21,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Files;
+namespace OCA\Talk\Files;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\UnauthorizedException;
-use OCA\Spreed\Room;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\Room;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

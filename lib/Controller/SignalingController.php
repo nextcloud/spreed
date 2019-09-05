@@ -22,16 +22,16 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
-use OCA\Spreed\Config;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\Signaling\Messages;
-use OCA\Spreed\TalkSession;
+use OCA\Talk\Config;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Signaling\Messages;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
@@ -250,9 +250,9 @@ class SignalingController extends OCSController {
 	/**
 	 * Check if the current request is coming from an allowed backend.
 	 *
-	 * The backends are sending the custom header "Spreed-Signaling-Random"
+	 * The backends are sending the custom header "Talk-Signaling-Random"
 	 * containing at least 32 bytes random data, and the header
-	 * "Spreed-Signaling-Checksum", which is the SHA256-HMAC of the random data
+	 * "Talk-Signaling-Checksum", which is the SHA256-HMAC of the random data
 	 * and the body of the request, calculated with the shared secret from the
 	 * configuration.
 	 *

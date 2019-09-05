@@ -21,14 +21,14 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat;
+namespace OCA\Talk\Tests\php\Chat;
 
-use OCA\Spreed\Chat\Notifier;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Files\Util;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Chat\Notifier;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Files\Util;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
@@ -42,13 +42,13 @@ class NotifierTest extends \Test\TestCase {
 	/** @var \OCP\IUserManager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $userManager;
 
-	/** @var \OCA\Spreed\Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \OCA\Talk\Manager|\PHPUnit_Framework_MockObject_MockObject */
 	protected $manager;
 
-	/** @var \OCA\Spreed\Files\Util|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var \OCA\Talk\Files\Util|\PHPUnit_Framework_MockObject_MockObject */
 	protected $util;
 
-	/** @var \OCA\Spreed\Chat\Notifier */
+	/** @var \OCA\Talk\Chat\Notifier */
 	protected $notifier;
 
 	public function setUp() {

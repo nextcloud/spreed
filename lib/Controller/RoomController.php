@@ -24,20 +24,20 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Exceptions\InvalidPasswordException;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Exceptions\UnauthorizedException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\TalkSession;
-use OCA\Spreed\Webinary;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Exceptions\InvalidPasswordException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;

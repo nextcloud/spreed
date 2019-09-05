@@ -21,13 +21,13 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat;
+namespace OCA\Talk\Tests\php\Chat;
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\CommentsManager;
-use OCA\Spreed\Chat\Notifier;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\CommentsManager;
+use OCA\Talk\Chat\Notifier;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;

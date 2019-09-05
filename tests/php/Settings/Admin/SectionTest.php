@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Settings\Admin;
+namespace OCA\Talk\Tests\php\Settings\Admin;
 
-use OCA\Spreed\Settings\Admin\Section;
+use OCA\Talk\Settings\Admin\Section;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use PHPUnit\Framework\MockObject\MockObject;

@@ -20,7 +20,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Activity\Provider;
+namespace OCA\Talk\Activity\Provider;
 
 use OCP\Activity\IEvent;
 use OCP\IL10N;

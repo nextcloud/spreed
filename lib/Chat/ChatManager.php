@@ -21,10 +21,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat;
+namespace OCA\Talk\Chat;
 
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;

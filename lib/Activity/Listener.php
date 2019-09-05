@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Activity;
+namespace OCA\Talk\Activity;
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Room;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Room;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\ILogger;

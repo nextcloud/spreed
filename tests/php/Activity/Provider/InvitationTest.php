@@ -19,14 +19,14 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Activity\Provider;
+namespace OCA\Talk\Tests\php\Activity\Provider;
 
 
-use OCA\Spreed\Activity\Provider\Invitation;
-use OCA\Spreed\Config;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Activity\Provider\Invitation;
+use OCA\Talk\Config;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IL10N;
@@ -40,7 +40,7 @@ use Test\TestCase;
 /**
  * Class InvitationTest
  *
- * @package OCA\Spreed\Tests\php\Activity
+ * @package OCA\Talk\Tests\php\Activity
  */
 class InvitationTest extends TestCase {
 

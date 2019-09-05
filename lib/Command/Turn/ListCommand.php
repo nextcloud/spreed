@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Command\Turn;
+namespace OCA\Talk\Command\Turn;
 
 use OCP\IConfig;
 use OC\Core\Command\Base;

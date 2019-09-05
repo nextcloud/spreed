@@ -20,11 +20,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Activity\Provider;
+namespace OCA\Talk\Activity\Provider;
 
-use OCA\Spreed\Config;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Config;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\Activity\IProvider;

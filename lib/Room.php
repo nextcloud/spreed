@@ -24,11 +24,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed;
+namespace OCA\Talk;
 
-use OCA\Spreed\Exceptions\InvalidPasswordException;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\UnauthorizedException;
+use OCA\Talk\Exceptions\InvalidPasswordException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\UnauthorizedException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\DB\QueryBuilder\IQueryBuilder;

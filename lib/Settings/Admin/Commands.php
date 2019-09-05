@@ -20,12 +20,12 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Settings\Admin;
+namespace OCA\Talk\Settings\Admin;
 
 
-use OCA\Spreed\Config;
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Config;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\IInitialStateService;
 use OCP\Settings\ISettings;

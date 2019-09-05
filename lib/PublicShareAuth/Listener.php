@@ -21,11 +21,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\PublicShareAuth;
+namespace OCA\Talk\PublicShareAuth;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

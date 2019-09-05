@@ -19,14 +19,14 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat\AutoComplete;
+namespace OCA\Talk\Tests\php\Chat\AutoComplete;
 
-use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
-use OCA\Spreed\Files\Util;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\TalkSession;
+use OCA\Talk\Chat\AutoComplete\SearchPlugin;
+use OCA\Talk\Files\Util;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\IL10N;
 use OCP\IUser;

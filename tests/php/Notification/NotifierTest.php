@@ -19,18 +19,18 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Notifications;
+namespace OCA\Talk\Tests\php\Notifications;
 
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Config;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Notification\Notifier;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Config;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Notification\Notifier;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\IL10N;

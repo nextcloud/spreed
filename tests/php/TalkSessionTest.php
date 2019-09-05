@@ -22,9 +22,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php;
+namespace OCA\Talk\Tests\php;
 
-use OCA\Spreed\TalkSession;
+use OCA\Talk\TalkSession;
 use OCP\ISession;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;

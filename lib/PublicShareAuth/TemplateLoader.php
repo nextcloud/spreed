@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\PublicShareAuth;
+namespace OCA\Talk\PublicShareAuth;
 
 use OCP\Share\IShare;
 use OCP\Util;

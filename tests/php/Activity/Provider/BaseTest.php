@@ -19,13 +19,13 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Activity\Provider;
+namespace OCA\Talk\Tests\php\Activity\Provider;
 
 
-use OCA\Spreed\Activity\Provider\Base;
-use OCA\Spreed\Config;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Activity\Provider\Base;
+use OCA\Talk\Config;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\Activity\IEvent;
 use OCP\Activity\IManager;
 use OCP\IL10N;
@@ -39,7 +39,7 @@ use Test\TestCase;
 /**
  * Class BaseTest
  *
- * @package OCA\Spreed\Tests\php\Activity
+ * @package OCA\Talk\Tests\php\Activity
  */
 class BaseTest extends TestCase {
 

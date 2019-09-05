@@ -22,10 +22,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\Unit;
+namespace OCA\Talk\Tests\Unit;
 
-use OCA\Spreed\Capabilities;
-use OCA\Spreed\Config;
+use OCA\Talk\Capabilities;
+use OCA\Talk\Config;
 use OCP\Capabilities\IPublicCapability;
 use OCP\IConfig;
 use OCP\IUser;

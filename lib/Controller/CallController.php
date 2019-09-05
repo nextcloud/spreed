@@ -24,9 +24,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
-use OCA\Spreed\Participant;
+use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;

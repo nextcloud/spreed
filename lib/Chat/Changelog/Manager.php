@@ -20,11 +20,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Changelog;
+namespace OCA\Talk\Chat\Changelog;
 
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Manager as RoomManager;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Manager as RoomManager;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IL10N;

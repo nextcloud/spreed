@@ -21,16 +21,16 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
-use OCA\Spreed\Chat\AutoComplete\SearchPlugin;
-use OCA\Spreed\Chat\AutoComplete\Sorter;
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Room;
-use OCA\Spreed\TalkSession;
+use OCA\Talk\Chat\AutoComplete\SearchPlugin;
+use OCA\Talk\Chat\AutoComplete\Sorter;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;

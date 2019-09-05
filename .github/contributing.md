@@ -20,7 +20,7 @@ Please submit translations via [Transifex](https://www.transifex.com/nextcloud/n
 
 ## Contributing to Source Code
 
-Thanks for wanting to contribute source code to the Spreed app. That's great! 🎉
+Thanks for wanting to contribute source code to the Talk app. That's great! 🎉
 
 Please read the [Code of Conduct](https://nextcloud.com/community/code-of-conduct/). This document offers some guidance to ensure Nextcloud participants can cooperate effectively in a positive and inspiring atmosphere, and to explain how together we can strengthen and support each other.
 

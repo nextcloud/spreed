@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;

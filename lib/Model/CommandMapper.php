@@ -20,7 +20,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Model;
+namespace OCA\Talk\Model;
 
 use OCP\AppFramework\Db\QBMapper;
 use OCP\IDBConnection;

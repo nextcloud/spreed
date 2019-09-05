@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\AutoComplete;
+namespace OCA\Talk\Chat\AutoComplete;
 
 
-use OCA\Spreed\Chat\CommentsManager;
+use OCA\Talk\Chat\CommentsManager;
 use OCP\Collaboration\AutoComplete\ISorter;
 
 class Sorter implements ISorter {

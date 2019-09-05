@@ -21,7 +21,7 @@ declare(strict_types=1);
  */
 
 
-namespace OCA\Spreed\Exceptions;
+namespace OCA\Talk\Exceptions;
 
 class UnauthorizedException extends \Exception {
 

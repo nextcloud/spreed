@@ -21,13 +21,13 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat\Command;
+namespace OCA\Talk\Tests\php\Chat\Command;
 
-use OCA\Spreed\Chat\Command\Executor;
-use OCA\Spreed\Chat\Command\ShellExecutor;
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Room;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Chat\Command\Executor;
+use OCA\Talk\Chat\Command\ShellExecutor;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Room;
+use OCA\Talk\Service\CommandService;
 use OCP\Comments\IComment;
 use OCP\IL10N;
 use OCP\ILogger;
