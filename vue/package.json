@@ -1,7 +1,7 @@
 {
   "name": "spreed",
   "description": "",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "author": "Joas Schilling <coding@schilljs.com>",
   "license": "agpl",
   "private": true,
