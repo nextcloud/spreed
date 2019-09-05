@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>8.0.0-dev.0</version>
+	<version>8.0.0-dev.1</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -52,6 +52,9 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</background-jobs>
 
 	<repair-steps>
+		<pre-migration>
+			<step>OCA\Talk\Migration\FixNamespaceInDatabaseTables</step>
+		</pre-migration>
 		<post-migration>
 			<step>OCA\Talk\Migration\CreateHelpCommand</step>
 			<step>OCA\Talk\Migration\ClearResourceAccessCache</step>
