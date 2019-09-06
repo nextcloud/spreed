@@ -53,6 +53,13 @@
 	overflow: hidden;
 
 	flex-grow: 1;
+
+	@media (max-width: $breakpoint-mobile) {
+		/* In narrow screens force the app content width to the full viewport
+		 * width to prevent the app content from being compressed when the
+		 * sidebar is shown. */
+		width: 100vw;
+	}
 }
 
 .contactsmenu-popover li > a > img {
