@@ -98,10 +98,11 @@
 						var $li = $(li);
 						var $avatar = $li.find('.avatar');
 						var avatarSize = 32;
-						if ($avatar.data('user-id') === 'all') {
+						var userId = '' + $avatar.data('user-id');
+						if (userId === 'all') {
 							$avatar.addClass('avatar icon icon-contacts');
-						} else if ($avatar.data('user-id') && $avatar.data('user-id').indexOf('guest/') !== 0) {
-							$avatar.avatar($avatar.data('user-id'), avatarSize);
+						} else if ($avatar.data('user-id') && userId.indexOf('guest/') !== 0) {
+							$avatar.avatar(userId, avatarSize);
 						} else {
 							var displayName = $avatar.data('user-display-name');
 							var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
@@ -819,7 +820,7 @@
 			$comment.find('.mention-user').each(function () {
 				var $this = $(this),
 					$inserted = $this.parent(),
-					userId = $this.find('.avatar').data('user-id');
+					userId = '' + $this.find('.avatar').data('user-id');
 				if (userId.indexOf(' ') !== -1 || userId.indexOf('guest/') === 0) {
 					$inserted.html('@"' + userId + '"');
 				} else {
