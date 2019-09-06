@@ -615,11 +615,12 @@
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				if ($element.data('user-id') && $element.data('user-id').substr(0, 6) !== 'guest/') {
-					if ($element.data('user-id') === 'all') {
+				var userId = '' + $element.data('user-id');
+				if (userId && userId.substr(0, 6) !== 'guest/') {
+					if (userId === 'all') {
 						$element.addClass('avatar icon icon-contacts');
 					} else {
-						$element.avatar($element.data('user-id'), size, undefined, false, undefined, $element.data('user-display-name'));
+						$element.avatar(userId, size, undefined, false, undefined, $element.data('user-display-name'));
 					}
 				} else {
 					var displayName = $element.data('user-display-name');
