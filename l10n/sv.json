@@ -158,6 +158,7 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Med projekt kan du skapa snabba länkar mellan konversationer, filer och andra objekt",
     "There are currently no commands available." : "Det finns för närvarande inga kommandon tillgängliga.",
     "The command does not exist" : "Kommandot finns inte",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "Ett fel inträffade under körning av kommandot. Be en administratör att kontrollera loggarna.",
     "Talk updates ✅" : "Talk uppdateringar ✅",
     "{actor} created the conversation" : "{actor} skapade konversationen",
     "You created the conversation" : "Du skapade konversationen",

@@ -160,6 +160,7 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Cos proxectos pode crear ligazóns rápidas entre conversas, ficheiros e outros elementos",
     "There are currently no commands available." : "Actualmente non hai ordes dispoñíbeis.",
     "The command does not exist" : "Non existe a orde",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "Produciuse un erro ao executar a orde. Pídalle a un administrador que verifique os rexistros.",
     "Talk updates ✅" : "Actualizacións do Talk ✅",
     "{actor} created the conversation" : "{actor} creou a conversa",
     "You created the conversation" : "Vostede creou a conversa",
