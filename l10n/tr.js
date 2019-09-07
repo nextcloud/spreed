@@ -160,6 +160,7 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Projeleri kullanarak görüşmeler, dosyalar ve diğer ögeler arasında hızlı bağlantılar oluşturabilirsiniz",
     "There are currently no commands available." : "Şu anda kullanılabilecek bir komut yok.",
     "The command does not exist" : "Komut bulunamadı",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "Komut yürütülürken bir sorun çıktı. Lütfen yöneticiden günlük kayıtlarına bakmasını isteyin.",
     "Talk updates ✅" : "Talk güncellemeleri ✅",
     "{actor} created the conversation" : "{actor} görüşme ekledi",
     "You created the conversation" : "Görüşme eklediniz",
