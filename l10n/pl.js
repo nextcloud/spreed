@@ -160,6 +160,7 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Dzięki projektom możesz tworzyć szybkie łącza między rozmowami, plikami i innymi elementami",
     "There are currently no commands available." : "Obecnie nie ma dostępnych poleceń.",
     "The command does not exist" : "Polecenie nie istnieje",
+    "An error occurred while running the command. Please ask an administrator to check the logs." : "Wystąpił błąd podczas uruchamiania polecenia. Poproś administratora o sprawdzenie dzienników.",
     "Talk updates ✅" : "Aktualizacje Talk ✅",
     "{actor} created the conversation" : "{actor} utworzył rozmowę",
     "You created the conversation" : "Utworzyłeś rozmowę",
