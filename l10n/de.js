@@ -88,7 +88,7 @@ OC.L10N.register(
     "Set your name in the chat window so other participants can identify you better." : "Gebe Deinen Namen auf der Chat-Seite an, damit andere Teilnehmer Dich besser erkennen können. ",
     "Mute audio" : "Audio stummschalten",
     "Disable video" : "Video deaktivieren",
-    "Share screen" : "Bildschirm übertragen",
+    "Share screen" : "Bildschirm teilen",
     "Share whole screen" : "Gesamten Bildschirm teilen",
     "Share a single window" : "Einzelnes Fenster teilen",
     "Show your screen" : "Deinen Bildschirm übertragen",
