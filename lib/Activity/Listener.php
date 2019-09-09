@@ -82,7 +82,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener, -100);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
