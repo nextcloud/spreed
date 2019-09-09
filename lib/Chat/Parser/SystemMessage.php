@@ -360,6 +360,13 @@ class SystemMessage {
 		$displayedUsers = $numUsers;
 
 		switch ($numUsers) {
+			case 0:
+				$subject = $this->l->n(
+					'Call with %n guest (Duration {duration})',
+					'Call with %n guests (Duration {duration})',
+					$parameters['guests']
+				);
+				break;
 			case 1:
 				$subject = $this->l->t('Call with {user1} and {user2} (Duration {duration})');
 				$subject = str_replace('{user2}', $this->l->n('%n guest', '%n guests', $parameters['guests']), $subject);
@@ -401,8 +408,10 @@ class SystemMessage {
 		}
 
 		$params = [];
-		for ($i = 1; $i <= $displayedUsers; $i++) {
-			$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+		if ($displayedUsers > 0) {
+			for ($i = 1; $i <= $displayedUsers; $i++) {
+				$params['user' . $i] = $this->getUser($parameters['users'][$i - 1]);
+			}
 		}
 
 		$subject = str_replace('{duration}', $this->getDuration($parameters['duration']), $subject);
