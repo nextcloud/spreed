@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0.0-beta.2 – 2019-09-09
+### Fixed
+- Fix mentions with users that have a numeric only ID
+  [#2173](https://github.com/nextcloud/spreed/pull/2173)
+- Fix notifications that contain a guest mention
+  [#2148](https://github.com/nextcloud/spreed/pull/2148)
+- Allow clients to get the last known message a well
+  [#2135](https://github.com/nextcloud/spreed/pull/2135)
+
 ## 7.0.0-beta.1 – 2019-08-29
 ### Added
 - Added a simple Lobby: moderators can join and prepare a call/meeting while users and guests can not join yet
