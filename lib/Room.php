@@ -1053,7 +1053,7 @@ class Room {
 			->andWhere($query->expr()->nonEmptyString('user_id'));
 
 		if ($maxLastJoined instanceof \DateTimeInterface) {
-			$query->andWhere($query->expr()->gt('last_joined_call', $query->createNamedParameter($maxLastJoined, IQueryBuilder::PARAM_DATE)));
+			$query->andWhere($query->expr()->gte('last_joined_call', $query->createNamedParameter($maxLastJoined, IQueryBuilder::PARAM_DATE)));
 		}
 
 		$result = $query->execute();
