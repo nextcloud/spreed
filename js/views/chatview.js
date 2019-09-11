@@ -98,10 +98,11 @@
 						var $li = $(li);
 						var $avatar = $li.find('.avatar');
 						var avatarSize = 32;
-						if ($avatar.data('user-id') === 'all') {
+						var userId = '' + $avatar.data('user-id');
+						if (userId === 'all') {
 							$avatar.addClass('avatar icon icon-contacts');
 						} else {
-							$avatar.avatar($avatar.data('user-id'), avatarSize);
+							$avatar.avatar(userId, avatarSize);
 						}
 						return $li;
 					},
@@ -806,7 +807,7 @@
 			$comment.find('.mention-user').each(function () {
 				var $this = $(this),
 					$inserted = $this.parent(),
-					userId = $this.find('.avatar').data('user-id');
+					userId = '' + $this.find('.avatar').data('user-id');
 				if (userId.indexOf(' ') !== -1) {
 					$inserted.html('@"' + userId + '"');
 				} else {
