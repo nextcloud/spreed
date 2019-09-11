@@ -22,9 +22,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Listener;
+namespace OCA\Talk\Listener;
 
-use OCA\Spreed\Config;
+use OCA\Talk\Config;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
 use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventListener;

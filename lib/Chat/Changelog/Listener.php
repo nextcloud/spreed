@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Changelog;
+namespace OCA\Talk\Chat\Changelog;
 
-use OCA\Spreed\Controller\RoomController;
+use OCA\Talk\Controller\RoomController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

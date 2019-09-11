@@ -19,9 +19,9 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Activity;
+namespace OCA\Talk\Tests\php\Activity;
 
-use OCA\Spreed\Activity\Setting;
+use OCA\Talk\Activity\Setting;
 use OCP\Activity\ISetting;
 use Test\TestCase;
 

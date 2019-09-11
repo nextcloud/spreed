@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Command\Signaling;
+namespace OCA\Talk\Command\Signaling;
 
 use OCP\IConfig;
 use OC\Core\Command\Base;

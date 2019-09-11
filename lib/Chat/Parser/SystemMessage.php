@@ -20,16 +20,16 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Parser;
+namespace OCA\Talk\Chat\Parser;
 
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\Share\RoomShareProvider;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;

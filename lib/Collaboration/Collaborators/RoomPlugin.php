@@ -21,10 +21,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Collaboration\Collaborators;
+namespace OCA\Talk\Collaboration\Collaborators;
 
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;

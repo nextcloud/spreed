@@ -20,9 +20,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Tests\php\Command\Stun;
+namespace OCA\Talk\Tests\php\Command\Stun;
 
-use OCA\Spreed\Command\Stun\Add;
+use OCA\Talk\Command\Stun\Add;
 use OCP\IConfig;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

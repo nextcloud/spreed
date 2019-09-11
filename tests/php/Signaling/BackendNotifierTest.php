@@ -20,17 +20,17 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Signaling;
+namespace OCA\Talk\Tests\php\Signaling;
 
-use OCA\Spreed\AppInfo\Application;
-use OCA\Spreed\Chat\CommentsManager;
-use OCA\Spreed\Config;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\Signaling\BackendNotifier;
-use OCA\Spreed\TalkSession;
-use OCA\Spreed\Webinary;
+use OCA\Talk\AppInfo\Application;
+use OCA\Talk\Chat\CommentsManager;
+use OCA\Talk\Config;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Signaling\BackendNotifier;
+use OCA\Talk\TalkSession;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;

@@ -18,9 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Tests\php;
+namespace OCA\Talk\Tests\php;
 
-use OCA\Spreed\Config;
+use OCA\Talk\Config;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IConfig;
 use OCP\IGroupManager;

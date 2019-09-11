@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Signaling;
+namespace OCA\Talk\Signaling;
 
 
-use OCA\Spreed\Room;
+use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;

@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Activity\Provider;
+namespace OCA\Talk\Activity\Provider;
 
-use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\Activity\IEvent;
 
 class Invitation extends Base {

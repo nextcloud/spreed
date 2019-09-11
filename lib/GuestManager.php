@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed;
+namespace OCA\Talk;
 
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Defaults;
 use OCP\IDBConnection;

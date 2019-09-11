@@ -20,13 +20,13 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed;
+namespace OCA\Talk;
 
 
-use OCA\Spreed\Chat\Changelog;
-use OCA\Spreed\Chat\CommentsManager;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
+use OCA\Talk\Chat\Changelog;
+use OCA\Talk\Chat\CommentsManager;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;

@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Command\Stun;
+namespace OCA\Talk\Command\Stun;
 
 use OCP\IConfig;
 use OC\Core\Command\Base;

@@ -20,13 +20,13 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Signaling;
+namespace OCA\Talk\Signaling;
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Config;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Config;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\IUser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;

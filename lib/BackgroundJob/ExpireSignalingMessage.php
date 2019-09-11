@@ -20,15 +20,15 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\BackgroundJob;
+namespace OCA\Talk\BackgroundJob;
 
 use OC\BackgroundJob\TimedJob;
-use OCA\Spreed\Signaling\Messages;
+use OCA\Talk\Signaling\Messages;
 
 /**
  * Class ExpireSignalingMessage
  *
- * @package OCA\Spreed\BackgroundJob
+ * @package OCA\Talk\BackgroundJob
  */
 class ExpireSignalingMessage extends TimedJob {
 

@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Parser;
+namespace OCA\Talk\Chat\Parser;
 
-use OCA\Spreed\Model\Message;
+use OCA\Talk\Model\Message;
 
 class Command {
 	/**
@@ -36,13 +36,13 @@ class Command {
 			throw new \OutOfBoundsException('Invalid message');
 		}
 
-		if ($data['visibility'] === \OCA\Spreed\Model\Command::RESPONSE_NONE) {
+		if ($data['visibility'] === \OCA\Talk\Model\Command::RESPONSE_NONE) {
 			$message->setVisibility(false);
 			return;
 		}
 
 		$participant = $message->getParticipant();
-		if ($data['visibility'] !== \OCA\Spreed\Model\Command::RESPONSE_ALL &&
+		if ($data['visibility'] !== \OCA\Talk\Model\Command::RESPONSE_ALL &&
 			  $data['user'] !== $participant->getUser()) {
 			$message->setVisibility(false);
 			return;

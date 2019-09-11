@@ -22,11 +22,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Signaling;
+namespace OCA\Talk\Signaling;
 
-use OCA\Spreed\Config;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Config;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Http\Client\IClientService;
 use OCP\ILogger;
 use OCP\Security\ISecureRandom;

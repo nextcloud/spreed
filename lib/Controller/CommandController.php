@@ -21,10 +21,10 @@
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;

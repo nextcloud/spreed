@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Files;
+namespace OCA\Talk\Tests\php\Files;
 
 use OCA\GroupFolders\Mount\GroupFolderStorage;
-use OCA\Spreed\Files\Util;
+use OCA\Talk\Files\Util;
 use OCP\Files\FileInfo;
 use OCP\Files\Folder;
 use OCP\Files\Node;

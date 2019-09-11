@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Files;
+namespace OCA\Talk\Files;
 
 use OCA\GroupFolders\Mount\GroupFolderStorage;
 use OCP\Files\FileInfo;

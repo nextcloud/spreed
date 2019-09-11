@@ -20,11 +20,11 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Parser;
+namespace OCA\Talk\Chat\Parser;
 
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Chat\Parser\Command as CommandParser;
-use OCA\Spreed\Model\Message;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Parser\Command as CommandParser;
+use OCA\Talk\Model\Message;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

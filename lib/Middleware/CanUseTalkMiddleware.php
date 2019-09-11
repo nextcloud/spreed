@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Middleware;
+namespace OCA\Talk\Middleware;
 
-use OCA\Spreed\Middleware\Exceptions\CanNotUseTalkException;
+use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\Response;

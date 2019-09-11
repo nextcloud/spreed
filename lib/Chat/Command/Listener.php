@@ -20,16 +20,16 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Command;
+namespace OCA\Talk\Chat\Command;
 
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Chat\Parser\Command as CommandParser;
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Parser\Command as CommandParser;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
+use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
 use OCP\IUser;

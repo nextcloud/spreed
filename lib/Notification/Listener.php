@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Notification;
+namespace OCA\Talk\Notification;
 
-use OCA\Spreed\Room;
+use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Notification\IManager;
 use OCP\ILogger;

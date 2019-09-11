@@ -16,7 +16,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 
 	]]></description>
 
-	<version>8.0.0-dev.0</version>
+	<version>8.0.0-dev.1</version>
 	<licence>agpl</licence>
 
 	<author>Daniel Calviño Sánchez</author>
@@ -24,7 +24,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<author>Jan-Christoph Borchardt</author>
 	<author>Joas Schilling</author>
 
-	<namespace>Spreed</namespace>
+	<namespace>Talk</namespace>
 
 	<types>
 		<prevent_group_restriction />
@@ -47,64 +47,67 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</dependencies>
 
 	<background-jobs>
-		<job>OCA\Spreed\BackgroundJob\ExpireSignalingMessage</job>
-		<job>OCA\Spreed\BackgroundJob\RemoveEmptyRooms</job>
+		<job>OCA\Talk\BackgroundJob\ExpireSignalingMessage</job>
+		<job>OCA\Talk\BackgroundJob\RemoveEmptyRooms</job>
 	</background-jobs>
 
 	<repair-steps>
+		<pre-migration>
+			<step>OCA\Talk\Migration\FixNamespaceInDatabaseTables</step>
+		</pre-migration>
 		<post-migration>
-			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
-			<step>OCA\Spreed\Migration\ClearResourceAccessCache</step>
+			<step>OCA\Talk\Migration\CreateHelpCommand</step>
+			<step>OCA\Talk\Migration\ClearResourceAccessCache</step>
 		</post-migration>
 		<install>
-			<step>OCA\Spreed\Migration\CreateHelpCommand</step>
+			<step>OCA\Talk\Migration\CreateHelpCommand</step>
 		</install>
 	</repair-steps>
 
 	<commands>
-		<command>OCA\Spreed\Command\Command\Add</command>
-		<command>OCA\Spreed\Command\Command\AddSamples</command>
-		<command>OCA\Spreed\Command\Command\Delete</command>
-		<command>OCA\Spreed\Command\Command\ListCommand</command>
-		<command>OCA\Spreed\Command\Command\Update</command>
-		<command>OCA\Spreed\Command\Stun\Add</command>
-		<command>OCA\Spreed\Command\Stun\Delete</command>
-		<command>OCA\Spreed\Command\Stun\ListCommand</command>
-		<command>OCA\Spreed\Command\Turn\Add</command>
-		<command>OCA\Spreed\Command\Turn\Delete</command>
-		<command>OCA\Spreed\Command\Turn\ListCommand</command>
-		<command>OCA\Spreed\Command\Signaling\Add</command>
-		<command>OCA\Spreed\Command\Signaling\Delete</command>
-		<command>OCA\Spreed\Command\Signaling\ListCommand</command>
+		<command>OCA\Talk\Command\Command\Add</command>
+		<command>OCA\Talk\Command\Command\AddSamples</command>
+		<command>OCA\Talk\Command\Command\Delete</command>
+		<command>OCA\Talk\Command\Command\ListCommand</command>
+		<command>OCA\Talk\Command\Command\Update</command>
+		<command>OCA\Talk\Command\Stun\Add</command>
+		<command>OCA\Talk\Command\Stun\Delete</command>
+		<command>OCA\Talk\Command\Stun\ListCommand</command>
+		<command>OCA\Talk\Command\Turn\Add</command>
+		<command>OCA\Talk\Command\Turn\Delete</command>
+		<command>OCA\Talk\Command\Turn\ListCommand</command>
+		<command>OCA\Talk\Command\Signaling\Add</command>
+		<command>OCA\Talk\Command\Signaling\Delete</command>
+		<command>OCA\Talk\Command\Signaling\ListCommand</command>
 	</commands>
 
 	<settings>
-		<admin>OCA\Spreed\Settings\Admin\AllowedGroups</admin>
-		<admin>OCA\Spreed\Settings\Admin\Commands</admin>
-		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
-		<admin>OCA\Spreed\Settings\Admin\StunServer</admin>
-		<admin>OCA\Spreed\Settings\Admin\TurnServer</admin>
-		<admin-section>OCA\Spreed\Settings\Admin\Section</admin-section>
+		<admin>OCA\Talk\Settings\Admin\AllowedGroups</admin>
+		<admin>OCA\Talk\Settings\Admin\Commands</admin>
+		<admin>OCA\Talk\Settings\Admin\SignalingServer</admin>
+		<admin>OCA\Talk\Settings\Admin\StunServer</admin>
+		<admin>OCA\Talk\Settings\Admin\TurnServer</admin>
+		<admin-section>OCA\Talk\Settings\Admin\Section</admin-section>
 	</settings>
 
 	<activity>
 		<settings>
-			<setting>OCA\Spreed\Activity\Setting</setting>
+			<setting>OCA\Talk\Activity\Setting</setting>
 		</settings>
 
 		<providers>
-			<provider>OCA\Spreed\Activity\Provider\Invitation</provider>
-			<provider>OCA\Spreed\Activity\Provider\Call</provider>
+			<provider>OCA\Talk\Activity\Provider\Invitation</provider>
+			<provider>OCA\Talk\Activity\Provider\Call</provider>
 		</providers>
 	</activity>
 
 	<contactsmenu>
-		<provider>OCA\Spreed\ContactsMenu\Providers\CallProvider</provider>
+		<provider>OCA\Talk\ContactsMenu\Providers\CallProvider</provider>
 	</contactsmenu>
 
 	<collaboration>
 		<plugins>
-			<plugin type="collaborator-search" share-type="SHARE_TYPE_ROOM">OCA\Spreed\Collaboration\Collaborators\RoomPlugin</plugin>
+			<plugin type="collaborator-search" share-type="SHARE_TYPE_ROOM">OCA\Talk\Collaboration\Collaborators\RoomPlugin</plugin>
 		</plugins>
 	</collaboration>
 </info>

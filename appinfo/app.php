@@ -19,6 +19,6 @@
  *
  */
 
-$app = new \OCA\Spreed\AppInfo\Application();
+$app = new \OCA\Talk\AppInfo\Application();
 // For the navigation $l->t('Talk')
 $app->register();

@@ -22,9 +22,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Migration;
+namespace OCA\Talk\Migration;
 
-use OCA\Spreed\Collaboration\Resources\ConversationProvider;
+use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCP\Collaboration\Resources\IManager;
 use OCP\IConfig;
 use OCP\Migration\IOutput;

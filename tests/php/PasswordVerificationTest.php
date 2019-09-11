@@ -18,11 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-namespace OCA\Spreed\Tests\php;
+namespace OCA\Talk\Tests\php;
 
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
-use OCA\Spreed\Webinary;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
 use OCP\Security\IHasher;

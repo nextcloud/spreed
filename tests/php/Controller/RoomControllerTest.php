@@ -21,18 +21,18 @@
  *
  */
 
-namespace OCA\Spreed\Tests\php\Controller;
+namespace OCA\Talk\Tests\php\Controller;
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Controller\RoomController;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\TalkSession;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Controller\RoomController;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;

@@ -21,10 +21,10 @@
  *
  */
 
-namespace OCA\Spreed\Migration;
+namespace OCA\Talk\Migration;
 
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Migration\IOutput;
 use OCP\Migration\IRepairStep;

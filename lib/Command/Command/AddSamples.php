@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Command\Command;
+namespace OCA\Talk\Command\Command;
 
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Service\CommandService;
 use OC\Core\Command\Base;
 use OCP\App\AppPathNotFoundException;
 use OCP\App\IAppManager;

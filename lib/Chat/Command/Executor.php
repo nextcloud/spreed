@@ -20,13 +20,13 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Command;
+namespace OCA\Talk\Chat\Command;
 
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Model\Command;
-use OCA\Spreed\Room;
-use OCA\Spreed\Service\CommandService;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Model\Command;
+use OCA\Talk\Room;
+use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
 use OCP\IL10N;

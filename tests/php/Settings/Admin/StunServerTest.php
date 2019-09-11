@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Settings\Admin;
+namespace OCA\Talk\Tests\php\Settings\Admin;
 
-use OCA\Spreed\Config;
-use OCA\Spreed\Settings\Admin\StunServer;
+use OCA\Talk\Config;
+use OCA\Talk\Settings\Admin\StunServer;
 use OCP\IInitialStateService;
 use PHPUnit\Framework\MockObject\MockObject;
 

@@ -20,17 +20,17 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\BackgroundJob;
+namespace OCA\Talk\BackgroundJob;
 
 use OC\BackgroundJob\TimedJob;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\ILogger;
 
 /**
  * Class RemoveEmptyRooms
  *
- * @package OCA\Spreed\BackgroundJob
+ * @package OCA\Talk\BackgroundJob
  */
 class RemoveEmptyRooms extends TimedJob {
 

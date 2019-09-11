@@ -20,19 +20,19 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\SystemMessage;
+namespace OCA\Talk\Chat\SystemMessage;
 
 
-use OCA\Spreed\Chat\ChatManager;
-use OCA\Spreed\Chat\MessageParser;
-use OCA\Spreed\Chat\Parser\SystemMessage;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Model\Message;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
-use OCA\Spreed\Share\RoomShareProvider;
-use OCA\Spreed\TalkSession;
-use OCA\Spreed\Webinary;
+use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Chat\Parser\SystemMessage;
+use OCA\Talk\Manager;
+use OCA\Talk\Model\Message;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
+use OCA\Talk\Share\RoomShareProvider;
+use OCA\Talk\TalkSession;
+use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\IUser;

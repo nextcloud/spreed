@@ -22,7 +22,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Listener;
+namespace OCA\Talk\Listener;
 
 use OCP\AppFramework\Http\FeaturePolicy;
 use OCP\EventDispatcher\Event;

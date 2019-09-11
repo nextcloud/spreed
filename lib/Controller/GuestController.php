@@ -21,13 +21,13 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
 use Doctrine\DBAL\DBALException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\GuestManager;
-use OCA\Spreed\Manager;
-use OCA\Spreed\TalkSession;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\GuestManager;
+use OCA\Talk\Manager;
+use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;

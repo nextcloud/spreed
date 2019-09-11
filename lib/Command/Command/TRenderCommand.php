@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Command\Command;
+namespace OCA\Talk\Command\Command;
 
-use OCA\Spreed\Model\Command;
+use OCA\Talk\Model\Command;
 use OC\Core\Command\Base;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;

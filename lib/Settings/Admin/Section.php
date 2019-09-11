@@ -20,7 +20,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Settings\Admin;
+namespace OCA\Talk\Settings\Admin;
 
 
 use OCP\IL10N;

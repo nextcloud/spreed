@@ -20,15 +20,15 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Collaboration\Resources;
+namespace OCA\Talk\Tests\php\Collaboration\Resources;
 
-use OCA\Spreed\Collaboration\Collaborators\RoomPlugin;
-use OCA\Spreed\Collaboration\Resources\ConversationProvider;
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Collaboration\Collaborators\RoomPlugin;
+use OCA\Talk\Collaboration\Resources\ConversationProvider;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Resources\IResource;
 use OCP\Collaboration\Resources\ResourceException;

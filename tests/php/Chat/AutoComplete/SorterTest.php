@@ -20,10 +20,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Tests\php\Chat;
+namespace OCA\Talk\Tests\php\Chat;
 
-use OCA\Spreed\Chat\AutoComplete\Sorter;
-use OCA\Spreed\Chat\CommentsManager;
+use OCA\Talk\Chat\AutoComplete\Sorter;
+use OCA\Talk\Chat\CommentsManager;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class SorterTest extends \Test\TestCase {

@@ -25,12 +25,12 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Share;
+namespace OCA\Talk\Share;
 
-use OCA\Spreed\Exceptions\ParticipantNotFoundException;
-use OCA\Spreed\Exceptions\RoomNotFoundException;
-use OCA\Spreed\Manager;
-use OCA\Spreed\Room;
+use OCA\Talk\Exceptions\ParticipantNotFoundException;
+use OCA\Talk\Exceptions\RoomNotFoundException;
+use OCA\Talk\Manager;
+use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Files\Folder;
@@ -1045,7 +1045,7 @@ class RoomShareProvider implements IShareProvider {
 	 * received shares.
 	 *
 	 * Not part of IShareProvider API, but needed by the hooks in
-	 * OCA\Spreed\AppInfo\Application
+	 * OCA\Talk\AppInfo\Application
 	 *
 	 * @param string $roomToken
 	 * @param string|null $user

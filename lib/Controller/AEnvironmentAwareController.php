@@ -24,10 +24,10 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Controller;
+namespace OCA\Talk\Controller;
 
-use OCA\Spreed\Participant;
-use OCA\Spreed\Room;
+use OCA\Talk\Participant;
+use OCA\Talk\Room;
 use OCP\AppFramework\OCSController;
 
 abstract class AEnvironmentAwareController extends OCSController {

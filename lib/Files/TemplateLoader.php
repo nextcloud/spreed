@@ -21,7 +21,7 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Files;
+namespace OCA\Talk\Files;
 
 use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

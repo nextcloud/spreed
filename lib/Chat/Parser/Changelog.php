@@ -20,9 +20,9 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Spreed\Chat\Parser;
+namespace OCA\Talk\Chat\Parser;
 
-use OCA\Spreed\Model\Message;
+use OCA\Talk\Model\Message;
 
 class Changelog {
 
