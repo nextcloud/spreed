@@ -226,6 +226,10 @@ body:not(#body-public) #chatView .comment .authorRow:not(.currentUser):not(.gues
 #chatView .comments li .message {
 	padding-left: 40px;
 	display: inline-block;
+
+	&.isEmojiOnly {
+		font-size: 250%;
+	}
 }
 
 #chatView .comment .action {
