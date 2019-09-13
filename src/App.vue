@@ -11,19 +11,17 @@
 			</AppNavigationSettings>
 		</AppNavigation>
 		<AppContent>
-			<span>This is the content</span>
 			<button @click="show = !show">
 				Toggle sidebar
 			</button>
 			<Message
-				user-name="Barthelemy dsflkjds"
-				:is-first-message="true"
-				message-time="16:12"
-				message-text="This is some mock text. This is some mock text. This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock textThis is some mock text.This is some mock text" />
-			<Message
-				user-name="Barthelemy dsflkjds"
-				message-time="16:12"
-				message-text="This is some mock text. This is some mock text. This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock textThis is some mock text.This is some mock text" />
+				v-for="message in messages"
+				:key="message.messageTime"
+				v-bind="message">
+				<MessageBody v-bind="message">
+					<MessageBody v-if="message.parent" v-bind="messages[message.parent]" />
+				</MessageBody>
+			</Message>
 		</AppContent>
 		<AppSidebar v-show="show" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
 			:actions="menu" :starred.sync="starred"
@@ -64,7 +62,8 @@ import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
-import Message from './components/Message'
+import Message from './components/Message/Message'
+import MessageBody from './components/Message/MessageBody'
 
 export default {
 	name: 'App',
@@ -77,7 +76,8 @@ export default {
 		AppNavigationSettings,
 		AppSidebar,
 		AppSidebarTab,
-		Message
+		Message,
+		MessageBody
 	},
 	data: function() {
 		return {
@@ -85,7 +85,93 @@ export default {
 			date: Date.now() + 86400000 * 3,
 			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
 			show: true,
-			starred: false
+			starred: false,
+			messages: {
+				1: {
+					userName: 'Marco',
+					messageText: 'Hello everyone',
+					messageTime: '14:35',
+					isFirstMessage: true
+
+				},
+				2: {
+					userName: 'Joas',
+					messageText: 'Please anwser to this message!!!',
+					messageTime: '14:35',
+					isFirstMessage: true
+				},
+				3: {
+					userName: 'Barth',
+					messageText: 'Here\'s your answer!',
+					messageTime: '14:35',
+					parent: 2,
+					isFirstMessage: true
+				},
+				4: {
+					userName: 'Marco',
+					messageText: 'Hayy buddaaayy',
+					messageTime: '14:35',
+					isFirstMessage: true
+				},
+				5: {
+					userName: 'Marco',
+					messageText: 'this is a second message from marco and it\'s going to be very very very very very very very very very very very very very very very very very very very very very veryvery very very very very very very very very very very very long very very very very very very very very very very very very very very very very very very very very very veryvery very very very very very very very very very very very long :)',
+					messageTime: '14:35',
+					isFirstMessage: false
+
+				},
+				6: {
+					userName: 'Joas',
+					messageText: 'Please anwser to this message!!!',
+					messageTime: '14:35',
+					isFirstMessage: true
+				},
+				7: {
+					userName: 'Barth',
+					messageText: 'Here\'s your answer!',
+					messageTime: '14:35',
+					parent: 456,
+					isFirstMessage: true
+				},
+				8: {
+					userName: 'sertdyu',
+					messageText: 'buddaaayy',
+					messageTime: '14:35',
+					isFirstMessage: true
+				},
+				9: {
+					userName: 'sertdyu',
+					messageText: 'buddaaayy',
+					messageTime: '14:35',
+					isFirstMessage: true
+				},
+				10: {
+					userName: 'Marco',
+					messageText: 'Hello everyone',
+					messageTime: '14:35',
+					isFirstMessage: true
+
+				},
+				11: {
+					userName: 'Joas',
+					messageText: 'Please anwser to this message!!!',
+					messageTime: '14:35',
+					isFirstMessage: true
+				},
+				12: {
+					userName: 'Barth',
+					messageText: 'Here\'s your answer!',
+					messageTime: '14:35',
+					parent: 456,
+					isFirstMessage: true
+				},
+				13: {
+					userName: 'sertdyu',
+					messageText: 'buddaaayy',
+					messageTime: '14:35',
+					isFirstMessage: true
+				}
+			}
 		}
 	},
 	computed: {
@@ -180,3 +266,9 @@ export default {
 	}
 }
 </script>
+
+<style lang="scss" scoped>
+.scroller {
+  height: 100%;
+}
+</style>

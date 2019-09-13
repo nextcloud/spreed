@@ -28,28 +28,13 @@
 			<div class="message-avatar">
 				<Avatar v-if="isFirstMessage" :user="userName" :display-name="userName" />
 			</div>
-			<div class="message-main">
-				<div v-if="isFirstMessage" class="message-main-header">
-					<h6>{{ userName }}</h6>
-				</div>
-				<div class="quote">
-					<div class="">
-					</div>
-				</div>
-				<div class="message-main-text">
-					<p>{{ messageText }}</p>
-				</div>
-			</div>
+			<slot />
 			<div class="message-right">
 				<h6>{{ messageTime }}</h6>
 				<Actions v-if="hover" class="actions">
 					<ActionButton icon="icon-edit" @click="alert('Edit')">
-						Edit
+						Reply
 					</ActionButton>
-					<ActionButton icon="icon-delete" @click="alert('Delete')">
-						Delete
-					</ActionButton>
-					<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
 				</Actions>
 			</div>
 		</div>
@@ -61,20 +46,13 @@
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-import ActionLink from 'nextcloud-vue/dist/Components/ActionLink'
 
 export default {
 	name: 'Message',
 	components: {
 		Avatar,
 		Actions,
-		ActionButton,
-		ActionLink
-	},
-	data: function() {
-		return {
-			hover: false
-		}
+		ActionButton
 	},
 	props: {
 		userName: {
@@ -85,25 +63,16 @@ export default {
 			type: String,
 			required: true
 		},
-		messageText: {
-			type: String,
-			required: true
-		},
+
 		isFirstMessage: {
 			type: Boolean,
 			default: false
-		},
-		isReply: {
-			type: Boolean,
-			default: false
-		},
-		replyQuoteAuthor: {
-			type: String,
-			default: 'John Doe'
-		},
-		replyQuoteText: {
-			type: String,
-			default: 'This is a placeholder reply message'
+		}
+
+	},
+	data: function() {
+		return {
+			hover: false
 		}
 	}
 }
@@ -113,6 +82,7 @@ export default {
 
 .wrapper {
 	width: 100%;
+	padding: 4px 0 4px 0;
 	&:hover {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
@@ -128,18 +98,6 @@ export default {
 		min-width: 52px;
 		padding: 4px 8px 0 8px;
 	}
-    &-main {
-        display: flex;
-		flex-grow: 1;
-        flex-direction: column;
-		font-size: 20;
-		&-header {
-			color: #989898;
-		}
-		&-text {
-			color: #000000;
-		}
-    }
 	&-right {
 		display: flex;
 		min-width: 110px;
@@ -148,7 +106,8 @@ export default {
 	}
 
 .actions {
-	margin-top: -14px;
+	position: absolute;
+	margin: -12px 0 0 38px;
 	padding:2px;
 	}
 }
