@@ -75,7 +75,7 @@ class Commands implements ISettings {
 	 * E.g.: 70
 	 */
 	public function getPriority(): int {
-		return 85;
+		return 60;
 	}
 
 }

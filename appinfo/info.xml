@@ -79,6 +79,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</commands>
 
 	<settings>
+		<admin>OCA\Spreed\Settings\Admin\GeneralSettings</admin>
 		<admin>OCA\Spreed\Settings\Admin\AllowedGroups</admin>
 		<admin>OCA\Spreed\Settings\Admin\Commands</admin>
 		<admin>OCA\Spreed\Settings\Admin\SignalingServer</admin>
