@@ -206,6 +206,7 @@
     "{actor} shared a file which is no longer available" : "{actor} delade en fil som inte längre är tillgänglig",
     "You shared a file which is no longer available" : "Du delade en fil som inte längre är tillgänglig",
     "%s (guest)" : "%s (gäst)",
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Samtal med %n gäst (Varaktighet {duration})","Samtal med %n gäster (Varaktighet {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Samtal med {user1} och {user2} (Varade {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Samtal med {user1}, {user2} och {user3} (Varade {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Samtal med {user1}, {user2}, {user3} och {user4} (Varade {duration})",
