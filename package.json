@@ -1,0 +1,77 @@
+{
+	"name": "talk",
+	"description": "A simple Nextcloud app using vue-components",
+	"version": "3.2.0",
+	"author": "John Molakvoæ <skjnldsv@protonmail.com>",
+	"contributors": [
+		"John Molakvoæ <skjnldsv@protonmail.com>"
+	],
+	"keywords": [
+		"nextcloud",
+		"vueexample",
+		"app",
+		"dev",
+		"vuejs"
+	],
+	"bugs": {
+		"url": "https://github.com/skjnldsv/vueexample/issues"
+	},
+	"repository": {
+		"url": "https://github.com/skjnldsv/vueexample",
+		"type": "git"
+	},
+	"homepage": "https://github.com/skjnldsv/vueexample",
+	"license": "agpl",
+	"private": true,
+	"scripts": {
+		"dev": "webpack --config webpack.dev.js",
+		"watch": "webpack --progress --watch --config webpack.dev.js",
+		"build": "webpack --progress --hide-modules --config webpack.prod.js",
+		"lint": "eslint --ext .js,.vue src",
+		"lint:fix": "eslint --ext .js,.vue src --fix",
+		"stylelint": "stylelint src",
+		"stylelint:fix": "stylelint src --fix"
+	},
+	"dependencies": {
+		"nextcloud-vue": "^0.12.3",
+		"vue": "^2.6.10"
+	},
+	"browserslist": [
+		"extends browserslist-config-nextcloud"
+	],
+	"engines": {
+		"node": ">=10.0.0"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.6.0",
+		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
+		"@babel/preset-env": "^7.6.0",
+		"@vue/test-utils": "^1.0.0-beta.29",
+		"babel-eslint": "^10.0.3",
+		"babel-loader": "^8.0.6",
+		"browserslist-config-nextcloud": "0.0.1",
+		"css-loader": "^3.2.0",
+		"eslint": "^5.16.0",
+		"eslint-config-standard": "^12.0.0",
+		"eslint-import-resolver-webpack": "^0.11.1",
+		"eslint-loader": "^3.0.0",
+		"eslint-plugin-import": "^2.18.2",
+		"eslint-plugin-nextcloud": "^0.3.0",
+		"eslint-plugin-node": "^9.2.0",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-standard": "^4.0.1",
+		"eslint-plugin-vue": "^5.2.3",
+		"node-sass": "^4.12.0",
+		"sass-loader": "^7.3.1",
+		"stylelint": "^8.4.0",
+		"stylelint-config-recommended-scss": "^3.3.0",
+		"stylelint-scss": "^3.10.1",
+		"stylelint-webpack-plugin": "^0.10.5",
+		"vue-loader": "^15.7.1",
+		"vue-template-compiler": "^2.6.10",
+		"webpack": "^4.40.1",
+		"webpack-cli": "^3.3.8",
+		"webpack-merge": "^4.2.2",
+		"webpack-node-externals": "^1.7.2"
+	}
+}
