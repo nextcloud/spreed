@@ -19,7 +19,11 @@
 				user-name="Barthelemy dsflkjds"
 				:is-first-message="true"
 				message-time="16:12"
-				message-text="This is a test message" />
+				message-text="This is some mock text. This is some mock text. This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock textThis is some mock text.This is some mock text" />
+			<Message
+				user-name="Barthelemy dsflkjds"
+				message-time="16:12"
+				message-text="This is some mock text. This is some mock text. This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock text.This is some mock textThis is some mock text.This is some mock text" />
 		</AppContent>
 		<AppSidebar v-show="show" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
 			:actions="menu" :starred.sync="starred"

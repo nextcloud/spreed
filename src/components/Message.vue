@@ -20,31 +20,61 @@
 -->
 
 <template>
-	<div class="message">
-		<div class="message-avatar">
-			<Avatar v-if="isFirstMessage" :user="userName" :display-name="userName" />
-		</div>
-		<div class="message-main">
-			<div v-if="isFirstMessage" class="message-main-header">
-				<h6>{{ userName }}</h6>
+	<div
+		class="wrapper"
+		@mouseover="hover=true"
+		@mouseleave="hover=false">
+		<div class="message">
+			<div class="message-avatar">
+				<Avatar v-if="isFirstMessage" :user="userName" :display-name="userName" />
 			</div>
-			<div class="message-main-text">
-				<p>{{messageText}}</p>
+			<div class="message-main">
+				<div v-if="isFirstMessage" class="message-main-header">
+					<h6>{{ userName }}</h6>
+				</div>
+				<div class="quote">
+					<div class="">
+					</div>
+				</div>
+				<div class="message-main-text">
+					<p>{{ messageText }}</p>
+				</div>
+			</div>
+			<div class="message-right">
+				<h6>{{ messageTime }}</h6>
+				<Actions v-if="hover" class="actions">
+					<ActionButton icon="icon-edit" @click="alert('Edit')">
+						Edit
+					</ActionButton>
+					<ActionButton icon="icon-delete" @click="alert('Delete')">
+						Delete
+					</ActionButton>
+					<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
+				</Actions>
 			</div>
 		</div>
-		<div class="message-right">
-			<h6>{{ messageTime }}</h6>
-		</div>
+		<div />
 	</div>
 </template>
 
 <script>
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+import Actions from 'nextcloud-vue/dist/Components/Actions'
+import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import ActionLink from 'nextcloud-vue/dist/Components/ActionLink'
 
 export default {
 	name: 'Message',
 	components: {
-		Avatar
+		Avatar,
+		Actions,
+		ActionButton,
+		ActionLink
+	},
+	data: function() {
+		return {
+			hover: false
+		}
 	},
 	props: {
 		userName: {
@@ -62,6 +92,18 @@ export default {
 		isFirstMessage: {
 			type: Boolean,
 			default: false
+		},
+		isReply: {
+			type: Boolean,
+			default: false
+		},
+		replyQuoteAuthor: {
+			type: String,
+			default: 'John Doe'
+		},
+		replyQuoteText: {
+			type: String,
+			default: 'This is a placeholder reply message'
 		}
 	}
 }
@@ -69,9 +111,15 @@ export default {
 
 <style lang="scss" scoped>
 
+.wrapper {
+	width: 100%;
+	&:hover {
+		background-color: rgba(47, 47, 47, 0.068);
+	}
+}
+
 .message {
     display: flex;
-    width: 100%;
     max-width: 600px;
 	padding: 12px 0 12px 0;
 	margin: auto;
@@ -93,9 +141,15 @@ export default {
 		}
     }
 	&-right {
-		min-width: 90px;
+		display: flex;
+		min-width: 110px;
 		color: #989898;
 		padding: 0px 8px 0 8px;
+	}
+
+.actions {
+	margin-top: -14px;
+	padding:2px;
 	}
 }
 
