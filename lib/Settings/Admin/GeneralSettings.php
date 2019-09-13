@@ -24,40 +24,30 @@ namespace OCA\Talk\Settings\Admin;
 
 
 use OCA\Talk\Config;
-use OCA\Talk\Model\Command;
-use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
-class Commands implements ISettings {
+class GeneralSettings implements ISettings {
 
-	/** @var CommandService */
-	private $commandService;
+	/** @var IConfig */
+	private $config;
 	/** @var IInitialStateService */
 	private $initialStateService;
 
-	public function __construct(CommandService $commandService,
+	public function __construct(IConfig $config,
 								IInitialStateService $initialStateService) {
-		$this->commandService = $commandService;
+		$this->config = $config;
 		$this->initialStateService = $initialStateService;
 	}
-
 
 	/**
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-
-		$commands = $this->commandService->findAll();
-
-		$result = array_map(function(Command $command) {
-			return $command->asArray();
-		}, $commands);
-
-		$this->initialStateService->provideInitialState('talk', 'commands', $result);
-
-		return new TemplateResponse('spreed', 'settings/admin/commands', [], '');
+		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->config->getAppValue('spreed', 'start_calls', '0'));
+		return new TemplateResponse('spreed', 'settings/admin/general-settings', [], '');
 	}
 
 	/**
@@ -75,7 +65,7 @@ class Commands implements ISettings {
 	 * E.g.: 70
 	 */
 	public function getPriority(): int {
-		return 60;
+		return 0;
 	}
 
 }

@@ -64,7 +64,7 @@ class AllowedGroups implements ISettings {
 	 * E.g.: 70
 	 */
 	public function getPriority(): int {
-		return 0;
+		return 10;
 	}
 
 }
