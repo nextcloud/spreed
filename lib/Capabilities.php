@@ -80,6 +80,7 @@ class Capabilities implements IPublicCapability {
 					'read-only-rooms',
 					'chat-read-marker',
 					'webinary-lobby',
+					'start-call-flag',
 				],
 				'config' => [
 					'chat' => [
