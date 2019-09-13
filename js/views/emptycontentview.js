@@ -184,20 +184,14 @@
 				return;
 			}
 
-			var icon = '';
+			var icon = 'icon-lobby';
 
-			if (this._activeRoom.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC) {
-				icon = 'icon-public';
-			} else {
-				icon = 'icon-contacts-dark';
-			}
-
-			var messageAdditional = t('spreed', 'Waiting for the conversation to be opened');
+			var messageAdditional = t('spreed', 'You are currently waiting in the lobby');
 			if (this._activeRoom.get('lobbyTimer')) {
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.
 				var startTime = OC.Util.formatDate(this._activeRoom.get('lobbyTimer') * 1000);
-				messageAdditional = t('spreed', 'Waiting for the conversation to be opened. This meeting is scheduled for {startTime}', {startTime: startTime});
+				messageAdditional = t('spreed', 'You are currently waiting in the lobby. This meeting is scheduled for {startTime}', {startTime: startTime});
 			}
 
 			this.setEmptyContentMessage(
