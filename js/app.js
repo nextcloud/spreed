@@ -707,6 +707,9 @@
 
             // Start new message notifier.
             if (OC.getCurrentUser().uid !== null) OCA.Talk.Notifier.init(this);
+
+            // Listen calling feature.
+            if (OC.getCurrentUser().uid !== null) OCA.Talk.Caller.init(this);
         },
         setupWebRTC: function () {
             if (!OCA.SpreedMe.webrtc) {
