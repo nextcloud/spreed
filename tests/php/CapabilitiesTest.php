@@ -91,6 +91,7 @@ class CapabilitiesTest extends TestCase {
 					'read-only-rooms',
 					'chat-read-marker',
 					'webinary-lobby',
+					'start-call-flag',
 				],
 				'config' => [
 					'chat' => [
@@ -146,6 +147,7 @@ class CapabilitiesTest extends TestCase {
 					'read-only-rooms',
 					'chat-read-marker',
 					'webinary-lobby',
+					'start-call-flag',
 				],
 				'config' => [
 					'chat' => [

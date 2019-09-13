@@ -42,6 +42,7 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -54,6 +55,8 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class RoomController extends AEnvironmentAwareController {
 	/** @var string|null */
 	private $userId;
+	/** @var IConfig */
+	private $config;
 	/** @var TalkSession */
 	private $session;
 	/** @var IUserManager */
@@ -78,6 +81,7 @@ class RoomController extends AEnvironmentAwareController {
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
+								IConfig $config,
 								TalkSession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
@@ -89,6 +93,7 @@ class RoomController extends AEnvironmentAwareController {
 								ITimeFactory $timeFactory,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
+		$this->config = $config;
 		$this->session = $session;
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
@@ -177,6 +182,7 @@ class RoomController extends AEnvironmentAwareController {
 			'count' => 0,
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
+			'canStartCall' => false,
 			'lastActivity' => 0,
 			'lastReadMessage' => 0,
 			'unreadMessages' => 0,
@@ -242,6 +248,15 @@ class RoomController extends AEnvironmentAwareController {
 			!$currentParticipant->hasModeratorPermissions()) {
 			// No participants and chat messages for users in the lobby.
 			return $roomData;
+		}
+
+		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', '0');
+		if ($defaultStartCall === 0) {
+			$roomData['canStartCall'] = true;
+		} else if ($defaultStartCall === 1 && (!$currentParticipant->isGuest() || $currentParticipant->hasModeratorPermissions())) {
+			$roomData['canStartCall'] = true;
+		} else if ($defaultStartCall === 2 && $currentParticipant->hasModeratorPermissions()) {
+			$roomData['canStartCall'] = true;
 		}
 
 		$currentUser = $this->userManager->get($currentParticipant->getUser());
