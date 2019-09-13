@@ -7,7 +7,7 @@
 		{{#if hasCall}}
 			<button class="join-call call-ongoing primary">{{joinCallText}}<span class="icon icon-loading-small hidden"></span></button>
 		{{else}}
-			<button class="join-call primary">{{startCallText}}<span class="icon icon-loading-small hidden"></span></button>
+			<button class="join-call primary" {{#if canStartCall}}{{else}} disabled="disabled"{{/if}}>{{startCallText}}<span class="icon icon-loading-small hidden"></span></button>
 		{{/if}}
 	{{/if}}
 {{/if}}
