@@ -23,7 +23,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Files\Util;
 use OCA\Talk\Manager;
@@ -36,7 +35,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\Share\IShare;
 
-class FilesController extends OCSController {
+class FilesIntegrationController extends OCSController {
 
 	/** @var string */
 	private $currentUser;
