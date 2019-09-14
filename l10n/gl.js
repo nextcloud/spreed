@@ -208,6 +208,7 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} compartiu un ficheiro que xa non está dispoñíbel",
     "You shared a file which is no longer available" : "Vostede compartiu un ficheiro que xa non está dispoñíbel",
     "%s (guest)" : "%s (convidado)",
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Chamada con %n convidado (Duración {duration})","Chamada con %n convidados (Duración {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Chamada con {user1} e {user2} (Duración {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Chamada con {user1}, {user2} e {user3} (Duración {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Chamada con {user1}, {user2}, {user3} e {user4} (Duración {duration})",
