@@ -3,7 +3,7 @@
 		<div v-if="isFirstMessage || isQuote" class="message-main-header">
 			<h6>{{ userName }}</h6>
 		</div>
-		<div class="quote">
+		<div v-if="isQuote" class="quote">
 			<slot />
 		</div>
 		<div class="message-main-text">
@@ -61,6 +61,6 @@ export default {
 }
 .quote {
 	border-left: 4px solid #0083C9;
-	padding-left: 8px;
+	padding: 4px 0 0 8px;
 }
 </style>

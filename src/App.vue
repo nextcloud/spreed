@@ -1,22 +1,71 @@
 <template>
 	<Content :class="{'icon-loading': loading}" app-name="vueexample">
 		<AppNavigation>
-			<AppNavigationNew v-if="!loading" :text="t('vueexample', 'New XXXXXX')" :disabled="false"
-				button-id="new-vueexample-button" button-class="icon-add" @click="newButtonAction" />
+			<AppNavigationNew
+				v-if="!loading"
+				:text="t('spreed', 'New conversation')"
+				:disabled="false"
+				button-id="new-conversation-button"
+				button-class="icon-add"
+				@click="newButtonAction" />
 			<ul id="app-vueexample-navigation">
-				<AppNavigationItem v-for="item in menu" :key="item.key" :item="item" />
+				<AppNavigationItem title="Billie Holiday">
+					<Avatar slot="icon" user="Billie Holiday" display-name="Billie Holiday" />
+					<AppNavigationCounter slot="counter" :highlighted="true">
+						99+
+					</AppNavigationCounter>
+					<template slot="actions">
+						<ActionButton icon="icon-edit" @click="alert('Edit')">
+							Edit
+						</ActionButton>
+						<ActionButton icon="icon-delete" @click="alert('Delete')">
+							Delete
+						</ActionButton>
+						<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
+					</template>
+				</AppNavigationItem>
+				<AppNavigationItem title="Charles Mingus">
+					<Avatar slot="icon" user="Charles Mingus" display-name="Charles Mingus" />
+					<AppNavigationCounter slot="counter" :highlighted="true">
+						3
+					</AppNavigationCounter>
+					<template slot="actions">
+						<ActionButton icon="icon-edit" @click="alert('Edit')">
+							Edit
+						</ActionButton>
+						<ActionButton icon="icon-delete" @click="alert('Delete')">
+							Delete
+						</ActionButton>
+						<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
+					</template>
+				</AppNavigationItem>
+				<AppNavigationItem title="The fellas" icon="icon-group">
+					<AppNavigationCounter slot="counter" :highlighted="true">
+						12
+					</AppNavigationCounter>
+					<template slot="actions">
+						<ActionButton icon="icon-edit" @click="alert('Edit')">
+							Edit
+						</ActionButton>
+						<ActionButton icon="icon-delete" @click="alert('Delete')">
+							Delete
+						</ActionButton>
+						<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
+					</template>
+				</AppNavigationItem>
+
 			</ul>
 			<AppNavigationSettings>
 				Example settings
 			</AppNavigationSettings>
 		</AppNavigation>
 		<AppContent>
-			<button @click="show = !show">
+			<!--<button @click="show = !show">
 				Toggle sidebar
-			</button>
+			</button>-->
 			<Message
 				v-for="message in messages"
-				:key="message.messageTime"
+				:key="message.id"
 				v-bind="message">
 				<MessageBody v-bind="message">
 					<MessageBody v-if="message.parent" v-bind="messages[message.parent]" />
@@ -34,20 +83,11 @@
 					type="checkbox">
 				<label for="link-checkbox" class="link-checkbox-label">Do something</label>
 			</template>
-			<AppSidebarTab name="Chat" icon="icon-talk">
-				this is the chat tab
+			<AppSidebarTab name="Participants" icon="icon-talk">
+				Participants
 			</AppSidebarTab>
-			<AppSidebarTab name="Activity" icon="icon-activity">
-				this is the activity tab
-			</AppSidebarTab>
-			<AppSidebarTab name="Comments" icon="icon-comment">
-				this is the comments tab
-			</AppSidebarTab>
-			<AppSidebarTab name="Sharing" icon="icon-shared">
-				this is the sharing tab
-			</AppSidebarTab>
-			<AppSidebarTab name="Versions" icon="icon-history">
-				this is the versions tab
+			<AppSidebarTab name="Projects" icon="icon-activity">
+				Projects
 			</AppSidebarTab>
 		</AppSidebar>
 	</Content>
@@ -62,8 +102,11 @@ import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
+import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import Message from './components/Message/Message'
 import MessageBody from './components/Message/MessageBody'
+import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 
 export default {
 	name: 'App',
@@ -77,7 +120,10 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		Message,
-		MessageBody
+		MessageBody,
+		AppNavigationCounter,
+		ActionButton,
+		Avatar
 	},
 	data: function() {
 		return {
@@ -88,6 +134,7 @@ export default {
 			starred: false,
 			messages: {
 				1: {
+					id: 1,
 					userName: 'Marco',
 					messageText: 'Hello everyone',
 					messageTime: '14:35',
@@ -95,12 +142,14 @@ export default {
 
 				},
 				2: {
+					id: 2,
 					userName: 'Joas',
 					messageText: 'Please anwser to this message!!!',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
 				3: {
+					id: 3,
 					userName: 'Barth',
 					messageText: 'Here\'s your answer!',
 					messageTime: '14:35',
@@ -108,12 +157,14 @@ export default {
 					isFirstMessage: true
 				},
 				4: {
+					id: 4,
 					userName: 'Marco',
 					messageText: 'Hayy buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
 				5: {
+					id: 5,
 					userName: 'Marco',
 					messageText: 'this is a second message from marco and it\'s going to be very very very very very very very very very very very very very very very very very very very very very veryvery very very very very very very very very very very very long very very very very very very very very very very very very very very very very very very very very very veryvery very very very very very very very very very very very long :)',
 					messageTime: '14:35',
@@ -121,12 +172,14 @@ export default {
 
 				},
 				6: {
+					id: 6,
 					userName: 'Joas',
 					messageText: 'Please anwser to this message!!!',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
 				7: {
+					id: 7,
 					userName: 'Barth',
 					messageText: 'Here\'s your answer!',
 					messageTime: '14:35',
@@ -134,18 +187,21 @@ export default {
 					isFirstMessage: true
 				},
 				8: {
+					id: 8,
 					userName: 'sertdyu',
 					messageText: 'buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
 				9: {
+					id: 9,
 					userName: 'sertdyu',
 					messageText: 'buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
 				10: {
+					id: 10,
 					userName: 'Marco',
 					messageText: 'Hello everyone',
 					messageTime: '14:35',
@@ -153,12 +209,14 @@ export default {
 
 				},
 				11: {
+					id: 11,
 					userName: 'Joas',
 					messageText: 'Please anwser to this message!!!',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
 				12: {
+					id: 12,
 					userName: 'Barth',
 					messageText: 'Here\'s your answer!',
 					messageTime: '14:35',
@@ -166,6 +224,7 @@ export default {
 					isFirstMessage: true
 				},
 				13: {
+					id: 13,
 					userName: 'sertdyu',
 					messageText: 'buddaaayy',
 					messageTime: '14:35',
