@@ -208,6 +208,7 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} deelde een bestand dat niet meer beschikbaar is",
     "You shared a file which is no longer available" : "Je deelde een bestand dat niet meer beschikbaar is",
     "%s (guest)" : "%s (gast)",
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["Gesprek met %n gast  (Duur {duration})","Gesprek met%n gasten (Duur {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "Gesprek met {user1} en {user2} (Duur {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "Gesprek met {user1}, {user2} en {user3} (Duur {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "Gesprek met {user1}, {user2}, {user3} en {user4} (Duur {duration})",
