@@ -32,7 +32,7 @@
 			<div class="message-right">
 				<h6>{{ messageTime }}</h6>
 				<Actions v-if="hover" class="actions">
-					<ActionButton icon="icon-edit" @click="alert('Edit')">
+					<ActionButton icon="icon-folder" @click="alert('Edit')">
 						Reply
 					</ActionButton>
 				</Actions>
