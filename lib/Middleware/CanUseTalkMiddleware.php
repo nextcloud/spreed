@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\Middleware;
 
+use OCA\Spreed\Exceptions\ForbiddenException;
 use OCA\Spreed\Middleware\Exceptions\CanNotUseTalkException;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -60,7 +61,8 @@ class CanUseTalkMiddleware extends Middleware {
 	 * @return Response
 	 */
 	public function afterException($controller, $methodName, \Exception $exception): Response {
-		if ($exception instanceof CanNotUseTalkException) {
+		if ($exception instanceof CanNotUseTalkException ||
+			$exception instanceof ForbiddenException) {
 			if ($controller instanceof OCSController) {
 				throw new OCSException($exception->getMessage(), Http::STATUS_FORBIDDEN);
 			}
