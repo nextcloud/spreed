@@ -250,12 +250,12 @@ class RoomController extends AEnvironmentAwareController {
 			return $roomData;
 		}
 
-		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', '0');
-		if ($defaultStartCall === 0) {
+		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
+		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
 			$roomData['canStartCall'] = true;
-		} else if ($defaultStartCall === 1 && (!$currentParticipant->isGuest() || $currentParticipant->hasModeratorPermissions())) {
+		} else if ($defaultStartCall === Room::START_CALL_USERS && (!$currentParticipant->isGuest() || $currentParticipant->hasModeratorPermissions())) {
 			$roomData['canStartCall'] = true;
-		} else if ($defaultStartCall === 2 && $currentParticipant->hasModeratorPermissions()) {
+		} else if ($defaultStartCall === Room::START_CALL_MODERATORS && $currentParticipant->hasModeratorPermissions()) {
 			$roomData['canStartCall'] = true;
 		}
 
