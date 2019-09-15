@@ -62,7 +62,10 @@
 			<!--<button @click="show = !show">
 				Toggle sidebar
 			</button>-->
-			<MessageList />
+			<div :windowHeight="windowHeight" class="messages-wrapper" :style="{ height: windowHeight+'px' }">
+				<MessageList />
+				<NewMessageForm />
+			</div>
 		</AppContent>
 		<AppSidebar v-show="show" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
 			:actions="menu" :starred.sync="starred"
@@ -98,6 +101,7 @@ import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCou
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import MessageList from './components/MessageList/MessageList'
+import NewMessageForm from './components/NewMessageForm/NewMessageForm'
 
 export default {
 	name: 'App',
@@ -113,15 +117,17 @@ export default {
 		AppNavigationCounter,
 		ActionButton,
 		Avatar,
-		MessageList
+		MessageList,
+		NewMessageForm
 	},
 	data: function() {
 		return {
 			loading: false,
 			date: Date.now() + 86400000 * 3,
 			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
-			show: true,
-			starred: false
+			show: false,
+			starred: false,
+			windowHeight: 0
 		}
 	},
 	computed: {
@@ -193,7 +199,14 @@ export default {
 			]
 		}
 	},
+	beforeMount() {
+		window.addEventListener('resize', this.onResize)
+		this.onResize()
+	},
 	methods: {
+		onResize() {
+			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
+		},
 		addOption(val) {
 			this.options.push(val)
 			this.select.push(val)
@@ -218,7 +231,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scroller {
-  height: 100%;
+.messages-wrapper {
+	display: flex;
+    flex-direction: column;
 }
 </style>

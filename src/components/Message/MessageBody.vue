@@ -1,11 +1,11 @@
 <template>
-	<div class="message-main">
+	<div v-show="messageText"
+		:class="{ 'message-main--quote' : isQuote }"
+		class="message-main">
 		<div v-if="isFirstMessage || isQuote" class="message-main-header">
 			<h6>{{ userName }}</h6>
 		</div>
-		<div v-if="isQuote" class="quote">
-			<slot />
-		</div>
+		<slot />
 		<div class="message-main-text">
 			<p>{{ messageText }}</p>
 		</div>
@@ -30,7 +30,7 @@ export default {
 	},
 	computed: {
 		isQuote() {
-			return this.$parent.messageText
+			return !!this.$parent.messageText
 		}
 	}
 }
@@ -57,10 +57,11 @@ export default {
 		&-text {
 			color: #000000;
 		}
+		&--quote {
+			border-left: 4px solid #0083C9;
+			padding: 4px 0 0 8px;
+		}
 	}
 }
-.quote {
-	border-left: 4px solid #0083C9;
-	padding: 4px 0 0 8px;
-}
+
 </style>

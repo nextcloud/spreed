@@ -21,7 +21,7 @@
 
 <template>
 	<DynamicScroller
-		:items="messages"
+		:items="messagesArray"
 		:min-item-size="60"
 		class="scroller">
 		<template v-slot="{ item, index, active }">
@@ -56,40 +56,60 @@ export default {
 		Message,
 		MessageBody
 	},
+	computed: {
+		messagesArray() {
+			return new Array(200).fill(0).map((x, id) => {
+				return {
+					messageText: 'Whatever',
+					messageTime: '14:30',
+					id,
+					userName: 'Skjnldsv',
+					isFirstMessage: true
+				}
+			})
+		},
+
+		messages() {
+			const messages = {}
+			this.messagesArray.forEach(message => {
+				messages[message.id] = message
+			})
+			return messages
+		}
+	},
 	data: function() {
 		return {
-			messages: [
-				{
+			messagesOld: {
+				1: {
 					id: 1,
 					userName: 'Marco',
 					messageText: 'Hello everyone',
 					messageTime: '14:35',
 					isFirstMessage: true
-
 				},
-				{
+				2: {
 					id: 2,
 					userName: 'Joas',
 					messageText: 'Please anwser to this message!!!',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
-				{
+				3: {
 					id: 3,
 					userName: 'Barth',
 					messageText: 'Here\'s your answer!',
 					messageTime: '14:35',
-					parent: 2,
-					isFirstMessage: true
+					isFirstMessage: true,
+					parent: 2
 				},
-				{
+				4: {
 					id: 4,
 					userName: 'Marco',
 					messageText: 'Hayy buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
-				{
+				5: {
 					id: 5,
 					userName: 'Marco',
 					messageText: 'this is a second message from marco and it\'s going to be very very very very very very very very very very very very very very very very very very very very very veryvery very very very very very very very very very very very long very very very very very very very very very very very very very very very very very very very very very veryvery very very very very very very very very very very very long :)',
@@ -97,36 +117,35 @@ export default {
 					isFirstMessage: false
 
 				},
-				{
+				6: {
 					id: 6,
 					userName: 'Joas',
 					messageText: 'Please anwser to this message!!!',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
-				{
+				7: {
 					id: 7,
 					userName: 'Barth',
 					messageText: 'Here\'s your answer!',
 					messageTime: '14:35',
-					parent: 456,
 					isFirstMessage: true
 				},
-				{
+				8: {
 					id: 8,
 					userName: 'sertdyu',
 					messageText: 'buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
-				{
+				9: {
 					id: 9,
 					userName: 'sertdyu',
 					messageText: 'buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
-				{
+				10: {
 					id: 10,
 					userName: 'Marco',
 					messageText: 'Hello everyone',
@@ -134,34 +153,35 @@ export default {
 					isFirstMessage: true
 
 				},
-				{
+				11: {
 					id: 11,
 					userName: 'Joas',
 					messageText: 'Please anwser to this message!!!',
 					messageTime: '14:35',
 					isFirstMessage: true
 				},
-				{
+				12: {
 					id: 12,
 					userName: 'Barth',
 					messageText: 'Here\'s your answer!',
 					messageTime: '14:35',
-					parent: 456,
 					isFirstMessage: true
 				},
-				{
+				13: {
 					id: 13,
 					userName: 'sertdyu',
 					messageText: 'buddaaayy',
 					messageTime: '14:35',
 					isFirstMessage: true
 				}
-			]
+			}
 		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
-
+.scroller {
+	height: auto
+}
 </style>
