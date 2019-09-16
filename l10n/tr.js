@@ -208,6 +208,7 @@ OC.L10N.register(
     "{actor} shared a file which is no longer available" : "{actor} artık kullanılamayan bir dosya paylaştı",
     "You shared a file which is no longer available" : "Artık kullanılamayan bir dosya paylaştınız",
     "%s (guest)" : "%s (konuk)",
+    "_Call with %n guest (Duration {duration})_::_Call with %n guests (Duration {duration})_" : ["%n konuk ile görüşme (Süre {duration})","%n konuk ile görüşme (Süre {duration})"],
     "Call with {user1} and {user2} (Duration {duration})" : "{user1} ve {user2} ile görüşme (Süre {duration})",
     "Call with {user1}, {user2} and {user3} (Duration {duration})" : "{user1}, {user2} ve {user3} ile görüşme (Süre {duration})",
     "Call with {user1}, {user2}, {user3} and {user4} (Duration {duration})" : "{user1}, {user2}, {user3} ve {user4} ile görüşme (Süre {duration})",
