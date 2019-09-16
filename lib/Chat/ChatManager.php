@@ -93,8 +93,12 @@ class ChatManager
         \DateTime $creationDateTime,
         bool $sendNotifications
     ): IComment {
-        $comment = $this->commentsManager->create($actorType, $actorId, 'chat',
-            (string) $chat->getId());
+        $comment = $this->commentsManager->create(
+            $actorType,
+            $actorId,
+            'chat',
+            (string) $chat->getId()
+        );
         $comment->setMessage($message);
         $comment->setCreationDateTime($creationDateTime);
         $comment->setVerb('system');
@@ -108,10 +112,12 @@ class ChatManager
                 $this->notifier->notifyOtherParticipant($chat, $comment, []);
             }
 
-            $this->dispatcher->dispatch(self::class.'::sendSystemMessage',
+            $this->dispatcher->dispatch(
+                self::class.'::sendSystemMessage',
                 new GenericEvent($chat, [
                     'comment' => $comment,
-                ]));
+                ])
+            );
         } catch (NotFoundException $e) {
         }
 
@@ -128,8 +134,12 @@ class ChatManager
      */
     public function addChangelogMessage(Room $chat, string $message): IComment
     {
-        $comment = $this->commentsManager->create('guests', 'changelog', 'chat',
-            (string) $chat->getId());
+        $comment = $this->commentsManager->create(
+            'guests',
+            'changelog',
+            'chat',
+            (string) $chat->getId()
+        );
         $comment->setMessage($message);
         $comment->setCreationDateTime($this->timeFactory->getDateTime());
         $comment->setVerb('comment'); // Has to be comment, so it counts as unread message
@@ -140,10 +150,12 @@ class ChatManager
             // Update last_message
             $chat->setLastMessage($comment);
 
-            $this->dispatcher->dispatch(self::class.'::sendSystemMessage',
+            $this->dispatcher->dispatch(
+                self::class.'::sendSystemMessage',
                 new GenericEvent($chat, [
                     'comment' => $comment,
-                ]));
+                ])
+            );
         } catch (NotFoundException $e) {
         }
 
@@ -170,20 +182,26 @@ class ChatManager
         string $message,
         \DateTime $creationDateTime
     ): IComment {
-        $comment = $this->commentsManager->create($actorType, $actorId, 'chat',
-            (string) $chat->getId());
+        $comment = $this->commentsManager->create(
+            $actorType,
+            $actorId,
+            'chat',
+            (string) $chat->getId()
+        );
         $comment->setMessage($message);
         $comment->setCreationDateTime($creationDateTime);
         // A verb ('comment', 'like'...) must be provided to be able to save a
         // comment
         $comment->setVerb('comment');
 
-        $this->dispatcher->dispatch(self::class.'::preSendMessage',
+        $this->dispatcher->dispatch(
+            self::class.'::preSendMessage',
             new GenericEvent($chat, [
                 'comment'     => $comment,
                 'room'        => $chat,
                 'participant' => $participant,
-            ]));
+            ])
+        );
 
         try {
             $this->commentsManager->save($comment);
@@ -191,22 +209,30 @@ class ChatManager
             // Update last_message
             $chat->setLastMessage($comment);
 
-            $mentionedUsers = $this->notifier->virtuallyMentionEveryone($chat, $comment);
+            $mentionedUsers = $this->notifier->virtuallyMentionEveryone(
+                $chat,
+                $comment
+            );
 
-            if ( ! empty($mentionedUsers)) {
+            if (! empty($mentionedUsers)) {
                 $chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
             }
 
             // User was not mentioned, send a normal notification
-            $this->notifier->notifyOtherParticipant($chat, $comment,
-                $mentionedUsers);
+            $this->notifier->notifyOtherParticipant(
+                $chat,
+                $comment,
+                $mentionedUsers
+            );
 
-            $this->dispatcher->dispatch(self::class.'::sendMessage',
+            $this->dispatcher->dispatch(
+                self::class.'::sendMessage',
                 new GenericEvent($chat, [
                     'comment'     => $comment,
                     'room'        => $chat,
                     'participant' => $participant,
-                ]));
+                ])
+            );
         } catch (NotFoundException $e) {
         }
 
@@ -215,8 +241,11 @@ class ChatManager
 
     public function getUnreadMarker(Room $chat, IUser $user): \DateTime
     {
-        $marker = $this->commentsManager->getReadMark('chat', $chat->getId(),
-            $user);
+        $marker = $this->commentsManager->getReadMark(
+            'chat',
+            $chat->getId(),
+            $user
+        );
         if ($marker === null) {
             $marker = $this->timeFactory->getDateTime('2000-01-01');
         }
@@ -226,8 +255,12 @@ class ChatManager
 
     public function getUnreadCount(Room $chat, \DateTime $unreadSince): int
     {
-        return $this->commentsManager->getNumberOfCommentsForObject('chat',
-            $chat->getId(), $unreadSince, 'comment');
+        return $this->commentsManager->getNumberOfCommentsForObject(
+            'chat',
+            $chat->getId(),
+            $unreadSince,
+            'comment'
+        );
     }
 
     /**
@@ -243,8 +276,13 @@ class ChatManager
      */
     public function getHistory(Room $chat, $offset, $limit): array
     {
-        return $this->commentsManager->getForObjectSince('chat',
-            (string) $chat->getId(), $offset, 'desc', $limit);
+        return $this->commentsManager->getForObjectSince(
+            'chat',
+            (string) $chat->getId(),
+            $offset,
+            'desc',
+            $limit
+        );
     }
 
     /**
@@ -275,25 +313,41 @@ class ChatManager
         ?IUser $user
     ): array {
         if ($user instanceof IUser) {
-            $this->notifier->markMentionNotificationsRead($chat,
-                $user->getUID());
+            $this->notifier->markMentionNotificationsRead(
+                $chat,
+                $user->getUID()
+            );
         }
         $elapsedTime = 0;
 
-        $comments = $this->commentsManager->getForObjectSince('chat',
-            (string) $chat->getId(), $offset, 'asc', $limit);
+        $comments = $this->commentsManager->getForObjectSince(
+            'chat',
+            (string) $chat->getId(),
+            $offset,
+            'asc',
+            $limit
+        );
 
         if ($user instanceof IUser) {
-            $this->commentsManager->setReadMark('chat', (string) $chat->getId(),
-                $this->timeFactory->getDateTime(), $user);
+            $this->commentsManager->setReadMark(
+                'chat',
+                (string) $chat->getId(),
+                $this->timeFactory->getDateTime(),
+                $user
+            );
         }
 
         while (empty($comments) && $elapsedTime < $timeout) {
             sleep(1);
             $elapsedTime++;
 
-            $comments = $this->commentsManager->getForObjectSince('chat',
-                (string) $chat->getId(), $offset, 'asc', $limit);
+            $comments = $this->commentsManager->getForObjectSince(
+                'chat',
+                (string) $chat->getId(),
+                $offset,
+                'asc',
+                $limit
+            );
         }
 
         return $comments;
@@ -306,8 +360,10 @@ class ChatManager
      */
     public function deleteMessages(Room $chat): void
     {
-        $this->commentsManager->deleteCommentsAtObject('chat',
-            (string) $chat->getId());
+        $this->commentsManager->deleteCommentsAtObject(
+            'chat',
+            (string) $chat->getId()
+        );
 
         $this->notifier->removePendingNotificationsForRoom($chat);
     }
@@ -338,9 +394,13 @@ class ChatManager
         $qb = $qb->select('*')
             ->from('talk_rooms')
             ->where(
-                $qb->expr()->in('token',
-                    $qb->createNamedParameter($passedRoomTokens,
-                        IQueryBuilder::PARAM_STR_ARRAY))
+                $qb->expr()->in(
+                    'token',
+                    $qb->createNamedParameter(
+                        $passedRoomTokens,
+                        IQueryBuilder::PARAM_STR_ARRAY
+                    )
+                )
             );
 
         $cursor       = $qb->execute();
@@ -373,9 +433,13 @@ class ChatManager
         $qb = $qb->select('*')
             ->from('comments')
             ->where(
-                $qb->expr()->in('id',
-                    $qb->createNamedParameter($lastMessages,
-                        IQueryBuilder::PARAM_INT_ARRAY))
+                $qb->expr()->in(
+                    'id',
+                    $qb->createNamedParameter(
+                        $lastMessages,
+                        IQueryBuilder::PARAM_INT_ARRAY
+                    )
+                )
             );
 
         $cursor          = $qb->execute();
@@ -389,7 +453,6 @@ class ChatManager
 
         // Attach latest comments.
         foreach ($fetchedComments as $comment) {
-
             $response['comments'][] = [
                 'actor_id'   => $comment['actor_id'],
                 'actor_type' => $comment['actor_type'],
@@ -405,20 +468,181 @@ class ChatManager
      *
      * @param $comment
      *
+     * @author Oozman
      * @return mixed|string
      */
-    private function generateCommentMsg($comment) {
-
-        if($comment['verb'] == 'system') {
+    private function generateCommentMsg($comment)
+    {
+        if ($comment['verb'] == 'system') {
             $msg = json_decode($comment['message'], true);
 
-            if($msg['message'] === 'file_shared') {
-                return $comment['actor_id'] . ' just shared a file.';
+            if ($msg['message'] === 'file_shared') {
+                return $comment['actor_id'].' just shared a file.';
             }
         } elseif ($comment['verb'] === 'comment') {
             return $comment['message'];
         }
 
         return 'You got a message.';
+    }
+
+    /**
+     * Get last message by an actor in room.
+     *
+     * @param $room
+     * @param $actorId
+     *
+     * @author Oozman
+     * @return int
+     * @throws \Exception
+     */
+    public function getLastMessageByActorInRoom($room, $actorId)
+    {
+        // Get object id.
+        $query  = $this->db->getQueryBuilder();
+        $result = $query->select('id')
+            ->from('talk_rooms')
+            ->where($query->expr()
+                ->eq('token', $query->createNamedParameter($room)))
+            ->setMaxResults(1)
+            ->execute();
+
+        $objectId = 0;
+        while ($row = $result->fetch()) {
+            $objectId = $row['id'];
+            break;
+        }
+
+        if ($objectId < 1) {
+            return 0;
+        }
+        $result->closeCursor();
+
+        // Get last comment.
+        $query = $this->db->getQueryBuilder();
+
+        $result = $query->select('id')
+            ->from('comments')
+            ->where($query->expr()
+                ->eq('object_type', $query->createNamedParameter('chat')))
+            ->andWhere($query->expr()
+                ->eq('object_id', $query->createNamedParameter($objectId)))
+            ->andWhere($query->expr()
+                ->eq('verb', $query->createNamedParameter('comment')))
+            ->andWhere($query->expr()
+                ->eq('actor_type', $query->createNamedParameter('users')))
+            ->andWhere($query->expr()
+                ->in('actor_id', $query->createNamedParameter($actorId)))
+            ->andWhere($query->expr()->gte(
+                'creation_timestamp',
+                $query->createNamedParameter($this->getLastMessageDateAllowed()
+                    ->format('Y-m-d H:i:s'))
+            ))
+            ->orderBy('creation_timestamp', 'DESC')
+            ->setMaxResults(1)
+            ->execute();
+
+        $lastCommentId = 0;
+        while ($row = $result->fetch()) {
+            $lastCommentId = $row['id'];
+            break;
+        }
+
+        $result->closeCursor();
+
+        return $lastCommentId;
+    }
+
+    /**
+     * Edit comment of an actor.
+     *
+     * @param $commentId
+     * @param $newMessage
+     * @param $actorId
+     * @param $room
+     *
+     * @author Oozman
+     * @return int|null
+     */
+    public function editCommentOfActor($commentId, $newMessage, $actorId, $room)
+    {
+        $comment = null;
+
+        // Get object id.
+        $query  = $this->db->getQueryBuilder();
+        $result = $query->select('id')
+            ->from('talk_rooms')
+            ->where($query->expr()
+                ->eq('token', $query->createNamedParameter($room)))
+            ->setMaxResults(1)
+            ->execute();
+
+        $objectId = 0;
+        while ($row = $result->fetch()) {
+            $objectId = $row['id'];
+            break;
+        }
+
+        if ($objectId < 1) {
+            return $comment;
+        }
+        $result->closeCursor();
+
+        // Get comment.
+        $query  = $this->db->getQueryBuilder();
+        $result = $query->select('id')
+            ->from('comments')
+            ->where($query->expr()
+                ->eq('id', $query->createNamedParameter($commentId)))
+            ->andWhere($query->expr()
+                ->eq('object_type', $query->createNamedParameter('chat')))
+            ->andWhere($query->expr()
+                ->eq('object_id', $query->createNamedParameter($objectId)))
+            ->andWhere($query->expr()
+                ->eq('verb', $query->createNamedParameter('comment')))
+            ->andWhere($query->expr()
+                ->eq('actor_type', $query->createNamedParameter('users')))
+            ->andWhere($query->expr()
+                ->in('actor_id', $query->createNamedParameter($actorId)))
+            ->orderBy('creation_timestamp', 'DESC')
+            ->setMaxResults(1)
+            ->execute();
+
+        while ($row = $result->fetch()) {
+            $comment = $row;
+            break;
+        }
+
+        $result->closeCursor();
+
+        // Update comment.
+        $query = $this->db->getQueryBuilder();
+
+        $result = $query->update('comments')
+            ->set('message', $query->createNamedParameter($newMessage))
+            ->where('id = :id')
+            ->setParameter(':id', $comment['id'])
+            ->execute();
+
+        return $result;
+    }
+
+    /**
+     * Get last message date allowed to be edited, in minutes.
+     *
+     * @param  int  $interval
+     *
+     * @author Oozman
+     * @return \DateTime
+     * @throws \Exception
+     */
+    public function getLastMessageDateAllowed($interval = 15)
+    {
+        $creationDateTime = $this->timeFactory->getDateTime(
+            'now',
+            new \DateTimeZone('UTC')
+        );
+
+        return $creationDateTime->sub(new \DateInterval('P'.$interval.'M'));
     }
 }

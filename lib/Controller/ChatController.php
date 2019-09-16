@@ -41,7 +41,6 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 
-
 class ChatController extends AEnvironmentAwareController
 {
 
@@ -80,6 +79,8 @@ class ChatController extends AEnvironmentAwareController
     /** @var ITimeFactory */
     protected $timeFactory;
 
+    protected $request;
+
     public function __construct(
         string $appName,
         ?string $UserId,
@@ -108,6 +109,7 @@ class ChatController extends AEnvironmentAwareController
         $this->searchResult        = $searchResult;
         $this->timeFactory         = $timeFactory;
         $this->l                   = $l;
+        $this->request             = $request;
     }
 
     /**
@@ -131,7 +133,6 @@ class ChatController extends AEnvironmentAwareController
         string $message,
         string $actorDisplayName = ''
     ): DataResponse {
-
         if ($this->userId === null) {
             $actorType = 'guests';
             $sessionId
@@ -144,37 +145,51 @@ class ChatController extends AEnvironmentAwareController
             $actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 
             if ($sessionId && $actorDisplayName) {
-                $this->guestManager->updateName($this->room, $sessionId,
-                    $actorDisplayName);
+                $this->guestManager->updateName(
+                    $this->room,
+                    $sessionId,
+                    $actorDisplayName
+                );
             }
         } else {
             $actorType = 'users';
             $actorId   = $this->userId;
         }
 
-        if ( ! $actorId) {
+        if (! $actorId) {
             return new DataResponse([], Http::STATUS_NOT_FOUND);
         }
 
         $this->room->ensureOneToOneRoomIsFilled();
-        $creationDateTime = $this->timeFactory->getDateTime('now',
-            new \DateTimeZone('UTC'));
+        $creationDateTime = $this->timeFactory->getDateTime(
+            'now',
+            new \DateTimeZone('UTC')
+        );
 
         try {
-            $comment = $this->chatManager->sendMessage($this->room,
-                $this->participant, $actorType, $actorId, $message,
-                $creationDateTime);
+            $comment = $this->chatManager->sendMessage(
+                $this->room,
+                $this->participant,
+                $actorType,
+                $actorId,
+                $message,
+                $creationDateTime
+            );
         } catch (MessageTooLongException $e) {
             return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
         } catch (\Exception $e) {
             return new DataResponse([], Http::STATUS_BAD_REQUEST);
         }
 
-        $chatMessage = $this->messageParser->createMessage($this->room,
-            $this->participant, $comment, $this->l);
+        $chatMessage = $this->messageParser->createMessage(
+            $this->room,
+            $this->participant,
+            $comment,
+            $this->l
+        );
         $this->messageParser->parseMessage($chatMessage);
 
-        if ( ! $chatMessage->getVisibility()) {
+        if (! $chatMessage->getVisibility()) {
             return new DataResponse([], Http::STATUS_CREATED);
         }
 
@@ -195,6 +210,45 @@ class ChatController extends AEnvironmentAwareController
 
     /**
      * @PublicPage
+     *
+     * Get last message of an actor in a particular room.
+     *
+     * @author Oozman
+     * @return DataResponse
+     * @throws \Exception
+     */
+    public function lastMessage(): DataResponse
+    {
+        $actorId = $this->request->getParam('actor');
+        $room = $this->request->getParam('room');
+
+        $lastCommentId = $this->chatManager->getLastMessageByActorInRoom($room, $actorId);
+
+        return new DataResponse(['id' => (int) $lastCommentId, 'msg' => $lastCommentId], Http::STATUS_OK);
+    }
+
+    /**
+     * @PublicPage
+     *
+     * Edit a specific message.
+     *
+     * @author Oozman
+     * @return DataResponse
+     */
+    public function editMessage(): DataResponse
+    {
+        $actorId = $this->request->getParam('actor');
+        $newMessage = $this->request->getParam('message');
+        $commentId = $this->request->getParam('comment_id');
+        $room = $this->request->getParam('room');
+
+        $result = $this->chatManager->editCommentOfActor($commentId, $newMessage, $actorId, $room);
+
+        return new DataResponse(['count' => $result], Http::STATUS_OK);
+    }
+
+    /**
+     * @PublicPage
      * @RequireParticipant
      *
      * Receives chat messages from the given room.
@@ -206,17 +260,19 @@ class ChatController extends AEnvironmentAwareController
      *
      * - Looking into the future ($lookIntoFuture=1):
      *   If there are currently no messages the response will not be sent
-     *   immediately. Instead, HTTP connection will be kept open waiting for new
-     *   messages to arrive and, when they do, then the response will be sent. The
-     *   connection will not be kept open indefinitely, though; the number of
-     *   seconds to wait for new messages to arrive can be set using the timeout
-     *   parameter; the default timeout is 30 seconds, maximum timeout is 60
-     *   seconds. If the timeout ends a successful but empty response will be
-     *   sent.
-     *   If messages have been returned (status=200) the new $lastKnownMessageId
-     *   for the follow up query is available as `X-Chat-Last-Given` header.
+     *   immediately. Instead, HTTP connection will be kept open waiting for
+     *     new
+     *   messages to arrive and, when they do, then the response will be sent.
+     *     The connection will not be kept open indefinitely, though; the
+     *     number of seconds to wait for new messages to arrive can be set
+     *     using the timeout parameter; the default timeout is 30 seconds,
+     *     maximum timeout is 60 seconds. If the timeout ends a successful but
+     *     empty response will be sent. If messages have been returned
+     *     (status=200) the new $lastKnownMessageId for the follow up query is
+     *     available as `X-Chat-Last-Given` header.
      *
-     * The limit specifies the maximum number of messages that will be returned,
+     * The limit specifies the maximum number of messages that will be
+     *     returned,
      * although the actual number of returned messages could be lower if some
      * messages are not visible to the participant. Note that if none of the
      * messages are visible to the participant the returned number of messages
@@ -225,16 +281,21 @@ class ChatController extends AEnvironmentAwareController
      * returned, but it should be used nevertheless as the $lastKnownMessageId
      * for the follow up query.
      *
-     * @param  int  $lookIntoFuture  Polling for new messages (1) or getting the history of the chat (0)
-     * @param  int  $limit  Number of chat messages to receive (100 by default, 200 at most)
-     * @param  int  $lastKnownMessageId  The last known message (serves as offset)
-     * @param  int  $timeout  Number of seconds to wait for new messages (30 by default, 30 at most)
+     * @param  int  $lookIntoFuture  Polling for new messages (1) or getting
+     *     the history of the chat (0)
+     * @param  int  $limit  Number of chat messages to receive (100 by default,
+     *     200 at most)
+     * @param  int  $lastKnownMessageId  The last known message (serves as
+     *     offset)
+     * @param  int  $timeout  Number of seconds to wait for new messages (30 by
+     *     default, 30 at most)
      *
      * @return DataResponse an array of chat messages, "404 Not found" if the
-     *         room token was not valid or "304 Not modified" if there were no messages;
-     *         each chat message is an array with
-     *         fields 'id', 'token', 'actorType', 'actorId',
-     *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone) and
+     *         room token was not valid or "304 Not modified" if there were no
+     *     messages; each chat message is an array with fields 'id', 'token',
+     *     'actorType', 'actorId',
+     *         'actorDisplayName', 'timestamp' (in seconds and UTC timezone)
+     *     and
      *         'message'.
      */
     public function receiveMessages(
@@ -247,18 +308,28 @@ class ChatController extends AEnvironmentAwareController
         $timeout = min(30, $timeout);
 
         if ($this->participant->getSessionId() !== '0') {
-            $this->room->ping($this->participant->getUser(),
+            $this->room->ping(
+                $this->participant->getUser(),
                 $this->participant->getSessionId(),
-                $this->timeFactory->getTime());
+                $this->timeFactory->getTime()
+            );
         }
 
         $currentUser = $this->userManager->get($this->userId);
         if ($lookIntoFuture) {
-            $comments = $this->chatManager->waitForNewMessages($this->room,
-                $lastKnownMessageId, $limit, $timeout, $currentUser);
+            $comments = $this->chatManager->waitForNewMessages(
+                $this->room,
+                $lastKnownMessageId,
+                $limit,
+                $timeout,
+                $currentUser
+            );
         } else {
-            $comments = $this->chatManager->getHistory($this->room,
-                $lastKnownMessageId, $limit);
+            $comments = $this->chatManager->getHistory(
+                $this->room,
+                $lastKnownMessageId,
+                $limit
+            );
         }
 
         if (empty($comments)) {
@@ -267,11 +338,15 @@ class ChatController extends AEnvironmentAwareController
 
         $messages = [];
         foreach ($comments as $comment) {
-            $message = $this->messageParser->createMessage($this->room,
-                $this->participant, $comment, $this->l);
+            $message = $this->messageParser->createMessage(
+                $this->room,
+                $this->participant,
+                $comment,
+                $this->l
+            );
             $this->messageParser->parseMessage($message);
 
-            if ( ! $message->getVisibility()) {
+            if (! $message->getVisibility()) {
                 continue;
             }
 
@@ -326,11 +401,14 @@ class ChatController extends AEnvironmentAwareController
         $results = array_merge_recursive($exactMatches, $results);
 
         $this->autoCompleteManager->registerSorter(Sorter::class);
-        $this->autoCompleteManager->runSorters(['talk_chat_participants'],
-            $results, [
+        $this->autoCompleteManager->runSorters(
+            ['talk_chat_participants'],
+            $results,
+            [
                 'itemType' => 'chat',
                 'itemId'   => (string) $this->room->getId(),
-            ]);
+            ]
+        );
 
         $results = $this->prepareResultArray($results);
 
@@ -358,7 +436,7 @@ class ChatController extends AEnvironmentAwareController
      */
     public function roomsInfo($roomsInfo): DataResponse
     {
-        return new DataResponse(array('roomsInfo' => $this->chatManager->roomsInfo($roomsInfo)));
+        return new DataResponse(['roomsInfo' => $this->chatManager->roomsInfo($roomsInfo)]);
     }
 
     protected function prepareResultArray(array $results): array
