@@ -702,14 +702,21 @@
                 this.connection.joinRoom(this.token);
             }
 
-            // Enable Copy Paste feature.
-            if(OC.getCurrentUser().uid !== null) OCA.Talk.CopyPaste.init(this);
+            // Load custom features.
+            if (OC.getCurrentUser().uid !== null) {
 
-            // Start new message notifier.
-            if (OC.getCurrentUser().uid !== null) OCA.Talk.Notifier.init(this);
+                // Enable Copy Paste feature.
+                OCA.Talk.CopyPaste.init(this);
 
-            // Listen calling feature.
-            if (OC.getCurrentUser().uid !== null) OCA.Talk.Caller.init(this);
+                // Enable notifier.
+                OCA.Talk.Notifier.init(this);
+
+                // Listen calling feature.
+                OCA.Talk.Caller.init(this);
+
+                // Listen last edit feature.
+                OCA.Talk.LastEdit.init(this);
+            }
         },
         setupWebRTC: function () {
             if (!OCA.SpreedMe.webrtc) {
