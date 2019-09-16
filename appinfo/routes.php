@@ -338,10 +338,10 @@ return [
 		],
 
 		/**
-		 * Files
+		 * FilesIntegration
 		 */
 		[
-			'name' => 'Files#getRoom',
+			'name' => 'FilesIntegration#getRoom',
 			'url' => '/api/{apiVersion}/file/{fileId}',
 			'verb' => 'GET',
 			'requirements' => [
