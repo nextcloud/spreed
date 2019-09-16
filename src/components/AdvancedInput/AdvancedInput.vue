@@ -20,55 +20,62 @@
 -->
 
 <template>
-	<div class="new-message">
-		<form class="new-message-form">
-			<button class="new-message-form__button icon-clip-add-file" />
-			<button class="new-message-form__button icon-emoji-smile" />
-			<AdvancedInput v-model="text" />
-			<button class="new-message-form__button icon-bell-outline" />
-			<button type="submit" class="new-message-form__button--submit icon-folder" />
-		</form>
-	</div>
+	<div v-contenteditable:text="active"
+		class="new-message-form__input"
+		@input="onInput" />
 </template>
 
 <script>
-import AdvancedInput from '../AdvancedInput/AdvancedInput'
 
 export default {
-	name: 'NewMessageForm',
-	components: {
-		AdvancedInput
+	name: 'AdvancedInput',
+	props: {
+		placeholderText: {
+			type: String,
+			default: 'Type something'
+		},
+		activeInput: {
+			type: Boolean,
+			default: true
+		},
+		value: {
+			type: String,
+			required: true
+		}
+	},
+	watch: {
+		value: {
+			immediate: true,
+			handler: (newValue) => {
+				this.text = newValue
+			}
+		}
 	},
 	data: function() {
 		return {
+			active: true,
 			text: ''
+		}
+	},
+	methods: {
+		onInput(event) {
+			this.updateValue()
+		},
+		onBlur() {
+			return 0
+		},
+		updateValue() {
+			this.$emit('input', this.text)
 		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
-
-.new-message {
-    border-top: 1px solid lightgray;
-    position: sticky;
-    position: -webkit-sticky;
-    bottom: 0;
-    background-color: white;
-    &-form {
-        display: flex;
-        align-items: center;
-        &__input {
-            flex-grow: 1;
-            border:none;
-        }
-        &__button {
-            width: 44px;
-            height: 44px;
-            margin: auto;
-            background-color: transparent;
-            border: none;
-        }
-	}
+//Support for the placehoder text in the div contenteditable
+[contenteditable]:empty:before{
+    content: attr(placeholder);
+    display: block;
+    color: gray;
 }
 </style>

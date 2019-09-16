@@ -62,10 +62,8 @@
 			<!--<button @click="show = !show">
 				Toggle sidebar
 			</button>-->
-			<div :windowHeight="windowHeight" class="messages-wrapper" :style="{ height: windowHeight+'px' }">
-				<MessageList />
-				<NewMessageForm />
-			</div>
+			<MessageList />
+			<NewMessageForm />
 		</AppContent>
 		<AppSidebar v-show="show" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
 			:actions="menu" :starred.sync="starred"
@@ -231,8 +229,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.messages-wrapper {
-	display: flex;
-    flex-direction: column;
-}
 </style>

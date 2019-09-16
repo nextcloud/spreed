@@ -4,5 +4,6 @@
 
 script('spreed', 'talk');
 
+style('spreed', 'merged');
 \OC::$server->getEventDispatcher()->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts');
 ?>

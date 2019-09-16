@@ -35,6 +35,7 @@
 	"dependencies": {
 		"nextcloud-vue": "^0.12.3",
 		"vue": "^2.6.10",
+		"vue-contenteditable-directive": "^1.2.0",
 		"vue-virtual-scroller": "^1.0.0-rc.2"
 	},
 	"browserslist": [

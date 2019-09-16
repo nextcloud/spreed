@@ -22,6 +22,7 @@
 <template>
 	<div
 		class="wrapper"
+		:class="{ 'hover': hover }"
 		@mouseover="hover=true"
 		@mouseleave="hover=false">
 		<div class="message">
@@ -32,7 +33,10 @@
 			<div class="message-right">
 				<h6>{{ messageTime }}</h6>
 				<Actions v-if="hover" class="actions">
-					<ActionButton icon="icon-folder" @click="alert('Edit')">
+					<ActionButton icon="icon-reply" @click="alert('Edit')">
+						Reply
+					</ActionButton>
+					<ActionButton icon="icon-reply" @click="alert('Edit')">
 						Reply
 					</ActionButton>
 				</Actions>
@@ -110,6 +114,10 @@ export default {
 	margin: -12px 0 0 38px;
 	padding:2px;
 	}
+}
+
+.hover {
+	background-color: rgba(0, 131, 201, 0.05);
 }
 
 </style>

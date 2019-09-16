@@ -20,23 +20,23 @@
 -->
 
 <template>
-    <div class="NewRoomForm">
-        <Multiselect />
-        <AppNavigationNew />
-    </div>
+	<div class="NewRoomForm">
+		<Multiselect />
+		<AppNavigationNew />
+	</div>
 </template>
 
 <script>
 import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
+import Multiselect from 'nextcloud-vue/dist/Components/Multiselect'
 
-
-    export default {
-        name: 'NewMessageForm',
-        components: {
-            AppNavigationNew,
-            Multiselect
-        }
-    }
+export default {
+	name: 'NewRoomForm',
+	components: {
+		AppNavigationNew,
+		Multiselect
+	}
+}
 </script>
 
 <style lang="scss" scoped>

@@ -21,11 +21,13 @@
  */
 import Vue from 'vue'
 import App from './App'
+import contenteditableDirective from 'vue-contenteditable-directive'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
+Vue.use(contenteditableDirective)
 
 export default new Vue({
 	el: '#content',

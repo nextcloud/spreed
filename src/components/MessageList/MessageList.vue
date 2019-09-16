@@ -56,30 +56,6 @@ export default {
 		Message,
 		MessageBody
 	},
-	computed: {
-		messagesArray() {
-			return new Array(200).fill(0).map((x, id) => {
-				return {
-					messageText: 'Whatever',
-					messageTime: '14:30',
-					id,
-					userName: 'Skjnldsv',
-					isFirstMessage: true
-				}
-			})
-		},
-
-		messages() {
-			const messages = {}
-			this.messagesArray.forEach(message => {
-				messages[message.id] = message
-			})
-			return messages
-		},
-		messagesOldArray() {
-			return Object.values(this.messagesOld)
-		}
-	},
 	data: function() {
 		return {
 			messagesOld: {
@@ -178,6 +154,30 @@ export default {
 					isFirstMessage: true
 				}
 			}
+		}
+	},
+	computed: {
+		messagesArray() {
+			return new Array(200).fill(0).map((x, id) => {
+				return {
+					messageText: 'Whatever',
+					messageTime: '14:30',
+					id,
+					userName: 'Skjnldsv',
+					isFirstMessage: true
+				}
+			})
+		},
+
+		messages() {
+			const messages = {}
+			this.messagesArray.forEach(message => {
+				messages[message.id] = message
+			})
+			return messages
+		},
+		messagesOldArray() {
+			return Object.values(this.messagesOld)
 		}
 	}
 }
