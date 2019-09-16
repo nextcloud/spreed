@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat\Parser;
 
 
-use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Message;
@@ -31,9 +30,12 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCP\Comments\IComment;
+use OCP\Files\File;
+use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IPreview as IPreviewManager;
 use OCP\IURLGenerator;
@@ -42,6 +44,8 @@ use OCP\IUserManager;
 
 class SystemMessage {
 
+	/** @var string */
+	protected $appName;
 	/** @var IUserManager */
 	protected $userManager;
 	/** @var GuestManager */
@@ -50,6 +54,8 @@ class SystemMessage {
 	protected $previewManager;
 	/** @var RoomShareProvider */
 	protected $shareProvider;
+	/** @var IConfig */
+	protected $config;
 	/** @var IRootFolder */
 	protected $rootFolder;
 	/** @var IURLGenerator */
@@ -62,16 +68,20 @@ class SystemMessage {
 	/** @var string[] */
 	protected $guestNames = [];
 
-	public function __construct(IUserManager $userManager,
+	public function __construct(string $appName,
+								IUserManager $userManager,
 								GuestManager $guestManager,
 								IPreviewManager $previewManager,
 								RoomShareProvider $shareProvider,
+								IConfig $config,
 								IRootFolder $rootFolder,
 								IURLGenerator $url) {
+		$this->appName = $appName;
 		$this->userManager = $userManager;
 		$this->guestManager = $guestManager;
 		$this->previewManager = $previewManager;
 		$this->shareProvider = $shareProvider;
+		$this->config = $config;
 		$this->rootFolder = $rootFolder;
 		$this->url = $url;
 	}
@@ -243,6 +253,17 @@ class SystemMessage {
 					$parsedMessage = $this->l->t('You shared a file which is no longer available');
 				}
 			}
+		} else if ($message === 'attachment') {
+			try {
+				$parsedParameters['attachment'] = $this->getAttachment($chatMessage->getRoom(), (int) $parameters['fileId']);
+				$parsedMessage = '{attachment}';
+				$chatMessage->setMessageType('comment');
+			} catch (\Exception $e) {
+				$parsedMessage = $this->l->t('{actor} shared a file which is no longer available');
+				if ($currentUserIsActor) {
+					$parsedMessage = $this->l->t('You shared a file which is no longer available');
+				}
+			}
 		} else {
 			throw new \OutOfBoundsException('Unknown subject');
 		}
@@ -304,6 +325,45 @@ class SystemMessage {
 			'mimetype' => $node->getMimeType(),
 			'preview-available' => $this->previewManager->isAvailable($node) ? 'yes' : 'no',
 		];
+	}
+
+	/**
+	 * @param Room $room
+	 * @param int $fileId
+	 * @return array
+	 * @throws NotFoundException
+	 */
+	protected function getAttachment(Room $room, int $fileId): array {
+		$file = $this->getConversationFile($room, $fileId);
+		return [
+			'type' => 'talk-attachment',
+			'id' => $file->getId(),
+			'name' => $file->getName(),
+			'conversation' => $room->getToken(),
+			'mimetype' => $file->getMimeType(),
+			'preview-available' => $this->previewManager->isMimeSupported($file->getMimeType()) ? 'yes' : 'no',
+		];
+	}
+
+	/**
+	 * @param Room $room
+	 * @param int $fileId
+	 * @return File
+	 * @throws NotFoundException
+	 */
+	protected function getConversationFile(Room $room, int $fileId): File {
+		$instanceId = $this->config->getSystemValueString('instanceid');
+		$appDataFolderName = 'appdata_' . $instanceId . '/talk'; // FIXME appId
+
+		/** @var Folder $folder */
+		$folder = $this->rootFolder->get($appDataFolderName . '/' . $room->getToken());
+		$nodes = $folder->getById($fileId);
+
+		if (empty($nodes)) {
+			throw new NotFoundException('File not found in conversation');
+		}
+
+		return array_pop($nodes);
 	}
 
 	protected function getActor(IComment $comment): array {

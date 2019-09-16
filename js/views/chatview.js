@@ -1084,12 +1084,11 @@
 
 				$.ajax({
 					type: 'POST',
-					url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares',
+					// url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares',
+					url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + self.collection.token + '/file',
 					dataType: 'json',
 					data: {
-						shareType: OC.Share.SHARE_TYPE_ROOM,
-						path: targetPath,
-						shareWith: self.collection.token
+						path: targetPath
 					}
 				}).always(function() {
 					$shareLoadingIcon.addClass('hidden');
