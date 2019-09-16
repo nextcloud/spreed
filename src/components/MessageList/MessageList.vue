@@ -21,7 +21,7 @@
 
 <template>
 	<DynamicScroller
-		:items="messagesArray"
+		:items="messagesOldArray"
 		:min-item-size="60"
 		class="scroller">
 		<template v-slot="{ item, index, active }">
@@ -34,7 +34,7 @@
 				:data-index="item.id">
 				<Message v-bind="item">
 					<MessageBody v-bind="item">
-						<MessageBody v-if="item.parent" v-bind="messages[item.parent]" />
+						<MessageBody v-if="item.parent" v-bind="messagesOld[item.parent]" />
 					</MessageBody>
 				</Message>
 			</DynamicScrollerItem>
@@ -75,6 +75,9 @@ export default {
 				messages[message.id] = message
 			})
 			return messages
+		},
+		messagesOldArray() {
+			return Object.values(this.messagesOld)
 		}
 	},
 	data: function() {
