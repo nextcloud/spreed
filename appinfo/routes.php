@@ -28,7 +28,21 @@ return [
 			'url' => '/',
 			'verb' => 'GET',
 		],
+
+		/**
+		 * Previews
+		 */
+		[
+			'name' => 'Preview#getPreviewByFileId',
+			'url' => '/attachment/{token}/{fileId}',
+			'verb' => 'GET',
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'token' => '^[a-z0-9]{4,30}$',
+			],
+		],
 	],
+
 	'ocs' => [
 		/**
 		 * Signaling
