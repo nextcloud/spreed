@@ -19,8 +19,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import axios from 'nextcloud-axios'
-import { generateOcsUrl } from 'nextcloud-router'
 
 const state = {
 	conversations: {
@@ -63,14 +61,6 @@ const actions = {
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
 		context.commit('indexConversationName', conversation)
-	},
-	async fetchConversations(context) {
-		try {
-			const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
-			console.debug(response)
-		} catch (error) {
-			console.debug(error)
-		}
 	}
 }
 

@@ -102,7 +102,9 @@ import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import MessageList from './components/MessageList/MessageList'
 import NewMessageForm from './components/NewMessageForm/NewMessageForm'
 import NewConversationForm from './components/NewConversationForm/NewConversationForm'
+import { fetchConversations } from './services/conversations'
 
+console.log(fetchConversations)
 export default {
 	name: 'App',
 	components: {
@@ -200,11 +202,16 @@ export default {
 			]
 		}
 	},
-	beforeMount() {
+	async beforeMount() {
 		window.addEventListener('resize', this.onResize)
 		this.onResize()
-		this.$store.dispatch('fetchConversations')
+		const conversations = await fetchConversations()
+		console.debug(conversations.data.ocs)
+		conversations.data.ocs.data.forEach(conversation => {
+			this.$store.dispatch('addConversation', conversation)
+		})
 	},
+
 	methods: {
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
