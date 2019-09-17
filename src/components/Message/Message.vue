@@ -116,8 +116,4 @@ export default {
 	}
 }
 
-.hover {
-	background-color: rgba(0, 131, 201, 0.05);
-}
-
 </style>

@@ -24,9 +24,9 @@
 		<form class="new-message-form">
 			<button class="new-message-form__button icon-clip-add-file" />
 			<button class="new-message-form__button icon-emoji-smile" />
-			<AdvancedInput v-model="text" />
+			<AdvancedInput v-model="text" @submit="handleSubmit" />
 			<button class="new-message-form__button icon-bell-outline" />
-			<button type="submit" class="new-message-form__button--submit icon-folder" />
+			<button type="submit" class="new-message-form__button icon-folder" />
 		</form>
 	</div>
 </template>
@@ -42,6 +42,11 @@ export default {
 	data: function() {
 		return {
 			text: ''
+		}
+	},
+	methods: {
+		handleSubmit() {
+			this.text = ''
 		}
 	}
 }

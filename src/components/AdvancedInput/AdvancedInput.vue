@@ -21,8 +21,9 @@
 
 <template>
 	<div v-contenteditable:text="active"
+		:placeHolder="placeholderText"
 		class="new-message-form__input"
-		@input="onInput" />
+		@keydown.enter="handleKeydown" />
 </template>
 
 <script>
@@ -43,29 +44,32 @@ export default {
 			required: true
 		}
 	},
-	watch: {
-		value: {
-			immediate: true,
-			handler: (newValue) => {
-				this.text = newValue
-			}
-		}
-	},
 	data: function() {
 		return {
 			active: true,
 			text: ''
 		}
 	},
-	methods: {
-		onInput(event) {
-			this.updateValue()
+	watch: {
+		text(text) {
+			this.$emit('update:value', text)
+			this.$emit('input', text)
+			this.$emit('change', text)
 		},
+		value(value) {
+			this.text = value
+		}
+	},
+	methods: {
 		onBlur() {
 			return 0
 		},
-		updateValue() {
-			this.$emit('input', this.text)
+		handleKeydown(event) {
+			// TODO: add support for CTRL+ENTER new line
+			if (!(event.shiftKey)) {
+				event.preventDefault()
+				this.$emit('submit', event)
+			}
 		}
 	}
 }
