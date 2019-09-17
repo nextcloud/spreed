@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div class="NewRoomForm">
+	<div class="NewConversationForm">
 		<Multiselect />
 		<AppNavigationNew />
 	</div>
@@ -31,7 +31,7 @@ import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
 import Multiselect from 'nextcloud-vue/dist/Components/Multiselect'
 
 export default {
-	name: 'NewRoomForm',
+	name: 'NewConversationForm',
 	components: {
 		AppNavigationNew,
 		Multiselect

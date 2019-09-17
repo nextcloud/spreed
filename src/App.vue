@@ -8,6 +8,7 @@
 				button-id="new-conversation-button"
 				button-class="icon-add"
 				@click="newButtonAction" />
+			<NewConversationForm />
 			<ul id="app-vueexample-navigation">
 				<AppNavigationItem title="Billie Holiday">
 					<Avatar slot="icon" user="Billie Holiday" display-name="Billie Holiday" />
@@ -100,6 +101,7 @@ import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import MessageList from './components/MessageList/MessageList'
 import NewMessageForm from './components/NewMessageForm/NewMessageForm'
+import NewConversationForm from './components/NewConversationForm/NewConversationForm'
 
 export default {
 	name: 'App',
@@ -116,7 +118,8 @@ export default {
 		ActionButton,
 		Avatar,
 		MessageList,
-		NewMessageForm
+		NewMessageForm,
+		NewConversationForm
 	},
 	data: function() {
 		return {
@@ -200,6 +203,7 @@ export default {
 	beforeMount() {
 		window.addEventListener('resize', this.onResize)
 		this.onResize()
+		this.$store.dispatch('fetchConversations')
 	},
 	methods: {
 		onResize() {

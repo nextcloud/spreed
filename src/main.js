@@ -21,15 +21,32 @@
  */
 import Vue from 'vue'
 import App from './App'
+import Vuex from 'vuex'
 import contenteditableDirective from 'vue-contenteditable-directive'
+import store from './store'
+import { generateFilePath } from 'nextcloud-router'
+import { getRequestToken } from 'nextcloud-auth'
+
+// CSP config for webpack dynamic chunk loading
+// eslint-disable-next-line
+__webpack_nonce__ = btoa(getRequestToken())
+
+// Correct the root of the app for chunk loading
+// OC.linkTo matches the apps folders
+// OC.generateUrl ensure the index.php (or not)
+// We do not want the index.php since we're loading files
+// eslint-disable-next-line
+__webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
 Vue.prototype.t = t
 Vue.prototype.n = n
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 Vue.use(contenteditableDirective)
+Vue.use(Vuex)
 
 export default new Vue({
 	el: '#content',
+	store,
 	render: h => h(App)
 })

@@ -33,7 +33,7 @@ export default {
 	props: {
 		placeholderText: {
 			type: String,
-			default: 'Type something'
+			default: 'New Message ...'
 		},
 		activeInput: {
 			type: Boolean,

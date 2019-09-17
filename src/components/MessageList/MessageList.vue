@@ -21,7 +21,7 @@
 
 <template>
 	<DynamicScroller
-		:items="messagesOldArray"
+		:items="messageList"
 		:min-item-size="60"
 		class="scroller">
 		<template v-slot="{ item, index, active }">
@@ -169,6 +169,10 @@ export default {
 			})
 		},
 
+		messageList() {
+			return this.$store.getters.messagesList
+		},
+
 		messages() {
 			const messages = {}
 			this.messagesArray.forEach(message => {
@@ -185,6 +189,6 @@ export default {
 
 <style lang="scss" scoped>
 .scroller {
-	height: auto
+	flex: 1 0;
 }
 </style>

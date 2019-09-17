@@ -27,12 +27,12 @@
 		@mouseleave="hover=false">
 		<div class="message">
 			<div class="message-avatar">
-				<Avatar v-if="isFirstMessage" :user="userName" :display-name="userName" />
+				<Avatar v-show="isFirstMessage" :user="userName" :display-name="userName" />
 			</div>
 			<slot />
 			<div class="message-right">
 				<h6>{{ messageTime }}</h6>
-				<Actions v-if="hover" class="actions">
+				<Actions v-show="hover" class="actions">
 					<ActionButton icon="icon-reply" @click="alert('Edit')">
 						Reply
 					</ActionButton>
