@@ -35,7 +35,7 @@ use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IRequest;
 
-class FilesController extends AEnvironmentAwareController {
+class FilesController extends AEnvironmentAwareOCSController {
 
 	/** @var ChatManager */
 	protected $chatManager;

@@ -22,9 +22,11 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
+use Exception;
 use OC\AppFramework\Utility\ControllerMethodReflector;
 use OCA\Talk\Controller\AEnvironmentAwareController;
-use OCA\Talk\Controller\EnvironmentAwareTrait;
+use OCA\Talk\Controller\AEnvironmentAwareOCSController;
+use OCA\Talk\Controller\IEnvironmentAwareController;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -42,7 +44,6 @@ use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
-use OCP\IUserSession;
 
 class InjectionMiddleware extends Middleware {
 
@@ -79,7 +80,8 @@ class InjectionMiddleware extends Middleware {
 	 * @throws LobbyException
 	 */
 	public function beforeController($controller, $methodName): void {
-		if (!$controller instanceof AEnvironmentAwareController) {
+		if (!$controller instanceof AEnvironmentAwareOCSController &&
+			!$controller instanceof AEnvironmentAwareController) {
 			return;
 		}
 
@@ -109,11 +111,11 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareController $controller
+	 * @param IEnvironmentAwareController $controller
 	 * @param bool $moderatorRequired
 	 * @throws NotAModeratorException
 	 */
-	protected function getLoggedIn(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
+	protected function getLoggedIn(IEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		$controller->setRoom($room);
@@ -127,12 +129,12 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareController $controller
+	 * @param IEnvironmentAwareController $controller
 	 * @param bool $moderatorRequired
 	 * @throws NotAModeratorException
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getLoggedInOrGuest(AEnvironmentAwareController $controller, bool $moderatorRequired): void {
+	protected function getLoggedInOrGuest(IEnvironmentAwareController $controller, bool $moderatorRequired): void {
 		$token = $this->request->getParam('token');
 		$room = $this->manager->getRoomForParticipantByToken($token, $this->userId);
 		$controller->setRoom($room);
@@ -151,10 +153,10 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareController $controller
+	 * @param IEnvironmentAwareController $controller
 	 * @throws ReadOnlyException
 	 */
-	protected function checkReadOnlyState(AEnvironmentAwareController $controller): void {
+	protected function checkReadOnlyState(IEnvironmentAwareController $controller): void {
 		$room = $controller->getRoom();
 		if (!$room instanceof Room || $room->getReadOnly() === Room::READ_ONLY) {
 			throw new ReadOnlyException();
@@ -162,10 +164,10 @@ class InjectionMiddleware extends Middleware {
 	}
 
 	/**
-	 * @param AEnvironmentAwareController $controller
+	 * @param IEnvironmentAwareController $controller
 	 * @throws LobbyException
 	 */
-	protected function checkLobbyState(AEnvironmentAwareController $controller): void {
+	protected function checkLobbyState(IEnvironmentAwareController $controller): void {
 		try {
 			$this->getLoggedInOrGuest($controller, true);
 			return;
@@ -182,11 +184,11 @@ class InjectionMiddleware extends Middleware {
 	/**
 	 * @param Controller $controller
 	 * @param string $methodName
-	 * @param \Exception $exception
-	 * @throws \Exception
+	 * @param Exception $exception
+	 * @throws Exception
 	 * @return Response
 	 */
-	public function afterException($controller, $methodName, \Exception $exception): Response {
+	public function afterException($controller, $methodName, Exception $exception): Response {
 		if ($exception instanceof RoomNotFoundException ||
 			$exception instanceof ParticipantNotFoundException) {
 			if ($controller instanceof OCSController) {

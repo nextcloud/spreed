@@ -51,7 +51,7 @@ use OCP\IGroupManager;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class RoomController extends AEnvironmentAwareController {
+class RoomController extends AEnvironmentAwareOCSController {
 	/** @var string|null */
 	private $userId;
 	/** @var TalkSession */

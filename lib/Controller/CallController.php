@@ -32,7 +32,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
-class CallController extends AEnvironmentAwareController {
+class CallController extends AEnvironmentAwareOCSController {
 
 	/** @var ITimeFactory */
 	private $timeFactory;

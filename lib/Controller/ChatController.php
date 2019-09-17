@@ -43,7 +43,7 @@ use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 
-class ChatController extends AEnvironmentAwareController {
+class ChatController extends AEnvironmentAwareOCSController {
 
 	/** @var string */
 	private $userId;

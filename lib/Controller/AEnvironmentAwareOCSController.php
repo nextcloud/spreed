@@ -28,9 +28,9 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCP\AppFramework\Controller;
+use OCP\AppFramework\OCSController;
 
-abstract class AEnvironmentAwareController extends Controller implements IEnvironmentAwareController {
+abstract class AEnvironmentAwareOCSController extends OCSController implements IEnvironmentAwareController {
 
 	/** @var Room */
 	protected $room;

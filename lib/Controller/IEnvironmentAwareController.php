@@ -1,10 +1,8 @@
 <?php
 declare(strict_types=1);
 /**
- * @copyright Copyright (c) 2016 Lukas Reschke <lukas@statuscode.ch>
- * @copyright Copyright (c) 2016 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
- * @author Lukas Reschke <lukas@statuscode.ch>
  * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -30,27 +28,14 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Controller;
 
-abstract class AEnvironmentAwareController extends Controller implements IEnvironmentAwareController {
+interface IEnvironmentAwareController  {
 
-	/** @var Room */
-	protected $room;
-	/** @var Participant */
-	protected $participant;
+	public function setRoom(Room $room): void;
 
-	public function setRoom(Room $room): void {
-		$this->room = $room;
-	}
+	public function getRoom(): ?Room;
 
-	public function getRoom(): ?Room {
-		return $this->room;
-	}
+	public function setParticipant(Participant $participant): void;
 
-	public function setParticipant(Participant $participant): void {
-		$this->participant = $participant;
-	}
-
-	public function getParticipant(): ?Participant {
-		return $this->participant;
-	}
+	public function getParticipant(): ?Participant;
 
 }
