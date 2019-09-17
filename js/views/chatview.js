@@ -98,7 +98,10 @@
 						var $li = $(li);
 						var $avatar = $li.find('.avatar');
 						var avatarSize = 32;
-						var userId = '' + $avatar.data('user-id');
+						var userId = $avatar.data('user-id');
+						if (userId) {
+							userId = String(userId);
+						}
 						if (userId === 'all') {
 							$avatar.addClass('avatar icon icon-contacts');
 						} else if ($avatar.data('user-id') && userId.indexOf('guest/') !== 0) {
@@ -616,7 +619,10 @@
 			$el.find('.has-tooltip').tooltip({container: this._tooltipContainer});
 
 			var setAvatar = function($element, size) {
-				var userId = '' + $element.data('user-id');
+				var userId = $element.data('user-id');
+				if (userId) {
+					userId = String(userId);
+				}
 				if (userId && userId.substr(0, 6) !== 'guest/') {
 					if (userId === 'all') {
 						$element.addClass('avatar icon icon-contacts');
@@ -820,7 +826,10 @@
 			$comment.find('.mention-user').each(function () {
 				var $this = $(this),
 					$inserted = $this.parent(),
-					userId = '' + $this.find('.avatar').data('user-id');
+					userId = $this.find('.avatar').data('user-id');
+				if (userId) {
+					userId = String(userId);
+				}
 				if (userId.indexOf(' ') !== -1 || userId.indexOf('guest/') === 0) {
 					$inserted.html('@"' + userId + '"');
 				} else {
