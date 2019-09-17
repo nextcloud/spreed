@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2018 Team Popcorn <teampopcornberlin@gmail.com>
+ * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
  *
- * @author Team Popcorn <teampopcornberlin@gmail.com>
+ * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -19,6 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+import Vue from 'vue'
 
 const state = {
 	conversations: {
@@ -28,6 +29,7 @@ const state = {
 }
 
 const getters = {
+	conversations: state => state.conversations,
 	conversationsList: state => Object.values(state.conversations)
 }
 
@@ -38,7 +40,7 @@ const mutations = {
      * @param {Object} conversation the conversation api object
      */
 	addConversation(state, conversation) {
-		state.conversations[conversation.id] = conversation
+		Vue.set(state.conversations, conversation.id, conversation)
 	},
 	/**
      *
@@ -48,7 +50,7 @@ const mutations = {
      * @param {string} object.displayName conversation name
      */
 	indexConversationName(state, { id, displayName }) {
-		state.conversationsNames[id] = displayName
+		Vue.set(state.conversationsNames, id, displayName)
 	}
 }
 

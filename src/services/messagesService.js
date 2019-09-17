@@ -20,22 +20,16 @@
  *
  */
 
-import Vue from 'vue'
-import Vuex, { Store } from 'vuex'
-import conversations from './conversations'
-import messages from './messages'
+import axios from 'nextcloud-axios'
+import { generateOcsUrl } from 'nextcloud-router'
 
-Vue.use(Vuex)
+const fetchConversations = async function() {
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `/room/{${token}}`)
+		return response
+	} catch (error) {
+		console.debug(error)
+	}
+}
 
-const mutations = {}
-
-export default new Store({
-	modules: {
-		conversations,
-		messages
-	},
-
-	mutations,
-
-	strict: process.env.NODE_ENV !== 'production'
-})
+export { fetchConversations }

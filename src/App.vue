@@ -1,3 +1,24 @@
+<!--
+  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  -
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
 <template>
 	<Content :class="{'icon-loading': loading}" app-name="vueexample">
 		<AppNavigation>
@@ -8,53 +29,7 @@
 				button-id="new-conversation-button"
 				button-class="icon-add"
 				@click="newButtonAction" />
-			<NewConversationForm />
-			<ul id="app-vueexample-navigation">
-				<AppNavigationItem title="Billie Holiday">
-					<Avatar slot="icon" user="Billie Holiday" display-name="Billie Holiday" />
-					<AppNavigationCounter slot="counter" :highlighted="true">
-						99+
-					</AppNavigationCounter>
-					<template slot="actions">
-						<ActionButton icon="icon-edit" @click="alert('Edit')">
-							Edit
-						</ActionButton>
-						<ActionButton icon="icon-delete" @click="alert('Delete')">
-							Delete
-						</ActionButton>
-						<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
-					</template>
-				</AppNavigationItem>
-				<AppNavigationItem title="Charles Mingus">
-					<Avatar slot="icon" user="Charles Mingus" display-name="Charles Mingus" />
-					<AppNavigationCounter slot="counter" :highlighted="true">
-						3
-					</AppNavigationCounter>
-					<template slot="actions">
-						<ActionButton icon="icon-edit" @click="alert('Edit')">
-							Edit
-						</ActionButton>
-						<ActionButton icon="icon-delete" @click="alert('Delete')">
-							Delete
-						</ActionButton>
-						<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
-					</template>
-				</AppNavigationItem>
-				<AppNavigationItem title="The fellas" icon="icon-group">
-					<AppNavigationCounter slot="counter" :highlighted="true">
-						12
-					</AppNavigationCounter>
-					<template slot="actions">
-						<ActionButton icon="icon-edit" @click="alert('Edit')">
-							Edit
-						</ActionButton>
-						<ActionButton icon="icon-delete" @click="alert('Delete')">
-							Delete
-						</ActionButton>
-						<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
-					</template>
-				</AppNavigationItem>
-			</ul>
+			<ConversationsList />
 			<AppNavigationSettings>
 				Example settings
 			</AppNavigationSettings>
@@ -91,37 +66,28 @@
 import Content from 'nextcloud-vue/dist/Components/Content'
 import AppContent from 'nextcloud-vue/dist/Components/AppContent'
 import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
-import AppNavigationItem from 'nextcloud-vue/dist/Components/AppNavigationItem'
 import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
-import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
-import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import MessageList from './components/MessageList/MessageList'
 import NewMessageForm from './components/NewMessageForm/NewMessageForm'
-import NewConversationForm from './components/NewConversationForm/NewConversationForm'
-import { fetchConversations } from './services/conversations'
+import ConversationsList from './components/ConversationsList/ConversationsList'
+import { fetchConversations } from './services/conversationsService'
 
-console.log(fetchConversations)
 export default {
 	name: 'App',
 	components: {
 		Content,
 		AppContent,
 		AppNavigation,
-		AppNavigationItem,
 		AppNavigationNew,
 		AppNavigationSettings,
 		AppSidebar,
 		AppSidebarTab,
-		AppNavigationCounter,
-		ActionButton,
-		Avatar,
+		ConversationsList,
 		MessageList,
-		NewMessageForm,
-		NewConversationForm
+		NewMessageForm
 	},
 	data: function() {
 		return {
@@ -133,75 +99,7 @@ export default {
 			windowHeight: 0
 		}
 	},
-	computed: {
-		// App navigation
-		menu: function() {
-			return [
-				{
-					id: 'app-category-your-apps',
-					classes: [],
-					href: '#1',
-					// action: this.log,
-					icon: 'icon-category-installed',
-					text: t('settings', 'Your apps')
-				},
-				{
-					caption: true,
-					text: t('vueexample', 'Section')
-				},
-				{
-					id: 'app-category-enabled',
-					classes: [],
-					icon: 'icon-category-enabled',
-					href: '#2',
-					utils: {
-						actions: [{
-							icon: 'icon-delete',
-							text: t('settings', 'Remove group'),
-							action: function() {
-								alert('remove')
-							}
-						}]
-					},
-					text: t('settings', 'Active apps')
-				},
-				{
-					id: 'app-category-enabled',
-					classes: [],
-					icon: 'icon-category-enabled',
-					href: '#3',
-					utils: {
-						counter: 123,
-						actions: [
-							{
-								icon: 'icon-delete',
-								text: t('settings', 'Remove group'),
-								action: function() {
-									alert('remove')
-								}
-							},
-							{
-								icon: 'icon-delete',
-								text: t('settings', 'Remove group'),
-								action: function() {
-									alert('remove')
-								}
-							}
-						]
-					},
-					text: t('settings', 'Active apps')
-				},
-				{
-					id: 'app-category-disabled',
-					classes: [],
-					icon: 'icon-category-disabled',
-					href: '#4',
-					undo: true,
-					text: t('settings', 'Disabled apps')
-				}
-			]
-		}
-	},
+
 	async beforeMount() {
 		window.addEventListener('resize', this.onResize)
 		this.onResize()
@@ -215,19 +113,6 @@ export default {
 	methods: {
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
-		},
-		addOption(val) {
-			this.options.push(val)
-			this.select.push(val)
-		},
-		previous(data) {
-			console.debug(data)
-		},
-		next(data) {
-			console.debug(data)
-		},
-		close(data) {
-			console.debug(data)
 		},
 		newButtonAction(e) {
 			console.debug(e)
