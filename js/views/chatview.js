@@ -848,13 +848,25 @@
 			var defaultIconUrl = OC.imagePath('core', 'filetypes/file');
 			var previewUrl = defaultIconUrl;
 			if ($filePreview.data('preview-available') === 'yes') {
-				previewUrl = OC.generateUrl(
-					'/core/preview?fileId={fileId}&x={width}&y={height}',
-					{
-						fileId: $filePreview.data('file-id'),
-						width: previewSize,
-						height: previewSize
-					});
+				if ($filePreview.data('type') === 'talk-attachment') {
+					previewSize *= 2;
+					previewUrl = OC.generateUrl(
+						'/apps/spreed/attachment/{conversation}/{fileId}?x={width}&y={height}',
+						{
+							conversation: this.model.get('token'),
+							fileId: $filePreview.data('file-id'),
+							width: previewSize,
+							height: previewSize
+						});
+				} else {
+					previewUrl = OC.generateUrl(
+						'/core/preview?fileId={fileId}&x={width}&y={height}',
+						{
+							fileId: $filePreview.data('file-id'),
+							width: previewSize,
+							height: previewSize
+						});
+				}
 			} else {
 				previewUrl = OC.MimeType.getIconUrl($filePreview.data('mimetype'));
 			}

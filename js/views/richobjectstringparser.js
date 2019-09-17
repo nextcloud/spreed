@@ -80,6 +80,17 @@
 
 					return this.callTemplate(parameter);
 
+				case 'talk-attachment':
+					parameter.link = 'https://nextcloud18.local/';
+					if (parameter['preview-available'] === 'yes' && (
+						parameter.mimetype.indexOf('image/') === 0 ||
+						parameter.mimetype.indexOf('video/') === 0)) {
+						if (!this.mediaTemplate) {
+							this.mediaTemplate = OCA.Talk.Views.Templates['richobjectstringparser_talkattachment_media'];
+						}
+						return this.mediaTemplate(parameter);
+					}
+
 				case 'file':
 					if (!this.filePreviewTemplate) {
 						this.filePreviewTemplate = OCA.Talk.Views.Templates['richobjectstringparser_filepreview'];

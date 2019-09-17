@@ -377,6 +377,8 @@ templates['richobjectstringparser_filepreview'] = template({"compiler":[8,">= 4.
     + alias5(((helper = (helper = helpers.link || (depth0 != null ? depth0.link : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"link","hash":{},"data":data}) : helper)))
     + "\" class=\"filePreviewContainer\" target=\"_blank\" rel=\"noopener noreferrer\">\n	<span class=\"filePreview\" data-file-id=\""
     + alias5(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\" data-type=\""
+    + alias5(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"type","hash":{},"data":data}) : helper)))
     + "\" data-mimetype=\""
     + alias5(((helper = (helper = helpers.mimetype || (depth0 != null ? depth0.mimetype : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"mimetype","hash":{},"data":data}) : helper)))
     + "\" data-preview-available=\""
@@ -384,6 +386,21 @@ templates['richobjectstringparser_filepreview'] = template({"compiler":[8,">= 4.
     + "\"></span>\n	<strong>"
     + alias5(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"name","hash":{},"data":data}) : helper)))
     + "</strong>\n</a>\n";
+},"useData":true});
+templates['richobjectstringparser_talkattachment_media'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=container.propertyIsEnumerable, alias2=depth0 != null ? depth0 : (container.nullContext || {}), alias3=container.hooks.helperMissing, alias4="function", alias5=container.escapeExpression;
+
+  return "<a href=\""
+    + alias5(((helper = (helper = helpers.link || (depth0 != null ? depth0.link : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"link","hash":{},"data":data}) : helper)))
+    + "\" class=\"filePreviewContainer\" target=\"_blank\" rel=\"noopener noreferrer\">\n	<span class=\"filePreview\" data-file-id=\""
+    + alias5(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\" data-type=\""
+    + alias5(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"type","hash":{},"data":data}) : helper)))
+    + "\" data-mimetype=\""
+    + alias5(((helper = (helper = helpers.mimetype || (depth0 != null ? depth0.mimetype : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"mimetype","hash":{},"data":data}) : helper)))
+    + "\" data-preview-available=\""
+    + alias5(((helper = (helper = helpers["preview-available"] || (depth0 != null ? depth0["preview-available"] : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"preview-available","hash":{},"data":data}) : helper)))
+    + "\"></span>\n</a>\n";
 },"useData":true});
 templates['richobjectstringparser_unknown'] = template({"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper, alias1=container.propertyIsEnumerable;
