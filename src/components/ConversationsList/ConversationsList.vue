@@ -49,6 +49,7 @@ import AppNavigationItem from 'nextcloud-vue/dist/Components/AppNavigationItem'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import { fetchConversations } from '../../services/conversationsService'
 
 export default {
 	name: 'ConversationsList',
@@ -65,6 +66,12 @@ export default {
 		conversations() {
 			return this.$store.getters.conversations
 		}
+	},
+	async beforeMount() {
+		const conversations = await fetchConversations()
+		conversations.data.ocs.data.forEach(conversation => {
+			this.$store.dispatch('addConversation', conversation)
+		})
 	}
 }
 </script>

@@ -67,7 +67,6 @@ import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSe
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
 import ConversationsList from './components/ConversationsList/ConversationsList'
-import { fetchConversations } from './services/conversationsService'
 
 export default {
 	name: 'App',
@@ -92,14 +91,9 @@ export default {
 		}
 	},
 
-	async beforeMount() {
+	beforeMount() {
 		window.addEventListener('resize', this.onResize)
 		this.onResize()
-		const conversations = await fetchConversations()
-		console.debug(conversations.data.ocs)
-		conversations.data.ocs.data.forEach(conversation => {
-			this.$store.dispatch('addConversation', conversation)
-		})
 	},
 
 	methods: {

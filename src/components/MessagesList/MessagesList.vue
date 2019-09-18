@@ -47,6 +47,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller/dist/
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Message from './Message/Message'
 import MessageBody from './Message/MessageBody'
+import { fetchMessages } from '../../services/messagesService'
 
 export default {
 	name: 'MessagesList',
@@ -72,6 +73,27 @@ export default {
 		},
 		messages() {
 			return this.$store.getters.messages
+		}
+	},
+	watch: {
+		token: function() {
+			this.onTokenChange()
+		}
+	},
+	// Fetches the messages when the MessageList is mounted for the
+	// first time. The router mounts this component only if the token
+	// is passed in so there's no need to check the token prop.
+	beforeMount() {
+		this.onTokenChange()
+	},
+	methods: {
+		async onTokenChange() {
+			const messages = await fetchMessages(this.token)
+			console.debug(this.token)
+			console.debug(messages)
+			messages.data.ocs.data.forEach(message => {
+				this.$store.dispatch('processMessage', message)
+			})
 		}
 	}
 }

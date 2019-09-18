@@ -28,5 +28,6 @@ export default {
 .chatview {
     display: flex;
 	flex-direction: column;
+	align-content: space-between;
 }
 </style>
