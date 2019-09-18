@@ -1,7 +1,7 @@
 <!--
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  - @author Marco Ambrosini <marcoambrosini@pm.me
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -24,6 +24,7 @@
 		<AppNavigationItem
 			v-for="item of conversationsList"
 			:key="item.id"
+			:to="{ name: 'conversation', params: { token: item.token }}"
 			:title="item.displayName">
 			<Avatar slot="icon" :user="item.displayName" :display-name="item.displayName" />
 			<AppNavigationCounter slot="counter" :highlighted="true">

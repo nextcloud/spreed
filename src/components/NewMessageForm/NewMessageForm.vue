@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import AdvancedInput from '../AdvancedInput/AdvancedInput'
+import AdvancedInput from './AdvancedInput/AdvancedInput'
 
 export default {
 	name: 'NewMessageForm',

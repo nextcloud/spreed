@@ -20,16 +20,32 @@
  *
  */
 
-import axios from 'nextcloud-axios'
-import { generateOcsUrl } from 'nextcloud-router'
+import Vue from 'vue'
+import Router from 'vue-router'
+import { generateUrl } from 'nextcloud-router'
+import WelcomeView from '../views/WelcomeView.vue'
+import ChatView from '../views/ChatView.vue'
 
-const fetchMessages = async function() {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `/room/{${token}}`)
-		return response
-	} catch (error) {
-		console.debug(error)
-	}
-}
+Vue.use(Router)
 
-export { fetchMessages }
+export default new Router({
+	mode: 'history',
+	// if index.php is in the url AND we got this far, then it's working:
+	// let's keep using index.php in the url
+	base: generateUrl('/', ''),
+	linkActiveClass: 'active',
+	routes: [
+		{
+			path: '/apps/spreed',
+			name: 'root',
+			component: WelcomeView,
+			props: true
+		},
+		{
+			path: '/call/:token',
+			name: 'conversation',
+			component: ChatView,
+			props: true
+		}
+	]
+})

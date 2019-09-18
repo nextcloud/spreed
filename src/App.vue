@@ -35,11 +35,7 @@
 			</AppNavigationSettings>
 		</AppNavigation>
 		<AppContent>
-			<!--<button @click="show = !show">
-				Toggle sidebar
-			</button>-->
-			<MessageList />
-			<NewMessageForm />
+			<router-view />
 		</AppContent>
 		<AppSidebar v-show="show" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
 			:actions="menu" :starred.sync="starred"
@@ -70,8 +66,6 @@ import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
-import MessageList from './components/MessageList/MessageList'
-import NewMessageForm from './components/NewMessageForm/NewMessageForm'
 import ConversationsList from './components/ConversationsList/ConversationsList'
 import { fetchConversations } from './services/conversationsService'
 
@@ -85,9 +79,7 @@ export default {
 		AppNavigationSettings,
 		AppSidebar,
 		AppSidebarTab,
-		ConversationsList,
-		MessageList,
-		NewMessageForm
+		ConversationsList
 	},
 	data: function() {
 		return {

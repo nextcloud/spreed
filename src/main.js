@@ -24,6 +24,8 @@ import App from './App'
 import Vuex from 'vuex'
 import contenteditableDirective from 'vue-contenteditable-directive'
 import store from './store'
+import VueRouter from 'vue-router'
+import router from './router/router'
 import { generateFilePath } from 'nextcloud-router'
 import { getRequestToken } from 'nextcloud-auth'
 
@@ -45,9 +47,11 @@ Vue.prototype.OCA = OCA
 
 Vue.use(contenteditableDirective)
 Vue.use(Vuex)
+Vue.use(VueRouter)
 
 export default new Vue({
 	el: '#content',
 	store,
+	router,
 	render: h => h(App)
 })

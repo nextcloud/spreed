@@ -120,7 +120,8 @@ const state = {
 }
 
 const getters = {
-	messagesList: state => Object.values(state.messages)
+	messagesList: state => Object.values(state.messages),
+	messages: state => state.messages
 }
 
 const mutations = {
