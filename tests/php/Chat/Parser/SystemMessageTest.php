@@ -797,14 +797,14 @@ class SystemMessageTest extends TestCase {
 
 		$this->assertSame([
 			'type' => 'guest',
-			'id' => $sessionHash,
+			'id' => 'guest/' . $sessionHash,
 			'name' => 'name',
 		], self::invokePrivate($parser, 'getGuest', [$sessionHash]));
 
 		// Cached call: no call to getGuestName() again
 		$this->assertSame([
 			'type' => 'guest',
-			'id' => $sessionHash,
+			'id' => 'guest/' . $sessionHash,
 			'name' => 'name',
 		], self::invokePrivate($parser, 'getGuest', [$sessionHash]));
 	}
