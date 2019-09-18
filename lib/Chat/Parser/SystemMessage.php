@@ -341,7 +341,7 @@ class SystemMessage {
 
 		return [
 			'type' => 'guest',
-			'id' => $sessionHash,
+			'id' => 'guest/' . $sessionHash,
 			'name' => $this->guestNames[$sessionHash],
 		];
 	}
