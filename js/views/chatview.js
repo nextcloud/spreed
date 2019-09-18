@@ -209,8 +209,8 @@
 			}
 
 			return this._addCommentTemplate(_.extend({
-				actorId: OC.getCurrentUser().uid,
-				actorDisplayName: OC.getCurrentUser().displayName,
+				actorId: OC.getCurrentUser().uid || 'guest/' + this.model.get('hashedSessionId'),
+				actorDisplayName: OC.getCurrentUser().displayName || '',
 				newMessagePlaceholder: newMessagePlaceholder,
 				submitText: submitText,
 				shareText: t('spreed', 'Share'),
