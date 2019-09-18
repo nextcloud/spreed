@@ -47,6 +47,9 @@ const mutations = {
 			Vue.set(state.messages, message.token, {})
 		}
 		Vue.set(state.messages[message.token], message.id, message)
+	},
+	deleteMessage(state, token, id) {
+		delete state.messages[token][id]
 	}
 }
 
@@ -57,6 +60,9 @@ const actions = {
 			message.parent = message.parent.id
 		}
 		context.commit('addMessage', message)
+	},
+	deleteMessage(context, token, id) {
+		context.commit('deleteMessage', token, id)
 	}
 }
 

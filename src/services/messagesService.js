@@ -32,4 +32,13 @@ const fetchMessages = async function(token) {
 	}
 }
 
-export { fetchMessages }
+const postNewMessage = async function(token, message) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName: '' })
+		return response
+	} catch (error) {
+		console.debug(error)
+	}
+}
+
+export { fetchMessages, postNewMessage }

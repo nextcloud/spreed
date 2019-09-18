@@ -26,13 +26,14 @@
 			<button class="new-message-form__button icon-emoji-smile" />
 			<AdvancedInput v-model="text" @submit="handleSubmit" />
 			<button class="new-message-form__button icon-bell-outline" />
-			<button type="submit" class="new-message-form__button icon-folder" />
+			<button type="submit" class="new-message-form__button icon-folder" @click.prevent="handleSubmit" />
 		</form>
 	</div>
 </template>
 
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput'
+import { postNewMessage } from '../../services/messagesService'
 
 export default {
 	name: 'NewMessageForm',
@@ -45,7 +46,22 @@ export default {
 		}
 	},
 	methods: {
-		handleSubmit() {
+		// Create a temporary ID that will be used until the
+		// actual message object is retrieved from the server
+		createTemporaryMessageId() {
+			const date = new Date()
+			return `temp_${(date.getTime()).toString()}`
+		},
+		// Add the new message to the store and post the new message
+		async handleSubmit() {
+			const temporaryId = this.createTemporaryMessageId()
+			console.debug(temporaryId)
+			this.$store.dispatch('processMessage', { id: temporaryId, message: this.text, token: this.$route.params.token })
+			try {
+				await postNewMessage(this.$route.params.token, this.text)
+			} catch (exception) {
+				console.debug(exception)
+			}
 			this.text = ''
 		}
 	}

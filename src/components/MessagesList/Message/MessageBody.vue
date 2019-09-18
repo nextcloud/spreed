@@ -23,8 +23,8 @@
 	<div v-show="message"
 		:class="{ 'message-main--quote' : isQuote }"
 		class="message-main">
-		<div v-if="isFirstMessage || isQuote" class="message-main-header">
-			<h6>{{ userName }}</h6>
+		<div class="message-main-header">
+			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<slot />
 		<div class="message-main-text">

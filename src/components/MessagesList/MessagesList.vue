@@ -90,7 +90,6 @@ export default {
 		async onTokenChange() {
 			const messages = await fetchMessages(this.token)
 			messages.data.ocs.data.forEach(message => {
-				console.debug(message)
 				this.$store.dispatch('processMessage', message)
 			})
 		}
