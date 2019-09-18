@@ -134,13 +134,11 @@ OC.L10N.register(
     "TURN server shared secret" : "סוד משותף לשרת TURN",
     "New public conversation" : "דיון ציבורי חדש",
     "New group conversation" : "דיון קבוצתי חדש",
-    "Password request by %s" : "בקשת ססמה מאת %s",
     "%s invited you to a private conversation" : "הוזמנת לדיון פרטי על ידי %s",
     "%s invited you to a group conversation: %s" : "הוזמנת על ידי %s לדיון קבוצתי: %s",
     "%s invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי %s",
     "{user} invited you to a group conversation" : "הוזמנת לדיון קבוצתי על ידי {user}",
     "A group call has started" : "החלה שיחה קבוצתית",
-    "{email} requested the password to access a share" : "התקבלה בקשה לססמת גישה לשיתוף על ידי {email}",
     "Video & audio-conferencing using WebRTC" : "דיון עם קול ותמונה באמצעות WebRTC",
     "This call is password-protected" : "שיחה זו מוגנת בססמה",
     "Signaling server" : "שרת איתות"

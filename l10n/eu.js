@@ -118,13 +118,13 @@ OC.L10N.register(
     "Delete server" : "Zerbitzaria borratu",
     "Add new server" : "Zerbitzari berria gehitu",
     "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
+    "Always notify" : "Jakinarazi beti",
+    "Never notify" : "Ez jakinarazi inoiz",
     "You were invited to a <strong>talk</strong> room or had a <strong>call</strong>" : "<strong> hitzaldi </strong> bat edo <strong>dei</strong> bat duzu",
     "_%n other guest_::_%n other guests_" : ["%n gonbidatu","%n gonbidatu"],
     ", " : ", ",
+    "Join now" : "Elkartu orain",
     "This call is password-protected" : "Deia pasahitzarekin babestua dago",
-    "Signaling server" : "Seinalizazio zerbitzaria ",
-    "Always notify" : "Jakinarazi beti",
-    "Never notify" : "Ez jakinarazi inoiz",
-    "Join now" : "Elkartu orain"
+    "Signaling server" : "Seinalizazio zerbitzaria "
 },
 "nplurals=2; plural=(n != 1);");
