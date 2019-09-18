@@ -25,7 +25,8 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:to="{ name: 'conversation', params: { token: item.token }}"
-			:title="item.displayName">
+			:title="item.displayName"
+			@click="joinConversation(item.token)">
 			<Avatar slot="icon" :user="item.displayName" :display-name="item.displayName" />
 			<AppNavigationCounter slot="counter" :highlighted="true">
 				3
@@ -50,7 +51,7 @@ import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import { fetchConversations } from '../../services/conversationsService'
-
+import { joinConversation } from '../../services/participantsService'
 export default {
 	name: 'ConversationsList',
 	components: {
@@ -72,6 +73,11 @@ export default {
 		conversations.data.ocs.data.forEach(conversation => {
 			this.$store.dispatch('addConversation', conversation)
 		})
+	},
+	methods: {
+		async joinConversation(token) {
+			await joinConversation(token)
+		}
 	}
 }
 </script>

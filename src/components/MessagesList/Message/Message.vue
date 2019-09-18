@@ -27,7 +27,7 @@
 		@mouseleave="hover=false">
 		<div class="message">
 			<div class="message-avatar">
-				<Avatar v-show="isFirstMessage" :user="userName" :display-name="userName" />
+				<Avatar :user="actorDisplayName" :display-name="actorDisplayName" />
 			</div>
 			<slot />
 			<div class="message-right">
@@ -59,12 +59,12 @@ export default {
 		ActionButton
 	},
 	props: {
-		userName: {
+		actorDisplayName: {
 			type: String,
 			required: true
 		},
-		messageTime: {
-			type: String,
+		timestamp: {
+			type: Number,
 			required: true
 		},
 
@@ -77,6 +77,11 @@ export default {
 	data: function() {
 		return {
 			hover: false
+		}
+	},
+	computed: {
+		messageTime() {
+			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
 		}
 	}
 }

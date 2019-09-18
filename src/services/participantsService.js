@@ -19,45 +19,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import Vue from 'vue'
 
-const state = {
-	messages: {
+import axios from 'nextcloud-axios'
+import { generateOcsUrl } from 'nextcloud-router'
+
+const joinConversation = async function(token) {
+	try {
+		const response = await axios.post(generateOcsUrl(`room/${token}/participants/active`))
+		return response
+	} catch (error) {
+		console.debug(error)
 	}
 }
 
-const getters = {
-	messagesList: (state) => (token) => {
-		if (state.messages[token]) {
-			return Object.values(state.messages[token])
-		}
-		return []
-	},
-	messages: (state) => (token) => {
-		if (state.messages[token]) {
-			return state.messages[token]
-		}
-		return {}
-	}
-}
-
-const mutations = {
-	addMessage(state, message) {
-		if (!state.messages[message.token]) {
-			Vue.set(state.messages, message.token, {})
-		}
-		Vue.set(state.messages[message.token], message.id, message)
-	}
-}
-
-const actions = {
-	processMessage(context, message) {
-		if (message.parent) {
-			context.commit('addMessage', message.parent)
-			message.parent = message.parent.id
-		}
-		context.commit('addMessage', message)
-	}
-}
-
-export default { state, mutations, getters, actions }
+export { joinConversation }

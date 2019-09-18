@@ -25,7 +25,7 @@ import { generateOcsUrl } from 'nextcloud-router'
 
 const fetchMessages = async function(token) {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token)
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0')
 		return response
 	} catch (error) {
 		console.debug(error)

@@ -69,10 +69,10 @@ export default {
 	},
 	computed: {
 		messagesList() {
-			return this.$store.getters.messagesList
+			return this.$store.getters.messagesList(this.token)
 		},
 		messages() {
-			return this.$store.getters.messages
+			return this.$store.getters.messages(this.token)
 		}
 	},
 	watch: {
@@ -89,9 +89,8 @@ export default {
 	methods: {
 		async onTokenChange() {
 			const messages = await fetchMessages(this.token)
-			console.debug(this.token)
-			console.debug(messages)
 			messages.data.ocs.data.forEach(message => {
+				console.debug(message)
 				this.$store.dispatch('processMessage', message)
 			})
 		}

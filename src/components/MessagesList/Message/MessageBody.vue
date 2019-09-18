@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<div v-show="messageText"
+	<div v-show="message"
 		:class="{ 'message-main--quote' : isQuote }"
 		class="message-main">
 		<div v-if="isFirstMessage || isQuote" class="message-main-header">
@@ -28,7 +28,7 @@
 		</div>
 		<slot />
 		<div class="message-main-text">
-			<p>{{ messageText }}</p>
+			<p>{{ message }}</p>
 		</div>
 	</div>
 </template>
@@ -37,11 +37,11 @@
 export default {
 	inheritAttrs: false,
 	props: {
-		userName: {
+		actorDisplayName: {
 			type: String,
 			required: true
 		},
-		messageText: {
+		message: {
 			type: String,
 			required: true
 		},

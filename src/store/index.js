@@ -22,8 +22,8 @@
 
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
-import conversations from './conversations'
-import messages from './messages'
+import conversationsStore from './conversations'
+import messagesStore from './messages'
 
 Vue.use(Vuex)
 
@@ -31,8 +31,8 @@ const mutations = {}
 
 export default new Store({
 	modules: {
-		conversations,
-		messages
+		conversationsStore,
+		messagesStore
 	},
 
 	mutations,
