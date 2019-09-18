@@ -424,10 +424,11 @@ class ChatController extends AEnvironmentAwareController {
 
 		$results = $this->prepareResultArray($results);
 
-		if (($search === '' || strpos('all', $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
+		$roomDisplayName = $this->room->getDisplayName($this->participant->getUser());
+		if (($search === '' || strpos('all', $search) !== false || stripos($roomDisplayName, $search) !== false) && $this->room->getType() !== Room::ONE_TO_ONE_CALL) {
 			array_unshift($results, [
 				'id' => 'all',
-				'label' => $this->room->getDisplayName($this->participant->getUser()),
+				'label' => $roomDisplayName,
 				'source' => 'calls',
 			]);
 		}
