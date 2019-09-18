@@ -48,8 +48,6 @@ OC.L10N.register(
     "TURN server shared secret" : "Serveri TURN ndan sekret",
     "_%n other guest_::_%n other guests_" : ["%n përdorues të tjerë","%n të tjerë"],
     ", " : ",",
-    "%s mentioned you in a group conversation: %s" : "%s ju përmendi në një bisedë grupi: %s",
-    "A guest mentioned you in a group conversation: %s" : "Një i ftuar ju përmendi në një bisedë grupi: %s",
     "%s invited you to a private conversation" : "%s ju ftoi në një bisedë private",
     "%s invited you to a group conversation: %s" : "%s ju ftoi në një bisedë grupi: %s"
 },
