@@ -70,7 +70,7 @@ class RestrictStartingCalls {
 			$canStartCall = true;
 		}
 
-		if (!$canStartCall) {
+		if (!$canStartCall && !$room->hasSessionsInCall()) {
 			throw new ForbiddenException('Can not start a call');
 		}
 	}
