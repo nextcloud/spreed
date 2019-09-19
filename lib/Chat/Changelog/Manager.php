@@ -91,6 +91,9 @@ class Manager {
 			$this->l->t('- With the "arrow-up" key you can repost your last message'),
 			$this->l->t('- Talk can now have commands, send "/help" as a chat message to see if your administrator configured some'),
 			$this->l->t('- With projects you can create quick links between conversations, files and other items'),
+			$this->l->t('New in Talk 7'),
+			$this->l->t('- You can now mention guests in the chat'),
+			$this->l->t('- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait.'),
 		];
 	}
 }
