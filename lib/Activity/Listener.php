@@ -82,7 +82,7 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener);
+		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener, -100);
 
 		$listener = function(GenericEvent $event) {
 			/** @var Room $room */
@@ -114,8 +114,8 @@ class Listener {
 		$duration = $this->timeFactory->getTime() - $activeSince->getTimestamp();
 		$userIds = $room->getParticipantUserIds($activeSince);
 
-		if (empty($userIds) || (\count($userIds) === 1 && $room->getActiveGuests() === 0)) {
-			// Single user pinged or guests only => no activity
+		if ((\count($userIds) + $room->getActiveGuests()) === 1) {
+			// Single user pinged or guests only => no summary/activity
 			$room->resetActiveSince();
 			return false;
 		}
@@ -124,6 +124,21 @@ class Listener {
 
 		if (!$room->resetActiveSince()) {
 			// Race-condition, the room was already reset.
+			return false;
+		}
+
+		$actorId = $userIds[0] ?? 'guests-only';
+		$actorType = $actorId !== 'guests-only' ? 'users' : 'guests';
+		$this->chatManager->addSystemMessage($room, $actorType, $actorId, json_encode([
+			'message' => 'call_ended',
+			'parameters' => [
+				'users' => $userIds,
+				'guests' => $numGuests,
+				'duration' => $duration,
+			],
+		]), $this->timeFactory->getDateTime(), false);
+
+		if (empty($userIds)) {
 			return false;
 		}
 
@@ -144,15 +159,6 @@ class Listener {
 			$this->logger->logException($e, ['app' => 'spreed']);
 			return false;
 		}
-
-		$this->chatManager->addSystemMessage($room, 'users', $userIds[0], json_encode([
-			'message' => 'call_ended',
-			'parameters' => [
-				'users' => $userIds,
-				'guests' => $numGuests,
-				'duration' => $duration,
-			],
-		]), $this->timeFactory->getDateTime(), false);
 
 		foreach ($userIds as $userId) {
 			try {
