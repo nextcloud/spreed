@@ -59,6 +59,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `sessionId` | string | `'0'` if not connected, otherwise a 512 character long string
         `hasPassword` | bool | Flag if the conversation has a password
         `hasCall` | bool | Flag if the conversation has an active call
+        `canStartCall` | bool | Flag if the user can start a new call in this conversation (joining is always possible) (only available with `start-call-flag` capability)
         `lastActivity` | int | Timestamp of the last activity in the conversation, in seconds and UTC time zone
         `isFavorite` | bool | Flag if the conversation is favorited by the user
         `notificationLevel` | int | The notification level for the user (one of `Participant::NOTIFY_*` (1-3))

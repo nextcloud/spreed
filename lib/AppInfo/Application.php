@@ -35,6 +35,7 @@ use OCA\Spreed\Config;
 use OCA\Spreed\Files\Listener as FilesListener;
 use OCA\Spreed\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Spreed\Listener;
+use OCA\Spreed\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Middleware\CanUseTalkMiddleware;
 use OCA\Spreed\Middleware\InjectionMiddleware;
@@ -111,6 +112,7 @@ class Application extends App {
 		PublicShareAuthTemplateLoader::register($dispatcher);
 		FilesListener::register($dispatcher);
 		FilesTemplateLoader::register($dispatcher);
+		RestrictStartingCallsListener::register($dispatcher);
 		RoomShareProvider::register($dispatcher);
 		SignalingListener::register($dispatcher);
 		CommandListener::register($dispatcher);

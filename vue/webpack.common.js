@@ -7,6 +7,7 @@ module.exports = {
 		"collectionsintegration": path.join(__dirname, 'src', 'collectionsintegration.js'),
 		"admin/allowed-groups": path.join(__dirname, 'src', 'allowed-groups.js'),
 		"admin/commands": path.join(__dirname, 'src', 'commands.js'),
+		"admin/general-settings": path.join(__dirname, 'src', 'general-settings.js'),
 		"admin/signaling-server": path.join(__dirname, 'src', 'signaling-server.js'),
 		"admin/stun-server": path.join(__dirname, 'src', 'stun-server.js'),
 		"admin/turn-server": path.join(__dirname, 'src', 'turn-server.js'),

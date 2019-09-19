@@ -58,6 +58,7 @@
 			count: 0,
 			hasPassword: false,
 			hasCall: false,
+			canStartCall: false,
 			lastActivity: 0,
 			unreadMessages: 0,
 			unreadMention: false,

@@ -29,11 +29,17 @@ templates['callbutton'] = template({"1":function(container,depth0,helpers,partia
     + container.escapeExpression(((helper = (helper = helpers.joinCallText || (depth0 != null ? depth0.joinCallText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"joinCallText","hash":{},"data":data}) : helper)))
     + "<span class=\"icon icon-loading-small hidden\"></span></button>\n";
 },"9":function(container,depth0,helpers,partials,data) {
-    var helper;
+    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
-  return "			<button class=\"join-call primary\">"
-    + container.escapeExpression(((helper = (helper = helpers.startCallText || (depth0 != null ? depth0.startCallText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"startCallText","hash":{},"data":data}) : helper)))
+  return "			<button class=\"join-call primary\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canStartCall : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.program(12, data, 0),"data":data})) != null ? stack1 : "")
+    + ">"
+    + container.escapeExpression(((helper = (helper = helpers.startCallText || (depth0 != null ? depth0.startCallText : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"startCallText","hash":{},"data":data}) : helper)))
     + "<span class=\"icon icon-loading-small hidden\"></span></button>\n";
+},"10":function(container,depth0,helpers,partials,data) {
+    return "";
+},"12":function(container,depth0,helpers,partials,data) {
+    return " disabled=\"disabled\"";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1;
 

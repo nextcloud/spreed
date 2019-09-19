@@ -25,17 +25,18 @@ namespace OCA\Spreed\Settings\Admin;
 
 use OCA\Spreed\Config;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\IConfig;
 use OCP\IInitialStateService;
 use OCP\Settings\ISettings;
 
-class AllowedGroups implements ISettings {
+class GeneralSettings implements ISettings {
 
-	/** @var Config */
+	/** @var IConfig */
 	private $config;
 	/** @var IInitialStateService */
 	private $initialStateService;
 
-	public function __construct(Config $config,
+	public function __construct(IConfig $config,
 								IInitialStateService $initialStateService) {
 		$this->config = $config;
 		$this->initialStateService = $initialStateService;
@@ -45,8 +46,8 @@ class AllowedGroups implements ISettings {
 	 * @return TemplateResponse
 	 */
 	public function getForm(): TemplateResponse {
-		$this->initialStateService->provideInitialState('talk', 'allowed_groups', $this->config->getAllowedGroupIds());
-		return new TemplateResponse('spreed', 'settings/admin/allowed-groups', [], '');
+		$this->initialStateService->provideInitialState('talk', 'start_calls', (int) $this->config->getAppValue('spreed', 'start_calls', '0'));
+		return new TemplateResponse('spreed', 'settings/admin/general-settings', [], '');
 	}
 
 	/**
@@ -64,7 +65,7 @@ class AllowedGroups implements ISettings {
 	 * E.g.: 70
 	 */
 	public function getPriority(): int {
-		return 10;
+		return 0;
 	}
 
 }

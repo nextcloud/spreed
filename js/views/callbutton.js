@@ -32,7 +32,7 @@
 
 	var roomsChannel = Backbone.Radio.channel('rooms');
 
-	var CallButton  = Marionette.View.extend({
+	var CallButton = Marionette.View.extend({
 
 		className: 'call-button',
 
@@ -47,6 +47,7 @@
 			return {
 				isReadOnly: this.model.get('readOnly') === 1,
 				isInCall: (this.model.get('participantFlags') & OCA.SpreedMe.app.FLAG_IN_CALL) !== 0,
+				canStartCall: this.model.get('canStartCall'),
 				hasCall: this.model.get('hasCall'),
 				leaveCallText: t('spreed', 'Leave call'),
 				joinCallText: t('spreed', 'Join call'),
