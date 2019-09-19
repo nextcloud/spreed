@@ -34,11 +34,11 @@
 			<div v-show="!isTemporary" class="message-right">
 				<h6>{{ messageTime }}</h6>
 				<Actions v-show="hover" class="actions">
-					<ActionButton icon="icon-reply" @click="alert('Edit')">
-						Reply
+					<ActionButton icon="icon-delete" @click="handleDelete">
+						Delete
 					</ActionButton>
-					<ActionButton icon="icon-reply" @click="alert('Edit')">
-						Reply
+					<ActionButton icon="icon-delete" @click="handleDelete">
+						Delete
 					</ActionButton>
 				</Actions>
 			</div>
@@ -72,8 +72,19 @@ export default {
 		isFirstMessage: {
 			type: Boolean,
 			default: false
+		},
+		id: {
+			type: Number,
+			required: true
+		},
+		token: {
+			type: String,
+			required: true
+		},
+		message: {
+			type: Object,
+			required: true
 		}
-
 	},
 	data: function() {
 		return {
@@ -86,6 +97,11 @@ export default {
 		},
 		isTemporary() {
 			return this.timestamp === 0
+		}
+	},
+	methods: {
+		handleDelete() {
+			this.$store.dispatch('deleteMessage', this.message)
 		}
 	}
 }
@@ -120,7 +136,7 @@ export default {
 
 .actions {
 	position: absolute;
-	margin: -12px 0 0 38px;
+	margin: -14px 0 0 50px;
 	padding:2px;
 	}
 }

@@ -32,7 +32,7 @@
 					item.messageText,
 				]"
 				:data-index="item.id">
-				<Message v-bind="item">
+				<Message v-bind="item" :message="item" @deleteMessage="handleDeleteMessage">
 					<MessageBody v-bind="item">
 						<MessageBody v-if="item.parent" v-bind="messages[item.parent]" />
 					</MessageBody>
@@ -110,6 +110,9 @@ export default {
 		},
 		scrollToEnd: function() {
 			this.$el.scrollTop = this.$el.scrollHeight
+		},
+		handleDeleteMessage(event) {
+			this.$store.dispatch('deleteMessage', event.message)
 		}
 	}
 }
