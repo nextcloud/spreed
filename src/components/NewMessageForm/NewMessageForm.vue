@@ -74,7 +74,9 @@ export default {
 			const temporaryMessage = this.createTemporaryMessage()
 			console.debug(temporaryMessage)
 			this.$store.dispatch('addTemporaryMessage', temporaryMessage)
-			document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
+			this.$nextTick(function() {
+				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
+			})
 			try {
 				const response = await postNewMessage(this.token, this.text)
 				console.debug(response.data.ocs.data)

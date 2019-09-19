@@ -65,6 +65,7 @@ export default {
 	},
 	data: function() {
 		return {
+			isInitiated: false
 		}
 	},
 	computed: {
@@ -86,8 +87,22 @@ export default {
 	beforeMount() {
 		this.onTokenChange()
 	},
+	// Scrolls to bottom
+	mounted() {
+
+	},
+	beforeUpdate() {
+		if (!this.isInitiated) {
+			this.$nextTick(function() {
+				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
+			})
+			this.isInitiated = true
+		}
+
+	},
 	methods: {
 		async onTokenChange() {
+			this.isInitiated = false
 			const messages = await fetchMessages(this.token)
 			messages.data.ocs.data.forEach(message => {
 				this.$store.dispatch('processMessage', message)
@@ -95,7 +110,6 @@ export default {
 		},
 		scrollToEnd: function() {
 			this.$el.scrollTop = this.$el.scrollHeight
-
 		}
 	}
 }
