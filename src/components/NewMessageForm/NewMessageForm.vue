@@ -45,6 +45,12 @@ export default {
 			text: ''
 		}
 	},
+	computed: {
+		// the current conversation token
+		token() {
+			return this.$route.params.token
+		}
+	},
 	methods: {
 		// Create a temporary ID that will be used until the
 		// actual message object is retrieved from the server
@@ -52,15 +58,30 @@ export default {
 			const date = new Date()
 			return `temp_${(date.getTime()).toString()}`
 		},
+		// Create a temporary ID that will be used until the
+		// actual message object is retrieved from the server
+		createTemporaryMessage() {
+			const message = {
+				id: this.createTemporaryMessageId(),
+				actorDisplayName: OC.getCurrentUser().displayName,
+				message: this.text,
+				token: this.token
+			}
+			return message
+		},
 		// Add the new message to the store and post the new message
 		async handleSubmit() {
-			const temporaryId = this.createTemporaryMessageId()
-			console.debug(temporaryId)
-			this.$store.dispatch('processMessage', { id: temporaryId, message: this.text, token: this.$route.params.token })
+			const temporaryMessage = this.createTemporaryMessage()
+			console.debug(temporaryMessage)
+			this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+			document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			try {
-				await postNewMessage(this.$route.params.token, this.text)
-			} catch (exception) {
-				console.debug(exception)
+				const response = await postNewMessage(this.token, this.text)
+				console.debug(response.data.ocs.data)
+				this.$store.dispatch('deleteMessage', temporaryMessage)
+				this.$store.dispatch('processMessage', response.data.ocs.data)
+			} catch (error) {
+				console.debug(`error while submitting message ${error}`)
 			}
 			this.text = ''
 		}

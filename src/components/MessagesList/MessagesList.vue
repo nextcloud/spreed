@@ -92,6 +92,10 @@ export default {
 			messages.data.ocs.data.forEach(message => {
 				this.$store.dispatch('processMessage', message)
 			})
+		},
+		scrollToEnd: function() {
+			this.$el.scrollTop = this.$el.scrollHeight
+
 		}
 	}
 }

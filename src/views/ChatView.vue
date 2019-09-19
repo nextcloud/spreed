@@ -26,6 +26,7 @@ export default {
 
 <style lang="scss" scoped>
 .chatview {
+	height: 100%;
     display: flex;
 	flex-grow: 1;
 	flex-direction: column;

@@ -30,7 +30,8 @@
 				<Avatar :user="actorDisplayName" :display-name="actorDisplayName" />
 			</div>
 			<slot />
-			<div class="message-right">
+			<div v-show="isTemporary" class="message-right icon-loading-small" />
+			<div v-show="!isTemporary" class="message-right">
 				<h6>{{ messageTime }}</h6>
 				<Actions v-show="hover" class="actions">
 					<ActionButton icon="icon-reply" @click="alert('Edit')">
@@ -65,7 +66,7 @@ export default {
 		},
 		timestamp: {
 			type: Number,
-			required: true
+			default: 0
 		},
 
 		isFirstMessage: {
@@ -82,6 +83,9 @@ export default {
 	computed: {
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		},
+		isTemporary() {
+			return this.timestamp === 0
 		}
 	}
 }

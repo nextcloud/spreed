@@ -48,8 +48,11 @@ const mutations = {
 		}
 		Vue.set(state.messages[message.token], message.id, message)
 	},
-	deleteMessage(state, token, id) {
-		delete state.messages[token][id]
+	deleteMessage(state, message) {
+		Vue.delete(state.messages[message.token], message.id)
+	},
+	addTemporaryMessage(state, message) {
+		Vue.set(state.messages[message.token], message.id, message)
 	}
 }
 
@@ -61,8 +64,23 @@ const actions = {
 		}
 		context.commit('addMessage', message)
 	},
-	deleteMessage(context, token, id) {
-		context.commit('deleteMessage', token, id)
+	/**
+     * Delete a message
+     * @param {Object} context default store context
+     * @param {String} message the message to be deleted
+     */
+	deleteMessage(context, message) {
+		context.commit('deleteMessage', message)
+	},
+	/**
+     * Add a temporary message generated in the client to
+	 * the store, these messages are deleted once the full
+	 * message object is recived from the server
+     * @param {Object} context default store context
+	 * @param {Object} message the temporary message
+     */
+	addTemporaryMessage(context, message) {
+		context.commit('addTemporaryMessage', message)
 	}
 }
 

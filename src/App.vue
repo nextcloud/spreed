@@ -111,4 +111,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#content {
+	height: 100%;
+}
 </style>
