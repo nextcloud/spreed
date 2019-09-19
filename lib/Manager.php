@@ -172,6 +172,7 @@ class Manager {
 
 		return new Participant(
 			$this->db,
+			$this->config,
 			$room,
 			(string) $row['user_id'],
 			(int) $row['participant_type'],
