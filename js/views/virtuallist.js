@@ -72,6 +72,12 @@
 	 * the position and size of all the elements, so in that case "reload()"
 	 * needs to be called.
 	 *
+	 * It is also possible to update single elements when their position and
+	 * size changes, but only in a very limited scenario: only for the first or
+	 * last loaded element and only while prepending or appending new elements.
+	 * This makes possible to "seam" the new elements to the existing ones by
+	 * changing the CSS classes of the existing ends if needed.
+	 *
 	 * Some operations on the virtual list, like reloading it, updating the
 	 * visible elements or scrolling to certain element, require that the
 	 * container is visible; if called while the container is hidden those
@@ -211,6 +217,12 @@
 			return this._lastKnownScrollPosition;
 		},
 
+		isScrollable: function() {
+			// In Firefox the scroll bar appears once the contained element is
+			// at least 1 pixel larger than the container.
+			return this._getElementOuterHeight(this._$wrapperBackground) > (this._getElementHeight(this._$container) + 1);
+		},
+
 		prependElementStart: function() {
 			this._prependedElementsBuffer = document.createDocumentFragment();
 
@@ -335,6 +347,33 @@
 			delete this._appendedElementsBuffer;
 
 			this.updateVisibleElements();
+		},
+
+		/**
+		 * Notifies the virtual list that the position and size of the given
+		 * element may have changed.
+		 *
+		 * Updating an element is only possible while new elements are being
+		 * prepended or appended, that is, between the calls to
+		 * "prepend/appendElementStart" and "prepend/appendElementEnd", and only
+		 * for the element at the end being modified.
+		 *
+		 * @param {jQuery} $element the element to update.
+		 */
+		updateElement: function($element) {
+			if (!this._prependedElementsBuffer && !this._appendedElementsBuffer) {
+				return;
+			}
+
+			if (this._prependedElementsBuffer && $element !== this._$firstLoadedElement) {
+				return;
+			}
+
+			if (this._appendedElementsBuffer && $element !== this._$lastLoadedElement) {
+				return;
+			}
+
+			$element._dirty = true;
 		},
 
 		/**
@@ -581,24 +620,72 @@
 			var $wrapper = $('<div class="wrapper"></div>');
 			$wrapper._top = 0;
 
+			var elementToUpdateOldHeight = 0;
+			var elementToUpdateOldHeightFromTopRaw = 0;
+			var elementToUpdateOldTopRaw = 0;
+
 			var $firstExistingElement = $firstElementToLoad._next;
 
+			if ($firstExistingElement && $firstExistingElement._dirty) {
+				// If the first existing element needs to be updated it is
+				// loaded again along with the other elements to load; however,
+				// as the element is already loaded, its height needs to be
+				// removed from the overall height of the list and all the
+				// other elements after it.
+				elementToUpdateOldHeight = $firstExistingElement._height;
+				elementToUpdateOldTopRaw = $firstExistingElement._topRaw;
+
+				// If the element was visible appending it to the buffer would
+				// remove it from the main wrapper, so a clone that acts as a
+				// proxy for the real element is used instead.
+				var $firstExistingElementProxy = $firstExistingElement.clone();
+				$firstExistingElementProxy._previous = $firstExistingElement._previous;
+				$firstExistingElementProxy._next = $firstExistingElement._next;
+				$firstExistingElementProxy._updateProxyFor = $firstExistingElement;
+
+				// ParentNode.append() is not compatible with older browsers.
+				elementsBuffer.appendChild($firstExistingElementProxy.get(0));
+
+				$firstElementToLoad = $firstExistingElementProxy;
+
+				$firstExistingElement = $firstExistingElement._next;
+
+				if ($firstExistingElement) {
+					// If there is another element after the one to update then
+					// the height to remove is not the full height of the
+					// element, but just until the top raw position of its next
+					// element to account for collapsing margins.
+					elementToUpdateOldHeight = $firstExistingElement._topRaw - $firstExistingElement._previous._topRaw;
+				}
+			}
+
+			var $firstExistingElementClone = null;
 			if ($firstExistingElement) {
 				// The wrapper is already at the top, so no need to set its
 				// position.
 
+				$firstExistingElementClone = $firstExistingElement.clone();
+
 				// Include the next element, as its position may change due to
 				// collapsing margins.
-				$wrapper.append($firstExistingElement.clone());
+				$wrapper.append($firstExistingElementClone);
 			}
 
 			this._$container.append($wrapper);
 
-			var previousWrapperHeight = this._getElementHeight($wrapper);
+			var wrapperHeightWithoutElementsToLoad = this._getElementHeight($wrapper);
 
 			$wrapper.prepend(elementsBuffer);
 
-			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
+			var firstExistingElementTopRawDifference = 0;
+			if ($firstExistingElement && $firstExistingElement._previous._dirty && $firstExistingElement._previous === this._$firstVisibleElement) {
+				// The clone is not a proxy
+				this._updateCache($firstExistingElementClone, $wrapper);
+				this._updateCache($firstElementToLoad, $wrapper);
+				firstExistingElementTopRawDifference = elementToUpdateOldHeight - ($firstExistingElementClone._topRaw - $firstElementToLoad._updateProxyFor._topRaw);
+			}
+
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad - elementToUpdateOldHeight;
 
 			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
@@ -652,7 +739,12 @@
 			// as it could "short circuit" before reaching the point where the
 			// wrapper position is updated.
 			if (this._$firstVisibleElement) {
-				this._$wrapper._top += wrapperHeightDifference;
+				// Adding the wrapperHeightDifference restores the wrapper
+				// position after the update of the scroll position, but it is
+				// necessary to add the first existing element top raw
+				// difference to restore its position when the previous element
+				// was also updated.
+				this._$wrapper._top += wrapperHeightDifference + firstExistingElementTopRawDifference;
 				this._$wrapper.css('top', this._$wrapper._top);
 			}
 		},
@@ -660,6 +752,30 @@
 		_loadNextElements: function($firstElementToLoad, $lastElementToLoad, elementsBuffer) {
 			var $wrapper = $('<div class="wrapper"></div>');
 			$wrapper._top = 0;
+
+			var elementToUpdateOldHeight = 0;
+
+			var $firstExistingElement = $firstElementToLoad._previous;
+			if ($firstExistingElement && $firstExistingElement._dirty) {
+				// If the first existing element needs to be updated it is
+				// loaded again along with the other elements to load; however,
+				// as the element is already loaded, its height needs to be
+				// removed from the overall height of the list.
+				elementToUpdateOldHeight = $firstExistingElement._height;
+
+				// If the element was visible appending it to the buffer would
+				// remove it from the main wrapper, so a clone that acts as a
+				// proxy for the real element is used instead.
+				var $firstExistingElementProxy = $firstExistingElement.clone();
+				$firstExistingElementProxy._previous = $firstExistingElement._previous;
+				$firstExistingElementProxy._next = $firstExistingElement._next;
+				$firstExistingElementProxy._updateProxyFor = $firstExistingElement;
+
+				// ParentNode.prepend() is not compatible with older browsers.
+				elementsBuffer.insertBefore($firstExistingElementProxy.get(0), elementsBuffer.firstChild);
+
+				$firstElementToLoad = $firstExistingElementProxy;
+			}
 
 			if ($firstElementToLoad._previous) {
 				$wrapper.css('top', $firstElementToLoad._previous._topRaw);
@@ -672,11 +788,11 @@
 
 			this._$container.append($wrapper);
 
-			var previousWrapperHeight = this._getElementHeight($wrapper);
+			var wrapperHeightWithoutElementsToLoad = this._getElementHeight($wrapper);
 
 			$wrapper.append(elementsBuffer);
 
-			var wrapperHeightDifference = this._getElementHeight($wrapper) - previousWrapperHeight;
+			var wrapperHeightDifference = this._getElementHeight($wrapper) - wrapperHeightWithoutElementsToLoad - elementToUpdateOldHeight;
 
 			this._setWrapperBackgroundHeight(this._getElementHeight(this._$wrapperBackground) + wrapperHeightDifference);
 
@@ -706,6 +822,13 @@
 		 * main one); detached elements can not be used, as the values to cache
 		 * would be invalid in that case.
 		 *
+		 * Although the element must be a child of the given wrapper the element
+		 * can be acting as a proxy for a different element (for example, the
+		 * given element could be a clone in a temporal wrapper and act as an
+		 * update proxy for another element in the main wrapper); in that case
+		 * the cached values will be set in the element proxied for instead of
+		 * in the given element.
+		 *
 		 * The element top position is relative to the wrapper, and the wrapper
 		 * top position plus the element top position is expected to place the
 		 * element at the proper offset from the top of the container.
@@ -714,17 +837,24 @@
 		 * @param {jQuery} $wrapper the parent wrapper of the element.
 		 */
 		_updateCache: function($element, $wrapper) {
-			$element._height = this._getElementOuterHeight($element);
+			var $elementToUpdate = $element;
+			if ($element._updateProxyFor) {
+				$elementToUpdate = $element._updateProxyFor;
+			}
+
+			delete $elementToUpdate._dirty;
+
+			$elementToUpdate._height = this._getElementOuterHeight($element);
 
 			// The top position of an element must be got from the element
 			// itself; it can not be based on the top position and height of the
 			// previous element, because the browser may merge/collapse the
 			// margins.
-			$element._top = $wrapper._top + this._getElementTopPosition($element);
-			$element._topRaw = $element._top;
+			$elementToUpdate._top = $wrapper._top + this._getElementTopPosition($element);
+			$elementToUpdate._topRaw = $elementToUpdate._top;
 			var marginTop = parseFloat($element.css('margin-top'));
 			if (marginTop < 0) {
-				$element._topRaw -= marginTop;
+				$elementToUpdate._topRaw -= marginTop;
 			}
 		},
 
@@ -762,7 +892,10 @@
 		 * @param jQuery $element the jQuery element to get its height.
 		 */
 		_getElementHeight: function($element) {
-			return $element.get(0).getBoundingClientRect().height;
+			var paddingTop = parseFloat($element.css('padding-top'));
+			var paddingBottom = parseFloat($element.css('padding-bottom'));
+
+			return $element.get(0).getBoundingClientRect().height - paddingTop - paddingBottom;
 		},
 
 		/**
@@ -827,7 +960,7 @@
 
 			// If the container is scrollable set its "tabindex" attribute so it
 			// is included in the sequential keyboard navigation.
-			if (this._getElementHeight(this._$wrapperBackground) > this._getElementHeight(this._$container)) {
+			if (this.isScrollable()) {
 				this._$container.attr('tabindex', 0);
 			} else {
 				this._$container.removeAttr('tabindex');
