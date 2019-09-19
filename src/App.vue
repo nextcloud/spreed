@@ -24,7 +24,6 @@
 		<AppNavigation>
 			<AppNavigationNew
 				v-if="!loading"
-				:text="t('spreed', 'New conversation')"
 				:disabled="false"
 				button-id="new-conversation-button"
 				button-class="icon-add"

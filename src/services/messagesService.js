@@ -23,15 +23,28 @@
 import axios from 'nextcloud-axios'
 import { generateOcsUrl } from 'nextcloud-router'
 
+/**
+ * Fetches messages that belong to a particular conversation
+ * specified with its token.
+ *
+ * @param {string} token The conversation token;
+ */
 const fetchMessages = async function(token) {
 	try {
 		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0')
 		return response
 	} catch (error) {
-		console.debug(error)
+		console.debug('Error while fetching messages: ', error)
 	}
 }
 
+/**
+ * Posts a new messageto the server.
+ *
+ * @param {Object} param0 The message object that is destructured;
+ * @param {String} token The conversation token;
+ * @param {Object} message The message object.
+ */
 const postNewMessage = async function({ token, message }) {
 	try {
 		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName: '' })

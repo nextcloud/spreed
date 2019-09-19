@@ -42,21 +42,45 @@ const getters = {
 }
 
 const mutations = {
+	/**
+     * Adds a message to the store.
+     * @param {Object} state current store state;
+     * @param {Object} message the message;
+     */
 	addMessage(state, message) {
 		if (!state.messages[message.token]) {
 			Vue.set(state.messages, message.token, {})
 		}
 		Vue.set(state.messages[message.token], message.id, message)
 	},
+	/**
+     * Deletes a message from the store.
+     * @param {Object} state current store state;
+     * @param {Object} message the message;
+     */
 	deleteMessage(state, message) {
 		Vue.delete(state.messages[message.token], message.id)
 	},
+	/**
+     * Adds a temporary message to the store.
+     * @param {Object} state current store state;
+     * @param {Object} message the temporary message;
+     */
 	addTemporaryMessage(state, message) {
 		Vue.set(state.messages[message.token], message.id, message)
 	}
 }
 
 const actions = {
+	/**
+	 * Adds message to the store.
+	 *
+	 * If the message has a parent message object,
+	 * first it adds the parent to the store.
+	 *
+     * @param {Object} context default store context;
+	 * @param {Object} message the message;
+     */
 	processMessage(context, message) {
 		if (message.parent) {
 			context.commit('addMessage', message.parent)
@@ -66,8 +90,9 @@ const actions = {
 	},
 	/**
      * Delete a message
-     * @param {Object} context default store context
-     * @param {String} message the message to be deleted
+	 *
+     * @param {Object} context default store context;
+     * @param {String} message the message to be deleted;
      */
 	deleteMessage(context, message) {
 		context.commit('deleteMessage', message)
@@ -75,9 +100,10 @@ const actions = {
 	/**
      * Add a temporary message generated in the client to
 	 * the store, these messages are deleted once the full
-	 * message object is recived from the server
-     * @param {Object} context default store context
-	 * @param {Object} message the temporary message
+	 * message object is recived from the server.
+	 *
+     * @param {Object} context default store context;
+	 * @param {Object} message the temporary message;
      */
 	addTemporaryMessage(context, message) {
 		context.commit('addTemporaryMessage', message)

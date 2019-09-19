@@ -23,6 +23,12 @@
 import axios from 'nextcloud-axios'
 import { generateOcsUrl } from 'nextcloud-router'
 
+/**
+ * Joins the current user to a conversation specified with
+ * the token.
+ *
+ * @param {String} token The conversation token;
+ */
 const joinConversation = async function(token) {
 	try {
 		const response = await axios.post(generateOcsUrl(`room/${token}/participants/active`))

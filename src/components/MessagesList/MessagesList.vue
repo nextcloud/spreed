@@ -58,6 +58,9 @@ export default {
 		MessageBody
 	},
 	props: {
+		/**
+		 * The conversation token.
+		 */
 		token: {
 			type: String,
 			required: true
@@ -69,9 +72,19 @@ export default {
 		}
 	},
 	computed: {
+		/**
+		 * Gets the messages array.
+		 *
+		 * @returns {Array}
+		 */
 		messagesList() {
 			return this.$store.getters.messagesList(this.token)
 		},
+		/**
+		 * Gets the messages object.
+		 *
+		 * @returns {Object}
+		 */
 		messages() {
 			return this.$store.getters.messages(this.token)
 		}
@@ -81,18 +94,19 @@ export default {
 			this.onTokenChange()
 		}
 	},
-	// Fetches the messages when the MessageList is mounted for the
-	// first time. The router mounts this component only if the token
-	// is passed in so there's no need to check the token prop.
+	/**
+	 * Fetches the messages when the MessageList is mounted for the
+	 * first time. The router mounts this component only if the token
+	 * is passed in so there's no need to check the token prop.
+	 */
 	beforeMount() {
 		this.onTokenChange()
 	},
-	// Scrolls to bottom
-	mounted() {
-
-	},
 	beforeUpdate() {
 		if (!this.isInitiated) {
+
+			// Scrolls to the bottom of the message list.
+
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
@@ -103,8 +117,13 @@ export default {
 	methods: {
 		async onTokenChange() {
 			this.isInitiated = false
+			/**
+			 * Fetches the messaes of a conversation given the
+			 * conversation token.
+			 */
 			const messages = await fetchMessages(this.token)
 			messages.data.ocs.data.forEach(message => {
+				// Process each messages and adds it to the store
 				this.$store.dispatch('processMessage', message)
 			})
 		},

@@ -31,14 +31,22 @@
 export default {
 	name: 'AdvancedInput',
 	props: {
+		/**
+		 * The placeholder for the input field
+		 */
 		placeholderText: {
 			type: String,
 			default: 'New Message ...'
 		},
+
+		/**
+		 * Determines if the input is active
+		 */
 		activeInput: {
 			type: Boolean,
 			default: true
 		},
+
 		value: {
 			type: String,
 			required: true
@@ -61,9 +69,13 @@ export default {
 		}
 	},
 	methods: {
-		onBlur() {
-			return 0
-		},
+		/**
+		 * Emits the submit event when enter is pressed (look
+		 * at the v-on in the template) unless shift is pressed:
+		 * in this case a new line will be created.
+		 *
+		 * @param {Object} event the event object;
+		 */
 		handleKeydown(event) {
 			// TODO: add support for CTRL+ENTER new line
 			if (!(event.shiftKey)) {

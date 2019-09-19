@@ -60,27 +60,37 @@ export default {
 		ActionButton
 	},
 	props: {
+		/**
+		 * The message username.
+		 */
 		actorDisplayName: {
 			type: String,
 			required: true
 		},
+		/**
+		 * The message timestamp.
+		 */
 		timestamp: {
 			type: Number,
 			default: 0
 		},
-
-		isFirstMessage: {
-			type: Boolean,
-			default: false
-		},
+		/**
+		 * The message id.
+		 */
 		id: {
 			type: Number,
 			required: true
 		},
+		/**
+		 * The conversation token.
+		 */
 		token: {
 			type: String,
 			required: true
 		},
+		/**
+		 * The message object.
+		 */
 		message: {
 			type: Object,
 			required: true

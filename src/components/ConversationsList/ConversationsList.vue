@@ -69,6 +69,9 @@ export default {
 		}
 	},
 	async beforeMount() {
+		/** Fetches the conversations from the server and then
+		 * adds them one by one to the store.
+		 */
 		const conversations = await fetchConversations()
 		conversations.data.ocs.data.forEach(conversation => {
 			this.$store.dispatch('addConversation', conversation)

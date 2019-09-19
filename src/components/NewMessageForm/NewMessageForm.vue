@@ -48,20 +48,22 @@ export default {
 		}
 	},
 	computed: {
-		// the current conversation token
+		/**
+		 * The current conversation token
+		 *
+		 * @returns {String}
+		 */
 		token() {
 			return this.$route.params.token
 		}
 	},
 	methods: {
-		// Create a temporary ID that will be used until the
-		// actual message object is retrieved from the server
-		createTemporaryMessageId() {
-			const date = new Date()
-			return `temp_${(date.getTime()).toString()}`
-		},
-		// Create a temporary message that will be used until the
-		// actual message object is retrieved from the server
+		/**
+		 * Create a temporary message that will be used until the
+		 * actual message object is retrieved from the server
+		 *
+		 * @returns {Object}
+		 */
 		createTemporaryMessage() {
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
@@ -71,19 +73,35 @@ export default {
 			})
 			return message
 		},
-		// Add the new message to the store and post the new message
+		/**
+		 * Create a temporary ID that will be used until the actual
+		 * message object is received from the server.
+		 *
+		 * @returns {String}
+		 */
+		createTemporaryMessageId() {
+			const date = new Date()
+			return `temp_${(date.getTime()).toString()}`
+		},
+		/**
+		 * Sends the new message
+		 */
 		async handleSubmit() {
 			if (this.text !== '') {
 				const temporaryMessage = this.createTemporaryMessage()
-				this.text = ''
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
+				this.text = ''
+				// Scrolls the message list to the last added message
 				this.$nextTick(function() {
 					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 				})
 				try {
+					// Posts the message to the server
 					const response = await postNewMessage(temporaryMessage)
-					console.debug(response.data.ocs.data)
+					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
+					// And adds the complete version of the message received
+					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
 				} catch (error) {
 					console.debug(`error while submitting message ${error}`)
