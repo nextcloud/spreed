@@ -101,7 +101,7 @@
 						var userId = '' + $avatar.data('user-id');
 						if (userId === 'all') {
 							$avatar.addClass('avatar icon icon-contacts');
-						} else if ($avatar.data('user-id') && userId.indexOf('guest/') !== 0) {
+						} else if (userId && userId.indexOf('guest/') !== 0) {
 							$avatar.avatar(userId, avatarSize);
 						} else {
 							var displayName = $avatar.data('user-display-name');
@@ -209,8 +209,8 @@
 			}
 
 			return this._addCommentTemplate(_.extend({
-				actorId: OC.getCurrentUser().uid,
-				actorDisplayName: OC.getCurrentUser().displayName,
+				actorId: OC.getCurrentUser().uid || 'guest/' + this.model.get('hashedSessionId'),
+				actorDisplayName: OC.getCurrentUser().displayName || '',
 				newMessagePlaceholder: newMessagePlaceholder,
 				submitText: submitText,
 				shareText: t('spreed', 'Share'),
@@ -617,7 +617,7 @@
 
 			var setAvatar = function($element, size) {
 				var userId = '' + $element.data('user-id');
-				if (userId && userId.substr(0, 6) !== 'guest/') {
+				if (userId && userId.indexOf('guest/') !== 0) {
 					if (userId === 'all') {
 						$element.addClass('avatar icon icon-contacts');
 					} else {
