@@ -1,6 +1,19 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0.0-rc.1 – 2019-09-19
+### Fixed
+- Load newest chat messages first on joining a conversation
+  [#2206](https://github.com/nextcloud/spreed/pull/2206)
+- Unify handling of guest avatars
+  [#2203](https://github.com/nextcloud/spreed/pull/2203)
+- Unify the lobby screen with the mobile clients
+  [#2201](https://github.com/nextcloud/spreed/pull/2201)
+- Allow to mention the conversation by its name additionally to "all"
+  [#2198](https://github.com/nextcloud/spreed/pull/2198)
+- Show a call summary for calls when there was no user
+  [#2177](https://github.com/nextcloud/spreed/pull/2177)
+
 ## 7.0.0-beta.2 – 2019-09-09
 ### Fixed
 - Fix mentions with users that have a numeric only ID
