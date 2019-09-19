@@ -13,7 +13,7 @@ Feature: lobby
     And I am logged in as the admin
     And I visit the public conversation link I wrote down
     Then I see that the "Public" conversation is active
-    And I see that the "Public Waiting for the conversation to be opened" empty content message is shown in the main view
+    And I see that the "Public You are currently waiting in the lobby" empty content message is shown in the main view
     And I see that the sidebar is closed
 
   Scenario: join public lobby as a self-joined user
@@ -28,7 +28,7 @@ Feature: lobby
     And I am logged in as the admin
     And I visit the public conversation link I wrote down
     Then I see that the "Public" conversation is active
-    And I see that the "Public Waiting for the conversation to be opened" empty content message is shown in the main view
+    And I see that the "Public You are currently waiting in the lobby" empty content message is shown in the main view
     And I see that the sidebar is closed
 
 
@@ -48,7 +48,7 @@ Feature: lobby
     And I am logged in as the admin
     And I visit the public conversation link I wrote down
     Then I see that the "Public" conversation is active
-    And I see that the "Public Waiting for the conversation to be opened" empty content message is shown in the main view
+    And I see that the "Public You are currently waiting in the lobby" empty content message is shown in the main view
     And I see that the sidebar is closed
 
   Scenario: join public lobby protected by password as a self-joined user
@@ -67,5 +67,5 @@ Feature: lobby
     And I see that the current page is the Authenticate page for the public conversation link I wrote down
     And I authenticate with password "abcdef" in public conversation
     Then I see that the "Public" conversation is active
-    And I see that the "Public Waiting for the conversation to be opened" empty content message is shown in the main view
+    And I see that the "Public You are currently waiting in the lobby" empty content message is shown in the main view
     And I see that the sidebar is closed
