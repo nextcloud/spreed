@@ -42,7 +42,6 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
-use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
@@ -55,8 +54,6 @@ use Symfony\Component\EventDispatcher\GenericEvent;
 class RoomController extends AEnvironmentAwareController {
 	/** @var string|null */
 	private $userId;
-	/** @var IConfig */
-	private $config;
 	/** @var TalkSession */
 	private $session;
 	/** @var IUserManager */
@@ -81,7 +78,6 @@ class RoomController extends AEnvironmentAwareController {
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
-								IConfig $config,
 								TalkSession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
@@ -93,7 +89,6 @@ class RoomController extends AEnvironmentAwareController {
 								ITimeFactory $timeFactory,
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
-		$this->config = $config;
 		$this->session = $session;
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
@@ -250,14 +245,7 @@ class RoomController extends AEnvironmentAwareController {
 			return $roomData;
 		}
 
-		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
-		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
-			$roomData['canStartCall'] = true;
-		} else if ($defaultStartCall === Room::START_CALL_USERS && (!$currentParticipant->isGuest() || $currentParticipant->hasModeratorPermissions())) {
-			$roomData['canStartCall'] = true;
-		} else if ($defaultStartCall === Room::START_CALL_MODERATORS && $currentParticipant->hasModeratorPermissions()) {
-			$roomData['canStartCall'] = true;
-		}
+		$roomData['canStartCall'] = $currentParticipant->canStartCall();
 
 		$currentUser = $this->userManager->get($currentParticipant->getUser());
 		if ($currentUser instanceof IUser) {

@@ -60,17 +60,7 @@ class RestrictStartingCalls {
 		/** @var Participant $participant */
 		$participant = $room->getParticipantBySession($sessionId);
 
-		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
-		$canStartCall = false;
-		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
-			$canStartCall = true;
-		} else if ($defaultStartCall === Room::START_CALL_USERS && (!$participant->isGuest() || $participant->hasModeratorPermissions())) {
-			$canStartCall = true;
-		} else if ($defaultStartCall === Room::START_CALL_MODERATORS && $participant->hasModeratorPermissions()) {
-			$canStartCall = true;
-		}
-
-		if (!$canStartCall && !$room->hasSessionsInCall()) {
+		if (!$participant->canStartCall() && !$room->hasSessionsInCall()) {
 			throw new ForbiddenException('Can not start a call');
 		}
 	}
