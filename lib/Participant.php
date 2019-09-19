@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\IConfig;
 use OCP\IDBConnection;
 
 class Participant {
@@ -47,6 +48,8 @@ class Participant {
 
 	/** @var IDBConnection */
 	protected $db;
+	/** @var IConfig */
+	protected $config;
 	/** @var Room */
 	protected $room;
 	/** @var string */
@@ -71,6 +74,7 @@ class Participant {
 	private $lastJoinedCall;
 
 	public function __construct(IDBConnection $db,
+								IConfig $config,
 								Room $room,
 								string $user,
 								int $participantType,
@@ -83,6 +87,7 @@ class Participant {
 								int $lastMentionMessage,
 								\DateTime $lastJoinedCall = null) {
 		$this->db = $db;
+		$this->config = $config;
 		$this->room = $room;
 		$this->user = $user;
 		$this->participantType = $participantType;
@@ -221,5 +226,23 @@ class Participant {
 
 		$this->lastMentionMessage = $messageId;
 		return true;
+	}
+
+	public function canStartCall(): bool {
+		$defaultStartCall = (int) $this->config->getAppValue('spreed', 'start_calls', Room::START_CALL_EVERYONE);
+
+		if ($defaultStartCall === Room::START_CALL_EVERYONE) {
+			return true;
+		}
+
+		if ($defaultStartCall === Room::START_CALL_USERS && (!$this->isGuest() || $this->hasModeratorPermissions())) {
+			return true;
+		}
+
+		if ($defaultStartCall === Room::START_CALL_MODERATORS && $this->hasModeratorPermissions()) {
+			return true;
+		}
+
+		return false;
 	}
 }

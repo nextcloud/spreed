@@ -177,6 +177,7 @@ class RoomController extends AEnvironmentAwareController {
 			'count' => 0,
 			'hasPassword' => $room->hasPassword(),
 			'hasCall' => false,
+			'canStartCall' => false,
 			'lastActivity' => 0,
 			'lastReadMessage' => 0,
 			'unreadMessages' => 0,
@@ -243,6 +244,8 @@ class RoomController extends AEnvironmentAwareController {
 			// No participants and chat messages for users in the lobby.
 			return $roomData;
 		}
+
+		$roomData['canStartCall'] = $currentParticipant->canStartCall();
 
 		$currentUser = $this->userManager->get($currentParticipant->getUser());
 		if ($currentUser instanceof IUser) {

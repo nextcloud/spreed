@@ -82,6 +82,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	</commands>
 
 	<settings>
+		<admin>OCA\Talk\Settings\Admin\GeneralSettings</admin>
 		<admin>OCA\Talk\Settings\Admin\AllowedGroups</admin>
 		<admin>OCA\Talk\Settings\Admin\Commands</admin>
 		<admin>OCA\Talk\Settings\Admin\SignalingServer</admin>
