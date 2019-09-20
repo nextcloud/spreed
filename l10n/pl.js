@@ -72,8 +72,6 @@ OC.L10N.register(
     "Edit" : "Edytuj",
     "Join a conversation or start a new one" : "Dołącz do rozmowy lub rozpocznij nową",
     "Say hi to your friends and colleagues!" : "Przywitaj się z przyjaciółmi i współpracownikami!",
-    "Waiting for the conversation to be opened" : "Oczekiwanie na rozpoczęcie rozmowy",
-    "Waiting for the conversation to be opened. This meeting is scheduled for {startTime}" : "Oczekiwanie na rozpoczęcie rozmowy. Spotkanie to jest zaplanowane na {startTime}",
     "No other people in this call" : "W tej rozmowie nie uczestniczą inne osoby",
     "Waiting for {participantName} to join the call …" : "Oczekiwanie na {participantName} by przyłączyć się do rozmowy…",
     "Waiting for others to join the call …" : "Czekamy na innych aby przyłączyć się do rozmowy…",

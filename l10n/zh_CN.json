@@ -70,8 +70,6 @@
     "Edit" : "编辑",
     "Join a conversation or start a new one" : "加入一个会话或开始新会话",
     "Say hi to your friends and colleagues!" : "跟您的朋友和同事打个招呼！",
-    "Waiting for the conversation to be opened" : "等待会话开放",
-    "Waiting for the conversation to be opened. This meeting is scheduled for {startTime}" : "等待会话打开。此会议的计划开始时间是 {startTime}",
     "No other people in this call" : " 此通话中没有其他人",
     "Waiting for {participantName} to join the call …" : "等待 {participantName} 加入通话 …",
     "Waiting for others to join the call …" : "等待其他人加入通话 ...",
