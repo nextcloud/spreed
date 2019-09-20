@@ -70,8 +70,6 @@
     "Edit" : "Bewerk",
     "Join a conversation or start a new one" : "Doe mee met een discussie, of start een nieuwe",
     "Say hi to your friends and colleagues!" : "Zeg hallo tegen je vrienden en collega's!",
-    "Waiting for the conversation to be opened" : "Wachten tot het gesprek is geopend",
-    "Waiting for the conversation to be opened. This meeting is scheduled for {startTime}" : "Wachten tot het gesprek is gestart. Deze vergadering staat gepland voor {startTime}",
     "No other people in this call" : "Geen andere deelnemers in het gesprek",
     "Waiting for {participantName} to join the call …" : "Wachten op deelname door {participantName} ...",
     "Waiting for others to join the call …" : "Wachten op deelname door anderen ...",
