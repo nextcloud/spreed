@@ -645,4 +645,40 @@ class ChatManager
 
         return $creationDateTime->sub(new \DateInterval('P'.$interval.'M'));
     }
+
+    /**
+     * Check if actor belongs to a given group.
+     *
+     * @param $actor
+     * @param $group
+     *
+     * @author Oozman
+     * @return bool
+     */
+    public function isActorBelongsTo($actor, $group) {
+        try {
+
+            $query  = $this->db->getQueryBuilder();
+
+            $result = $query->select('uid')
+                ->from('group_user')
+                ->where($query->expr()
+                    ->eq('uid', $query->createNamedParameter($actor)))
+                ->andWhere($query->expr()
+                    ->eq('gid', $query->createNamedParameter($group)))
+                ->setMaxResults(1)
+                ->execute();
+
+            $isEnabled = false;
+
+            while ($row = $result->fetch()) {
+                $isEnabled = true;
+                break;
+            }
+
+            return $isEnabled;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 }

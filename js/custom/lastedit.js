@@ -27,6 +27,13 @@
         isEditing: false,
 
         /**
+         * Only allow edit feature if actor belongs to this group.
+         */
+        group: "Edit",
+
+        isEnabled: false,
+
+        /**
          * Initialize.
          *
          * @param a
@@ -42,13 +49,48 @@
             console.log("Last edit loaded.");
 
             self.app.signaling.on('joinRoom', function (token) {
-                self.lastMessageId = 0;
-                self.activeRoom = token;
-                self.getLastMessage();
+
+                self.checkIfEnabled().then(function () {
+                    self.lastMessageId = 0;
+                    self.activeRoom = token;
+                    self.isEnabled = true;
+                    self.getLastMessage();
+                });
             });
 
             self.app.signaling.on("onBeforeReceiveMessage", function (message) {
-                self.getLastMessage();
+                if (self.isEnabled) {
+                    self.getLastMessage();
+                }
+            });
+        },
+
+        /**
+         * Check if actor is allowed to edit last message.
+         *
+         * @returns {Promise<unknown>}
+         */
+        checkIfEnabled() {
+
+            const self = this;
+
+            return new Promise((resolve, reject) => {
+
+                $.ajax({
+                    url: OC.linkToOCS('apps/spreed/api/v1', 2) + "isActorBelongsTo",
+                    headers: {'Accept': 'application/json'},
+                    type: 'POST',
+                    data: {actor: self.currentUser.uid, group: self.group}
+                }).done(function (response) {
+
+                    if(!response.ocs.data.result) {
+                        return reject(new Error('Disabled'));
+                    }
+
+                    resolve(true);
+                }).fail(function (xhr) {
+                    reject(new Error('Disabled'));
+                });
             });
         },
 
@@ -76,9 +118,9 @@
          * Remove all edit comment DOM elements.
          */
         removeAllEditComments() {
-          $(".comment-edit").each(function() {
+            $(".comment-edit").each(function () {
                 $(this).remove();
-          });
+            });
         },
 
         /**
@@ -89,7 +131,7 @@
             const self = this;
 
             // Is currently editing, do nothing.
-            if(self.isEditing) {
+            if (self.isEditing) {
                 return;
             }
 
@@ -182,11 +224,12 @@
                     comment_id: id,
                     message: message,
                     actor: self.currentUser.uid,
-                    room: self.activeRoom}
+                    room: self.activeRoom
+                }
             }).done(function (response) {
                 dom.find(".message").html(self.nl2br(message, true));
-            }).always(function() {
-               console.log("Dont editing message.");
+            }).always(function () {
+                console.log("Dont editing message.");
 
                 dom.find(".contentRow").show();
                 domEditComment.find("textarea").html("").hide();
@@ -240,7 +283,7 @@
          * @param is_xhtml
          * @returns {string}
          */
-        nl2br (str, is_xhtml) {
+        nl2br(str, is_xhtml) {
             if (typeof str === 'undefined' || str === null) {
                 return '';
             }

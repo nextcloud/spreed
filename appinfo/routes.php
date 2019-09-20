@@ -139,6 +139,15 @@ return [
             ],
         ],
         [
+            'name'         => 'Chat#isActorBelongsTo',
+            'url'          => '/api/{apiVersion}/isActorBelongsTo',
+            'verb'         => 'POST',
+            'requirements' => [
+                'apiVersion' => 'v1',
+                'token'      => '^[a-z0-9]{4,30}$',
+            ],
+        ],
+        [
             'name'         => 'Chat#mentions',
             'url'          => '/api/{apiVersion}/chat/{token}/mentions',
             'verb'         => 'GET',

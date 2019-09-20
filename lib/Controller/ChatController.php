@@ -156,7 +156,7 @@ class ChatController extends AEnvironmentAwareController
             $actorId   = $this->userId;
         }
 
-        if (! $actorId) {
+        if ( ! $actorId) {
             return new DataResponse([], Http::STATUS_NOT_FOUND);
         }
 
@@ -189,7 +189,7 @@ class ChatController extends AEnvironmentAwareController
         );
         $this->messageParser->parseMessage($chatMessage);
 
-        if (! $chatMessage->getVisibility()) {
+        if ( ! $chatMessage->getVisibility()) {
             return new DataResponse([], Http::STATUS_CREATED);
         }
 
@@ -213,18 +213,22 @@ class ChatController extends AEnvironmentAwareController
      *
      * Get last message of an actor in a particular room.
      *
-     * @author Oozman
      * @return DataResponse
      * @throws \Exception
+     * @author Oozman
      */
     public function lastMessage(): DataResponse
     {
         $actorId = $this->request->getParam('actor');
-        $room = $this->request->getParam('room');
+        $room    = $this->request->getParam('room');
 
-        $lastCommentId = $this->chatManager->getLastMessageByActorInRoom($room, $actorId);
+        $lastCommentId = $this->chatManager->getLastMessageByActorInRoom($room,
+            $actorId);
 
-        return new DataResponse(['id' => (int) $lastCommentId, 'msg' => $lastCommentId], Http::STATUS_OK);
+        return new DataResponse([
+            'id'  => (int) $lastCommentId,
+            'msg' => $lastCommentId,
+        ], Http::STATUS_OK);
     }
 
     /**
@@ -232,17 +236,18 @@ class ChatController extends AEnvironmentAwareController
      *
      * Edit a specific message.
      *
-     * @author Oozman
      * @return DataResponse
+     * @author Oozman
      */
     public function editMessage(): DataResponse
     {
-        $actorId = $this->request->getParam('actor');
+        $actorId    = $this->request->getParam('actor');
         $newMessage = $this->request->getParam('message');
-        $commentId = $this->request->getParam('comment_id');
-        $room = $this->request->getParam('room');
+        $commentId  = $this->request->getParam('comment_id');
+        $room       = $this->request->getParam('room');
 
-        $result = $this->chatManager->editCommentOfActor($commentId, $newMessage, $actorId, $room);
+        $result = $this->chatManager->editCommentOfActor($commentId,
+            $newMessage, $actorId, $room);
 
         return new DataResponse(['count' => $result], Http::STATUS_OK);
     }
@@ -346,7 +351,7 @@ class ChatController extends AEnvironmentAwareController
             );
             $this->messageParser->parseMessage($message);
 
-            if (! $message->getVisibility()) {
+            if ( ! $message->getVisibility()) {
                 continue;
             }
 
@@ -453,5 +458,23 @@ class ChatController extends AEnvironmentAwareController
         }
 
         return $output;
+    }
+
+    /**
+     * @PublicPage
+     *
+     * Check if an actor belongs to a group.
+     *
+     * @return DataResponse
+     * @author Oozman
+     */
+    public function isActorBelongsTo(): DataResponse
+    {
+        $actorId = $this->request->getParam('actor');
+        $group   = $this->request->getParam('group');
+
+        $result = $this->chatManager->isActorBelongsTo($actorId, $group);
+
+        return new DataResponse(['result' => $result], Http::STATUS_OK);
     }
 }
