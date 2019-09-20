@@ -70,8 +70,6 @@
     "Edit" : "Редактировать",
     "Join a conversation or start a new one" : "Присоединитесь к обсуждению или же начните новое",
     "Say hi to your friends and colleagues!" : "Поприветствуйте своих друзей и коллег.",
-    "Waiting for the conversation to be opened" : "Ожидание начала обсуждения",
-    "Waiting for the conversation to be opened. This meeting is scheduled for {startTime}" : "Ожидание начала обсуждения. Эта встреча запланирована на {startTime}",
     "No other people in this call" : "У этого вызова нет других участников",
     "Waiting for {participantName} to join the call …" : "Ожидание подключения к вызову пользователя {participantName}…",
     "Waiting for others to join the call …" : "Ожидание подключения к вызову остальных пользователей…",
