@@ -70,8 +70,6 @@
     "Edit" : "Ändra",
     "Join a conversation or start a new one" : "Anslut till en konversation eller starta en ny",
     "Say hi to your friends and colleagues!" : "Säg hej till dina vänner och kollegor!",
-    "Waiting for the conversation to be opened" : "Väntar på att konversationen ska öppnas",
-    "Waiting for the conversation to be opened. This meeting is scheduled for {startTime}" : "Väntar på att konversationen ska öppnas. Detta möte är planerat till {startTime}",
     "No other people in this call" : "Inga andra personer i detta samtal",
     "Waiting for {participantName} to join the call …" : "Väntar på att {participantName} ansluter sig till samtalet ...",
     "Waiting for others to join the call …" : "Väntar på andra ansluter sig till samtalet ...",

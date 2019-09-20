@@ -70,8 +70,6 @@
     "Edit" : "Editar",
     "Join a conversation or start a new one" : "Únete a una conversación o empieza una nueva",
     "Say hi to your friends and colleagues!" : "¡Saluda a tus amigos y colegas!",
-    "Waiting for the conversation to be opened" : "Esperando a que se abra la conversación",
-    "Waiting for the conversation to be opened. This meeting is scheduled for {startTime}" : "Esperando a que se abra la conversación. Esta reunión está programada a las {startTime}",
     "No other people in this call" : "No hay más gente en esta llamada",
     "Waiting for {participantName} to join the call …" : "Esperando a {participantName} para unirse a la llamada ...",
     "Waiting for others to join the call …" : "Esperando a otros a unirse a la llamada ...",
