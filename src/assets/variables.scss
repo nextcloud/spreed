@@ -1,0 +1,57 @@
+/**
+ * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @author John Molakvoæ <skjnldsv@protonmail.com>
+ *
+ * @license GNU AGPL version 3 or any later version
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+// https://uxplanet.org/7-rules-for-mobile-ui-button-design-e9cf2ea54556
+// recommended is 48px
+// 44px is what we choose and have very good visual-to-usability ratio
+$clickable-area: 44px;
+
+// background icon size
+// also used for the scss icon font
+$icon-size: 16px;
+
+// icon padding for a $clickable-area width and a $icon-size icon
+// ( 44px - 16px ) / 2
+$icon-margin: ($clickable-area - $icon-size) / 2;
+
+// transparency background for icons
+$icon-focus-bg: rgba(127, 127, 127, .25);
+
+// popovermenu arrow width from the triangle center
+$arrow-width: 9px;
+
+// opacities
+$opacity_disabled: .5;
+$opacity_normal: .7;
+$opacity_full: 1;
+
+// menu round background hover feedback
+// good looking on dark AND white bg
+$action-background-hover: rgba(127, 127, 127, .25);
+
+// various structure data used in the 
+// `AppNavigation` component
+$header-height: 50px;
+$navigation-width: 300px;
+
+// mobile breakpoint
+$breakpoint-mobile: 1024px;

@@ -22,12 +22,6 @@
 <template>
 	<Content :class="{'icon-loading': loading}" app-name="vueexample">
 		<AppNavigation>
-			<AppNavigationNew
-				v-if="!loading"
-				:disabled="false"
-				button-id="new-conversation-button"
-				button-class="icon-add"
-				@click="newButtonAction" />
 			<ConversationsList />
 			<AppNavigationSettings>
 				Example settings
@@ -36,8 +30,11 @@
 		<AppContent>
 			<router-view />
 		</AppContent>
-		<AppSidebar v-show="show" title="christmas-image-2018-12-25-00:01:12.jpg" subtitle="4,3 MB, last edited 41 days ago"
-			:actions="menu" :starred.sync="starred"
+		<AppSidebar
+			v-show="show"
+			title="christmas-image-2018-12-25-00:01:12.jpg"
+			subtitle="4,3 MB, last edited 41 days ago"
+			:starred.sync="starred"
 			@close="show=false">
 			<template #action>
 				<button class="primary">
@@ -61,7 +58,6 @@
 import Content from 'nextcloud-vue/dist/Components/Content'
 import AppContent from 'nextcloud-vue/dist/Components/AppContent'
 import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
-import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
@@ -73,7 +69,6 @@ export default {
 		Content,
 		AppContent,
 		AppNavigation,
-		AppNavigationNew,
 		AppNavigationSettings,
 		AppSidebar,
 		AppSidebarTab,

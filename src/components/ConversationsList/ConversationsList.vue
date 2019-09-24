@@ -21,44 +21,60 @@
 
 <template>
 	<ul class="app-navigation">
-		<AppNavigationItem
+		<Conversation
 			v-for="item of conversationsList"
 			:key="item.id"
 			:to="{ name: 'conversation', params: { token: item.token }}"
 			:title="item.displayName"
+			:subtitle="item.lastMessage.message"
 			@click="joinConversation(item.token)">
-			<Avatar slot="icon" :user="item.displayName" :display-name="item.displayName" />
-			<AppNavigationCounter slot="counter" :highlighted="true">
+			<Avatar
+				slot="icon"
+				size="40"
+				:user="item.displayName"
+				:display-name="item.displayName" />
+			<AppNavigationCounter
+				slot="counter"
+				:highlighted="true">
 				3
 			</AppNavigationCounter>
-			<template slot="actions">
-				<ActionButton icon="icon-edit" @click="alert('Edit')">
+			<template
+				slot="actions">
+				<ActionButton
+					icon="icon-edit"
+					@click="alert('Edit')">
 					Edit
 				</ActionButton>
-				<ActionButton icon="icon-delete" @click="alert('Delete')">
+				<ActionButton
+					icon="icon-delete"
+					@click="alert('Delete')">
 					Delete
 				</ActionButton>
-				<ActionLink icon="icon-external" title="Link" href="https://nextcloud.com" />
+				<ActionLink
+					icon="icon-external"
+					title="Link"
+					href="https://nextcloud.com" />
 			</template>
-		</AppNavigationItem>
+		</Conversation>
 	</ul>
 </template>
 
 <script>
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import AppNavigationItem from 'nextcloud-vue/dist/Components/AppNavigationItem'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import { fetchConversations } from '../../services/conversationsService'
 import { joinConversation } from '../../services/participantsService'
+import Conversation from './Conversation/Conversation'
+
 export default {
 	name: 'ConversationsList',
 	components: {
-		AppNavigationItem,
 		Avatar,
 		AppNavigationCounter,
-		ActionButton
+		ActionButton,
+		Conversation
 	},
 	computed: {
 		conversationsList() {
