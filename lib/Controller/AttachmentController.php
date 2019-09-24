@@ -32,6 +32,7 @@ use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
 use OCP\Files\File;
 use OCP\Files\NotFoundException;
+use OCP\Files\NotPermittedException;
 use OCP\IConfig;
 use OCP\IRequest;
 
@@ -114,6 +115,55 @@ class AttachmentController extends AEnvironmentAwareOCSController {
 			$room, 'users', $participant->getUser(),
 			json_encode($message), $this->timeFactory->getDateTime(), true
 		);
+
+		return new DataResponse([], Http::STATUS_CREATED);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * @RequireParticipant
+	 * @RequireReadWriteConversation
+	 * @RequireModeratorOrNoLobby
+	 *
+	 * @param int $id
+	 * @param string $targetFolder
+	 * @return DataResponse
+	 */
+	public function copyAttachmentToFile(int $id, string $targetFolder = ''): DataResponse {
+		$participant = $this->getParticipant();
+		$room = $this->getRoom();
+
+		if (!$room instanceof Room) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		if (!$participant instanceof Participant || $participant->isGuest()) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
+		$folder = $this->getConversationFolder($room);
+		$attachmentNodes = $folder->getById($id);
+		if (empty($attachmentNodes)) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		/** @var File $attachment */
+		$attachment = array_pop($attachmentNodes);
+		$tempName = $attachment->getName();
+		$tempName = substr($tempName, strpos($tempName, '-') + 1);
+
+		$userFolder = $this->rootFolder->getUserFolder($participant->getUser());
+		$folder = $userFolder;
+		if ($targetFolder) {
+			try {
+				$folder = $userFolder->get($targetFolder);
+			} catch (NotFoundException $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+		}
+
+		$fileName = $folder->getNonExistingName($tempName);
+		$file = $folder->newFile($fileName);
+		$file->putContent($attachment->fopen('r'));
 
 		return new DataResponse([], Http::STATUS_CREATED);
 	}
