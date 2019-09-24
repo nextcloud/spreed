@@ -35,7 +35,7 @@ use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IRequest;
 
-class FilesController extends AEnvironmentAwareOCSController {
+class AttachmentController extends AEnvironmentAwareOCSController {
 
 	/** @var ChatManager */
 	protected $chatManager;
@@ -70,7 +70,7 @@ class FilesController extends AEnvironmentAwareOCSController {
 	 * @param string $path
 	 * @return DataResponse
 	 */
-	public function copyFileToRoom(string $path): DataResponse {
+	public function copyFileToAttachment(string $path): DataResponse {
 		$participant = $this->getParticipant();
 		$room = $this->getRoom();
 

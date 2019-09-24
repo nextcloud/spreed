@@ -157,7 +157,7 @@ return [
 		 * Files
 		 */
 		[
-			'name' => 'Files#copyFileToRoom',
+			'name' => 'Attachment#copyFileToAttachment',
 			'url' => '/api/{apiVersion}/chat/{token}/file',
 			'verb' => 'POST',
 			'requirements' => [
