@@ -437,7 +437,7 @@
 			this.reloadMessageList();
 		},
 
-		_loadOlderMessagesOnScrollToTop: function(event) {
+		_loadOlderMessagesOnScrollToTop: function() {
 			if (!this.collection.canLoadOlderMessages()) {
 				return;
 			}

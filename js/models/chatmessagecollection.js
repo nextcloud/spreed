@@ -148,7 +148,7 @@
 				return this._loadOlderMessagesPromise;
 			}
 
-			var currentLoadOlderMessagesPromise = $.Deferred()
+			var currentLoadOlderMessagesPromise = $.Deferred();
 			this._loadOlderMessagesPromise = currentLoadOlderMessagesPromise;
 
 			$.ajax({
@@ -160,7 +160,7 @@
 					limit: 50,
 				},
 				dataType: 'json',
-				success: function (data, status, request) {
+				success: function(data, status) {
 					if (status === "notmodified") {
 						this._canLoadOlderMessages = false;
 
@@ -196,7 +196,7 @@
 
 					currentLoadOlderMessagesPromise.resolve();
 				}.bind(this),
-				error: function (result) {
+				error: function() {
 					this._loadOlderMessagesPromise = null;
 
 					currentLoadOlderMessagesPromise.reject();
