@@ -134,13 +134,13 @@ templates['chatview'] = template({"compiler":[7,">= 4.0.0"],"main":function(cont
     + "</p>\n</div>\n<div class=\"loading hidden\" style=\"height: 50px\"></div>\n";
 },"useData":true});
 templates['chatview_add_comment'] = template({"1":function(container,depth0,helpers,partials,data) {
+    return "			<div class=\"guest-name\"></div>\n";
+},"3":function(container,depth0,helpers,partials,data) {
     var helper;
 
-  return "		<div class=\"author\">"
+  return "			<div class=\"author\">"
     + container.escapeExpression(((helper = (helper = helpers.actorDisplayName || (depth0 != null ? depth0.actorDisplayName : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"actorDisplayName","hash":{},"data":data}) : helper)))
     + "</div>\n";
-},"3":function(container,depth0,helpers,partials,data) {
-    return "		<div class=\"guest-name\"></div>\n";
 },"5":function(container,depth0,helpers,partials,data) {
     return " with-add-button";
 },"7":function(container,depth0,helpers,partials,data) {
@@ -161,7 +161,7 @@ templates['chatview_add_comment'] = template({"1":function(container,depth0,help
   return "<div class=\"newCommentRow comment\">\n	<div class=\"authorRow currentUser\">\n		<div class=\"avatar\" data-user-id=\""
     + alias4(((helper = (helper = helpers.actorId || (depth0 != null ? depth0.actorId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"actorId","hash":{},"data":data}) : helper)))
     + "\"></div>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.actorId : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isGuest : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
     + "	</div>\n	<form class=\"newCommentForm"
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.canShare : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + "\">\n		<div contentEditable=\""
