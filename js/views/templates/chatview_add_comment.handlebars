@@ -1,10 +1,10 @@
 <div class="newCommentRow comment">
 	<div class="authorRow currentUser">
 		<div class="avatar" data-user-id="{{actorId}}"></div>
-		{{#if actorId}}
-		<div class="author">{{actorDisplayName}}</div>
+		{{#if isGuest}}
+			<div class="guest-name"></div>
 		{{else}}
-		<div class="guest-name"></div>
+			<div class="author">{{actorDisplayName}}</div>
 		{{/if}}
 	</div>
 	<form class="newCommentForm{{#if canShare}} with-add-button{{/if}}">

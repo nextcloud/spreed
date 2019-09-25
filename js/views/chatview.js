@@ -206,6 +206,7 @@
 			}
 
 			return this._addCommentTemplate(_.extend({
+				isGuest: !OC.getCurrentUser().uid,
 				actorId: OC.getCurrentUser().uid || 'guest/' + this.model.get('hashedSessionId'),
 				actorDisplayName: OC.getCurrentUser().displayName || '',
 				newMessagePlaceholder: newMessagePlaceholder,
