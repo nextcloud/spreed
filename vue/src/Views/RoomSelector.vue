@@ -108,7 +108,7 @@ import { Avatar } from 'nextcloud-vue/dist/Components/Avatar'
 import axios from 'nextcloud-axios'
 
 export default {
-	name: 'CollaborationView',
+	name: 'RoomSelector',
 	components: {
 		Modal, Avatar
 	},

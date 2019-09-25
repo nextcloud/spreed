@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import GeneralSettings from 'Views/GeneralSettings'
+import GeneralSettings from './Views/GeneralSettings'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
