@@ -228,6 +228,7 @@ OC.L10N.register(
     "Invalid date, date format must be YYYY-MM-DD" : "Neplatné datum, je třeba aby formát byl RRRR-MM-DD",
     "Conversation not found" : "Konverzace nenalezena",
     "Path is already shared with this room" : "Umístění je už sdíleno s touto místností",
+    "Chat, video & audio-conferencing using WebRTC" : "Chat, video a audiokonference pomocí WebRTC",
     "None" : "Žádné",
     "User" : "Uživatel",
     "Everyone" : "Všichni",
@@ -315,6 +316,11 @@ OC.L10N.register(
     "Video & audio-conferencing using WebRTC" : "Video a audio konference pomocí WebRTC",
     "Video & audio-conferencing using WebRTC\n\n* 💬 **Chat integration!** Nextcloud Talk comes with some simple text chat since Nextcloud 13. More features are planned for future versions.\n* 👥 **Private, group, public and password protected calls!** Just invite somebody, a whole group or send a public link to invite to a call.\n* 💻 **Screen sharing!** Share your screen with participants of your call.\n* 🚀 **Integration with other Nextcloud apps!** Currently Contacts and users – more to come.\n* 🙈 **We’re not reinventing the wheel!** Based on the great [simpleWebRTC](https://simplewebrtc.com/) library.\n\nAnd in the works for the [coming versions](https://github.com/nextcloud/spreed/milestones/):\n* ✋ [Federated calls](https://github.com/nextcloud/spreed/issues/21), to call people on other Nextclouds" : "Video a audio konference pomocí WebRTC\n\n* 👥 **Soukromé, skupinové a veřejné hovory!** Stačí jen přizvat někoho, celou skupinu nebo poslat veřejný odkaz pro pozvání do hovoru.\n* 💻 **Sdílení obrazovky!** Sdílejte svou obrazovku s účastníky hovoru.\n* 🚀 **Napojení na ostatní Nextcloud aplikace!** V tuto chvíli Kontakty a uživatele – další jsou na cestě.\n* 🙈 **Nevymýšlíme vymyšlené!** Založeno na skvělé softwarové knihovně [simpleWebRTC](https://simplewebrtc.com/).",
     "This call is password-protected" : "Toto volání je chráněno heslem",
-    "Signaling server" : "Signální server"
+    "Signaling server" : "Signální server",
+    "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edge a Safari lze nyní použít k účasti na zvukových a video hovorech",
+    "* You can now notify all participants by posting \"@all\" into the chat" : "* Nyní můžete upozornit všechny účastníky zasláním „@all“ do chatu",
+    "* With the \"arrow-up\" key you can repost your last message" : "* Pomocí tlačítka se šipkou nahoru můžete znovu odeslat svou poslední zprávu",
+    "* Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "* Talk může nyní mít příkazy, poslat \"/help\" jako chatovou zprávu, aby zjistil, jestli váš administrátor něco nakonfiguroval",
+    "* With projects you can create quick links between conversations, files and other items" : "* U projektů můžete vytvářet rychlé odkazy mezi konverzacemi, soubory a dalšími položkami"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");
