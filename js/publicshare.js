@@ -28,6 +28,9 @@
 		init: function() {
 			this._boundHideCallUi = this._hideCallUi.bind(this);
 
+			// Match the size set in the CSS.
+			OCA.Talk.Views.VideoView.prototype.participantAvatarSize = 64;
+
 			this.setupLayoutForTalkSidebar();
 
 			this.setupSignalingEventHandlers();
