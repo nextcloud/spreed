@@ -205,7 +205,7 @@
 
 	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
 		var defer = $.Deferred();
-		if (this.roomCollection && OC.getCurrentUser().uid) {
+		if (this.roomCollection && OCA.Talk.getCurrentUser().uid) {
 			this.roomCollection.fetch({
 				success: function(roomCollection) {
 					defer.resolve(roomCollection);
@@ -956,7 +956,7 @@
 		} else {
 			// Already reconnected with a new session.
 			this._forceReconnect = false;
-			var user = OC.getCurrentUser();
+			var user = OCA.Talk.getCurrentUser();
 			var url = OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'backend';
 			msg = {
 				"type": "hello",

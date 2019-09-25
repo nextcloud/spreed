@@ -211,7 +211,7 @@
 			var messageAdditional = '';
 			var url = '';
 
-			var isGuest = (OC.getCurrentUser().uid === null);
+			var isGuest = (OCA.Talk.getCurrentUser().uid === null);
 
 			var participants = this._activeRoom.get('participants');
 			var numberOfParticipants = Object.keys(participants).length;
@@ -230,7 +230,7 @@
 					participantName = '';
 
 				_.each(participants, function(data, userId) {
-					if (OC.getCurrentUser().uid !== userId) {
+					if (OCA.Talk.getCurrentUser().uid !== userId) {
 						participantId = userId;
 						participantName = data.name;
 					}

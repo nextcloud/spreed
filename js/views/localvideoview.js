@@ -103,7 +103,7 @@
 				return;
 			}
 
-			var userId = OC.getCurrentUser().uid;
+			var userId = OCA.Talk.getCurrentUser().uid;
 			var guestName = localStorage.getItem("nick");
 			this.setAvatar(userId, guestName);
 

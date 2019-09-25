@@ -25,6 +25,7 @@
   "webrtc.js",
   "signaling.js",
   "connection.js",
+  "currentuser.js",
   "embedded.js",
   "filesplugin.js"
 ]
