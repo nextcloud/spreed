@@ -34,7 +34,7 @@
 		</p>
 
 		<p class="allowed-groups-settings-content">
-			<multiselect v-model="allowedGroups"
+			<Multiselect v-model="allowedGroups"
 				class="allowed-groups-select"
 				:options="groups"
 				:placeholder="t('spreed', 'Limit app usage to groups.')"

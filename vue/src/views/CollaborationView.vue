@@ -22,7 +22,9 @@
 
 <template>
 	<div>
-		<collection-list v-if="roomId" :id="roomId" type="room"
+		<CollectionList v-if="roomId"
+			:id="roomId"
+			type="room"
 			:name="roomTitle" />
 	</div>
 </template>

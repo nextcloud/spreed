@@ -25,7 +25,9 @@
 		<h2>
 			{{ t('spreed', 'STUN servers') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading" v-tooltip.auto="t('spreed', 'Add a new server')" class="icon icon-add"
+			<a v-else-if="!loading"
+				v-tooltip.auto="t('spreed', 'Add a new server')"
+				class="icon icon-add"
 				@click="newServer">
 				<span class="hidden-visually">{{ t('spreed', 'Add a new server') }}</span>
 			</a>
@@ -38,7 +40,7 @@
 
 		<ul class="stun-servers">
 			<transition-group name="fade" tag="li">
-				<stun-server
+				<StunServer
 					v-for="(server, index) in servers"
 					:key="`server${index}`"
 					:server.sync="servers[index]"

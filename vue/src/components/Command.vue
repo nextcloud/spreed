@@ -21,7 +21,7 @@
  -->
 
 <template>
-	<fragment>
+	<Fragment>
 		<div class="name">
 			{{ name }}
 		</div>
@@ -37,7 +37,7 @@
 		<div class="enabled">
 			{{ translatedEnabled }}
 		</div>
-	</fragment>
+	</Fragment>
 </template>
 
 <script>
