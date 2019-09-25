@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import Command from 'Components/Command'
+import Command from '../Components/Command'
 
 export default {
 	name: 'Commands',

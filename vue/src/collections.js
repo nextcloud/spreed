@@ -43,7 +43,7 @@
  */
 
 import Vue from 'vue'
-import RoomSelector from './views/RoomSelector'
+import RoomSelector from './Views/RoomSelector'
 
 // eslint-disable-next-line no-unexpected-multiline
 (function(OCP, OC) {

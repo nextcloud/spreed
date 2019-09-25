@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import SignalingServers from 'Views/SignalingServers'
+import StunServers from './Views/StunServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -30,7 +30,7 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#signaling_server',
-	name: 'SignalingServerSettings',
-	render: h => h(SignalingServers)
+	el: '#stun_server',
+	name: 'StunServerSettings',
+	render: h => h(StunServers)
 })

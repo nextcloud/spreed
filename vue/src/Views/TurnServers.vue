@@ -60,7 +60,7 @@
 <script>
 import { Tooltip } from 'nextcloud-vue'
 import debounce from 'debounce'
-import TurnServer from 'Components/TurnServer'
+import TurnServer from '../Components/TurnServer'
 
 export default {
 	name: 'TurnServers',
