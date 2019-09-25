@@ -621,8 +621,6 @@
 			$wrapper._top = 0;
 
 			var elementToUpdateOldHeight = 0;
-			var elementToUpdateOldHeightFromTopRaw = 0;
-			var elementToUpdateOldTopRaw = 0;
 
 			var $firstExistingElement = $firstElementToLoad._next;
 
@@ -633,7 +631,6 @@
 				// removed from the overall height of the list and all the
 				// other elements after it.
 				elementToUpdateOldHeight = $firstExistingElement._height;
-				elementToUpdateOldTopRaw = $firstExistingElement._topRaw;
 
 				// If the element was visible appending it to the buffer would
 				// remove it from the main wrapper, so a clone that acts as a
