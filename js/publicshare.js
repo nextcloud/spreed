@@ -72,6 +72,26 @@
 					request.setRequestHeader('Accept', 'application/json');
 				},
 				success: function(ocsResponse) {
+					if (ocsResponse.ocs.data.userId) {
+						// Override "OC.getCurrentUser()" with the user returned
+						// by the controller (as the public share page uses the
+						// incognito mode, and thus it always returns an
+						// anonymous user).
+						//
+						// When the external signaling server is used it should
+						// wait until the current user is set before trying to
+						// connect, as otherwise the connection would fail due
+						// to a mismatch between the user ID given when
+						// connecting to the backend (an anonymous user) and the
+						// user that fetched the signaling settings (the actual
+						// user). However, if that happens the signaling server
+						// will retry the connection again and again, so at some
+						// point the anonymous user will have been overriden
+						// with the current user and the connection will
+						// succeed.
+						OCA.Talk.setCurrentUser(ocsResponse.ocs.data.userId, ocsResponse.ocs.data.userDisplayName);
+					}
+
 					self.setupRoom(ocsResponse.ocs.data.token);
 				},
 				error: function() {

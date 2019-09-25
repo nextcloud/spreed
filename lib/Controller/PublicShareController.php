@@ -33,6 +33,8 @@ use OCP\AppFramework\OCSController;
 use OCP\Files\FileInfo;
 use OCP\Files\NotFoundException;
 use OCP\IRequest;
+use OCP\IUser;
+use OCP\IUserManager;
 use OCP\ISession;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as ShareManager;
@@ -40,6 +42,10 @@ use OCP\Share\IShare;
 
 class PublicShareController extends OCSController {
 
+	/** @var string|null */
+	private $userId;
+	/** @var IUserManager */
+	private $userManager;
 	/** @var ShareManager */
 	private $shareManager;
 	/** @var ISession */
@@ -51,13 +57,17 @@ class PublicShareController extends OCSController {
 
 	public function __construct(
 			$appName,
+			?string $UserId,
 			IRequest $request,
+			IUserManager $userManager,
 			ShareManager $shareManager,
 			ISession $session,
 			TalkSession $talkSession,
 			Manager $manager
 	) {
 		parent::__construct($appName, $request);
+		$this->userId = $UserId;
+		$this->userManager = $userManager;
 		$this->shareManager = $shareManager;
 		$this->session = $session;
 		$this->talkSession = $talkSession;
@@ -86,6 +96,11 @@ class PublicShareController extends OCSController {
 	 * In any case, to create or even get the token of the room, the file must
 	 * be publicly shared (like a link share, for example); an error is returned
 	 * otherwise.
+	 *
+	 * Besides the token of the room this also returns the current user ID and
+	 * display name, if any; this is needed by the Talk sidebar to know the
+	 * actual current user, as the public share page uses the incognito mode and
+	 * thus logged in users as seen as guests.
 	 *
 	 * @param string $shareToken
 	 * @return DataResponse the status code is "200 OK" if a room is returned,
@@ -119,8 +134,14 @@ class PublicShareController extends OCSController {
 
 		$this->talkSession->setFileShareTokenForRoom($room->getToken(), $shareToken);
 
+		$currentUser = $this->userManager->get($this->userId);
+		$currentUserId = $currentUser instanceof IUser ? $currentUser->getUID() : '';
+		$currentUserDisplayName = $currentUser instanceof IUser ? $currentUser->getDisplayName() : '';
+
 		return new DataResponse([
-			'token' => $room->getToken()
+			'token' => $room->getToken(),
+			'userId' => $currentUserId,
+			'userDisplayName' => $currentUserDisplayName,
 		]);
 	}
 
