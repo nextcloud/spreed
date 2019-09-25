@@ -35,6 +35,7 @@
   "webrtc.js",
   "signaling.js",
   "connection.js",
+  "currentuser.js",
   "app.js",
   "init.js"
 ]

@@ -206,14 +206,14 @@
 			}
 
 			return this._addCommentTemplate(_.extend({
-				isGuest: !OC.getCurrentUser().uid,
-				actorId: OC.getCurrentUser().uid || 'guest/' + this.model.get('hashedSessionId'),
-				actorDisplayName: OC.getCurrentUser().displayName || '',
+				isGuest: !OCA.Talk.getCurrentUser().uid,
+				actorId: OCA.Talk.getCurrentUser().uid || 'guest/' + this.model.get('hashedSessionId'),
+				actorDisplayName: OCA.Talk.getCurrentUser().displayName || '',
 				newMessagePlaceholder: newMessagePlaceholder,
 				submitText: submitText,
 				shareText: t('spreed', 'Share'),
 				isReadOnly: isReadOnly,
-				canShare: !isReadOnly && OC.getCurrentUser().uid,
+				canShare: !isReadOnly && OCA.Talk.getCurrentUser().uid,
 			}, params));
 		},
 
@@ -224,7 +224,7 @@
 
 			params = _.extend({
 				// TODO isUserAuthor is not properly set for guests
-				isUserAuthor: OC.getCurrentUser().uid === params.actorId,
+				isUserAuthor: OCA.Talk.getCurrentUser().uid === params.actorId,
 				isGuest: params.actorType === 'guests',
 			}, params);
 
@@ -256,8 +256,8 @@
 			this._virtualList = new OCA.SpreedMe.Views.VirtualList(this.$container);
 
 			var avatarSize = 32;
-			if (OC.getCurrentUser().uid) {
-				this.$el.find('.avatar').avatar(OC.getCurrentUser().uid, avatarSize, undefined, false, undefined, OC.getCurrentUser().displayName);
+			if (OCA.Talk.getCurrentUser().uid) {
+				this.$el.find('.avatar').avatar(OCA.Talk.getCurrentUser().uid, avatarSize, undefined, false, undefined, OCA.Talk.getCurrentUser().displayName);
 			} else {
 				var displayName = this.getOption('guestNameModel').get('nick');
 				var customName = displayName !== t('spreed', 'Guest') ? displayName : '';
@@ -500,7 +500,7 @@
 			formattedMessage = formattedMessage.replace(/\n/g, '<br/>');
 			formattedMessage = OCA.SpreedMe.Views.RichObjectStringParser.parseMessage(
 				formattedMessage, commentModel.get('messageParameters'), {
-					userId: OC.getCurrentUser().uid,
+					userId: OCA.Talk.getCurrentUser().uid,
 					sessionHash: this.model.get('hashedSessionId'),
 				});
 
@@ -807,10 +807,10 @@
 				setAvatar($(this), inlineAvatarSize);
 			});
 
-			if (OC.getCurrentUser().uid &&
+			if (OCA.Talk.getCurrentUser().uid &&
 				model &&
 				model.get('actorType') === 'users' &&
-				model.get('actorId') !== OC.getCurrentUser().uid) {
+				model.get('actorId') !== OCA.Talk.getCurrentUser().uid) {
 				$el.find('.authorRow .avatar, .authorRow .author').contactsMenu(
 					model.get('actorId'), 0, $el.find('.authorRow'));
 			}
@@ -827,7 +827,7 @@
 			});
 
 			// Contacts menu is not shown in public view.
-			if (!OC.getCurrentUser().uid) {
+			if (!OCA.Talk.getCurrentUser().uid) {
 				return;
 			}
 
@@ -836,7 +836,7 @@
 				var $avatar = $this.find('.avatar');
 
 				var user = $avatar.data('user-id');
-				if (user !== OC.getCurrentUser().uid) {
+				if (user !== OCA.Talk.getCurrentUser().uid) {
 					$this.contactsMenu(user, 0, $this);
 				}
 			});
@@ -884,7 +884,7 @@
 			img.width = previewSize;
 			img.height = previewSize;
 
-			if (OC.getCurrentUser().uid) {
+			if (OCA.Talk.getCurrentUser().uid) {
 				img.onerror = handlePreviewLoadError;
 				img.src = previewUrl;
 			} else {
@@ -1018,7 +1018,7 @@
 				message: message
 			};
 
-			if (!OC.getCurrentUser().uid) {
+			if (!OCA.Talk.getCurrentUser().uid) {
 				var guestNick = OCA.SpreedMe.app._localStorageModel.get('nick');
 				if (guestNick) {
 					data.actorDisplayName = guestNick;

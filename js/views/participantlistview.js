@@ -81,8 +81,8 @@
 			templateContext: function() {
 				var isSelf = false,
 					isModerator = false;
-				if (OC.getCurrentUser().uid) {
-					isSelf = this.model.get('userId') === OC.getCurrentUser().uid;
+				if (OCA.Talk.getCurrentUser().uid) {
+					isSelf = this.model.get('userId') === OCA.Talk.getCurrentUser().uid;
 					isModerator = this.room.get('participantType') === OCA.SpreedMe.app.OWNER ||
 						this.room.get('participantType') === OCA.SpreedMe.app.MODERATOR;
 				} else {
@@ -102,7 +102,7 @@
 				}
 
 				var isGuestOrGuestModerator = this.model.get('participantType') === OCA.SpreedMe.app.GUEST || this.model.get('participantType') === OCA.SpreedMe.app.GUEST_MODERATOR;
-				var hasContactsMenu = OC.getCurrentUser().uid && !isSelf && !isGuestOrGuestModerator;
+				var hasContactsMenu = OCA.Talk.getCurrentUser().uid && !isSelf && !isGuestOrGuestModerator;
 
 				return {
 					canModerate: canModerate,
@@ -139,8 +139,8 @@
 					}
 				});
 
-				if (OC.getCurrentUser().uid && model.get('userId') &&
-					model.get('userId') !== OC.getCurrentUser().uid) {
+				if (OCA.Talk.getCurrentUser().uid && model.get('userId') &&
+					model.get('userId') !== OCA.Talk.getCurrentUser().uid) {
 					this.$el.find('.participant-entry .avatar').contactsMenu(
 						model.get('userId'), 0, this.$el.find('.participant-entry'));
 

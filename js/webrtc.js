@@ -381,7 +381,7 @@ var spreedPeerConnectionTable = [];
 			detectSpeakingEvents: true,
 			connection: signaling,
 			enableDataChannels: true,
-			nick: OC.getCurrentUser().displayName
+			nick: OCA.Talk.getCurrentUser().displayName
 		});
 		if (signaling.hasFeature('mcu')) {
 			// Force "Plan-B" semantics if the MCU is used, which doesn't support
@@ -536,7 +536,7 @@ var spreedPeerConnectionTable = [];
 							} else {
 								OCA.SpreedMe.webrtc.emit('audioOn');
 							}
-							if (!OC.getCurrentUser()['uid']) {
+							if (!OCA.Talk.getCurrentUser()['uid']) {
 								var currentGuestNick = localStorage.getItem("nick");
 								sendDataChannelToAll('status', 'nickChanged', currentGuestNick);
 							}
@@ -624,7 +624,7 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.videos.stopSendingNick(peer);
 				peer.nickInterval = setInterval(function() {
 					var payload;
-					var user = OC.getCurrentUser();
+					var user = OCA.Talk.getCurrentUser();
 					if (!user.uid) {
 						payload = localStorage.getItem("nick");
 					} else {
