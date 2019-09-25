@@ -1090,18 +1090,27 @@
 			var $shareButton = $form.find('.share');
 			var $shareLoadingIcon = $form.find('.shareLoading');
 
-			OC.dialogs.filepicker(t('spreed', 'File to share'), function(targetPath) {
+			OC.dialogs.filepicker(t('spreed', 'File to share'), function(targetPath, clickType) {
 				$shareButton.addClass('hidden');
 				$shareLoadingIcon.removeClass('hidden');
 
+				var url = OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares';
+				var data = {
+					shareType: OC.Share.SHARE_TYPE_ROOM,
+					path: targetPath,
+					shareWith: self.collection.token
+				};
+				if (clickType === 'attach') {
+					url = OC.linkToOCS('apps/spreed/api/v1/chat', 2) + self.collection.token + '/file';
+					data = {
+						path: targetPath
+					};
+				}
 				$.ajax({
 					type: 'POST',
-					// url: OC.linkToOCS('apps/files_sharing/api/v1', 2) + 'shares',
-					url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + self.collection.token + '/file',
+					url: url,
 					dataType: 'json',
-					data: {
-						path: targetPath
-					}
+					data: data
 				}).always(function() {
 					$shareLoadingIcon.addClass('hidden');
 					$shareButton.removeClass('hidden');
@@ -1118,7 +1127,20 @@
 
 					OC.Notification.showTemporary(message);
 				});
-			}, false, ['*', 'httpd/unix-directory'], true, OC.dialogs.FILEPICKER_TYPE_CHOOSE);
+			}, false, ['*', 'httpd/unix-directory'], true, OC.dialogs.FILEPICKER_TYPE_CUSTOM, '', {
+				buttons: [
+					{
+						text: t('spreed', 'Share'),
+						type: 'share',
+						defaultButton: false
+					},
+					{
+						text: t('spreed', 'Attach'),
+						type: 'attach',
+						defaultButton: true
+					}
+				]
+			});
 		},
 
 	});
