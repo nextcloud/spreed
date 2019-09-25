@@ -25,7 +25,9 @@
 		<h2>
 			{{ t('spreed', 'Signaling servers') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
-			<a v-else-if="!loading" v-tooltip.auto="t('spreed', 'Add a new server')" class="icon icon-add"
+			<a v-else-if="!loading"
+				v-tooltip.auto="t('spreed', 'Add a new server')"
+				class="icon icon-add"
 				@click="newServer">
 				<span class="hidden-visually">{{ t('spreed', 'Add a new server') }}</span>
 			</a>
@@ -38,15 +40,19 @@
 		</p>
 
 		<div v-if="!servers.length" class="signaling-warning">
-			<input id="hide_warning" v-model="hideWarning" type="checkbox"
-				name="hide_warning" class="checkbox" :disabled="loading"
+			<input id="hide_warning"
+				v-model="hideWarning"
+				type="checkbox"
+				name="hide_warning"
+				class="checkbox"
+				:disabled="loading"
 				@change="updateHideWarning">
 			<label for="hide_warning">{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}</label>
 		</div>
 
 		<ul class="turn-servers">
 			<transition-group name="fade" tag="li">
-				<signaling-server
+				<SignalingServer
 					v-for="(server, index) in servers"
 					:key="`server${index}`"
 					:server.sync="servers[index].server"
@@ -61,9 +67,13 @@
 
 		<div class="signaling-secret">
 			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input v-model="secret" type="text" name="signaling_secret"
-				:disabled="loading" :placeholder="t('spreed', 'Shared secret')"
-				:aria-label="t('spreed', 'Shared secret')" @input="debounceUpdateServers">
+			<input v-model="secret"
+				type="text"
+				name="signaling_secret"
+				:disabled="loading"
+				:placeholder="t('spreed', 'Shared secret')"
+				:aria-label="t('spreed', 'Shared secret')"
+				@input="debounceUpdateServers">
 		</div>
 	</div>
 </template>
