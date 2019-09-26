@@ -358,10 +358,12 @@
 			var self = this;
 			this.signaling.syncRooms()
 				.then(function() {
-					self.stopListening(self.activeRoom, 'change:displayName');
-					self.stopListening(self.activeRoom, 'change:participantType');
-					self.stopListening(self.activeRoom, 'change:participantFlags');
-					self.stopListening(self.activeRoom, 'change:lobbyState');
+					self.stopListening(self.activeRoom, 'change:displayName', self._updatePageTitleOnDisplayNameChange);
+					self.stopListening(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
+					self.stopListening(self.activeRoom, 'change:participantType', self.updateContentsLayout);
+					self.stopListening(self.activeRoom, 'change:participantType', self._updateSidebar);
+					self.stopListening(self.activeRoom, 'change:lobbyState', self.updateContentsLayout);
+					self.stopListening(self.activeRoom, 'change:lobbyState', self._updateSidebar);
 
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
