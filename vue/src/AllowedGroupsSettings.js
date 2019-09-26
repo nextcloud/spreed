@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import AllowedGroups from './Views/AllowedGroups'
+import AllowedGroups from './views/AllowedGroups'
 
 Vue.prototype.t = t
 Vue.prototype.n = n

@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import TurnServers from './Views/TurnServers'
+import TurnServers from './views/TurnServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n

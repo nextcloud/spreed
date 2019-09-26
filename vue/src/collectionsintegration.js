@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import CollaborationView from './Views/CollaborationView'
+import CollaborationView from './views/CollaborationView'
 
 // eslint-disable-next-line no-unexpected-multiline
 (function(OCP, OCA) {
