@@ -376,9 +376,7 @@
 					self._emptyContentView.setActiveRoom(self.activeRoom);
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
-					self.listenTo(self.activeRoom, 'change:displayName', function(model, value) {
-						self.setPageTitle(value);
-					});
+					self.listenTo(self.activeRoom, 'change:displayName', self._updatePageTitleOnDisplayNameChange);
 
 					self.updateContentsLayout();
 					self.listenTo(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
@@ -389,6 +387,9 @@
 
 					self.updateSidebarWithActiveRoom();
 				});
+		},
+		_updatePageTitleOnDisplayNameChange: function(model, value) {
+			this.setPageTitle(value);
 		},
 		updateContentsLayout: function() {
 			if (!this.activeRoom) {
