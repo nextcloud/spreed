@@ -68,6 +68,9 @@
 		},
 
 		modelEvents: {
+			'change:canStartCall': function() {
+				this.render();
+			},
 			'change:hasCall': function() {
 				this.render();
 			},
