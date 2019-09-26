@@ -391,10 +391,25 @@
 		},
 
 		/**
-		 * Reloads the message list.
+		 * Reloads the message list and updates internal values based on the
+		 * size of the chat view.
 		 *
 		 * This needs to be called whenever the size of the chat view has
 		 * changed.
+		 */
+		handleSizeChanged: function() {
+			this.reloadMessageList();
+
+			if (this.$el && this.$el.find('.newCommentRow .message').length > 0) {
+				// Before the 3.0.0 release jQuery rounded the height to the nearest
+				// integer, but Firefox has subpixel accuracy, so the height
+				// returned by jQuery can not be used in the calculations.
+				this._newMessageFieldHeight = this.$el.find('.newCommentRow .message').get(0).getBoundingClientRect().height;
+			}
+		},
+
+		/**
+		 * Reloads the message list.
 		 *
 		 * When the message list is reloaded its size may have changed (for
 		 * example, if the chat view was detached from the main view and
@@ -888,6 +903,15 @@
 				$field.data('submitButtonEl', $submitButton);
 			}
 
+			// Pressing Arrow-up/down in an empty/unchanged input brings back the last sent messages
+			if (this.lastComments.length !== 0 && !$field.atwho('isSelecting')) {
+				if (ev.keyCode === 38 || ev.keyCode === 40) {
+					this._loopThroughLastComments(ev, $field);
+				} else {
+					this.currentLastComment = -1;
+				}
+			}
+
 			var newMessageFieldOldHeight = this._newMessageFieldHeight;
 			// Before the 3.0.0 release jQuery rounded the height to the nearest
 			// integer, but Firefox has subpixel accuracy, so the height
@@ -904,16 +928,6 @@
 			if (ev.keyCode === 13 && !ev.shiftKey && !$field.atwho('isSelecting')) {
 				$submitButton.click();
 				ev.preventDefault();
-			}
-
-			// Pressing Arrow-up/down in an empty/unchanged input brings back the last sent messages
-			if (this.lastComments.length !== 0 && !$field.atwho('isSelecting')) {
-
-				if (ev.keyCode === 38 || ev.keyCode === 40) {
-					this._loopThroughLastComments(ev, $field);
-				} else {
-					this.currentLastComment = -1;
-				}
 			}
 		},
 
@@ -1032,6 +1046,14 @@
 			$form.find('.submit').removeClass('hidden');
 			$form.find('.submitLoading').addClass('hidden');
 			$form.find('.message').text('').prop('contenteditable', true);
+
+			// Update the stored height of the new message field after cleaning
+			// it.
+			//
+			// Before the 3.0.0 release jQuery rounded the height to the nearest
+			// integer, but Firefox has subpixel accuracy, so the height
+			// returned by jQuery can not be used in the calculations.
+			this._newMessageFieldHeight = $form.find('.message').get(0).getBoundingClientRect().height;
 
 			$form.find('.message').focus();
 
