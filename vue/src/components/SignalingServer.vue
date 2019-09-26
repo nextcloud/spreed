@@ -22,15 +22,25 @@
 
 <template>
 	<div class="signaling-server">
-		<input ref="signaling_server" type="text" name="signaling_server"
-			placeholder="wss://signaling.example.org" :value="server" :disabled="loading"
-			:aria-label="t('spreed', 'TURN server URL')" @input="updateServer">
-		<input :id="'verify' + index" type="checkbox" :name="'verify' + index"
-			class="checkbox verify" :checked="verify"
+		<input ref="signaling_server"
+			type="text"
+			name="signaling_server"
+			placeholder="wss://signaling.example.org"
+			:value="server"
+			:disabled="loading"
+			:aria-label="t('spreed', 'TURN server URL')"
+			@input="updateServer">
+		<input :id="'verify' + index"
+			type="checkbox"
+			:name="'verify' + index"
+			class="checkbox verify"
+			:checked="verify"
 			@change="updateVerify">
 		<label :for="'verify' + index">{{ t('spreed', 'Validate SSL certificate') }}</label>
 
-		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Delete this server')" class="icon icon-delete"
+		<a v-show="!loading"
+			v-tooltip.auto="t('spreed', 'Delete this server')"
+			class="icon icon-delete"
 			@click="removeServer" />
 	</div>
 </template>

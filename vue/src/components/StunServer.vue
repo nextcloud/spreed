@@ -22,11 +22,18 @@
 
 <template>
 	<div class="stun-server">
-		<input ref="stun_server" type="text" name="stun_server"
-			placeholder="stunserver:port" :value="server" :disabled="loading"
-			:aria-label="t('spreed', 'STUN server URL')" @input="update">
+		<input ref="stun_server"
+			type="text"
+			name="stun_server"
+			placeholder="stunserver:port"
+			:value="server"
+			:disabled="loading"
+			:aria-label="t('spreed', 'STUN server URL')"
+			@input="update">
 		<span v-show="!isValidServer" class="icon icon-error" />
-		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Delete this server')" class="icon icon-delete"
+		<a v-show="!loading"
+			v-tooltip.auto="t('spreed', 'Delete this server')"
+			class="icon icon-delete"
 			@click="removeServer" />
 	</div>
 </template>

@@ -22,15 +22,28 @@
 
 <template>
 	<div class="turn-server">
-		<input ref="turn_server" type="text" name="turn_server"
-			placeholder="turnserver:port" :value="server" :disabled="loading"
-			:aria-label="t('spreed', 'TURN server URL')" @input="updateServer">
-		<input ref="turn_secret" type="text" name="turn_secret"
-			placeholder="secret" :value="secret" :disabled="loading"
-			:aria-label="t('spreed', 'TURN server secret')" @input="updateSecret">
+		<input ref="turn_server"
+			type="text"
+			name="turn_server"
+			placeholder="turnserver:port"
+			:value="server"
+			:disabled="loading"
+			:aria-label="t('spreed', 'TURN server URL')"
+			@input="updateServer">
+		<input ref="turn_secret"
+			type="text"
+			name="turn_secret"
+			placeholder="secret"
+			:value="secret"
+			:disabled="loading"
+			:aria-label="t('spreed', 'TURN server secret')"
+			@input="updateSecret">
 
-		<select class="protocols" :value="protocols" :disabled="loading"
-			:aria-label="t('spreed', 'TURN server protocols')" @input="updateProtocols">
+		<select class="protocols"
+			:value="protocols"
+			:disabled="loading"
+			:aria-label="t('spreed', 'TURN server protocols')"
+			@input="updateProtocols">
 			<option value="udp,tcp">
 				{{ t('spreed', 'UDP and TCP') }}
 			</option>
@@ -42,10 +55,14 @@
 			</option>
 		</select>
 
-		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Test this server')" class="icon"
+		<a v-show="!loading"
+			v-tooltip.auto="t('spreed', 'Test this server')"
+			class="icon"
 			:class="{'icon-category-monitoring': !testing && !testingError && !testingSuccess, 'icon-loading-small': testing, 'icon-error': testingError, 'icon-checkmark': testingSuccess}"
 			@click="testServer" />
-		<a v-show="!loading" v-tooltip.auto="t('spreed', 'Delete this server')" class="icon icon-delete"
+		<a v-show="!loading"
+			v-tooltip.auto="t('spreed', 'Delete this server')"
+			class="icon icon-delete"
 			@click="removeServer" />
 	</div>
 </template>

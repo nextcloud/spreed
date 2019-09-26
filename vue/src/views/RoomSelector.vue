@@ -21,15 +21,17 @@
   -->
 
 <template>
-	<modal @close="close">
+	<Modal @close="close">
 		<div id="modal-inner" :class="{ 'icon-loading': loading }">
 			<div id="modal-content">
 				<h1>{{ t('spreed', 'Select a conversation to add to the project') }}</h1>
 				<div id="room-list">
 					<ul v-if="!loading">
-						<li v-for="room in availableRooms" :key="room.token" :class="{selected: selectedRoom === room.token }"
+						<li v-for="room in availableRooms"
+							:key="room.token"
+							:class="{selected: selectedRoom === room.token }"
 							@click="selectedRoom=room.token">
-							<avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name" />
+							<Avatar v-if="room.type === types.ROOM_TYPE_ONE_TO_ONE" :user="room.name" />
 							<div v-else-if="room.type === types.ROOM_TYPE_PUBLIC" class="avatar icon icon-public icon-white" />
 							<div v-else class="avatar icon icon-contacts" />
 							<span>{{ room.displayName }}</span>
@@ -43,7 +45,7 @@
 				</div>
 			</div>
 		</div>
-	</modal>
+	</Modal>
 </template>
 <style scoped>
 	#modal-inner {
@@ -106,7 +108,7 @@ import { Avatar } from 'nextcloud-vue/dist/Components/Avatar'
 import axios from 'nextcloud-axios'
 
 export default {
-	name: 'CollaborationView',
+	name: 'RoomSelector',
 	components: {
 		Modal, Avatar
 	},
