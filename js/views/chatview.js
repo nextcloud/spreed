@@ -888,6 +888,15 @@
 				$field.data('submitButtonEl', $submitButton);
 			}
 
+			// Pressing Arrow-up/down in an empty/unchanged input brings back the last sent messages
+			if (this.lastComments.length !== 0 && !$field.atwho('isSelecting')) {
+				if (ev.keyCode === 38 || ev.keyCode === 40) {
+					this._loopThroughLastComments(ev, $field);
+				} else {
+					this.currentLastComment = -1;
+				}
+			}
+
 			var newMessageFieldOldHeight = this._newMessageFieldHeight;
 			// Before the 3.0.0 release jQuery rounded the height to the nearest
 			// integer, but Firefox has subpixel accuracy, so the height
@@ -904,16 +913,6 @@
 			if (ev.keyCode === 13 && !ev.shiftKey && !$field.atwho('isSelecting')) {
 				$submitButton.click();
 				ev.preventDefault();
-			}
-
-			// Pressing Arrow-up/down in an empty/unchanged input brings back the last sent messages
-			if (this.lastComments.length !== 0 && !$field.atwho('isSelecting')) {
-
-				if (ev.keyCode === 38 || ev.keyCode === 40) {
-					this._loopThroughLastComments(ev, $field);
-				} else {
-					this.currentLastComment = -1;
-				}
 			}
 		},
 
