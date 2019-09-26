@@ -1033,6 +1033,14 @@
 			$form.find('.submitLoading').addClass('hidden');
 			$form.find('.message').text('').prop('contenteditable', true);
 
+			// Update the stored height of the new message field after cleaning
+			// it.
+			//
+			// Before the 3.0.0 release jQuery rounded the height to the nearest
+			// integer, but Firefox has subpixel accuracy, so the height
+			// returned by jQuery can not be used in the calculations.
+			this._newMessageFieldHeight = $form.find('.message').get(0).getBoundingClientRect().height;
+
 			$form.find('.message').focus();
 
 			// The new message does not need to be explicitly added to the list
