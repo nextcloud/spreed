@@ -473,3 +473,7 @@ video {
 
 	opacity: 0.7;
 }
+
+#muteWrapper .icon-audio-off + .volume-indicator {
+	background: linear-gradient(0deg, gray, white 36px);
+}
