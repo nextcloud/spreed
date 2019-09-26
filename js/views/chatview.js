@@ -391,10 +391,25 @@
 		},
 
 		/**
-		 * Reloads the message list.
+		 * Reloads the message list and updates internal values based on the
+		 * size of the chat view.
 		 *
 		 * This needs to be called whenever the size of the chat view has
 		 * changed.
+		 */
+		handleSizeChanged: function() {
+			this.reloadMessageList();
+
+			if (this.$el && this.$el.find('.newCommentRow .message').length > 0) {
+				// Before the 3.0.0 release jQuery rounded the height to the nearest
+				// integer, but Firefox has subpixel accuracy, so the height
+				// returned by jQuery can not be used in the calculations.
+				this._newMessageFieldHeight = this.$el.find('.newCommentRow .message').get(0).getBoundingClientRect().height;
+			}
+		},
+
+		/**
+		 * Reloads the message list.
 		 *
 		 * When the message list is reloaded its size may have changed (for
 		 * example, if the chat view was detached from the main view and
