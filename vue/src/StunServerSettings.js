@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import StunServers from './Views/StunServers'
+import StunServers from './views/StunServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
