@@ -414,7 +414,7 @@
 			if (!this._chatViewInMainView) {
 				this._sidebarView.removeTab('chat');
 				this._chatView.$el.prependTo('#app-content-wrapper');
-				this._chatView.reloadMessageList();
+				this._chatView.handleSizeChanged();
 				this._chatView.setTooltipContainer($('#app'));
 				this._chatView.focusChatInput();
 				this._chatViewInMainView = true;
@@ -429,7 +429,7 @@
 				this._chatView.$el.detach();
 				this._sidebarView.addTab('chat', { label: t('spreed', 'Chat'), icon: 'icon-comment', priority: 100 }, this._chatView);
 				this._sidebarView.selectTab('chat');
-				this._chatView.reloadMessageList();
+				this._chatView.handleSizeChanged();
 				this._chatView.setTooltipContainer(this._chatView.$el);
 				this._chatViewInMainView = false;
 			}
@@ -575,43 +575,43 @@
 			}.bind(this));
 
 			// Opening or closing the sidebar changes the width of the main
-			// view, so if the chat view is in the main view it needs to be
-			// reloaded.
-			var reloadMessageListOnSidebarVisibilityChange = function() {
+			// view, so if the chat view is in the main view it needs to handle
+			// a size change.
+			var handleSizeChangedOnSidebarVisibilityChange = function() {
 				if (!this._chatViewInMainView) {
 					return;
 				}
 
-				this._chatView.reloadMessageList();
+				this._chatView.handleSizeChanged();
 			}.bind(this);
-			this._chatView.listenTo(this._sidebarView, 'opened', reloadMessageListOnSidebarVisibilityChange);
-			this._chatView.listenTo(this._sidebarView, 'closed', reloadMessageListOnSidebarVisibilityChange);
+			this._chatView.listenTo(this._sidebarView, 'opened', handleSizeChangedOnSidebarVisibilityChange);
+			this._chatView.listenTo(this._sidebarView, 'closed', handleSizeChangedOnSidebarVisibilityChange);
 
 			// Resizing the window can change the size of the chat view, both
 			// when it is in the main view and in the sidebar, so the chat view
-			// needs to be reloaded. The initial reload is not very heavy, so
-			// the handler is not debounced for a snappier feel and to reduce
-			// flickering.
+			// needs to handle a size change. The initial reload is not very
+			// heavy, so the window resize handler is not debounced for a
+			// snappier feel and to reduce flickering.
 			// However, resizing the window below certain width causes the
 			// navigation bar to be hidden; an explicit handling is needed in
 			// this case because the app navigation (or, more specifically, its
 			// Snap object) adds a transition to the app content, so the reload
 			// needs to be delayed to give the transition time to end and thus
 			// give the app content time to get its final size.
-			var reloadMessageListOnWindowResize = function() {
+			var handleSizeChangedOnWindowResize = function() {
 				var chatView = this._chatView;
 
 				if ($(window).width() >= 768 || !this._chatViewInMainView) {
-					chatView.reloadMessageList();
+					chatView.handleSizeChanged();
 
 					return;
 				}
 
 				setTimeout(function() {
-					chatView.reloadMessageList();
+					chatView.handleSizeChanged();
 				}, 300);
 			}.bind(this);
-			$(window).resize(reloadMessageListOnWindowResize);
+			$(window).resize(handleSizeChangedOnWindowResize);
 
 			this._messageCollection.listenTo(roomChannel, 'leaveCurrentRoom', function() {
 				this.stopReceivingMessages();
