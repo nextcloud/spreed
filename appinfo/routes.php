@@ -341,7 +341,7 @@ return [
 		 * FilesIntegration
 		 */
 		[
-			'name' => 'FilesIntegration#getRoom',
+			'name' => 'FilesIntegration#getRoomByFileId',
 			'url' => '/api/{apiVersion}/file/{fileId}',
 			'verb' => 'GET',
 			'requirements' => [
@@ -349,15 +349,14 @@ return [
 				'fileId' => '.+'
 			],
 		],
-
-		/**
-		 * PublicShare
-		 */
 		[
-			'name' => 'PublicShare#getRoom',
+			'name' => 'FilesIntegration#getRoomByShareToken',
 			'url' => '/api/{apiVersion}/publicshare/{shareToken}',
 			'verb' => 'GET',
-			'requirements' => ['apiVersion' => 'v1'],
+			'requirements' => [
+				'apiVersion' => 'v1',
+				'shareToken' => '.+',
+			],
 		],
 
 		/**
