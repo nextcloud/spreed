@@ -23,6 +23,7 @@ require __DIR__ . '/../../vendor/autoload.php';
 
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
@@ -65,6 +66,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/** @var array */
 	protected $createdGroups = [];
 
+	/** @var SharingContext */
+	private $sharingContext;
+
 	public static function getTokenForIdentifier(string $identifier) {
 		return self::$identifierToToken[$identifier];
 	}
@@ -89,6 +93,15 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		$this->createdUsers = [];
 		$this->createdGroups = [];
+	}
+
+	/**
+	 * @BeforeScenario
+	 */
+	public function getOtherRequiredSiblingContexts(BeforeScenarioScope $scope) {
+		$environment = $scope->getEnvironment();
+
+		$this->sharingContext = $environment->getContext("SharingContext");
 	}
 
 	/**
@@ -360,6 +373,30 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
+	}
+
+	/**
+	 * @Then /^user "([^"]*)" gets the room for last share with (\d+)$/
+	 *
+	 * @param string $user
+	 * @param int $statusCode
+	 */
+	public function userGetsTheRoomForLastShare($user, $statusCode) {
+		$shareToken = $this->sharingContext->getLastShareToken();
+
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/apps/spreed/api/v1/publicshare/' . $shareToken);
+		$this->assertStatusCode($this->response, $statusCode);
+
+		if ($statusCode !== '200') {
+			return;
+		}
+
+		$response = $this->getDataFromResponse($this->response);
+
+		$identifier = 'file last share room';
+		self::$identifierToToken[$identifier] = $response['token'];
+		self::$tokenToIdentifier[$response['token']] = $identifier;
 	}
 
 	/**
@@ -1069,6 +1106,51 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/*
 	 * Requests
 	 */
+
+	/**
+	 * @Given /^user "([^"]*)" logs in$/
+	 */
+	public function userLogsIn(string $user) {
+		$loginUrl = $this->baseUrl . '/login';
+
+		$cookieJar = $this->getUserCookieJar($user);
+
+		// Request a new session and extract CSRF token
+		$client = new Client();
+		$this->response = $client->get(
+			$loginUrl,
+			[
+				'cookies' => $cookieJar,
+			]
+		);
+
+		$requestToken = $this->extractRequestTokenFromResponse($this->response);
+
+		// Login and extract new token
+		$password = ($user === 'admin') ? 'admin' : '123456';
+		$client = new Client();
+		$this->response = $client->post(
+			$loginUrl,
+			[
+				'body' => [
+					'user' => $user,
+					'password' => $password,
+					'requesttoken' => $requestToken,
+				],
+				'cookies' => $cookieJar,
+			]
+		);
+
+		$this->assertStatusCode($this->response, 200);
+	}
+
+	/**
+	 * @param ResponseInterface $response
+	 * @return string
+	 */
+	private function extractRequestTokenFromResponse(ResponseInterface $response): string {
+		return substr(preg_replace('/(.*)data-requesttoken="(.*)">(.*)/sm', '\2', $response->getBody()->getContents()), 0, 89);
+	}
 
 	/**
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/

@@ -53,6 +53,8 @@
 
 		template: OCA.Talk.Views.Templates['videoview'],
 
+		participantAvatarSize: 128,
+
 		ui: {
 			'audio': 'audio',
 			'video': 'video',
@@ -129,9 +131,9 @@
 			this._participantName = participantName;
 
 			if (userId && userId.length) {
-				this.getUI('avatar').avatar(userId, 128);
+				this.getUI('avatar').avatar(userId, this.participantAvatarSize);
 			} else {
-				this.getUI('avatar').imageplaceholder('?', rawParticipantName, 128);
+				this.getUI('avatar').imageplaceholder('?', rawParticipantName, this.participantAvatarSize);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
 			}
 

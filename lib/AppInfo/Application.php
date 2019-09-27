@@ -43,6 +43,7 @@ use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
+use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\Room;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\RoomShareProvider;
@@ -110,6 +111,7 @@ class Application extends App {
 		ParserListener::register($dispatcher);
 		PublicShareAuthListener::register($dispatcher);
 		PublicShareAuthTemplateLoader::register($dispatcher);
+		PublicShareTemplateLoader::register($dispatcher);
 		FilesListener::register($dispatcher);
 		FilesTemplateLoader::register($dispatcher);
 		RestrictStartingCallsListener::register($dispatcher);

@@ -65,7 +65,7 @@
 		},
 
 		initialize: function() {
-			if (!OC.getCurrentUser().uid) {
+			if (!OCA.Talk.getCurrentUser().uid) {
 				this.initGuestName();
 			}
 

@@ -51,6 +51,18 @@ class TalkSession {
 		$this->removeValue('spreed-session', $token);
 	}
 
+	public function getFileShareTokenForRoom(string $roomToken): ?string {
+		return $this->getValue('spreed-file-share-token', $roomToken);
+	}
+
+	public function setFileShareTokenForRoom(string $roomToken, string $shareToken): void {
+		$this->setValue('spreed-file-share-token', $roomToken, $shareToken);
+	}
+
+	public function removeFileShareTokenForRoom(string $roomToken): void {
+		$this->removeValue('spreed-file-share-token', $roomToken);
+	}
+
 	public function getPasswordForRoom(string $token): ?string {
 		return $this->getValue('spreed-password', $token);
 	}

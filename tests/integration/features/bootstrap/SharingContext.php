@@ -211,9 +211,10 @@ class SharingContext implements Context {
 	 * @param string $user
 	 * @param string $path
 	 * @param int $statusCode
+	 * @param TableNode|null $body
 	 */
-	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode) {
-		$this->userSharesByLink($user, $path);
+	public function userSharesByLinkWithOcs(string $user, string $path, int $statusCode, TableNode $body = null) {
+		$this->userSharesByLink($user, $path, $body);
 		$this->theOCSStatusCodeShouldBe($statusCode);
 	}
 
@@ -881,6 +882,13 @@ class SharingContext implements Context {
 		$requestToken = $this->extractRequestTokenFromResponse($response);
 
 		return [$requestToken, $cookieJar];
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getLastShareToken(): string {
+		return (string)$this->lastCreatedShareData->data[0]->token;
 	}
 
 	/**

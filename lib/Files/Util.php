@@ -28,6 +28,8 @@ use OCP\Files\FileInfo;
 use OCP\Files\IRootFolder;
 use OCP\Files\Node;
 use OCP\Files\NotFoundException;
+use OCP\ISession;
+use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
 
@@ -35,14 +37,18 @@ class Util {
 
 	/** @var IRootFolder */
 	private $rootFolder;
+	/** @var ISession */
+	private $session;
 	/** @var IShareManager */
 	private $shareManager;
 	/** @var array[] */
 	private $accessLists = [];
 
 	public function __construct(IRootFolder $rootFolder,
+			ISession $session,
 			IShareManager $shareManager) {
 		$this->rootFolder = $rootFolder;
+		$this->session = $session;
 		$this->shareManager = $shareManager;
 	}
 
@@ -67,8 +73,29 @@ class Util {
 		return \in_array($userId, $this->getUsersWithAccessFile($fileId), true);
 	}
 
+	public function canGuestAccessFile(string $shareToken): bool {
+		try {
+			$share = $this->shareManager->getShareByToken($shareToken);
+			if ($share->getPassword() !== null) {
+				$shareId = $this->session->get('public_link_authenticated');
+				if ($share->getId() !== $shareId) {
+					throw new ShareNotFound();
+				}
+			}
+			return true;
+		} catch (ShareNotFound $e) {
+			return false;
+		}
+	}
+
 	/**
-	 * Returns any share of the file that the user has direct access to.
+	 * Returns any share of the file that is public and owned by the user, or
+	 * that the user has direct access to.
+	 *
+	 * A public share is one accessible by any user, including guests, like a
+	 * share by link. Note that only a share of the file itself is taken into
+	 * account; if an ancestor folder is shared publicly that share will not be
+	 * returned.
 	 *
 	 * A user has direct access to a share and, thus, to a file, if she received
 	 * the file through a user, group, circle or room share (but not through a
@@ -82,7 +109,7 @@ class Util {
 	 * @param string $userId
 	 * @return IShare|null
 	 */
-	public function getAnyDirectShareOfFileAccessibleByUser(string $fileId, string $userId): ?IShare {
+	public function getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser(string $fileId, string $userId): ?IShare {
 		$userFolder = $this->rootFolder->getUserFolder($userId);
 		$nodes = $userFolder->getById($fileId);
 		if (empty($nodes)) {
@@ -92,6 +119,13 @@ class Util {
 		$nodes = array_filter($nodes, function($node) {
 			return $node->getType() === FileInfo::TYPE_FILE;
 		});
+
+		if (!empty($nodes)) {
+			$share = $this->getAnyPublicShareOfNodeOwnedByUser($nodes[0], $userId);
+			if ($share) {
+				return $share;
+			}
+		}
 
 		while (!empty($nodes)) {
 			$node = array_pop($nodes);
@@ -105,6 +139,31 @@ class Util {
 				$nodes[] = $node->getParent();
 			} catch (NotFoundException $e) {
 			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns any public share of the node (like a link share) created by the
+	 * user.
+	 *
+	 * @param Node $node
+	 * @param string $userId
+	 * @return IShare|null
+	 */
+	private function getAnyPublicShareOfNodeOwnedByUser(Node $node, string $userId): ?IShare {
+		$reshares = false;
+		$limit = 1;
+
+		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_LINK, $node, $reshares, $limit);
+		if (\count($shares) > 0) {
+			return $shares[0];
+		}
+
+		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_EMAIL, $node, $reshares, $limit);
+		if (\count($shares) > 0) {
+			return $shares[0];
 		}
 
 		return null;
