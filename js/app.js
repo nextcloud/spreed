@@ -337,7 +337,7 @@
 		 * @param {string} token
 		 */
 		_setRoomActive: function(token) {
-			if (OC.getCurrentUser().uid) {
+			if (OCA.Talk.getCurrentUser().uid) {
 				this._rooms.forEach(function(room) {
 					room.set('active', room.get('token') === token);
 				});
@@ -365,7 +365,7 @@
 					self.stopListening(self.activeRoom, 'change:lobbyState', self.updateContentsLayout);
 					self.stopListening(self.activeRoom, 'change:lobbyState', self._updateSidebar);
 
-					if (OC.getCurrentUser().uid) {
+					if (OCA.Talk.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
 
 						self._rooms.forEach(function(room) {
@@ -504,7 +504,7 @@
 			this._sidebarView = new OCA.SpreedMe.Views.SidebarView();
 			$('#content').append(this._sidebarView.$el);
 
-			if (OC.getCurrentUser().uid) {
+			if (OCA.Talk.getCurrentUser().uid) {
 				this._rooms = new OCA.SpreedMe.Models.RoomCollection();
 				this.listenTo(roomChannel, 'active', this._setRoomActive);
 			} else {
@@ -725,7 +725,7 @@
 				this.signaling.disconnect();
 			}.bind(this));
 
-			if (OC.getCurrentUser().uid) {
+			if (OCA.Talk.getCurrentUser().uid) {
 				this._showRoomList();
 				this.signaling.setRoomCollection(this._rooms)
 					.then(function(data) {

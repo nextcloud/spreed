@@ -75,6 +75,68 @@ Feature: System messages
       | room | actorType | actorId      | actorDisplayName         | systemMessage |
       | room | users     | participant1 | participant1-displayname | conversation_created |
 
+  Scenario: Adding participant to room
+    Given user "participant1" creates room "room"
+      | roomType | 2 |
+      | roomName | room |
+    When user "participant1" adds "participant2" to room "room" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | user_added |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: Joining public room
+    Given user "participant1" creates room "room"
+      | roomType | 3 |
+      | roomName | room |
+    When user "participant1" joins room "room" with 200
+    And user "participant2" joins room "room" with 200
+    Then user "participant1" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "room" with 200
+      | room | actorType | actorId      | actorDisplayName         | systemMessage |
+      | room | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: Joining room for file
+    Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant1" gets the room for path "welcome.txt" with 200
+    When user "participant1" joins room "file welcome.txt room" with 200
+    And user "participant2" joins room "file welcome.txt room" with 200
+    Then user "participant1" sees the following system messages in room "file welcome.txt room" with 200
+      | room                  | actorType | actorId      | actorDisplayName         | systemMessage |
+      | file welcome.txt room | users     | participant2 | participant2-displayname | user_added |
+      | file welcome.txt room | users     | participant1 | participant1-displayname | user_added |
+      | file welcome.txt room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "file welcome.txt room" with 200
+      | room                  | actorType | actorId      | actorDisplayName         | systemMessage |
+      | file welcome.txt room | users     | participant2 | participant2-displayname | user_added |
+      | file welcome.txt room | users     | participant1 | participant1-displayname | user_added |
+      | file welcome.txt room | users     | participant1 | participant1-displayname | conversation_created |
+
+  Scenario: Joining room for link share
+    Given user "participant1" shares "welcome.txt" by link with OCS 100
+    And user "participant1" gets the room for last share with 200
+    # Users without access to a file shared by link need to log in (so further
+    # requests keep the same session) and get the room (so the share token is
+    # stored in the session) to be able to join it.
+    And user "participant2" logs in
+    And user "participant2" gets the room for last share with 200
+    When user "participant1" joins room "file last share room" with 200
+    And user "participant2" joins room "file last share room" with 200
+    Then user "participant1" sees the following system messages in room "file last share room" with 200
+      | room                 | actorType | actorId      | actorDisplayName         | systemMessage |
+      | file last share room | users     | participant1 | participant1-displayname | user_added |
+      | file last share room | users     | participant1 | participant1-displayname | conversation_created |
+    And user "participant2" sees the following system messages in room "file last share room" with 200
+      | room                 | actorType | actorId      | actorDisplayName         | systemMessage |
+      | file last share room | users     | participant1 | participant1-displayname | user_added |
+      | file last share room | users     | participant1 | participant1-displayname | conversation_created |
+
   Scenario: Participant escalation
     Given user "participant1" creates room "room"
       | roomType | 2 |

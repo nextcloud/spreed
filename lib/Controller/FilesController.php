@@ -67,20 +67,25 @@ class FilesController extends OCSController {
 	 *
 	 * Returns the token of the room associated to the given file id.
 	 *
+	 * This is the counterpart of PublicShareController::getRoom() for file ids
+	 * instead of share tokens, although both return the same room token if the
+	 * given file id and share token refer to the same file.
+	 *
 	 * If there is no room associated to the given file id a new room is
 	 * created; the new room is a public room associated with a "file" object
 	 * with the given file id. Unlike normal rooms in which the owner is the
 	 * user that created the room these are special rooms without owner
-	 * (although self joined users become persistent participants automatically
-	 * when they join until they explicitly leave or no longer have access to
-	 * the file).
+	 * (although self joined users with direct access to the file become
+	 * persistent participants automatically when they join until they
+	 * explicitly leave or no longer have access to the file).
 	 *
 	 * In any case, to create or even get the token of the room, the file must
-	 * be shared and the user must have direct access to that file; an error
-	 * is returned otherwise. A user has direct access to a file if she has
-	 * access to it (or to an ancestor) through a user, group, circle or room
-	 * share (but not through a link share, for example), or if she is the owner
-	 * of such a file.
+	 * be shared and the user must be the owner of a public share of the file
+	 * (like a link share, for example) or have direct access to that file; an
+	 * error is returned otherwise. A user has direct access to a file if she
+	 * has access to it (or to an ancestor) through a user, group, circle or
+	 * room share (but not through a link share, for example), or if she is the
+	 * owner of such a file.
 	 *
 	 * @param string $fileId
 	 * @return DataResponse the status code is "200 OK" if a room is returned,
@@ -88,7 +93,7 @@ class FilesController extends OCSController {
 	 * @throws OCSNotFoundException
 	 */
 	public function getRoom(string $fileId): DataResponse {
-		$share = $this->util->getAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
+		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
 		$groupFolder = null;
 		if (!$share) {
 			$groupFolder = $this->util->getGroupFolderNode($fileId, $this->currentUser);

@@ -38,7 +38,7 @@ Feature: app-files
     # share is ready before continuing.
     And I write down the shared link
     And I open the Chat tab in the details view of the Files app
-    Then I see that the "Start a conversation Share this file with others to discuss Share" empty content message is shown in the chat tab
+    Then I see that the chat is shown in the Chat tab
 
   Scenario: chat tab header is not shown in a folder even if shared
     Given I am logged in as the admin
@@ -81,6 +81,51 @@ Feature: app-files
     And I open the details view for "welcome.txt"
     And I open the Chat tab in the details view of the Files app
     Then I see that the chat is shown in the Chat tab
+
+
+
+  Scenario: mention a user that has not joined yet but has access to a file room
+    Given I act as John
+    And I am logged in as the admin
+    And I share "welcome.txt" with "user0"
+    And I see that the file is shared with "user0"
+    And I open the Chat tab in the details view of the Files app
+    And I see that the chat is shown in the Chat tab
+    And I act as Jane
+    And I am logged in
+    And I have opened the Talk app
+    # Wait until the "Talk updates" conversation is shown to ensure that the
+    # list is loaded before checking that there is no "welcome.txt" conversation
+    And I see that the "Talk updates ✅" conversation is shown in the list
+    And I see that the "welcome.txt" conversation is not shown in the list
+    When I act as John
+    And I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "user0"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "admin" with the text "Hello user0"
+    And I see that the message 1 contains a formatted mention of "user0"
+    And I act as Jane
+    And I see that the "welcome.txt" conversation is shown in the list
+
+  Scenario: mention all users when a user has not joined yet the file room
+    Given I act as John
+    And I am logged in as the admin
+    And I share "welcome.txt" with "user0"
+    And I see that the file is shared with "user0"
+    And I open the Chat tab in the details view of the Files app
+    And I see that the chat is shown in the Chat tab
+    When I type a new chat message with the text "Hello @"
+    And I choose the candidate mention for "welcome.txt"
+    And I send the current chat message
+    Then I see that the message 1 was sent by "admin" with the text "Hello welcome.txt"
+    And I see that the message 1 contains a formatted mention of all participants of "welcome.txt"
+    And I act as Jane
+    And I am logged in
+    And I have opened the Talk app
+    # Wait until the "Talk updates" conversation is shown to ensure that the
+    # list is loaded before checking that there is no "welcome.txt" conversation
+    And I see that the "Talk updates ✅" conversation is shown in the list
+    And I see that the "welcome.txt" conversation is not shown in the list
 
 
 
@@ -156,3 +201,47 @@ Feature: app-files
 #    And I see that the message 1 was sent by "admin" with the text "Hello"
 #    And I see that the message 2 was sent by "user0" with the text "Hi!"
 #    And I see that the message 3 was sent by "user1" with the text "Hey!"
+
+  Scenario: chat in a file shared by link
+    Given I act as John
+    And I am logged in
+    And I share the link for "welcome.txt"
+    And I write down the shared link
+    And I open the Chat tab in the details view of the Files app
+    And I act as Jane
+    And I visit the shared link I wrote down
+    And I see that the current page is the shared link I wrote down
+    When I act as John
+    And I send a new chat message with the text "Hello"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    Then I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "Guest" with the text "Hi!"
+    And I act as John
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "Guest" with the text "Hi!"
+
+
+
+  Scenario: chat in a file shared by link with a password
+    Given I act as John
+    And I am logged in
+    And I share the link for "welcome.txt" protected by the password "abcdef"
+    And I write down the shared link
+    And I open the Chat tab in the details view of the Files app
+    And I act as Jane
+    And I visit the shared link I wrote down
+    And I see that the current page is the Authenticate page for the shared link I wrote down
+    And I authenticate with password "abcdef"
+    And I see that the current page is the shared link I wrote down
+    When I act as John
+    And I send a new chat message with the text "Hello"
+    And I act as Jane
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I send a new chat message with the text "Hi!"
+    Then I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "Guest" with the text "Hi!"
+    And I act as John
+    And I see that the message 1 was sent by "user0" with the text "Hello"
+    And I see that the message 2 was sent by "Guest" with the text "Hi!"
