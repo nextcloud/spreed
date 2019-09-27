@@ -138,7 +138,7 @@ class Listener {
 	 * @param Room $room
 	 * @param string $userId
 	 */
-	public function addUserAsPersistentParticipant(Room $room, string $userId) {
+	public function addUserAsPersistentParticipant(Room $room, string $userId): void {
 		if ($room->getObjectType() !== 'file') {
 			return;
 		}

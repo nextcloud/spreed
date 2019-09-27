@@ -32,9 +32,9 @@ use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
-use OCP\Share;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\Exceptions\ShareNotFound;
+use OCP\Share\IShare;
 
 class PublicShareAuthController extends OCSController {
 
@@ -98,7 +98,7 @@ class PublicShareAuthController extends OCSController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
+		if ($share->getShareType() === IShare::TYPE_EMAIL) {
 			$roomName = $share->getSharedWith();
 		} else {
 			$roomName = trim($share->getTarget(), '/');

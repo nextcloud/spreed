@@ -27,6 +27,7 @@ use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\IDBConnection;
 use OCP\IRequest;
+use OCP\Share\IShare;
 
 class ApiController extends OCSController {
 
@@ -62,7 +63,7 @@ class ApiController extends OCSController {
 		$query = $this->db->getQueryBuilder();
 		$query->delete('share')
 			->where($query->expr()->orX(
-				$query->expr()->eq('share_type', $query->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)),
+				$query->expr()->eq('share_type', $query->createNamedParameter(IShare::TYPE_ROOM)),
 				$query->expr()->eq('share_type', $query->createNamedParameter(11 /*RoomShareProvider::SHARE_TYPE_USERROOM*/))
 			))
 			->execute();

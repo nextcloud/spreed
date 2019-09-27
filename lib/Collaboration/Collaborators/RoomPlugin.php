@@ -29,7 +29,7 @@ use OCP\Collaboration\Collaborators\ISearchPlugin;
 use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IUserSession;
-use OCP\Share;
+use OCP\Share\IShare;
 
 class RoomPlugin implements ISearchPlugin {
 
@@ -86,7 +86,7 @@ class RoomPlugin implements ISearchPlugin {
 		[
 			'label' => $room->getDisplayName($userId),
 			'value' => [
-				'shareType' => Share::SHARE_TYPE_ROOM,
+				'shareType' => IShare::TYPE_ROOM,
 				'shareWith' => $room->getToken()
 			]
 		];

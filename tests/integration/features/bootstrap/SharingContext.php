@@ -128,7 +128,7 @@ class SharingContext implements Context {
 	 * @param TableNode|null $body
 	 */
 	public function userSharesWithUser(string $user, string $path, string $sharee, TableNode $body = null) {
-		$this->userSharesWith($user, $path, 0 /*Share::SHARE_TYPE_USER*/, $sharee, $body);
+		$this->userSharesWith($user, $path, 0 /*IShare::TYPE_USER*/, $sharee, $body);
 	}
 
 	/**
@@ -153,7 +153,7 @@ class SharingContext implements Context {
 	 * @param TableNode|null $body
 	 */
 	public function userSharesWithGroup(string $user, string $path, string $sharee, TableNode $body = null) {
-		$this->userSharesWith($user, $path, 1 /*Share::SHARE_TYPE_GROUP*/, $sharee, $body);
+		$this->userSharesWith($user, $path, 1 /*IShare::TYPE_GROUP*/, $sharee, $body);
 	}
 
 	/**
@@ -178,7 +178,7 @@ class SharingContext implements Context {
 	 * @param TableNode|null $body
 	 */
 	public function userSharesWithRoom(string $user, string $path, string $room, TableNode $body = null) {
-		$this->userSharesWith($user, $path, 10 /*Share::SHARE_TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($room), $body);
+		$this->userSharesWith($user, $path, 10 /*IShare::TYPE_ROOM*/, FeatureContext::getTokenForIdentifier($room), $body);
 	}
 
 	/**
@@ -202,7 +202,7 @@ class SharingContext implements Context {
 	 * @param TableNode|null $body
 	 */
 	public function userSharesByLink(string $user, string $path, TableNode $body = null) {
-		$this->userSharesWith($user, $path, 3 /*Share::SHARE_TYPE_LINK*/, '', $body);
+		$this->userSharesWith($user, $path, 3 /*IShare::TYPE_LINK*/, '', $body);
 	}
 
 	/**
@@ -400,7 +400,7 @@ class SharingContext implements Context {
 		$url = '/apps/files_sharing/api/v1/sharees';
 
 		$parameters = [];
-		$parameters[] = 'shareType=10'; // Share::SHARE_TYPE_ROOM,
+		$parameters[] = 'shareType=10'; // IShare::TYPE_ROOM,
 		$parameters[] = 'itemType=file';
 		foreach ($body->getRowsHash() as $key => $value) {
 			$parameters[] = $key . '=' . $value;
@@ -562,7 +562,7 @@ class SharingContext implements Context {
 
 		$defaultExpectedFields = [
 			'id' => 'A_NUMBER',
-			'share_type' => '10', // Share::SHARE_TYPE_ROOM,
+			'share_type' => '10', // IShare::TYPE_ROOM,
 			'permissions' => '19',
 			'stime' => 'A_NUMBER',
 			'parent' => '',
@@ -586,7 +586,7 @@ class SharingContext implements Context {
 		}
 
 		if (array_key_exists('share_type', $expectedFields) &&
-				$expectedFields['share_type'] == 10 /* Share::SHARE_TYPE_ROOM */ &&
+				$expectedFields['share_type'] == 10 /* IShare::TYPE_ROOM */ &&
 				array_key_exists('share_with', $expectedFields)) {
 			if ($expectedFields['share_with'] === 'private_conversation') {
 				$expectedFields['share_with'] = 'REGEXP /^private_conversation_[0-9a-f]{6}$/';
@@ -607,7 +607,7 @@ class SharingContext implements Context {
 	 * name is checked against the returned "label" value, and the room test
 	 * identifier is used to get the room token, which is checked against the
 	 * returned "shareWith" value. The returned "shareType" value is expected to
-	 * always be "Share::SHARE_TYPE_ROOM", so there is no need to specify it.
+	 * always be "IShare::TYPE_ROOM", so there is no need to specify it.
 	 *
 	 * @param string $shareeType
 	 * @param string $isEmpty
@@ -618,7 +618,7 @@ class SharingContext implements Context {
 			$sharees = [];
 			foreach ($shareesList->getRows() as $row) {
 				$expectedSharee = [$row[0]];
-				$expectedSharee[] = 10; // Share::SHARE_TYPE_ROOM
+				$expectedSharee[] = 10; // IShare::TYPE_ROOM
 				$expectedSharee[] = FeatureContext::getTokenForIdentifier($row[1]);
 				$sharees[] = $expectedSharee;
 			}
