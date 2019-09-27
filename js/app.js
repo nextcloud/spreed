@@ -358,10 +358,12 @@
 			var self = this;
 			this.signaling.syncRooms()
 				.then(function() {
-					self.stopListening(self.activeRoom, 'change:displayName');
-					self.stopListening(self.activeRoom, 'change:participantType');
-					self.stopListening(self.activeRoom, 'change:participantFlags');
-					self.stopListening(self.activeRoom, 'change:lobbyState');
+					self.stopListening(self.activeRoom, 'change:displayName', self._updatePageTitleOnDisplayNameChange);
+					self.stopListening(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
+					self.stopListening(self.activeRoom, 'change:participantType', self.updateContentsLayout);
+					self.stopListening(self.activeRoom, 'change:participantType', self._updateSidebar);
+					self.stopListening(self.activeRoom, 'change:lobbyState', self.updateContentsLayout);
+					self.stopListening(self.activeRoom, 'change:lobbyState', self._updateSidebar);
 
 					if (OC.getCurrentUser().uid) {
 						roomChannel.trigger('active', token);
@@ -376,9 +378,7 @@
 					self._emptyContentView.setActiveRoom(self.activeRoom);
 
 					self.setPageTitle(self.activeRoom.get('displayName'));
-					self.listenTo(self.activeRoom, 'change:displayName', function(model, value) {
-						self.setPageTitle(value);
-					});
+					self.listenTo(self.activeRoom, 'change:displayName', self._updatePageTitleOnDisplayNameChange);
 
 					self.updateContentsLayout();
 					self.listenTo(self.activeRoom, 'change:participantFlags', self.updateContentsLayout);
@@ -389,6 +389,9 @@
 
 					self.updateSidebarWithActiveRoom();
 				});
+		},
+		_updatePageTitleOnDisplayNameChange: function(model, value) {
+			this.setPageTitle(value);
 		},
 		updateContentsLayout: function() {
 			if (!this.activeRoom) {
