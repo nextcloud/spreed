@@ -156,13 +156,13 @@ class Util {
 		$reshares = false;
 		$limit = 1;
 
-		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_LINK, $node, $reshares, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_LINK, $node, $reshares, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_EMAIL, $node, $reshares, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_EMAIL, $node, $reshares, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
@@ -180,23 +180,23 @@ class Util {
 		$reshares = false;
 		$limit = 1;
 
-		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_USER, $node, $reshares, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_USER, $node, $reshares, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_GROUP, $node, $reshares, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_GROUP, $node, $reshares, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_CIRCLE, $node, $reshares, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_CIRCLE, $node, $reshares, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharesBy($userId, \OCP\Share::SHARE_TYPE_ROOM, $node, $reshares, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharesBy($userId, IShare::TYPE_ROOM, $node, $reshares, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
@@ -207,23 +207,23 @@ class Util {
 			return null;
 		}
 
-		$shares = $this->shareManager->getSharedWith($userId, \OCP\Share::SHARE_TYPE_USER, $node, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_USER, $node, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharedWith($userId, \OCP\Share::SHARE_TYPE_GROUP, $node, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_GROUP, $node, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharedWith($userId, \OCP\Share::SHARE_TYPE_CIRCLE, $node, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_CIRCLE, $node, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
-		$shares = $this->shareManager->getSharedWith($userId, \OCP\Share::SHARE_TYPE_ROOM, $node, $limit);
-		if (\count($shares) > 0) {
+		$shares = $this->shareManager->getSharedWith($userId, IShare::TYPE_ROOM, $node, $limit);
+		if (!empty($shares)) {
 			return $shares[0];
 		}
 
