@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import TurnServers from 'Views/TurnServers'
+import AllowedGroups from './views/AllowedGroups'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -30,7 +30,7 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#turn_server',
-	name: 'TurnServerSettings',
-	render: h => h(TurnServers)
+	el: '#allowed_groups',
+	name: 'AllowedGroupsSettings',
+	render: h => h(AllowedGroups)
 })

@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import SignalingServers from 'Views/SignalingServers'
+import Commands from './views/Commands'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -30,7 +30,7 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#signaling_server',
-	name: 'SignalingServerSettings',
-	render: h => h(SignalingServers)
+	el: '#chat_commands',
+	name: 'CommandsSettings',
+	render: h => h(Commands)
 })

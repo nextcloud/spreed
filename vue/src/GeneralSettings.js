@@ -1,5 +1,5 @@
 /**
- * @copyright Copyright (c) 2018 Joas Schilling <coding@schilljs.com>
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @author Joas Schilling <coding@schilljs.com>
  *
@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import StunServers from 'Views/StunServers'
+import GeneralSettings from './views/GeneralSettings'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
@@ -30,7 +30,7 @@ Vue.prototype.OCA = OCA
 Vue.prototype.OCP = OCP
 
 export default new Vue({
-	el: '#stun_server',
-	name: 'StunServerSettings',
-	render: h => h(StunServers)
+	el: '#general_settings',
+	name: 'GeneralSettings',
+	render: h => h(GeneralSettings)
 })

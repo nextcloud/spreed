@@ -48,13 +48,13 @@
 			<div class="head enabled">
 				{{ t('spreed', 'Enabled for') }}
 			</div>
-			<command v-for="command in commands" :key="command.id" v-bind="command" />
+			<Command v-for="command in commands" :key="command.id" v-bind="command" />
 		</div>
 	</div>
 </template>
 
 <script>
-import Command from 'Components/Command'
+import Command from '../components/Command'
 
 export default {
 	name: 'Commands',

@@ -5,12 +5,12 @@ module.exports = {
 	entry: {
 		"collections": path.join(__dirname, 'src', 'collections.js'),
 		"collectionsintegration": path.join(__dirname, 'src', 'collectionsintegration.js'),
-		"admin/allowed-groups": path.join(__dirname, 'src', 'allowed-groups.js'),
-		"admin/commands": path.join(__dirname, 'src', 'commands.js'),
-		"admin/general-settings": path.join(__dirname, 'src', 'general-settings.js'),
-		"admin/signaling-server": path.join(__dirname, 'src', 'signaling-server.js'),
-		"admin/stun-server": path.join(__dirname, 'src', 'stun-server.js'),
-		"admin/turn-server": path.join(__dirname, 'src', 'turn-server.js'),
+		"admin/allowed-groups": path.join(__dirname, 'src', 'AllowedGroupsSettings.js'),
+		"admin/commands": path.join(__dirname, 'src', 'CommandsSettings.js'),
+		"admin/general-settings": path.join(__dirname, 'src', 'GeneralSettings.js'),
+		"admin/signaling-server": path.join(__dirname, 'src', 'SignalingServerSettings.js'),
+		"admin/stun-server": path.join(__dirname, 'src', 'StunServerSettings.js'),
+		"admin/turn-server": path.join(__dirname, 'src', 'TurnServerSettings.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, '../js'),

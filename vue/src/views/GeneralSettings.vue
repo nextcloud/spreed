@@ -26,9 +26,15 @@
 
 		<label for="start_calls">{{ t('spreed', 'Start calls') }}</label>
 		<select id="start_calls" v-model="startCalls" @change="saveChanges">
-			<option value="0">{{ t('spreed', 'Everyone') }}</option>
-			<option value="1">{{ t('spreed', 'Users and moderators') }}</option>
-			<option value="2">{{ t('spreed', 'Moderators only') }}</option>
+			<option value="0">
+				{{ t('spreed', 'Everyone') }}
+			</option>
+			<option value="1">
+				{{ t('spreed', 'Users and moderators') }}
+			</option>
+			<option value="2">
+				{{ t('spreed', 'Moderators only') }}
+			</option>
 		</select>
 	</div>
 </template>
