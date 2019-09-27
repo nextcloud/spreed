@@ -1,32 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## 7.0.0-rc.1 – 2019-09-19
-### Fixed
-- Load newest chat messages first on joining a conversation
-  [#2206](https://github.com/nextcloud/spreed/pull/2206)
-- Unify handling of guest avatars
-  [#2203](https://github.com/nextcloud/spreed/pull/2203)
-- Unify the lobby screen with the mobile clients
-  [#2201](https://github.com/nextcloud/spreed/pull/2201)
-- Allow to mention the conversation by its name additionally to "all"
-  [#2198](https://github.com/nextcloud/spreed/pull/2198)
-- Show a call summary for calls when there was no user
-  [#2177](https://github.com/nextcloud/spreed/pull/2177)
-
-## 7.0.0-beta.2 – 2019-09-09
-### Fixed
-- Fix mentions with users that have a numeric only ID
-  [#2173](https://github.com/nextcloud/spreed/pull/2173)
-- Fix notifications that contain a guest mention
-  [#2148](https://github.com/nextcloud/spreed/pull/2148)
-- Allow clients to get the last known message a well
-  [#2135](https://github.com/nextcloud/spreed/pull/2135)
-
-## 7.0.0-beta.1 – 2019-08-29
+## 7.0.0 – 2019-09-26
 ### Added
 - Added a simple Lobby: moderators can join and prepare a call/meeting while users and guests can not join yet
   [#1926](https://github.com/nextcloud/spreed/pull/1926)
+- Add the file call functionality to the public sharing page
+  [#2107](https://github.com/nextcloud/spreed/pull/2107)
 - Allow to mention guest users
   [#1974](https://github.com/nextcloud/spreed/pull/1974)
 - Added a voice level indicator and notify the user when they speak while they are muted
@@ -35,9 +15,13 @@ All notable changes to this project will be documented in this file.
   [#1214](https://github.com/nextcloud/spreed/pull/1214)
 - Prepare the backend for replies to messages so the clients can implement it
   [#2000](https://github.com/nextcloud/spreed/pull/2000)
+- Allow to prevent guests from starting a call
+  [#2204](https://github.com/nextcloud/spreed/pull/2204)
 - Update SimpleWebRTC to the latest version
 
 ### Changed
+- Load newest chat messages first on joining a conversation
+  [#2206](https://github.com/nextcloud/spreed/pull/2206)
 - You can now escape commands to show them to your chat partners by prepending a second slash (e.g. //help)
   [#1919](https://github.com/nextcloud/spreed/pull/1919)
 - One-to-one conversations are now only deleted if both users leave the conversation
@@ -56,6 +40,12 @@ All notable changes to this project will be documented in this file.
   [#2117](https://github.com/nextcloud/spreed/pull/2117)
 - Make sure the external signaling server is informed about the new state changes (read-only, lobby, etc.)
   [#2103](https://github.com/nextcloud/spreed/pull/2103)
+- Show a call summary for calls when there was no user
+  [#2177](https://github.com/nextcloud/spreed/pull/2177)
+- Allow to mention the conversation by its name additionally to "all"
+  [#2198](https://github.com/nextcloud/spreed/pull/2198)
+- Fix mentions with users that have a numeric only ID
+  [#2173](https://github.com/nextcloud/spreed/pull/2173)
 - Enable camera and microphone access in the Nextcloud 17 feature policy
   [#2073](https://github.com/nextcloud/spreed/pull/2073)
 - Multiple Nextcloud 17 compatibility fixes
