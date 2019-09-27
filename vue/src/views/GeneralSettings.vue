@@ -24,38 +24,43 @@
 	<div id="general_settings" class="videocalls section">
 		<h2>{{ t('spreed', 'General settings') }}</h2>
 
-		<label for="start_calls">{{ t('spreed', 'Start calls') }}</label>
-		<select id="start_calls" v-model="startCalls" @change="saveChanges">
-			<option value="0">
-				{{ t('spreed', 'Everyone') }}
-			</option>
-			<option value="1">
-				{{ t('spreed', 'Users and moderators') }}
-			</option>
-			<option value="2">
-				{{ t('spreed', 'Moderators only') }}
-			</option>
-		</select>
+		<p>
+			<label for="start_calls">{{ t('spreed', 'Start calls') }}</label>
+			<Multiselect id="start_calls"
+				v-model="startCalls"
+				:options="startCallOptions"
+				label="label"
+				track-by="value" />
+		</p>
 	</div>
 </template>
 
 <script>
+import { Multiselect } from 'nextcloud-vue'
+
+const startCallOptions = [
+	{ value: 0, label: t('spreed', 'Everyone') },
+	{ value: 1, label: t('spreed', 'Users and moderators') },
+	{ value: 2, label: t('spreed', 'Moderators only') }
+]
 export default {
 	name: 'GeneralSettings',
+
+	components: {
+		Multiselect
+	},
 
 	data() {
 		return {
 			loading: false,
-			startCalls: '0'
+			startCallOptions,
+			startCalls: startCallOptions[0]
 		}
 	},
 
 	mounted() {
 		this.loading = true
-		this.startCalls = OCP.InitialState.loadState('talk', 'start_calls')
-		console.info(this.startCalls)
-		this.startCalls = parseInt(this.startCalls)
-		console.info(this.startCalls)
+		this.startCalls = startCallOptions[parseInt(OCP.InitialState.loadState('talk', 'start_calls'))]
 		this.loading = false
 	},
 
@@ -72,3 +77,9 @@ export default {
 	}
 }
 </script>
+<style scoped>
+p {
+	display: flex;
+	align-items: center;
+}
+</style>

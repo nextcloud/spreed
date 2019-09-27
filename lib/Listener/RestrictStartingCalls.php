@@ -45,7 +45,7 @@ class RestrictStartingCalls {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->checkStartCallPermissions($event);
-		});
+		}, 1000);
 	}
 
 	/**
