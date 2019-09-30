@@ -29,6 +29,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
+use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\Files\FileInfo;
@@ -44,8 +45,6 @@ use OCP\Share\IShare;
 
 class FilesIntegrationController extends OCSController {
 
-	/** @var string */
-	private $currentUser;
 	/** @var Manager */
 	private $manager;
 	/** @var IShareManager */
@@ -64,7 +63,6 @@ class FilesIntegrationController extends OCSController {
 	public function __construct(
 			string $appName,
 			IRequest $request,
-			string $userId,
 			Manager $manager,
 			IShareManager $shareManager,
 			ISession $session,
@@ -74,7 +72,6 @@ class FilesIntegrationController extends OCSController {
 			IL10N $l10n
 	) {
 		parent::__construct($appName, $request);
-		$this->currentUser = $userId;
 		$this->manager = $manager;
 		$this->shareManager = $shareManager;
 		$this->session = $session;
@@ -115,10 +112,16 @@ class FilesIntegrationController extends OCSController {
 	 * @throws OCSNotFoundException
 	 */
 	public function getRoomByFileId(string $fileId): DataResponse {
-		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
+		$currentUser = $this->userSession->getUser();
+		if (!$currentUser instanceof IUser) {
+			throw new OCSException($this->l->t('File is not shared, or shared but not with the user'), Http::STATUS_UNAUTHORIZED);
+		}
+
+
+		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($fileId, $currentUser->getUID());
 		$groupFolder = null;
 		if (!$share) {
-			$groupFolder = $this->util->getGroupFolderNode($fileId, $this->currentUser);
+			$groupFolder = $this->util->getGroupFolderNode($fileId, $currentUser->getUID());
 			if (!$groupFolder) {
 				throw new OCSNotFoundException($this->l->t('File is not shared, or shared but not with the user'));
 			}
