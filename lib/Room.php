@@ -91,6 +91,8 @@ class Room {
 	private $activeSince;
 	/** @var \DateTime|null */
 	private $lastActivity;
+	/** @var int */
+	private $lastMessageId;
 	/** @var IComment|null */
 	private $lastMessage;
 	/** @var string */
@@ -119,6 +121,7 @@ class Room {
 								int $activeGuests,
 								\DateTime $activeSince = null,
 								\DateTime $lastActivity = null,
+								int $lastMessageId,
 								IComment $lastMessage = null,
 								\DateTime $lobbyTimer = null,
 								string $objectType = '',
@@ -139,6 +142,7 @@ class Room {
 		$this->activeGuests = $activeGuests;
 		$this->activeSince = $activeSince;
 		$this->lastActivity = $lastActivity;
+		$this->lastMessageId = $lastMessageId;
 		$this->lastMessage = $lastMessage;
 		$this->lobbyTimer = $lobbyTimer;
 		$this->objectType = $objectType;
@@ -198,6 +202,13 @@ class Room {
 	}
 
 	public function getLastMessage(): ?IComment {
+		if ($this->lastMessageId && $this->lastMessage === null) {
+			$this->lastMessage = $this->manager->loadLastCommentInfo($this->lastMessageId);
+			if ($this->lastMessage === null) {
+				$this->lastMessageId = 0;
+			}
+		}
+
 		return $this->lastMessage;
 	}
 
