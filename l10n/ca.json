@@ -283,6 +283,8 @@
     "Response to" : "Resposta a",
     "Enabled for" : "Activat per ",
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "Les ordres són una nova funcionalitat a Talk, encara en fase beta. Us permet executar scripts al vostre servidor Nextcloud. Podeu definir-les amb la nostra interfície de línia d'ordres (CLI). Podeu trobar un exemple de script calculadora a la nostra  <a {attributes}>documentació ↗</a>.",
+    "General settings" : "Paràmetres generals",
+    "Users and moderators" : "Usuaris i moderadors",
     "Select a conversation to add to the project" : "Seleccioneu una conversa per ser afegida al projecte",
     "Select conversation" : "Seleccioneu una conversa",
     "Signaling servers" : "Servidors de senyalització",
