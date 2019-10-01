@@ -28,6 +28,8 @@ use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Comments\IComment;
+use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IConfig;
 use OCP\IDBConnection;
@@ -152,6 +154,7 @@ class Manager {
 			(int) $row['active_guests'],
 			$activeSince,
 			$lastActivity,
+			(int) $row['last_message'],
 			$lastMessage,
 			$lobbyTimer,
 			(string) $row['object_type'],
@@ -185,6 +188,14 @@ class Manager {
 			(int) $row['last_mention_message'],
 			$lastJoinedCall
 		);
+	}
+
+	public function loadLastCommentInfo(int $id): ?IComment {
+		try {
+			return $this->commentsManager->get((string)$id);
+		} catch (NotFoundException $e) {
+			return null;
+		}
 	}
 
 	/**
