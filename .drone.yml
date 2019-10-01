@@ -15,7 +15,7 @@ steps:
   - name: check-handlebars-templates
     image: node:lts
     commands:
-      - npm install -g handlebars
+      - make npm-init
       - ./check-handlebars-templates.sh
 
 trigger:
