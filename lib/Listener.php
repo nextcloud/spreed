@@ -106,7 +106,10 @@ class Listener {
 		$sessionIds = $this->talkSession->getAllActiveSessions();
 		foreach ($sessionIds as $sessionId) {
 			$room = $this->manager->getRoomForSession($user->getUID(), $sessionId);
-			$room->changeInCall($sessionId, Participant::FLAG_DISCONNECTED);
+			$participant = $room->getParticipant($user->getUID());
+			if ($participant->getInCallFlags() !== Participant::FLAG_DISCONNECTED) {
+				$room->changeInCall($sessionId, Participant::FLAG_DISCONNECTED);
+			}
 			$room->leaveRoom($user->getUID(), $sessionId);
 		}
 	}
