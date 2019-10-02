@@ -436,10 +436,7 @@ class SignalingController extends OCSController {
 			'room' => [
 				'version' => '1.0',
 				'roomid' => $room->getToken(),
-				'properties' => [
-					'name' => $room->getDisplayName((string) $userId),
-					'type' => $room->getType(),
-				],
+				'properties' => $room->getPropertiesForSignaling((string) $userId),
 			],
 		];
 		if ($event->getSession()) {
