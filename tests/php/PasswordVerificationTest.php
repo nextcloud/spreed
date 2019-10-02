@@ -61,6 +61,9 @@ class PasswordVerificationTest extends TestCase {
 			'foobar',
 			'Test',
 			'passy',
+			0,
+			null,
+			null,
 			0
 		);
 		$verificationResult = $room->verifyPassword('1234');
