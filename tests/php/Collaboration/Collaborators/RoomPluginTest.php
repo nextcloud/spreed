@@ -31,7 +31,7 @@ use OCP\Collaboration\Collaborators\ISearchResult;
 use OCP\Collaboration\Collaborators\SearchResultType;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Share;
+use OCP\Share\IShare;
 
 class RoomPluginTest extends \Test\TestCase {
 
@@ -91,7 +91,7 @@ class RoomPluginTest extends \Test\TestCase {
 		return [
 			'label' => $label,
 			'value' => [
-				'shareType' => Share::SHARE_TYPE_ROOM,
+				'shareType' => IShare::TYPE_ROOM,
 				'shareWith' => $shareWith
 			]
 		];

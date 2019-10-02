@@ -47,6 +47,7 @@ use OCP\RichObjectStrings\Definitions;
 use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
+use OCP\Share\IShare;
 
 class Notifier implements INotifier {
 
@@ -544,7 +545,7 @@ class Notifier implements INotifier {
 			$notification = $this->addActionButton($notification, $l->t('Call back'));
 		}
 
-		if ($share->getShareType() === Share::SHARE_TYPE_EMAIL) {
+		if ($share->getShareType() === IShare::TYPE_EMAIL) {
 			$sharedWith = $share->getSharedWith();
 			if ($callIsActive) {
 				$subject = $l->t('{email} is requesting the password to access {file}');

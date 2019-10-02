@@ -24,20 +24,15 @@ namespace OCA\Talk\Chat\SystemMessage;
 
 
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Chat\MessageParser;
-use OCA\Talk\Chat\Parser\SystemMessage;
 use OCA\Talk\Manager;
-use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Comments\IComment;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Share;
 use OCP\Share\IShare;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -250,7 +245,7 @@ class Listener {
 			/** @var IShare $share */
 			$share = $event->getSubject();
 
-			if ($share->getShareType() !== Share::SHARE_TYPE_ROOM) {
+			if ($share->getShareType() !== IShare::TYPE_ROOM) {
 				return;
 			}
 

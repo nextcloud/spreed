@@ -42,7 +42,6 @@ use OCP\Share\Exceptions\GenericShareException;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
-use OCP\Share\IShareHelper;
 use OCP\Share\IShareProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -223,7 +222,7 @@ class RoomShareProvider implements IShareProvider {
 	): int {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->insert('share')
-			->setValue('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM))
+			->setValue('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM))
 			->setValue('share_with', $qb->createNamedParameter($shareWith))
 			->setValue('uid_initiator', $qb->createNamedParameter($sharedBy))
 			->setValue('uid_owner', $qb->createNamedParameter($shareOwner))
@@ -530,7 +529,7 @@ class RoomShareProvider implements IShareProvider {
 				$qb->expr()->eq('item_type', $qb->createNamedParameter('folder'))
 			))
 			->andWhere(
-				$qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM))
+				$qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM))
 			);
 
 		/**
@@ -578,7 +577,7 @@ class RoomShareProvider implements IShareProvider {
 		$qb->select('*')
 			->from('share');
 
-		$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)));
+		$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 		/**
 		 * Reshares for this user are shares where they are the owner.
@@ -635,7 +634,7 @@ class RoomShareProvider implements IShareProvider {
 			->leftJoin('s', 'filecache', 'f', $qb->expr()->eq('s.file_source', 'f.fileid'))
 			->leftJoin('f', 'storages', 'st', $qb->expr()->eq('f.storage', 'st.numeric_id'))
 			->where($qb->expr()->eq('s.id', $qb->createNamedParameter($id)))
-			->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)));
+			->andWhere($qb->expr()->eq('s.share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)));
 
 		$cursor = $qb->execute();
 		$data = $cursor->fetch();
@@ -731,7 +730,7 @@ class RoomShareProvider implements IShareProvider {
 		$cursor = $qb->select('*')
 			->from('share')
 			->andWhere($qb->expr()->eq('file_source', $qb->createNamedParameter($path->getId())))
-			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 			->execute();
 
 		$shares = [];
@@ -791,7 +790,7 @@ class RoomShareProvider implements IShareProvider {
 
 			$rooms = array_map(function(Room $room) { return $room->getToken(); }, $rooms);
 
-			$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			$qb->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 				->andWhere($qb->expr()->in('share_with', $qb->createNamedParameter(
 					$rooms,
 					IQueryBuilder::PARAM_STR_ARRAY
@@ -852,7 +851,7 @@ class RoomShareProvider implements IShareProvider {
 
 		$cursor = $qb->select('*')
 			->from('share')
-			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 			->andWhere($qb->expr()->eq('token', $qb->createNamedParameter($token)))
 			->execute();
 
@@ -926,7 +925,7 @@ class RoomShareProvider implements IShareProvider {
 
 		$qb = $this->dbConnection->getQueryBuilder();
 
-		$types = [\OCP\Share::SHARE_TYPE_ROOM];
+		$types = [IShare::TYPE_ROOM];
 		if ($currentAccess) {
 			$types[] = self::SHARE_TYPE_USERROOM;
 		}
@@ -944,7 +943,7 @@ class RoomShareProvider implements IShareProvider {
 		$users = [];
 		while($row = $cursor->fetch()) {
 			$type = (int)$row['share_type'];
-			if ($type === \OCP\Share::SHARE_TYPE_ROOM) {
+			if ($type === IShare::TYPE_ROOM) {
 				$roomToken = $row['share_with'];
 				try {
 					$room = $this->manager->getRoomByToken($roomToken);
@@ -1026,7 +1025,7 @@ class RoomShareProvider implements IShareProvider {
 		$qb->select('*')
 			->from('share')
 			->where($qb->expr()->eq('parent', $qb->createNamedParameter($parent->getId())))
-			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->andWhere($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 			->orderBy('id');
 
 		$cursor = $qb->execute();
@@ -1055,7 +1054,7 @@ class RoomShareProvider implements IShareProvider {
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->select('id')
 			->from('share')
-			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
 
 		if ($user !== null) {
@@ -1082,7 +1081,7 @@ class RoomShareProvider implements IShareProvider {
 		// Now delete all the original room shares
 		$qb = $this->dbConnection->getQueryBuilder();
 		$qb->delete('share')
-			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+			->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 			->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
 
 		if ($user !== null) {
@@ -1096,7 +1095,7 @@ class RoomShareProvider implements IShareProvider {
 			$qb = $this->dbConnection->getQueryBuilder();
 			$qb->select('id')
 				->from('share')
-				->where($qb->expr()->eq('share_type', $qb->createNamedParameter(\OCP\Share::SHARE_TYPE_ROOM)))
+				->where($qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM)))
 				->andWhere($qb->expr()->eq('share_with', $qb->createNamedParameter($roomToken)));
 
 			$cursor = $qb->execute();
