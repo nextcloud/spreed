@@ -195,3 +195,9 @@ Explanations:
 * Event class: `OCA\Talk\Events\SignalingEvent`
 * Event name: `OCA\Talk\Controller\SignalingController::EVENT_BACKEND_SIGNALING_ROOMS`
 * Since: 8.0.0
+
+### Get conversation properties for signaling
+
+* Event class: `OCA\Talk\Events\SignalingRoomPropertiesEvent`
+* Event name: `OCA\Talk\Room::EVENT_BEFORE_SIGNALING_PROPERTIES`
+* Since: 8.0.5

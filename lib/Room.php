@@ -36,6 +36,7 @@ use OCA\Talk\Events\ParticipantEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\Events\SignalingRoomPropertiesEvent;
 use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -100,6 +101,7 @@ class Room {
 	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
 	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
 	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
+	public const EVENT_BEFORE_SIGNALING_PROPERTIES = self::class . '::beforeSignalingProperties';
 
 	/** @var Manager */
 	private $manager;
@@ -276,6 +278,23 @@ class Room {
 	public function setParticipant(?string $userId, Participant $participant): void {
 		$this->currentUser = $userId;
 		$this->participant = $participant;
+	}
+
+	/**
+	 * Return the room properties to send to the signaling server.
+	 *
+	 * @param string $userId
+	 * @return array
+	 */
+	public function getPropertiesForSignaling(string $userId): array {
+		$properties = [
+			'name' => $this->getDisplayName($userId),
+			'type' => $this->getType(),
+		];
+
+		$event = new SignalingRoomPropertiesEvent($this, $userId, $properties);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_SIGNALING_PROPERTIES, $event);
+		return $event->getProperties();
 	}
 
 	/**

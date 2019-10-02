@@ -131,10 +131,7 @@ class BackendNotifier {
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
-				'properties' => [
-					'name' => $room->getDisplayName(''),
-					'type' => $room->getType(),
-				],
+				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
 	}
@@ -155,10 +152,7 @@ class BackendNotifier {
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
-				'properties' => [
-					'name' => $room->getDisplayName(''),
-					'type' => $room->getType(),
-				],
+				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
 	}
@@ -179,10 +173,7 @@ class BackendNotifier {
 				// TODO(fancycode): We should try to get rid of 'alluserids' and
 				// find a better way to notify existing users to update the room.
 				'alluserids' => $room->getParticipantUserIds(),
-				'properties' => [
-					'name' => $room->getDisplayName(''),
-					'type' => $room->getType(),
-				],
+				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
 	}
@@ -199,10 +190,7 @@ class BackendNotifier {
 			'type' => 'update',
 			'update' => [
 				'userids' => $room->getParticipantUserIds(),
-				'properties' => [
-					'name' => $room->getDisplayName(''),
-					'type' => $room->getType(),
-				],
+				'properties' => $room->getPropertiesForSignaling(''),
 			],
 		]);
 	}
