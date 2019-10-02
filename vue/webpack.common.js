@@ -3,8 +3,12 @@ const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
 	entry: {
+		// "collections" can not be bundled with other files, as it is used not
+		// only by Talk but also by any other app that uses collections.
 		"collections": path.join(__dirname, 'src', 'collections.js'),
-		"collectionsintegration": path.join(__dirname, 'src', 'collectionsintegration.js'),
+		"main": [
+			path.join(__dirname, 'src', 'collectionsintegration.js'),
+		],
 		"admin/allowed-groups": path.join(__dirname, 'src', 'AllowedGroupsSettings.js'),
 		"admin/commands": path.join(__dirname, 'src', 'CommandsSettings.js'),
 		"admin/general-settings": path.join(__dirname, 'src', 'GeneralSettings.js'),
