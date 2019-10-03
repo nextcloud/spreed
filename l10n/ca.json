@@ -158,6 +158,7 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Amb els projectes podeu crear ràpidament enllaços entre converses, fitxers i altres elements a Nextcloud",
     "New in Talk 7" : "Nou a Talk 7",
     "- You can now mention guests in the chat" : "- Ara ja podeu esmentar convidats al xat.",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Les converses poden tenir un vestíbul. Això permetrà als moderadors unir-se al xat i trucar immediatament per preparar la reunió, mentre que usuaris i convidats hauran d’esperar.",
     "There are currently no commands available." : "Actualment no hi ha comandaments disponibles.",
     "The command does not exist" : "No existeix aquest comandament.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "S'ha produït un error en executar l'ordre. Sol·liciteu a un administrador que comprovi els registres.",
