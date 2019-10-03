@@ -1176,7 +1176,7 @@ steps:
     image: nextcloudci/acceptance-php7.1:acceptance-php7.1-2
     environment:
       APP_NAME: spreed
-      CORE_BRANCH: master
+      CORE_BRANCH: stable17
       SELENIUM_HOST: selenium
       TESTS_ACCEPTANCE: public-share
     commands:
