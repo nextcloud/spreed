@@ -21,25 +21,26 @@
 
 <template>
 	<ul class="app-navigation">
-		<Conversation
+		<AppContentListItem
 			v-for="item of conversationsList"
 			:key="item.id"
 			:to="{ name: 'conversation', params: { token: item.token }}"
 			:title="item.displayName"
-			:subtitle="item.lastMessage.message"
 			@click="joinConversation(item.token)">
 			<Avatar
 				slot="icon"
-				size="40"
+				:size="44"
 				:user="item.displayName"
 				:display-name="item.displayName" />
+			<template slot="subtitle">
+				{{ item.lastMessage.message }}
+			</template>
 			<AppNavigationCounter
 				slot="counter"
 				:highlighted="true">
 				3
 			</AppNavigationCounter>
-			<template
-				slot="actions">
+			<template slot="actions">
 				<ActionButton
 					icon="icon-edit"
 					@click="alert('Edit')">
@@ -55,7 +56,7 @@
 					title="Link"
 					href="https://nextcloud.com" />
 			</template>
-		</Conversation>
+		</AppContentListItem>
 	</ul>
 </template>
 
@@ -63,10 +64,10 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
+import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import { fetchConversations } from '../../services/conversationsService'
 import { joinConversation } from '../../services/participantsService'
-import Conversation from './Conversation/Conversation'
 
 export default {
 	name: 'ConversationsList',
@@ -74,7 +75,7 @@ export default {
 		Avatar,
 		AppNavigationCounter,
 		ActionButton,
-		Conversation
+		AppContentListItem
 	},
 	computed: {
 		conversationsList() {
@@ -104,5 +105,9 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	flex: 1 0;
+}
+
+.ellipsis {
+	text-overflow: ellipsis;
 }
 </style>
