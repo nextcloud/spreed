@@ -5,8 +5,8 @@ Feature: lobby
     And I am logged in
     And I have opened the Talk app
     And I create a public conversation named "Public"
-    And I enable the conversation for moderators only
-    And I see that the conversation is enabled for moderators only
+    And I enable the conversation lobby
+    And I see that the conversation lobby is enabled
     And I write down the public conversation link
     And I add "admin" to the participants
     When I act as Jane
@@ -21,8 +21,8 @@ Feature: lobby
     And I am logged in
     And I have opened the Talk app
     And I create a public conversation named "Public"
-    And I enable the conversation for moderators only
-    And I see that the conversation is enabled for moderators only
+    And I enable the conversation lobby
+    And I see that the conversation lobby is enabled
     And I write down the public conversation link
     When I act as Jane
     And I am logged in as the admin
@@ -38,8 +38,8 @@ Feature: lobby
     And I am logged in
     And I have opened the Talk app
     And I create a public conversation named "Public"
-    And I enable the conversation for moderators only
-    And I see that the conversation is enabled for moderators only
+    And I enable the conversation lobby
+    And I see that the conversation lobby is enabled
     And I protect the conversation with the password "abcdef"
     And I see that the conversation is password protected
     And I write down the public conversation link
@@ -56,8 +56,8 @@ Feature: lobby
     And I am logged in
     And I have opened the Talk app
     And I create a public conversation named "Public"
-    And I enable the conversation for moderators only
-    And I see that the conversation is enabled for moderators only
+    And I enable the conversation lobby
+    And I see that the conversation lobby is enabled
     And I protect the conversation with the password "abcdef"
     And I see that the conversation is password protected
     And I write down the public conversation link
