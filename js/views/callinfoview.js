@@ -47,6 +47,7 @@
 			var canModerate = this._canModerate();
 			var canFullModerate = this._canFullModerate();
 			var isPublic = this.model.get('type') === OCA.SpreedMe.app.ROOM_TYPE_PUBLIC;
+			var isLobbyActive = this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS;
 			return $.extend(this.model.toJSON(), {
 				isRoomForFile: this.model.get('objectType') === 'file',
 				fileLink: OC.generateUrl('/f/{fileId}', { fileId: this.model.get('objectId') }),
@@ -56,13 +57,10 @@
 				linkLabel: t('spreed', 'Guests'),
 				linkCheckboxLabel: t('spreed', 'Share link'),
 				copyLinkLabel: t('spreed', 'Copy link'),
-				enableForLabel: t('spreed', 'Enable for'),
-				allParticipantsLabel: t('spreed', 'All participants'),
-				moderatorsOnlyLabel: t('spreed', 'Moderators only'),
-				allParticipantsValue: OCA.SpreedMe.app.LOBBY_NONE,
-				moderatorsOnlyValue: OCA.SpreedMe.app.LOBBY_NON_MODERATORS,
-				lobbyStateAllParticipants: this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE,
-				lobbyStateModeratorsOnly: this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS,
+				webinarLabel: t('spreed', 'Webinar'),
+				lobbyCheckboxLabel: t('spreed', 'Enable lobby'),
+				lobbyCheckboxDetail: t('spreed', 'Only moderators can enter the conversation when the lobby is enabled'),
+				isLobbyActive: isLobbyActive,
 				lobbyTimerPlaceholder: t('spreed', 'Start time (optional)'),
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.
@@ -90,11 +88,8 @@
 			'roomModerationButton': '.room-moderation-button .button',
 			'roomModerationMenu': '.room-moderation-button .menu',
 
-			'allParticipantsRadio': '.all-participants-radio',
-			'moderatorsOnlyRadio': '.moderators-only-radio',
-			'allParticipantsLabel': '.all-participants-label',
-			'moderatorsOnlyLabel': '.moderators-only-label',
-
+			'lobbyCheckbox': '.lobby-checkbox',
+			'lobbyCheckboxLabel': '.lobby-checkbox-label',
 			'lobbyTimerForm': '.lobby-timer-form',
 			'lobbyTimerInput': '.lobby-timer-input',
 			'lobbyTimerConfirm': '.lobby-timer-confirm',
@@ -112,9 +107,7 @@
 			'click @ui.passwordConfirm': 'confirmPassword',
 			'submit @ui.passwordForm': 'confirmPassword',
 
-			'click @ui.allParticipantsRadio': 'setLobbyStateAllParticipants',
-			'click @ui.moderatorsOnlyRadio': 'setLobbyStateModeratorsOnly',
-
+			'change @ui.lobbyCheckbox': 'toggleLobbyCheckbox',
 			'click @ui.lobbyTimerConfirm': 'confirmLobbyTimer',
 			'submit @ui.lobbyTimerForm': 'confirmLobbyTimer',
 		},
@@ -324,50 +317,24 @@
 			});
 		},
 
-		setLobbyStateAllParticipants: function() {
-			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE) {
-				return;
-			}
+		/**
+		 * Lobby
+		 */
+		toggleLobbyCheckbox: function() {
+			var isLobbyActive = this.ui.lobbyCheckbox.prop('checked');
+			var lobbyState = (isLobbyActive) ? OCA.SpreedMe.app.LOBBY_NON_MODERATORS : OCA.SpreedMe.app.LOBBY_NONE;
 
-			this.ui.allParticipantsRadio.prop('disabled', true);
-			this.ui.allParticipantsLabel.addClass('icon-loading-small');
+			this.ui.lobbyCheckbox.prop('disabled', true);
+			this.ui.lobbyCheckboxLabel.addClass('icon-loading-small');
 
-			this.model.setLobbyState(OCA.SpreedMe.app.LOBBY_NONE, {
+			this.model.setLobbyState(lobbyState, {
 				wait: true,
 				error: function() {
-					if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE) {
-						this.ui.allParticipantsRadio.prop('checked', true);
-					} else {
-						this.ui.moderatorsOnlyRadio.prop('checked', true);
-					}
-					this.ui.allParticipantsRadio.prop('disabled', false);
-					this.ui.allParticipantsLabel.removeClass('icon-loading-small');
+					this.ui.lobbyCheckbox.prop('checked', !isLobbyActive);
+					this.ui.lobbyCheckbox.prop('disabled', false);
+					this.ui.lobbyCheckboxLabel.removeClass('icon-loading-small');
 
-					OC.Notification.show(t('spreed', 'Error occurred while enabling for all participants'), {type: 'error'});
-				}.bind(this)
-			});
-		},
-
-		setLobbyStateModeratorsOnly: function() {
-			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
-				return;
-			}
-
-			this.ui.moderatorsOnlyRadio.prop('disabled', true);
-			this.ui.moderatorsOnlyLabel.addClass('icon-loading-small');
-
-			this.model.setLobbyState(OCA.SpreedMe.app.LOBBY_NON_MODERATORS, {
-				wait: true,
-				error: function() {
-					if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NONE) {
-						this.ui.allParticipantsRadio.prop('checked', true);
-					} else {
-						this.ui.moderatorsOnlyRadio.prop('checked', true);
-					}
-					this.ui.moderatorsOnlyRadio.prop('disabled', false);
-					this.ui.moderatorsOnlyLabel.removeClass('icon-loading-small');
-
-					OC.Notification.show(t('spreed', 'Error occurred while enabling only for moderators'), {type: 'error'});
+					OC.Notification.show(t('spreed', 'Error occurred while changing lobby state'), {type: 'error'});
 				}.bind(this)
 			});
 		},
