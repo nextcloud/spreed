@@ -99,6 +99,7 @@
 		regions: {
 			'roomName': '@ui.roomName',
 			'callButton': '@ui.callButton',
+			'lobbyTimerPicker': '@ui.lobbyTimerInput',
 		},
 
 		events: {
@@ -120,6 +121,7 @@
 				this.render();
 			},
 			'change:lobbyTimer': function() {
+				this._updateLobbyTimerPickerValue();
 				this.render();
 			},
 			'change:participantType': function() {
@@ -166,6 +168,16 @@
 				connection: OCA.SpreedMe.app.connection,
 			});
 
+			this._lobbyTimerPicker = new OCA.Talk.Views.VueWrapper({
+				vm: new OCA.Talk.Views.LobbyTimerPicker()
+			});
+			this._updateLobbyTimerPickerValue = function() {
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				this._lobbyTimerPicker._vm.value = this.model.get('lobbyTimer')? new Date(this.model.get('lobbyTimer') * 1000): null;
+			};
+			this._updateLobbyTimerPickerValue();
+
 			this._updateNameEditability();
 		},
 
@@ -181,6 +193,7 @@
 			// time and without that option the call would fail otherwise.
 			this.getRegion('roomName').reset({ preventDestroy: true, allowMissingEl: true });
 			this.getRegion('callButton').reset({ preventDestroy: true, allowMissingEl: true });
+			this.getRegion('lobbyTimerPicker').reset({ preventDestroy: true, allowMissingEl: true });
 
 			// Remove previous tooltips in case any of them is shown, as
 			// otherwise they will stay forever in the DOM once their parent is
@@ -208,6 +221,9 @@
 			// template has been rendered.
 			this.showChildView('roomName', this._nameEditableTextLabel, { replaceElement: true } );
 			this.showChildView('callButton', this._callButton, { replaceElement: true } );
+			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
+				this.showChildView('lobbyTimerPicker', this._lobbyTimerPicker, { replaceElement: true } );
+			}
 
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
@@ -359,11 +375,11 @@
 
 			var lobbyTimerTimestamp = 0;
 
-			var lobbyTimerInputValue = this.ui.lobbyTimerInput.val().trim();
-			if (lobbyTimerInputValue) {
+			var lobbyTimerPickerValue = this._lobbyTimerPicker._vm.value;
+			if (lobbyTimerPickerValue) {
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.
-				lobbyTimerTimestamp = Date.parse(lobbyTimerInputValue) / 1000;
+				lobbyTimerTimestamp = lobbyTimerPickerValue.getTime() / 1000;
 			}
 
 			if (isNaN(lobbyTimerTimestamp)) {
@@ -372,12 +388,12 @@
 				return;
 			}
 
-			this.ui.lobbyTimerInput.prop('disabled', true);
+			this._lobbyTimerPicker._vm.disabled = true;
 			this.ui.lobbyTimerConfirm.addClass('hidden');
 			this.ui.lobbyTimerLoading.removeClass('hidden');
 
 			var restoreState = function() {
-				this.ui.lobbyTimerInput.prop('disabled', false);
+				this._lobbyTimerPicker._vm.disabled = false;
 				this.ui.lobbyTimerConfirm.removeClass('hidden');
 				this.ui.lobbyTimerLoading.addClass('hidden');
 			}.bind(this);

@@ -8,6 +8,7 @@ module.exports = {
 		"collections": path.join(__dirname, 'src', 'collections.js'),
 		"main": [
 			path.join(__dirname, 'src', 'collectionsintegration.js'),
+			path.join(__dirname, 'src', 'lobbytimerpicker.js'),
 		],
 		"admin/allowed-groups": path.join(__dirname, 'src', 'AllowedGroupsSettings.js'),
 		"admin/commands": path.join(__dirname, 'src', 'CommandsSettings.js'),
