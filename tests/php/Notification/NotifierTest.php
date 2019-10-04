@@ -21,6 +21,7 @@
 
 namespace OCA\Talk\Tests\php\Notifications;
 
+use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -32,7 +33,6 @@ use OCA\Talk\Notification\Notifier;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
-use OCP\Comments\ICommentsManager;
 use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
@@ -63,7 +63,7 @@ class NotifierTest extends \Test\TestCase {
 	protected $manager;
 	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
-	/** @var ICommentsManager|MockObject */
+	/** @var CommentsManager|MockObject */
 	protected $commentsManager;
 	/** @var MessageParser|MockObject */
 	protected $messageParser;
@@ -83,7 +83,7 @@ class NotifierTest extends \Test\TestCase {
 		$this->shareManager = $this->createMock(IShareManager::class);
 		$this->manager = $this->createMock(Manager::class);
 		$this->notificationManager = $this->createMock(INotificationManager::class);
-		$this->commentsManager = $this->createMock(ICommentsManager::class);
+		$this->commentsManager = $this->createMock(CommentsManager::class);
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->definitions = $this->createMock(Definitions::class);
 
