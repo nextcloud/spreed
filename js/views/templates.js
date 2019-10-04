@@ -74,7 +74,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + alias4(((helper = (helper = helpers.linkLabel || (depth0 != null ? depth0.linkLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"linkLabel","hash":{},"data":data}) : helper)))
     + "</span>\n					</span>\n				</li>\n				<li>\n					<span class=\"menuitem\">\n						<input name=\"link-checkbox\" id=\"link-checkbox\" class=\"checkbox link-checkbox\" value=\"1\" "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isPublic : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " type=\"checkbox\">\n						<label for=\"link-checkbox\" class=\"link-checkbox-label\">"
+    + " type=\"checkbox\">\n						<label for=\"link-checkbox\" class=\"checkbox-label link-checkbox-label\">"
     + alias4(((helper = (helper = helpers.linkCheckboxLabel || (depth0 != null ? depth0.linkCheckboxLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"linkCheckboxLabel","hash":{},"data":data}) : helper)))
     + "</label>\n					</span>\n				</li>\n";
 },"7":function(container,depth0,helpers,partials,data) {
@@ -95,21 +95,15 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "				<li>\n					<div class=\"separator\"></div>\n				</li>\n				<li>\n					<span class=\"menuitem caption\">\n						<span>"
-    + alias4(((helper = (helper = helpers.enableForLabel || (depth0 != null ? depth0.enableForLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"enableForLabel","hash":{},"data":data}) : helper)))
-    + "</span>\n					</span>\n				</li>\n				<li>\n					<span class=\"menuitem\">\n						<input name=\"lobby-state\" id=\"all-participants\" class=\"radio all-participants-radio\" value=\""
-    + alias4(((helper = (helper = helpers.allParticipantsValue || (depth0 != null ? depth0.allParticipantsValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"allParticipantsValue","hash":{},"data":data}) : helper)))
-    + "\" "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateAllParticipants : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " type=\"radio\">\n						<label for=\"all-participants\" class=\"all-participants-label\">"
-    + alias4(((helper = (helper = helpers.allParticipantsLabel || (depth0 != null ? depth0.allParticipantsLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"allParticipantsLabel","hash":{},"data":data}) : helper)))
-    + "</label>\n					</span>\n				</li>\n				<li>\n					<span class=\"menuitem\">\n						<input name=\"lobby-state\" id=\"moderators-only\" class=\"radio moderators-only-radio\" value=\""
-    + alias4(((helper = (helper = helpers.moderatorsOnlyValue || (depth0 != null ? depth0.moderatorsOnlyValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"moderatorsOnlyValue","hash":{},"data":data}) : helper)))
-    + "\" "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateModeratorsOnly : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " type=\"radio\">\n						<label for=\"moderators-only\" class=\"moderators-only-label\">"
-    + alias4(((helper = (helper = helpers.moderatorsOnlyLabel || (depth0 != null ? depth0.moderatorsOnlyLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"moderatorsOnlyLabel","hash":{},"data":data}) : helper)))
-    + "</label>\n					</span>\n				</li>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateModeratorsOnly : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+    + alias4(((helper = (helper = helpers.webinarLabel || (depth0 != null ? depth0.webinarLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"webinarLabel","hash":{},"data":data}) : helper)))
+    + "</span>\n					</span>\n				</li>\n				<li class=\"item-has-details\">\n					<span class=\"menuitem\">\n						<input name=\"lobby-checkbox\" id=\"lobby-checkbox\" class=\"checkbox lobby-checkbox\" value=\"1\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isLobbyActive : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " type=\"checkbox\">\n						<label for=\"lobby-checkbox\" class=\"checkbox-label lobby-checkbox-label\">"
+    + alias4(((helper = (helper = helpers.lobbyCheckboxLabel || (depth0 != null ? depth0.lobbyCheckboxLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyCheckboxLabel","hash":{},"data":data}) : helper)))
+    + "</label>\n					</span>\n					<span class=\"menuitem-details\">"
+    + alias4(((helper = (helper = helpers.lobbyCheckboxDetail || (depth0 != null ? depth0.lobbyCheckboxDetail : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyCheckboxDetail","hash":{},"data":data}) : helper)))
+    + "</span>\n				</li>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isLobbyActive : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"15":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
