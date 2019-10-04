@@ -206,7 +206,7 @@
 			this.ui.lobbyTimerInput.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
-				title: t('spreed', 'YYYY-MM-DD HH:MM')
+				title: 'YYYY-MM-DD HH:mm'
 			});
 
 			this.ui.clipboardButton.attr('value', completeURL);
