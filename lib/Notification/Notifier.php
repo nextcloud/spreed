@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Notification;
 
 
+use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
@@ -31,7 +32,6 @@ use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -44,7 +44,6 @@ use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\Notification\INotifier;
 use OCP\RichObjectStrings\Definitions;
-use OCP\Share;
 use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager as IShareManager;
 use OCP\Share\IShare;
@@ -67,7 +66,7 @@ class Notifier implements INotifier {
 	protected $manager;
 	/** @var INotificationManager */
 	protected $notificationManager;
-	/** @var ICommentsManager */
+	/** @var CommentsManager */
 	protected $commentManager;
 	/** @var MessageParser */
 	protected $messageParser;
@@ -82,7 +81,7 @@ class Notifier implements INotifier {
 								IShareManager $shareManager,
 								Manager $manager,
 								INotificationManager $notificationManager,
-								ICommentsManager $commentManager,
+								CommentsManager $commentManager,
 								MessageParser $messageParser,
 								Definitions $definitions) {
 		$this->lFactory = $lFactory;
