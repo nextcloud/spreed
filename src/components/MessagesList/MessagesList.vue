@@ -46,7 +46,7 @@
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller/dist/vue-virtual-scroller.umd.js'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Message from './Message/Message'
-import MessageBody from './Message/MessageBody'
+import MessageBody from './MessageBody/MessageBody'
 import { fetchMessages } from '../../services/messagesService'
 
 export default {

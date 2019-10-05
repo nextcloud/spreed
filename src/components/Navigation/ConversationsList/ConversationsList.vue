@@ -21,13 +21,6 @@
 
 <template>
 	<ul class="app-navigation">
-		<Multiselect
-			:options="conversationsList"
-			label="displayName"
-			track-by="user"
-			:user-select="true"
-			@input="handleInput"
-			style="width: 250px" />
 		<AppContentListItem
 			v-for="item of conversationsList"
 			:key="item.id"
@@ -72,10 +65,9 @@ import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
-import Multiselect from 'nextcloud-vue/dist/Components/Multiselect'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-import { fetchConversations } from '../../services/conversationsService'
-import { joinConversation } from '../../services/participantsService'
+import { fetchConversations } from '../../../services/conversationsService'
+import { joinConversation } from '../../../services/participantsService'
 
 export default {
 	name: 'ConversationsList',
@@ -83,8 +75,7 @@ export default {
 		Avatar,
 		AppNavigationCounter,
 		ActionButton,
-		AppContentListItem,
-		Multiselect
+		AppContentListItem
 	},
 	computed: {
 		conversationsList() {

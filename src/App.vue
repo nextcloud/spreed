@@ -20,13 +20,8 @@
 -->
 
 <template>
-	<Content :class="{'icon-loading': loading}" app-name="vueexample">
-		<AppNavigation>
-			<ConversationsList />
-			<AppNavigationSettings>
-				Example settings
-			</AppNavigationSettings>
-		</AppNavigation>
+	<Content :class="{'icon-loading': loading}" app-name="Talk">
+		<Navigation />
 		<AppContent>
 			<router-view />
 		</AppContent>
@@ -57,22 +52,18 @@
 <script>
 import Content from 'nextcloud-vue/dist/Components/Content'
 import AppContent from 'nextcloud-vue/dist/Components/AppContent'
-import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
-import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
-import ConversationsList from './components/ConversationsList/ConversationsList'
+import Navigation from './components/Navigation/Navigation'
 
 export default {
 	name: 'App',
 	components: {
 		Content,
 		AppContent,
-		AppNavigation,
-		AppNavigationSettings,
 		AppSidebar,
 		AppSidebarTab,
-		ConversationsList
+		Navigation
 	},
 	data: function() {
 		return {
