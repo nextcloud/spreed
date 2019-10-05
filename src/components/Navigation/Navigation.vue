@@ -22,7 +22,9 @@
 <template>
 	<AppNavigation>
 		<ul class="app-navigation">
-			<AppNavigationSearch v-model="searchText" />
+			<AppNavigationSearch
+				v-model="searchText"
+				@input="debounceFetchSearchResults" />
 			<ConversationsList />
 		</ul>
 		<AppNavigationSettings>
@@ -36,6 +38,9 @@ import ConversationsList from './ConversationsList/ConversationsList'
 import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
 import AppNavigationSearch from './AppNavigationSearch/AppNavigationSearch'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
+import { searchPossibleConversations } from '../../services/conversationsService'
+
+import debounce from 'debounce'
 
 export default {
 
@@ -50,16 +55,23 @@ export default {
 
 	data() {
 		return {
-			searchText: ''
+			searchText: '',
+			searchResults: {},
+			contactsLoading: false
 		}
 	},
 
-	watch: {
-		searchText() {
-			this.$emit('The search text has been updated')
+	methods: {
+		debounceFetchSearchResults: debounce(function() {
+			this.fetchSearchResults()
+		}, 250),
+
+		async fetchSearchResults() {
+			this.contactsLoading = true
+			this.searchResults = await searchPossibleConversations(this.searchText)
+			this.contactsLoading = false
 		}
 	}
-
 }
 </script>
 

@@ -35,4 +35,17 @@ const fetchConversations = async function() {
 	}
 }
 
-export { fetchConversations }
+/**
+ * Fetches possible conversations
+ * @param {String} searchText The string that will be used in the search query
+ */
+const searchPossibleConversations = async function(searchText) {
+	try {
+		const response = await axios.get(generateOcsUrl('core/autocomplete', 2) + `get` + `?format=json` + `&search=${searchText}` + `&itemType=call` + `&itemId=new` + `&shareTypes[]=${OC.Share.SHARE_TYPE_USER}&shareTypes[]=${OC.Share.SHARE_TYPE_GROUP}`)
+		return response
+	} catch (error) {
+		console.debug('Error while searching possible conversations: ', error)
+	}
+}
+
+export { fetchConversations, searchPossibleConversations }

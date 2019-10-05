@@ -23,11 +23,11 @@
 	<form
 		@submit.prevent="handleSubmit">
 		<input
+			v-model="localValue"
 			class="app-navigation-search"
 			type="text"
 			:autofocus="autoFocused"
-			v-model="localValue"
-			:placeHolder="placeholderText" />
+			:placeHolder="placeholderText">
 	</form>
 </template>
 
