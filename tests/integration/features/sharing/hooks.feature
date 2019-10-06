@@ -1018,8 +1018,19 @@ Feature: hooks
       | share_with             | group room invited to |
       | share_with_displayname | Group room invited to |
     And user "participant3" gets last share
-    And the OCS status code should be "404"
-    And the HTTP status code should be "200"
+    And share is returned with
+      | uid_owner              | participant2 |
+      | displayname_owner      | participant2 |
+      | uid_file_owner         | participant1 |
+      | displayname_file_owner | participant1-displayname |
+      | path                   | /welcome (2).txt |
+      | item_type              | file |
+      | mimetype               | text/plain |
+      | storage_id             | shared::/welcome (2).txt |
+      | file_target            | /welcome (2).txt |
+      | share_with             | participant4 |
+      | share_with_displayname | participant4-displayname |
+      | share_type             | 0 |
     And user "participant3" gets all received shares
     And the list of returned shares has 1 shares
     And share 0 is returned with
