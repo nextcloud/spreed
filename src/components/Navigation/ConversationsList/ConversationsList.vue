@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<ul class="app-navigation">
+	<ul class="conversations">
 		<AppContentListItem
 			v-for="item of conversationsList"
 			:key="item.id"
@@ -108,6 +108,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.conversations {
+	overflow: visible;
+}
+
 .scroller {
 	flex: 1 0;
 }

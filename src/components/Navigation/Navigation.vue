@@ -25,7 +25,10 @@
 			<AppNavigationSearch
 				v-model="searchText"
 				@input="debounceFetchSearchResults" />
+			<Caption v-if="isSearching" title="Conversations" />
 			<ConversationsList />
+			<Caption v-if="isSearching" title="Contacts" />
+			<ContactsList v-if="isSearching" :contacts="searchResults" />
 		</ul>
 		<AppNavigationSettings>
 			Example settings
@@ -39,8 +42,9 @@ import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
 import AppNavigationSearch from './AppNavigationSearch/AppNavigationSearch'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import { searchPossibleConversations } from '../../services/conversationsService'
-
+import ContactsList from './ContactsList/ContactsList'
 import debounce from 'debounce'
+import Caption from './Caption/Caption'
 
 export default {
 
@@ -50,7 +54,9 @@ export default {
 		ConversationsList,
 		AppNavigation,
 		AppNavigationSettings,
-		AppNavigationSearch
+		AppNavigationSearch,
+		ContactsList,
+		Caption
 	},
 
 	data() {
@@ -61,14 +67,23 @@ export default {
 		}
 	},
 
+	computed: {
+		isSearching() {
+			return this.searchText !== ''
+		}
+	},
+
 	methods: {
 		debounceFetchSearchResults: debounce(function() {
-			this.fetchSearchResults()
+			if (this.isSearching) {
+				this.fetchSearchResults()
+			}
 		}, 250),
 
 		async fetchSearchResults() {
 			this.contactsLoading = true
-			this.searchResults = await searchPossibleConversations(this.searchText)
+			const response = await searchPossibleConversations(this.searchText)
+			this.searchResults = response.data.ocs.data
 			this.contactsLoading = false
 		}
 	}
