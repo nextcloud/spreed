@@ -53,6 +53,7 @@
 				fileLinkTitle: t('spreed', 'Go to file'),
 				showRoomModerationMenu: canModerate && (canFullModerate || isPublic),
 				canFullModerate: canFullModerate,
+				linkLabel: t('spreed', 'Guests'),
 				linkCheckboxLabel: t('spreed', 'Share link'),
 				copyLinkLabel: t('spreed', 'Copy link'),
 				enableForLabel: t('spreed', 'Enable for'),
