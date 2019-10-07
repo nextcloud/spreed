@@ -33,6 +33,9 @@
 				track-by="value"
 				@input="saveChanges" />
 		</p>
+		<p>
+			<em>{{ t('spreed', 'When a guest or user can not start a call they can still join the conversation and chat. When a user or moderator started the call they can also join the call.') }}</em>
+		</p>
 	</div>
 </template>
 
