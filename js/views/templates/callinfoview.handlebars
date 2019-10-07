@@ -20,6 +20,11 @@
 			<ul>
 				{{#if canFullModerate}}
 				<li>
+					<span class="menuitem caption">
+						<span>{{linkLabel}}</span>
+					</span>
+				</li>
+				<li>
 					<span class="menuitem">
 						<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">
 						<label for="link-checkbox" class="link-checkbox-label">{{linkCheckboxLabel}}</label>
