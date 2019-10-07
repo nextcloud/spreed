@@ -203,6 +203,12 @@
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
 
+			this.ui.lobbyTimerInput.tooltip({
+				placement: 'bottom',
+				trigger: 'hover',
+				title: 'YYYY-MM-DD HH:mm'
+			});
+
 			this.ui.clipboardButton.attr('value', completeURL);
 			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
 			this.ui.clipboardButton.tooltip({
