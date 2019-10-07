@@ -78,9 +78,19 @@ export default {
 	}
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 p {
 	display: flex;
 	align-items: center;
+
+	label {
+		display: block;
+		margin-right: 10px;
+	}
+}
+
+.multiselect {
+	flex-grow: 1;
+	max-width: 300px;
 }
 </style>
