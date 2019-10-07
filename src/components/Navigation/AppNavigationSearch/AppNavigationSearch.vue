@@ -21,10 +21,11 @@
 
 <template>
 	<form
+		class="app-navigation-search"
 		@submit.prevent="handleSubmit">
 		<input
 			v-model="localValue"
-			class="app-navigation-search"
+			class="app-navigation-search__input"
 			type="text"
 			:autofocus="autoFocused"
 			:placeHolder="placeholderText">
@@ -89,7 +90,13 @@ export default {
 @import '../../../assets/variables.scss';
 
 .app-navigation-search {
-	width: $navigation-width - 20px;
-	margin: 10px;
+	position: sticky;
+	top: 0px;
+	background-color: white;
+	border-bottom: 1px solid lightgray;
+	&__input {
+		width: $navigation-width - 20px;
+		margin: 10px;
+	}
 }
 </style>

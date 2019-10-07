@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<ul>
+	<ul class="contacts-list">
 		<AppContentListItem
 			v-for="item of contacts"
 			:key="item.id"
@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
 import { createOneToOneConversation } from '../../../services/conversationsService'
@@ -74,11 +73,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.scroller {
-	flex: 1 0;
-}
-
 .ellipsis {
 	text-overflow: ellipsis;
 }
+.contacts-list {
+	overflow: visible;
+	display: block;
+}
+
 </style>

@@ -21,16 +21,16 @@
 
 <template>
 	<AppNavigation>
+		<AppNavigationSearch
+			v-model="searchText"
+			@input="debounceFetchSearchResults" />
 		<ul class="app-navigation">
-			<AppNavigationSearch
-				v-model="searchText"
-				@input="debounceFetchSearchResults" />
 			<Caption v-if="isSearching" title="Conversations" />
 			<ConversationsList />
 			<Caption v-if="isSearching" title="Contacts" />
 			<ContactsList v-if="isSearching" :contacts="searchResults" />
 		</ul>
-		<AppNavigationSettings>
+		<AppNavigationSettings class="settings">
 			Example settings
 		</AppNavigationSettings>
 	</AppNavigation>
@@ -91,5 +91,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.app-navigation {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
 
+.settings {
+	position: sticky;
+	bottom: 0px;
+}
 </style>
