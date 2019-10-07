@@ -36,8 +36,8 @@ const fetchConversations = async function() {
 }
 
 /**
- * Fetches possible conversations
- * @param {String} searchText The string that will be used in the search query
+ * Fetch possible conversations
+ * @param {String} searchText The string that will be used in the search query.
  */
 const searchPossibleConversations = async function(searchText) {
 	try {
@@ -48,4 +48,30 @@ const searchPossibleConversations = async function(searchText) {
 	}
 }
 
-export { fetchConversations, searchPossibleConversations }
+/**
+ * Create a new one to one conversation with the specified user.
+ * @param {String} userId The ID of the user with wich the new conversation will be opened.
+ */
+const createOneToOneConversation = async function(userId) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: 1, invite: userId })
+		return response
+	} catch (error) {
+		console.debug('Error creating new one to one conversation: ', error)
+	}
+}
+
+/**
+ * Create a new group conversation.
+ * @param {String} groupId The group ID, this parameter is optional.
+ */
+const createGroupConversation = async function(groupId) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: 2, invite: groupId })
+		return response
+	} catch (error) {
+		console.debug('Error creating new one to one conversation: ', error)
+	}
+}
+
+export { fetchConversations, searchPossibleConversations, createOneToOneConversation, createGroupConversation }

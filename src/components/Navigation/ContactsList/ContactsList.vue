@@ -24,8 +24,8 @@
 		<AppContentListItem
 			v-for="item of contacts"
 			:key="item.id"
-			:to="{ name: 'conversation', params: { token: item.token }}"
-			:title="item.id">
+			:title="item.id"
+			@click="createAndJoinConversation(item.id)">
 			<Avatar
 				slot="icon"
 				:size="44"
@@ -39,6 +39,7 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
+import { createOneToOneConversation } from '../../../services/conversationsService'
 
 export default {
 	name: 'ContactsList',
@@ -58,16 +59,16 @@ export default {
 	},
 	methods: {
 		/**
-		 * here I will have to create a new conversation
+		 * Create a new conversation with the selected user.
+		 * @param {String} userId the ID of the clicked user.
 		 */
-		// async joinConversation(token) {
-		// 	await joinConversation(token)
-		// },
-		// handleInput(payload) {
-		// 	const selectedConversationToken = payload.token
-		// 	this.joinConversation(selectedConversationToken)
-		// 	this.$router.push({ path: `/call/${selectedConversationToken}` })
-		// }
+		async createAndJoinConversation(userId) {
+			console.debug(userId)
+			const response = await createOneToOneConversation(userId)
+			const conversationToken = response.data.ocs.data.token
+			this.$router.push({ name: 'conversation', params: { token: conversationToken } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			console.debug(response)
+		}
 	}
 }
 </script>
