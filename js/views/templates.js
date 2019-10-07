@@ -86,7 +86,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + ((stack1 = helpers["if"].call(alias2,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.program(12, data, 0),"data":data})) != null ? stack1 : "")
     + " password-option\">\n						<form class=\"password-form\">\n							<input class=\"password-input\" maxlength=\"200\" type=\"password\"\n								placeholder=\""
     + container.escapeExpression(((helper = (helper = helpers.passwordInputPlaceholder || (depth0 != null ? depth0.passwordInputPlaceholder : depth0)) != null ? helper : container.hooks.helperMissing),(typeof helper === "function" ? helper.call(alias2,{"name":"passwordInputPlaceholder","hash":{},"data":data}) : helper)))
-    + "\">\n							<input type=\"submit\" value=\"\" autocomplete=\"new-password\" class=\"icon icon-confirm password-confirm\"></input>\n							<span class=\"icon icon-loading-small password-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
+    + "\">\n							<input type=\"submit\" value=\"\" autocomplete=\"new-password\" class=\"icon icon-confirm password-confirm\">\n							<span class=\"icon icon-loading-small password-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
 },"10":function(container,depth0,helpers,partials,data) {
     return "icon-password";
 },"12":function(container,depth0,helpers,partials,data) {
@@ -111,7 +111,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + alias5(((helper = (helper = helpers.lobbyTimerPlaceholder || (depth0 != null ? depth0.lobbyTimerPlaceholder : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"lobbyTimerPlaceholder","hash":{},"data":data}) : helper)))
     + "\" value=\""
     + alias5(((helper = (helper = helpers.lobbyTimerValue || (depth0 != null ? depth0.lobbyTimerValue : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias2,{"name":"lobbyTimerValue","hash":{},"data":data}) : helper)))
-    + "\"></input>\n							<input type=\"submit\" value=\"\" class=\"icon icon-confirm lobby-timer-confirm\"></input>\n							<span class=\"icon icon-loading-small lobby-timer-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
+    + "\">\n							<input type=\"submit\" value=\"\" class=\"icon icon-confirm lobby-timer-confirm\">\n							<span class=\"icon icon-loading-small lobby-timer-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
 },"compiler":[8,">= 4.3.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=container.propertyIsEnumerable, alias2=depth0 != null ? depth0 : (container.nullContext || {});
 
