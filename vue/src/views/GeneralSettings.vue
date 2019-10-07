@@ -30,7 +30,8 @@
 				v-model="startCalls"
 				:options="startCallOptions"
 				label="label"
-				track-by="value" />
+				track-by="value"
+				@input="saveChanges" />
 		</p>
 	</div>
 </template>
@@ -68,7 +69,7 @@ export default {
 		saveChanges() {
 			this.loading = true
 
-			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls, {
+			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
 				success: function() {
 					this.loading = false
 				}.bind(this)
