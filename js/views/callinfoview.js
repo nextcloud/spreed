@@ -181,6 +181,21 @@
 			// time and without that option the call would fail otherwise.
 			this.getRegion('roomName').reset({ preventDestroy: true, allowMissingEl: true });
 			this.getRegion('callButton').reset({ preventDestroy: true, allowMissingEl: true });
+
+			// Remove previous tooltips in case any of them is shown, as
+			// otherwise they will stay forever in the DOM once their parent is
+			// removed.
+			if (this._lobbyTimerInputTooltip) {
+				this._lobbyTimerInputTooltip.tooltip('dispose');
+			}
+
+			if (this._clipboardButtonTooltip) {
+				this._clipboardButtonTooltip.tooltip('dispose');
+			}
+
+			if (this._fileLinkTooltip) {
+				this._fileLinkTooltip.tooltip('dispose');
+			}
 		},
 
 		onRender: function() {
@@ -197,7 +212,7 @@
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
 
-			this.ui.lobbyTimerInput.tooltip({
+			this._lobbyTimerInputTooltip = this.ui.lobbyTimerInput.tooltip({
 				placement: 'bottom',
 				trigger: 'hover',
 				title: 'YYYY-MM-DD HH:mm'
@@ -205,7 +220,7 @@
 
 			this.ui.clipboardButton.attr('value', completeURL);
 			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
-			this.ui.clipboardButton.tooltip({
+			this._clipboardButtonTooltip = this.ui.clipboardButton.tooltip({
 				placement: 'bottom',
 				trigger: 'manual',
 				title: t('core', 'Link copied!')
@@ -214,7 +229,7 @@
 
 			// Set the body as the container to show the tooltip in front of the
 			// header.
-			this.ui.fileLink.tooltip({container: $('body')});
+			this._fileLinkTooltip = this.ui.fileLink.tooltip({container: $('body')});
 
 			OC.registerMenu(this.ui.roomModerationButton, this.ui.roomModerationMenu);
 		},
