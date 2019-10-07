@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace OCA\Spreed\Notification;
 
 
+use OCA\Spreed\Chat\CommentsManager;
 use OCA\Spreed\Chat\MessageParser;
 use OCA\Spreed\Config;
 use OCA\Spreed\Exceptions\ParticipantNotFoundException;
@@ -31,7 +32,6 @@ use OCA\Spreed\GuestManager;
 use OCA\Spreed\Manager;
 use OCA\Spreed\Participant;
 use OCA\Spreed\Room;
-use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -66,7 +66,7 @@ class Notifier implements INotifier {
 	protected $manager;
 	/** @var INotificationManager */
 	protected $notificationManager;
-	/** @var ICommentsManager */
+	/** @var CommentsManager */
 	protected $commentManager;
 	/** @var MessageParser */
 	protected $messageParser;
@@ -81,7 +81,7 @@ class Notifier implements INotifier {
 								IShareManager $shareManager,
 								Manager $manager,
 								INotificationManager $notificationManager,
-								ICommentsManager $commentManager,
+								CommentsManager $commentManager,
 								MessageParser $messageParser,
 								Definitions $definitions) {
 		$this->lFactory = $lFactory;
