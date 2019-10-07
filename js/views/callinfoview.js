@@ -149,7 +149,7 @@
 				modelSaveOptions: {
 					wait: true,
 					error: function() {
-						OC.Notification.show(t('spreed', 'Error occurred while renaming the room'), {type: 'error'});
+						OC.Notification.show(t('spreed', 'Error occurred while renaming the conversation'), {type: 'error'});
 					}
 				},
 
@@ -275,9 +275,9 @@
 					this.ui.linkCheckboxLabel.removeClass('icon-loading-small');
 
 					if (isPublic) {
-						OC.Notification.show(t('spreed', 'Error occurred while making the room public'), {type: 'error'});
+						OC.Notification.show(t('spreed', 'Error occurred while making the conversation public'), {type: 'error'});
 					} else {
-						OC.Notification.show(t('spreed', 'Error occurred while making the room private'), {type: 'error'});
+						OC.Notification.show(t('spreed', 'Error occurred while making the conversation private'), {type: 'error'});
 					}
 				}.bind(this)
 			});
