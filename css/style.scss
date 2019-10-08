@@ -1124,6 +1124,27 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 				}
 			}
 		}
+
+		.menuitem.lobby-timer-option {
+			.icon-confirm {
+				border: none;
+
+				opacity: .3;
+
+				&:hover,
+				&:focus,
+				&:active {
+					opacity: 1;
+				}
+			}
+
+			.icon-loading-small {
+				/* Inputs in menu items have a left margin, so it needs to be
+				 * included in the loading icon too to keep the same position
+				 * when it replaces the "input.icon-confirm" element. */
+				margin-left: 5px;
+			}
+		}
 	}
 
 	/* The specific locator is needed to have higher priority than other
