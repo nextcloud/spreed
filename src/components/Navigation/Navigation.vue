@@ -99,5 +99,6 @@ export default {
 .settings {
 	position: sticky;
 	bottom: 0px;
+	border-top: 1px solid lightgray;
 }
 </style>

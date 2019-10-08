@@ -74,4 +74,22 @@ const createGroupConversation = async function(groupId) {
 	}
 }
 
-export { fetchConversations, searchPossibleConversations, createOneToOneConversation, createGroupConversation }
+/**
+ * Delete a conversation.
+ * @param {String} token The token of the conversation to be deleted.
+ */
+const deleteConversation = async function(token) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
+		return response
+	} catch (error) {
+		console.debug('Error while deleting the conversation: ', error)
+	}
+}
+
+export {
+	fetchConversations,
+	searchPossibleConversations,
+	createOneToOneConversation,
+	createGroupConversation,
+	deleteConversation }

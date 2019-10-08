@@ -26,7 +26,7 @@
 			:key="item.id"
 			:to="{ name: 'conversation', params: { token: item.token }}"
 			:title="item.displayName"
-			@click="joinConversation(item.token)">
+			@click.prevent.exact="joinConversation(item.token)">
 			<Avatar
 				slot="icon"
 				:size="44"
@@ -48,13 +48,9 @@
 				</ActionButton>
 				<ActionButton
 					icon="icon-delete"
-					@click="alert('Delete')">
-					Delete
+					@click.prevent.exact="deleteConversation(item.token)">
+					{{t('spreed', 'Leave Conversation')}}
 				</ActionButton>
-				<ActionLink
-					icon="icon-external"
-					title="Link"
-					href="https://nextcloud.com" />
 			</template>
 		</AppContentListItem>
 	</ul>
@@ -67,7 +63,7 @@ import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCou
 import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import { fetchConversations } from '../../../services/conversationsService'
-import { joinConversation } from '../../../services/participantsService'
+import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
 
 export default {
 	name: 'ConversationsList',
@@ -102,6 +98,14 @@ export default {
 			const selectedConversationToken = payload.token
 			this.joinConversation(selectedConversationToken)
 			this.$router.push({ path: `/call/${selectedConversationToken}` })
+		},
+		/**
+		 * Deletes the current user from the conversation.
+		 * @param {String} token The token of the conversation to be left.
+		 */
+		async deleteConversation(token) {
+			const response = await removeCurrentUserFromConversation(token)
+			console.debug(response)
 		}
 	}
 }

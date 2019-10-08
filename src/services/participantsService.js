@@ -38,4 +38,36 @@ const joinConversation = async function(token) {
 	}
 }
 
-export { joinConversation }
+/**
+ * Leaves the conversation specified with the token.
+ *
+ * @param {String} token The conversation token;
+ */
+const leaveConversation = async function(token) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
+		return response
+	} catch (error) {
+		console.debug(error)
+	}
+}
+
+/**
+ * Removes the the current user from the conversation specified with the token.
+ *
+ * @param {String} token The conversation token;
+ */
+const removeCurrentUserFromConversation = async function(token) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/self`)
+		return response
+	} catch (error) {
+		console.debug(error)
+	}
+}
+
+export {
+	joinConversation,
+	leaveConversation,
+	removeCurrentUserFromConversation
+}

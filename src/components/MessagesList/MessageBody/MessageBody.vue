@@ -77,10 +77,10 @@ export default {
 			color: #989898;
 		}
 		&-text {
-			color: #000000;
+			color: #444444;
 		}
 		&--quote {
-			border-left: 4px solid #0083C9;
+			border-left: 4px solid rgb(59, 59, 59);
 			padding: 4px 0 0 8px;
 		}
 	}
