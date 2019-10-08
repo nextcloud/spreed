@@ -390,7 +390,7 @@ input[type="password"] {
 
 	/* The specific locator is needed to have higher priority than other
 	 * important rules set in the server. */
-	input.checkbox + label.link-checkbox-label,
+	input.checkbox + label.checkbox-label,
 	input.radio + label {
 		/* If ".icon-loading-small" is set hide the checkbox and show a
 		 * loading icon instead. */

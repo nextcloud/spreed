@@ -27,7 +27,7 @@
 				<li>
 					<span class="menuitem">
 						<input name="link-checkbox" id="link-checkbox" class="checkbox link-checkbox" value="1" {{#if isPublic}} checked="checked"{{/if}} type="checkbox">
-						<label for="link-checkbox" class="link-checkbox-label">{{linkCheckboxLabel}}</label>
+						<label for="link-checkbox" class="checkbox-label link-checkbox-label">{{linkCheckboxLabel}}</label>
 					</span>
 				</li>
 				{{/if}}
@@ -37,7 +37,7 @@
 						<form class="password-form">
 							<input class="password-input" maxlength="200" type="password"
 								placeholder="{{passwordInputPlaceholder}}">
-							<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm"></input>
+							<input type="submit" value="" autocomplete="new-password" class="icon icon-confirm password-confirm">
 							<span class="icon icon-loading-small password-loading hidden"/>
 						</form>
 					</span>
@@ -49,27 +49,22 @@
 				</li>
 				<li>
 					<span class="menuitem caption">
-						<span>{{enableForLabel}}</span>
+						<span>{{webinarLabel}}</span>
 					</span>
 				</li>
-				<li>
+				<li class="item-has-details">
 					<span class="menuitem">
-						<input name="lobby-state" id="all-participants" class="radio all-participants-radio" value="{{allParticipantsValue}}" {{#if lobbyStateAllParticipants}} checked="checked"{{/if}} type="radio">
-						<label for="all-participants" class="all-participants-label">{{allParticipantsLabel}}</label>
+						<input name="lobby-checkbox" id="lobby-checkbox" class="checkbox lobby-checkbox" value="1" {{#if isLobbyActive}} checked="checked"{{/if}} type="checkbox">
+						<label for="lobby-checkbox" class="checkbox-label lobby-checkbox-label">{{lobbyCheckboxLabel}}</label>
 					</span>
+					<span class="menuitem-details">{{lobbyCheckboxDetail}}</span>
 				</li>
-				<li>
-					<span class="menuitem">
-						<input name="lobby-state" id="moderators-only" class="radio moderators-only-radio" value="{{moderatorsOnlyValue}}" {{#if lobbyStateModeratorsOnly}} checked="checked"{{/if}} type="radio">
-						<label for="moderators-only" class="moderators-only-label">{{moderatorsOnlyLabel}}</label>
-					</span>
-				</li>
-				{{#if lobbyStateModeratorsOnly}}
+				{{#if isLobbyActive}}
 				<li>
 					<span class="menuitem icon-calendar lobby-timer-option">
 						<form class="lobby-timer-form">
-							<input class="lobby-timer-input datepicker" type="text" placeholder="{{lobbyTimerPlaceholder}}" value="{{lobbyTimerValue}}"></input>
-							<input type="submit" value="" class="icon icon-confirm lobby-timer-confirm"></input>
+							<input class="lobby-timer-input datepicker" type="text" placeholder="{{lobbyTimerPlaceholder}}" value="{{lobbyTimerValue}}">
+							<input type="submit" value="" class="icon icon-confirm lobby-timer-confirm">
 							<span class="icon icon-loading-small lobby-timer-loading hidden"/>
 						</form>
 					</span>
