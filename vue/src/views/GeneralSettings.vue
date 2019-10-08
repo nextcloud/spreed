@@ -30,7 +30,11 @@
 				v-model="startCalls"
 				:options="startCallOptions"
 				label="label"
-				track-by="value" />
+				track-by="value"
+				@input="saveChanges" />
+		</p>
+		<p>
+			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
 	</div>
 </template>
@@ -68,7 +72,7 @@ export default {
 		saveChanges() {
 			this.loading = true
 
-			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls, {
+			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
 				success: function() {
 					this.loading = false
 				}.bind(this)
@@ -77,9 +81,19 @@ export default {
 	}
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
 p {
 	display: flex;
 	align-items: center;
+
+	label {
+		display: block;
+		margin-right: 10px;
+	}
+}
+
+.multiselect {
+	flex-grow: 1;
+	max-width: 300px;
 }
 </style>
