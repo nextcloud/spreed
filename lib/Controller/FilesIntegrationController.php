@@ -34,6 +34,7 @@ use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\Files\FileInfo;
 use OCP\Files\NotFoundException;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\ISession;
@@ -57,6 +58,8 @@ class FilesIntegrationController extends OCSController {
 	private $talkSession;
 	/** @var Util */
 	private $util;
+	/** @var IConfig */
+	private $config;
 	/** @var IL10N */
 	private $l;
 
@@ -69,6 +72,7 @@ class FilesIntegrationController extends OCSController {
 			IUserSession $userSession,
 			TalkSession $talkSession,
 			Util $util,
+			IConfig $config,
 			IL10N $l10n
 	) {
 		parent::__construct($appName, $request);
@@ -78,6 +82,7 @@ class FilesIntegrationController extends OCSController {
 		$this->userSession = $userSession;
 		$this->talkSession = $talkSession;
 		$this->util = $util;
+		$this->config = $config;
 		$this->l = $l10n;
 	}
 
@@ -112,6 +117,10 @@ class FilesIntegrationController extends OCSController {
 	 * @throws OCSNotFoundException
 	 */
 	public function getRoomByFileId(string $fileId): DataResponse {
+		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$currentUser = $this->userSession->getUser();
 		if (!$currentUser instanceof IUser) {
 			throw new OCSException($this->l->t('File is not shared, or shared but not with the user'), Http::STATUS_UNAUTHORIZED);
@@ -180,6 +189,11 @@ class FilesIntegrationController extends OCSController {
 	 *         or "404 Not found" if the given share token was invalid.
 	 */
 	public function getRoomByShareToken(string $shareToken): DataResponse {
+		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
+			$this->config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		try {
 			$share = $this->shareManager->getShareByToken($shareToken);
 			if ($share->getPassword() !== null) {
