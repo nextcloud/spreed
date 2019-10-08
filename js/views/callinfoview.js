@@ -61,10 +61,6 @@
 				lobbyCheckboxLabel: t('spreed', 'Enable lobby'),
 				lobbyCheckboxDetail: t('spreed', 'Only moderators can enter the conversation when the lobby is enabled'),
 				isLobbyActive: isLobbyActive,
-				lobbyTimerPlaceholder: t('spreed', 'Start time (optional)'),
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				lobbyTimerValue: this.model.get('lobbyTimer')? OC.Util.formatDate(this.model.get('lobbyTimer') * 1000, 'YYYY-MM-DD HH:mm:ss') : '',
 				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
@@ -91,7 +87,7 @@
 			'lobbyCheckbox': '.lobby-checkbox',
 			'lobbyCheckboxLabel': '.lobby-checkbox-label',
 			'lobbyTimerForm': '.lobby-timer-form',
-			'lobbyTimerInput': '.lobby-timer-input',
+			'lobbyTimerPicker': '.lobby-timer-picker',
 			'lobbyTimerConfirm': '.lobby-timer-confirm',
 			'lobbyTimerLoading': '.lobby-timer-loading',
 		},
@@ -99,7 +95,7 @@
 		regions: {
 			'roomName': '@ui.roomName',
 			'callButton': '@ui.callButton',
-			'lobbyTimerPicker': '@ui.lobbyTimerInput',
+			'lobbyTimerPicker': '@ui.lobbyTimerPicker',
 		},
 
 		events: {
@@ -198,10 +194,6 @@
 			// Remove previous tooltips in case any of them is shown, as
 			// otherwise they will stay forever in the DOM once their parent is
 			// removed.
-			if (this._lobbyTimerInputTooltip) {
-				this._lobbyTimerInputTooltip.tooltip('dispose');
-			}
-
 			if (this._clipboardButtonTooltip) {
 				this._clipboardButtonTooltip.tooltip('dispose');
 			}
@@ -227,12 +219,6 @@
 
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
-
-			this._lobbyTimerInputTooltip = this.ui.lobbyTimerInput.tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: 'YYYY-MM-DD HH:mm'
-			});
 
 			this.ui.clipboardButton.attr('value', completeURL);
 			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
