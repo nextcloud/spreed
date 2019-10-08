@@ -37,10 +37,9 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class TemplateLoader {
 
 	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function() {
+		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function() {
 			self::loadTalkSidebarUi();
-		};
-		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', $listener);
+		});
 	}
 
 	/**
@@ -49,7 +48,13 @@ class TemplateLoader {
 	 * This method should be called when loading additional scripts for the
 	 * public share page of the server.
 	 */
-	public static function loadTalkSidebarUi() {
+	public static function loadTalkSidebarUi(): void {
+		$config = \OC::$server->getConfig();
+		if ($config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
+			$config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+			return;
+		}
+
 		Util::addStyle('spreed', 'merged-public-share');
 		Util::addScript('spreed', 'merged-public-share');
 	}

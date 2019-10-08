@@ -32,10 +32,35 @@
 				:placeholder="t('spreed', 'Who can start a call?')"
 				label="label"
 				track-by="value"
-				@input="saveChanges" />
+				:disabled="loading || loadingStartCalls"
+				@input="saveStartCalls" />
 		</p>
 		<p>
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
+		</p>
+
+		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
+
+		<p>
+			<input id="conversations_files"
+				v-model="conversationsFiles"
+				type="checkbox"
+				name="conversations_files"
+				class="checkbox"
+				:disabled="loading || loadingConversationsFiles"
+				@change="saveConversationsFiles">
+			<label for="conversations_files">{{ t('spreed', 'Allow conversations on files') }}</label>
+		</p>
+
+		<p>
+			<input id="conversations_files_public_shares"
+				v-model="conversationsFilesPublicShares"
+				type="checkbox"
+				name="conversations_files_public_shares"
+				class="checkbox"
+				:disabled="loading || loadingConversationsFiles || !conversationsFiles"
+				@change="saveConversationsFilesPublicShares">
+			<label for="conversations_files_public_shares">{{ t('spreed', 'Allow conversations on public shares for files') }}</label>
 		</p>
 	</div>
 </template>
@@ -57,25 +82,61 @@ export default {
 
 	data() {
 		return {
-			loading: false,
+			loading: true,
+			loadingStartCalls: false,
+			loadingConversationsFiles: false,
+
 			startCallOptions,
-			startCalls: startCallOptions[0]
+			startCalls: startCallOptions[0],
+
+			conversationsFiles: true,
+			conversationsFilesPublicShares: true
 		}
 	},
 
 	mounted() {
 		this.loading = true
 		this.startCalls = startCallOptions[parseInt(OCP.InitialState.loadState('talk', 'start_calls'))]
+		this.conversationsFiles = parseInt(OCP.InitialState.loadState('talk', 'conversations_files')) === 1
+		this.conversationsFilesPublicShares = parseInt(OCP.InitialState.loadState('talk', 'conversations_files_public_shares')) === 1
 		this.loading = false
 	},
 
 	methods: {
-		saveChanges() {
-			this.loading = true
+		saveStartCalls() {
+			this.loadingStartCalls = true
 
 			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
 				success: function() {
-					this.loading = false
+					this.loadingStartCalls = false
+				}.bind(this)
+			})
+		},
+		saveConversationsFiles() {
+			this.loadingConversationsFiles = true
+
+			OCP.AppConfig.setValue('spreed', 'conversations_files', this.conversationsFiles ? '1' : '0', {
+				success: function() {
+					if (!this.conversationsFiles) {
+						// When the file integration is disabled, the share integration is also disabled
+						OCP.AppConfig.setValue('spreed', 'conversations_files_public_shares', '0', {
+							success: function() {
+								this.conversationsFilesPublicShares = false
+								this.loadingConversationsFiles = false
+							}.bind(this)
+						})
+					} else {
+						this.loadingConversationsFiles = false
+					}
+				}.bind(this)
+			})
+		},
+		saveConversationsFilesPublicShares() {
+			this.loadingConversationsFiles = true
+
+			OCP.AppConfig.setValue('spreed', 'conversations_files_public_shares', this.conversationsFilesPublicShares ? '1' : '0', {
+				success: function() {
+					this.loadingConversationsFiles = false
 				}.bind(this)
 			})
 		}
