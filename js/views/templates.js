@@ -134,7 +134,9 @@ templates['chatview_add_comment'] = template({"1":function(container,depth0,help
     + alias4(((helper = (helper = helpers.newMessagePlaceholder || (depth0 != null ? depth0.newMessagePlaceholder : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"newMessagePlaceholder","hash":{},"data":data}) : helper)))
     + "\">"
     + alias4(((helper = (helper = helpers.message || (depth0 != null ? depth0.message : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"message","hash":{},"data":data}) : helper)))
-    + "</div>\n		<input class=\"submit icon-confirm has-tooltip\" type=\"submit\" "
+    + "</div>\n		<input class=\"submit icon-confirm-temp\" type=\"button\" value=\"\" title=\"\" data-original-title=\"Send\" style=\"\n" +
+      "    margin-right: 45px;\n" +
+      "\"><input class=\"submit icon-confirm has-tooltip\" type=\"button\" "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isReadOnly : depth0),{"name":"if","hash":{},"fn":container.program(11, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
     + " value=\"\" title=\""
     + alias4(((helper = (helper = helpers.submitText || (depth0 != null ? depth0.submitText : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"submitText","hash":{},"data":data}) : helper)))

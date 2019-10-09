@@ -14,7 +14,7 @@
      *
      * @type {string}
      */
-    const audioFile = "http://talk.surge.sh/ringing.mp3";
+    const audioFile = "/apps/spreed/audio/ringing.mp3";
 
     OCA.Talk = OCA.Talk || {};
     OCA.Talk.Caller = {

@@ -97,7 +97,7 @@ class ChatManager
             $actorType,
             $actorId,
             'chat',
-            (string) $chat->getId()
+            (string)$chat->getId()
         );
         $comment->setMessage($message);
         $comment->setCreationDateTime($creationDateTime);
@@ -138,7 +138,7 @@ class ChatManager
             'guests',
             'changelog',
             'chat',
-            (string) $chat->getId()
+            (string)$chat->getId()
         );
         $comment->setMessage($message);
         $comment->setCreationDateTime($this->timeFactory->getDateTime());
@@ -170,7 +170,9 @@ class ChatManager
      * @param  string  $actorType
      * @param  string  $actorId
      * @param  string  $message
-     * @param  \DateTime  $creationDateTime
+     * @param  \DateTime  $expireAt
+     *
+     * @param  int  $isTemp
      *
      * @return IComment
      */
@@ -180,16 +182,17 @@ class ChatManager
         string $actorType,
         string $actorId,
         string $message,
-        \DateTime $creationDateTime
+        \DateTime $expireAt,
+        int $isTemp = 0
     ): IComment {
         $comment = $this->commentsManager->create(
             $actorType,
             $actorId,
             'chat',
-            (string) $chat->getId()
+            (string)$chat->getId()
         );
         $comment->setMessage($message);
-        $comment->setCreationDateTime($creationDateTime);
+        $comment->setCreationDateTime($expireAt);
         // A verb ('comment', 'like'...) must be provided to be able to save a
         // comment
         $comment->setVerb('comment');
@@ -206,6 +209,22 @@ class ChatManager
         try {
             $this->commentsManager->save($comment);
 
+            /**
+             * If message is temp, add additional info about the comment.
+             * Set creation timestamp to be the date of expiry.
+             * This saves us to create new database field.
+             *
+             * @author Oozman
+             */
+            if ($isTemp > 0) {
+                $this->saveTempCommentMeta(
+                    $chat,
+                    $actorType,
+                    $actorId,
+                    $comment
+                );
+            }
+
             // Update last_message
             $chat->setLastMessage($comment);
 
@@ -215,7 +234,7 @@ class ChatManager
             );
 
             if (! empty($mentionedUsers)) {
-                $chat->markUsersAsMentioned($mentionedUsers, $creationDateTime);
+                $chat->markUsersAsMentioned($mentionedUsers, $expireAt);
             }
 
             // User was not mentioned, send a normal notification
@@ -278,7 +297,7 @@ class ChatManager
     {
         return $this->commentsManager->getForObjectSince(
             'chat',
-            (string) $chat->getId(),
+            (string)$chat->getId(),
             $offset,
             'desc',
             $limit
@@ -322,7 +341,7 @@ class ChatManager
 
         $comments = $this->commentsManager->getForObjectSince(
             'chat',
-            (string) $chat->getId(),
+            (string)$chat->getId(),
             $offset,
             'asc',
             $limit
@@ -331,7 +350,7 @@ class ChatManager
         if ($user instanceof IUser) {
             $this->commentsManager->setReadMark(
                 'chat',
-                (string) $chat->getId(),
+                (string)$chat->getId(),
                 $this->timeFactory->getDateTime(),
                 $user
             );
@@ -343,7 +362,7 @@ class ChatManager
 
             $comments = $this->commentsManager->getForObjectSince(
                 'chat',
-                (string) $chat->getId(),
+                (string)$chat->getId(),
                 $offset,
                 'asc',
                 $limit
@@ -362,7 +381,7 @@ class ChatManager
     {
         $this->commentsManager->deleteCommentsAtObject(
             'chat',
-            (string) $chat->getId()
+            (string)$chat->getId()
         );
 
         $this->notifier->removePendingNotificationsForRoom($chat);
@@ -425,7 +444,7 @@ class ChatManager
         // Get rooms with new comment.
         $lastMessages = [];
         foreach ($roomChanges as $roomChange) {
-            $lastMessages[] = (int) $roomChange['last_message'];
+            $lastMessages[] = (int)$roomChange['last_message'];
         }
 
         // Get comments of a given room.
@@ -468,8 +487,8 @@ class ChatManager
      *
      * @param $comment
      *
-     * @author Oozman
      * @return mixed|string
+     * @author Oozman
      */
     private function generateCommentMsg($comment)
     {
@@ -492,9 +511,9 @@ class ChatManager
      * @param $room
      * @param $actorId
      *
-     * @author Oozman
      * @return int
      * @throws \Exception
+     * @author Oozman
      */
     public function getLastMessageByActorInRoom($room, $actorId)
     {
@@ -561,8 +580,8 @@ class ChatManager
      * @param $actorId
      * @param $room
      *
-     * @author Oozman
      * @return int|null
+     * @author Oozman
      */
     public function editCommentOfActor($commentId, $newMessage, $actorId, $room)
     {
@@ -632,9 +651,9 @@ class ChatManager
      *
      * @param  int  $interval
      *
-     * @author Oozman
      * @return \DateTime
      * @throws \Exception
+     * @author Oozman
      */
     public function getLastMessageDateAllowed($interval = 15)
     {
@@ -652,13 +671,13 @@ class ChatManager
      * @param $actor
      * @param $group
      *
-     * @author Oozman
      * @return bool
+     * @author Oozman
      */
-    public function isActorBelongsTo($actor, $group) {
+    public function isActorBelongsTo($actor, $group)
+    {
         try {
-
-            $query  = $this->db->getQueryBuilder();
+            $query = $this->db->getQueryBuilder();
 
             $result = $query->select('uid')
                 ->from('group_user')
@@ -676,9 +695,136 @@ class ChatManager
                 break;
             }
 
+            $result->closeCursor();
+
             return $isEnabled;
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Delete temp comments.
+     *
+     * @param $room
+     *
+     * @return array
+     */
+    public function deleteTempComments($room)
+    {
+        try {
+            // Get object id.
+            $query = $this->db->getQueryBuilder();
+
+            $result = $query->select('id')
+                ->from('talk_rooms')
+                ->where($query->expr()
+                    ->eq('token', $query->createNamedParameter($room)))
+                ->setMaxResults(1)
+                ->execute();
+
+            $objectId = 0;
+
+            while ($row = $result->fetch()) {
+                $objectId = $row['id'];
+                break;
+            }
+
+            $result->closeCursor();
+
+            $now = $this->timeFactory->getDateTime(
+                'now',
+                new \DateTimeZone('UTC')
+            );
+
+            // Get comments to be deleted.
+            $query = $this->db->getQueryBuilder();
+
+            $result = $query->select('message')
+                ->from('comments')
+                ->where($query->expr()
+                    ->eq('object_id', $query->createNamedParameter($objectId)))
+                ->andWhere($query->expr()
+                    ->eq(
+                        'object_type',
+                        $query->createNamedParameter('chat-temp')
+                    ))
+                ->andWhere($query->expr()
+                    ->lt(
+                        'creation_timestamp',
+                        $query->createNamedParameter($now->format('Y-m-d H:i:s'))
+                    ))
+                ->execute();
+
+            $tempCommentIds = [];
+
+            while ($row = $result->fetch()) {
+                $tempCommentIds[] = (int) $row['message'];
+            }
+
+            $result->closeCursor();
+
+            // Delete temp comments.
+            foreach ($tempCommentIds as $tempCommentId) {
+                $query->delete('comments')
+                    ->where($query->expr()
+                        ->eq('id', $query->createNamedParameter($tempCommentId)))
+                    ->execute();
+            }
+
+            // Delete temp comments meta.
+            if (!empty($tempCommentIds)) {
+                $query->delete('comments')
+                    ->where($query->expr()
+                        ->eq('object_id', $query->createNamedParameter($objectId)))
+                    ->andWhere($query->expr()
+                        ->eq(
+                            'object_type',
+                            $query->createNamedParameter('chat-temp')
+                        ))
+                    ->andWhere($query->expr()
+                        ->lt(
+                            'creation_timestamp',
+                            $query->createNamedParameter($now->format('Y-m-d H:i:s'))
+                        ))
+                    ->execute();
+            }
+
+            return $tempCommentIds;
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * @param  Room  $chat
+     * @param  string  $actorType
+     * @param  string  $actorId
+     * @param $comment
+     */
+    private function saveTempCommentMeta(
+        Room $chat,
+        string $actorType,
+        string $actorId,
+        $comment
+    ) {
+        $tempComment = $this->commentsManager->create(
+            $actorType,
+            $actorId,
+            'chat-temp',
+            (string)$chat->getId()
+        );
+        $tempComment->setVerb('comment-temp');
+        $tempComment->setObject('chat-temp', $comment->getObjectId());
+
+        $expireAt = $this->timeFactory->getDateTime(
+            'now +1 minutes',
+            new \DateTimeZone('UTC')
+        );
+
+        $tempComment->setMessage($comment->getId());
+        $tempComment->setCreationDateTime($expireAt);
+
+        $this->commentsManager->save($tempComment);
     }
 }

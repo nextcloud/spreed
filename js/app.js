@@ -705,17 +705,20 @@
             // Load custom features.
             if (OC.getCurrentUser().uid !== null) {
 
-                // Enable Copy Paste feature.
+                // Copy Paste feature.
                 OCA.Talk.CopyPaste.init(this);
 
-                // Enable notifier.
+                // Notifier.
                 OCA.Talk.Notifier.init(this);
 
-                // Listen calling feature.
+                // Calling feature.
                 OCA.Talk.Caller.init(this);
 
-                // Listen last edit feature.
+                // LLast edit feature.
                 OCA.Talk.LastEdit.init(this);
+
+                // Temp message feature.
+                OCA.Talk.TempMsg.init(this);
             }
         },
         setupWebRTC: function () {

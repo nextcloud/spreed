@@ -49,6 +49,7 @@
 			actorDisplayName: '',
 			timestamp: 0,
 			message: '',
+			isTemp: 0,
 			messageParameters: []
 		},
 

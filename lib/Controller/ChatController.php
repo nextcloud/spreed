@@ -125,14 +125,18 @@ class ChatController extends AEnvironmentAwareController
      * @param  string  $message  the message to send
      * @param  string  $actorDisplayName  for guests
      *
+     * @param  int  $isTemp
+     *
      * @return DataResponse the status code is "201 Created" if successful, and
      *         "404 Not found" if the room or session for a guest user was not
      *         found".
      */
     public function sendMessage(
         string $message,
-        string $actorDisplayName = ''
+        string $actorDisplayName = '',
+        int $isTemp
     ): DataResponse {
+
         if ($this->userId === null) {
             $actorType = 'guests';
             $sessionId
@@ -173,7 +177,8 @@ class ChatController extends AEnvironmentAwareController
                 $actorType,
                 $actorId,
                 $message,
-                $creationDateTime
+                $creationDateTime,
+                $isTemp
             );
         } catch (MessageTooLongException $e) {
             return new DataResponse([], Http::STATUS_REQUEST_ENTITY_TOO_LARGE);
@@ -474,6 +479,23 @@ class ChatController extends AEnvironmentAwareController
         $group   = $this->request->getParam('group');
 
         $result = $this->chatManager->isActorBelongsTo($actorId, $group);
+
+        return new DataResponse(['result' => $result], Http::STATUS_OK);
+    }
+
+    /**
+     * @PublicPage
+     *
+     * Delete temp comments.
+     *
+     * @return DataResponse
+     * @author Oozman
+     */
+    public function deleteTempComments(): DataResponse
+    {
+        $room = $this->request->getParam('room');
+
+        $result = $this->chatManager->deleteTempComments($room);
 
         return new DataResponse(['result' => $result], Http::STATUS_OK);
     }

@@ -369,3 +369,11 @@ body:not(#body-public) #chatView .comment:not(.newCommentRow) .message .mention-
 	 * force it to be on its own line below the preview. */
 	display: block;
 }
+
+#chatView .icon-confirm-temp {
+	background-image: url("/apps/spreed/img/fire.png") !important;
+	background-repeat: no-repeat;
+	margin-right: 45px;
+	background-size: 16px 19px !important;
+	background-position: 25px 11px !important;
+}

@@ -10,6 +10,7 @@
   "custom/notifier.js",
   "custom/caller.js",
   "custom/lastedit.js",
+  "custom/tempmsg.js",
   "vendor/backbone/backbone-min.js",
   "vendor/backbone.radio/build/backbone.radio.min.js",
   "vendor/backbone.marionette/lib/backbone.marionette.min.js",

@@ -148,6 +148,15 @@ return [
             ],
         ],
         [
+            'name'         => 'Chat#deleteTempComments',
+            'url'          => '/api/{apiVersion}/deleteTempComments',
+            'verb'         => 'POST',
+            'requirements' => [
+                'apiVersion' => 'v1',
+                'token'      => '^[a-z0-9]{4,30}$',
+            ],
+        ],
+        [
             'name'         => 'Chat#mentions',
             'url'          => '/api/{apiVersion}/chat/{token}/mentions',
             'verb'         => 'GET',
@@ -420,4 +429,3 @@ return [
         ],
     ],
 ];
-
