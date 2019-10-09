@@ -1,35 +1,67 @@
 {
-  "name": "spreed",
-  "version": "8.0.0",
-  "description": "",
-  "main": " ",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nextcloud/spreed.git"
-  },
-  "author": "",
-  "license": "AGPL-3.0",
-  "scripts": {
-    "build": "make npm-init build-js-production bundle-simplewebrtc"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "attachmediastream": "^2.1.0",
-    "babel-plugin-add-module-exports": "^1.0.2",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
-    "browserslist-config-nextcloud": "0.0.1",
-    "handlebars": "^4.4.2",
-    "hark": "^1.2.3",
-    "mockconsole": "0.0.1",
-    "util": "^0.12.1",
-    "webrtc-adapter": "^7.3.0",
-    "webrtcsupport": "^2.2.0",
-    "wildemitter": "^1.2.1"
-  },
-  "browserslist": [
-    "extends browserslist-config-nextcloud"
-  ],
-  "dependencies": {}
+	"name": "talk",
+	"description": "",
+	"version": "8.0.0",
+	"author": "Joas Schilling <coding@schilljs.com>",
+	"license": "agpl",
+	"private": true,
+	"scripts": {
+		"dev": "NODE_ENV=development webpack --config webpack.dev.js",
+		"watch": "NODE_ENV=development webpack --progress --watch --config webpack.dev.js",
+		"build": "NODE_ENV=production webpack --progress --hide-modules --config webpack.prod.js",
+		"lint": "eslint --ext .js,.vue src",
+		"lint:fix": "eslint --ext .js,.vue src --fix",
+		"stylelint": "stylelint src",
+		"stylelint:fix": "stylelint src --fix"
+	},
+	"dependencies": {
+		"debounce": "^1.2.0",
+		"nextcloud-auth": "0.0.3",
+		"nextcloud-axios": "^0.2.1",
+		"nextcloud-router": "0.0.9",
+		"nextcloud-vue": "^0.12.3",
+		"vue": "^2.6.10",
+		"vue-contenteditable-directive": "^1.2.0",
+		"vue-router": "^3.1.3",
+		"vue-virtual-scroller": "^1.0.0-rc.2",
+		"vuex": "^3.1.1"
+	},
+	"browserslist": [
+		"extends browserslist-config-nextcloud"
+	],
+	"engines": {
+		"node": ">=10.0.0"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.6.0",
+		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
+		"@babel/preset-env": "^7.6.0",
+		"@vue/test-utils": "^1.0.0-beta.29",
+		"babel-eslint": "^10.0.3",
+		"babel-loader": "^8.0.6",
+		"browserslist-config-nextcloud": "0.0.1",
+		"css-loader": "^3.2.0",
+		"eslint": "^5.16.0",
+		"eslint-config-standard": "^12.0.0",
+		"eslint-import-resolver-webpack": "^0.11.1",
+		"eslint-loader": "^3.0.0",
+		"eslint-plugin-import": "^2.18.2",
+		"eslint-plugin-nextcloud": "^0.3.0",
+		"eslint-plugin-node": "^9.2.0",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-standard": "^4.0.1",
+		"eslint-plugin-vue": "^5.2.3",
+		"node-sass": "^4.12.0",
+		"sass-loader": "^7.3.1",
+		"stylelint": "^8.4.0",
+		"stylelint-config-recommended-scss": "^3.3.0",
+		"stylelint-scss": "^3.10.1",
+		"stylelint-webpack-plugin": "^0.10.5",
+		"vue-loader": "^15.7.1",
+		"vue-template-compiler": "^2.6.10",
+		"webpack": "^4.40.2",
+		"webpack-cli": "^3.3.8",
+		"webpack-merge": "^4.2.2",
+		"webpack-node-externals": "^1.7.2"
+	}
 }

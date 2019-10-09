@@ -20,18 +20,23 @@ dependabot: dev-setup npm-update build-js-production compile-handlebars-template
 release: appstore create-tag
 
 build-js:
+	npm run dev
 	cd vue/ && npm run dev
 
 build-js-production:
+	npm run build
 	cd vue/ && npm run build
 
 watch-js:
+	npm run watch
 	cd vue/ && npm run watch
 
 lint:
+	npm run lint
 	cd vue/ && npm run lint
 
 lint-fix:
+	npm run lint:fix
 	cd vue/ && npm run lint:fix
 
 npm-init: npm-init-root npm-init-vue
