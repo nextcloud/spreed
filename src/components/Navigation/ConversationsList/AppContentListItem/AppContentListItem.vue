@@ -30,7 +30,7 @@
 		<div class="acli__content">
 			<div class="acli__content__line-one">
 				<span class="acli__content__line-one__title">
-					{{title}}
+					{{ title }}
 				</span>
 				<span>
 					<Actions
@@ -100,12 +100,6 @@ export default {
 			default: ''
 		}
 	},
-	methods: {
-		// forward click event
-		onClick(event) {
-			this.$emit('click', event)
-		}
-	},
 	computed: {
 		hasDetails() {
 			return (this.details !== '' && !this.$slots.counter)
@@ -129,6 +123,12 @@ export default {
 			}
 		}
 
+	},
+	methods: {
+		// forward click event
+		onClick(event) {
+			this.$emit('click', event)
+		}
 	}
 }
 </script>

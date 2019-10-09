@@ -29,9 +29,11 @@ watch-js:
 	cd vue/ && npm run watch
 
 lint:
+	npm run lint
 	cd vue/ && npm run lint
 
 lint-fix:
+	npm run lint:fix
 	cd vue/ && npm run lint:fix
 
 npm-init: npm-init-root npm-init-vue

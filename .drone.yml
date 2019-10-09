@@ -32,9 +32,9 @@ name: eslint
 
 steps:
   - name: eslint
-    image: nextcloudci/eslint:eslint-1
+    image: node:lts
     commands:
-      - ./run-eslint.sh
+      - make lint
 
 trigger:
   branch:

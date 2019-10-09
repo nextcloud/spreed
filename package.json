@@ -1,26 +1,8 @@
 {
 	"name": "talk",
-	"description": "A simple Nextcloud app using vue-components",
-	"version": "3.2.0",
-	"author": "John Molakvoæ <skjnldsv@protonmail.com>",
-	"contributors": [
-		"John Molakvoæ <skjnldsv@protonmail.com>"
-	],
-	"keywords": [
-		"nextcloud",
-		"vueexample",
-		"app",
-		"dev",
-		"vuejs"
-	],
-	"bugs": {
-		"url": "https://github.com/skjnldsv/vueexample/issues"
-	},
-	"repository": {
-		"url": "https://github.com/skjnldsv/vueexample",
-		"type": "git"
-	},
-	"homepage": "https://github.com/skjnldsv/vueexample",
+	"description": "",
+	"version": "8.0.0",
+	"author": "Joas Schilling <coding@schilljs.com>",
 	"license": "agpl",
 	"private": true,
 	"scripts": {

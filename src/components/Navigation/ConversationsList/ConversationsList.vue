@@ -49,7 +49,7 @@
 				<ActionButton
 					icon="icon-delete"
 					@click.prevent.exact="deleteConversation(item.token)">
-					{{t('spreed', 'Leave Conversation')}}
+					{{ t('spreed', 'Leave Conversation') }}
 				</ActionButton>
 			</template>
 		</AppContentListItem>
