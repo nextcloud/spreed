@@ -178,5 +178,5 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the conversation is not found or the session does not exist in the conversation
-        + `403 Forbidden` When the user is logged in
+        + `403 Forbidden` When the current user is not a guest
+        + `404 Not Found` When the conversation could not be found for the participant

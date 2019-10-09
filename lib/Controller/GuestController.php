@@ -24,66 +24,44 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use Doctrine\DBAL\DBALException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
-use OCA\Talk\Manager;
-use OCA\Talk\TalkSession;
+use OCA\Talk\Participant;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
-use OCP\AppFramework\OCSController;
 use OCP\IRequest;
 
-class GuestController extends OCSController {
-
-	/** @var string|null */
-	private $userId;
-
-	/** @var TalkSession */
-	private $session;
-
-	/** @var Manager */
-	private $roomManager;
+class GuestController extends AEnvironmentAwareController {
 
 	/** @var GuestManager */
 	private $guestManager;
 
 	public function __construct(string $appName,
-								?string $UserId,
 								IRequest $request,
-								TalkSession $session,
-								Manager $roomManager,
 								GuestManager $guestManager) {
 		parent::__construct($appName, $request);
 
-		$this->userId = $UserId;
-		$this->session = $session;
-		$this->roomManager = $roomManager;
 		$this->guestManager = $guestManager;
 	}
 
 	/**
 	 * @PublicPage
+	 * @RequireParticipant
 	 *
-	 *
-	 * @param string $token
 	 * @param string $displayName
 	 * @return DataResponse
 	 */
-	public function setDisplayName(string $token, string $displayName): DataResponse {
-		if ($this->userId) {
-			return new DataResponse([], Http::STATUS_FORBIDDEN);
-		}
-
-		$sessionId = $this->session->getSessionForRoom($token);
-
-		try {
-			$room = $this->roomManager->getRoomForSession($this->userId, $sessionId);
-		} catch (RoomNotFoundException $exception) {
+	public function setDisplayName(string $displayName): DataResponse {
+		$participant = $this->getParticipant();
+		if (!$participant instanceof Participant) {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
+		if (!$participant->isGuest()) {
+			return new DataResponse([], Http::STATUS_FORBIDDEN);
+		}
+
 		try {
-			$this->guestManager->updateName($room, $sessionId, $displayName);
+			$this->guestManager->updateName($this->getRoom(), $participant->getSessionId(), $displayName);
 		} catch (DBALException $e) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}
