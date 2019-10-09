@@ -25,8 +25,6 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Model\Command;
 use OCA\Talk\Service\CommandService;
-use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\IRequest;
@@ -60,39 +58,4 @@ class CommandController extends OCSController {
 
 		return new DataResponse($result);
 	}
-
-	/**
-	 * @param int $id
-	 * @param int $response
-	 * @param int $enabled
-	 * @return DataResponse
-	 */
-	public function update(int $id, int $response, int $enabled): DataResponse {
-		try {
-			$command = $this->commandService->updateFromWeb($id, $response, $enabled);
-		} catch (DoesNotExistException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
-		}
-
-		return new DataResponse($command->asArray());
-	}
-
-	/**
-	 * @param int $id
-	 * @return DataResponse
-	 */
-	public function destroy(int $id): DataResponse {
-		try {
-			$this->commandService->delete($id);
-		} catch (DoesNotExistException $e) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		} catch (\InvalidArgumentException $e) {
-			return new DataResponse(['error' => $e->getMessage()], Http::STATUS_BAD_REQUEST);
-		}
-
-		return new DataResponse();
-	}
-
 }
