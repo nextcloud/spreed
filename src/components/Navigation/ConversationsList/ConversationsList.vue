@@ -60,7 +60,7 @@
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
-import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
+import AppContentListItem from './AppContentListItem/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import { fetchConversations } from '../../../services/conversationsService'
 import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
