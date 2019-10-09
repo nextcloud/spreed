@@ -20,6 +20,12 @@ title: Constants
 * `5` user following a public link
 * `6` guest with moderator permissions
 
+## Participant in-call flag
+* `0` disconnected
+* `1` in-call
+* `2` provides audio
+* `4` provides video
+
 ## Actor types of chat messages
 * `guests` - guest users
 * `users` - logged-in users
