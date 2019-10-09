@@ -37,7 +37,7 @@
 
 <script>
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
-import AppContentListItem from 'nextcloud-vue/dist/Components/AppContentListItem'
+import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
 import { createOneToOneConversation } from '../../../services/conversationsService'
 
 export default {
