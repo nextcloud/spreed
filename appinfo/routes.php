@@ -140,7 +140,7 @@ return [
 		],
 
 		/**
-		 * Room
+		 * Conversation (Room)
 		 */
 		[
 			'name' => 'Room#getRooms',
@@ -403,14 +403,15 @@ return [
 		],
 
 		/**
-		 * Webinary
+		 * Webinar
 		 */
 		[
-			'name' => 'Webinary#setLobby',
-			'url' => '/api/{apiVersion}/room/{token}/webinary/lobby',
+			'name' => 'Webinar#setLobby',
+			'url' => '/api/{apiVersion}/room/{token}/{webinar}/lobby',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
+				'webinar' => 'webinary?',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

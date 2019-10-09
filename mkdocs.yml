@@ -24,7 +24,7 @@ nav:
       - 'Participants management': 'participant.md'
       - 'Call management': 'call.md'
       - 'Chat management': 'chat.md'
-      - 'Webinary management': 'webinary.md'
+      - 'Webinar management': 'webinar.md'
       - 'Internal signaling API': 'internal-signaling.md'
       - 'External signaling API': 'standalone-signaling-api-v1.md'
   - Commands: 'commands.md'
