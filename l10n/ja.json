@@ -33,8 +33,6 @@
     "Go to file" : "ファイルへ移動",
     "Share link" : "リンクの共有",
     "Copy link" : "リンクをコピー",
-    "All participants" : "すべての参加者",
-    "Moderators only" : "モデレータ専用",
     "Start time (optional)" : "開始時間（オプション）",
     "Change password" : "パスワード変更",
     "Set password" : "パスワード設定",
@@ -267,6 +265,7 @@
     "Response to" : "への反応",
     "Enabled for" : "に対して有効",
     "Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>." : "コマンドはNextcloud Talkの新しいベータ版の機能です。スクリプトをNextcloudサーバー上で実行することができます。コマンドラインインターフェイスを使用して定義できます。計算スクリプトの例は、<a {attributes}>ドキュメント ↗</a>に記載されています。",
+    "Moderators only" : "モデレータ専用",
     "Select a conversation to add to the project" : "プロジェクトに追加する会話を選択",
     "Select conversation" : "会話を選択",
     "Signaling servers" : "シグナリングサーバー",
@@ -328,6 +327,7 @@
     "* You can now notify all participants by posting \"@all\" into the chat" : "* チャットに「@all」を付けることで、参加者全員に通知できるようになりました。",
     "* With the \"arrow-up\" key you can repost your last message" : "* ↑キーを押して、最後のメッセージを再投稿できます",
     "* Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "* Talkでコマンドを使用したり、「/help」をチャットメッセージとして送信したりできるようになりました。",
-    "* With projects you can create quick links between conversations, files and other items" : "* プロジェクトを使用すると、会話、ファイル、およびその他のアイテム間のクイックリンクを作成できます"
+    "* With projects you can create quick links between conversations, files and other items" : "* プロジェクトを使用すると、会話、ファイル、およびその他のアイテム間のクイックリンクを作成できます",
+    "All participants" : "すべての参加者"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
