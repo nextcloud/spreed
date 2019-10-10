@@ -48,3 +48,27 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         field | type | Description
         ------|------|------------
         `token` | string | The token of the conversation for this file
+
+## Create a conversation to request the password for a public share
+
+* Method: `POST`
+* Endpoint: `/publicshareauth`
+* Data:
+
+    field | type | Description
+    ------|------|------------
+    `shareToken` | string | Share token for which the conversation should be given
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `404 Not Found` When the share was not found
+        + `404 Not Found` When "Request password via Talk" is not active for the share
+
+    - Data:
+
+        field | type | Description
+        ------|------|------------
+        `token` | string | The token of the conversation for this file
+        `name` | string | A technical name for the conversation
+        `displayName` | string | The visual name of the conversation
