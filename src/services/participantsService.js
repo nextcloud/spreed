@@ -27,7 +27,7 @@ import { generateOcsUrl } from 'nextcloud-router'
  * Joins the current user to a conversation specified with
  * the token.
  *
- * @param {String} token The conversation token;
+ * @param {string} token The conversation token;
  */
 const joinConversation = async function(token) {
 	try {
@@ -41,7 +41,7 @@ const joinConversation = async function(token) {
 /**
  * Leaves the conversation specified with the token.
  *
- * @param {String} token The conversation token;
+ * @param {string} token The conversation token;
  */
 const leaveConversation = async function(token) {
 	try {
@@ -55,7 +55,7 @@ const leaveConversation = async function(token) {
 /**
  * Removes the the current user from the conversation specified with the token.
  *
- * @param {String} token The conversation token;
+ * @param {string} token The conversation token;
  */
 const removeCurrentUserFromConversation = async function(token) {
 	try {

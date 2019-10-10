@@ -37,7 +37,7 @@ const fetchConversations = async function() {
 
 /**
  * Fetch possible conversations
- * @param {String} searchText The string that will be used in the search query.
+ * @param {string} searchText The string that will be used in the search query.
  */
 const searchPossibleConversations = async function(searchText) {
 	try {
@@ -50,7 +50,7 @@ const searchPossibleConversations = async function(searchText) {
 
 /**
  * Create a new one to one conversation with the specified user.
- * @param {String} userId The ID of the user with wich the new conversation will be opened.
+ * @param {string} userId The ID of the user with wich the new conversation will be opened.
  */
 const createOneToOneConversation = async function(userId) {
 	try {
@@ -63,7 +63,7 @@ const createOneToOneConversation = async function(userId) {
 
 /**
  * Create a new group conversation.
- * @param {String} groupId The group ID, this parameter is optional.
+ * @param {string} groupId The group ID, this parameter is optional.
  */
 const createGroupConversation = async function(groupId) {
 	try {
@@ -76,7 +76,7 @@ const createGroupConversation = async function(groupId) {
 
 /**
  * Delete a conversation.
- * @param {String} token The token of the conversation to be deleted.
+ * @param {string} token The token of the conversation to be deleted.
  */
 const deleteConversation = async function(token) {
 	try {

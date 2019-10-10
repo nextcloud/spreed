@@ -101,7 +101,7 @@ export default {
 		},
 		/**
 		 * Deletes the current user from the conversation.
-		 * @param {String} token The token of the conversation to be left.
+		 * @param {string} token The token of the conversation to be left.
 		 */
 		async deleteConversation(token) {
 			const response = await removeCurrentUserFromConversation(token)
