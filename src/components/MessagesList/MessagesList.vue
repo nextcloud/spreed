@@ -18,6 +18,14 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
+<docs>
+
+This component is a wrapper for the list of messages. It's main purpose it to
+get the messagesList array and loop through the list to generate the messages.
+In order not to render each and every messages that is in the store, we use
+the DinamicScroller component, whose docs you can find [here.](https://github.com/Akryum/vue-virtual-scroller#dynamicscroller)
+
+</docs>
 
 <template>
 	<DynamicScroller
@@ -68,22 +76,29 @@ export default {
 	},
 	data: function() {
 		return {
+			/**
+			 * Keeps track of the state of the component in order to trigger the scroll to
+			 * bottom.
+			 */
 			isInitiated: false
 		}
 	},
 	computed: {
 		/**
-		 * Gets the messages array.
+		 * Gets the messages array. We need this because the DynamicScroller needs an array to
+		 * loop through.
 		 *
-		 * @returns {Array}
+		 * @returns {array}
 		 */
 		messagesList() {
 			return this.$store.getters.messagesList(this.token)
 		},
 		/**
-		 * Gets the messages object.
+		 * Gets the messages object, which is structured so that the key of each message element
+		 * corresponds to the id of the message, and makes it easy and efficient to access the
+		 * individual message object.
 		 *
-		 * @returns {Object}
+		 * @returns {object}
 		 */
 		messages() {
 			return this.$store.getters.messages(this.token)
@@ -104,9 +119,9 @@ export default {
 	},
 	beforeUpdate() {
 		if (!this.isInitiated) {
-
-			// Scrolls to the bottom of the message list.
-
+			/**
+			 * If the component is not initiated, scroll to the bottom of the message list.
+			 */
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
@@ -126,9 +141,6 @@ export default {
 				// Process each messages and adds it to the store
 				this.$store.dispatch('processMessage', message)
 			})
-		},
-		scrollToEnd: function() {
-			this.$el.scrollTop = this.$el.scrollHeight
 		},
 		handleDeleteMessage(event) {
 			this.$store.dispatch('deleteMessage', event.message)
