@@ -698,34 +698,6 @@ class RoomController extends AEnvironmentAwareController {
 
 	/**
 	 * @PublicPage
-	 * @RequireLoggedInModeratorParticipant
-	 *
-	 * @param string $newParticipant
-	 * @return DataResponse
-	 */
-	public function inviteEmailToRoom(string $newParticipant): DataResponse {
-		$currentUser = $this->userManager->get($this->userId);
-		if (!$currentUser instanceof IUser) {
-			return new DataResponse([], Http::STATUS_NOT_FOUND);
-		}
-
-		if ($this->room->getType() === Room::ONE_TO_ONE_CALL) {
-			return new DataResponse([], Http::STATUS_BAD_REQUEST);
-		}
-
-		$data = [];
-		// In case a guest is added to a non-public call, we change the call to a public call
-		if ($this->room->changeType(Room::PUBLIC_CALL)) {
-			$data = ['type' => $this->room->getType()];
-		}
-
-		$this->guestManager->inviteByEmail($this->room, $newParticipant);
-
-		return new DataResponse($data);
-	}
-
-	/**
-	 * @PublicPage
 	 * @RequireParticipant
 	 *
 	 * @param string $participant
