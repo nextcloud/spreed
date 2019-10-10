@@ -7,3 +7,24 @@
 @include icon-black-white('bell-outline', 'spreed', 1);
 @include icon-black-white('emoji-smile', 'spreed', 1);
 
+// We always want to use the white icons, this is why we don't use var(--color-white) here.
+.avatar.icon {
+  &.icon-public {
+    background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
+  }
+  &.icon-contacts {
+    background-image: url(icon-color-path('contacts', 'places', 'fff', 1, true));
+  }
+  &.icon-password {
+    background-image: url(icon-color-path('password', 'actions', 'fff', 1, true));
+  }
+  &.icon-file {
+    background-image: url(icon-color-path('text', 'filetypes', 'fff', 1, true));
+  }
+  &.icon-mail {
+    background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
+  }
+  &.icon-changelog {
+    background-image: url('../img/changelog.svg');
+  }
+}

@@ -1,0 +1,84 @@
+<!--
+  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
+  -
+  - @author Joas Schilling <coding@schilljs.com>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+
+<template>
+	<div v-if="item.objectType === 'file'"
+		class="avatar icon icon-file" />
+	<div v-else-if="item.objectType === 'share:password'"
+		class="avatar icon icon-password" />
+	<div v-else-if="item.type === 4"
+		class="avatar icon icon-changelog" />
+	<div v-else-if="item.type === 2"
+		class="avatar icon icon-contacts" />
+	<div v-else-if="item.type === 3"
+		class="avatar icon icon-public" />
+	<Avatar v-else
+		:size="44"
+		:user="item.displayName"
+		:display-name="item.displayName" />
+</template>
+
+<script>
+import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+
+export default {
+	name: 'ConversationsIcon',
+	components: {
+		Avatar
+	},
+	props: {
+		item: {
+			type: Object,
+			default: function() {
+				return {
+					objectType: '',
+					type: 0,
+					displayName: ''
+				}
+			}
+		}
+	}
+}
+</script>
+
+<style lang="scss" scoped>
+
+.icon {
+	width: 44px;
+	height: 44px;
+	line-height: 44px;
+	font-size: 24px;
+	background-color: var(--color-background-darker);
+
+	&.icon-changelog {
+		background-size: 44px;
+	}
+	&.icon-public,
+	&.icon-contacts,
+	&.icon-password,
+	&.icon-file,
+	&.icon-mail {
+		background-size: 20px;
+	}
+
+}
+
+</style>
