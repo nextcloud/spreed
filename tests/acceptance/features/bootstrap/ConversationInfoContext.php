@@ -129,43 +129,22 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	/**
 	 * @return Locator
 	 */
-	public static function enableForAllParticipantsRadioButton() {
-		// forThe()->radioButton("All participants") can not be used here; that
-		// would return the radio button itself, but the element that the user
-		// interacts with is the label.
-		return Locator::forThe()->css(".all-participants-label")->
+	public static function enableLobbyCheckbox() {
+		// forThe()->checkbox("Enable lobby") can not be used here; that would
+		// return the checkbox itself, but the element that the user interacts
+		// with is the label.
+		return Locator::forThe()->css(".lobby-checkbox-label")->
 				descendantOf(self::roomModerationMenu())->
-				describedAs("Enable for all participants button in room moderation menu in conversation info");
+				describedAs("Enable lobby checkbox in room moderation menu in conversation info");
 	}
 
 	/**
 	 * @return Locator
 	 */
-	public static function enableForAllParticipantsRadioButtonInput() {
-		return Locator::forThe()->radioButton("All participants")->
+	public static function enableLobbyCheckboxInput() {
+		return Locator::forThe()->checkbox("Enable lobby")->
 				descendantOf(self::roomModerationMenu())->
-				describedAs("Enable for all participants button input in room moderation menu in conversation info");
-	}
-
-	/**
-	 * @return Locator
-	 */
-	public static function enableForModeratorsOnlyRadioButton() {
-		// forThe()->radioButton("Moderators only") can not be used here; that
-		// would return the radio button itself, but the element that the user
-		// interacts with is the label.
-		return Locator::forThe()->css(".moderators-only-label")->
-				descendantOf(self::roomModerationMenu())->
-				describedAs("Enable for moderators only button in room moderation menu in conversation info");
-	}
-
-	/**
-	 * @return Locator
-	 */
-	public static function enableForModeratorsOnlyRadioButtonInput() {
-		return Locator::forThe()->radioButton("Moderators only")->
-				descendantOf(self::roomModerationMenu())->
-				describedAs("Enable for moderators only button input in room moderation menu in conversation info");
+				describedAs("Enable lobby checkbox input in room moderation menu in conversation info");
 	}
 
 	/**
@@ -199,21 +178,25 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	}
 
 	/**
-	 * @When I enable the conversation for all participants
+	 * @When I enable the conversation lobby
 	 */
-	public function iEnableTheConversationForAllParticipants() {
+	public function iEnableTheConversationLobby() {
+		$this->iSeeThatTheConversationLobbyIsNotEnabled();
+
 		$this->showRoomModerationMenu();
 
-		$this->actor->find(self::enableForAllParticipantsRadioButton(), 2)->click();
+		$this->actor->find(self::enableLobbyCheckbox(), 2)->click();
 	}
 
 	/**
-	 * @When I enable the conversation for moderators only
+	 * @When I disable the conversation lobby
 	 */
-	public function iEnableTheConversationForModeratorsOnly() {
+	public function iDisableTheConversationLobby() {
+		$this->iSeeThatTheConversationLobbyIsEnabled();
+
 		$this->showRoomModerationMenu();
 
-		$this->actor->find(self::enableForModeratorsOnlyRadioButton(), 2)->click();
+		$this->actor->find(self::enableLobbyCheckbox(), 2)->click();
 	}
 
 	/**
@@ -241,24 +224,24 @@ class ConversationInfoContext implements Context, ActorAwareInterface {
 	}
 
 	/**
-	 * @Then I see that the conversation is enabled for all participants
+	 * @Then I see that the conversation lobby is enabled
 	 */
-	public function iSeeThatTheConversationIsEnabledForAllParticipants() {
+	public function iSeeThatTheConversationLobbyIsEnabled() {
 		$this->showRoomModerationMenu();
 
-		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::enableForAllParticipantsRadioButtonInput(), 10)->isChecked(), "Enable for all participants radio button is checked");
+		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::enableLobbyCheckboxInput(), 10)->isChecked(), "Enable lobby checkbox is checked");
 
 		// Hide menu again after checking the button.
 		$this->actor->find(self::roomModerationButton(), 2)->click();
 	}
 
 	/**
-	 * @Then I see that the conversation is enabled for moderators only
+	 * @Then I see that the conversation lobby is not enabled
 	 */
-	public function iSeeThatTheConversationIsEnabledForModeratorsOnly() {
+	public function iSeeThatTheConversationLobbyIsNotEnabled() {
 		$this->showRoomModerationMenu();
 
-		PHPUnit_Framework_Assert::assertTrue($this->actor->find(self::enableForModeratorsOnlyRadioButtonInput(), 10)->isChecked(), "Enable for moderators only radio button is checked");
+		PHPUnit_Framework_Assert::assertFalse($this->actor->find(self::enableLobbyCheckboxInput(), 10)->isChecked(), "Enable lobby checkbox is not checked");
 
 		// Hide menu again after checking the button.
 		$this->actor->find(self::roomModerationButton(), 2)->click();

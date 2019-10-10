@@ -74,7 +74,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + alias4(((helper = (helper = helpers.linkLabel || (depth0 != null ? depth0.linkLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"linkLabel","hash":{},"data":data}) : helper)))
     + "</span>\n					</span>\n				</li>\n				<li>\n					<span class=\"menuitem\">\n						<input name=\"link-checkbox\" id=\"link-checkbox\" class=\"checkbox link-checkbox\" value=\"1\" "
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isPublic : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " type=\"checkbox\">\n						<label for=\"link-checkbox\" class=\"link-checkbox-label\">"
+    + " type=\"checkbox\">\n						<label for=\"link-checkbox\" class=\"checkbox-label link-checkbox-label\">"
     + alias4(((helper = (helper = helpers.linkCheckboxLabel || (depth0 != null ? depth0.linkCheckboxLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"linkCheckboxLabel","hash":{},"data":data}) : helper)))
     + "</label>\n					</span>\n				</li>\n";
 },"7":function(container,depth0,helpers,partials,data) {
@@ -86,7 +86,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.hasPassword : depth0),{"name":"if","hash":{},"fn":container.program(10, data, 0),"inverse":container.program(12, data, 0),"data":data})) != null ? stack1 : "")
     + " password-option\">\n						<form class=\"password-form\">\n							<input class=\"password-input\" maxlength=\"200\" type=\"password\"\n								placeholder=\""
     + container.escapeExpression(((helper = (helper = helpers.passwordInputPlaceholder || (depth0 != null ? depth0.passwordInputPlaceholder : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"passwordInputPlaceholder","hash":{},"data":data}) : helper)))
-    + "\">\n							<input type=\"submit\" value=\"\" autocomplete=\"new-password\" class=\"icon icon-confirm password-confirm\"></input>\n							<span class=\"icon icon-loading-small password-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
+    + "\">\n							<input type=\"submit\" value=\"\" autocomplete=\"new-password\" class=\"icon icon-confirm password-confirm\">\n							<span class=\"icon icon-loading-small password-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
 },"10":function(container,depth0,helpers,partials,data) {
     return "icon-password";
 },"12":function(container,depth0,helpers,partials,data) {
@@ -95,21 +95,15 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
   return "				<li>\n					<div class=\"separator\"></div>\n				</li>\n				<li>\n					<span class=\"menuitem caption\">\n						<span>"
-    + alias4(((helper = (helper = helpers.enableForLabel || (depth0 != null ? depth0.enableForLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"enableForLabel","hash":{},"data":data}) : helper)))
-    + "</span>\n					</span>\n				</li>\n				<li>\n					<span class=\"menuitem\">\n						<input name=\"lobby-state\" id=\"all-participants\" class=\"radio all-participants-radio\" value=\""
-    + alias4(((helper = (helper = helpers.allParticipantsValue || (depth0 != null ? depth0.allParticipantsValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"allParticipantsValue","hash":{},"data":data}) : helper)))
-    + "\" "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateAllParticipants : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " type=\"radio\">\n						<label for=\"all-participants\" class=\"all-participants-label\">"
-    + alias4(((helper = (helper = helpers.allParticipantsLabel || (depth0 != null ? depth0.allParticipantsLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"allParticipantsLabel","hash":{},"data":data}) : helper)))
-    + "</label>\n					</span>\n				</li>\n				<li>\n					<span class=\"menuitem\">\n						<input name=\"lobby-state\" id=\"moderators-only\" class=\"radio moderators-only-radio\" value=\""
-    + alias4(((helper = (helper = helpers.moderatorsOnlyValue || (depth0 != null ? depth0.moderatorsOnlyValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"moderatorsOnlyValue","hash":{},"data":data}) : helper)))
-    + "\" "
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateModeratorsOnly : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-    + " type=\"radio\">\n						<label for=\"moderators-only\" class=\"moderators-only-label\">"
-    + alias4(((helper = (helper = helpers.moderatorsOnlyLabel || (depth0 != null ? depth0.moderatorsOnlyLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"moderatorsOnlyLabel","hash":{},"data":data}) : helper)))
-    + "</label>\n					</span>\n				</li>\n"
-    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.lobbyStateModeratorsOnly : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+    + alias4(((helper = (helper = helpers.webinarLabel || (depth0 != null ? depth0.webinarLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"webinarLabel","hash":{},"data":data}) : helper)))
+    + "</span>\n					</span>\n				</li>\n				<li class=\"item-has-details\">\n					<span class=\"menuitem\">\n						<input name=\"lobby-checkbox\" id=\"lobby-checkbox\" class=\"checkbox lobby-checkbox\" value=\"1\" "
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isLobbyActive : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + " type=\"checkbox\">\n						<label for=\"lobby-checkbox\" class=\"checkbox-label lobby-checkbox-label\">"
+    + alias4(((helper = (helper = helpers.lobbyCheckboxLabel || (depth0 != null ? depth0.lobbyCheckboxLabel : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyCheckboxLabel","hash":{},"data":data}) : helper)))
+    + "</label>\n					</span>\n					<span class=\"menuitem-details\">"
+    + alias4(((helper = (helper = helpers.lobbyCheckboxDetail || (depth0 != null ? depth0.lobbyCheckboxDetail : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyCheckboxDetail","hash":{},"data":data}) : helper)))
+    + "</span>\n				</li>\n"
+    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isLobbyActive : depth0),{"name":"if","hash":{},"fn":container.program(15, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"15":function(container,depth0,helpers,partials,data) {
     var helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
@@ -117,7 +111,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + alias4(((helper = (helper = helpers.lobbyTimerPlaceholder || (depth0 != null ? depth0.lobbyTimerPlaceholder : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyTimerPlaceholder","hash":{},"data":data}) : helper)))
     + "\" value=\""
     + alias4(((helper = (helper = helpers.lobbyTimerValue || (depth0 != null ? depth0.lobbyTimerValue : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"lobbyTimerValue","hash":{},"data":data}) : helper)))
-    + "\"></input>\n							<input type=\"submit\" value=\"\" class=\"icon icon-confirm lobby-timer-confirm\"></input>\n							<span class=\"icon icon-loading-small lobby-timer-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
+    + "\">\n							<input type=\"submit\" value=\"\" class=\"icon icon-confirm lobby-timer-confirm\">\n							<span class=\"icon icon-loading-small lobby-timer-loading hidden\"/>\n						</form>\n					</span>\n				</li>\n";
 },"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var stack1, alias1=depth0 != null ? depth0 : (container.nullContext || {});
 
