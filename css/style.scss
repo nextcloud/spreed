@@ -1137,6 +1137,12 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 					/* Used when viewport is < 1111px. */
 					min-width: 155px;
 				}
+
+				.mx-input-append {
+					/* Override default background colour so it does not hide
+					 * the input field border on some browsers. */
+					background-color: transparent;
+				}
 			}
 
 			.icon-confirm {
