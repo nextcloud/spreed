@@ -19,11 +19,16 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 
+<docs>
+This component displays the text inside the message component and can be used for
+the main body of the message as well as a quote.
+</docs>
+
 <template>
 	<div v-show="message"
 		:class="{ 'message-main--quote' : isQuote }"
 		class="message-main">
-		<div class="message-main-header">
+		<div v-if="hasAuthor" class="message-main-header">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<slot />
@@ -37,22 +42,33 @@
 export default {
 	inheritAttrs: false,
 	props: {
+		/**
+		 * The sender of the message.
+		 */
 		actorDisplayName: {
 			type: String,
 			required: true
 		},
+		/**
+		 * The message or quote text.
+		 */
 		message: {
 			type: String,
 			required: true
 		},
-		isFirstMessage: {
+		/**
+		 * if true, it displays the message author on top of the message.
+		 */
+		hasAuthor: {
+			type: Boolean,
+			default: true
+		},
+		/**
+		 * Style the message as a quote.
+		 */
+		isQuote: {
 			type: Boolean,
 			default: false
-		}
-	},
-	computed: {
-		isQuote() {
-			return !!this.$parent.messageText
 		}
 	}
 }
@@ -74,13 +90,13 @@ export default {
         flex-direction: column;
 		font-size: 20;
 		&-header {
-			color: #989898;
+			color: var(--color-text-maxcontrast);
 		}
 		&-text {
-			color: #444444;
+			color: var(--color-text-light);
 		}
 		&--quote {
-			border-left: 4px solid rgb(59, 59, 59);
+			border-left: 4px solid var(--color-primary);
 			padding: 4px 0 0 8px;
 		}
 	}
