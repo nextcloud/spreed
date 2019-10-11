@@ -1038,7 +1038,8 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		 * sets the top/bottom margin to the whole item instead of only to the
 		 * forms or inputs. */
 		li:first-of-type {
-			> .menuitem.password-option {
+			> .menuitem.password-option,
+			> .menuitem.lobby-timer-option {
 
 				margin-top: $outter-margin - 2px; // minus the input margin
 
@@ -1048,7 +1049,8 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 			}
 		}
 		li:last-of-type {
-			> .menuitem.password-option {
+			> .menuitem.password-option,
+			> .menuitem.lobby-timer-option {
 
 				margin-bottom: $outter-margin - 2px; // minus the input margin
 
