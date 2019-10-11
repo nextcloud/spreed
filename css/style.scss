@@ -1126,6 +1126,19 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		}
 
 		.menuitem.lobby-timer-option {
+			.mx-datepicker {
+				/* Default datapicker size is 210px, which needs to be reduced
+				 * on narrow screens to prevent the moderation menu from
+				 * overflowing the sidebar. */
+				@media (max-width: 1315px) {
+					max-width: 210px;
+					/* Used when viewport is between 1111px and 1315px. */
+					width: calc(27vw - 145px);
+					/* Used when viewport is < 1111px. */
+					min-width: 155px;
+				}
+			}
+
 			.icon-confirm {
 				border: none;
 
