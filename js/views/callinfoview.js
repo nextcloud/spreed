@@ -86,6 +86,7 @@
 
 			'lobbyCheckbox': '.lobby-checkbox',
 			'lobbyCheckboxLabel': '.lobby-checkbox-label',
+			'lobbyTimerOption': '.lobby-timer-option',
 			'lobbyTimerForm': '.lobby-timer-form',
 			'lobbyTimerPicker': '.lobby-timer-picker',
 			'lobbyTimerConfirm': '.lobby-timer-confirm',
@@ -167,6 +168,17 @@
 			this._lobbyTimerPicker = new OCA.Talk.Views.VueWrapper({
 				vm: new OCA.Talk.Views.LobbyTimerPicker()
 			});
+
+			// The DatetimePicker component does not seem to provide any event
+			// to know when the popup is shown or hidden, although in most cases
+			// it corresponds with the input being focused or not.
+			this._lobbyTimerPicker._vm.$on('focus', function() {
+				this.ui.lobbyTimerOption.addClass('with-datepicker-popup');
+			}.bind(this));
+			this._lobbyTimerPicker._vm.$on('blur', function() {
+				this.ui.lobbyTimerOption.removeClass('with-datepicker-popup');
+			}.bind(this));
+
 			this._updateLobbyTimerPickerValue = function() {
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.

@@ -1126,6 +1126,13 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 		}
 
 		.menuitem.lobby-timer-option {
+			/**
+			 * Force full opacity in the menu item so the pop up is shown with
+			 * full opacity as well. */
+			&.with-datepicker-popup {
+				opacity: 1 !important;
+			}
+
 			.mx-datepicker {
 				/* Default datapicker size is 210px, which needs to be reduced
 				 * on narrow screens to prevent the moderation menu from

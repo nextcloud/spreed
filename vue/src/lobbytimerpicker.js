@@ -69,7 +69,9 @@ import { DatetimePicker } from 'nextcloud-vue'
 					// instead of changing the property itself, but as this Vue
 					// instance acts as a boundary between Vue and Marionette
 					// the property is modified to simplify things.
-					'change': value => { this.value = value }
+					'change': value => { this.value = value },
+					'focus': () => { this.$emit('focus') },
+					'blur': () => { this.$emit('blur') }
 				}
 			})
 		}
