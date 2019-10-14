@@ -90,8 +90,8 @@ export default {
 <style lang="scss" scoped>
 //Support for the placehoder text in the div contenteditable
 [contenteditable]:empty:before{
-    content: attr(placeholder);
-    display: block;
-    color: gray;
+	content: attr(placeholder);
+	display: block;
+	color: gray;
 }
 </style>

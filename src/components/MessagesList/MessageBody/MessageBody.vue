@@ -84,11 +84,11 @@ export default {
 }
 
 .message {
-    &-main {
-        display: flex;
+	&-main {
+		display: flex;
 		flex-grow: 1;
-        flex-direction: column;
-		font-size: 20;
+		flex-direction: column;
+		font-size: 20px;
 		&-header {
 			color: var(--color-text-maxcontrast);
 		}

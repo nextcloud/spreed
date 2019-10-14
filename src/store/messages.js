@@ -43,10 +43,10 @@ const getters = {
 
 const mutations = {
 	/**
-     * Adds a message to the store.
-     * @param {object} state current store state;
-     * @param {object} message the message;
-     */
+	 * Adds a message to the store.
+	 * @param {object} state current store state;
+	 * @param {object} message the message;
+	 */
 	addMessage(state, message) {
 		if (!state.messages[message.token]) {
 			Vue.set(state.messages, message.token, {})
@@ -54,18 +54,18 @@ const mutations = {
 		Vue.set(state.messages[message.token], message.id, message)
 	},
 	/**
-     * Deletes a message from the store.
-     * @param {object} state current store state;
-     * @param {object} message the message;
-     */
+	 * Deletes a message from the store.
+	 * @param {object} state current store state;
+	 * @param {object} message the message;
+	 */
 	deleteMessage(state, message) {
 		Vue.delete(state.messages[message.token], message.id)
 	},
 	/**
-     * Adds a temporary message to the store.
-     * @param {object} state current store state;
-     * @param {object} message the temporary message;
-     */
+	 * Adds a temporary message to the store.
+	 * @param {object} state current store state;
+	 * @param {object} message the temporary message;
+	 */
 	addTemporaryMessage(state, message) {
 		Vue.set(state.messages[message.token], message.id, message)
 	}
@@ -79,9 +79,9 @@ const actions = {
 	 * If the message has a parent message object,
 	 * first it adds the parent to the store.
 	 *
-     * @param {object} context default store context;
+	 * @param {object} context default store context;
 	 * @param {object} message the message;
-     */
+	 */
 	processMessage(context, message) {
 		if (message.parent) {
 			context.commit('addMessage', message.parent)
@@ -91,23 +91,23 @@ const actions = {
 	},
 
 	/**
-     * Delete a message
+	 * Delete a message
 	 *
-     * @param {object} context default store context;
-     * @param {string} message the message to be deleted;
-     */
+	 * @param {object} context default store context;
+	 * @param {string} message the message to be deleted;
+	 */
 	deleteMessage(context, message) {
 		context.commit('deleteMessage', message)
 	},
 
 	/**
-     * Add a temporary message generated in the client to
+	 * Add a temporary message generated in the client to
 	 * the store, these messages are deleted once the full
 	 * message object is recived from the server.
 	 *
-     * @param {object} context default store context;
+	 * @param {object} context default store context;
 	 * @param {object} message the temporary message;
-     */
+	 */
 	addTemporaryMessage(context, message) {
 		context.commit('addTemporaryMessage', message)
 	}

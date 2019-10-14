@@ -91,7 +91,7 @@ export default {
 
 .app-navigation-search {
 	position: sticky;
-	top: 0px;
+	top: 0;
 	background-color: white;
 	border-bottom: 1px solid lightgray;
 	&__input {
