@@ -33,10 +33,10 @@
 			<template slot="subtitle">
 				{{ item.lastMessage.message }}
 			</template>
-			<AppNavigationCounter
+			<AppNavigationCounter v-if="item.unreadMessages"
 				slot="counter"
 				:highlighted="true">
-				3
+				{{ item.unreadMessages }}
 			</AppNavigationCounter>
 			<template slot="actions">
 				<ActionButton
