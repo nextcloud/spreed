@@ -21,54 +21,21 @@
 
 <template>
 	<ul class="conversations">
-		<AppContentListItem
+		<ConversationsListItem
 			v-for="item of conversationsList"
 			:key="item.id"
-			:to="{ name: 'conversation', params: { token: item.token }}"
-			:title="item.displayName"
-			@click.prevent.exact="joinConversation(item.token)">
-			<ConversationIcon
-				slot="icon"
-				:item="item" />
-			<template slot="subtitle">
-				{{ item.lastMessage.message }}
-			</template>
-			<AppNavigationCounter v-if="item.unreadMessages"
-				slot="counter"
-				:highlighted="true">
-				{{ item.unreadMessages }}
-			</AppNavigationCounter>
-			<template slot="actions">
-				<ActionButton
-					icon="icon-edit"
-					@click="alert('Edit')">
-					Edit
-				</ActionButton>
-				<ActionButton
-					icon="icon-delete"
-					@click.prevent.exact="deleteConversation(item.token)">
-					{{ t('spreed', 'Leave Conversation') }}
-				</ActionButton>
-			</template>
-		</AppContentListItem>
+			:item="item" />
 	</ul>
 </template>
 
 <script>
-import ConversationIcon from '../../ConversationIcon'
-import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
-import AppContentListItem from './AppContentListItem/AppContentListItem'
-import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import ConversationsListItem from './ConversationsListItem'
 import { fetchConversations } from '../../../services/conversationsService'
-import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
 
 export default {
 	name: 'ConversationsList',
 	components: {
-		ConversationIcon,
-		AppNavigationCounter,
-		ActionButton,
-		AppContentListItem
+		ConversationsListItem
 	},
 	computed: {
 		conversationsList() {
@@ -88,21 +55,10 @@ export default {
 		})
 	},
 	methods: {
-		async joinConversation(token) {
-			await joinConversation(token)
-		},
 		handleInput(payload) {
 			const selectedConversationToken = payload.token
 			this.joinConversation(selectedConversationToken)
 			this.$router.push({ path: `/call/${selectedConversationToken}` })
-		},
-		/**
-		 * Deletes the current user from the conversation.
-		 * @param {string} token The token of the conversation to be left.
-		 */
-		async deleteConversation(token) {
-			const response = await removeCurrentUserFromConversation(token)
-			console.debug(response)
 		}
 	}
 }
