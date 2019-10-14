@@ -20,16 +20,8 @@
 -->
 
 <template>
-	<div v-if="item.objectType === 'file'"
-		class="avatar icon icon-file" />
-	<div v-else-if="item.objectType === 'share:password'"
-		class="avatar icon icon-password" />
-	<div v-else-if="item.type === 4"
-		class="avatar icon icon-changelog" />
-	<div v-else-if="item.type === 2"
-		class="avatar icon icon-contacts" />
-	<div v-else-if="item.type === 3"
-		class="avatar icon icon-public" />
+	<div v-if="itemClass"
+		class="avatar icon" :class="itemClass" />
 	<Avatar v-else
 		:size="44"
 		:user="item.displayName"
@@ -54,6 +46,23 @@ export default {
 					displayName: ''
 				}
 			}
+		}
+	},
+	computed: {
+		itemClass() {
+			if (this.item.objectType === 'file') {
+				return 'icon-file'
+			} else if (this.item.objectType === 'share:password') {
+				return 'icon-password'
+			} else if (this.item.type === 4) {
+				return 'icon-changelog'
+			} else if (this.item.type === 2) {
+				return 'icon-contacts'
+			} else if (this.item.type === 3) {
+				return 'icon-public'
+			}
+
+			return ''
 		}
 	}
 }
