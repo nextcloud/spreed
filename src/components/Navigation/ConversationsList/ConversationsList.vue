@@ -56,7 +56,7 @@
 
 <script>
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import ConversationsIcon from './ConversationsIcon'
+import ConversationsIcon from './../../ConversationsIcon'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
