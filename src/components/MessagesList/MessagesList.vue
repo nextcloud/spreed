@@ -18,6 +18,14 @@
   - You should have received a copy of the GNU Affero General Public License
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
+<docs>
+
+This component is a wrapper for the list of messages. It's main purpose it to
+get the messagesList array and loop through the list to generate the messages.
+In order not to render each and every messages that is in the store, we use
+the DynamicScroller component, whose docs you can find [here.](https://github.com/Akryum/vue-virtual-scroller#dynamicscroller)
+
+</docs>
 
 <template>
 	<DynamicScroller
@@ -47,7 +55,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller/dist/
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Message from './Message/Message'
 import MessageBody from './MessageBody/MessageBody'
-import { fetchMessages } from '../../services/messagesService'
+import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
 
 export default {
 	name: 'MessagesList',
@@ -57,6 +65,7 @@ export default {
 		Message,
 		MessageBody
 	},
+
 	props: {
 		/**
 		 * The conversation token.
@@ -66,34 +75,45 @@ export default {
 			required: true
 		}
 	},
+
 	data: function() {
 		return {
+			/**
+			 * Keeps track of the state of the component in order to trigger the scroll to
+			 * bottom.
+			 */
 			isInitiated: false
 		}
 	},
+
 	computed: {
 		/**
-		 * Gets the messages array.
+		 * Gets the messages array. We need this because the DynamicScroller needs an array to
+		 * loop through.
 		 *
-		 * @returns {Array}
+		 * @returns {array}
 		 */
 		messagesList() {
 			return this.$store.getters.messagesList(this.token)
 		},
 		/**
-		 * Gets the messages object.
+		 * Gets the messages object, which is structured so that the key of each message element
+		 * corresponds to the id of the message, and makes it easy and efficient to access the
+		 * individual message object.
 		 *
-		 * @returns {Object}
+		 * @returns {object}
 		 */
 		messages() {
 			return this.$store.getters.messages(this.token)
 		}
 	},
+
 	watch: {
 		token: function() {
 			this.onTokenChange()
 		}
 	},
+
 	/**
 	 * Fetches the messages when the MessageList is mounted for the
 	 * first time. The router mounts this component only if the token
@@ -102,37 +122,71 @@ export default {
 	beforeMount() {
 		this.onTokenChange()
 	},
+
 	beforeUpdate() {
+		/**
+		 * If the component is not initiated, scroll to the bottom of the message list.
+		 */
 		if (!this.isInitiated) {
+			this.scrollToBottom()
+			this.isInitiated = true
+		}
+	},
 
-			// Scrolls to the bottom of the message list.
+	methods: {
 
+		/**
+		 * Fetches the messaes of a conversation given the
+		 * conversation token.
+		 */
+		async onTokenChange() {
+			this.isInitiated = false
+			const messages = await fetchMessages(this.token)
+			// Process each messages and adds it to the store
+			messages.data.ocs.data.forEach(message => {
+				this.$store.dispatch('processMessage', message)
+			})
+			// After loading the old messages to the store, we start looking for new mwssages.
+			this.getNewMessages()
+		},
+
+		/**
+		 * Creates a long polling request for a new message.
+		 */
+		async getNewMessages() {
+			const lastKnownMessageId = this.messagesList[this.messagesList.length - 1].id
+			const messages = await lookForNewMessges(this.token, lastKnownMessageId)
+			// If there are no new messages, the variable messages will be undefined.
+			if (messages !== undefined) {
+				// Process each messages and adds it to the store
+				messages.data.ocs.data.forEach(message => {
+					this.$store.dispatch('processMessage', message)
+				})
+				this.scrollToBottom()
+			}
+			/**
+			 * This method recursively call itself after a response, so we're always
+			 * looking for new messages.
+			 */
+			this.getNewMessages()
+		},
+
+		/**
+		 * Dispatches the deleteMessages action.
+		 * @param {object} event The deleteMessage event emitted by the Message component.
+		 */
+		handleDeleteMessage(event) {
+			this.$store.dispatch('deleteMessage', event.message)
+		},
+		/**
+		 * Scrolls to the bottom of the list.
+		 */
+		scrollToBottom() {
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
-			this.isInitiated = true
 		}
 
-	},
-	methods: {
-		async onTokenChange() {
-			this.isInitiated = false
-			/**
-			 * Fetches the messaes of a conversation given the
-			 * conversation token.
-			 */
-			const messages = await fetchMessages(this.token)
-			messages.data.ocs.data.forEach(message => {
-				// Process each messages and adds it to the store
-				this.$store.dispatch('processMessage', message)
-			})
-		},
-		scrollToEnd: function() {
-			this.$el.scrollTop = this.$el.scrollHeight
-		},
-		handleDeleteMessage(event) {
-			this.$store.dispatch('deleteMessage', event.message)
-		}
 	}
 }
 </script>

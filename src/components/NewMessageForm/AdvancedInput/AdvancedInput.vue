@@ -74,7 +74,7 @@ export default {
 		 * at the v-on in the template) unless shift is pressed:
 		 * in this case a new line will be created.
 		 *
-		 * @param {Object} event the event object;
+		 * @param {object} event the event object;
 		 */
 		handleKeydown(event) {
 			// TODO: add support for CTRL+ENTER new line

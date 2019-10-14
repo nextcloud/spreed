@@ -37,8 +37,8 @@ const mutations = {
 	/**
      * Adds a conversation to the store.
 	 *
-     * @param {Object} state current store state;
-     * @param {Object} conversation the conversation;
+     * @param {object} state current store state;
+     * @param {object} conversation the conversation;
      */
 	addConversation(state, conversation) {
 		Vue.set(state.conversations, conversation.id, conversation)
@@ -47,8 +47,8 @@ const mutations = {
      * Creates a key-value pair with conversation id and name
 	 * respectively.
 	 *
-     * @param {Object} state current state object;
-     * @param {Object} object destructuring object;
+     * @param {object} state current state object;
+     * @param {object} object destructuring object;
      * @param {int} object.id conversation id;
      * @param {string} object.displayName conversation name;
      */
@@ -61,8 +61,8 @@ const actions = {
 	/**
      * Add a conversation to the store and index the displayname.
 	 *
-     * @param {Object} context default store context;
-     * @param {Object} conversation the conversation;
+     * @param {object} context default store context;
+     * @param {object} conversation the conversation;
      */
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)

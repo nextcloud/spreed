@@ -39,11 +39,27 @@ const fetchMessages = async function(token) {
 }
 
 /**
+ * Fetches newly created messages that belong to a particular conversation
+ * specified with its token.
+ *
+ * @param {string} token The conversation token;
+ * @param {int} lastKnownMessageId The id of the last message in the store.
+ */
+const lookForNewMessges = async function(token, lastKnownMessageId) {
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + '&includeLastKnown=0' + `&lastKnownMessageId=${lastKnownMessageId}`)
+		return response
+	} catch (error) {
+		console.debug('Error while looking for new message: ', error)
+	}
+}
+
+/**
  * Posts a new messageto the server.
  *
- * @param {Object} param0 The message object that is destructured;
- * @param {String} token The conversation token;
- * @param {Object} message The message object.
+ * @param {object} param0 The message object that is destructured;
+ * @param {string} token The conversation token;
+ * @param {object} message The message object.
  */
 const postNewMessage = async function({ token, message }) {
 	try {
@@ -54,4 +70,8 @@ const postNewMessage = async function({ token, message }) {
 	}
 }
 
-export { fetchMessages, postNewMessage }
+export {
+	fetchMessages,
+	lookForNewMessges,
+	postNewMessage
+}

@@ -59,7 +59,7 @@ export default {
 	methods: {
 		/**
 		 * Create a new conversation with the selected user.
-		 * @param {String} userId the ID of the clicked user.
+		 * @param {string} userId the ID of the clicked user.
 		 */
 		async createAndJoinConversation(userId) {
 			console.debug(userId)
