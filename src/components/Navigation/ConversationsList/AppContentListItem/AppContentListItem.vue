@@ -144,10 +144,10 @@ export default {
 	align-items: center;
 	flex: 0 0 auto;
 	&:hover, &:focus {
-		background-color: rgba(126, 126, 126, 0.137);
+		background-color: var(--color-background-dark);
 	}
 	&:active {
-		background-color:lightblue;
+		background-color: var(--color-primary-light);
 	}
 	&__content {
 		width: 240px;
@@ -160,7 +160,7 @@ export default {
 				flex-grow: 1;
 				overflow: hidden;
 				text-overflow: ellipsis;
-				color: rgb(56, 56, 56);
+				color: var(--color-main-text);
 				padding-right: 4px;
 			}
 			&__actions {
@@ -177,7 +177,7 @@ export default {
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
-				color: gray;
+				color: var(--color-text-lighter);
 				padding-right: 4px;
 			}
 			&__counter {
