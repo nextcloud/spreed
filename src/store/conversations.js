@@ -35,23 +35,23 @@ const getters = {
 
 const mutations = {
 	/**
-     * Adds a conversation to the store.
+	 * Adds a conversation to the store.
 	 *
-     * @param {object} state current store state;
-     * @param {object} conversation the conversation;
-     */
+	 * @param {object} state current store state;
+	 * @param {object} conversation the conversation;
+	 */
 	addConversation(state, conversation) {
 		Vue.set(state.conversations, conversation.id, conversation)
 	},
 	/**
-     * Creates a key-value pair with conversation id and name
+	 * Creates a key-value pair with conversation id and name
 	 * respectively.
 	 *
-     * @param {object} state current state object;
-     * @param {object} object destructuring object;
-     * @param {int} object.id conversation id;
-     * @param {string} object.displayName conversation name;
-     */
+	 * @param {object} state current state object;
+	 * @param {object} object destructuring object;
+	 * @param {int} object.id conversation id;
+	 * @param {string} object.displayName conversation name;
+	 */
 	indexConversationName(state, { id, displayName }) {
 		Vue.set(state.conversationsNames, id, displayName)
 	}
@@ -59,11 +59,11 @@ const mutations = {
 
 const actions = {
 	/**
-     * Add a conversation to the store and index the displayname.
+	 * Add a conversation to the store and index the displayname.
 	 *
-     * @param {object} context default store context;
-     * @param {object} conversation the conversation;
-     */
+	 * @param {object} context default store context;
+	 * @param {object} conversation the conversation;
+	 */
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
 		context.commit('indexConversationName', conversation)

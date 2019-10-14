@@ -121,15 +121,15 @@ export default {
 
 .wrapper {
 	width: 100%;
-	padding: 0px 0 0px 0;
+	padding: 0 0 0 0;
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
 }
 
 .message {
-    display: flex;
-    max-width: 600px;
+	display: flex;
+	max-width: 600px;
 	padding: 8px 0 8px 0;
 	margin: auto;
 	&-avatar {
@@ -141,13 +141,13 @@ export default {
 		display: flex;
 		min-width: 110px;
 		color: #989898;
-		padding: 0px 8px 0 8px;
+		padding: 0 8px 0 8px;
 	}
 
-.actions {
-	position: absolute;
-	margin: -14px 0 0 50px;
-	padding:2px;
+	.actions {
+		position: absolute;
+		margin: -14px 0 0 50px;
+		padding:2px;
 	}
 }
 
