@@ -35,15 +35,50 @@
 			{{ item.unreadMessages }}
 		</AppNavigationCounter>
 		<template slot="actions">
+			<ActionButton v-if="canFavorite"
+				:icon="iconFavorite"
+				@click.prevent.exact="toggleFavoriteConversation">
+				{{ labelFavorite }}
+			</ActionButton>
+
+			<!-- FIXME Should be a real separator -->
+			<ActionText>
+				FIXME I'm a separator
+			</ActionText>
+
+			<ActionText>
+				{{ t('spreed', 'Chat notifications') }}
+			</ActionText>
 			<ActionButton
-				icon="icon-delete"
-				@click.prevent.exact="deleteConversation(item.token)">
-				{{ t('spreed', 'Leave Conversation') }}
+				icon="icon-sound"
+				@click.prevent.exact="setNotificationLevel(1)">
+				{{ t('spreed', 'All messages') }}
 			</ActionButton>
 			<ActionButton
+				icon="icon-user"
+				@click.prevent.exact="setNotificationLevel(2)">
+				{{ t('spreed', '@-mentions only') }}
+			</ActionButton>
+			<ActionButton
+				icon="icon-sound-off"
+				@click.prevent.exact="setNotificationLevel(3)">
+				{{ t('spreed', 'Off') }}
+			</ActionButton>
+
+			<!-- FIXME Should be a real separator -->
+			<ActionText>
+				FIXME I'm a seperator
+			</ActionText>
+
+			<ActionButton v-if="canLeaveConversation"
+				:icon="iconLeaveConversation"
+				@click.prevent.exact="leaveConversation">
+				{{ t('spreed', 'Leave conversation') }}
+			</ActionButton>
+			<ActionButton v-if="canDeleteConversation"
 				icon="icon-delete"
-				@click.prevent.exact="deleteConversation(item.token)">
-				{{ t('spreed', 'Leave Conversation2') }}
+				@click.prevent.exact="deleteConversation">
+				{{ t('spreed', 'Delete conversation') }}
 			</ActionButton>
 		</template>
 	</AppContentListItem>
@@ -55,12 +90,15 @@ import ConversationIcon from './../../ConversationIcon'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import ActionText from 'nextcloud-vue/dist/Components/ActionText'
 import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
+import { deleteConversation, addToFavorites, removeFromFavorites, setNotificationLevel } from '../../../services/conversationsService'
 
 export default {
 	name: 'ConversationsListItem',
 	components: {
 		ActionButton,
+		ActionText,
 		AppContentListItem,
 		AppNavigationCounter,
 		ConversationIcon
@@ -70,27 +108,70 @@ export default {
 			type: Object,
 			default: function() {
 				return {
+					token: '',
+					participants: [],
+					participantType: 0,
 					unreadMessages: 0,
 					objectType: '',
 					type: 0,
-					displayName: ''
+					displayName: '',
+					isFavorite: false
 				}
 			}
 		}
 	},
 	computed: {
+		canFavorite() {
+			return this.item.participantType !== 5
+		},
+		iconFavorite() {
+			return this.item.isFavorite ? 'icon-star-dark' : 'icon-starred'
+		},
+		labelFavorite() {
+			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
+		},
+		canDeleteConversation() {
+			return this.item.type !== 1 && (this.item.participantType === 1 || this.item.participantType === 2)
+		},
+		canLeaveConversation() {
+			return !this.canDeleteConversation || (this.item.type !== 1 && Object.keys(this.item.participants).length > 1)
+		},
+		iconLeaveConversation() {
+			if (this.canDeleteConversation) {
+				return 'icon-close'
+			}
+			return 'icon-delete'
+		}
 	},
 	methods: {
-		async joinConversation(token) {
-			await joinConversation(token)
+		async joinConversation() {
+			await joinConversation(this.item.token)
+		},
+		/**
+		 * Deletes the conversation.
+		 */
+		async deleteConversation() {
+			await deleteConversation(this.item.token)
 		},
 		/**
 		 * Deletes the current user from the conversation.
-		 * @param {string} token The token of the conversation to be left.
 		 */
-		async deleteConversation(token) {
-			const response = await removeCurrentUserFromConversation(token)
-			console.debug(response)
+		async leaveConversation() {
+			await removeCurrentUserFromConversation(this.item.token)
+		},
+		async toggleFavoriteConversation() {
+			if (this.item.isFavorite) {
+				await removeFromFavorites(this.item.token)
+			} else {
+				await addToFavorites(this.item.token)
+			}
+		},
+		/**
+		 * Set the notification level for the conversation
+		 * @param {int} level The notification level to set.
+		 */
+		async setNotificationLevel(level) {
+			await setNotificationLevel(this.item.token, level)
 		}
 	}
 }

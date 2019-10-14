@@ -88,9 +88,52 @@ const deleteConversation = async function(token) {
 	}
 }
 
+/**
+ * Add a conversation to the favorites
+ * @param {string} token The token of the conversation to be favorites
+ */
+const addToFavorites = async function(token) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/favorite`)
+		return response
+	} catch (error) {
+		console.debug('Error while adding the conversation to favorites: ', error)
+	}
+}
+
+/**
+ * Remove a conversation from the favorites
+ * @param {string} token The token of the conversation to be removed from favorites
+ */
+const removeFromFavorites = async function(token) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/favorite`)
+		return response
+	} catch (error) {
+		console.debug('Error while removing the conversation from favorites: ', error)
+	}
+}
+
+/**
+ * Remove a conversation from the favorites
+ * @param {string} token The token of the conversation to be removed from favorites
+ * @param {int} level The notification level to set.
+ */
+const setNotificationLevel = async function(token, level) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/notify`, { level })
+		return response
+	} catch (error) {
+		console.debug('Error while setting the notification level: ', error)
+	}
+}
+
 export {
 	fetchConversations,
 	searchPossibleConversations,
 	createOneToOneConversation,
 	createGroupConversation,
-	deleteConversation }
+	deleteConversation,
+	addToFavorites,
+	removeFromFavorites,
+	setNotificationLevel }
