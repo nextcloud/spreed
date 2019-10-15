@@ -95,7 +95,7 @@ import { joinConversation, removeCurrentUserFromConversation } from '../../../se
 import { deleteConversation, addToFavorites, removeFromFavorites, setNotificationLevel } from '../../../services/conversationsService'
 
 export default {
-	name: 'ConversationsListItem',
+	name: 'Conversation',
 	components: {
 		ActionButton,
 		ActionText,

@@ -21,7 +21,7 @@
 
 <template>
 	<ul class="conversations">
-		<ConversationsListItem
+		<Conversation
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
@@ -29,13 +29,13 @@
 </template>
 
 <script>
-import ConversationsListItem from './ConversationsListItem'
+import Conversation from './Conversation'
 import { fetchConversations } from '../../../services/conversationsService'
 
 export default {
 	name: 'ConversationsList',
 	components: {
-		ConversationsListItem
+		Conversation
 	},
 	computed: {
 		conversationsList() {
