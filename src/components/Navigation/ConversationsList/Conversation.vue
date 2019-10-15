@@ -40,13 +40,20 @@
 				@click.prevent.exact="toggleFavoriteConversation">
 				{{ labelFavorite }}
 			</ActionButton>
+			<ActionButton
+				icon="icon-clippy"
+				@click.stop.prevent="copyLinkToConversation">
+				{{ t('spreed', 'Copy link') }}
+			</ActionButton>
 
 			<!-- FIXME Should be a real separator -->
-			<ActionText>
-				FIXME I'm a separator
+			<ActionText
+				icon="icon-more">
+				------
 			</ActionText>
 
-			<ActionText>
+			<ActionText
+				icon="icon-timezone">
 				{{ t('spreed', 'Chat notifications') }}
 			</ActionText>
 			<ActionButton
@@ -66,8 +73,9 @@
 			</ActionButton>
 
 			<!-- FIXME Should be a real separator -->
-			<ActionText>
-				FIXME I'm a seperator
+			<ActionText
+				icon="icon-more">
+				------
 			</ActionText>
 
 			<ActionButton v-if="canLeaveConversation"
@@ -93,6 +101,7 @@ import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import ActionText from 'nextcloud-vue/dist/Components/ActionText'
 import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
 import { deleteConversation, addToFavorites, removeFromFavorites, setNotificationLevel } from '../../../services/conversationsService'
+import { generateUrl } from 'nextcloud-router'
 
 export default {
 	name: 'Conversation',
@@ -121,6 +130,9 @@ export default {
 		}
 	},
 	computed: {
+		linkToConversation() {
+			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
+		},
 		canFavorite() {
 			return this.item.participantType !== 5
 		},
@@ -144,6 +156,14 @@ export default {
 		}
 	},
 	methods: {
+		async copyLinkToConversation() {
+			try {
+				await this.$copyText(this.linkToConversation)
+				OCP.Toast.success(t('spreed', 'Link to conversation copied to clipboard'))
+			} catch (error) {
+				OCP.Toast.error(t('spreed', 'Link to conversation was not copied to clipboard.'))
+			}
+		},
 		async joinConversation() {
 			await joinConversation(this.item.token)
 		},
