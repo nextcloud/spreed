@@ -27,11 +27,9 @@
 			:to="{ name: 'conversation', params: { token: item.token }}"
 			:title="item.displayName"
 			@click.prevent.exact="joinConversation(item.token)">
-			<Avatar
+			<ConversationIcon
 				slot="icon"
-				:size="44"
-				:user="item.displayName"
-				:display-name="item.displayName" />
+				:item="item" />
 			<template slot="subtitle">
 				{{ item.lastMessage.message }}
 			</template>
@@ -58,7 +56,7 @@
 
 <script>
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+import ConversationIcon from '../../ConversationIcon'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
@@ -68,7 +66,7 @@ import { joinConversation, removeCurrentUserFromConversation } from '../../../se
 export default {
 	name: 'ConversationsList',
 	components: {
-		Avatar,
+		ConversationIcon,
 		AppNavigationCounter,
 		ActionButton,
 		AppContentListItem
