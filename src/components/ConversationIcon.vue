@@ -32,7 +32,7 @@
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 
 export default {
-	name: 'ConversationsIcon',
+	name: 'ConversationIcon',
 	components: {
 		Avatar
 	},

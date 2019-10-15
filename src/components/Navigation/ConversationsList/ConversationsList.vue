@@ -27,7 +27,7 @@
 			:to="{ name: 'conversation', params: { token: item.token }}"
 			:title="item.displayName"
 			@click.prevent.exact="joinConversation(item.token)">
-			<ConversationsIcon
+			<ConversationIcon
 				slot="icon"
 				:item="item" />
 			<template slot="subtitle">
@@ -56,7 +56,7 @@
 
 <script>
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import ConversationsIcon from './../../ConversationsIcon'
+import ConversationIcon from '../../ConversationIcon'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
@@ -66,7 +66,7 @@ import { joinConversation, removeCurrentUserFromConversation } from '../../../se
 export default {
 	name: 'ConversationsList',
 	components: {
-		ConversationsIcon,
+		ConversationIcon,
 		AppNavigationCounter,
 		ActionButton,
 		AppContentListItem
