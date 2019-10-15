@@ -86,13 +86,13 @@ video {
 
 .videoContainer .avatar-container {
 	position: absolute;
-	text-align: center;
 	bottom: 44px;
 	left: 0;
 	width: 100%;
 }
 .videoContainer .avatar-container .avatar {
-	display: inline-block;
+	margin-left: auto;
+	margin-right: auto;
 }
 .videoContainer.promoted .avatar-container {
 	top: 30%;
