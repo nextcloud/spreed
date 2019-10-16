@@ -49,7 +49,7 @@ kind: pipeline
 name: stylelint
 
 steps:
-  - name: eslint
+  - name: stylelint
     image: nextcloudci/stylelint:stylelint-1
     commands:
       - ./run-stylelint.sh
