@@ -51,7 +51,7 @@ name: stylelint
 
 steps:
   - name: stylelint
-    image: nextcloudci/stylelint:stylelint-1
+    image: nextcloudci/stylelint:stylelint-2
     commands:
       - ./run-stylelint.sh
 
