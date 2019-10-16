@@ -34,6 +34,7 @@ steps:
   - name: eslint
     image: node:lts
     commands:
+      - make dev-setup
       - make lint
 
 trigger:
@@ -49,8 +50,8 @@ kind: pipeline
 name: stylelint
 
 steps:
-  - name: eslint
-    image: nextcloudci/stylelint:stylelint-1
+  - name: stylelint
+    image: nextcloudci/stylelint:stylelint-2
     commands:
       - ./run-stylelint.sh
 
