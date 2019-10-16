@@ -20,6 +20,18 @@ title: Constants
 * `5` user following a public link
 * `6` guest with moderator permissions
 
+## Participant in-call flag
+* `0` disconnected
+* `1` in-call
+* `2` provides audio
+* `4` provides video
+
+## Participant notification levels
+* `0` Default (`1` for one-to-one conversations, `2` for other conversations)
+* `1` Always notify
+* `2` Notify on mention
+* `3` Never notify
+
 ## Actor types of chat messages
 * `guests` - guest users
 * `users` - logged-in users

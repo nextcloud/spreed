@@ -140,7 +140,7 @@ return [
 		],
 
 		/**
-		 * Room
+		 * Conversation (Room)
 		 */
 		[
 			'name' => 'Room#getRooms',
@@ -383,34 +383,17 @@ return [
 				'apiVersion' => 'v1',
 			],
 		],
-		[
-			'name' => 'Command#update',
-			'url' => '/api/{apiVersion}/command/{id}',
-			'verb' => 'PUT',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'id' => '^\d+$',
-			],
-		],
-		[
-			'name' => 'Command#destroy',
-			'url' => '/api/{apiVersion}/command/{id}',
-			'verb' => 'DELETE',
-			'requirements' => [
-				'apiVersion' => 'v1',
-				'id' => '^\d+$',
-			],
-		],
 
 		/**
-		 * Webinary
+		 * Webinar
 		 */
 		[
-			'name' => 'Webinary#setLobby',
-			'url' => '/api/{apiVersion}/room/{token}/webinary/lobby',
+			'name' => 'Webinar#setLobby',
+			'url' => '/api/{apiVersion}/room/{token}/{webinar}/lobby',
 			'verb' => 'PUT',
 			'requirements' => [
 				'apiVersion' => 'v1',
+				'webinar' => 'webinary?',
 				'token' => '^[a-z0-9]{4,30}$',
 			],
 		],

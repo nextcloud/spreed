@@ -12,8 +12,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     ------|------|------------
     `lookIntoFuture` | int | `1` Poll and wait for new message or `0` get history of a conversation
     `limit` | int | Number of chat messages to receive (100 by default, 200 at most)
-    `timeout` | int | `$lookIntoFuture = 1` only, Number of seconds to wait for new messages (30 by default, 60 at most)
     `lastKnownMessageId` | int | Serves as an offset for the query. The lastKnownMessageId for the next page is available in the `X-Chat-Last-Given` header.
+    `timeout` | int | `$lookIntoFuture = 1` only, Number of seconds to wait for new messages (30 by default, 60 at most)
     `setReadMarker` | int | `1` to automatically set the read timer after fetching the messages, use `0` when your client calls `Mark chat as read` manually. (Default: `1`)
     `includeLastKnown` | int | `1` to include the last known message as well (Default: `0`)
 
@@ -22,6 +22,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `304 Not Modified` When there were no older/newer messages
         + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
     - Header:
 
@@ -61,7 +62,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     - Header:
         + `201 Created`
         + `400 Bad Request` In case of any other error
+        + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
         + `413 Payload Too Large` When the message was longer than the allowed limit of 32000 characters (or 1000 until Nextcloud 16.0.1, check the `spreed => config => chat => max-length` capability for the limit)
 
     - Data:
@@ -99,16 +102,18 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Status code:
         + `200 OK`
+        + `403 Forbidden` When the conversation is read-only
         + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
     - Data:
         Array of suggestions, each suggestion has at least:
 
         field | type | Description
         ------|------|------------
-        `id` | string | The user id which should be sent as `@<id>` in the message
+        `id` | string | The user id which should be sent as `@<id>` in the message (user ids that contain spaces as well as guest ids need to be wrapped in double-quotes when sending in a message: `@"space user"` and `@"guest/random-string"`)
         `label` | string | The displayname of the user
-        `source` | string | The type of the user, currently only `users`
+        `source` | string | The type of the user, currently only `users`, `guests` or `calls` (for mentioning the whole conversation
         
 ## System messages
 
@@ -118,6 +123,11 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `call_joined` - {actor} joined the call
 * `call_left` - {actor} left the call
 * `call_ended` - Call with {user1}, {user2}, {user3}, {user4} and {user5} (Duration 30:23)
+* `read_only_off` - {actor} unlocked the conversation
+* `read_only` - {actor} locked the conversation
+* `lobby_timer_reached` - The conversation is now open to everyone
+* `lobby_none` - {actor} opened the conversation to everyone
+* `lobby_non_moderators` - {actor} restricted the conversation to moderators
 * `guests_allowed` - {actor} allowed guests in the conversation
 * `guests_disallowed` - {actor} disallowed guests in the conversation
 * `password_set` - {actor} set a password for the conversation
@@ -128,46 +138,3 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * `moderator_demoted` - {actor} demoted {user} from moderator
 * `guest_moderator_promoted` - {actor} promoted {user} to moderator
 * `guest_moderator_demoted` - {actor} demoted {user} from moderator
-* `read_only_off` - {actor} unlocked the conversation
-* `read_only` - {actor} locked the conversation
-
-## Guests
-        
-        
-## Signaling
-
-### Get signaling settings
-
-* Method: `GET`
-* Endpoint: `/signaling/settings`
-* Data:
-
-    field | type | Description
-    ------|------|------------
-    `stunservers` | array | STUN servers
-    `turnservers` | array | TURN servers
-    `server` | string | URL of the external signaling server
-    `ticket` | string | Ticket for the external signaling server
-
-    - STUN server
-    
-       field | type | Description
-       ------|------|------------
-       `url` | string | STUN server URL
-
-    - TURN server
-    
-       field | type | Description
-       ------|------|------------
-       `url` | array | One element array with TURN server URL
-       `urls` | array | One element array with TURN server URL
-       `username` | string | User name for the TURN server
-       `credential` | string | User password for the TURN server
-
-* Response:
-    - Header:
-        + `200 OK`
-        + `404 Not Found`
-
-### External signaling API
-See External Signaling API [Draft](https://github.com/nextcloud/spreed/wiki/Signaling-API) in the wiki…

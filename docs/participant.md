@@ -10,7 +10,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
+        + `403 Forbidden` When the participant is a guest
         + `404 Not Found` When the conversation could not be found for the participant
+        + `412 Precondition Failed` When the lobby is active and the user is not a moderator
 
     - Data:
         Array of participants, each participant has at least:
@@ -37,8 +39,9 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `403 Forbidden` When the current user is not a moderator/owner
-        + `400 Bad Request` When the source type is unknown
+        + `400 Bad Request` When the source type is unknown, currently `users`, `groups` and `emails` are supported
+        + `400 Bad Request` When the conversation is a one-to-one conversation
+        + `403 Forbidden` When the current user is not a moderator or owner
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the user or group to add could not be found
 
@@ -61,11 +64,23 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `400 Bad Request` When the participant is a moderator/owner and there are no other moderators/owners left.
-        + `403 Forbidden` When the current user is not a moderator/owner
+        + `400 Bad Request` When the participant is a moderator or owner
+        + `400 Bad Request` When there are no other moderators or owners left
+        + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the participant to remove is an owner
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
+
+## Remove yourself from a conversation
+
+* Method: `DELETE`
+* Endpoint: `/room/{token}/participants/self`
+
+* Response:
+    - Header:
+        + `200 OK`
+        + `400 Bad Request` When the participant is a moderator or owner and there are no other moderators or owners left.
+        + `404 Not Found` When the conversation could not be found for the participant
 
 ## Remove a guest from a conversation
 
@@ -80,21 +95,10 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `403 Forbidden` When the current user is not a moderator/owner
-        + `403 Forbidden` When the target participant is not a guest
+        + `400 Bad Request` When the target participant is not a guest
+        + `403 Forbidden` When the current user is not a moderator or owner
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the target participant could not be found
-
-## Remove yourself from a conversation
-
-* Method: `DELETE`
-* Endpoint: `/room/{token}/participants/self`
-
-* Response:
-    - Header:
-        + `200 OK`
-        + `400 Bad Request` When the participant is a moderator/owner and there are no other moderators/owners left.
-        + `404 Not Found` When the conversation could not be found for the participant
 
 ## Join a conversation (available for call and chat)
 
@@ -128,7 +132,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `200 OK`
         + `404 Not Found` When the conversation could not be found for the participant
 
-## Promote a user to a moderator
+## Promote a user or guest to moderator
 
 * Method: `POST`
 * Endpoint: `/room/{token}/moderators`
@@ -136,18 +140,19 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `participant` | string | User to promote
+    `participant` | string or null | User to promote
+    `sessionId` | string or null | Guest session to promote
 
 * Response:
     - Header:
         + `200 OK`
-        + `400 Bad Request` When the participant to promote is not a normal user (type `3`)
-        + `403 Forbidden` When the current user is not a moderator/owner
+        + `400 Bad Request` When the participant to promote is not a normal user (type `3`) or normal guest (type `4`)
+        + `403 Forbidden` When the current user is not a moderator or owner
         + `403 Forbidden` When the participant to remove is an owner
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to remove could not be found
 
-## Demote a moderator to a user
+## Demote a moderator to user or guest
 
 * Method: `DELETE`
 * Endpoint: `/room/{token}/moderators`
@@ -155,13 +160,15 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `participant` | string | User to promote
+    `participant` | string or null | User to demote
+    `sessionId` | string or null | Guest session to demote
 
 * Response:
     - Header:
         + `200 OK`
-        + `400 Bad Request` When the participant to demote is not a moderator (type `2`)
-        + `403 Forbidden` When the current user is not a moderator/owner
+        + `400 Bad Request` When the participant to demote is not a moderator (type `2`) or guest moderator (type `6`)
+        + `403 Forbidden` When the current participant is not a moderator or owner
+        + `403 Forbidden` When the current participant tries to demote themselves
         + `404 Not Found` When the conversation could not be found for the participant
         + `404 Not Found` When the participant to demote could not be found
 
@@ -178,5 +185,5 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 * Response:
     - Header:
         + `200 OK`
-        + `404 Not Found` When the conversation is not found or the session does not exist in the conversation
-        + `403 Forbidden` When the user is logged in
+        + `403 Forbidden` When the current user is not a guest
+        + `404 Not Found` When the conversation could not be found for the participant

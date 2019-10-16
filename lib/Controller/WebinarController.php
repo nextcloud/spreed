@@ -29,7 +29,7 @@ use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IRequest;
 
-class WebinaryController extends AEnvironmentAwareController {
+class WebinarController extends AEnvironmentAwareController {
 
 	/** @var ITimeFactory */
 	protected $timeFactory;
