@@ -88,7 +88,6 @@ export default {
 		display: flex;
 		flex-grow: 1;
 		flex-direction: column;
-		font-size: 20px;
 		&-header {
 			color: var(--color-text-maxcontrast);
 		}
