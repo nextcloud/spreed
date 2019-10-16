@@ -30,7 +30,7 @@ title: Constants
 * `0` Default (`1` for one-to-one conversations, `2` for other conversations)
 * `1` Always notify
 * `2` Notify on mention
-* `4` Never notify
+* `3` Never notify
 
 ## Actor types of chat messages
 * `guests` - guest users
