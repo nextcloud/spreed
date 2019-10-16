@@ -172,13 +172,25 @@ export default {
 		 * Deletes the conversation.
 		 */
 		async deleteConversation() {
-			await deleteConversation(this.item.token)
+			try {
+				await deleteConversation(this.item.token)
+				// If successful, deletes the conversation from the store
+				this.$store.dispatch('deleteConversation', this.item)
+			} catch (error) {
+				console.debug(`error while deleting conversation ${error}`)
+			}
 		},
 		/**
 		 * Deletes the current user from the conversation.
 		 */
 		async leaveConversation() {
-			await removeCurrentUserFromConversation(this.item.token)
+			try {
+				await removeCurrentUserFromConversation(this.item.token)
+				// If successful, deletes the conversation from the store
+				this.$store.dispatch('deleteConversation', this.item)
+			} catch (error) {
+				console.debug(`error while removing yourself from conversation ${error}`)
+			}
 		},
 		async toggleFavoriteConversation() {
 			if (this.item.isFavorite) {

@@ -54,6 +54,15 @@ const mutations = {
 	 */
 	indexConversationName(state, { id, displayName }) {
 		Vue.set(state.conversationsNames, id, displayName)
+	},
+	/**
+	 * Deletes a conversation from the store.
+	 * @param {object} state current store state;
+	 * @param {object} conversation the message;
+	 */
+	deleteConversation(state, conversation) {
+		Vue.delete(state.conversations, conversation.id)
+		Vue.delete(state.conversationsNames, conversation.id)
 	}
 }
 
@@ -67,6 +76,16 @@ const actions = {
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
 		context.commit('indexConversationName', conversation)
+	},
+
+	/**
+	 * Delete a object
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} conversation the conversation to be deleted;
+	 */
+	deleteConversation(context, conversation) {
+		context.commit('deleteConversation', conversation)
 	}
 }
 
