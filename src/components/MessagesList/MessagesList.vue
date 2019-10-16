@@ -40,7 +40,11 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 					item.messageText,
 				]"
 				:data-index="item.id">
-				<Message v-bind="item" :message="item" @deleteMessage="handleDeleteMessage">
+				<Message
+					v-bind="item"
+					:message="item"
+					:previous-message="messagesList[index-1]"
+					@deleteMessage="handleDeleteMessage">
 					<MessageBody v-bind="item">
 						<MessageBody v-if="item.parent" v-bind="messages[item.parent]" />
 					</MessageBody>

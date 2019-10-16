@@ -27,7 +27,7 @@
 		@mouseleave="hover=false">
 		<div class="message">
 			<div class="message-avatar">
-				<Avatar :user="actorDisplayName" :display-name="actorDisplayName" />
+				<Avatar v-if="!isSameAuthor" :user="actorDisplayName" :display-name="actorDisplayName" />
 			</div>
 			<slot />
 			<div v-show="isTemporary" class="message-right icon-loading-small" />
@@ -94,6 +94,12 @@ export default {
 		message: {
 			type: Object,
 			required: true
+		},
+		/**
+		 * The previous message in the list
+		 */
+		previousMessage: {
+			required: true
 		}
 	},
 	data: function() {
@@ -107,6 +113,12 @@ export default {
 		},
 		isTemporary() {
 			return this.timestamp === 0
+		},
+		isSameAuthor() {
+			if (this.previousMessage === undefined) {
+				return false
+			}
+			return this.message.actorId === this.previousMessage.actorId
 		}
 	},
 	methods: {
