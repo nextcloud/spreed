@@ -43,11 +43,9 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 				<Message
 					v-bind="item"
 					:message="item"
+					:parent="messages[item.parent]"
 					:previous-message="messagesList[index-1]"
 					@deleteMessage="handleDeleteMessage">
-					<MessageBody v-bind="item">
-						<MessageBody v-if="item.parent" v-bind="messages[item.parent]" />
-					</MessageBody>
 				</Message>
 			</DynamicScrollerItem>
 		</template>
@@ -58,7 +56,6 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller/dist/vue-virtual-scroller.umd.js'
 import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import Message from './Message/Message'
-import MessageBody from './MessageBody/MessageBody'
 import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
 
 export default {
@@ -66,8 +63,7 @@ export default {
 	components: {
 		DynamicScroller,
 		DynamicScrollerItem,
-		Message,
-		MessageBody
+		Message
 	},
 
 	props: {

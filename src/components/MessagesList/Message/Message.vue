@@ -25,11 +25,18 @@
 		:class="{ 'hover': hover }"
 		@mouseover="hover=true"
 		@mouseleave="hover=false">
-		<div class="message">
-			<div class="message-avatar">
-				<Avatar v-if="!isSameAuthor" :user="actorDisplayName" :display-name="actorDisplayName" />
-			</div>
-			<slot />
+		<div class="message-avatar">
+			<Avatar
+				v-if="!isSameAuthor"
+				:user="actorDisplayName"
+				:display-name="actorDisplayName" />
+		</div>
+		<div class="message" :class="{'same-author': isSameAuthor}">
+			<MessageBody v-bind="message" :isSameAuthor="isSameAuthor">
+				<MessageBody
+					v-if="quote !== {}"
+					v-bind="quote" />
+			</MessageBody>
 			<div v-show="isTemporary" class="message-right icon-loading-small" />
 			<div v-show="!isTemporary" class="message-right">
 				<h6>{{ messageTime }}</h6>
@@ -51,13 +58,15 @@
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import MessageBody from './MessageBody/MessageBody'
 
 export default {
 	name: 'Message',
 	components: {
 		Avatar,
 		Actions,
-		ActionButton
+		ActionButton,
+		MessageBody
 	},
 	props: {
 		/**
@@ -100,6 +109,12 @@ export default {
 		 */
 		previousMessage: {
 			required: true
+		},
+		/**
+		 * The quote object
+		 */
+		quote: {
+			type: Object
 		}
 	},
 	data: function() {
@@ -142,7 +157,7 @@ export default {
 .message {
 	display: flex;
 	max-width: 600px;
-	padding: 8px 0 8px 0;
+	padding: 8px 0 8px 52px;
 	margin: auto;
 	&-avatar {
 		width: 52px;
@@ -161,6 +176,10 @@ export default {
 		margin: -14px 0 0 50px;
 		padding:2px;
 	}
+}
+
+.same-author {
+	padding: 0 0 8px 52px;
 }
 
 </style>

@@ -28,7 +28,7 @@ the main body of the message as well as a quote.
 	<div v-show="message"
 		:class="{ 'message-main--quote' : isQuote }"
 		class="message-main">
-		<div v-if="showAuthor" class="message-main-header">
+		<div v-if="!isSameAuthor" class="message-main-header">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<slot />
@@ -69,6 +69,9 @@ export default {
 		isQuote: {
 			type: Boolean,
 			default: false
+		},
+		isSameAuthor: {
+			required: true
 		}
 	}
 }
