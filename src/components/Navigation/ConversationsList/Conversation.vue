@@ -124,7 +124,8 @@ export default {
 					objectType: '',
 					type: 0,
 					displayName: '',
-					isFavorite: false
+					isFavorite: false,
+					notificationLevel: 0
 				}
 			}
 		}
@@ -194,6 +195,7 @@ export default {
 		 */
 		async setNotificationLevel(level) {
 			await setNotificationLevel(this.item.token, level)
+			this.item.notificationLevel = level
 		}
 	}
 }
