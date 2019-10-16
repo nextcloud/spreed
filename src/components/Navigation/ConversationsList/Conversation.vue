@@ -22,6 +22,7 @@
 <template>
 	<AppContentListItem
 		:title="item.displayName"
+		:to="{ name: 'conversation', params: { token: item.token }}"
 		@click.prevent.exact="joinConversation(item.token)">
 		<ConversationIcon
 			slot="icon"
