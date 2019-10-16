@@ -22,6 +22,7 @@
 
 import axios from 'nextcloud-axios'
 import { generateOcsUrl } from 'nextcloud-router'
+import { Conversation } from '../constants'
 
 /**
  * Fetches the conversations from the server.
@@ -54,7 +55,7 @@ const searchPossibleConversations = async function(searchText) {
  */
 const createOneToOneConversation = async function(userId) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: 1, invite: userId })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: Conversation.Type.ONE_TO_ONE, invite: userId })
 		return response
 	} catch (error) {
 		console.debug('Error creating new one to one conversation: ', error)
@@ -67,10 +68,10 @@ const createOneToOneConversation = async function(userId) {
  */
 const createGroupConversation = async function(groupId) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: 2, invite: groupId })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: Conversation.Type.GROUP, invite: groupId })
 		return response
 	} catch (error) {
-		console.debug('Error creating new one to one conversation: ', error)
+		console.debug('Error creating new group conversation: ', error)
 	}
 }
 
