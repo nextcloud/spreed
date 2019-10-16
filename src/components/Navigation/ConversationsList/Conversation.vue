@@ -185,6 +185,8 @@ export default {
 			} else {
 				await addToFavorites(this.item.token)
 			}
+
+			this.item.isFavorite = !this.item.isFavorite
 		},
 		/**
 		 * Set the notification level for the conversation
