@@ -55,7 +55,6 @@
 </template>
 
 <script>
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import ConversationIcon from '../../ConversationIcon'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
@@ -112,13 +111,5 @@ export default {
 <style lang="scss" scoped>
 .conversations {
 	overflow: visible;
-}
-
-.scroller {
-	flex: 1 0;
-}
-
-.ellipsis {
-	text-overflow: ellipsis;
 }
 </style>

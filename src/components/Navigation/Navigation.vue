@@ -20,11 +20,11 @@
 -->
 
 <template>
-	<AppNavigation>
+	<AppNavigation class="vue navigation">
 		<AppNavigationSearch
 			v-model="searchText"
 			@input="debounceFetchSearchResults" />
-		<ul class="app-navigation">
+		<ul class="navigation__tems">
 			<Caption v-if="isSearching" title="Conversations" />
 			<ConversationsList />
 			<Caption v-if="isSearching" title="Contacts" />
@@ -91,9 +91,34 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-navigation {
+
+.navigation {
+	width: 300px;
+	position: fixed;
+	top: 50px;
+	left: 0;
+	z-index: 500;
 	overflow-y: auto;
 	overflow-x: hidden;
+	// Do not use vh because of mobile headers
+	// are included in the calculation
+	height: calc(100% - 50px);
+	box-sizing: border-box;
+	background-color: var(--color-main-background);
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	border-right: 1px solid var(--color-border);
+	display: flex;
+	flex-direction: column;
+	flex-grow: 0;
+	flex-shrink: 0;
+	&__items {
+		display: block;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
 }
 
 .settings {
