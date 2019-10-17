@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0.1 – 2019-10-17
+### Fixed
+- Fix position of the promoted and the current participant in calls
+  [#2320](https://github.com/nextcloud/spreed/pull/2320)
+- Add a hint for the start time format of the lobby timer
+  [#2267](https://github.com/nextcloud/spreed/pull/2267)
+- Fix "MessageTooLongException" when mentioning someone in a long comment
+  [#2268](https://github.com/nextcloud/spreed/pull/2268)
+- Correctly set the unread counter when readding a user to a one-to-one conversation
+  [#2259](https://github.com/nextcloud/spreed/pull/2259)
+
 ## 7.0.0 – 2019-09-26
 ### Added
 - Added a simple Lobby: moderators can join and prepare a call/meeting while users and guests can not join yet
