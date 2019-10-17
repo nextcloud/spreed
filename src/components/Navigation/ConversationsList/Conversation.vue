@@ -103,6 +103,7 @@ import ActionText from 'nextcloud-vue/dist/Components/ActionText'
 import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
 import { deleteConversation, addToFavorites, removeFromFavorites, setNotificationLevel } from '../../../services/conversationsService'
 import { generateUrl } from 'nextcloud-router'
+import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
 export default {
 	name: 'Conversation',
@@ -136,7 +137,7 @@ export default {
 			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
 		},
 		canFavorite() {
-			return this.item.participantType !== 5
+			return this.item.participantType !== PARTICIPANT.TYPE.USER_SELF_JOINED
 		},
 		iconFavorite() {
 			return this.item.isFavorite ? 'icon-star-dark' : 'icon-starred'
@@ -145,10 +146,10 @@ export default {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
 		},
 		canDeleteConversation() {
-			return this.item.type !== 1 && (this.item.participantType === 1 || this.item.participantType === 2)
+			return this.item.type !== CONVERSATION.TYPE.ONE_TO_ONE && (this.item.participantType === PARTICIPANT.TYPE.OWNER || this.item.participantType === PARTICIPANT.TYPE.MODERATOR)
 		},
 		canLeaveConversation() {
-			return !this.canDeleteConversation || (this.item.type !== 1 && Object.keys(this.item.participants).length > 1)
+			return !this.canDeleteConversation || (this.item.type !== CONVERSATION.TYPE.ONE_TO_ONE && Object.keys(this.item.participants).length > 1)
 		},
 		iconLeaveConversation() {
 			if (this.canDeleteConversation) {
