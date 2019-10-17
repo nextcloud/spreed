@@ -19,6 +19,6 @@
  *
  */
 
-$app = new \OCA\Talk\AppInfo\Application();
+$app = \OC::$server->query(\OCA\Talk\AppInfo\Application::class);
 // For the navigation $l->t('Talk')
 $app->register();
