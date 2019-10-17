@@ -25,22 +25,49 @@ the main body of the message as well as a quote.
 </docs>
 
 <template>
-	<div v-show="message"
-		:class="{ 'message-main--quote' : isQuote }"
-		class="message-main">
-		<div v-if="!isSameAuthor" class="message-main-header">
+	<div
+		class="message-body"
+		:class="{ 'hover': hover }"
+		@mouseover="hover=true"
+		@mouseleave="hover=false">
+		<div class="message-body__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
-		<slot />
-		<div class="message-main-text">
-			<p>{{ message }}</p>
+		<div class="message-body__main">
+			<div class="message-body__main__text">
+				<p>{{ message }}</p>
+			</div>
+			<div v-show="isTemporary" class="message-right icon-loading-small" />
+			<div v-show="!isTemporary" class="message-right">
+				<h6>{{ messageTime }}</h6>
+				<Actions v-show="hover" class="actions">
+					<ActionButton icon="icon-delete" @click="handleDelete">
+						Delete
+					</ActionButton>
+					<ActionButton icon="icon-delete" @click="handleDelete">
+						Delete
+					</ActionButton>
+				</Actions>
+			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import Actions from 'nextcloud-vue/dist/Components/Actions'
+import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+
 export default {
-	inheritAttrs: false,
+	name: 'MessageBody',
+	components: {
+		Actions,
+		ActionButton
+	},
+	data: function() {
+		return {
+			hover: false
+		}
+	},
 	props: {
 		/**
 		 * The sender of the message.
@@ -57,6 +84,13 @@ export default {
 			required: true
 		},
 		/**
+		 * The message timestamp.
+		 */
+		timestamp: {
+			type: Number,
+			default: 0
+		},
+		/**
 		 * if true, it displays the message author on top of the message.
 		 */
 		showAuthor: {
@@ -70,33 +104,53 @@ export default {
 			type: Boolean,
 			default: false
 		},
-		isSameAuthor: {
+		isTemporary: {
+			type: Boolean,
 			required: true
+		}
+	},
+	computed: {
+		messageTime() {
+			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		}
+	},
+	methods: {
+		handleDelete() {
+			this.$store.dispatch('deleteMessage', this.message)
 		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
+@import '../../../../assets/variables';
+
+.message-body {
 	width: 100%;
 	padding: 4px 0 4px 0;
+	flex-direction: column;
 	&:hover {
 		background-color: rgba(47, 47, 47, 0.068);
+	}
+	&__author {
+		color: var(--color-text-maxcontrast);
+	}
+	&__main {
+		display: flex;
+		justify-content: space-between;
+		&__text {
+			width: $message-text-width;
+			color: var(--color-text-light);
+		}
 	}
 }
 
 .message {
 	&-main {
-		display: flex;
+		display: inline-flex;
 		flex-grow: 1;
 		flex-direction: column;
-		&-header {
-			color: var(--color-text-maxcontrast);
-		}
-		&-text {
-			color: var(--color-text-light);
-		}
+
 		&--quote {
 			border-left: 4px solid var(--color-primary);
 			padding: 4px 0 0 8px;
@@ -104,4 +158,16 @@ export default {
 	}
 }
 
+.right {
+		display: flex;
+		min-width: 110px;
+		color: #989898;
+		padding: 0 8px 0 8px;
+	}
+
+	.actions {
+		position: absolute;
+		margin: -14px 0 0 50px;
+		padding:2px;
+	}
 </style>

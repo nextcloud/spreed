@@ -20,69 +20,37 @@
 -->
 
 <template>
-	<div
-		class="wrapper"
-		:class="{ 'hover': hover }"
-		@mouseover="hover=true"
-		@mouseleave="hover=false">
-		<div class="message-avatar">
+	<div class="wrapper">
+		<div class="messages__avatar">
 			<Avatar
-				v-if="!isSameAuthor"
+				class="messages__avatar__icon"
 				:user="actorDisplayName"
 				:display-name="actorDisplayName" />
 		</div>
-		<div class="message" :class="{'same-author': isSameAuthor}">
-			<MessageBody v-bind="message" :is-same-author="isSameAuthor">
-				<MessageBody
-					v-if="quote !== {}"
-					v-bind="quote" />
-			</MessageBody>
-			<div v-show="isTemporary" class="message-right icon-loading-small" />
-			<div v-show="!isTemporary" class="message-right">
-				<h6>{{ messageTime }}</h6>
-				<Actions v-show="hover" class="actions">
-					<ActionButton icon="icon-delete" @click="handleDelete">
-						Delete
-					</ActionButton>
-					<ActionButton icon="icon-delete" @click="handleDelete">
-						Delete
-					</ActionButton>
-				</Actions>
-			</div>
+		<div class="messages">
+			<MessageBody
+				v-for="message of messages"
+				v-bind="message"
+				:key="message.id"
+				:hover="hover"
+				:actor-display-name="actorDisplayName"
+				:isTemporary="isTemporary" />
 		</div>
-		<div />
 	</div>
 </template>
 
 <script>
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
-import Actions from 'nextcloud-vue/dist/Components/Actions'
-import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+
 import MessageBody from './MessageBody/MessageBody'
 
 export default {
 	name: 'Message',
 	components: {
 		Avatar,
-		Actions,
-		ActionButton,
 		MessageBody
 	},
 	props: {
-		/**
-		 * The message username.
-		 */
-		actorDisplayName: {
-			type: String,
-			required: true
-		},
-		/**
-		 * The message timestamp.
-		 */
-		timestamp: {
-			type: Number,
-			default: 0
-		},
 		/**
 		 * The message id.
 		 */
@@ -98,88 +66,55 @@ export default {
 			required: true
 		},
 		/**
-		 * The message object.
+		 * The messages object.
 		 */
-		message: {
-			type: Object,
+		messages: {
+			type: Array,
 			required: true
-		},
-		/**
-		 * The previous message in the list
-		 */
-		previousMessage: {
-			required: true
-		},
-		/**
-		 * The quote object
-		 */
-		quote: {
-			type: Object
 		}
 	},
-	data: function() {
-		return {
-			hover: false
-		}
-	},
+
 	computed: {
-		messageTime() {
-			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		/**
+		 * The message username.
+		 * @returns {string}
+		 */
+		actorDisplayName() {
+			return this.messages[0].actorDisplayName
 		},
 		isTemporary() {
-			return this.timestamp === 0
-		},
-		isSameAuthor() {
-			if (this.previousMessage === undefined) {
-				return false
-			}
-			return this.message.actorId === this.previousMessage.actorId
-		}
-	},
-	methods: {
-		handleDelete() {
-			this.$store.dispatch('deleteMessage', this.message)
+			return this.messages[0].timestamp === 0
 		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables';
 
 .wrapper {
-	width: 100%;
+	max-width: $message-width;
+	display: flex;
+	margin: auto;
 	padding: 0 0 0 0;
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
 }
 
-.message {
+.messages {
 	display: flex;
-	max-width: 600px;
-	padding: 8px 0 8px 52px;
-	margin: auto;
-	&-avatar {
+	padding: 8px 0 8px 0;
+	flex-direction: column;
+	&__avatar {
+		min-height: 100%;
 		width: 52px;
 		min-width: 52px;
 		padding: 4px 8px 0 8px;
-	}
-	&-right {
-		display: flex;
-		min-width: 110px;
-		color: #989898;
-		padding: 0 8px 0 8px;
-	}
-
-	.actions {
-		position: absolute;
-		margin: -14px 0 0 50px;
-		padding:2px;
+		&__icon {
+			position: sticky;
+			top: 16px;
+		}
 	}
 }
-
-.same-author {
-	padding: 0 0 8px 52px;
-}
-
 </style>

@@ -28,41 +28,28 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 </docs>
 
 <template>
-	<DynamicScroller
-		:items="messagesList"
-		:min-item-size="60"
+	<virtual-list :size="40" :remain="8" :variable="true"
 		class="scroller">
-		<template v-slot="{ item, index, active }">
-			<DynamicScrollerItem
-				:item="item"
-				:active="active"
-				:size-dependencies="[
-					item.messageText,
-				]"
-				:data-index="item.id">
-				<Message
-					v-bind="item"
-					:message="item"
-					:parent="messages[item.parent]"
-					:previous-message="messagesList[index-1]"
-					@deleteMessage="handleDeleteMessage" />
-			</DynamicScrollerItem>
-		</template>
-	</DynamicScroller>
+		<Message
+			v-for="item of messagesGroupedByAuthor"
+			:key="item[0].id"
+			:style="{ height: item.height + 'px' }"
+			v-bind="item"
+			:messages="item"
+			@deleteMessage="handleDeleteMessage" />
+	</virtual-list>
 </template>
 
 <script>
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller/dist/vue-virtual-scroller.umd.js'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import virtualList from 'vue-virtual-scroll-list'
 import Message from './Message/Message'
 import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
 
 export default {
 	name: 'MessagesList',
 	components: {
-		DynamicScroller,
-		DynamicScrollerItem,
-		Message
+		Message,
+		virtualList
 	},
 
 	props: {
