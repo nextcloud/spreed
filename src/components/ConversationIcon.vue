@@ -30,7 +30,7 @@
 
 <script>
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
-import { Conversation } from '../constants'
+import { CONVERSATION } from '../constants'
 
 export default {
 	name: 'ConversationIcon',
@@ -55,11 +55,11 @@ export default {
 				return 'icon-file'
 			} else if (this.item.objectType === 'share:password') {
 				return 'icon-password'
-			} else if (this.item.type === Conversation.Type.CHANGELOG) {
+			} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 				return 'icon-changelog'
-			} else if (this.item.type === Conversation.Type.GROUP) {
+			} else if (this.item.type === CONVERSATION.TYPE.GROUP) {
 				return 'icon-contacts'
-			} else if (this.item.type === Conversation.Type.PUBLIC) {
+			} else if (this.item.type === CONVERSATION.TYPE.PUBLIC) {
 				return 'icon-public'
 			}
 

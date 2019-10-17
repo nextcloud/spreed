@@ -17,37 +17,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-export const Conversation = {
-	StartCall: {
+export const CONVERSATION = {
+	START_CALL: {
 		EVERYONE: 0,
 		USERS: 1,
 		MODERATORS: 2
 	},
-	State: {
+	STATE: {
 		READ_WRITE: 0,
 		READ_ONLY: 1
 	},
-	Type: {
+	TYPE: {
 		ONE_TO_ONE: 1,
 		GROUP: 2,
 		PUBLIC: 3,
 		CHANGELOG: 4
 	}
 }
-export const Participant = {
-	CallFlag: {
+export const PARTICIPANT = {
+	CALL_FLAG: {
 		DISCONNECTED: 0,
 		IN_CALL: 1,
 		WITH_AUDIO: 2,
 		WITH_VIDEO: 4
 	},
-	Notify: {
+	NOTIFY: {
 		DEFAULT: 0,
 		ALWAYS: 1,
 		MENTION: 2,
 		NEVER: 3
 	},
-	Type: {
+	TYPE: {
 		OWNER: 1,
 		MODERATOR: 2,
 		USER: 3,
@@ -56,8 +56,8 @@ export const Participant = {
 		GUEST_MODERATOR: 6
 	}
 }
-export const Webinar = {
-	Lobby: {
+export const WEBINAR = {
+	LOBBY: {
 		NONE: 0,
 		NON_MODERATORS: 1
 	}
