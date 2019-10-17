@@ -91,6 +91,33 @@
 	justify-content: center;
 }
 
+#talk-sidebar .emptycontent.room-not-joined {
+	/* Override "margin-top: 30vh" set in server, as the message is already
+	 * centered in the Talk sidebar. */
+	margin-top: unset;
+
+	button {
+		padding-left: 24px;
+		padding-right: 24px;
+
+		.icon-loading-small {
+			/* Prevent the text from being moved when the icon is shown. */
+			position: absolute;
+
+			margin-left: 5px;
+			margin-top: 1px;
+
+			/* Unset the size set by the server for icons in empty content */
+			width: unset;
+			height: unset;
+
+			&.hidden {
+				display: none;
+			}
+		}
+	}
+}
+
 #talk-sidebar #emptycontent {
 	position: relative;
 

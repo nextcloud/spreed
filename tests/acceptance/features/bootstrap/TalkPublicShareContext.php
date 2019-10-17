@@ -34,12 +34,28 @@ class TalkPublicShareContext extends PublicShareContext {
 	}
 
 	/**
+	 * @return Locator
+	 */
+	public static function joinTheConversationButton() {
+		return Locator::forThe()->css(".room-not-joined button")->
+				descendantOf(self::talkSidebar())->
+				describedAs("Join the conversation button in the Talk sidebar in the public share page");
+	}
+
+	/**
 	 * @override I see that the current page is the shared link I wrote down
 	 */
 	public function iSeeThatTheCurrentPageIsTheSharedLinkIWroteDown() {
 		parent::iSeeThatTheCurrentPageIsTheSharedLinkIWroteDown();
 
 		$this->setChatAncestorForActor(self::talkSidebar(), $this->actor);
+	}
+
+	/**
+	 * @When I join the conversation in the Talk sidebar in the public share page
+	 */
+	public function iJoinTheConversationInTheTalkSidebarInThePublicSharePage() {
+		$this->actor->find(self::joinTheConversationButton(), 10)->click();
 	}
 
 	/**

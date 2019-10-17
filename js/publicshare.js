@@ -53,6 +53,27 @@
 
 			OCA.SpreedMe.app._localVideoView.render();
 			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
+
+			this._$roomNotJoinedMessage = $(
+				'<div class="emptycontent room-not-joined">' +
+				'    <div class="icon icon-talk"></div>' +
+				'    <h2>' + t('spreed', 'Join the conversation') + '</h2>' +
+				'    <button class="primary" disabled="disabled">' + t('spreed', 'Join') + '<span class="icon icon-loading-small hidden"/></button>' +
+				'</div>');
+
+			this._$joinRoomButton = this._$roomNotJoinedMessage.find('button');
+			this._$joinRoomButton.click(function() {
+				// TODO The button should be enabled again and a notification
+				// shown in case of failure, but the signaling object currently
+				// does not provide a way to know that joining the room failed
+				// (in fact, it will redirect to the main Talk UI).
+				this._$joinRoomButton.prop('disabled', true);
+				this._$joinRoomButton.find('.icon-loading-small').removeClass('hidden');
+
+				OCA.SpreedMe.app.signaling.joinRoom(OCA.SpreedMe.app.token);
+			}.bind(this));
+
+			$('#talk-sidebar').append(this._$roomNotJoinedMessage);
 		},
 
 		enableTalkSidebar: function() {
@@ -120,6 +141,8 @@
 				}
 
 				OCA.SpreedMe.app.signaling.syncRooms().then(function() {
+					self._$roomNotJoinedMessage.remove();
+
 					OCA.SpreedMe.app._chatView.$el.appendTo('#talk-sidebar');
 					OCA.SpreedMe.app._chatView.setTooltipContainer($('body'));
 
@@ -158,12 +181,6 @@
 					OCA.SpreedMe.app._chatView.setRoom(OCA.SpreedMe.app.activeRoom);
 					OCA.SpreedMe.app._messageCollection.setRoomToken(OCA.SpreedMe.app.activeRoom.get('token'));
 					OCA.SpreedMe.app._messageCollection.receiveMessages();
-
-					self.showTalkSidebar().then(function() {
-						// Once the sidebar is shown its size has changed, so
-						// the chat view needs to handle a size change.
-						OCA.SpreedMe.app._chatView.handleSizeChanged();
-					});
 				});
 			});
 		},
@@ -173,7 +190,10 @@
 			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
 			OCA.SpreedMe.app.token = token;
-			OCA.SpreedMe.app.signaling.joinRoom(token);
+
+			this.showTalkSidebar().then(function() {
+				this._$joinRoomButton.prop('disabled', false);
+			}.bind(this));
 		},
 
 		_updateCallContainer: function() {

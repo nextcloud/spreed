@@ -48,6 +48,7 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     And I see that the current participant is the user "user0"
     # Visit the Home page so the header shows again the list of apps
     When I visit the Home page
@@ -69,6 +70,7 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     And I see that the current participant is the user "admin"
     # Log in with the same user from a different window to check Talk while the
     # original window is in the public share page
@@ -99,6 +101,7 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     When I type a new chat message with the text "Hello @"
     And I choose the candidate mention for "user0"
     And I send the current chat message
@@ -117,6 +120,7 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     When I send a new chat message with the text "Hello @user0"
     Then I see that the message 1 was sent by "admin" with the text "Hello user0"
     And I see that the message 1 contains a formatted mention of "user0"
@@ -137,11 +141,13 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     And I act as Jim
     And I am logged in as the admin
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     When I act as Jane
     And I type a new chat message with the text "Hello @"
     And I choose the candidate mention for "admin"
@@ -170,11 +176,13 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     And I set my guest name to "Cat"
     And I act as Jim
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     When I type a new chat message with the text "Hello @"
     And I choose the candidate mention for "Cat"
     And I send the current chat message
@@ -195,6 +203,7 @@ Feature: public share
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
     And I see that the Talk sidebar is shown in the public share page
+    And I join the conversation in the Talk sidebar in the public share page
     When I type a new chat message with the text "Hello @"
     And I choose the candidate mention for "welcome.txt"
     And I send the current chat message
