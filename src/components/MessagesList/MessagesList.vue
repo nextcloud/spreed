@@ -30,7 +30,7 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 <template>
 	<virtual-list :size="40" :remain="8" :variable="true"
 		class="scroller">
-		<Message
+		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"
 			:key="item[0].id"
 			:style="{ height: item.height + 'px' }"
@@ -42,13 +42,13 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 
 <script>
 import virtualList from 'vue-virtual-scroll-list'
-import Message from './Message/Message'
+import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
 
 export default {
 	name: 'MessagesList',
 	components: {
-		Message,
+		MessagesGroup,
 		virtualList
 	},
 

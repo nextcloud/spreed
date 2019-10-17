@@ -26,19 +26,19 @@ the main body of the message as well as a quote.
 
 <template>
 	<div
-		class="message-body"
+		class="message"
 		:class="{ 'hover': hover }"
 		@mouseover="hover=true"
 		@mouseleave="hover=false">
-		<div class="message-body__author">
+		<div class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
-		<div class="message-body__main">
-			<div class="message-body__main__text">
+		<div class="message__main">
+			<div class="message__main__text">
 				<p>{{ message }}</p>
 			</div>
-			<div v-show="isTemporary" class="message-right icon-loading-small" />
-			<div v-show="!isTemporary" class="message-right">
+			<div v-show="isTemporary" class="message__main__right icon-loading-small" />
+			<div v-show="!isTemporary" class="message__main__right">
 				<h6>{{ messageTime }}</h6>
 				<Actions v-show="hover" class="actions">
 					<ActionButton icon="icon-delete" @click="handleDelete">
@@ -58,7 +58,7 @@ import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 
 export default {
-	name: 'MessageBody',
+	name: 'Message',
 	components: {
 		Actions,
 		ActionButton
@@ -125,8 +125,8 @@ export default {
 <style lang="scss" scoped>
 @import '../../../../assets/variables';
 
-.message-body {
-	width: 100%;
+.message {
+	min-width: 100%;
 	padding: 4px 0 4px 0;
 	flex-direction: column;
 	&:hover {
@@ -138,9 +138,13 @@ export default {
 	&__main {
 		display: flex;
 		justify-content: space-between;
+		min-width: 100%;
 		&__text {
-			width: $message-text-width;
+			width: 400px;
 			color: var(--color-text-light);
+		}
+		&__right {
+			width: 80px;
 		}
 	}
 }

@@ -28,7 +28,7 @@
 				:display-name="actorDisplayName" />
 		</div>
 		<div class="messages">
-			<MessageBody
+			<Message
 				v-for="message of messages"
 				v-bind="message"
 				:key="message.id"
@@ -42,13 +42,13 @@
 <script>
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 
-import MessageBody from './MessageBody/MessageBody'
+import Message from './Message/Message'
 
 export default {
-	name: 'Message',
+	name: 'MessagesGroup',
 	components: {
 		Avatar,
-		MessageBody
+		Message
 	},
 	props: {
 		/**
