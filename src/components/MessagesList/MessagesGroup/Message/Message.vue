@@ -30,7 +30,7 @@ the main body of the message as well as a quote.
 		:class="{ 'hover': hover }"
 		@mouseover="hover=true"
 		@mouseleave="hover=false">
-		<div class="message__author">
+		<div v-if="isFirstMessage" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<div class="message__main">
@@ -40,7 +40,7 @@ the main body of the message as well as a quote.
 			<div v-show="isTemporary" class="message__main__right icon-loading-small" />
 			<div v-show="!isTemporary" class="message__main__right">
 				<h6>{{ messageTime }}</h6>
-				<Actions v-show="hover" class="actions">
+				<Actions v-show="hover" class="message__main__right__actions">
 					<ActionButton icon="icon-delete" @click="handleDelete">
 						Delete
 					</ActionButton>
@@ -107,6 +107,10 @@ export default {
 		isTemporary: {
 			type: Boolean,
 			required: true
+		},
+		isFirstMessage: {
+			type: Boolean,
+			required: true
 		}
 	},
 	computed: {
@@ -126,12 +130,8 @@ export default {
 @import '../../../../assets/variables';
 
 .message {
-	min-width: 100%;
 	padding: 4px 0 4px 0;
 	flex-direction: column;
-	&:hover {
-		background-color: rgba(47, 47, 47, 0.068);
-	}
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -140,38 +140,24 @@ export default {
 		justify-content: space-between;
 		min-width: 100%;
 		&__text {
-			width: 400px;
+			flex: 1 1 400px;
 			color: var(--color-text-light);
-		}
-		&__right {
-			width: 80px;
-		}
-	}
-}
-
-.message {
-	&-main {
-		display: inline-flex;
-		flex-grow: 1;
-		flex-direction: column;
-
-		&--quote {
+			&--quote {
 			border-left: 4px solid var(--color-primary);
 			padding: 4px 0 0 8px;
+			}
+		}
+		&__right {
+			flex: 0 0 150px;
+			display: flex;
+			color: var(--color-text-maxcontrast);
+			font-size: 13px;
+			padding: 0 8px 0 8px;
+			&__actions {
+				position: absolute;
+				margin: -10px 0 0 60px
+			}
 		}
 	}
 }
-
-.right {
-		display: flex;
-		min-width: 110px;
-		color: #989898;
-		padding: 0 8px 0 8px;
-	}
-
-	.actions {
-		position: absolute;
-		margin: -14px 0 0 50px;
-		padding:2px;
-	}
 </style>

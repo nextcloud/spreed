@@ -29,8 +29,9 @@
 		</div>
 		<div class="messages">
 			<Message
-				v-for="message of messages"
+				v-for="(message, index) of messages"
 				v-bind="message"
+				:isFirstMessage="index === 0"
 				:key="message.id"
 				:hover="hover"
 				:actor-display-name="actorDisplayName"
@@ -103,17 +104,17 @@ export default {
 }
 
 .messages {
+	flex: auto;
 	display: flex;
 	padding: 8px 0 8px 0;
 	flex-direction: column;
 	&__avatar {
 		min-height: 100%;
-		width: 52px;
-		min-width: 52px;
-		padding: 4px 8px 0 8px;
+		flex: 0 0 52px;
+		padding: 20px 8px 10px 8px;
 		&__icon {
 			position: sticky;
-			top: 16px;
+			top: 12px;
 		}
 	}
 }
