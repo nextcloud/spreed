@@ -32,7 +32,7 @@
 				:display-name="actorDisplayName" />
 		</div>
 		<div class="message" :class="{'same-author': isSameAuthor}">
-			<MessageBody v-bind="message" :isSameAuthor="isSameAuthor">
+			<MessageBody v-bind="message" :is-same-author="isSameAuthor">
 				<MessageBody
 					v-if="quote !== {}"
 					v-bind="quote" />

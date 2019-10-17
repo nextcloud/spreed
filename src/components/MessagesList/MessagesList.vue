@@ -45,8 +45,7 @@ the DynamicScroller component, whose docs you can find [here.](https://github.co
 					:message="item"
 					:parent="messages[item.parent]"
 					:previous-message="messagesList[index-1]"
-					@deleteMessage="handleDeleteMessage">
-				</Message>
+					@deleteMessage="handleDeleteMessage" />
 			</DynamicScrollerItem>
 		</template>
 	</DynamicScroller>
@@ -105,6 +104,23 @@ export default {
 		 */
 		messages() {
 			return this.$store.getters.messages(this.token)
+		},
+		/**
+		 * Creates an array of messages grouped in nested arrays by same autor.
+		 * @returns {array}
+		 */
+		messagesGroupedByAuthor() {
+			let groups = []
+			let currentAuthor = ''
+			for (let message of this.messagesList) {
+				if (message.actorId !== currentAuthor) {
+					groups.push([message])
+					currentAuthor = message.actorId
+				} else {
+					groups[groups.length - 1].push(message)
+				}
+			}
+			return groups
 		}
 	},
 
