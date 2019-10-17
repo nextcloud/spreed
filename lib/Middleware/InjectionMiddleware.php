@@ -22,9 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
-use OC\AppFramework\Utility\ControllerMethodReflector;
 use OCA\Talk\Controller\AEnvironmentAwareController;
-use OCA\Talk\Controller\EnvironmentAwareTrait;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -41,14 +39,14 @@ use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\IRequest;
-use OCP\IUserSession;
 
 class InjectionMiddleware extends Middleware {
 
 	/** @var IRequest */
 	private $request;
-	/** @var ControllerMethodReflector */
+	/** @var IControllerMethodReflector */
 	private $reflector;
 	/** @var TalkSession */
 	private $talkSession;
@@ -58,7 +56,7 @@ class InjectionMiddleware extends Middleware {
 	private $userId;
 
 	public function __construct(IRequest $request,
-								ControllerMethodReflector $reflector,
+								IControllerMethodReflector $reflector,
 								TalkSession $talkSession,
 								Manager $manager,
 								?string $userId) {

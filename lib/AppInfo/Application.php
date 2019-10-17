@@ -67,33 +67,11 @@ class Application extends App {
 	public function __construct(array $urlParams = []) {
 		parent::__construct('spreed', $urlParams);
 
-		$server = $this->getContainer()->getServer();
-		$this->getContainer()->registerService('CanUseTalkMiddleware', function() use ($server) {
-			/** @var Config $config */
-			$config = $server->query(Config::class);
-			$user = $server->getUserSession()->getUser();
-
-			return new CanUseTalkMiddleware(
-				!$user instanceof IUser ||
-				!$config->isDisabledForUser($user)
-			);
-		});
-
-		$this->getContainer()->registerService('InjectionMiddleware', function() use ($server) {
-			return new InjectionMiddleware(
-				$server->getRequest(),
-				$server->query(IControllerMethodReflector::class),
-				$this->getContainer()->query(TalkSession::class),
-				$this->getContainer()->query(Manager::class),
-				$this->getContainer()->query('userId')
-			);
-		});
-
 		// This needs to be in the constructor,
 		// because otherwise the middleware is registered on a wrong object,
 		// when it is requested by the Router.
-		$this->getContainer()->registerMiddleWare('CanUseTalkMiddleware');
-		$this->getContainer()->registerMiddleWare('InjectionMiddleware');
+		$this->getContainer()->registerMiddleWare(CanUseTalkMiddleware::class);
+		$this->getContainer()->registerMiddleWare(InjectionMiddleware::class);
 	}
 
 	public function register(): void {
