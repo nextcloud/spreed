@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Middleware;
 
+use OCA\Talk\Config;
 use OCA\Talk\Exceptions\ForbiddenException;
 use OCA\Talk\Middleware\Exceptions\CanNotUseTalkException;
 use OCP\AppFramework\Controller;
@@ -31,14 +32,20 @@ use OCP\AppFramework\Http\RedirectToDefaultAppResponse;
 use OCP\AppFramework\Middleware;
 use OCP\AppFramework\OCS\OCSException;
 use OCP\AppFramework\OCSController;
+use OCP\IUser;
+use OCP\IUserSession;
 
 class CanUseTalkMiddleware extends Middleware {
 
-	/** @var bool */
-	private $canAccessTalk;
+	/** @var IUserSession */
+	private $userSession;
+	/** @var Config */
+	private $config;
 
-	public function __construct(bool $canAccessTalk) {
-		$this->canAccessTalk = $canAccessTalk;
+	public function __construct(IUserSession $userSession,
+								Config $config) {
+		$this->userSession = $userSession;
+		$this->config = $config;
 	}
 
 	/**
@@ -48,7 +55,8 @@ class CanUseTalkMiddleware extends Middleware {
 	 * @throws CanNotUseTalkException
 	 */
 	public function beforeController($controller, $methodName): void {
-		if (!$this->canAccessTalk) {
+		$user = $this->userSession->getUser();
+		if ($user instanceof IUser && $this->config->isDisabledForUser($user)) {
 			throw new CanNotUseTalkException();
 		}
 	}
