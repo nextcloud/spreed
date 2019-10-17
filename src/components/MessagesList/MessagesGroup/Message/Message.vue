@@ -37,9 +37,9 @@ the main body of the message as well as a quote.
 			<div class="message__main__text">
 				<p>{{ message }}</p>
 			</div>
-			<div v-show="isTemporary" class="message__main__right icon-loading-small" />
-			<div v-show="!isTemporary" class="message__main__right">
-				<h6>{{ messageTime }}</h6>
+			<div class="message__main__right">
+				<div v-show="isTemporary" class="icon-loading-small" />
+				<h6 v-show="!isTemporary">{{ messageTime }}</h6>
 				<Actions v-show="hover" class="message__main__right__actions">
 					<ActionButton icon="icon-delete" @click="handleDelete">
 						Delete
@@ -148,14 +148,17 @@ export default {
 			}
 		}
 		&__right {
-			flex: 0 0 150px;
+			justify-self: flex-start;
+			position: relative;
+			flex: 0 0 110px;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: 13px;
 			padding: 0 8px 0 8px;
 			&__actions {
 				position: absolute;
-				margin: -10px 0 0 60px
+				top: -50%;
+				right: 0;
 			}
 		}
 	}

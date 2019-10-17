@@ -68,9 +68,10 @@ export default {
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
 				actorDisplayName: OC.getCurrentUser().displayName,
-				actorId: OC.getCurrentUser().Id,
+				actorId: OC.getCurrentUser().uid,
 				message: this.text,
-				token: this.token
+				token: this.token,
+				timestamp: 0
 			})
 			return message
 		},

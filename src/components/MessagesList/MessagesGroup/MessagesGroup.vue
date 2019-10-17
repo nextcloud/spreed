@@ -35,7 +35,7 @@
 				:key="message.id"
 				:hover="hover"
 				:actor-display-name="actorDisplayName"
-				:isTemporary="isTemporary" />
+				:isTemporary="message.timestamp === 0" />
 		</div>
 	</div>
 </template>
@@ -82,9 +82,6 @@ export default {
 		 */
 		actorDisplayName() {
 			return this.messages[0].actorDisplayName
-		},
-		isTemporary() {
-			return this.messages[0].timestamp === 0
 		}
 	}
 }
@@ -109,13 +106,10 @@ export default {
 	padding: 8px 0 8px 0;
 	flex-direction: column;
 	&__avatar {
-		min-height: 100%;
-		flex: 0 0 52px;
-		padding: 20px 8px 10px 8px;
-		&__icon {
-			position: sticky;
-			top: 12px;
-		}
+		position: sticky;
+		top: 0px;
+		height: 52px;
+		padding: 20px 10px 10px 10px;
 	}
 }
 </style>
