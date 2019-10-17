@@ -85,14 +85,14 @@ video {
 }
 
 .videoContainer .avatar-container {
-	display: flex;
-	margin-bottom: 50px;
-}
-.videoContainer .avatar-container.hidden {
-	display: none;
+	position: absolute;
+	bottom: 44px;
+	left: 0;
+	width: 100%;
 }
 .videoContainer .avatar-container .avatar {
-	display: inline-block;
+	margin-left: auto;
+	margin-right: auto;
 }
 .videoContainer.promoted .avatar-container {
 	top: 30%;
