@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import Command from '../components/Command'
+import Command from '../../components/AdminSettings/Command'
 
 export default {
 	name: 'Commands',
