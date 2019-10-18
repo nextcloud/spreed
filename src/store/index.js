@@ -22,8 +22,9 @@
 
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
-import conversationsStore from './conversations'
-import messagesStore from './messages'
+import conversationsStore from './conversationsStore'
+import messagesStore from './messagesStore'
+import quoteReplyStore from './quoteReplyStore'
 
 Vue.use(Vuex)
 
@@ -32,7 +33,8 @@ const mutations = {}
 export default new Store({
 	modules: {
 		conversationsStore,
-		messagesStore
+		messagesStore,
+		quoteReplyStore
 	},
 
 	mutations,

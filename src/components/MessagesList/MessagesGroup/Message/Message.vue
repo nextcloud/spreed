@@ -42,10 +42,16 @@ the main body of the message as well as a quote.
 					{{ messageTime }}
 				</h6>
 				<Actions v-show="showActions" class="message__main__right__actions">
-					<ActionButton icon="icon-reply" :closeAfterClick="true"	 @click="handleReply">
+					<ActionButton
+						icon="icon-reply"
+						:close-after-click="true"
+						@click.stop="handleReply">
 						Reply
 					</ActionButton>
-					<ActionButton icon="icon-delete" :closeAfterClick="true" @click="handleDelete">
+					<ActionButton
+						icon="icon-delete"
+						:close-after-click="true"
+						@click.stop="handleDelete">
 						Delete
 					</ActionButton>
 				</Actions>
@@ -121,6 +127,13 @@ export default {
 		isFirstMessage: {
 			type: Boolean,
 			required: true
+		},
+		/**
+		 * The conversation token.
+		 */
+		token: {
+			type: String,
+			required: true
 		}
 	},
 	data() {
@@ -138,9 +151,10 @@ export default {
 			const MESSAGE_TO_BE_REPLIED = {
 				id: this.id,
 				author: this.actorDisplayName,
-				message: this.message
+				message: this.message,
+				token: this.token
 			}
-			this.$emit('reply', MESSAGE_TO_BE_REPLIED)
+			this.$store.dispatch('addMessageToBeReplied', MESSAGE_TO_BE_REPLIED)
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
