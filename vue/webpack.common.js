@@ -5,7 +5,6 @@ module.exports = {
 	entry: {
 		"collections": path.join(__dirname, 'src', 'collections.js'),
 		"collectionsintegration": path.join(__dirname, 'src', 'collectionsintegration.js'),
-		"admin/general-settings": path.join(__dirname, 'src', 'GeneralSettings.js'),
 		"admin/signaling-server": path.join(__dirname, 'src', 'SignalingServerSettings.js'),
 		"admin/stun-server": path.join(__dirname, 'src', 'StunServerSettings.js'),
 		"admin/turn-server": path.join(__dirname, 'src', 'TurnServerSettings.js'),

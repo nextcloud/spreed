@@ -5,7 +5,8 @@ const StyleLintPlugin = require('stylelint-webpack-plugin')
 module.exports = {
 	entry: {
 		'admin/allowed-groups': path.join(__dirname, 'src', 'AllowedGroupsSettings.js'),
-		"admin/commands": path.join(__dirname, 'src', 'CommandsSettings.js'),
+		'admin/commands': path.join(__dirname, 'src', 'CommandsSettings.js'),
+		'admin/general-settings': path.join(__dirname, 'src', 'GeneralSettings.js'),
 		'talk': path.join(__dirname, 'src', 'main.js')
 	},
 	output: {
