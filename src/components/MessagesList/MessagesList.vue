@@ -23,47 +23,35 @@
 This component is a wrapper for the list of messages. It's main purpose it to
 get the messagesList array and loop through the list to generate the messages.
 In order not to render each and every messages that is in the store, we use
-the DynamicScroller component, whose docs you can find [here.](https://github.com/Akryum/vue-virtual-scroller#dynamicscroller)
+the Vue virtual scroll list component, whose docs you can find [here.](https://github.com/tangbc/vue-virtual-scroll-list)
 
 </docs>
 
 <template>
-	<DynamicScroller
-		:items="messagesList"
-		:min-item-size="60"
+	<!-- size and remain refer to the amount and initial height of the items that
+	are outside of the viewport -->
+	<virtual-list :size="40" :remain="8" :variable="true"
 		class="scroller">
-		<template v-slot="{ item, index, active }">
-			<DynamicScrollerItem
-				:item="item"
-				:active="active"
-				:size-dependencies="[
-					item.messageText,
-				]"
-				:data-index="item.id">
-				<Message v-bind="item" :message="item" @deleteMessage="handleDeleteMessage">
-					<MessageBody v-bind="item">
-						<MessageBody v-if="item.parent" v-bind="messages[item.parent]" />
-					</MessageBody>
-				</Message>
-			</DynamicScrollerItem>
-		</template>
-	</DynamicScroller>
+		<MessagesGroup
+			v-for="item of messagesGroupedByAuthor"
+			:key="item[0].id"
+			:style="{ height: item.height + 'px' }"
+			v-bind="item"
+			:messages="item"
+			@deleteMessage="handleDeleteMessage" />
+	</virtual-list>
 </template>
 
 <script>
-import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller/dist/vue-virtual-scroller.umd.js'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
-import Message from './Message/Message'
-import MessageBody from './MessageBody/MessageBody'
+import virtualList from 'vue-virtual-scroll-list'
+import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
 
 export default {
 	name: 'MessagesList',
 	components: {
-		DynamicScroller,
-		DynamicScrollerItem,
-		Message,
-		MessageBody
+		MessagesGroup,
+		virtualList
 	},
 
 	props: {
@@ -105,6 +93,23 @@ export default {
 		 */
 		messages() {
 			return this.$store.getters.messages(this.token)
+		},
+		/**
+		 * Creates an array of messages grouped in nested arrays by same autor.
+		 * @returns {array}
+		 */
+		messagesGroupedByAuthor() {
+			let groups = []
+			let currentAuthor = ''
+			for (let message of this.messagesList) {
+				if (message.actorId !== currentAuthor) {
+					groups.push([message])
+					currentAuthor = message.actorId
+				} else {
+					groups[groups.length - 1].push(message)
+				}
+			}
+			return groups
 		}
 	},
 

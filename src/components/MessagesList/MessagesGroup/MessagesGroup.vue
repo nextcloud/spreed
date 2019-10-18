@@ -19,86 +19,96 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 
-<docs>
-This component displays the text inside the message component and can be used for
-the main body of the message as well as a quote.
-</docs>
-
 <template>
-	<div v-show="message"
-		:class="{ 'message-main--quote' : isQuote }"
-		class="message-main">
-		<div v-if="showAuthor" class="message-main-header">
-			<h6>{{ actorDisplayName }}</h6>
+	<div class="wrapper">
+		<div class="messages__avatar">
+			<Avatar
+				class="messages__avatar__icon"
+				:user="actorDisplayName"
+				:display-name="actorDisplayName" />
 		</div>
-		<slot />
-		<div class="message-main-text">
-			<p>{{ message }}</p>
+		<div class="messages">
+			<Message
+				v-for="(message, index) of messages"
+				:key="message.id"
+				v-bind="message"
+				:is-first-message="index === 0"
+				:actor-display-name="actorDisplayName"
+				:is-temporary="message.timestamp === 0" />
 		</div>
 	</div>
 </template>
 
 <script>
+import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+
+import Message from './Message/Message'
+
 export default {
-	inheritAttrs: false,
+	name: 'MessagesGroup',
+	components: {
+		Avatar,
+		Message
+	},
 	props: {
 		/**
-		 * The sender of the message.
+		 * The message id.
 		 */
-		actorDisplayName: {
+		id: {
+			type: Number,
+			required: true
+		},
+		/**
+		 * The conversation token.
+		 */
+		token: {
 			type: String,
 			required: true
 		},
 		/**
-		 * The message or quote text.
+		 * The messages object.
 		 */
-		message: {
-			type: String,
+		messages: {
+			type: Array,
 			required: true
-		},
+		}
+	},
+
+	computed: {
 		/**
-		 * if true, it displays the message author on top of the message.
+		 * The message username.
+		 * @returns {string}
 		 */
-		showAuthor: {
-			type: Boolean,
-			default: true
-		},
-		/**
-		 * Style the message as a quote.
-		 */
-		isQuote: {
-			type: Boolean,
-			default: false
+		actorDisplayName() {
+			return this.messages[0].actorDisplayName
 		}
 	}
 }
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables';
+
 .wrapper {
-	width: 100%;
-	padding: 4px 0 4px 0;
-	&:hover {
+	max-width: $message-width;
+	display: flex;
+	margin: auto;
+	padding: 0;
+	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}
 }
 
-.message {
-	&-main {
-		display: flex;
-		flex-grow: 1;
-		flex-direction: column;
-		&-header {
-			color: var(--color-text-maxcontrast);
-		}
-		&-text {
-			color: var(--color-text-light);
-		}
-		&--quote {
-			border-left: 4px solid var(--color-primary);
-			padding: 4px 0 0 8px;
-		}
+.messages {
+	flex: auto;
+	display: flex;
+	padding: 8px 0 8px 0;
+	flex-direction: column;
+	&__avatar {
+		position: sticky;
+		top: 0px;
+		height: 52px;
+		padding: 20px 10px 10px 10px;
 	}
 }
-
 </style>
