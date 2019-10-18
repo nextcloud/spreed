@@ -33,7 +33,6 @@
 				:key="message.id"
 				v-bind="message"
 				:is-first-message="index === 0"
-				:hover="hover"
 				:actor-display-name="actorDisplayName"
 				:is-temporary="message.timestamp === 0" />
 		</div>

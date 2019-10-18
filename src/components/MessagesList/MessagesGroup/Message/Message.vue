@@ -28,6 +28,7 @@ the main body of the message as well as a quote.
 	<div
 		class="message"
 		:class="{ 'hover': hover }"
+		@click="onClick"
 		@mouseover="hover=true"
 		@mouseleave="hover=false">
 		<div v-if="isFirstMessage" class="message__author">
@@ -42,7 +43,7 @@ the main body of the message as well as a quote.
 				<h6 v-else>
 					{{ messageTime }}
 				</h6>
-				<Actions v-show="hover" class="message__main__right__actions">
+				<Actions v-show="showActions" class="message__main__right__actions">
 					<ActionButton icon="icon-delete" @click="handleDelete">
 						Delete
 					</ActionButton>
@@ -58,6 +59,7 @@ the main body of the message as well as a quote.
 <script>
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import isMobile from 'nextcloud-vue/dist/Mixins/isMobile'
 
 export default {
 	name: 'Message',
@@ -65,6 +67,9 @@ export default {
 		Actions,
 		ActionButton
 	},
+	mixins: [
+		isMobile
+	],
 	props: {
 		/**
 		 * The sender of the message.
@@ -112,17 +117,35 @@ export default {
 	},
 	data() {
 		return {
-			hover: false
+			hover: false,
+			clicked: false
 		}
 	},
 	computed: {
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		},
+		/**
+		 * Determines when actions are shown:
+		 * desktop --> on hover
+		 * mobile --> on tap
+		 * @returns {boolean}
+		 */
+		showActions() {
+			if (this.isMobile && this.clicked) {
+				return true
+			} else if (!this.isMobile && this.hover) {
+				return true
+			} else return false
 		}
 	},
 	methods: {
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
+		},
+		onClick() {
+			this.$emit('clickeddddd')
+			this.clicked = true
 		}
 	}
 }
