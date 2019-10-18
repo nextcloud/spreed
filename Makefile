@@ -15,7 +15,7 @@ all: dev-setup build-js-production
 
 dev-setup: clean-dev npm-init
 
-dependabot: dev-setup npm-update build-js-production compile-handlebars-templates bundle-simplewebrtc
+dependabot: dev-setup npm-update build-js-production bundle-simplewebrtc
 
 release: appstore create-tag
 
@@ -47,9 +47,6 @@ clean:
 clean-dev: clean
 	rm -rf node_modules
 
-compile-handlebars-templates:
-	bash compile-handlebars-templates.sh
-
 bundle-simplewebrtc:
 	# webrtc-adapter uses JavaScript features not supported by browserify,
 	# so the sources need to be transformed using babel to a compatible
@@ -70,8 +67,6 @@ appstore:
 	--exclude=bower.json \
 	--exclude=.bowerrc \
 	--exclude=/build \
-	--exclude=check-handlebars-templates.sh \
-	--exclude=compile-handlebars-templates.sh \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
@@ -82,7 +77,6 @@ appstore:
 	--exclude=.gitignore \
 	--exclude=.jscsrc \
 	--exclude=.jshintignore \
-	--exclude=js/views/templates \
 	--exclude=js/**.js.map \
 	--include=js/simplewebrtc/bundled.js \
 	--exclude=js/simplewebrtc/*.js \
