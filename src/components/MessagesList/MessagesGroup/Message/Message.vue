@@ -27,10 +27,8 @@ the main body of the message as well as a quote.
 <template>
 	<div
 		class="message"
-		:class="{ 'hover': hover }"
-		@click="onClick"
-		@mouseover="hover=true"
-		@mouseleave="hover=false">
+		@mouseover="showActions=true"
+		@mouseleave="showActions=false">
 		<div v-if="isFirstMessage" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
@@ -59,7 +57,6 @@ the main body of the message as well as a quote.
 <script>
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-import isMobile from 'nextcloud-vue/dist/Mixins/isMobile'
 
 export default {
 	name: 'Message',
@@ -67,9 +64,6 @@ export default {
 		Actions,
 		ActionButton
 	},
-	mixins: [
-		isMobile
-	],
 	props: {
 		/**
 		 * The sender of the message.
@@ -117,35 +111,17 @@ export default {
 	},
 	data() {
 		return {
-			hover: false,
-			clicked: false
+			showActions: false
 		}
 	},
 	computed: {
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
-		},
-		/**
-		 * Determines when actions are shown:
-		 * desktop --> on hover
-		 * mobile --> on tap
-		 * @returns {boolean}
-		 */
-		showActions() {
-			if (this.isMobile && this.clicked) {
-				return true
-			} else if (!this.isMobile && this.hover) {
-				return true
-			} else return false
 		}
 	},
 	methods: {
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
-		},
-		onClick() {
-			this.$emit('clickeddddd')
-			this.clicked = true
 		}
 	}
 }
