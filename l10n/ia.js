@@ -1,6 +1,11 @@
 OC.L10N.register(
     "spreed",
     {
+    "Guest" : "Invitato",
+    "UDP only" : "solo UDP",
+    "TCP only" : "solo TCP",
+    "Saved" : "Salveguardate",
+    "TURN server" : "servitor TURN",
     "Copy" : "Copiar",
     "Copied!" : "Copiate!",
     "Not supported!" : "Non supportate!",
@@ -9,17 +14,12 @@ OC.L10N.register(
     "Share link" : "Compartir ligamine",
     "Rename" : "Renominar",
     "You" : "Tu",
-    "Guest" : "Invitato",
     "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
     "Please use a different browser like Firefox or Chrome" : "Per favor, usa un navigator differente tal como Firefox o Chrome",
     "Access to microphone & camera is only possible with HTTPS" : "Accesso al microphono e al camera solmente es possibile per HTTPS",
     "Access to microphone & camera was denied" : "Accesso al microphono e al camera solmente esseva negate",
     "WebRTC is not supported in your browser" : "WebRTC non es supportate per tu navigator",
     "Error while accessing microphone & camera" : "Error durante accesso a microphono e camera",
-    "UDP only" : "solo UDP",
-    "TCP only" : "solo TCP",
-    "Saved" : "Salveguardate",
-    "TURN server" : "servitor TURN",
     ", " : ", "
 },
 "nplurals=2; plural=(n != 1);");
