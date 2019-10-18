@@ -91,7 +91,7 @@ export default {
 	},
 	methods: {
 		handleAbortReply() {
-			this.$store.dispatch('deleteMessage', this.message)
+			this.$store.dispatch('removeMessageToBeReplied', this.token)
 		}
 	}
 }

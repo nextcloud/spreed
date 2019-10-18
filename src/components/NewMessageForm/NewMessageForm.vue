@@ -33,8 +33,8 @@
 				<div class="new-message-form__input">
 					<Quote
 						v-if="messageToBeReplied"
-						:isNewMessageFormQuote="true"
-						:isQuote="true"
+						:is-new-message-form-quote="true"
+						:is-quote="true"
 						v-bind="messageToBeReplied" />
 					<AdvancedInput
 						v-model="text"
