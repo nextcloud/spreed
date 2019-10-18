@@ -5,7 +5,6 @@ module.exports = {
 	entry: {
 		"collections": path.join(__dirname, 'src', 'collections.js'),
 		"collectionsintegration": path.join(__dirname, 'src', 'collectionsintegration.js'),
-		"admin/signaling-server": path.join(__dirname, 'src', 'SignalingServerSettings.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, '../js'),

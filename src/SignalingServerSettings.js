@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import SignalingServers from './views/SignalingServers'
+import SignalingServers from './views/AdminSettings/SignalingServers'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
