@@ -31,9 +31,11 @@
 				<button
 					class="new-message-form__button icon-emoji-smile" />
 				<div class="new-message-form__input">
-					<Message v-if="messageToBeReplied" :isQuote="true" v-bind="messageToBeReplied">
-						{{messageToBeReplied.message}}
-					</Message>
+					<Quote
+						v-if="messageToBeReplied"
+						:isNewMessageFormQuote="true"
+						:isQuote="true"
+						v-bind="messageToBeReplied" />
 					<AdvancedInput
 						v-model="text"
 						@submit="handleSubmit" />
@@ -53,13 +55,13 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import { getCurrentUser } from '@nextcloud/auth'
-import Message from '../MessagesList/MessagesGroup/Message/Message'
+import Quote from './Quote/Quote'
 
 export default {
 	name: 'NewMessageForm',
 	components: {
 		AdvancedInput,
-		Message
+		Quote
 	},
 	data: function() {
 		return {

@@ -25,11 +25,8 @@ the main body of the message as well as a quote.
 </docs>
 
 <template>
-	<div
-		class="message"
-		@mouseover="showActions=true"
-		@mouseleave="showActions=false">
-		<div v-if="isFirstMessage" class="message__author">
+	<div class="message">
+		<div class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<div class="message__main">
@@ -37,23 +34,11 @@ the main body of the message as well as a quote.
 				<p>{{ message }}</p>
 			</div>
 			<div class="message__main__right">
-				<div v-if="isTemporary" class="icon-loading-small" />
-				<h6 v-else>
-					{{ messageTime }}
-				</h6>
-				<Actions v-show="showActions" class="message__main__right__actions">
-					<ActionButton
-						icon="icon-reply"
-						:close-after-click="true"
-						@click.stop="handleReply">
-						Reply
-					</ActionButton>
+				<Actions v-if="isNewMessageFormQuote" class="message__main__right__actions">
 					<ActionButton
 						icon="icon-delete"
 						:close-after-click="true"
-						@click.stop="handleDelete">
-						Delete
-					</ActionButton>
+						@click.stop="handleAbortReply" />
 				</Actions>
 			</div>
 		</div>
@@ -65,7 +50,7 @@ import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 
 export default {
-	name: 'Message',
+	name: 'Quote',
 	components: {
 		Actions,
 		ActionButton
@@ -86,39 +71,10 @@ export default {
 			required: true
 		},
 		/**
-		 * The message timestamp.
-		 */
-		timestamp: {
-			type: Number,
-			default: 0
-		},
-		/**
 		 * The message id.
 		 */
 		id: {
 			type: Number,
-			required: true
-		},
-		/**
-		 * If true, it displays the message author on top of the message.
-		 */
-		showAuthor: {
-			type: Boolean,
-			default: true
-		},
-		/**
-		 * Specifies if the message is temporary in order to display the spinner instead
-		 * of the message time.
-		 */
-		isTemporary: {
-			type: Boolean,
-			required: true
-		},
-		/**
-		 * Specifies if the message is the first of a group of same-author messages.
-		 */
-		isFirstMessage: {
-			type: Boolean,
 			required: true
 		},
 		/**
@@ -127,29 +83,14 @@ export default {
 		token: {
 			type: String,
 			required: true
-		}
-	},
-	data() {
-		return {
-			showActions: false
-		}
-	},
-	computed: {
-		messageTime() {
-			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		},
+		isNewMessageFormQuote: {
+			type: Boolean,
+			default: false
 		}
 	},
 	methods: {
-		handleReply() {
-			const MESSAGE_TO_BE_REPLIED = {
-				id: this.id,
-				actorDisplayName: this.actorDisplayName,
-				message: this.message,
-				token: this.token
-			}
-			this.$store.dispatch('addMessageToBeReplied', MESSAGE_TO_BE_REPLIED)
-		},
-		handleDelete() {
+		handleAbortReply() {
 			this.$store.dispatch('deleteMessage', this.message)
 		}
 	}
@@ -157,10 +98,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../assets/variables';
 
 .message {
-	padding: 4px 0 4px 0;
+	border-left: 4px solid var(--color-primary);
+	margin: 4px 0 4px 0;
+	padding: 0 0 0 10px;
 	flex-direction: column;
 	&__author {
 		color: var(--color-text-maxcontrast);
