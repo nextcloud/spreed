@@ -42,10 +42,10 @@ the main body of the message as well as a quote.
 					{{ messageTime }}
 				</h6>
 				<Actions v-show="showActions" class="message__main__right__actions">
-					<ActionButton icon="icon-delete" @click="handleDelete">
-						Delete
+					<ActionButton icon="icon-reply" :closeAfterClick="true"	 @click="handleReply">
+						Reply
 					</ActionButton>
-					<ActionButton icon="icon-delete" @click="handleDelete">
+					<ActionButton icon="icon-delete" :closeAfterClick="true" @click="handleDelete">
 						Delete
 					</ActionButton>
 				</Actions>
@@ -87,7 +87,14 @@ export default {
 			default: 0
 		},
 		/**
-		 * if true, it displays the message author on top of the message.
+		 * The message id.
+		 */
+		id: {
+			type: Number,
+			required: true
+		},
+		/**
+		 * If true, it displays the message author on top of the message.
 		 */
 		showAuthor: {
 			type: Boolean,
@@ -100,10 +107,17 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		/**
+		 * Specifies if the message is temporary in order to display the spinner instead
+		 * of the message time.
+		 */
 		isTemporary: {
 			type: Boolean,
 			required: true
 		},
+		/**
+		 * Specifies if the message is the first of a group of same-author messages.
+		 */
 		isFirstMessage: {
 			type: Boolean,
 			required: true
@@ -120,6 +134,14 @@ export default {
 		}
 	},
 	methods: {
+		handleReply() {
+			const MESSAGE_TO_BE_REPLIED = {
+				id: this.id,
+				author: this.actorDisplayName,
+				message: this.message
+			}
+			this.$emit('reply', MESSAGE_TO_BE_REPLIED)
+		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
 		}
