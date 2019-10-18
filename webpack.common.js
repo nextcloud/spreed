@@ -8,6 +8,7 @@ module.exports = {
 		'admin/commands': path.join(__dirname, 'src', 'CommandsSettings.js'),
 		'admin/general-settings': path.join(__dirname, 'src', 'GeneralSettings.js'),
 		'admin/stun-server': path.join(__dirname, 'src', 'StunServerSettings.js'),
+		'admin/turn-server': path.join(__dirname, 'src', 'TurnServerSettings.js'),
 		'talk': path.join(__dirname, 'src', 'main.js')
 	},
 	output: {
