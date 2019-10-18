@@ -41,7 +41,7 @@ npm-update:
 	npm update
 
 clean:
-	rm -f js/*
+	rm -rf js/*
 	rm -rf $(build_dir)
 
 clean-dev: clean
