@@ -38,8 +38,10 @@ the main body of the message as well as a quote.
 				<p>{{ message }}</p>
 			</div>
 			<div class="message__main__right">
-				<div v-show="isTemporary" class="icon-loading-small" />
-				<h6 v-show="!isTemporary">{{ messageTime }}</h6>
+				<div v-if="isTemporary" class="icon-loading-small" />
+				<h6 v-else>
+					{{ messageTime }}
+				</h6>
 				<Actions v-show="hover" class="message__main__right__actions">
 					<ActionButton icon="icon-delete" @click="handleDelete">
 						Delete
@@ -62,11 +64,6 @@ export default {
 	components: {
 		Actions,
 		ActionButton
-	},
-	data: function() {
-		return {
-			hover: false
-		}
 	},
 	props: {
 		/**
@@ -113,6 +110,11 @@ export default {
 			required: true
 		}
 	},
+	data() {
+		return {
+			hover: false
+		}
+	},
 	computed: {
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
@@ -157,7 +159,7 @@ export default {
 			padding: 0 8px 0 8px;
 			&__actions {
 				position: absolute;
-				top: -50%;
+				top: -12px;
 				right: 0;
 			}
 		}

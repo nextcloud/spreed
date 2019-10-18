@@ -30,12 +30,12 @@
 		<div class="messages">
 			<Message
 				v-for="(message, index) of messages"
-				v-bind="message"
-				:isFirstMessage="index === 0"
 				:key="message.id"
+				v-bind="message"
+				:is-first-message="index === 0"
 				:hover="hover"
 				:actor-display-name="actorDisplayName"
-				:isTemporary="message.timestamp === 0" />
+				:is-temporary="message.timestamp === 0" />
 		</div>
 	</div>
 </template>
@@ -94,7 +94,7 @@ export default {
 	max-width: $message-width;
 	display: flex;
 	margin: auto;
-	padding: 0 0 0 0;
+	padding: 0;
 	&:focus {
 		background-color: rgba(47, 47, 47, 0.068);
 	}

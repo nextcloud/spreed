@@ -36,6 +36,7 @@
 <script>
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
+import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'NewMessageForm',
@@ -67,8 +68,8 @@ export default {
 		createTemporaryMessage() {
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
-				actorDisplayName: OC.getCurrentUser().displayName,
-				actorId: OC.getCurrentUser().uid,
+				actorDisplayName: getCurrentUser().displayName,
+				actorId: getCurrentUser().uid,
 				message: this.text,
 				token: this.token,
 				timestamp: 0
