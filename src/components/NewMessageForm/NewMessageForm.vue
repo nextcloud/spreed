@@ -20,14 +20,30 @@
 -->
 
 <template>
-	<div class="wrapper">
-		<div class="new-message">
-			<form class="new-message-form">
-				<button class="new-message-form__button icon-clip-add-file" />
-				<button class="new-message-form__button icon-emoji-smile" />
-				<AdvancedInput v-model="text" @submit="handleSubmit" />
-				<button class="new-message-form__button icon-bell-outline" />
-				<button type="submit" class="new-message-form__button icon-folder" @click.prevent="handleSubmit" />
+	<div
+		class="wrapper">
+		<div
+			class="new-message">
+			<form
+				class="new-message-form">
+				<button
+					class="new-message-form__button icon-clip-add-file" />
+				<button
+					class="new-message-form__button icon-emoji-smile" />
+				<div class="new-message-form__input">
+					<Message v-if="messageToBeReplied" :isQuote="true" v-bind="messageToBeReplied">
+						{{messageToBeReplied.message}}
+					</Message>
+					<AdvancedInput
+						v-model="text"
+						@submit="handleSubmit" />
+				</div>
+				<button
+					class="new-message-form__button icon-bell-outline" />
+				<button
+					type="submit"
+					class="new-message-form__button icon-folder"
+					@click.prevent="handleSubmit" />
 			</form>
 		</div>
 	</div>
@@ -37,11 +53,13 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import { getCurrentUser } from '@nextcloud/auth'
+import Message from '../MessagesList/MessagesGroup/Message/Message'
 
 export default {
 	name: 'NewMessageForm',
 	components: {
-		AdvancedInput
+		AdvancedInput,
+		Message
 	},
 	data: function() {
 		return {
@@ -56,6 +74,9 @@ export default {
 		 */
 		token() {
 			return this.$route.params.token
+		},
+		messageToBeReplied() {
+			return this.$store.getters.getMessageToBeReplied(this.token)
 		}
 	},
 	methods: {

@@ -27,8 +27,10 @@ const state = {
 }
 
 const getters = {
-	getMessageToBeReplies: (state) => (token) => {
-		return state.messagesToBeReplied[token]
+	getMessageToBeReplied: (state) => (token) => {
+		if (state.messagesToBeReplied[token]) {
+			return state.messagesToBeReplied[token]
+		}
 	}
 }
 

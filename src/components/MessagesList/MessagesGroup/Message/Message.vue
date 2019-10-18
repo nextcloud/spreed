@@ -150,7 +150,7 @@ export default {
 		handleReply() {
 			const MESSAGE_TO_BE_REPLIED = {
 				id: this.id,
-				author: this.actorDisplayName,
+				actorDisplayName: this.actorDisplayName,
 				message: this.message,
 				token: this.token
 			}
