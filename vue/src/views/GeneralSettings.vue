@@ -29,6 +29,7 @@
 			<Multiselect id="start_calls"
 				v-model="startCalls"
 				:options="startCallOptions"
+				:placeholder="t('spreed', 'Who can start a call?')"
 				label="label"
 				track-by="value" />
 		</p>
