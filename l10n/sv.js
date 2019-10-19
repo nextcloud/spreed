@@ -123,6 +123,8 @@ OC.L10N.register(
     "Conversation not found" : "Konversationen hittades inte",
     "Path is already shared with this room" : "Sökvägen är redan delad med detta rum",
     "Chat, video & audio-conferencing using WebRTC" : "Chatt, video och ljud - konferenser med WebRTC",
+    "Search conversations or contacts" : "Sök konversationer eller kontakter",
+    "Leave Conversation" : "Lämna konversation",
     "Join a conversation or start a new one" : "Anslut till en konversation eller starta en ny",
     "Say hi to your friends and colleagues!" : "Säg hej till dina vänner och kollegor!",
     "None" : "Ingen",
