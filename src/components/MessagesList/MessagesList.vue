@@ -30,7 +30,9 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
-	<virtual-list :size="40" :remain="8" :variable="true"
+	<virtual-list :size="40"
+		:remain="8"
+		:variable="true"
 		class="scroller">
 		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"

@@ -35,7 +35,9 @@
 				<button class="primary">
 					Button 1
 				</button>
-				<input id="link-checkbox" name="link-checkbox" class="checkbox link-checkbox"
+				<input id="link-checkbox"
+					name="link-checkbox"
+					class="checkbox link-checkbox"
 					type="checkbox">
 				<label for="link-checkbox" class="link-checkbox-label">Do something</label>
 			</template>
