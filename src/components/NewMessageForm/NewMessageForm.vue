@@ -33,7 +33,7 @@
 				<div class="new-message-form__input">
 					<Quote
 						v-if="messageToBeReplied"
-						:is-quote="true"
+						:is-new-message-form-quote="true"
 						v-bind="messageToBeReplied" />
 					<AdvancedInput
 						v-model="text"
@@ -54,7 +54,7 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import { getCurrentUser } from '@nextcloud/auth'
-import Quote from './Quote/Quote'
+import Quote from '../MessagesList/MessagesGroup/Message/Quote/Quote'
 
 export default {
 	name: 'NewMessageForm',
@@ -101,7 +101,7 @@ export default {
 			 * temporary message object.
 			 */
 			if (this.messageToBeReplied) {
-				message.parent = this.messageToBeReplied
+				message.parent = this.messageToBeReplied.id
 			}
 			return message
 		},
@@ -132,6 +132,8 @@ export default {
 					const response = await postNewMessage(temporaryMessage)
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
+					// Also remove the message to be replied for this conversation
+					this.$store.dispatch('removeMessageToBeReplied', this.token)
 					// And adds the complete version of the message received
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)

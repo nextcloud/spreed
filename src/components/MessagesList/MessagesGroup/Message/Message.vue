@@ -29,6 +29,7 @@ the main body of the message as well as a quote.
 		class="message"
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
+		<Quote v-if="parent" v-bind="quote" />
 		<div v-if="isFirstMessage" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
@@ -63,12 +64,14 @@ the main body of the message as well as a quote.
 <script>
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import Quote from './Quote/Quote'
 
 export default {
 	name: 'Message',
 	components: {
 		Actions,
-		ActionButton
+		ActionButton,
+		Quote
 	},
 	props: {
 		/**
@@ -127,6 +130,12 @@ export default {
 		token: {
 			type: String,
 			required: true
+		},
+		/**
+		 * The parent message's id.
+		 */
+		parent: {
+			type: Number
 		}
 	},
 	data() {
@@ -137,6 +146,11 @@ export default {
 	computed: {
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		},
+		quote() {
+			if (this.parent) {
+				return this.$store.getters.message(this.token, this.parent)
+			} else return undefined
 		}
 	},
 	methods: {

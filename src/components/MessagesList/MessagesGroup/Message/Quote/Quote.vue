@@ -20,9 +20,8 @@
 -->
 
 <docs>
-This is the quote component for the `NewMessageForm` component. It just displays
-the author, the message and a delete action to interrupt the quote-reply
-operation.
+This component is intended to be used both in `NewMessageForm` and `Message`
+components.
 </docs>
 
 <template>
@@ -35,7 +34,7 @@ operation.
 				<p>{{ message }}</p>
 			</div>
 		</div>
-		<div class="quote__main__right">
+		<div v-if="isNewMessageFormQuote" class="quote__main__right">
 			<Actions class="quote__main__right__actions">
 				<ActionButton
 					icon="icon-delete"
@@ -84,9 +83,21 @@ export default {
 		token: {
 			type: String,
 			required: true
+		},
+		/**
+		 * If the quote component is used in the `NewMessageForm` component we display
+		 * the remove button.
+		 */
+		isNewMessageFormQuote: {
+			type: Boolean,
+			default: false
 		}
 	},
 	methods: {
+		/**
+		 * Stops the quote-reply operation by removing the MessageToBeReplied from
+		 * the quoteReplyStore.
+		 */
 		handleAbortReply() {
 			this.$store.dispatch('removeMessageToBeReplied', this.token)
 		}

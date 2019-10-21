@@ -38,6 +38,12 @@ const getters = {
 			return state.messages[token]
 		}
 		return {}
+	},
+	message: (state) => (token, id) => {
+		if (state.messages[token][id]) {
+			return state.messages[token][id]
+		}
+		return {}
 	}
 }
 
