@@ -24,8 +24,12 @@ declare(strict_types=1);
 
 namespace OCA\Spreed\PublicShare;
 
+use OCP\Files\FileInfo;
+use OCP\Share\IShare;
 use OCP\Util;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Helper class to extend the "publicshare" template from the server.
@@ -37,8 +41,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class TemplateLoader {
 
 	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function() {
-			self::loadTalkSidebarUi();
+		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function(Event $event) {
+			/** @var IShare $share */
+			$share = null;
+			if ($event instanceof GenericEvent) {
+				$share = $event->getArgument('share');
+			}
+			self::loadTalkSidebarUi($share);
 		});
 	}
 
@@ -47,11 +56,17 @@ class TemplateLoader {
 	 *
 	 * This method should be called when loading additional scripts for the
 	 * public share page of the server.
+	 *
+	 * @param IShare $share
 	 */
-	public static function loadTalkSidebarUi(): void {
+	public static function loadTalkSidebarUi(?IShare $share): void {
 		$config = \OC::$server->getConfig();
 		if ($config->getAppValue('spreed', 'conversations_files', '1') !== '1' ||
 			$config->getAppValue('spreed', 'conversations_files_public_shares', '1') !== '1') {
+			return;
+		}
+
+		if (!$share || $share->getNodeType() !== FileInfo::TYPE_FILE) {
 			return;
 		}
 
