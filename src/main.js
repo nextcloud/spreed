@@ -25,6 +25,7 @@ import Vuex from 'vuex'
 import contenteditableDirective from 'vue-contenteditable-directive'
 import store from './store'
 import VueRouter from 'vue-router'
+import VueClipboard from 'vue-clipboard2'
 import router from './router/router'
 import { generateFilePath } from 'nextcloud-router'
 import { getRequestToken } from 'nextcloud-auth'
@@ -48,6 +49,7 @@ Vue.prototype.OCA = OCA
 Vue.use(contenteditableDirective)
 Vue.use(Vuex)
 Vue.use(VueRouter)
+Vue.use(VueClipboard)
 
 export default new Vue({
 	el: '#content',

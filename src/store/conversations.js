@@ -41,7 +41,7 @@ const mutations = {
 	 * @param {object} conversation the conversation;
 	 */
 	addConversation(state, conversation) {
-		Vue.set(state.conversations, conversation.id, conversation)
+		Vue.set(state.conversations, conversation.token, conversation)
 	},
 	/**
 	 * Creates a key-value pair with conversation id and name
@@ -49,11 +49,20 @@ const mutations = {
 	 *
 	 * @param {object} state current state object;
 	 * @param {object} object destructuring object;
-	 * @param {int} object.id conversation id;
+	 * @param {string} object.token conversation token;
 	 * @param {string} object.displayName conversation name;
 	 */
-	indexConversationName(state, { id, displayName }) {
-		Vue.set(state.conversationsNames, id, displayName)
+	indexConversationName(state, { token, displayName }) {
+		Vue.set(state.conversationsNames, token, displayName)
+	},
+	/**
+	 * Deletes a conversation from the store.
+	 * @param {object} state current store state;
+	 * @param {object} conversation the message;
+	 */
+	deleteConversation(state, conversation) {
+		Vue.delete(state.conversations, conversation.token)
+		Vue.delete(state.conversationsNames, conversation.token)
 	}
 }
 
@@ -67,6 +76,16 @@ const actions = {
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
 		context.commit('indexConversationName', conversation)
+	},
+
+	/**
+	 * Delete a object
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} conversation the conversation to be deleted;
+	 */
+	deleteConversation(context, conversation) {
+		context.commit('deleteConversation', conversation)
 	}
 }
 
