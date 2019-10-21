@@ -96,6 +96,13 @@ export default {
 				token: this.token,
 				timestamp: 0
 			})
+			/**
+			 * If the current message is a quote-reply messag, add the parent key to the
+			 * temporary message object.
+			 */
+			if (this.messageToBeReplied) {
+				message.parent = this.messageToBeReplied
+			}
 			return message
 		},
 		/**
@@ -106,7 +113,7 @@ export default {
 		 */
 		createTemporaryMessageId() {
 			const date = new Date()
-			return `temp_${(date.getTime()).toString()}`
+			return date.getTime()
 		},
 		/**
 		 * Sends the new message
