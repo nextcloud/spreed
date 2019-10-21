@@ -21,9 +21,9 @@
  -->
 
 <template>
-	<div id="signaling_server" class="videocalls section">
+	<div id="turn_server" class="videocalls section">
 		<h2>
-			{{ t('spreed', 'Signaling servers') }}
+			{{ t('spreed', 'TURN servers') }}
 			<span v-if="saved" class="icon icon-checkmark-color" :title="t('spreed', 'Saved')" />
 			<a v-else-if="!loading"
 				v-tooltip.auto="t('spreed', 'Add a new server')"
@@ -35,80 +35,54 @@
 		</h2>
 
 		<p class="settings-hint">
-			{{ t('spreed', 'An external signaling server should optionally be used for larger installations. Leave empty to use the internal signaling server.') }}
-			<span v-if="!servers.length">{{ t('spreed', 'Please note that calls with more than 4 participants without external signaling server, participants can experience connectivity issues and cause high load on participating devices.') }}</span>
+			{{ t('spreed', 'A TURN server is used to proxy the traffic from participants behind a firewall.') }}
 		</p>
-
-		<div v-if="!servers.length" class="signaling-warning">
-			<input id="hide_warning"
-				v-model="hideWarning"
-				type="checkbox"
-				name="hide_warning"
-				class="checkbox"
-				:disabled="loading"
-				@change="updateHideWarning">
-			<label for="hide_warning">{{ t('spreed', 'Don\'t warn about connectivity issues in calls with more than 4 participants') }}</label>
-		</div>
 
 		<ul class="turn-servers">
 			<transition-group name="fade" tag="li">
-				<SignalingServer
+				<TurnServer
 					v-for="(server, index) in servers"
 					:key="`server${index}`"
 					:server.sync="servers[index].server"
-					:verify.sync="servers[index].verify"
+					:secret.sync="servers[index].secret"
+					:protocols.sync="servers[index].protocols"
 					:index="index"
 					:loading="loading"
 					@removeServer="removeServer"
 					@update:server="debounceUpdateServers"
-					@update:verify="debounceUpdateServers" />
+					@update:secret="debounceUpdateServers"
+					@update:protocols="debounceUpdateServers" />
 			</transition-group>
 		</ul>
-
-		<div class="signaling-secret">
-			<h4>{{ t('spreed', 'Shared secret') }}</h4>
-			<input v-model="secret"
-				type="text"
-				name="signaling_secret"
-				:disabled="loading"
-				:placeholder="t('spreed', 'Shared secret')"
-				:aria-label="t('spreed', 'Shared secret')"
-				@input="debounceUpdateServers">
-		</div>
 	</div>
 </template>
 
 <script>
 import { Tooltip } from 'nextcloud-vue'
 import debounce from 'debounce'
-import SignalingServer from '../components/SignalingServer'
+import TurnServer from '../../components/AdminSettings/TurnServer'
 
 export default {
-	name: 'SignalingServers',
+	name: 'TurnServers',
 
 	directives: {
 		tooltip: Tooltip
 	},
 
 	components: {
-		SignalingServer
+		TurnServer
 	},
 
 	data() {
 		return {
 			servers: [],
-			secret: '',
-			hideWarning: false,
 			loading: false,
 			saved: false
 		}
 	},
 
 	beforeMount() {
-		const state = OCP.InitialState.loadState('talk', 'signaling_servers')
-		this.servers = state.servers
-		this.secret = state.secret
-		this.hideWarning = state.hideWarning
+		this.servers = OCP.InitialState.loadState('talk', 'turn_servers')
 	},
 
 	methods: {
@@ -120,19 +94,8 @@ export default {
 		newServer() {
 			this.servers.push({
 				server: '',
-				verify: false
-			})
-		},
-
-		updateHideWarning() {
-			const self = this
-			self.loading = true
-
-			OCP.AppConfig.setValue('spreed', 'hide_signaling_warning', this.hideWarning ? 'yes' : 'no', {
-				success() {
-					self.loading = false
-					self.toggleSave()
-				}
+				secret: '',
+				protocols: 'udp,tcp' // default to udp AND tcp
 			})
 		},
 
@@ -141,15 +104,32 @@ export default {
 		}, 1000),
 
 		async updateServers() {
-			this.loading = true
+			var servers = []
 
-			this.servers = this.servers.filter(server => server.server.trim() !== '')
+			this.servers.forEach((server) => {
+				const data = {
+					server: server.server,
+					secret: server.secret,
+					protocols: server.protocols
+				}
+
+				if (data.server.startsWith('https://')) {
+					data.server = data.server.substr(8)
+				} else if (data.server.startsWith('http://')) {
+					data.server = data.server.substr(7)
+				}
+
+				if (data.secret === '') {
+					return
+				}
+
+				servers.push(data)
+			})
 
 			const self = this
-			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
-				servers: this.servers,
-				secret: this.secret
-			}), {
+
+			this.loading = true
+			OCP.AppConfig.setValue('spreed', 'turn_servers', JSON.stringify(servers), {
 				success() {
 					self.loading = false
 					self.toggleSave()

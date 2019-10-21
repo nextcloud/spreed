@@ -12,11 +12,6 @@
 #    commands:
 #      - make npm-init
 #      - ./check-vuejs-builds.sh
-#  - name: check-handlebars-templates
-#    image: node:lts
-#    commands:
-#      - make npm-init
-#      - ./check-handlebars-templates.sh
 #
 #trigger:
 #  branch:

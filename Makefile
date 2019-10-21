@@ -15,57 +15,37 @@ all: dev-setup build-js-production
 
 dev-setup: clean-dev npm-init
 
-dependabot: dev-setup npm-update build-js-production compile-handlebars-templates bundle-simplewebrtc
+dependabot: dev-setup npm-update build-js-production bundle-simplewebrtc
 
 release: appstore create-tag
 
 build-js:
 	npm run dev
-	cd vue/ && npm run dev
 
 build-js-production:
 	npm run build
-	cd vue/ && npm run build
 
 watch-js:
 	npm run watch
-	cd vue/ && npm run watch
 
 lint:
 	npm run lint
-	cd vue/ && npm run lint
 
 lint-fix:
 	npm run lint:fix
-	cd vue/ && npm run lint:fix
 
-npm-init: npm-init-root npm-init-vue
-
-npm-init-root:
+npm-init:
 	npm install
-
-npm-init-vue:
-	cd vue/ && npm install
 
 npm-update:
 	npm update
-	cd vue/ && npm update
 
 clean:
-	rm -f js/admin/*.js
-	rm -f js/admin/*.js.map
-	rm -f js/collections.js
-	rm -f js/collections.js.map
-	rm -f js/collectionsintegration.js
-	rm -f js/collectionsintegration.js.map
+	rm -rf js/*
 	rm -rf $(build_dir)
 
 clean-dev: clean
 	rm -rf node_modules
-	cd vue/ && rm -rf node_modules
-
-compile-handlebars-templates:
-	bash compile-handlebars-templates.sh
 
 bundle-simplewebrtc:
 	# webrtc-adapter uses JavaScript features not supported by browserify,
@@ -87,8 +67,6 @@ appstore:
 	--exclude=bower.json \
 	--exclude=.bowerrc \
 	--exclude=/build \
-	--exclude=check-handlebars-templates.sh \
-	--exclude=compile-handlebars-templates.sh \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
@@ -99,7 +77,6 @@ appstore:
 	--exclude=.gitignore \
 	--exclude=.jscsrc \
 	--exclude=.jshintignore \
-	--exclude=js/views/templates \
 	--exclude=js/**.js.map \
 	--include=js/simplewebrtc/bundled.js \
 	--exclude=js/simplewebrtc/*.js \
@@ -114,11 +91,11 @@ appstore:
 	--exclude=README.md \
 	--exclude=run-*lint.sh \
 	--exclude=.scrutinizer.yml \
+	--exclude=src \
 	--exclude=.stylelintrc \
 	--exclude=tests \
 	--exclude=.travis.yml \
 	--exclude=.tx \
-	--exclude=vue \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \

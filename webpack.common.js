@@ -1,16 +1,23 @@
 const path = require('path')
 const { VueLoaderPlugin } = require('vue-loader')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
-const packageJson = require('./package.json')
-const appName = packageJson.name
 
 module.exports = {
-	entry: path.join(__dirname, 'src', 'main.js'),
+	entry: {
+		'admin/allowed-groups': path.join(__dirname, 'src', 'AllowedGroupsSettings.js'),
+		'admin/commands': path.join(__dirname, 'src', 'CommandsSettings.js'),
+		'admin/general-settings': path.join(__dirname, 'src', 'GeneralSettings.js'),
+		'admin/signaling-server': path.join(__dirname, 'src', 'SignalingServerSettings.js'),
+		'admin/stun-server': path.join(__dirname, 'src', 'StunServerSettings.js'),
+		'admin/turn-server': path.join(__dirname, 'src', 'TurnServerSettings.js'),
+		'collections': path.join(__dirname, 'src', 'collections.js'),
+		'collectionsintegration': path.join(__dirname, 'src', 'collectionsintegration.js'),
+		'talk': path.join(__dirname, 'src', 'main.js')
+	},
 	output: {
 		path: path.resolve(__dirname, './js'),
 		publicPath: '/js/',
-		filename: `${appName}.js`,
-		chunkFilename: 'chunks/[name]-[hash].js'
+		filename: '[name].js'
 	},
 	module: {
 		rules: [
@@ -37,6 +44,13 @@ module.exports = {
 				test: /\.js$/,
 				loader: 'babel-loader',
 				exclude: /node_modules/
+			},
+			{
+				test: /\.(png|jpg|gif|svg)$/,
+				loader: 'file-loader',
+				options: {
+					name: '[name].[ext]?[hash]'
+				}
 			}
 		]
 	},

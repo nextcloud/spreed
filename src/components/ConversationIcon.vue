@@ -21,7 +21,8 @@
 
 <template>
 	<div v-if="itemClass"
-		class="avatar icon" :class="itemClass" />
+		class="avatar icon"
+		:class="itemClass" />
 	<Avatar v-else
 		:size="44"
 		:user="item.displayName"

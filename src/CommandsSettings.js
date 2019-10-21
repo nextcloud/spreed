@@ -21,7 +21,7 @@
  */
 
 import Vue from 'vue'
-import Commands from './views/Commands'
+import Commands from './views/AdminSettings/Commands'
 
 Vue.prototype.t = t
 Vue.prototype.n = n
