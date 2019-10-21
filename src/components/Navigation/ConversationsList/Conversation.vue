@@ -94,7 +94,6 @@
 </template>
 
 <script>
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 import ConversationIcon from './../../ConversationIcon'
 import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
