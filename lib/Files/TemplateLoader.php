@@ -32,7 +32,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class TemplateLoader {
 
 	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', function() {
+		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', static function() {
 			self::loadTalkSidebarForFilesApp();
 		});
 	}
@@ -44,6 +44,11 @@ class TemplateLoader {
 	 * Files app.
 	 */
 	public static function loadTalkSidebarForFilesApp(): void {
+		$config = \OC::$server->getConfig();
+		if ($config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+			return;
+		}
+
 		Util::addStyle('spreed', 'merged-files');
 		Util::addScript('spreed', 'merged-files');
 	}
