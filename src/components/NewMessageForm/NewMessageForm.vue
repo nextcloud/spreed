@@ -33,7 +33,6 @@
 				<div class="new-message-form__input">
 					<Quote
 						v-if="messageToBeReplied"
-						:is-new-message-form-quote="true"
 						:is-quote="true"
 						v-bind="messageToBeReplied" />
 					<AdvancedInput
@@ -162,7 +161,7 @@ export default {
         &__button {
             width: 44px;
             height: 44px;
-            margin: auto;
+            margin-top: auto;
             background-color: transparent;
             border: none;
         }

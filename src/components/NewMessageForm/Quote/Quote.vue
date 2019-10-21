@@ -20,27 +20,28 @@
 -->
 
 <docs>
-This component displays the text inside the message component and can be used for
-the main body of the message as well as a quote.
+This is the quote component for the `NewMessageForm` component. It just displays
+the author, the message and a delete action to interrupt the quote-reply
+operation.
 </docs>
 
 <template>
-	<div class="message">
-		<div class="message__author">
-			<h6>{{ actorDisplayName }}</h6>
-		</div>
-		<div class="message__main">
-			<div class="message__main__text">
+	<div class="quote">
+		<div class="quote__main">
+			<div class="quote__main__author">
+				<h6>{{ actorDisplayName }}</h6>
+			</div>
+			<div class="quote__main__text">
 				<p>{{ message }}</p>
 			</div>
-			<div class="message__main__right">
-				<Actions v-if="isNewMessageFormQuote" class="message__main__right__actions">
-					<ActionButton
-						icon="icon-delete"
-						:close-after-click="true"
-						@click.stop="handleAbortReply" />
-				</Actions>
-			</div>
+		</div>
+		<div class="quote__main__right">
+			<Actions class="quote__main__right__actions">
+				<ActionButton
+					icon="icon-delete"
+					:close-after-click="true"
+					@click.stop="handleAbortReply" />
+			</Actions>
 		</div>
 	</div>
 </template>
@@ -57,36 +58,32 @@ export default {
 	},
 	props: {
 		/**
-		 * The sender of the message.
+		 * The sender of the message to be replied to.
 		 */
 		actorDisplayName: {
 			type: String,
 			required: true
 		},
 		/**
-		 * The message or quote text.
+		 * The text of the message to be replied to.
 		 */
 		message: {
 			type: String,
 			required: true
 		},
 		/**
-		 * The message id.
+		 * The message id of the message to be replied to.
 		 */
 		id: {
 			type: Number,
 			required: true
 		},
 		/**
-		 * The conversation token.
+		 * The conversation token of the message to be replied to.
 		 */
 		token: {
 			type: String,
 			required: true
-		},
-		isNewMessageFormQuote: {
-			type: Boolean,
-			default: false
 		}
 	},
 	methods: {
@@ -99,40 +96,29 @@ export default {
 
 <style lang="scss" scoped>
 
-.message {
+.quote {
 	border-left: 4px solid var(--color-primary);
-	margin: 4px 0 4px 0;
+	margin: 10px 0 10px 0;
 	padding: 0 0 0 10px;
-	flex-direction: column;
-	&__author {
-		color: var(--color-text-maxcontrast);
-	}
+	display: flex;
 	&__main {
 		display: flex;
-		justify-content: space-between;
-		min-width: 100%;
-		&__text {
-			flex: 1 1 400px;
-			color: var(--color-text-light);
-			&--quote {
-			border-left: 4px solid var(--color-primary);
-			padding: 4px 0 0 8px;
-			}
-		}
-		&__right {
-			justify-self: flex-start;
-			position: relative;
-			flex: 0 0 110px;
-			display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		&__author {
 			color: var(--color-text-maxcontrast);
-			font-size: 13px;
-			padding: 0 8px 0 8px;
-			&__actions {
-				position: absolute;
-				top: -12px;
-				right: 0;
-			}
 		}
+		&__text {
+			color: var(--color-text-light);
+		}
+	}
+	&__right {
+		flex: 0 0 44px;
+		color: var(--color-text-maxcontrast);
+		font-size: 13px;
+		padding: 0 8px 0 8px;
+		position: relative;
+		margin: auto;
 	}
 }
 </style>

@@ -179,8 +179,9 @@ export default {
 		}
 		&__right {
 			justify-self: flex-start;
+			justify-content:  space-between;
 			position: relative;
-			flex: 0 0 110px;
+			flex: 0 0 120px;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: 13px;

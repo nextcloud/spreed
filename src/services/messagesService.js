@@ -61,7 +61,7 @@ const lookForNewMessges = async function(token, lastKnownMessageId) {
  * @param {string} token The conversation token;
  * @param {object} message The message object.
  */
-const postNewMessage = async function({ token, message }) {
+const postNewMessage = async function({ token, message, replyTo }) {
 	try {
 		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName: '' })
 		return response
