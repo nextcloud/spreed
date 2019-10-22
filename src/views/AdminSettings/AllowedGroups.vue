@@ -57,9 +57,11 @@
 </template>
 
 <script>
-import Axios from 'nextcloud-axios'
+import axios from 'nextcloud-axios'
+import debounce from 'debounce'
 import { Multiselect } from 'nextcloud-vue'
-import _ from 'lodash'
+import { generateOcsUrl } from 'nextcloud-router/dist/index'
+import { loadState } from 'nextcloud-initial-state'
 
 export default {
 	name: 'AllowedGroups',
@@ -80,7 +82,7 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.allowedGroups = OCP.InitialState.loadState('talk', 'allowed_groups')
+		this.allowedGroups = loadState('talk', 'allowed_groups')
 		this.groups = this.allowedGroups
 		this.loading = false
 
@@ -88,20 +90,19 @@ export default {
 	},
 
 	methods: {
-		searchGroup: _.debounce(function(query) {
+		searchGroup: debounce(async function(query) {
 			this.loadingGroups = true
-			Axios.get(OC.linkToOCS(`cloud/groups?offset=0&search=${encodeURIComponent(query)}&limit=20`, 2))
-				.then(res => res.data.ocs)
-				.then(ocs => ocs.data.groups)
-				.then(groups => {
-					this.groups = _.sortedUniq(_.uniq(this.groups.concat(groups)))
+			try {
+				const res = await axios.get(generateOcsUrl('cloud', 2) + `groups?offset=0&search=${encodeURIComponent(query)}&limit=20`)
+				// remove duplicates and sort
+				this.groups = [...new Set(res.data.ocs.data.groups)].sort(function(a, b) {
+					return a.localeCompare(b)
 				})
-				.catch(err => {
-					console.error('could not search groups', err)
-				})
-				.then(() => {
-					this.loadingGroups = false
-				})
+			} catch (err) {
+				console.error('Could not fetch groups', err)
+			} finally {
+				this.loadingGroups = false
+			}
 		}, 500),
 
 		saveChanges() {
