@@ -28,6 +28,11 @@
     "UDP only" : "UDP bakarrik",
     "TCP only" : "TCP bakarrik",
     "Test this server" : "Probatu zerbitzari hau",
+    "Copy link" : "Kopiatu esteka",
+    "All messages" : "Mezu guztiak",
+    "Leave conversation" : "Atera elkarrizketatik",
+    "Delete conversation" : "Ezabatu elkarrizketa",
+    "Add to favorites" : "Gehitu gogokoetara",
     "Name" : "Izena",
     "Saved" : "Gordeta",
     "Shared secret" : "Partekatutako sekretua",
@@ -65,7 +70,6 @@
     "Set password" : "Ezarri pasahitza",
     "Go to file" : "Joan fitxategira",
     "Rename" : "Aldatu izena",
-    "Copy link" : "Kopiatu esteka",
     "Link copied!" : "Esteka kopiatuta!",
     "You" : "Zu ",
     "No messages yet, start the conversation!" : "Ez dago mezurik, elkarrizketa hasi!",
@@ -101,11 +105,8 @@
     "Promote to moderator" : "Moderatzaile bihurtu zara",
     "Remove participant" : "Partehartzailea borratu",
     "Favorited" : "Gogokoa",
-    "Add to favorites" : "Gehitu gogokoetara",
     "Always notify" : "Jakinarazi beti",
     "Never notify" : "Ez jakinarazi inoiz",
-    "Leave conversation" : "Atera elkarrizketatik",
-    "Delete conversation" : "Ezabatu elkarrizketa",
     "Close" : "Itxi",
     "Show screen" : "Erakutsi pantaila",
     "Enable video" : "Aktibatu bideoa",
@@ -122,7 +123,6 @@
     "Join now" : "Elkartu orain",
     "This call is password-protected" : "Deia pasahitzarekin babestua dago",
     "Signaling server" : "Seinalizazio zerbitzaria ",
-    "Projects" : "Proiektuak",
-    "All messages" : "Mezu guztiak"
+    "Projects" : "Proiektuak"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
