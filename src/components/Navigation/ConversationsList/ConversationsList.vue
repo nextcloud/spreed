@@ -45,20 +45,29 @@ export default {
 			return this.$store.getters.conversations
 		}
 	},
-	async beforeMount() {
-		/** Fetches the conversations from the server and then
-		 * adds them one by one to the store.
-		 */
-		const conversations = await fetchConversations()
-		conversations.data.ocs.data.forEach(conversation => {
-			this.$store.dispatch('addConversation', conversation)
-		})
+	beforeMount() {
+		this.fetchConversations()
+	},
+	mounted() {
+		/** Refreshes the conversations every 30 seconds */
+		window.setInterval(() => {
+			this.fetchConversations()
+		}, 30000)
 	},
 	methods: {
 		handleInput(payload) {
 			const selectedConversationToken = payload.token
 			this.joinConversation(selectedConversationToken)
 			this.$router.push({ path: `/call/${selectedConversationToken}` })
+		},
+		async fetchConversations() {
+			/** Fetches the conversations from the server and then adds them one by one
+			 * to the store.
+			 */
+			const conversations = await fetchConversations()
+			conversations.data.ocs.data.forEach(conversation => {
+				this.$store.dispatch('addConversation', conversation)
+			})
 		}
 	}
 }
