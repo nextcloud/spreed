@@ -65,6 +65,7 @@ export default {
 			 * to the store.
 			 */
 			const conversations = await fetchConversations()
+			this.$store.dispatch('purgeConversationsStore')
 			conversations.data.ocs.data.forEach(conversation => {
 				this.$store.dispatch('addConversation', conversation)
 			})
