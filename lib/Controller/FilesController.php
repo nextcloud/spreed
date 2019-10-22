@@ -32,6 +32,7 @@ use OCP\AppFramework\OCS\OCSNotFoundException;
 use OCP\AppFramework\OCSController;
 use OCP\Files\FileInfo;
 use OCP\Files\NotFoundException;
+use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\Share\IShare;
@@ -44,6 +45,8 @@ class FilesController extends OCSController {
 	private $manager;
 	/** @var Util */
 	private $util;
+	/** @var IConfig */
+	private $config;
 	/** @var IL10N */
 	private $l;
 
@@ -53,12 +56,14 @@ class FilesController extends OCSController {
 			string $userId,
 			Manager $manager,
 			Util $util,
+			IConfig $config,
 			IL10N $l10n
 	) {
 		parent::__construct($appName, $request);
 		$this->currentUser = $userId;
 		$this->manager = $manager;
 		$this->util = $util;
+		$this->config = $config;
 		$this->l = $l10n;
 	}
 
@@ -93,6 +98,10 @@ class FilesController extends OCSController {
 	 * @throws OCSNotFoundException
 	 */
 	public function getRoom(string $fileId): DataResponse {
+		if ($this->config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
 		$share = $this->util->getAnyPublicShareOfFileOwnedByUserOrAnyDirectShareOfFileAccessibleByUser($fileId, $this->currentUser);
 		$groupFolder = null;
 		if (!$share) {
