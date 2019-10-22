@@ -57,6 +57,7 @@ import AppContent from 'nextcloud-vue/dist/Components/AppContent'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
 import Navigation from './components/Navigation/Navigation'
+import Router from './router/router'
 
 export default {
 	name: 'App',
@@ -69,7 +70,6 @@ export default {
 	},
 	data: function() {
 		return {
-			defaultPageTitle: false,
 			loading: false,
 			date: Date.now() + 86400000 * 3,
 			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
@@ -82,62 +82,35 @@ export default {
 	computed: {
 		conversations() {
 			return this.$store.getters.conversations
-		},
-		currentToken() {
-			return this.$route.params.token
-		}
-	},
-
-	watch: {
-		currentToken() {
-			this.onChangeConversation()
 		}
 	},
 
 	beforeMount() {
 		window.addEventListener('resize', this.onResize)
 		this.onResize()
-	},
-
-	mounted() {
-		setTimeout(this.onChangeConversation, 2500)
+		/**
+		 * Global before guard, this is called whenever a navigation is triggered.
+		*/
+		Router.beforeEach((to, from, next) => {
+			/**
+			 * This runs whenever the new route is a conversation.
+			 */
+			if (to.name === 'conversation') {
+				const NEXT_CONVERSATION_NAME = this.$store.getters.conversations[to.params.token].displayName
+				this.setPageTitle(NEXT_CONVERSATION_NAME)
+			}
+		})
 	},
 
 	methods: {
-		async onChangeConversation() {
-			if (Object.keys(this.conversations).indexOf(this.currentToken) !== -1) {
-				const currentConversation = this.conversations[this.currentToken]
-				this.setPageTitle(currentConversation.displayName)
-			} else {
-				this.setPageTitle('')
-			}
-		},
 		/**
 		 * Set the page title to the conversation name
 		 * @param {string} title Prefix for the page title e.g. conversation name
 		 */
 		setPageTitle(title) {
-			if (this.defaultPageTitle === false) {
-				// On the first load we store the current page title "Talk - Nextcloud",
-				// so we can append it every time again
-				this.defaultPageTitle = window.document.title
-
-				// When a conversation is opened directly, the "Talk - " part is
-				// missing from the title
-				if (this.defaultPageTitle.indexOf(t('spreed', 'Talk') + ' - ') !== 0) {
-					this.defaultPageTitle = t('spreed', 'Talk') + ' - ' + this.defaultPageTitle
-				}
-			}
-
-			if (title) {
-				title += ' - '
-			} else {
-				title = ''
-			}
-
-			title += this.defaultPageTitle
-			window.document.title = title
+			window.document.title = `${title} - ${t('spreed', 'talk')}`
 		},
+
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
 		},
