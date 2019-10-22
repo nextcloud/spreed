@@ -21,10 +21,15 @@
  */
 import Vue from 'vue'
 
+const getDefaultState = () => {
+	return {
+		conversations: {
+		}
+	}
+}
+
 const state = {
 	conversations: {
-	},
-	conversationsNames: {
 	}
 }
 
@@ -44,25 +49,19 @@ const mutations = {
 		Vue.set(state.conversations, conversation.token, conversation)
 	},
 	/**
-	 * Creates a key-value pair with conversation id and name
-	 * respectively.
-	 *
-	 * @param {object} state current state object;
-	 * @param {object} object destructuring object;
-	 * @param {string} object.token conversation token;
-	 * @param {string} object.displayName conversation name;
-	 */
-	indexConversationName(state, { token, displayName }) {
-		Vue.set(state.conversationsNames, token, displayName)
-	},
-	/**
 	 * Deletes a conversation from the store.
 	 * @param {object} state current store state;
 	 * @param {object} conversation the message;
 	 */
 	deleteConversation(state, conversation) {
 		Vue.delete(state.conversations, conversation.token)
-		Vue.delete(state.conversationsNames, conversation.token)
+	},
+	/**
+	 * Resets the store to it's original state
+	 * @param {object} state current store state;
+	 */
+	purgeConversationsStore(state) {
+		Object.assign(state, getDefaultState())
 	}
 }
 
@@ -75,7 +74,6 @@ const actions = {
 	 */
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
-		context.commit('indexConversationName', conversation)
 	},
 
 	/**
@@ -86,6 +84,13 @@ const actions = {
 	 */
 	deleteConversation(context, conversation) {
 		context.commit('deleteConversation', conversation)
+	},
+	/**
+	 * Resets the store to it's original state.
+	 * @param {object} context default store context;
+	 */
+	purgeConversationsStore(context) {
+		context.commit('purgeConversationsStore')
 	}
 }
 
