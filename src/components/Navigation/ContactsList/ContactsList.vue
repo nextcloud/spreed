@@ -24,13 +24,13 @@
 		<AppContentListItem
 			v-for="item of contacts"
 			:key="item.id"
-			:title="item.id"
+			:title="item.label"
 			@click="createAndJoinConversation(item.id)">
 			<Avatar
 				slot="icon"
 				:size="44"
 				:user="item.id"
-				:display-name="item.id" />
+				:display-name="item.label" />
 		</AppContentListItem>
 	</ul>
 </template>
