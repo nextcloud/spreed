@@ -22,7 +22,7 @@
 <template>
 	<ul class="conversations">
 		<Conversation
-			v-for="item of conversationsList"
+			v-for="item of sortedConversationsList"
 			:key="item.id"
 			:item="item" />
 	</ul>
@@ -41,8 +41,8 @@ export default {
 		conversationsList() {
 			return this.$store.getters.conversationsList
 		},
-		conversations() {
-			return this.$store.getters.conversations
+		sortedConversationsList() {
+			return this.conversationsList.slice().sort(this.sortConversations)
 		}
 	},
 	beforeMount() {
@@ -55,6 +55,13 @@ export default {
 		}, 30000)
 	},
 	methods: {
+		sortConversations(conversation1, conversation2) {
+			if (conversation1.isFavorite !== conversation2.isFavorite) {
+				return conversation1.isFavorite ? -1 : 1
+			}
+
+			return conversation2.lastActivity - conversation1.lastActivity
+		},
 		handleInput(payload) {
 			const selectedConversationToken = payload.token
 			this.joinConversation(selectedConversationToken)
