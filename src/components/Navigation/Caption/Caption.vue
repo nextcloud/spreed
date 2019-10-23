@@ -20,9 +20,8 @@
 -->
 
 <template>
-	<li>
-		<h3>{{ title }}</h3>
-		<hr>
+	<li class="app-navigation-caption">
+		{{ title }}
 	</li>
 </template>
 
@@ -39,5 +38,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+	.app-navigation-caption {
+		color: var(--color-primary);
+		line-height: 44px;
 
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		box-shadow: none !important;
+		user-select: none;
+		pointer-events: none;
+
+		margin-left: 10px;
+		border-bottom: 1px solid var(--color-border-dark);
+
+		&:not(:first-child) {
+			margin-top: 22px;
+		}
+	}
 </style>

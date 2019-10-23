@@ -25,9 +25,11 @@
 			v-model="searchText"
 			@input="debounceFetchSearchResults" />
 		<ul class="navigation__tems">
-			<Caption v-if="isSearching" title="Conversations" />
+			<Caption v-if="isSearching"
+				:title="t('spreed', 'Conversations')" />
 			<ConversationsList />
-			<Caption v-if="isSearching" title="Contacts" />
+			<Caption v-if="isSearching"
+				:title="t('spreed', 'Contacts')" />
 			<ContactsList v-if="isSearching" :contacts="searchResults" />
 		</ul>
 		<AppNavigationSettings class="settings">
