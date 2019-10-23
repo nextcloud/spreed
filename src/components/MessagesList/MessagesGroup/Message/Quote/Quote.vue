@@ -37,7 +37,7 @@ components.
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
 			<Actions class="quote__main__right__actions">
 				<ActionButton
-					icon="icon-delete"
+					icon="icon-close"
 					:close-after-click="true"
 					@click.stop="handleAbortReply" />
 			</Actions>

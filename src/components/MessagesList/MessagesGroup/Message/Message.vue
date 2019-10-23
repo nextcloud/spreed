@@ -150,7 +150,8 @@ export default {
 		quote() {
 			if (this.parent) {
 				return this.$store.getters.message(this.token, this.parent)
-			} else return undefined
+			}
+			return undefined
 		}
 	},
 	methods: {
