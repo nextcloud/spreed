@@ -108,7 +108,7 @@ export default {
 		 * @param {string} title Prefix for the page title e.g. conversation name
 		 */
 		setPageTitle(title) {
-			window.document.title = `${title} - ${t('spreed', 'talk')}`
+			window.document.title = `${title} - ${t('spreed', 'Talk')}`
 		},
 
 		onResize() {
