@@ -140,7 +140,11 @@ export default {
 				}
 			}
 
-			window.document.title = `${title} - ${this.defaultPageTitle}`
+			if (title !== '') {
+				window.document.title = `${title} - ${this.defaultPageTitle}`
+			} else {
+				window.document.title = this.defaultPageTitle
+			}
 		},
 
 		onResize() {
