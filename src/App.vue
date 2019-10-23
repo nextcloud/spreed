@@ -57,6 +57,8 @@ import AppContent from 'nextcloud-vue/dist/Components/AppContent'
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
 import Navigation from './components/Navigation/Navigation'
+import Router from './router/router'
+import { EventBus } from './services/EventBus'
 
 export default {
 	name: 'App',
@@ -69,6 +71,7 @@ export default {
 	},
 	data: function() {
 		return {
+			defaultPageTitle: false,
 			loading: false,
 			date: Date.now() + 86400000 * 3,
 			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
@@ -78,12 +81,72 @@ export default {
 		}
 	},
 
+	computed: {
+		conversations() {
+			return this.$store.getters.conversations
+		},
+		/**
+		 * The current conversation token
+		 * @returns {string} The token.
+		 */
+		token() {
+			return this.$route.params.token
+		}
+	},
+
 	beforeMount() {
 		window.addEventListener('resize', this.onResize)
 		this.onResize()
+		/**
+		 * Listens to the conversationsReceived globalevent, emitted by the conversationsList
+		 * component each time a new batch of conversations is received and processed in
+		 * the store.
+		 */
+		EventBus.$once('conversationsReceived', () => {
+			if (this.$route.name === 'conversation') {
+				const CURRENT_CONVERSATION_NAME = this.getConversationName(this.token)
+				this.setPageTitle(CURRENT_CONVERSATION_NAME)
+			}
+		})
+		/**
+		 * Global before guard, this is called whenever a navigation is triggered.
+		*/
+		Router.beforeEach((to, from, next) => {
+			/**
+			 * This runs whenever the new route is a conversation.
+			 */
+			if (to.name === 'conversation') {
+				const NEXT_CONVERSATION_NAME = this.getConversationName(to.params.token)
+				this.setPageTitle(NEXT_CONVERSATION_NAME)
+			}
+			next()
+		})
 	},
 
 	methods: {
+		/**
+		 * Set the page title to the conversation name
+		 * @param {string} title Prefix for the page title e.g. conversation name
+		 */
+		setPageTitle(title) {
+			if (this.defaultPageTitle === false) {
+				// On the first load we store the current page title "Talk - Nextcloud",
+				// so we can append it every time again
+				this.defaultPageTitle = window.document.title
+				// When a conversation is opened directly, the "Talk - " part is
+				// missing from the title
+				if (this.defaultPageTitle.indexOf(t('spreed', 'Talk') + ' - ') !== 0) {
+					this.defaultPageTitle = t('spreed', 'Talk') + ' - ' + this.defaultPageTitle
+				}
+			}
+
+			if (title !== '') {
+				window.document.title = `${title} - ${this.defaultPageTitle}`
+			} else {
+				window.document.title = this.defaultPageTitle
+			}
+		},
+
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
 		},
@@ -92,6 +155,14 @@ export default {
 		},
 		log(e) {
 			console.debug(e)
+		},
+		/**
+		 * Get a conversation's name.
+		 * @param {string} token The conversation's token
+		 * @returns {string} The conversation's name
+		 */
+		getConversationName(token) {
+			return this.$store.getters.conversations[token].displayName
 		}
 	}
 }

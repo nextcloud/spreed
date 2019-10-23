@@ -31,6 +31,7 @@
 <script>
 import Conversation from './Conversation'
 import { fetchConversations } from '../../../services/conversationsService'
+import { EventBus } from '../../../services/EventBus'
 
 export default {
 	name: 'ConversationsList',
@@ -69,6 +70,11 @@ export default {
 			conversations.data.ocs.data.forEach(conversation => {
 				this.$store.dispatch('addConversation', conversation)
 			})
+			/**
+			 * Emits a global event that is used in App.vue to update the page title once the
+			 * ( if the current route is a conversation and once the conversations are received)
+			 */
+			EventBus.$emit('conversationsReceived')
 		}
 	}
 }
