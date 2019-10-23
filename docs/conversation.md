@@ -65,13 +65,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         + `401 Unauthorized` When the user is not logged in
         + `404 Not Found` When the target to invite does not exist
 
-    - Data:
-
-        field | type | Description
-        ------|------|------------
-        `token` | string | Token identifier of the conversation which is used for further interaction
-        `name` | string | Name of the conversation (can also be empty)
-        `displayName` | string | `name` if non empty, otherwise it falls back to a list of participants
+    - Data: See array definition in `Get user´s conversations`
 
 ## Get single conversation (also for guests)
 

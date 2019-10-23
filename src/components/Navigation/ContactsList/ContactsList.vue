@@ -64,8 +64,9 @@ export default {
 		async createAndJoinConversation(userId) {
 			console.debug(userId)
 			const response = await createOneToOneConversation(userId)
-			const conversationToken = response.data.ocs.data.token
-			this.$router.push({ name: 'conversation', params: { token: conversationToken } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			console.debug(response)
 		}
 	}
