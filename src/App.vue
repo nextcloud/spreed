@@ -118,6 +118,7 @@ export default {
 				const NEXT_CONVERSATION_NAME = this.getConversationName(to.params.token)
 				this.setPageTitle(NEXT_CONVERSATION_NAME)
 			}
+			next()
 		})
 	},
 
