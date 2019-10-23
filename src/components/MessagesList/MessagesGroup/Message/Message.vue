@@ -148,10 +148,7 @@ export default {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
 		},
 		quote() {
-			if (this.parent) {
-				return this.$store.getters.message(this.token, this.parent)
-			}
-			return undefined
+			return this.parent && this.$store.getters.message(this.token, this.parent)
 		}
 	},
 	methods: {
@@ -196,7 +193,7 @@ export default {
 			justify-self: flex-start;
 			justify-content:  space-between;
 			position: relative;
-			flex: 0 0 120px;
+			flex: 0 0 $message-utils-width;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: 13px;
