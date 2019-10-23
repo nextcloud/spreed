@@ -161,7 +161,7 @@ export default {
 				message: this.message,
 				token: this.token
 			}
-			this.$store.dispatch('addMessageToBeReplied', MESSAGE_TO_BE_REPLIED)
+			this.$store.dispatch('addMessageToBeReplied', Object.assign({}, MESSAGE_TO_BE_REPLIED))
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
