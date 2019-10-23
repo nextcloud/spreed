@@ -28,9 +28,19 @@
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
 			<ConversationsList />
-			<Caption v-if="isSearching"
-				:title="t('spreed', 'Contacts')" />
-			<ContactsList v-if="isSearching" :contacts="searchResults" />
+			<template v-if="isSearching">
+				<Caption
+					:title="t('spreed', 'Contacts')" />
+				<ContactsList v-if="searchResultsUsers.length !== 0" :contacts="searchResultsUsers" />
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-else :hint="t('spreed', 'No results')" />
+
+				<Caption
+					:title="t('spreed', 'Groups')" />
+				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-else :hint="t('spreed', 'No results')" />
+			</template>
 		</ul>
 		<AppNavigationSettings class="settings">
 			Example settings
@@ -43,10 +53,13 @@ import ConversationsList from './ConversationsList/ConversationsList'
 import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
 import AppNavigationSearch from './AppNavigationSearch/AppNavigationSearch'
 import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
-import { searchPossibleConversations } from '../../services/conversationsService'
 import ContactsList from './ContactsList/ContactsList'
+import GroupsList from './GroupsList/GroupsList'
 import debounce from 'debounce'
 import Caption from './Caption/Caption'
+import Hint from './Hint/Hint'
+import { searchPossibleConversations } from '../../services/conversationsService'
+import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 
@@ -58,13 +71,17 @@ export default {
 		AppNavigationSettings,
 		AppNavigationSearch,
 		ContactsList,
-		Caption
+		GroupsList,
+		Caption,
+		Hint
 	},
 
 	data() {
 		return {
 			searchText: '',
 			searchResults: {},
+			searchResultsUsers: [],
+			searchResultsGroups: [],
 			contactsLoading: false
 		}
 	},
@@ -86,6 +103,8 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			this.searchResults = response.data.ocs.data
+			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
+			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
 		}
 	}

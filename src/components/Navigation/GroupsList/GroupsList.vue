@@ -1,7 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me
+  - @author Joas Schilling <coding@schilljs.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -22,32 +22,31 @@
 <template>
 	<ul class="contacts-list">
 		<AppContentListItem
-			v-for="item of contacts"
+			v-for="item of groups"
 			:key="item.id"
 			:title="item.label"
 			@click="createAndJoinConversation(item.id)">
-			<Avatar
+			<ConversationIcon
 				slot="icon"
-				:size="44"
-				:user="item.id"
-				:display-name="item.label" />
+				:item="dummyIconData" />
 		</AppContentListItem>
 	</ul>
 </template>
 
 <script>
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+import ConversationIcon from '../../ConversationIcon'
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
-import { createOneToOneConversation } from '../../../services/conversationsService'
+import { createGroupConversation } from '../../../services/conversationsService'
+import { CONVERSATION } from '../../../constants'
 
 export default {
-	name: 'ContactsList',
+	name: 'GroupsList',
 	components: {
-		Avatar,
+		ConversationIcon,
 		AppContentListItem
 	},
 	props: {
-		contacts: {
+		groups: {
 			type: Array,
 			required: true
 		},
@@ -56,16 +55,24 @@ export default {
 			default: false
 		}
 	},
+	computed: {
+		dummyIconData() {
+			return {
+				type: CONVERSATION.TYPE.GROUP
+			}
+		}
+	},
 	methods: {
 		/**
 		 * Create a new conversation with the selected user.
-		 * @param {string} userId the ID of the clicked user.
+		 * @param {string} groupId the ID of the clicked group.
 		 */
-		async createAndJoinConversation(userId) {
-			console.debug(userId)
-			const response = await createOneToOneConversation(userId)
-			const conversationToken = response.data.ocs.data.token
-			this.$router.push({ name: 'conversation', params: { token: conversationToken } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		async createAndJoinConversation(groupId) {
+			console.debug(groupId)
+			const response = await createGroupConversation(groupId)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			console.debug(response)
 		}
 	}
