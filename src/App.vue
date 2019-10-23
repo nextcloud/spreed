@@ -71,6 +71,7 @@ export default {
 	},
 	data: function() {
 		return {
+			defaultPageTitle: false,
 			loading: false,
 			date: Date.now() + 86400000 * 3,
 			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
@@ -128,7 +129,18 @@ export default {
 		 * @param {string} title Prefix for the page title e.g. conversation name
 		 */
 		setPageTitle(title) {
-			window.document.title = `${title} - ${t('spreed', 'Talk')}`
+			if (this.defaultPageTitle === false) {
+				// On the first load we store the current page title "Talk - Nextcloud",
+				// so we can append it every time again
+				this.defaultPageTitle = window.document.title
+				// When a conversation is opened directly, the "Talk - " part is
+				// missing from the title
+				if (this.defaultPageTitle.indexOf(t('spreed', 'Talk') + ' - ') !== 0) {
+					this.defaultPageTitle = t('spreed', 'Talk') + ' - ' + this.defaultPageTitle
+				}
+			}
+
+			window.document.title = `${title} - ${this.defaultPageTitle}`
 		},
 
 		onResize() {
