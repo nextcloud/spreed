@@ -92,8 +92,9 @@ export default {
 .app-navigation-search {
 	position: sticky;
 	top: 0;
-	background-color: white;
-	border-bottom: 1px solid lightgray;
+	background-color: var(--color-main-background);
+	border-bottom: 1px solid var(--color-border-dark);
+	z-index: 1;
 	&__input {
 		width: $navigation-width - 20px;
 		margin: 10px;
