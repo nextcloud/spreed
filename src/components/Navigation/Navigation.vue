@@ -27,7 +27,10 @@
 		<ul class="navigation__tems">
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
-			<ConversationsList />
+
+			<ConversationsList
+				:search-text="searchText" />
+
 			<template v-if="isSearching">
 				<Caption
 					:title="t('spreed', 'Contacts')" />
