@@ -29,6 +29,7 @@ the main body of the message as well as a quote.
 		class="message"
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
+		<Quote v-if="parent" v-bind="quote" />
 		<div v-if="isFirstMessage" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
@@ -42,10 +43,16 @@ the main body of the message as well as a quote.
 					{{ messageTime }}
 				</h6>
 				<Actions v-show="showActions" class="message__main__right__actions">
-					<ActionButton icon="icon-delete" @click="handleDelete">
-						Delete
+					<ActionButton
+						icon="icon-reply"
+						:close-after-click="true"
+						@click.stop="handleReply">
+						Reply
 					</ActionButton>
-					<ActionButton icon="icon-delete" @click="handleDelete">
+					<ActionButton
+						icon="icon-delete"
+						:close-after-click="true"
+						@click.stop="handleDelete">
 						Delete
 					</ActionButton>
 				</Actions>
@@ -57,12 +64,14 @@ the main body of the message as well as a quote.
 <script>
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import Quote from './Quote/Quote'
 
 export default {
 	name: 'Message',
 	components: {
 		Actions,
-		ActionButton
+		ActionButton,
+		Quote
 	},
 	props: {
 		/**
@@ -87,26 +96,46 @@ export default {
 			default: 0
 		},
 		/**
-		 * if true, it displays the message author on top of the message.
+		 * The message id.
+		 */
+		id: {
+			type: Number,
+			required: true
+		},
+		/**
+		 * If true, it displays the message author on top of the message.
 		 */
 		showAuthor: {
 			type: Boolean,
 			default: true
 		},
 		/**
-		 * Style the message as a quote.
+		 * Specifies if the message is temporary in order to display the spinner instead
+		 * of the message time.
 		 */
-		isQuote: {
-			type: Boolean,
-			default: false
-		},
 		isTemporary: {
 			type: Boolean,
 			required: true
 		},
+		/**
+		 * Specifies if the message is the first of a group of same-author messages.
+		 */
 		isFirstMessage: {
 			type: Boolean,
 			required: true
+		},
+		/**
+		 * The conversation token.
+		 */
+		token: {
+			type: String,
+			required: true
+		},
+		/**
+		 * The parent message's id.
+		 */
+		parent: {
+			type: Number
 		}
 	},
 	data() {
@@ -117,9 +146,21 @@ export default {
 	computed: {
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
+		},
+		quote() {
+			return this.parent && this.$store.getters.message(this.token, this.parent)
 		}
 	},
 	methods: {
+		handleReply() {
+			const MESSAGE_TO_BE_REPLIED = {
+				id: this.id,
+				actorDisplayName: this.actorDisplayName,
+				message: this.message,
+				token: this.token
+			}
+			this.$store.dispatch('addMessageToBeReplied', Object.assign({}, MESSAGE_TO_BE_REPLIED))
+		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
 		}
@@ -150,8 +191,9 @@ export default {
 		}
 		&__right {
 			justify-self: flex-start;
+			justify-content:  space-between;
 			position: relative;
-			flex: 0 0 110px;
+			flex: 0 0 $message-utils-width;
 			display: flex;
 			color: var(--color-text-maxcontrast);
 			font-size: 13px;

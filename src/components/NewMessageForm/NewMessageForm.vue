@@ -20,14 +20,31 @@
 -->
 
 <template>
-	<div class="wrapper">
-		<div class="new-message">
-			<form class="new-message-form">
-				<button class="new-message-form__button icon-clip-add-file" />
-				<button class="new-message-form__button icon-emoji-smile" />
-				<AdvancedInput v-model="text" @submit="handleSubmit" />
-				<button class="new-message-form__button icon-bell-outline" />
-				<button type="submit" class="new-message-form__button icon-folder" @click.prevent="handleSubmit" />
+	<div
+		class="wrapper">
+		<div
+			class="new-message">
+			<form
+				class="new-message-form">
+				<button
+					class="new-message-form__button icon-clip-add-file" />
+				<button
+					class="new-message-form__button icon-emoji-smile" />
+				<div class="new-message-form__input">
+					<Quote
+						v-if="messageToBeReplied"
+						:is-new-message-form-quote="true"
+						v-bind="messageToBeReplied" />
+					<AdvancedInput
+						v-model="text"
+						@submit="handleSubmit" />
+				</div>
+				<button
+					class="new-message-form__button icon-bell-outline" />
+				<button
+					type="submit"
+					class="new-message-form__button icon-folder"
+					@click.prevent="handleSubmit" />
 			</form>
 		</div>
 	</div>
@@ -37,11 +54,13 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import { getCurrentUser } from '@nextcloud/auth'
+import Quote from '../MessagesList/MessagesGroup/Message/Quote/Quote'
 
 export default {
 	name: 'NewMessageForm',
 	components: {
-		AdvancedInput
+		AdvancedInput,
+		Quote
 	},
 	data: function() {
 		return {
@@ -56,6 +75,9 @@ export default {
 		 */
 		token() {
 			return this.$route.params.token
+		},
+		messageToBeReplied() {
+			return this.$store.getters.getMessageToBeReplied(this.token)
 		}
 	},
 	methods: {
@@ -74,6 +96,13 @@ export default {
 				token: this.token,
 				timestamp: 0
 			})
+			/**
+			 * If the current message is a quote-reply messag, add the parent key to the
+			 * temporary message object.
+			 */
+			if (this.messageToBeReplied) {
+				message.parent = this.messageToBeReplied.id
+			}
 			return message
 		},
 		/**
@@ -84,7 +113,7 @@ export default {
 		 */
 		createTemporaryMessageId() {
 			const date = new Date()
-			return `temp_${(date.getTime()).toString()}`
+			return date.getTime()
 		},
 		/**
 		 * Sends the new message
@@ -103,6 +132,8 @@ export default {
 					const response = await postNewMessage(temporaryMessage)
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
+					// Also remove the message to be replied for this conversation
+					this.$store.dispatch('removeMessageToBeReplied', this.token)
 					// And adds the complete version of the message received
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
@@ -139,7 +170,7 @@ export default {
         &__button {
             width: 44px;
             height: 44px;
-            margin: auto;
+            margin-top: auto;
             background-color: transparent;
             border: none;
         }

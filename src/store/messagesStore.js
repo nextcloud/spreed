@@ -27,15 +27,39 @@ const state = {
 }
 
 const getters = {
+	/**
+	 * Gets the messages array
+	 * @param {object} state the state object.
+	 * @returns {array} the messages array (if there are messages in the store)
+	 */
 	messagesList: (state) => (token) => {
 		if (state.messages[token]) {
 			return Object.values(state.messages[token])
 		}
 		return []
 	},
+	/**
+	 * Gets the messages object
+	 * @param {object} state the state object.
+	 * @param {string} token the conversation token.
+	 * @returns {object} the messages object (if there are messages in the store)
+	 */
 	messages: (state) => (token) => {
 		if (state.messages[token]) {
 			return state.messages[token]
+		}
+		return {}
+	},
+	/**
+	 * Gets a single message object
+	 * @param {object} state the state object.
+	 * @param {string} token the conversation token.
+	 * @param {string} id the message id.
+	 * @returns {object} the message object (if the message is found in the store)
+	 */
+	message: (state) => (token, id) => {
+		if (state.messages[token][id]) {
+			return state.messages[token][id]
 		}
 		return {}
 	}
