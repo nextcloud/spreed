@@ -116,6 +116,7 @@ export default {
 			 * This runs whenever the new route is a conversation.
 			 */
 			if (to.name === 'conversation') {
+				// Page title
 				const NEXT_CONVERSATION_NAME = this.getConversationName(to.params.token)
 				this.setPageTitle(NEXT_CONVERSATION_NAME)
 			}

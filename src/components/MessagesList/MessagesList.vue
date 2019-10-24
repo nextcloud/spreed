@@ -47,7 +47,7 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 <script>
 import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
-import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
+import { fetchMessages, cancelableLookForNewMessages } from '../../services/messagesService'
 import { EventBus } from '../../services/EventBus'
 
 export default {
@@ -74,6 +74,12 @@ export default {
 			 * bottom.
 			 */
 			isInitiated: false,
+			/**
+			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+			 * which allows to cancel the previous long polling request for new
+			 * messages before making another one.
+			 */
+			cancelRequest: null,
 		}
 	},
 
@@ -177,17 +183,27 @@ export default {
 			messages.data.ocs.data.forEach(message => {
 				this.$store.dispatch('processMessage', message)
 			})
-			// After loading the old messages to the store, we start looking for new mwssages.
 			this.getNewMessages()
 		},
-
 		/**
 		 * Creates a long polling request for a new message.
 		 */
 		async getNewMessages() {
+			/**
+			 * If there's already one pending long polling request from a previous call
+			 * of this method, we call the `cancelRequest` function to clear it and reset
+			 * the cancelRequest to null in the component's data.
+			 */
+			if (typeof this.cancelRequest === 'function') {
+				this.cancelRequest('canceled')
+				this.cancelRequest = null
+			}
+			// Get a new request function and cancel function pair
+			const { lookForNewMessages, cancel } = cancelableLookForNewMessages()
+			// store the cancel function in the data
+			this.cancelRequest = cancel
 			const lastKnownMessageId = this.getLastKnownMessageId()
-			const messages = await lookForNewMessges(this.token, lastKnownMessageId)
-			// If there are no new messages, the variable messages will be undefined.
+			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
 			if (messages !== undefined) {
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
@@ -196,12 +212,11 @@ export default {
 				this.scrollToBottom()
 			}
 			/**
-			 * This method recursively call itself after a response, so we're always
-			 * looking for new messages.
+			 * If there are no new messages, the variable messages will be undefined, so the
+			 * previous code block will be skipped and this method recursively calls itself.
 			 */
 			this.getNewMessages()
 		},
-
 		/**
 		 * Dispatches the deleteMessages action.
 		 * @param {object} event The deleteMessage event emitted by the Message component.
