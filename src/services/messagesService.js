@@ -34,7 +34,9 @@ const fetchMessages = async function(token) {
 		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0')
 		return response
 	} catch (error) {
-		console.debug('Error while fetching messages: ', error)
+		if (!error.response || !error.response.status || error.response.status !== 304) {
+			console.debug('Error while fetching messages: ', error)
+		}
 	}
 }
 
@@ -47,10 +49,12 @@ const fetchMessages = async function(token) {
  */
 const lookForNewMessges = async function(token, lastKnownMessageId) {
 	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + '&includeLastKnown=0' + `&lastKnownMessageId=${lastKnownMessageId}`)
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + `&lastKnownMessageId=${lastKnownMessageId}`)
 		return response
 	} catch (error) {
-		console.debug('Error while looking for new message: ', error)
+		if (!error.response || !error.response.status || error.response.status !== 304) {
+			console.debug('Error while looking for new messages: ', error)
+		}
 	}
 }
 
