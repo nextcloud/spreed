@@ -94,7 +94,8 @@ export default {
 				actorId: getCurrentUser().uid,
 				message: this.text,
 				token: this.token,
-				timestamp: 0
+				timestamp: 0,
+				systemMessage: ''
 			})
 			/**
 			 * If the current message is a quote-reply messag, add the parent key to the
