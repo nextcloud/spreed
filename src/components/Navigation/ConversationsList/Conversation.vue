@@ -28,7 +28,7 @@
 			slot="icon"
 			:item="item" />
 		<template slot="subtitle">
-			{{ item.lastMessage.message }}
+			{{ simpleLastChatMessage }}
 		</template>
 		<AppNavigationCounter v-if="item.unreadMessages"
 			slot="counter"
@@ -160,6 +160,23 @@ export default {
 				return 'icon-close'
 			}
 			return 'icon-delete'
+		},
+		/**
+		 * This is a simplified version of the last chat message.
+		 * Parameters are parsed without markup (just replaced with the name),
+		 * e.g. no avatars on mentions.
+		 * @returns {string} A simple message to show below the conversation name
+		 */
+		simpleLastChatMessage() {
+			const params = this.item.lastMessage.messageParameters
+			let subtitle = this.item.lastMessage.message
+
+			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
+			Object.keys(params).forEach((parameterKey) => {
+				subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
+			})
+
+			return subtitle
 		}
 	},
 	methods: {
