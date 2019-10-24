@@ -150,18 +150,17 @@ export default {
 		onResize() {
 			this.windowHeight = window.innerHeight - document.getElementById('header').clientHeight
 		},
-		newButtonAction(e) {
-			console.debug(e)
-		},
-		log(e) {
-			console.debug(e)
-		},
+
 		/**
 		 * Get a conversation's name.
 		 * @param {string} token The conversation's token
 		 * @returns {string} The conversation's name
 		 */
 		getConversationName(token) {
+			if (!this.$store.getters.conversations[token]) {
+				return ''
+			}
+
 			return this.$store.getters.conversations[token].displayName
 		}
 	}
