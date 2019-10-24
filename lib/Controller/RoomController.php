@@ -404,7 +404,7 @@ class RoomController extends AEnvironmentAwareController {
 		try {
 			$room = $this->manager->getOne2OneRoom($this->userId, $targetUser->getUID());
 			$room->ensureOneToOneRoomIsFilled();
-			return new DataResponse(['token' => $room->getToken()], Http::STATUS_OK);
+			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_OK);
 		} catch (RoomNotFoundException $e) {
 			$room = $this->manager->createOne2OneRoom();
 			$room->addUsers([
@@ -415,11 +415,7 @@ class RoomController extends AEnvironmentAwareController {
 				'participantType' => Participant::OWNER,
 			]);
 
-			return new DataResponse([
-				'token' => $room->getToken(),
-				'name' => $room->getName(),
-				'displayName' => $room->getDisplayName($currentUser->getUID()),
-			], Http::STATUS_CREATED);
+			return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 		}
 	}
 
@@ -465,11 +461,7 @@ class RoomController extends AEnvironmentAwareController {
 
 		\call_user_func_array([$room, 'addUsers'], $participants);
 
-		return new DataResponse([
-			'token' => $room->getToken(),
-			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($currentUser->getUID()),
-		], Http::STATUS_CREATED);
+		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 	}
 
 	/**
@@ -502,11 +494,7 @@ class RoomController extends AEnvironmentAwareController {
 			'participantType' => Participant::OWNER,
 		]);
 
-		return new DataResponse([
-			'token' => $room->getToken(),
-			'name' => $room->getName(),
-			'displayName' => $room->getDisplayName($currentUser->getUID()),
-		], Http::STATUS_CREATED);
+		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
 	}
 
 	/**
