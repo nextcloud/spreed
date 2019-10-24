@@ -22,9 +22,9 @@
 <template>
 	<div class="wrapper">
 		<div class="messages__avatar">
-			<Avatar v-if="!isSystemMessage"
-				class="messages__avatar__icon"
-				:user="actorDisplayName"
+			<AuthorAvatar v-if="!isSystemMessage"
+				:author-type="actorType"
+				:author-id="actorId"
 				:display-name="actorDisplayName" />
 		</div>
 		<div class="messages">
@@ -41,14 +41,13 @@
 </template>
 
 <script>
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
-
+import AuthorAvatar from './AuthorAvatar'
 import Message from './Message/Message'
 
 export default {
 	name: 'MessagesGroup',
 	components: {
-		Avatar,
+		AuthorAvatar,
 		Message,
 	},
 	props: {
@@ -77,7 +76,21 @@ export default {
 
 	computed: {
 		/**
-		 * The message username.
+		 * The message actor type.
+		 * @returns {string}
+		 */
+		actorType() {
+			return this.messages[0].actorType
+		},
+		/**
+		 * The message actor id.
+		 * @returns {string}
+		 */
+		actorId() {
+			return this.messages[0].actorId
+		},
+		/**
+		 * The message actor display name.
 		 * @returns {string}
 		 */
 		actorDisplayName() {
