@@ -317,6 +317,7 @@
     "Error occurred while making the room private" : "Došlo k chybě při činění místnosti soukromou",
     "You can not send messages, because the conversation is locked." : "Nemůžete posílat zprávy, protože konverzace je uzamčená.",
     "The conversation is locked." : "Konverzace je uzamčena.",
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Zapnout video (v) – při prvním zapnutí videa bude vaše spojení nakrátko přerušeno",
     "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
     "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edge a Safari lze nyní použít k účasti na zvukových a video hovorech",
     "* You can now notify all participants by posting \"@all\" into the chat" : "* Nyní můžete upozornit všechny účastníky zasláním „@all“ do chatu",
