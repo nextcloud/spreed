@@ -22,7 +22,7 @@
 <template>
 	<ul class="conversations">
 		<Conversation
-			v-for="item of sortedConversationsList"
+			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
 	</ul>
@@ -38,12 +38,21 @@ export default {
 	components: {
 		Conversation
 	},
+	props: {
+		searchText: {
+			type: String,
+			default: ''
+		}
+	},
 	computed: {
 		conversationsList() {
-			return this.$store.getters.conversationsList
-		},
-		sortedConversationsList() {
-			return this.conversationsList.slice().sort(this.sortConversations)
+			let conversations = this.$store.getters.conversationsList
+
+			if (this.searchText !== '') {
+				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1)
+			}
+
+			return conversations.sort(this.sortConversations)
 		}
 	},
 	beforeMount() {

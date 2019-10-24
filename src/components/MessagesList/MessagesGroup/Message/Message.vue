@@ -135,7 +135,8 @@ export default {
 		 * The parent message's id.
 		 */
 		parent: {
-			type: Number
+			type: Number,
+			default: 0
 		}
 	},
 	data() {
