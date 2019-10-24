@@ -183,7 +183,7 @@ export default {
 		 * Creates a long polling request for a new message.
 		 */
 		async getNewMessages() {
-			const lastKnownMessageId = this.messagesList[this.messagesList.length - 1].id
+			const lastKnownMessageId = this.getLastKnownMessageId()
 			const messages = await lookForNewMessges(this.token, lastKnownMessageId)
 			// If there are no new messages, the variable messages will be undefined.
 			if (messages !== undefined) {
@@ -214,6 +214,17 @@ export default {
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
+		},
+
+		/**
+		 * gets the last known message id.
+		 * @returns {string} The last known message id.
+		 */
+		getLastKnownMessageId() {
+			if (this.messagesList[this.messagesList.length - 1]) {
+				return this.messagesList[this.messagesList.length - 1].id
+			}
+			return '0'
 		},
 
 	},
