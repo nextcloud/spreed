@@ -30,7 +30,7 @@ the main body of the message as well as a quote.
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
 		<Quote v-if="parent" v-bind="quote" />
-		<div v-if="isFirstMessage" class="message__author">
+		<div v-if="isFirstMessage && showAuthor" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<div class="message__main">

@@ -22,7 +22,7 @@
 <template>
 	<div class="wrapper">
 		<div class="messages__avatar">
-			<Avatar
+			<Avatar v-if="!isSystemMessage"
 				class="messages__avatar__icon"
 				:user="actorDisplayName"
 				:display-name="actorDisplayName" />
@@ -34,6 +34,7 @@
 				v-bind="message"
 				:is-first-message="index === 0"
 				:actor-display-name="actorDisplayName"
+				:show-author="!isSystemMessage"
 				:is-temporary="message.timestamp === 0" />
 		</div>
 	</div>
@@ -81,6 +82,13 @@ export default {
 		 */
 		actorDisplayName() {
 			return this.messages[0].actorDisplayName
+		},
+		/**
+		 * Whether the given message is a system message
+		 * @returns {bool}
+		 */
+		isSystemMessage() {
+			return this.messages[0].systemMessage.length !== 0
 		}
 	}
 }
@@ -106,8 +114,9 @@ export default {
 	flex-direction: column;
 	&__avatar {
 		position: sticky;
-		top: 0px;
+		top: 0;
 		height: 52px;
+		width: 52px;
 		padding: 20px 10px 10px 10px;
 	}
 }

@@ -102,11 +102,11 @@ export default {
 		 */
 		messagesGroupedByAuthor() {
 			let groups = []
-			let currentAuthor = ''
+			let lastMessage = null
 			for (let message of this.messagesList) {
-				if (message.actorId !== currentAuthor) {
+				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					groups.push([message])
-					currentAuthor = message.actorId
+					lastMessage = message
 				} else {
 					groups[groups.length - 1].push(message)
 				}
@@ -141,9 +141,31 @@ export default {
 	},
 
 	methods: {
+		/**
+		 * Compare two messages to decide if they should be grouped
+		 *
+		 * @param {object} message1 The new message
+		 * @param {string} message1.actorType Actor type of the new message
+		 * @param {string} message1.actorId Actor id of the new message
+		 * @param {string} message1.systemMessage System message content of the new message
+		 * @param {null|object} message2 The previous message
+		 * @param {string} message2.actorType Actor type of the previous message
+		 * @param {string} message2.actorId Actor id of the previous message
+		 * @param {string} message2.systemMessage System message content of the previous message
+		 * @returns {bool} Boolean if the messages should be grouped or not
+		 */
+		messagesShouldBeGrouped(message1, message2) {
+			return message2 // Is there a previous message
+				&& (
+					message1.actorType !== 'bots' // Don't group messages of commands and bots
+					|| message1.actorId === 'changelog') // Apart from the changelog bot
+				&& (message1.systemMessage.length === 0) === (message2.systemMessage.length === 0) // Only group system messages with each others
+				&& message1.actorType === message2.actorType // To have the same author, the type
+				&& message1.actorId === message2.actorId //     and the id of the author must be the same
+		},
 
 		/**
-		 * Fetches the messaes of a conversation given the
+		 * Fetches the messages of a conversation given the
 		 * conversation token.
 		 */
 		async onTokenChange() {
