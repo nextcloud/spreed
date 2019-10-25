@@ -26,7 +26,7 @@
 			:class="iconClass" />
 		<Avatar v-else
 			:size="44"
-			:user="item.displayName"
+			:user="item.name"
 			:display-name="item.displayName" />
 		<div v-if="showFavorite"
 			class="favorite-mark">
