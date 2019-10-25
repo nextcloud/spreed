@@ -150,6 +150,8 @@
     "Add to favorites" : "Ajouter aux favoris",
     "Link to conversation copied to clipboard" : "Lien vers la conversation copié dans le presse-papier",
     "Link to conversation was not copied to clipboard." : "Le lien vers la conversation n'a pas été copié dans le presse-papier.",
+    "Conversations" : "Conversations",
+    "Contacts" : "Contacts",
     "Limit to groups" : "Limiter aux groupes",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Lorsqu'au moins un groupe est sélectionné, seules les personnes des groupes répertoriés peuvent participer aux conversations.",
     "Guests can still join public conversations." : "Les invités peuvent toujours rejoindre les conversations publiques.",

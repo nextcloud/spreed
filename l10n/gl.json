@@ -150,6 +150,8 @@
     "Add to favorites" : "Engadir a favoritos",
     "Link to conversation copied to clipboard" : " Ligazón á conversa foi copiada ao portapapeis",
     "Link to conversation was not copied to clipboard." : "A ligazón á conversa non foi copiada no portapapeis.",
+    "Conversations" : "Conversas",
+    "Contacts" : "Contactos",
     "Limit to groups" : "Límite para grupos",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Cando se selecciona polo menos un grupo, só as persoas dos grupos listados poden formar parte das conversas.",
     "Guests can still join public conversations." : "Os convidados aínda poden unirse a conversas públicas.",

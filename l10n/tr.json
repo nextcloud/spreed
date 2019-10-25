@@ -150,6 +150,8 @@
     "Add to favorites" : "Sık kullanılanlara ekle",
     "Link to conversation copied to clipboard" : "Görüşme bağlantısı panoya kopyalandı",
     "Link to conversation was not copied to clipboard." : "Görüşme bağlantısı panoya kopyalanamadı",
+    "Conversations" : "Görüşmeler",
+    "Contacts" : "Kişiler",
     "Limit to groups" : "Şu gruplarla sınırla",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "En az bir grup seçildiğinde, yalnız belirtilen gruplardaki kişiler görüşmelere katılabilir.",
     "Guests can still join public conversations." : "Konuklar hala herkese açık görüşmelere katılabilir.",
