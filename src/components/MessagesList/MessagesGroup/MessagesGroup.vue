@@ -94,7 +94,17 @@ export default {
 		 * @returns {string}
 		 */
 		actorDisplayName() {
-			return this.messages[0].actorDisplayName
+			let displayName = this.messages[0].actorDisplayName.trim()
+
+			if (displayName === '' && this.actorType === 'guests') {
+				return t('spreed', 'Guest')
+			}
+
+			if (displayName === '') {
+				return t('spreed', '[Unknown user name]')
+			}
+
+			return displayName
 		},
 		/**
 		 * Whether the given message is a system message
