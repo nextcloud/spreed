@@ -149,6 +149,8 @@
     "Add to favorites" : "Lägg till som favorit",
     "Link to conversation copied to clipboard" : "Länk till konversation kopierad till urklipp",
     "Link to conversation was not copied to clipboard." : "Länk till konversation kopierades inte till urklipp.",
+    "Conversations" : "Konversationer",
+    "Contacts" : "Kontakter",
     "Limit to groups" : "Begränsa till grupper",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "När minst en grupp väljs kan bara personer i de angivna grupperna ingå i konversationer.",
     "Guests can still join public conversations." : "Gäster kan fortfarande delta i publika konversationer.",
