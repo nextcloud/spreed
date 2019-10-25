@@ -152,6 +152,8 @@ OC.L10N.register(
     "Add to favorites" : "Aggiungi ai preferiti",
     "Link to conversation copied to clipboard" : "Collegamento alla conversazione copiato negli appunti",
     "Link to conversation was not copied to clipboard." : "Il collegamento alla conversazione non è stato copiato negli appunti.",
+    "Conversations" : "Conversazioni",
+    "Contacts" : "Contatti",
     "Limit to groups" : "Limita a gruppi",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Quando almeno un gruppo è selezionato, solo le persone dei gruppi elencati possono prendere parte alla conversazione.",
     "Guests can still join public conversations." : "Gli ospiti possono unirsi a conversazioni pubbliche.",
