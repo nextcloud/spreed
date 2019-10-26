@@ -12,6 +12,8 @@
     "Join a conversation or start a new one" : "Приклучи се кон разговорот или започни нов",
     "Say hi to your friends and colleagues!" : "Кажи им здраво на твојте пријатели и колеги!",
     "Password" : "Лозинка",
+    "%s Talk on your mobile devices" : "%s Разговор на вашиоте мобилни уреди",
+    "Join conversations at any time, any where, on any device." : "Придружете се на разговор во секое време, каде и да било, на кој било уред.",
     "Delete server" : "Избриши сервер",
     "Add new server" : "Додади нов сервер",
     "You deleted all STUN servers. As it is almost always needed, a default STUN server was added." : "Ги избришавте сите STUN сервери. Бидејќи најчесто е потребен, додаден е стандарден STUN сервер.",
