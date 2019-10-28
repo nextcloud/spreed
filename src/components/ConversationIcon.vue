@@ -20,13 +20,20 @@
 -->
 
 <template>
-	<div v-if="itemClass"
-		class="avatar icon"
-		:class="itemClass" />
-	<Avatar v-else
-		:size="44"
-		:user="item.displayName"
-		:display-name="item.displayName" />
+	<div>
+		<div v-if="itemClass"
+			class="avatar icon"
+			:class="itemClass" />
+		<Avatar v-else
+			:size="44"
+			:user="item.displayName"
+			:display-name="item.displayName" />
+		<div v-if="showFavorite"
+			class="favorite-mark">
+			<span class="icon icon-favorite"></span>
+			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
+		</div>
+	</div>
 </template>
 
 <script>
@@ -39,6 +46,13 @@ export default {
 		Avatar,
 	},
 	props: {
+		/**
+		 * Allow to hide the favorite icon, e.g. on mentions
+		 */
+		hideFavorite: {
+			type: Boolean,
+			default: true,
+		},
 		item: {
 			type: Object,
 			default: function() {
@@ -46,11 +60,15 @@ export default {
 					objectType: '',
 					type: 0,
 					displayName: '',
+					isFavorite: false,
 				}
 			},
 		},
 	},
 	computed: {
+		showFavorite() {
+			return !this.hideFavorite && this.item.isFavorite
+		},
 		itemClass() {
 			if (this.item.objectType === 'file') {
 				return 'icon-file'
@@ -72,7 +90,7 @@ export default {
 
 <style lang="scss" scoped>
 
-.icon {
+.icon:not(.icon-favorite) {
 	width: 44px;
 	height: 44px;
 	line-height: 44px;
@@ -90,6 +108,20 @@ export default {
 		background-size: 20px;
 	}
 
+}
+
+.favorite-mark {
+	position: absolute;
+	top: 8px;
+	left: calc(44px - 8px);
+	line-height: 100%;
+
+	.icon-favorite {
+		display: inline-block;
+		vertical-align: middle;
+		background-image: var(--icon-star-dark-FC0);
+		background-size: 20px;
+	}
 }
 
 </style>
