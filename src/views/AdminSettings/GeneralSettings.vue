@@ -71,13 +71,13 @@ import { Multiselect } from 'nextcloud-vue'
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
 	{ value: 1, label: t('spreed', 'Users and moderators') },
-	{ value: 2, label: t('spreed', 'Moderators only') }
+	{ value: 2, label: t('spreed', 'Moderators only') },
 ]
 export default {
 	name: 'GeneralSettings',
 
 	components: {
-		Multiselect
+		Multiselect,
 	},
 
 	data() {
@@ -90,7 +90,7 @@ export default {
 			startCalls: startCallOptions[0],
 
 			conversationsFiles: true,
-			conversationsFilesPublicShares: true
+			conversationsFilesPublicShares: true,
 		}
 	},
 
@@ -109,7 +109,7 @@ export default {
 			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
 				success: function() {
 					this.loadingStartCalls = false
-				}.bind(this)
+				}.bind(this),
 			})
 		},
 		saveConversationsFiles() {
@@ -123,12 +123,12 @@ export default {
 							success: function() {
 								this.conversationsFilesPublicShares = false
 								this.loadingConversationsFiles = false
-							}.bind(this)
+							}.bind(this),
 						})
 					} else {
 						this.loadingConversationsFiles = false
 					}
-				}.bind(this)
+				}.bind(this),
 			})
 		},
 		saveConversationsFilesPublicShares() {
@@ -137,10 +137,10 @@ export default {
 			OCP.AppConfig.setValue('spreed', 'conversations_files_public_shares', this.conversationsFilesPublicShares ? '1' : '0', {
 				success: function() {
 					this.loadingConversationsFiles = false
-				}.bind(this)
+				}.bind(this),
 			})
-		}
-	}
+		},
+	},
 }
 </script>
 <style scoped lang="scss">

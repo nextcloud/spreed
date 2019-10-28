@@ -67,7 +67,7 @@ export default {
 		AppContent,
 		AppSidebar,
 		AppSidebarTab,
-		Navigation
+		Navigation,
 	},
 	data: function() {
 		return {
@@ -77,7 +77,7 @@ export default {
 			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
 			show: false,
 			starred: false,
-			windowHeight: 0
+			windowHeight: 0,
 		}
 	},
 
@@ -91,7 +91,7 @@ export default {
 		 */
 		token() {
 			return this.$route.params.token
-		}
+		},
 	},
 
 	beforeMount() {
@@ -162,8 +162,8 @@ export default {
 			}
 
 			return this.$store.getters.conversations[token].displayName
-		}
-	}
+		},
+	},
 }
 </script>
 

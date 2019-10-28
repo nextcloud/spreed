@@ -43,9 +43,9 @@ import CollaborationView from './views/CollaborationView'
 		init(MountingPoint, roomModel) {
 			this.ComponentVM = new Vue({
 				data: {
-					model: roomModel.toJSON()
+					model: roomModel.toJSON(),
 				},
-				render: h => h(CollaborationView)
+				render: h => h(CollaborationView),
 			})
 
 			if (MountingPoint) {
@@ -56,7 +56,7 @@ import CollaborationView from './views/CollaborationView'
 			if (this.ComponentVM) {
 				this.ComponentVM.model = roomModel.toJSON()
 			}
-		}
+		},
 
 	}
 

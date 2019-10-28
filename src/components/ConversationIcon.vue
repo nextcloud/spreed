@@ -36,7 +36,7 @@ import { CONVERSATION } from '../constants'
 export default {
 	name: 'ConversationIcon',
 	components: {
-		Avatar
+		Avatar,
 	},
 	props: {
 		item: {
@@ -45,10 +45,10 @@ export default {
 				return {
 					objectType: '',
 					type: 0,
-					displayName: ''
+					displayName: '',
 				}
-			}
-		}
+			},
+		},
 	},
 	computed: {
 		itemClass() {
@@ -65,8 +65,8 @@ export default {
 			}
 
 			return ''
-		}
-	}
+		},
+	},
 }
 </script>
 

@@ -87,11 +87,11 @@ export default {
 	name: 'SignalingServers',
 
 	directives: {
-		tooltip: Tooltip
+		tooltip: Tooltip,
 	},
 
 	components: {
-		SignalingServer
+		SignalingServer,
 	},
 
 	data() {
@@ -100,7 +100,7 @@ export default {
 			secret: '',
 			hideWarning: false,
 			loading: false,
-			saved: false
+			saved: false,
 		}
 	},
 
@@ -120,7 +120,7 @@ export default {
 		newServer() {
 			this.servers.push({
 				server: '',
-				verify: false
+				verify: false,
 			})
 		},
 
@@ -132,7 +132,7 @@ export default {
 				success() {
 					self.loading = false
 					self.toggleSave()
-				}
+				},
 			})
 		},
 
@@ -148,12 +148,12 @@ export default {
 			const self = this
 			OCP.AppConfig.setValue('spreed', 'signaling_servers', JSON.stringify({
 				servers: this.servers,
-				secret: this.secret
+				secret: this.secret,
 			}), {
 				success() {
 					self.loading = false
 					self.toggleSave()
-				}
+				},
 			})
 		},
 
@@ -162,7 +162,7 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
-		}
-	}
+		},
+	},
 }
 </script>

@@ -110,7 +110,7 @@ import axios from 'nextcloud-axios'
 export default {
 	name: 'RoomSelector',
 	components: {
-		Modal, Avatar
+		Modal, Avatar,
 	},
 	data() {
 		return {
@@ -122,8 +122,8 @@ export default {
 				ROOM_TYPE_ONE_TO_ONE: 1,
 				ROOM_TYPE_GROUP: 2,
 				ROOM_TYPE_PUBLIC: 3,
-				ROOM_TYPE_CHANGELOG: 4
-			}
+				ROOM_TYPE_CHANGELOG: 4,
+			},
 		}
 	},
 	computed: {
@@ -140,7 +140,7 @@ export default {
 					&& room.objectType !== 'file'
 					&& room.objectType !== 'share:password'
 			})
-		}
+		},
 	},
 	beforeMount() {
 		this.fetchRooms()
@@ -157,7 +157,7 @@ export default {
 		},
 		select() {
 			this.$root.$emit('select', this.selectedRoom)
-		}
-	}
+		},
+	},
 }
 </script>

@@ -31,9 +31,9 @@ export default {
 	props: {
 		hint: {
 			type: String,
-			required: true
-		}
-	}
+			required: true,
+		},
+	},
 }
 </script>
 

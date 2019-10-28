@@ -21,31 +21,31 @@ export const CONVERSATION = {
 	START_CALL: {
 		EVERYONE: 0,
 		USERS: 1,
-		MODERATORS: 2
+		MODERATORS: 2,
 	},
 	STATE: {
 		READ_WRITE: 0,
-		READ_ONLY: 1
+		READ_ONLY: 1,
 	},
 	TYPE: {
 		ONE_TO_ONE: 1,
 		GROUP: 2,
 		PUBLIC: 3,
-		CHANGELOG: 4
-	}
+		CHANGELOG: 4,
+	},
 }
 export const PARTICIPANT = {
 	CALL_FLAG: {
 		DISCONNECTED: 0,
 		IN_CALL: 1,
 		WITH_AUDIO: 2,
-		WITH_VIDEO: 4
+		WITH_VIDEO: 4,
 	},
 	NOTIFY: {
 		DEFAULT: 0,
 		ALWAYS: 1,
 		MENTION: 2,
-		NEVER: 3
+		NEVER: 3,
 	},
 	TYPE: {
 		OWNER: 1,
@@ -53,12 +53,12 @@ export const PARTICIPANT = {
 		USER: 3,
 		GUEST: 4,
 		USER_SELF_JOINED: 5,
-		GUEST_MODERATOR: 6
-	}
+		GUEST_MODERATOR: 6,
+	},
 }
 export const WEBINAR = {
 	LOBBY: {
 		NONE: 0,
-		NON_MODERATORS: 1
-	}
+		NON_MODERATORS: 1,
+	},
 }

@@ -36,13 +36,13 @@ import { EventBus } from '../../../services/EventBus'
 export default {
 	name: 'ConversationsList',
 	components: {
-		Conversation
+		Conversation,
 	},
 	props: {
 		searchText: {
 			type: String,
-			default: ''
-		}
+			default: '',
+		},
 	},
 	computed: {
 		conversationsList() {
@@ -53,7 +53,7 @@ export default {
 			}
 
 			return conversations.sort(this.sortConversations)
-		}
+		},
 	},
 	beforeMount() {
 		this.fetchConversations()
@@ -91,8 +91,8 @@ export default {
 			 * ( if the current route is a conversation and once the conversations are received)
 			 */
 			EventBus.$emit('conversationsReceived')
-		}
-	}
+		},
+	},
 }
 </script>
 

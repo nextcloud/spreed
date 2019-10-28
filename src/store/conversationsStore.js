@@ -24,18 +24,18 @@ import Vue from 'vue'
 const getDefaultState = () => {
 	return {
 		conversations: {
-		}
+		},
 	}
 }
 
 const state = {
 	conversations: {
-	}
+	},
 }
 
 const getters = {
 	conversations: state => state.conversations,
-	conversationsList: state => Object.values(state.conversations)
+	conversationsList: state => Object.values(state.conversations),
 }
 
 const mutations = {
@@ -62,7 +62,7 @@ const mutations = {
 	 */
 	purgeConversationsStore(state) {
 		Object.assign(state, getDefaultState())
-	}
+	},
 }
 
 const actions = {
@@ -91,7 +91,7 @@ const actions = {
 	 */
 	purgeConversationsStore(context) {
 		context.commit('purgeConversationsStore')
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

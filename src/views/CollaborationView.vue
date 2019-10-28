@@ -35,7 +35,7 @@ import { CollectionList } from 'nextcloud-vue-collections'
 export default {
 	name: 'CollaborationView',
 	components: {
-		CollectionList: CollectionList
+		CollectionList: CollectionList,
 	},
 	computed: {
 		roomId() {
@@ -49,7 +49,7 @@ export default {
 				return '' + this.$root.model.displayName
 			}
 			return ''
-		}
-	}
+		},
+	},
 }
 </script>

@@ -67,7 +67,7 @@ export default {
 	name: 'AllowedGroups',
 
 	components: {
-		Multiselect
+		Multiselect,
 	},
 
 	data() {
@@ -76,7 +76,7 @@ export default {
 			loadingGroups: false,
 			groups: [],
 			allowedGroups: [],
-			saveButtonText: t('spreed', 'Save changes')
+			saveButtonText: t('spreed', 'Save changes'),
 		}
 	},
 
@@ -118,10 +118,10 @@ export default {
 					setTimeout(function() {
 						this.saveButtonText = t('spreed', 'Save changes')
 					}.bind(this), 5000)
-				}.bind(this)
+				}.bind(this),
 			})
-		}
-	}
+		},
+	},
 }
 </script>
 

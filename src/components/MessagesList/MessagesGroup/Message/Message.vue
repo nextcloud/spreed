@@ -71,7 +71,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
-		Quote
+		Quote,
 	},
 	props: {
 		/**
@@ -79,35 +79,35 @@ export default {
 		 */
 		actorDisplayName: {
 			type: String,
-			required: true
+			required: true,
 		},
 		/**
 		 * The message or quote text.
 		 */
 		message: {
 			type: String,
-			required: true
+			required: true,
 		},
 		/**
 		 * The message timestamp.
 		 */
 		timestamp: {
 			type: Number,
-			default: 0
+			default: 0,
 		},
 		/**
 		 * The message id.
 		 */
 		id: {
 			type: Number,
-			required: true
+			required: true,
 		},
 		/**
 		 * If true, it displays the message author on top of the message.
 		 */
 		showAuthor: {
 			type: Boolean,
-			default: true
+			default: true,
 		},
 		/**
 		 * Specifies if the message is temporary in order to display the spinner instead
@@ -115,33 +115,33 @@ export default {
 		 */
 		isTemporary: {
 			type: Boolean,
-			required: true
+			required: true,
 		},
 		/**
 		 * Specifies if the message is the first of a group of same-author messages.
 		 */
 		isFirstMessage: {
 			type: Boolean,
-			required: true
+			required: true,
 		},
 		/**
 		 * The conversation token.
 		 */
 		token: {
 			type: String,
-			required: true
+			required: true,
 		},
 		/**
 		 * The parent message's id.
 		 */
 		parent: {
 			type: Number,
-			default: 0
-		}
+			default: 0,
+		},
 	},
 	data() {
 		return {
-			showActions: false
+			showActions: false,
 		}
 	},
 	computed: {
@@ -150,7 +150,7 @@ export default {
 		},
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
-		}
+		},
 	},
 	methods: {
 		handleReply() {
@@ -158,14 +158,14 @@ export default {
 				id: this.id,
 				actorDisplayName: this.actorDisplayName,
 				message: this.message,
-				token: this.token
+				token: this.token,
 			}
 			this.$store.dispatch('addMessageToBeReplied', Object.assign({}, MESSAGE_TO_BE_REPLIED))
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
-		}
-	}
+		},
+	},
 }
 </script>
 

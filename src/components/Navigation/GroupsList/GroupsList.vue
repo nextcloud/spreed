@@ -43,24 +43,24 @@ export default {
 	name: 'GroupsList',
 	components: {
 		ConversationIcon,
-		AppContentListItem
+		AppContentListItem,
 	},
 	props: {
 		groups: {
 			type: Array,
-			required: true
+			required: true,
 		},
 		isLoading: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 	computed: {
 		dummyIconData() {
 			return {
-				type: CONVERSATION.TYPE.GROUP
+				type: CONVERSATION.TYPE.GROUP,
 			}
-		}
+		},
 	},
 	methods: {
 		/**
@@ -74,8 +74,8 @@ export default {
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			console.debug(response)
-		}
-	}
+		},
+	},
 }
 </script>
 

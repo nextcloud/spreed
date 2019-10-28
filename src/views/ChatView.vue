@@ -13,14 +13,14 @@ export default {
 	name: 'ChatView',
 	components: {
 		MessagesList,
-		NewMessageForm
+		NewMessageForm,
 	},
 	props: {
 		token: {
 			type: String,
-			required: true
-		}
-	}
+			required: true,
+		},
+	},
 }
 </script>
 

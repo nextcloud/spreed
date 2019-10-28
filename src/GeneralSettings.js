@@ -32,5 +32,5 @@ Vue.prototype.OCP = OCP
 export default new Vue({
 	el: '#general_settings',
 	name: 'GeneralSettings',
-	render: h => h(GeneralSettings)
+	render: h => h(GeneralSettings),
 })

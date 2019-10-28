@@ -111,7 +111,7 @@ export default {
 		ActionText,
 		AppContentListItem,
 		AppNavigationCounter,
-		ConversationIcon
+		ConversationIcon,
 	},
 	props: {
 		item: {
@@ -126,10 +126,10 @@ export default {
 					type: 0,
 					displayName: '',
 					isFavorite: false,
-					notificationLevel: 0
+					notificationLevel: 0,
 				}
-			}
-		}
+			},
+		},
 	},
 	computed: {
 		conversationName() {
@@ -177,7 +177,7 @@ export default {
 			})
 
 			return subtitle
-		}
+		},
 	},
 	methods: {
 		async copyLinkToConversation() {
@@ -231,8 +231,8 @@ export default {
 		async setNotificationLevel(level) {
 			await setNotificationLevel(this.item.token, level)
 			this.item.notificationLevel = level
-		}
-	}
+		},
+	},
 }
 </script>
 

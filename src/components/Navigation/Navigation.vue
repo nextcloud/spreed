@@ -76,7 +76,7 @@ export default {
 		ContactsList,
 		GroupsList,
 		Caption,
-		Hint
+		Hint,
 	},
 
 	data() {
@@ -85,14 +85,14 @@ export default {
 			searchResults: {},
 			searchResultsUsers: [],
 			searchResultsGroups: [],
-			contactsLoading: false
+			contactsLoading: false,
 		}
 	},
 
 	computed: {
 		isSearching() {
 			return this.searchText !== ''
-		}
+		},
 	},
 
 	methods: {
@@ -109,8 +109,8 @@ export default {
 			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
-		}
-	}
+		},
+	},
 }
 </script>
 

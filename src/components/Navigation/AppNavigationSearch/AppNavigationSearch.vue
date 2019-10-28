@@ -42,14 +42,14 @@ export default {
 		 */
 		autoFocused: {
 			type: Boolean,
-			default: true
+			default: true,
 		},
 		/**
 		 * The placeholder for the input field
 		 */
 		placeholderText: {
 			type: String,
-			default: t('spreed', 'Search conversations or contacts')
+			default: t('spreed', 'Search conversations or contacts'),
 		},
 		/**
 		 * The value of the input field, when receiving it as a prop the localValue
@@ -57,12 +57,12 @@ export default {
 		 */
 		value: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 	data: function() {
 		return {
-			localValue: ''
+			localValue: '',
 		}
 	},
 	watch: {
@@ -72,7 +72,7 @@ export default {
 		},
 		value(value) {
 			this.localValue = value
-		}
+		},
 	},
 	methods: {
 		/**
@@ -81,8 +81,8 @@ export default {
 		 */
 		handleSubmit() {
 			this.$emit('submit')
-		}
-	}
+		},
+	},
 }
 </script>
 
