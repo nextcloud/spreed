@@ -26,7 +26,8 @@
 		@click.prevent.exact="joinConversation(item.token)">
 		<ConversationIcon
 			slot="icon"
-			:item="item" />
+			:item="item"
+			:hideFavorite="false" />
 		<template slot="subtitle">
 			{{ simpleLastChatMessage }}
 		</template>
