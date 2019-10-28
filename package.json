@@ -23,7 +23,7 @@
 		"nextcloud-initial-state": "0.0.3",
 		"nextcloud-router": "0.0.9",
 		"nextcloud-vue": "^0.12.7",
-		"nextcloud-vue-collections": "^0.5.6",
+		"nextcloud-vue-collections": "^0.6.0",
 		"vue": "^2.6.10",
 		"vue-clipboard2": "^0.3.1",
 		"vue-contenteditable-directive": "^1.2.0",
