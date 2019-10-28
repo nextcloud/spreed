@@ -48,37 +48,30 @@
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
 
-			<!-- FIXME Should be a real separator -->
-			<ActionText
-				icon="icon-more">
-				------
-			</ActionText>
+			<ActionText class="separator" />
 
 			<ActionText
-				icon="icon-timezone">
-				{{ t('spreed', 'Chat notifications') }}
-			</ActionText>
+				:title="t('spreed', 'Chat notifications')" />
 			<ActionButton
+				:class="{'forced-active': isNotifyAlways}"
 				icon="icon-sound"
 				@click.prevent.exact="setNotificationLevel(1)">
 				{{ t('spreed', 'All messages') }}
 			</ActionButton>
 			<ActionButton
+				:class="{'forced-active': isNotifyMention}"
 				icon="icon-user"
 				@click.prevent.exact="setNotificationLevel(2)">
 				{{ t('spreed', '@-mentions only') }}
 			</ActionButton>
 			<ActionButton
+				:class="{'forced-active': isNotifyNever}"
 				icon="icon-sound-off"
 				@click.prevent.exact="setNotificationLevel(3)">
 				{{ t('spreed', 'Off') }}
 			</ActionButton>
 
-			<!-- FIXME Should be a real separator -->
-			<ActionText
-				icon="icon-more">
-				------
-			</ActionText>
+			<ActionText class="separator" />
 
 			<ActionButton v-if="canLeaveConversation"
 				:icon="iconLeaveConversation"
@@ -149,6 +142,15 @@ export default {
 		},
 		labelFavorite() {
 			return this.item.isFavorite ? t('spreed', 'Remove from favorites') : t('spreed', 'Add to favorites')
+		},
+		isNotifyAlways() {
+			return this.item.notificationLevel === PARTICIPANT.NOTIFY.ALWAYS
+		},
+		isNotifyMention() {
+			return this.item.notificationLevel === PARTICIPANT.NOTIFY.MENTION
+		},
+		isNotifyNever() {
+			return this.item.notificationLevel === PARTICIPANT.NOTIFY.NEVER
 		},
 		canDeleteConversation() {
 			return this.item.type !== CONVERSATION.TYPE.ONE_TO_ONE && (this.item.participantType === PARTICIPANT.TYPE.OWNER || this.item.participantType === PARTICIPANT.TYPE.MODERATOR)
@@ -244,5 +246,15 @@ export default {
 
 .ellipsis {
 	text-overflow: ellipsis;
+}
+
+.separator {
+	height: 0;
+	margin: 5px 10px 5px 15px;
+	border-bottom: 1px solid var(--color-border-dark);
+}
+
+.forced-active {
+	box-shadow: inset 4px 0 var(--color-primary);
 }
 </style>
