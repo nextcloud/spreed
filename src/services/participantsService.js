@@ -69,5 +69,5 @@ const removeCurrentUserFromConversation = async function(token) {
 export {
 	joinConversation,
 	leaveConversation,
-	removeCurrentUserFromConversation
+	removeCurrentUserFromConversation,
 }

@@ -66,23 +66,23 @@ export default {
 	name: 'AppContentListItem',
 
 	components: {
-		Actions
+		Actions,
 	},
 
-	props:	{
+	props: {
 		/**
 		 * The details text displayed in the upper right part
 		 */
 		details: {
 			type: String,
-			default: ''
+			default: '',
 		},
 		/**
 		 *  Title
 		 */
 		title: {
 			type: String,
-			required: true
+			required: true,
 		},
 		/**
 		* Pass in `true` if you want the matching behaviour to
@@ -90,15 +90,15 @@ export default {
 		*/
 		exact: {
 			type: Boolean,
-			default: false
+			default: false,
 		},
 		/**
 		* The route for for the router link.
 		*/
 		to: {
 			type: [String, Object],
-			default: ''
-		}
+			default: '',
+		},
 	},
 	computed: {
 		hasDetails() {
@@ -115,21 +115,21 @@ export default {
 					is: 'router-link',
 					tag: 'li',
 					to: this.to,
-					exact: this.exactRoute
+					exact: this.exactRoute,
 				}
 			}
 			return {
-				is: 'li'
+				is: 'li',
 			}
-		}
+		},
 
 	},
 	methods: {
 		// forward click event
 		onClick(event) {
 			this.$emit('click', event)
-		}
-	}
+		},
+	},
 }
 </script>
 

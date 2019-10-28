@@ -45,24 +45,24 @@ export default {
 	name: 'StunServer',
 
 	directives: {
-		tooltip: Tooltip
+		tooltip: Tooltip,
 	},
 
 	props: {
 		server: {
 			type: String,
 			default: '',
-			required: true
+			required: true,
 		},
 		index: {
 			type: Number,
 			default: -1,
-			required: true
+			required: true,
 		},
 		loading: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 
 	computed: {
@@ -81,7 +81,7 @@ export default {
 			return parts.length === 2
 				&& parts[1].match(/^([1-9]\d{0,4})$/) !== null
 				&& parseInt(parts[1]) <= Math.pow(2, 16)
-		}
+		},
 	},
 
 	methods: {
@@ -90,8 +90,8 @@ export default {
 		},
 		update(event) {
 			this.$emit('update:server', event.target.value)
-		}
-	}
+		},
+	},
 }
 </script>
 

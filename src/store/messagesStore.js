@@ -23,7 +23,7 @@ import Vue from 'vue'
 
 const state = {
 	messages: {
-	}
+	},
 }
 
 const getters = {
@@ -62,7 +62,7 @@ const getters = {
 			return state.messages[token][id]
 		}
 		return {}
-	}
+	},
 }
 
 const mutations = {
@@ -92,7 +92,7 @@ const mutations = {
 	 */
 	addTemporaryMessage(state, message) {
 		Vue.set(state.messages[message.token], message.id, message)
-	}
+	},
 }
 
 const actions = {
@@ -134,7 +134,7 @@ const actions = {
 	 */
 	addTemporaryMessage(context, message) {
 		context.commit('addTemporaryMessage', message)
-	}
+	},
 }
 
 export default { state, mutations, getters, actions }

@@ -32,5 +32,5 @@ Vue.prototype.OCP = OCP
 export default new Vue({
 	el: '#stun_server',
 	name: 'StunServerSettings',
-	render: h => h(StunServers)
+	render: h => h(StunServers),
 })

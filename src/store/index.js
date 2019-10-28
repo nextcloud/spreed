@@ -34,10 +34,10 @@ export default new Store({
 	modules: {
 		conversationsStore,
 		messagesStore,
-		quoteReplyStore
+		quoteReplyStore,
 	},
 
 	mutations,
 
-	strict: process.env.NODE_ENV !== 'production'
+	strict: process.env.NODE_ENV !== 'production',
 })

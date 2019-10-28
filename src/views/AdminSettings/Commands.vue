@@ -60,26 +60,26 @@ export default {
 	name: 'Commands',
 
 	components: {
-		Command
+		Command,
 	},
 
 	data() {
 		return {
-			commands: {}
+			commands: {},
 		}
 	},
 
 	computed: {
 		commandHint() {
 			return t('spreed', 'Commands are a new beta feature in Nextcloud Talk. They allow you to run scripts on your Nextcloud server. You can define them with our command line interface. An example of a calculator script can be found in our <a {attributes}>documentation ↗</a>.', {
-				attributes: 'target="_blank" rel="noreferrer noopener" href="https://github.com/nextcloud/spreed/blob/master/docs/commands.md"'
+				attributes: 'target="_blank" rel="noreferrer noopener" href="https://github.com/nextcloud/spreed/blob/master/docs/commands.md"',
 			}, undefined, { escape: false })
-		}
+		},
 	},
 
 	mounted() {
 		this.commands = OCP.InitialState.loadState('talk', 'commands')
-	}
+	},
 }
 </script>
 

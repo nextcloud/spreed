@@ -34,8 +34,8 @@ export default {
 	name: 'NewConversationForm',
 	components: {
 		AppNavigationNew,
-		Multiselect
-	}
+		Multiselect,
+	},
 }
 </script>
 

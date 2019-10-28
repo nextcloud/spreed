@@ -53,7 +53,7 @@ export default {
 	name: 'MessagesList',
 	components: {
 		MessagesGroup,
-		virtualList
+		virtualList,
 	},
 
 	props: {
@@ -62,8 +62,8 @@ export default {
 		 */
 		token: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	data: function() {
@@ -72,7 +72,7 @@ export default {
 			 * Keeps track of the state of the component in order to trigger the scroll to
 			 * bottom.
 			 */
-			isInitiated: false
+			isInitiated: false,
 		}
 	},
 
@@ -101,9 +101,9 @@ export default {
 		 * @returns {array}
 		 */
 		messagesGroupedByAuthor() {
-			let groups = []
+			const groups = []
 			let lastMessage = null
-			for (let message of this.messagesList) {
+			for (const message of this.messagesList) {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					groups.push([message])
 					lastMessage = message
@@ -112,13 +112,13 @@ export default {
 				}
 			}
 			return groups
-		}
+		},
 	},
 
 	watch: {
 		token: function() {
 			this.onTokenChange()
-		}
+		},
 	},
 
 	/**
@@ -214,9 +214,9 @@ export default {
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
-		}
+		},
 
-	}
+	},
 }
 </script>
 

@@ -77,50 +77,50 @@ export default {
 	name: 'TurnServer',
 
 	directives: {
-		tooltip: Tooltip
+		tooltip: Tooltip,
 	},
 
 	props: {
 		server: {
 			type: String,
 			default: '',
-			required: true
+			required: true,
 		},
 		secret: {
 			type: String,
 			default: '',
-			required: true
+			required: true,
 		},
 		protocols: {
 			type: String,
 			default: '',
-			required: true
+			required: true,
 		},
 		index: {
 			type: Number,
 			default: -1,
-			required: true
+			required: true,
 		},
 		loading: {
 			type: Boolean,
-			default: false
-		}
+			default: false,
+		},
 	},
 
 	data: () => {
 		return {
 			testing: {
 				type: Boolean,
-				default: false
+				default: false,
 			},
 			testingError: {
 				type: Boolean,
-				default: false
+				default: false,
 			},
 			testingSuccess: {
 				type: Boolean,
-				default: false
-			}
+				default: false,
+			},
 		}
 	},
 
@@ -140,7 +140,7 @@ export default {
 			this.testingError = false
 			this.testingSuccess = false
 
-			var protocols = this.protocols.split(',')
+			const protocols = this.protocols.split(',')
 			if (!this.server || !this.secret || !protocols.length) {
 				return
 			}
@@ -151,31 +151,31 @@ export default {
 				urls.push('turn:' + this.server + '?transport=' + protocols[i])
 			}
 
-			var expires = Math.round((new Date()).getTime() / 1000) + (5 * 60)
-			var username = expires + ':turn-test-user'
-			var password = Base64.stringify(hmacSHA1(username, this.secret))
+			const expires = Math.round((new Date()).getTime() / 1000) + (5 * 60)
+			const username = expires + ':turn-test-user'
+			const password = Base64.stringify(hmacSHA1(username, this.secret))
 
-			var iceServer = {
+			const iceServer = {
 				username: username,
 				credential: password,
-				urls: urls
+				urls: urls,
 			}
 
 			// Create a PeerConnection with no streams, but force a m=audio line.
-			var config = {
+			const config = {
 				iceServers: [
-					iceServer
+					iceServer,
 				],
-				iceTransportPolicy: 'relay'
+				iceTransportPolicy: 'relay',
 			}
-			var offerOptions = {
-				offerToReceiveAudio: 1
+			const offerOptions = {
+				offerToReceiveAudio: 1,
 			}
 			console.info('Creating PeerConnection with', config)
-			var candidates = []
+			const candidates = []
 
-			var pc = new RTCPeerConnection(config)
-			var timeout = setTimeout(function() {
+			const pc = new RTCPeerConnection(config)
+			const timeout = setTimeout(function() {
 				this.notifyTurnResult(candidates, timeout)
 				pc.close()
 			}.bind(this), 10000)
@@ -207,7 +207,7 @@ export default {
 		notifyTurnResult(candidates, timeout) {
 			console.info('Received candidates', candidates)
 
-			var types = candidates.map((cand) => cand.type)
+			const types = candidates.map((cand) => cand.type)
 
 			this.testing = false
 			if (types.indexOf('relay') === -1) {
@@ -237,7 +237,7 @@ export default {
 				protocol: parts[2],
 				address: parts[4],
 				port: parts[5],
-				priority: parts[3]
+				priority: parts[3],
 			}
 		},
 
@@ -264,8 +264,8 @@ export default {
 		updateProtocols(event) {
 			this.$emit('update:protocols', event.target.value)
 			this.debounceTestServer()
-		}
-	}
+		},
+	},
 }
 </script>
 
