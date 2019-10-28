@@ -47,16 +47,10 @@
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
 
-			<!-- FIXME Should be a real separator -->
-			<ActionText
-				icon="icon-more">
-				------
-			</ActionText>
+			<ActionText class="separator" />
 
 			<ActionText
-				icon="icon-timezone">
-				{{ t('spreed', 'Chat notifications') }}
-			</ActionText>
+				:title="t('spreed', 'Chat notifications')" />
 			<ActionButton
 				icon="icon-sound"
 				@click.prevent.exact="setNotificationLevel(1)">
@@ -73,11 +67,7 @@
 				{{ t('spreed', 'Off') }}
 			</ActionButton>
 
-			<!-- FIXME Should be a real separator -->
-			<ActionText
-				icon="icon-more">
-				------
-			</ActionText>
+			<ActionText class="separator" />
 
 			<ActionButton v-if="canLeaveConversation"
 				:icon="iconLeaveConversation"
@@ -243,5 +233,11 @@ export default {
 
 .ellipsis {
 	text-overflow: ellipsis;
+}
+
+.separator {
+	height: 0;
+	margin: 5px 10px 5px 15px;
+	border-bottom: 1px solid var(--color-border-dark);
 }
 </style>
