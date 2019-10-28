@@ -77,50 +77,50 @@ export default {
 	name: 'TurnServer',
 
 	directives: {
-		tooltip: Tooltip,
+		tooltip: Tooltip
 	},
 
 	props: {
 		server: {
 			type: String,
 			default: '',
-			required: true,
+			required: true
 		},
 		secret: {
 			type: String,
 			default: '',
-			required: true,
+			required: true
 		},
 		protocols: {
 			type: String,
 			default: '',
-			required: true,
+			required: true
 		},
 		index: {
 			type: Number,
 			default: -1,
-			required: true,
+			required: true
 		},
 		loading: {
 			type: Boolean,
-			default: false,
-		},
+			default: false
+		}
 	},
 
 	data: () => {
 		return {
 			testing: {
 				type: Boolean,
-				default: false,
+				default: false
 			},
 			testingError: {
 				type: Boolean,
-				default: false,
+				default: false
 			},
 			testingSuccess: {
 				type: Boolean,
-				default: false,
-			},
+				default: false
+			}
 		}
 	},
 
@@ -158,18 +158,18 @@ export default {
 			const iceServer = {
 				username: username,
 				credential: password,
-				urls: urls,
+				urls: urls
 			}
 
 			// Create a PeerConnection with no streams, but force a m=audio line.
 			const config = {
 				iceServers: [
-					iceServer,
+					iceServer
 				],
-				iceTransportPolicy: 'relay',
+				iceTransportPolicy: 'relay'
 			}
 			const offerOptions = {
-				offerToReceiveAudio: 1,
+				offerToReceiveAudio: 1
 			}
 			console.info('Creating PeerConnection with', config)
 			const candidates = []
@@ -237,7 +237,7 @@ export default {
 				protocol: parts[2],
 				address: parts[4],
 				port: parts[5],
-				priority: parts[3],
+				priority: parts[3]
 			}
 		},
 
@@ -264,8 +264,8 @@ export default {
 		updateProtocols(event) {
 			this.$emit('update:protocols', event.target.value)
 			this.debounceTestServer()
-		},
-	},
+		}
+	}
 }
 </script>
 

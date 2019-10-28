@@ -46,34 +46,34 @@ import { Fragment } from 'vue-fragment'
 export default {
 	name: 'Command',
 	components: {
-		Fragment,
+		Fragment
 	},
 
 	props: {
 		id: {
 			type: Number,
-			default: 0,
+			default: 0
 		},
 		name: {
 			type: String,
-			default: '',
+			default: ''
 		},
 		command: {
 			type: String,
-			default: '',
+			default: ''
 		},
 		script: {
 			type: String,
-			default: '',
+			default: ''
 		},
 		response: {
 			type: Number,
-			default: 0,
+			default: 0
 		},
 		enabled: {
 			type: Number,
-			default: 0,
-		},
+			default: 0
+		}
 	},
 
 	computed: {
@@ -98,7 +98,7 @@ export default {
 			default:
 				return t('spreed', 'Everyone')
 			}
-		},
-	},
+		}
+	}
 }
 </script>

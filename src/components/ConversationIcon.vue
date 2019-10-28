@@ -30,7 +30,7 @@
 			:display-name="item.displayName" />
 		<div v-if="showFavorite"
 			class="favorite-mark">
-			<span class="icon icon-favorite"></span>
+			<span class="icon icon-favorite" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>
@@ -43,7 +43,7 @@ import { CONVERSATION } from '../constants'
 export default {
 	name: 'ConversationIcon',
 	components: {
-		Avatar,
+		Avatar
 	},
 	props: {
 		/**
@@ -51,7 +51,7 @@ export default {
 		 */
 		hideFavorite: {
 			type: Boolean,
-			default: true,
+			default: true
 		},
 		item: {
 			type: Object,
@@ -60,10 +60,10 @@ export default {
 					objectType: '',
 					type: 0,
 					displayName: '',
-					isFavorite: false,
+					isFavorite: false
 				}
-			},
-		},
+			}
+		}
 	},
 	computed: {
 		showFavorite() {
@@ -83,8 +83,8 @@ export default {
 			}
 
 			return ''
-		},
-	},
+		}
+	}
 }
 </script>
 

@@ -62,18 +62,18 @@ export default {
 	name: 'StunServers',
 
 	directives: {
-		tooltip: Tooltip,
+		tooltip: Tooltip
 	},
 
 	components: {
-		StunServer,
+		StunServer
 	},
 
 	data() {
 		return {
 			servers: [],
 			loading: false,
-			saved: false,
+			saved: false
 		}
 	},
 
@@ -124,7 +124,7 @@ export default {
 				success() {
 					self.loading = false
 					self.toggleSave()
-				},
+				}
 			})
 		},
 
@@ -133,8 +133,8 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
-		},
-	},
+		}
+	}
 }
 </script>
 

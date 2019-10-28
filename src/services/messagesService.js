@@ -74,5 +74,5 @@ const postNewMessage = async function({ token, message, parent }) {
 export {
 	fetchMessages,
 	lookForNewMessges,
-	postNewMessage,
+	postNewMessage
 }

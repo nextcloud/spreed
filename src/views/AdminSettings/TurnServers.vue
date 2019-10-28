@@ -66,18 +66,18 @@ export default {
 	name: 'TurnServers',
 
 	directives: {
-		tooltip: Tooltip,
+		tooltip: Tooltip
 	},
 
 	components: {
-		TurnServer,
+		TurnServer
 	},
 
 	data() {
 		return {
 			servers: [],
 			loading: false,
-			saved: false,
+			saved: false
 		}
 	},
 
@@ -95,7 +95,7 @@ export default {
 			this.servers.push({
 				server: '',
 				secret: '',
-				protocols: 'udp,tcp', // default to udp AND tcp
+				protocols: 'udp,tcp' // default to udp AND tcp
 			})
 		},
 
@@ -110,7 +110,7 @@ export default {
 				const data = {
 					server: server.server,
 					secret: server.secret,
-					protocols: server.protocols,
+					protocols: server.protocols
 				}
 
 				if (data.server.startsWith('https://')) {
@@ -133,7 +133,7 @@ export default {
 				success() {
 					self.loading = false
 					self.toggleSave()
-				},
+				}
 			})
 		},
 
@@ -142,7 +142,7 @@ export default {
 			setTimeout(() => {
 				this.saved = false
 			}, 3000)
-		},
-	},
+		}
+	}
 }
 </script>

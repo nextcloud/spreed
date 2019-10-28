@@ -32,5 +32,5 @@ Vue.prototype.OCP = OCP
 export default new Vue({
 	el: '#allowed_groups',
 	name: 'AllowedGroupsSettings',
-	render: h => h(AllowedGroups),
+	render: h => h(AllowedGroups)
 })

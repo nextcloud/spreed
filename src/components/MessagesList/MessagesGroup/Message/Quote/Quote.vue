@@ -53,7 +53,7 @@ export default {
 	name: 'Quote',
 	components: {
 		Actions,
-		ActionButton,
+		ActionButton
 	},
 	props: {
 		/**
@@ -61,28 +61,28 @@ export default {
 		 */
 		actorDisplayName: {
 			type: String,
-			required: true,
+			required: true
 		},
 		/**
 		 * The text of the message to be replied to.
 		 */
 		message: {
 			type: String,
-			required: true,
+			required: true
 		},
 		/**
 		 * The message id of the message to be replied to.
 		 */
 		id: {
 			type: Number,
-			required: true,
+			required: true
 		},
 		/**
 		 * The conversation token of the message to be replied to.
 		 */
 		token: {
 			type: String,
-			required: true,
+			required: true
 		},
 		/**
 		 * If the quote component is used in the `NewMessageForm` component we display
@@ -90,8 +90,8 @@ export default {
 		 */
 		isNewMessageFormQuote: {
 			type: Boolean,
-			default: false,
-		},
+			default: false
+		}
 	},
 	methods: {
 		/**
@@ -100,8 +100,8 @@ export default {
 		 */
 		handleAbortReply() {
 			this.$store.dispatch('removeMessageToBeReplied', this.token)
-		},
-	},
+		}
+	}
 }
 </script>
 

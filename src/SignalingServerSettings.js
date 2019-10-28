@@ -32,5 +32,5 @@ Vue.prototype.OCP = OCP
 export default new Vue({
 	el: '#signaling_server',
 	name: 'SignalingServerSettings',
-	render: h => h(SignalingServers),
+	render: h => h(SignalingServers)
 })

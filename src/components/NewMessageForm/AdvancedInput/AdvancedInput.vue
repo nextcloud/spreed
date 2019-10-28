@@ -36,7 +36,7 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: 'New Message ...',
+			default: 'New Message ...'
 		},
 
 		/**
@@ -44,18 +44,18 @@ export default {
 		 */
 		activeInput: {
 			type: Boolean,
-			default: true,
+			default: true
 		},
 
 		value: {
 			type: String,
-			required: true,
-		},
+			required: true
+		}
 	},
 	data: function() {
 		return {
 			active: true,
-			text: '',
+			text: ''
 		}
 	},
 	watch: {
@@ -66,7 +66,7 @@ export default {
 		},
 		value(value) {
 			this.text = value
-		},
+		}
 	},
 	methods: {
 		/**
@@ -82,8 +82,8 @@ export default {
 				event.preventDefault()
 				this.$emit('submit', event)
 			}
-		},
-	},
+		}
+	}
 }
 </script>
 

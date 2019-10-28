@@ -43,7 +43,7 @@ import RoomSelector from './views/RoomSelector'
 				const body = document.getElementById('body-user')
 				body.append(container)
 				const ComponentVM = new Vue({
-					render: h => h(RoomSelector),
+					render: h => h(RoomSelector)
 				})
 				ComponentVM.$mount(container)
 				ComponentVM.$root.$on('close', () => {
@@ -59,6 +59,6 @@ import RoomSelector from './views/RoomSelector'
 			})
 		},
 		typeString: t('spreed', 'Link to a conversation'),
-		typeIconClass: 'icon-talk',
+		typeIconClass: 'icon-talk'
 	})
 })(window.OCP, window.OC)

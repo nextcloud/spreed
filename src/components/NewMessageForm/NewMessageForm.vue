@@ -60,11 +60,11 @@ export default {
 	name: 'NewMessageForm',
 	components: {
 		AdvancedInput,
-		Quote,
+		Quote
 	},
 	data: function() {
 		return {
-			text: '',
+			text: ''
 		}
 	},
 	computed: {
@@ -78,7 +78,7 @@ export default {
 		},
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
-		},
+		}
 	},
 	methods: {
 		/**
@@ -95,7 +95,7 @@ export default {
 				message: this.text,
 				token: this.token,
 				timestamp: 0,
-				systemMessage: '',
+				systemMessage: ''
 			})
 			/**
 			 * If the current message is a quote-reply messag, add the parent key to the
@@ -143,8 +143,8 @@ export default {
 				}
 
 			}
-		},
-	},
+		}
+	}
 }
 </script>
 

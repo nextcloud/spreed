@@ -39,13 +39,13 @@ export default new Router({
 			path: '/apps/spreed',
 			name: 'root',
 			component: WelcomeView,
-			props: true,
+			props: true
 		},
 		{
 			path: '/call/:token',
 			name: 'conversation',
 			component: ChatView,
-			props: true,
-		},
-	],
+			props: true
+		}
+	]
 })

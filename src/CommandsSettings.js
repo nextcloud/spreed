@@ -32,5 +32,5 @@ Vue.prototype.OCP = OCP
 export default new Vue({
 	el: '#chat_commands',
 	name: 'CommandsSettings',
-	render: h => h(Commands),
+	render: h => h(Commands)
 })

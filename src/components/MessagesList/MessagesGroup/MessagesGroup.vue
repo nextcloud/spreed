@@ -49,7 +49,7 @@ export default {
 	name: 'MessagesGroup',
 	components: {
 		Avatar,
-		Message,
+		Message
 	},
 	props: {
 		/**
@@ -57,22 +57,22 @@ export default {
 		 */
 		id: {
 			type: Number,
-			required: true,
+			required: true
 		},
 		/**
 		 * The conversation token.
 		 */
 		token: {
 			type: String,
-			required: true,
+			required: true
 		},
 		/**
 		 * The messages object.
 		 */
 		messages: {
 			type: Array,
-			required: true,
-		},
+			required: true
+		}
 	},
 
 	computed: {
@@ -89,8 +89,8 @@ export default {
 		 */
 		isSystemMessage() {
 			return this.messages[0].systemMessage.length !== 0
-		},
-	},
+		}
+	}
 }
 </script>
 

@@ -32,5 +32,5 @@ Vue.prototype.OCP = OCP
 export default new Vue({
 	el: '#turn_server',
 	name: 'TurnServerSettings',
-	render: h => h(TurnServers),
+	render: h => h(TurnServers)
 })

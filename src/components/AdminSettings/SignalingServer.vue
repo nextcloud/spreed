@@ -52,29 +52,29 @@ export default {
 	name: 'SignalingServer',
 
 	directives: {
-		tooltip: Tooltip,
+		tooltip: Tooltip
 	},
 
 	props: {
 		server: {
 			type: String,
 			default: '',
-			required: true,
+			required: true
 		},
 		verify: {
 			type: Boolean,
 			default: false,
-			required: true,
+			required: true
 		},
 		index: {
 			type: Number,
 			default: -1,
-			required: true,
+			required: true
 		},
 		loading: {
 			type: Boolean,
-			default: false,
-		},
+			default: false
+		}
 	},
 
 	methods: {
@@ -86,8 +86,8 @@ export default {
 		},
 		updateVerify(event) {
 			this.$emit('update:verify', event.target.checked)
-		},
-	},
+		}
+	}
 }
 </script>
 

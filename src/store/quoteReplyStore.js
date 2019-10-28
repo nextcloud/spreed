@@ -23,7 +23,7 @@
 import Vue from 'vue'
 
 const state = {
-	messagesToBeReplied: {},
+	messagesToBeReplied: {}
 }
 
 const getters = {
@@ -31,7 +31,7 @@ const getters = {
 		if (state.messagesToBeReplied[token]) {
 			return state.messagesToBeReplied[token]
 		}
-	},
+	}
 }
 
 const mutations = {
@@ -54,7 +54,7 @@ const mutations = {
 	 */
 	removeMessageToBeReplied(state, token) {
 		Vue.delete(state.messagesToBeReplied, token)
-	},
+	}
 }
 
 const actions = {
@@ -79,7 +79,7 @@ const actions = {
 	 */
 	removeMessageToBeReplied(context, token) {
 		context.commit('removeMessageToBeReplied', token)
-	},
+	}
 }
 
 export default { state, mutations, getters, actions }
