@@ -63,6 +63,7 @@ import Caption from './Caption/Caption'
 import Hint from './Hint/Hint'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
+import { CONVERSATION } from '../../constants'
 
 export default {
 
@@ -90,6 +91,9 @@ export default {
 	},
 
 	computed: {
+		conversationsList() {
+			return this.$store.getters.conversationsList
+		},
 		isSearching() {
 			return this.searchText !== ''
 		},
@@ -106,9 +110,13 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
+			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid && !this.hasOneToOneConversationWith(match.id))
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
+		},
+
+		hasOneToOneConversationWith(userId) {
+			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
 	},
 }
