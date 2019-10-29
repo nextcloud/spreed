@@ -94,7 +94,7 @@ export default {
 		 * @returns {string}
 		 */
 		actorDisplayName() {
-			let displayName = this.messages[0].actorDisplayName.trim()
+			const displayName = this.messages[0].actorDisplayName.trim()
 
 			if (displayName === '' && this.actorType === 'guests') {
 				return t('spreed', 'Guest')

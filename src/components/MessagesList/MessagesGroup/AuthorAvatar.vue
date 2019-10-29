@@ -1,7 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  - @author Joas Schilling <coding@schilljs.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -42,21 +42,21 @@ import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 export default {
 	name: 'AuthorAvatar',
 	components: {
-		Avatar
+		Avatar,
 	},
 	props: {
 		authorType: {
 			type: String,
-			required: true
+			required: true,
 		},
 		authorId: {
 			type: String,
-			required: true
+			required: true,
 		},
 		displayName: {
 			type: String,
-			required: true
-		}
+			required: true,
+		},
 	},
 
 	computed: {
@@ -73,8 +73,8 @@ export default {
 		firstLetterOfGuestName() {
 			const customName = this.displayName !== t('spreed', 'Guest') ? this.displayName : '?'
 			return customName.charAt(0)
-		}
-	}
+		},
+	},
 }
 </script>
 
