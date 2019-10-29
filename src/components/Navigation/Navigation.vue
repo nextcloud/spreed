@@ -36,13 +36,13 @@
 					:title="t('spreed', 'Contacts')" />
 				<ContactsList v-if="searchResultsUsers.length !== 0" :contacts="searchResultsUsers" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No results')" />
+				<Hint v-else :hint="t('spreed', 'No search results')" />
 
 				<Caption
 					:title="t('spreed', 'Groups')" />
 				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No results')" />
+				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 		</ul>
 		<AppNavigationSettings class="settings">

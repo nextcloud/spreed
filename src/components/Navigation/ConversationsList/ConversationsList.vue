@@ -25,11 +25,14 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
+		<Hint v-if="searchText"
+			:hint="t('spreed', 'No search results')" />
 	</ul>
 </template>
 
 <script>
 import Conversation from './Conversation'
+import Hint from '../Hint/Hint'
 import { fetchConversations } from '../../../services/conversationsService'
 import { EventBus } from '../../../services/EventBus'
 
@@ -37,6 +40,7 @@ export default {
 	name: 'ConversationsList',
 	components: {
 		Conversation,
+		Hint,
 	},
 	props: {
 		searchText: {
