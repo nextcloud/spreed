@@ -45,9 +45,6 @@
 				<Hint v-else :hint="t('spreed', 'No results')" />
 			</template>
 		</ul>
-		<AppNavigationSettings class="settings">
-			Example settings
-		</AppNavigationSettings>
 	</AppNavigation>
 </template>
 
@@ -55,7 +52,6 @@
 import ConversationsList from './ConversationsList/ConversationsList'
 import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
 import AppNavigationSearch from './AppNavigationSearch/AppNavigationSearch'
-import AppNavigationSettings from 'nextcloud-vue/dist/Components/AppNavigationSettings'
 import ContactsList from './ContactsList/ContactsList'
 import GroupsList from './GroupsList/GroupsList'
 import debounce from 'debounce'
@@ -71,7 +67,6 @@ export default {
 	components: {
 		ConversationsList,
 		AppNavigation,
-		AppNavigationSettings,
 		AppNavigationSearch,
 		ContactsList,
 		GroupsList,
