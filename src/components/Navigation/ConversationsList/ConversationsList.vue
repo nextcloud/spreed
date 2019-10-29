@@ -53,7 +53,8 @@ export default {
 			let conversations = this.$store.getters.conversationsList
 
 			if (this.searchText !== '') {
-				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1)
+				const lowerSearchText = this.searchText.toLowerCase()
+				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
 			}
 
 			return conversations.sort(this.sortConversations)
