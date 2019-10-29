@@ -76,6 +76,32 @@ const createGroupConversation = async function(groupId) {
 }
 
 /**
+ * Create a new private conversation.
+ * @param {string} conversationName The name for the new conversation
+ */
+const createPrivateConversation = async function(conversationName) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, roomName: conversationName })
+		return response
+	} catch (error) {
+		console.debug('Error creating new private conversation: ', error)
+	}
+}
+
+/**
+ * Create a new private conversation.
+ * @param {string} conversationName The name for the new conversation
+ */
+const createPublicConversation = async function(conversationName) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: CONVERSATION.TYPE.PUBLIC, roomName: conversationName })
+		return response
+	} catch (error) {
+		console.debug('Error creating new public conversation: ', error)
+	}
+}
+
+/**
  * Delete a conversation.
  * @param {string} token The token of the conversation to be deleted.
  */
@@ -133,6 +159,8 @@ export {
 	searchPossibleConversations,
 	createOneToOneConversation,
 	createGroupConversation,
+	createPrivateConversation,
+	createPublicConversation,
 	deleteConversation,
 	addToFavorites,
 	removeFromFavorites,
