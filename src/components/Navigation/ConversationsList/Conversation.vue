@@ -21,9 +21,9 @@
 
 <template>
 	<AppContentListItem
-		:title="conversationName"
+		:title="item.displayName"
 		:to="{ name: 'conversation', params: { token: item.token }}"
-		@click.prevent.exact="joinConversation(item.token)">
+		@click.prevent.exact="joinConversation">
 		<ConversationIcon
 			slot="icon"
 			:item="item"
@@ -126,11 +126,6 @@ export default {
 		},
 	},
 	computed: {
-		conversationName() {
-			// FIXME this is just for demonstration, instead the yellow star
-			// FIXME should be added on top of the ConversationIcon
-			return (this.item.isFavorite ? 'FAVORITE' : '') + this.item.displayName
-		},
 		linkToConversation() {
 			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
 		},
