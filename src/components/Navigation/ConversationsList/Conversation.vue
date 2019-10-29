@@ -121,6 +121,7 @@ export default {
 					displayName: '',
 					isFavorite: false,
 					notificationLevel: 0,
+					lastMessage: {},
 				}
 			},
 		},
@@ -166,6 +167,10 @@ export default {
 		 * @returns {string} A simple message to show below the conversation name
 		 */
 		simpleLastChatMessage() {
+			if (!Object.keys(this.item.lastMessage).length) {
+				return ''
+			}
+
 			const params = this.item.lastMessage.messageParameters
 			let subtitle = this.item.lastMessage.message
 
