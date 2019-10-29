@@ -1,7 +1,7 @@
 <!--
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
