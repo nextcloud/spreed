@@ -35,6 +35,7 @@
 <script>
 import ConversationIcon from '../../ConversationIcon'
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
+import { EventBus } from '../../../services/EventBus'
 import { createPublicConversation } from '../../../services/conversationsService'
 import { CONVERSATION } from '../../../constants'
 
@@ -64,6 +65,7 @@ export default {
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			console.debug(response)
+			EventBus.$emit('resetSearchFilter')
 		},
 	},
 }

@@ -66,6 +66,7 @@ import Hint from './Hint/Hint'
 import NewPrivateConversation from './NewConversation/NewPrivateConversation'
 import NewPublicConversation from './NewConversation/NewPublicConversation'
 import debounce from 'debounce'
+import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION } from '../../constants'
@@ -103,6 +104,15 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+	},
+
+	beforeMount() {
+		/**
+		 * After a conversation was created, the search filter is reset
+		 */
+		EventBus.$once('resetSearchFilter', () => {
+			this.searchText = ''
+		})
 	},
 
 	methods: {

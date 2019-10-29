@@ -38,6 +38,7 @@
 <script>
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
+import { EventBus } from '../../../services/EventBus'
 import { createOneToOneConversation } from '../../../services/conversationsService'
 
 export default {
@@ -68,6 +69,7 @@ export default {
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 			console.debug(response)
+			EventBus.$emit('resetSearchFilter')
 		},
 	},
 }
