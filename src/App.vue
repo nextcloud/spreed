@@ -119,6 +119,12 @@ export default {
 				const NEXT_CONVERSATION_NAME = this.getConversationName(to.params.token)
 				this.setPageTitle(NEXT_CONVERSATION_NAME)
 			}
+			/**
+			 * Fires a global event that tells the whole app that the route has changed. The event
+			 * carries the from and to objects as payload
+			 */
+			EventBus.$emit('routeChange', { from, to })
+
 			next()
 		})
 	},

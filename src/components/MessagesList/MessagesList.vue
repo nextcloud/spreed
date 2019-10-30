@@ -48,6 +48,7 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'MessagesList',
@@ -115,19 +116,20 @@ export default {
 		},
 	},
 
-	watch: {
-		token: function() {
-			this.onTokenChange()
-		},
-	},
-
 	/**
-	 * Fetches the messages when the MessageList is mounted for the
-	 * first time. The router mounts this component only if the token
-	 * is passed in so there's no need to check the token prop.
+	 * Fetches the messages when the MessageList created. The router mounts this
+	 * component only if the token is passed in so there's no need to check the
+	 * token prop.
 	 */
-	beforeMount() {
-		this.onTokenChange()
+	created() {
+		this.onRouteChange()
+		/**
+		 * Add a listener for routeChange event emitted by the App.vue component.
+		 * Call the onRouteChange method function whenever the route changes.
+		 */
+		EventBus.$on('routeChange', () => {
+			this.onRouteChange()
+		})
 	},
 
 	beforeUpdate() {
@@ -165,10 +167,10 @@ export default {
 		},
 
 		/**
-		 * Fetches the messages of a conversation given the
-		 * conversation token.
+		 * Fetches the messages of a conversation given the conversation token. Triggers
+		 * a long-polling request for new messages.
 		 */
-		async onTokenChange() {
+		async onRouteChange() {
 			this.isInitiated = false
 			const messages = await fetchMessages(this.token)
 			// Process each messages and adds it to the store
