@@ -21,12 +21,12 @@
 
 <template>
 	<div>
-		<div v-if="itemClass"
+		<div v-if="iconClass"
 			class="avatar icon"
-			:class="itemClass" />
+			:class="iconClass" />
 		<Avatar v-else
 			:size="44"
-			:user="item.displayName"
+			:user="item.name"
 			:display-name="item.displayName" />
 		<div v-if="showFavorite"
 			class="favorite-mark">
@@ -69,7 +69,7 @@ export default {
 		showFavorite() {
 			return !this.hideFavorite && this.item.isFavorite
 		},
-		itemClass() {
+		iconClass() {
 			if (this.item.objectType === 'file') {
 				return 'icon-file'
 			} else if (this.item.objectType === 'share:password') {
