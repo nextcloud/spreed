@@ -140,6 +140,7 @@ OC.L10N.register(
     "UDP only" : "仅 UDP",
     "TCP only" : "仅 TCP",
     "Test this server" : "测试此服务器",
+    "Search conversations or contacts" : "搜索会话或联系人",
     "Copy link" : "复制链接",
     "Chat notifications" : "聊天通知",
     "All messages" : "全部消息",
