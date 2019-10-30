@@ -25,11 +25,14 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
+		<Hint v-if="searchText"
+			:hint="t('spreed', 'No search results')" />
 	</ul>
 </template>
 
 <script>
 import Conversation from './Conversation'
+import Hint from '../Hint/Hint'
 import { fetchConversations } from '../../../services/conversationsService'
 import { EventBus } from '../../../services/EventBus'
 
@@ -37,6 +40,7 @@ export default {
 	name: 'ConversationsList',
 	components: {
 		Conversation,
+		Hint,
 	},
 	props: {
 		searchText: {
@@ -49,7 +53,8 @@ export default {
 			let conversations = this.$store.getters.conversationsList
 
 			if (this.searchText !== '') {
-				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(this.searchText.toLowerCase()) !== -1)
+				const lowerSearchText = this.searchText.toLowerCase()
+				conversations = conversations.filter(conversation => conversation.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || conversation.name.toLowerCase().indexOf(lowerSearchText) !== -1)
 			}
 
 			return conversations.sort(this.sortConversations)
