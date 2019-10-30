@@ -140,6 +140,7 @@ OC.L10N.register(
     "UDP only" : "Nur UDP",
     "TCP only" : "Nur TCP",
     "Test this server" : "Diesen Server testen",
+    "Favorite" : "Favorit",
     "Search conversations or contacts" : "Suche nach Unterhaltungen oder Kontakten",
     "Copy link" : "Link kopieren",
     "Chat notifications" : "Chat-Benachrichtigungen",

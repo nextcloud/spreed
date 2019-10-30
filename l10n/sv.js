@@ -139,6 +139,7 @@ OC.L10N.register(
     "UDP only" : "endast UDP",
     "TCP only" : "endast TCP",
     "Test this server" : "Testa denna server",
+    "Favorite" : "Favorit",
     "Search conversations or contacts" : "Sök konversationer eller kontakter",
     "Copy link" : "Kopiera länk",
     "Chat notifications" : "Chatt-notifieringar",
