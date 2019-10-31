@@ -43,20 +43,30 @@
 				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
+
+				<Caption
+					:title="t('spreed', 'New conversation')" />
+				<NewPublicConversation
+					:search-text="searchText" />
+				<NewPrivateConversation
+					:search-text="searchText" />
 			</template>
 		</ul>
 	</AppNavigation>
 </template>
 
 <script>
-import ConversationsList from './ConversationsList/ConversationsList'
 import AppNavigation from 'nextcloud-vue/dist/Components/AppNavigation'
 import AppNavigationSearch from './AppNavigationSearch/AppNavigationSearch'
-import ContactsList from './ContactsList/ContactsList'
-import GroupsList from './GroupsList/GroupsList'
-import debounce from 'debounce'
 import Caption from './Caption/Caption'
+import ContactsList from './ContactsList/ContactsList'
+import ConversationsList from './ConversationsList/ConversationsList'
+import GroupsList from './GroupsList/GroupsList'
 import Hint from './Hint/Hint'
+import NewPrivateConversation from './NewConversation/NewPrivateConversation'
+import NewPublicConversation from './NewConversation/NewPublicConversation'
+import debounce from 'debounce'
+import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION } from '../../constants'
@@ -66,13 +76,15 @@ export default {
 	name: 'Navigation',
 
 	components: {
-		ConversationsList,
 		AppNavigation,
 		AppNavigationSearch,
-		ContactsList,
-		GroupsList,
 		Caption,
+		ContactsList,
+		ConversationsList,
+		GroupsList,
 		Hint,
+		NewPrivateConversation,
+		NewPublicConversation,
 	},
 
 	data() {
@@ -92,6 +104,15 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+	},
+
+	beforeMount() {
+		/**
+		 * After a conversation was created, the search filter is reset
+		 */
+		EventBus.$once('resetSearchFilter', () => {
+			this.searchText = ''
+		})
 	},
 
 	methods: {

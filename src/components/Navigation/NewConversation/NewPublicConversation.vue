@@ -1,7 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  - @author Joas Schilling <coding@schilljs.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -20,51 +20,47 @@
 -->
 
 <template>
-	<ul class="contacts-list">
-		<AppContentListItem
-			v-for="item of contacts"
-			:key="item.id"
-			:title="item.label"
-			@click="createAndJoinConversation(item.id)">
-			<Avatar
-				slot="icon"
-				:size="44"
-				:user="item.id"
-				:display-name="item.label" />
-		</AppContentListItem>
-	</ul>
+	<AppContentListItem
+		:title="searchText"
+		@click="createPublicConversation">
+		<ConversationIcon
+			slot="icon"
+			:item="iconData" />
+		<template slot="subtitle">
+			{{ t('spreed', 'Public conversation') }}
+		</template>
+	</AppContentListItem>
 </template>
 
 <script>
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+import ConversationIcon from '../../ConversationIcon'
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
 import { EventBus } from '../../../services/EventBus'
-import { createOneToOneConversation } from '../../../services/conversationsService'
+import { createPublicConversation } from '../../../services/conversationsService'
+import { CONVERSATION } from '../../../constants'
 
 export default {
-	name: 'ContactsList',
+	name: 'NewPublicConversation',
 	components: {
-		Avatar,
 		AppContentListItem,
+		ConversationIcon,
 	},
 	props: {
-		contacts: {
-			type: Array,
-			required: true,
+		searchText: {
+			type: String,
+			default: '',
 		},
-		isLoading: {
-			type: Boolean,
-			default: false,
+	},
+	computed: {
+		iconData() {
+			return {
+				type: CONVERSATION.TYPE.PUBLIC,
+			}
 		},
 	},
 	methods: {
-		/**
-		 * Create a new conversation with the selected user.
-		 * @param {string} userId the ID of the clicked user.
-		 */
-		async createAndJoinConversation(userId) {
-			console.debug(userId)
-			const response = await createOneToOneConversation(userId)
+		async createPublicConversation() {
+			const response = await createPublicConversation(this.searchText)
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
@@ -83,5 +79,4 @@ export default {
 	overflow: visible;
 	display: block;
 }
-
 </style>
