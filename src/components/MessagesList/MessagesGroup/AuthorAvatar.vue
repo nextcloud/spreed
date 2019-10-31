@@ -30,10 +30,7 @@
 	</div>
 	<div v-else-if="isChangelog"
 		class="avatar icon icon-changelog" />
-	<div v-else
-		class="avatar bot">
-		&gt;_
-	</div>
+	<div v-else class="avatar bot" />
 </template>
 
 <script>
