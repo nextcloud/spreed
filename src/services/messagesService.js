@@ -25,20 +25,32 @@ import { generateOcsUrl } from 'nextcloud-router'
 
 const CANCEL_TOKEN = axios.CancelToken
 
-/**
- * Fetches messages that belong to a particular conversation
- * specified with its token.
- *
- * @param {string} token The conversation token;
- */
-const fetchMessages = async function(token) {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0')
-		return response
-	} catch (exception) {
-		if (!exception.response || !exception.response.status || exception.response.status !== 304) {
-			console.debug('Error while fetching messages: ', exception)
+const cancelableFetchMessages = function() {
+	/**
+	 * cancelToken= the token that gets injected into the axios method and links it
+	 * to the cancel function;
+	 * cancel= function that allows to delete the api call;
+	 */
+	const { token: cancelToken, cancel } = CANCEL_TOKEN.source()
+	/**
+	 * Fetches messages that belong to a particular conversation
+	 * specified with its token.
+	 *
+	 * @param {string} token The conversation token;
+	 */
+	const fetchMessages = async function(token) {
+		try {
+			const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0', { cancelToken })
+			return response
+		} catch (exception) {
+			if (!exception.response || !exception.response.status || exception.response.status !== 304) {
+				console.debug('Error while fetching messages: ', exception)
+			}
 		}
+	}
+	return {
+		fetchMessages,
+		cancel,
 	}
 }
 
@@ -102,7 +114,7 @@ const postNewMessage = async function({ token, message, parent }) {
 }
 
 export {
-	fetchMessages,
+	cancelableFetchMessages,
 	cancelableLookForNewMessages,
 	postNewMessage,
 }
