@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import axios from 'nextcloud-axios'
+import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { Multiselect } from 'nextcloud-vue'
 import { generateOcsUrl } from 'nextcloud-router/dist/index'

@@ -30,7 +30,7 @@
 			:display-name="item.displayName" />
 		<div v-if="showFavorite"
 			class="favorite-mark">
-			<span class="icon icon-favorite"></span>
+			<span class="icon icon-favorite" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
 	</div>

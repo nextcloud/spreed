@@ -47,7 +47,8 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 <script>
 import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
-import { fetchMessages, lookForNewMessges } from '../../services/messagesService'
+import { fetchMessages, cancelableLookForNewMessages } from '../../services/messagesService'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'MessagesList',
@@ -73,6 +74,12 @@ export default {
 			 * bottom.
 			 */
 			isInitiated: false,
+			/**
+			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+			 * which allows to cancel the previous long polling request for new
+			 * messages before making another one.
+			 */
+			cancelRequest: null,
 		}
 	},
 
@@ -115,19 +122,20 @@ export default {
 		},
 	},
 
-	watch: {
-		token: function() {
-			this.onTokenChange()
-		},
-	},
-
 	/**
-	 * Fetches the messages when the MessageList is mounted for the
-	 * first time. The router mounts this component only if the token
-	 * is passed in so there's no need to check the token prop.
+	 * Fetches the messages when the MessageList created. The router mounts this
+	 * component only if the token is passed in so there's no need to check the
+	 * token prop.
 	 */
-	beforeMount() {
-		this.onTokenChange()
+	created() {
+		this.onRouteChange()
+		/**
+		 * Add a listener for routeChange event emitted by the App.vue component.
+		 * Call the onRouteChange method function whenever the route changes.
+		 */
+		EventBus.$on('routeChange', () => {
+			this.onRouteChange()
+		})
 	},
 
 	beforeUpdate() {
@@ -165,27 +173,37 @@ export default {
 		},
 
 		/**
-		 * Fetches the messages of a conversation given the
-		 * conversation token.
+		 * Fetches the messages of a conversation given the conversation token. Triggers
+		 * a long-polling request for new messages.
 		 */
-		async onTokenChange() {
+		async onRouteChange() {
 			this.isInitiated = false
 			const messages = await fetchMessages(this.token)
 			// Process each messages and adds it to the store
 			messages.data.ocs.data.forEach(message => {
 				this.$store.dispatch('processMessage', message)
 			})
-			// After loading the old messages to the store, we start looking for new mwssages.
 			this.getNewMessages()
 		},
-
 		/**
 		 * Creates a long polling request for a new message.
 		 */
 		async getNewMessages() {
-			const lastKnownMessageId = this.messagesList[this.messagesList.length - 1].id
-			const messages = await lookForNewMessges(this.token, lastKnownMessageId)
-			// If there are no new messages, the variable messages will be undefined.
+			/**
+			 * If there's already one pending long polling request from a previous call
+			 * of this method, we call the `cancelRequest` function to clear it and reset
+			 * the cancelRequest to null in the component's data.
+			 */
+			if (typeof this.cancelRequest === 'function') {
+				this.cancelRequest('canceled')
+				this.cancelRequest = null
+			}
+			// Get a new request function and cancel function pair
+			const { lookForNewMessages, cancel } = cancelableLookForNewMessages()
+			// store the cancel function in the data
+			this.cancelRequest = cancel
+			const lastKnownMessageId = this.getLastKnownMessageId()
+			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
 			if (messages !== undefined) {
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
@@ -194,12 +212,11 @@ export default {
 				this.scrollToBottom()
 			}
 			/**
-			 * This method recursively call itself after a response, so we're always
-			 * looking for new messages.
+			 * If there are no new messages, the variable messages will be undefined, so the
+			 * previous code block will be skipped and this method recursively calls itself.
 			 */
 			this.getNewMessages()
 		},
-
 		/**
 		 * Dispatches the deleteMessages action.
 		 * @param {object} event The deleteMessage event emitted by the Message component.
@@ -214,6 +231,17 @@ export default {
 			this.$nextTick(function() {
 				document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 			})
+		},
+
+		/**
+		 * gets the last known message id.
+		 * @returns {string} The last known message id.
+		 */
+		getLastKnownMessageId() {
+			if (this.messagesList[this.messagesList.length - 1]) {
+				return this.messagesList[this.messagesList.length - 1].id
+			}
+			return '0'
 		},
 
 	},

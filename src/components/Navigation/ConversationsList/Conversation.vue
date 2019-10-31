@@ -27,7 +27,7 @@
 		<ConversationIcon
 			slot="icon"
 			:item="item"
-			:hideFavorite="false" />
+			:hide-favorite="false" />
 		<template slot="subtitle">
 			{{ simpleLastChatMessage }}
 		</template>

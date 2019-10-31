@@ -20,8 +20,10 @@
  *
  */
 
-import axios from 'nextcloud-axios'
+import axios from '@nextcloud/axios'
 import { generateOcsUrl } from 'nextcloud-router'
+
+const CANCEL_TOKEN = axios.CancelToken
 
 /**
  * Fetches messages that belong to a particular conversation
@@ -39,18 +41,44 @@ const fetchMessages = async function(token) {
 }
 
 /**
- * Fetches newly created messages that belong to a particular conversation
- * specified with its token.
- *
- * @param {string} token The conversation token;
- * @param {int} lastKnownMessageId The id of the last message in the store.
+ * Creates a cancelable axios 'request object'. We need this in order to cancel
+ * long polling requests for new messages of previous conversatios when
+ * switching to a new one.
+ * @returns {object} An object that contains 2 functions:
+ * - `lookForNewMessages` : the api call async function with the injected cancel
+ * token;
+ * - `cancel` : the function that allows to cancel that particular a call;
  */
-const lookForNewMessges = async function(token, lastKnownMessageId) {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + '&includeLastKnown=0' + `&lastKnownMessageId=${lastKnownMessageId}`)
-		return response
-	} catch (error) {
-		console.debug('Error while looking for new message: ', error)
+const cancelableLookForNewMessages = function() {
+	/**
+	 * cancelToken= the token that gets injected into the axios method and links it
+	 * to the cancel function;
+	 * cancel= function that allows to delete the api call;
+	 */
+	const { token: cancelToken, cancel } = CANCEL_TOKEN.source()
+	/**
+	 * Fetches newly created messages that belong to a particular conversation
+	 * specified with its token.
+	 *
+	 * @param {string} token The conversation token;
+	 * @param {int} lastKnownMessageId The id of the last message in the store.
+	 */
+	const lookForNewMessages = async(token, lastKnownMessageId) => {
+		try {
+			const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + '&includeLastKnown=0' + `&lastKnownMessageId=${lastKnownMessageId}`, { cancelToken })
+			return response
+		} catch (exception) {
+			if (axios.isCancel(exception)) {
+				console.debug(exception.message)
+				return exception.message
+			} else {
+				console.debug('Error while looking for new message: ', exception)
+			}
+		}
+	}
+	return {
+		lookForNewMessages,
+		cancel,
 	}
 }
 
@@ -73,6 +101,6 @@ const postNewMessage = async function({ token, message, parent }) {
 
 export {
 	fetchMessages,
-	lookForNewMessges,
+	cancelableLookForNewMessages,
 	postNewMessage,
 }
