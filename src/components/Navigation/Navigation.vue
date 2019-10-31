@@ -24,7 +24,7 @@
 		<AppNavigationSearch
 			v-model="searchText"
 			@input="debounceFetchSearchResults" />
-		<ul class="navigation__tems">
+		<ul>
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
 
@@ -141,11 +141,6 @@ export default {
 	flex-direction: column;
 	flex-grow: 0;
 	flex-shrink: 0;
-	&__items {
-		display: block;
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
 }
 
 .settings {
