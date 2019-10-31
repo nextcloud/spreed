@@ -35,8 +35,10 @@ const fetchMessages = async function(token) {
 	try {
 		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0')
 		return response
-	} catch (error) {
-		console.debug('Error while fetching messages: ', error)
+	} catch (exception) {
+		if (!exception.response || !exception.response.status || exception.response.status !== 304) {
+			console.debug('Error while fetching messages: ', exception)
+		}
 	}
 }
 
@@ -71,8 +73,8 @@ const cancelableLookForNewMessages = function() {
 			if (axios.isCancel(exception)) {
 				console.debug(exception.message)
 				return exception.message
-			} else {
-				console.debug('Error while looking for new message: ', exception)
+			} else if (!exception.response || !exception.response.status || exception.response.status !== 304) {
+				console.debug('Error while looking for new messages: ', exception)
 			}
 		}
 	}
