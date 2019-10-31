@@ -47,7 +47,7 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 <script>
 import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
-import { fetchMessages, cancelableLookForNewMessages } from '../../services/messagesService'
+import { cancelableFetchMessages, cancelableLookForNewMessages } from '../../services/messagesService'
 import { EventBus } from '../../services/EventBus'
 
 export default {
@@ -79,7 +79,8 @@ export default {
 			 * which allows to cancel the previous long polling request for new
 			 * messages before making another one.
 			 */
-			cancelLookForNewMessges: null,
+			cancelLookForNewMessages: null,
+			cancelFetchMessages: null,
 		}
 	},
 
@@ -176,14 +177,37 @@ export default {
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
 		 */
-		async onRouteChange() {
+		onRouteChange() {
 			this.isInitiated = false
-			const messages = await fetchMessages(this.token)
-			// Process each messages and adds it to the store
-			messages.data.ocs.data.forEach(message => {
-				this.$store.dispatch('processMessage', message)
-			})
+			this.getOldMessages()
 			this.getNewMessages()
+		},
+		async getOldMessages() {
+			/**
+			 * If there's already one pending request from a previous call
+			 * of this method, we call the `cancelFetchMessages` function to clear it and reset
+			 * the cancelRequest to null in the component's data.
+			 */
+			if (typeof this.cancelFetchMessages === 'function') {
+				this.cancelFetchMessages('canceled')
+				this.cancelFetchMessages = null
+			}
+			// Get a new request function and cancel function pair
+			const { fetchMessages, cancelFetchMessages } = cancelableFetchMessages()
+			// Assign the new cancel function to our data value
+			this.cancelFetchMessages = cancelFetchMessages
+			// Make the request
+			const messages = await fetchMessages(this.token)
+			if (messages !== undefined) {
+				// Ends the execution of the method if the api call has been canceled.
+				if (messages === 'canceled') {
+					return
+				}
+				// Process each messages and adds it to the store
+				messages.data.ocs.data.forEach(message => {
+					this.$store.dispatch('processMessage', message)
+				})
+			}
 		},
 		/**
 		 * Creates a long polling request for a new message.
@@ -194,14 +218,14 @@ export default {
 			 * of this method, we call the `cancelRequest` function to clear it and reset
 			 * the cancelRequest to null in the component's data.
 			 */
-			if (typeof this.cancelLookForNewMessges === 'function') {
-				this.cancelLookForNewMessges('canceled')
-				this.cancelLookForNewMessges = null
+			if (typeof this.cancelLookForNewMessages === 'function') {
+				this.cancelLookForNewMessages('canceled')
+				this.cancelLookForNewMessages = null
 			}
 			// Get a new request function and cancel function pair
-			const { lookForNewMessages, cancelLookForNewMessges } = cancelableLookForNewMessages()
+			const { lookForNewMessages, cancelLookForNewMessages } = cancelableLookForNewMessages()
 			// store the cancel function in the data
-			this.cancelLookForNewMessges = cancelLookForNewMessges
+			this.cancelLookForNewMessages = cancelLookForNewMessages
 			const lastKnownMessageId = this.getLastKnownMessageId()
 			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
 			if (messages !== undefined) {
