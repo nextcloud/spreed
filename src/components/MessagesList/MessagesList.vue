@@ -205,6 +205,10 @@ export default {
 			const lastKnownMessageId = this.getLastKnownMessageId()
 			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
 			if (messages !== undefined) {
+				// Ends the execution of the method if the api call has been canceled.
+				if (messages === 'canceled') {
+					return
+				}
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
