@@ -79,7 +79,7 @@ export default {
 			 * which allows to cancel the previous long polling request for new
 			 * messages before making another one.
 			 */
-			cancelRequest: null,
+			cancelLookForNewMessges: null,
 		}
 	},
 
@@ -194,14 +194,14 @@ export default {
 			 * of this method, we call the `cancelRequest` function to clear it and reset
 			 * the cancelRequest to null in the component's data.
 			 */
-			if (typeof this.cancelRequest === 'function') {
-				this.cancelRequest('canceled')
-				this.cancelRequest = null
+			if (typeof this.cancelLookForNewMessges === 'function') {
+				this.cancelLookForNewMessges('canceled')
+				this.cancelLookForNewMessges = null
 			}
 			// Get a new request function and cancel function pair
-			const { lookForNewMessages, cancel } = cancelableLookForNewMessages()
+			const { lookForNewMessages, cancelLookForNewMessges } = cancelableLookForNewMessages()
 			// store the cancel function in the data
-			this.cancelRequest = cancel
+			this.cancelLookForNewMessges = cancelLookForNewMessges
 			const lastKnownMessageId = this.getLastKnownMessageId()
 			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
 			if (messages !== undefined) {

@@ -31,7 +31,7 @@ const cancelableFetchMessages = function() {
 	 * to the cancel function;
 	 * cancel= function that allows to delete the api call;
 	 */
-	const { token: cancelToken, cancel } = CANCEL_TOKEN.source()
+	const { token: cancelToken, cancel: cancelFetchMessages } = CANCEL_TOKEN.source()
 	/**
 	 * Fetches messages that belong to a particular conversation
 	 * specified with its token.
@@ -50,7 +50,7 @@ const cancelableFetchMessages = function() {
 	}
 	return {
 		fetchMessages,
-		cancel,
+		cancelFetchMessages,
 	}
 }
 
@@ -69,7 +69,7 @@ const cancelableLookForNewMessages = function() {
 	 * to the cancel function;
 	 * cancel= function that allows to delete the api call;
 	 */
-	const { token: cancelToken, cancel } = CANCEL_TOKEN.source()
+	const { token: cancelToken, cancel: cancelLookForNewMessages } = CANCEL_TOKEN.source()
 	/**
 	 * Fetches newly created messages that belong to a particular conversation
 	 * specified with its token.
@@ -92,7 +92,7 @@ const cancelableLookForNewMessages = function() {
 	}
 	return {
 		lookForNewMessages,
-		cancel,
+		cancelLookForNewMessages,
 	}
 }
 
