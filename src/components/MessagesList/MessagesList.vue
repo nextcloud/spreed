@@ -80,6 +80,11 @@ export default {
 			 * messages before making another one.
 			 */
 			cancelLookForNewMessages: null,
+			/**
+			 * Stores the cancel function returned by `cancelableFetchMessages`,
+			 * which allows to cancel the previous request for old messages
+			 * when quickly switching to a new conversation.
+			 */
 			cancelFetchMessages: null,
 		}
 	},
@@ -179,7 +184,9 @@ export default {
 		 */
 		onRouteChange() {
 			this.isInitiated = false
+			// Gets the history of the conversation
 			this.getOldMessages()
+			// Listens for new messages
 			this.getNewMessages()
 		},
 		async getOldMessages() {
@@ -224,7 +231,7 @@ export default {
 			}
 			// Get a new request function and cancel function pair
 			const { lookForNewMessages, cancelLookForNewMessages } = cancelableLookForNewMessages()
-			// store the cancel function in the data
+			// Assign the new cancel function to our data value
 			this.cancelLookForNewMessages = cancelLookForNewMessages
 			const lastKnownMessageId = this.getLastKnownMessageId()
 			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
