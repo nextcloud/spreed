@@ -184,9 +184,12 @@ export default {
 		 */
 		onRouteChange() {
 			this.isInitiated = false
-			// Gets the history of the conversation
-			this.getOldMessages()
-			// Listens for new messages
+			this.getMessages()
+		},
+		async getMessages() {
+			// Gets the history of the conversation.
+			await this.getOldMessages()
+			// Once the history is received, startslooking for new messages.
 			this.getNewMessages()
 		},
 		async getOldMessages() {
