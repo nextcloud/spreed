@@ -204,16 +204,14 @@ export default {
 			// Assign the new cancel function to our data value
 			this.cancelFetchMessages = cancelFetchMessages
 			// Make the request
-			const messages = await fetchMessages(this.token)
-			if (messages !== undefined) {
-				// Ends the execution of the method if the api call has been canceled.
-				if (messages === 'canceled') {
-					return
-				}
+			try {
+				const messages = await fetchMessages(this.token)
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
+			} catch {
+				// No need to do anything here...
 			}
 		},
 		/**
@@ -234,17 +232,18 @@ export default {
 			// Assign the new cancel function to our data value
 			this.cancelLookForNewMessages = cancelLookForNewMessages
 			const lastKnownMessageId = this.getLastKnownMessageId()
-			const messages = await lookForNewMessages(this.token, lastKnownMessageId)
-			if (messages !== undefined) {
-				// Ends the execution of the method if the api call has been canceled.
-				if (messages === 'canceled') {
-					return
-				}
+
+			try {
+				const messages = await lookForNewMessages(this.token, lastKnownMessageId)
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
 				this.scrollToBottom()
+			} catch (exception) {
+				if (exception.message === 'canceled') {
+					return
+				}
 			}
 			/**
 			 * If there are no new messages, the variable messages will be undefined, so the
