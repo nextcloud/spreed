@@ -153,6 +153,7 @@ OC.L10N.register(
     "Add to favorites" : "Lägg till som favorit",
     "Link to conversation copied to clipboard" : "Länk till konversation kopierad till urklipp",
     "Link to conversation was not copied to clipboard." : "Länk till konversation kopierades inte till urklipp.",
+    "No search results" : "Inga sökresultat",
     "Conversations" : "Konversationer",
     "Contacts" : "Kontakter",
     "Loading" : "Laddar",

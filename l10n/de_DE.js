@@ -154,6 +154,7 @@ OC.L10N.register(
     "Add to favorites" : "Zu den Favoriten hinzufügen",
     "Link to conversation copied to clipboard" : "Link zur Unterhaltung in die Zwischenablage kopiert",
     "Link to conversation was not copied to clipboard." : "Link zur Unterhaltung wurde nicht in die Zwischenablage kopiert.",
+    "No search results" : "Keine Suchergebnisse",
     "Conversations" : "Unterhaltungen",
     "Contacts" : "Kontakte",
     "Loading" : "Lade",
