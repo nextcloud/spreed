@@ -154,6 +154,7 @@ OC.L10N.register(
     "Add to favorites" : "Adicionar aos favoritos",
     "Link to conversation copied to clipboard" : "O link para a conversa foi copiado para a área de transferência",
     "Link to conversation was not copied to clipboard." : "O link para a conversa não foi copiado para a área de transferência.",
+    "No search results" : "Nenhum resultado encontrado",
     "Conversations" : "Conversas",
     "Contacts" : "Contatos",
     "Loading" : "Carregando",

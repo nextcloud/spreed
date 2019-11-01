@@ -154,6 +154,7 @@ OC.L10N.register(
     "Add to favorites" : "Ajouter aux favoris",
     "Link to conversation copied to clipboard" : "Lien vers la conversation copié dans le presse-papier",
     "Link to conversation was not copied to clipboard." : "Le lien vers la conversation n'a pas été copié dans le presse-papier.",
+    "No search results" : "Aucun résultat",
     "Conversations" : "Conversations",
     "Contacts" : "Contacts",
     "Loading" : "Chargement",
