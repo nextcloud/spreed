@@ -154,6 +154,7 @@ OC.L10N.register(
     "Add to favorites" : "Añadir a favoritos",
     "Link to conversation copied to clipboard" : "Enlace a la conversación copiado al portapapeles",
     "Link to conversation was not copied to clipboard." : "Enlace a la conversación no ha sido copiado al portapapeles",
+    "No search results" : "No hay resultados de búsqueda",
     "Conversations" : "Conversaciones",
     "Contacts" : "Contactos",
     "Loading" : "Cargando",
