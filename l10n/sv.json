@@ -156,6 +156,8 @@
     "Contacts" : "Kontakter",
     "Loading" : "Laddar",
     "Groups" : "Grupper",
+    "New conversation" : "Ny konversation",
+    "Public conversation" : "Publik konversation",
     "Limit to groups" : "Begränsa till grupper",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "När minst en grupp väljs kan bara personer i de angivna grupperna ingå i konversationer.",
     "Guests can still join public conversations." : "Gäster kan fortfarande delta i publika konversationer.",
