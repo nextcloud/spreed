@@ -159,6 +159,8 @@ OC.L10N.register(
     "Contacts" : "Kontakte",
     "Loading" : "Lade",
     "Groups" : "Gruppen",
+    "New conversation" : "Neue Unterhaltung",
+    "Public conversation" : "Öffentliche Unterhaltung",
     "Limit to groups" : "Auf Gruppen beschränken",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Wenn mindestens eine Gruppe ausgewählt ist, so können nur Personen von den aufgelisteten Gruppen an den Unterhaltungen teilnehmen.",
     "Guests can still join public conversations." : "Gäste können nach wie vor öffentlichen Unterhaltungen beitreten.",

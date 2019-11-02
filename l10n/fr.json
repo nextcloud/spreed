@@ -157,6 +157,8 @@
     "Contacts" : "Contacts",
     "Loading" : "Chargement",
     "Groups" : "Groupes",
+    "New conversation" : "Nouvelle conversation",
+    "Public conversation" : "Conversation publique",
     "Limit to groups" : "Limiter aux groupes",
     "When at least one group is selected, only people of the listed groups can be part of conversations." : "Lorsqu'au moins un groupe est sélectionné, seules les personnes des groupes répertoriés peuvent participer aux conversations.",
     "Guests can still join public conversations." : "Les invités peuvent toujours rejoindre les conversations publiques.",
