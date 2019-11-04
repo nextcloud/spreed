@@ -92,6 +92,7 @@ export default {
 				id: this.createTemporaryMessageId(),
 				actorDisplayName: getCurrentUser().displayName,
 				actorId: getCurrentUser().uid,
+				actorType: 'users',
 				message: this.text,
 				token: this.token,
 				timestamp: 0,
