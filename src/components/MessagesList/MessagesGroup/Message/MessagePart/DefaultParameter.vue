@@ -20,7 +20,14 @@
 -->
 
 <template>
-	<strong>{{ data.name }}</strong>
+	<a v-if="data.link"
+		:href="link"
+		class="external"
+		target="_blank"
+		rel="noopener noreferrer">
+		<strong>{{ data.name }}</strong>
+	</a>
+	<strong v-else>{{ data.name }}</strong>
 </template>
 
 <script>
@@ -29,8 +36,19 @@ export default {
 	props: {
 		data: {
 			type: Object,
-			required: true,
+			default() {
+				return {
+					name: '',
+					link: '',
+				}
+			},
 		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.external:after {
+	content: " ↗";
+}
+</style>
