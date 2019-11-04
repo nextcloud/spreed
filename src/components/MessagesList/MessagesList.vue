@@ -47,8 +47,10 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 <script>
 import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
-import { cancelableFetchMessages, cancelableLookForNewMessages } from '../../services/messagesService'
+import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import { EventBus } from '../../services/EventBus'
+import CancelableRequest from '../../utils/cancelableRequest'
+import Axios from '@nextcloud/axios'
 
 export default {
 	name: 'MessagesList',
@@ -79,13 +81,13 @@ export default {
 			 * which allows to cancel the previous long polling request for new
 			 * messages before making another one.
 			 */
-			cancelLookForNewMessages: null,
+			cancelLookForNewMessages: () => {},
 			/**
 			 * Stores the cancel function returned by `cancelableFetchMessages`,
 			 * which allows to cancel the previous request for old messages
 			 * when quickly switching to a new conversation.
 			 */
-			cancelFetchMessages: null,
+			cancelFetchMessages: () => {},
 		}
 	},
 
@@ -190,69 +192,66 @@ export default {
 			// Gets the history of the conversation.
 			await this.getOldMessages()
 			// Once the history is received, startslooking for new messages.
-			this.getNewMessages()
+			this.$nextTick(() => {
+				this.getNewMessages()
+			})
 		},
 		async getOldMessages() {
 			/**
-			 * If there's already one pending request from a previous call
-			 * of this method, we call the `cancelFetchMessages` function to clear it and reset
-			 * the cancelRequest to null in the component's data.
+			 * Clear previous requests if there's one pending
 			 */
-			if (typeof this.cancelFetchMessages === 'function') {
-				this.cancelFetchMessages('canceled')
-				this.cancelFetchMessages = null
-			}
-			// Get a new request function and cancel function pair
-			const { fetchMessages, cancelFetchMessages } = cancelableFetchMessages()
+			this.cancelFetchMessages('canceled')
+
+			// Get a new cancelable request function and cancel function pair
+			const { request, cancel } = CancelableRequest(fetchMessages)
 			// Assign the new cancel function to our data value
-			this.cancelFetchMessages = cancelFetchMessages
+			this.cancelFetchMessages = cancel
 			// Make the request
 			try {
-				const messages = await fetchMessages(this.token)
+				const messages = await request({ token: this.token })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
-			} catch {
-				// No need to do anything here...
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
+				}
 			}
 		},
 		/**
 		 * Creates a long polling request for a new message.
 		 */
 		async getNewMessages() {
-			/**
-			 * If there's already one pending long polling request from a previous call
-			 * of this method, we call the `cancelRequest` function to clear it and reset
-			 * the cancelRequest to null in the component's data.
-			 */
-			if (typeof this.cancelLookForNewMessages === 'function') {
-				this.cancelLookForNewMessages('canceled')
-				this.cancelLookForNewMessages = null
-			}
-			// Get a new request function and cancel function pair
-			const { lookForNewMessages, cancelLookForNewMessages } = cancelableLookForNewMessages()
+			// Clear previous requests if there's one pending
+			this.cancelLookForNewMessages('canceled')
+			// Get a new cancelable request function and cancel function pair
+			const { request, cancel } = CancelableRequest(lookForNewMessages)
 			// Assign the new cancel function to our data value
-			this.cancelLookForNewMessages = cancelLookForNewMessages
+			this.cancelLookForNewMessages = cancel
+			// Get the last message's id
 			const lastKnownMessageId = this.getLastKnownMessageId()
-
+			// Make the request
 			try {
-				const messages = await lookForNewMessages(this.token, lastKnownMessageId)
+				const messages = await request({ token: this.token, lastKnownMessageId })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
 				this.scrollToBottom()
 			} catch (exception) {
-				if (exception.message === 'canceled') {
-					return
+				if (exception.response) {
+					/**
+					 * Recursively call the same method if no new messages are returned
+					 */
+					if (exception.response.status === 304) {
+						this.getNewMessages()
+					}
+				}
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
 				}
 			}
-			/**
-			 * If there are no new messages, the variable messages will be undefined, so the
-			 * previous code block will be skipped and this method recursively calls itself.
-			 */
-			this.getNewMessages()
 		},
 		/**
 		 * Dispatches the deleteMessages action.
@@ -276,7 +275,7 @@ export default {
 		 */
 		getLastKnownMessageId() {
 			if (this.messagesList[this.messagesList.length - 1]) {
-				return this.messagesList[this.messagesList.length - 1].id
+				return this.messagesList[this.messagesList.length - 1].id.toString()
 			}
 			return '0'
 		},
