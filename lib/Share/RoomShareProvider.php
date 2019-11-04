@@ -1118,4 +1118,30 @@ class RoomShareProvider implements IShareProvider {
 		}
 	}
 
+	/**
+	 * Get all the shares in this provider returned as iterable to reduce memory
+	 * overhead
+	 *
+	 * @return iterable
+	 * @since 18.0.0
+	 */
+	public function getAllShares(): iterable {
+		$qb = $this->dbConnection->getQueryBuilder();
+
+		$qb->select('*')
+			->from('share')
+			->where(
+				$qb->expr()->orX(
+					$qb->expr()->eq('share_type', $qb->createNamedParameter(IShare::TYPE_ROOM))
+				)
+			);
+
+		$cursor = $qb->execute();
+		while($data = $cursor->fetch()) {
+			$share = $this->createShareObject($data);
+
+			yield $share;
+		}
+		$cursor->closeCursor();
+	}
 }
