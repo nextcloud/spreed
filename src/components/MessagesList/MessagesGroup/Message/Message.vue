@@ -182,9 +182,20 @@ export default {
 			const parameters = Object.keys(this.messageParameters)
 			const blocks = this.message.split('{')
 			const renderBlocks = []
-			let isFirstBlock = true
 
-			blocks.forEach(block => {
+			blocks.forEach((block, index) => {
+				if (index === 0) {
+					// The first block does not need to get the leading curly brace
+					// as it was not split away before.
+					renderBlocks.push({
+						type: 'plain',
+						data: {
+							text: block,
+						},
+					})
+					return
+				}
+
 				const parts = block.split('}')
 				if (parts.length > 1 && parameters.indexOf(parts[0]) !== -1) {
 					// Valid parameter
@@ -204,16 +215,6 @@ export default {
 					}
 
 				// Not a valid parameter - render as plain text
-				} else if (isFirstBlock) {
-					// The first block does not need to get the leading curly brace
-					// as it was not split away before.
-					renderBlocks.push({
-						type: 'plain',
-						data: {
-							text: block,
-						},
-					})
-					isFirstBlock = false
 				} else {
 					renderBlocks.push({
 						type: 'plain',
