@@ -258,14 +258,16 @@
 
 				$('#talk-sidebar').get(0).addEventListener('transitionend', resolveOnceSidebarIsOpen);
 			} else {
+				var animationQuickValue = getComputedStyle(document.documentElement).getPropertyValue('--animation-quick');
+
 				// The browser does not support the "ontransitionend" event, so
 				// just wait a few milliseconds more than the duration of the
-				// transition (300ms).
+				// transition.
 				setTimeout(function() {
 					console.log('ontransitionend is not supported; the sidebar should have been fully shown by now');
 
 					deferred.resolve();
-				}, 500);
+				}, Number.parseInt(animationQuickValue) + 200);
 			}
 
 			$('#talk-sidebar').removeClass('disappear');

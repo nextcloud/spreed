@@ -72,8 +72,8 @@
 	overflow-y: auto;
 	z-index: 500;
 
-	transition: 300ms width ease-in-out,
-				300ms min-width ease-in-out;
+	transition: var(--animation-quick) width ease-in-out,
+				var(--animation-quick) min-width ease-in-out;
 }
 
 #talk-sidebar.disappear {
