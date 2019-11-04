@@ -25,39 +25,16 @@
 		<AppContent>
 			<router-view />
 		</AppContent>
-		<AppSidebar
-			v-show="show"
-			title="christmas-image-2018-12-25-00:01:12.jpg"
-			subtitle="4,3 MB, last edited 41 days ago"
-			:starred.sync="starred"
-			@close="show=false">
-			<template #action>
-				<button class="primary">
-					Button 1
-				</button>
-				<input id="link-checkbox"
-					name="link-checkbox"
-					class="checkbox link-checkbox"
-					type="checkbox">
-				<label for="link-checkbox" class="link-checkbox-label">Do something</label>
-			</template>
-			<AppSidebarTab name="Participants" icon="icon-talk">
-				Participants
-			</AppSidebarTab>
-			<AppSidebarTab name="Projects" icon="icon-activity">
-				Projects
-			</AppSidebarTab>
-		</AppSidebar>
+		<Sidebar />
 	</Content>
 </template>
 
 <script>
 import Content from 'nextcloud-vue/dist/Components/Content'
 import AppContent from 'nextcloud-vue/dist/Components/AppContent'
-import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
-import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
 import Navigation from './components/Navigation/Navigation'
 import Router from './router/router'
+import Sidebar from './components/Sidebar/Sidebar'
 import { EventBus } from './services/EventBus'
 
 export default {
@@ -65,19 +42,13 @@ export default {
 	components: {
 		Content,
 		AppContent,
-		AppSidebar,
-		AppSidebarTab,
+		Sidebar,
 		Navigation,
 	},
 	data: function() {
 		return {
 			defaultPageTitle: false,
 			loading: false,
-			date: Date.now() + 86400000 * 3,
-			date2: Date.now() + 86400000 * 3 + Math.floor(Math.random() * 86400000 / 2),
-			show: false,
-			starred: false,
-			windowHeight: 0,
 		}
 	},
 
