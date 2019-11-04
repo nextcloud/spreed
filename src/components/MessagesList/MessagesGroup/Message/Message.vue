@@ -69,6 +69,7 @@ the main body of the message as well as a quote.
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import DefaultParameter from './MessagePart/DefaultParameter'
+import FilePreview from './MessagePart/FilePreview'
 import PlainText from './MessagePart/PlainText'
 import Quote from './Quote/Quote'
 
@@ -78,6 +79,7 @@ export default {
 		Actions,
 		ActionButton,
 		DefaultParameter,
+		FilePreview,
 		PlainText,
 		Quote,
 	},
@@ -227,10 +229,12 @@ export default {
 	},
 	methods: {
 		getComponentInstanceForMessagePart(messagePartType) {
-			if (messagePartType !== 'plain') {
-				return DefaultParameter
+			if (messagePartType === 'plain') {
+				return PlainText
+			} else if (messagePartType === 'file') {
+				return FilePreview
 			}
-			return PlainText
+			return DefaultParameter
 		},
 		handleReply() {
 			const MESSAGE_TO_BE_REPLIED = {
