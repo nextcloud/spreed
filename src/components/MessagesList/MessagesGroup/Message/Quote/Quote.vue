@@ -31,7 +31,7 @@ components.
 				<h6>{{ actorDisplayName }}</h6>
 			</div>
 			<div class="quote__main__text">
-				<p>{{ message }}</p>
+				<p>{{ simpleQuotedMessage }}</p>
 			</div>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
@@ -71,6 +71,13 @@ export default {
 			required: true,
 		},
 		/**
+		 * The text of the message to be replied to.
+		 */
+		messageParameters: {
+			type: [Array, Object],
+			required: true,
+		},
+		/**
 		 * The message id of the message to be replied to.
 		 */
 		id: {
@@ -91,6 +98,29 @@ export default {
 		isNewMessageFormQuote: {
 			type: Boolean,
 			default: false,
+		},
+	},
+	computed: {
+		/**
+		 * This is a simplified version of the last chat message.
+		 * Parameters are parsed without markup (just replaced with the name),
+		 * e.g. no avatars on mentions.
+		 * @returns {string} A simple message to show below the conversation name
+		 */
+		simpleQuotedMessage() {
+			if (!Object.keys(this.messageParameters).length) {
+				return this.message
+			}
+
+			const params = this.messageParameters
+			let subtitle = this.message
+
+			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
+			Object.keys(params).forEach((parameterKey) => {
+				subtitle = subtitle.replace('{' + parameterKey + '}', params[parameterKey].name)
+			})
+
+			return subtitle
 		},
 	},
 	methods: {
