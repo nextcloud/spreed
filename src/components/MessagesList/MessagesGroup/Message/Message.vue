@@ -35,7 +35,11 @@ the main body of the message as well as a quote.
 		</div>
 		<div class="message__main">
 			<div class="message__main__text">
-				<p>{{ message }}</p>
+				<component
+					:is="getComponentInstanceForMessagePart(block.type)"
+					v-for="(block, i) in parsedMessage"
+					:key="i"
+					:data="block.data" />
 			</div>
 			<div class="message__main__right">
 				<div v-if="isTemporary" class="icon-loading-small" />
@@ -64,6 +68,8 @@ the main body of the message as well as a quote.
 <script>
 import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+import DefaultParameter from './MessagePart/DefaultParameter'
+import PlainText from './MessagePart/PlainText'
 import Quote from './Quote/Quote'
 
 export default {
@@ -71,6 +77,8 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		DefaultParameter,
+		PlainText,
 		Quote,
 	},
 	props: {
@@ -86,6 +94,13 @@ export default {
 		 */
 		message: {
 			type: String,
+			required: true,
+		},
+		/**
+		 * The parameters of the rich object message
+		 */
+		messageParameters: {
+			type: [Array, Object],
 			required: true,
 		},
 		/**
@@ -151,8 +166,72 @@ export default {
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
 		},
+
+		/**
+		 * Messages are parsed in the following way:
+		 * 1. We try to find all `{placeholder}`s in the message
+		 * 2. Afterwards all parts (parameters and plain text) are added to an array
+		 * 3. On rendering we loop over the array and the different blocks are rendered
+		 *    by different components.
+		 * @returns {Array} the different message parts
+		 */
+		parsedMessage() {
+
+			const parameters = Object.keys(this.messageParameters)
+			const blocks = this.message.split('{')
+			const renderBlocks = []
+			let isFirstBlock = true
+
+			blocks.forEach(block => {
+				const parts = block.split('}')
+				if (parts.length > 1 && parameters.indexOf(parts[0]) !== -1) {
+					// Valid parameter
+					const placeholder = parts.shift()
+					renderBlocks.push({
+						type: this.messageParameters[placeholder].type,
+						data: this.messageParameters[placeholder],
+					})
+
+					if (parts.join('}').length) {
+						renderBlocks.push({
+							type: 'plain',
+							data: {
+								text: parts.join('}'),
+							},
+						})
+					}
+
+				// Not a valid parameter - render as plain text
+				} else if (isFirstBlock) {
+					// The first block does not need to get the leading curly brace
+					// as it was not split away before.
+					renderBlocks.push({
+						type: 'plain',
+						data: {
+							text: block,
+						},
+					})
+					isFirstBlock = false
+				} else {
+					renderBlocks.push({
+						type: 'plain',
+						data: {
+							text: '{' + block,
+						},
+					})
+				}
+			})
+
+			return renderBlocks
+		},
 	},
 	methods: {
+		getComponentInstanceForMessagePart(messagePartType) {
+			if (messagePartType !== 'plain') {
+				return DefaultParameter
+			}
+			return PlainText
+		},
 		handleReply() {
 			const MESSAGE_TO_BE_REPLIED = {
 				id: this.id,
