@@ -121,7 +121,7 @@ export default {
 @import '../../../assets/variables';
 
 .wrapper {
-	max-width: $message-width;
+	max-width: $message-max-width;
 	display: flex;
 	margin: auto;
 	padding: 0;
