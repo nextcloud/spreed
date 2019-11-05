@@ -90,14 +90,17 @@ export default {
 @import '../../../assets/variables.scss';
 
 .app-navigation-search {
+	height: $top-bar-height !important;
 	position: sticky;
 	top: 0;
 	background-color: var(--color-main-background);
 	border-bottom: 1px solid var(--color-border-dark);
 	z-index: 1;
+	display: flex;
+	justify-content: center;
 	&__input {
+		align-self: center;
 		width: $navigation-width - 20px;
-		margin: 10px;
 	}
 }
 </style>
