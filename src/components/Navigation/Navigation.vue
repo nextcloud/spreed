@@ -140,8 +140,10 @@ export default {
 
 <style lang="scss" scoped>
 
+@import '../../assets/variables';
+
 .navigation {
-	width: 300px;
+	width: $navigation-width;
 	position: fixed;
 	top: 50px;
 	left: 0;
@@ -167,6 +169,6 @@ export default {
 .settings {
 	position: sticky;
 	bottom: 0;
-	border-top: 1px solid lightgray;
+	border-top: 1px solid var(--color-border-dark);
 }
 </style>

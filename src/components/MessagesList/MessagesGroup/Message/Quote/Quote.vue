@@ -137,11 +137,15 @@ export default {
 
 <style lang="scss" scoped>
 
+@import '../../../../../assets/variables';
+
 .quote {
 	border-left: 4px solid var(--color-primary);
 	margin: 10px 0 10px 0;
 	padding: 0 0 0 10px;
 	display: flex;
+	max-width: $message-max-width;
+	margin: 0 $message-utils-width 0 0;
 	&__main {
 		display: flex;
 		flex-direction: column;
@@ -162,4 +166,5 @@ export default {
 		margin: auto;
 	}
 }
+
 </style>
