@@ -543,6 +543,11 @@
 				}
 
 				this._chatView.restoreScrollPosition();
+
+				// When the chat is attached again the message list needs to be
+				// reloaded to add the messages that could have been received
+				// while detached.
+				this._chatView.reloadMessageList();
 			}.bind(this));
 			this._chatView.listenTo(this._sidebarView, 'close', function() {
 				if (this._sidebarView.getCurrentTabId() !== 'chat') {
