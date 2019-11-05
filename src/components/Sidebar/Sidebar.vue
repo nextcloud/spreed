@@ -24,29 +24,41 @@
 		v-if="opened"
 		:title="conversation.displayName"
 		:starred.sync="conversation.isFavorite"
-		@close="show=false" />
+		@close="show=false">
+		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
+			Participants
+		</AppSidebarTab>
+		<AppSidebarTab :name="t('spreed', 'Projects')" icon="icon-projects">
+			<CollectionList v-if="conversation.token"
+				:id="conversation.token"
+				type="room"
+				:name="conversation.displayName" />
+		</AppSidebarTab>
+	</AppSidebar>
 </template>
 
 <script>
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
+import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
+// import ParticipantsTab from './ParticipantsTab/ParticipantsTab'
+import { CollectionList } from 'nextcloud-vue-collections'
 import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'Sidebar',
 	components: {
 		AppSidebar,
+		AppSidebarTab,
+		CollectionList,
+		// ParticipantsTab,
 	},
 
 	data() {
 		return {
-			show: true
+			show: true,
 		}
 	},
-	beforeMount() {
-		EventBus.$on('routeChange', () => {
-			this.show = true
-		})
-	},
+
 	computed: {
 		opened() {
 			return !!this.token && this.show
@@ -59,10 +71,21 @@ export default {
 				return this.$store.getters.conversations[this.token]
 			}
 			return {
+				token: '',
 				displayName: '',
 				isFavorite: false,
 			}
 		},
 	},
+
+	beforeMount() {
+		EventBus.$on('routeChange', () => {
+			this.show = true
+		})
+	},
 }
 </script>
+
+<style scoped>
+
+</style>
