@@ -238,13 +238,18 @@ export default {
 			return DefaultParameter
 		},
 		handleReply() {
-			const MESSAGE_TO_BE_REPLIED = {
+			this.$store.dispatch('addMessageToBeReplied', {
 				id: this.id,
+				actorId: this.actorId,
+				actorType: this.actorType,
 				actorDisplayName: this.actorDisplayName,
+				timestamp: this.timestamp,
+				systemMessage: this.systemMessage,
+				messageType: this.messageType,
 				message: this.message,
+				messageParameters: this.messageParameters,
 				token: this.token,
-			}
-			this.$store.dispatch('addMessageToBeReplied', Object.assign({}, MESSAGE_TO_BE_REPLIED))
+			})
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
