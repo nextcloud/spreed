@@ -238,7 +238,7 @@ export default {
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
-				this.scrollToBottom()
+				this.getNewMessages()
 			} catch (exception) {
 				if (exception.response) {
 					/**
