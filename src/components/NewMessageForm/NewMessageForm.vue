@@ -153,31 +153,33 @@ export default {
 @import '../../assets/variables';
 
 .wrapper {
-	border-top: 1px solid lightgray;
+	border-top: 1px solid var(--color-border-dark);
+	padding: 4px 0;
 }
 
 .new-message {
 	margin: auto;
 	width: $message-width + 88px;
-    position: sticky;
-    position: -webkit-sticky;
-    bottom: 0;
-    background-color: white;
-    &-form {
-        display: flex;
-        align-items: center;
-        &__input {
+	position: sticky;
+	position: -webkit-sticky;
+	bottom: 0;
+	background-color: var(--color-main-background);
+	&-form {
+		display: flex;
+		align-items: center;
+		&__input {
 			flex-grow: 1;
-			width: 100%;
-            border:none;
-        }
-        &__button {
-            width: 44px;
-            height: 44px;
-            margin-top: auto;
-            background-color: transparent;
-            border: none;
-        }
+			max-height: $message-form-max-height;
+			overflow-y: scroll;
+			overflow-x: hidden;
+		}
+		&__button {
+			width: 44px;
+			height: 44px;
+			margin-top: auto;
+			background-color: transparent;
+			border: none;
+		}
 	}
 }
 </style>
