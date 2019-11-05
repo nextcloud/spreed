@@ -58,6 +58,26 @@
 
 
 
+@include icon-black-white('menu-people', 'spreed', 1);
+
+#talk-sidebar-trigger {
+	width: 44px;
+	height: 44px;
+
+	background-color: transparent;
+	border-color: transparent;
+
+	opacity: 0.6;
+
+	&:hover,
+	&:focus,
+	&:active {
+		opacity: 1;
+	}
+}
+
+
+
 /* Properties based on the app-sidebar */
 #talk-sidebar {
 	position: relative;

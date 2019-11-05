@@ -32,17 +32,31 @@
 
 			this.setupSignalingEventHandlers();
 
-			// Delay showing the Talk sidebar, as if it is shown too soon after
-			// the page loads (even if it has loaded) there will be no
-			// transition and the join button will not be enabled.
-			setTimeout(function() {
-				this.showTalkSidebar().then(function() {
-					this._$joinRoomButton.prop('disabled', false);
-				}.bind(this));
-			}.bind(this), 1000);
+			// Open the sidebar by default based on the window width
+			// using the same threshold as in the main Talk UI.
+			if ($(window).width() > 1111) {
+				// Delay showing the Talk sidebar, as if it is shown too soon
+				// after the page loads (even if it has loaded) there will be no
+				// transition and the join button will not be enabled.
+				setTimeout(function() {
+					this.showTalkSidebar().then(function() {
+						this._$joinRoomButton.prop('disabled', false);
+					}.bind(this));
+				}.bind(this), 1000);
+			}
 		},
 
 		setupLayoutForTalkSidebar: function() {
+			this._talkSidebarTrigger = $('<button id="talk-sidebar-trigger" class="icon-menu-people icon-white"></button>');
+			this._talkSidebarTrigger.click(function() {
+				if ($('#talk-sidebar').hasClass('disappear')) {
+					this.showAndUpdateTalkSidebar();
+				} else {
+					this.hideTalkSidebar();
+				}
+			}.bind(this));
+			$('.header-right').append(this._talkSidebarTrigger);
+
 			$('#app-content').append($('footer'));
 
 			this._$callContainerWrapper = $('<div id="call-container-wrapper" class="hidden"></div>');
@@ -228,6 +242,19 @@
 
 		leaveRoom: function() {
 			this.hideTalkSidebarTimeout = setTimeout(this.hideTalkSidebar, 5000);
+		},
+
+		/**
+		 * Shows the Talk sidebar and updates its contents.
+		 */
+		showAndUpdateTalkSidebar: function() {
+			this.showTalkSidebar().then(function() {
+				this._$joinRoomButton.prop('disabled', false);
+
+				// Once the sidebar is shown its size has changed, so
+				// the chat view needs to handle a size change.
+				OCA.SpreedMe.app._chatView.handleSizeChanged();
+			}.bind(this));
 		},
 
 		/**
