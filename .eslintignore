@@ -1,6 +1,5 @@
 /js/admin/*
 /js/collections.js
-/js/collectionsintegration.js
 /js/simplewebrtc/bundled.js
 /js/tests/*
 /js/vendor/*
