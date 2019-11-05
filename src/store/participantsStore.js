@@ -20,7 +20,12 @@
  *
  */
 import Vue from 'vue'
-import { promoteToModerator, demoteFromModerator } from '../services/participantsService'
+import {
+	promoteToModerator,
+	demoteFromModerator,
+	removeUserFromConversation,
+	removeGuestFromConversation,
+} from '../services/participantsService'
 import { PARTICIPANT } from '../constants'
 
 const state = {
@@ -77,6 +82,11 @@ const mutations = {
 			state.participants[token][index] = Object.assign(state.participants[token][index], updatedData)
 		}
 	},
+	deleteParticipant(state, { token, index }) {
+		if (state.participants[token] && state.participants[token][index]) {
+			Vue.delete(state.participants[token], index)
+		}
+	},
 	/**
 	 * Resets the store to it's original state
 	 * @param {object} state current store state;
@@ -126,6 +136,20 @@ const actions = {
 			participantType: participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR ? PARTICIPANT.TYPE.GUEST : PARTICIPANT.TYPE.USER,
 		}
 		commit('updateParticipant', { token, index, updatedData })
+	},
+	async removeParticipant({ commit, getters }, { token, participantIdentifier }) {
+		const index = getters.getParticipantIndex(token, participantIdentifier)
+		if (index === -1) {
+			return
+		}
+
+		const participant = getters.getParticipant(token, index)
+		if (participant.userId) {
+			await removeUserFromConversation(token, participant.userId)
+		} else {
+			await removeGuestFromConversation(token, participant.sessionId)
+		}
+		commit('deleteParticipant', { token, index })
 	},
 	/**
 	 * Resets the store to it's original state.

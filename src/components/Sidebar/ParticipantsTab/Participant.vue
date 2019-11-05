@@ -46,7 +46,8 @@
 					{{ t('spreed', 'Promote to moderator') }}
 				</ActionButton>
 				<ActionButton
-					icon="icon-delete">
+					icon="icon-delete"
+					@click.prevent.exact="removeParticipant">
 					{{ t('spreed', 'Remove participant') }}
 				</ActionButton>
 			</Actions>
@@ -155,6 +156,12 @@ export default {
 		},
 		async demoteFromModerator() {
 			await this.$store.dispatch('demoteFromModerator', {
+				token: this.token,
+				participantIdentifier: this.participantIdentifier,
+			})
+		},
+		async removeParticipant() {
+			await this.$store.dispatch('removeParticipant', {
 				token: this.token,
 				participantIdentifier: this.participantIdentifier,
 			})
