@@ -239,6 +239,8 @@ export default {
 					this.$store.dispatch('processMessage', message)
 				})
 				this.scrollToBottom()
+
+				this.getNewMessages()
 			} catch (exception) {
 				if (exception.response) {
 					/**
