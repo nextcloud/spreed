@@ -20,26 +20,53 @@
  *
  */
 
-import Vue from 'vue'
-import Vuex, { Store } from 'vuex'
-import conversationsStore from './conversationsStore'
-import messagesStore from './messagesStore'
-import quoteReplyStore from './quoteReplyStore'
-import sidebarStore from './sidebarStore'
+const state = {
+	show: true,
+}
 
-Vue.use(Vuex)
-
-const mutations = {}
-
-export default new Store({
-	modules: {
-		conversationsStore,
-		messagesStore,
-		quoteReplyStore,
-		sidebarStore,
+const getters = {
+	getSidebarStatus: (state) => () => {
+		return state.show
 	},
+}
 
-	mutations,
+const mutations = {
+	/**
+	 * Shows the sidebar
+	 *
+	 * @param {object} state current store state;
+	 */
+	showSidebar(state) {
+		state.show = true
+	},
+	/**
+	 * Hides the sidebar
+	 *
+	 * @param {object} state current store state;
+	 */
+	hideSidebar(state) {
+		state.show = false
+	},
+}
 
-	strict: process.env.NODE_ENV !== 'production',
-})
+const actions = {
+
+	/**
+	 * Shows the sidebar
+	 *
+	 * @param {object} context default store context;
+	 */
+	showSidebar(context) {
+		context.commit('showSidebar')
+	},
+	/**
+	 * Hides the sidebar
+	 *
+	 * @param {object} context default store context;
+	 */
+	hideSidebar(context) {
+		context.commit('hideSidebar')
+	},
+}
+
+export default { state, mutations, getters, actions }

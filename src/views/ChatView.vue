@@ -15,7 +15,7 @@ export default {
 	components: {
 		MessagesList,
 		NewMessageForm,
-		TopBar
+		TopBar,
 	},
 	props: {
 		token: {

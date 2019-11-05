@@ -32,19 +32,26 @@
 
 <script>
 import { ActionButton } from 'nextcloud-vue/dist/Components/ActionButton'
+import { Actions } from 'nextcloud-vue/dist/Components/Actions'
 
 export default {
 	name: 'TopBar',
 
 	components: {
-		ActionButton
+		ActionButton,
+		Actions,
+	},
+	computed: {
+		showOpenSidebarButton() {
+			return !this.$store.getters.getSidebarStatus()
+		},
 	},
 
 	methods: {
 		handleClick() {
-
-		}
-	}
+			this.$store.dispatch('showSidebar')
+		},
+	},
 }
 </script>
 
@@ -63,7 +70,7 @@ export default {
 	justify-content: flex-end;
 	padding: 0 6px;
 	&__button {
-		background: white;
+		align-self: center;
 	}
 
 }
