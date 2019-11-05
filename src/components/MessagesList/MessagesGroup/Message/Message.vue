@@ -283,7 +283,7 @@ export default {
 			color: var(--color-text-maxcontrast);
 			font-size: 13px;
 			padding: 0 8px 0 8px;
-			&__actions {
+			&__actions.action-item {
 				position: absolute;
 				top: -12px;
 				right: 0;
