@@ -258,6 +258,44 @@
 		},
 
 		/**
+		 * Wait for the sidebar to end changing its width.
+		 *
+		 * The changes on the sidebar width are animated; this method returns a
+		 * promise that is resolved the next time that the sidebar width ends
+		 * changing.
+		 */
+		_waitForSidebarWidthChangeEnd: function() {
+			var deferred = $.Deferred();
+
+			if ('ontransitionend' in $('#talk-sidebar').get(0)) {
+				var resolveOnceSidebarWidthHasChanged = function(event) {
+					if (event.propertyName !== 'min-width' && event.propertyName !== 'width') {
+						return;
+					}
+
+					$('#talk-sidebar').get(0).removeEventListener('transitionend', resolveOnceSidebarWidthHasChanged);
+
+					deferred.resolve();
+				};
+
+				$('#talk-sidebar').get(0).addEventListener('transitionend', resolveOnceSidebarWidthHasChanged);
+			} else {
+				var animationQuickValue = getComputedStyle(document.documentElement).getPropertyValue('--animation-quick');
+
+				// The browser does not support the "ontransitionend" event, so
+				// just wait a few milliseconds more than the duration of the
+				// transition.
+				setTimeout(function() {
+					console.log('ontransitionend is not supported; the sidebar should have been fully shown/hidden by now');
+
+					deferred.resolve();
+				}, Number.parseInt(animationQuickValue) + 200);
+			}
+
+			return deferred.promise();
+		},
+
+		/**
 		 * Shows the Talk sidebar.
 		 *
 		 * The sidebar is shown with an animation; this method returns a promise
@@ -272,30 +310,9 @@
 				return deferred.promise();
 			}
 
-			if ('ontransitionend' in $('#talk-sidebar').get(0)) {
-				var resolveOnceSidebarIsOpen = function(event) {
-					if (event.propertyName !== 'min-width' && event.propertyName !== 'width') {
-						return;
-					}
-
-					$('#talk-sidebar').get(0).removeEventListener('transitionend', resolveOnceSidebarIsOpen);
-
-					deferred.resolve();
-				};
-
-				$('#talk-sidebar').get(0).addEventListener('transitionend', resolveOnceSidebarIsOpen);
-			} else {
-				var animationQuickValue = getComputedStyle(document.documentElement).getPropertyValue('--animation-quick');
-
-				// The browser does not support the "ontransitionend" event, so
-				// just wait a few milliseconds more than the duration of the
-				// transition.
-				setTimeout(function() {
-					console.log('ontransitionend is not supported; the sidebar should have been fully shown by now');
-
-					deferred.resolve();
-				}, Number.parseInt(animationQuickValue) + 200);
-			}
+			this._waitForSidebarWidthChangeEnd().then(function() {
+				deferred.resolve();
+			});
 
 			$('#talk-sidebar').removeClass('disappear');
 
