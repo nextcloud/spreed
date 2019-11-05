@@ -40,10 +40,10 @@
 						@submit="handleSubmit" />
 				</div>
 				<button
-					class="new-message-form__button icon-bell-outline" />
+					class="new-message-form__button icon-sound-off" />
 				<button
 					type="submit"
-					class="new-message-form__button icon-folder"
+					class="new-message-form__button icon-confirm-fade"
 					@click.prevent="handleSubmit" />
 			</form>
 		</div>
@@ -150,6 +150,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../assets/variables';
 
 .wrapper {
 	border-top: 1px solid lightgray;
@@ -157,7 +158,7 @@ export default {
 
 .new-message {
 	margin: auto;
-	width: 700px;
+	width: $message-width + 88px;
     position: sticky;
     position: -webkit-sticky;
     bottom: 0;
@@ -166,7 +167,8 @@ export default {
         display: flex;
         align-items: center;
         &__input {
-            flex-grow: 1;
+			flex-grow: 1;
+			width: 100%;
             border:none;
         }
         &__button {
