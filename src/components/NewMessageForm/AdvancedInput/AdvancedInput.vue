@@ -22,7 +22,7 @@
 <template>
 	<div v-contenteditable:text="active"
 		:placeHolder="placeholderText"
-		class="new-message-form__input"
+		class="new-message-form__advancedinput"
 		@keydown.enter="handleKeydown" />
 </template>
 
@@ -88,6 +88,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.new-message-form__advancedinput {
+	overflow: show;
+	width: 100%;
+	border:none;
+	margin: 0;
+}
+
 //Support for the placehoder text in the div contenteditable
 [contenteditable]:empty:before{
 	content: attr(placeholder);
