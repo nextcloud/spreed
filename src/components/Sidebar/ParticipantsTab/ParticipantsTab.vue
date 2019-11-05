@@ -39,6 +39,7 @@
 import Participant from './Participant'
 import { fetchParticipants } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
+import { PARTICIPANT } from '../../../constants'
 
 export default {
 	name: 'ParticipantsTab',
@@ -58,7 +59,9 @@ export default {
 		 * @returns {array}
 		 */
 		participantsList() {
-			return this.$store.getters.participantsList(this.token)
+			const participants = this.$store.getters.participantsList(this.token)
+
+			return participants.sort(this.sortParticipants)
 		},
 	},
 
@@ -84,6 +87,26 @@ export default {
 	methods: {
 		onRouteChange() {
 			this.getParticipants()
+		},
+
+		sortParticipants(participant1, participant2) {
+			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
+			const moderator1 = moderatorTypes.indexOf(participant1.participantType) !== -1
+			const moderator2 = moderatorTypes.indexOf(participant2.participantType) !== -1
+
+			if (moderator1 !== moderator2) {
+				return moderator1 ? -1 : 1
+			}
+
+			if (participant1.sessionId === '0') {
+				if (participant2.sessionId !== '0') {
+					return 1
+				}
+			} else if (participant2.sessionId === '0') {
+				return -1
+			}
+
+			return participant2.displayName - participant1.displayName
 		},
 
 		async getParticipants() {
