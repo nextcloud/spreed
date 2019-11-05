@@ -51,6 +51,8 @@
 			this._talkSidebarTrigger.click(function() {
 				if ($('#talk-sidebar').hasClass('disappear')) {
 					this.showAndUpdateTalkSidebar();
+
+					OCA.SpreedMe.app._chatView.saveScrollPosition();
 				} else {
 					this.hideTalkSidebar();
 				}
@@ -251,6 +253,13 @@
 			this.showTalkSidebar().then(function() {
 				this._$joinRoomButton.prop('disabled', false);
 
+				OCA.SpreedMe.app._chatView.restoreScrollPosition();
+
+				// When the sidebar is shown again the message list needs to
+				// be reloaded to add the messages that could have been
+				// received while detached.
+				OCA.SpreedMe.app._chatView.reloadMessageList();
+
 				// Once the sidebar is shown its size has changed, so
 				// the chat view needs to handle a size change.
 				OCA.SpreedMe.app._chatView.handleSizeChanged();
@@ -314,13 +323,26 @@
 				deferred.resolve();
 			});
 
-			$('#talk-sidebar').removeClass('disappear');
+			$('#talk-sidebar').removeClass('hidden-important');
+
+			// Defer removing the disappear class to ensure that a transition
+			// will be triggered, as if it is removed at the same time as the
+			// "display: none" property the new width will be immediately set.
+			setTimeout(function() {
+				$('#talk-sidebar').removeClass('disappear');
+			}, 0);
 
 			return deferred.promise();
 		},
 
 		hideTalkSidebar: function() {
 			$('#talk-sidebar').addClass('disappear');
+
+			this._waitForSidebarWidthChangeEnd().then(function() {
+				// "display" CSS properties can not be animated, so the sidebar
+				// needs to be explicitly hidden once the transition ends.
+				$('#talk-sidebar').addClass('hidden-important');
+			});
 
 			delete this.hideTalkSidebarTimeout;
 		},
