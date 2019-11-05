@@ -34,6 +34,7 @@
 import Conversation from './Conversation'
 import Hint from '../Hint/Hint'
 import { fetchConversations } from '../../../services/conversationsService'
+import { joinConversation, leaveConversation } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
 
 export default {
@@ -68,6 +69,15 @@ export default {
 		window.setInterval(() => {
 			this.fetchConversations()
 		}, 30000)
+
+		EventBus.$on('routeChange', ({ from, to }) => {
+			if (from.name === 'conversation') {
+				leaveConversation(from.params.token)
+			}
+			if (to.name === 'conversation') {
+				joinConversation(to.params.token)
+			}
+		})
 	},
 	methods: {
 		sortConversations(conversation1, conversation2) {
