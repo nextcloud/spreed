@@ -21,7 +21,7 @@
 
 <template>
 	<AppSidebar
-		v-if="show"
+		v-if="opened"
 		:title="conversation.displayName"
 		:starred.sync="conversation.isFavorite"
 		@close="show=false" />
@@ -29,6 +29,7 @@
 
 <script>
 import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'Sidebar',
@@ -36,15 +37,31 @@ export default {
 		AppSidebar,
 	},
 
+	data() {
+		return {
+			show: true
+		}
+	},
+	beforeMount() {
+		EventBus.$on('routeChange', () => {
+			this.show = true
+		})
+	},
 	computed: {
-		show() {
-			return !!this.token
+		opened() {
+			return !!this.token && this.show
 		},
 		token() {
 			return this.$route.params.token
 		},
 		conversation() {
-			return this.$store.getters.conversations[this.token]
+			if (this.$store.getters.conversations[this.token]) {
+				return this.$store.getters.conversations[this.token]
+			}
+			return {
+				displayName: '',
+				isFavorite: false,
+			}
 		},
 	},
 }
