@@ -21,6 +21,7 @@
 
 <template>
 	<nav-element
+		:class="{ 'active' : isActive }"
 		v-bind="navElement"
 		href="#"
 		class="acli"
@@ -101,6 +102,9 @@ export default {
 		},
 	},
 	computed: {
+		isActive() {
+			return this.to && this.$route.params.token === this.to.params.token
+		},
 		hasDetails() {
 			return (this.details !== '' && !this.$slots.counter)
 		},
@@ -143,12 +147,6 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	flex: 0 0 auto;
-	&:hover, &:focus {
-		background-color: var(--color-background-dark);
-	}
-	&:active {
-		background-color: var(--color-primary-light);
-	}
 	&__content {
 		width: 240px;
 		&__line-one {
@@ -185,6 +183,11 @@ export default {
 			}
 		}
 	}
+}
+
+.active {
+	background-color: var(--color-primary-light);
+	box-shadow: inset 4px 0 var(--color-primary)
 }
 
 </style>
