@@ -62,15 +62,12 @@ export default {
 .top-bar {
 	height: $top-bar-height;
 	position: absolute;
-	width:100%;
 	top: 0;
 	right: 0;
 	display: flex;
 	z-index: 10;
 	justify-content: flex-end;
 	padding: 0 6px;
-	background: var(--color-main-background);
-	background: linear-gradient(180deg, var(--color-main-background) 0%, rgba(255,255,255,0) 100%);
 	&__button {
 		align-self: center;
 	}
