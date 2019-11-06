@@ -1,5 +1,6 @@
 <template>
 	<div class="chatview">
+		<TopBar />
 		<MessagesList :token="token" />
 		<NewMessageForm />
 	</div>
@@ -8,12 +9,13 @@
 <script>
 import MessagesList from '../components/MessagesList/MessagesList'
 import NewMessageForm from '../components/NewMessageForm/NewMessageForm'
-
+import TopBar from '../components/TopBar/TopBar'
 export default {
 	name: 'ChatView',
 	components: {
 		MessagesList,
 		NewMessageForm,
+		TopBar,
 	},
 	props: {
 		token: {

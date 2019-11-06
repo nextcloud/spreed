@@ -137,10 +137,10 @@ export default {
 	flex-direction: column;
 	&__avatar {
 		position: sticky;
-		top: 0;
+		top: 44px;
 		height: 52px;
 		width: 52px;
-		padding: 20px 10px 10px 10px;
+		padding: 0 10px 10px 10px;
 	}
 }
 </style>

@@ -24,7 +24,7 @@
 		v-if="opened"
 		:title="conversation.displayName"
 		:starred.sync="conversation.isFavorite"
-		@close="show=false">
+		@close="handleClose">
 		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
 			Participants
 		</AppSidebarTab>
@@ -42,7 +42,6 @@ import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
 import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
 // import ParticipantsTab from './ParticipantsTab/ParticipantsTab'
 import { CollectionList } from 'nextcloud-vue-collections'
-import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'Sidebar',
@@ -53,13 +52,10 @@ export default {
 		// ParticipantsTab,
 	},
 
-	data() {
-		return {
-			show: true,
-		}
-	},
-
 	computed: {
+		show() {
+			return this.$store.getters.getSidebarStatus()
+		},
 		opened() {
 			return !!this.token && this.show
 		},
@@ -78,10 +74,10 @@ export default {
 		},
 	},
 
-	beforeMount() {
-		EventBus.$on('routeChange', () => {
-			this.show = true
-		})
+	methods: {
+		handleClose() {
+			this.$store.dispatch('hideSidebar')
+		},
 	},
 }
 </script>
