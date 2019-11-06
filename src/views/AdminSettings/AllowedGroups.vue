@@ -60,7 +60,7 @@
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { Multiselect } from 'nextcloud-vue'
-import { generateOcsUrl } from 'nextcloud-router/dist/index'
+import { generateOcsUrl } from '@nextcloud/router'
 import { loadState } from '@nextcloud/initial-state'
 
 export default {
