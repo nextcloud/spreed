@@ -163,6 +163,11 @@ export default {
 			}
 			&__actions {
 				margin: -5px 0 -3px 0;
+				&.action-item {
+				position: absolute;
+				top: 7px;
+				right: 2px;
+			}
 			}
 		}
 		&__line-two {
