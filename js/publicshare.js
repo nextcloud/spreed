@@ -32,7 +32,14 @@
 
 			this.setupSignalingEventHandlers();
 
-			this.enableTalkSidebar();
+			// Delay showing the Talk sidebar, as if it is shown too soon after
+			// the page loads (even if it has loaded) there will be no
+			// transition and the join button will not be enabled.
+			setTimeout(function() {
+				this.showTalkSidebar().then(function() {
+					this._$joinRoomButton.prop('disabled', false);
+				}.bind(this));
+			}.bind(this), 1000);
 		},
 
 		setupLayoutForTalkSidebar: function() {
@@ -70,7 +77,7 @@
 				this._$joinRoomButton.prop('disabled', true);
 				this._$joinRoomButton.find('.icon-loading-small').removeClass('hidden');
 
-				OCA.SpreedMe.app.signaling.joinRoom(OCA.SpreedMe.app.token);
+				this.enableTalkSidebar();
 			}.bind(this));
 
 			$('#talk-sidebar').append(this._$roomNotJoinedMessage);
@@ -190,10 +197,7 @@
 			OCA.SpreedMe.app.signaling.setRoom(OCA.SpreedMe.app.activeRoom);
 
 			OCA.SpreedMe.app.token = token;
-
-			this.showTalkSidebar().then(function() {
-				this._$joinRoomButton.prop('disabled', false);
-			}.bind(this));
+			OCA.SpreedMe.app.signaling.joinRoom(token);
 		},
 
 		_updateCallContainer: function() {
