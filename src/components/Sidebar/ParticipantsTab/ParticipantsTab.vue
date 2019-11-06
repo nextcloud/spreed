@@ -89,6 +89,22 @@ export default {
 			this.getParticipants()
 		},
 
+		/**
+		 * Sort two participants by:
+		 * - type (moderators before normal participants)
+		 * - online status
+		 * - display name
+		 *
+		 * @param {object} participant1 First participant
+		 * @param {int} participant1.participantType First participant type
+		 * @param {string} participant1.sessionId First participant session
+		 * @param {string} participant1.displayName First participant display name
+		 * @param {object} participant2 Second participant
+		 * @param {int} participant2.participantType Second participant type
+		 * @param {string} participant2.sessionId Second participant session
+		 * @param {string} participant2.displayName Second participant display name
+		 * @returns {number}
+		 */
 		sortParticipants(participant1, participant2) {
 			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
 			const moderator1 = moderatorTypes.indexOf(participant1.participantType) !== -1

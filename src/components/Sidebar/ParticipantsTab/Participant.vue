@@ -61,6 +61,7 @@ import Actions from 'nextcloud-vue/dist/Components/Actions'
 import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
 import Avatar from 'nextcloud-vue/dist/Components/Avatar'
 import { PARTICIPANT } from '../../../constants'
+import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'Participant',
@@ -98,12 +99,21 @@ export default {
 		token() {
 			return this.$route.params.token
 		},
+		currentParticipant() {
+			return this.$store.getters.conversations[this.token]
+		},
 
 		isSelf() {
-			return false // FIXME
+			// User
+			if (this.userId) {
+				return getCurrentUser().uid === this.userId
+			}
+
+			// Guest
+			return this.sessionId !== '0' && this.sessionId === this.currentParticipant.sessionId
 		},
 		selfIsModerator() {
-			return true // FIXME
+			return this.participantTypeIsModerator(this.currentParticipant.participantType)
 		},
 
 		isOffline() {
@@ -113,7 +123,7 @@ export default {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
 		},
 		isModerator() {
-			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
+			return this.participantTypeIsModerator(this.participantType)
 		},
 		canModerate() {
 			return this.participantType !== PARTICIPANT.TYPE.OWNER && !this.isSelf && this.selfIsModerator
@@ -148,6 +158,10 @@ export default {
 	},
 
 	methods: {
+		participantTypeIsModerator(participantType) {
+			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
+		},
+
 		async promoteToModerator() {
 			await this.$store.dispatch('promoteToModerator', {
 				token: this.token,
