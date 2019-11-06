@@ -274,8 +274,14 @@ export default {
 		 * @returns {string} The last known message id.
 		 */
 		getLastKnownMessageId() {
-			if (this.messagesList[this.messagesList.length - 1]) {
-				return this.messagesList[this.messagesList.length - 1].id.toString()
+			for (let i = 1; i < this.messagesList.length; i++) {
+				if (this.messagesList[this.messagesList.length - i]) {
+					const id = this.messagesList[this.messagesList.length - i].id.toString()
+					// Ignore temporary messages
+					if (!id.startsWith('temp-')) {
+						return id
+					}
+				}
 			}
 			return '0'
 		},

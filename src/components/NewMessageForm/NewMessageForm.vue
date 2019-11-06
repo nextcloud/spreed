@@ -117,7 +117,7 @@ export default {
 		 */
 		createTemporaryMessageId() {
 			const date = new Date()
-			return date.getTime()
+			return 'temp-' + date.getTime()
 		},
 		/**
 		 * Sends the new message
