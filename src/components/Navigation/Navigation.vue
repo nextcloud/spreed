@@ -21,7 +21,7 @@
 
 <template>
 	<AppNavigation class="vue navigation">
-		<AppNavigationSearch
+		<SearchBox
 			v-model="searchText"
 			@input="debounceFetchSearchResults" />
 		<ul>
@@ -57,7 +57,6 @@
 
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import AppNavigationSearch from './AppNavigationSearch/AppNavigationSearch'
 import Caption from './Caption/Caption'
 import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
@@ -65,6 +64,7 @@ import GroupsList from './GroupsList/GroupsList'
 import Hint from './Hint/Hint'
 import NewPrivateConversation from './NewConversation/NewPrivateConversation'
 import NewPublicConversation from './NewConversation/NewPublicConversation'
+import SearchBox from '../SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
@@ -77,7 +77,6 @@ export default {
 
 	components: {
 		AppNavigation,
-		AppNavigationSearch,
 		Caption,
 		ContactsList,
 		ConversationsList,
@@ -85,6 +84,7 @@ export default {
 		Hint,
 		NewPrivateConversation,
 		NewPublicConversation,
+		SearchBox,
 	},
 
 	data() {

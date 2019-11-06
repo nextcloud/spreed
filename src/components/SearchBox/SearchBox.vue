@@ -35,7 +35,7 @@
 <script>
 
 export default {
-	name: 'AppNavigationSearch',
+	name: 'SearchBox',
 	props: {
 		/**
 		 * Refers to the focused state of the input search box when loading the page.
@@ -87,7 +87,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables.scss';
+@import '../../assets/variables.scss';
 
 .app-navigation-search {
 	height: $top-bar-height !important;

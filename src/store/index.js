@@ -24,6 +24,7 @@ import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import conversationsStore from './conversationsStore'
 import messagesStore from './messagesStore'
+import participantsStore from './participantsStore'
 import quoteReplyStore from './quoteReplyStore'
 import sidebarStore from './sidebarStore'
 
@@ -35,6 +36,7 @@ export default new Store({
 	modules: {
 		conversationsStore,
 		messagesStore,
+		participantsStore,
 		quoteReplyStore,
 		sidebarStore,
 	},

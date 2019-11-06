@@ -29,9 +29,9 @@ import { generateOcsUrl } from '@nextcloud/router'
  *
  * @param {string} token The conversation token;
  */
-const joinConversation = async function(token) {
+const joinConversation = async(token) => {
 	try {
-		const response = await axios.post(generateOcsUrl(`room/${token}/participants/active`))
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
 		return response
 	} catch (error) {
 		console.debug(error)
@@ -66,8 +66,56 @@ const removeCurrentUserFromConversation = async function(token) {
 	}
 }
 
+const removeUserFromConversation = async function(token, userId) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants`, {
+			params: {
+				participant: userId,
+			},
+		})
+		return response
+	} catch (error) {
+		console.debug(error)
+	}
+}
+
+const removeGuestFromConversation = async function(token, sessionId) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/guests`, {
+			params: {
+				participant: sessionId,
+			},
+		})
+		return response
+	} catch (error) {
+		console.debug(error)
+	}
+}
+
+const promoteToModerator = async(token, options) => {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/moderators', options)
+	return response
+}
+
+const demoteFromModerator = async(token, options) => {
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/moderators', {
+		params: options,
+	})
+	return response
+}
+
+const fetchParticipants = async(token) => {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants')
+	return response
+}
+
 export {
 	joinConversation,
 	leaveConversation,
 	removeCurrentUserFromConversation,
+	removeUserFromConversation,
+	removeGuestFromConversation,
+	promoteToModerator,
+	demoteFromModerator,
+	fetchParticipants,
 }
