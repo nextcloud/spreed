@@ -58,7 +58,9 @@
 
 
 
-@include icon-black-white('menu-people', 'spreed', 1);
+.icon-menu-people {
+	@include icon-color('menu-people', 'spreed', $color-primary-text, 1);
+}
 
 #talk-sidebar-trigger {
 	width: 44px;

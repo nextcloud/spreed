@@ -47,7 +47,7 @@
 		},
 
 		setupLayoutForTalkSidebar: function() {
-			this._talkSidebarTrigger = $('<button id="talk-sidebar-trigger" class="icon-menu-people icon-white"></button>');
+			this._talkSidebarTrigger = $('<button id="talk-sidebar-trigger" class="icon-menu-people"></button>');
 			this._talkSidebarTrigger.click(function() {
 				if ($('#talk-sidebar').hasClass('disappear')) {
 					this.showAndUpdateTalkSidebar();
