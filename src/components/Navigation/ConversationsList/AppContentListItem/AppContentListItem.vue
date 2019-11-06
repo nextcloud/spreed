@@ -148,7 +148,6 @@ export default {
 	justify-content: space-between;
 	align-items: center;
 	flex: 0 0 auto;
-	margin: 2px;
 	&__content {
 		width: 240px;
 		margin-left: 6px;

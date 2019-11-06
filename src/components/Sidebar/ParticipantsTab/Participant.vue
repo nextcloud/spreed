@@ -32,7 +32,7 @@
 		<span v-if="isModerator" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 
 		<template v-if="canModerate">
-			<Actions class="participant-row__actions" >
+			<Actions class="participant-row__actions">
 				<ActionButton v-if="canBeDemoted"
 					icon="icon-rename"
 					@click.prevent.exact="demoteFromModerator">
