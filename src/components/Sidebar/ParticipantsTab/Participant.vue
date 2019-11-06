@@ -22,17 +22,15 @@
 <template>
 	<li class="participant-row"
 		:class="{ offline: isOffline, currentUser: isSelf, guestUser: isGuest }">
-		<div class="avatar-wrapper">
+		<div class="participant-row__avatar-wrapper">
 			<Avatar
 				:user="userId"
 				:display-name="displayName" />
 		</div>
 
-		<span>{{ displayName }}</span>
-
-		<span v-if="isModerator" class="moderator-indicator">({{ t('spreed', 'moderator') }})</span>
-		<span v-if="inCall" class="icon icon-video" />
-
+		<span class="participant-row__user-name">{{ displayName }}</span>
+		<span v-if="isModerator" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
+		<div v-if="inCall" class="participant-row__icon icon-video" />
 		<template v-if="canModerate">
 			<Actions>
 				<ActionButton v-if="canBeDemoted"
@@ -186,14 +184,32 @@ export default {
 
 <style lang="scss" scoped>
 
-.moderator-indicator {
-	color: var(--color-text-maxcontrast);
-	font-weight: 300;
-	padding-left: 5px;
+.participant-row {
+	display: flex;
+	align-items: center;
+	&__avatar-wrapper {
+		height: 32px;
+		width: 32px;
+	}
+	&__user-name {
+		margin-left: 6px;
+		display: inline-block;
+		vertical-align: middle;
+		line-height: normal;
+	}
+	&__moderator-indicator {
+		color: var(--color-text-maxcontrast);
+		font-weight: 300;
+		padding-left: 5px;
+	}
+	&__icon {
+		width: 32px;
+		height: 44px;
+	}
 }
 
 .offline {
-	& > .avatar-wrapper {
+	& > .participant-row__avatar-wrapper {
 		opacity: .4;
 	}
 	& > span {
