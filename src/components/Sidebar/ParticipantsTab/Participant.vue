@@ -30,7 +30,7 @@
 
 		<span class="participant-row__user-name">{{ displayName }}</span>
 		<span v-if="isModerator" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
-		<div v-if="inCall" class="participant-row__icon icon-video" />
+
 		<template v-if="canModerate">
 			<Actions>
 				<ActionButton v-if="canBeDemoted"
@@ -55,9 +55,9 @@
 
 <script>
 
-import Actions from 'nextcloud-vue/dist/Components/Actions'
-import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import { PARTICIPANT } from '../../../constants'
 import { getCurrentUser } from '@nextcloud/auth'
 
@@ -132,10 +132,6 @@ export default {
 		},
 		canBePromoted() {
 			return this.canModerate && !this.isModerator
-		},
-		inCall() {
-			// FIXME
-			return true
 		},
 
 		participantIdentifier() {
