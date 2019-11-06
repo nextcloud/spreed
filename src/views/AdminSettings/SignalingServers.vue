@@ -79,9 +79,9 @@
 </template>
 
 <script>
-import { Tooltip } from 'nextcloud-vue'
-import debounce from 'debounce'
 import SignalingServer from '../../components/AdminSettings/SignalingServer'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
+import debounce from 'debounce'
 
 export default {
 	name: 'SignalingServers',

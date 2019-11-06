@@ -38,8 +38,8 @@
 </template>
 
 <script>
-import AppSidebar from 'nextcloud-vue/dist/Components/AppSidebar'
-import AppSidebarTab from 'nextcloud-vue/dist/Components/AppSidebarTab'
+import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
+import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 // import ParticipantsTab from './ParticipantsTab/ParticipantsTab'
 import { CollectionList } from 'nextcloud-vue-collections'
 

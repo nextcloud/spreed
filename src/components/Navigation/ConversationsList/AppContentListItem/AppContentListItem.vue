@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import Actions from 'nextcloud-vue/dist/Components/Actions'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
 
 export default {
 	name: 'AppContentListItem',

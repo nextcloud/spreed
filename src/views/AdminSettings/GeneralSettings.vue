@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { Multiselect } from 'nextcloud-vue'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },

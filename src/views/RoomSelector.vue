@@ -103,14 +103,15 @@
 </style>
 <script>
 /* global OC */
-import { Modal } from 'nextcloud-vue/dist/Components/Modal'
-import { Avatar } from 'nextcloud-vue/dist/Components/Avatar'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import Modal from '@nextcloud/vue/dist/Components/Modal'
 import axios from '@nextcloud/axios'
 
 export default {
 	name: 'RoomSelector',
 	components: {
-		Modal, Avatar,
+		Modal,
+		Avatar,
 	},
 	data() {
 		return {
