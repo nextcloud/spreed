@@ -61,7 +61,7 @@ import axios from '@nextcloud/axios'
 import debounce from 'debounce'
 import { Multiselect } from 'nextcloud-vue'
 import { generateOcsUrl } from 'nextcloud-router/dist/index'
-import { loadState } from 'nextcloud-initial-state'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'AllowedGroups',
