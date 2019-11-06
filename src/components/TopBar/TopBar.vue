@@ -69,6 +69,8 @@ export default {
 	z-index: 10;
 	justify-content: flex-end;
 	padding: 0 6px;
+	background: var(--color-main-background);
+	background: linear-gradient(180deg, var(--color-main-background) 0%, rgba(255,255,255,0) 100%);
 	&__button {
 		align-self: center;
 	}
