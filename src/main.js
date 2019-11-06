@@ -28,7 +28,7 @@ import VueRouter from 'vue-router'
 import VueClipboard from 'vue-clipboard2'
 import router from './router/router'
 import { generateFilePath } from 'nextcloud-router'
-import { getRequestToken } from 'nextcloud-auth'
+import { getRequestToken } from '@nextcloud/auth'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
