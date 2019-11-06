@@ -25,7 +25,7 @@
 			class="avatar icon"
 			:class="iconClass" />
 		<Avatar v-else
-			:size="44"
+			:size="40"
 			:user="item.name"
 			:display-name="item.displayName" />
 		<div v-if="showFavorite"
@@ -90,8 +90,8 @@ export default {
 
 <style lang="scss" scoped>
 .conversation-icon {
-	width: 44px;
-	height: 44px;
+	width: 40px;
+	height: 40px;
 }
 
 .icon:not(.icon-favorite) {

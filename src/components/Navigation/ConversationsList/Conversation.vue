@@ -33,6 +33,7 @@
 		</template>
 		<AppNavigationCounter v-if="item.unreadMessages"
 			slot="counter"
+			class="counter"
 			:highlighted="true">
 			{{ item.unreadMessages }}
 		</AppNavigationCounter>
@@ -240,6 +241,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .counter {
+	line-height: inherit;
+	font-size: 12px;
+
+	span {
+		padding: 2px 6px;
+	}
+}
 .scroller {
 	flex: 1 0;
 }

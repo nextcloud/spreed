@@ -94,7 +94,7 @@ export default {
 			default: false,
 		},
 		/**
-		* The route for for the router link.
+		* The route for the router link.
 		*/
 		to: {
 			type: [String, Object],
@@ -139,16 +139,19 @@ export default {
 
 <style lang="scss" scoped>
 
+// AppContentListItem
 .acli {
 	position: relative;
 	cursor: pointer;
-	padding: 6px 2px 6px 6px;
+	padding: 10px 2px 10px 8px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex: 0 0 auto;
+	margin: 2px;
 	&__content {
 		width: 240px;
+		margin-left: 6px;
 		&__line-one {
 			display: flex;
 			justify-content: space-between;
@@ -164,10 +167,10 @@ export default {
 			&__actions {
 				margin: -5px 0 -3px 0;
 				&.action-item {
-				position: absolute;
-				top: 7px;
-				right: 2px;
-			}
+					position: absolute;
+					top: 7px;
+					right: 2px;
+				}
 			}
 		}
 		&__line-two {
@@ -184,7 +187,7 @@ export default {
 				padding-right: 4px;
 			}
 			&__counter {
-				margin-right: 8px;
+				margin-right: 12px;
 			}
 		}
 	}
