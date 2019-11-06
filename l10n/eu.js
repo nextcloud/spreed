@@ -36,6 +36,8 @@ OC.L10N.register(
     "Leave conversation" : "Atera elkarrizketatik",
     "Delete conversation" : "Ezabatu elkarrizketa",
     "Add to favorites" : "Gehitu gogokoetara",
+    "Participants" : "Partehartzaileak",
+    "Projects" : "Proiektuak",
     "Name" : "Izena",
     "Saved" : "Gordeta",
     "Shared secret" : "Partekatutako sekretua",
@@ -52,7 +54,6 @@ OC.L10N.register(
     "Add new server" : "Zerbitzari berria gehitu",
     "TURN server shared secret" : "TURN zerbitzariaren partekatze-sekretua",
     "{name} (public)" : "{name} (publikoa)",
-    "Participants" : "Partehartzaileak",
     "Chat" : "Chat",
     "Copy" : "Kopiatu",
     "Copied!" : "Kopiatuta!",
@@ -124,7 +125,6 @@ OC.L10N.register(
     ", " : ", ",
     "Join now" : "Elkartu orain",
     "This call is password-protected" : "Deia pasahitzarekin babestua dago",
-    "Signaling server" : "Seinalizazio zerbitzaria ",
-    "Projects" : "Proiektuak"
+    "Signaling server" : "Seinalizazio zerbitzaria "
 },
 "nplurals=2; plural=(n != 1);");
