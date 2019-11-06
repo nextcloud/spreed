@@ -61,10 +61,6 @@
 				lobbyCheckboxLabel: t('spreed', 'Enable lobby'),
 				lobbyCheckboxDetail: t('spreed', 'Only moderators can enter the conversation when the lobby is enabled'),
 				isLobbyActive: isLobbyActive,
-				lobbyTimerPlaceholder: t('spreed', 'Start time (optional)'),
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				lobbyTimerValue: this.model.get('lobbyTimer')? OC.Util.formatDate(this.model.get('lobbyTimer') * 1000, 'YYYY-MM-DD HH:mm:ss') : '',
 				isPublic: isPublic,
 				passwordInputPlaceholder: this.model.get('hasPassword')? t('spreed', 'Change password'): t('spreed', 'Set password'),
 				isDeletable: canModerate && (Object.keys(this.model.get('participants')).length > 2 || this.model.get('numGuests') > 0)
@@ -90,8 +86,9 @@
 
 			'lobbyCheckbox': '.lobby-checkbox',
 			'lobbyCheckboxLabel': '.lobby-checkbox-label',
+			'lobbyTimerOption': '.lobby-timer-option',
 			'lobbyTimerForm': '.lobby-timer-form',
-			'lobbyTimerInput': '.lobby-timer-input',
+			'lobbyTimerPicker': '.lobby-timer-picker',
 			'lobbyTimerConfirm': '.lobby-timer-confirm',
 			'lobbyTimerLoading': '.lobby-timer-loading',
 		},
@@ -99,6 +96,7 @@
 		regions: {
 			'roomName': '@ui.roomName',
 			'callButton': '@ui.callButton',
+			'lobbyTimerPicker': '@ui.lobbyTimerPicker',
 		},
 
 		events: {
@@ -120,6 +118,7 @@
 				this.render();
 			},
 			'change:lobbyTimer': function() {
+				this._updateLobbyTimerPickerValue();
 				this.render();
 			},
 			'change:participantType': function() {
@@ -166,6 +165,27 @@
 				connection: OCA.SpreedMe.app.connection,
 			});
 
+			this._lobbyTimerPicker = new OCA.Talk.Views.VueWrapper({
+				vm: new OCA.Talk.Views.LobbyTimerPicker()
+			});
+
+			// The DatetimePicker component does not seem to provide any event
+			// to know when the popup is shown or hidden, although in most cases
+			// it corresponds with the input being focused or not.
+			this._lobbyTimerPicker._vm.$on('focus', function() {
+				this.ui.lobbyTimerOption.addClass('with-datepicker-popup');
+			}.bind(this));
+			this._lobbyTimerPicker._vm.$on('blur', function() {
+				this.ui.lobbyTimerOption.removeClass('with-datepicker-popup');
+			}.bind(this));
+
+			this._updateLobbyTimerPickerValue = function() {
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				this._lobbyTimerPicker._vm.value = this.model.get('lobbyTimer')? new Date(this.model.get('lobbyTimer') * 1000): null;
+			};
+			this._updateLobbyTimerPickerValue();
+
 			this._updateNameEditability();
 		},
 
@@ -181,14 +201,11 @@
 			// time and without that option the call would fail otherwise.
 			this.getRegion('roomName').reset({ preventDestroy: true, allowMissingEl: true });
 			this.getRegion('callButton').reset({ preventDestroy: true, allowMissingEl: true });
+			this.getRegion('lobbyTimerPicker').reset({ preventDestroy: true, allowMissingEl: true });
 
 			// Remove previous tooltips in case any of them is shown, as
 			// otherwise they will stay forever in the DOM once their parent is
 			// removed.
-			if (this._lobbyTimerInputTooltip) {
-				this._lobbyTimerInputTooltip.tooltip('dispose');
-			}
-
 			if (this._clipboardButtonTooltip) {
 				this._clipboardButtonTooltip.tooltip('dispose');
 			}
@@ -208,15 +225,12 @@
 			// template has been rendered.
 			this.showChildView('roomName', this._nameEditableTextLabel, { replaceElement: true } );
 			this.showChildView('callButton', this._callButton, { replaceElement: true } );
+			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
+				this.showChildView('lobbyTimerPicker', this._lobbyTimerPicker, { replaceElement: true } );
+			}
 
 			var roomURL = OC.generateUrl('/call/' + this.model.get('token')),
 				completeURL = window.location.protocol + '//' + window.location.host + roomURL;
-
-			this._lobbyTimerInputTooltip = this.ui.lobbyTimerInput.tooltip({
-				placement: 'bottom',
-				trigger: 'hover',
-				title: 'YYYY-MM-DD HH:mm'
-			});
 
 			this.ui.clipboardButton.attr('value', completeURL);
 			this.ui.clipboardButton.attr('data-clipboard-text', completeURL);
@@ -359,11 +373,11 @@
 
 			var lobbyTimerTimestamp = 0;
 
-			var lobbyTimerInputValue = this.ui.lobbyTimerInput.val().trim();
-			if (lobbyTimerInputValue) {
+			var lobbyTimerPickerValue = this._lobbyTimerPicker._vm.value;
+			if (lobbyTimerPickerValue) {
 				// PHP timestamp is second-based; JavaScript timestamp is
 				// millisecond based.
-				lobbyTimerTimestamp = Date.parse(lobbyTimerInputValue) / 1000;
+				lobbyTimerTimestamp = lobbyTimerPickerValue.getTime() / 1000;
 			}
 
 			if (isNaN(lobbyTimerTimestamp)) {
@@ -372,12 +386,12 @@
 				return;
 			}
 
-			this.ui.lobbyTimerInput.prop('disabled', true);
+			this._lobbyTimerPicker._vm.disabled = true;
 			this.ui.lobbyTimerConfirm.addClass('hidden');
 			this.ui.lobbyTimerLoading.removeClass('hidden');
 
 			var restoreState = function() {
-				this.ui.lobbyTimerInput.prop('disabled', false);
+				this._lobbyTimerPicker._vm.disabled = false;
 				this.ui.lobbyTimerConfirm.removeClass('hidden');
 				this.ui.lobbyTimerLoading.addClass('hidden');
 			}.bind(this);
