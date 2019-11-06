@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import AppNavigationNew from 'nextcloud-vue/dist/Components/AppNavigationNew'
-import Multiselect from 'nextcloud-vue/dist/Components/Multiselect'
+import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
 export default {
 	name: 'NewConversationForm',
