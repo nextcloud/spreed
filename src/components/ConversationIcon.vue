@@ -20,12 +20,12 @@
 -->
 
 <template>
-	<div>
+	<div class="conversation-icon">
 		<div v-if="iconClass"
 			class="avatar icon"
 			:class="iconClass" />
 		<Avatar v-else
-			:size="44"
+			:size="40"
 			:user="item.name"
 			:display-name="item.displayName" />
 		<div v-if="showFavorite"
@@ -89,6 +89,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.conversation-icon {
+	width: 40px;
+	height: 40px;
+}
 
 .icon:not(.icon-favorite) {
 	width: 44px;
