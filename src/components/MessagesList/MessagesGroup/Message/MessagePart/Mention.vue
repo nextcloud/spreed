@@ -28,7 +28,6 @@
 
 <script>
 
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import UserBubble from '@nextcloud/vue/dist/Components/UserBubble'
 import { getCurrentUser } from '@nextcloud/auth'
 
@@ -36,7 +35,6 @@ export default {
 	name: 'Mention',
 
 	components: {
-		Avatar,
 		UserBubble,
 	},
 
