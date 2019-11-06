@@ -19,6 +19,8 @@ OC.L10N.register(
     "Leave conversation" : "離開對話",
     "Remove from favorites" : "取消我的最愛",
     "Add to favorites" : "加到我的最愛",
+    "Participants" : "參與者",
+    "Projects" : "專案項目",
     "Name" : "名稱",
     "Saved" : "儲存",
     "Join a conversation or start a new one" : "加入一個對話或者開一個新的",
@@ -30,7 +32,6 @@ OC.L10N.register(
     "New public conversation" : "新的公開對話",
     "New group conversation" : "新群組對話",
     "New conversation …" : "新對話",
-    "Participants" : "參與者",
     "Chat" : "聊天",
     "Exit fullscreen (f)" : "離開全螢幕 (f)",
     "Copy" : "複製",
@@ -68,7 +69,6 @@ OC.L10N.register(
     "Never notify" : "取消提醒",
     "Close" : "關閉",
     "Enter name for a new conversation" : "輸入新對話名稱",
-    "Projects" : "專案項目",
     "Room name can not be empty" : "名稱不能空白"
 },
 "nplurals=1; plural=0;");
