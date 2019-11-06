@@ -70,6 +70,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
+import Mention from './MessagePart/Mention'
 import PlainText from './MessagePart/PlainText'
 import Quote from './Quote/Quote'
 
@@ -80,6 +81,7 @@ export default {
 		ActionButton,
 		DefaultParameter,
 		FilePreview,
+		Mention,
 		PlainText,
 		Quote,
 	},
@@ -232,6 +234,8 @@ export default {
 		getComponentInstanceForMessagePart(messagePartType) {
 			if (messagePartType === 'plain') {
 				return PlainText
+			} else if (messagePartType === 'user') {
+				return Mention
 			} else if (messagePartType === 'file') {
 				return FilePreview
 			}
