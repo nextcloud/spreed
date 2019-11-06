@@ -29,6 +29,7 @@ import VueClipboard from 'vue-clipboard2'
 import router from './router/router'
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
+import { translate, translatePlural } from '@nextcloud/l10n'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -41,8 +42,8 @@ __webpack_nonce__ = btoa(getRequestToken())
 // eslint-disable-next-line
 __webpack_public_path__ = generateFilePath('spreed', '', 'js/')
 
-Vue.prototype.t = t
-Vue.prototype.n = n
+Vue.prototype.t = translate
+Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
