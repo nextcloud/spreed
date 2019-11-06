@@ -183,6 +183,7 @@ export default {
 .participant-row {
 	display: flex;
 	align-items: center;
+	height: 44px;
 	&__avatar-wrapper {
 		height: 32px;
 		width: 32px;
