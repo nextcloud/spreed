@@ -61,7 +61,7 @@ export default {
 		participantsList() {
 			const participants = this.$store.getters.participantsList(this.token)
 
-			return participants.sort(this.sortParticipants)
+			return participants.slice().sort(this.sortParticipants)
 		},
 	},
 
