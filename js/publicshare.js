@@ -32,17 +32,33 @@
 
 			this.setupSignalingEventHandlers();
 
-			// Delay showing the Talk sidebar, as if it is shown too soon after
-			// the page loads (even if it has loaded) there will be no
-			// transition and the join button will not be enabled.
-			setTimeout(function() {
-				this.showTalkSidebar().then(function() {
-					this._$joinRoomButton.prop('disabled', false);
-				}.bind(this));
-			}.bind(this), 1000);
+			// Open the sidebar by default based on the window width
+			// using the same threshold as in the main Talk UI.
+			if ($(window).width() > 1111) {
+				// Delay showing the Talk sidebar, as if it is shown too soon
+				// after the page loads (even if it has loaded) there will be no
+				// transition and the join button will not be enabled.
+				setTimeout(function() {
+					this.showTalkSidebar().then(function() {
+						this._$joinRoomButton.prop('disabled', false);
+					}.bind(this));
+				}.bind(this), 1000);
+			}
 		},
 
 		setupLayoutForTalkSidebar: function() {
+			this._talkSidebarTrigger = $('<button id="talk-sidebar-trigger" class="icon-menu-people"></button>');
+			this._talkSidebarTrigger.click(function() {
+				if ($('#talk-sidebar').hasClass('disappear')) {
+					this.showAndUpdateTalkSidebar();
+
+					OCA.SpreedMe.app._chatView.saveScrollPosition();
+				} else {
+					this.hideTalkSidebar();
+				}
+			}.bind(this));
+			$('.header-right').append(this._talkSidebarTrigger);
+
 			$('#app-content').append($('footer'));
 
 			this._$callContainerWrapper = $('<div id="call-container-wrapper" class="hidden"></div>');
@@ -231,6 +247,64 @@
 		},
 
 		/**
+		 * Shows the Talk sidebar and updates its contents.
+		 */
+		showAndUpdateTalkSidebar: function() {
+			this.showTalkSidebar().then(function() {
+				this._$joinRoomButton.prop('disabled', false);
+
+				OCA.SpreedMe.app._chatView.restoreScrollPosition();
+
+				// When the sidebar is shown again the message list needs to
+				// be reloaded to add the messages that could have been
+				// received while detached.
+				OCA.SpreedMe.app._chatView.reloadMessageList();
+
+				// Once the sidebar is shown its size has changed, so
+				// the chat view needs to handle a size change.
+				OCA.SpreedMe.app._chatView.handleSizeChanged();
+			}.bind(this));
+		},
+
+		/**
+		 * Wait for the sidebar to end changing its width.
+		 *
+		 * The changes on the sidebar width are animated; this method returns a
+		 * promise that is resolved the next time that the sidebar width ends
+		 * changing.
+		 */
+		_waitForSidebarWidthChangeEnd: function() {
+			var deferred = $.Deferred();
+
+			if ('ontransitionend' in $('#talk-sidebar').get(0)) {
+				var resolveOnceSidebarWidthHasChanged = function(event) {
+					if (event.propertyName !== 'min-width' && event.propertyName !== 'width') {
+						return;
+					}
+
+					$('#talk-sidebar').get(0).removeEventListener('transitionend', resolveOnceSidebarWidthHasChanged);
+
+					deferred.resolve();
+				};
+
+				$('#talk-sidebar').get(0).addEventListener('transitionend', resolveOnceSidebarWidthHasChanged);
+			} else {
+				var animationQuickValue = getComputedStyle(document.documentElement).getPropertyValue('--animation-quick');
+
+				// The browser does not support the "ontransitionend" event, so
+				// just wait a few milliseconds more than the duration of the
+				// transition.
+				setTimeout(function() {
+					console.log('ontransitionend is not supported; the sidebar should have been fully shown/hidden by now');
+
+					deferred.resolve();
+				}, Number.parseInt(animationQuickValue) + 200);
+			}
+
+			return deferred.promise();
+		},
+
+		/**
 		 * Shows the Talk sidebar.
 		 *
 		 * The sidebar is shown with an animation; this method returns a promise
@@ -245,36 +319,30 @@
 				return deferred.promise();
 			}
 
-			if ('ontransitionend' in $('#talk-sidebar').get(0)) {
-				var resolveOnceSidebarIsOpen = function(event) {
-					if (event.propertyName !== 'min-width' && event.propertyName !== 'width') {
-						return;
-					}
+			this._waitForSidebarWidthChangeEnd().then(function() {
+				deferred.resolve();
+			});
 
-					$('#talk-sidebar').get(0).removeEventListener('transitionend', resolveOnceSidebarIsOpen);
+			$('#talk-sidebar').removeClass('hidden-important');
 
-					deferred.resolve();
-				};
-
-				$('#talk-sidebar').get(0).addEventListener('transitionend', resolveOnceSidebarIsOpen);
-			} else {
-				// The browser does not support the "ontransitionend" event, so
-				// just wait a few milliseconds more than the duration of the
-				// transition (300ms).
-				setTimeout(function() {
-					console.log('ontransitionend is not supported; the sidebar should have been fully shown by now');
-
-					deferred.resolve();
-				}, 500);
-			}
-
-			$('#talk-sidebar').removeClass('disappear');
+			// Defer removing the disappear class to ensure that a transition
+			// will be triggered, as if it is removed at the same time as the
+			// "display: none" property the new width will be immediately set.
+			setTimeout(function() {
+				$('#talk-sidebar').removeClass('disappear');
+			}, 0);
 
 			return deferred.promise();
 		},
 
 		hideTalkSidebar: function() {
 			$('#talk-sidebar').addClass('disappear');
+
+			this._waitForSidebarWidthChangeEnd().then(function() {
+				// "display" CSS properties can not be animated, so the sidebar
+				// needs to be explicitly hidden once the transition ends.
+				$('#talk-sidebar').addClass('hidden-important');
+			});
 
 			delete this.hideTalkSidebarTimeout;
 		},
