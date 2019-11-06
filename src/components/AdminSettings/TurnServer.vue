@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { Tooltip } from 'nextcloud-vue'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import hmacSHA1 from 'crypto-js/hmac-sha1'
 import Base64 from 'crypto-js/enc-base64'
 import debounce from 'debounce'

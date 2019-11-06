@@ -17,12 +17,12 @@
 	"dependencies": {
 		"@nextcloud/auth": "^0.3.1",
 		"@nextcloud/axios": "^0.5.0",
+		"@nextcloud/initial-state": "^0.2.0",
+		"@nextcloud/l10n": "^0.2.1",
+		"@nextcloud/router": "^0.1.0",
+		"@nextcloud/vue": "^1.2.0",
 		"crypto-js": "^3.1.9-1",
 		"debounce": "^1.2.0",
-		"nextcloud-auth": "0.0.3",
-		"nextcloud-initial-state": "0.0.3",
-		"nextcloud-router": "0.0.9",
-		"nextcloud-vue": "^0.12.7",
 		"nextcloud-vue-collections": "^0.6.0",
 		"vue": "^2.6.10",
 		"vue-clipboard2": "^0.3.1",
@@ -33,7 +33,7 @@
 		"vuex": "^3.1.1"
 	},
 	"browserslist": [
-		"extends browserslist-config-nextcloud"
+		"extends @nextcloud/browserslist-config"
 	],
 	"engines": {
 		"node": ">=10.0.0"
@@ -42,10 +42,11 @@
 		"@babel/core": "^7.6.4",
 		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
 		"@babel/preset-env": "^7.6.3",
+		"@babel/runtime": "^7.6.3",
+		"@nextcloud/browserslist-config": "^1.0.0",
 		"@vue/test-utils": "^1.0.0-beta.29",
 		"babel-eslint": "^10.0.3",
 		"babel-loader": "^8.0.6",
-		"browserslist-config-nextcloud": "0.1.0",
 		"css-loader": "^3.2.0",
 		"eslint": "^5.16.0",
 		"eslint-config-nextcloud": "^0.1.0",

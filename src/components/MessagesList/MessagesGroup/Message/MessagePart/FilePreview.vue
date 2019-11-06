@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { generateUrl, imagePath } from 'nextcloud-router'
+import { generateUrl, imagePath } from '@nextcloud/router'
 import { getCurrentUser } from '@nextcloud/auth'
 
 export default {

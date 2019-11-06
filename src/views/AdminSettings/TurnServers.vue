@@ -58,9 +58,9 @@
 </template>
 
 <script>
-import { Tooltip } from 'nextcloud-vue'
-import debounce from 'debounce'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import TurnServer from '../../components/AdminSettings/TurnServer'
+import debounce from 'debounce'
 
 export default {
 	name: 'TurnServers',

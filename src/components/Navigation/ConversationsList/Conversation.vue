@@ -88,14 +88,14 @@
 </template>
 
 <script>
-import ConversationIcon from './../../ConversationIcon'
-import AppNavigationCounter from 'nextcloud-vue/dist/Components/AppNavigationCounter'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
-import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-import ActionText from 'nextcloud-vue/dist/Components/ActionText'
+import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
+import ConversationIcon from './../../ConversationIcon'
 import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
 import { deleteConversation, addToFavorites, removeFromFavorites, setNotificationLevel } from '../../../services/conversationsService'
-import { generateUrl } from 'nextcloud-router'
+import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
 export default {

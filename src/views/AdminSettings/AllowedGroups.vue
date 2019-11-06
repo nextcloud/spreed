@@ -57,11 +57,11 @@
 </template>
 
 <script>
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
 import debounce from 'debounce'
-import { Multiselect } from 'nextcloud-vue'
-import { generateOcsUrl } from 'nextcloud-router/dist/index'
-import { loadState } from 'nextcloud-initial-state'
+import { generateOcsUrl } from '@nextcloud/router'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'AllowedGroups',

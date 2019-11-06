@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { Tooltip } from 'nextcloud-vue'
+import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 
 export default {
 	name: 'StunServer',

@@ -22,7 +22,7 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import { generateUrl } from 'nextcloud-router'
+import { generateUrl } from '@nextcloud/router'
 import WelcomeView from '../views/WelcomeView.vue'
 import ChatView from '../views/ChatView.vue'
 

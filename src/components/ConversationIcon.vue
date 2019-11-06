@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import Avatar from 'nextcloud-vue/dist/Components/Avatar'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import { CONVERSATION } from '../constants'
 
 export default {

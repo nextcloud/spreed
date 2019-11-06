@@ -21,7 +21,7 @@
  */
 
 import axios from '@nextcloud/axios'
-import { generateOcsUrl } from 'nextcloud-router'
+import { generateOcsUrl } from '@nextcloud/router'
 
 /**
  * Joins the current user to a conversation specified with

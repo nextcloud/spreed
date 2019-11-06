@@ -30,8 +30,8 @@
 </template>
 
 <script>
-import Content from 'nextcloud-vue/dist/Components/Content'
-import AppContent from 'nextcloud-vue/dist/Components/AppContent'
+import AppContent from '@nextcloud/vue/dist/Components/AppContent'
+import Content from '@nextcloud/vue/dist/Components/Content'
 import Navigation from './components/Navigation/Navigation'
 import Router from './router/router'
 import Sidebar from './components/Sidebar/Sidebar'
