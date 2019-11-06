@@ -90,13 +90,15 @@ export default {
 		createTemporaryMessage() {
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
-				actorDisplayName: getCurrentUser().displayName,
 				actorId: getCurrentUser().uid,
 				actorType: 'users',
-				message: this.text,
-				token: this.token,
+				actorDisplayName: getCurrentUser().displayName,
 				timestamp: 0,
 				systemMessage: '',
+				messageType: '',
+				message: this.text,
+				messageParameters: {},
+				token: this.token,
 			})
 			/**
 			 * If the current message is a quote-reply messag, add the parent key to the
