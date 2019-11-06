@@ -25,7 +25,7 @@
 			Start a call
 		</button>
 		<Actions v-if="showOpenSidebarButton" class="top-bar__button" close-after-click="true">
-			<ActionButton icon="icon-settings" @click="handleClick" />
+			<ActionButton icon="icon-menu-people" @click="handleClick" />
 		</Actions>
 	</div>
 </template>
