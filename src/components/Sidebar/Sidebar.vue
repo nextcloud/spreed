@@ -36,6 +36,14 @@
 				@change="toggleGuests">
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
+			<ActionText
+				icon="icon-lobby"
+				:title="t('spreed', 'Webinar')" />
+			<ActionCheckbox
+				:checked="hasLobbyEnabled"
+				@change="toggleLobby">
+				{{ t('spreed', 'Enable lobby') }}
+			</ActionCheckbox>
 		</template>
 		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
 			<SearchBox
@@ -78,7 +86,7 @@ import SearchBox from '../SearchBox'
 import debounce from 'debounce'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { EventBus } from '../../services/EventBus'
-import { CONVERSATION } from '../../constants'
+import { CONVERSATION, WEBINAR } from '../../constants'
 import { getCurrentUser } from '@nextcloud/auth'
 import { searchPossibleConversations } from '../../services/conversationsService'
 
@@ -126,6 +134,7 @@ export default {
 				displayName: '',
 				isFavorite: false,
 				type: CONVERSATION.TYPE.PUBLIC,
+				lobbyState: WEBINAR.LOBBY.NONE,
 			}
 		},
 
@@ -135,6 +144,9 @@ export default {
 		},
 		isSharedPublicly() {
 			return this.conversation.type === CONVERSATION.TYPE.PUBLIC
+		},
+		hasLobbyEnabled() {
+			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 		},
 
 		isSearching() {
@@ -175,6 +187,13 @@ export default {
 			await this.$store.dispatch('toggleGuests', {
 				token: this.token,
 				allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
+			})
+		},
+
+		async toggleLobby() {
+			await this.$store.dispatch('toggleLobby', {
+				token: this.token,
+				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
 			})
 		},
 	},

@@ -180,6 +180,22 @@ const makePrivate = async function(token) {
 	}
 }
 
+/**
+ * Change the lobby state
+ * @param {string} token The token of the conversation to be modified
+ * @param {int} newState The new lobby state to set
+ */
+const changeLobbyState = async function(token, newState) {
+	try {
+		const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/webinar/lobby`, {
+			state: newState,
+		})
+		return response
+	} catch (error) {
+		console.debug('Error while updating webinar lobby: ', error)
+	}
+}
+
 export {
 	fetchConversations,
 	searchPossibleConversations,
@@ -193,4 +209,5 @@ export {
 	setNotificationLevel,
 	makePublic,
 	makePrivate,
+	changeLobbyState,
 }
