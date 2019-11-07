@@ -49,6 +49,8 @@
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
 			<SearchBox
+				v-if="displaySearchBox"
+				:placeholderText="t('spreed', 'Add participants to the conversation')"
 				v-model="searchText"
 				@input="debounceFetchSearchResults" />
 			<CurrentParticipants />
@@ -92,6 +94,8 @@ import { CollectionList } from 'nextcloud-vue-collections'
 import { EventBus } from '../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../constants'
 import { searchPossibleConversations } from '../../services/conversationsService'
+import ParticipantsList from './ParticipantsList/ParticipantsList'
+import { CONVERSATION } from '../../constants'
 
 export default {
 	name: 'Sidebar',
@@ -156,6 +160,9 @@ export default {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 		},
 
+		displaySearchBox() {
+			return this.conversation.type === CONVERSATION.TYPE.GROUP || this.conversation.type === CONVERSATION.TYPE.PUBLIC
+		},
 		isSearching() {
 			return this.searchText !== ''
 		},
