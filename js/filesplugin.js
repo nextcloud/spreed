@@ -443,8 +443,8 @@
 			var $roomNotJoinedMessage = $(
 				'<div class="emptycontent room-not-joined">' +
 				'    <div class="icon icon-talk"></div>' +
-				'    <h2>' + t('spreed', 'Join the conversation') + '</h2>' +
-				'    <button class="primary">' + t('spreed', 'Join') + '</button>' +
+				'    <h2>' + t('spreed', 'Discuss this file') + '</h2>' +
+				'    <button class="primary">' + t('spreed', 'Join conversation') + '</button>' +
 				'</div>');
 
 			$roomNotJoinedMessage.find('button').click(function() {
@@ -460,9 +460,9 @@
 			var $fileNotSharedMessage = $(
 				'<div class="emptycontent file-not-shared">' +
 				'    <div class="icon icon-talk"></div>' +
-				'    <h2>' + t('spreed', 'Start a conversation') + '</h2>' +
-				'    <p>' + t('spreed', 'Share this file with others to discuss') + '</p>' +
-				'    <button class="primary">' + t('spreed', 'Share') + '</button>' +
+				'    <h2>' + t('spreed', 'Discuss this file') + '</h2>' +
+				'    <p>' + t('spreed', 'Share this file with others to discuss it') + '</p>' +
+				'    <button class="primary">' + t('spreed', 'Share this file') + '</button>' +
 				'</div>');
 
 			$fileNotSharedMessage.find('button').click(function() {
