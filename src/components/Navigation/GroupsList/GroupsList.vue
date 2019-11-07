@@ -26,8 +26,7 @@
 			:key="item.id"
 			:title="item.label"
 			@click="createAndJoinConversation(item.id)">
-			<ConversationIcon
-				slot="icon"
+			<ConversationIcon v-slot:icon
 				:item="dummyIconData" />
 		</AppContentListItem>
 	</ul>
