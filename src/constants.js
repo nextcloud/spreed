@@ -62,3 +62,12 @@ export const WEBINAR = {
 		NON_MODERATORS: 1,
 	},
 }
+export const SHARE = {
+	TYPE: {
+		USER: 0,
+		GROUP: 1,
+		EMAIL: 4,
+		REMOTE: 6,
+		CIRCLE: 7,
+	},
+}

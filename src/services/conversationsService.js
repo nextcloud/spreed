@@ -22,7 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { CONVERSATION } from '../constants'
+import { CONVERSATION, SHARE } from '../constants'
 
 /**
  * Fetches the conversations from the server.
@@ -42,7 +42,7 @@ const fetchConversations = async function() {
  */
 const searchPossibleConversations = async function(searchText) {
 	try {
-		const response = await axios.get(generateOcsUrl('core/autocomplete', 2) + `get` + `?format=json` + `&search=${searchText}` + `&itemType=call` + `&itemId=new` + `&shareTypes[]=${OC.Share.SHARE_TYPE_USER}&shareTypes[]=${OC.Share.SHARE_TYPE_GROUP}`)
+		const response = await axios.get(generateOcsUrl('core/autocomplete', 2) + `get` + `?format=json` + `&search=${searchText}` + `&itemType=call` + `&itemId=new` + `&shareTypes[]=${SHARE.TYPE.USER}&shareTypes[]=${SHARE.TYPE.GROUP}`)
 		return response
 	} catch (error) {
 		console.debug('Error while searching possible conversations: ', error)
