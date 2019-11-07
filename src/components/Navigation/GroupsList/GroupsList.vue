@@ -26,8 +26,10 @@
 			:key="item.id"
 			:title="item.label"
 			@click="createAndJoinConversation(item.id)">
-			<ConversationIcon v-slot:icon
-				:item="dummyIconData" />
+			<template v-slot:icon>
+				<ConversationIcon
+					:item="iconData" />
+			</template>
 		</AppContentListItem>
 	</ul>
 </template>
@@ -56,7 +58,7 @@ export default {
 		},
 	},
 	computed: {
-		dummyIconData() {
+		iconData() {
 			return {
 				type: CONVERSATION.TYPE.GROUP,
 			}

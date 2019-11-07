@@ -23,9 +23,11 @@
 	<AppContentListItem
 		:title="item.displayName"
 		:to="{ name: 'conversation', params: { token: item.token }}">
-		<ConversationIcon v-slot:icon
-			:item="item"
-			:hide-favorite="false" />
+		<template v-slot:icon>
+			<ConversationIcon
+				:item="item"
+				:hide-favorite="false" />
+		</template>
 		<template v-slot:subtitle>
 			{{ simpleLastChatMessage }}
 		</template>
