@@ -26,6 +26,7 @@
 		:starred.sync="conversation.isFavorite"
 		@close="handleClose">
 		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
+			<SearchBox />
 			<ParticipantsTab />
 		</AppSidebarTab>
 		<AppSidebarTab :name="t('spreed', 'Projects')" icon="icon-projects">
@@ -42,6 +43,7 @@ import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ParticipantsTab from './ParticipantsTab/ParticipantsTab'
 import { CollectionList } from 'nextcloud-vue-collections'
+import SearchBox from '../SearchBox'
 
 export default {
 	name: 'Sidebar',
@@ -50,6 +52,7 @@ export default {
 		AppSidebarTab,
 		CollectionList,
 		ParticipantsTab,
+		SearchBox
 	},
 
 	computed: {
