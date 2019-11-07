@@ -25,7 +25,7 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
-		<Hint v-if="searchText"
+		<Hint v-if="searchText && !conversationsList.length"
 			:hint="t('spreed', 'No search results')" />
 	</ul>
 </template>
