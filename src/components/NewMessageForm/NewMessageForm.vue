@@ -54,7 +54,7 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import { getCurrentUser } from '@nextcloud/auth'
-import Quote from '../MessagesList/MessagesGroup/Message/Quote/Quote'
+import Quote from '../Quote'
 
 export default {
 	name: 'NewMessageForm',

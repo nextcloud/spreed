@@ -72,7 +72,7 @@ import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
 import PlainText from './MessagePart/PlainText'
-import Quote from './Quote/Quote'
+import Quote from '../../../Quote'
 
 export default {
 	name: 'Message',
