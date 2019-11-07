@@ -20,6 +20,8 @@
  *
  */
 import Vue from 'vue'
+import { makePublic, makePrivate } from '../services/conversationsService'
+import { CONVERSATION } from '../constants'
 
 const getDefaultState = () => {
 	return {
@@ -91,6 +93,23 @@ const actions = {
 	 */
 	purgeConversationsStore(context) {
 		context.commit('purgeConversationsStore')
+	},
+
+	async toggleGuests({ commit, getters }, { token, allowGuests }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		if (allowGuests) {
+			await makePublic(token)
+			conversation.type = CONVERSATION.TYPE.PUBLIC
+		} else {
+			await makePrivate(token)
+			conversation.type = CONVERSATION.TYPE.GROUP
+		}
+
+		commit('addConversation', conversation)
 	},
 }
 

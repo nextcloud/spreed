@@ -154,6 +154,32 @@ const setNotificationLevel = async function(token, level) {
 	}
 }
 
+/**
+ * Make the conversation public
+ * @param {string} token The token of the conversation to be removed from favorites
+ */
+const makePublic = async function(token) {
+	try {
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/public`)
+		return response
+	} catch (error) {
+		console.debug('Error while making the conversation public: ', error)
+	}
+}
+
+/**
+ * Make the conversation private
+ * @param {string} token The token of the conversation to be removed from favorites
+ */
+const makePrivate = async function(token) {
+	try {
+		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/public`)
+		return response
+	} catch (error) {
+		console.debug('Error while making the conversation private: ', error)
+	}
+}
+
 export {
 	fetchConversations,
 	searchPossibleConversations,
@@ -164,4 +190,7 @@ export {
 	deleteConversation,
 	addToFavorites,
 	removeFromFavorites,
-	setNotificationLevel }
+	setNotificationLevel,
+	makePublic,
+	makePrivate,
+}
