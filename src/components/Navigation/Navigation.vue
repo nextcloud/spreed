@@ -57,7 +57,7 @@
 
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import Caption from './Caption/Caption'
+import Caption from '../Caption'
 import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
 import GroupsList from './GroupsList/GroupsList'
