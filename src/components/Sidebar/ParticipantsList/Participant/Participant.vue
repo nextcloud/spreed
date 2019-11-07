@@ -21,35 +21,33 @@
 
 <template>
 	<li class="participant-row"
-		:class="{ offline: isOffline, currentUser: isSelf, guestUser: isGuest }">
+		:class="{ offline: isOffline, currentUser: isSelf, guestUser: isGuest }"
+		@click="handleClick">
 		<div class="participant-row__avatar-wrapper">
 			<Avatar
-				:user="userId"
-				:display-name="displayName" />
+				:user="computedId"
+				:display-name="computedName" />
 		</div>
 
-		<span class="participant-row__user-name">{{ displayName }}</span>
+		<span class="participant-row__user-name">{{ computedName }}</span>
 		<span v-if="isModerator" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
-
-		<template v-if="canModerate">
-			<Actions class="participant-row__actions">
-				<ActionButton v-if="canBeDemoted"
-					icon="icon-rename"
-					@click.prevent.exact="demoteFromModerator">
-					{{ t('spreed', 'Demote from moderator') }}
-				</ActionButton>
-				<ActionButton v-if="canBePromoted"
-					icon="icon-rename"
-					@click.prevent.exact="promoteToModerator">
-					{{ t('spreed', 'Promote to moderator') }}
-				</ActionButton>
-				<ActionButton
-					icon="icon-delete"
-					@click.prevent.exact="removeParticipant">
-					{{ t('spreed', 'Remove participant') }}
-				</ActionButton>
-			</Actions>
-		</template>
+		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
+			<ActionButton v-if="canBeDemoted"
+				icon="icon-rename"
+				@click.prevent.exact="demoteFromModerator">
+				{{ t('spreed', 'Demote from moderator') }}
+			</ActionButton>
+			<ActionButton v-if="canBePromoted"
+				icon="icon-rename"
+				@click.prevent.exact="promoteToModerator">
+				{{ t('spreed', 'Promote to moderator') }}
+			</ActionButton>
+			<ActionButton
+				icon="icon-delete"
+				@click.prevent.exact="removeParticipant">
+				{{ t('spreed', 'Remove participant') }}
+			</ActionButton>
+		</Actions>
 	</li>
 </template>
 
@@ -58,7 +56,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { PARTICIPANT } from '../../../constants'
+import { PARTICIPANT } from '../../../../constants'
 import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
@@ -71,29 +69,47 @@ export default {
 	},
 
 	props: {
-		userId: {
-			type: String,
-			required: true,
-		},
-		displayName: {
-			type: String,
-			required: true,
-		},
-		participantType: {
-			type: Number,
-			required: true,
-		},
-		lastPing: {
-			type: Number,
-			default: 0,
-		},
-		sessionId: {
-			type: String,
+		participant: {
+			type: Object,
 			required: true,
 		},
 	},
 
 	computed: {
+		/**
+		 * If the Participant component is used as to display a search result, it will
+		 * return true. We use this not to display actions on the searched contacts and
+		 * groups.
+		 * @returns {boolean}
+		 */
+		isSearched() {
+			return this.participant.userId === undefined
+		},
+		computedName() {
+			if (this.participant.displayName) {
+				return this.participant.displayName
+			} else return this.participant.label
+		},
+		computedId() {
+			if (this.participant.userId) {
+				return this.participant.userId
+			} else return this.participant.id
+		},
+		id() {
+			return this.participant.id
+		},
+		label() {
+			return this.participant.label
+		},
+		participantType() {
+			return this.participant.type
+		},
+		sessionId() {
+			return this.participant.sessionId
+		},
+		lastPing() {
+			return this.participant.lastPing
+		},
 		token() {
 			return this.$route.params.token
 		},
@@ -149,9 +165,13 @@ export default {
 
 			return data
 		},
+
 	},
 
 	methods: {
+		handleClick(event) {
+			this.$emit('click', event)
+		},
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
 		},

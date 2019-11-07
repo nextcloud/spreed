@@ -57,14 +57,14 @@
 
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
-import Caption from './Caption/Caption'
+import Caption from '../Caption'
 import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
 import GroupsList from './GroupsList/GroupsList'
-import Hint from './Hint/Hint'
+import Hint from '../Hint'
 import NewPrivateConversation from './NewConversation/NewPrivateConversation'
 import NewPublicConversation from './NewConversation/NewPublicConversation'
-import SearchBox from '../SearchBox/SearchBox'
+import SearchBox from '../SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'

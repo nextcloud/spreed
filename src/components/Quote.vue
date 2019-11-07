@@ -137,7 +137,7 @@ export default {
 
 <style lang="scss" scoped>
 
-@import '../../../../../assets/variables';
+@import '../assets/variables';
 
 .quote {
 	border-left: 4px solid var(--color-primary);

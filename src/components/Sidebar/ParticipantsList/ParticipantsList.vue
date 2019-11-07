@@ -1,7 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  - @author Joas Schilling <coding@schilljs.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -20,25 +20,42 @@
 -->
 
 <template>
-	<div class="NewConversationForm">
-		<Multiselect />
-		<AppNavigationNew />
+	<div>
+		<ul>
+			<Participant
+				v-for="participant in participantsList"
+				:key="participant.userId"
+				:participant="participant" />
+		</ul>
 	</div>
 </template>
 
 <script>
-import AppNavigationNew from '@nextcloud/vue/dist/Components/AppNavigationNew'
-import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+
+import Participant from './Participant/Participant'
 
 export default {
-	name: 'NewConversationForm',
+	name: 'ParticipantsList',
+
 	components: {
-		AppNavigationNew,
-		Multiselect,
+		Participant,
+	},
+
+	props: {
+		participantsList: {
+			type: Array,
+			required: true,
+		},
+	},
+
+	methods: {
+		handleClick(event) {
+			this.$emit('click', event)
+		},
 	},
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 
 </style>

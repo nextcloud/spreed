@@ -20,32 +20,21 @@
 -->
 
 <template>
-	<div>
-		<ul>
-			<Participant
-				v-for="participant in participantsList"
-				:key="participant.userId"
-				:user-id="participant.userId"
-				:display-name="participant.displayName"
-				:participant-type="participant.participantType"
-				:last-ping="participant.lastPing"
-				:session-id="participant.sessionId" />
-		</ul>
-	</div>
+	<ParticipantsList :participants-list="participantsList" />
 </template>
 
 <script>
 
-import Participant from './Participant'
+import ParticipantsList from '../ParticipantsList/ParticipantsList'
 import { fetchParticipants } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
 import { PARTICIPANT } from '../../../constants'
 
 export default {
-	name: 'ParticipantsTab',
+	name: 'CurrentParticipants',
 
 	components: {
-		Participant,
+		ParticipantsList,
 	},
 
 	computed: {

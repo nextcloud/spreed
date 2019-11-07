@@ -87,10 +87,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/variables.scss';
+@import '../assets/variables.scss';
 
 .app-navigation-search {
-	height: $top-bar-height !important;
+	height: $top-bar-height;
 	position: sticky;
 	top: 0;
 	background-color: var(--color-main-background);
@@ -98,9 +98,11 @@ export default {
 	z-index: 1;
 	display: flex;
 	justify-content: center;
+	padding: 0 6px;
 	&__input {
 		align-self: center;
-		width: $navigation-width - 20px;
+		width: 100%;
+		margin: 0px;
 	}
 }
 </style>
