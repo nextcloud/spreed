@@ -32,7 +32,7 @@
 
 <script>
 import Conversation from './Conversation'
-import Hint from '../Hint/Hint'
+import Hint from '../../Hint'
 import { fetchConversations } from '../../../services/conversationsService'
 import { joinConversation, leaveConversation } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'

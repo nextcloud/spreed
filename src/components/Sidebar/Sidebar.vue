@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
   -
   - @author Joas Schilling <coding@schilljs.com>
+  - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -26,8 +27,23 @@
 		:starred.sync="conversation.isFavorite"
 		@close="handleClose">
 		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
-			<SearchBox />
-			<ParticipantsList />
+			<SearchBox
+				v-model="searchText"
+				@input="debounceFetchSearchResults" />
+			<CurrentParticipants />
+			<template v-if="isSearching">
+				<Caption
+					:title="t('spreed', 'Add participants')" />
+				<ContactsList v-if="searchResultsUsers.length !== 0" :contacts="searchResultsUsers" />
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-else :hint="t('spreed', 'No search results')" />
+
+				<Caption
+					:title="t('spreed', 'Add groups')" />
+				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-else :hint="t('spreed', 'No search results')" />
+			</template>
 		</AppSidebarTab>
 		<AppSidebarTab :name="t('spreed', 'Projects')" icon="icon-projects">
 			<CollectionList v-if="conversation.token"
@@ -41,9 +57,16 @@
 <script>
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import ParticipantsList from './ParticipantsList/ParticipantsList'
+import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import { CollectionList } from 'nextcloud-vue-collections'
 import SearchBox from '../SearchBox'
+import { searchPossibleConversations } from '../../services/conversationsService'
+import debounce from 'debounce'
+import Caption from '../Caption'
+import Hint from '../Hint'
+import { getCurrentUser } from '@nextcloud/auth'
+import { EventBus } from '../../services/EventBus'
+import { CONVERSATION } from '../../constants'
 
 export default {
 	name: 'Sidebar',
@@ -51,8 +74,20 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		CollectionList,
-		ParticipantsList,
-		SearchBox
+		CurrentParticipants,
+		SearchBox,
+		Caption,
+		Hint,
+	},
+
+	data() {
+		return {
+			searchText: '',
+			searchResults: {},
+			searchResultsUsers: [],
+			searchResultsGroups: [],
+			contactsLoading: false,
+		}
 	},
 
 	computed: {
@@ -75,11 +110,41 @@ export default {
 				isFavorite: false,
 			}
 		},
+		isSearching() {
+			return this.searchText !== ''
+		},
+	},
+
+	beforeMount() {
+		/**
+		 * After a conversation was created, the search filter is reset
+		 */
+		EventBus.$once('resetSearchFilter', () => {
+			this.searchText = ''
+		})
 	},
 
 	methods: {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
+		},
+		debounceFetchSearchResults: debounce(function() {
+			if (this.isSearching) {
+				this.fetchSearchResults()
+			}
+		}, 250),
+
+		async fetchSearchResults() {
+			this.contactsLoading = true
+			const response = await searchPossibleConversations(this.searchText)
+			this.searchResults = response.data.ocs.data
+			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid && !this.hasOneToOneConversationWith(match.id))
+			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
+			this.contactsLoading = false
+		},
+
+		hasOneToOneConversationWith(userId) {
+			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
 	},
 }

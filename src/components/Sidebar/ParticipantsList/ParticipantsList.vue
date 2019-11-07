@@ -29,7 +29,8 @@
 				:display-name="participant.displayName"
 				:participant-type="participant.participantType"
 				:last-ping="participant.lastPing"
-				:session-id="participant.sessionId" />
+				:session-id="participant.sessionId"
+				@click="handleClick" />
 		</ul>
 	</div>
 </template>
@@ -37,9 +38,6 @@
 <script>
 
 import Participant from './Participant/Participant'
-import { fetchParticipants } from '../../../services/participantsService'
-import { EventBus } from '../../../services/EventBus'
-import { PARTICIPANT } from '../../../constants'
 
 export default {
 	name: 'ParticipantsList',
@@ -48,92 +46,16 @@ export default {
 		Participant,
 	},
 
-	computed: {
-		token() {
-			return this.$route.params.token
+	props: {
+		participantsList: {
+			type: Array,
+			required: true,
 		},
-
-		/**
-		 * Gets the participants array.
-		 *
-		 * @returns {array}
-		 */
-		participantsList() {
-			const participants = this.$store.getters.participantsList(this.token)
-
-			return participants.slice().sort(this.sortParticipants)
-		},
-	},
-
-	/**
-	 * Fetches the messages when the MessageList created. The router mounts this
-	 * component only if the token is passed in so there's no need to check the
-	 * token prop.
-	 */
-	created() {
-		this.onRouteChange()
-
-		/**
-		 * Add a listener for routeChange event emitted by the App.vue component.
-		 * Call the onRouteChange method function whenever the route changes.
-		 */
-		EventBus.$on('routeChange', () => {
-			this.$nextTick(() => {
-				this.onRouteChange()
-			})
-		})
 	},
 
 	methods: {
-		onRouteChange() {
-			this.getParticipants()
-		},
-
-		/**
-		 * Sort two participants by:
-		 * - type (moderators before normal participants)
-		 * - online status
-		 * - display name
-		 *
-		 * @param {object} participant1 First participant
-		 * @param {int} participant1.participantType First participant type
-		 * @param {string} participant1.sessionId First participant session
-		 * @param {string} participant1.displayName First participant display name
-		 * @param {object} participant2 Second participant
-		 * @param {int} participant2.participantType Second participant type
-		 * @param {string} participant2.sessionId Second participant session
-		 * @param {string} participant2.displayName Second participant display name
-		 * @returns {number}
-		 */
-		sortParticipants(participant1, participant2) {
-			const moderatorTypes = [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR]
-			const moderator1 = moderatorTypes.indexOf(participant1.participantType) !== -1
-			const moderator2 = moderatorTypes.indexOf(participant2.participantType) !== -1
-
-			if (moderator1 !== moderator2) {
-				return moderator1 ? -1 : 1
-			}
-
-			if (participant1.sessionId === '0') {
-				if (participant2.sessionId !== '0') {
-					return 1
-				}
-			} else if (participant2.sessionId === '0') {
-				return -1
-			}
-
-			return participant2.displayName - participant1.displayName
-		},
-
-		async getParticipants() {
-			const participants = await fetchParticipants(this.token)
-			this.$store.dispatch('purgeParticipantsStore', this.token)
-			participants.data.ocs.data.forEach(participant => {
-				this.$store.dispatch('addParticipant', {
-					token: this.token,
-					participant: participant,
-				})
-			})
+		handleClick(event) {
+			this.$emit('click', event)
 		},
 	},
 }
