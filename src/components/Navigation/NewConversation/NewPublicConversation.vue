@@ -23,8 +23,10 @@
 	<AppContentListItem
 		:title="searchText"
 		@click="createPublicConversation">
-		<ConversationIcon v-slot:icon
-			:item="iconData" />
+		<template v-slot:icon>
+			<ConversationIcon
+				:item="iconData" />
+		</template>
 		<template v-slot:subtitle>
 			{{ t('spreed', 'Public conversation') }}
 		</template>
