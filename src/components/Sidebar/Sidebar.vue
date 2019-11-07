@@ -27,7 +27,7 @@
 		@close="handleClose">
 		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
 			<SearchBox />
-			<ParticipantsTab />
+			<ParticipantsList />
 		</AppSidebarTab>
 		<AppSidebarTab :name="t('spreed', 'Projects')" icon="icon-projects">
 			<CollectionList v-if="conversation.token"
@@ -41,7 +41,7 @@
 <script>
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import ParticipantsTab from './ParticipantsTab/ParticipantsTab'
+import ParticipantsList from './ParticipantsList/ParticipantsList'
 import { CollectionList } from 'nextcloud-vue-collections'
 import SearchBox from '../SearchBox'
 
@@ -51,7 +51,7 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		CollectionList,
-		ParticipantsTab,
+		ParticipantsList,
 		SearchBox
 	},
 

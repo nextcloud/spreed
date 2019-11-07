@@ -58,7 +58,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { PARTICIPANT } from '../../../constants'
+import { PARTICIPANT } from '../../../../constants'
 import { getCurrentUser } from '@nextcloud/auth'
 
 export default {

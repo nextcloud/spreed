@@ -36,13 +36,13 @@
 
 <script>
 
-import Participant from './Participant'
+import Participant from './Participant/Participant'
 import { fetchParticipants } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
 import { PARTICIPANT } from '../../../constants'
 
 export default {
-	name: 'ParticipantsTab',
+	name: 'ParticipantsList',
 
 	components: {
 		Participant,
