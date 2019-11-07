@@ -80,8 +80,8 @@
 			this._$roomNotJoinedMessage = $(
 				'<div class="emptycontent room-not-joined">' +
 				'    <div class="icon icon-talk"></div>' +
-				'    <h2>' + t('spreed', 'Join the conversation') + '</h2>' +
-				'    <button class="primary" disabled="disabled">' + t('spreed', 'Join') + '<span class="icon icon-loading-small hidden"/></button>' +
+				'    <h2>' + t('spreed', 'Discuss this file') + '</h2>' +
+				'    <button class="primary" disabled="disabled">' + t('spreed', 'Join conversation') + '<span class="icon icon-loading-small hidden"/></button>' +
 				'</div>');
 
 			this._$joinRoomButton = this._$roomNotJoinedMessage.find('button');
