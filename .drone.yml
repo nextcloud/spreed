@@ -3,17 +3,18 @@ name: check-builds
 
 steps:
   - name: check-simplewebrtc-bundle
-    image: node:lts
+    image: nextcloudci/node:node-7
     commands:
-      - make npm-init
+      - npm ci
       - ./check-simplewebrtc-bundle.sh
   - name: check-vuejs-builds
-    image: node:lts
+    image: nextcloudci/node:node-7
     commands:
-      - make npm-init
-      - ./check-vuejs-builds.sh
+      - npm ci
+      - cd vue/ && npm ci
+      - cd .. && ./check-vuejs-builds.sh
   - name: check-handlebars-templates
-    image: node:lts
+    image: nextcloudci/node:node-7
     commands:
       - npm install -g handlebars
       - ./check-handlebars-templates.sh
