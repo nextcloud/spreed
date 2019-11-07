@@ -114,7 +114,10 @@ export default {
 			return this.$route.params.token
 		},
 		currentParticipant() {
-			return this.$store.getters.conversations[this.token]
+			return this.$store.getters.conversations[this.token] || {
+				sessionId: '0',
+				participantType: getCurrentUser().uid ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+			}
 		},
 
 		isSelf() {
