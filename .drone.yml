@@ -3,12 +3,12 @@
 #
 #steps:
 #  - name: check-simplewebrtc-bundle
-#    image: node:lts
+#    image: nextcloudci/node:node-7
 #    commands:
 #      - make npm-init
 #      - ./check-simplewebrtc-bundle.sh
 #  - name: check-vuejs-builds
-#    image: node:lts
+#    image: nextcloudci/node:node-7
 #    commands:
 #      - make npm-init
 #      - ./check-vuejs-builds.sh
@@ -27,7 +27,7 @@ name: eslint
 
 steps:
   - name: eslint
-    image: node:lts
+    image: nextcloudci/node:node-7
     commands:
       - make dev-setup
       - make lint
