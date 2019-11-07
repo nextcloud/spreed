@@ -23,20 +23,19 @@
 	<AppContentListItem
 		:title="item.displayName"
 		:to="{ name: 'conversation', params: { token: item.token }}">
-		<ConversationIcon
-			slot="icon"
+		<ConversationIcon v-slot:icon
 			:item="item"
 			:hide-favorite="false" />
-		<template slot="subtitle">
+		<template v-slot:subtitle>
 			{{ simpleLastChatMessage }}
 		</template>
 		<AppNavigationCounter v-if="item.unreadMessages"
-			slot="counter"
+			v-slot:counter
 			class="counter"
 			:highlighted="true">
 			{{ item.unreadMessages }}
 		</AppNavigationCounter>
-		<template slot="actions">
+		<template v-slot:actions>
 			<ActionButton v-if="canFavorite"
 				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
