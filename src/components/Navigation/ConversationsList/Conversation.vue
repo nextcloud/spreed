@@ -32,12 +32,12 @@
 			{{ simpleLastChatMessage }}
 		</template>
 		<AppNavigationCounter v-if="item.unreadMessages"
-			v-slot:counter
+			slot="counter"
 			class="counter"
 			:highlighted="true">
 			{{ item.unreadMessages }}
 		</AppNavigationCounter>
-		<template v-slot:actions>
+		<template slot="actions">
 			<ActionButton v-if="canFavorite"
 				:icon="iconFavorite"
 				@click.prevent.exact="toggleFavoriteConversation">
