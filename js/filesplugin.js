@@ -326,8 +326,10 @@
 			this.$el.prepend('<div class="ui-not-ready-placeholder icon-loading"></div>');
 
 			OCA.Talk.FilesPlugin.isTalkSidebarSupportedForFile(fileInfo).then(function(supported) {
-				if (supported) {
-					this._setFileInfoWhenTalkSidebarIsSupportedForFile(fileInfo);
+				if (supported && this.model === fileInfo) {
+					this._setFileInfoWhenRoomIsJoinedInTalkSidebarForFile(fileInfo);
+				} else if (supported) {
+					this._setFileInfoWhenRoomIsNotJoinedInTalkSidebarForFile(fileInfo);
 				} else {
 					this._setFileInfoWhenTalkSidebarIsNotSupportedForFile();
 				}
@@ -342,7 +344,15 @@
 			this._renderFileNotSharedUi();
 		},
 
-		_setFileInfoWhenTalkSidebarIsSupportedForFile: function(fileInfo) {
+		_setFileInfoWhenRoomIsNotJoinedInTalkSidebarForFile: function(fileInfo) {
+			this.model = null;
+
+			this._roomForFileModel.leave();
+
+			this._renderRoomNotJoinedUi(fileInfo);
+		},
+
+		_setFileInfoWhenRoomIsJoinedInTalkSidebarForFile: function(fileInfo) {
 			if (this.model === fileInfo) {
 				this.$el.find('.ui-not-ready-placeholder').remove();
 
@@ -406,6 +416,7 @@
 			this._roomForFileModel.join(this.model.get('id'));
 
 			this.$el.find('.file-not-shared').remove();
+			this.$el.find('.room-not-joined').remove();
 
 			// If the details view is rendered again after the chat view has
 			// been appended to this tab the chat view would stop working due to
@@ -424,6 +435,23 @@
 			setTimeout(function() {
 				OCA.SpreedMe.app._chatView.reloadMessageList();
 			}, 0);
+		},
+
+		_renderRoomNotJoinedUi: function(fileInfo) {
+			this.$el.empty();
+
+			var $roomNotJoinedMessage = $(
+				'<div class="emptycontent room-not-joined">' +
+				'    <div class="icon icon-talk"></div>' +
+				'    <h2>' + t('spreed', 'Join the conversation') + '</h2>' +
+				'    <button class="primary">' + t('spreed', 'Join') + '</button>' +
+				'</div>');
+
+			$roomNotJoinedMessage.find('button').click(function() {
+				this._setFileInfoWhenRoomIsJoinedInTalkSidebarForFile(fileInfo);
+			}.bind(this));
+
+			this.$el.append($roomNotJoinedMessage);
 		},
 
 		_renderFileNotSharedUi: function() {
