@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<ParticipantsList :participantsList="participantsList" />
+	<ParticipantsList :participants-list="participantsList" />
 </template>
 
 <script>

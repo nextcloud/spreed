@@ -34,13 +34,13 @@
 			<template v-if="isSearching">
 				<Caption
 					:title="t('spreed', 'Add participants')" />
-				<ContactsList v-if="searchResultsUsers.length !== 0" :contacts="searchResultsUsers" />
+				<ParticipantsList v-if="searchResultsUsers.length !== 0" :participants-list="searchResultsUsers" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 
 				<Caption
 					:title="t('spreed', 'Add groups')" />
-				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
+				<ParticipantsList v-if="searchResultsGroups.length !== 0" :participants-list="searchResultsGroups" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
@@ -66,7 +66,7 @@ import Caption from '../Caption'
 import Hint from '../Hint'
 import { getCurrentUser } from '@nextcloud/auth'
 import { EventBus } from '../../services/EventBus'
-import { CONVERSATION } from '../../constants'
+import ParticipantsList from './ParticipantsList/ParticipantsList'
 
 export default {
 	name: 'Sidebar',
@@ -78,6 +78,7 @@ export default {
 		SearchBox,
 		Caption,
 		Hint,
+		ParticipantsList,
 	},
 
 	data() {
@@ -138,13 +139,9 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid && !this.hasOneToOneConversationWith(match.id))
+			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
-		},
-
-		hasOneToOneConversationWith(userId) {
-			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
 	},
 }

@@ -25,12 +25,7 @@
 			<Participant
 				v-for="participant in participantsList"
 				:key="participant.userId"
-				:user-id="participant.userId"
-				:display-name="participant.displayName"
-				:participant-type="participant.participantType"
-				:last-ping="participant.lastPing"
-				:session-id="participant.sessionId"
-				@click="handleClick" />
+				:participant="participant" />
 		</ul>
 	</div>
 </template>
