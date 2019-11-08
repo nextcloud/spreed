@@ -34,7 +34,7 @@
 		<AppNavigationCounter v-if="item.unreadMessages"
 			slot="counter"
 			class="counter"
-			:highlighted="true">
+			:highlighted="item.unreadMention">
 			{{ item.unreadMessages }}
 		</AppNavigationCounter>
 		<template slot="actions">
@@ -117,6 +117,7 @@ export default {
 					participants: [],
 					participantType: 0,
 					unreadMessages: 0,
+					unreadMention: false,
 					objectType: '',
 					type: 0,
 					displayName: '',
