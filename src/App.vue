@@ -47,8 +47,10 @@ export default {
 	},
 	data: function() {
 		return {
+			savedLastMessageMap: {},
 			defaultPageTitle: false,
 			loading: false,
+			windowIsVisible: true,
 		}
 	},
 
@@ -56,6 +58,41 @@ export default {
 		conversations() {
 			return this.$store.getters.conversations
 		},
+
+		/**
+		 * Keeps a list for all last message ids
+		 * @returns {object} Map with token => lastMessageId
+		 */
+		lastMessageMap() {
+			const conversationList = this.$store.getters.conversationsList
+			if (conversationList.length === 0) {
+				return {}
+			}
+
+			const lastMessage = {}
+			conversationList.forEach(conversation => {
+				lastMessage[conversation.token] = 0 + (conversation.lastMessage && conversation.lastMessage.id ? conversation.lastMessage.id : 0)
+			})
+			return lastMessage
+		},
+
+		/**
+		 * @returns {boolean} Returns true, if
+		 * - a conversation is newly added to lastMessageMap
+		 * - a conversation has a different last message id then previously
+		 */
+		atLeastOneLastMessageIdChanged() {
+			let modified = false
+			Object.keys(this.lastMessageMap).forEach(token => {
+				if (!this.savedLastMessageMap[token]
+					|| this.savedLastMessageMap[token] !== this.lastMessageMap[token]) {
+					modified = true
+				}
+			})
+
+			return modified
+		},
+
 		/**
 		 * The current conversation token
 		 * @returns {string} The token.
@@ -65,8 +102,24 @@ export default {
 		},
 	},
 
+	watch: {
+		atLeastOneLastMessageIdChanged() {
+			if (this.windowIsVisible) {
+				return
+			}
+
+			this.setPageTitle(this.getConversationName(this.token), this.atLeastOneLastMessageIdChanged)
+		},
+	},
+
+	beforeDestroy() {
+		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
+	},
+
 	beforeMount() {
 		window.addEventListener('resize', this.onResize)
+		document.addEventListener('visibilitychange', this.changeWindowVisibility)
+
 		this.onResize()
 		/**
 		 * Listens to the conversationsReceived globalevent, emitted by the conversationsList
@@ -102,11 +155,25 @@ export default {
 	},
 
 	methods: {
+		changeWindowVisibility() {
+			this.windowIsVisible = !document.hidden
+			if (this.windowIsVisible) {
+				// Remove the potential "*" marker for unread chat messages
+				this.setPageTitle(this.getConversationName(this.token), false)
+			} else {
+				// Copy the last message map to the saved version,
+				// this will be our reference to check if any chat got a new
+				// message since the last visit
+				this.savedLastMessageMap = this.lastMessageMap
+			}
+		},
+
 		/**
 		 * Set the page title to the conversation name
 		 * @param {string} title Prefix for the page title e.g. conversation name
+		 * @param {boolean} showAsterix Prefix for the page title e.g. conversation name
 		 */
-		setPageTitle(title) {
+		setPageTitle(title, showAsterix) {
 			if (this.defaultPageTitle === false) {
 				// On the first load we store the current page title "Talk - Nextcloud",
 				// so we can append it every time again
@@ -119,9 +186,9 @@ export default {
 			}
 
 			if (title !== '') {
-				window.document.title = `${title} - ${this.defaultPageTitle}`
+				window.document.title = (showAsterix ? '* ' : '') + `${title} - ${this.defaultPageTitle}`
 			} else {
-				window.document.title = this.defaultPageTitle
+				window.document.title = (showAsterix ? '* ' : '') + this.defaultPageTitle
 			}
 		},
 
