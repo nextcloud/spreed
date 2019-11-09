@@ -34,7 +34,12 @@ the main body of the message as well as a quote.
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<div class="message__main">
-			<div class="message__main__text">
+
+			<div v-if="isSingleEmoji"
+				class="message__main__text single-emoji">
+				{{ message }}
+			</div>
+			<div v-else class="message__main__text">
 				<component
 					:is="getComponentInstanceForMessagePart(block.type)"
 					v-for="(block, i) in parsedMessage"
@@ -73,6 +78,7 @@ import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
 import PlainText from './MessagePart/PlainText'
 import Quote from '../../../Quote'
+import emojiRegex from 'emoji-regex'
 
 export default {
 	name: 'Message',
@@ -169,6 +175,25 @@ export default {
 		},
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
+		},
+
+		isSingleEmoji() {
+			const regex = emojiRegex()
+			let match
+			let emojiStrings = ''
+			let emojiCount = 0
+
+			// eslint-disable-next-line no-cond-assign
+			while (match = regex.exec(this.message)) {
+				if (emojiCount > 2) {
+					return false
+				}
+
+				emojiStrings += match[0]
+				emojiCount++
+			}
+
+			return emojiStrings === this.message
 		},
 
 		/**
@@ -278,9 +303,15 @@ export default {
 		&__text {
 			flex: 1 1 400px;
 			color: var(--color-text-light);
+
+			&.single-emoji {
+				font-size: 250%;
+				line-height: 100%;
+			}
+
 			&--quote {
-			border-left: 4px solid var(--color-primary);
-			padding: 4px 0 0 8px;
+				border-left: 4px solid var(--color-primary);
+				padding: 4px 0 0 8px;
 			}
 		}
 		&__right {
