@@ -3,6 +3,6 @@ js/vendor/
 js/tests/
 js/collections.js
 js/collections.js.map
-js/collectionsintegration.js
-js/collectionsintegration.js.map
+js/main.js
+js/main.js.map
 build/
