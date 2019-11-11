@@ -14,6 +14,7 @@ Feature: app-files
     When I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     Then I see that the chat is shown in the Chat tab
 
   Scenario: open chat tab in a received shared file
@@ -29,6 +30,7 @@ Feature: app-files
     And I open the Files app
     And I open the details view for "welcome (2).txt"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     Then I see that the chat is shown in the Chat tab
 
   Scenario: open chat tab in a file shared by link
@@ -38,6 +40,7 @@ Feature: app-files
     # share is ready before continuing.
     And I write down the shared link
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     Then I see that the chat is shown in the Chat tab
 
   Scenario: chat tab header is not shown in a folder even if shared
@@ -64,6 +67,7 @@ Feature: app-files
     And I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I see that the chat is shown in the Chat tab
     When I have opened the Talk app
     Then I see that the "welcome.txt" conversation is shown in the list
@@ -73,6 +77,7 @@ Feature: app-files
     And I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I see that the chat is shown in the Chat tab
     And I have opened the Talk app
     And I leave the "welcome.txt" conversation
@@ -80,6 +85,7 @@ Feature: app-files
     When I open the Files app
     And I open the details view for "welcome.txt"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     Then I see that the chat is shown in the Chat tab
 
 
@@ -90,6 +96,7 @@ Feature: app-files
     And I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I see that the chat is shown in the Chat tab
     And I act as Jane
     And I am logged in
@@ -113,6 +120,7 @@ Feature: app-files
     And I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I see that the chat is shown in the Chat tab
     When I type a new chat message with the text "Hello @"
     And I choose the candidate mention for "welcome.txt"
@@ -138,11 +146,13 @@ Feature: app-files
     And I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I act as Jane
     # The Files app is open again to reload the file list
     And I open the Files app
     And I open the details view for "welcome (2).txt"
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     When I act as John
     And I send a new chat message with the text "Hello @user0"
     And I act as Jane
@@ -171,17 +181,20 @@ Feature: app-files
 #    And I share "welcome.txt" with "user0"
 #    And I see that the file is shared with "user0"
 #    And I open the Chat tab in the details view of the Files app
+#    And I join the conversation in the details view of the Files app
 #    And I act as Jane
 #    # The Files app is open again to reload the file list
 #    And I open the Files app
 #    And I share "welcome (2).txt" with "user1"
 #    And I see that the file is shared with "user1"
 #    And I open the Chat tab in the details view of the Files app
+#    And I join the conversation in the details view of the Files app
 #    And I act as Jim
 #    # The Files app is open again to reload the file list
 #    And I open the Files app
 #    And I open the details view for "welcome (2).txt"
 #    And I open the Chat tab in the details view of the Files app
+#    And I join the conversation in the details view of the Files app
 #    When I act as John
 #    And I send a new chat message with the text "Hello"
 #    And I act as Jane
@@ -208,9 +221,11 @@ Feature: app-files
     And I share the link for "welcome.txt"
     And I write down the shared link
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I act as Jane
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     When I act as John
     And I send a new chat message with the text "Hello"
     And I act as Jane
@@ -230,11 +245,13 @@ Feature: app-files
     And I share the link for "welcome.txt" protected by the password "abcdef"
     And I write down the shared link
     And I open the Chat tab in the details view of the Files app
+    And I join the conversation in the details view of the Files app
     And I act as Jane
     And I visit the shared link I wrote down
     And I see that the current page is the Authenticate page for the shared link I wrote down
     And I authenticate with password "abcdef"
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     When I act as John
     And I send a new chat message with the text "Hello"
     And I act as Jane

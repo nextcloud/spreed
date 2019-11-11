@@ -52,6 +52,15 @@ class FilesAppChatTabContext implements Context, ActorAwareInterface {
 		$this->filesAppContext = $environment->getContext("FilesAppContext");
 	}
 
+	/**
+	 * @return Locator
+	 */
+	public static function joinTheConversationButton() {
+		return Locator::forThe()->css(".room-not-joined button")->
+				descendantOf(FilesAppContext::tabInDetailsViewNamed("Chat"))->
+				describedAs("Join the conversation button in tab named Chat in details view in Files app");
+	}
+
 	// "of the Files app" is needed to resolve the ambiguity between this step
 	// and the one defined in FilesAppContext.
 	/**
@@ -61,6 +70,13 @@ class FilesAppChatTabContext implements Context, ActorAwareInterface {
 		$this->filesAppContext->iOpenTheTabInTheDetailsView("Chat");
 
 		$this->setChatAncestorForActor(FilesAppContext::tabInDetailsViewNamed("Chat"), $this->actor);
+	}
+
+	/**
+	 * @When I join the conversation in the details view of the Files app
+	 */
+	public function iJoinTheConversationInTheDetailsViewOfTheFilesApp() {
+		$this->actor->find(self::joinTheConversationButton(), 10)->click();
 	}
 
 	/**
