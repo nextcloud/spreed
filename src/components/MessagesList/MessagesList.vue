@@ -45,6 +45,7 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 </template>
 
 <script>
+import moment from '@nextcloud/moment'
 import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
@@ -120,6 +121,11 @@ export default {
 			let lastMessage = null
 			for (const message of this.messagesList) {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
+					// Add the date separator for different days
+					if (this.messagesHaveDifferentDate(message, lastMessage)) {
+						message.dateSeparator = this.generateDateSeparator(message.timestamp)
+					}
+
 					groups.push([message])
 					lastMessage = message
 				} else {
@@ -164,11 +170,13 @@ export default {
 		 * @param {string} message1.actorType Actor type of the new message
 		 * @param {string} message1.actorId Actor id of the new message
 		 * @param {string} message1.systemMessage System message content of the new message
+		 * @param {int} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
 		 * @param {string} message2.actorType Actor type of the previous message
 		 * @param {string} message2.actorId Actor id of the previous message
 		 * @param {string} message2.systemMessage System message content of the previous message
-		 * @returns {bool} Boolean if the messages should be grouped or not
+		 * @param {int} message2.timestamp Timestamp of the second message
+		 * @returns {boolean} Boolean if the messages should be grouped or not
 		 */
 		messagesShouldBeGrouped(message1, message2) {
 			return message2 // Is there a previous message
@@ -178,6 +186,54 @@ export default {
 				&& (message1.systemMessage.length === 0) === (message2.systemMessage.length === 0) // Only group system messages with each others
 				&& message1.actorType === message2.actorType // To have the same author, the type
 				&& message1.actorId === message2.actorId //     and the id of the author must be the same
+				&& !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
+		},
+
+		/**
+		 * Check if 2 messages are from the same date
+		 *
+		 * @param {object} message1 The new message
+		 * @param {int} message1.timestamp Timestamp of the new message
+		 * @param {null|object} message2 The previous message
+		 * @param {int} message2.timestamp Timestamp of the second message
+		 * @returns {boolean} Boolean if the messages have the same date
+		 */
+		messagesHaveDifferentDate(message1, message2) {
+			return !message2 // There is no previous message
+				|| moment.unix(message1.timestamp).format('YYYY-MM-DD') !== moment.unix(message2.timestamp).format('YYYY-MM-DD')
+		},
+
+		/**
+		 * Generate the date header between the messages
+		 *
+		 * @param {int} timestamp The timestamp of the message
+		 * @returns {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
+		 */
+		generateDateSeparator(timestamp) {
+			const date = moment.unix(timestamp)
+			const dayOfYear = date.format('YYYY-DDD')
+			let relativePrefix = date.fromNow()
+
+			// Use the relative day for today and yesterday
+			const dayOfYearToday = moment().format('YYYY-DDD')
+			if (dayOfYear === dayOfYearToday) {
+				relativePrefix = t('spreed', 'Today')
+			} else {
+				const dayOfYearYesterday = moment().subtract(1, 'days').format('YYYY-DDD')
+				if (dayOfYear === dayOfYearYesterday) {
+					relativePrefix = t('spreed', 'Yesterday')
+				}
+			}
+
+			// <Today>, <November 11th, 2019>
+			return t('spreed', '{relativeDate}, {absoluteDate}', {
+				relativeDate: relativePrefix,
+				// 'LL' formats a localized date including day of month, month
+				// name and year
+				absoluteDate: date.format('LL'),
+			}, undefined, {
+				escape: false, // French "Today" has a ' in it
+			})
 		},
 
 		/**
