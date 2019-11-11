@@ -202,4 +202,16 @@ export default {
 
 <style scoped>
 
+/** TODO: fix these in the nextcloud-vue library **/
+
+::v-deep .app-sidebar-header__menu {
+	top: 6px !important;
+	margin-top: 0 !important;
+	right: 54px !important;
+}
+::v-deep .app-sidebar__close {
+	top: 6px !important;
+	right: 6px !important;
+}
+
 </style>
