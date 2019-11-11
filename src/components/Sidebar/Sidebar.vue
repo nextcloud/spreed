@@ -26,6 +26,25 @@
 		:title="conversation.displayName"
 		:starred.sync="conversation.isFavorite"
 		@close="handleClose">
+		<template v-if="conversationHasSettings"
+			v-slot:secondary-actions>
+			<ActionText
+				icon="icon-shared"
+				:title="t('spreed', 'Guests')" />
+			<ActionCheckbox
+				:checked="isSharedPublicly"
+				@change="toggleGuests">
+				{{ t('spreed', 'Share link') }}
+			</ActionCheckbox>
+			<ActionText
+				icon="icon-lobby"
+				:title="t('spreed', 'Webinar')" />
+			<ActionCheckbox
+				:checked="hasLobbyEnabled"
+				@change="toggleLobby">
+				{{ t('spreed', 'Enable lobby') }}
+			</ActionCheckbox>
+		</template>
 		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
 			<SearchBox
 				v-model="searchText"
@@ -55,22 +74,27 @@
 </template>
 
 <script>
+import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
+import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
-import { CollectionList } from 'nextcloud-vue-collections'
-import SearchBox from '../SearchBox'
-import { searchPossibleConversations } from '../../services/conversationsService'
-import debounce from 'debounce'
 import Caption from '../Caption'
+import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../Hint'
-import { getCurrentUser } from '@nextcloud/auth'
-import { EventBus } from '../../services/EventBus'
 import ParticipantsList from './ParticipantsList/ParticipantsList'
+import SearchBox from '../SearchBox'
+import debounce from 'debounce'
+import { CollectionList } from 'nextcloud-vue-collections'
+import { EventBus } from '../../services/EventBus'
+import { CONVERSATION, WEBINAR } from '../../constants'
+import { getCurrentUser } from '@nextcloud/auth'
+import { searchPossibleConversations } from '../../services/conversationsService'
 
 export default {
 	name: 'Sidebar',
 	components: {
+		ActionCheckbox,
+		ActionText,
 		AppSidebar,
 		AppSidebarTab,
 		CollectionList,
@@ -109,8 +133,22 @@ export default {
 				token: '',
 				displayName: '',
 				isFavorite: false,
+				type: CONVERSATION.TYPE.PUBLIC,
+				lobbyState: WEBINAR.LOBBY.NONE,
 			}
 		},
+
+		conversationHasSettings() {
+			return this.conversation.type === CONVERSATION.TYPE.GROUP
+				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
+		},
+		isSharedPublicly() {
+			return this.conversation.type === CONVERSATION.TYPE.PUBLIC
+		},
+		hasLobbyEnabled() {
+			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
@@ -129,6 +167,7 @@ export default {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 		},
+
 		debounceFetchSearchResults: debounce(function() {
 			if (this.isSearching) {
 				this.fetchSearchResults()
@@ -143,10 +182,36 @@ export default {
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
 		},
+
+		async toggleGuests() {
+			await this.$store.dispatch('toggleGuests', {
+				token: this.token,
+				allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
+			})
+		},
+
+		async toggleLobby() {
+			await this.$store.dispatch('toggleLobby', {
+				token: this.token,
+				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
+			})
+		},
 	},
 }
 </script>
 
 <style scoped>
+
+/** TODO: fix these in the nextcloud-vue library **/
+
+::v-deep .app-sidebar-header__menu {
+	top: 6px !important;
+	margin-top: 0 !important;
+	right: 54px !important;
+}
+::v-deep .app-sidebar__close {
+	top: 6px !important;
+	right: 6px !important;
+}
 
 </style>

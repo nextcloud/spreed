@@ -20,6 +20,8 @@
  *
  */
 import Vue from 'vue'
+import { makePublic, makePrivate, changeLobbyState } from '../services/conversationsService'
+import { CONVERSATION, WEBINAR } from '../constants'
 
 const getDefaultState = () => {
 	return {
@@ -91,6 +93,40 @@ const actions = {
 	 */
 	purgeConversationsStore(context) {
 		context.commit('purgeConversationsStore')
+	},
+
+	async toggleGuests({ commit, getters }, { token, allowGuests }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		if (allowGuests) {
+			await makePublic(token)
+			conversation.type = CONVERSATION.TYPE.PUBLIC
+		} else {
+			await makePrivate(token)
+			conversation.type = CONVERSATION.TYPE.GROUP
+		}
+
+		commit('addConversation', conversation)
+	},
+
+	async toggleLobby({ commit, getters }, { token, enableLobby }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		if (enableLobby) {
+			await changeLobbyState(token, WEBINAR.LOBBY.NON_MODERATORS)
+			conversation.lobbyState = WEBINAR.LOBBY.NON_MODERATORS
+		} else {
+			await changeLobbyState(token, WEBINAR.LOBBY.NONE)
+			conversation.lobbyState = WEBINAR.LOBBY.NONE
+		}
+
+		commit('addConversation', conversation)
 	},
 }
 
