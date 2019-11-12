@@ -34,6 +34,7 @@
 <script>
 
 import Participant from './Participant/Participant'
+import { addParticipant } from '../../../../services/participantsService'
 
 export default {
 	name: 'ParticipantsList',
@@ -54,12 +55,20 @@ export default {
 	computed: {
 		CurrentConversationParticipants() {
 			return this.$store.getters.participantsList
+		},
+		token() {
+			return this.$route.params.token
 		}
 	},
 
 	methods: {
-		handleClickParticipant(event) {
-			console.debug(event)
+		handleClickParticipant(participant) {
+			try {
+				const response = addParticipant(this.token, participant.id, participant.source)
+				console.debug(response)
+			} catch (exeption) {
+				console.debug(exeption)
+			}
 		},
 	},
 }

@@ -53,6 +53,23 @@ const leaveConversation = async function(token) {
 }
 
 /**
+ * Add a participant to a conversation.
+ * @param {token} token the conversation token.
+ * @param {string} newParticipant the id of the new participant
+ * @param {string} source the source Source of the participant as returned by the autocomplete suggestion endpoint (default is users)
+ */
+const addParticipant = async function(token, newParticipant, source) {
+	debugger
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants`, {
+		params: {
+			newParticipant,
+			source,
+		}
+	})
+	return response
+}
+
+/**
  * Removes the the current user from the conversation specified with the token.
  *
  * @param {string} token The conversation token;
@@ -112,6 +129,7 @@ const fetchParticipants = async(token) => {
 export {
 	joinConversation,
 	leaveConversation,
+	addParticipant,
 	removeCurrentUserFromConversation,
 	removeUserFromConversation,
 	removeGuestFromConversation,

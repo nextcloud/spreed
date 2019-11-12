@@ -171,8 +171,10 @@ export default {
 	},
 
 	methods: {
-		handleClick(event) {
-			this.$emit('clickParticipant', event)
+		handleClick() {
+			if (this.isSearched) {
+				this.$emit('clickParticipant', this.participant)
+			}
 		},
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
