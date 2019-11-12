@@ -62,10 +62,10 @@ export default {
 	},
 
 	methods: {
-		handleClickParticipant(participant) {
+		async handleClickParticipant(participant) {
 			try {
-				const response = addParticipant(this.token, participant.id, participant.source)
-				console.debug(response)
+				await addParticipant(this.token, participant.id, participant.source)
+				this.$emit('refreshCurrentParticipants')
 			} catch (exeption) {
 				console.debug(exeption)
 			}

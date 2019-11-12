@@ -26,8 +26,6 @@
 <script>
 
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
-import { fetchParticipants } from '../../../../services/participantsService'
-import { EventBus } from '../../../../services/EventBus'
 import { PARTICIPANT } from '../../../../constants'
 
 export default {
@@ -49,34 +47,11 @@ export default {
 		 */
 		participantsList() {
 			const participants = this.$store.getters.participantsList(this.token)
-
 			return participants.slice().sort(this.sortParticipants)
 		},
 	},
 
-	/**
-	 * Fetches the messages when the MessageList created. The router mounts this
-	 * component only if the token is passed in so there's no need to check the
-	 * token prop.
-	 */
-	created() {
-		this.onRouteChange()
-
-		/**
-		 * Add a listener for routeChange event emitted by the App.vue component.
-		 * Call the onRouteChange method function whenever the route changes.
-		 */
-		EventBus.$on('routeChange', () => {
-			this.$nextTick(() => {
-				this.onRouteChange()
-			})
-		})
-	},
-
 	methods: {
-		onRouteChange() {
-			this.getParticipants()
-		},
 
 		/**
 		 * Sort two participants by:
@@ -112,17 +87,6 @@ export default {
 			}
 
 			return participant2.displayName - participant1.displayName
-		},
-
-		async getParticipants() {
-			const participants = await fetchParticipants(this.token)
-			this.$store.dispatch('purgeParticipantsStore', this.token)
-			participants.data.ocs.data.forEach(participant => {
-				this.$store.dispatch('addParticipant', {
-					token: this.token,
-					participant: participant,
-				})
-			})
 		},
 	},
 }

@@ -32,7 +32,8 @@
 				:title="t('spreed', 'Add participants')" />
 			<ParticipantsList
 				v-if="searchResultsUsers.length !== 0"
-				:items="searchResultsUsers" />
+				:items="searchResultsUsers"
+				@refreshCurrentParticipants="this.getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 
@@ -40,7 +41,8 @@
 				:title="t('spreed', 'Add groups')" />
 			<ParticipantsList
 				v-if="searchResultsGroups.length !== 0"
-				:items="searchResultsGroups" />
+				:items="searchResultsGroups"
+				@refreshCurrentParticipants="this.getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
@@ -58,6 +60,7 @@ import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
 import { getCurrentUser } from '@nextcloud/auth'
 import { searchPossibleConversations } from '../../../services/conversationsService'
+import { fetchParticipants } from '../../../services/participantsService'
 
 export default {
 	name: 'ParticipantsTab',
@@ -114,11 +117,15 @@ export default {
 	},
 
 	beforeMount() {
+		this.getParticipants()
 		/**
-		 * If the route changes, the search filter is reset
+		 * If the route changes, the search filter is reset and we get participants again
 		 */
 		EventBus.$on('routeChange', () => {
 			this.searchText = ''
+			this.$nextTick(() => {
+				this.getParticipants()
+			})
 		})
 	},
 
@@ -153,6 +160,16 @@ export default {
 			await this.$store.dispatch('toggleLobby', {
 				token: this.token,
 				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
+			})
+		},
+		async getParticipants() {
+			const participants = await fetchParticipants(this.token)
+			this.$store.dispatch('purgeParticipantsStore', this.token)
+			participants.data.ocs.data.forEach(participant => {
+				this.$store.dispatch('addParticipant', {
+					token: this.token,
+					participant: participant,
+				})
 			})
 		},
 	},
