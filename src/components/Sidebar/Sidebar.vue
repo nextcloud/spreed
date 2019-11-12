@@ -94,8 +94,6 @@ import { CollectionList } from 'nextcloud-vue-collections'
 import { EventBus } from '../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../constants'
 import { searchPossibleConversations } from '../../services/conversationsService'
-import ParticipantsList from './ParticipantsList/ParticipantsList'
-import { CONVERSATION } from '../../constants'
 
 export default {
 	name: 'Sidebar',
@@ -170,9 +168,9 @@ export default {
 
 	beforeMount() {
 		/**
-		 * After a conversation was created, the search filter is reset
+		 * If the route changes, the search filter is reset
 		 */
-		EventBus.$once('resetSearchFilter', () => {
+		EventBus.$on('routeChange', () => {
 			this.searchText = ''
 		})
 	},
