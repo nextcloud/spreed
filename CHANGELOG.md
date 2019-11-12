@@ -1,6 +1,18 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 7.0.2 – 2019-11-12
+### Changed
+- Improve the settings for Talk and extend the explanations
+  [#2342](https://github.com/nextcloud/spreed/pull/2342)
+
+### Fixed
+- Do not join file conversations automatically to avoid empty conversations
+  [#2423](https://github.com/nextcloud/spreed/pull/2423)
+  [#2347](https://github.com/nextcloud/spreed/pull/2347)
+- Do not load the Talk sidebar on public share page for folders
+  [#2340](https://github.com/nextcloud/spreed/pull/2340)
+
 ## 7.0.1 – 2019-10-17
 ### Fixed
 - Fix position of the promoted and the current participant in calls
