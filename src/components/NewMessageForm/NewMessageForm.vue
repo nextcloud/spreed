@@ -28,8 +28,6 @@
 				class="new-message-form">
 				<button
 					class="new-message-form__button icon-clip-add-file" />
-				<button
-					class="new-message-form__button icon-emoji-smile" />
 				<div class="new-message-form__input">
 					<Quote
 						v-if="messageToBeReplied"
@@ -39,8 +37,6 @@
 						v-model="text"
 						@submit="handleSubmit" />
 				</div>
-				<button
-					class="new-message-form__button icon-sound-off" />
 				<button
 					type="submit"
 					class="new-message-form__button icon-confirm-fade"
