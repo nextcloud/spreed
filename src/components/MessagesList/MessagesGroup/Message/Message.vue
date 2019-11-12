@@ -124,7 +124,7 @@ export default {
 		 * The message id.
 		 */
 		id: {
-			type: Number,
+			type: [String, Number],
 			required: true,
 		},
 		/**

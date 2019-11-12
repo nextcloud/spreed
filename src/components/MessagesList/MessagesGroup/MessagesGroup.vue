@@ -20,22 +20,27 @@
 -->
 
 <template>
-	<div class="wrapper">
-		<div class="messages__avatar">
-			<AuthorAvatar v-if="!isSystemMessage"
-				:author-type="actorType"
-				:author-id="actorId"
-				:display-name="actorDisplayName" />
+	<div class="message-group">
+		<div v-if="dateSeparator" class="message-group__date-header">
+			<span class="date">{{ dateSeparator }}</span>
 		</div>
-		<div class="messages">
-			<Message
-				v-for="(message, index) of messages"
-				:key="message.id"
-				v-bind="message"
-				:is-first-message="index === 0"
-				:actor-display-name="actorDisplayName"
-				:show-author="!isSystemMessage"
-				:is-temporary="message.timestamp === 0" />
+		<div class="wrapper">
+			<div class="messages__avatar">
+				<AuthorAvatar v-if="!isSystemMessage"
+					:author-type="actorType"
+					:author-id="actorId"
+					:display-name="actorDisplayName" />
+			</div>
+			<div class="messages">
+				<Message
+					v-for="(message, index) of messages"
+					:key="message.id"
+					v-bind="message"
+					:is-first-message="index === 0"
+					:actor-display-name="actorDisplayName"
+					:show-author="!isSystemMessage"
+					:is-temporary="message.timestamp === 0" />
+			</div>
 		</div>
 	</div>
 </template>
@@ -55,7 +60,7 @@ export default {
 		 * The message id.
 		 */
 		id: {
-			type: Number,
+			type: [String, Number],
 			required: true,
 		},
 		/**
@@ -90,6 +95,13 @@ export default {
 			return this.messages[0].actorId
 		},
 		/**
+		 * The message date.
+		 * @returns {string}
+		 */
+		dateSeparator() {
+			return this.messages[0].dateSeparator || ''
+		},
+		/**
 		 * The message actor display name.
 		 * @returns {string}
 		 */
@@ -119,6 +131,33 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../../assets/variables';
+
+.message-group {
+	&__date-header {
+		display: block;
+		text-align: center;
+
+		margin: 40px 15px 0;
+		border-top: 1px solid var(--color-border);
+		padding-top: 20px;
+		position: relative;
+
+		.date {
+			content: attr(data-date);
+			position: absolute;
+			top: 0;
+			left: 50%;
+			transform: translateX(-50%) translateY(-50%);
+			padding: 0 7px 0 7px;
+
+			text-align: center;
+			white-space: nowrap;
+
+			color: var(--color-text-maxcontrast);
+			background-color: var(--color-main-background);
+		}
+	}
+}
 
 .wrapper {
 	max-width: $message-max-width;
