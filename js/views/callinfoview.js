@@ -118,7 +118,9 @@
 				this.render();
 			},
 			'change:lobbyTimer': function() {
-				this._updateLobbyTimerPickerValue();
+				if (this._updateLobbyTimerPickerValue) {
+					this._updateLobbyTimerPickerValue();
+				}
 				this.render();
 			},
 			'change:participantType': function() {
@@ -165,26 +167,30 @@
 				connection: OCA.SpreedMe.app.connection,
 			});
 
-			this._lobbyTimerPicker = new OCA.Talk.Views.VueWrapper({
-				vm: new OCA.Talk.Views.LobbyTimerPicker()
-			});
+			// The DatetimePicker is shown only in the UI for logged in users,
+			// but not in the UI for guests (even if it is a guest moderator).
+			if (OCA.Talk.getCurrentUser().uid) {
+				this._lobbyTimerPicker = new OCA.Talk.Views.VueWrapper({
+					vm: new OCA.Talk.Views.LobbyTimerPicker()
+				});
 
-			// The DatetimePicker component does not seem to provide any event
-			// to know when the popup is shown or hidden, although in most cases
-			// it corresponds with the input being focused or not.
-			this._lobbyTimerPicker._vm.$on('focus', function() {
-				this.ui.lobbyTimerOption.addClass('with-datepicker-popup');
-			}.bind(this));
-			this._lobbyTimerPicker._vm.$on('blur', function() {
-				this.ui.lobbyTimerOption.removeClass('with-datepicker-popup');
-			}.bind(this));
+				// The DatetimePicker component does not seem to provide any event
+				// to know when the popup is shown or hidden, although in most cases
+				// it corresponds with the input being focused or not.
+				this._lobbyTimerPicker._vm.$on('focus', function() {
+					this.ui.lobbyTimerOption.addClass('with-datepicker-popup');
+				}.bind(this));
+				this._lobbyTimerPicker._vm.$on('blur', function() {
+					this.ui.lobbyTimerOption.removeClass('with-datepicker-popup');
+				}.bind(this));
 
-			this._updateLobbyTimerPickerValue = function() {
-				// PHP timestamp is second-based; JavaScript timestamp is
-				// millisecond based.
-				this._lobbyTimerPicker._vm.value = this.model.get('lobbyTimer')? new Date(this.model.get('lobbyTimer') * 1000): null;
-			};
-			this._updateLobbyTimerPickerValue();
+				this._updateLobbyTimerPickerValue = function() {
+					// PHP timestamp is second-based; JavaScript timestamp is
+					// millisecond based.
+					this._lobbyTimerPicker._vm.value = this.model.get('lobbyTimer')? new Date(this.model.get('lobbyTimer') * 1000): null;
+				};
+				this._updateLobbyTimerPickerValue();
+			}
 
 			this._updateNameEditability();
 		},
@@ -225,7 +231,7 @@
 			// template has been rendered.
 			this.showChildView('roomName', this._nameEditableTextLabel, { replaceElement: true } );
 			this.showChildView('callButton', this._callButton, { replaceElement: true } );
-			if (this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
+			if (this._canFullModerate() && this.model.get('lobbyState') === OCA.SpreedMe.app.LOBBY_NON_MODERATORS) {
 				this.showChildView('lobbyTimerPicker', this._lobbyTimerPicker, { replaceElement: true } );
 			}
 
