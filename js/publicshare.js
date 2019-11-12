@@ -37,11 +37,9 @@
 			if ($(window).width() > 1111) {
 				// Delay showing the Talk sidebar, as if it is shown too soon
 				// after the page loads (even if it has loaded) there will be no
-				// transition and the join button will not be enabled.
+				// transition.
 				setTimeout(function() {
-					this.showTalkSidebar().then(function() {
-						this._$joinRoomButton.prop('disabled', false);
-					}.bind(this));
+					this.showTalkSidebar();
 				}.bind(this), 1000);
 			}
 		},
@@ -81,7 +79,7 @@
 				'<div class="emptycontent room-not-joined">' +
 				'    <div class="icon icon-talk"></div>' +
 				'    <h2>' + t('spreed', 'Discuss this file') + '</h2>' +
-				'    <button class="primary" disabled="disabled">' + t('spreed', 'Join conversation') + '<span class="icon icon-loading-small hidden"/></button>' +
+				'    <button class="primary">' + t('spreed', 'Join conversation') + '<span class="icon icon-loading-small hidden"/></button>' +
 				'</div>');
 
 			this._$joinRoomButton = this._$roomNotJoinedMessage.find('button');
