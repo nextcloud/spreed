@@ -4,13 +4,13 @@ Feature: app-files
     Given I am logged in as the admin
     When I open the details view for "welcome.txt"
     And I open the Chat tab in the details view of the Files app
-    Then I see that the "Start a conversation Share this file with others to discuss Share" empty content message is shown in the chat tab
+    Then I see that the "Discuss this file Share this file with others to discuss it Share this file" empty content message is shown in the chat tab
 
   Scenario: open chat tab in a file again after sharing it with a user
     Given I am logged in as the admin
     And I open the details view for "welcome.txt"
     And I open the Chat tab in the details view of the Files app
-    And I see that the "Start a conversation Share this file with others to discuss Share" empty content message is shown in the chat tab
+    And I see that the "Discuss this file Share this file with others to discuss it Share this file" empty content message is shown in the chat tab
     When I share "welcome.txt" with "user0"
     And I see that the file is shared with "user0"
     And I open the Chat tab in the details view of the Files app
