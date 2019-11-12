@@ -23,9 +23,10 @@
 	<div>
 		<ul>
 			<Participant
-				v-for="participant in participantsList"
+				v-for="participant in items"
 				:key="participant.userId"
-				:participant="participant" />
+				:participant="participant"
+				@clickParticipant="handleClickParticipant" />
 		</ul>
 	</div>
 </template>
@@ -40,17 +41,25 @@ export default {
 	components: {
 		Participant,
 	},
-
+	/**
+	 * List of searched users or groups
+	 */
 	props: {
-		participantsList: {
+		items: {
 			type: Array,
 			required: true,
 		},
 	},
 
+	computed: {
+		CurrentConversationParticipants() {
+			return this.$store.getters.participantsList
+		}
+	},
+
 	methods: {
-		handleClick(event) {
-			this.$emit('click', event)
+		handleClickParticipant(event) {
+			console.debug(event)
 		},
 	},
 }

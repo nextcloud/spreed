@@ -56,7 +56,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { PARTICIPANT } from '../../../../constants'
+import { PARTICIPANT } from '../../../../../constants'
 
 export default {
 	name: 'Participant',
@@ -172,7 +172,7 @@ export default {
 
 	methods: {
 		handleClick(event) {
-			this.$emit('click', event)
+			this.$emit('clickParticipant', event)
 		},
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1

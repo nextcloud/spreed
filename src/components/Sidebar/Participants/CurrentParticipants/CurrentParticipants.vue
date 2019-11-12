@@ -20,15 +20,15 @@
 -->
 
 <template>
-	<ParticipantsList :participants-list="participantsList" />
+	<ParticipantsList :items="participantsList" />
 </template>
 
 <script>
 
 import ParticipantsList from '../ParticipantsList/ParticipantsList'
-import { fetchParticipants } from '../../../services/participantsService'
-import { EventBus } from '../../../services/EventBus'
-import { PARTICIPANT } from '../../../constants'
+import { fetchParticipants } from '../../../../services/participantsService'
+import { EventBus } from '../../../../services/EventBus'
+import { PARTICIPANT } from '../../../../constants'
 
 export default {
 	name: 'CurrentParticipants',
