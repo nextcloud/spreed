@@ -137,6 +137,11 @@
     "Delete conversation" : "会話を削除",
     "Remove from favorites" : "お気に入りから削除",
     "Add to favorites" : "お気に入りに追加",
+    "moderator" : "モデレータ",
+    "Demote from moderator" : "モデレータから降格",
+    "Promote to moderator" : "モデレータに昇格",
+    "Remove participant" : "参加者を削除",
+    "Share link" : "リンクの共有",
     "Participants" : "参加者",
     "Projects" : "プロジェクト",
     "Limit to groups" : "グループに制限する",
@@ -214,7 +219,6 @@
     "Submit" : "了解",
     "Leave call" : "通話終了",
     "Start call" : "通話を開始",
-    "Share link" : "リンクの共有",
     "Change password" : "パスワード変更",
     "Set password" : "パスワード設定",
     "Go to file" : "ファイルへ移動",
@@ -267,10 +271,6 @@
     "Please use a different browser like Firefox or Chrome to share your screen." : "画面共有を利用する場合は、別のブラウザー（Firefox または Chrome 等）を使用してください。",
     "An error occurred while starting screensharing." : "画面共有の開始中にエラーが発生しました。",
     "Enable screensharing" : "画面共有を有効にする",
-    "moderator" : "モデレータ",
-    "Demote from moderator" : "モデレータから降格",
-    "Promote to moderator" : "モデレータに昇格",
-    "Remove participant" : "参加者を削除",
     "Error while promoting user to moderator" : "ユーザーをモデレータに昇格中にエラーが発生しました",
     "Error while demoting moderator" : "モデレータの降格中にエラーが発生しました",
     "Error while removing user from room" : "ルームからユーザを削除中にエラーが発生しました",
@@ -326,7 +326,7 @@
     "* With the \"arrow-up\" key you can repost your last message" : "* ↑キーを押して、最後のメッセージを再投稿できます",
     "* Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "* Talkでコマンドを使用したり、「/help」をチャットメッセージとして送信したりできるようになりました。",
     "* With projects you can create quick links between conversations, files and other items" : "* プロジェクトを使用すると、会話、ファイル、およびその他のアイテム間のクイックリンクを作成できます",
-    "Start time (optional)" : "開始時間（オプション）",
-    "Invalid start time format" : "開始時間がフォーマットに沿っていません"
+    "Invalid start time format" : "開始時間がフォーマットに沿っていません",
+    "Start time (optional)" : "開始時間（オプション）"
 },"pluralForm" :"nplurals=1; plural=0;"
 }
