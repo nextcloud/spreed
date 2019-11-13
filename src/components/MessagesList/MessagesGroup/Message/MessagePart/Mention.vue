@@ -29,7 +29,6 @@
 <script>
 
 import UserBubble from '@nextcloud/vue/dist/Components/UserBubble'
-import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'Mention',
@@ -52,7 +51,8 @@ export default {
 
 	computed: {
 		isCurrentUser() {
-			return this.data.id === getCurrentUser().uid
+			return this.$store.getters.getActorType() === 'users'
+				&& this.data.id === this.$store.getters.getUserId()
 		},
 	},
 }

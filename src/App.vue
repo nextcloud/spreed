@@ -21,7 +21,7 @@
 
 <template>
 	<Content :class="{'icon-loading': loading}" app-name="Talk">
-		<Navigation />
+		<Navigation v-if="getUserId" />
 		<AppContent>
 			<router-view />
 		</AppContent>
@@ -36,6 +36,7 @@ import Navigation from './components/Navigation/Navigation'
 import Router from './router/router'
 import Sidebar from './components/Sidebar/Sidebar'
 import { EventBus } from './services/EventBus'
+import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'App',
@@ -57,6 +58,10 @@ export default {
 	computed: {
 		conversations() {
 			return this.$store.getters.conversations
+		},
+
+		getUserId() {
+			return this.$store.getters.getUserId()
 		},
 
 		/**
@@ -130,6 +135,10 @@ export default {
 			if (this.$route.name === 'conversation') {
 				const CURRENT_CONVERSATION_NAME = this.getConversationName(this.token)
 				this.setPageTitle(CURRENT_CONVERSATION_NAME)
+			}
+
+			if (getCurrentUser()) {
+				this.$store.dispatch('setCurrentUser', getCurrentUser())
 			}
 		})
 		/**

@@ -45,7 +45,9 @@
 				{{ t('spreed', 'Enable lobby') }}
 			</ActionCheckbox>
 		</template>
-		<AppSidebarTab :name="t('spreed', 'Participants')" icon="icon-contacts-dark">
+		<AppSidebarTab v-if="getUserId"
+			:name="t('spreed', 'Participants')"
+			icon="icon-contacts-dark">
 			<SearchBox
 				v-model="searchText"
 				@input="debounceFetchSearchResults" />
@@ -64,7 +66,9 @@
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 		</AppSidebarTab>
-		<AppSidebarTab :name="t('spreed', 'Projects')" icon="icon-projects">
+		<AppSidebarTab v-if="getUserId"
+			:name="t('spreed', 'Projects')"
+			icon="icon-projects">
 			<CollectionList v-if="conversation.token"
 				:id="conversation.token"
 				type="room"
@@ -87,7 +91,6 @@ import debounce from 'debounce'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { EventBus } from '../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../constants'
-import { getCurrentUser } from '@nextcloud/auth'
 import { searchPossibleConversations } from '../../services/conversationsService'
 
 export default {
@@ -138,6 +141,10 @@ export default {
 			}
 		},
 
+		getUserId() {
+			return this.$store.getters.getUserId()
+		},
+
 		conversationHasSettings() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
@@ -178,7 +185,11 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
+			this.searchResultsUsers = this.searchResults.filter((match) => {
+				return match.source === 'users'
+					&& match.id !== this.$store.getters.getUserId()
+					&& !this.hasOneToOneConversationWith(match.id)
+			})
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
 		},
