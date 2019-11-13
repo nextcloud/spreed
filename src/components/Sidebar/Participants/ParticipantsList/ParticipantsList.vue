@@ -53,12 +53,9 @@ export default {
 	},
 
 	computed: {
-		CurrentConversationParticipants() {
-			return this.$store.getters.participantsList
-		},
 		token() {
 			return this.$route.params.token
-		}
+		},
 	},
 
 	methods: {

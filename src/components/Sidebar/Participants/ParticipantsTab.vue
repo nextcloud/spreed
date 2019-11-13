@@ -23,16 +23,16 @@
 	<div>
 		<SearchBox
 			v-if="displaySearchBox"
-			:placeholderText="t('spreed', 'Add participants to the conversation')"
 			v-model="searchText"
+			:placeholder-text="t('spreed', 'Add participants to the conversation')"
 			@input="debounceFetchSearchResults" />
 		<CurrentParticipants />
 		<template v-if="isSearching">
 			<Caption
 				:title="t('spreed', 'Add participants')" />
 			<ParticipantsList
-				v-if="searchResultsUsers.length !== 0"
-				:items="searchResultsUsers"
+				v-if="addableUsers.length !== 0"
+				:items="addableUsers"
 				@refreshCurrentParticipants="this.getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
@@ -40,8 +40,8 @@
 			<Caption
 				:title="t('spreed', 'Add groups')" />
 			<ParticipantsList
-				v-if="searchResultsGroups.length !== 0"
-				:items="searchResultsGroups"
+				v-if="addableGroups.length !== 0"
+				:items="addableGroups"
 				@refreshCurrentParticipants="this.getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
@@ -72,20 +72,19 @@ export default {
 		ParticipantsList,
 	},
 
-	data() {
-		return {
-			searchText: '',
-			searchResults: {},
-			searchResultsUsers: [],
-			searchResultsGroups: [],
-			contactsLoading: false,
-		}
-	},
-
 	props: {
 		displaySearchBox: {
 			type: Boolean,
-			required: true
+			required: true,
+		},
+	},
+
+	data() {
+		return {
+			searchText: '',
+			addableUsers: [],
+			addableGroups: [],
+			contactsLoading: false,
 		}
 	},
 
@@ -143,9 +142,17 @@ export default {
 		async fetchSearchResults() {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
-			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
-			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
+			const searchResults = response.data.ocs.data
+			debugger
+			// get current participants
+			const currentParticipants = this.$store.getters.participantsList(this.token)
+			// array of both participants already in the conversation and response from server
+			const allParticipants = [ ...currentParticipants, ...searchResults]
+			this.addableParticipantsList = allParticipants.reduce((a, b) => {
+				return a.id !== b.id
+			})
+			this.addableUsers = allParticipants.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
+			this.addableGroups = allParticipants.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
 		},
 

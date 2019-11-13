@@ -79,7 +79,7 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		CollectionList,
-		ParticipantsTab
+		ParticipantsTab,
 	},
 
 	data() {
