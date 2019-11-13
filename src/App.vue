@@ -21,7 +21,7 @@
 
 <template>
 	<Content :class="{'icon-loading': loading}" app-name="Talk">
-		<Navigation />
+		<Navigation v-if="getUserId" />
 		<AppContent>
 			<router-view />
 		</AppContent>
@@ -36,6 +36,9 @@ import Navigation from './components/Navigation/Navigation'
 import Router from './router/router'
 import Sidebar from './components/Sidebar/Sidebar'
 import { EventBus } from './services/EventBus'
+import { getCurrentUser } from '@nextcloud/auth'
+import { fetchConversation } from './services/conversationsService'
+import { joinConversation } from './services/participantsService'
 
 export default {
 	name: 'App',
@@ -57,6 +60,10 @@ export default {
 	computed: {
 		conversations() {
 			return this.$store.getters.conversations
+		},
+
+		getUserId() {
+			return this.$store.getters.getUserId()
 		},
 
 		/**
@@ -131,6 +138,12 @@ export default {
 				const CURRENT_CONVERSATION_NAME = this.getConversationName(this.token)
 				this.setPageTitle(CURRENT_CONVERSATION_NAME)
 			}
+
+			if (!getCurrentUser()) {
+				joinConversation(this.token)
+				const conversation = this.$store.getters.conversations[this.token]
+				this.$store.dispatch('setCurrentParticipant', conversation)
+			}
 		})
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
@@ -152,6 +165,16 @@ export default {
 
 			next()
 		})
+
+		if (getCurrentUser()) {
+			this.$store.dispatch('setCurrentUser', getCurrentUser())
+		}
+		if (this.getUserId === null) {
+			this.fetchSingleConversation(this.token)
+			window.setInterval(() => {
+				this.fetchSingleConversation(this.token)
+			}, 30000)
+		}
 	},
 
 	methods: {
@@ -207,6 +230,21 @@ export default {
 			}
 
 			return this.$store.getters.conversations[token].displayName
+		},
+
+		async fetchSingleConversation(token) {
+			/** Fetches the conversations from the server and then adds them one by one
+			 * to the store.
+			 */
+			const response = await fetchConversation(token)
+			// this.$store.dispatch('purgeConversationsStore')
+			this.$store.dispatch('addConversation', response.data.ocs.data)
+
+			/**
+			 * Emits a global event that is used in App.vue to update the page title once the
+			 * ( if the current route is a conversation and once the conversations are received)
+			 */
+			EventBus.$emit('conversationsReceived')
 		},
 	},
 }

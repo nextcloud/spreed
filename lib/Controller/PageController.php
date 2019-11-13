@@ -248,7 +248,7 @@ class PageController extends Controller {
 			'token' => $token,
 			'signaling-settings' => $this->config->getSettings($this->userId),
 		];
-		$response = new PublicTemplateResponse($this->appName, 'index-public', $params);
+		$response = new PublicTemplateResponse($this->appName, 'index', $params);
 		$response->setFooterVisible(false);
 		$csp = new ContentSecurityPolicy();
 		$csp->addAllowedConnectDomain('*');

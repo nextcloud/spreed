@@ -5,5 +5,6 @@
 script('spreed', 'talk');
 
 style('spreed', 'merged');
-\OC::$server->getEventDispatcher()->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts');
-?>
+if ($_['user_uid'] !== '') {
+	\OC::$server->getEventDispatcher()->dispatch('\OCP\Collaboration\Resources::loadAdditionalScripts');
+}

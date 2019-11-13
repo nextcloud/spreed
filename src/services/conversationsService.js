@@ -37,6 +37,19 @@ const fetchConversations = async function() {
 }
 
 /**
+ * Fetches a conversation from the server.
+ * @param {string} token The token of the conversation to be fetched.
+ */
+const fetchConversation = async function(token) {
+	try {
+		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
+		return response
+	} catch (error) {
+		console.debug('Error while fetching a conversation: ', error)
+	}
+}
+
+/**
  * Fetch possible conversations
  * @param {string} searchText The string that will be used in the search query.
  */
@@ -198,6 +211,7 @@ const changeLobbyState = async function(token, newState) {
 
 export {
 	fetchConversations,
+	fetchConversation,
 	searchPossibleConversations,
 	createOneToOneConversation,
 	createGroupConversation,

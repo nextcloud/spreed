@@ -40,7 +40,6 @@
 
 <script>
 import { generateUrl, imagePath } from '@nextcloud/router'
-import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'FilePreview',
@@ -69,7 +68,7 @@ export default {
 			return imagePath('core', 'filetypes/file')
 		},
 		previewUrl() {
-			if (this.data['preview-available'] !== 'yes' || !getCurrentUser().uid) {
+			if (this.data['preview-available'] !== 'yes' || this.$store.getters.getUserId() !== null) {
 				return OC.MimeType.getIconUrl(this.data.mimetype)
 			}
 

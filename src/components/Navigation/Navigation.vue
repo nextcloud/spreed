@@ -68,7 +68,6 @@ import SearchBox from '../SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
-import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION } from '../../constants'
 
 export default {
@@ -126,7 +125,11 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid && !this.hasOneToOneConversationWith(match.id))
+			this.searchResultsUsers = this.searchResults.filter((match) => {
+				return match.source === 'users'
+					&& match.id !== this.$store.getters.getUserId()
+					&& !this.hasOneToOneConversationWith(match.id)
+			})
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
 		},

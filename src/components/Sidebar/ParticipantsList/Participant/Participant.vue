@@ -57,7 +57,6 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import { PARTICIPANT } from '../../../../constants'
-import { getCurrentUser } from '@nextcloud/auth'
 
 export default {
 	name: 'Participant',
@@ -116,14 +115,14 @@ export default {
 		currentParticipant() {
 			return this.$store.getters.conversations[this.token] || {
 				sessionId: '0',
-				participantType: getCurrentUser().uid ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
+				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}
 		},
 
 		isSelf() {
 			// User
 			if (this.userId) {
-				return getCurrentUser().uid === this.userId
+				return this.$store.getters.getUserId() === this.userId
 			}
 
 			// Guest

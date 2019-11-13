@@ -22,6 +22,7 @@
 
 import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
+import actorStore from './actorStore'
 import conversationsStore from './conversationsStore'
 import messagesStore from './messagesStore'
 import participantsStore from './participantsStore'
@@ -34,6 +35,7 @@ const mutations = {}
 
 export default new Store({
 	modules: {
+		actorStore,
 		conversationsStore,
 		messagesStore,
 		participantsStore,
