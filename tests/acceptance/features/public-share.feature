@@ -226,13 +226,16 @@ Feature: public share
     And I write down the shared link
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     And I act as Jane
     And I am logged in as the admin
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     And I act as Jim
     And I visit the shared link I wrote down
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     And I set my guest name to "Rob"
     When I act as John
     And I send a new chat message with the text "Hello"
@@ -266,17 +269,20 @@ Feature: public share
     And I see that the current page is the Authenticate page for the shared link I wrote down
     And I authenticate with password "abcdef"
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     And I act as Jane
     And I am logged in as the admin
     And I visit the shared link I wrote down
     And I see that the current page is the Authenticate page for the shared link I wrote down
     And I authenticate with password "abcdef"
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     And I act as Jim
     And I visit the shared link I wrote down
     And I see that the current page is the Authenticate page for the shared link I wrote down
     And I authenticate with password "abcdef"
     And I see that the current page is the shared link I wrote down
+    And I join the conversation in the Talk sidebar in the public share page
     When I act as John
     And I send a new chat message with the text "Hello"
     And I act as Jane
