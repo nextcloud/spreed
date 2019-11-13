@@ -69,6 +69,7 @@ const mutations = {
 	 */
 	setUserId(state, userId) {
 		state.userId = userId
+		state.actorId = userId
 	},
 	/**
 	 * Set the sessionId
