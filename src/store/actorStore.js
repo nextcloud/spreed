@@ -1,7 +1,7 @@
 /**
- * @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
- * @author Marco Ambrosini <marcoambrosini@pm.me>
+ * @author Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -18,6 +18,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
+ */
+
+/**
+ * This store helps to identify a the current actor in all cases.
+ * In Talk not every user is a local nextcloud user, so identifying
+ * solely by userId is not enough.
+ * If an as no userId, they are a guest and identified by actorType + sessionId.
  */
 
 import sha1 from 'crypto-js/sha1'
