@@ -139,9 +139,7 @@ export default {
 				this.setPageTitle(CURRENT_CONVERSATION_NAME)
 			}
 
-			if (getCurrentUser()) {
-				this.$store.dispatch('setCurrentUser', getCurrentUser())
-			} else {
+			if (!getCurrentUser()) {
 				joinConversation(this.token)
 				const conversation = this.$store.getters.conversations[this.token]
 				this.$store.dispatch('setCurrentParticipant', conversation)
@@ -168,6 +166,9 @@ export default {
 			next()
 		})
 
+		if (getCurrentUser()) {
+			this.$store.dispatch('setCurrentUser', getCurrentUser())
+		}
 		if (this.getUserId === null) {
 			this.fetchSingleConversation(this.token)
 			window.setInterval(() => {
