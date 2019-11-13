@@ -20,18 +20,30 @@
  *
  */
 
+import sha1 from 'crypto-js/sha1'
+import { PARTICIPANT } from '../constants'
+
 const state = {
 	userId: null,
-	displayName: null,
+	sessionId: null,
+	sessionHash: null,
+	actorId: null,
 	actorType: null,
+	displayName: '',
 }
 
 const getters = {
 	getUserId: (state) => () => {
 		return state.userId
 	},
+	getSessionId: (state) => () => {
+		return state.sessionId
+	},
+	getSessionHash: (state) => () => {
+		return state.sessionHash
+	},
 	getActorId: (state) => () => {
-		return state.userId // FIXME adjust for guests
+		return state.actorId
 	},
 	getActorType: (state) => () => {
 		return state.actorType
@@ -50,6 +62,25 @@ const mutations = {
 	 */
 	setUserId(state, userId) {
 		state.userId = userId
+	},
+	/**
+	 * Set the sessionId
+	 *
+	 * @param {object} state current store state;
+	 * @param {string} sessionId The actors session id
+	 */
+	setSessionId(state, sessionId) {
+		state.sessionId = sessionId
+		state.sessionHash = sha1(sessionId)
+	},
+	/**
+	 * Set the actorId
+	 *
+	 * @param {object} state current store state;
+	 * @param {string} actorId The actor id
+	 */
+	setActorId(state, actorId) {
+		state.actorId = actorId
 	},
 	/**
 	 * Set the userId
@@ -74,7 +105,7 @@ const mutations = {
 const actions = {
 
 	/**
-	 * Shows the sidebar
+	 * Set the actor from the current user
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} user A NextcloudUser object as returned by @nextcloud/auth
@@ -85,6 +116,26 @@ const actions = {
 		context.commit('setUserId', user.uid)
 		context.commit('setDisplayName', user.displayName || user.uid)
 		context.commit('setActorType', 'users')
+	},
+
+	/**
+	 * Set the actor from the current participant
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} participant The participant data
+	 * @param {int} participant.participantType The type of the participant
+	 * @param {string} participant.sessionId The session id of the participant
+	 */
+	setCurrentParticipant(context, participant) {
+		context.commit('setSessionId', participant.sessionId)
+
+		if (participant.participantType === PARTICIPANT.TYPE.GUEST
+			|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
+			context.commit('setUserId', null)
+			context.commit('setActorType', 'guests')
+			context.commit('setActorId', 'guest/' + context.getters.getSessionHash())
+			// FIXME context.commit('setDisplayName', '')
+		}
 	},
 }
 

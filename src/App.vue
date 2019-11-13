@@ -37,6 +37,8 @@ import Router from './router/router'
 import Sidebar from './components/Sidebar/Sidebar'
 import { EventBus } from './services/EventBus'
 import { getCurrentUser } from '@nextcloud/auth'
+import { fetchConversation } from './services/conversationsService'
+import { joinConversation } from './services/participantsService'
 
 export default {
 	name: 'App',
@@ -139,6 +141,10 @@ export default {
 
 			if (getCurrentUser()) {
 				this.$store.dispatch('setCurrentUser', getCurrentUser())
+			} else {
+				joinConversation(this.token)
+				const conversation = this.$store.getters.conversations[this.token]
+				this.$store.dispatch('setCurrentParticipant', conversation)
 			}
 		})
 		/**
@@ -161,6 +167,13 @@ export default {
 
 			next()
 		})
+
+		if (this.getUserId === null) {
+			this.fetchSingleConversation(this.token)
+			window.setInterval(() => {
+				this.fetchSingleConversation(this.token)
+			}, 30000)
+		}
 	},
 
 	methods: {
@@ -216,6 +229,21 @@ export default {
 			}
 
 			return this.$store.getters.conversations[token].displayName
+		},
+
+		async fetchSingleConversation(token) {
+			/** Fetches the conversations from the server and then adds them one by one
+			 * to the store.
+			 */
+			const response = await fetchConversation(token)
+			// this.$store.dispatch('purgeConversationsStore')
+			this.$store.dispatch('addConversation', response.data.ocs.data)
+
+			/**
+			 * Emits a global event that is used in App.vue to update the page title once the
+			 * ( if the current route is a conversation and once the conversations are received)
+			 */
+			EventBus.$emit('conversationsReceived')
 		},
 	},
 }
