@@ -24,6 +24,10 @@
 		class="messages__avatar__icon"
 		:user="authorId"
 		:display-name="displayName" />
+	<div v-else-if="isDeletedUser"
+		class="avatar guest">
+		X
+	</div>
 	<div v-else-if="isGuest"
 		class="avatar guest">
 		{{ firstLetterOfGuestName }}
@@ -65,6 +69,9 @@ export default {
 		},
 		isUser() {
 			return this.authorType === 'users'
+		},
+		isDeletedUser() {
+			return this.authorType === 'deleted_users'
 		},
 		isGuest() {
 			return this.authorType === 'guests'
