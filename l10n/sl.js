@@ -24,6 +24,7 @@ OC.L10N.register(
     "Share link" : "Povezava za souporabo",
     "Saved" : "Shranjeno",
     "Join a conversation or start a new one" : "Pridružite se pogovoru, ali pa začnite novega.",
+    "Say hi to your friends and colleagues!" : "Pozdravite prijatelje in znance.",
     "Password" : "Geslo",
     "Delete server" : "Izbriši strežnik",
     "Add new server" : "Dodaj strežnik",
