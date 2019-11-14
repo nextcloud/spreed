@@ -87,12 +87,14 @@ export default {
 		computedName() {
 			if (this.participant.displayName) {
 				return this.participant.displayName
-			} else return this.participant.label
+			}
+			return this.participant.label
 		},
 		computedId() {
 			if (this.participant.userId) {
 				return this.participant.userId
-			} else return this.participant.id
+			}
+			return this.participant.id
 		},
 		id() {
 			return this.participant.id
