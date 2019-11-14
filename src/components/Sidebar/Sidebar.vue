@@ -68,7 +68,6 @@ import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR } from '../../constants'
-import { searchPossibleConversations } from '../../services/conversationsService'
 import ParticipantsTab from './Participants/ParticipantsTab'
 
 export default {

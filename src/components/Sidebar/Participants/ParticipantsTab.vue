@@ -33,7 +33,7 @@
 			<ParticipantsList
 				v-if="addableUsers.length !== 0"
 				:items="addableUsers"
-				@refreshCurrentParticipants="this.getParticipants" />
+				@refreshCurrentParticipants="getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 
@@ -42,7 +42,7 @@
 			<ParticipantsList
 				v-if="addableGroups.length !== 0"
 				:items="addableGroups"
-				@refreshCurrentParticipants="this.getParticipants" />
+				@refreshCurrentParticipants="getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
@@ -143,14 +143,11 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			const searchResults = response.data.ocs.data
-			debugger
+
 			// get current participants
 			const currentParticipants = this.$store.getters.participantsList(this.token)
 			// array of both participants already in the conversation and response from server
-			const allParticipants = [ ...currentParticipants, ...searchResults]
-			this.addableParticipantsList = allParticipants.reduce((a, b) => {
-				return a.id !== b.id
-			})
+			const allParticipants = [...currentParticipants, ...searchResults]
 			this.addableUsers = allParticipants.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
 			this.addableGroups = allParticipants.filter((match) => match.source === 'groups')
 			this.contactsLoading = false
