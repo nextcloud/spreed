@@ -123,7 +123,7 @@ export default {
 				if (!this.messagesShouldBeGrouped(message, lastMessage)) {
 					// Add the date separator for different days
 					if (this.messagesHaveDifferentDate(message, lastMessage)) {
-						message.dateSeparator = this.generateDateSeparator(message.timestamp)
+						message.dateSeparator = this.generateDateSeparator(message)
 					}
 
 					groups.push([message])
@@ -167,11 +167,13 @@ export default {
 		 * Compare two messages to decide if they should be grouped
 		 *
 		 * @param {object} message1 The new message
+		 * @param {string} message1.id The ID of the new message
 		 * @param {string} message1.actorType Actor type of the new message
 		 * @param {string} message1.actorId Actor id of the new message
 		 * @param {string} message1.systemMessage System message content of the new message
 		 * @param {int} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
+		 * @param {string} message2.id The ID of the second message
 		 * @param {string} message2.actorType Actor type of the previous message
 		 * @param {string} message2.actorId Actor id of the previous message
 		 * @param {string} message2.systemMessage System message content of the previous message
@@ -193,24 +195,28 @@ export default {
 		 * Check if 2 messages are from the same date
 		 *
 		 * @param {object} message1 The new message
+		 * @param {string} message1.id The ID of the new message
 		 * @param {int} message1.timestamp Timestamp of the new message
 		 * @param {null|object} message2 The previous message
+		 * @param {string} message2.id The ID of the second message
 		 * @param {int} message2.timestamp Timestamp of the second message
 		 * @returns {boolean} Boolean if the messages have the same date
 		 */
 		messagesHaveDifferentDate(message1, message2) {
 			return !message2 // There is no previous message
-				|| moment.unix(message1.timestamp).format('YYYY-MM-DD') !== moment.unix(message2.timestamp).format('YYYY-MM-DD')
+				|| this.getDateOfMessage(message1).format('YYYY-MM-DD') !== this.getDateOfMessage(message2).format('YYYY-MM-DD')
 		},
 
 		/**
 		 * Generate the date header between the messages
 		 *
-		 * @param {int} timestamp The timestamp of the message
+		 * @param {object} message The message object
+		 * @param {string} message.id The ID of the message
+		 * @param {int} message.timestamp Timestamp of the message
 		 * @returns {string} Translated string of "<Today>, <November 11th, 2019>", "<3 days ago>, <November 8th, 2019>"
 		 */
-		generateDateSeparator(timestamp) {
-			const date = moment.unix(timestamp)
+		generateDateSeparator(message) {
+			const date = this.getDateOfMessage(message)
 			const dayOfYear = date.format('YYYY-DDD')
 			let relativePrefix = date.fromNow()
 
@@ -234,6 +240,21 @@ export default {
 			}, undefined, {
 				escape: false, // French "Today" has a ' in it
 			})
+		},
+
+		/**
+		 * Generate the date of the messages
+		 *
+		 * @param {object} message The message object
+		 * @param {string} message.id The ID of the message
+		 * @param {int} message.timestamp Timestamp of the message
+		 * @returns {object} MomentJS object
+		 */
+		getDateOfMessage(message) {
+			if (message.id.toString().startsWith('temp-')) {
+				return moment()
+			}
+			return moment.unix(message.timestamp)
 		},
 
 		/**
