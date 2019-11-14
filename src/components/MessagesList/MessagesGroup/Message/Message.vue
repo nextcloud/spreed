@@ -34,7 +34,6 @@ the main body of the message as well as a quote.
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<div class="message__main">
-
 			<div v-if="isSingleEmoji"
 				class="message__main__text single-emoji">
 				{{ message }}
