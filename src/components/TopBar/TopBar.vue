@@ -21,9 +21,7 @@
 
 <template>
 	<div class="top-bar">
-		<button class="top-bar__button primary">
-			Start a call
-		</button>
+		<CallButton />
 		<Actions v-if="showOpenSidebarButton" class="top-bar__button" close-after-click="true">
 			<ActionButton icon="icon-menu-people" @click="handleClick" />
 		</Actions>
@@ -33,6 +31,7 @@
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
+import CallButton from './CallButton'
 
 export default {
 	name: 'TopBar',
@@ -40,6 +39,7 @@ export default {
 	components: {
 		ActionButton,
 		Actions,
+		CallButton,
 	},
 	computed: {
 		showOpenSidebarButton() {
