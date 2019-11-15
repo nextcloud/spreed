@@ -75,7 +75,13 @@ const mutations = {
 		if (!state.messages[message.token]) {
 			Vue.set(state.messages, message.token, {})
 		}
-		Vue.set(state.messages[message.token], message.id, message)
+		if (state.messages[message.token][message.id]) {
+			Vue.set(state.messages[message.token], message.id,
+				Object.assign(state.messages[message.token][message.id], message)
+			)
+		} else {
+			Vue.set(state.messages[message.token], message.id, message)
+		}
 	},
 	/**
 	 * Deletes a message from the store.

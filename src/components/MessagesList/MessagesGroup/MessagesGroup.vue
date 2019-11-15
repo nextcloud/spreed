@@ -37,6 +37,8 @@
 					:key="message.id"
 					v-bind="message"
 					:is-first-message="index === 0"
+					:actor-type="actorType"
+					:actor-id="actorId"
 					:actor-display-name="actorDisplayName"
 					:show-author="!isSystemMessage"
 					:is-temporary="message.timestamp === 0" />

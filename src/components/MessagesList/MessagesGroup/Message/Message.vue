@@ -50,18 +50,15 @@ the main body of the message as well as a quote.
 				<h6 v-else>
 					{{ messageTime }}
 				</h6>
-				<Actions v-show="showActions" class="message__main__right__actions">
+				<Actions
+					v-show="showActions && hasActions"
+					class="message__main__right__actions">
 					<ActionButton
+						v-if="isReplyable"
 						icon="icon-reply"
 						:close-after-click="true"
 						@click.stop="handleReply">
-						Reply
-					</ActionButton>
-					<ActionButton
-						icon="icon-delete"
-						:close-after-click="true"
-						@click.stop="handleDelete">
-						Delete
+						{{ t('spreed', 'Reply') }}
 					</ActionButton>
 				</Actions>
 			</div>
@@ -92,7 +89,21 @@ export default {
 	},
 	props: {
 		/**
-		 * The sender of the message.
+		 * The actor type of the sender of the message.
+		 */
+		actorType: {
+			type: String,
+			required: true,
+		},
+		/**
+		 * The actor id of the sender of the message.
+		 */
+		actorId: {
+			type: String,
+			required: true,
+		},
+		/**
+		 * The display name of the sender of the message.
 		 */
 		actorDisplayName: {
 			type: String,
@@ -163,17 +174,28 @@ export default {
 			default: 0,
 		},
 	},
+
 	data() {
 		return {
 			showActions: false,
 		}
 	},
+
 	computed: {
+		hasActions() {
+			return this.isReplyable
+		},
+
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
 		},
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
+		},
+
+		isReplyable() {
+			return (this.actorType === 'users' || this.actorType === 'guests')
+				&& !this.systemMessage
 		},
 
 		isSingleEmoji() {
