@@ -1127,6 +1127,26 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 			}
 		}
 
+		.menuitem-details {
+			/* Base the details width on the widest element, which is the date
+			 * picker, to prevent the text from being too narrow when the date
+			 * picker is not shown.
+			 *
+			 * The width is calculated from the date picker width (210px) plus
+			 * the width of the margins, padding and between the datepicker and
+			 * the borders of the menu (107px).
+			 */
+			width: 317px;
+
+			@media (max-width: 1315px) {
+				max-width: 317px;
+				/* Used when viewport is between 1111px and 1315px. */
+				width: calc(27vw - 38px);
+				/* Used when viewport is < 1111px. */
+				min-width: 262px;
+			}
+		}
+
 		.menuitem.lobby-timer-option {
 			/**
 			 * Force full opacity in the menu item so the pop up is shown with
