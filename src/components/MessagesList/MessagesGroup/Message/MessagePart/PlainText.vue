@@ -20,16 +20,24 @@
 -->
 
 <template>
-	<span>{{ data.text }}</span>
+	<span v-html="text" />
 </template>
 
 <script>
+import escapeHtml from 'escape-html'
+
 export default {
 	name: 'PlainText',
 	props: {
 		data: {
 			type: Object,
 			required: true,
+		},
+	},
+
+	computed: {
+		text() {
+			return escapeHtml(this.data.text).replace(/\n/g, '<br>')
 		},
 	},
 }
