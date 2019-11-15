@@ -1145,6 +1145,8 @@ body:not(#body-public) .participantWithList > li > span:not(.currentUser):not(.g
 				/* Used when viewport is < 1111px. */
 				min-width: 262px;
 			}
+
+			padding-right: 14px;
 		}
 
 		.menuitem.lobby-timer-option {
