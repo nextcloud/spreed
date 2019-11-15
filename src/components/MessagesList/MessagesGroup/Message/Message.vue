@@ -50,19 +50,15 @@ the main body of the message as well as a quote.
 				<h6 v-else>
 					{{ messageTime }}
 				</h6>
-				<Actions v-show="showActions" class="message__main__right__actions">
+				<Actions
+					v-show="showActions && hasActions"
+					class="message__main__right__actions">
 					<ActionButton
 						v-if="isReplyable"
 						icon="icon-reply"
 						:close-after-click="true"
 						@click.stop="handleReply">
-						Reply
-					</ActionButton>
-					<ActionButton
-						icon="icon-delete"
-						:close-after-click="true"
-						@click.stop="handleDelete">
-						Delete
+						{{ t('spreed', 'Reply') }}
 					</ActionButton>
 				</Actions>
 			</div>
@@ -178,12 +174,18 @@ export default {
 			default: 0,
 		},
 	},
+
 	data() {
 		return {
 			showActions: false,
 		}
 	},
+
 	computed: {
+		hasActions() {
+			return this.isReplyable
+		},
+
 		messageTime() {
 			return OC.Util.formatDate(this.timestamp * 1000, 'LT')
 		},
