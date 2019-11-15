@@ -192,7 +192,8 @@ export default {
 		},
 
 		isReplyable() {
-			return this.actorType === 'users' || this.actorType === 'guests'
+			return (this.actorType === 'users' || this.actorType === 'guests')
+				&& !this.systemMessage
 		},
 
 		isSingleEmoji() {
