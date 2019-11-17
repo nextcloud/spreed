@@ -141,6 +141,7 @@ OC.L10N.register(
     "TCP only" : "Tylko TCP",
     "Test this server" : "Przetestuj ten serwer",
     "Favorite" : "Ulubione",
+    "Reply" : "Odpowiedz",
     "[Unknown user name]" : "[Nieznana nazwa użytkownika]",
     "Today" : "Dzisiaj",
     "Yesterday" : "Wczoraj",
