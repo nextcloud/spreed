@@ -141,6 +141,7 @@ OC.L10N.register(
     "TCP only" : "Yalnız TCP",
     "Test this server" : "Bu sunucuyu sına",
     "Favorite" : "Sık Kullanılanlara Ekle",
+    "Reply" : "Yanıtla",
     "[Unknown user name]" : "[Kullanıcı adı bilinmiyor]",
     "Today" : "Bugün",
     "Yesterday" : "Dün",
