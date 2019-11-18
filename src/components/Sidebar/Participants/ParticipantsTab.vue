@@ -25,7 +25,7 @@
 			v-if="displaySearchBox"
 			v-model="searchText"
 			:placeholder-text="t('spreed', 'Add participants to the conversation')"
-			@input="debounceFetchSearchResults" />
+			@input="debounceSearchParticipants" />
 		<CurrentParticipants />
 		<template v-if="isSearching">
 			<Caption
@@ -33,7 +33,7 @@
 			<ParticipantsList
 				v-if="addableUsers.length !== 0"
 				:items="addableUsers"
-				@refreshCurrentParticipants="getParticipants" />
+				@refreshCurrentParticipants="searchParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 
@@ -42,7 +42,7 @@
 			<ParticipantsList
 				v-if="addableGroups.length !== 0"
 				:items="addableGroups"
-				@refreshCurrentParticipants="getParticipants" />
+				@refreshCurrentParticipants="searchParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
@@ -58,7 +58,6 @@ import SearchBox from '../../SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
-import { searchPossibleConversations } from '../../../services/conversationsService'
 import { fetchParticipants } from '../../../services/participantsService'
 
 export default {
@@ -81,8 +80,6 @@ export default {
 	data() {
 		return {
 			searchText: '',
-			addableUsers: [],
-			addableGroups: [],
 			contactsLoading: false,
 		}
 	},
@@ -112,6 +109,12 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+		addableUsers() {
+			return this.$store.getters.getAddableUsers
+		},
+		addableGroups() {
+			return this.$store.getters.getAddableGroups
+		}
 	},
 
 	beforeMount() {
@@ -121,6 +124,7 @@ export default {
 		 */
 		EventBus.$on('routeChange', () => {
 			this.searchText = ''
+			this.contactsLoading = false
 			this.$nextTick(() => {
 				this.getParticipants()
 			})
@@ -132,29 +136,18 @@ export default {
 			this.$store.dispatch('hideSidebar')
 		},
 
-		debounceFetchSearchResults: debounce(function() {
+		debounceSearchParticipants: debounce(function() {
 			if (this.isSearching) {
-				this.fetchSearchResults()
+				this.searchParticipants()
 			}
 		}, 250),
 
-		async fetchSearchResults() {
+		searchParticipants() {
 			this.contactsLoading = true
-			const response = await searchPossibleConversations(this.searchText)
-			const searchResults = response.data.ocs.data
-			const searchResultUsers = searchResults.filter(item => item.source === 'users')
-			const participants = this.$store.getters.participantsList(this.token)
-			this.addableUsers = searchResultUsers.filter(user => {
-				let addable = true
-				for (const participant of participants) {
-					if (user.id === participant.userId) {
-						addable = false
-						break
-					}
-				}
-				return addable
+			this.$store.dispatch('searchParticipants', {
+				token: this.token,
+				searchText: this.searchText,
 			})
-			this.addableGroups = searchResults.filter((item) => item.source === 'groups')
 			this.contactsLoading = false
 		},
 

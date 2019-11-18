@@ -26,6 +26,7 @@ import {
 	removeUserFromConversation,
 	removeGuestFromConversation,
 } from '../services/participantsService'
+import { searchPossibleConversations } from '../services/conversationsService'
 import { PARTICIPANT } from '../constants'
 
 const state = {
@@ -62,6 +63,12 @@ const getters = {
 
 		return index
 	},
+	getAddableUsers: (state) => (token) => {
+		return state.participants[token].addable.users
+	},
+	getAddableGroups: (state) => (token) => {
+		return state.participants[token].addable.groups
+	},
 }
 
 const mutations = {
@@ -94,6 +101,23 @@ const mutations = {
 	 */
 	purgeParticipantsStore(state, token) {
 		Vue.delete(state.participants, token)
+	},
+	computeAddableParticipants(state, { token, searchResults }) {
+		debugger
+		const searchResultUsers = searchResults.filter(item => item.source === 'users')
+		const participants = state.participants[token]
+		const addableUsers = searchResultUsers.filter(user => {
+			let addable = true
+			for (const participant of participants) {
+				if (user.id === participant.userId) {
+					addable = false
+					break
+				}
+			}
+			return addable
+		})
+		const addableGroups = searchResults.filter((item) => item.source === 'groups')
+		Vue.set(state.participants, token, { addable: { addableUsers, addableGroups } })
 	},
 }
 
@@ -151,6 +175,13 @@ const actions = {
 		}
 		commit('deleteParticipant', { token, index })
 	},
+
+	async searchParticipants({ commit }, { token, searchText }) {
+		const response = await searchPossibleConversations(searchText)
+		const searchResults = response.data.ocs.data
+		commit('computeAddableParticipants', { token, searchResults })
+	},
+
 	/**
 	 * Resets the store to it's original state.
 	 * @param {object} context default store context;
@@ -159,6 +190,7 @@ const actions = {
 	purgeParticipantsStore({ commit }, token) {
 		commit('purgeParticipantsStore', token)
 	},
+
 }
 
 export default { state, mutations, getters, actions }

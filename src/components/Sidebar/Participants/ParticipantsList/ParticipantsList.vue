@@ -63,6 +63,7 @@ export default {
 			try {
 				await addParticipant(this.token, participant.id, participant.source)
 				this.$emit('refreshCurrentParticipants')
+				this.$emit('refreshSearchResults')
 			} catch (exeption) {
 				console.debug(exeption)
 			}
