@@ -58,7 +58,6 @@ import SearchBox from '../../SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
-import { getCurrentUser } from '@nextcloud/auth'
 import { searchPossibleConversations } from '../../../services/conversationsService'
 import { fetchParticipants } from '../../../services/participantsService'
 
@@ -143,13 +142,19 @@ export default {
 			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
 			const searchResults = response.data.ocs.data
-
-			// get current participants
-			const currentParticipants = this.$store.getters.participantsList(this.token)
-			// array of both participants already in the conversation and response from server
-			const allParticipants = [...currentParticipants, ...searchResults]
-			this.addableUsers = allParticipants.filter((match) => match.source === 'users' && match.id !== getCurrentUser().uid)
-			this.addableGroups = allParticipants.filter((match) => match.source === 'groups')
+			const searchResultUsers = searchResults.filter(item => item.source === 'users')
+			const participants = this.$store.getters.participantsList(this.token)
+			this.addableUsers = searchResultUsers.filter(user => {
+				let addable = true
+				for (const participant of participants) {
+					if (user.id === participant.userId) {
+						addable = false
+						break
+					}
+				}
+				return addable
+			})
+			this.addableGroups = searchResults.filter((item) => item.source === 'groups')
 			this.contactsLoading = false
 		},
 
