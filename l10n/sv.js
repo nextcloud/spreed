@@ -140,6 +140,7 @@ OC.L10N.register(
     "TCP only" : "endast TCP",
     "Test this server" : "Testa denna server",
     "Favorite" : "Favorit",
+    "Reply" : "Svara",
     "[Unknown user name]" : "[Okänt användarnam]",
     "Today" : "Idag",
     "Yesterday" : "Igår",
