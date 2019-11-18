@@ -32,6 +32,9 @@ import { PARTICIPANT } from '../constants'
 const state = {
 	participants: {
 	},
+	addableParticipants: {
+
+	}
 }
 
 const getters = {
@@ -64,10 +67,10 @@ const getters = {
 		return index
 	},
 	getAddableUsers: (state) => (token) => {
-		return state.participants[token].addable.users
+		return state.addableParticipants[token].addableUsers
 	},
 	getAddableGroups: (state) => (token) => {
-		return state.participants[token].addable.groups
+		return state.addableParticipants[token].addableGroups
 	},
 }
 
@@ -103,7 +106,6 @@ const mutations = {
 		Vue.delete(state.participants, token)
 	},
 	computeAddableParticipants(state, { token, searchResults }) {
-		debugger
 		const searchResultUsers = searchResults.filter(item => item.source === 'users')
 		const participants = state.participants[token]
 		const addableUsers = searchResultUsers.filter(user => {
@@ -112,12 +114,12 @@ const mutations = {
 				if (user.id === participant.userId) {
 					addable = false
 					break
-				}
+				}	
 			}
 			return addable
 		})
 		const addableGroups = searchResults.filter((item) => item.source === 'groups')
-		Vue.set(state.participants, token, { addable: { addableUsers, addableGroups } })
+		Vue.set(state.addableParticipants, token, { addableUsers, addableGroups })
 	},
 }
 

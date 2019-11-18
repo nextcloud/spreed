@@ -110,10 +110,10 @@ export default {
 			return this.searchText !== ''
 		},
 		addableUsers() {
-			return this.$store.getters.getAddableUsers
+			return this.$store.getters.getAddableUsers(this.token)
 		},
 		addableGroups() {
-			return this.$store.getters.getAddableGroups
+			return this.$store.getters.getAddableGroups(this.token)
 		}
 	},
 
