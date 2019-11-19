@@ -34,17 +34,17 @@
 		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
-				@click.exact="demoteFromModerator">
+				@click="demoteFromModerator">
 				{{ t('spreed', 'Demote from moderator') }}
 			</ActionButton>
 			<ActionButton v-if="canBePromoted"
 				icon="icon-rename"
-				@click.exact="promoteToModerator">
+				@click="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-delete"
-				@click.exact="removeParticipant">
+				@click="removeParticipant">
 				{{ t('spreed', 'Remove participant') }}
 			</ActionButton>
 		</Actions>
