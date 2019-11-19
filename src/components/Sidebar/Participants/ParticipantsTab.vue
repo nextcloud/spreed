@@ -114,7 +114,7 @@ export default {
 		},
 		addableGroups() {
 			return this.$store.getters.getAddableGroups(this.token)
-		}
+		},
 	},
 
 	beforeMount() {

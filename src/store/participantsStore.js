@@ -32,9 +32,9 @@ import { PARTICIPANT } from '../constants'
 const state = {
 	participants: {
 	},
-	addableParticipants: {
+	searchResults: {
 
-	}
+	},
 }
 
 const getters = {
@@ -67,10 +67,26 @@ const getters = {
 		return index
 	},
 	getAddableUsers: (state) => (token) => {
-		return state.addableParticipants[token].addableUsers
+		if (state.searchResults[token]) {
+			const searchResultUsers = state.searchResults[token].filter(item => item.source === 'users')
+			const participants = state.participants[token]
+			const addableUsers = searchResultUsers.filter(user => {
+				let addable = true
+				for (const participant of participants) {
+					if (user.id === participant.userId) {
+						addable = false
+						break
+					}
+				}
+				return addable
+			})
+			return addableUsers
+		} return []
 	},
 	getAddableGroups: (state) => (token) => {
-		return state.addableParticipants[token].addableGroups
+		if (state.searchResults[token]) {
+			return state.searchResults[token].filter((item) => item.source === 'groups')
+		} return []
 	},
 }
 
@@ -102,24 +118,11 @@ const mutations = {
 	 * @param {object} state current store state;
 	 * @param {string} token the conversation to purge;
 	 */
-	purgeParticipantsStore(state, token) {
+	purgeParticipants(state, token) {
 		Vue.delete(state.participants, token)
 	},
-	computeAddableParticipants(state, { token, searchResults }) {
-		const searchResultUsers = searchResults.filter(item => item.source === 'users')
-		const participants = state.participants[token]
-		const addableUsers = searchResultUsers.filter(user => {
-			let addable = true
-			for (const participant of participants) {
-				if (user.id === participant.userId) {
-					addable = false
-					break
-				}	
-			}
-			return addable
-		})
-		const addableGroups = searchResults.filter((item) => item.source === 'groups')
-		Vue.set(state.addableParticipants, token, { addableUsers, addableGroups })
+	addSearchResults(state, { token, searchResults }) {
+		Vue.set(state.searchResults, token, searchResults)
 	},
 }
 
@@ -181,16 +184,24 @@ const actions = {
 	async searchParticipants({ commit }, { token, searchText }) {
 		const response = await searchPossibleConversations(searchText)
 		const searchResults = response.data.ocs.data
-		commit('computeAddableParticipants', { token, searchResults })
+		commit('addSearchResults', { token, searchResults })
 	},
 
 	/**
-	 * Resets the store to it's original state.
+	 * Resets the participants to it's original state.
 	 * @param {object} context default store context;
-	 * @param {string} token the conversation to purge;
+	 * @param {string} token the conversation's participants to purge;
 	 */
-	purgeParticipantsStore({ commit }, token) {
-		commit('purgeParticipantsStore', token)
+	purgeParticipants(context, token) {
+		context.commit('purgeParticipants', token)
+	},
+	/**
+	 * Resets the search results of a given conversation.
+	 * @param {*} context default store context;
+	 * @param {*} token the conversation search results to purge;
+	 */
+	purgeSearchResults(context, token) {
+		context.commit('purgeSearchResults', token)
 	},
 
 }
