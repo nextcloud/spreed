@@ -88,7 +88,7 @@ export default {
 
 	computed: {
 		show() {
-			return this.$store.getters.getSidebarStatus()
+			return this.$store.getters.getSidebarStatus
 		},
 		opened() {
 			return !!this.token && this.show
