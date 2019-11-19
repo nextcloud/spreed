@@ -130,8 +130,18 @@
 			this._rawParticipantName = rawParticipantName;
 			this._participantName = participantName;
 
+			// Restore icon if needed after "avatar()" resets it.
+			var restoreIconLoadingCallback = function() {
+				if (this._connectionStatus === ConnectionStatus.NEW ||
+						this._connectionStatus === ConnectionStatus.CHECKING ||
+						this._connectionStatus === ConnectionStatus.DISCONNECTED_LONG ||
+						this._connectionStatus === ConnectionStatus.FAILED) {
+					this.getUI('avatar').addClass('icon-loading');
+				}
+			}.bind(this);
+
 			if (userId && userId.length) {
-				this.getUI('avatar').avatar(userId, this.participantAvatarSize);
+				this.getUI('avatar').avatar(userId, this.participantAvatarSize, undefined, undefined, restoreIconLoadingCallback);
 			} else {
 				this.getUI('avatar').imageplaceholder('?', rawParticipantName, this.participantAvatarSize);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
