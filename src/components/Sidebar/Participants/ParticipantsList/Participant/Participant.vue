@@ -34,17 +34,17 @@
 		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
-				@click.prevent.exact="demoteFromModerator">
+				@click="demoteFromModerator">
 				{{ t('spreed', 'Demote from moderator') }}
 			</ActionButton>
 			<ActionButton v-if="canBePromoted"
 				icon="icon-rename"
-				@click.prevent.exact="promoteToModerator">
+				@click="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-delete"
-				@click.prevent.exact="removeParticipant">
+				@click="removeParticipant">
 				{{ t('spreed', 'Remove participant') }}
 			</ActionButton>
 		</Actions>
@@ -56,7 +56,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { PARTICIPANT } from '../../../../constants'
+import { PARTICIPANT } from '../../../../../constants'
 
 export default {
 	name: 'Participant',
@@ -87,12 +87,14 @@ export default {
 		computedName() {
 			if (this.participant.displayName) {
 				return this.participant.displayName
-			} else return this.participant.label
+			}
+			return this.participant.label
 		},
 		computedId() {
 			if (this.participant.userId) {
 				return this.participant.userId
-			} else return this.participant.id
+			}
+			return this.participant.id
 		},
 		id() {
 			return this.participant.id
@@ -154,25 +156,25 @@ export default {
 
 		participantIdentifier() {
 			let data = {}
-
 			if (this.isGuest) {
 				data = {
 					sessionId: this.sessionId,
 				}
 			} else {
 				data = {
-					participant: this.userId,
+					participant: this.computedId,
 				}
 			}
-
 			return data
 		},
 
 	},
 
 	methods: {
-		handleClick(event) {
-			this.$emit('click', event)
+		handleClick() {
+			if (this.isSearched) {
+				this.$emit('clickParticipant', this.participant)
+			}
 		},
 		participantTypeIsModerator(participantType) {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
@@ -206,6 +208,7 @@ export default {
 	display: flex;
 	align-items: center;
 	height: 44px;
+	cursor: pointer;
 	&__avatar-wrapper {
 		height: 32px;
 		width: 32px;

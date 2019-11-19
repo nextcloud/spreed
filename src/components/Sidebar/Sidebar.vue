@@ -48,23 +48,7 @@
 		<AppSidebarTab v-if="getUserId"
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
-			<SearchBox
-				v-model="searchText"
-				@input="debounceFetchSearchResults" />
-			<CurrentParticipants />
-			<template v-if="isSearching">
-				<Caption
-					:title="t('spreed', 'Add participants')" />
-				<ParticipantsList v-if="searchResultsUsers.length !== 0" :participants-list="searchResultsUsers" />
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No search results')" />
-
-				<Caption
-					:title="t('spreed', 'Add groups')" />
-				<ParticipantsList v-if="searchResultsGroups.length !== 0" :participants-list="searchResultsGroups" />
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No search results')" />
-			</template>
+			<ParticipantsTab :display-search-box="displaySearchBox" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
 			:name="t('spreed', 'Projects')"
@@ -82,16 +66,9 @@ import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import Caption from '../Caption'
-import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
-import Hint from '../Hint'
-import ParticipantsList from './ParticipantsList/ParticipantsList'
-import SearchBox from '../SearchBox'
-import debounce from 'debounce'
 import { CollectionList } from 'nextcloud-vue-collections'
-import { EventBus } from '../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../constants'
-import { searchPossibleConversations } from '../../services/conversationsService'
+import ParticipantsTab from './Participants/ParticipantsTab'
 
 export default {
 	name: 'Sidebar',
@@ -101,19 +78,11 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		CollectionList,
-		CurrentParticipants,
-		SearchBox,
-		Caption,
-		Hint,
-		ParticipantsList,
+		ParticipantsTab,
 	},
 
 	data() {
 		return {
-			searchText: '',
-			searchResults: {},
-			searchResultsUsers: [],
-			searchResultsGroups: [],
 			contactsLoading: false,
 		}
 	},
@@ -156,42 +125,17 @@ export default {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 		},
 
+		displaySearchBox() {
+			return this.conversation.type === CONVERSATION.TYPE.GROUP || this.conversation.type === CONVERSATION.TYPE.PUBLIC
+		},
 		isSearching() {
 			return this.searchText !== ''
 		},
 	},
 
-	beforeMount() {
-		/**
-		 * After a conversation was created, the search filter is reset
-		 */
-		EventBus.$once('resetSearchFilter', () => {
-			this.searchText = ''
-		})
-	},
-
 	methods: {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
-		},
-
-		debounceFetchSearchResults: debounce(function() {
-			if (this.isSearching) {
-				this.fetchSearchResults()
-			}
-		}, 250),
-
-		async fetchSearchResults() {
-			this.contactsLoading = true
-			const response = await searchPossibleConversations(this.searchText)
-			this.searchResults = response.data.ocs.data
-			this.searchResultsUsers = this.searchResults.filter((match) => {
-				return match.source === 'users'
-					&& match.id !== this.$store.getters.getUserId()
-					&& !this.hasOneToOneConversationWith(match.id)
-			})
-			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
-			this.contactsLoading = false
 		},
 
 		async toggleGuests() {

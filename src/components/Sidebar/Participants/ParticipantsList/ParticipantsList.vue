@@ -23,9 +23,10 @@
 	<div>
 		<ul>
 			<Participant
-				v-for="participant in participantsList"
+				v-for="participant in items"
 				:key="participant.userId"
-				:participant="participant" />
+				:participant="participant"
+				@clickParticipant="handleClickParticipant" />
 		</ul>
 	</div>
 </template>
@@ -33,6 +34,7 @@
 <script>
 
 import Participant from './Participant/Participant'
+import { addParticipant } from '../../../../services/participantsService'
 
 export default {
 	name: 'ParticipantsList',
@@ -40,17 +42,30 @@ export default {
 	components: {
 		Participant,
 	},
-
+	/**
+	 * List of searched users or groups
+	 */
 	props: {
-		participantsList: {
+		items: {
 			type: Array,
 			required: true,
 		},
 	},
 
+	computed: {
+		token() {
+			return this.$route.params.token
+		},
+	},
+
 	methods: {
-		handleClick(event) {
-			this.$emit('click', event)
+		async handleClickParticipant(participant) {
+			try {
+				await addParticipant(this.token, participant.id, participant.source)
+				this.$emit('refreshCurrentParticipants')
+			} catch (exeption) {
+				console.debug(exeption)
+			}
 		},
 	},
 }

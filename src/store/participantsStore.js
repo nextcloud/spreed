@@ -88,12 +88,14 @@ const mutations = {
 		}
 	},
 	/**
-	 * Resets the store to it's original state
+	 * Purges a given conversation from the previously added participants
 	 * @param {object} state current store state;
 	 * @param {string} token the conversation to purge;
 	 */
 	purgeParticipantsStore(state, token) {
-		Vue.delete(state.participants, token)
+		if (state.participants[token]) {
+			Vue.delete(state.participants, token)
+		} else console.debug("The conversation you are trying to purge doesn't exist")
 	},
 }
 
@@ -152,7 +154,7 @@ const actions = {
 		commit('deleteParticipant', { token, index })
 	},
 	/**
-	 * Resets the store to it's original state.
+	 * Purges a given conversation from the previously added participants
 	 * @param {object} context default store context;
 	 * @param {string} token the conversation to purge;
 	 */
