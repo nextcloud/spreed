@@ -93,7 +93,9 @@ const mutations = {
 	 * @param {string} token the conversation to purge;
 	 */
 	purgeParticipantsStore(state, token) {
-		Vue.delete(state.participants, token)
+		if (state.participants[token]) {
+			Vue.delete(state.participants, token)
+		}
 	},
 }
 

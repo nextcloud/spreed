@@ -81,8 +81,7 @@ export default {
 	data() {
 		return {
 			searchText: '',
-			addableUsers: [],
-			addableGroups: [],
+			searchResults: [],
 			contactsLoading: false,
 		}
 	},
@@ -112,6 +111,27 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+		addableUsers() {
+			if (this.searchResults !== []) {
+				const searchResultUsers = this.searchResults.filter(item => item.source === 'users')
+				const participants = this.$store.getters.participantsList(this.token)
+				return searchResultUsers.filter(user => {
+					let addable = true
+					for (const participant of participants) {
+						if (user.id === participant.userId) {
+							addable = false
+							break
+						}
+					}
+					return addable
+				})
+			} return []
+		},
+		addableGroups() {
+			if (this.searchResults !== []) {
+				return this.searchResults.filter((item) => item.source === 'groups')
+			} return []
+		}
 	},
 
 	beforeMount() {
@@ -133,28 +153,16 @@ export default {
 		},
 
 		debounceFetchSearchResults: debounce(function() {
+			this.contactsLoading = true
 			if (this.isSearching) {
 				this.fetchSearchResults()
 			}
 		}, 250),
 
 		async fetchSearchResults() {
-			this.contactsLoading = true
 			const response = await searchPossibleConversations(this.searchText)
-			const searchResults = response.data.ocs.data
-			const searchResultUsers = searchResults.filter(item => item.source === 'users')
-			const participants = this.$store.getters.participantsList(this.token)
-			this.addableUsers = searchResultUsers.filter(user => {
-				let addable = true
-				for (const participant of participants) {
-					if (user.id === participant.userId) {
-						addable = false
-						break
-					}
-				}
-				return addable
-			})
-			this.addableGroups = searchResults.filter((item) => item.source === 'groups')
+			this.searchResults = response.data.ocs.data
+			this.getParticipants()
 			this.contactsLoading = false
 		},
 
