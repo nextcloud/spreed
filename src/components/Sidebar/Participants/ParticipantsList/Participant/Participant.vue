@@ -34,17 +34,17 @@
 		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
-				@click.prevent.exact="demoteFromModerator">
+				@click.exact="demoteFromModerator">
 				{{ t('spreed', 'Demote from moderator') }}
 			</ActionButton>
 			<ActionButton v-if="canBePromoted"
 				icon="icon-rename"
-				@click.prevent.exact="promoteToModerator">
+				@click.exact="promoteToModerator">
 				{{ t('spreed', 'Promote to moderator') }}
 			</ActionButton>
 			<ActionButton
 				icon="icon-delete"
-				@click.prevent.exact="removeParticipant">
+				@click.exact="removeParticipant">
 				{{ t('spreed', 'Remove participant') }}
 			</ActionButton>
 		</Actions>
@@ -156,17 +156,15 @@ export default {
 
 		participantIdentifier() {
 			let data = {}
-
 			if (this.isGuest) {
 				data = {
 					sessionId: this.sessionId,
 				}
 			} else {
 				data = {
-					participant: this.userId,
+					participant: this.computedId,
 				}
 			}
-
 			return data
 		},
 
