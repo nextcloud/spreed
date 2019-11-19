@@ -208,6 +208,7 @@ export default {
 	display: flex;
 	align-items: center;
 	height: 44px;
+	cursor: pointer;
 	&__avatar-wrapper {
 		height: 32px;
 		width: 32px;

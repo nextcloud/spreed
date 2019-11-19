@@ -25,7 +25,7 @@
 			v-if="displaySearchBox"
 			v-model="searchText"
 			:placeholder-text="t('spreed', 'Add participants to the conversation')"
-			@input="debounceFetchSearchResults" />
+			@input="handleInput" />
 		<CurrentParticipants />
 		<template v-if="isSearching">
 			<Caption
@@ -151,9 +151,13 @@ export default {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 		},
+		handleInput() {
+			this.contactsLoading = true
+			this.searchResults = []
+			this.debounceFetchSearchResults()
+		},
 
 		debounceFetchSearchResults: debounce(function() {
-			this.contactsLoading = true
 			if (this.isSearching) {
 				this.fetchSearchResults()
 			}
