@@ -125,13 +125,15 @@ export default {
 					}
 					return addable
 				})
-			} return []
+			}
+			return []
 		},
 		addableGroups() {
 			if (this.searchResults !== []) {
 				return this.searchResults.filter((item) => item.source === 'groups')
-			} return []
-		}
+			}
+			return []
+		},
 	},
 
 	beforeMount() {
