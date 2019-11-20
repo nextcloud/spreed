@@ -50,6 +50,7 @@
 import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
+import CancelableRequest from '../../utils/cancelableRequest'
 
 export default {
 	name: 'NewMessageForm',
@@ -60,6 +61,10 @@ export default {
 	data: function() {
 		return {
 			text: '',
+			/**
+			 * Stores the cancel function
+			 */
+			cancelPostNewMessages: () => {},
 		}
 	},
 	computed: {
@@ -128,9 +133,14 @@ export default {
 				this.$nextTick(function() {
 					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 				})
+				// Get a new cancelable request function and cancel function pair
+				const { request, cancel } = CancelableRequest(postNewMessage)
+				// Assign the new cancel function to our data value
+				this.cancelPostNewMessages = cancel
+				// Make the request
 				try {
 					// Posts the message to the server
-					const response = await postNewMessage(temporaryMessage)
+					const response = await request(temporaryMessage)
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
 					// Also remove the message to be replied for this conversation
