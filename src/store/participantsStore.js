@@ -95,7 +95,9 @@ const mutations = {
 	purgeParticipantsStore(state, token) {
 		if (state.participants[token]) {
 			Vue.delete(state.participants, token)
-		} else console.debug("The conversation you are trying to purge doesn't exist")
+		} else {
+			console.debug("The conversation you are trying to purge doesn't exist")
+		}
 	},
 }
 
