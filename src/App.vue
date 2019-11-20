@@ -167,8 +167,12 @@ export default {
 		})
 
 		if (getCurrentUser()) {
+			console.debug('Setting current user')
 			this.$store.dispatch('setCurrentUser', getCurrentUser())
+		} else {
+			console.debug('Can not set current user because it\'s a guest')
 		}
+
 		if (this.getUserId === null) {
 			this.fetchSingleConversation(this.token)
 			window.setInterval(() => {

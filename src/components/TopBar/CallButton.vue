@@ -21,15 +21,16 @@
 
 <template>
 	<button v-if="showStartCallButton"
-		:disabled="startCallButtonDisabled"
+		:disabled="startCallButtonDisabled || loading"
 		class="top-bar__button primary"
 		@click="joinCall">
 		{{ startCallLabel }}
 	</button>
 	<button v-else-if="showLeaveCallButton"
 		class="top-bar__button primary"
+		:disabled="loading"
 		@click="leaveCall">
-		{{ t('spreed', 'Leave call') }}
+		{{ leaveCallLabel }}
 	</button>
 </template>
 
@@ -38,6 +39,12 @@ import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 
 export default {
 	name: 'CallButton',
+
+	data() {
+		return {
+			loading: false,
+		}
+	},
 
 	computed: {
 		token() {
@@ -58,6 +65,19 @@ export default {
 			}
 		},
 
+		participant() {
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			if (participantIndex !== -1) {
+				console.debug('Current participant found')
+				return this.$store.getters.getParticipant(this.token, participantIndex)
+			}
+
+			console.debug('Current participant not found')
+			return {
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}
+		},
+
 		isBlockedByLobby() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
 				&& this.isParticipantTypeModerator(this.conversation.participantType)
@@ -69,7 +89,19 @@ export default {
 				|| this.isBlockedByLobby
 		},
 
+		leaveCallLabel() {
+			if (this.loading) {
+				return t('spreed', 'Leaving call')
+			}
+
+			return t('spreed', 'Leave call')
+		},
+
 		startCallLabel() {
+			if (this.loading) {
+				return t('spreed', 'Joining call')
+			}
+
 			if (this.conversation.hasCall && !this.isBlockedByLobby) {
 				return t('spreed', 'Join call')
 			}
@@ -79,12 +111,12 @@ export default {
 
 		showStartCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& this.conversation.participantFlags === PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
 		showLeaveCallButton() {
 			return this.conversation.readOnly === CONVERSATION.STATE.READ_WRITE
-				&& this.conversation.participantFlags !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+				&& this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 	},
 
@@ -93,12 +125,25 @@ export default {
 			return [PARTICIPANT.TYPE.OWNER, PARTICIPANT.TYPE.MODERATOR, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(participantType) !== -1
 		},
 
-		joinCall() {
-			console.info('Join/start call')
+		async joinCall() {
+			console.info('Joining call')
+			this.loading = true
+			await this.$store.dispatch('joinCall', {
+				token: this.token,
+				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				flags: PARTICIPANT.CALL_FLAG.IN_CALL, // FIXME add audio+video as per setting
+			})
+			this.loading = false
 		},
 
-		leaveCall() {
-			console.info('Leave call')
+		async leaveCall() {
+			console.info('Leaving call')
+			this.loading = true
+			await this.$store.dispatch('leaveCall', {
+				token: this.token,
+				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+			})
+			this.loading = false
 		},
 	},
 }
