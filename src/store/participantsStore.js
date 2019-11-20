@@ -74,17 +74,23 @@ const mutations = {
 	addParticipant(state, { token, participant }) {
 		if (!state.participants[token]) {
 			Vue.set(state.participants, token, [])
+		} else {
+			console.error('Error while adding the participant')
 		}
 		state.participants[token].push(participant)
 	},
 	updateParticipant(state, { token, index, updatedData }) {
 		if (state.participants[token] && state.participants[token][index]) {
 			state.participants[token][index] = Object.assign(state.participants[token][index], updatedData)
+		} else {
+			console.error('Error while updating the participant')
 		}
 	},
 	deleteParticipant(state, { token, index }) {
 		if (state.participants[token] && state.participants[token][index]) {
 			Vue.delete(state.participants[token], index)
+		} else {
+			console.error(`The conversation you are trying to purge doesn't exist`)
 		}
 	},
 	/**
@@ -95,7 +101,9 @@ const mutations = {
 	purgeParticipantsStore(state, token) {
 		if (state.participants[token]) {
 			Vue.delete(state.participants, token)
-		} else console.debug("The conversation you are trying to purge doesn't exist")
+		} else {
+			console.error('Error while purging the participants')
+		}
 	},
 }
 
