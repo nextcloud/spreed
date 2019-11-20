@@ -51,6 +51,7 @@ import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import CancelableRequest from '../../utils/cancelableRequest'
+import pTimeout from 'p-timeout'
 
 export default {
 	name: 'NewMessageForm',
@@ -64,7 +65,7 @@ export default {
 			/**
 			 * Stores the cancel function
 			 */
-			cancelPostNewMessages: () => {},
+			cancelPostNewMessage: () => {},
 		}
 	},
 	computed: {
@@ -88,8 +89,6 @@ export default {
 		 * @returns {Object}
 		 */
 		createTemporaryMessage() {
-			console.error(this.text)
-
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
 				actorId: this.$store.getters.getActorId(),
@@ -134,13 +133,15 @@ export default {
 					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 				})
 				// Get a new cancelable request function and cancel function pair
-				const { request, cancel } = CancelableRequest(postNewMessage)
-				// Assign the new cancel function to our data value
-				this.cancelPostNewMessages = cancel
+				const { request, cancel, token } = CancelableRequest(postNewMessage)
 				// Make the request
 				try {
 					// Posts the message to the server
-					const response = await request(temporaryMessage)
+					const response = await pTimeout(request(temporaryMessage), 100, () => {
+						console.log(token.promise)
+						cancel('canceled')
+						console.log(token.promise)
+					})
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
 					// Also remove the message to be replied for this conversation
