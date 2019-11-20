@@ -126,7 +126,8 @@ export default {
 		},
 
 		displaySearchBox() {
-			return this.conversation.type === CONVERSATION.TYPE.GROUP || this.conversation.type === CONVERSATION.TYPE.PUBLIC
+			return this.conversation.type === CONVERSATION.TYPE.GROUP
+				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
 		},
 		isSearching() {
 			return this.searchText !== ''

@@ -191,7 +191,7 @@ export default {
 			participants.data.ocs.data.forEach(participant => {
 				this.$store.dispatch('addParticipant', {
 					token: this.token,
-					participant: participant,
+					participant,
 				})
 			})
 		},
