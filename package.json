@@ -27,6 +27,7 @@
 		"emoji-regex": "^8.0.0",
 		"escape-html": "^1.0.3",
 		"nextcloud-vue-collections": "^0.6.0",
+		"p-timeout": "^3.2.0",
 		"vue": "^2.6.10",
 		"vue-clipboard2": "^0.3.1",
 		"vue-contenteditable-directive": "^1.2.0",

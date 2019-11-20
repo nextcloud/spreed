@@ -51,6 +51,7 @@ import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import CancelableRequest from '../../utils/cancelableRequest'
+import pTimeout from 'p-timeout'
 
 export default {
 	name: 'NewMessageForm',
@@ -64,7 +65,7 @@ export default {
 			/**
 			 * Stores the cancel function
 			 */
-			cancelPostNewMessages: () => {},
+			cancelPostNewMessage: () => {},
 		}
 	},
 	computed: {
@@ -88,8 +89,6 @@ export default {
 		 * @returns {Object}
 		 */
 		createTemporaryMessage() {
-			console.error(this.text)
-
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
 				actorId: this.$store.getters.getActorId(),
@@ -135,20 +134,27 @@ export default {
 				})
 				// Get a new cancelable request function and cancel function pair
 				const { request, cancel } = CancelableRequest(postNewMessage)
-				// Assign the new cancel function to our data value
-				this.cancelPostNewMessages = cancel
 				// Make the request
 				try {
 					// Posts the message to the server
-					const response = await request(temporaryMessage)
+					const response = await pTimeout(request(temporaryMessage), 500, () => {
+						cancel('canceled')
+						throw new Error('timeout')
+					})
+					debugger
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
 					// Also remove the message to be replied for this conversation
 					this.$store.dispatch('removeMessageToBeReplied', this.token)
-					// And adds the complete version of the message received
-					// by the server
+					// Add the complete version of the message receive by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
 				} catch (error) {
+					if (error.message === 'timeout') {
+						// If successful, deletes the temporary message from the store
+						this.$store.dispatch('deleteMessage', temporaryMessage)
+						// Also remove the message to be replied for this conversation
+						this.$store.dispatch('removeMessageToBeReplied', this.token)
+					}
 					console.debug(`error while submitting message ${error}`)
 				}
 
