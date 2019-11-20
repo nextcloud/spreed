@@ -166,34 +166,54 @@ export default {
 		}, 250),
 
 		async fetchSearchResults() {
-			const response = await searchPossibleConversations(this.searchText)
-			this.searchResults = response.data.ocs.data
-			this.getParticipants()
-			this.contactsLoading = false
+			try {
+				const response = await searchPossibleConversations(this.searchText)
+				this.searchResults = response.data.ocs.data
+				this.getParticipants()
+				this.contactsLoading = false
+			} catch (exeption) {
+				console.error(exeption)
+				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
+			}
 		},
 
 		async toggleGuests() {
-			await this.$store.dispatch('toggleGuests', {
-				token: this.token,
-				allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
-			})
+			try {
+				await this.$store.dispatch('toggleGuests', {
+					token: this.token,
+					allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
+				})
+			} catch (exeption) {
+				console.error(exeption)
+				OCP.Toast.error(t('spreed', 'An error occurred while toggling guests'))
+			}
 		},
 
 		async toggleLobby() {
-			await this.$store.dispatch('toggleLobby', {
-				token: this.token,
-				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
-			})
+			try {
+				await this.$store.dispatch('toggleLobby', {
+					token: this.token,
+					enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
+				})
+			} catch (exeption) {
+				console.error(exeption)
+				OCP.Toast.error(t('spreed', 'An error occurred while toggling the lobby'))
+			}
 		},
 		async getParticipants() {
-			const participants = await fetchParticipants(this.token)
-			this.$store.dispatch('purgeParticipantsStore', this.token)
-			participants.data.ocs.data.forEach(participant => {
-				this.$store.dispatch('addParticipant', {
-					token: this.token,
-					participant,
+			try {
+				const participants = await fetchParticipants(this.token)
+				this.$store.dispatch('purgeParticipantsStore', this.token)
+				participants.data.ocs.data.forEach(participant => {
+					this.$store.dispatch('addParticipant', {
+						token: this.token,
+						participant,
+					})
 				})
-			})
+			} catch (exeption) {
+				console.error(exeption)
+				OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
+			}
 		},
 	},
 }
