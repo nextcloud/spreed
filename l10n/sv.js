@@ -168,6 +168,7 @@ OC.L10N.register(
     "Demote from moderator" : "Degradera från moderator",
     "Promote to moderator" : "Befordra till moderator",
     "Remove participant" : "Ta bort deltagare",
+    "Add participants to the conversation" : "Lägg till deltagare i konversationen",
     "Add participants" : "Lägg till deltagare",
     "Add groups" : "Lägg till grupper",
     "Guests" : "Gäster",

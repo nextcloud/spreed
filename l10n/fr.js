@@ -169,6 +169,7 @@ OC.L10N.register(
     "Demote from moderator" : "Destituer de modérateur",
     "Promote to moderator" : "Promouvoir en modérateur",
     "Remove participant" : "Supprimer un participant",
+    "Add participants to the conversation" : "Ajouter des participants à la conversation",
     "Add participants" : "Ajouter des participants",
     "Add groups" : "Ajouter des groupes",
     "Guests" : "Invités",
