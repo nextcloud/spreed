@@ -51,7 +51,6 @@ import AdvancedInput from './AdvancedInput/AdvancedInput'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
 import CancelableRequest from '../../utils/cancelableRequest'
-import pTimeout from 'p-timeout'
 
 export default {
 	name: 'NewMessageForm',
@@ -133,15 +132,14 @@ export default {
 					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 				})
 				// Get a new cancelable request function and cancel function pair
-				const { request, cancel, token } = CancelableRequest(postNewMessage)
+				const { request, cancel } = CancelableRequest(postNewMessage)
 				// Make the request
 				try {
+					setTimeout(function() {
+						cancel(); 
+					}, 100);
 					// Posts the message to the server
-					const response = await pTimeout(request(temporaryMessage), 100, () => {
-						console.log(token.promise)
-						cancel('canceled')
-						console.log(token.promise)
-					})
+					const response = await request(temporaryMessage)
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
 					// Also remove the message to be replied for this conversation
