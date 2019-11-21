@@ -74,8 +74,6 @@ const mutations = {
 	addParticipant(state, { token, participant }) {
 		if (!state.participants[token]) {
 			Vue.set(state.participants, token, [])
-		} else {
-			console.error('Error while adding the participant')
 		}
 		state.participants[token].push(participant)
 	},
@@ -101,8 +99,6 @@ const mutations = {
 	purgeParticipantsStore(state, token) {
 		if (state.participants[token]) {
 			Vue.delete(state.participants, token)
-		} else {
-			console.error('Error while purging the participants')
 		}
 	},
 }
