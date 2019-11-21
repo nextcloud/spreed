@@ -148,6 +148,14 @@ export default {
 				this.$store.dispatch('setCurrentParticipant', conversation)
 			}
 		})
+
+		EventBus.$on('conversationsReceived', () => {
+			if (this.$route.name === 'conversation'
+				&& !this.$store.getters.conversations[this.token]) {
+				this.$router.push('/apps/spreed')
+			}
+		})
+
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
 		*/
