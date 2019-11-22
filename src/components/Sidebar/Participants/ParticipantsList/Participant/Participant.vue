@@ -103,7 +103,7 @@ export default {
 			return this.participant.label
 		},
 		participantType() {
-			return this.participant.type
+			return this.participant.participantType
 		},
 		sessionId() {
 			return this.participant.sessionId
