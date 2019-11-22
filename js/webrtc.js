@@ -119,22 +119,41 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.remove(ownPeer.id, true);
 			OCA.SpreedMe.videos.remove(ownPeer.id);
 			delete spreedMappingTable[ownPeer.id];
+			if (delayedConnectionToPeer[ownPeer.id]) {
+				clearInterval(delayedConnectionToPeer[ownPeer.id]);
+				delete delayedConnectionToPeer[ownPeer.id];
+			}
 			ownPeer.end();
 		}
 
-		// Create own publishing stream.
-		ownPeer = webrtc.webrtc.createPeer({
-			id: currentSessionId,
-			type: "video",
-			enableDataChannels: true,
-			receiveMedia: {
-				offerToReceiveAudio: 0,
-				offerToReceiveVideo: 0
-			},
-			sendVideoIfAvailable: signaling.getSendVideoIfAvailable()
-		});
-		webrtc.emit('createdPeer', ownPeer);
-		ownPeer.start();
+		var createPeer = function() {
+			// Create own publishing stream.
+			ownPeer = webrtc.webrtc.createPeer({
+				id: currentSessionId,
+				type: "video",
+				enableDataChannels: true,
+				receiveMedia: {
+					offerToReceiveAudio: 0,
+					offerToReceiveVideo: 0
+				},
+				sendVideoIfAvailable: signaling.getSendVideoIfAvailable()
+			});
+			webrtc.emit('createdPeer', ownPeer);
+			ownPeer.start();
+		}
+
+		createPeer();
+
+		delayedConnectionToPeer[ownPeer.id] = setInterval(function() {
+			if (ownPeer) {
+				ownPeer.end();
+
+				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
+				OCA.SpreedMe.videos.remove(ownPeer.id);
+			}
+
+			createPeer();
+		}, 10000);
 	}
 
 	function userHasStreams(user) {
@@ -1003,6 +1022,10 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
 				OCA.SpreedMe.videos.remove(ownPeer.id);
 				delete spreedMappingTable[ownPeer.id];
+				if (delayedConnectionToPeer[ownPeer.id]) {
+					clearInterval(delayedConnectionToPeer[ownPeer.id]);
+					delete delayedConnectionToPeer[ownPeer.id];
+				}
 				ownPeer.end();
 				ownPeer = null;
 			}
