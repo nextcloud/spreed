@@ -170,6 +170,8 @@
     "Add participants to the conversation" : "Ajouter des participants à la conversation",
     "Add participants" : "Ajouter des participants",
     "Add groups" : "Ajouter des groupes",
+    "An error occurred while performing the search" : "Une erreur est survenue pendant la recherche",
+    "An error occurred while fetching the participants" : "Une erreur est survenue pendant la récupération des participants",
     "Guests" : "Invités",
     "Share link" : "Partager le lien",
     "Webinar" : "Webinaire",
