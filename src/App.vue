@@ -25,7 +25,8 @@
 		<AppContent>
 			<router-view />
 		</AppContent>
-		<RightSidebar />
+		<RightSidebar
+			:show-chat-in-sidebar="showChatInSidebar" />
 	</Content>
 </template>
 
@@ -39,6 +40,7 @@ import { EventBus } from './services/EventBus'
 import { getCurrentUser } from '@nextcloud/auth'
 import { fetchConversation } from './services/conversationsService'
 import { joinConversation } from './services/participantsService'
+import { PARTICIPANT } from './constants'
 
 export default {
 	name: 'App',
@@ -64,6 +66,29 @@ export default {
 
 		getUserId() {
 			return this.$store.getters.getUserId()
+		},
+
+		participant() {
+			if (typeof this.token === 'undefined') {
+				return {
+					inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+				}
+			}
+
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			if (participantIndex !== -1) {
+				return this.$store.getters.getParticipant(this.token, participantIndex)
+			}
+
+			return {
+				inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+			}
+		},
+
+		showChatInSidebar() {
+			// FIXME return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+			// Somehow changing this will not add the tab in the end.
+			return true
 		},
 
 		/**
