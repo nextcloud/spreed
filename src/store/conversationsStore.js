@@ -21,6 +21,7 @@
  */
 import Vue from 'vue'
 import { makePublic, makePrivate, changeLobbyState } from '../services/conversationsService'
+import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR } from '../constants'
 
 const getDefaultState = () => {
@@ -76,6 +77,19 @@ const actions = {
 	 */
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
+
+		const currentUser = getCurrentUser()
+		context.dispatch('addParticipantOnce', {
+			token: conversation.token,
+			participant: {
+				inCall: conversation.participantFlags,
+				lastPing: conversation.lastPing,
+				sessionId: conversation.sessionId,
+				participantType: conversation.participantType,
+				userId: currentUser ? currentUser.uid : '',
+				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '',
+			},
+		})
 	},
 
 	/**

@@ -26,6 +26,10 @@ import {
 	removeUserFromConversation,
 	removeGuestFromConversation,
 } from '../services/participantsService'
+import {
+	joinCall,
+	leaveCall,
+} from '../services/callsService'
 import { PARTICIPANT } from '../constants'
 
 const state = {
@@ -52,6 +56,10 @@ const getters = {
 		return {}
 	},
 	getParticipantIndex: (state) => (token, participantIdentifier) => {
+		if (!state.participants[token]) {
+			return -1
+		}
+
 		let index
 
 		if (participantIdentifier.hasOwnProperty('participant')) {
@@ -108,12 +116,27 @@ const actions = {
 	/**
 	 * Adds participant to the store.
 	 *
+	 * Only call this after purgeParticipantsStore, otherwise use addParticipantOnce
+	 *
 	 * @param {object} context default store context;
-	 * @param {string} token the conversation to purge;
+	 * @param {string} token the conversation to add the participant;
 	 * @param {object} participant the participant;
 	 */
 	addParticipant({ commit }, { token, participant }) {
 		commit('addParticipant', { token, participant })
+	},
+	/**
+	 * Only add a participant when they are not there yet
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} token the conversation to add the participant;
+	 * @param {object} participant the participant;
+	 */
+	addParticipantOnce({ commit }, { token, participant }) {
+		const index = getters.getParticipantIndex(token, participant)
+		if (index === -1) {
+			commit('addParticipant', { token, participant })
+		}
 	},
 	async promoteToModerator({ commit, getters }, { token, participantIdentifier }) {
 		const index = getters.getParticipantIndex(token, participantIdentifier)
@@ -164,6 +187,37 @@ const actions = {
 	 */
 	purgeParticipantsStore({ commit }, token) {
 		commit('purgeParticipantsStore', token)
+	},
+
+	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
+		const index = getters.getParticipantIndex(token, participantIdentifier)
+		if (index === -1) {
+			console.error('Participant not found')
+			console.error(participantIdentifier)
+			console.error(flags)
+			return
+		}
+
+		await joinCall(token, flags)
+
+		const updatedData = {
+			inCall: flags,
+		}
+		commit('updateParticipant', { token, index, updatedData })
+	},
+
+	async leaveCall({ commit, getters }, { token, participantIdentifier }) {
+		const index = getters.getParticipantIndex(token, participantIdentifier)
+		if (index === -1) {
+			return
+		}
+
+		await leaveCall(token)
+
+		const updatedData = {
+			inCall: PARTICIPANT.CALL_FLAG.DISCONNECTED,
+		}
+		commit('updateParticipant', { token, index, updatedData })
 	},
 }
 

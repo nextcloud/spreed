@@ -58,6 +58,16 @@ const getters = {
 	getDisplayName: (state) => () => {
 		return state.displayName
 	},
+	getParticipantIdentifier: (state) => () => {
+		if (state.actorType === 'guests') {
+			return {
+				sessionId: state.sessionId,
+			}
+		}
+		return {
+			participant: state.userId,
+		}
+	},
 }
 
 const mutations = {

@@ -135,12 +135,15 @@ export default {
 		 */
 		EventBus.$once('conversationsReceived', () => {
 			if (this.$route.name === 'conversation') {
-				const CURRENT_CONVERSATION_NAME = this.getConversationName(this.token)
-				this.setPageTitle(CURRENT_CONVERSATION_NAME)
+				// Adjust the page title once the conversation list is loaded
+				this.setPageTitle(this.getConversationName(this.token), false)
+
+				// Automatically join the conversation as well
+				joinConversation(this.token)
 			}
 
 			if (!getCurrentUser()) {
-				joinConversation(this.token)
+				// Set the current actor/participant for guests
 				const conversation = this.$store.getters.conversations[this.token]
 				this.$store.dispatch('setCurrentParticipant', conversation)
 			}
@@ -167,8 +170,12 @@ export default {
 		})
 
 		if (getCurrentUser()) {
+			console.debug('Setting current user')
 			this.$store.dispatch('setCurrentUser', getCurrentUser())
+		} else {
+			console.debug('Can not set current user because it\'s a guest')
 		}
+
 		if (this.getUserId === null) {
 			this.fetchSingleConversation(this.token)
 			window.setInterval(() => {
