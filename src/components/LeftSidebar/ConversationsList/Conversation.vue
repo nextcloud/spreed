@@ -217,7 +217,11 @@ export default {
 				// If successful, deletes the conversation from the store
 				this.$store.dispatch('deleteConversation', this.item)
 			} catch (error) {
-				console.debug(`error while removing yourself from conversation ${error}`)
+				if (error.response.status === 400) {
+					OCP.Toast.error(t('spreed', 'You need to promote a new moderator before you can leave the conversation.'))
+				} else {
+					console.debug(`error while removing yourself from conversation ${error}`)
+				}
 			}
 		},
 		async toggleFavoriteConversation() {
