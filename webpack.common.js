@@ -14,6 +14,7 @@ module.exports = {
 		'talk': path.join(__dirname, 'src', 'main.js'),
 		'talk-chat-tab': path.join(__dirname, 'src', 'mainChatTab.js'),
 		'files-sidebar-tab': path.join(__dirname, 'src', 'mainSidebarTab.js'),
+		'flow': path.join(__dirname, 'src', 'flow.js')
 	},
 	output: {
 		path: path.resolve(__dirname, './js'),

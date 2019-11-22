@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Flow;
 
+use OC_Util;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -73,6 +74,7 @@ class Operation implements IOperation {
 		$dispatcher->addListener(FlowManager::EVENT_NAME_REG_OPERATION, function (GenericEvent $event) {
 			$operation = \OC::$server->query(Operation::class);
 			$event->getSubject()->registerOperation($operation);
+			OC_Util::addScript('spreed', 'flow');
 		});
 	}
 
@@ -142,16 +144,14 @@ class Operation implements IOperation {
 
 	protected function parseOperationConfig(string $raw): array {
 		/**
-		 * We expect $operation be a base64 encoded json string, containing
+		 * We expect $operation be a json string, containing
 		 * 	't' => string, the room token
 		 *  'm' => int 1..3, the mention-mode (none, yourself, room)
-		 *  'u' => string, the applicable user id
 		 *
 		 * setting up room mentions are only permitted to moderators
 		 */
 
-		$decoded = base64_decode($raw);
-		$opConfig = \json_decode($decoded, true);
+		$opConfig = \json_decode($raw, true);
 		if(!is_array($opConfig) || empty($opConfig)) {
 			throw new UnexpectedValueException('Cannot decode operation details');
 		}
