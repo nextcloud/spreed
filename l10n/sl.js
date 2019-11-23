@@ -2,6 +2,7 @@ OC.L10N.register(
     "spreed",
     {
     "a conversation" : "pogovor",
+    "(Duration %s)" : "(Trajanje %s)",
     "_%n guest_::_%n guests_" : ["%n gost","%n gosta","%n gostje","%n gostov"],
     "{actor} invited you to {call}" : "{actor} pošlje povabilo na {call}",
     "Guest" : "Gost",
@@ -101,9 +102,9 @@ OC.L10N.register(
     "Your screen" : "Vaš zaslon",
     ", " : ", ",
     "%s invited you to a private conversation" : "%s pošlje povabilo za zasebni pogovor",
-    "%s invited you to a group conversation: %s" : "%s pošlje povabilo na skupinski pogovor: %s",
-    "%s invited you to a group conversation" : "%s pošlje povabilo na skupinski pogovor",
-    "{user} invited you to a group conversation" : "{user} pošlje povabilo na skupinski pogovor",
+    "%s invited you to a group conversation: %s" : "%s vam pošlje povabilo na skupinski pogovor: %s",
+    "%s invited you to a group conversation" : "%s vam pošlje povabilo na skupinski pogovor",
+    "{user} invited you to a group conversation" : "{user} vam pošlje povabilo na skupinski pogovor",
     "A group call has started" : "Začet je skupinski pogovor",
     "Unnamed conversation" : "Neimenovan pogovor",
     "* You can now notify all participants by posting \"@all\" into the chat" : "Vse udeležence je mogoče obvestiti z uporabo ukaza »@all« v klepetalnem oknu"
