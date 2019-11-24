@@ -42,7 +42,7 @@
 		"node": ">=10.0.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.7.2",
+		"@babel/core": "^7.7.4",
 		"@babel/plugin-syntax-dynamic-import": "^7.2.0",
 		"@babel/preset-env": "^7.7.1",
 		"@babel/runtime": "^7.7.2",
