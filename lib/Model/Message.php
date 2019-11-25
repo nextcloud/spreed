@@ -152,4 +152,29 @@ class Message {
 	public function getActorDisplayName(): string {
 		return $this->actorDisplayName;
 	}
+
+	/**
+	 * Specifies whether a message can be replied to
+	 */
+	public function isReplyable(): bool {
+		return $this->getMessageType() !== 'system' &&
+			$this->getMessageType() !== 'command' &&
+			\in_array($this->getActorType(), ['users', 'guests']);
+	}
+
+	public function toArray(): array {
+		return [
+			'id' => (int) $this->getComment()->getId(),
+			'token' => $this->getRoom()->getToken(),
+			'actorType' => $this->getActorType(),
+			'actorId' => $this->getActorId(),
+			'actorDisplayName' => $this->getActorDisplayName(),
+			'timestamp' => $this->getComment()->getCreationDateTime()->getTimestamp(),
+			'message' => $this->getMessage(),
+			'messageParameters' => $this->getMessageParameters(),
+			'systemMessage' => $this->getMessageType() === 'system' ? $this->getMessageRaw() : '',
+			'messageType' => $this->getMessageType(),
+			'isReplyable' => $this->isReplyable(),
+		];
+	}
 }

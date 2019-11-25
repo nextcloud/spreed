@@ -338,19 +338,7 @@ class RoomController extends AEnvironmentAwareController {
 			return [];
 		}
 
-		return [
-			'id' => (int) $lastMessage->getId(),
-			'actorType' => $message->getActorType(),
-			'actorId' => $message->getActorId(),
-			'actorDisplayName' => $message->getActorDisplayName(),
-			'timestamp' => $lastMessage->getCreationDateTime()->getTimestamp(),
-			'message' => $message->getMessage(),
-			'messageParameters' => $message->getMessageParameters(),
-			'systemMessage' => $message->getMessageType() === 'system' ? $message->getMessageRaw() : '',
-			'messageType' => $message->getMessageType(),
-			'isReplyable' => $message->getMessageType() !== 'system' &&
-				($message->getActorType() === 'users' || $message->getActorType() === 'guests'),
-		];
+		return $message->toArray();
 	}
 
 	/**
