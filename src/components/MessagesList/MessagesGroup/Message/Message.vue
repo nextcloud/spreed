@@ -46,21 +46,38 @@ the main body of the message as well as a quote.
 					:data="block.data" />
 			</div>
 			<div class="message__main__right">
-				<div v-if="isTemporary" class="icon-loading-small" />
-				<h6 v-else>
-					{{ messageTime }}
-				</h6>
+				<div v-if="isTemporary && !unsent" class="icon-loading-small" />
 				<Actions
-					v-show="showActions && hasActions"
-					class="message__main__right__actions">
+					v-else-if="unsent"
+					class="message__main__right__actions--unsent"
+					default-icon="icon-error">
 					<ActionButton
-						v-if="isReplyable"
-						icon="icon-reply"
-						:close-after-click="true"
-						@click.stop="handleReply">
-						{{ t('spreed', 'Reply') }}
+						icon="icon-history"
+						@click="handleResend">
+						{{ t('spreed', 'Retry') }}
+					</ActionButton>
+					<ActionButton
+						icon="icon-delete"
+						@click="handleDelete">
+						{{ t('spreed', 'Delete unsent message') }}
 					</ActionButton>
 				</Actions>
+				<template v-else>
+					<h6>
+						{{ messageTime }}
+					</h6>
+					<Actions
+						v-show="showActions && hasActions"
+						class="message__main__right__actions">
+						<ActionButton
+							v-if="isReplyable"
+							icon="icon-reply"
+							:close-after-click="true"
+							@click.stop="handleReply">
+							{{ t('spreed', 'Reply') }}
+						</ActionButton>
+					</Actions>
+				</template>
 			</div>
 		</div>
 	</div>
@@ -173,6 +190,13 @@ export default {
 			type: Number,
 			default: 0,
 		},
+		/**
+		 * Unsent state for temporary messages.
+		 */
+		unsent: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -183,7 +207,7 @@ export default {
 
 	computed: {
 		hasActions() {
-			return this.isReplyable
+			return this.isReplyable && !this.isTemporary
 		},
 
 		messageTime() {
@@ -348,6 +372,10 @@ export default {
 				position: absolute;
 				top: -12px;
 				right: 0;
+			}
+			&__actions--unsent {
+				position: absolute;
+				top: -12px;
 			}
 		}
 	}
