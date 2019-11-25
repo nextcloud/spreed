@@ -144,28 +144,6 @@ input#request-password-button:disabled ~ .icon {
 	box-sizing: border-box;
 }
 
-/* Screensharing in Talk sidebar */
-#talk-sidebar #call-container.screensharing #videos .videoContainer video {
-	max-height: 200px;
-	background-color: transparent;
-	box-shadow: 0;
-}
-
-#talk-sidebar #call-container.screensharing #screens {
-	position: absolute;
-	width: 100%;
-	height: calc(100% - 200px);
-	top: 0;
-	background-color: transparent;
-}
-
-#talk-sidebar #call-container.screensharing .screenContainer {
-	position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: hidden;
-}
-
 /**
  * Cascade parent element height to the chat view in the sidebar to limit the
  * vertical scroll bar only to the list of messages. Otherwise, the vertical

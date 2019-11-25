@@ -48,7 +48,8 @@ video {
 	vertical-align: top; /* fix white line below video */
 }
 
-#app-content.screensharing .videoContainer video {
+#app-content.screensharing .videoContainer video,
+#call-container.screensharing .videoContainer video {
 	max-height: 200px;
 	background-color: transparent;
 	box-shadow: none;
@@ -209,7 +210,8 @@ video {
 
 
 
-#app-content.screensharing #screens {
+#app-content.screensharing #screens,
+#call-container.screensharing #screens {
 	position: absolute;
 	width: 100%;
 	height: calc(100% - 200px);
@@ -217,7 +219,8 @@ video {
 	background-color: transparent;
 }
 
-#app-content.screensharing .screenContainer {
+#app-content.screensharing .screenContainer,
+#call-container.screensharing .screenContainer {
 	position: relative;
 	width: 100%;
 	height: 100%;
