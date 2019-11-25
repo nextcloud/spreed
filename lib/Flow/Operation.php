@@ -45,6 +45,13 @@ use UnexpectedValueException;
 
 class Operation implements IOperation {
 
+	/** @var int[] */
+	public const MESSAGE_MODES = [
+		'NO_MENTION' => 1,
+		'SELF_MENTION' => 2,
+		'ROOM_MENTION' => 3,
+	];
+
 	/** @var IL10N */
 	private $l;
 	/** @var IURLGenerator */
@@ -135,10 +142,25 @@ class Operation implements IOperation {
 				$participant,
 				'bots',
 				$participant->getUser(),
-				'MESSAGE TODO',
+				$this->prepareMention($mode, $participant) . 'MESSAGE TODO',
 				new \DateTime(),
 				null
 			);
+		}
+	}
+
+	/**
+	 * returns a mention including a trailing whitespace, or an empty string
+	 */
+	protected function prepareMention(int $mode, Participant $participant): string {
+		switch ($mode) {
+			case self::MESSAGE_MODES['ROOM_MENTION']:
+				return '@all ';
+			case self::MESSAGE_MODES['SELF_MENTION']:
+				return '@"' . $participant->getUser() . '" ';
+			case self::MESSAGE_MODES['NO_MENTION']:
+			default:
+				return '';
 		}
 	}
 
@@ -146,7 +168,7 @@ class Operation implements IOperation {
 		/**
 		 * We expect $operation be a json string, containing
 		 * 	't' => string, the room token
-		 *  'm' => int 1..3, the mention-mode (none, yourself, room)
+		 *  'm' => int > 0, see self::MESSAGE_MODES
 		 *
 		 * setting up room mentions are only permitted to moderators
 		 */
@@ -163,7 +185,7 @@ class Operation implements IOperation {
 	}
 
 	protected function validateOperationConfig(int $mode, string $token): void {
-		if(($mode < 1 || $mode > 3)) {
+		if(!in_array($mode, self::MESSAGE_MODES)) {
 			throw new UnexpectedValueException('Invalid mode');
 		}
 
@@ -177,7 +199,7 @@ class Operation implements IOperation {
 			throw new UnexpectedValueException('Room not found', $e->getCode(), $e);
 		}
 
-		if($mode === 3) {
+		if($mode === self::MESSAGE_MODES['ROOM_MENTION']) {
 			try {
 				$participant = $this->getParticipant($room);
 				if (!$participant->hasModeratorPermissions(false)) {

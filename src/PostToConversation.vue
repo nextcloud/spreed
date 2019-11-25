@@ -18,6 +18,7 @@
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
 
+// see \OCA\Talk\Flow\Operation::MESSAGE_MODES
 const conversationModeOptions = [
 	{
 		id: 1,
