@@ -15,7 +15,8 @@
 }
 
 .videoContainer,
-#app-content.screensharing .videoContainer {
+#app-content.screensharing .videoContainer,
+#call-container.screensharing .videoContainer {
 	position: relative;
 	width: 100%;
 	padding: 0 2%;
@@ -31,11 +32,13 @@
 }
 
 .videoContainer.hidden,
-#app-content.screensharing .videoContainer.hidden {
+#app-content.screensharing .videoContainer.hidden,
+#call-container.screensharing .videoContainer.hidden {
 	display: none;
 }
 
-#app-content.screensharing .videoContainer {
+#app-content.screensharing .videoContainer,
+#call-container.screensharing .videoContainer {
 	max-height: 200px;
 }
 
