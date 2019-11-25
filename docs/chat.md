@@ -43,6 +43,7 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
         `timestamp` | int | Timestamp in seconds and UTC time zone
         `systemMessage` | string | empty for normal chat message or the type of the system message (untranslated)
         `messageType` | string | Currently known types are `comment`, `system` and `command`
+        `isReplyable` | bool | True if the user can post a reply to this message (only available with `chat-replies` capability)
         `message` | string | Message string with placeholders (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
         `messageParameters` | array | Message parameters for `message` (see [Rich Object String](https://github.com/nextcloud/server/issues/1706))
 

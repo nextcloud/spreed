@@ -377,6 +377,8 @@ class ChatController extends AEnvironmentAwareController {
 			'messageParameters' => $message->getMessageParameters(),
 			'systemMessage' => $message->getMessageType() === 'system' ? $message->getMessageRaw() : '',
 			'messageType' => $message->getMessageType(),
+			'isReplyable' => $message->getMessageType() !== 'system' &&
+				($message->getActorType() === 'users' || $message->getActorType() === 'guests'),
 		];
 	}
 

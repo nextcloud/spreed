@@ -81,6 +81,7 @@ class Capabilities implements IPublicCapability {
 					'chat-read-marker',
 					'webinary-lobby',
 					'start-call-flag',
+					'chat-replies',
 				],
 				'config' => [
 					'chat' => [
