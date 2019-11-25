@@ -99,6 +99,7 @@ export default {
 				messageType: '',
 				message: this.text,
 				messageParameters: {},
+				unsent: false,
 				token: this.token,
 			})
 			/**
@@ -137,11 +138,10 @@ export default {
 				// Make the request
 				try {
 					// Posts the message to the server
-					const response = await pTimeout(request(temporaryMessage), 500, () => {
+					const response = await pTimeout(request(temporaryMessage), 10, () => {
 						cancel('canceled')
 						throw new Error('timeout')
 					})
-					debugger
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
 					// Also remove the message to be replied for this conversation
@@ -151,7 +151,7 @@ export default {
 				} catch (error) {
 					if (error.message === 'timeout') {
 						// If successful, deletes the temporary message from the store
-						this.$store.dispatch('deleteMessage', temporaryMessage)
+						this.$store.dispatch('setUnsentState', temporaryMessage)
 						// Also remove the message to be replied for this conversation
 						this.$store.dispatch('removeMessageToBeReplied', this.token)
 					}

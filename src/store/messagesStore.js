@@ -66,6 +66,7 @@ const getters = {
 }
 
 const mutations = {
+
 	/**
 	 * Adds a message to the store.
 	 * @param {object} state current store state;
@@ -83,6 +84,7 @@ const mutations = {
 			Vue.set(state.messages[message.token], message.id, message)
 		}
 	},
+
 	/**
 	 * Deletes a message from the store.
 	 * @param {object} state current store state;
@@ -91,6 +93,7 @@ const mutations = {
 	deleteMessage(state, message) {
 		Vue.delete(state.messages[message.token], message.id)
 	},
+
 	/**
 	 * Adds a temporary message to the store.
 	 * @param {object} state current store state;
@@ -98,6 +101,15 @@ const mutations = {
 	 */
 	addTemporaryMessage(state, message) {
 		Vue.set(state.messages[message.token], message.id, message)
+	},
+
+	/**
+	 * Enables the unsent state for the temporary message
+	 * @param {object} state current store state;
+	 * @param {object} message the temporary message;
+	 */
+	setUnsentState(state, message) {
+		Vue.set(state.messages[message.token][message.id], 'unsent', true)
 	},
 }
 
@@ -140,6 +152,16 @@ const actions = {
 	 */
 	addTemporaryMessage(context, message) {
 		context.commit('addTemporaryMessage', message)
+	},
+
+	/**
+	 * Enables the unsent state for the temporary message
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} message the temporary message;
+	 */
+	setUnsentState(context, message) {
+		context.commit('setUnsentState', message)
 	},
 }
 
