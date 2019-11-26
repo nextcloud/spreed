@@ -15,8 +15,9 @@
 }
 
 .videoContainer,
-#app-content.screensharing .videoContainer,
-#call-container.screensharing .videoContainer {
+/* Force regular rules on "big speaker video" when screensharing is enabled. */
+.participants-1.screensharing .videoContainer,
+.participants-2.screensharing .videoContainer {
 	position: relative;
 	width: 100%;
 	padding: 0 2%;
@@ -32,8 +33,8 @@
 }
 
 .videoContainer.hidden,
-#app-content.screensharing .videoContainer.hidden,
-#call-container.screensharing .videoContainer.hidden {
+.participants-1.screensharing .videoContainer.hidden,
+.participants-2.screensharing .videoContainer.hidden {
 	display: none;
 }
 
