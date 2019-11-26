@@ -115,20 +115,20 @@ input#request-password-button:disabled ~ .icon {
 }
 
 /* Video in Talk sidebar */
-#talk-sidebar #videos {
+#talk-sidebar #call-container #videos {
 	position: relative;
 
 	flex-grow: 1;
 }
 
-#talk-sidebar .videoContainer {
+#talk-sidebar #call-container .videoContainer {
 	/* The video container has some small padding to prevent the video from
 	 * reaching the edges, but it also uses "width: 100%", so the padding should
 	 * be included in the full width of the element. */
 	box-sizing: border-box;
 }
 
-#talk-sidebar .videoContainer.promoted video {
+#talk-sidebar #call-container .videoContainer.promoted video {
 	/* Base the size of the video on its width instead of on its height;
 	 * otherwise the video could appear in full height but cropped on the sides
 	 * due to the space available in the sidebar being typically larger in
@@ -137,7 +137,7 @@ input#request-password-button:disabled ~ .icon {
 	height: auto;
 }
 
-#talk-sidebar .nameIndicator {
+#talk-sidebar #call-container .nameIndicator {
 	/* The name indicator has some small padding to prevent the name from
 	 * reaching the edges, but it also uses "width: 100%", so the padding should
 	 * be included in the full width of the element. */

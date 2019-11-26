@@ -68,20 +68,20 @@
 }
 
 /* Video in Talk sidebar */
-.talkCallInfoView #call-container-wrapper #videos {
+.talkCallInfoView #call-container-wrapper #call-container #videos {
 	position: absolute;
 
 	flex-grow: 1;
 }
 
-.talkCallInfoView #call-container-wrapper .videoContainer {
+.talkCallInfoView #call-container-wrapper #call-container .videoContainer {
 	/* The video container has some small padding to prevent the video from
 	 * reaching the edges, but it also uses "width: 100%", so the padding should
 	 * be included in the full width of the element. */
 	box-sizing: border-box;
 }
 
-.talkCallInfoView #call-container-wrapper .videoContainer.promoted video {
+.talkCallInfoView #call-container-wrapper #call-container .videoContainer.promoted video {
 	/* Base the size of the video on its width instead of on its height;
 	 * otherwise the video could appear in full height but cropped on the sides
 	 * due to the space available in the sidebar being typically larger in
@@ -90,7 +90,7 @@
 	height: auto;
 }
 
-.talkCallInfoView #call-container-wrapper .nameIndicator {
+.talkCallInfoView #call-container-wrapper #call-container .nameIndicator {
 	/* The name indicator has some small padding to prevent the name from
 	 * reaching the edges, but it also uses "width: 100%", so the padding should
 	 * be included in the full width of the element. */
@@ -117,7 +117,7 @@
 
 
 
-.talkCallInfoView #videos .videoContainer:not(.promoted) video {
+.talkCallInfoView #call-container #videos .videoContainer:not(.promoted) video {
 	/* Make the unpromoted videos smaller to not overlap too much the promoted
 	 * video */
 	max-height: 100px;
@@ -125,8 +125,8 @@
 
 /* The avatars are requested with a size of 128px, so reduce it to not overlap
  * too much the promoted video */
-.talkCallInfoView #videos .videoContainer:not(.promoted) .avatar,
-.talkCallInfoView #videos .videoContainer:not(.promoted) .avatar img {
+.talkCallInfoView #call-container #videos .videoContainer:not(.promoted) .avatar,
+.talkCallInfoView #call-container #videos .videoContainer:not(.promoted) .avatar img {
 	width: 64px !important;
 	height: 64px !important;
 	line-height: 64px !important;
@@ -139,7 +139,7 @@
  * on, so the text avatar may have a hardcoded height of 64px. Note that this
  * does not apply to regular image avatars, as in that case they are always
  * requested with a size of 128px. */
-.talkCallInfoView #videos .videoContainer.promoted .avatar {
+.talkCallInfoView #call-container #videos .videoContainer.promoted .avatar {
 	width: 128px !important;
 	height: 128px !important;
 	line-height: 128px !important;
@@ -149,8 +149,8 @@
 
 
 
-.talkCallInfoView .participants-1 .videoView,
-.talkCallInfoView .participants-2 .videoView {
+.talkCallInfoView #call-container.participants-1 .videoView,
+.talkCallInfoView #call-container.participants-2 .videoView {
 	/* Do not force the width to 200px, as otherwise the video is too tall and
 	 * overlaps too much with the promoted video. */
 	min-width: initial;
@@ -160,21 +160,21 @@
 
 
 
-.talkCallInfoView .nameIndicator {
+.talkCallInfoView #call-container .nameIndicator {
 	/* Reduce padding to bring the name closer to the bottom */
 	padding: 3px;
 	/* Use default font size, as it takes too much space otherwise */
 	font-size: initial;
 }
 
-.talkCallInfoView .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+.talkCallInfoView #call-container.participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	/* Reduce padding to bring the name closer to the bottom */
 	padding: 3px 35%;
 }
 
 
 
-.talkCallInfoView .mediaIndicator {
+.talkCallInfoView #call-container .mediaIndicator {
 	/* Move the media indicator closer to the bottom */
 	bottom: 16px;
 }
