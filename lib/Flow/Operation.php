@@ -113,39 +113,31 @@ class Operation implements IOperation {
 		$this->validateOperationConfig($mode, $token);
 	}
 
-	/**
-	 * Is being called by the workflow engine when an event was triggered that
-	 * is configured for this operation. An evaluation whether the event
-	 * qualifies for this operation to run has still to be done by the
-	 * implementor by calling the RuleMatchers getMatchingOperations method
-	 * and evaluating the results.
-	 *
-	 * If the implementor is an IComplexOperation, this method will not be
-	 * called automatically. It can be used or left as no-op by the implementor.
-	 *
-	 * @since 18.0.0
-	 */
 	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
 		$flows = $ruleMatcher->getMatchingOperations(self::class, false);
 		foreach ($flows as $flow) {
 			try {
 				list($mode, $token) = $this->parseOperationConfig($flow['operation']);
 				$this->validateOperationConfig($mode, $token);
+
+				$room = $this->getRoom($token);
+				$participant = $this->getParticipant($room);
+				$this->chatManager->sendMessage(
+					$room,
+					$participant,
+					'bots',
+					$participant->getUser(),
+					$this->prepareMention($mode, $participant) . 'MESSAGE TODO',
+					new \DateTime(),
+					null
+				);
 			} catch(UnexpectedValueException $e) {
 				continue;
+			} catch (ParticipantNotFoundException $e) {
+				continue;
+			} catch (RoomNotFoundException $e) {
+				continue;
 			}
-
-			$room = $this->getRoom($token);
-			$participant = $this->getParticipant($room);
-			$this->chatManager->sendMessage(
-				$room,
-				$participant,
-				'bots',
-				$participant->getUser(),
-				$this->prepareMention($mode, $participant) . 'MESSAGE TODO',
-				new \DateTime(),
-				null
-			);
 		}
 	}
 
