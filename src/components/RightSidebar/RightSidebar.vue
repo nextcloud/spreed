@@ -71,7 +71,7 @@ import { CONVERSATION, WEBINAR } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
 
 export default {
-	name: 'Sidebar',
+	name: 'RightSidebar',
 	components: {
 		ActionCheckbox,
 		ActionText,

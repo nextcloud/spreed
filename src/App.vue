@@ -21,20 +21,20 @@
 
 <template>
 	<Content :class="{'icon-loading': loading}" app-name="Talk">
-		<Navigation v-if="getUserId" />
+		<LeftSidebar v-if="getUserId" />
 		<AppContent>
 			<router-view />
 		</AppContent>
-		<Sidebar />
+		<RightSidebar />
 	</Content>
 </template>
 
 <script>
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Content from '@nextcloud/vue/dist/Components/Content'
-import Navigation from './components/Navigation/Navigation'
+import LeftSidebar from './components/LeftSidebar/LeftSidebar'
 import Router from './router/router'
-import Sidebar from './components/Sidebar/Sidebar'
+import RightSidebar from './components/RightSidebar/RightSidebar'
 import { EventBus } from './services/EventBus'
 import { getCurrentUser } from '@nextcloud/auth'
 import { fetchConversation } from './services/conversationsService'
@@ -45,8 +45,8 @@ export default {
 	components: {
 		Content,
 		AppContent,
-		Sidebar,
-		Navigation,
+		RightSidebar,
+		LeftSidebar,
 	},
 	data: function() {
 		return {
