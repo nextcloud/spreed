@@ -17,10 +17,10 @@
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
-import { FLOW, CONVERSATION } from './constants'
+import { FLOW, CONVERSATION } from '../constants'
 
 export default {
-	name: 'PostToConversation',
+	name: 'FlowPostToConversation',
 	components: { Multiselect },
 	props: {
 		value: {
