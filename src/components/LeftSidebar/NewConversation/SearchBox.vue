@@ -87,7 +87,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/variables.scss';
+@import '../../../assets/variables.scss';
 
 .app-navigation-search {
 	height: $top-bar-height;

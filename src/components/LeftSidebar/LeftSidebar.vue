@@ -64,7 +64,7 @@ import GroupsList from './GroupsList/GroupsList'
 import Hint from '../Hint'
 import NewPrivateConversation from './NewConversation/NewPrivateConversation'
 import NewPublicConversation from './NewConversation/NewPublicConversation'
-import SearchBox from '../SearchBox'
+import SearchBox from './NewConversation/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
@@ -72,7 +72,7 @@ import { CONVERSATION } from '../../constants'
 
 export default {
 
-	name: 'Navigation',
+	name: 'LeftSidebar',
 
 	components: {
 		AppNavigation,
