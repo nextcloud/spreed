@@ -21,9 +21,12 @@
 
 <template>
 	<AppNavigation class="vue navigation">
-		<SearchBox
-			v-model="searchText"
-			@input="debounceFetchSearchResults" />
+		<div class="new-conversation">
+			<SearchBox
+				v-model="searchText"
+				@input="debounceFetchSearchResults" />
+			<NewGroupConversation />
+		</div>
 		<ul>
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
@@ -69,6 +72,7 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
+import NewGroupConversation from './NewConversation/NewGroupConversation'
 
 export default {
 
@@ -84,6 +88,7 @@ export default {
 		NewPrivateConversation,
 		NewPublicConversation,
 		SearchBox,
+		NewGroupConversation,
 	},
 
 	data() {
@@ -144,6 +149,11 @@ export default {
 <style lang="scss" scoped>
 
 @import '../../assets/variables';
+
+.new-conversation {
+	display: flex;
+	border-bottom: 1px solid var(--color-border-dark);
+}
 
 .navigation {
 	width: $navigation-width;

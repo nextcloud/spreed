@@ -103,7 +103,6 @@ export default {
 	position: sticky;
 	top: 0;
 	background-color: var(--color-main-background);
-	border-bottom: 1px solid var(--color-border-dark);
 	z-index: 1;
 	display: flex;
 	justify-content: center;
