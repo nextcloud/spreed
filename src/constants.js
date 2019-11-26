@@ -71,3 +71,10 @@ export const SHARE = {
 		CIRCLE: 7,
 	},
 }
+export const FLOW = {
+	MESSAGE_MODES: {
+		NO_MENTION: 1,
+		SELF_MENTION: 2,
+		ROOM_MENTION: 3,
+	},
+}

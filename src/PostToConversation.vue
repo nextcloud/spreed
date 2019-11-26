@@ -17,22 +17,7 @@
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 import axios from '@nextcloud/axios'
-
-// see \OCA\Talk\Flow\Operation::MESSAGE_MODES
-const conversationModeOptions = [
-	{
-		id: 1,
-		text: t('spreed', 'Message without mention'),
-	},
-	{
-		id: 2,
-		text: t('spreed', 'Mention myself'),
-	},
-	{
-		id: 3,
-		text: t('spreed', 'Mention room'),
-	},
-]
+import { FLOW, CONVERSATION } from './constants'
 
 export default {
 	name: 'PostToConversation',
@@ -45,13 +30,25 @@ export default {
 	},
 	data() {
 		return {
-			modeOptions: conversationModeOptions,
+			modeOptions: [
+				{
+					id: FLOW.MESSAGE_MODES.NO_MENTION,
+					text: t('spreed', 'Message without mention'),
+				},
+				{
+					id: FLOW.MESSAGE_MODES.SELF_MENTION,
+					text: t('spreed', 'Mention myself'),
+				},
+				{
+					id: FLOW.MESSAGE_MODES.ROOM_MENTION,
+					text: t('spreed', 'Mention room'),
+				},
+			],
 			roomOptions: [],
 		}
 	},
 	computed: {
 		currentRoom() {
-			console.debug('room ' + this.value)
 			if (this.value === '') {
 				return ''
 			}
@@ -60,22 +57,17 @@ export default {
 			if (typeof newValue === 'undefined') {
 				return ''
 			}
-			console.debug('sel room ' + selectedRoom)
 			return newValue
 		},
 		currentMode() {
-			console.debug('mode ' + this.value)
 			if (this.value === '') {
-				console.debug('def mode ' + conversationModeOptions[0].id)
-				return conversationModeOptions[0].id
+				return this.modeOptions[0]
 			}
 			const selectedMode = JSON.parse(this.value).m
-			const newValue = conversationModeOptions.find(option => option.id === selectedMode)
+			const newValue = this.modeOptions.find(option => option.id === selectedMode)
 			if (typeof newValue === 'undefined') {
-				console.debug('def mode2 ' + conversationModeOptions[0].id)
-				return conversationModeOptions[0].id
+				return this.modeOptions[0]
 			}
-			console.debug('sel mode ' + selectedMode)
 			return newValue
 		},
 	},
@@ -86,7 +78,7 @@ export default {
 		fetchRooms() {
 			axios.get(OC.linkToOCS('/apps/spreed/api/v1', 2) + 'room').then((response) => {
 				this.roomOptions = response.data.ocs.data.filter(function(room) {
-					return room.readOnly === 0
+					return room.readOnly === CONVERSATION.STATE.READ_WRITE
 				})
 			})
 		},
