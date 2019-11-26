@@ -112,25 +112,6 @@ video {
 
 
 
-#shareRoomContainer {
-	position: relative;
-}
-#shareRoomInput {
-	width: 250px;
-	padding-right: 32px;
-	text-overflow: ellipsis;
-}
-#shareRoomClipboardButton {
-	position: absolute;
-	right: 0;
-	padding: 18px;
-	background-size: 16px !important;
-	height: 16px !important;
-	width: 16px !important;
-	margin: 0 !important;
-	opacity: .8 !important;
-}
-
 .participants-1:not(.screensharing) #emptycontent {
 	display: block !important;
 }
@@ -204,9 +185,7 @@ video {
 	right: 0;
 }
 
-.videoContainer.promoted,
-#app-content.incall,
-#app-content.screensharing {
+.videoContainer.promoted {
 	background-color: #000;
 }
 
