@@ -23,9 +23,12 @@ declare(strict_types=1);
 namespace OCA\Talk;
 
 
+use OCA\Talk\Events\AddEmailEvent;
+use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\Defaults;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IL10N;
 use OCP\IURLGenerator;
@@ -33,8 +36,6 @@ use OCP\IUser;
 use OCP\IUserSession;
 use OCP\Mail\IMailer;
 use OCP\Util;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class GuestManager {
 
@@ -56,7 +57,7 @@ class GuestManager {
 	/** @var IL10N */
 	protected $l;
 
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	protected $dispatcher;
 
 	public function __construct(IDBConnection $connection,
@@ -65,7 +66,7 @@ class GuestManager {
 								IUserSession $userSession,
 								IURLGenerator $url,
 								IL10N $l,
-								EventDispatcherInterface $dispatcher) {
+								IEventDispatcher $dispatcher) {
 		$this->connection = $connection;
 		$this->mailer = $mailer;
 		$this->defaults = $defaults;
@@ -77,12 +78,12 @@ class GuestManager {
 
 	/**
 	 * @param Room $room
-	 * @param string $sessionId
+	 * @param Participant $participant
 	 * @param string $displayName
 	 * @throws \Doctrine\DBAL\DBALException
 	 */
-	public function updateName(Room $room, string $sessionId, string $displayName): void {
-		$sessionHash = sha1($sessionId);
+	public function updateName(Room $room, Participant $participant, string $displayName): void {
+		$sessionHash = sha1($participant->getSessionId());
 		$dispatchEvent = true;
 
 		try {
@@ -104,12 +105,9 @@ class GuestManager {
 			], ['session_hash']);
 		}
 
-
 		if ($dispatchEvent) {
-			$this->dispatcher->dispatch(self::class . '::updateName', new GenericEvent($room, [
-				'sessionId' => $sessionId,
-				'newName' => $displayName,
-			]));
+			$event = new ModifyParticipantEvent($room, $participant, 'name', $displayName);
+			$this->dispatcher->dispatch(self::class . '::updateName', $event);
 		}
 	}
 
@@ -162,9 +160,8 @@ class GuestManager {
 	}
 
 	public function inviteByEmail(Room $room, string $email): void {
-		$this->dispatcher->dispatch(self::class . '::preInviteByEmail', new GenericEvent($room, [
-			'email' => $email,
-		]));
+		$event = new AddEmailEvent($room, $email);
+		$this->dispatcher->dispatch(self::class . '::preInviteByEmail', $event);
 
 		$link = $this->url->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()]);
 
@@ -207,9 +204,7 @@ class GuestManager {
 		try {
 			$this->mailer->send($message);
 
-			$this->dispatcher->dispatch(self::class . '::postInviteByEmail', new GenericEvent($room, [
-				'email' => $email,
-			]));
+			$this->dispatcher->dispatch(self::class . '::postInviteByEmail', $event);
 		} catch (\Exception $e) {
 		}
 	}

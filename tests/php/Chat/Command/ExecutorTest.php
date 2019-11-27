@@ -25,20 +25,21 @@ namespace OCA\Talk\Tests\php\Chat\Command;
 
 use OCA\Talk\Chat\Command\Executor;
 use OCA\Talk\Chat\Command\ShellExecutor;
+use OCA\Talk\Events\CommandEvent;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\ILogger;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Test\TestCase;
 
 class ExecutorTest extends TestCase {
 
-	/** @var EventDispatcherInterface|MockObject */
+	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 
 	/** @var ShellExecutor|MockObject */
@@ -59,7 +60,7 @@ class ExecutorTest extends TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->shellExecutor = $this->createMock(ShellExecutor::class);
 		$this->commandService = $this->createMock(CommandService::class);
 		$this->logger = $this->createMock(ILogger::class);
@@ -90,18 +91,9 @@ class ExecutorTest extends TestCase {
 		$room = $this->createMock(Room::class);
 		$command = Command::fromParams([]);
 
-		$event = $this->createMock(GenericEvent::class);
+		$event = $this->createMock(CommandEvent::class);
 		$event->expects($this->once())
-			->method('setArguments')
-			->with([
-				'room' => $room,
-				'message' => $message,
-				'arguments' => $arguments,
-				'output' => '',
-			]);
-		$event->expects($this->once())
-			->method('getArgument')
-			->with('output')
+			->method('getOutput')
 			->willReturn($expected);
 
 		$executor = $this->getMockBuilder(Executor::class)
@@ -116,7 +108,7 @@ class ExecutorTest extends TestCase {
 			->getMock();
 		$executor->expects($this->once())
 			->method('createEvent')
-			->with($command)
+			->with($room, $message, $command, $arguments)
 			->willReturn($event);
 
 		$this->dispatcher->expects($this->once())

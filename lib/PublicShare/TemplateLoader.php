@@ -24,10 +24,10 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShare;
 
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\FileInfo;
 use OCP\Share\IShare;
 use OCP\Util;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -39,7 +39,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class TemplateLoader {
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
+	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener('OCA\Files_Sharing::loadAdditionalScripts', static function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');

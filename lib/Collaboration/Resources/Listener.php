@@ -22,20 +22,20 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Collaboration\Resources;
 
-use OCA\Talk\Participant;
+use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\RemoveParticipantEvent;
+use OCA\Talk\Events\RemoveUserEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Room;
 use OCP\Collaboration\Resources\IManager;
 use OCP\Collaboration\Resources\ResourceException;
-use OCP\IUser;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUserManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+	public static function register(IEventDispatcher $dispatcher): void {
+		$listener = static function(RoomEvent $event) {
+			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
 
@@ -48,9 +48,8 @@ class Listener {
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(AddParticipantsEvent $event) {
+			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
 			/** @var IUserManager $userManager */
@@ -61,7 +60,7 @@ class Listener {
 				return;
 			}
 
-			$participants = $event->getArgument('users');
+			$participants = $event->getParticipants();
 			foreach ($participants as $participant) {
 				$user = null;
 				if ($participant['user_id'] !== '') {
@@ -71,28 +70,24 @@ class Listener {
 				$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 			}
 		};
-		$dispatcher->addListener(Room::class . '::postAddUser', $listener);
+		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(RemoveUserEvent $event) {
+			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
-			/** @var IUser $user */
-			$user = $event->getArgument('user');
 			try {
 				$resource = $resourceManager->getResourceForUser('room', $room->getToken(), null);
 			} catch (ResourceException $e) {
 				return;
 			}
 
-			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
+			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $event->getUser());
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(RemoveParticipantEvent $event) {
+			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
 			/** @var IUserManager $userManager */
@@ -103,16 +98,14 @@ class Listener {
 				return;
 			}
 
-			/** @var Participant $participant */
-			$participant = $event->getArgument('participant');
+			$participant = $event->getParticipant();
 			$user = $userManager->get($participant->getUser());
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(RoomEvent $event) {
+			$room = $event->getRoom();
 			/** @var IManager $manager */
 			$resourceManager = \OC::$server->query(IManager::class);
 
@@ -123,7 +116,7 @@ class Listener {
 			}
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, null);
 		};
-		$dispatcher->addListener(Room::class . '::postChangeType', $listener);
+		$dispatcher->addListener(Room::class . '::postSetType', $listener);
 		$dispatcher->addListener(Room::class . '::postInviteByEmail', $listener);
 	}
 }

@@ -20,36 +20,44 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Chat\Changelog;
+namespace OCA\Talk\Events;
 
-use OCA\Talk\Controller\RoomController;
-use OCA\Talk\Events\UserEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 
-class Listener {
+use OCA\Talk\Room;
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::class . '::preGetRooms', static function(UserEvent $event) {
-			$userId = $event->getUserId();
+class VerifyRoomPasswordEvent extends RoomEvent {
 
-			/** @var Listener $listener */
-			$listener = \OC::$server->query(self::class);
-			$listener->preGetRooms($userId);
-		}, -100);
+	/** @var string */
+	protected $password;
+	/** @var bool|null */
+	protected $isPasswordValid;
+	/** @var string */
+	protected $redirectUrl = '';
+
+
+	public function __construct(Room $room,
+								string $password) {
+		parent::__construct($room);
+		$this->password = $password;
 	}
 
-	/** @var Manager */
-	protected $manager;
-
-	public function __construct(Manager $manager) {
-		$this->manager = $manager;
+	public function getPassword(): string {
+		return $this->password;
 	}
 
-	public function preGetRooms(string $userId): void {
-		if (!$this->manager->userHasNewChangelog($userId)) {
-			return;
-		}
+	public function setIsPasswordValid(bool $isPasswordValid): void {
+		$this->isPasswordValid = $isPasswordValid;
+	}
 
-		$this->manager->updateChangelog($userId);
+	public function isPasswordValid(): ?bool {
+		return $this->isPasswordValid;
+	}
+
+	public function setRedirectUrl(string $redirectUrl): void {
+		$this->redirectUrl = $redirectUrl;
+	}
+
+	public function getRedirectUrl(): string {
+		return $this->redirectUrl;
 	}
 }

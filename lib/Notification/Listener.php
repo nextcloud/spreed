@@ -22,14 +22,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Notification;
 
+use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\JoinRoomUserEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Notification\IManager;
 use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
 
@@ -52,10 +54,9 @@ class Listener {
 		$this->logger = $logger;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+	public static function register(IEventDispatcher $dispatcher): void {
+		$listener = static function(AddParticipantsEvent $event) {
+			$room = $event->getRoom();
 
 			if ($room->getObjectType() === 'file') {
 				return;
@@ -63,37 +64,28 @@ class Listener {
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->generateInvitation($room, $event->getArgument('users'));
+			$listener->generateInvitation($room, $event->getParticipants());
 		};
 		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+		$listener = static function(JoinRoomUserEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->markInvitationRead($room);
+			$listener->markInvitationRead($event->getRoom());
 		};
 		$dispatcher->addListener(Room::class . '::postJoinRoom', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->generateCallNotifications($room);
+			$listener->generateCallNotifications($event->getRoom());
 		};
 		$dispatcher->addListener(Room::class . '::preSessionJoinCall', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->markCallNotificationsRead($room);
+			$listener->markCallNotificationsRead($event->getRoom());
 		};
 		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
 	}

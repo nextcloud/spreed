@@ -23,11 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShareAuth;
 
+use OCA\Talk\Events\JoinRoomGuestEvent;
+use OCA\Talk\Events\JoinRoomUserEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 
 /**
  * Custom behaviour for rooms to request the password for a share.
@@ -44,25 +46,19 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class Listener {
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-			self::preventExtraUsersFromJoining($room, $event->getArgument('userId'));
+	public static function register(IEventDispatcher $dispatcher): void {
+		$listener = static function(JoinRoomUserEvent $event) {
+			self::preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID());
 		};
 		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-			self::preventExtraGuestsFromJoining($room);
+		$listener = static function(JoinRoomGuestEvent $event) {
+			self::preventExtraGuestsFromJoining($event->getRoom());
 		};
 		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-			self::destroyRoomOnParticipantLeave($room);
+		$listener = static function(RoomEvent $event) {
+			self::destroyRoomOnParticipantLeave($event->getRoom());
 		};
 		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
 		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);

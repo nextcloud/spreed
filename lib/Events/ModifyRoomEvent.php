@@ -20,36 +20,49 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Chat\Changelog;
+namespace OCA\Talk\Events;
 
-use OCA\Talk\Controller\RoomController;
-use OCA\Talk\Events\UserEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 
-class Listener {
+use OCA\Talk\Room;
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::class . '::preGetRooms', static function(UserEvent $event) {
-			$userId = $event->getUserId();
+class ModifyRoomEvent extends RoomEvent {
 
-			/** @var Listener $listener */
-			$listener = \OC::$server->query(self::class);
-			$listener->preGetRooms($userId);
-		}, -100);
+	/** @var string */
+	protected $parameter;
+	/** @var int|string|bool */
+	protected $newValue;
+	/** @var int|string|bool|null */
+	protected $oldValue;
+
+
+	public function __construct(Room $room,
+								string $parameter,
+								$newValue,
+								$oldValue = null) {
+		parent::__construct($room);
+		$this->parameter = $parameter;
+		$this->newValue = $newValue;
+		$this->oldValue = $oldValue;
 	}
 
-	/** @var Manager */
-	protected $manager;
-
-	public function __construct(Manager $manager) {
-		$this->manager = $manager;
+	/**
+	 * @return string
+	 */
+	public function getParameter(): string {
+		return $this->parameter;
 	}
 
-	public function preGetRooms(string $userId): void {
-		if (!$this->manager->userHasNewChangelog($userId)) {
-			return;
-		}
+	/**
+	 * @return int|string|bool
+	 */
+	public function getNewValue() {
+		return $this->newValue;
+	}
 
-		$this->manager->updateChangelog($userId);
+	/**
+	 * @return int|string|bool|null
+	 */
+	public function getOldValue() {
+		return $this->oldValue;
 	}
 }

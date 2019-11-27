@@ -24,41 +24,29 @@ namespace OCA\Talk\Chat\Command;
 
 
 use OCA\Talk\Chat\ChatManager;
-use OCA\Talk\Chat\MessageParser;
-use OCA\Talk\Chat\Parser\Command as CommandParser;
+use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Model\Command;
-use OCA\Talk\Model\Message;
-use OCA\Talk\Participant;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
-use OCP\Comments\IComment;
-use OCP\IUser;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
 
-	/** @var EventDispatcherInterface */
-	protected $dispatcher;
 	/** @var CommandService */
 	protected $commandService;
 	/** @var Executor */
 	protected $executor;
 
-	public function __construct(EventDispatcherInterface $dispatcher,
-								CommandService $commandService,
+	public function __construct(CommandService $commandService,
 								Executor $executor) {
-		$this->dispatcher = $dispatcher;
 		$this->commandService = $commandService;
 		$this->executor = $executor;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener(ChatManager::class . '::preSendMessage', function(GenericEvent $event) {
-			/** @var IComment $message */
-			$message = $event->getArgument('comment');
-			/** @var Participant $participant */
-			$participant = $event->getArgument('participant');
+	public static function register(IEventDispatcher $dispatcher): void {
+		$dispatcher->addListener(ChatManager::class . '::preSendMessage', static function(ChatParticipantEvent $event) {
+			$message = $event->getComment();
+			$participant = $event->getParticipant();
 
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
@@ -88,7 +76,7 @@ class Listener {
 				return;
 			}
 
-			$listener->executor->exec($event->getSubject(), $message, $command, $arguments);
+			$listener->executor->exec($event->getRoom(), $message, $command, $arguments);
 		});
 	}
 

@@ -139,7 +139,7 @@ class ChatController extends AEnvironmentAwareController {
 			$actorId = $sessionId ? sha1($sessionId) : 'failed-to-get-session';
 
 			if ($sessionId && $actorDisplayName) {
-				$this->guestManager->updateName($this->room, $sessionId, $actorDisplayName);
+				$this->guestManager->updateName($this->room, $this->participant, $actorDisplayName);
 			}
 		} else {
 			$actorType = 'users';

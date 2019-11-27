@@ -23,15 +23,16 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OCA\Talk\Events\ChatEvent;
+use OCA\Talk\Events\ChatParticipantEvent;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
 use OCP\Comments\NotFoundException;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Basic polling chat manager.
@@ -49,7 +50,7 @@ class ChatManager {
 
 	/** @var CommentsManager|ICommentsManager */
 	private $commentsManager;
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	private $dispatcher;
 	/** @var Notifier */
 	private $notifier;
@@ -57,7 +58,7 @@ class ChatManager {
 	protected $timeFactory;
 
 	public function __construct(CommentsManager $commentsManager,
-								EventDispatcherInterface $dispatcher,
+								IEventDispatcher $dispatcher,
 								Notifier $notifier,
 								ITimeFactory $timeFactory) {
 		$this->commentsManager = $commentsManager;
@@ -92,9 +93,8 @@ class ChatManager {
 				$this->notifier->notifyOtherParticipant($chat, $comment, []);
 			}
 
-			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
-				'comment' => $comment,
-			]));
+			$event = new ChatEvent($chat, $comment);
+			$this->dispatcher->dispatch(self::class . '::postSendSystemMessage', $event);
 		} catch (NotFoundException $e) {
 		}
 
@@ -121,9 +121,8 @@ class ChatManager {
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-			$this->dispatcher->dispatch(self::class . '::sendSystemMessage', new GenericEvent($chat, [
-				'comment' => $comment,
-			]));
+			$event = new ChatEvent($chat, $comment);
+			$this->dispatcher->dispatch(self::class . '::postSendSystemMessage', $event);
 		} catch (NotFoundException $e) {
 		}
 
@@ -154,11 +153,8 @@ class ChatManager {
 			$comment->setParentId($replyTo->getId());
 		}
 
-		$this->dispatcher->dispatch(self::class . '::preSendMessage', new GenericEvent($chat, [
-			'comment' => $comment,
-			'room' => $chat,
-			'participant' => $participant,
-		]));
+		$event = new ChatParticipantEvent($chat, $comment, $participant);
+		$this->dispatcher->dispatch(self::class . '::preSendMessage', $event);
 
 		try {
 			$this->commentsManager->save($comment);
@@ -179,11 +175,7 @@ class ChatManager {
 			// User was not mentioned, send a normal notification
 			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers);
 
-			$this->dispatcher->dispatch(self::class . '::sendMessage', new GenericEvent($chat, [
-				'comment' => $comment,
-				'room' => $chat,
-				'participant' => $participant,
-			]));
+			$this->dispatcher->dispatch(self::class . '::postSendMessage', $event);
 		} catch (NotFoundException $e) {
 		}
 

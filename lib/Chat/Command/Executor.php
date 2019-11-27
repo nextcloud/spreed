@@ -24,15 +24,15 @@ namespace OCA\Talk\Chat\Command;
 
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\CommandEvent;
 use OCA\Talk\Model\Command;
 use OCA\Talk\Room;
 use OCA\Talk\Service\CommandService;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\ILogger;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Executor {
 
@@ -41,7 +41,7 @@ class Executor {
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
 	public const PLACEHOLDER_ARGUMENTS_DOUBLEQUOTE_ESCAPED = '{ARGUMENTS_DOUBLEQUOTE_ESCAPED}';
 
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	protected $dispatcher;
 
 	/** @var ShellExecutor */
@@ -56,7 +56,7 @@ class Executor {
 	/** @var IL10N */
 	protected $l;
 
-	public function __construct(EventDispatcherInterface $dispatcher,
+	public function __construct(IEventDispatcher $dispatcher,
 								ShellExecutor $shellExecutor,
 								CommandService $commandService,
 								ILogger $logger,
@@ -171,21 +171,13 @@ class Executor {
 	}
 
 	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): string {
-		$event = $this->createEvent($command);
-		$event->setArguments([
-			'room' => $room,
-			'message' => $message,
-			'arguments' => $arguments,
-			'output' => '',
-		]);
-
+		$event = $this->createEvent($room, $message, $command, $arguments);
 		$this->dispatcher->dispatch(self::class . '::execApp', $event);
-
-		return (string) $event->getArgument('output');
+		return $event->getOutput();
 	}
 
-	protected function createEvent(Command $command): GenericEvent {
-		return new GenericEvent($command);
+	protected function createEvent(Room $room, IComment $message, Command $command, string $arguments): CommandEvent {
+		return new CommandEvent($room, $message, $command, $arguments);
 	}
 
 	public function execShell(Room $room, IComment $message, Command $command, string $arguments): string {

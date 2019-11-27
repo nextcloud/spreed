@@ -94,7 +94,7 @@ class CallController extends AEnvironmentAwareController {
 			$flags = Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO;
 		}
 
-		$this->room->changeInCall($sessionId, $flags);
+		$this->room->changeInCall($this->participant, $flags);
 
 		return new DataResponse();
 	}
@@ -112,7 +112,7 @@ class CallController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_NOT_FOUND);
 		}
 
-		$this->room->changeInCall($sessionId, Participant::FLAG_DISCONNECTED);
+		$this->room->changeInCall($this->participant, Participant::FLAG_DISCONNECTED);
 
 		return new DataResponse();
 	}

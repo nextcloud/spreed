@@ -32,11 +32,12 @@ use OCA\Talk\Chat\SystemMessage\Listener as SystemMessageListener;
 use OCA\Talk\Collaboration\Resources\ConversationProvider;
 use OCA\Talk\Collaboration\Resources\Listener as ResourceListener;
 use OCA\Talk\Config;
+use OCA\Talk\Events\ChatEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Listener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
-use OCA\Talk\Manager;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
@@ -48,9 +49,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
-use OCA\Talk\TalkSession;
 use OCP\AppFramework\App;
-use OCP\AppFramework\Utility\IControllerMethodReflector;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Collaboration\Resources\IManager as IResourceManager;
 use OCP\EventDispatcher\IEventDispatcher;
@@ -59,8 +58,6 @@ use OCP\IUser;
 use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Application extends App {
 
@@ -81,7 +78,9 @@ class Application extends App {
 		$this->registerCollaborationResourceProvider($server);
 		$this->getContainer()->registerCapability(Capabilities::class);
 
-		$dispatcher = $server->getEventDispatcher();
+		/** @var IEventDispatcher $dispatcher */
+		$dispatcher = $server->query(IEventDispatcher::class);
+
 		Listener::register($dispatcher);
 		ActivityListener::register($dispatcher);
 		NotificationListener::register($dispatcher);
@@ -99,10 +98,8 @@ class Application extends App {
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
 
-		/** @var IEventDispatcher $newDispatcher */
-		$newDispatcher = $server->query(IEventDispatcher::class);
-		$newDispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
-		$newDispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
+		$dispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
+		$dispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
 
 		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
@@ -148,27 +145,23 @@ class Application extends App {
 		});
 	}
 
-	protected function registerRoomActivityHooks(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+	protected function registerRoomActivityHooks(IEventDispatcher $dispatcher): void {
+		$listener = function(ChatEvent $event) {
+			$room = $event->getRoom();
 			/** @var ITimeFactory $timeFactory */
 			$timeFactory = $this->getContainer()->query(ITimeFactory::class);
 			$room->setLastActivity($timeFactory->getDateTime());
 		};
 
-		$dispatcher->addListener(ChatManager::class . '::sendMessage', $listener);
-		$dispatcher->addListener(ChatManager::class . '::sendSystemMessage', $listener);
+		$dispatcher->addListener(ChatManager::class . '::postSendMessage', $listener);
+		$dispatcher->addListener(ChatManager::class . '::postSendSystemMessage', $listener);
 	}
 
-	protected function registerChatHooks(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+	protected function registerChatHooks(IEventDispatcher $dispatcher): void {
+		$listener = function(RoomEvent $event) {
 			/** @var ChatManager $chatManager */
 			$chatManager = $this->getContainer()->query(ChatManager::class);
-			$chatManager->deleteMessages($room);
+			$chatManager->deleteMessages($event->getRoom());
 		};
 		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
 	}

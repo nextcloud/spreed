@@ -23,9 +23,9 @@ declare(strict_types=1);
 
 namespace OCA\Talk\PublicShareAuth;
 
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Share\IShare;
 use OCP\Util;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
@@ -37,7 +37,7 @@ use Symfony\Component\EventDispatcher\GenericEvent;
  */
 class TemplateLoader {
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
+	public static function register(IEventDispatcher $dispatcher): void {
 		$listener = function(GenericEvent $event) {
 			/** @var IShare $share */
 			$share = $event->getArgument('share');

@@ -24,16 +24,14 @@ namespace OCA\Talk\Chat\Parser;
 
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Chat\Parser\Command as CommandParser;
-use OCA\Talk\Model\Message;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCA\Talk\Events\ChatMessageEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var Message $message */
-			$message = $event->getSubject();
+	public static function register(IEventDispatcher $dispatcher): void {
+		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'comment') {
 				return;
@@ -44,9 +42,8 @@ class Listener {
 			$parser->parseMessage($message);
 		}, -100);
 
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var Message $message */
-			$message = $event->getSubject();
+		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'comment') {
 				return;
@@ -62,9 +59,8 @@ class Listener {
 			}
 		}, -75);
 
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var Message $message */
-			$message = $event->getSubject();
+		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'system') {
 				return;
@@ -81,9 +77,8 @@ class Listener {
 			}
 		});
 
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', function(GenericEvent $event) {
-			/** @var Message $chatMessage */
-			$chatMessage = $event->getSubject();
+		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+			$chatMessage = $event->getMessage();
 
 			if ($chatMessage->getMessageType() !== 'command') {
 				return;
