@@ -20,13 +20,15 @@
 -->
 
 <template>
-	<div v-contenteditable:text="active"
+	<div ref="contentEditable"
+		v-contenteditable:text="active"
 		:placeHolder="placeholderText"
 		class="new-message-form__advancedinput"
 		@keydown.enter="handleKeydown" />
 </template>
 
 <script>
+import { EventBus } from '../../../services/EventBus'
 
 export default {
 	name: 'AdvancedInput',
@@ -68,7 +70,28 @@ export default {
 			this.text = value
 		},
 	},
+	mounted() {
+		this.focusInput()
+		/**
+		 * Listen to routeChange global events and focus on the
+		 */
+		EventBus.$on('routeChange', () => {
+			this.focusInput()
+		})
+	},
 	methods: {
+		/**
+		 * Focuses the contenteditable div input
+		 */
+		focusInput() {
+			if (this.$route.name === 'conversation') {
+				const contentEditable = this.$refs.contentEditable
+				// This is a hack but it's the only way I've found to focus a contenteditable div
+				setTimeout(function() {
+					contentEditable.focus()
+				}, 0)
+			}
+		},
 		/**
 		 * Emits the submit event when enter is pressed (look
 		 * at the v-on in the template) unless shift is pressed:
