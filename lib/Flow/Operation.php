@@ -151,7 +151,9 @@ class Operation implements IOperation {
 			case self::MESSAGE_MODES['ROOM_MENTION']:
 				return '@all ';
 			case self::MESSAGE_MODES['SELF_MENTION']:
-				return '@"' . $participant->getUser() . '" ';
+				$hasWhitespace = strpos($participant->getUser(), ' ') !== false;
+				$enclosure = $hasWhitespace ? '"' : '';
+				return '@' . $enclosure . $participant->getUser() . $enclosure . ' ';
 			case self::MESSAGE_MODES['NO_MENTION']:
 			default:
 				return '';
