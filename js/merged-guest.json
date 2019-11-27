@@ -8,6 +8,7 @@
   "simplewebrtc/bundled.js",
   "models/chatmessage.js",
   "models/chatmessagecollection.js",
+  "models/localmediamodel.js",
   "models/localstoragemodel.js",
   "models/room.js",
   "models/participant.js",

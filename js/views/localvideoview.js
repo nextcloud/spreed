@@ -57,8 +57,8 @@
 
 		initialize: function(options) {
 			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
+				model: options.localMediaModel,
 				app: options.app,
-				webrtc: options.webrtc,
 				sharedScreens: options.sharedScreens,
 			});
 		},

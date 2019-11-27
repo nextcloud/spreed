@@ -80,79 +80,62 @@
 			'click @ui.stopScreenButton': 'stopScreen',
 		},
 
-		initialize: function(options) {
-			this._app = options.app;
-			this._webrtc = options.webrtc;
-			this._sharedScreens = options.sharedScreens;
-
-			this._handleVolumeChangeBound = this._handleVolumeChange.bind(this);
-
-			this._audioAvailable = true;
-			this._videoAvailable = true;
-
-			this.audioEnabled = false;
-			this.videoEnabled = false;
+		modelEvents: {
+			'change:audioAvailable': '_setAudioAvailable',
+			'change:audioEnabled': '_setAudioEnabled',
+			'change:volume': '_setVolume',
+			'change:videoAvailable': '_setVideoAvailable',
+			'change:videoEnabled': '_setVideoEnabled',
+			'change:sharedScreenId': '_setSharedScreenId',
 		},
 
-		setWebRtc: function(webrtc) {
-			if (this._webrtc && this._webrtc.webrtc) {
-				this._webrtc.webrtc.off('volumeChange', this._handleVolumeChangeBound);
-			}
-
-			this._webrtc = webrtc;
-
-			this._webrtc.webrtc.on('volumeChange', this._handleVolumeChangeBound);
+		initialize: function(options) {
+			this._app = options.app;
+			this._sharedScreens = options.sharedScreens;
 		},
 
 		setSharedScreens: function(sharedScreens) {
 			this._sharedScreens = sharedScreens;
 		},
 
+		onRender: function() {
+			// Match current model state.
+			this._setAudioAvailable(this.model, this.model.get('audioAvailable'));
+			this._setVideoAvailable(this.model, this.model.get('videoAvailable'));
+			this._setSharedScreenId(this.model, this.model.get('sharedScreenId'));
+		},
+
 		toggleAudio: function() {
-			if (!this._audioAvailable) {
+			if (!this.model.get('audioAvailable')) {
 				return;
 			}
 
-			if (this.audioEnabled) {
-				this.setAudioEnabled(false);
+			if (this.model.get('audioEnabled')) {
+				this.model.disableAudio();
 			} else {
-				this.setAudioEnabled(true);
+				this.model.enableAudio();
 			}
 		},
 
-		setAudioEnabled: function(audioEnabled) {
-			if (!this._audioAvailable || !this._webrtc) {
-				return;
-			}
-
+		_setAudioEnabled: function(model, audioEnabled) {
 			if (audioEnabled) {
-				this._webrtc.unmute();
-
 				this.getUI('audioButton').attr('data-original-title', t('spreed', 'Mute audio (m)'))
 					.removeClass('audio-disabled icon-audio-off')
 					.addClass('icon-audio');
 			} else {
-				this._webrtc.mute();
-
 				this.getUI('audioButton').attr('data-original-title', t('spreed', 'Unmute audio (m)'))
 					.addClass('audio-disabled icon-audio-off')
 					.removeClass('icon-audio');
 			}
-
-			this.audioEnabled = audioEnabled;
 		},
 
-		/**
-		 * Sets the audio as available or not available.
-		 *
-		 * "setAudioEnabled(bool)" is expected to be called with the appropriate
-		 * value after the audio is set as available.
-		 */
-		setAudioAvailable: function(audioAvailable) {
+		_setAudioAvailable: function(model, audioAvailable) {
 			if (audioAvailable) {
 				this.getUI('audioButton').removeClass('no-audio-available');
 
 				this.getUI('volumeIndicator').removeClass('hidden');
+
+				this._setAudioEnabled(model, model.get('audioEnabled'));
 			} else {
 				this.getUI('audioButton').removeClass('audio-disabled icon-audio')
 					.addClass('no-audio-available icon-audio-off')
@@ -160,8 +143,6 @@
 
 				this.getUI('volumeIndicator').addClass('hidden');
 			}
-
-			this._audioAvailable = audioAvailable;
 		},
 
 		setSpeakingWhileMutedNotification: function(message) {
@@ -178,7 +159,7 @@
 					.tooltip('show');
 		},
 
-		_handleVolumeChange: function(currentVolume, threshold) {
+		_setVolume: function(currentVolume, threshold) {
 			// WebRTC volume goes from -100 (silence) to 0 (loudest sound in the
 			// system); for the volume indicator only sounds above the threshold
 			// are taken into account.
@@ -193,43 +174,31 @@
 		},
 
 		toggleVideo: function() {
-			if (!this._videoAvailable) {
+			if (!this.model.get('videoAvailable')) {
 				return;
 			}
 
-			if (this.videoEnabled) {
+			if (this.model.get('videoEnabled')) {
 				this._app.setVideoEnabled(false);
 			} else {
 				this._app.setVideoEnabled(true);
 			}
 		},
 
-		setVideoEnabled: function(videoEnabled) {
-			if (!this._videoAvailable || !this._webrtc) {
-				return false;
-			}
-
+		_setVideoEnabled: function(model, videoEnabled) {
 			if (videoEnabled) {
-				this._webrtc.resumeVideo();
-
 				this.getUI('videoButton').attr('data-original-title', t('spreed', 'Disable video (v)'))
 					.removeClass('local-video-disabled video-disabled icon-video-off')
 					.addClass('icon-video');
 				this.getUI('audioButton').removeClass('local-video-disabled');
 				this.getUI('screensharingButton').removeClass('local-video-disabled');
 			} else {
-				this._webrtc.pauseVideo();
-
 				this.getUI('videoButton').attr('data-original-title', this._getEnableVideoButtonTitle())
 					.addClass('local-video-disabled video-disabled icon-video-off')
 					.removeClass('icon-video');
 				this.getUI('audioButton').addClass('local-video-disabled');
 				this.getUI('screensharingButton').addClass('local-video-disabled');
 			}
-
-			this.videoEnabled = videoEnabled;
-
-			return true;
 		},
 
 		_getEnableVideoButtonTitle: function() {
@@ -240,26 +209,20 @@
 			return t('spreed', 'Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time');
 		},
 
-		/**
-		 * Sets the video as available or not available.
-		 *
-		 * "setVideoEnabled(bool)" is expected to be called with the appropriate
-		 * value after the video is set as available.
-		 */
-		setVideoAvailable: function(videoAvailable) {
+		_setVideoAvailable: function(model, videoAvailable) {
 			if (videoAvailable) {
 				this.getUI('videoButton').removeClass('no-video-available');
+
+				this._setVideoEnabled(model, model.get('videoEnabled'));
 			} else {
 				this.getUI('videoButton').removeClass('icon-video')
 					.addClass('no-video-available icon-video-off')
 					.attr('data-original-title', t('spreed', 'No Camera'));
 			}
-
-			this._videoAvailable = videoAvailable;
 		},
 
 		toggleScreensharingMenu: function() {
-			if (!this._webrtc.capabilities.supportScreenSharing) {
+			if (!this.model.getWebRtc().capabilities.supportScreenSharing) {
 				if (window.location.protocol === 'https:') {
 					OC.Notification.showTemporary(t('spreed', 'Screensharing is not supported by your browser.'));
 				} else {
@@ -277,7 +240,7 @@
 				splitShare = (ffver >= 52);
 			}
 
-			if (this._webrtc.getLocalScreen()) {
+			if (this.model.get('sharedScreenId')) {
 				this.getUI('shareScreenEntry').addClass('hidden');
 				this.getUI('shareWindowEntry').addClass('hidden');
 				this.getUI('showScreenEntry').removeClass('hidden');
@@ -298,7 +261,7 @@
 		},
 
 		shareScreen: function() {
-			if (!this._webrtc.getLocalScreen()) {
+			if (!this.model.get('sharedScreenId')) {
 				this.startShareScreen('screen');
 			}
 
@@ -306,7 +269,7 @@
 		},
 
 		shareWindow: function() {
-			if (!this._webrtc.getLocalScreen()) {
+			if (!this.model.get('sharedScreenId')) {
 				this.startShareScreen('window');
 			}
 
@@ -314,27 +277,23 @@
 		},
 
 		showScreen: function() {
-			if (this._webrtc.getLocalScreen()) {
-				var currentUser = this._webrtc.connection.getSessionid();
-				this._sharedScreens.switchScreenToId(currentUser);
+			if (this.model.get('sharedScreenId')) {
+				this._sharedScreens.switchScreenToId(this.model.get('sharedScreenId'));
 			}
 
 			this.getUI('screensharingMenu').toggleClass('open', false);
 		},
 
 		stopScreen: function() {
-			this._webrtc.stopScreenShare();
+			this.model.stopSharingScreen();
 		},
 
 		startShareScreen: function(mode) {
 			this.getUI('screensharingButton').prop('disabled', true);
 
-			this._webrtc.shareScreen(mode, function(err) {
+			this.model.shareScreen(mode, function(err) {
 				this.getUI('screensharingButton').prop('disabled', false);
 				if (!err) {
-					this.getUI('screensharingButton').attr('data-original-title', t('spreed', 'Screensharing options'))
-						.removeClass('screensharing-disabled icon-screen-off')
-						.addClass('icon-screen');
 					return;
 				}
 
@@ -372,7 +331,15 @@
 			}.bind(this));
 		},
 
-		disableScreensharingButton: function() {
+		_setSharedScreenId: function(model, sharedScreenId) {
+			if (sharedScreenId) {
+				this.getUI('screensharingButton').attr('data-original-title', t('spreed', 'Screensharing options'))
+					.removeClass('screensharing-disabled icon-screen-off')
+					.addClass('icon-screen');
+
+				return;
+			}
+
 			this.getUI('screensharingButton').attr('data-original-title', t('spreed', 'Enable screensharing'))
 					.addClass('screensharing-disabled icon-screen-off')
 					.removeClass('icon-screen');

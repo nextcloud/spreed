@@ -993,10 +993,6 @@ var spreedPeerConnectionTable = [];
 			stopPeerCheckMedia(peer);
 		});
 
-		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
-			app.disableScreensharingButton();
-		});
-
 		var forceReconnect = function(signaling, flags) {
 			if (ownPeer) {
 				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);

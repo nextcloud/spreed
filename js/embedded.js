@@ -81,9 +81,11 @@
 				this.stopReceivingMessages();
 			});
 
+			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
+
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
+				localMediaModel: this._localMediaModel,
 				app: this,
-				webrtc: OCA.SpreedMe.webrtc,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
 
@@ -119,13 +121,13 @@
 				delete this._reconnectCallToken;
 
 				if (this.activeRoom.get('type') === this.ROOM_TYPE_ONE_TO_ONE) {
-					this._mediaControlsView.setAudioEnabled(true);
+					this._localMediaModel.enableAudio();
 					this.setVideoEnabled(false);
 
 					return;
 				}
 
-				this._mediaControlsView.setAudioEnabled(false);
+				this._localMediaModel.disableAudio();
 				this.setVideoEnabled(false);
 
 				var participants = this.activeRoom.get('participants');
@@ -154,7 +156,7 @@
 		setupWebRTC: function() {
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
-				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
+				this._localMediaModel.setWebRtc(OCA.SpreedMe.webrtc);
 				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
 				this._speakingWhileMutedWarner.setWebRtc(OCA.SpreedMe.webrtc);
 			}
@@ -201,31 +203,37 @@
 		},
 		initAudioVideoSettings: function(configuration) {
 			if (configuration.audio !== false) {
-				this._mediaControlsView.setAudioAvailable(true);
-				this._mediaControlsView.setAudioEnabled(this._mediaControlsView.audioEnabled);
+				this._localMediaModel.setAudioAvailable(true);
+				if (this._localMediaModel.get('audioEnabled')) {
+					this._localMediaModel.enableAudio();
+				} else {
+					this._localMediaModel.disableAudio();
+				}
 			} else {
-				this._mediaControlsView.setAudioEnabled(false);
-				this._mediaControlsView.setAudioAvailable(false);
+				this._localMediaModel.disableAudio();
+				this._localMediaModel.setAudioAvailable(false);
 			}
 
 			if (configuration.video !== false) {
-				this._mediaControlsView.setVideoAvailable(true);
-				this.setVideoEnabled(this._mediaControlsView.videoEnabled);
+				this._localMediaModel.setVideoAvailable(true);
+				this.setVideoEnabled(this._localMediaModel.get('videoEnabled'));
 			} else {
 				this.setVideoEnabled(false);
-				this._mediaControlsView.setVideoAvailable(false);
+				this._localMediaModel.setVideoAvailable(false);
 			}
 		},
 		setVideoEnabled: function(videoEnabled) {
-			if (!this._mediaControlsView.setVideoEnabled(videoEnabled)) {
+			if (!this._localMediaModel.get('videoAvailable')) {
 				return;
 			}
 
+			if (videoEnabled) {
+				this._localMediaModel.enableVideo();
+			} else {
+				this._localMediaModel.disableVideo();
+			}
+
 			this._localVideoView.setVideoEnabled(videoEnabled);
-		},
-		// Called from webrtc.js
-		disableScreensharingButton: function() {
-			this._mediaControlsView.disableScreensharingButton();
 		},
 		setGuestName: function(name) {
 			$.ajax({
