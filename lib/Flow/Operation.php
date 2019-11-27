@@ -110,18 +110,20 @@ class Operation implements IOperation {
 	 */
 	public function validateOperation(string $name, array $checks, string $operation): void {
 		list($mode, $token) = $this->parseOperationConfig($operation);
-		$this->validateOperationConfig($mode, $token);
+		$this->validateOperationConfig($mode, $token, $this->getUser()->getUID());
 	}
 
 	public function onEvent(string $eventName, Event $event, IRuleMatcher $ruleMatcher): void {
-		$flows = $ruleMatcher->getMatchingOperations(self::class, false);
+		$flows = $ruleMatcher->getFlows(false);
 		foreach ($flows as $flow) {
 			try {
 				list($mode, $token) = $this->parseOperationConfig($flow['operation']);
-				$this->validateOperationConfig($mode, $token);
+				$uid = $flow['scope_actor_id'];
+				$this->validateOperationConfig($mode, $token, $uid);
 
-				$room = $this->getRoom($token);
-				$participant = $this->getParticipant($room);
+
+				$room = $this->getRoom($token, $uid);
+				$participant = $this->getParticipant($uid, $room);
 				$this->chatManager->sendMessage(
 					$room,
 					$participant,
@@ -131,7 +133,7 @@ class Operation implements IOperation {
 					new \DateTime(),
 					null
 				);
-			} catch(UnexpectedValueException $e) {
+			} catch (UnexpectedValueException $e) {
 				continue;
 			} catch (ParticipantNotFoundException $e) {
 				continue;
@@ -176,7 +178,7 @@ class Operation implements IOperation {
 		return [$mode, $token];
 	}
 
-	protected function validateOperationConfig(int $mode, string $token): void {
+	protected function validateOperationConfig(int $mode, string $token, string $uid): void {
 		if(!in_array($mode, self::MESSAGE_MODES)) {
 			throw new UnexpectedValueException('Invalid mode');
 		}
@@ -186,14 +188,14 @@ class Operation implements IOperation {
 		}
 
 		try {
-			$room = $this->getRoom($token);
+			$room = $this->getRoom($token, $uid);
 		} catch (RoomNotFoundException $e) {
 			throw new UnexpectedValueException('Room not found', $e->getCode(), $e);
 		}
 
 		if($mode === self::MESSAGE_MODES['ROOM_MENTION']) {
 			try {
-				$participant = $this->getParticipant($room);
+				$participant = $this->getParticipant($uid, $room);
 				if (!$participant->hasModeratorPermissions(false)) {
 					throw new UnexpectedValueException('Not allowed to mention room');
 				}
@@ -217,16 +219,14 @@ class Operation implements IOperation {
 	/**
 	 * @throws RoomNotFoundException
 	 */
-	protected function getRoom(string $token): Room {
-		$user = $this->getUser();
-		return $this->talkManager->getRoomForParticipantByToken($token, $user->getUID());
+	protected function getRoom(string $token, string $uid): Room {
+		return $this->talkManager->getRoomForParticipantByToken($token, $uid);
 	}
 
 	/**
 	 * @throws ParticipantNotFoundException
 	 */
-	protected function getParticipant(Room $room): Participant {
-		$user = $this->getUser();
-		return $room->getParticipant($user->getUID());
+	protected function getParticipant(string $uid, Room $room): Participant {
+		return $room->getParticipant($uid);
 	}
 }
