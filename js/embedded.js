@@ -84,6 +84,8 @@
 			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
 
+			this._callView = new OCA.Talk.Views.CallView();
+
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				localCallParticipantModel: this._localCallParticipantModel,
 				localMediaModel: this._localMediaModel,

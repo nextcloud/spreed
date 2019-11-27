@@ -159,10 +159,8 @@
 			this._$callContainerWrapper = $('<div id="call-container-wrapper" class="hidden"></div>');
 
 			this.$el.append(this._$callContainerWrapper);
-			$('#call-container-wrapper').append('<div id="call-container"></div>');
+			$('#call-container-wrapper').append(OCA.SpreedMe.app._callView.$el);
 			$('#call-container-wrapper').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
-			$('#call-container').append('<div id="videos"></div>');
-			$('#call-container').append('<div id="screens"></div>');
 
 			if (this._emptyContentView) {
 				this._emptyContentView.destroy();

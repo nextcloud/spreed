@@ -14,6 +14,7 @@
   "models/room.js",
   "models/roomcollection.js",
   "views/callbutton.js",
+  "views/callview.js",
   "views/chatview.js",
   "views/editabletextlabel.js",
   "views/emptycontentview.js",

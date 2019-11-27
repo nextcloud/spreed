@@ -423,8 +423,8 @@
 				this._chatViewInMainView = true;
 			}
 
-			$('#videos').hide();
-			$('#screens').hide();
+			this._callView.$el.hide();
+
 			$('#emptycontent').show();
 		},
 		_showCallViewInMainView: function() {
@@ -437,16 +437,16 @@
 				this._chatViewInMainView = false;
 			}
 
-			$('#videos').show();
-			$('#screens').show();
+			this._callView.$el.show();
+
 			$('#emptycontent').hide();
 		},
 		_showEmptyContentViewInMainView: function() {
 			this._chatView.$el.detach();
 			this._chatViewInMainView = false;
 
-			$('#videos').hide();
-			$('#screens').hide();
+			this._callView.$el.hide();
+
 			$('#emptycontent').show();
 		},
 		_updateSidebar: function() {
@@ -656,9 +656,10 @@
 			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
 
+			this._callView = new OCA.Talk.Views.CallView();
 			// Ensure that the call view is not visible in the initial page.
-			$('#videos').hide();
-			$('#screens').hide();
+			this._callView.$el.hide();
+			this._callView.$el.insertBefore(this._emptyContentView.$el);
 
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				localCallParticipantModel: this._localCallParticipantModel,

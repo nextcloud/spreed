@@ -17,6 +17,7 @@
   "models/participantcollection.js",
   "views/callbutton.js",
   "views/callinfoview.js",
+  "views/callview.js",
   "views/chatview.js",
   "views/editabletextlabel.js",
   "views/emptycontentview.js",

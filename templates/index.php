@@ -27,10 +27,6 @@ script('spreed', 'merged');
 	<div id="app-content-wrapper">
 		<button id="video-fullscreen" class="icon-fullscreen force-icon-white-in-call icon-shadow hidden" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen (f)')) ?>"></button>
 
-		<div id="videos"></div>
-
-		<div id="screens"></div>
-
 		<div id="emptycontent">
 			<div id="emptycontent-icon" class="icon-talk"></div>
 			<h2><?php p($l->t('Join a conversation or start a new one')) ?></h2>
