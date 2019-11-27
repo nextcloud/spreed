@@ -36,6 +36,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\WorkflowEngine\EntityContext\IDisplayText;
 use OCP\WorkflowEngine\IManager as FlowManager;
 use OCP\WorkflowEngine\IOperation;
 use OCP\WorkflowEngine\IRuleMatcher;
@@ -121,6 +122,15 @@ class Operation implements IOperation {
 				$uid = $flow['scope_actor_id'];
 				$this->validateOperationConfig($mode, $token, $uid);
 
+				$entity = $ruleMatcher->getEntity();
+
+				$message = $eventName;
+				if($entity instanceof IDisplayText) {
+					$message = $entity->getDisplayText(3);
+					if($message === '') {
+						continue;
+					}
+				}
 
 				$room = $this->getRoom($token, $uid);
 				$participant = $this->getParticipant($uid, $room);
@@ -129,7 +139,7 @@ class Operation implements IOperation {
 					$participant,
 					'bots',
 					$participant->getUser(),
-					$this->prepareMention($mode, $participant) . 'MESSAGE TODO',
+					$this->prepareMention($mode, $participant) . $message,
 					new \DateTime(),
 					null
 				);
