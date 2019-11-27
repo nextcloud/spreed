@@ -16,6 +16,10 @@
 		align-items: flex-end;
 	}
 
+	#videos.hidden {
+		display: none;
+	}
+
 	.videoContainer,
 	/* Force regular rules on "big speaker video" when screensharing is enabled. */
 	&.participants-1.screensharing .videoContainer,

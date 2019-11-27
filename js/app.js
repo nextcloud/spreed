@@ -656,14 +656,16 @@
 			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
 
+			// Ensure that the call view is not visible in the initial page.
+			$('#videos').hide();
+			$('#screens').hide();
+
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				localCallParticipantModel: this._localCallParticipantModel,
 				localMediaModel: this._localMediaModel,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
 			this._localVideoView.render();
-			// Ensure that the local video is not visible in the initial page.
-			this._localVideoView.$el.addClass('hidden');
 			$('#videos').append(this._localVideoView.$el);
 
 			this._mediaControlsView = this._localVideoView._mediaControlsView;
@@ -808,8 +810,6 @@
 				this.callbackAfterMedia = null;
 			}
 
-			this._localVideoView.$el.removeClass('hidden');
-
 			localMediaChannel.trigger('startLocalMedia');
 		},
 		startWithoutLocalMedia: function(configuration) {
@@ -817,8 +817,6 @@
 				this.callbackAfterMedia(null);
 				this.callbackAfterMedia = null;
 			}
-
-			this._localVideoView.$el.removeClass('hidden');
 
 			if (OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {
 				localMediaChannel.trigger('startWithoutLocalMedia');
