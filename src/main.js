@@ -1,7 +1,9 @@
 /**
- * @copyright Copyright (c) 2018 John Molakvoæ <skjnldsv@protonmail.com>
+ * @copyright Copyright (c) 2019 John Molakvoæ <skjnldsv@protonmail.com>
  *
  * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Joas Schilling <coding@schilljs.com>
+ * @author Marco Ambrosini <marcoambrosini@pm.me>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -19,16 +21,25 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 import Vue from 'vue'
 import App from './App'
+
+// Store
 import Vuex from 'vuex'
-import contenteditableDirective from 'vue-contenteditable-directive'
 import store from './store'
+
+// Router
 import VueRouter from 'vue-router'
-import VueClipboard from 'vue-clipboard2'
 import router from './router/router'
+
+// Utils
 import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
+
+// Directives
+import contenteditableDirective from 'vue-contenteditable-directive'
+import VueClipboard from 'vue-clipboard2'
 import { translate, translatePlural } from '@nextcloud/l10n'
 
 // CSP config for webpack dynamic chunk loading
