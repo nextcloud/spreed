@@ -90,8 +90,8 @@
 			this._audioAvailable = true;
 			this._videoAvailable = true;
 
-			this.audioEnabled = !localStorage.getItem('audioDisabled');
-			this.videoEnabled = !localStorage.getItem('videoDisabled');
+			this.audioEnabled = false;
+			this.videoEnabled = false;
 		},
 
 		setWebRtc: function(webrtc) {
@@ -115,10 +115,8 @@
 
 			if (this.audioEnabled) {
 				this.setAudioEnabled(false);
-				localStorage.setItem('audioDisabled', true);
 			} else {
 				this.setAudioEnabled(true);
-				localStorage.removeItem('audioDisabled');
 			}
 		},
 
@@ -201,10 +199,8 @@
 
 			if (this.videoEnabled) {
 				this._app.setVideoEnabled(false);
-				localStorage.setItem('videoDisabled', true);
 			} else {
 				this._app.setVideoEnabled(true);
-				localStorage.removeItem('videoDisabled');
 			}
 		},
 
