@@ -53,6 +53,31 @@ function LocalMedia(opts) {
 
 util.inherits(LocalMedia, WildEmitter);
 
+/**
+ * Clones a MediaStream that will be ended when the original MediaStream is
+ * ended.
+ */
+var cloneLinkedStream = function(stream) {
+	var linkedStream = new MediaStream();
+
+	stream.getTracks().forEach(function (track) {
+		var linkedTrack = track.clone();
+		linkedStream.addTrack(linkedTrack);
+
+		// Keep a reference of all the linked clones of a track to be able to
+		// stop them when the track is stopped.
+		if (!track.linkedTracks) {
+			track.linkedTracks = [];
+		}
+		track.linkedTracks.push(linkedTrack);
+
+		track.addEventListener('ended', function () {
+			linkedTrack.stop();
+		});
+	});
+
+	return linkedStream;
+};
 
 LocalMedia.prototype.start = function (mediaConstraints, cb) {
 	var self = this;
@@ -83,7 +108,7 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
 
 		// The audio monitor stream is never disabled to be able to analyze it
 		// even when the stream sent is muted.
-		var audioMonitorStream = stream.clone();
+		var audioMonitorStream = cloneLinkedStream(stream);
 		if (constraints.audio && self.config.detectSpeakingEvents) {
 			self._setupAudioMonitor(audioMonitorStream, self.config.harkOptions);
 		}
@@ -130,12 +155,38 @@ LocalMedia.prototype.stopStream = function (stream) {
 	if (stream) {
 		var idx = this.localStreams.indexOf(stream);
 		if (idx > -1) {
-			stream.getTracks().forEach(function (track) { track.stop(); });
+			stream.getTracks().forEach(function (track) {
+				track.stop();
+
+				// Linked tracks must be explicitly stopped, as stopping a track
+				// does not trigger the "ended" event, and due to a bug in
+				// Firefox it is not possible to explicitly dispatch the event
+				// either (nor any other event with a different name):
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=1473457
+				if (track.linkedTracks) {
+					track.linkedTracks.forEach(function(linkedTrack) {
+						linkedTrack.stop();
+					});
+				}
+			});
 			this._removeStream(stream);
 		}
 	} else {
 		this.localStreams.forEach(function (stream) {
-			stream.getTracks().forEach(function (track) { track.stop(); });
+			stream.getTracks().forEach(function (track) {
+				track.stop();
+
+				// Linked tracks must be explicitly stopped, as stopping a track
+				// does not trigger the "ended" event, and due to a bug in
+				// Firefox it is not possible to explicitly dispatch the event
+				// either (nor any other event with a different name):
+				// https://bugzilla.mozilla.org/show_bug.cgi?id=1473457
+				if (track.linkedTracks) {
+					track.linkedTracks.forEach(function(linkedTrack) {
+						linkedTrack.stop();
+					});
+				}
+			});
 			self._removeStream(stream);
 		});
 	}
