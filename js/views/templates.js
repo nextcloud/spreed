@@ -117,7 +117,7 @@ templates['callinfoview'] = template({"1":function(container,depth0,helpers,part
     + "</div>\n";
 },"useData":true});
 templates['callview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<div id=\"videos\"></div>\n<div id=\"screens\"></div>\n";
+    return "<div id=\"videos\">\n	<div id=\"localVideoContainer\"></div>\n</div>\n<div id=\"screens\"></div>\n";
 },"useData":true});
 templates['chatview'] = template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
     var helper;

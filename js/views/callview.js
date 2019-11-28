@@ -44,11 +44,41 @@
 
 		ui: {
 			'videos': '#videos',
+			'localVideoContainer': '#localVideoContainer',
 			'screens': '#screens',
 		},
 
+		regions: {
+			'localVideo': '@ui.localVideoContainer',
+		},
+
 		initialize: function(options) {
+			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
+				localCallParticipantModel: options.localCallParticipantModel,
+				localMediaModel: options.localMediaModel,
+				sharedScreens: options.sharedScreens,
+			});
+
 			this.render();
+		},
+
+		onBeforeRender: function() {
+			// During the rendering the regions of this view are reset, which
+			// destroys its child views. If a child view has to be detached
+			// instead so it can be attached back after the rendering of the
+			// template finishes it is necessary to call "reset" with the
+			// "preventDestroy" option (in later Marionette versions a public
+			// "detachView" function was introduced instead).
+			// "allowMissingEl" is needed for the first time this view is
+			// rendered, as the element of the region does not exist yet at that
+			// time and without that option the call would fail otherwise.
+			this.getRegion('localVideo').reset({ preventDestroy: true, allowMissingEl: true });
+		},
+
+		onRender: function() {
+			// Attach the child views again (or for the first time) after the
+			// template has been rendered.
+			this.showChildView('localVideo', this._localVideoView, { replaceElement: true } );
 		},
 
 	});

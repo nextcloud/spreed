@@ -74,9 +74,6 @@
 				el: '#talk-sidebar > #emptycontent'
 			});
 
-			OCA.SpreedMe.app._localVideoView.render();
-			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
-
 			$('body').addClass('talk-sidebar-enabled');
 		},
 

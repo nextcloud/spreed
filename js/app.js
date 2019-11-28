@@ -656,20 +656,16 @@
 			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
 
-			this._callView = new OCA.Talk.Views.CallView();
-			// Ensure that the call view is not visible in the initial page.
-			this._callView.$el.hide();
-			this._callView.$el.insertBefore(this._emptyContentView.$el);
-
-			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
+			this._callView = new OCA.Talk.Views.CallView({
 				localCallParticipantModel: this._localCallParticipantModel,
 				localMediaModel: this._localMediaModel,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
-			this._localVideoView.render();
-			$('#videos').append(this._localVideoView.$el);
+			// Ensure that the call view is not visible in the initial page.
+			this._callView.$el.hide();
+			this._callView.$el.insertBefore(this._emptyContentView.$el);
 
-			this._mediaControlsView = this._localVideoView._mediaControlsView;
+			this._mediaControlsView = this._callView._localVideoView._mediaControlsView;
 
 			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._localMediaModel, this._mediaControlsView);
 

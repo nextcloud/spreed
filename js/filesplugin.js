@@ -145,9 +145,9 @@
 		},
 
 		render: function() {
-			// Detach the LocalVideoView before emptying its ancestor to prevent
+			// Detach the CallView before emptying its ancestor to prevent
 			// internal listeners in MediaControlsView from becoming unusable.
-			OCA.SpreedMe.app._localVideoView.$el.detach();
+			OCA.SpreedMe.app._callView.$el.detach();
 
 			this.$el.empty();
 			this._$callContainerWrapper = null;
@@ -169,9 +169,7 @@
 				el: '#call-container-wrapper > #emptycontent',
 			});
 
-			OCA.SpreedMe.app._localVideoView.render();
 			OCA.SpreedMe.app._mediaControlsView.hideScreensharingButton();
-			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
 		},
 
 		_updateCallContainer: function() {

@@ -84,15 +84,13 @@
 			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
 
-			this._callView = new OCA.Talk.Views.CallView();
-
-			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
+			this._callView = new OCA.Talk.Views.CallView({
 				localCallParticipantModel: this._localCallParticipantModel,
 				localMediaModel: this._localMediaModel,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
 
-			this._mediaControlsView = this._localVideoView._mediaControlsView;
+			this._mediaControlsView = this._callView._localVideoView._mediaControlsView;
 
 			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._localMediaModel, this._mediaControlsView);
 		},
