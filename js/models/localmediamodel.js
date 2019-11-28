@@ -117,10 +117,40 @@
 			// use several local streams for now it is assumed that only one
 			// local stream will be active at the same time.
 			this.set('localStream', localStream);
+
+			this._setInitialMediaState(configuration);
 		},
 
 		_handleLocalStreamRequestFailed: function() {
 			this.set('localStream', null);
+
+			this._setInitialMediaState({audio: false, video: false});
+		},
+
+		_setInitialMediaState: function(configuration) {
+			if (configuration.audio !== false) {
+				this.set('audioAvailable', true);
+				if (this.get('audioEnabled')) {
+					this.enableAudio();
+				} else {
+					this.disableAudio();
+				}
+			} else {
+				this.set('audioEnabled', false);
+				this.set('audioAvailable', false);
+			}
+
+			if (configuration.video !== false) {
+				this.set('videoAvailable', true);
+				if (this.get('videoEnabled')) {
+					this.enableVideo();
+				} else {
+					this.disableVideo();
+				}
+			} else {
+				this.set('videoEnabled', false);
+				this.set('videoAvailable', false);
+			}
 		},
 
 		_handleLocalStreamStopped: function(localStream) {
@@ -214,10 +244,6 @@
 			this.set('sharedScreenId', null);
 		},
 
-		setAudioAvailable: function(audioAvailable) {
-			this.set('audioAvailable', audioAvailable);
-		},
-
 		enableAudio: function() {
 			if (!this._webRtc) {
 				throw 'WebRtc not initialized yet';
@@ -243,10 +269,6 @@
 			}
 
 			this._webRtc.mute();
-		},
-
-		setVideoAvailable: function(videoAvailable) {
-			this.set('videoAvailable', videoAvailable);
 		},
 
 		enableVideo: function() {

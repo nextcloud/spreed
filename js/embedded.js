@@ -187,8 +187,6 @@
 				this.callbackAfterMedia = null;
 			}
 
-			this.initAudioVideoSettings(configuration);
-
 			localMediaChannel.trigger('startLocalMedia');
 		},
 		startWithoutLocalMedia: function(configuration) {
@@ -197,35 +195,8 @@
 				this.callbackAfterMedia = null;
 			}
 
-			this.initAudioVideoSettings(configuration);
-
 			if (OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {
 				localMediaChannel.trigger('startWithoutLocalMedia');
-			}
-		},
-		initAudioVideoSettings: function(configuration) {
-			if (configuration.audio !== false) {
-				this._localMediaModel.setAudioAvailable(true);
-				if (this._localMediaModel.get('audioEnabled')) {
-					this._localMediaModel.enableAudio();
-				} else {
-					this._localMediaModel.disableAudio();
-				}
-			} else {
-				this._localMediaModel.disableAudio();
-				this._localMediaModel.setAudioAvailable(false);
-			}
-
-			if (configuration.video !== false) {
-				this._localMediaModel.setVideoAvailable(true);
-				if (this._localMediaModel.get('videoEnabled')) {
-					this._localMediaModel.enableVideo();
-				} else {
-					this._localMediaModel.disableVideo();
-				}
-			} else {
-				this._localMediaModel.disableVideo();
-				this._localMediaModel.setVideoAvailable(false);
 			}
 		},
 		setGuestName: function(name) {
