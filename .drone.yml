@@ -76,7 +76,7 @@ steps:
       - composer install
       - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
   - name: syntax-php7.4
-    image: nextcloudci/php7.4:php7.4-2
+    image: nextcloudci/php7.4:2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -176,7 +176,7 @@ name: unit-sqlite-php7.4
 
 steps:
   - name: sqlite-php7.4
-    image: nextcloudci/php7.4:php7.4-2
+    image: nextcloudci/php7.4:2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -297,7 +297,7 @@ name: unit-mysql-php7.4
 
 steps:
   - name: mysql-php7.4
-    image: nextcloudci/php7.4:php7.4-2
+    image: nextcloudci/php7.4:2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -428,7 +428,7 @@ name: unit-pgsql-php7.4
 
 steps:
   - name: pgsql-php7.4
-    image: nextcloudci/php7.4:php7.4-2
+    image: nextcloudci/php7.4:2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
