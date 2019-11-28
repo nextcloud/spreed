@@ -58,6 +58,7 @@
 		initialize: function(options) {
 			this._localMediaModel = options.localMediaModel;
 
+			this.listenTo(this._localMediaModel, 'change:speaking', this._setSpeaking);
 			this.listenTo(this._localMediaModel, 'change:videoEnabled', this._setVideoEnabled);
 
 			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
@@ -86,6 +87,7 @@
 			this.showChildView('mediaControls', this._mediaControlsView, { replaceElement: true } );
 
 			// Match current model state.
+			this._setSpeaking(this._localMediaModel, this._localMediaModel.get('speaking'));
 			this._setVideoEnabled(this._localMediaModel, this._localMediaModel.get('videoEnabled'));
 		},
 
@@ -98,7 +100,7 @@
 			}
 		},
 
-		setSpeaking: function(speaking) {
+		_setSpeaking: function(model, speaking) {
 			this.$el.toggleClass('speaking', speaking);
 		},
 

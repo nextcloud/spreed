@@ -1195,12 +1195,10 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('speaking', function(){
 			sendDataChannelToAll('status', 'speaking');
-			OCA.SpreedMe.app._localVideoView.setSpeaking(true);
 		});
 
 		OCA.SpreedMe.webrtc.on('stoppedSpeaking', function(){
 			sendDataChannelToAll('status', 'stoppedSpeaking');
-			OCA.SpreedMe.app._localVideoView.setSpeaking(false);
 		});
 
 		// a peer was removed
