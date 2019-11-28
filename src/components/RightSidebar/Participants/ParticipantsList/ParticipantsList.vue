@@ -23,7 +23,7 @@
 	<div>
 		<ul>
 			<Participant
-				v-for="participant in items"
+				v-for="participant in participants"
 				:key="participant.userId"
 				:participant="participant"
 				@clickParticipant="handleClickParticipant" />
@@ -35,6 +35,7 @@
 
 import Participant from './Participant/Participant'
 import { addParticipant } from '../../../../services/participantsService'
+import Vue from 'vue'
 
 export default {
 	name: 'ParticipantsList',
@@ -73,6 +74,35 @@ export default {
 		token() {
 			return this.$route.params.token
 		},
+		/**
+		 * Creates a new array that combines the items (participants received as a prop)
+		 * with the current selectedParticipants so that each participant in the returned
+		 * array has a new 'selected' boolean key.
+		 * @returns {array} An array of 'participant' objects
+		 */
+		participants() {
+			/**
+			 * Compute this only in the new group conversation form.
+			 */
+			if (this.addOnClick === false) {
+				if (this.items !== []) {
+					const participants = this.items.slice()
+					participants.forEach(item => {
+						if (this.selectedParticipants.indexOf(item) !== -1) {
+							Vue.set(item, 'selected', true)
+						} else {
+							Vue.set(item, 'selected', false)
+						}
+					})
+					console.log(participants)
+					return participants
+				} else {
+					return []
+				}
+			} else {
+				return []
+			}
+		},
 	},
 
 	methods: {
@@ -97,7 +127,7 @@ export default {
 					/**
 					 * Add the clicked participant from the selected participants list
 					 */
-					this.selectedParticipants.push(participant)
+					this.selectedParticipants = [...this.selectedParticipants, participant]
 				}
 			}
 

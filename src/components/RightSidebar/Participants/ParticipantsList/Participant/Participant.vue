@@ -21,7 +21,11 @@
 
 <template>
 	<li class="participant-row"
-		:class="{ offline: isOffline, currentUser: isSelf, guestUser: isGuest }"
+		:class="{
+			'offline': isOffline,
+			'currentUser': isSelf,
+			'guestUser': isGuest,
+			'selected': isSelected }"
 		@click="handleClick">
 		<div class="participant-row__avatar-wrapper">
 			<Avatar
@@ -75,6 +79,14 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * This parameter is automatically computed by the ParticipantsList component
+		 * when both component are used in the new-group-conversation-form context
+		 * @returns {array}
+		 */
+		isSelected() {
+			return this.participant.selected
+		},
 		/**
 		 * If the Participant component is used as to display a search result, it will
 		 * return true. We use this not to display actions on the searched contacts and
@@ -204,6 +216,10 @@ export default {
 
 <style lang="scss" scoped>
 
+.selected {
+	background-color: var(--color-primary-light);
+}
+
 .participant-row {
 	display: flex;
 	align-items: center;
@@ -218,6 +234,7 @@ export default {
 		display: inline-block;
 		vertical-align: middle;
 		line-height: normal;
+		cursor: pointer;
 	}
 	&__moderator-indicator {
 		color: var(--color-text-maxcontrast);
@@ -227,6 +244,7 @@ export default {
 	&__icon {
 		width: 32px;
 		height: 44px;
+		cursor: pointer;
 	}
 	&__actions {
 		margin-left: auto;

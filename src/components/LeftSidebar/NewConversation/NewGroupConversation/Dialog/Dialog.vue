@@ -50,7 +50,7 @@ import { searchPossibleConversations } from '../../../../../services/conversatio
 import { fetchParticipants } from '../../../../../services/participantsService'
 
 export default {
-	name: 'NewGroupConversationDialog',
+	name: 'Dialog',
 	components: {
 		SearchBox,
 		Caption,
