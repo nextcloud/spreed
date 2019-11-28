@@ -105,7 +105,7 @@
 			this._webRtc.webrtc.on('localScreenStopped', this._handleLocalScreenStoppedBound);
 		},
 
-		_handleLocalStream: function(localStream) {
+		_handleLocalStream: function(configuration, localStream) {
 			// Although there could be several local streams active at the same
 			// time (if the local media is started again before stopping it
 			// first) the methods to control them ("mute", "unmute",

@@ -123,7 +123,7 @@ LocalMedia.prototype.start = function (mediaConstraints, cb) {
 			});
 		});
 
-		self.emit('localStream', stream);
+		self.emit('localStream', constraints, stream);
 
 		if (cb) {
 			return cb(null, stream);
