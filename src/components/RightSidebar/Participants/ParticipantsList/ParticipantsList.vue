@@ -42,10 +42,11 @@ export default {
 	components: {
 		Participant,
 	},
-	/**
-	 * List of searched users or groups
-	 */
+	
 	props: {
+		/**
+		 * List of searched users or groups
+		 */
 		items: {
 			type: Array,
 			required: true,
