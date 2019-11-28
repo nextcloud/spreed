@@ -24,10 +24,8 @@
 		<Actions>
 			<ActionButton icon="icon-add" @click="showModal" />
 		</Actions>
-		<Modal v-if="modal" @close="closeModal">
-			<div class="modal__content">
-				Hello world
-			</div>
+		<Modal v-if="modal" size="full" @close="closeModal">
+			<NewGroupConversationDialog />
 		</modal>
 	</div>
 </template>
@@ -37,6 +35,7 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import NewGroupConversationDialog from './NewGroupConversationDialog/NewGroupConversationDialog'
 
 export default {
 
@@ -45,7 +44,8 @@ export default {
 	components: {
 		Modal,
 		Actions,
-		ActionButton
+		ActionButton,
+		NewGroupConversationDialog,
 	},
 
 	data() {

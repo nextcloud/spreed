@@ -72,7 +72,7 @@ import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
-import NewGroupConversation from './NewConversation/NewGroupConversation'
+import NewGroupConversation from './NewConversation/NewGroupConversation/NewGroupConversation'
 
 export default {
 
