@@ -85,7 +85,6 @@
 
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				localMediaModel: this._localMediaModel,
-				app: this,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
 

@@ -90,7 +90,6 @@
 		},
 
 		initialize: function(options) {
-			this._app = options.app;
 			this._sharedScreens = options.sharedScreens;
 		},
 
@@ -202,7 +201,7 @@
 		},
 
 		_getEnableVideoButtonTitle: function() {
-			if (!this._app.signaling || this._app.signaling.getSendVideoIfAvailable()) {
+			if (!this.model.getWebRtc() || !this.model.getWebRtc().connection || this.model.getWebRtc().connection.getSendVideoIfAvailable()) {
 				return t('spreed', 'Enable video (v)');
 			}
 
