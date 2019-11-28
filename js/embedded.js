@@ -91,7 +91,7 @@
 
 			this._mediaControlsView = this._localVideoView._mediaControlsView;
 
-			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._mediaControlsView);
+			this._speakingWhileMutedWarner = new OCA.Talk.Views.SpeakingWhileMutedWarner(this._localMediaModel, this._mediaControlsView);
 		},
 		onStart: function() {
 			this.signaling = OCA.Talk.Signaling.createConnection();
@@ -161,7 +161,6 @@
 				OCA.SpreedMe.initWebRTC(this);
 				this._localMediaModel.setWebRtc(OCA.SpreedMe.webrtc);
 				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
-				this._speakingWhileMutedWarner.setWebRtc(OCA.SpreedMe.webrtc);
 			}
 
 			if (!OCA.SpreedMe.webrtc.capabilities.supportRTCPeerConnection) {

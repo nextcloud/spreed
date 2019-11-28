@@ -49,23 +49,19 @@
 	 * to the user even if the browser window is not in the foreground (provided
 	 * the user granted the permissions to receive notifications from the site).
 	 */
-	function SpeakingWhileMutedWarner(view) {
+	function SpeakingWhileMutedWarner(model, view) {
+		model.on('change:speakingWhileMuted', this._handleSpeakingWhileMutedChange.bind(this));
+
 		this._view = view;
-		this._handleSpeakingWhileMutedBound = this._handleSpeakingWhileMuted.bind(this);
-		this._handleStoppedSpeakingWhileMutedBound = this._handleStoppedSpeakingWhileMuted.bind(this);
 	}
 	SpeakingWhileMutedWarner.prototype = {
 
-		setWebRtc: function(webrtc) {
-			if (this._webrtc && this._webrtc.webrtc) {
-				this._webrtc.webrtc.off('speakingWhileMuted', this._handleSpeakingWhileMutedBound);
-				this._webrtc.webrtc.off('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound);
+		_handleSpeakingWhileMutedChange: function(model, speakingWhileMuted) {
+			if (speakingWhileMuted) {
+				this._handleSpeakingWhileMuted();
+			} else {
+				this._handleStoppedSpeakingWhileMuted();
 			}
-
-			this._webrtc = webrtc;
-
-			this._webrtc.webrtc.on('speakingWhileMuted', this._handleSpeakingWhileMutedBound);
-			this._webrtc.webrtc.on('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound);
 		},
 
 		_handleSpeakingWhileMuted: function() {

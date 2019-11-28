@@ -33,6 +33,7 @@
 			audioAvailable: false,
 			audioEnabled: false,
 			speaking: false,
+			speakingWhileMuted: false,
 			videoAvailable: false,
 			videoEnabled: false,
 			sharedScreenId: null,
@@ -48,6 +49,8 @@
 			this._handleVolumeChangeBound = this._handleVolumeChange.bind(this);
 			this._handleSpeakingBound = this._handleSpeaking.bind(this);
 			this._handleStoppedSpeakingBound = this._handleStoppedSpeaking.bind(this);
+			this._handleSpeakingWhileMutedBound = this._handleSpeakingWhileMuted.bind(this);
+			this._handleStoppedSpeakingWhileMutedBound = this._handleStoppedSpeakingWhileMuted.bind(this);
 			this._handleVideoOnBound = this._handleVideoOn.bind(this);
 			this._handleVideoOffBound = this._handleVideoOff.bind(this);
 			this._handleLocalScreenBound = this._handleLocalScreen.bind(this);
@@ -65,6 +68,8 @@
 				this._webRtc.webrtc.off('volumeChange', this._handleVolumeChangeBound);
 				this._webRtc.webrtc.off('speaking', this._handleSpeakingBound);
 				this._webRtc.webrtc.off('stoppedSpeaking', this._handleStoppedSpeakingBound);
+				this._webRtc.webrtc.off('speakingWhileMuted', this._handleSpeakingWhileMutedBound);
+				this._webRtc.webrtc.off('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound);
 				this._webRtc.webrtc.off('videoOn', this._handleVideoOnBound);
 				this._webRtc.webrtc.off('videoOff', this._handleVideoOffBound);
 				this._webRtc.webrtc.off('localScreen', this._handleLocalScreenBound);
@@ -82,6 +87,8 @@
 			this._webRtc.webrtc.on('volumeChange', this._handleVolumeChangeBound);
 			this._webRtc.webrtc.on('speaking', this._handleSpeakingBound);
 			this._webRtc.webrtc.on('stoppedSpeaking', this._handleStoppedSpeakingBound);
+			this._webRtc.webrtc.on('speakingWhileMuted', this._handleSpeakingWhileMutedBound);
+			this._webRtc.webrtc.on('stoppedSpeakingWhileMuted', this._handleStoppedSpeakingWhileMutedBound);
 			this._webRtc.webrtc.on('videoOn', this._handleVideoOnBound);
 			this._webRtc.webrtc.on('videoOff', this._handleVideoOffBound);
 			this._webRtc.webrtc.on('localScreen', this._handleLocalScreenBound);
@@ -126,6 +133,22 @@
 			}
 
 			this.set('speaking', false);
+		},
+
+		_handleSpeakingWhileMuted: function() {
+			if (!this.get('audioAvailable')) {
+				return;
+			}
+
+			this.set('speakingWhileMuted', true);
+		},
+
+		_handleStoppedSpeakingWhileMuted: function() {
+			if (!this.get('audioAvailable')) {
+				return;
+			}
+
+			this.set('speakingWhileMuted', false);
 		},
 
 		_handleVideoOn: function() {
