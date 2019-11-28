@@ -58,6 +58,7 @@
 		initialize: function(options) {
 			this._localMediaModel = options.localMediaModel;
 
+			this.listenTo(this._localMediaModel, 'change:localStream', this._setLocalStream);
 			this.listenTo(this._localMediaModel, 'change:speaking', this._setSpeaking);
 			this.listenTo(this._localMediaModel, 'change:videoEnabled', this._setVideoEnabled);
 
@@ -87,6 +88,7 @@
 			this.showChildView('mediaControls', this._mediaControlsView, { replaceElement: true } );
 
 			// Match current model state.
+			this._setLocalStream(this._localMediaModel, this._localMediaModel.get('localStream'));
 			this._setSpeaking(this._localMediaModel, this._localMediaModel.get('speaking'));
 			this._setVideoEnabled(this._localMediaModel, this._localMediaModel.get('videoEnabled'));
 		},
@@ -98,6 +100,22 @@
 				this.getUI('avatar').imageplaceholder('?', guestName, 128);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
 			}
+		},
+
+		_setLocalStream: function(model, localStream) {
+			if (!localStream) {
+				// Do not clear the srcObject of the video element, just leave
+				// the previous stream as a frozen image.
+
+				return;
+			}
+
+			var options = {
+				autoplay: true,
+				mirror: true,
+				muted: true
+			};
+			OCA.Talk.Views.attachMediaStream(localStream, this.getUI('video').get(0), options);
 		},
 
 		_setSpeaking: function(model, speaking) {

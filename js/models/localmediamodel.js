@@ -30,6 +30,7 @@
 	var LocalMediaModel = Backbone.Model.extend({
 
 		defaults: {
+			localStream: null,
 			audioAvailable: false,
 			audioEnabled: false,
 			speaking: false,
@@ -44,6 +45,9 @@
 		},
 
 		initialize: function(options) {
+			this._handleLocalStreamBound = this._handleLocalStream.bind(this);
+			this._handleLocalStreamRequestFailedBound = this._handleLocalStreamRequestFailed.bind(this);
+			this._handleLocalStreamStoppedBound = this._handleLocalStreamStopped.bind(this);
 			this._handleAudioOnBound = this._handleAudioOn.bind(this);
 			this._handleAudioOffBound = this._handleAudioOff.bind(this);
 			this._handleVolumeChangeBound = this._handleVolumeChange.bind(this);
@@ -63,6 +67,9 @@
 
 		setWebRtc: function(webRtc) {
 			if (this._webRtc && this._webRtc.webrtc) {
+				this._webRtc.webrtc.off('localStream', this._handleLocalStreamBound);
+				this._webRtc.webrtc.off('localStreamRequestFailed', this._handleLocalStreamRequestFailedBound);
+				this._webRtc.webrtc.off('localStreamStopped', this._handleLocalStreamStoppedBound);
 				this._webRtc.webrtc.off('audioOn', this._handleAudioOnBound);
 				this._webRtc.webrtc.off('audioOff', this._handleAudioOffBound);
 				this._webRtc.webrtc.off('volumeChange', this._handleVolumeChangeBound);
@@ -82,6 +89,9 @@
 			// state matches the state of the object.
 			this.set(this.defaults);
 
+			this._webRtc.webrtc.on('localStream', this._handleLocalStreamBound);
+			this._webRtc.webrtc.on('localStreamRequestFailed', this._handleLocalStreamRequestFailedBound);
+			this._webRtc.webrtc.on('localStreamStopped', this._handleLocalStreamStoppedBound);
 			this._webRtc.webrtc.on('audioOn', this._handleAudioOnBound);
 			this._webRtc.webrtc.on('audioOff', this._handleAudioOffBound);
 			this._webRtc.webrtc.on('volumeChange', this._handleVolumeChangeBound);
@@ -93,6 +103,32 @@
 			this._webRtc.webrtc.on('videoOff', this._handleVideoOffBound);
 			this._webRtc.webrtc.on('localScreen', this._handleLocalScreenBound);
 			this._webRtc.webrtc.on('localScreenStopped', this._handleLocalScreenStoppedBound);
+		},
+
+		_handleLocalStream: function(localStream) {
+			// Although there could be several local streams active at the same
+			// time (if the local media is started again before stopping it
+			// first) the methods to control them ("mute", "unmute",
+			// "pauseVideo" and "resumeVideo") act on all the streams, it is not
+			// possible to control them individually. Also all local streams
+			// are transmitted when a Peer is created, but if another local
+			// stream is then added it will not be automatically added to the
+			// Peer. As it is not well supported and there is also no need to
+			// use several local streams for now it is assumed that only one
+			// local stream will be active at the same time.
+			this.set('localStream', localStream);
+		},
+
+		_handleLocalStreamRequestFailed: function() {
+			this.set('localStream', null);
+		},
+
+		_handleLocalStreamStopped: function(localStream) {
+			if (this.get('localStream') !== localStream) {
+				return;
+			}
+
+			this.set('localStream', null);
 		},
 
 		_handleAudioOn: function() {

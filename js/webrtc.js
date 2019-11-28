@@ -393,7 +393,6 @@ var spreedPeerConnectionTable = [];
 		});
 
 		webrtc = new SimpleWebRTC({
-			localVideoEl: 'localVideo',
 			remoteVideosEl: '',
 			autoRequestMedia: true,
 			debug: false,
