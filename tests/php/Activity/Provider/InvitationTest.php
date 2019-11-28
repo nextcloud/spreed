@@ -96,9 +96,6 @@ class InvitationTest extends TestCase {
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testParseThrowsWrongSubject() {
 		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
@@ -123,6 +120,7 @@ class InvitationTest extends TestCase {
 			->willReturn(false);
 
 		$provider = $this->getProvider();
+		$this->expectException(\InvalidArgumentException::class);
 		$provider->parse('en', $event);
 	}
 

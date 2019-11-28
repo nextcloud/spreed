@@ -68,7 +68,7 @@ class SearchPluginTest extends \Test\TestCase {
 
 	/**
 	 * @param string[] $methods
-	 * @return SearchPlugin|\PHPUnit_Framework_MockObject_MockObject
+	 * @return SearchPlugin|MockObject
 	 */
 	protected function getPlugin(array $methods = []) {
 		if (empty($methods)) {
@@ -131,7 +131,7 @@ class SearchPluginTest extends \Test\TestCase {
 			->with('fo', ['123', 'foo', 'bar'], $result)
 			->willReturnCallback(function($search, $users, $result) {
 				array_map(function($user) {
-					$this->assertInternalType('string', $user);
+					$this->assertIsString($user);
 				}, $users);
 			});
 		$plugin->expects($this->once())
@@ -139,7 +139,7 @@ class SearchPluginTest extends \Test\TestCase {
 			->with('fo', $this->anything(), $result)
 			->willReturnCallback(function($search, $guests, $result) {
 				array_map(function($guest) {
-					$this->assertInternalType('string', $guest);
+					$this->assertIsString($guest);
 					$this->assertSame(40, strlen($guest));
 				}, $guests);
 			});
