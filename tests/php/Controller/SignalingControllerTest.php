@@ -87,7 +87,7 @@ class SignalingControllerTest extends \Test\TestCase {
 	/** @var CustomInputSignalingController */
 	private $controller;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->userId = 'testUser';

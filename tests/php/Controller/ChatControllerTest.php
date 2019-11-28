@@ -83,7 +83,7 @@ class ChatControllerTest extends TestCase {
 	/** @var Callback */
 	private $newMessageDateTimeConstraint;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->userId = 'testUser';

@@ -56,7 +56,7 @@ class BaseTest extends TestCase {
 	/** @var Manager|MockObject */
 	protected $manager;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->l10nFactory = $this->createMock(IFactory::class);

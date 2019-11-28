@@ -72,7 +72,7 @@ class NotifierTest extends \Test\TestCase {
 	/** @var Notifier */
 	protected $notifier;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->lFactory = $this->createMock(IFactory::class);

@@ -63,8 +63,8 @@ kind: pipeline
 name: compatibility
 
 steps:
-  - name: syntax-php7.1
-    image: nextcloudci/php7.1:php7.1-16
+  - name: syntax-php7.2
+    image: nextcloudci/php7.2:php7.2-13
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -75,8 +75,8 @@ steps:
       - cd ../server
       - composer install
       - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
-  - name: syntax-php7.3
-    image: nextcloudci/php7.3:php7.3-1
+  - name: syntax-php7.4
+    image: nextcloudci/php7.4:php7.4-2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -88,7 +88,7 @@ steps:
       - composer install
       - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
   - name: app-code-check
-    image: nextcloudci/php7.3:php7.3-1
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -110,42 +110,11 @@ trigger:
 
 ---
 kind: pipeline
-name: unit-sqlite-php7.1
-
-steps:
-  - name: sqlite-php7.1
-    image: nextcloudci/php7.1:php7.1-16
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - bash tests/drone-run-php-tests.sh || exit 0
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - ./occ app:enable $APP_NAME
-      - cd apps/$APP_NAME
-
-      # Run phpunit tests
-      - cd tests/php/
-      - phpunit --configuration phpunit.xml
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-    - pull_request
-    - push
-
----
-kind: pipeline
 name: unit-sqlite-php7.2
 
 steps:
   - name: sqlite-php7.2
-    image: nextcloudci/php7.2:php7.2-12
+    image: nextcloudci/php7.2:php7.2-13
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -176,7 +145,7 @@ name: unit-sqlite-php7.3
 
 steps:
   - name: sqlite-php7.3
-    image: nextcloudci/php7.3:php7.3-1
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -203,15 +172,15 @@ trigger:
 
 ---
 kind: pipeline
-name: unit-mysql-php7.1
+name: unit-sqlite-php7.4
 
 steps:
-  - name: mysql-php7.1
-    image: nextcloudci/php7.1:php7.1-16
+  - name: sqlite-php7.4
+    image: nextcloudci/php7.4:php7.4-2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
-      DATABASEHOST: mysql
+      DATABASEHOST: sqlite
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -223,20 +192,6 @@ steps:
       # Run phpunit tests
       - cd tests/php/
       - phpunit --configuration phpunit.xml
-
-services:
-  - name: cache
-    image: redis
-  - name: mysql
-    image: mysql:5.7.22
-    environment:
-      MYSQL_ROOT_PASSWORD: owncloud
-      MYSQL_USER: oc_autotest
-      MYSQL_PASSWORD: owncloud
-      MYSQL_DATABASE: oc_autotest
-    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
-    tmpfs:
-      - /var/lib/mysql
 
 trigger:
   branch:
@@ -252,7 +207,7 @@ name: unit-mysql-php7.2
 
 steps:
   - name: mysql-php7.2
-    image: nextcloudci/php7.2:php7.2-12
+    image: nextcloudci/php7.2:php7.2-13
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -297,7 +252,7 @@ name: unit-mysql-php7.3
 
 steps:
   - name: mysql-php7.3
-    image: nextcloudci/php7.3:php7.3-1
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -338,15 +293,15 @@ trigger:
 
 ---
 kind: pipeline
-name: unit-pgsql-php7.1
+name: unit-mysql-php7.4
 
 steps:
-  - name: pgsql-php7.1
-    image: nextcloudci/php7.1:php7.1-16
+  - name: mysql-php7.4
+    image: nextcloudci/php7.4:php7.4-2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
-      DATABASEHOST: pgsql
+      DATABASEHOST: mysql
     commands:
       - bash tests/drone-run-php-tests.sh || exit 0
       - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
@@ -362,14 +317,16 @@ steps:
 services:
   - name: cache
     image: redis
-  - name: pgsql
-    image: postgres:10
+  - name: mysql
+    image: mysql:5.7.22
     environment:
-      POSTGRES_USER: oc_autotest
-      POSTGRES_DB: oc_autotest_dummy
-      POSTGRES_PASSWORD:
+      MYSQL_ROOT_PASSWORD: owncloud
+      MYSQL_USER: oc_autotest
+      MYSQL_PASSWORD: owncloud
+      MYSQL_DATABASE: oc_autotest
+    command: [ "--innodb_large_prefix=true", "--innodb_file_format=barracuda", "--innodb_file_per_table=true" ]
     tmpfs:
-      - /var/lib/postgresql/data
+      - /var/lib/mysql
 
 trigger:
   branch:
@@ -385,7 +342,7 @@ name: unit-pgsql-php7.2
 
 steps:
   - name: pgsql-php7.2
-    image: nextcloudci/php7.2:php7.2-12
+    image: nextcloudci/php7.2:php7.2-13
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -428,7 +385,50 @@ name: unit-pgsql-php7.3
 
 steps:
   - name: pgsql-php7.3
-    image: nextcloudci/php7.3:php7.3-1
+    image: nextcloudci/php7.3:php7.3-5
+    environment:
+      APP_NAME: spreed
+      CORE_BRANCH: master
+      DATABASEHOST: pgsql
+    commands:
+      - bash tests/drone-run-php-tests.sh || exit 0
+      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
+      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
+      - cd ../server
+      - ./occ app:enable $APP_NAME
+      - cd apps/$APP_NAME
+
+      # Run phpunit tests
+      - cd tests/php/
+      - phpunit --configuration phpunit.xml
+
+services:
+  - name: cache
+    image: redis
+  - name: pgsql
+    image: postgres:10
+    environment:
+      POSTGRES_USER: oc_autotest
+      POSTGRES_DB: oc_autotest_dummy
+      POSTGRES_PASSWORD:
+    tmpfs:
+      - /var/lib/postgresql/data
+
+trigger:
+  branch:
+    - master
+    - stable*
+  event:
+    - pull_request
+    - push
+
+---
+kind: pipeline
+name: unit-pgsql-php7.4
+
+steps:
+  - name: pgsql-php7.4
+    image: nextcloudci/php7.4:php7.4-2
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -471,7 +471,7 @@ name: int-sqlite-callapi
 
 steps:
   - name: integration-callapi
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -506,7 +506,7 @@ name: int-sqlite-chat
 
 steps:
   - name: integration-chat
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -541,7 +541,7 @@ name: int-sqlite-conversation
 
 steps:
   - name: integration-conversation
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -576,7 +576,7 @@ name: int-sqlite-sharing
 
 steps:
   - name: integration-sharing
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -611,7 +611,7 @@ name: int-mysql-callapi
 
 steps:
   - name: integration-callapi
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -656,7 +656,7 @@ name: int-mysql-chat
 
 steps:
   - name: integration-chat
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -701,7 +701,7 @@ name: int-mysql-conversation
 
 steps:
   - name: integration-conversation
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -746,7 +746,7 @@ name: int-mysql-sharing
 
 steps:
   - name: integration-sharing
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -791,7 +791,7 @@ name: int-pgsql-callapi
 
 steps:
   - name: integration-callapi
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -834,7 +834,7 @@ name: int-pgsql-chat
 
 steps:
   - name: integration-chat
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -877,7 +877,7 @@ name: int-pgsql-conversation
 
 steps:
   - name: integration-conversation
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master
@@ -920,7 +920,7 @@ name: int-pgsql-sharing
 
 steps:
   - name: integration-sharing
-    image: nextcloudci/php7.1:php7.1-16
+    image: nextcloudci/php7.3:php7.3-5
     environment:
       APP_NAME: spreed
       CORE_BRANCH: master

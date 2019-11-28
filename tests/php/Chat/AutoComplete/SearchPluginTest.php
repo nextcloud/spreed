@@ -50,7 +50,7 @@ class SearchPluginTest extends \Test\TestCase {
 	/** @var SearchPlugin */
 	protected $plugin;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);

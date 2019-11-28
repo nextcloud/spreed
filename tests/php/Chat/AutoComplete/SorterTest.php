@@ -61,7 +61,7 @@ class SorterTest extends \Test\TestCase {
 		],
 	];
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->commentsManager = $this->createMock(CommentsManager::class);

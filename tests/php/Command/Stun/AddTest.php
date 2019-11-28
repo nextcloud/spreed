@@ -42,7 +42,7 @@ class AddTest extends TestCase {
 	/** @var OutputInterface|\PHPUnit_Framework_MockObject_MockObject */
 	private $output;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->config = $this->createMock(IConfig::class);

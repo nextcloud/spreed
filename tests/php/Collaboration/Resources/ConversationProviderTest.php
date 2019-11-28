@@ -49,7 +49,7 @@ class ConversationProviderTest extends TestCase {
 	/** @var ConversationProvider */
 	protected $provider;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);

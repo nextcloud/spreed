@@ -92,7 +92,7 @@ class BackendNotifierTest extends \Test\TestCase {
 	/** @var BackendNotifier */
 	protected $originalBackendNotifier;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->userId = 'testUser';
@@ -139,7 +139,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		);
 	}
 
-	public function tearDown() {
+	public function tearDown(): void {
 		$config = \OC::$server->getConfig();
 		$config->deleteAppValue('spreed', 'signaling_servers');
 		$this->app->getContainer()->registerService(BackendNotifier::class, function() {

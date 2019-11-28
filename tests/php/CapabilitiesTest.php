@@ -42,7 +42,7 @@ class CapabilitiesTest extends TestCase {
 	/** @var IUserSession|MockObject */
 	protected $userSession;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->serverConfig = $this->createMock(IConfig::class);
 		$this->talkConfig = $this->createMock(Config::class);

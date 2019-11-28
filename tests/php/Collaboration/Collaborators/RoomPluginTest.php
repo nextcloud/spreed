@@ -50,7 +50,7 @@ class RoomPluginTest extends \Test\TestCase {
 	/** @var RoomPlugin */
 	protected $plugin;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);

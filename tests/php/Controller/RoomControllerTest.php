@@ -69,7 +69,7 @@ class RoomControllerTest extends \Test\TestCase {
 	private $l;
 
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->userId = 'testUser';

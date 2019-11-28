@@ -56,7 +56,7 @@ class ExecutorTest extends TestCase {
 	/** @var Executor */
 	protected $executor;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);

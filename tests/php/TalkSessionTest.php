@@ -37,7 +37,7 @@ class TalkSessionTest extends TestCase {
 	/** @var TalkSession */
 	protected $talkSession;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->session = $this->createMock(ISession::class);
