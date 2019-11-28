@@ -72,12 +72,8 @@ const addParticipant = async function(token, newParticipant, source) {
  * @param {string} token The conversation token;
  */
 const removeCurrentUserFromConversation = async function(token) {
-	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/self`)
-		return response
-	} catch (error) {
-		console.debug(error)
-	}
+	const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/self`)
+	return response
 }
 
 const removeUserFromConversation = async function(token, userId) {

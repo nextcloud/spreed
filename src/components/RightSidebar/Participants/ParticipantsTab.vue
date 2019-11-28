@@ -201,6 +201,10 @@ export default {
 			}
 		},
 		async getParticipants() {
+			if (typeof this.token === 'undefined') {
+				return
+			}
+
 			try {
 				const participants = await fetchParticipants(this.token)
 				this.$store.dispatch('purgeParticipantsStore', this.token)
