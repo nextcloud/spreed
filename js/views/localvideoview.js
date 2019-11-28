@@ -56,7 +56,10 @@
 		},
 
 		initialize: function(options) {
+			this._localCallParticipantModel = options.localCallParticipantModel;
 			this._localMediaModel = options.localMediaModel;
+
+			this.listenTo(this._localCallParticipantModel, 'change:guestName', this._handleGuestNameChange);
 
 			this.listenTo(this._localMediaModel, 'change:localStream', this._setLocalStream);
 			this.listenTo(this._localMediaModel, 'change:speaking', this._setSpeaking);
@@ -92,13 +95,17 @@
 			this._setVideoEnabled(this._localMediaModel, this._localMediaModel.get('videoEnabled'));
 		},
 
-		setAvatar: function(userId, guestName) {
+		_setAvatar: function(userId, guestName) {
 			if (userId && userId.length) {
 				this.getUI('avatar').avatar(userId, 128);
 			} else {
 				this.getUI('avatar').imageplaceholder('?', guestName, 128);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
 			}
+		},
+
+		_handleGuestNameChange: function(model, guestName) {
+			this._setAvatar(null, guestName);
 		},
 
 		_setLocalStream: function(model, localStream) {
@@ -131,7 +138,7 @@
 
 			var userId = OCA.Talk.getCurrentUser().uid;
 			var guestName = localStorage.getItem("nick");
-			this.setAvatar(userId, guestName);
+			this._setAvatar(userId, guestName);
 
 			this.getUI('avatarContainer').removeClass('hidden');
 			this.getUI('video').addClass('hidden');

@@ -653,9 +653,11 @@
 				OC.Util.History.replaceState({}, OC.generateUrl('/apps/spreed'));
 			});
 
+			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
 
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
+				localCallParticipantModel: this._localCallParticipantModel,
 				localMediaModel: this._localMediaModel,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
@@ -777,6 +779,7 @@
 		setupWebRTC: function() {
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
+				this._localCallParticipantModel.setWebRtc(OCA.SpreedMe.webrtc);
 				this._localMediaModel.setWebRtc(OCA.SpreedMe.webrtc);
 				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
 			}
@@ -875,7 +878,9 @@
 					request.setRequestHeader('Accept', 'application/json');
 				},
 				success: function() {
-					this._onChangeGuestName(name);
+					if (OCA.SpreedMe.webrtc) {
+						this._localCallParticipantModel.setGuestName(name);
+					}
 				}.bind(this)
 			});
 		},
@@ -891,14 +896,6 @@
 			}.bind(this));
 
 			this._localStorageModel.fetch();
-		},
-		_onChangeGuestName: function(newDisplayName) {
-			this._localVideoView.setAvatar(undefined, newDisplayName);
-
-			if (OCA.SpreedMe.webrtc) {
-				console.log('_onChangeGuestName.webrtc');
-				OCA.SpreedMe.webrtc.sendDirectlyToAll('status', 'nickChanged', newDisplayName);
-			}
 		},
 		initShareRoomClipboard: function () {
 			$('body').find('.shareRoomClipboard').tooltip({

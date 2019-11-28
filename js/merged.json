@@ -9,6 +9,7 @@
   "main.js",
   "models/chatmessage.js",
   "models/chatmessagecollection.js",
+  "models/localcallparticipantmodel.js",
   "models/localmediamodel.js",
   "models/room.js",
   "models/roomcollection.js",
