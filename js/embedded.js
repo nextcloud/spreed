@@ -125,13 +125,13 @@
 
 				if (this.activeRoom.get('type') === this.ROOM_TYPE_ONE_TO_ONE) {
 					this._localMediaModel.enableAudio();
-					this.setVideoEnabled(false);
+					this._localMediaModel.disableVideo();
 
 					return;
 				}
 
 				this._localMediaModel.disableAudio();
-				this.setVideoEnabled(false);
+				this._localMediaModel.disableVideo();
 
 				var participants = this.activeRoom.get('participants');
 				var numberOfParticipantsAndGuests = (participants? Object.keys(participants).length: 0) +
@@ -175,7 +175,7 @@
 					this.activeRoom.get('numGuests');
 			if (numberOfParticipantsAndGuests >= 5) {
 				this.signaling.setSendVideoIfAvailable(false);
-				this.setVideoEnabled(false);
+				this._localMediaModel.disableVideo();
 			} else {
 				this.signaling.setSendVideoIfAvailable(true);
 			}
@@ -219,24 +219,15 @@
 
 			if (configuration.video !== false) {
 				this._localMediaModel.setVideoAvailable(true);
-				this.setVideoEnabled(this._localMediaModel.get('videoEnabled'));
-			} else {
-				this.setVideoEnabled(false);
-				this._localMediaModel.setVideoAvailable(false);
-			}
-		},
-		setVideoEnabled: function(videoEnabled) {
-			if (!this._localMediaModel.get('videoAvailable')) {
-				return;
-			}
-
-			if (videoEnabled) {
-				this._localMediaModel.enableVideo();
+				if (this._localMediaModel.get('videoEnabled')) {
+					this._localMediaModel.enableVideo();
+				} else {
+					this._localMediaModel.disableVideo();
+				}
 			} else {
 				this._localMediaModel.disableVideo();
+				this._localMediaModel.setVideoAvailable(false);
 			}
-
-			this._localVideoView.setVideoEnabled(videoEnabled);
 		},
 		setGuestName: function(name) {
 			$.ajax({

@@ -56,6 +56,10 @@
 		},
 
 		initialize: function(options) {
+			this._localMediaModel = options.localMediaModel;
+
+			this.listenTo(this._localMediaModel, 'change:videoEnabled', this._setVideoEnabled);
+
 			this._mediaControlsView = new OCA.SpreedMe.Views.MediaControlsView({
 				model: options.localMediaModel,
 				app: options.app,
@@ -80,6 +84,9 @@
 			// Attach the child views again (or for the first time) after the
 			// template has been rendered.
 			this.showChildView('mediaControls', this._mediaControlsView, { replaceElement: true } );
+
+			// Match current model state.
+			this._setVideoEnabled(this._localMediaModel, this._localMediaModel.get('videoEnabled'));
 		},
 
 		setAvatar: function(userId, guestName) {
@@ -95,7 +102,7 @@
 			this.$el.toggleClass('speaking', speaking);
 		},
 
-		setVideoEnabled: function(videoEnabled) {
+		_setVideoEnabled: function(model, videoEnabled) {
 			if (videoEnabled) {
 				this.getUI('avatarContainer').addClass('hidden');
 				this.getUI('video').removeClass('hidden');

@@ -179,9 +179,9 @@
 			}
 
 			if (this.model.get('videoEnabled')) {
-				this._app.setVideoEnabled(false);
+				this.model.disableVideo();
 			} else {
-				this._app.setVideoEnabled(true);
+				this.model.enableVideo();
 			}
 		},
 
