@@ -42,7 +42,7 @@ export default {
 	components: {
 		Participant,
 	},
-	
+
 	props: {
 		/**
 		 * List of searched users or groups
@@ -51,6 +51,22 @@ export default {
 			type: Array,
 			required: true,
 		},
+		/**
+		 * If true, clicking the participant will add it to to the current conversation.
+		 * This behavior is used in the right sidebar for already existing conversations.
+		 * If false, clicking on the participant will add the participant to the
+		 * `selectedParticipants` array in the data.
+		 */
+		addOnClick: {
+			type: Boolean,
+			default: true,
+		},
+	},
+
+	data() {
+		return {
+			selectedParticipants: [],
+		}
 	},
 
 	computed: {
@@ -61,12 +77,30 @@ export default {
 
 	methods: {
 		async handleClickParticipant(participant) {
-			try {
-				await addParticipant(this.token, participant.id, participant.source)
-				this.$emit('refreshCurrentParticipants')
-			} catch (exeption) {
-				console.debug(exeption)
+			if (this.addOnClick) {
+				/**
+				 * Add the clicked participant to the current conversation
+				 */
+				try {
+					await addParticipant(this.token, participant.id, participant.source)
+					this.$emit('refreshCurrentParticipants')
+				} catch (exeption) {
+					console.debug(exeption)
+				}
+			} else {
+				if (this.selectedParticipants.indexOf(participant) !== -1) {
+					/**
+					 * Remove the clicked participant from the selected participants list
+					 */
+					this.selectedParticipants = [...this.selectedParticipants.slice(0, this.selectedParticipants.indexOf(participant)), ...this.selectedParticipants.slice(this.selectedParticipants.indexOf(participant), this.selectedParticipants.length)]
+				} else {
+					/**
+					 * Add the clicked participant from the selected participants list
+					 */
+					this.selectedParticipants.push(participant)
+				}
 			}
+
 		},
 	},
 }

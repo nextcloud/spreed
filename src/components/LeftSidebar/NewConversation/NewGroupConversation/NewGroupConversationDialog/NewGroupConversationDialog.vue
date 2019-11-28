@@ -29,20 +29,11 @@
 			<Caption
 				:title="t('spreed', 'Add participants')" />
 			<ParticipantsList
-				v-if="addableUsers.length !== 0"
-				:items="addableUsers"
+				:add-on-click="false"
+				:items="searchResults"
 				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
-
-			<Caption
-				:title="t('spreed', 'Add groups')" />
-			<ParticipantsList
-				v-if="addableGroups.length !== 0"
-				:items="addableGroups"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
+			<Hint :hint="t('spreed', 'Loading')" />
+			<Hint :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
 </template>
@@ -99,29 +90,6 @@ export default {
 		},
 		isSearching() {
 			return this.searchText !== ''
-		},
-		addableUsers() {
-			if (this.searchResults !== []) {
-				const searchResultUsers = this.searchResults.filter(item => item.source === 'users')
-				const participants = this.$store.getters.participantsList(this.token)
-				return searchResultUsers.filter(user => {
-					let addable = true
-					for (const participant of participants) {
-						if (user.id === participant.userId) {
-							addable = false
-							break
-						}
-					}
-					return addable
-				})
-			}
-			return []
-		},
-		addableGroups() {
-			if (this.searchResults !== []) {
-				return this.searchResults.filter((item) => item.source === 'groups')
-			}
-			return []
 		},
 	},
 
