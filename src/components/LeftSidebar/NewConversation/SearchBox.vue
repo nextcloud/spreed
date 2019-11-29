@@ -24,26 +24,20 @@
 		class="app-navigation-search"
 		@submit.prevent="handleSubmit">
 		<input
+			ref="searchConversations"
 			v-model="localValue"
 			class="app-navigation-search__input"
 			type="text"
-			:autofocus="autoFocused"
 			:placeHolder="placeholderText">
 	</form>
 </template>
 
 <script>
+import { EventBus } from '../../../services/EventBus'
 
 export default {
 	name: 'SearchBox',
 	props: {
-		/**
-		 * Refers to the focused state of the input search box when loading the page.
-		 */
-		autoFocused: {
-			type: Boolean,
-			default: true,
-		},
 		/**
 		 * The placeholder for the input field
 		 */
@@ -74,7 +68,22 @@ export default {
 			this.localValue = value
 		},
 	},
+	mounted() {
+		this.focusInput()
+		/**
+		 * Listen to routeChange global events and focus on the
+		 */
+		EventBus.$on('routeChange', () => {
+			this.focusInput()
+		})
+	},
 	methods: {
+		// Focus the input field of the current componnent.
+		focusInput() {
+			if (this.$route.name === 'root') {
+				this.$refs.searchConversations.focus()
+			}
+		},
 		/**
 		 * When the form is submitted we send this event up in order to allow for example
 		 * to select the first search result and trigger a route change in the main view.
