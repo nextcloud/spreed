@@ -73,6 +73,7 @@
 			});
 
 			OCA.SpreedMe.app._localVideoView.render();
+			OCA.SpreedMe.app._mediaControlsView.hideScreensharingButton();
 			$('#videos').append(OCA.SpreedMe.app._localVideoView.$el);
 
 			this._$roomNotJoinedMessage = $(

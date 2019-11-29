@@ -155,6 +155,7 @@
 			if (!OCA.SpreedMe.webrtc) {
 				OCA.SpreedMe.initWebRTC(this);
 				this._mediaControlsView.setWebRtc(OCA.SpreedMe.webrtc);
+				this._mediaControlsView.setSharedScreens(OCA.SpreedMe.sharedScreens);
 				this._speakingWhileMutedWarner.setWebRtc(OCA.SpreedMe.webrtc);
 			}
 

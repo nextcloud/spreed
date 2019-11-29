@@ -98,8 +98,19 @@
 }
 
 /* Screensharing in Talk sidebar */
-.talkCallInfoView #call-container-wrapper #screens {
-	display: none;
+.talkCallInfoView #call-container-wrapper #call-container.screensharing #screens {
+	/* The row with the participants is shorter in the Talk sidebar to make room
+	 * for the promoted video and the shared screens. */
+	height: calc(100% - 100px);
+}
+
+.talkCallInfoView #call-container-wrapper #call-container.screensharing .videoContainer {
+	max-height: 100px;
+
+	/* Avatars slightly overflow the container; although they overlap the shared
+	 * screen it is not too bad and it is better than compressing even further
+	 * the shared screen. */
+	overflow: visible;
 }
 
 

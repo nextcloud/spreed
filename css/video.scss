@@ -15,7 +15,8 @@
 }
 
 .videoContainer,
-#app-content.screensharing .videoContainer {
+#app-content.screensharing .videoContainer,
+#call-container.screensharing .videoContainer {
 	position: relative;
 	width: 100%;
 	padding: 0 2%;
@@ -31,11 +32,13 @@
 }
 
 .videoContainer.hidden,
-#app-content.screensharing .videoContainer.hidden {
+#app-content.screensharing .videoContainer.hidden,
+#call-container.screensharing .videoContainer.hidden {
 	display: none;
 }
 
-#app-content.screensharing .videoContainer {
+#app-content.screensharing .videoContainer,
+#call-container.screensharing .videoContainer {
 	max-height: 200px;
 }
 
@@ -48,7 +51,8 @@ video {
 	vertical-align: top; /* fix white line below video */
 }
 
-#app-content.screensharing .videoContainer video {
+#app-content.screensharing .videoContainer video,
+#call-container.screensharing .videoContainer video {
 	max-height: 200px;
 	background-color: transparent;
 	box-shadow: none;
@@ -209,16 +213,17 @@ video {
 
 
 
-#app-content.screensharing #screens {
+#app-content.screensharing #screens,
+#call-container.screensharing #screens {
 	position: absolute;
 	width: 100%;
 	height: calc(100% - 200px);
 	top: 0;
-	overflow-y: scroll;
 	background-color: transparent;
 }
 
-#app-content.screensharing .screenContainer {
+#app-content.screensharing .screenContainer,
+#call-container.screensharing .screenContainer {
 	position: relative;
 	width: 100%;
 	height: 100%;
