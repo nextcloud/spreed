@@ -103,6 +103,7 @@ OC.L10N.register(
     "Delete conversation" : "Ištrinti pokalbį",
     "Remove from favorites" : "Šalinti iš mėgstamų",
     "Add to favorites" : "Pridėti į mėgstamus",
+    "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių.",
     "Contacts" : "Adresatai",
     "Loading" : "Įkeliama",
     "Groups" : "Grupės",
@@ -249,7 +250,6 @@ OC.L10N.register(
     "Enter name for a new conversation" : "Įveskite naujo pokalbio pavadinimą",
     "Calls are disabled in this conversation." : "Šiame pokalbyje skambinti negalima.",
     "You can not send messages, because the conversation is locked." : "Negalite siųsti žinučių, nes pokalbis užrakintas.",
-    "The conversation is locked." : "Pokalbis užrakintas.",
-    "You need to promote a new moderator before you can leave the conversation." : "Prieš išeidami iš pokalbio, turite paaukštinti naują moderatorių."
+    "The conversation is locked." : "Pokalbis užrakintas."
 },
 "nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);");
