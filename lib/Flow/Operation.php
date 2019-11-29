@@ -37,6 +37,8 @@ use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
 use OCP\WorkflowEngine\EntityContext\IDisplayText;
+use OCP\WorkflowEngine\EntityContext\IUrl;
+use OCP\WorkflowEngine\IEntity;
 use OCP\WorkflowEngine\IManager as FlowManager;
 use OCP\WorkflowEngine\IOperation;
 use OCP\WorkflowEngine\IRuleMatcher;
@@ -124,12 +126,9 @@ class Operation implements IOperation {
 
 				$entity = $ruleMatcher->getEntity();
 
-				$message = $eventName;
-				if($entity instanceof IDisplayText) {
-					$message = $entity->getDisplayText(3);
-					if($message === '') {
-						continue;
-					}
+				$message = $this->prepareText($entity, $eventName);
+				if($message === '') {
+					continue;
 				}
 
 				$room = $this->getRoom($token, $uid);
@@ -151,6 +150,17 @@ class Operation implements IOperation {
 				continue;
 			}
 		}
+	}
+
+	protected function prepareText(IEntity $entity, string $eventName) {
+		$message = $eventName;
+		if($entity instanceof IDisplayText) {
+			$message = trim($entity->getDisplayText(3));
+		}
+		if($entity instanceof IUrl && $message !== '') {
+			$message .= ' ' . $entity->getUrl();
+		}
+		return $message;
 	}
 
 	/**
