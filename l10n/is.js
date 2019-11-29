@@ -110,6 +110,7 @@ OC.L10N.register(
     "Delete conversation" : "Eyða samtali",
     "Remove from favorites" : "Fjarlægja úr eftirlætum",
     "Add to favorites" : "Bæta í eftirlæti",
+    "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu.",
     "[Unknown user name]" : "[nafn óþekkts notanda]",
     "Today" : "Í dag",
     "Yesterday" : "Í gær",
@@ -289,7 +290,6 @@ OC.L10N.register(
     "Calls are disabled in this conversation." : "Símtöl eru óvirk í þessu samtali",
     "You can not send messages, because the conversation is locked." : "Þú getur ekki sent skilaboð því samtalið er læst.",
     "The conversation is locked." : "Samtalið er læst.",
-    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Virkja myndskeið (v) - Tengingin þín verður trufluð í stutta stund á meðan myndmerkið er virkjað í fyrsta skipti",
-    "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu."
+    "Enable video (v) - Your connection will be briefly interrupted when enabling the video for the first time" : "Virkja myndskeið (v) - Tengingin þín verður trufluð í stutta stund á meðan myndmerkið er virkjað í fyrsta skipti"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
