@@ -148,6 +148,8 @@
 			}
 
 			this.getUI('nameIndicator').text(participantName);
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		/**
@@ -186,6 +188,8 @@
 				this.getUI('screenSharingIndicator').addClass('hidden');
 				this.getUI('iceFailedIndicator').removeClass('not-failed');
 
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
 				return;
 			}
 		},
@@ -215,12 +219,16 @@
 						.addClass('audio-off');
 				this.setSpeaking(false);
 
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
 				return;
 			}
 
 			this.getUI('muteIndicator')
 					.removeClass('audio-off')
 					.addClass('audio-on');
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setSpeaking: function(speaking) {
@@ -257,6 +265,8 @@
 				this.getUI('video').addClass('hidden');
 				this.getUI('hideRemoteVideoButton').addClass('hidden');
 
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
 				return;
 			}
 
@@ -266,6 +276,8 @@
 				this.getUI('avatarContainer').addClass('hidden');
 				this.getUI('video').removeClass('hidden');
 			}
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setVideoEnabled: function(videoEnabled) {
@@ -279,6 +291,8 @@
 						.removeClass('icon-video')
 						.addClass('icon-video-off');
 
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
 				return;
 			}
 
@@ -288,6 +302,8 @@
 					.attr('data-original-title', t('spreed', 'Disable video'))
 					.removeClass('icon-video-off')
 					.addClass('icon-video');
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		toggleVideo: function() {
@@ -296,8 +312,6 @@
 			} else {
 				this.setVideoEnabled(true);
 			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setPromoted: function(promoted) {

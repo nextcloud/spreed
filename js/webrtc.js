@@ -650,8 +650,6 @@ var spreedPeerConnectionTable = [];
 							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CLOSED);
 							break;
 					}
-
-					OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(peer.id);
 				});
 			},
 			// The nick name below the avatar is distributed through the
@@ -1374,8 +1372,6 @@ var spreedPeerConnectionTable = [];
 			if (!data.userid && data.name) {
 				guestNamesTable[data.id] = data.name;
 			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 
 		// Peer is muted
@@ -1390,8 +1386,6 @@ var spreedPeerConnectionTable = [];
 			} else {
 				videoView.setAudioAvailable(false);
 			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 
 		// Peer is umuted
@@ -1406,8 +1400,6 @@ var spreedPeerConnectionTable = [];
 			} else {
 				videoView.setAudioAvailable(true);
 			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 	}
 
