@@ -51,7 +51,7 @@ class NotifierTest extends \Test\TestCase {
 	/** @var \OCA\Talk\Chat\Notifier */
 	protected $notifier;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->notificationManager = $this->createMock(INotificationManager::class);

@@ -36,7 +36,7 @@ class StunServerTest extends \Test\TestCase {
 	/** @var StunServer */
 	protected $admin;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->config = $this->createMock(Config::class);

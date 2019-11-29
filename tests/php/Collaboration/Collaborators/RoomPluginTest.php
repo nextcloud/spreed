@@ -50,7 +50,7 @@ class RoomPluginTest extends \Test\TestCase {
 	/** @var RoomPlugin */
 	protected $plugin;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->manager = $this->createMock(Manager::class);
@@ -216,8 +216,8 @@ class RoomPluginTest extends \Test\TestCase {
 	 * @dataProvider searchProvider
 	 *
 	 * @param string $searchTerm
-	 * @param bool $limit
-	 * @param bool $offset
+	 * @param int $limit
+	 * @param int $offset
 	 * @param array $roomsForParticipant
 	 * @param array $expectedMatchesExact
 	 * @param array $expectedMatches
@@ -225,8 +225,8 @@ class RoomPluginTest extends \Test\TestCase {
 	 */
 	public function testSearch(
 		string $searchTerm,
-		bool $limit,
-		bool $offset,
+		int $limit,
+		int $offset,
 		array $roomsForParticipant,
 		array $expectedMatchesExact,
 		array $expectedMatches,

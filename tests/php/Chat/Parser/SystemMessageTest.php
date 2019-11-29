@@ -61,7 +61,7 @@ class SystemMessageTest extends TestCase {
 	/** @var IL10N|MockObject */
 	protected $l;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->userManager = $this->createMock(IUserManager::class);
@@ -397,7 +397,6 @@ class SystemMessageTest extends TestCase {
 	/**
 	 * @dataProvider dataParseMessageThrows
 	 * @param string|null $return
-	 * @expectedException \OutOfBoundsException
 	 */
 	public function testParseMessageThrows($return) {
 		/** @var IComment|MockObject $comment */
@@ -416,6 +415,7 @@ class SystemMessageTest extends TestCase {
 		$chatMessage = new Message($room, $participant, $comment, $this->l);
 		$chatMessage->setMessage($return, []);
 
+		$this->expectException(\OutOfBoundsException::class);
 		$parser->parseMessage($chatMessage);
 	}
 
@@ -606,9 +606,6 @@ class SystemMessageTest extends TestCase {
 		], self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']));
 	}
 
-	/**
-	 * @expectedException \OCP\Files\NotFoundException
-	 */
 	public function testGetFileFromShareForRecipientThrows() {
 		$node = $this->createMock(Node::class);
 		$node->expects($this->once())
@@ -651,12 +648,10 @@ class SystemMessageTest extends TestCase {
 			->method('linkToRouteAbsolute');
 
 		$parser = $this->getParser();
+		$this->expectException(NotFoundException::class);
 		self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']);
 	}
 
-	/**
-	 * @expectedException \OCP\Share\Exceptions\ShareNotFound
-	 */
 	public function testGetFileFromShareThrows() {
 
 		$this->shareProvider->expects($this->once())
@@ -666,6 +661,7 @@ class SystemMessageTest extends TestCase {
 
 		$participant = $this->createMock(Participant::class);
 		$parser = $this->getParser();
+		$this->expectException(ShareNotFound::class);
 		self::invokePrivate($parser, 'getFileFromShare', [$participant, '23']);
 	}
 

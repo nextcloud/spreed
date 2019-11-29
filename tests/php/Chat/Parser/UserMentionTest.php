@@ -50,7 +50,7 @@ class UserMentionTest extends \Test\TestCase {
 	/** @var UserMention */
 	protected $parser;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->commentsManager = $this->createMock(ICommentsManager::class);

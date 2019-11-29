@@ -56,7 +56,7 @@ class BaseTest extends TestCase {
 	/** @var Manager|MockObject */
 	protected $manager;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->l10nFactory = $this->createMock(IFactory::class);
@@ -162,9 +162,6 @@ class BaseTest extends TestCase {
 		$this->assertSame($event, static::invokePrivate($provider, 'preParse', [$event]));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testPreParseThrows() {
 		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
@@ -172,6 +169,7 @@ class BaseTest extends TestCase {
 			->method('getApp')
 			->willReturn('activity');
 		$provider = $this->getProvider();
+		$this->expectException(\InvalidArgumentException::class);
 		static::invokePrivate($provider, 'preParse', [$event]);
 	}
 

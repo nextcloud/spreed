@@ -72,7 +72,7 @@ class NotifierTest extends \Test\TestCase {
 	/** @var Notifier */
 	protected $notifier;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->lFactory = $this->createMock(IFactory::class);
@@ -758,8 +758,6 @@ class NotifierTest extends \Test\TestCase {
 	/**
 	 * @dataProvider dataPrepareThrows
 	 *
-	 * @expectedException \InvalidArgumentException
-	 *
 	 * @param string $message
 	 * @param string $app
 	 * @param bool|null $isDisabledForUser
@@ -835,15 +833,30 @@ class NotifierTest extends \Test\TestCase {
 		$n->expects($this->once())
 			->method('getApp')
 			->willReturn($app);
-		$n->expects($subject === null ? $this->never() : $this->atLeastOnce())
-			->method('getSubject')
-			->willReturn($subject);
-		$n->expects($params === null ? $this->never() : $this->once())
-			->method('getSubjectParameters')
-			->willReturn($params);
-		$n->expects($objectType === null ? $this->never() : $this->once())
-			->method('getObjectType')
-			->willReturn($objectType);
+		if ($subject === null) {
+			$n->expects($this->never())
+				->method('getSubject');
+		} else {
+			$n->expects($this->once())
+				->method('getSubject')
+				->willReturn($subject);
+		}
+		if ($params === null) {
+			$n->expects($this->never())
+				->method('getSubjectParameters');
+		} else {
+			$n->expects($this->once())
+				->method('getSubjectParameters')
+				->willReturn($params);
+		}
+		if ($objectType === null) {
+			$n->expects($this->never())
+				->method('getObjectType');
+		} else {
+			$n->expects($this->once())
+				->method('getObjectType')
+				->willReturn($objectType);
+		}
 
 		if ($message === AlreadyProcessedException::class) {
 			$this->expectException(AlreadyProcessedException::class);

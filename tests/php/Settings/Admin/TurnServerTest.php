@@ -36,7 +36,7 @@ class TurnServerTest extends \Test\TestCase {
 	/** @var TurnServer */
 	protected $admin;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->config = $this->createMock(Config::class);

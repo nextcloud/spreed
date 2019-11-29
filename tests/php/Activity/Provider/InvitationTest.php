@@ -57,7 +57,7 @@ class InvitationTest extends TestCase {
 	/** @var Manager|MockObject */
 	protected $manager;
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 
 		$this->l10nFactory = $this->createMock(IFactory::class);
@@ -96,9 +96,6 @@ class InvitationTest extends TestCase {
 		);
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testParseThrowsWrongSubject() {
 		/** @var IEvent|MockObject $event */
 		$event = $this->createMock(IEvent::class);
@@ -123,6 +120,7 @@ class InvitationTest extends TestCase {
 			->willReturn(false);
 
 		$provider = $this->getProvider();
+		$this->expectException(\InvalidArgumentException::class);
 		$provider->parse('en', $event);
 	}
 
