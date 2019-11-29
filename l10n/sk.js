@@ -106,6 +106,7 @@ OC.L10N.register(
     "Delete conversation" : "Zmazať rozhovor",
     "Remove from favorites" : "Odstrániť z obľúbených",
     "Add to favorites" : "Pridať do obľúbených",
+    "You need to promote a new moderator before you can leave the conversation." : "Skôr než budete môcť opustiť rozhovor, je potrebné niekomu odovzdať rolu moderátora.",
     "[Unknown user name]" : "[Neznáme užívateľské meno]",
     "Today" : "Dnes",
     "Yesterday" : "Včera",
@@ -265,7 +266,6 @@ OC.L10N.register(
     "Calls are disabled in this conversation." : "Hovory sú v tomto rozhovore zakázané.",
     "You can not send messages, because the conversation is locked." : "Nemôžete odosielať správy, pretože rozhovor je zamknutý.",
     "The conversation is locked." : "Rozhovor je zamknutý",
-    "You need to promote a new moderator before you can leave the conversation." : "Skôr než budete môcť opustiť rozhovor, je potrebné niekomu odovzdať rolu moderátora.",
     "* Microsoft Edge and Safari can now be used to participate in audio and video calls" : "* Microsoft Edge a Safari môžu byť teraz používané na audio a video hovory."
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");
