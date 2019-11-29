@@ -48,7 +48,7 @@
 		className: 'videoContainer',
 
 		id: function() {
-			return 'container_' + this.options.peerId + '_video_incoming';
+			return 'container_' + this.model.get('peerId') + '_video_incoming';
 		},
 
 		template: OCA.Talk.Views.Templates['videoview'],
@@ -297,7 +297,7 @@
 				this.setVideoEnabled(true);
 			}
 
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.options.peerId);
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setPromoted: function(promoted) {
@@ -326,7 +326,7 @@
 
 		switchToScreen: function() {
 			if (!this._screenVisible) {
-				OCA.SpreedMe.sharedScreens.switchScreenToId(this.options.peerId);
+				OCA.SpreedMe.sharedScreens.switchScreenToId(this.model.get('peerId'));
 			}
 
 			this.getUI('screenSharingIndicator').tooltip('hide');

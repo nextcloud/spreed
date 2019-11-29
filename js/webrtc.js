@@ -172,6 +172,14 @@ var spreedPeerConnectionTable = [];
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 			spreedMappingTable[sessionId] = user.userId || user.userid;
 
+			var callParticipantModel = OCA.SpreedMe.callParticipantModels[sessionId];
+			if (!callParticipantModel) {
+				callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
+					peerId: sessionId,
+				});
+				OCA.SpreedMe.callParticipantModels[sessionId] = callParticipantModel;
+			}
+
 			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
 			if (!videoView) {
 				OCA.SpreedMe.videos.add(sessionId);
@@ -244,6 +252,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.removePeers(sessionId);
 			OCA.SpreedMe.speakers.remove(sessionId, true);
 			OCA.SpreedMe.videos.remove(sessionId);
+			delete OCA.SpreedMe.callParticipantModels[sessionId];
 			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
 			if (delayedConnectionToPeer[sessionId]) {
@@ -456,6 +465,8 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.sendDirectlyToAll(channel, message, payload);
 		};
 
+		OCA.SpreedMe.callParticipantModels = [];
+
 		OCA.SpreedMe.videos = {
 			videoViews: [],
 			add: function(id) {
@@ -470,8 +481,10 @@ var spreedPeerConnectionTable = [];
 
 				var userId = spreedMappingTable[id];
 
+				var callParticipantModel = OCA.SpreedMe.callParticipantModels[id];
+
 				var videoView = new OCA.Talk.Views.VideoView({
-					peerId: id
+					model: callParticipantModel,
 				});
 
 				// When the MCU is used and the other participant has no streams
@@ -910,6 +923,18 @@ var spreedPeerConnectionTable = [];
 		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
 			console.log('PEER CREATED', peer);
 			if (peer.type === 'video') {
+				if (peer.id !== OCA.SpreedMe.webrtc.connection.getSessionid()) {
+					// In some strange cases a Peer can be added before its
+					// participant is found in the list of participants.
+					var callParticipantModel = OCA.SpreedMe.callParticipantModels[peer.id];
+					if (!callParticipantModel) {
+						callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
+							peerId: peer.id,
+						});
+						OCA.SpreedMe.callParticipantModels[peer.id] = callParticipantModel;
+					}
+				}
+
 				OCA.SpreedMe.videos.addPeer(peer);
 				// Make sure required data channels exist for all peers. This
 				// is required for peers that get created by SimpleWebRTC from
