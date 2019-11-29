@@ -142,12 +142,12 @@ export default {
 // AppContentListItem
 .acli {
 	position: relative;
-	cursor: pointer;
 	padding: 10px 2px 10px 8px;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	flex: 0 0 auto;
+	cursor: pointer;
 	&__content {
 		width: 240px;
 		margin-left: 6px;
@@ -162,6 +162,7 @@ export default {
 				text-overflow: ellipsis;
 				color: var(--color-main-text);
 				padding-right: 4px;
+				cursor: pointer;
 			}
 			&__actions {
 				margin: -5px 0 -3px 0;
@@ -184,6 +185,7 @@ export default {
 				white-space: nowrap;
 				color: var(--color-text-lighter);
 				padding-right: 4px;
+				cursor: pointer;
 			}
 			&__counter {
 				margin-right: 12px;
