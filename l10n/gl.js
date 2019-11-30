@@ -176,7 +176,7 @@ OC.L10N.register(
     "An error occurred while performing the search" : "Produciuse un erro ao realizar a busca",
     "An error occurred while toggling guests" : "Produciuse un erro ao cambiar os convidados",
     "An error occurred while toggling the lobby" : "Produciuse un erro ao cambiar ao vestíbulo",
-    "An error occurred while fetching the participants" : "Produciuse un erro ao atopar os participantes",
+    "An error occurred while fetching the participants" : "Produciuse un erro ao recuperar os participantes",
     "Guests" : "Convidados",
     "Share link" : "Compartir ligazón",
     "Webinar" : "Seminario web",
