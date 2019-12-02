@@ -494,7 +494,7 @@ var spreedPeerConnectionTable = [];
 				// modified later and thus it needs to be fully set now.
 				if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
 						(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
-					videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.COMPLETED);
+					videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.COMPLETED);
 					videoView.setAudioAvailable(false);
 					videoView.setVideoAvailable(false);
 				}
@@ -544,16 +544,16 @@ var spreedPeerConnectionTable = [];
 						case 'checking':
 							console.log('Connecting to peer...');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CHECKING);
+							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.CHECKING);
 							break;
 						case 'connected':
 						case 'completed': // on caller side
 							console.log('Connection established.');
 
 							if (peer.pc.iceConnectionState === 'connected') {
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CONNECTED);
+								videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.CONNECTED);
 							} else {
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.COMPLETED);
+								videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.COMPLETED);
 							}
 
 							// Ensure that the peer name is shown, as the name
@@ -587,14 +587,14 @@ var spreedPeerConnectionTable = [];
 						case 'disconnected':
 							console.log('Disconnected.');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED);
+							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.DISCONNECTED);
 
 							setTimeout(function() {
 								if (peer.pc.iceConnectionState !== 'disconnected') {
 									return;
 								}
 
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
+								videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.DISCONNECTED_LONG);
 
 								if (!signaling.hasFeature("mcu")) {
 									// ICE failures will be handled in "iceFailed"
@@ -615,7 +615,7 @@ var spreedPeerConnectionTable = [];
 						case 'failed':
 							console.log('Connection failed.');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
+							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.FAILED);
 
 							if (!signaling.hasFeature("mcu")) {
 								// ICE failures will be handled in "iceFailed"
@@ -630,7 +630,7 @@ var spreedPeerConnectionTable = [];
 								} else {
 									console.log('ICE failed after 5 tries.');
 
-									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED_NO_RESTART);
+									videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.FAILED_NO_RESTART);
 								}
 							} else {
 								console.log('Request offer again');
@@ -647,7 +647,7 @@ var spreedPeerConnectionTable = [];
 						case 'closed':
 							console.log('Connection closed.');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CLOSED);
+							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.CLOSED);
 							break;
 					}
 				});

@@ -30,7 +30,7 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 	OCA.Talk.Views = OCA.Talk.Views || {};
 
-	var ConnectionStatus = {
+	var ConnectionState = {
 		NEW: 'new',
 		CHECKING: 'checking',
 		CONNECTED: 'connected',
@@ -74,7 +74,7 @@
 		},
 
 		initialize: function() {
-			this._connectionStatus = ConnectionStatus.NEW;
+			this._connectionState = ConnectionState.NEW;
 
 			// Video is enabled by default, even if it is not initially
 			// available.
@@ -113,7 +113,7 @@
 
 			// "Guest" placeholder is not shown until the initial connection for
 			// consistency with regular users.
-			if (!(userId && userId.length) && this._connectionStatus !== ConnectionStatus.NEW) {
+			if (!(userId && userId.length) && this._connectionState !== ConnectionState.NEW) {
 				participantName = participantName || t('spreed', 'Guest');
 			}
 
@@ -132,10 +132,10 @@
 
 			// Restore icon if needed after "avatar()" resets it.
 			var restoreIconLoadingCallback = function() {
-				if (this._connectionStatus === ConnectionStatus.NEW ||
-						this._connectionStatus === ConnectionStatus.CHECKING ||
-						this._connectionStatus === ConnectionStatus.DISCONNECTED_LONG ||
-						this._connectionStatus === ConnectionStatus.FAILED) {
+				if (this._connectionState === ConnectionState.NEW ||
+						this._connectionState === ConnectionState.CHECKING ||
+						this._connectionState === ConnectionState.DISCONNECTED_LONG ||
+						this._connectionState === ConnectionState.FAILED) {
 					this.getUI('avatar').addClass('icon-loading');
 				}
 			}.bind(this);
@@ -153,21 +153,21 @@
 		},
 
 		/**
-		 * Sets the current status of the connection.
+		 * Sets the current state of the connection.
 		 *
-		 * @param OCA.Talk.Views.VideoView.ConnectionStatus the connection
+		 * @param OCA.Talk.Views.VideoView.ConnectionState the connection
 		 *        status.
 		 */
-		setConnectionStatus: function(connectionStatus) {
-			this._connectionStatus = connectionStatus;
+		setConnectionState: function(connectionState) {
+			this._connectionState = connectionState;
 
 			this.$el.addClass('not-connected');
 
 			this.getUI('iceFailedIndicator').addClass('not-failed');
 
-			if (connectionStatus === ConnectionStatus.CHECKING ||
-					connectionStatus === ConnectionStatus.DISCONNECTED_LONG ||
-					connectionStatus === ConnectionStatus.FAILED) {
+			if (connectionState === ConnectionState.CHECKING ||
+					connectionState === ConnectionState.DISCONNECTED_LONG ||
+					connectionState === ConnectionState.FAILED) {
 				this.getUI('avatar').addClass('icon-loading');
 
 				return;
@@ -175,14 +175,14 @@
 
 			this.getUI('avatar').removeClass('icon-loading');
 
-			if (connectionStatus === ConnectionStatus.CONNECTED ||
-					connectionStatus === ConnectionStatus.COMPLETED) {
+			if (connectionState === ConnectionState.CONNECTED ||
+					connectionState === ConnectionState.COMPLETED) {
 				this.$el.removeClass('not-connected');
 
 				return;
 			}
 
-			if (connectionStatus === ConnectionStatus.FAILED_NO_RESTART) {
+			if (connectionState === ConnectionState.FAILED_NO_RESTART) {
 				this.getUI('muteIndicator').addClass('hidden');
 				this.getUI('hideRemoteVideoButton').addClass('hidden');
 				this.getUI('screenSharingIndicator').addClass('hidden');
@@ -374,6 +374,6 @@
 	});
 
 	OCA.Talk.Views.VideoView = VideoView;
-	OCA.Talk.Views.VideoView.ConnectionStatus = ConnectionStatus;
+	OCA.Talk.Views.VideoView.ConnectionState = ConnectionState;
 
 })(OCA, Marionette);
