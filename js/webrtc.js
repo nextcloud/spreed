@@ -169,8 +169,10 @@ var spreedPeerConnectionTable = [];
 
 			previousUsersInRoom.push(sessionId);
 
+			// Use null to differentiate between guest (null) and not known yet
+			// (undefined).
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
-			spreedMappingTable[sessionId] = user.userId || user.userid;
+			spreedMappingTable[sessionId] = user.userId || user.userid || null;
 
 			var callParticipantModel = OCA.SpreedMe.callParticipantModels[sessionId];
 			if (!callParticipantModel) {
@@ -494,7 +496,7 @@ var spreedPeerConnectionTable = [];
 				// modified later and thus it needs to be fully set now.
 				if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
 						(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
-					videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.COMPLETED);
+					callParticipantModel.setPeer(null);
 					videoView.setAudioAvailable(false);
 					videoView.setVideoAvailable(false);
 				}
@@ -540,21 +542,16 @@ var spreedPeerConnectionTable = [];
 				peer.pc.addEventListener('iceconnectionstatechange', function () {
 					var userId = spreedMappingTable[peer.id];
 
+					peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState);
+
 					switch (peer.pc.iceConnectionState) {
 						case 'checking':
 							console.log('Connecting to peer...');
 
-							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.CHECKING);
 							break;
 						case 'connected':
 						case 'completed': // on caller side
 							console.log('Connection established.');
-
-							if (peer.pc.iceConnectionState === 'connected') {
-								videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.CONNECTED);
-							} else {
-								videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.COMPLETED);
-							}
 
 							// Ensure that the peer name is shown, as the name
 							// indicator for registered users without microphone
@@ -587,14 +584,12 @@ var spreedPeerConnectionTable = [];
 						case 'disconnected':
 							console.log('Disconnected.');
 
-							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.DISCONNECTED);
-
 							setTimeout(function() {
 								if (peer.pc.iceConnectionState !== 'disconnected') {
 									return;
 								}
 
-								videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.DISCONNECTED_LONG);
+								peer.emit('extendedIceConnectionStateChange', 'disconnected-long');
 
 								if (!signaling.hasFeature("mcu")) {
 									// ICE failures will be handled in "iceFailed"
@@ -615,8 +610,6 @@ var spreedPeerConnectionTable = [];
 						case 'failed':
 							console.log('Connection failed.');
 
-							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.FAILED);
-
 							if (!signaling.hasFeature("mcu")) {
 								// ICE failures will be handled in "iceFailed"
 								// below for MCU installations.
@@ -630,7 +623,7 @@ var spreedPeerConnectionTable = [];
 								} else {
 									console.log('ICE failed after 5 tries.');
 
-									videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.FAILED_NO_RESTART);
+									peer.emit('extendedIceConnectionStateChange', 'failed-no-restart');
 								}
 							} else {
 								console.log('Request offer again');
@@ -647,7 +640,6 @@ var spreedPeerConnectionTable = [];
 						case 'closed':
 							console.log('Connection closed.');
 
-							videoView.setConnectionState(OCA.Talk.Views.VideoView.ConnectionState.CLOSED);
 							break;
 					}
 				});
@@ -931,6 +923,7 @@ var spreedPeerConnectionTable = [];
 						});
 						OCA.SpreedMe.callParticipantModels[peer.id] = callParticipantModel;
 					}
+					callParticipantModel.setPeer(peer);
 				}
 
 				OCA.SpreedMe.videos.addPeer(peer);
@@ -1360,7 +1353,11 @@ var spreedPeerConnectionTable = [];
 			// Video
 			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
 			if (videoView) {
-				videoView.setParticipant(data.userid, data.name);
+				// Use null to differentiate between guest (null) and not known
+				// yet (undefined).
+				// Use null to differentiate between empty (null) and not known
+				// yet (undefined).
+				videoView.setParticipant(data.userid || null, data.name || null);
 			}
 
 			//Screen
@@ -1370,7 +1367,9 @@ var spreedPeerConnectionTable = [];
 			}
 
 			if (!data.userid && data.name) {
-				guestNamesTable[data.id] = data.name;
+				// Use null to differentiate between empty (null) and not known
+				// yet (undefined).
+				guestNamesTable[data.id] = data.name || null;
 			}
 		});
 
