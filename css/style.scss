@@ -47,6 +47,11 @@
 	flex-grow: 1;
 }
 
+#app-content.incall,
+#app-content.screensharing {
+	background-color: #000;
+}
+
 #app-content-wrapper {
 	display: flex;
 	flex-direction: column;
@@ -345,6 +350,25 @@ input[type="password"] {
 	width: 128px;
 	margin: 0 auto;
 	padding-bottom: 20px;
+}
+
+#shareRoomContainer {
+	position: relative;
+}
+#shareRoomInput {
+	width: 250px;
+	padding-right: 32px;
+	text-overflow: ellipsis;
+}
+#shareRoomClipboardButton {
+	position: absolute;
+	right: 0;
+	padding: 18px;
+	background-size: 16px !important;
+	height: 16px !important;
+	width: 16px !important;
+	margin: 0 !important;
+	opacity: .8 !important;
 }
 
 
