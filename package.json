@@ -47,7 +47,7 @@
 		"@babel/preset-env": "^7.7.4",
 		"@babel/runtime": "^7.7.4",
 		"@nextcloud/browserslist-config": "^1.0.0",
-		"@vue/test-utils": "^1.0.0-beta.29",
+		"@vue/test-utils": "^1.0.0-beta.30",
 		"babel-eslint": "^10.0.3",
 		"babel-loader": "^8.0.6",
 		"css-loader": "^3.2.0",
