@@ -25,7 +25,10 @@
 			<ActionButton icon="icon-add" @click="showModal" />
 		</Actions>
 		<Modal v-if="modal" size="full" @close="closeModal">
-			<Dialog />
+			<SetConversationName
+				v-if="isSettingName"
+				@setConversationName="handleSetConversationName"/>
+			<SetContacts v-else />
 		</modal>
 	</div>
 </template>
@@ -35,7 +38,8 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
-import Dialog from './Dialog/Dialog'
+import SetContacts from './SetContacts/SetContacts'
+import SetConversationName from './SetConversationName/SetConversationName'
 
 export default {
 
@@ -45,12 +49,15 @@ export default {
 		Modal,
 		Actions,
 		ActionButton,
-		Dialog,
+		SetContacts,
+		SetConversationName
 	},
 
 	data() {
 		return {
 			modal: false,
+			isSettingName: true,
+			conversationName: ''
 		}
 	},
 
@@ -61,6 +68,11 @@ export default {
 		closeModal() {
 			this.modal = false
 		},
+		handleSetConversationName(event) {
+			console.log(event)
+			this.conversationName = event
+			this.isSettingName = false
+		}
 	},
 
 }

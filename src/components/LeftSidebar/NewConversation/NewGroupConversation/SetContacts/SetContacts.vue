@@ -50,7 +50,7 @@ import { searchPossibleConversations } from '../../../../../services/conversatio
 import { fetchParticipants } from '../../../../../services/participantsService'
 
 export default {
-	name: 'Dialog',
+	name: 'SetContacts',
 	components: {
 		SearchBox,
 		Caption,
