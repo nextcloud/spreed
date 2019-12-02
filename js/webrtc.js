@@ -1188,11 +1188,7 @@ var spreedPeerConnectionTable = [];
 				var userId = spreedMappingTable[peer.id];
 				var guestName = guestNamesTable[peer.id];
 
-				var participantName = peer.nick;
-				if (!userId || !userId.length) {
-					participantName = peer.nick || guestName;
-				}
-
+				var participantName = peer.nick || guestName;
 				videoView.setParticipant(userId, participantName);
 
 				videoView.setVideoElement(video);
