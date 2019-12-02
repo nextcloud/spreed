@@ -82,7 +82,9 @@
 			this._screenVisible = false;
 
 			this.render();
+		},
 
+		onRender: function() {
 			this.$el.addClass('not-connected');
 
 			this.getUI('avatar').addClass('icon-loading');
@@ -91,9 +93,7 @@
 			this.getUI('hideRemoteVideoButton').addClass('hidden');
 
 			this.getUI('screenSharingIndicator').attr('data-original-title', t('spreed', 'Show screen'));
-		},
 
-		onRender: function() {
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
 				trigger: 'hover'
