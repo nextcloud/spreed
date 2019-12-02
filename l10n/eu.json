@@ -114,7 +114,7 @@
     "Access to microphone & camera is only possible with HTTPS" : "Kamara eta mikrofonoak atzitzeko modu bakarra HTTPS bidez da",
     "Access to microphone & camera was denied" : "Kamera eta mikrofonora sarbidea ukatu da",
     "WebRTC is not supported in your browser" : "Zure nabigatzaileak ez du WebRTC onartzen",
-    "Error while accessing microphone & camera" : "Mikrofonoa eta kamara atzitzean errorea",
+    "Error while accessing microphone & camera" : "Errorea mikrofonoa eta kamara atzitzean",
     "{participantName}'s screen" : "{participantName}-aren pantaila",
     "Guest's screen" : "Gonbidatuaren pantaila",
     "Your screen" : "Zure pantaila",
