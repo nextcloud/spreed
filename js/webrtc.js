@@ -3,7 +3,6 @@
 
 var webrtc;
 var guestNamesTable = {};
-var spreedMappingTable = {};
 var spreedPeerConnectionTable = [];
 
 (function(OCA, OC) {
@@ -118,7 +117,6 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
 			OCA.SpreedMe.speakers.remove(ownPeer.id, true);
 			OCA.SpreedMe.videos.remove(ownPeer.id);
-			delete spreedMappingTable[ownPeer.id];
 			ownPeer.end();
 		}
 
@@ -172,7 +170,7 @@ var spreedPeerConnectionTable = [];
 			// Use null to differentiate between guest (null) and not known yet
 			// (undefined).
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
-			spreedMappingTable[sessionId] = user.userId || user.userid || null;
+			var userId = user.userId || user.userid || null;
 
 			var callParticipantModel = OCA.SpreedMe.callParticipantModels[sessionId];
 			if (!callParticipantModel) {
@@ -184,8 +182,9 @@ var spreedPeerConnectionTable = [];
 
 			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
 			if (!videoView) {
-				OCA.SpreedMe.videos.add(sessionId);
+				videoView = OCA.SpreedMe.videos.add(sessionId);
 			}
+			videoView.setUserId(userId);
 
 			var createPeer = function() {
 				var peer = webrtc.webrtc.createPeer({
@@ -255,7 +254,6 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.remove(sessionId, true);
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete OCA.SpreedMe.callParticipantModels[sessionId];
-			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
 			if (delayedConnectionToPeer[sessionId]) {
 				clearInterval(delayedConnectionToPeer[sessionId]);
@@ -481,8 +479,6 @@ var spreedPeerConnectionTable = [];
 					console.log("User has no stream", id);
 				}
 
-				var userId = spreedMappingTable[id];
-
 				var callParticipantModel = OCA.SpreedMe.callParticipantModels[id];
 
 				var videoView = new OCA.Talk.Views.VideoView({
@@ -501,7 +497,6 @@ var spreedPeerConnectionTable = [];
 					videoView.setVideoAvailable(false);
 				}
 
-				videoView.setParticipant(userId);
 				videoView.setScreenAvailable(!!spreedListofSharedScreens[id]);
 
 				OCA.SpreedMe.videos.videoViews[id] = videoView;
@@ -540,8 +535,6 @@ var spreedPeerConnectionTable = [];
 				spreedPeerConnectionTable[peer.id] = 0;
 
 				peer.pc.addEventListener('iceconnectionstatechange', function () {
-					var userId = spreedMappingTable[peer.id];
-
 					peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState);
 
 					switch (peer.pc.iceConnectionState) {
@@ -556,8 +549,8 @@ var spreedPeerConnectionTable = [];
 							// Ensure that the peer name is shown, as the name
 							// indicator for registered users without microphone
 							// nor camera will not be updated later.
-							if (userId && userId.length) {
-								videoView.setParticipant(userId, peer.nick);
+							if (videoView.getUserId() && videoView.getUserId().length) {
+								videoView.setParticipantName(peer.nick);
 							}
 
 							// Send the current information about the video and microphone state
@@ -1018,7 +1011,6 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
 				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
 				OCA.SpreedMe.videos.remove(ownPeer.id);
-				delete spreedMappingTable[ownPeer.id];
 				ownPeer.end();
 				ownPeer = null;
 			}
@@ -1185,11 +1177,10 @@ var spreedPeerConnectionTable = [];
 
 			var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
 			if (videoView) {
-				var userId = spreedMappingTable[peer.id];
 				var guestName = guestNamesTable[peer.id];
 
 				var participantName = peer.nick || guestName;
-				videoView.setParticipant(userId, participantName);
+				videoView.setParticipantName(participantName);
 
 				videoView.setVideoElement(video);
 				videoView.setAudioElement(audio);
@@ -1351,9 +1342,10 @@ var spreedPeerConnectionTable = [];
 			if (videoView) {
 				// Use null to differentiate between guest (null) and not known
 				// yet (undefined).
+				videoView.setUserId(data.userid || null);
 				// Use null to differentiate between empty (null) and not known
 				// yet (undefined).
-				videoView.setParticipant(data.userid || null, data.name || null);
+				videoView.setParticipantName(data.name || null);
 			}
 
 			//Screen

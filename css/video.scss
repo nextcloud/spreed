@@ -95,6 +95,20 @@
 		left: 0;
 		width: 100%;
 	}
+
+	/* Text avatars need to be forced to 128px, as imageplaceholder() overrides
+	 * the given size with the actual height of the element it was called on, so
+	 * the text avatar may have any hardcoded height. Note that this does not
+	 * apply to regular image avatars, as in that case they are always requested
+	 * with a size of 128px. */
+	.videoContainer .avatar-container .avatar {
+		width: 128px !important;
+		height: 128px !important;
+		line-height: 128px !important;
+		/* imageplaceholder() sets font-size to "height * 0.55" */
+		font-size: 70.4px !important;
+	}
+
 	.videoContainer .avatar-container .avatar {
 		margin-left: auto;
 		margin-right: auto;

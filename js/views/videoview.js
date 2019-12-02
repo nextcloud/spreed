@@ -66,8 +66,8 @@
 		modelEvents: {
 			'change:connectionState': function(model, connectionState) {
 				this._setConnectionState(connectionState);
-				// "setParticipant" depends on "connectionState"
-				this.setParticipant(this._userId, this._rawParticipantName);
+				// "_setParticipant" depends on "connectionState"
+				this._setParticipant(this._userId, this._rawParticipantName);
 			}
 		},
 
@@ -90,8 +90,8 @@
 
 			// Match current model state.
 			this._setConnectionState(this.model.get('connectionState'));
-			// "setParticipant" depends on "connectionState"
-			this.setParticipant(this._userId, this._rawParticipantName);
+			// "_setParticipant" depends on "connectionState"
+			this._setParticipant(this._userId, this._rawParticipantName);
 
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
@@ -104,7 +104,19 @@
 			});
 		},
 
-		setParticipant: function(userId, participantName) {
+		getUserId: function() {
+			return this._userId;
+		},
+
+		setUserId: function(userId) {
+			this._setParticipant(userId, this._rawParticipantName);
+		},
+
+		setParticipantName: function(participantName) {
+			this._setParticipant(this._userId, participantName);
+		},
+
+		_setParticipant: function(userId, participantName) {
 			// Needed for guest avatars, as if no name is given the avatar
 			// should show "?" instead of the first letter of the "Guest"
 			// placeholder.
