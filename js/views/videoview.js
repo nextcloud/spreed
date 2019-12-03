@@ -75,6 +75,8 @@
 			'change:name': function(model, name) {
 				this._setParticipant(this.model.get('userId'), name);
 			},
+			'change:audioAvailable': '_setAudioAvailable',
+			'change:videoAvailable': '_setVideoAvailable',
 		},
 
 		initialize: function() {
@@ -88,13 +90,14 @@
 
 		onRender: function() {
 			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
-			this.getUI('hideRemoteVideoButton').addClass('hidden');
 
 			this.getUI('screenSharingIndicator').attr('data-original-title', t('spreed', 'Show screen'));
 
 			// Match current model state.
 			this._setConnectionState(this.model.get('connectionState'));
 			this._setParticipant(this.model.get('userId'), this.model.get('name'));
+			this._setAudioAvailable(this.model, this.model.get('audioAvailable'));
+			this._setVideoAvailable(this.model, this.model.get('videoAvailable'));
 
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
@@ -202,7 +205,17 @@
 			this.getUI('audio').addClass('hidden');
 		},
 
-		setAudioAvailable: function(audioAvailable) {
+		_setAudioAvailable: function(model, audioAvailable) {
+			if (audioAvailable === undefined) {
+				this.getUI('muteIndicator')
+						.removeClass('audio-on')
+						.removeClass('audio-off');
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
+				return;
+			}
+
 			if (!audioAvailable) {
 				this.getUI('muteIndicator')
 						.removeClass('audio-on')
@@ -249,7 +262,7 @@
 			this.getUI('video').addClass('hidden');
 		},
 
-		setVideoAvailable: function(videoAvailable) {
+		_setVideoAvailable: function(model, videoAvailable) {
 			if (!videoAvailable) {
 				this.getUI('avatarContainer').removeClass('hidden');
 				this.getUI('video').addClass('hidden');

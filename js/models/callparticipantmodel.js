@@ -48,6 +48,8 @@
 			userId: undefined,
 			name: undefined,
 			connectionState: ConnectionState.NEW,
+			audioAvailable: undefined,
+			videoAvailable: undefined,
 		},
 
 		sync: function(method, model, options) {
@@ -59,10 +61,14 @@
 
 			this._handlePeerStreamAddedBound = this._handlePeerStreamAdded.bind(this);
 			this._handleNickBound = this._handleNick.bind(this);
+			this._handleMuteBound = this._handleMute.bind(this);
+			this._handleUnmuteBound = this._handleUnmute.bind(this);
 			this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this);
 
 			this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound);
 			this._webRtc.on('nick', this._handleNickBound);
+			this._webRtc.on('mute', this._handleMuteBound);
+			this._webRtc.on('unmute', this._handleUnmuteBound);
 		},
 
 		_handlePeerStreamAdded: function(peer) {
@@ -85,6 +91,30 @@
 			this.set('name', data.name || null);
 		},
 
+		_handleMute: function(data) {
+			if (!this._peer || this._peer.id !== data.id) {
+				return;
+			}
+
+			if (data.name === 'video') {
+				this.set('videoAvailable', false);
+			} else {
+				this.set('audioAvailable', false);
+			}
+		},
+
+		_handleUnmute: function(data) {
+			if (!this._peer || this._peer.id !== data.id) {
+				return;
+			}
+
+			if (data.name === 'video') {
+				this.set('videoAvailable', true);
+			} else {
+				this.set('audioAvailable', true);
+			}
+		},
+
 		setPeer: function(peer) {
 			if (peer && this.get('peerId') !== peer.id) {
 				console.warn('Mismatch between stored peer ID and ID of given peer: ', this.get('peerId'), peer.id);
@@ -99,6 +129,8 @@
 			// Special case when the participant has no streams.
 			if (!this._peer) {
 				this.set('connectionState', ConnectionState.COMPLETED);
+				this.set('audioAvailable', false);
+				this.set('videoAvailable', false);
 
 				return;
 			}
@@ -122,9 +154,13 @@
 			switch (extendedIceConnectionState) {
 				case 'new':
 					this.set('connectionState', ConnectionState.NEW);
+					this.set('audioAvailable', undefined);
+					this.set('videoAvailable', undefined);
 					break;
 				case 'checking':
 					this.set('connectionState', ConnectionState.CHECKING);
+					this.set('audioAvailable', undefined);
+					this.set('videoAvailable', undefined);
 					break;
 				case 'connected':
 					this.set('connectionState', ConnectionState.CONNECTED);

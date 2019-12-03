@@ -494,8 +494,6 @@ var spreedPeerConnectionTable = [];
 				if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
 						(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
 					callParticipantModel.setPeer(null);
-					videoView.setAudioAvailable(false);
-					videoView.setVideoAvailable(false);
 				}
 
 				videoView.setScreenAvailable(!!spreedListofSharedScreens[id]);
@@ -1337,34 +1335,6 @@ var spreedPeerConnectionTable = [];
 				// Use null to differentiate between empty (null) and not known
 				// yet (undefined).
 				guestNamesTable[data.id] = data.name || null;
-			}
-		});
-
-		// Peer is muted
-		OCA.SpreedMe.webrtc.on('mute', function(data) {
-			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
-			if (!videoView) {
-				return;
-			}
-
-			if (data.name === 'video') {
-				videoView.setVideoAvailable(false);
-			} else {
-				videoView.setAudioAvailable(false);
-			}
-		});
-
-		// Peer is umuted
-		OCA.SpreedMe.webrtc.on('unmute', function(data) {
-			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
-			if (!videoView) {
-				return;
-			}
-
-			if (data.name === 'video') {
-				videoView.setVideoAvailable(true);
-			} else {
-				videoView.setAudioAvailable(true);
 			}
 		});
 	}

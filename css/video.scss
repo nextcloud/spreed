@@ -335,6 +335,7 @@
 	}
 
 	.muteIndicator.audio-on,
+	.muteIndicator:not(.audio-on):not(.audio-off),
 	.screensharingIndicator.screen-off,
 	.iceFailedIndicator.not-failed {
 		display: none;
