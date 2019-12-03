@@ -1168,12 +1168,6 @@ var spreedPeerConnectionTable = [];
 				return;
 			}
 
-			var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
-			if (videoView) {
-				videoView.setVideoElement(video);
-				videoView.setAudioElement(audio);
-			}
-
 			var otherSpeakerPromoted = false;
 			for (var key in spreedListofSpeakers) {
 				if (spreedListofSpeakers.hasOwnProperty(key) && spreedListofSpeakers[key] > 1) {
@@ -1206,11 +1200,6 @@ var spreedPeerConnectionTable = [];
 				if (peer.type === 'video') {
 					// a removed peer can't speak anymore ;)
 					OCA.SpreedMe.speakers.remove(peer.id, true);
-
-					var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
-					if (videoView) {
-						videoView.setVideoElement(null);
-					}
 				} else if (peer.type === 'screen') {
 					OCA.SpreedMe.sharedScreens.remove(peer.id);
 				}

@@ -75,6 +75,7 @@
 			'change:name': function(model, name) {
 				this._setParticipant(this.model.get('userId'), name);
 			},
+			'change:stream': '_setStream',
 			'change:audioAvailable': '_setAudioAvailable',
 			'change:videoAvailable': '_setVideoAvailable',
 		},
@@ -96,6 +97,7 @@
 			// Match current model state.
 			this._setConnectionState(this.model.get('connectionState'));
 			this._setParticipant(this.model.get('userId'), this.model.get('name'));
+			this._setStream(this.model, this.model.get('stream'));
 			this._setAudioAvailable(this.model, this.model.get('audioAvailable'));
 			this._setVideoAvailable(this.model, this.model.get('videoAvailable'));
 
@@ -187,13 +189,42 @@
 			}
 		},
 
+		_setStream: function(model, stream) {
+			if (!stream) {
+				this._setAudioElement(null);
+				this._setVideoElement(null);
+
+				return;
+			}
+
+			// If there is a video track Chromium does not play audio in a video
+			// element until the video track starts to play; an audio element is
+			// thus needed to play audio when the remote peer starts with the
+			// camera available but disabled.
+			var audio = OCA.Talk.Views.attachMediaStream(stream, null, { audio: true });
+			var video = OCA.Talk.Views.attachMediaStream(stream);
+
+			video.muted = true;
+
+			// At least Firefox, Opera and Edge move the video to a wrong
+			// position instead of keeping it unchanged	when
+			// "transform: scaleX(1)" is used ("transform: scaleX(-1)" is fine);
+			// as it should have no effect the transform is removed.
+			if (video.style.transform === 'scaleX(1)') {
+				video.style.transform = '';
+			}
+
+			this._setAudioElement(audio);
+			this._setVideoElement(video);
+		},
+
 		/**
 		 * Sets the element with the audio stream.
 		 *
 		 * @param HTMLVideoElement|null audioElement the element to set, or null
 		 *        to remove the current one.
 		 */
-		setAudioElement: function(audioElement) {
+		_setAudioElement: function(audioElement) {
 			this.getUI('audio').remove();
 
 			if (audioElement) {
@@ -244,7 +275,7 @@
 		 * @param HTMLVideoElement|null videoElement the element to set, or null
 		 *        to remove the current one.
 		 */
-		setVideoElement: function(videoElement) {
+		_setVideoElement: function(videoElement) {
 			this.getUI('video').remove();
 
 			if (videoElement) {

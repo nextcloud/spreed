@@ -48,6 +48,7 @@
 			userId: undefined,
 			name: undefined,
 			connectionState: ConnectionState.NEW,
+			stream: null,
 			audioAvailable: undefined,
 			videoAvailable: undefined,
 		},
@@ -60,12 +61,14 @@
 			this._webRtc = options.webRtc;
 
 			this._handlePeerStreamAddedBound = this._handlePeerStreamAdded.bind(this);
+			this._handlePeerStreamRemovedBound = this._handlePeerStreamRemoved.bind(this);
 			this._handleNickBound = this._handleNick.bind(this);
 			this._handleMuteBound = this._handleMute.bind(this);
 			this._handleUnmuteBound = this._handleUnmute.bind(this);
 			this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this);
 
 			this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound);
+			this._webRtc.on('peerStreamRemoved', this._handlePeerStreamRemovedBound);
 			this._webRtc.on('nick', this._handleNickBound);
 			this._webRtc.on('mute', this._handleMuteBound);
 			this._webRtc.on('unmute', this._handleUnmuteBound);
@@ -76,10 +79,22 @@
 				return;
 			}
 
+			this.set('stream', peer.stream || null);
+
 			// "peer.nick" is set only for users and when the MCU is not used.
 			if (this._peer.nick !== undefined) {
 				this.set('name', this._peer.nick);
 			}
+		},
+
+		_handlePeerStreamRemoved: function(peer) {
+			if (this._peer !== peer) {
+				return;
+			}
+
+			this.set('stream', null);
+			this.set('audioAvailable', undefined);
+			this.set('videoAvailable', undefined);
 		},
 
 		_handleNick: function(data) {
@@ -137,6 +152,7 @@
 
 			// Reset state that depends on the Peer object.
 			this._handleExtendedIceConnectionStateChange(this._peer.pc.iceConnectionState);
+			this._handlePeerStreamAdded(this._peer);
 
 			this._peer.on('extendedIceConnectionStateChange', this._handleExtendedIceConnectionStateChangeBound);
 		},
