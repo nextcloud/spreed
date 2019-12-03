@@ -327,12 +327,13 @@ class ChatController extends AEnvironmentAwareController {
 					if ($message->getVisibility()) {
 						$loadedParents[$parentId] = $message->toArray();
 						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
-					} else {
-						$loadedParents[$parentId] = [
-							'id' => $parentId,
-							'deleted' => true,
-						];
+						continue;
 					}
+
+					$loadedParents[$parentId] = [
+						'id' => $parentId,
+						'deleted' => true,
+					];
 				} catch (NotFoundException $e) {
 				}
 			}
