@@ -122,7 +122,7 @@ class Listener {
 
 			$notifier->roomInvited($event->getRoom(), $event->getParticipants());
 		});
-		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, static function(ModifyRoomEvent $event) {
+		$listener = static function(RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
 			}
@@ -131,59 +131,13 @@ class Listener {
 			$notifier = \OC::$server->query(BackendNotifier::class);
 
 			$notifier->roomModified($event->getRoom());
-		});
-		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, static function(ModifyRoomEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
-
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
-
-			$notifier->roomModified($event->getRoom());
-		});
-		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, static function(ModifyRoomEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
-
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
-
-			$notifier->roomModified($event->getRoom());
-		});
-		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, static function(ModifyRoomEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
-
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
-
-			$notifier->roomModified($event->getRoom());
-		});
-		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, static function(ModifyLobbyEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
-
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
-
-			$notifier->roomModified($event->getRoom());
-		});
-		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, static function(ModifyParticipantEvent $event) {
-			if (self::isUsingInternalSignaling()) {
-				return;
-			}
-
-			/** @var BackendNotifier $notifier */
-			$notifier = \OC::$server->query(BackendNotifier::class);
-
-			// The type of a participant has changed, notify all participants
-			// so they can update the room properties.
-			$notifier->roomModified($event->getRoom());
-		});
+		};
+		$dispatcher->addListener(Room::EVENT_AFTER_NAME_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PASSWORD_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_READONLY_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_LOBBY_STATE_SET, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_TYPE_SET, $listener);
 		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_DELETE, static function(RoomEvent $event) {
 			if (self::isUsingInternalSignaling()) {
 				return;
