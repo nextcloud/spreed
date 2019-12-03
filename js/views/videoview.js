@@ -68,7 +68,13 @@
 				this._setConnectionState(connectionState);
 				// "_setParticipant" depends on "connectionState"
 				this._setParticipant(this._userId, this._rawParticipantName);
-			}
+			},
+			'change:userId': function(model, userId) {
+				this._setParticipant(userId, this.model.get('name'));
+			},
+			'change:name': function(model, name) {
+				this._setParticipant(this.model.get('userId'), name);
+			},
 		},
 
 		initialize: function() {
@@ -81,8 +87,6 @@
 		},
 
 		onRender: function() {
-			this.getUI('avatar').addClass('icon-loading');
-
 			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
 			this.getUI('hideRemoteVideoButton').addClass('hidden');
 
@@ -90,8 +94,7 @@
 
 			// Match current model state.
 			this._setConnectionState(this.model.get('connectionState'));
-			// "_setParticipant" depends on "connectionState"
-			this._setParticipant(this._userId, this._rawParticipantName);
+			this._setParticipant(this.model.get('userId'), this.model.get('name'));
 
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
@@ -102,18 +105,6 @@
 				placement: 'top',
 				trigger: 'hover'
 			});
-		},
-
-		getUserId: function() {
-			return this._userId;
-		},
-
-		setUserId: function(userId) {
-			this._setParticipant(userId, this._rawParticipantName);
-		},
-
-		setParticipantName: function(participantName) {
-			this._setParticipant(this._userId, participantName);
 		},
 
 		_setParticipant: function(userId, participantName) {
@@ -127,19 +118,6 @@
 			if (!(userId && userId.length) && this.model.get('connectionState') !== ConnectionState.NEW) {
 				participantName = participantName || t('spreed', 'Guest');
 			}
-
-			if (this.hasOwnProperty('_userId') && this.hasOwnProperty('_rawParticipantName') && this.hasOwnProperty('_participantName') &&
-					userId === this._userId && rawParticipantName === this._rawParticipantName && participantName === this._participantName) {
-				// Do not set again the avatar if it has already been set to
-				// workaround the MCU setting the participant again and again
-				// and thus causing a loading icon to be shown on the avatar
-				// again and again.
-				return;
-			}
-
-			this._userId = userId;
-			this._rawParticipantName = rawParticipantName;
-			this._participantName = participantName;
 
 			// Restore icon if needed after "avatar()" resets it.
 			var restoreIconLoadingCallback = function() {

@@ -43,6 +43,10 @@
 
 		defaults: {
 			peerId: null,
+			// "undefined" is used for values not known yet; "null" or "false"
+			// are used for known but negative/empty values.
+			userId: undefined,
+			name: undefined,
 			connectionState: ConnectionState.NEW,
 		},
 
@@ -51,7 +55,34 @@
 		},
 
 		initialize: function(options) {
+			this._webRtc = options.webRtc;
+
+			this._handlePeerStreamAddedBound = this._handlePeerStreamAdded.bind(this);
+			this._handleNickBound = this._handleNick.bind(this);
 			this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this);
+
+			this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound);
+			this._webRtc.on('nick', this._handleNickBound);
+		},
+
+		_handlePeerStreamAdded: function(peer) {
+			if (this._peer !== peer) {
+				return;
+			}
+
+			// "peer.nick" is set only for users and when the MCU is not used.
+			if (this._peer.nick !== undefined) {
+				this.set('name', this._peer.nick);
+			}
+		},
+
+		_handleNick: function(data) {
+			if (!this._peer || this._peer.id !== data.id) {
+				return;
+			}
+
+			this.set('userId', data.userid || null);
+			this.set('name', data.name || null);
 		},
 
 		setPeer: function(peer) {
@@ -79,6 +110,15 @@
 		},
 
 		_handleExtendedIceConnectionStateChange: function(extendedIceConnectionState) {
+			// Ensure that the name is set, as when the MCU is not used it will
+			// not be set later for registered users without microphone nor
+			// camera.
+			var setNameForUserFromPeerNick = function() {
+				if (this._peer.nick !== undefined) {
+					this.set('name', this._peer.nick);
+				}
+			}.bind(this);
+
 			switch (extendedIceConnectionState) {
 				case 'new':
 					this.set('connectionState', ConnectionState.NEW);
@@ -88,9 +128,11 @@
 					break;
 				case 'connected':
 					this.set('connectionState', ConnectionState.CONNECTED);
+					setNameForUserFromPeerNick();
 					break;
 				case 'completed':
 					this.set('connectionState', ConnectionState.COMPLETED);
+					setNameForUserFromPeerNick();
 					break;
 				case 'disconnected':
 					this.set('connectionState', ConnectionState.DISCONNECTED);
@@ -110,6 +152,10 @@
 				default:
 					console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState);
 			}
+		},
+
+		setUserId: function(userId) {
+			this.set('userId', userId);
 		},
 
 	});

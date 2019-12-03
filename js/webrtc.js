@@ -176,15 +176,16 @@ var spreedPeerConnectionTable = [];
 			if (!callParticipantModel) {
 				callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
 					peerId: sessionId,
+					webRtc: OCA.SpreedMe.webrtc,
 				});
 				OCA.SpreedMe.callParticipantModels[sessionId] = callParticipantModel;
 			}
+			callParticipantModel.setUserId(userId);
 
 			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
 			if (!videoView) {
 				videoView = OCA.SpreedMe.videos.add(sessionId);
 			}
-			videoView.setUserId(userId);
 
 			var createPeer = function() {
 				var peer = webrtc.webrtc.createPeer({
@@ -546,13 +547,6 @@ var spreedPeerConnectionTable = [];
 						case 'completed': // on caller side
 							console.log('Connection established.');
 
-							// Ensure that the peer name is shown, as the name
-							// indicator for registered users without microphone
-							// nor camera will not be updated later.
-							if (videoView.getUserId() && videoView.getUserId().length) {
-								videoView.setParticipantName(peer.nick);
-							}
-
 							// Send the current information about the video and microphone state
 							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
 								OCA.SpreedMe.webrtc.emit('videoOff');
@@ -913,6 +907,7 @@ var spreedPeerConnectionTable = [];
 					if (!callParticipantModel) {
 						callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
 							peerId: peer.id,
+							webRtc: OCA.SpreedMe.webrtc,
 						});
 						OCA.SpreedMe.callParticipantModels[peer.id] = callParticipantModel;
 					}
@@ -1177,11 +1172,6 @@ var spreedPeerConnectionTable = [];
 
 			var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
 			if (videoView) {
-				var guestName = guestNamesTable[peer.id];
-
-				var participantName = peer.nick || guestName;
-				videoView.setParticipantName(participantName);
-
 				videoView.setVideoElement(video);
 				videoView.setAudioElement(audio);
 			}
@@ -1337,17 +1327,6 @@ var spreedPeerConnectionTable = [];
 
 		// Peer changed nick
 		OCA.SpreedMe.webrtc.on('nick', function(data) {
-			// Video
-			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
-			if (videoView) {
-				// Use null to differentiate between guest (null) and not known
-				// yet (undefined).
-				videoView.setUserId(data.userid || null);
-				// Use null to differentiate between empty (null) and not known
-				// yet (undefined).
-				videoView.setParticipantName(data.name || null);
-			}
-
 			//Screen
 			var screenView = OCA.SpreedMe.sharedScreens.screenViews[data.id];
 			if (screenView) {
