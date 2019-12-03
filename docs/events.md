@@ -1,147 +1,197 @@
 # PHP Events
 
+Explanations:
+* `Event class`: is the PHP class of the event object that is passed by the event
+* `Event name`: refers to the PHP constant that contains the full name for the event. You should always use the constants instead of copying the value to avoid problems in the future. Most events have a `Before` and `After` event name. They behave the same and reflect if the event is triggered before or after the action described.
+
 ## Conversation related events
 
-### Created conversation
+### Get conversations list
+
+* Event class: `OCA\Talk\Events\UserEvent`
+* Event name: `OCA\Talk\Controller\RoomController::EVENT_BEFORE_ROOMS_GET`
+* Since: 8.0.0
+
+
+### Create conversation
 
 * Event class: `OCA\Talk\Events\RoomEvent`
-* Event name: `OCA\Talk\Room::createdRoom`
+* Event name: `OCA\Talk\Room::EVENT_AFTER_ROOM_CREATE`
+* Since: 8.0.0
 
 ### Create token for conversation
 
 * Event class: `OCA\Talk\Events\CreateRoomTokenEvent`
-* Event name: `OCA\Talk\Manager::generateNewToken`
+* Event name: `OCA\Talk\Manager::EVENT_TOKEN_GENERATE`
+* Since: 8.0.0
 
 ### Set name
 
 * Event class: `OCA\Talk\Events\ModifyRoomEvent`
-* Pre-event name: `OCA\Talk\Room::preSetName`
-* Post-event name: `OCA\Talk\Room::postSetName`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_NAME_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_NAME_SET`
+* Since: 8.0.0
 
 ### Set password
 
 * Event class: `OCA\Talk\Events\ModifyRoomEvent`
   - No old value is provided
-* Pre-event name: `OCA\Talk\Room::preSetPassword`
-* Post-event name: `OCA\Talk\Room::postSetPassword`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_PASSWORD_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_PASSWORD_SET`
+* Since: 8.0.0
 
 ### Set type
 
 * Event class: `OCA\Talk\Events\ModifyRoomEvent`
-* Pre-event name: `OCA\Talk\Room::preSetType`
-* Post-event name: `OCA\Talk\Room::postSetType`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_TYPE_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_TYPE_SET`
+* Since: 8.0.0
 
 ### Set read-only
 
 * Event class: `OCA\Talk\Events\ModifyRoomEvent`
-* Pre-event name: `OCA\Talk\Room::preSetReadOnly`
-* Post-event name: `OCA\Talk\Room::postSetReadOnly`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_READONLY_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_READONLY_SET`
+* Since: 8.0.0
 
 ### Set lobby
 
 * Event class: `OCA\Talk\Events\ModifyLobbyEvent`
-* Pre-event name: `OCA\Talk\Room::preSetLobbyState`
-* Post-event name: `OCA\Talk\Room::postSetLobbyState`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_LOBBY_STATE_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_LOBBY_STATE_SET`
+* Since: 8.0.0
 
 ### Clean up guests
 
 * Event class: `OCA\Talk\Events\RoomEvent`
-* Pre-event name: `OCA\Talk\Room::preCleanGuests`
-* Post-event name: `OCA\Talk\Room::postCleanGuests`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_GUESTS_CLEAN`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_GUESTS_CLEAN`
+* Since: 8.0.0
 
 ### Verify password
 
 * Event class: `OCA\Talk\Events\VerifyRoomPasswordEvent`
-* Event name: `OCA\Talk\Room::verifyPassword`
+* Event name: `OCA\Talk\Room::EVENT_PASSWORD_VERIFY`
+* Since: 8.0.0
 
 ### Delete conversation
 
 * Event class: `OCA\Talk\Events\RoomEvent`
-* Pre-event name: `OCA\Talk\Room::preDeleteRoom`
-* Post-event name: `OCA\Talk\Room::postDeleteRoom`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_ROOM_DELETE`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_ROOM_DELETE`
+* Since: 8.0.0
 
 ## Participant related events
 
 ### Add participants
 
 * Event class: `OCA\Talk\Events\AddParticipantsEvent`
-* Pre-event name: `OCA\Talk\Room::preAddUsers`
-* Post-event name: `OCA\Talk\Room::postAddUsers`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_USERS_ADD`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_USERS_ADD`
+* Since: 8.0.0
 
 ### Add email
 
 * Event class: `OCA\Talk\Events\AddEmailEvent`
-* Pre-event name: `OCA\Talk\GuestManager::preInviteByEmail`
-* Post-event name: `OCA\Talk\GuestManager::postInviteByEmail`
-
-### Set participant type for user
-
-* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
-* Pre-event name: `OCA\Talk\Room::preSetParticipantType`
-* Post-event name: `OCA\Talk\Room::postSetParticipantType`
-
-### Set participant type for guests
-
-* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
-* Pre-event name: `OCA\Talk\Room::preSetParticipantTypeBySession`
-* Post-event name: `OCA\Talk\Room::postSetParticipantTypeBySession`
-
-### Join a conversation as user
-
-* Event class: `OCA\Talk\Events\JoinRoomUserEvent`
-* Pre-event name: `OCA\Talk\Room::preJoinRoom`
-* Post-event name: `OCA\Talk\Room::postJoinRoom`
-
-### Join a conversation as guest
-
-* Event class: `OCA\Talk\Events\JoinRoomGuestEvent`
-* Pre-event name: `OCA\Talk\Room::preJoinRoomGuest`
-* Post-event name: `OCA\Talk\Room::postJoinRoomGuest`
-
-### Join a call
-
-* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
-* Pre-event name: `OCA\Talk\Room::preSessionJoinCall`
-* Post-event name: `OCA\Talk\Room::postSessionJoinCall`
-
-### Leave a call
-
-* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
-* Pre-event name: `OCA\Talk\Room::preSessionLeaveCall`
-* Post-event name: `OCA\Talk\Room::postSessionLeaveCall`
-
-### Leave conversation
-
-* Event class: `OCA\Talk\Events\ParticipantEvent`
-* Pre-event name: `OCA\Talk\Room::preUserDisconnectRoom`
-* Post-event name: `OCA\Talk\Room::postUserDisconnectRoom`
-
-### Remove user
-
-* Event class: `OCA\Talk\Events\RemoveUserEvent`
-* Pre-event name: `OCA\Talk\Room::preRemoveUser`
-* Post-event name: `OCA\Talk\Room::postRemoveUser`
+* Before event name: `OCA\Talk\GuestManager::EVENT_BEFORE_EMAIL_INVITE`
+* After event name: `OCA\Talk\GuestManager::EVENT_AFTER_EMAIL_INVITE`
+* Since: 8.0.0
 
 ### Remove participant by session
 
 * Event class: `OCA\Talk\Events\RemoveParticipantEvent`
-* Pre-event name: `OCA\Talk\Room::preRemoveBySession`
-* Post-event name: `OCA\Talk\Room::postRemoveBySession`
+* Event name: `OCA\Talk\GuestManager::EVENT_AFTER_NAME_UPDATE`
+* Since: 8.0.0
+
+### Set participant type for user
+
+* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_PARTICIPANT_TYPE_SET`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_PARTICIPANT_TYPE_SET`
+* Since: 8.0.0
+
+### Join a conversation as user (Connect)
+
+* Event class: `OCA\Talk\Events\JoinRoomUserEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_ROOM_CONNECT`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_ROOM_CONNECT`
+* Since: 8.0.0
+
+### Join a conversation as guest (Connect)
+
+* Event class: `OCA\Talk\Events\JoinRoomGuestEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_GUEST_CONNECT`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_GUEST_CONNECT`
+* Since: 8.0.0
+
+### Join a call
+
+* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_SESSION_JOIN_CALL`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_SESSION_JOIN_CALL`
+* Since: 8.0.0
+
+### Leave a call
+
+* Event class: `OCA\Talk\Events\ModifyParticipantEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_SESSION_LEAVE_CALL`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_SESSION_LEAVE_CALL`
+* Since: 8.0.0
+
+### Leave a conversation (Disconnect)
+
+* Event class: `OCA\Talk\Events\ParticipantEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_ROOM_DISCONNECT`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_ROOM_DISCONNECT`
+* Since: 8.0.0
+
+### Remove user
+
+* Event class: `OCA\Talk\Events\RemoveUserEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_USER_REMOVE`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_USER_REMOVE`
+* Since: 8.0.0
+
+### Remove participant by session
+
+* Event class: `OCA\Talk\Events\RemoveParticipantEvent`
+* Before event name: `OCA\Talk\Room::EVENT_BEFORE_PARTICIPANT_REMOVE`
+* After event name: `OCA\Talk\Room::EVENT_AFTER_PARTICIPANT_REMOVE`
+* Since: 8.0.0
 
 ## Chat related events
 
-### System message has been posted
+### System message
 
 * Event class: `OCA\Talk\Events\ChatEvent`
-* Event name: `OCA\Talk\Chat\ChatManager::postSendSystemMessage`
+* Before event name: `OCA\Talk\Chat\ChatManager::EVENT_BEFORE_SYSTEM_MESSAGE_SEND`
+* After event name: `OCA\Talk\Chat\ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND`
+* Since: 8.0.0
 
 ### Post chat message
 
 * Event class: `OCA\Talk\Events\ChatEvent`
-* Pre-event name: `OCA\Talk\Chat\ChatManager::preSendMessage`
-* Post-event name: `OCA\Talk\Chat\ChatManager::postSendMessage`
+* Before event name: `OCA\Talk\Chat\ChatManager::EVENT_BEFORE_MESSAGE_SEND`
+* After event name: `OCA\Talk\Chat\ChatManager::EVENT_AFTER_MESSAGE_SEND`
+* Since: 8.0.0
 
 ### Parse chat message
 
 * Event class: `OCA\Talk\Events\ChatMessageEvent`
-* Event name: `OCA\Talk\Chat\MessageParser::parseMessage`
+* Event name: `OCA\Talk\Chat\MessageParser::EVENT_MESSAGE_PARSE`
+* Since: 8.0.0
+
+### Command execution for apps
+
+* Event class: `OCA\Talk\Events\CommandEvent`
+* Event name: `OCA\Talk\Chat\Command\Executor::EVENT_APP_EXECUTE`
+* Since: 8.0.0
+
+
+## Other events
+
+### Signaling backend
+
+* Event class: `OCA\Talk\Events\SignalingEvent`
+* Event name: `OCA\Talk\Controller\SignalingController::EVENT_BACKEND_SIGNALING_ROOMS`
+* Since: 8.0.0
