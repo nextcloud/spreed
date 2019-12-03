@@ -56,6 +56,7 @@ Feature: transfer-ownership
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant3" shares "welcome.txt" with user "participant1" with OCS 100
+    And user "participant1" accepts last share
     And user "participant1" shares "welcome (2).txt" with room "group room" with OCS 100
     When transfering ownership from "participant1" to "participant2"
     Then user "participant1" gets last share

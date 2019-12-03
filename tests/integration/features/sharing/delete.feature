@@ -221,6 +221,7 @@ Feature: delete
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     When user "participant1" deletes last share
     Then the OCS status code should be "100"
     And the HTTP status code should be "200"
@@ -243,6 +244,7 @@ Feature: delete
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant1" deletes last share
     Then the OCS status code should be "100"
@@ -309,6 +311,7 @@ Feature: delete
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant2" deletes last share
     Then the OCS status code should be "100"

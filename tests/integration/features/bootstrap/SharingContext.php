@@ -281,6 +281,22 @@ class SharingContext implements Context {
 	}
 
 	/**
+	 * @When user :user accepts last share
+	 *
+	 * @param string $user
+	 */
+	public function userAcceptsLastShare(string $user) {
+		$this->currentUser = $user;
+
+		$url = '/apps/files_sharing/api/v1/shares/pending/' . $this->getLastShareId();
+
+		$this->sendingTo('POST', $url);
+
+		$this->theHTTPStatusCodeShouldBe(200);
+		$this->theOCSStatusCodeShouldBe(100);
+	}
+
+	/**
 	 * @When user :user gets all shares
 	 *
 	 * @param string $user

@@ -55,6 +55,7 @@ Feature: conversation/lobby
 
   Scenario: set lobby state in file room
     Given user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant1" gets the room for path "welcome.txt" with 200
     And user "participant2" gets the room for path "welcome (2).txt" with 200
     And user "participant1" joins room "file welcome.txt room" with 200
