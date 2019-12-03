@@ -44,6 +44,8 @@ use OCP\Security\ISecureRandom;
 
 class Manager {
 
+	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
+
 	/** @var IDBConnection */
 	private $db;
 	/** @var IConfig */
@@ -618,7 +620,7 @@ class Manager {
 		$room = $this->getRoomById($roomId);
 
 		$event = new RoomEvent($room);
-		$this->dispatcher->dispatch(Room::class . '::createdRoom', $event);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
 
 		return $room;
 	}
@@ -802,7 +804,7 @@ class Manager {
 	protected function generateNewToken(IQueryBuilder $query, int $entropy, string $chars): string {
 
 		$event = new CreateRoomTokenEvent($entropy, $chars);
-		$this->dispatcher->dispatch(self::class . '::generateNewToken', $event);
+		$this->dispatcher->dispatch(self::EVENT_TOKEN_GENERATE, $event);
 		try {
 			$token = $event->getToken();
 			if ($token === '') {

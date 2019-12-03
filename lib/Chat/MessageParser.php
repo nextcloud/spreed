@@ -41,6 +41,8 @@ use OCP\IUserManager;
  */
 class MessageParser {
 
+	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
+
 	/** @var IEventDispatcher */
 	private $dispatcher;
 
@@ -71,7 +73,7 @@ class MessageParser {
 		$this->setActor($message);
 
 		$event = new ChatMessageEvent($message);
-		$this->dispatcher->dispatch(self::class . '::parseMessage', $event);
+		$this->dispatcher->dispatch(self::EVENT_MESSAGE_PARSE, $event);
 	}
 
 	protected function setActor(Message $message): void {

@@ -109,7 +109,7 @@ class RoomShareProvider implements IShareProvider {
 				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getUser());
 			}
 		};
-		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
 
 		$listener = static function(RemoveUserEvent $event) {
 			$room = $event->getRoom();
@@ -118,7 +118,7 @@ class RoomShareProvider implements IShareProvider {
 			$roomShareProvider = \OC::$server->query(self::class);
 			$roomShareProvider->deleteInRoom($room->getToken(), $event->getUser()->getUID());
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			$room = $event->getRoom();
@@ -127,7 +127,7 @@ class RoomShareProvider implements IShareProvider {
 			$roomShareProvider = \OC::$server->query(self::class);
 			$roomShareProvider->deleteInRoom($room->getToken());
 		};
-		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 	}
 
 	/**

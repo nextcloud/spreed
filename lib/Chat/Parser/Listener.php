@@ -30,7 +30,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 class Listener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'comment') {
@@ -42,7 +42,7 @@ class Listener {
 			$parser->parseMessage($message);
 		}, -100);
 
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'comment') {
@@ -59,7 +59,7 @@ class Listener {
 			}
 		}, -75);
 
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
 			$message = $event->getMessage();
 
 			if ($message->getMessageType() !== 'system') {
@@ -77,7 +77,7 @@ class Listener {
 			}
 		});
 
-		$dispatcher->addListener(MessageParser::class . '::parseMessage', static function(ChatMessageEvent $event) {
+		$dispatcher->addListener(MessageParser::EVENT_MESSAGE_PARSE, static function(ChatMessageEvent $event) {
 			$chatMessage = $event->getMessage();
 
 			if ($chatMessage->getMessageType() !== 'command') {

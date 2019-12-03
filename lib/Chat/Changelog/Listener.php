@@ -29,7 +29,7 @@ use OCP\EventDispatcher\IEventDispatcher;
 class Listener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::class . '::preGetRooms', static function(UserEvent $event) {
+		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function(UserEvent $event) {
 			$userId = $event->getUserId();
 
 			/** @var Listener $listener */

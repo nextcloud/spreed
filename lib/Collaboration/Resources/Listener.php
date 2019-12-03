@@ -22,10 +22,12 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Collaboration\Resources;
 
+use OCA\Talk\Events\AddEmailEvent;
 use OCA\Talk\Events\AddParticipantsEvent;
 use OCA\Talk\Events\RemoveParticipantEvent;
 use OCA\Talk\Events\RemoveUserEvent;
 use OCA\Talk\Events\RoomEvent;
+use OCA\Talk\GuestManager;
 use OCA\Talk\Room;
 use OCP\Collaboration\Resources\IManager;
 use OCP\Collaboration\Resources\ResourceException;
@@ -46,7 +48,7 @@ class Listener {
 			}
 			$resourceManager->invalidateAccessCacheForResource($resource);
 		};
-		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 
 		$listener = static function(AddParticipantsEvent $event) {
 			$room = $event->getRoom();
@@ -70,7 +72,7 @@ class Listener {
 				$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 			}
 		};
-		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 
 		$listener = static function(RemoveUserEvent $event) {
 			$room = $event->getRoom();
@@ -84,7 +86,7 @@ class Listener {
 
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $event->getUser());
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 
 		$listener = static function(RemoveParticipantEvent $event) {
 			$room = $event->getRoom();
@@ -102,7 +104,7 @@ class Listener {
 			$user = $userManager->get($participant->getUser());
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, $user);
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			$room = $event->getRoom();
@@ -116,7 +118,7 @@ class Listener {
 			}
 			$resourceManager->invalidateAccessCacheForResourceByUser($resource, null);
 		};
-		$dispatcher->addListener(Room::class . '::postSetType', $listener);
-		$dispatcher->addListener(Room::class . '::postInviteByEmail', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_TYPE_SET, $listener);
+		$dispatcher->addListener(GuestManager::EVENT_AFTER_EMAIL_INVITE, $listener);
 	}
 }

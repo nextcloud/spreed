@@ -39,6 +39,10 @@ use OCP\Util;
 
 class GuestManager {
 
+	public const EVENT_BEFORE_EMAIL_INVITE = self::class . '::preInviteByEmail';
+	public const EVENT_AFTER_EMAIL_INVITE = self::class . '::postInviteByEmail';
+	public const EVENT_AFTER_NAME_UPDATE = self::class . '::updateName';
+
 	/** @var IDBConnection */
 	protected $connection;
 
@@ -107,7 +111,7 @@ class GuestManager {
 
 		if ($dispatchEvent) {
 			$event = new ModifyParticipantEvent($room, $participant, 'name', $displayName);
-			$this->dispatcher->dispatch(self::class . '::updateName', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_UPDATE, $event);
 		}
 	}
 
@@ -161,7 +165,7 @@ class GuestManager {
 
 	public function inviteByEmail(Room $room, string $email): void {
 		$event = new AddEmailEvent($room, $email);
-		$this->dispatcher->dispatch(self::class . '::preInviteByEmail', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_EMAIL_INVITE, $event);
 
 		$link = $this->url->linkToRouteAbsolute('spreed.pagecontroller.showCall', ['token' => $room->getToken()]);
 
@@ -204,7 +208,7 @@ class GuestManager {
 		try {
 			$this->mailer->send($message);
 
-			$this->dispatcher->dispatch(self::class . '::postInviteByEmail', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_EMAIL_INVITE, $event);
 		} catch (\Exception $e) {
 		}
 	}

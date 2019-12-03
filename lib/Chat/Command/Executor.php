@@ -36,6 +36,8 @@ use OCP\ILogger;
 
 class Executor {
 
+	public const EVENT_APP_EXECUTE = self::class . '::execApp';
+
 	public const PLACEHOLDER_ROOM = '{ROOM}';
 	public const PLACEHOLDER_USER = '{USER}';
 	public const PLACEHOLDER_ARGUMENTS = '{ARGUMENTS}';
@@ -172,7 +174,7 @@ class Executor {
 
 	protected function execApp(Room $room, IComment $message, Command $command, string $arguments): string {
 		$event = $this->createEvent($room, $message, $command, $arguments);
-		$this->dispatcher->dispatch(self::class . '::execApp', $event);
+		$this->dispatcher->dispatch(self::EVENT_APP_EXECUTE, $event);
 		return $event->getOutput();
 	}
 

@@ -41,7 +41,7 @@ class RoomTest extends TestCase {
 			\OC::$server,
 			$this->createMock(ILogger::class)
 		);
-		$dispatcher->addListener(Room::class . '::verifyPassword', static function(VerifyRoomPasswordEvent $event) {
+		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function(VerifyRoomPasswordEvent $event) {
 			$password = $event->getPassword();
 
 			if ($password === '1234') {

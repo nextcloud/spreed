@@ -48,6 +48,8 @@ class SignalingController extends OCSController {
 	/** @var int */
 	private const PULL_MESSAGES_TIMEOUT = 30;
 
+	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
+
 	/** @var Config */
 	private $config;
 	/** @var TalkSession */
@@ -427,7 +429,7 @@ class SignalingController extends OCSController {
 		}
 
 		$event = new SignalingEvent($room, $participant, $action);
-		$this->dispatcher->dispatch(self::class . '::signalingBackendRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $event);
 
 		$response = [
 			'type' => 'room',

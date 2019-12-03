@@ -66,6 +66,41 @@ class Room {
 	public const PARTICIPANT_REMOVED = 'remove';
 	public const PARTICIPANT_LEFT = 'leave';
 
+	public const EVENT_AFTER_ROOM_CREATE = self::class . '::createdRoom';
+	public const EVENT_BEFORE_ROOM_DELETE = self::class . '::preDeleteRoom';
+	public const EVENT_AFTER_ROOM_DELETE = self::class . '::postDeleteRoom';
+	public const EVENT_BEFORE_NAME_SET = self::class . '::preSetName';
+	public const EVENT_AFTER_NAME_SET = self::class . '::postSetName';
+	public const EVENT_BEFORE_PASSWORD_SET = self::class . '::preSetPassword';
+	public const EVENT_AFTER_PASSWORD_SET = self::class . '::postSetPassword';
+	public const EVENT_BEFORE_TYPE_SET = self::class . '::preSetType';
+	public const EVENT_AFTER_TYPE_SET = self::class . '::postSetType';
+	public const EVENT_BEFORE_READONLY_SET = self::class . '::preSetReadOnly';
+	public const EVENT_AFTER_READONLY_SET = self::class . '::postSetReadOnly';
+	public const EVENT_BEFORE_LOBBY_STATE_SET = self::class . '::preSetLobbyState';
+	public const EVENT_AFTER_LOBBY_STATE_SET = self::class . '::postSetLobbyState';
+	public const EVENT_BEFORE_USERS_ADD = self::class . '::preAddUsers';
+	public const EVENT_AFTER_USERS_ADD = self::class . '::postAddUsers';
+	public const EVENT_BEFORE_PARTICIPANT_TYPE_SET = self::class . '::preSetParticipantType';
+	public const EVENT_AFTER_PARTICIPANT_TYPE_SET = self::class . '::postSetParticipantType';
+	public const EVENT_BEFORE_USER_REMOVE = self::class . '::preRemoveUser';
+	public const EVENT_AFTER_USER_REMOVE = self::class . '::postRemoveUser';
+	public const EVENT_BEFORE_PARTICIPANT_REMOVE = self::class . '::preRemoveBySession';
+	public const EVENT_AFTER_PARTICIPANT_REMOVE = self::class . '::postRemoveBySession';
+	public const EVENT_BEFORE_ROOM_CONNECT = self::class . '::preJoinRoom';
+	public const EVENT_AFTER_ROOM_CONNECT = self::class . '::postJoinRoom';
+	public const EVENT_BEFORE_ROOM_DISCONNECT = self::class . '::preUserDisconnectRoom';
+	public const EVENT_AFTER_ROOM_DISCONNECT = self::class . '::postUserDisconnectRoom';
+	public const EVENT_BEFORE_GUEST_CONNECT = self::class . '::preJoinRoomGuest';
+	public const EVENT_AFTER_GUEST_CONNECT = self::class . '::postJoinRoomGuest';
+	public const EVENT_PASSWORD_VERIFY = self::class . '::verifyPassword';
+	public const EVENT_BEFORE_GUESTS_CLEAN = self::class . '::preCleanGuests';
+	public const EVENT_AFTER_GUESTS_CLEAN = self::class . '::postCleanGuests';
+	public const EVENT_BEFORE_SESSION_JOIN_CALL = self::class . '::preSessionJoinCall';
+	public const EVENT_AFTER_SESSION_JOIN_CALL = self::class . '::postSessionJoinCall';
+	public const EVENT_BEFORE_SESSION_LEAVE_CALL = self::class . '::preSessionLeaveCall';
+	public const EVENT_AFTER_SESSION_LEAVE_CALL = self::class . '::postSessionLeaveCall';
+
 	/** @var Manager */
 	private $manager;
 	/** @var IDBConnection */
@@ -305,9 +340,8 @@ class Room {
 	}
 
 	public function deleteRoom(): void {
-		$participants = $this->getParticipantsLegacy();
 		$event = new RoomEvent($this);
-		$this->dispatcher->dispatch(self::class . '::preDeleteRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DELETE, $event);
 		$query = $this->db->getQueryBuilder();
 
 		// Delete all participants
@@ -320,7 +354,7 @@ class Room {
 			->where($query->expr()->eq('id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postDeleteRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DELETE, $event);
 	}
 
 	/**
@@ -334,7 +368,7 @@ class Room {
 		}
 
 		$event = new ModifyRoomEvent($this, 'name', $newName, $oldName);
-		$this->dispatcher->dispatch(self::class . '::preSetName', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_NAME_SET, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
@@ -343,7 +377,7 @@ class Room {
 		$query->execute();
 		$this->name = $newName;
 
-		$this->dispatcher->dispatch(self::class . '::postSetName', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_NAME_SET, $event);
 
 		return true;
 	}
@@ -360,7 +394,7 @@ class Room {
 		$hash = $password !== '' ? $this->hasher->hash($password) : '';
 
 		$event = new ModifyRoomEvent($this, 'password', $password);
-		$this->dispatcher->dispatch(self::class . '::preSetPassword', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_PASSWORD_SET, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
@@ -369,7 +403,7 @@ class Room {
 		$query->execute();
 		$this->password = $hash;
 
-		$this->dispatcher->dispatch(self::class . '::postSetPassword', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_PASSWORD_SET, $event);
 
 		return true;
 	}
@@ -464,7 +498,7 @@ class Room {
 		$oldType = $this->getType();
 
 		$event = new ModifyRoomEvent($this, 'type', $newType, $oldType);
-		$this->dispatcher->dispatch(self::class . '::preSetType', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_TYPE_SET, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
@@ -483,7 +517,7 @@ class Room {
 			$query->execute();
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postSetType', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_TYPE_SET, $event);
 
 		return true;
 	}
@@ -510,7 +544,7 @@ class Room {
 		}
 
 		$event = new ModifyRoomEvent($this, 'readOnly', $newState, $oldState);
-		$this->dispatcher->dispatch(self::class . '::preSetReadOnly', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_READONLY_SET, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
@@ -520,7 +554,7 @@ class Room {
 
 		$this->readOnly = $newState;
 
-		$this->dispatcher->dispatch(self::class . '::postSetReadOnly', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_READONLY_SET, $event);
 
 		return true;
 	}
@@ -550,7 +584,7 @@ class Room {
 		}
 
 		$event = new ModifyLobbyEvent($this, 'lobby', $newState, $oldState, $dateTime, $timerReached);
-		$this->dispatcher->dispatch(self::class . '::preSetLobbyState', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_LOBBY_STATE_SET, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_rooms')
@@ -561,7 +595,7 @@ class Room {
 
 		$this->lobbyState = $newState;
 
-		$this->dispatcher->dispatch(self::class . '::postSetLobbyState', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_LOBBY_STATE_SET, $event);
 
 		return true;
 	}
@@ -590,7 +624,7 @@ class Room {
 	 */
 	public function addUsers(array ...$participants): void {
 		$event = new AddParticipantsEvent($this, $participants);
-		$this->dispatcher->dispatch(self::class . '::preAddUsers', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_USERS_ADD, $event);
 
 		$lastMessage = 0;
 		if ($this->getLastMessage() instanceof IComment) {
@@ -618,7 +652,7 @@ class Room {
 			$query->execute();
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postAddUsers', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_USERS_ADD, $event);
 	}
 
 	/**
@@ -627,7 +661,7 @@ class Room {
 	 */
 	public function setParticipantType(Participant $participant, int $participantType): void {
 		$event = new ModifyParticipantEvent($this, $participant, 'type', $participantType, $participant->getParticipantType());
-		$this->dispatcher->dispatch(self::class . '::preSetParticipantType', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_PARTICIPANT_TYPE_SET, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->update('talk_participants')
@@ -636,25 +670,7 @@ class Room {
 			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($participant->getUser())));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postSetParticipantType', $event);
-	}
-
-	/**
-	 * @param Participant $participant
-	 * @param int $participantType
-	 */
-	public function setParticipantTypeBySession(Participant $participant, int $participantType): void {
-		$event = new ModifyParticipantEvent($this, $participant, 'type', $participantType, $participant->getParticipantType());
-		$this->dispatcher->dispatch(self::class . '::preSetParticipantTypeBySession', $event);
-
-		$query = $this->db->getQueryBuilder();
-		$query->update('talk_participants')
-			->set('participant_type', $query->createNamedParameter($participantType, IQueryBuilder::PARAM_INT))
-			->where($query->expr()->eq('room_id', $query->createNamedParameter($this->getId(), IQueryBuilder::PARAM_INT)))
-			->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
-		$query->execute();
-
-		$this->dispatcher->dispatch(self::class . '::postSetParticipantTypeBySession', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_PARTICIPANT_TYPE_SET, $event);
 	}
 
 	/**
@@ -669,7 +685,7 @@ class Room {
 		}
 
 		$event = new RemoveUserEvent($this, $participant, $user, $reason);
-		$this->dispatcher->dispatch(self::class . '::preRemoveUser', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_USER_REMOVE, $event);
 
 		if ($this->getType() === self::ONE_TO_ONE_CALL) {
 			$this->setName($user->getUID());
@@ -681,7 +697,7 @@ class Room {
 			->andWhere($query->expr()->eq('user_id', $query->createNamedParameter($user->getUID())));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postRemoveUser', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_USER_REMOVE, $event);
 
 	}
 
@@ -691,7 +707,7 @@ class Room {
 	 */
 	public function removeParticipantBySession(Participant $participant, string $reason): void {
 		$event = new RemoveParticipantEvent($this, $participant, $reason);
-		$this->dispatcher->dispatch(self::class . '::preRemoveBySession', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_PARTICIPANT_REMOVE, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
@@ -699,7 +715,7 @@ class Room {
 			->andWhere($query->expr()->eq('session_id', $query->createNamedParameter($participant->getSessionId())));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postRemoveBySession', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_PARTICIPANT_REMOVE, $event);
 	}
 
 	/**
@@ -712,7 +728,7 @@ class Room {
 	 */
 	public function joinRoom(IUser $user, string $password, bool $passedPasswordProtection = false): string {
 		$event = new JoinRoomUserEvent($this, $user, $password, $passedPasswordProtection);
-		$this->dispatcher->dispatch(self::class . '::preJoinRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_CONNECT, $event);
 
 		if ($event->getCancelJoin() === true) {
 			$this->removeUser($user, self::PARTICIPANT_LEFT);
@@ -748,7 +764,7 @@ class Room {
 			$query->execute();
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postJoinRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_CONNECT, $event);
 
 		return $sessionId;
 	}
@@ -765,7 +781,7 @@ class Room {
 		}
 
 		$event = new ParticipantEvent($this, $participant);
-		$this->dispatcher->dispatch(self::class . '::preUserDisconnectRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOM_DISCONNECT, $event);
 
 		// Reset session when leaving a normal room
 		$query = $this->db->getQueryBuilder();
@@ -791,7 +807,7 @@ class Room {
 		}
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postUserDisconnectRoom', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_ROOM_DISCONNECT, $event);
 	}
 
 	/**
@@ -803,7 +819,7 @@ class Room {
 	 */
 	public function joinRoomGuest(string $password, bool $passedPasswordProtection = false): string {
 		$event = new JoinRoomGuestEvent($this, $password, $passedPasswordProtection);
-		$this->dispatcher->dispatch(self::class . '::preJoinRoomGuest', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_GUEST_CONNECT, $event);
 
 		if ($event->getCancelJoin()) {
 			throw new UnauthorizedException('Participant is not allowed to join');
@@ -830,7 +846,7 @@ class Room {
 			$sessionId = $this->secureRandom->generate(255);
 		}
 
-		$this->dispatcher->dispatch(self::class . '::postJoinRoomGuest', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_GUEST_CONNECT, $event);
 
 		return $sessionId;
 	}
@@ -838,9 +854,9 @@ class Room {
 	public function changeInCall(Participant $participant, int $flags): void {
 		$event = new ModifyParticipantEvent($this, $participant, 'inCall', $flags, $participant->getInCallFlags());
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$this->dispatcher->dispatch(self::class . '::preSessionJoinCall', $event);
+			$this->dispatcher->dispatch(self::EVENT_BEFORE_SESSION_JOIN_CALL, $event);
 		} else {
-			$this->dispatcher->dispatch(self::class . '::preSessionLeaveCall', $event);
+			$this->dispatcher->dispatch(self::EVENT_BEFORE_SESSION_LEAVE_CALL, $event);
 		}
 
 		$query = $this->db->getQueryBuilder();
@@ -858,9 +874,9 @@ class Room {
 		$query->execute();
 
 		if ($flags !== Participant::FLAG_DISCONNECTED) {
-			$this->dispatcher->dispatch(self::class . '::postSessionJoinCall', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_SESSION_JOIN_CALL, $event);
 		} else {
-			$this->dispatcher->dispatch(self::class . '::postSessionLeaveCall', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_SESSION_LEAVE_CALL, $event);
 		}
 	}
 
@@ -870,7 +886,7 @@ class Room {
 	 */
 	public function verifyPassword(string $password): array {
 		$event = new VerifyRoomPasswordEvent($this, $password);
-		$this->dispatcher->dispatch(self::class . '::verifyPassword', $event);
+		$this->dispatcher->dispatch(self::EVENT_PASSWORD_VERIFY, $event);
 
 		if ($event->isPasswordValid() !== null) {
 			return [
@@ -903,7 +919,7 @@ class Room {
 
 	public function cleanGuestParticipants(): void {
 		$event = new RoomEvent($this);
-		$this->dispatcher->dispatch(self::class . '::preCleanGuests', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_GUESTS_CLEAN, $event);
 
 		$query = $this->db->getQueryBuilder();
 		$query->delete('talk_participants')
@@ -912,7 +928,7 @@ class Room {
 			->andWhere($query->expr()->lte('last_ping', $query->createNamedParameter($this->timeFactory->getTime() - 100, IQueryBuilder::PARAM_INT)));
 		$query->execute();
 
-		$this->dispatcher->dispatch(self::class . '::postCleanGuests', $event);
+		$this->dispatcher->dispatch(self::EVENT_AFTER_GUESTS_CLEAN, $event);
 	}
 
 	/**

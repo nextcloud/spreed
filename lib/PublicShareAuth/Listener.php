@@ -50,20 +50,20 @@ class Listener {
 		$listener = static function(JoinRoomUserEvent $event) {
 			self::preventExtraUsersFromJoining($event->getRoom(), $event->getUser()->getUID());
 		};
-		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
 		$listener = static function(JoinRoomGuestEvent $event) {
 			self::preventExtraGuestsFromJoining($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			self::destroyRoomOnParticipantLeave($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
-		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
-		$dispatcher->addListener(Room::class . '::postCleanGuests', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_GUESTS_CLEAN, $listener);
 	}
 
 	/**

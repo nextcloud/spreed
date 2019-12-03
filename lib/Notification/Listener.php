@@ -66,28 +66,28 @@ class Listener {
 			$listener = \OC::$server->query(self::class);
 			$listener->generateInvitation($room, $event->getParticipants());
 		};
-		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 
 		$listener = static function(JoinRoomUserEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->markInvitationRead($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postJoinRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_CONNECT, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateCallNotifications($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::preSessionJoinCall', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->markCallNotificationsRead($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 	}
 
 	/**

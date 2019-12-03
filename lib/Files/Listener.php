@@ -72,7 +72,7 @@ class Listener {
 				$event->setCancelJoin(true);
 			}
 		};
-		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
 		$listener = static function(JoinRoomGuestEvent $event) {
 			/** @var self $listener */
@@ -84,7 +84,7 @@ class Listener {
 				$event->setCancelJoin( true);
 			}
 		};
-		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
 	}
 
 	/**

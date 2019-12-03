@@ -113,7 +113,7 @@ class ExecutorTest extends TestCase {
 
 		$this->dispatcher->expects($this->once())
 			->method('dispatch')
-			->with(Executor::class . '::execApp', $event);
+			->with(Executor::EVENT_APP_EXECUTE, $event);
 
 		$this->assertSame($expected, self::invokePrivate($executor, 'execApp', [$room, $message, $command, $arguments]));
 	}

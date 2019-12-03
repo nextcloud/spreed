@@ -44,7 +44,7 @@ class Listener {
 	}
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(ChatManager::class . '::preSendMessage', static function(ChatParticipantEvent $event) {
+		$dispatcher->addListener(ChatManager::EVENT_BEFORE_MESSAGE_SEND, static function(ChatParticipantEvent $event) {
 			$message = $event->getComment();
 			$participant = $event->getParticipant();
 

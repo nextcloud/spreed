@@ -52,6 +52,9 @@ use OCP\IGroup;
 use OCP\IGroupManager;
 
 class RoomController extends AEnvironmentAwareController {
+
+	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
+
 	/** @var string|null */
 	private $userId;
 	/** @var TalkSession */
@@ -111,7 +114,7 @@ class RoomController extends AEnvironmentAwareController {
 	 */
 	public function getRooms(): DataResponse {
 		$event = new UserEvent($this->userId);
-		$this->dispatcher->dispatch(self::class . '::preGetRooms', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
 
 		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
 
@@ -949,7 +952,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$room->setParticipantTypeBySession($targetParticipant, Participant::GUEST_MODERATOR);
+		$room->setParticipantType($targetParticipant, Participant::GUEST_MODERATOR);
 
 		return new DataResponse();
 	}
@@ -1005,7 +1008,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$room->setParticipantTypeBySession($targetParticipant, Participant::GUEST);
+		$room->setParticipantType($targetParticipant, Participant::GUEST);
 
 		return new DataResponse();
 	}

@@ -46,6 +46,11 @@ use OCP\IUser;
  */
 class ChatManager {
 
+	public const EVENT_BEFORE_SYSTEM_MESSAGE_SEND = self::class . '::preSendSystemMessage';
+	public const EVENT_AFTER_SYSTEM_MESSAGE_SEND = self::class . '::postSendSystemMessage';
+	public const EVENT_BEFORE_MESSAGE_SEND = self::class . '::preSendMessage';
+	public const EVENT_AFTER_MESSAGE_SEND = self::class . '::postSendMessage';
+
 	public const MAX_CHAT_LENGTH = 32000;
 
 	/** @var CommentsManager|ICommentsManager */
@@ -83,6 +88,9 @@ class ChatManager {
 		$comment->setMessage($message, self::MAX_CHAT_LENGTH);
 		$comment->setCreationDateTime($creationDateTime);
 		$comment->setVerb('system');
+
+		$event = new ChatEvent($chat, $comment);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
 
@@ -93,8 +101,7 @@ class ChatManager {
 				$this->notifier->notifyOtherParticipant($chat, $comment, []);
 			}
 
-			$event = new ChatEvent($chat, $comment);
-			$this->dispatcher->dispatch(self::class . '::postSendSystemMessage', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
 
@@ -115,14 +122,15 @@ class ChatManager {
 		$comment->setCreationDateTime($this->timeFactory->getDateTime());
 		$comment->setVerb('comment'); // Has to be comment, so it counts as unread message
 
+		$event = new ChatEvent($chat, $comment);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_SYSTEM_MESSAGE_SEND, $event);
 		try {
 			$this->commentsManager->save($comment);
 
 			// Update last_message
 			$chat->setLastMessage($comment);
 
-			$event = new ChatEvent($chat, $comment);
-			$this->dispatcher->dispatch(self::class . '::postSendSystemMessage', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
 
@@ -154,7 +162,7 @@ class ChatManager {
 		}
 
 		$event = new ChatParticipantEvent($chat, $comment, $participant);
-		$this->dispatcher->dispatch(self::class . '::preSendMessage', $event);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_MESSAGE_SEND, $event);
 
 		try {
 			$this->commentsManager->save($comment);
@@ -175,7 +183,7 @@ class ChatManager {
 			// User was not mentioned, send a normal notification
 			$this->notifier->notifyOtherParticipant($chat, $comment, $alreadyNotifiedUsers);
 
-			$this->dispatcher->dispatch(self::class . '::postSendMessage', $event);
+			$this->dispatcher->dispatch(self::EVENT_AFTER_MESSAGE_SEND, $event);
 		} catch (NotFoundException $e) {
 		}
 

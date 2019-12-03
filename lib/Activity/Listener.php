@@ -69,23 +69,23 @@ class Listener {
 			$listener = \OC::$server->query(self::class);
 			$listener->setActive($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateCallActivity($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener, -100);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener, -100);
 
 		$listener = static function(AddParticipantsEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->generateInvitationActivity($event->getRoom(), $event->getParticipants());
 		};
-		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 	}
 
 	public function setActive(Room $room): void {

@@ -532,7 +532,7 @@ class SignalingControllerTest extends \Test\TestCase {
 	}
 
 	public function testBackendRoomSessionFromEvent() {
-		$this->dispatcher->addListener(SignalingController::class . '::signalingBackendRoom', static function(SignalingEvent $event) {
+		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function(SignalingEvent $event) {
 			$room = $event->getRoom();
 			$event->setSession([
 				'foo' => 'bar',

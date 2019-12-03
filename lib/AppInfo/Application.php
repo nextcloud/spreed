@@ -153,8 +153,8 @@ class Application extends App {
 			$room->setLastActivity($timeFactory->getDateTime());
 		};
 
-		$dispatcher->addListener(ChatManager::class . '::postSendMessage', $listener);
-		$dispatcher->addListener(ChatManager::class . '::postSendSystemMessage', $listener);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_MESSAGE_SEND, $listener);
+		$dispatcher->addListener(ChatManager::EVENT_AFTER_SYSTEM_MESSAGE_SEND, $listener);
 	}
 
 	protected function registerChatHooks(IEventDispatcher $dispatcher): void {
@@ -163,6 +163,6 @@ class Application extends App {
 			$chatManager = $this->getContainer()->query(ChatManager::class);
 			$chatManager->deleteMessages($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 	}
 }
