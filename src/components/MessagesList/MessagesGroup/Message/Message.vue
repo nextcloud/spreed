@@ -160,6 +160,13 @@ export default {
 			required: true,
 		},
 		/**
+		 * Specifies if the message can be replied to.
+		 */
+		isReplyable: {
+			type: Boolean,
+			required: true,
+		},
+		/**
 		 * The conversation token.
 		 */
 		token: {
@@ -191,11 +198,6 @@ export default {
 		},
 		quote() {
 			return this.parent && this.$store.getters.message(this.token, this.parent)
-		},
-
-		isReplyable() {
-			return (this.actorType === 'users' || this.actorType === 'guests')
-				&& !this.systemMessage
 		},
 
 		isSingleEmoji() {

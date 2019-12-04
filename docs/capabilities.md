@@ -37,3 +37,7 @@ title: Capabilities
 * `chat-read-marker` - The chat can be optionally marked read by clients manually, independent from the loading of the chat messages.
 * `webinary-lobby` - See [Webinary management](webinary.md) for technical details.
 * `start-call-flag` - Only moderators or users might be able to start calls.
+
+
+## 8.0
+* `chat-replies` - Normal chat messages can now be replied to. Check the `isReplyable` parameter on the message object.

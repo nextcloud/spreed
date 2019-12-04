@@ -143,9 +143,6 @@ class ChatControllerTest extends TestCase {
 
 	public function testSendMessageByUser() {
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getToken')
-			->willReturn('testToken');
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -166,32 +163,23 @@ class ChatControllerTest extends TestCase {
 
 		$chatMessage = $this->createMock(Message::class);
 		$chatMessage->expects($this->once())
-			->method('getActorType')
-			->willReturn('user');
-		$chatMessage->expects($this->once())
-			->method('getActorId')
-			->willReturn($this->userId);
-		$chatMessage->expects($this->once())
-			->method('getActorDisplayName')
-			->willReturn('displayName');
-		$chatMessage->expects($this->once())
-			->method('getMessage')
-			->willReturn('parsedMessage');
-		$chatMessage->expects($this->once())
-			->method('getMessageParameters')
-			->willReturn(['arg' => 'uments']);
-		$chatMessage->expects($this->exactly(2))
-			->method('getMessageType')
-			->willReturn('comment');
-		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
-		$chatMessage->expects($this->exactly(2))
-			->method('getComment')
-			->willReturn($comment);
 		$chatMessage->expects($this->once())
-			->method('getRoom')
-			->willReturn($this->room);
+			->method('toArray')
+			->willReturn([
+				'id' => 42,
+				'token' => 'testToken',
+				'actorType' => 'users',
+				'actorId' => $this->userId,
+				'actorDisplayName' => 'displayName',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage',
+				'messageParameters' => ['arg' => 'uments'],
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+			]);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
@@ -208,7 +196,7 @@ class ChatControllerTest extends TestCase {
 		$expected = new DataResponse([
 			'id' => 42,
 			'token' => 'testToken',
-			'actorType' => 'user',
+			'actorType' => 'users',
 			'actorId' => $this->userId,
 			'actorDisplayName' => 'displayName',
 			'timestamp' => $date->getTimestamp(),
@@ -216,6 +204,7 @@ class ChatControllerTest extends TestCase {
 			'messageParameters' => ['arg' => 'uments'],
 			'systemMessage' => '',
 			'messageType' => 'comment',
+			'isReplyable' => true,
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -223,9 +212,6 @@ class ChatControllerTest extends TestCase {
 
 	public function testSendReplyByUser() {
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->exactly(2))
-			->method('getToken')
-			->willReturn('testToken');
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -233,10 +219,10 @@ class ChatControllerTest extends TestCase {
 			->willReturn($date);
 
 		/** @var IComment|MockObject $comment */
-		$parent = $this->newComment(23, 'user', $this->userId . '2', $date, 'testMessage original');
+		$parent = $this->newComment(23, 'users', $this->userId . '2', $date, 'testMessage original');
 
 		/** @var IComment|MockObject $comment */
-		$comment = $this->newComment(42, 'user', $this->userId, $date, 'testMessage');
+		$comment = $this->newComment(42, 'users', $this->userId, $date, 'testMessage');
 		$this->chatManager->expects($this->once())
 			->method('sendMessage')
 			->with($this->room,
@@ -255,58 +241,43 @@ class ChatControllerTest extends TestCase {
 
 		$parentMessage = $this->createMock(Message::class);
 		$parentMessage->expects($this->once())
-			->method('getActorType')
-			->willReturn('user');
+			->method('isReplyable')
+			->willReturn(true);
 		$parentMessage->expects($this->once())
-			->method('getActorId')
-			->willReturn($this->userId . '2');
-		$parentMessage->expects($this->once())
-			->method('getActorDisplayName')
-			->willReturn('displayName2');
-		$parentMessage->expects($this->once())
-			->method('getMessage')
-			->willReturn('parsedMessage2');
-		$parentMessage->expects($this->once())
-			->method('getMessageParameters')
-			->willReturn(['arg' => 'uments2']);
-		$parentMessage->expects($this->exactly(4))
-			->method('getMessageType')
-			->willReturn('comment');
-		$parentMessage->expects($this->exactly(2))
-			->method('getComment')
-			->willReturn($parent);
-		$parentMessage->expects($this->once())
-			->method('getRoom')
-			->willReturn($this->room);
+			->method('toArray')
+			->willReturn([
+				'id' => 23,
+				'token' => 'testToken',
+				'actorType' => 'users',
+				'actorId' => $this->userId . '2',
+				'actorDisplayName' => 'displayName2',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage2',
+				'messageParameters' => ['arg' => 'uments2'],
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+			]);
 
 		$chatMessage = $this->createMock(Message::class);
 		$chatMessage->expects($this->once())
-			->method('getActorType')
-			->willReturn('user');
-		$chatMessage->expects($this->once())
-			->method('getActorId')
-			->willReturn($this->userId);
-		$chatMessage->expects($this->once())
-			->method('getActorDisplayName')
-			->willReturn('displayName');
-		$chatMessage->expects($this->once())
-			->method('getMessage')
-			->willReturn('parsedMessage');
-		$chatMessage->expects($this->once())
-			->method('getMessageParameters')
-			->willReturn(['arg' => 'uments']);
-		$chatMessage->expects($this->exactly(2))
-			->method('getMessageType')
-			->willReturn('comment');
-		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
-		$chatMessage->expects($this->exactly(2))
-			->method('getComment')
-			->willReturn($comment);
 		$chatMessage->expects($this->once())
-			->method('getRoom')
-			->willReturn($this->room);
+			->method('toArray')
+			->willReturn([
+				'id' => 42,
+				'token' => 'testToken',
+				'actorType' => 'users',
+				'actorId' => $this->userId,
+				'actorDisplayName' => 'displayName',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage',
+				'messageParameters' => ['arg' => 'uments'],
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+			]);
 
 		$this->messageParser->expects($this->exactly(2))
 			->method('createMessage')
@@ -326,7 +297,7 @@ class ChatControllerTest extends TestCase {
 		$expected = new DataResponse([
 			'id' => 42,
 			'token' => 'testToken',
-			'actorType' => 'user',
+			'actorType' => 'users',
 			'actorId' => $this->userId,
 			'actorDisplayName' => 'displayName',
 			'timestamp' => $date->getTimestamp(),
@@ -334,10 +305,11 @@ class ChatControllerTest extends TestCase {
 			'messageParameters' => ['arg' => 'uments'],
 			'systemMessage' => '',
 			'messageType' => 'comment',
+			'isReplyable' => true,
 			'parent' => [
 				'id' => 23,
 				'token' => 'testToken',
-				'actorType' => 'user',
+				'actorType' => 'users',
 				'actorId' => $this->userId . '2',
 				'actorDisplayName' => 'displayName2',
 				'timestamp' => $date->getTimestamp(),
@@ -345,49 +317,14 @@ class ChatControllerTest extends TestCase {
 				'messageParameters' => ['arg' => 'uments2'],
 				'systemMessage' => '',
 				'messageType' => 'comment',
-			]
+				'isReplyable' => true,
+			],
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
 	}
 
-	public function testSendReplyByUserToCommand() {
-		$participant = $this->createMock(Participant::class);
-
-		$date = new \DateTime();
-		/** @var IComment|MockObject $comment */
-		$parent = $this->newComment(23, 'user', $this->userId . '2', $date, 'testMessage original');
-
-		$this->chatManager->expects($this->never())
-			->method('sendMessage');
-		$this->chatManager->expects($this->once())
-			->method('getParentComment')
-			->with($this->room, 23)
-			->willReturn($parent);
-
-		$parentMessage = $this->createMock(Message::class);
-		$parentMessage->expects($this->exactly(2))
-			->method('getMessageType')
-			->willReturn('command');
-
-		$this->messageParser->expects($this->once())
-			->method('createMessage')
-			->with($this->room, $participant, $parent, $this->l)
-			->willReturn($parentMessage);
-
-		$this->messageParser->expects($this->once())
-			->method('parseMessage')
-			->with($parentMessage);
-
-		$this->controller->setRoom($this->room);
-		$this->controller->setParticipant($participant);
-		$response = $this->controller->sendMessage('testMessage', '', 23);
-		$expected = new DataResponse([], Http::STATUS_BAD_REQUEST);
-
-		$this->assertEquals($expected, $response);
-	}
-
-	public function testSendReplyByUserToSystemMessage() {
+	public function testSendReplyByUserToNotReplyable() {
 		$participant = $this->createMock(Participant::class);
 
 		$date = new \DateTime();
@@ -403,8 +340,8 @@ class ChatControllerTest extends TestCase {
 
 		$parentMessage = $this->createMock(Message::class);
 		$parentMessage->expects($this->once())
-			->method('getMessageType')
-			->willReturn('system');
+			->method('isReplyable')
+			->willReturn(false);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
@@ -425,9 +362,6 @@ class ChatControllerTest extends TestCase {
 
 	public function testSendMessageByUserNotJoinedButInRoom() {
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->once())
-			->method('getToken')
-			->willReturn('testToken');
 
 		$date = new \DateTime();
 		$this->timeFactory->expects($this->once())
@@ -448,32 +382,23 @@ class ChatControllerTest extends TestCase {
 
 		$chatMessage = $this->createMock(Message::class);
 		$chatMessage->expects($this->once())
-			->method('getActorType')
-			->willReturn('user');
-		$chatMessage->expects($this->once())
-			->method('getActorId')
-			->willReturn($this->userId);
-		$chatMessage->expects($this->once())
-			->method('getActorDisplayName')
-			->willReturn('displayName');
-		$chatMessage->expects($this->once())
-			->method('getMessage')
-			->willReturn('parsedMessage2');
-		$chatMessage->expects($this->once())
-			->method('getMessageParameters')
-			->willReturn(['arg' => 'uments2']);
-		$chatMessage->expects($this->exactly(2))
-			->method('getMessageType')
-			->willReturn('comment');
-		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
-		$chatMessage->expects($this->exactly(2))
-			->method('getComment')
-			->willReturn($comment);
 		$chatMessage->expects($this->once())
-			->method('getRoom')
-			->willReturn($this->room);
+			->method('toArray')
+			->willReturn([
+				'id' => 23,
+				'token' => 'testToken',
+				'actorType' => 'users',
+				'actorId' => $this->userId,
+				'actorDisplayName' => 'displayName',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage2',
+				'messageParameters' => ['arg' => 'uments2'],
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+			]);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
@@ -490,7 +415,7 @@ class ChatControllerTest extends TestCase {
 		$expected = new DataResponse([
 			'id' => 23,
 			'token' => 'testToken',
-			'actorType' => 'user',
+			'actorType' => 'users',
 			'actorId' => $this->userId,
 			'actorDisplayName' => 'displayName',
 			'timestamp' => $date->getTimestamp(),
@@ -498,6 +423,7 @@ class ChatControllerTest extends TestCase {
 			'messageParameters' => ['arg' => 'uments2'],
 			'systemMessage' => '',
 			'messageType' => 'comment',
+			'isReplyable' => true,
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -513,7 +439,7 @@ class ChatControllerTest extends TestCase {
 			->willReturn('testSpreedSession');
 
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->exactly(2))
+		$this->room->expects($this->once())
 			->method('getToken')
 			->willReturn('testToken');
 
@@ -536,32 +462,23 @@ class ChatControllerTest extends TestCase {
 
 		$chatMessage = $this->createMock(Message::class);
 		$chatMessage->expects($this->once())
-			->method('getActorType')
-			->willReturn('guest');
-		$chatMessage->expects($this->once())
-			->method('getActorId')
-			->willReturn(sha1('testSpreedSession'));
-		$chatMessage->expects($this->once())
-			->method('getActorDisplayName')
-			->willReturn('guest name');
-		$chatMessage->expects($this->once())
-			->method('getMessage')
-			->willReturn('parsedMessage3');
-		$chatMessage->expects($this->once())
-			->method('getMessageParameters')
-			->willReturn(['arg' => 'uments3']);
-		$chatMessage->expects($this->exactly(2))
-			->method('getMessageType')
-			->willReturn('comment');
-		$chatMessage->expects($this->once())
 			->method('getVisibility')
 			->willReturn(true);
-		$chatMessage->expects($this->exactly(2))
-			->method('getComment')
-			->willReturn($comment);
 		$chatMessage->expects($this->once())
-			->method('getRoom')
-			->willReturn($this->room);
+			->method('toArray')
+			->willReturn([
+				'id' => 64,
+				'token' => 'testToken',
+				'actorType' => 'guests',
+				'actorId' => sha1('testSpreedSession'),
+				'actorDisplayName' => 'guest name',
+				'timestamp' => $date->getTimestamp(),
+				'message' => 'parsedMessage3',
+				'messageParameters' => ['arg' => 'uments3'],
+				'systemMessage' => '',
+				'messageType' => 'comment',
+				'isReplyable' => true,
+			]);
 
 		$this->messageParser->expects($this->once())
 			->method('createMessage')
@@ -578,7 +495,7 @@ class ChatControllerTest extends TestCase {
 		$expected = new DataResponse([
 			'id' => 64,
 			'token' => 'testToken',
-			'actorType' => 'guest',
+			'actorType' => 'guests',
 			'actorId' => $comment->getActorId(),
 			'actorDisplayName' => 'guest name',
 			'timestamp' => $date->getTimestamp(),
@@ -586,6 +503,7 @@ class ChatControllerTest extends TestCase {
 			'messageParameters' => ['arg' => 'uments3'],
 			'systemMessage' => '',
 			'messageType' => 'comment',
+			'isReplyable' => true,
 		], Http::STATUS_CREATED);
 
 		$this->assertEquals($expected, $response);
@@ -605,9 +523,6 @@ class ChatControllerTest extends TestCase {
 			]);
 
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->exactly(4))
-			->method('getToken')
-			->willReturn('testToken');
 
 		$i = 4;
 		$this->messageParser->expects($this->exactly(4))
@@ -621,32 +536,23 @@ class ChatControllerTest extends TestCase {
 			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
-					->method('getActorType')
-					->willReturn($comment->getActorType());
-				$chatMessage->expects($this->once())
-					->method('getActorId')
-					->willReturn($comment->getActorId());
-				$chatMessage->expects($this->once())
-					->method('getActorDisplayName')
-					->willReturn('User' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessage')
-					->willReturn('testMessage' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessageParameters')
-					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->exactly(2))
-					->method('getMessageType')
-					->willReturn('comment');
-				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
-				$chatMessage->expects($this->atLeastOnce())
-					->method('getComment')
-					->willReturn($comment);
 				$chatMessage->expects($this->once())
-					->method('getRoom')
-					->willReturn($room);
+					->method('toArray')
+					->willReturn([
+						'id' => $comment->getId(),
+						'token' => 'testToken',
+						'actorType' => $comment->getActorType(),
+						'actorId' => $comment->getActorId(),
+						'actorDisplayName' => 'User' . $i,
+						'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+						'message' => 'testMessage' . $i,
+						'messageParameters' => ['testMessageParameters' . $i],
+						'systemMessage' => '',
+						'messageType' => 'comment',
+						'isReplyable' => true,
+					]);
 
 				$i--;
 				return $chatMessage;
@@ -659,10 +565,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment']
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -671,9 +577,6 @@ class ChatControllerTest extends TestCase {
 
 	public function testReceiveMessagesByUserNotJoinedButInRoom() {
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->exactly(4))
-			->method('getToken')
-			->willReturn('testToken');
 
 		$offset = 23;
 		$limit = 4;
@@ -699,32 +602,23 @@ class ChatControllerTest extends TestCase {
 			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
-					->method('getActorType')
-					->willReturn($comment->getActorType());
-				$chatMessage->expects($this->once())
-					->method('getActorId')
-					->willReturn($comment->getActorId());
-				$chatMessage->expects($this->once())
-					->method('getActorDisplayName')
-					->willReturn('User' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessage')
-					->willReturn('testMessage' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessageParameters')
-					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->exactly(2))
-					->method('getMessageType')
-					->willReturn('comment');
-				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
-				$chatMessage->expects($this->atLeastOnce())
-					->method('getComment')
-					->willReturn($comment);
 				$chatMessage->expects($this->once())
-					->method('getRoom')
-					->willReturn($room);
+					->method('toArray')
+					->willReturn([
+						'id' => $comment->getId(),
+						'token' => 'testToken',
+						'actorType' => $comment->getActorType(),
+						'actorId' => $comment->getActorId(),
+						'actorDisplayName' => 'User' . $i,
+						'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+						'message' => 'testMessage' . $i,
+						'messageParameters' => ['testMessageParameters' . $i],
+						'systemMessage' => '',
+						'messageType' => 'comment',
+						'isReplyable' => true,
+					]);
 
 				$i--;
 				return $chatMessage;
@@ -737,10 +631,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment']
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -752,9 +646,6 @@ class ChatControllerTest extends TestCase {
 		$this->recreateChatController();
 
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->exactly(4))
-			->method('getToken')
-			->willReturn('testToken');
 
 		$offset = 23;
 		$limit = 4;
@@ -780,32 +671,23 @@ class ChatControllerTest extends TestCase {
 			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
-					->method('getActorType')
-					->willReturn($comment->getActorType());
-				$chatMessage->expects($this->once())
-					->method('getActorId')
-					->willReturn($comment->getActorId());
-				$chatMessage->expects($this->once())
-					->method('getActorDisplayName')
-					->willReturn('User' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessage')
-					->willReturn('testMessage' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessageParameters')
-					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->exactly(2))
-					->method('getMessageType')
-					->willReturn('comment');
-				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
-				$chatMessage->expects($this->atLeastOnce())
-					->method('getComment')
-					->willReturn($comment);
 				$chatMessage->expects($this->once())
-					->method('getRoom')
-					->willReturn($room);
+					->method('toArray')
+					->willReturn([
+						'id' => $comment->getId(),
+						'token' => 'testToken',
+						'actorType' => $comment->getActorType(),
+						'actorId' => $comment->getActorId(),
+						'actorDisplayName' => 'User' . $i,
+						'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+						'message' => 'testMessage' . $i,
+						'messageParameters' => ['testMessageParameters' . $i],
+						'systemMessage' => '',
+						'messageType' => 'comment',
+						'isReplyable' => true,
+					]);
 
 				$i--;
 				return $chatMessage;
@@ -818,10 +700,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(0, $limit, $offset);
 		$expected = new DataResponse([
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment']
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true]
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 108);
 
@@ -835,9 +717,6 @@ class ChatControllerTest extends TestCase {
 			->willReturn('testUser');
 
 		$participant = $this->createMock(Participant::class);
-		$this->room->expects($this->exactly(4))
-			->method('getToken')
-			->willReturn('testToken');
 
 		$offset = 23;
 		$limit = 4;
@@ -869,32 +748,23 @@ class ChatControllerTest extends TestCase {
 			->willReturnCallback(function($room, $participant, IComment $comment, $l) use (&$i) {
 				$chatMessage = $this->createMock(Message::class);
 				$chatMessage->expects($this->once())
-					->method('getActorType')
-					->willReturn($comment->getActorType());
-				$chatMessage->expects($this->once())
-					->method('getActorId')
-					->willReturn($comment->getActorId());
-				$chatMessage->expects($this->once())
-					->method('getActorDisplayName')
-					->willReturn('User' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessage')
-					->willReturn('testMessage' . $i);
-				$chatMessage->expects($this->once())
-					->method('getMessageParameters')
-					->willReturn(['testMessageParameters' . $i]);
-				$chatMessage->expects($this->exactly(2))
-					->method('getMessageType')
-					->willReturn('comment');
-				$chatMessage->expects($this->once())
 					->method('getVisibility')
 					->willReturn(true);
-				$chatMessage->expects($this->atLeastOnce())
-					->method('getComment')
-					->willReturn($comment);
 				$chatMessage->expects($this->once())
-					->method('getRoom')
-					->willReturn($room);
+					->method('toArray')
+					->willReturn([
+						'id' => $comment->getId(),
+						'token' => 'testToken',
+						'actorType' => $comment->getActorType(),
+						'actorId' => $comment->getActorId(),
+						'actorDisplayName' => 'User' . $i,
+						'timestamp' => $comment->getCreationDateTime()->getTimestamp(),
+						'message' => 'testMessage' . $i,
+						'messageParameters' => ['testMessageParameters' . $i],
+						'systemMessage' => '',
+						'messageType' => 'comment',
+						'isReplyable' => true,
+					]);
 
 				$i++;
 				return $chatMessage;
@@ -907,10 +777,10 @@ class ChatControllerTest extends TestCase {
 		$this->controller->setParticipant($participant);
 		$response = $this->controller->receiveMessages(1, $limit, $offset, $timeout);
 		$expected = new DataResponse([
-			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment'],
-			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment'],
+			['id'=>108, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User1', 'timestamp'=>1000000004, 'message'=>'testMessage1', 'messageParameters'=>['testMessageParameters1'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>109, 'token'=>'testToken', 'actorType'=>'guests', 'actorId'=>'testSpreedSession', 'actorDisplayName'=>'User2', 'timestamp'=>1000000008, 'message'=>'testMessage2', 'messageParameters'=>['testMessageParameters2'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>110, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUnknownUser', 'actorDisplayName'=>'User3', 'timestamp'=>1000000015, 'message'=>'testMessage3', 'messageParameters'=>['testMessageParameters3'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
+			['id'=>111, 'token'=>'testToken', 'actorType'=>'users', 'actorId'=>'testUser', 'actorDisplayName'=>'User4', 'timestamp'=>1000000016, 'message'=>'testMessage4', 'messageParameters'=>['testMessageParameters4'], 'systemMessage' => '', 'messageType' => 'comment', 'isReplyable' => true],
 		], Http::STATUS_OK);
 		$expected->addHeader('X-Chat-Last-Given', 111);
 

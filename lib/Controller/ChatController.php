@@ -161,7 +161,7 @@ class ChatController extends AEnvironmentAwareController {
 
 			$parentMessage = $this->messageParser->createMessage($this->room, $this->participant, $parent, $this->l);
 			$this->messageParser->parseMessage($parentMessage);
-			if ($parentMessage->getMessageType() === 'system' || $parentMessage->getMessageType() === 'command') {
+			if (!$parentMessage->isReplyable()) {
 				return new DataResponse([], Http::STATUS_BAD_REQUEST);
 			}
 		}
@@ -184,9 +184,9 @@ class ChatController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_CREATED);
 		}
 
-		$data = $this->messageToData($chatMessage);
+		$data = $chatMessage->toArray();
 		if ($parentMessage instanceof Message) {
-			$data['parent'] = $this->messageToData($parentMessage);
+			$data['parent'] = $parentMessage->toArray();
 		}
 		return new DataResponse($data, Http::STATUS_CREATED);
 	}
@@ -289,7 +289,7 @@ class ChatController extends AEnvironmentAwareController {
 				$parentIds[$id] = $comment->getParentId();
 			}
 
-			$messages[] = $this->messageToData($message);
+			$messages[] = $message->toArray();
 			$commentIdToIndex[$id] = $i;
 			$i++;
 		}
@@ -325,14 +325,15 @@ class ChatController extends AEnvironmentAwareController {
 					$this->messageParser->parseMessage($message);
 
 					if ($message->getVisibility()) {
-						$loadedParents[$parentId] = $this->messageToData($message);
+						$loadedParents[$parentId] = $message->toArray();
 						$messages[$commentKey]['parent'] = $loadedParents[$parentId];
-					} else {
-						$loadedParents[$parentId] = [
-							'id' => $parentId,
-							'deleted' => true,
-						];
+						continue;
 					}
+
+					$loadedParents[$parentId] = [
+						'id' => $parentId,
+						'deleted' => true,
+					];
 				} catch (NotFoundException $e) {
 				}
 			}
@@ -363,21 +364,6 @@ class ChatController extends AEnvironmentAwareController {
 		}
 
 		return $response;
-	}
-
-	protected function messageToData(Message $message): array {
-		return [
-			'id' => (int) $message->getComment()->getId(),
-			'token' => $message->getRoom()->getToken(),
-			'actorType' => $message->getActorType(),
-			'actorId' => $message->getActorId(),
-			'actorDisplayName' => $message->getActorDisplayName(),
-			'timestamp' => $message->getComment()->getCreationDateTime()->getTimestamp(),
-			'message' => $message->getMessage(),
-			'messageParameters' => $message->getMessageParameters(),
-			'systemMessage' => $message->getMessageType() === 'system' ? $message->getMessageRaw() : '',
-			'messageType' => $message->getMessageType(),
-		];
 	}
 
 	/**
