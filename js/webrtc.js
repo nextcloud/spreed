@@ -17,7 +17,7 @@ var spreedPeerConnectionTable = [];
 	var ownScreenPeer = null;
 	var hasLocalMedia = false;
 	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
-	var delayedCreatePeer = [];
+	var delayedConnectionToPeer = [];
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -196,6 +196,12 @@ var spreedPeerConnectionTable = [];
 				if (useMcu) {
 					// TODO(jojo): Already create peer object to avoid duplicate offers.
 					webrtc.connection.requestOffer(user, "video");
+
+					delayedConnectionToPeer[user.sessionId] = setInterval(function() {
+						console.log('No offer received for new peer, request offer again');
+
+						webrtc.connection.requestOffer(user, 'video');
+					}, 10000);
 				} else if (userHasStreams(selfInCall) && (!userHasStreams(user) || sessionId < currentSessionId)) {
 					// To avoid overloading the user joining a room (who previously called
 					// all the other participants), we decide who calls who by comparing
@@ -209,7 +215,19 @@ var spreedPeerConnectionTable = [];
 					// offer in a reasonable time, the current peer calls the
 					// remote peer instead of waiting to be called to
 					// reestablish the connection.
-					delayedCreatePeer[sessionId] = setTimeout(function() {
+					delayedConnectionToPeer[sessionId] = setInterval(function() {
+						// New offers are periodically sent until a connection
+						// is established. As an offer can not be sent again
+						// from an existing peer it must be removed and a new
+						// one must be created from scratch.
+						webrtc.webrtc.getPeers(sessionId, 'video').forEach(function(peer) {
+							peer.end();
+
+							OCA.SpreedMe.speakers.remove(peer.id, true);
+							OCA.SpreedMe.videos.remove(peer.id);
+						});
+
+						console.log("No offer nor answer received, sending offer again");
 						createPeer();
 					}, 10000);
 				}
@@ -228,9 +246,9 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete spreedMappingTable[sessionId];
 			delete guestNamesTable[sessionId];
-			if (delayedCreatePeer[sessionId]) {
-				clearTimeout(delayedCreatePeer[sessionId]);
-				delete delayedCreatePeer[sessionId];
+			if (delayedConnectionToPeer[sessionId]) {
+				clearInterval(delayedConnectionToPeer[sessionId]);
+				delete delayedConnectionToPeer[sessionId];
 			}
 		});
 
@@ -326,6 +344,13 @@ var spreedPeerConnectionTable = [];
 		});
 
 		signaling.on('message', function (message) {
+			if (message.type === 'answer' && message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
+				clearInterval(delayedConnectionToPeer[message.from]);
+				delete delayedConnectionToPeer[message.from];
+
+				return;
+			}
+
 			if (message.type !== 'offer') {
 				return;
 			}
@@ -348,9 +373,9 @@ var spreedPeerConnectionTable = [];
 				}
 			}
 
-			if (message.roomType === 'video' && delayedCreatePeer[message.from]) {
-				clearTimeout(delayedCreatePeer[message.from]);
-				delete delayedCreatePeer[message.from];
+			if (message.roomType === 'video' && delayedConnectionToPeer[message.from]) {
+				clearInterval(delayedConnectionToPeer[message.from]);
+				delete delayedConnectionToPeer[message.from];
 			}
 
 			if (!selfInCall) {
@@ -594,6 +619,16 @@ var spreedPeerConnectionTable = [];
 
 									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED_NO_RESTART);
 								}
+							} else {
+								console.log('Request offer again');
+
+								signaling.requestOffer(peer.id, 'video');
+
+								delayedConnectionToPeer[peer.id] = setInterval(function() {
+									console.log('No offer received, request offer again');
+
+									signaling.requestOffer(peer.id, 'video');
+								}, 10000);
 							}
 							break;
 						case 'closed':
