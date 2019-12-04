@@ -68,7 +68,7 @@ export default {
 			return imagePath('core', 'filetypes/file')
 		},
 		previewUrl() {
-			if (this.data['preview-available'] !== 'yes' || this.$store.getters.getUserId() !== null) {
+			if (this.data['preview-available'] !== 'yes' || this.$store.getters.getUserId() === null) {
 				return OC.MimeType.getIconUrl(this.data.mimetype)
 			}
 
