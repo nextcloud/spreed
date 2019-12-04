@@ -94,7 +94,6 @@ export default {
 							Vue.set(item, 'selected', false)
 						}
 					})
-					console.log(participants)
 					return participants
 				} else {
 					return []

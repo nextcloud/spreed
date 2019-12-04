@@ -20,15 +20,15 @@
 -->
 
 <template>
-	<div>
-		<span>
-			<input 
-				type="checkbox"
-				class="conversation-type"
-				@input="handleInput" />
-			{{t('spreed', 'make ')}}<strong>{{conversationDisplayName}}</strong>{{t('spreed', ' public')}}
-		</span>
-		<p v-if="value">{{t('spreed', 'You will get a link to share this conversation.')}}</p>
+	<div class="conversation-type">
+		<input
+			type="checkbox"
+			class="checkbox"
+			@input="handleInput">
+		<label class="conversation-type__label">{{ t('spreed', 'Make ') }}<strong>{{ conversationDisplayName }}</strong>{{ t('spreed', ' public') }}</label>
+		<p class="conversation-type__hint">
+			{{ t('spreed', `If checked, you will get a link that will allow you to share this conversation with unregistered users once the conversation is created.`) }}
+		</p>
 	</div>
 </template>
 
@@ -44,7 +44,7 @@ export default {
 		conversationName: {
 			type: String,
 			default: t('spreed', 'your conversation'),
-		}
+		},
 	},
 	computed: {
 		conversationDisplayName() {
@@ -58,12 +58,20 @@ export default {
 	methods: {
 		handleInput(event) {
 			this.$emit('input', event.target.checked)
-		}
-	}
+		},
+	},
 
 }
 
 </script>
 
 <style lang="scss" scoped>
+
+.conversation-type {
+	margin: 20px 0;
+	&__hint {
+		padding: 10px 0;
+		color: var(--color-text-light)
+	}
+}
 </style>

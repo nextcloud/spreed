@@ -22,42 +22,57 @@
 <template>
 	<div>
 		<Actions>
-			<ActionButton icon="icon-add" @click="showModal" />
+			<ActionButton
+				icon="icon-add"
+				@click="showModal" />
 		</Actions>
-		<Modal v-if="modal" size="full" @close="closeModal">
-			<div class="wrapper">
-				<div class="content">
-					<template v-if="page === 0">
+		<Modal
+			v-if="modal"
+			size="full"
+			@close="closeModal">
+			<div
+				class="new-group-conversation">
+				<div
+					class="new-group-conversation__content">
+					<template
+						v-if="page === 0">
 						<SetConversationName
 							v-model="conversationName"
+							@input="handleInput"
 							@setConversationName="handleSetConversationName" />
-						<p v-if="hint !== ''">{{hint}}</p>
-						<SetConversationType 
-							v-model="checked" 
-							:conversationName="conversationName"/>
+						<p
+							v-if="hint !== ''"
+							class="warning">
+							{{ hint }}
+						</p>
+						<SetConversationType
+							v-model="checked"
+							:conversation-name="conversationName" />
 					</template>
 					<template v-if="page === 1">
-						<SetContacts />
+						<SetContacts
+							:conversation-name="conversationName" />
 					</template>
 				</div>
-				<div class="navigation">
+				<div
+					class="navigation">
 					<button
 						v-if="page===1"
 						class="navigation__button-left"
 						@click="handleClickBack">
-						{{t('spreed', 'Back')}}
+						{{ t('spreed', 'Back') }}
 					</button>
 					<button
 						v-if="page===0"
 						class="navigation__button-right primary"
 						@click="handleClickForward">
-						{{t('spreed', 'Next')}}
+						{{ t('spreed', 'Next') }}
 					</button>
 					<button
 						v-if="page===1"
 						class="navigation__button-right primary"
 						@click="handleCreateConversation">
-						{{t('spreed', 'Create conversation')}}
+						{{ t('spreed', 'Create conversation') }}
 					</button>
 				</div>
 			</div>
@@ -74,7 +89,6 @@ import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
 
-
 export default {
 
 	name: 'NewGroupConversation',
@@ -85,7 +99,7 @@ export default {
 		ActionButton,
 		SetContacts,
 		SetConversationName,
-		SetConversationType
+		SetConversationType,
 	},
 
 	data() {
@@ -107,24 +121,29 @@ export default {
 		},
 		handleSetConversationName(event) {
 			console.log(event)
-			this.conversationName = event
 			this.page = 1
 		},
 		handleClickForward() {
 			if (this.page === 0) {
 				if (this.conversationName !== '') {
 					this.page = 1
+					this.hint = ''
 				} else if (this.conversationName === '') {
-					this.hint = t('spreed', 'Please enter a valid group name')
+					this.hint = t('spreed', 'Please enter a valid conversation name')
 				}
-			}		
+			}
 		},
 		handleClickBack() {
-			this.page = 0 
+			this.page = 0
 		},
 		handleCreateConversation() {
 			return true
-		}
+		},
+		handleInput() {
+			if (this.conversationName !== '') {
+				this.hint = ''
+			}
+		},
 	},
 
 }
@@ -132,18 +151,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.wrapper {
+
+.new-group-conversation {
 	width: 300px;
-	height: 450px;
+	height: 400px;
 	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
+	&__content {
+		margin-bottom: 20px;
+	}
 }
-
-.content {
+.hint{
+	color: var(--color-)
 }
-
 .navigation {
 	display: flex;
 	&__button-right {

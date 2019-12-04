@@ -20,19 +20,22 @@
 -->
 
 <template>
-	<div>
-		<SearchBox
+	<div class="set-contacts">
+		<input
+			class="set-contacts__input"
+			type="text"
+			autofocus
 			v-model="searchText"
-			:placeholder-text="t('spreed', 'Add participants to the conversation')"
+			:placeholder="t('spreed', `Search Participants`)"
 			@input="handleInput" />
 		<template>
 			<Caption
-				:title="t('spreed', 'Add participants')" />
+				:title="t('spreed', `Select participants to add to ${conversationName}`)" />
 			<ParticipantsList
 				:add-on-click="false"
 				:items="searchResults"
 				@refreshCurrentParticipants="getParticipants" />
-			<Hint :hint="t('spreed', 'Loading')" />
+			<Hint v-if="false" :hint="t('spreed', 'Loading')" />
 			<Hint :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
@@ -42,7 +45,6 @@
 import Caption from '../../../../Caption'
 import Hint from '../../../../Hint'
 import ParticipantsList from '../../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
-import SearchBox from '../../SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../../../constants'
@@ -52,10 +54,16 @@ import { fetchParticipants } from '../../../../../services/participantsService'
 export default {
 	name: 'SetContacts',
 	components: {
-		SearchBox,
 		Caption,
 		Hint,
 		ParticipantsList,
+	},
+
+	props: {
+		conversationName: {
+			type: String,
+			required: true,
+		}
 	},
 
 	data() {
@@ -176,18 +184,15 @@ export default {
 }
 </script>
 
-<style scoped>
-
-/** TODO: fix these in the nextcloud-vue library **/
-
-::v-deep .app-sidebar-header__menu {
-	top: 6px !important;
-	margin-top: 0 !important;
-	right: 54px !important;
-}
-::v-deep .app-sidebar__close {
-	top: 6px !important;
-	right: 6px !important;
+<style lang="scss" scoped>
+.set-contacts {
+	&__input {
+		width: 100%;
+		outline: none;
+		border: none;
+		font-size: 16px;
+		padding-left: 0;
+	}
 }
 
 </style>

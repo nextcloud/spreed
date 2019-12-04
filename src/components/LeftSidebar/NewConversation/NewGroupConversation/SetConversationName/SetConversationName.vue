@@ -21,12 +21,12 @@
 
 <template>
 	<div class="set-conversation-name">
-		<input 
+		<input
 			type="text"
 			autofocus
 			class="conversation-name"
-			@input="handleInput"
-			:placeholder="t('spreed', 'Choose a conversation name')" />
+			:placeholder="t('spreed', 'Choose a conversation name')"
+			@input="handleInput">
 	</div>
 </template>
 
@@ -38,14 +38,14 @@ export default {
 		value: {
 			type: String,
 			required: true,
-		}
+		},
 	},
 
 	methods: {
 		handleInput(event) {
 			this.$emit('input', event.target.value)
-		}
-	}
+		},
+	},
 
 }
 
@@ -53,13 +53,13 @@ export default {
 
 <style lang="scss" scoped>
 .set-conversation-name {
-	margin-bottom: 30px;
 }
 
 .conversation-name {
 	width: 100%;
 	outline: none;
 	border: none;
-	font-size: 15px;
+	font-size: 16px;
+	padding-left: 0;
 }
 </style>
