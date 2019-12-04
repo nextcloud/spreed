@@ -1184,21 +1184,12 @@ var spreedPeerConnectionTable = [];
 		});
 
 		// a peer was removed
-		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
-			if (peer) {
-				if (peer.type === 'video') {
-					// a removed peer can't speak anymore ;)
-					OCA.SpreedMe.speakers.remove(peer.id, true);
-				} else if (peer.type === 'screen') {
-					OCA.SpreedMe.sharedScreens.remove(peer.id);
-				}
-			} else if (video.id === 'localScreen') {
-				// SimpleWebRTC notifies about stopped screensharing through
-				// the generic "videoRemoved" API, but the stream must be
-				// handled differently.
-				OCA.SpreedMe.webrtc.emit('localScreenStopped');
-
-				OCA.SpreedMe.sharedScreens.remove(OCA.SpreedMe.webrtc.connection.getSessionid());
+		OCA.SpreedMe.webrtc.on('peerStreamRemoved', function(peer) {
+			if (peer.type === 'video') {
+				// a removed peer can't speak anymore ;)
+				OCA.SpreedMe.speakers.remove(peer.id, true);
+			} else if (peer.type === 'screen' && !peer.sharemyscreen) {
+				OCA.SpreedMe.sharedScreens.remove(peer.id);
 			}
 		});
 
@@ -1266,23 +1257,23 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('localScreenStopped', function() {
 			var signaling = OCA.SpreedMe.app.signaling;
+
+			OCA.SpreedMe.sharedScreens.remove(signaling.getSessionid());
+
 			if (!signaling.hasFeature('mcu')) {
 				// Only need to notify clients here if running with MCU.
 				// Otherwise SimpleWebRTC will notify each client on its own.
 				return;
 			}
 
-			var currentSessionId = signaling.getSessionid();
-			OCA.SpreedMe.webrtc.getPeers().forEach(function(existingPeer) {
-				if (ownScreenPeer && existingPeer.type === 'screen' && existingPeer.id === currentSessionId) {
-					ownScreenPeer = null;
-					existingPeer.end();
-					signaling.sendRoomMessage({
-						roomType: 'screen',
-						type: 'unshareScreen'
-					});
-				}
-			});
+			if (ownScreenPeer) {
+				ownScreenPeer = null;
+
+				signaling.sendRoomMessage({
+					roomType: 'screen',
+					type: 'unshareScreen'
+				});
+			}
 		});
 
 		// Peer changed nick
