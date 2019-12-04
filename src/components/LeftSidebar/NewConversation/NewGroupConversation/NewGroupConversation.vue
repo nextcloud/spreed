@@ -27,11 +27,18 @@
 		<Modal v-if="modal" size="full" @close="closeModal">
 			<div class="wrapper">
 				<div class="content">
-					<SetConversationName
-						v-if="page === 0"
-						v-model="conversationName"
-						@setConversationName="handleSetConversationName"/>
-					<SetContacts v-else />
+					<template v-if="page === 0">
+						<SetConversationName
+							v-model="conversationName"
+							@setConversationName="handleSetConversationName" />
+						<p v-if="hint !== ''">{{hint}}</p>
+						<SetConversationType 
+							v-model="checked" 
+							:conversationName="conversationName"/>
+					</template>
+					<template v-if="page === 1">
+						<SetContacts />
+					</template>
 				</div>
 				<div class="navigation">
 					<button
@@ -44,7 +51,13 @@
 						v-if="page===0"
 						class="navigation__button-right primary"
 						@click="handleClickForward">
-						{{t('spreed', 'Confirm')}}
+						{{t('spreed', 'Next')}}
+					</button>
+					<button
+						v-if="page===1"
+						class="navigation__button-right primary"
+						@click="handleCreateConversation">
+						{{t('spreed', 'Create conversation')}}
 					</button>
 				</div>
 			</div>
@@ -59,6 +72,8 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
+import SetConversationType from './SetConversationType/SetConversationType'
+
 
 export default {
 
@@ -69,7 +84,8 @@ export default {
 		Actions,
 		ActionButton,
 		SetContacts,
-		SetConversationName
+		SetConversationName,
+		SetConversationType
 	},
 
 	data() {
@@ -77,7 +93,8 @@ export default {
 			modal: false,
 			page: 0,
 			conversationName: '',
-			private: true
+			hint: '',
+			checked: false,
 		}
 	},
 
@@ -97,13 +114,16 @@ export default {
 			if (this.page === 0) {
 				if (this.conversationName !== '') {
 					this.page = 1
-				} else {
-					
+				} else if (this.conversationName === '') {
+					this.hint = t('spreed', 'Please enter a valid group name')
 				}
 			}		
 		},
 		handleClickBack() {
 			this.page = 0 
+		},
+		handleCreateConversation() {
+			return true
 		}
 	},
 
@@ -113,9 +133,9 @@ export default {
 
 <style lang="scss" scoped>
 .wrapper {
-	width: 350px;
-	height: 500px;
-	padding: 10px;
+	width: 300px;
+	height: 450px;
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -125,8 +145,9 @@ export default {
 }
 
 .navigation {
+	display: flex;
 	&__button-right {
-		justify-self: flex-end;
+		margin-left:auto;
 	}
 }
 </style>

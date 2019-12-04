@@ -20,30 +20,44 @@
 -->
 
 <template>
-	<div class="set-conversation-name">
-		<input 
-			type="text"
-			autofocus
-			class="conversation-name"
-			@input="handleInput"
-			:placeholder="t('spreed', 'Choose a conversation name')" />
+	<div>
+		<span>
+			<input 
+				type="checkbox"
+				class="conversation-type"
+				@input="handleInput" />
+			{{t('spreed', 'make ')}}<strong>{{conversationDisplayName}}</strong>{{t('spreed', ' public')}}
+		</span>
+		<p v-if="value">{{t('spreed', 'You will get a link to share this conversation.')}}</p>
 	</div>
 </template>
 
 <script>
 
 export default {
-	name: 'SetConversationName',
+	name: 'SetConversationType',
 	props: {
 		value: {
-			type: String,
+			type: Boolean,
 			required: true,
+		},
+		conversationName: {
+			type: String,
+			default: t('spreed', 'your conversation'),
 		}
 	},
-
+	computed: {
+		conversationDisplayName() {
+			if (this.conversationName === '') {
+				return t('spreed', 'your conversation')
+			} else {
+				return this.conversationName
+			}
+		},
+	},
 	methods: {
 		handleInput(event) {
-			this.$emit('input', event.target.value)
+			this.$emit('input', event.target.checked)
 		}
 	}
 
@@ -52,14 +66,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.set-conversation-name {
-	margin-bottom: 30px;
-}
-
-.conversation-name {
-	width: 100%;
-	outline: none;
-	border: none;
-	font-size: 15px;
-}
 </style>
