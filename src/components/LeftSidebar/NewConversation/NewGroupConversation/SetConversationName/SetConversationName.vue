@@ -21,20 +21,13 @@
 
 <template>
 	<div>
+		<p class="title">{{t('spreed', 'Choose your conversation name')}}</p>
 		<input 
 			type="text"
 			class="conversation-name"
-			v-model="conversationName"
+			@input="handleInput"
 			:placeholder="t('spreed', 'Give this group conversation a name')"
 			autofocus/>
-		<p
-			v-if="badInput"
-			class="alert">
-				{{t('spreed', 'bad input')}}
-			</p>
-		<button
-			class="submit"
-			@click="handleClick" />
 	</div>
 </template>
 
@@ -42,29 +35,32 @@
 
 export default {
 	name: 'SetConversationName',
-	data() {
-		return { 
-			conversationName: ''
+	props: {
+		value: {
+			type: String,
+			required: true,
 		}
 	},
 
 	methods: {
-		handleClick() {
-			if (this.conversationName !== '') {
-				this.$emit('setConversationName', )
-			} else {
-				
-			}
-		}
-	},
-
-	computed: {
-		badInput() {
-			return false
+		handleInput(event) {
+			this.$emit('input', event.target.value)
 		}
 	}
+
 }
+
 </script>
 
-<style>
+<style lang="scss">
+
+.title {
+	font-size: 16px;
+}
+
+.conversation-name {
+	width: 100%;
+	outline: none;
+	font-size: 16px;
+}
 </style>

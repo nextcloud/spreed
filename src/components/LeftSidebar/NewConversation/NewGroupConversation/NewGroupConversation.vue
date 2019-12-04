@@ -25,10 +25,29 @@
 			<ActionButton icon="icon-add" @click="showModal" />
 		</Actions>
 		<Modal v-if="modal" size="full" @close="closeModal">
-			<SetConversationName
-				v-if="isSettingName"
-				@setConversationName="handleSetConversationName"/>
-			<SetContacts v-else />
+			<div class="wrapper">
+				<div class="content">
+					<SetConversationName
+						v-if="page === 0"
+						v-model="conversationName"
+						@setConversationName="handleSetConversationName"/>
+					<SetContacts v-else />
+				</div>
+				<div class="navigation">
+					<button
+						v-if="page===1"
+						class="navigation__button-left"
+						@click="handleClickBack">
+						{{t('spreed', 'Back')}}
+					</button>
+					<button
+						v-if="page===0"
+						class="navigation__button-right primary"
+						@click="handleClickForward">
+						{{t('spreed', 'Confirm')}}
+					</button>
+				</div>
+			</div>
 		</modal>
 	</div>
 </template>
@@ -56,8 +75,9 @@ export default {
 	data() {
 		return {
 			modal: false,
-			isSettingName: true,
-			conversationName: ''
+			page: 0,
+			conversationName: '',
+			private: true
 		}
 	},
 
@@ -71,7 +91,19 @@ export default {
 		handleSetConversationName(event) {
 			console.log(event)
 			this.conversationName = event
-			this.isSettingName = false
+			this.page = 1
+		},
+		handleClickForward() {
+			if (this.page === 0) {
+				if (this.conversationName !== '') {
+					this.page = 1
+				} else {
+					
+				}
+			}		
+		},
+		handleClickBack() {
+			this.page = 0 
 		}
 	},
 
@@ -79,10 +111,22 @@ export default {
 
 </script>
 
-<style scoped>
-	.modal__content {
-		width: 50vw;
-		text-align: center;
-		margin: 10vw 0;
+<style lang="scss" scoped>
+.wrapper {
+	width: 350px;
+	height: 500px;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.content {
+}
+
+.navigation {
+	&__button-right {
+		justify-self: flex-end;
 	}
+}
 </style>
