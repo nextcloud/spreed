@@ -77,6 +77,7 @@
 			},
 			'change:stream': '_setStream',
 			'change:audioAvailable': '_setAudioAvailable',
+			'change:speaking': '_setSpeaking',
 			'change:videoAvailable': '_setVideoAvailable',
 			'change:screen': function(model, screen) {
 				this._setScreenAvailable(this.model.get('screen'));
@@ -102,6 +103,7 @@
 			this._setParticipant(this.model.get('userId'), this.model.get('name'));
 			this._setStream(this.model, this.model.get('stream'));
 			this._setAudioAvailable(this.model, this.model.get('audioAvailable'));
+			this._setSpeaking(this.model, this.model.get('speaking'));
 			this._setVideoAvailable(this.model, this.model.get('videoAvailable'));
 			this._setScreenAvailable(this.model.get('screen'));
 
@@ -255,7 +257,6 @@
 				this.getUI('muteIndicator')
 						.removeClass('audio-on')
 						.addClass('audio-off');
-				this.setSpeaking(false);
 
 				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 
@@ -269,8 +270,8 @@
 			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
-		setSpeaking: function(speaking) {
-			this.$el.toggleClass('speaking', speaking);
+		_setSpeaking: function(model, speaking) {
+			this.$el.toggleClass('speaking', speaking || false);
 		},
 
 		/**

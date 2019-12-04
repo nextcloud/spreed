@@ -50,6 +50,7 @@
 			connectionState: ConnectionState.NEW,
 			stream: null,
 			audioAvailable: undefined,
+			speaking: undefined,
 			videoAvailable: undefined,
 			screen: null,
 		},
@@ -67,12 +68,14 @@
 			this._handleMuteBound = this._handleMute.bind(this);
 			this._handleUnmuteBound = this._handleUnmute.bind(this);
 			this._handleExtendedIceConnectionStateChangeBound = this._handleExtendedIceConnectionStateChange.bind(this);
+			this._handleChannelMessageBound = this._handleChannelMessage.bind(this);
 
 			this._webRtc.on('peerStreamAdded', this._handlePeerStreamAddedBound);
 			this._webRtc.on('peerStreamRemoved', this._handlePeerStreamRemovedBound);
 			this._webRtc.on('nick', this._handleNickBound);
 			this._webRtc.on('mute', this._handleMuteBound);
 			this._webRtc.on('unmute', this._handleUnmuteBound);
+			this._webRtc.on('channelMessage', this._handleChannelMessageBound);
 		},
 
 		_handlePeerStreamAdded: function(peer) {
@@ -92,6 +95,7 @@
 			if (this._peer === peer) {
 				this.set('stream', null);
 				this.set('audioAvailable', undefined);
+				this.set('speaking', undefined);
 				this.set('videoAvailable', undefined);
 			} else if (this._screenPeer === peer) {
 				this.set('screen', null);
@@ -116,6 +120,7 @@
 				this.set('videoAvailable', false);
 			} else {
 				this.set('audioAvailable', false);
+				this.set('speaking', false);
 			}
 		},
 
@@ -128,6 +133,22 @@
 				this.set('videoAvailable', true);
 			} else {
 				this.set('audioAvailable', true);
+			}
+		},
+
+		_handleChannelMessage: function(peer, label, data) {
+			if (!this._peer || this._peer.id !== peer.id) {
+				return;
+			}
+
+			if (label !== 'status') {
+				return;
+			}
+
+			if (data.type === 'speaking') {
+				this.set('speaking', true);
+			} else if (data.type === 'stoppedSpeaking') {
+				this.set('speaking', false);
 			}
 		},
 
@@ -146,6 +167,7 @@
 			if (!this._peer) {
 				this.set('connectionState', ConnectionState.COMPLETED);
 				this.set('audioAvailable', false);
+				this.set('speaking', false);
 				this.set('videoAvailable', false);
 
 				return;
@@ -172,11 +194,13 @@
 				case 'new':
 					this.set('connectionState', ConnectionState.NEW);
 					this.set('audioAvailable', undefined);
+					this.set('speaking', undefined);
 					this.set('videoAvailable', undefined);
 					break;
 				case 'checking':
 					this.set('connectionState', ConnectionState.CHECKING);
 					this.set('audioAvailable', undefined);
+					this.set('speaking', undefined);
 					this.set('videoAvailable', undefined);
 					break;
 				case 'connected':

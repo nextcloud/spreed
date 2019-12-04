@@ -726,11 +726,6 @@ var spreedPeerConnectionTable = [];
 
 				spreedListofSpeakers[id] = (new Date()).getTime();
 
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (videoView) {
-					videoView.setSpeaking(true);
-				}
-
 				if (latestSpeakerId === id) {
 					return;
 				}
@@ -744,11 +739,6 @@ var spreedPeerConnectionTable = [];
 
 				if (enforce) {
 					delete spreedListofSpeakers[id];
-				}
-
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (videoView) {
-					videoView.setSpeaking(false);
 				}
 
 				if (latestSpeakerId !== id) {
