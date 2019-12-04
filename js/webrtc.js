@@ -818,10 +818,18 @@ var spreedPeerConnectionTable = [];
 
 				latestScreenId = id;
 			},
+			enterScreensharingMode: function() {
+				OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
+
+				screenSharingActive = true;
+				$(OCA.SpreedMe.app.mainCallElementSelector).addClass('screensharing');
+			},
 			add: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
 					return;
 				}
+
+				OCA.SpreedMe.sharedScreens.enterScreensharingMode();
 
 				spreedListofSharedScreens[id] = (new Date()).getTime();
 
@@ -863,6 +871,19 @@ var spreedPeerConnectionTable = [];
 
 				if (mostRecentId !== null) {
 					OCA.SpreedMe.sharedScreens.switchScreenToId(mostRecentId);
+				}
+
+				OCA.SpreedMe.sharedScreens.exitScreenSharingModeIfThereAreNoScreens();
+			},
+			exitScreenSharingModeIfThereAreNoScreens: function() {
+				var screens = document.getElementById('screens');
+				if (!screens || !screens.hasChildNodes()) {
+					screenSharingActive = false;
+					$(OCA.SpreedMe.app.mainCallElementSelector).removeClass('screensharing');
+					if (unpromotedSpeakerId) {
+						OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
+						unpromotedSpeakerId = null;
+					}
 				}
 			}
 		};
@@ -1164,8 +1185,6 @@ var spreedPeerConnectionTable = [];
 
 		// a peer was removed
 		OCA.SpreedMe.webrtc.on('videoRemoved', function(video, peer) {
-			var screens;
-
 			if (peer) {
 				if (peer.type === 'video') {
 					// a removed peer can't speak anymore ;)
@@ -1180,17 +1199,6 @@ var spreedPeerConnectionTable = [];
 				OCA.SpreedMe.webrtc.emit('localScreenStopped');
 
 				OCA.SpreedMe.sharedScreens.remove(OCA.SpreedMe.webrtc.connection.getSessionid());
-			}
-
-			// Check if there are still some screens
-			screens = document.getElementById('screens');
-			if (!screens || !screens.hasChildNodes()) {
-				screenSharingActive = false;
-				$(OCA.SpreedMe.app.mainCallElementSelector).removeClass('screensharing');
-				if (unpromotedSpeakerId) {
-					OCA.SpreedMe.speakers.switchVideoToId(unpromotedSpeakerId);
-					unpromotedSpeakerId = null;
-				}
 			}
 		});
 
@@ -1209,11 +1217,6 @@ var spreedPeerConnectionTable = [];
 		});
 
 		OCA.SpreedMe.webrtc.on('screenAdded', function(video, peer) {
-			OCA.SpreedMe.speakers.unpromoteLatestSpeaker();
-
-			screenSharingActive = true;
-			$(OCA.SpreedMe.app.mainCallElementSelector).addClass('screensharing');
-
 			var screens = document.getElementById('screens');
 			if (screens) {
 				var screenView = new OCA.Talk.Views.ScreenView({
