@@ -51,6 +51,7 @@
 			stream: null,
 			audioAvailable: undefined,
 			videoAvailable: undefined,
+			screen: null,
 		},
 
 		sync: function(method, model, options) {
@@ -75,26 +76,26 @@
 		},
 
 		_handlePeerStreamAdded: function(peer) {
-			if (this._peer !== peer) {
-				return;
-			}
+			if (this._peer === peer) {
+				this.set('stream', this._peer.stream || null);
 
-			this.set('stream', peer.stream || null);
-
-			// "peer.nick" is set only for users and when the MCU is not used.
-			if (this._peer.nick !== undefined) {
-				this.set('name', this._peer.nick);
+				// "peer.nick" is set only for users and when the MCU is not used.
+				if (this._peer.nick !== undefined) {
+					this.set('name', this._peer.nick);
+				}
+			} else if (this._screenPeer === peer) {
+				this.set('screen', this._screenPeer.stream || null);
 			}
 		},
 
 		_handlePeerStreamRemoved: function(peer) {
-			if (this._peer !== peer) {
-				return;
+			if (this._peer === peer) {
+				this.set('stream', null);
+				this.set('audioAvailable', undefined);
+				this.set('videoAvailable', undefined);
+			} else if (this._screenPeer === peer) {
+				this.set('screen', null);
 			}
-
-			this.set('stream', null);
-			this.set('audioAvailable', undefined);
-			this.set('videoAvailable', undefined);
 		},
 
 		_handleNick: function(data) {
@@ -204,6 +205,17 @@
 				default:
 					console.error('Unexpected (extended) ICE connection state: ', extendedIceConnectionState);
 			}
+		},
+
+		setScreenPeer: function(screenPeer) {
+			if (this.get('peerId') !== screenPeer.id) {
+				console.warn('Mismatch between stored peer ID and ID of given screen peer: ', this.get('peerId'), screenPeer.id);
+			}
+
+			this._screenPeer = screenPeer;
+
+			// Reset state that depends on the screen Peer object.
+			this._handlePeerStreamAdded(this._screenPeer);
 		},
 
 		setUserId: function(userId) {

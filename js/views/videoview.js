@@ -78,6 +78,9 @@
 			'change:stream': '_setStream',
 			'change:audioAvailable': '_setAudioAvailable',
 			'change:videoAvailable': '_setVideoAvailable',
+			'change:screen': function(model, screen) {
+				this._setScreenAvailable(this.model.get('screen'));
+			},
 		},
 
 		initialize: function() {
@@ -100,6 +103,7 @@
 			this._setStream(this.model, this.model.get('stream'));
 			this._setAudioAvailable(this.model, this.model.get('audioAvailable'));
 			this._setVideoAvailable(this.model, this.model.get('videoAvailable'));
+			this._setScreenAvailable(this.model.get('screen'));
 
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
@@ -352,11 +356,13 @@
 			this.$el.toggleClass('promoted', promoted);
 		},
 
-		setScreenAvailable: function(screenAvailable) {
+		_setScreenAvailable: function(screenAvailable) {
 			if (!screenAvailable) {
 				this.getUI('screenSharingIndicator')
 						.removeClass('screen-on')
 						.addClass('screen-off');
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 
 				return;
 			}
@@ -364,6 +370,8 @@
 			this.getUI('screenSharingIndicator')
 					.removeClass('screen-off')
 					.addClass('screen-on');
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setScreenVisible: function(screenVisible) {
