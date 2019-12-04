@@ -115,8 +115,6 @@ var spreedPeerConnectionTable = [];
 
 		if (ownPeer) {
 			OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-			OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-			OCA.SpreedMe.videos.remove(ownPeer.id);
 			ownPeer.end();
 		}
 
@@ -993,8 +991,6 @@ var spreedPeerConnectionTable = [];
 		var forceReconnect = function(signaling, flags) {
 			if (ownPeer) {
 				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-				OCA.SpreedMe.videos.remove(ownPeer.id);
 				ownPeer.end();
 				ownPeer = null;
 			}
