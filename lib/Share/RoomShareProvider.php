@@ -280,6 +280,7 @@ class RoomShareProvider implements IShareProvider {
 			->setShareType((int)$data['share_type'])
 			->setPermissions((int)$data['permissions'])
 			->setTarget($data['file_target'])
+			->setStatus((int)$data['accepted'])
 			->setToken($data['token']);
 
 		$shareTime = $this->timeFactory->getDateTime();

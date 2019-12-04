@@ -265,6 +265,7 @@ Feature: move
     And user "participant1" adds "participant3" to room "group room" with 200
     And user "participant3" creates folder "/test"
     And user "participant3" shares "/test" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     When user "participant3" moves file "/welcome (2).txt" to "/test/renamed.txt"
     Then the HTTP status code should be "403"

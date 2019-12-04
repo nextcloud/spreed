@@ -187,6 +187,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" creates folder "/deleted"
     And user "participant1" shares "deleted" with room "group room invited to" with OCS 100
@@ -258,10 +259,12 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" creates folder "/deleted"
     And user "participant1" shares "deleted" with room "group room invited to" with OCS 100
     And user "participant2" shares "deleted" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant1" deletes file "deleted"
     When user "participant1" gets all shares and reshares
     Then the list of returned shares has 6 shares
@@ -338,6 +341,7 @@ Feature: get
       | roomType | 1 |
       | invite   | participant3 |
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares
     Then the list of returned shares has 2 shares
@@ -372,6 +376,7 @@ Feature: get
       | roomType | 1 |
       | invite   | participant3 |
     And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares
     Then the list of returned shares has 2 shares
@@ -423,6 +428,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares for "/welcome.txt"
     Then the list of returned shares has 2 shares
@@ -469,6 +475,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" deletes file "welcome.txt"
     When user "participant1" gets all shares for "/welcome.txt"
@@ -497,6 +504,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 4 shares
@@ -551,6 +559,7 @@ Feature: get
       | roomType | 1 |
       | invite   | participant3 |
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 2 shares
@@ -585,6 +594,7 @@ Feature: get
       | roomType | 1 |
       | invite   | participant3 |
     And user "participant1" shares "welcome.txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 2 shares
@@ -620,6 +630,7 @@ Feature: get
       | roomName | room |
     And user "participant2" renames room "group room not invited to" to "Group room not invited to" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "group room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 2 shares
@@ -655,6 +666,7 @@ Feature: get
       | roomName | room |
     And user "participant2" renames room "public room not invited to" to "Public room not invited to" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "public room not invited to" with OCS 100
     When user "participant1" gets all shares and reshares for "/welcome.txt"
     Then the list of returned shares has 2 shares
@@ -691,6 +703,7 @@ Feature: get
       | roomName | room |
     And user "participant2" renames room "public room invited to" to "Public room invited to" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "public room invited to" with OCS 100
     And user "participant2" adds "participant1" to room "public room invited to" with 200
     When user "participant1" gets all shares and reshares for "/welcome.txt"
@@ -728,6 +741,7 @@ Feature: get
       | roomName | room |
     And user "participant2" renames room "public room self-joined to" to "Public room self-joined to" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "public room self-joined to" with OCS 100
     And user "participant1" joins room "public room self-joined to" with 200
     When user "participant1" gets all shares and reshares for "/welcome.txt"
@@ -781,6 +795,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room invited to" with OCS 100
     And user "participant1" shares "test" with room "own one-to-one room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "welcome (2).txt" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" deletes file "welcome.txt"
     When user "participant1" gets all shares and reshares for "/welcome.txt"
@@ -814,6 +829,7 @@ Feature: get
     And user "participant1" shares "test2" with room "own one-to-one room" with OCS 100
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
     And user "participant2" shares "subfolder" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "subfolder" with room "one-to-one room not invited to" with OCS 100
     # Only direct children are taken into account
     When user "participant1" gets all shares for "/test" and its subfiles
@@ -905,6 +921,7 @@ Feature: get
     And user "participant1" shares "test2" with room "own one-to-one room" with OCS 100
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
     And user "participant2" shares "subfolder" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     And user "participant3" shares "subfolder" with room "one-to-one room not invited to" with OCS 100
     And user "participant1" deletes file "test"
     When user "participant1" gets all shares for "/test" and its subfiles
@@ -1145,6 +1162,7 @@ Feature: get
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     When user "participant1" gets the share-type DAV property for "/welcome.txt"
     Then the response contains a share-types DAV property with
       | 10 |
@@ -1158,6 +1176,7 @@ Feature: get
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "group room" with OCS 100
     When user "participant1" gets the share-type DAV property for "/welcome.txt"
     Then the response contains a share-types DAV property with
@@ -1173,6 +1192,7 @@ Feature: get
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant2" shares "welcome (2).txt" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
     Then the response contains a share-types DAV property with
       | 0 |
@@ -1186,6 +1206,7 @@ Feature: get
       | roomName | room |
     And user "participant1" adds "participant2" to room "group room" with 200
     And user "participant1" shares "welcome.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "welcome (2).txt" with room "group room" with OCS 100
     When user "participant2" gets the share-type DAV property for "/welcome (2).txt"
     Then the response contains a share-types DAV property with
@@ -1199,6 +1220,7 @@ Feature: get
       | roomName | room |
     And user "participant1" creates folder "/test"
     And user "participant1" shares "/test" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "/test" with room "group room" with OCS 100
     When user "participant1" gets the share-type DAV property for "/test"
     Then the response contains a share-types DAV property with
@@ -1211,6 +1233,7 @@ Feature: get
     And user "participant1" creates folder "/test"
     And user "participant1" moves file "/welcome.txt" to "/test/renamed.txt" with 201
     And user "participant1" shares "/test/renamed.txt" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "renamed.txt" with room "group room" with OCS 100
     When user "participant1" gets the share-type DAV property for "/test"
     Then the response contains a share-types DAV property with
@@ -1224,6 +1247,7 @@ Feature: get
     And user "participant1" creates folder "/test"
     And user "participant1" creates folder "/test/subfolder"
     And user "participant1" shares "/test/subfolder" with user "participant2" with OCS 100
+    And user "participant2" accepts last share
     And user "participant2" shares "subfolder" with room "group room" with OCS 100
     When user "participant1" gets the share-type DAV property for "/test"
     Then the response contains a share-types DAV property with
@@ -1308,6 +1332,7 @@ Feature: get
     And user "participant1" shares "welcome.txt" with room "group room" with OCS 100
     And user "participant1" shares "test/subfolder" with room "group room" with OCS 100
     And user "participant1" shares "test/subfolder" with user "participant3" with OCS 100
+    And user "participant3" accepts last share
     When user "participant1" gets recent files
     Then the response contains a share-types file property for "/welcome.txt" with
       | 10 |
