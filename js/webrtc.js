@@ -16,6 +16,7 @@ var spreedPeerConnectionTable = [];
 	var hasLocalMedia = false;
 	var selfInCall = 0;  // OCA.SpreedMe.app.FLAG_DISCONNECTED, not available yet.
 	var delayedConnectionToPeer = [];
+	var callParticipantCollection = null;
 
 	function updateParticipantsUI(currentUsersNo) {
 		'use strict';
@@ -169,13 +170,12 @@ var spreedPeerConnectionTable = [];
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
 			var userId = user.userId || user.userid || null;
 
-			var callParticipantModel = OCA.SpreedMe.callParticipantModels[sessionId];
+			var callParticipantModel = callParticipantCollection.get(sessionId);
 			if (!callParticipantModel) {
-				callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
+				callParticipantModel = callParticipantCollection.add({
 					peerId: sessionId,
 					webRtc: OCA.SpreedMe.webrtc,
 				});
-				OCA.SpreedMe.callParticipantModels[sessionId] = callParticipantModel;
 			}
 			callParticipantModel.setUserId(userId);
 
@@ -251,7 +251,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.removePeers(sessionId);
 			OCA.SpreedMe.speakers.remove(sessionId, true);
 			OCA.SpreedMe.videos.remove(sessionId);
-			delete OCA.SpreedMe.callParticipantModels[sessionId];
+			callParticipantCollection.remove(sessionId);
 			if (delayedConnectionToPeer[sessionId]) {
 				clearInterval(delayedConnectionToPeer[sessionId]);
 				delete delayedConnectionToPeer[sessionId];
@@ -314,6 +314,8 @@ var spreedPeerConnectionTable = [];
 				return a.indexOf(i) < 0;
 			});
 		};
+
+		callParticipantCollection = app._callParticipantCollection;
 
 		var signaling = app.signaling;
 		signaling.on('usersLeft', function(users) {
@@ -461,8 +463,6 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.sendDirectlyToAll(channel, message, payload);
 		};
 
-		OCA.SpreedMe.callParticipantModels = [];
-
 		OCA.SpreedMe.videos = {
 			videoViews: [],
 			add: function(id) {
@@ -475,7 +475,7 @@ var spreedPeerConnectionTable = [];
 					console.log("User has no stream", id);
 				}
 
-				var callParticipantModel = OCA.SpreedMe.callParticipantModels[id];
+				var callParticipantModel = callParticipantCollection.get(id);
 
 				var videoView = new OCA.Talk.Views.VideoView({
 					model: callParticipantModel,
@@ -892,13 +892,12 @@ var spreedPeerConnectionTable = [];
 			if (peer.id !== OCA.SpreedMe.webrtc.connection.getSessionid() && !peer.sharemyscreen) {
 				// In some strange cases a Peer can be added before its
 				// participant is found in the list of participants.
-				var callParticipantModel = OCA.SpreedMe.callParticipantModels[peer.id];
+				var callParticipantModel = callParticipantCollection.get(peer.id);
 				if (!callParticipantModel) {
-					callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
+					callParticipantModel = callParticipantCollection.add({
 						peerId: peer.id,
 						webRtc: OCA.SpreedMe.webrtc,
 					});
-					OCA.SpreedMe.callParticipantModels[peer.id] = callParticipantModel;
 				}
 
 				if (peer.type === 'video') {
@@ -1210,7 +1209,7 @@ var spreedPeerConnectionTable = [];
 			if (screens) {
 				var screenView = new OCA.Talk.Views.ScreenView({
 					localMediaModel: peer? null: OCA.SpreedMe.app._localMediaModel,
-					callParticipantModel: peer? OCA.SpreedMe.callParticipantModels[peer.id]: null,
+					callParticipantModel: peer? callParticipantCollection.get(peer.id): null,
 				});
 
 				screenView.$el.prependTo($('#screens'));

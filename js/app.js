@@ -655,6 +655,7 @@
 
 			this._localCallParticipantModel = new OCA.Talk.Models.LocalCallParticipantModel();
 			this._localMediaModel = new OCA.Talk.Models.LocalMediaModel();
+			this._callParticipantCollection = new OCA.Talk.Models.CallParticipantCollection();
 
 			this._callView = new OCA.Talk.Views.CallView({
 				localCallParticipantModel: this._localCallParticipantModel,

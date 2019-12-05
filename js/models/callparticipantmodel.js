@@ -60,6 +60,8 @@
 		},
 
 		initialize: function(options) {
+			this.set('id', options.peerId);
+
 			this._webRtc = options.webRtc;
 
 			this._handlePeerStreamAddedBound = this._handlePeerStreamAdded.bind(this);
