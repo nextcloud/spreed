@@ -47,8 +47,7 @@
 	flex-grow: 1;
 }
 
-#app-content.incall,
-#app-content.screensharing {
+#app-content.has-dark-background {
 	background-color: #000;
 }
 
@@ -382,10 +381,8 @@ input[type="password"] {
 	}
 }
 
-#app-content.incall .force-icon-white-in-call,
-#app-content.screensharing .force-icon-white-in-call,
-#app-content.incall ~ #app-sidebar-wrapper .force-icon-white-in-call,
-#app-content.screensharing ~ #app-sidebar-wrapper .force-icon-white-in-call {
+#app-content.has-dark-background .force-icon-white-in-call,
+#app-content.has-dark-background ~ #app-sidebar-wrapper .force-icon-white-in-call {
 	/*
 	 * Force the white icon, independent from white/dark mode selection,
 	 * because those icons are presented on our black calling-screen.
@@ -407,8 +404,7 @@ input[type="password"] {
 /* Use white icon for the app navigation toggle when in a call; this can not be
  * integrated above because the navigation toggle is created by the core and
  * does not include the Talk-specific "force-icon-white-in-call" CSS class. */
-#app-content.incall .icon-menu,
-#app-content.screensharing .icon-menu {
+#app-content.has-dark-background .icon-menu {
 	background-image: url(icon-color-path('menu', 'actions', 'fff', 1, true));
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }

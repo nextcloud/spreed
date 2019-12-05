@@ -71,6 +71,7 @@
 			this._callViewSpeakers = new OCA.Talk.Views.CallViewSpeakers(this);
 
 			this._screenSharingActive = false;
+			this._hasDarkBackground = false;
 
 			this.render();
 		},
@@ -94,6 +95,24 @@
 			this.showChildView('localVideo', this._localVideoView, { replaceElement: true } );
 		},
 
+		hasDarkBackground: function() {
+			return this._hasDarkBackground;
+		},
+
+		_updateContainerState: function() {
+			var hasDarkBackgroundOld = this._hasDarkBackground;
+
+			if (Object.keys(this._videoViews).length > 0 || this._screenSharingActive) {
+				this._hasDarkBackground = true;
+			} else {
+				this._hasDarkBackground = false;
+			}
+
+			if (hasDarkBackgroundOld !== this._hasDarkBackground) {
+				this.trigger('hasDarkBackground', this._hasDarkBackground);
+			}
+		},
+
 		_addVideoView: function(callParticipantModel) {
 			if (this._videoViews[callParticipantModel.get('id')]) {
 				return;
@@ -103,6 +122,8 @@
 				model: callParticipantModel,
 			});
 			this._videoViews[callParticipantModel.get('id')] = videoView;
+
+			this._updateContainerState();
 
 			this.listenTo(videoView, 'videoContainerDummyOutdated', function() {
 				this._callViewSpeakers.updateVideoContainerDummyIfLatestSpeaker(callParticipantModel.get('id'));
@@ -141,6 +162,8 @@
 			}
 
 			delete this._videoViews[callParticipantModel.get('id')];
+
+			this._updateContainerState();
 		},
 
 		_handleConnectionStateChange: function(callParticipantModel, connectionState) {
@@ -179,6 +202,8 @@
 
 		setScreenSharingActive: function(active) {
 			this._screenSharingActive = active;
+
+			this._updateContainerState();
 		},
 
 	});

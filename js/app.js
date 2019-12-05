@@ -413,6 +413,9 @@
 				this._showChatViewInMainView();
 			}
 		},
+		_toggleHasDarkBackground: function(hasDarkBackground) {
+			$('#app-content').toggleClass('has-dark-background', hasDarkBackground);
+		},
 		_showChatViewInMainView: function() {
 			if (!this._chatViewInMainView) {
 				this._sidebarView.removeTab('chat');
@@ -424,6 +427,9 @@
 			}
 
 			this._callView.$el.hide();
+
+			this.stopListening(this._callView, 'hasDarkBackground', this._toggleHasDarkBackground);
+			this._toggleHasDarkBackground(false);
 
 			$('#emptycontent').show();
 		},
@@ -439,6 +445,9 @@
 
 			this._callView.$el.show();
 
+			this.listenTo(this._callView, 'hasDarkBackground', this._toggleHasDarkBackground);
+			this._toggleHasDarkBackground(this._callView.hasDarkBackground());
+
 			$('#emptycontent').hide();
 		},
 		_showEmptyContentViewInMainView: function() {
@@ -446,6 +455,9 @@
 			this._chatViewInMainView = false;
 
 			this._callView.$el.hide();
+
+			this.stopListening(this._callView, 'hasDarkBackground', this._toggleHasDarkBackground);
+			this._toggleHasDarkBackground(false);
 
 			$('#emptycontent').show();
 		},

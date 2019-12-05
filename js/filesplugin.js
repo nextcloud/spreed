@@ -182,6 +182,10 @@
 			}
 		},
 
+		_toggleIconCloseForceIconWhiteInCall: function(forceIconWhiteInCall) {
+			$('#app-sidebar .icon-close').toggleClass('force-icon-white-in-call icon-shadow', forceIconWhiteInCall);
+		},
+
 		_showCallUi: function() {
 			if (!this._$callContainerWrapper || !this._$callContainerWrapper.hasClass('hidden')) {
 				return;
@@ -197,11 +201,8 @@
 
 			// The icon to close the sidebar overlaps the video, so use its
 			// white version with a shadow instead of the black one.
-			// TODO Change it only when there is a call in progress; while
-			// waiting for other participants it should be kept black. However,
-			// this would need to hook in "updateParticipantsUI" which is where
-			// the "incall" class is set.
-			$('#app-sidebar .icon-close').addClass('force-icon-white-in-call icon-shadow');
+			this.listenTo(OCA.SpreedMe.app._callView, 'hasDarkBackground', this._toggleIconCloseForceIconWhiteInCall);
+			this._toggleIconCloseForceIconWhiteInCall(OCA.SpreedMe.app._callView.hasDarkBackground());
 		},
 
 		_hideCallUi: function() {
@@ -215,7 +216,8 @@
 			});
 
 			// Restore the icon to close the sidebar.
-			$('#app-sidebar .icon-close').removeClass('force-icon-white-in-call icon-shadow');
+			this.stopListening(OCA.SpreedMe.app._callView, 'hasDarkBackground', this._toggleIconCloseForceIconWhiteInCall);
+			this._toggleIconCloseForceIconWhiteInCall(false);
 
 			if (!this._$callContainerWrapper || this._$callContainerWrapper.hasClass('hidden')) {
 				return;
