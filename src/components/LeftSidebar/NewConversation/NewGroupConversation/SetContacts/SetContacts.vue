@@ -30,7 +30,7 @@
 			@input="handleInput">
 		<template>
 			<Caption
-				:title="t('spreed', `Select participants to add to ${conversationName}`)" />
+				:title="t('spreed', `Add participants to ${conversationName}`)" />
 			<ParticipantsList
 				:add-on-click="false"
 				:items="searchResults"

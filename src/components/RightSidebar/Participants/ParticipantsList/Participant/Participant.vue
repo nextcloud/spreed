@@ -218,6 +218,7 @@ export default {
 
 .selected {
 	background-color: var(--color-primary-light);
+	border-radius: 5px;
 }
 
 .participant-row {
@@ -225,6 +226,9 @@ export default {
 	align-items: center;
 	height: 44px;
 	cursor: pointer;
+	padding: 0 5px;
+    margin: 5px 0;
+    border-radius: 22px;
 	&__avatar-wrapper {
 		height: 32px;
 		width: 32px;

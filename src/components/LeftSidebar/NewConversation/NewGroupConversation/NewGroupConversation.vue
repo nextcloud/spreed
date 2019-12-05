@@ -38,7 +38,7 @@
 					<template
 						v-if="page === 0">
 						<SetConversationName
-							v-model="conversationName"
+							v-model="conversationNameInput"
 							@input="handleInput"
 							@setConversationName="handleSetConversationName" />
 						<p
@@ -107,9 +107,15 @@ export default {
 		return {
 			modal: false,
 			page: 0,
-			conversationName: '',
+			conversationNameInput: '',
 			hint: '',
 			checked: false,
+		}
+	},
+
+	computed: {
+		conversationName() {
+			return this.conversationNameInput.trim()
 		}
 	},
 
