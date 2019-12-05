@@ -223,6 +223,8 @@ export default {
 				}
 			}
 			this.success = true
+			// Push the newly created conversation's route.
+			this.pushNewRoute()
 			// This displays the checkmark for a little while.
 			await setTimeout(() => this.closeModal(), 200)
 		},
@@ -240,8 +242,9 @@ export default {
 			this.$store.dispatch('addConversation', conversation)
 			this.token = conversation.token
 		},
-		pushNewRoute(token) {
-			this.$router.push({ name: 'conversation', params: { token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		pushNewRoute() {
+			this.$router.push({ name: 'conversation', params: { token: this.token } })
+				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 
