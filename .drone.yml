@@ -23,70 +23,9 @@
 #
 #---
 kind: pipeline
-name: eslint
-
-steps:
-  - name: eslint
-    image: nextcloudci/node:node-7
-    commands:
-      - make dev-setup
-      - make lint
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-    - pull_request
-    - push
-
----
-kind: pipeline
-name: stylelint
-
-steps:
-  - name: stylelint
-    image: nextcloudci/stylelint:stylelint-2
-    commands:
-      - ./run-stylelint.sh
-
-trigger:
-  branch:
-    - master
-    - stable*
-  event:
-    - pull_request
-    - push
-
----
-kind: pipeline
 name: compatibility
 
 steps:
-  - name: syntax-php7.2
-    image: nextcloudci/php7.2:php7.2-13
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - composer install
-      - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
-  - name: syntax-php7.4
-    image: nextcloudci/php7.4:2
-    environment:
-      APP_NAME: spreed
-      CORE_BRANCH: master
-      DATABASEHOST: sqlite
-    commands:
-      - wget https://raw.githubusercontent.com/nextcloud/travis_ci/master/before_install.sh
-      - bash ./before_install.sh $APP_NAME $CORE_BRANCH $DATABASEHOST
-      - cd ../server
-      - composer install
-      - ./lib/composer/bin/parallel-lint apps/$APP_NAME/
   - name: app-code-check
     image: nextcloudci/php7.3:php7.3-5
     environment:
