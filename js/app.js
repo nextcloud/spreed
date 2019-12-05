@@ -660,6 +660,7 @@
 			this._callView = new OCA.Talk.Views.CallView({
 				localCallParticipantModel: this._localCallParticipantModel,
 				localMediaModel: this._localMediaModel,
+				collection: this._callParticipantCollection,
 				sharedScreens: OCA.SpreedMe.sharedScreens,
 			});
 			// Ensure that the call view is not visible in the initial page.

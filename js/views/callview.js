@@ -52,12 +52,20 @@
 			'localVideo': '@ui.localVideoContainer',
 		},
 
+		collectionEvents: {
+			'add': '_addVideoView',
+			'remove': '_removeVideoView',
+			'change:connectionState': '_handleConnectionStateChange',
+		},
+
 		initialize: function(options) {
 			this._localVideoView = new OCA.Talk.Views.LocalVideoView({
 				localCallParticipantModel: options.localCallParticipantModel,
 				localMediaModel: options.localMediaModel,
 				sharedScreens: options.sharedScreens,
 			});
+
+			this._videoViews = [];
 
 			this.render();
 		},
@@ -79,6 +87,61 @@
 			// Attach the child views again (or for the first time) after the
 			// template has been rendered.
 			this.showChildView('localVideo', this._localVideoView, { replaceElement: true } );
+		},
+
+		_addVideoView: function(callParticipantModel) {
+			if (this._videoViews[callParticipantModel.get('id')]) {
+				return;
+			}
+
+			var videoView = new OCA.Talk.Views.VideoView({
+				model: callParticipantModel,
+			});
+			this._videoViews[callParticipantModel.get('id')] = videoView;
+
+			// When adding a region and showing a view on it the target element
+			// of the region must exist in the parent view. Therefore, a dummy
+			// target element, which will be replaced with the VideoView itself,
+			// has to be added to the parent view.
+			var dummyElement = '<div id="' + videoView.id() + '"/>';
+			this.getUI('videos').prepend(dummyElement);
+
+			this.addRegion(callParticipantModel.get('id'), { el: document.getElementById(videoView.id()), replaceElement: true });
+			this.showChildView(callParticipantModel.get('id'), videoView);
+		},
+
+		getVideoView: function(id) {
+			return this._videoViews[id];
+		},
+
+		_removeVideoView: function(callParticipantModel) {
+			if (!this._videoViews[callParticipantModel.get('id')]) {
+				return;
+			}
+
+			var removedRegion = this.removeRegion(callParticipantModel.get('id'));
+			// Remove the dummy target element that was replaced by the view
+			// when it was shown and that is restored back when the region is
+			// removed.
+			if (removedRegion.el.parentNode) {
+				removedRegion.el.parentNode.removeChild(removedRegion.el);
+			}
+
+			delete this._videoViews[callParticipantModel.get('id')];
+		},
+
+		_handleConnectionStateChange: function(callParticipantModel, connectionState) {
+			if (connectionState === OCA.Talk.Models.CallParticipantModel.ConnectionState.CLOSED) {
+				this._removeVideoView(callParticipantModel);
+
+				return;
+			}
+
+			if (this._videoViews[callParticipantModel.get('id')]) {
+				return;
+			}
+
+			this._addVideoView(callParticipantModel);
 		},
 
 	});

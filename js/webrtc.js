@@ -188,11 +188,6 @@ var spreedPeerConnectionTable = [];
 				callParticipantModel.setPeer(null);
 			}
 
-			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
-			if (!videoView) {
-				videoView = OCA.SpreedMe.videos.add(sessionId);
-			}
-
 			var createPeer = function() {
 				var peer = webrtc.webrtc.createPeer({
 					id: sessionId,
@@ -240,7 +235,6 @@ var spreedPeerConnectionTable = [];
 							peer.end();
 
 							OCA.SpreedMe.speakers.remove(peer.id, true);
-							OCA.SpreedMe.videos.remove(peer.id);
 						});
 
 						console.log("No offer nor answer received, sending offer again");
@@ -259,7 +253,6 @@ var spreedPeerConnectionTable = [];
 			console.log('XXX Remove peer', sessionId);
 			OCA.SpreedMe.webrtc.removePeers(sessionId);
 			OCA.SpreedMe.speakers.remove(sessionId, true);
-			OCA.SpreedMe.videos.remove(sessionId);
 			callParticipantCollection.remove(sessionId);
 			if (delayedConnectionToPeer[sessionId]) {
 				clearInterval(delayedConnectionToPeer[sessionId]);
@@ -386,7 +379,6 @@ var spreedPeerConnectionTable = [];
 
 				if (message.roomType === 'video') {
 					OCA.SpreedMe.speakers.remove(stalePeer.id, true);
-					OCA.SpreedMe.videos.remove(stalePeer.id);
 				}
 			}
 
@@ -473,53 +465,12 @@ var spreedPeerConnectionTable = [];
 		};
 
 		OCA.SpreedMe.videos = {
-			videoViews: [],
-			add: function(id) {
-				if (!(typeof id === 'string' || id instanceof String)) {
-					return;
-				}
-
-				var user = usersInCallMapping[id];
-				if (user && !userHasStreams(user)) {
-					console.log("User has no stream", id);
-				}
-
-				var callParticipantModel = callParticipantCollection.get(id);
-
-				var videoView = new OCA.Talk.Views.VideoView({
-					model: callParticipantModel,
-				});
-
-				OCA.SpreedMe.videos.videoViews[id] = videoView;
-
-				videoView.$el.prependTo($('#videos'));
-
-				return videoView;
-			},
-			remove: function(id) {
-				if (!(typeof id === 'string' || id instanceof String)) {
-					return;
-				}
-
-				if (!OCA.SpreedMe.videos.videoViews[id]) {
-					return;
-				}
-
-				OCA.SpreedMe.videos.videoViews[id].$el.remove();
-
-				delete OCA.SpreedMe.videos.videoViews[id];
-			},
 			addPeer: function(peer) {
 				var signaling = OCA.SpreedMe.app.signaling;
 				if (peer.id === webrtc.connection.getSessionid()) {
 					console.log("Not adding video for own peer", peer);
 					OCA.SpreedMe.videos.startSendingNick(peer);
 					return;
-				}
-
-				var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
-				if (!videoView) {
-					videoView = OCA.SpreedMe.videos.add(peer.id);
 				}
 
 				// Initialize ice restart counter for peer
@@ -667,13 +618,13 @@ var spreedPeerConnectionTable = [];
 					return;
 				}
 
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				var videoView = OCA.SpreedMe.app._callView.getVideoView(id);
 				if (!videoView) {
 					console.warn('promote: no video found for ID', id);
 					return;
 				}
 
-				var oldVideoView = OCA.SpreedMe.videos.videoViews[latestSpeakerId];
+				var oldVideoView = OCA.SpreedMe.app._callView.getVideoView(latestSpeakerId);
 				if (oldVideoView) {
 					oldVideoView.setPromoted(false);
 				}
@@ -685,7 +636,7 @@ var spreedPeerConnectionTable = [];
 			},
 			unpromoteLatestSpeaker: function() {
 				if (latestSpeakerId) {
-					var oldVideoView = OCA.SpreedMe.videos.videoViews[latestSpeakerId];
+					var oldVideoView = OCA.SpreedMe.app._callView.getVideoView(latestSpeakerId);
 					if (oldVideoView) {
 						oldVideoView.setPromoted(false);
 					}
@@ -705,7 +656,7 @@ var spreedPeerConnectionTable = [];
 			updateVideoContainerDummy: function(id) {
 				$('.videoContainer-dummy').remove();
 
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				var videoView = OCA.SpreedMe.app._callView.getVideoView(id);
 				if (videoView) {
 					videoView.$el.after(videoView.newDummyVideoContainer());
 				}
@@ -755,7 +706,7 @@ var spreedPeerConnectionTable = [];
 					}
 
 					var currentTime = spreedListofSpeakers[currentId];
-					if (currentTime > mostRecentTime && OCA.SpreedMe.videos.videoViews[currentId]) {
+					if (currentTime > mostRecentTime && OCA.SpreedMe.app._callView.getVideoView(currentId)) {
 						mostRecentTime = currentTime;
 						mostRecentId = currentId;
 					}
@@ -804,11 +755,11 @@ var spreedPeerConnectionTable = [];
 					}
 				}
 
-				var oldVideoView = OCA.SpreedMe.videos.videoViews[latestScreenId];
+				var oldVideoView = OCA.SpreedMe.app._callView.getVideoView(latestScreenId);
 				if (oldVideoView) {
 					oldVideoView.setScreenVisible(false);
 				}
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
+				var videoView = OCA.SpreedMe.app._callView.getVideoView(id);
 				if (videoView) {
 					videoView.setScreenVisible(true);
 				}
