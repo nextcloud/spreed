@@ -19,3 +19,20 @@ jobs:
           coverage: none
       - name: Lint
         run: "find . -name \\*.php -not -path './vendor/*' -exec php -l \"{}\" \\;"
+
+  style-linter:
+    runs-on: ubuntu-latest
+    name: Style lint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: Set up Stylelint 11
+        run: npm i -g stylelint@11.0.0
+      - name: Lint CSS files
+        run: "find css -name '*.css' -exec $(which stylelint) -f verbose {} \\;"
+      - name: Lint SCSS files
+        run: "find css -name '*.scss' -exec $(which stylelint) -f verbose {} \\;"
