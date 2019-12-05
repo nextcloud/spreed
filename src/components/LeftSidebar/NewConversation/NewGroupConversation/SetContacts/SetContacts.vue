@@ -28,16 +28,16 @@
 			autofocus
 			:placeholder="t('spreed', `Search Participants`)"
 			@input="handleInput">
-		<template>
-			<Caption
-				:title="t('spreed', `Add participants to ${conversationName}`)" />
+		<Caption
+			:title="t('spreed', `Add participants to ${conversationName}`)" />
+		<div class="set-contacts__participants">
 			<ParticipantsList
 				:add-on-click="false"
 				:items="searchResults"
-				@refreshCurrentParticipants="getParticipants" />
+				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-if="false" :hint="t('spreed', 'No search results')" />
-		</template>
+		</div>
 	</div>
 </template>
 
@@ -47,7 +47,6 @@ import Hint from '../../../../Hint'
 import ParticipantsList from '../../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
 import debounce from 'debounce'
 import { searchPossibleConversations } from '../../../../../services/conversationsService'
-import { fetchParticipants } from '../../../../../services/participantsService'
 
 export default {
 	name: 'SetContacts',
@@ -96,29 +95,16 @@ export default {
 			try {
 				const response = await searchPossibleConversations(this.searchText)
 				this.searchResults = response.data.ocs.data
-				this.getParticipants()
 				this.contactsLoading = false
 			} catch (exeption) {
 				console.error(exeption)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
-
-		async getParticipants() {
-			try {
-				const participants = await fetchParticipants(this.token)
-				this.$store.dispatch('purgeParticipantsStore', this.token)
-				participants.data.ocs.data.forEach(participant => {
-					this.$store.dispatch('addParticipant', {
-						token: this.token,
-						participant,
-					})
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
-			}
-		},
+		// Forward the event from the children to the parent
+		handleUpdateSelectedParticipants(selectedParticipants) {
+			this.$emit('updateSelectedParticipants', selectedParticipants)
+		}
 	},
 }
 </script>
@@ -131,6 +117,9 @@ export default {
 		border: none;
 		font-size: 16px;
 		padding-left: 0;
+	}
+	&__participants {
+		overflow-y: auto;
 	}
 }
 

@@ -126,11 +126,13 @@ export default {
 							return false
 						} return true
 					})
+					this.$emit('updateSelectedParticipants', this.selectedParticipants)
 				} else {
 					/**
 					 * Add the clicked participant from the selected participants list
 					 */
 					this.selectedParticipants = [...this.selectedParticipants, participant]
+					this.$emit('updateSelectedParticipants', this.selectedParticipants)
 				}
 			}
 

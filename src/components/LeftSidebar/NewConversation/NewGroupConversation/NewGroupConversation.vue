@@ -52,10 +52,13 @@
 					</template>
 					<template v-if="page === 1">
 						<SetContacts
-							:conversation-name="conversationName" />
+							:conversation-name="conversationName"
+							@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 					</template>
 					<template v-if="page === 2">
-						<Confirmation is-loading="isLoading" />
+						<Confirmation
+							:conversation-name="conversationName"
+							:is-loading="isLoading" />
 					</template>
 				</div>
 				<div
@@ -93,6 +96,11 @@ import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
 import Confirmation from './Confirmation/Confirmation'
+import { addParticipant } from '../../../../services/participantsService'
+import {
+	createPublicConversation,
+	createPrivateConversation,
+} from '../../../../services/conversationsService'
 
 export default {
 
@@ -105,7 +113,7 @@ export default {
 		SetContacts,
 		SetConversationName,
 		SetConversationType,
-		Confirmation
+		Confirmation,
 	},
 
 	data() {
@@ -116,6 +124,8 @@ export default {
 			hint: '',
 			checked: false,
 			isLoading: true,
+			token: '',
+			selectedParticipants: []
 		}
 	},
 
@@ -133,10 +143,12 @@ export default {
 		closeModal() {
 			this.modal = false
 			this.page = 0
-			this.conversationName = ''
+			this.conversationNameInput = ''
 			this.hint = ''
 			this.checked = false
 			this.isLoading = true
+			this.token = ''
+			this.selectedParticipants = []
 		},
 		handleSetConversationName(event) {
 			this.page = 1
@@ -154,14 +166,61 @@ export default {
 		handleClickBack() {
 			this.page = 0
 		},
-		handleCreateConversation() {
-			this.isLoading = true
-			this.page = 2
-		},
+
 		handleInput() {
 			if (this.conversationName !== '') {
 				this.hint = ''
 			}
+		},
+
+		handleUpdateSelectedParticipants(e) {
+			console.debug(e)
+			this.selectedParticipants = e
+		},
+
+		async handleCreateConversation() {
+			this.isLoading = true
+			this.page = 2
+			if (this.checked) {
+				try {
+					await this.createPublicConversation()
+				} catch (exeption) {
+					// Stop the execution of the method on exeptions. 
+					return
+				}
+			} else {
+				try {
+					await this.createPrivateConversation()
+				} catch (exeption) {
+					// Stop the execution of the method on exeptions. 
+					return
+				}
+			}
+			debugger
+			for (const participant of this.selectedParticipants) {
+				try {
+					await addParticipant(this.token, participant.id, participant.source)
+				} catch (exeption) {
+					console.debug(exeption)
+				}
+			}
+		},
+
+		async createPrivateConversation() {
+			const response = await createPrivateConversation(this.conversationName)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.token = conversation.token
+		},
+
+		async createPublicConversation() {
+			const response = await createPublicConversation(this.conversationName)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.token = conversation.token
+		},
+		pushNewRoute(token) {
+			this.$router.push({ name: 'conversation', params: { token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 	},
 

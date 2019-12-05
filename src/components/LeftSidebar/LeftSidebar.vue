@@ -152,7 +152,7 @@ export default {
 
 .new-conversation {
 	display: flex;
-	padding: 10px;
+	padding: 6px;
 	border-bottom: 1px solid var(--color-border-dark);
 }
 
