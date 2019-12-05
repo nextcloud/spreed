@@ -21,8 +21,18 @@
 
 <template>
 	<div class="confirmation">
-		<template v-if="isLoading">
-			<p>Loading</p>
+		<template v-if="isLoading && !error">
+			<div v-if="!success" class="icon-loading confirmation__icon" />
+			<div v-if="success" class="icon-checkmark confirmation__icon" />
+			<p class="confirmation__warning">
+				{{ t('spreed', 'Please wait') }}
+			</p>
+		</template>
+		<template v-else>
+			<div class="icon-error confirmation__icon" />
+			<p class="confirmation__warning">
+				{{ t('spreed', 'Error while creating the conversation') }}
+			</p>
 		</template>
 	</div>
 </template>
@@ -43,11 +53,29 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		success: {
+			type: Boolean,
+			required: true,
+		},
+		error: {
+			type: Boolean,
+			required: true,
+		},
 	},
 }
 
 </script>
 
 <style lang="scss" scoped>
-
+.confirmation {
+	margin: auto;
+	&__icon{
+		padding-top: 80px;
+	}
+	&__warning{
+		margin: auto;
+		text-align: center;
+		font-size: 16px;
+	}
+}
 </style>

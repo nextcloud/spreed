@@ -104,7 +104,7 @@ export default {
 		// Forward the event from the children to the parent
 		handleUpdateSelectedParticipants(selectedParticipants) {
 			this.$emit('updateSelectedParticipants', selectedParticipants)
-		}
+		},
 	},
 }
 </script>

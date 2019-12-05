@@ -58,7 +58,9 @@
 					<template v-if="page === 2">
 						<Confirmation
 							:conversation-name="conversationName"
-							:is-loading="isLoading" />
+							:error="error"
+							:is-loading="isLoading"
+							:success="success" />
 					</template>
 				</div>
 				<div
@@ -79,7 +81,13 @@
 						v-if="page===1"
 						class="navigation__button-right primary"
 						@click="handleCreateConversation">
-						{{ t('spreed', 'Create conversation') }}
+						{{ t('spreed', 'Add participants') }}
+					</button>
+					<button
+						v-if="page===2 && this.error"
+						class="navigation__button-right primary"
+						@click="closeModal">
+						{{ t('spreed', 'Close') }}
 					</button>
 				</div>
 			</div>
@@ -125,7 +133,9 @@ export default {
 			checked: false,
 			isLoading: true,
 			token: '',
-			selectedParticipants: []
+			selectedParticipants: [],
+			success: false,
+			error: false,
 		}
 	},
 
@@ -149,6 +159,8 @@ export default {
 			this.isLoading = true
 			this.token = ''
 			this.selectedParticipants = []
+			this.success = false
+			this.error = false
 		},
 		handleSetConversationName(event) {
 			this.page = 1
@@ -179,31 +191,40 @@ export default {
 		},
 
 		async handleCreateConversation() {
-			this.isLoading = true
 			this.page = 2
 			if (this.checked) {
 				try {
 					await this.createPublicConversation()
 				} catch (exeption) {
-					// Stop the execution of the method on exeptions. 
+					this.isLoading = false
+					this.error = true
+					// Stop the execution of the method on exeptions.
 					return
 				}
 			} else {
 				try {
 					await this.createPrivateConversation()
 				} catch (exeption) {
-					// Stop the execution of the method on exeptions. 
+					this.isLoading = false
+					this.error = true
+					// Stop the execution of the method on exeptions.
 					return
 				}
 			}
-			debugger
 			for (const participant of this.selectedParticipants) {
 				try {
 					await addParticipant(this.token, participant.id, participant.source)
 				} catch (exeption) {
 					console.debug(exeption)
+					this.isLoading = false
+					this.error = true
+					// Stop the execution of the method on exeptions.
+					return
 				}
 			}
+			this.success = true
+			// This displays the checkmark for a little while.
+			await setTimeout(() => this.closeModal(), 200)
 		},
 
 		async createPrivateConversation() {
