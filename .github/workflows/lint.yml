@@ -51,5 +51,5 @@ jobs:
         run: npm i
       - name: ESLint
         run: npm run lint
-      - name: ESLint
+      - name: Stylelint for vue files
         run: npm run stylelint
