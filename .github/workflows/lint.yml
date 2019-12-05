@@ -36,3 +36,20 @@ jobs:
         run: "find css -name '*.css' -exec $(which stylelint) -f verbose {} \\;"
       - name: Lint SCSS files
         run: "find css -name '*.scss' -exec $(which stylelint) -f verbose {} \\;"
+
+  eslint:
+    runs-on: ubuntu-latest
+    name: ESLint
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: NPM install
+        run: npm i
+      - name: ESLint
+        run: npm run lint
+      - name: ESLint
+        run: npm run stylelint
