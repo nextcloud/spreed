@@ -151,7 +151,7 @@
 				this.getUI('nameIndicator').text(participantName);
 			}
 
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+			this.trigger('videoContainerDummyOutdated', this);
 		},
 
 		/**
@@ -189,7 +189,7 @@
 				this.getUI('screenSharingIndicator').addClass('hidden');
 				this.getUI('iceFailedIndicator').removeClass('not-failed');
 
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+				this.trigger('videoContainerDummyOutdated', this);
 
 				return;
 			}
@@ -248,7 +248,7 @@
 						.removeClass('audio-on')
 						.removeClass('audio-off');
 
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+				this.trigger('videoContainerDummyOutdated', this);
 
 				return;
 			}
@@ -258,7 +258,7 @@
 						.removeClass('audio-on')
 						.addClass('audio-off');
 
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+				this.trigger('videoContainerDummyOutdated', this);
 
 				return;
 			}
@@ -267,7 +267,7 @@
 					.removeClass('audio-off')
 					.addClass('audio-on');
 
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+			this.trigger('videoContainerDummyOutdated', this);
 		},
 
 		_setSpeaking: function(model, speaking) {
@@ -304,7 +304,7 @@
 				this.getUI('video').addClass('hidden');
 				this.getUI('hideRemoteVideoButton').addClass('hidden');
 
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+				this.trigger('videoContainerDummyOutdated', this);
 
 				return;
 			}
@@ -316,7 +316,7 @@
 				this.getUI('video').removeClass('hidden');
 			}
 
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+			this.trigger('videoContainerDummyOutdated', this);
 		},
 
 		setVideoEnabled: function(videoEnabled) {
@@ -330,7 +330,7 @@
 						.removeClass('icon-video')
 						.addClass('icon-video-off');
 
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+				this.trigger('videoContainerDummyOutdated', this);
 
 				return;
 			}
@@ -342,7 +342,7 @@
 					.removeClass('icon-video-off')
 					.addClass('icon-video');
 
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+			this.trigger('videoContainerDummyOutdated', this);
 		},
 
 		toggleVideo: function() {
@@ -363,7 +363,7 @@
 						.removeClass('screen-on')
 						.addClass('screen-off');
 
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+				this.trigger('videoContainerDummyOutdated', this);
 
 				return;
 			}
@@ -372,7 +372,7 @@
 					.removeClass('screen-off')
 					.addClass('screen-on');
 
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+			this.trigger('videoContainerDummyOutdated', this);
 		},
 
 		setScreenVisible: function(screenVisible) {

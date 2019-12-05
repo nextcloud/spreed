@@ -99,6 +99,10 @@
 			});
 			this._videoViews[callParticipantModel.get('id')] = videoView;
 
+			this.listenTo(videoView, 'videoContainerDummyOutdated', function() {
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(callParticipantModel.get('id'));
+			});
+
 			// When adding a region and showing a view on it the target element
 			// of the region must exist in the parent view. Therefore, a dummy
 			// target element, which will be replaced with the VideoView itself,
