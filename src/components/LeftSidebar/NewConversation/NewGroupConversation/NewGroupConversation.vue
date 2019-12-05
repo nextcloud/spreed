@@ -54,6 +54,9 @@
 						<SetContacts
 							:conversation-name="conversationName" />
 					</template>
+					<template v-if="page === 2">
+						<Confirmation is-loading="isLoading" />
+					</template>
 				</div>
 				<div
 					class="navigation">
@@ -89,6 +92,7 @@ import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
+import Confirmation from './Confirmation/Confirmation'
 
 export default {
 
@@ -101,6 +105,7 @@ export default {
 		SetContacts,
 		SetConversationName,
 		SetConversationType,
+		Confirmation
 	},
 
 	data() {
@@ -110,13 +115,14 @@ export default {
 			conversationNameInput: '',
 			hint: '',
 			checked: false,
+			isLoading: true,
 		}
 	},
 
 	computed: {
 		conversationName() {
 			return this.conversationNameInput.trim()
-		}
+		},
 	},
 
 	methods: {
@@ -130,6 +136,7 @@ export default {
 			this.conversationName = ''
 			this.hint = ''
 			this.checked = false
+			this.isLoading = true
 		},
 		handleSetConversationName(event) {
 			this.page = 1
@@ -148,7 +155,8 @@ export default {
 			this.page = 0
 		},
 		handleCreateConversation() {
-			return true
+			this.isLoading = true
+			this.page = 2
 		},
 		handleInput() {
 			if (this.conversationName !== '') {

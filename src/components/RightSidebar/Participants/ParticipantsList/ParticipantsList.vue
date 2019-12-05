@@ -121,8 +121,8 @@ export default {
 				 * Remove the clicked participant from the selected participants list
 				 */
 				if (this.selectedParticipants.indexOf(participant) !== -1) {
-					this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) =>{
-						if(selectedParticipant.id === participant.id) {
+					this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) => {
+						if (selectedParticipant.id === participant.id) {
 							return false
 						} return true
 					})
