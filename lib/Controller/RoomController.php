@@ -26,6 +26,8 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Controller;
 
+use OCA\Circles\Api\v1\Circles;
+use OCA\Circles\Model\Member;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Events\UserEvent;
@@ -39,6 +41,7 @@ use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -57,6 +60,8 @@ class RoomController extends AEnvironmentAwareController {
 
 	/** @var string|null */
 	private $userId;
+	/** @var IAppManager */
+	private $appManager;
 	/** @var TalkSession */
 	private $session;
 	/** @var IUserManager */
@@ -81,6 +86,7 @@ class RoomController extends AEnvironmentAwareController {
 	public function __construct(string $appName,
 								?string $UserId,
 								IRequest $request,
+								IAppManager $appManager,
 								TalkSession $session,
 								IUserManager $userManager,
 								IGroupManager $groupManager,
@@ -93,6 +99,7 @@ class RoomController extends AEnvironmentAwareController {
 								IL10N $l10n) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
+		$this->appManager = $appManager;
 		$this->userId = $UserId;
 		$this->userManager = $userManager;
 		$this->groupManager = $groupManager;
@@ -351,15 +358,19 @@ class RoomController extends AEnvironmentAwareController {
 	 * @param int $roomType
 	 * @param string $invite
 	 * @param string $roomName
+	 * @param string $source
 	 * @return DataResponse
 	 */
-	public function createRoom(int $roomType, string $invite = '', string $roomName = ''): DataResponse {
+	public function createRoom(int $roomType, string $invite = '', string $roomName = '', string $source = ''): DataResponse {
 		switch ($roomType) {
 			case Room::ONE_TO_ONE_CALL:
 				return $this->createOneToOneRoom($invite);
 			case Room::GROUP_CALL:
 				if ($invite === '') {
 					return $this->createEmptyRoom($roomName, false);
+				}
+				if ($source === 'circles') {
+					return $this->createCircleRoom($invite);
 				}
 				return $this->createGroupRoom($invite);
 			case Room::PUBLIC_CALL:
@@ -448,6 +459,60 @@ class RoomController extends AEnvironmentAwareController {
 
 			$participants[] = [
 				'userId' => $user->getUID(),
+			];
+		}
+
+		\call_user_func_array([$room, 'addUsers'], $participants);
+
+		return new DataResponse($this->formatRoom($room, $room->getParticipant($currentUser->getUID())), Http::STATUS_CREATED);
+	}
+
+	/**
+	 * Initiates a group video call from the selected circle
+	 *
+	 * @NoAdminRequired
+	 *
+	 * @param string $targetCircleId
+	 * @return DataResponse
+	 */
+	protected function createCircleRoom(string $targetCircleId): DataResponse {
+		if (!$this->appManager->isEnabledForUser('circles')) {
+			return new DataResponse([], Http::STATUS_BAD_REQUEST);
+		}
+
+		/** @var Circles $circlesApi */
+		try {
+			$circle = Circles::detailsCircle($targetCircleId);
+		} catch (\Exception $e) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+		$currentUser = $this->userManager->get($this->userId);
+
+		if (!$currentUser instanceof IUser) {
+			return new DataResponse([], Http::STATUS_NOT_FOUND);
+		}
+
+		// Create the room
+		$room = $this->manager->createGroupRoom($circle->getName());
+		$room->addUsers([
+			'userId' => $currentUser->getUID(),
+			'participantType' => Participant::OWNER,
+		]);
+
+		$participants = [];
+		foreach ($circle->getMembers() as $member) {
+			/** @var Member $member */
+			if ($member->getUserId() === '') {
+				// Not a user?
+				continue;
+			}
+			if ($currentUser->getUID() === $member->getUserId()) {
+				// Current user is already added
+				continue;
+			}
+
+			$participants[] = [
+				'userId' => $member->getUserId(),
 			];
 		}
 

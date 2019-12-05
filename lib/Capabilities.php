@@ -82,6 +82,7 @@ class Capabilities implements IPublicCapability {
 					'webinary-lobby',
 					'start-call-flag',
 					'chat-replies',
+					'circles-support',
 				],
 				'config' => [
 					'chat' => [

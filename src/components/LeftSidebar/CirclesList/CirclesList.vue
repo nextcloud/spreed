@@ -22,7 +22,7 @@
 <template>
 	<ul class="contacts-list">
 		<AppContentListItem
-			v-for="item of groups"
+			v-for="item of circles"
 			:key="item.id"
 			:title="item.label"
 			@click="createAndJoinConversation(item.id)">
@@ -42,13 +42,13 @@ import { createGroupConversation } from '../../../services/conversationsService'
 import { CONVERSATION } from '../../../constants'
 
 export default {
-	name: 'GroupsList',
+	name: 'CirclesList',
 	components: {
 		ConversationIcon,
 		AppContentListItem,
 	},
 	props: {
-		groups: {
+		circles: {
 			type: Array,
 			required: true,
 		},
@@ -66,12 +66,13 @@ export default {
 	},
 	methods: {
 		/**
-		 * Create a new conversation with the selected group.
-		 * @param {string} groupId the ID of the clicked group.
+		 * Create a new conversation with the selected circle.
+		 * @param {string} circleId the ID of the clicked circle.
 		 */
-		async createAndJoinConversation(groupId) {
-			console.debug(groupId)
-			const response = await createGroupConversation(groupId, 'groups')
+		async createAndJoinConversation(circleId) {
+			console.debug('circles')
+			console.debug(circleId)
+			const response = await createGroupConversation(circleId, 'circles')
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
