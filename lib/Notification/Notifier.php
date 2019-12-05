@@ -549,7 +549,7 @@ class Notifier implements INotifier {
 			if ($callIsActive) {
 				$subject = $l->t('{email} is requesting the password to access {file}');
 			} else {
-				$subject = $l->t('{email} tried to requested the password to access {file}');
+				$subject = $l->t('{email} tried to request the password to access {file}');
 			}
 
 			$notification
@@ -567,7 +567,7 @@ class Notifier implements INotifier {
 			if ($callIsActive) {
 				$subject = $l->t('Someone is requesting the password to access {file}');
 			} else {
-				$subject = $l->t('Someone tried to requested the password to access {file}');
+				$subject = $l->t('Someone tried to request the password to access {file}');
 			}
 
 			$notification
