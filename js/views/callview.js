@@ -56,6 +56,7 @@
 			'add': '_addVideoView',
 			'remove': '_removeVideoView',
 			'change:connectionState': '_handleConnectionStateChange',
+			'change:speaking': '_handleSpeakingChange',
 		},
 
 		initialize: function(options) {
@@ -66,6 +67,10 @@
 			});
 
 			this._videoViews = [];
+
+			this._callViewSpeakers = new OCA.Talk.Views.CallViewSpeakers(this);
+
+			this._screenSharingActive = false;
 
 			this.render();
 		},
@@ -100,8 +105,10 @@
 			this._videoViews[callParticipantModel.get('id')] = videoView;
 
 			this.listenTo(videoView, 'videoContainerDummyOutdated', function() {
-				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(callParticipantModel.get('id'));
+				this._callViewSpeakers.updateVideoContainerDummyIfLatestSpeaker(callParticipantModel.get('id'));
 			});
+
+			this._callViewSpeakers.add(callParticipantModel.get('id'));
 
 			// When adding a region and showing a view on it the target element
 			// of the region must exist in the parent view. Therefore, a dummy
@@ -122,6 +129,8 @@
 			if (!this._videoViews[callParticipantModel.get('id')]) {
 				return;
 			}
+
+			this._callViewSpeakers.remove(callParticipantModel.get('id'), true);
 
 			var removedRegion = this.removeRegion(callParticipantModel.get('id'));
 			// Remove the dummy target element that was replaced by the view
@@ -146,6 +155,30 @@
 			}
 
 			this._addVideoView(callParticipantModel);
+		},
+
+		_handleSpeakingChange: function(callParticipantModel, speaking) {
+			if (speaking) {
+				this._callViewSpeakers.add(callParticipantModel.get('id'));
+			} else {
+				this._callViewSpeakers.remove(callParticipantModel.get('id'));
+			}
+		},
+
+		unpromoteLatestSpeaker: function() {
+			this._callViewSpeakers.unpromoteLatestSpeaker();
+		},
+
+		switchToUnpromotedLatestSpeaker: function() {
+			this._callViewSpeakers.switchToUnpromotedLatestSpeaker();
+		},
+
+		isScreenSharingActive: function() {
+			return this._screenSharingActive;
+		},
+
+		setScreenSharingActive: function(active) {
+			this._screenSharingActive = active;
 		},
 
 	});
