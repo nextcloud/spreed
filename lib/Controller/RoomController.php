@@ -725,6 +725,40 @@ class RoomController extends AEnvironmentAwareController {
 			}
 
 			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
+		} else if ($source === 'circles') {
+			if (!$this->appManager->isEnabledForUser('circles')) {
+				return new DataResponse([], Http::STATUS_BAD_REQUEST);
+			}
+
+			/** @var Circles $circlesApi */
+			try {
+				$circle = Circles::detailsCircle($newParticipant);
+			} catch (\Exception $e) {
+				return new DataResponse([], Http::STATUS_NOT_FOUND);
+			}
+
+			$participants = [];
+			foreach ($circle->getMembers() as $member) {
+				/** @var Member $member */
+				if ($member->getUserId() === '') {
+					// Not a user?
+					continue;
+				}
+
+				if (\in_array($member->getUserId(), $participants, true)) {
+					continue;
+				}
+
+				$participantsToAdd[] = [
+					'userId' => $member->getUserId(),
+				];
+			}
+
+			if (empty($participantsToAdd)) {
+				return new DataResponse([]);
+			}
+
+			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
 		} else if ($source === 'emails') {
 			$data = [];
 			if ($this->room->setType(Room::PUBLIC_CALL)) {
