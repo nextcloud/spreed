@@ -57,25 +57,26 @@
 
 			this.listenTo(this._localMediaModel, 'change:localScreen', this._setScreen);
 			this.listenTo(this._callParticipantModel, 'change:screen', this._setScreen);
+			this.listenTo(this._callParticipantModel, 'change:name', this._setParticipantName);
 
 			this.render();
-
-			if (this._localMediaModel) {
-				this.getUI('nameIndicator').text(t('spreed', 'Your screen'));
-			}
 		},
 
 		onRender: function() {
 			// Match current model state.
 			if (this._localMediaModel) {
 				this._setScreen(this._localMediaModel, this._localMediaModel.get('localScreen'));
+				this._setParticipantName(this._localMediaModel, null);
 			} else {
 				this._setScreen(this._callParticipantModel, this._callParticipantModel.get('screen'));
+				this._setParticipantName(this._callParticipantModel, this._callParticipantModel.get('name'));
 			}
 		},
 
-		setParticipantName: function(participantName) {
+		_setParticipantName: function(model, participantName) {
 			if (this._localMediaModel) {
+				this.getUI('nameIndicator').text(t('spreed', 'Your screen'));
+
 				return;
 			}
 

@@ -2,7 +2,6 @@
 /* global SimpleWebRTC, OC, OCA: false */
 
 var webrtc;
-var guestNamesTable = {};
 var spreedPeerConnectionTable = [];
 
 (function(OCA, OC) {
@@ -253,7 +252,6 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.speakers.remove(sessionId, true);
 			OCA.SpreedMe.videos.remove(sessionId);
 			delete OCA.SpreedMe.callParticipantModels[sessionId];
-			delete guestNamesTable[sessionId];
 			if (delayedConnectionToPeer[sessionId]) {
 				clearInterval(delayedConnectionToPeer[sessionId]);
 				delete delayedConnectionToPeer[sessionId];
@@ -1215,11 +1213,6 @@ var spreedPeerConnectionTable = [];
 					callParticipantModel: peer? OCA.SpreedMe.callParticipantModels[peer.id]: null,
 				});
 
-				if (peer) {
-					var participantName = peer.nick || guestNamesTable[peer.id];
-					screenView.setParticipantName(participantName);
-				}
-
 				screenView.$el.prependTo($('#screens'));
 
 				if (peer) {
@@ -1273,21 +1266,6 @@ var spreedPeerConnectionTable = [];
 					roomType: 'screen',
 					type: 'unshareScreen'
 				});
-			}
-		});
-
-		// Peer changed nick
-		OCA.SpreedMe.webrtc.on('nick', function(data) {
-			//Screen
-			var screenView = OCA.SpreedMe.sharedScreens.screenViews[data.id];
-			if (screenView) {
-				screenView.setParticipantName(data.name);
-			}
-
-			if (!data.userid && data.name) {
-				// Use null to differentiate between empty (null) and not known
-				// yet (undefined).
-				guestNamesTable[data.id] = data.name || null;
 			}
 		});
 	}
