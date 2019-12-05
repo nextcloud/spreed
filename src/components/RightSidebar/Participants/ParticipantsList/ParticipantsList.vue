@@ -99,7 +99,7 @@ export default {
 					return []
 				}
 			} else {
-				return []
+				return this.items
 			}
 		},
 	},

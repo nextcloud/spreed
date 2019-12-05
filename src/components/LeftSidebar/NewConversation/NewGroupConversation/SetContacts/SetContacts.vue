@@ -22,12 +22,12 @@
 <template>
 	<div class="set-contacts">
 		<input
+			v-model="searchText"
 			class="set-contacts__input"
 			type="text"
 			autofocus
-			v-model="searchText"
 			:placeholder="t('spreed', `Search Participants`)"
-			@input="handleInput" />
+			@input="handleInput">
 		<template>
 			<Caption
 				:title="t('spreed', `Select participants to add to ${conversationName}`)" />
@@ -46,8 +46,6 @@ import Caption from '../../../../Caption'
 import Hint from '../../../../Hint'
 import ParticipantsList from '../../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
 import debounce from 'debounce'
-import { EventBus } from '../../../../../services/EventBus'
-import { CONVERSATION, WEBINAR } from '../../../../../constants'
 import { searchPossibleConversations } from '../../../../../services/conversationsService'
 import { fetchParticipants } from '../../../../../services/participantsService'
 
@@ -63,7 +61,7 @@ export default {
 		conversationName: {
 			type: String,
 			required: true,
-		}
+		},
 	},
 
 	data() {
@@ -75,49 +73,13 @@ export default {
 	},
 
 	computed: {
-		show() {
-			return this.$store.getters.getSidebarStatus
-		},
-		opened() {
-			return !!this.token && this.show
-		},
-		token() {
-			return this.$route.params.token
-		},
-		conversation() {
-			if (this.$store.getters.conversations[this.token]) {
-				return this.$store.getters.conversations[this.token]
-			}
-			return {
-				token: '',
-				displayName: '',
-				isFavorite: false,
-				type: CONVERSATION.TYPE.PUBLIC,
-				lobbyState: WEBINAR.LOBBY.NONE,
-			}
-		},
+
 		isSearching() {
 			return this.searchText !== ''
 		},
 	},
 
-	beforeMount() {
-		this.getParticipants()
-		/**
-		 * If the route changes, the search filter is reset and we get participants again
-		 */
-		EventBus.$on('routeChange', () => {
-			this.searchText = ''
-			this.$nextTick(() => {
-				this.getParticipants()
-			})
-		})
-	},
-
 	methods: {
-		handleClose() {
-			this.$store.dispatch('hideSidebar')
-		},
 		handleInput() {
 			this.contactsLoading = true
 			this.searchResults = []
@@ -142,29 +104,6 @@ export default {
 			}
 		},
 
-		async toggleGuests() {
-			try {
-				await this.$store.dispatch('toggleGuests', {
-					token: this.token,
-					allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while toggling guests'))
-			}
-		},
-
-		async toggleLobby() {
-			try {
-				await this.$store.dispatch('toggleLobby', {
-					token: this.token,
-					enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while toggling the lobby'))
-			}
-		},
 		async getParticipants() {
 			try {
 				const participants = await fetchParticipants(this.token)

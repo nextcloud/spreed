@@ -120,7 +120,6 @@ export default {
 			this.modal = false
 		},
 		handleSetConversationName(event) {
-			console.log(event)
 			this.page = 1
 		},
 		handleClickForward() {
