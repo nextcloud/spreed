@@ -646,23 +646,6 @@ input[type="password"] {
 	opacity: 1;
 }
 
-/* make blue header bar transparent in shared room */
-#body-public #app-content:not(.participants-1) #header.spreed-public {
-	background: transparent;
-}
-
-/* As the header is hidden (except for the logo), move the fullscreen button and
- * sidebar to the top during calls */
-#body-public #app-content:not(.participants-1) #app-sidebar,
-#body-public #app-content:not(.participants-1) #app-sidebar-trigger,
-#body-public #app-content:not(.participants-1) #video-fullscreen {
-	top: 0;
-	z-index: 3000;
-}
-#body-public #app-content:not(.participants-1) #video-fullscreen {
-	top: 44px;
-}
-
 /**
  * Right sidebar
  */
