@@ -41,14 +41,12 @@ export default {
 	.app-navigation-caption {
 		color: var(--color-primary);
 		line-height: 44px;
-
+		list-style-type:none;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		box-shadow: none !important;
 		user-select: none;
 		pointer-events: none;
-
-		margin-left: 10px;
 		border-bottom: 1px solid var(--color-border-dark);
 
 		&:not(:first-child) {

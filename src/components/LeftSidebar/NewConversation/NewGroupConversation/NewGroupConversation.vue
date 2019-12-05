@@ -23,6 +23,7 @@
 	<div>
 		<Actions>
 			<ActionButton
+				class="toggle"
 				icon="icon-add"
 				@click="showModal" />
 		</Actions>
@@ -155,6 +156,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.toggle {
+	margin-left: 5px !important;
+}
 
 .new-group-conversation {
 	width: 300px;

@@ -117,11 +117,15 @@ export default {
 					console.debug(exeption)
 				}
 			} else {
+				/**
+				 * Remove the clicked participant from the selected participants list
+				 */
 				if (this.selectedParticipants.indexOf(participant) !== -1) {
-					/**
-					 * Remove the clicked participant from the selected participants list
-					 */
-					this.selectedParticipants = [...this.selectedParticipants.slice(0, this.selectedParticipants.indexOf(participant)), ...this.selectedParticipants.slice(this.selectedParticipants.indexOf(participant), this.selectedParticipants.length)]
+					this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) =>{
+						if(selectedParticipant.id === participant.id) {
+							return false
+						} return true
+					})
 				} else {
 					/**
 					 * Add the clicked participant from the selected participants list

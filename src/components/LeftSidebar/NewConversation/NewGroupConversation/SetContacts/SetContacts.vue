@@ -35,8 +35,8 @@
 				:add-on-click="false"
 				:items="searchResults"
 				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-if="false" :hint="t('spreed', 'Loading')" />
-			<Hint :hint="t('spreed', 'No search results')" />
+			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+			<Hint v-if="false" :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
 </template>
