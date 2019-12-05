@@ -116,8 +116,13 @@ export default {
 		showModal() {
 			this.modal = true
 		},
+		// Resets to the base state of the component
 		closeModal() {
 			this.modal = false
+			this.page = 0
+			this.conversationName = ''
+			this.hint = ''
+			this.checked = false
 		},
 		handleSetConversationName(event) {
 			this.page = 1
