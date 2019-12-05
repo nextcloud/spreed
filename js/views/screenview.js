@@ -36,7 +36,7 @@
 		className: 'screenContainer',
 
 		id: function() {
-			return this.options.peerId? 'container_' + this.options.peerId + '_screen_incoming': 'localScreenContainer';
+			return this.options.callParticipantModel? 'container_' + this.options.callParticipantModel.get('peerId') + '_screen_incoming': 'localScreenContainer';
 		},
 
 		template: function(context) {
@@ -52,15 +52,30 @@
 		},
 
 		initialize: function(options) {
+			this._localMediaModel = options.localMediaModel;
+			this._callParticipantModel = options.callParticipantModel;
+
+			this.listenTo(this._localMediaModel, 'change:localScreen', this._setScreen);
+			this.listenTo(this._callParticipantModel, 'change:screen', this._setScreen);
+
 			this.render();
 
-			if (!options.peerId) {
+			if (this._localMediaModel) {
 				this.getUI('nameIndicator').text(t('spreed', 'Your screen'));
 			}
 		},
 
+		onRender: function() {
+			// Match current model state.
+			if (this._localMediaModel) {
+				this._setScreen(this._localMediaModel, this._localMediaModel.get('localScreen'));
+			} else {
+				this._setScreen(this._callParticipantModel, this._callParticipantModel.get('screen'));
+			}
+		},
+
 		setParticipantName: function(participantName) {
-			if (!this.options.peerId) {
+			if (this._localMediaModel) {
 				return;
 			}
 
@@ -74,13 +89,23 @@
 			this.getUI('nameIndicator').text(nameIndicator);
 		},
 
+		_setScreen: function(model, screen) {
+			if (!screen) {
+				this._setVideoElement(null);
+
+				return;
+			}
+
+			this._setVideoElement(OCA.Talk.Views.attachMediaStream(screen));
+		},
+
 		/**
 		 * Sets the element with the video stream.
 		 *
 		 * @param {HTMLVideoElement|null} videoElement the element to set, or null
 		 *        to remove the current one.
 		 */
-		setVideoElement: function(videoElement) {
+		_setVideoElement: function(videoElement) {
 			this.getUI('video').remove();
 
 			if (videoElement) {

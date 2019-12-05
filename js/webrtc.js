@@ -1211,9 +1211,9 @@ var spreedPeerConnectionTable = [];
 			var screens = document.getElementById('screens');
 			if (screens) {
 				var screenView = new OCA.Talk.Views.ScreenView({
-					peerId: peer? peer.id: undefined
+					localMediaModel: peer? null: OCA.SpreedMe.app._localMediaModel,
+					callParticipantModel: peer? OCA.SpreedMe.callParticipantModels[peer.id]: null,
 				});
-				screenView.setVideoElement(video);
 
 				if (peer) {
 					var participantName = peer.nick || guestNamesTable[peer.id];
