@@ -179,6 +179,15 @@ var spreedPeerConnectionTable = [];
 			}
 			callParticipantModel.setUserId(userId);
 
+			// When the MCU is used and the other participant has no streams or
+			// when no MCU is used and neither the local participant nor the
+			// other one has no streams there will be no Peer for that other
+			// participant, so a null Peer needs to be explicitly set now.
+			if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
+					(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
+				callParticipantModel.setPeer(null);
+			}
+
 			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
 			if (!videoView) {
 				videoView = OCA.SpreedMe.videos.add(sessionId);
@@ -480,16 +489,6 @@ var spreedPeerConnectionTable = [];
 				var videoView = new OCA.Talk.Views.VideoView({
 					model: callParticipantModel,
 				});
-
-				// When the MCU is used and the other participant has no streams
-				// or when no MCU is used and neither the local participant nor
-				// the other one has no streams there will be no Peer for that
-				// other participant, so the VideoView status will not be
-				// modified later and thus it needs to be fully set now.
-				if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
-						(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
-					callParticipantModel.setPeer(null);
-				}
 
 				OCA.SpreedMe.videos.videoViews[id] = videoView;
 
