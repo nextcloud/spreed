@@ -23,24 +23,27 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Chat;
 
+use OCA\Talk\Events\ChatEvent;
+use OCA\Talk\Events\ChatMessageEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Model\Message;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IUser;
 use OCP\IUserManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 /**
  * Helper class to get a rich message from a plain text message.
  */
 class MessageParser {
 
-	/** @var EventDispatcherInterface */
+	public const EVENT_MESSAGE_PARSE = self::class . '::parseMessage';
+
+	/** @var IEventDispatcher */
 	private $dispatcher;
 
 	/** @var IUserManager */
@@ -52,7 +55,7 @@ class MessageParser {
 	/** @var array */
 	protected $guestNames = [];
 
-	public function __construct(EventDispatcherInterface $dispatcher,
+	public function __construct(IEventDispatcher $dispatcher,
 								IUserManager $userManager,
 								GuestManager $guestManager) {
 		$this->dispatcher = $dispatcher;
@@ -69,8 +72,8 @@ class MessageParser {
 		$message->setMessageType($message->getComment()->getVerb());
 		$this->setActor($message);
 
-		$event = new GenericEvent($message);
-		$this->dispatcher->dispatch(self::class . '::parseMessage', $event);
+		$event = new ChatMessageEvent($message);
+		$this->dispatcher->dispatch(self::EVENT_MESSAGE_PARSE, $event);
 	}
 
 	protected function setActor(Message $message): void {

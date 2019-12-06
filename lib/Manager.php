@@ -25,12 +25,15 @@ namespace OCA\Talk;
 
 use OCA\Talk\Chat\Changelog;
 use OCA\Talk\Chat\CommentsManager;
+use OCA\Talk\Events\CreateRoomTokenEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\NotFoundException;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IDBConnection;
 use OCP\IL10N;
@@ -38,10 +41,10 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Manager {
+
+	public const EVENT_TOKEN_GENERATE = self::class . '::generateNewToken';
 
 	/** @var IDBConnection */
 	private $db;
@@ -55,7 +58,7 @@ class Manager {
 	private $commentsManager;
 	/** @var TalkSession */
 	private $talkSession;
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	private $dispatcher;
 	/** @var ITimeFactory */
 	protected $timeFactory;
@@ -70,7 +73,7 @@ class Manager {
 								IUserManager $userManager,
 								CommentsManager $commentsManager,
 								TalkSession $talkSession,
-								EventDispatcherInterface $dispatcher,
+								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
 								IHasher $hasher,
 								IL10N $l) {
@@ -616,7 +619,8 @@ class Manager {
 
 		$room = $this->getRoomById($roomId);
 
-		$this->dispatcher->dispatch(Room::class . '::createRoom', new GenericEvent($room));
+		$event = new RoomEvent($room);
+		$this->dispatcher->dispatch(Room::EVENT_AFTER_ROOM_CREATE, $event);
 
 		return $room;
 	}
@@ -798,14 +802,12 @@ class Manager {
 	 * @throws \OutOfBoundsException
 	 */
 	protected function generateNewToken(IQueryBuilder $query, int $entropy, string $chars): string {
-		$event = new GenericEvent(null, [
-			'entropy' => $entropy,
-			'chars' => $chars,
-		]);
-		$this->dispatcher->dispatch(self::class . '::generateNewToken', $event);
+
+		$event = new CreateRoomTokenEvent($entropy, $chars);
+		$this->dispatcher->dispatch(self::EVENT_TOKEN_GENERATE, $event);
 		try {
-			$token = $event->getArgument('token');
-			if (empty($token)) {
+			$token = $event->getToken();
+			if ($token === '') {
 				// Will generate default token below.
 				throw new \InvalidArgumentException('token may not be empty');
 			}

@@ -23,14 +23,16 @@ declare(strict_types=1);
 namespace OCA\Talk\Activity;
 
 use OCA\Talk\Chat\ChatManager;
+use OCA\Talk\Events\AddParticipantsEvent;
+use OCA\Talk\Events\ModifyParticipantEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Room;
 use OCP\Activity\IManager;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\ILogger;
 use OCP\IUser;
 use OCP\IUserSession;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class Listener {
 
@@ -61,38 +63,29 @@ class Listener {
 		$this->timeFactory = $timeFactory;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+	public static function register(IEventDispatcher $dispatcher): void {
+		$listener = static function(ModifyParticipantEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->setActive($room);
+			$listener->setActive($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postSessionJoinCall', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->generateCallActivity($room);
+			$listener->generateCallActivity($event->getRoom());
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveBySession', $listener);
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
-		$dispatcher->addListener(Room::class . '::postSessionLeaveCall', $listener, -100);
+		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener, -100);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
-
+		$listener = static function(AddParticipantsEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->generateInvitationActivity($room, $event->getArgument('users'));
+			$listener->generateInvitationActivity($event->getRoom(), $event->getParticipants());
 		};
-		$dispatcher->addListener(Room::class . '::postAddUsers', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USERS_ADD, $listener);
 	}
 
 	public function setActive(Room $room): void {

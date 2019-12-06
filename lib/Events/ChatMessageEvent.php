@@ -20,36 +20,23 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Chat\Changelog;
+namespace OCA\Talk\Events;
 
-use OCA\Talk\Controller\RoomController;
-use OCA\Talk\Events\UserEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 
-class Listener {
+use OCA\Talk\Model\Message;
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function(UserEvent $event) {
-			$userId = $event->getUserId();
+class ChatMessageEvent extends ChatEvent {
 
-			/** @var Listener $listener */
-			$listener = \OC::$server->query(self::class);
-			$listener->preGetRooms($userId);
-		}, -100);
+	/** @var Message */
+	protected $message;
+
+
+	public function __construct(Message $message) {
+		parent::__construct($message->getRoom(), $message->getComment());
+		$this->message = $message;
 	}
 
-	/** @var Manager */
-	protected $manager;
-
-	public function __construct(Manager $manager) {
-		$this->manager = $manager;
-	}
-
-	public function preGetRooms(string $userId): void {
-		if (!$this->manager->userHasNewChangelog($userId)) {
-			return;
-		}
-
-		$this->manager->updateChangelog($userId);
+	public function getMessage(): Message {
+		return $this->message;
 	}
 }

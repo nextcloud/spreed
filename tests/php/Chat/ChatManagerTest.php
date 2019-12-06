@@ -31,16 +31,16 @@ use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
 use OCP\Comments\ICommentsManager;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Test\TestCase;
 
 class ChatManagerTest extends TestCase {
 
 	/** @var CommentsManager|ICommentsManager|MockObject */
 	protected $commentsManager;
-	/** @var EventDispatcherInterface|MockObject */
+	/** @var IEventDispatcher|MockObject */
 	protected $dispatcher;
 	/** @var Notifier|MockObject */
 	protected $notifier;
@@ -53,7 +53,7 @@ class ChatManagerTest extends TestCase {
 		parent::setUp();
 
 		$this->commentsManager = $this->createMock(CommentsManager::class);
-		$this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+		$this->dispatcher = $this->createMock(IEventDispatcher::class);
 		$this->notifier = $this->createMock(Notifier::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 

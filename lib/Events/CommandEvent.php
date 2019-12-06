@@ -20,36 +20,42 @@ declare(strict_types=1);
  *
  */
 
-namespace OCA\Talk\Chat\Changelog;
+namespace OCA\Talk\Events;
 
-use OCA\Talk\Controller\RoomController;
-use OCA\Talk\Events\UserEvent;
-use OCP\EventDispatcher\IEventDispatcher;
 
-class Listener {
+use OCA\Talk\Model\Command;
+use OCA\Talk\Room;
+use OCP\Comments\IComment;
 
-	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function(UserEvent $event) {
-			$userId = $event->getUserId();
+class CommandEvent extends ChatEvent {
 
-			/** @var Listener $listener */
-			$listener = \OC::$server->query(self::class);
-			$listener->preGetRooms($userId);
-		}, -100);
+	/** @var Command */
+	protected $command;
+	/** @var string */
+	protected $arguments;
+	/** @var string */
+	protected $output;
+
+
+	public function __construct(Room $room, IComment $message, Command $command, string $arguments) {
+		parent::__construct($room, $message);
+		$this->command = $command;
+		$this->arguments = $arguments;
 	}
 
-	/** @var Manager */
-	protected $manager;
-
-	public function __construct(Manager $manager) {
-		$this->manager = $manager;
+	public function getCommand(): Command {
+		return $this->command;
 	}
 
-	public function preGetRooms(string $userId): void {
-		if (!$this->manager->userHasNewChangelog($userId)) {
-			return;
-		}
+	public function getArguments(): string {
+		return $this->arguments;
+	}
 
-		$this->manager->updateChangelog($userId);
+	public function setOutput(string $output): void {
+		$this->output = $output;
+	}
+
+	public function getOutput(): string {
+		return $this->output;
 	}
 }

@@ -25,6 +25,7 @@ namespace OCA\Talk\Tests\php\Controller;
 use OCA\Talk\Chat\CommentsManager;
 use OCA\Talk\Config;
 use OCA\Talk\Controller\SignalingController;
+use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
@@ -33,6 +34,7 @@ use OCA\Talk\Room;
 use OCA\Talk\Signaling\Messages;
 use OCA\Talk\TalkSession;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -41,7 +43,6 @@ use OCP\IUserManager;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
 use PHPUnit\Framework\MockObject\MockObject;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
 class CustomInputSignalingController extends SignalingController {
@@ -81,7 +82,7 @@ class SignalingControllerTest extends \Test\TestCase {
 	private $userId;
 	/** @var ISecureRandom */
 	private $secureRandom;
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	private $dispatcher;
 
 	/** @var CustomInputSignalingController */
@@ -107,7 +108,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		$this->messages = $this->createMock(Messages::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
-		$this->dispatcher = \OC::$server->getEventDispatcher();
+		$this->dispatcher = \OC::$server->query(IEventDispatcher::class);
 		$this->recreateSignalingController();
 	}
 
@@ -531,9 +532,9 @@ class SignalingControllerTest extends \Test\TestCase {
 	}
 
 	public function testBackendRoomSessionFromEvent() {
-		$this->dispatcher->addListener(SignalingController::class . '::signalingBackendRoom', function(GenericEvent $event) {
-			$room = $event->getSubject();
-			$event->setArgument('roomSession', [
+		$this->dispatcher->addListener(SignalingController::EVENT_BACKEND_SIGNALING_ROOMS, static function(SignalingEvent $event) {
+			$room = $event->getRoom();
+			$event->setSession([
 				'foo' => 'bar',
 				'room' => $room->getToken(),
 			]);
@@ -693,7 +694,7 @@ class SignalingControllerTest extends \Test\TestCase {
 		// Make sure that leaving a user with an old session id doesn't remove
 		// the current user from the room if he re-joined in the meantime.
 		$dbConnection = \OC::$server->getDatabaseConnection();
-		$dispatcher = \OC::$server->getEventDispatcher();
+		$dispatcher = \OC::$server->query(IEventDispatcher::class);
 		$this->manager = new Manager(
 			$dbConnection,
 			\OC::$server->getConfig(),

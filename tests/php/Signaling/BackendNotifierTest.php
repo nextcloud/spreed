@@ -32,6 +32,7 @@ use OCA\Talk\Signaling\BackendNotifier;
 use OCA\Talk\TalkSession;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Http\Client\IClientService;
 use OCP\IGroupManager;
 use OCP\IL10N;
@@ -124,7 +125,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		});
 
 		$dbConnection = \OC::$server->getDatabaseConnection();
-		$dispatcher = \OC::$server->getEventDispatcher();
+		$dispatcher = \OC::$server->query(IEventDispatcher::class);
 		$this->manager = new Manager(
 			$dbConnection,
 			$config,
@@ -281,7 +282,7 @@ class BackendNotifierTest extends \Test\TestCase {
 
 	public function testRoomTypeChanged() {
 		$room = $this->manager->createPublicRoom();
-		$room->changeType(Room::GROUP_CALL);
+		$room->setType(Room::GROUP_CALL);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -370,7 +371,8 @@ class BackendNotifierTest extends \Test\TestCase {
 			'userId' => $this->userId,
 			'sessionId' => $userSession,
 		]);
-		$room->changeInCall($userSession, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
+		$participant = $room->getParticipantBySession($userSession);
+		$room->changeInCall($participant, Participant::FLAG_IN_CALL | Participant::FLAG_WITH_AUDIO | Participant::FLAG_WITH_VIDEO);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -403,7 +405,8 @@ class BackendNotifierTest extends \Test\TestCase {
 
 		$this->controller->clearRequests();
 		$guestSession = $room->joinRoomGuest('');
-		$room->changeInCall($guestSession, Participant::FLAG_IN_CALL);
+		$guestParticipant = $room->getParticipantBySession($guestSession);
+		$room->changeInCall($guestParticipant, Participant::FLAG_IN_CALL);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
@@ -440,7 +443,7 @@ class BackendNotifierTest extends \Test\TestCase {
 		], $bodies);
 
 		$this->controller->clearRequests();
-		$room->changeInCall($userSession, Participant::FLAG_DISCONNECTED);
+		$room->changeInCall($participant, Participant::FLAG_DISCONNECTED);
 
 		$requests = $this->controller->getRequests();
 		$bodies = array_map(function($request) use ($room) {
