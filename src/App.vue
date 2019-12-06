@@ -86,9 +86,7 @@ export default {
 		},
 
 		showChatInSidebar() {
-			// FIXME return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
-			// Somehow changing this will not add the tab in the end.
-			return true
+			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
 		/**

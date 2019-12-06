@@ -45,12 +45,18 @@
 				{{ t('spreed', 'Enable lobby') }}
 			</ActionCheckbox>
 		</template>
-		<AppSidebarTab v-if="showChatInSidebar"
+		<AppSidebarTab
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
-			<MessagesList :token="token" />
-			<NewMessageForm />
+			<template v-if="showChatInSidebar">
+				<MessagesList :token="token" />
+				<NewMessageForm />
+			</template>
+			<template v-else>
+				This should be hidden, but the visibility of the tab can not change at the moment:
+				https://github.com/nextcloud/nextcloud-vue/issues/747
+			</template>
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
 			:order="2"
