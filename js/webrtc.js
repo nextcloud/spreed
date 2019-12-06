@@ -405,15 +405,6 @@ var spreedPeerConnectionTable = [];
 		var latestScreenId = null;
 		var screenSharingActive = false;
 
-		window.addEventListener('resize', function() {
-			if (screenSharingActive) {
-				$('#screens').children('video').each(function() {
-					$(this).width('100%');
-					$(this).height($('#screens').height());
-				});
-			}
-		});
-
 		var sendDataChannelToAll = function(channel, message, payload) {
 			// If running with MCU, the message must be sent through the
 			// publishing peer and will be distributed by the MCU to subscribers.
