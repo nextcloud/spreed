@@ -27,7 +27,9 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
-use GuzzleHttp\Message\ResponseInterface;
+use GuzzleHttp\Exception\ClientException;
+use PHPUnit\Framework\Assert;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Defines application features from the specific context.
@@ -134,12 +136,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		});
 
 		if ($formData === null) {
-			PHPUnit_Framework_Assert::assertEmpty($rooms);
+			Assert::assertEmpty($rooms);
 			return;
 		}
 
-		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
-		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($room, $expectedRoom) {
+		Assert::assertCount(count($formData->getHash()), $rooms, 'Room count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function($room, $expectedRoom) {
 			$participantNames = array_map(function($participant) {
 				return $participant['name'];
 			}, $room['participants']);
@@ -177,12 +179,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @Then /^user "([^"]*)" (is|is not) participant of room "([^"]*)"$/
 	 *
 	 * @param string $user
-	 * @param string $isParticipant
+	 * @param string $isOrNotParticipant
 	 * @param string $identifier
 	 */
-	public function userIsParticipantOfRoom($user, $isParticipant, $identifier) {
-		if (substr($user, 0, strlen('guest')) === 'guest') {
-			$this->guestIsParticipantOfRoom($user, $isParticipant, $identifier);
+	public function userIsParticipantOfRoom($user, $isOrNotParticipant, $identifier) {
+		if (strpos($user, 'guest') === 0) {
+			$this->guestIsParticipantOfRoom($user, $isOrNotParticipant, $identifier);
 
 			return;
 		}
@@ -191,7 +193,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->sendRequest('GET', '/apps/spreed/api/v1/room');
 		$this->assertStatusCode($this->response, 200);
 
-		$isParticipant = $isParticipant === 'is';
+		$isParticipant = $isOrNotParticipant === 'is';
 
 		$rooms = $this->getDataFromResponse($this->response);
 
@@ -200,35 +202,35 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		});
 
 		if ($isParticipant) {
-			PHPUnit_Framework_Assert::assertNotEmpty($rooms);
+			Assert::assertNotEmpty($rooms);
 		}
 
 		foreach ($rooms as $room) {
 			if (self::$tokenToIdentifier[$room['token']] === $identifier) {
-				PHPUnit_Framework_Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
+				Assert::assertEquals($isParticipant, true, 'Room ' . $identifier . ' found in user´s room list');
 				return;
 			}
 		}
 
-		PHPUnit_Framework_Assert::assertEquals($isParticipant, false, 'Room ' . $identifier . ' not found in user´s room list');
+		Assert::assertEquals($isParticipant, false, 'Room ' . $identifier . ' not found in user´s room list');
 	}
 
 	/**
 	 * @param string $guest
-	 * @param string $isParticipant
+	 * @param string $isOrNotParticipant
 	 * @param string $identifier
 	 */
-	private function guestIsParticipantOfRoom($guest, $isParticipant, $identifier) {
+	private function guestIsParticipantOfRoom($guest, $isOrNotParticipant, $identifier) {
 		$this->setCurrentUser($guest);
 		$this->sendRequest('GET', '/apps/spreed/api/v1/room/' . self::$identifierToToken[$identifier]);
 
 		$response = $this->getDataFromResponse($this->response);
 
-		$isParticipant = $isParticipant === 'is';
+		$isParticipant = $isOrNotParticipant === 'is';
 
 		if ($isParticipant) {
 			$this->assertStatusCode($this->response, 200);
-			PHPUnit_Framework_Assert::assertEquals(self::$userToSessionId[$guest], $response['sessionId']);
+			Assert::assertEquals(self::$userToSessionId[$guest], $response['sessionId']);
 
 			return;
 		}
@@ -236,7 +238,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($this->response->getStatusCode() === 200) {
 			// Public rooms can always be got, but if the guest is not a
 			// participant the sessionId will be 0.
-			PHPUnit_Framework_Assert::assertEquals(0, $response['sessionId']);
+			Assert::assertEquals(0, $response['sessionId']);
 
 			return;
 		}
@@ -350,7 +352,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $body
 	 */
 	private function sendingToDav(string $verb, string $url, array $headers = null, string $body = null) {
-		$fullUrl = $this->baseUrl . "remote.php/dav/files" . $url;
+		$fullUrl = $this->baseUrl . 'remote.php/dav/files' . $url;
 		$client = new Client();
 		$options = [];
 		if ($this->currentUser === 'admin') {
@@ -369,7 +371,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		try {
-			$this->response = $client->send($client->createRequest($verb, $fullUrl, $options));
+			$this->response = $client->{$verb}($fullUrl, $options);
 		} catch (GuzzleHttp\Exception\ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
@@ -526,11 +528,14 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $statusCode
 	 * @param TableNode
 	 */
-	public function userSetsLobbyStateForRoomTo($user, $identifier, $lobbyState, $statusCode) {
-		if ($lobbyState === 'no lobby') {
+	public function userSetsLobbyStateForRoomTo($user, $identifier, $lobbyStateString, $statusCode) {
+		if ($lobbyStateString === 'no lobby') {
 			$lobbyState = 0;
-		} else if ($lobbyState === 'non moderators') {
+		} else if ($lobbyStateString === 'non moderators') {
 			$lobbyState = 1;
+		} else {
+			Assert::fail('Invalid lobby state');
+			return;
 		}
 
 		$this->setCurrentUser($user);
@@ -673,9 +678,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 		if ($statusCode === '200') {
 			$response = $this->getDataFromResponse($this->response);
-			PHPUnit_Framework_Assert::assertCount((int) $numPeers, $response);
+			Assert::assertCount((int) $numPeers, $response);
 		} else {
-			PHPUnit_Framework_Assert::assertEquals((int) $numPeers, 0);
+			Assert::assertEquals((int) $numPeers, 0);
 		}
 	}
 
@@ -757,18 +762,19 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		if ($formData === null) {
-			PHPUnit_Framework_Assert::assertEmpty($messages);
+			Assert::assertEmpty($messages);
 			return;
 		}
 		$includeParents = in_array('parentMessage', $formData->getRow(0), true);
 
-		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
-		for ($i = 0; $i < count($formData->getHash()); $i++) {
+		$count = count($formData->getHash());
+		Assert::assertCount($count, $messages, 'Message count does not match');
+		for ($i = 0; $i < $count; $i++) {
 			if ($formData->getHash()[$i]['messageParameters'] === '"IGNORE"') {
 				$messages[$i]['messageParameters'] = 'IGNORE';
 			}
 		}
-		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents) {
+		Assert::assertEquals($formData->getHash(), array_map(function($message) use($includeParents) {
 			$data = [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => $message['actorType'],
@@ -810,12 +816,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		}
 
 		if ($formData === null) {
-			PHPUnit_Framework_Assert::assertEmpty($messages);
+			Assert::assertEmpty($messages);
 			return;
 		}
 
-		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
-		PHPUnit_Framework_Assert::assertEquals($formData->getHash(), array_map(function($message) {
+		Assert::assertCount(count($formData->getHash()), $messages, 'Message count does not match');
+		Assert::assertEquals($formData->getHash(), array_map(function($message) {
 			return [
 				'room' => self::$tokenToIdentifier[$message['token']],
 				'actorType' => (string) $message['actorType'],
@@ -843,18 +849,18 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$mentions = $this->getDataFromResponse($this->response);
 
 		if ($formData === null) {
-			PHPUnit_Framework_Assert::assertEmpty($mentions);
+			Assert::assertEmpty($mentions);
 			return;
 		}
 
-		PHPUnit_Framework_Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
+		Assert::assertCount(count($formData->getHash()), $mentions, 'Mentions count does not match');
 
 		foreach ($formData->getHash() as $key => $row) {
 			if ($row['id'] === 'GUEST_ID') {
-				PHPUnit_Framework_Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
+				Assert::assertRegExp('/^guest\/[0-9a-f]{40}$/', $mentions[$key]['id']);
 				$mentions[$key]['id'] = 'GUEST_ID';
 			}
-			PHPUnit_Framework_Assert::assertEquals($row, $mentions[$key]);
+			Assert::assertEquals($row, $mentions[$key]);
 		}
 	}
 
@@ -881,7 +887,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @return array
 	 */
 	protected function getDataFromResponse(ResponseInterface $response) {
-		return $response->json()['ocs']['data'];
+		$jsonBody = json_decode($response->getBody()->getContents(), true);
+		return $jsonBody['ocs']['data'];
 	}
 
 	/**
@@ -898,16 +905,10 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @AfterScenario
 	 */
 	public function resetSpreedAppData() {
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-		];
-
-		try {
-			return $client->send($client->createRequest('DELETE', getenv('TEST_SERVER_URL') . 'ocs/v2.php/apps/spreedcheats/', $options));
-		} catch (\GuzzleHttp\Exception\ClientException $ex) {
-			return $ex->getResponse();
-		}
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/apps/spreedcheats/');
+		$this->setCurrentUser($currentUser);
 	}
 
 	/*
@@ -927,54 +928,42 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $user
 	 */
 	public function assureUserExists($user) {
-		try {
-			$this->userExists($user);
-		} catch (\GuzzleHttp\Exception\ClientException $ex) {
+		$response = $this->userExists($user);
+		if ($response->getStatusCode() !== 200) {
 			$this->createUser($user);
 			// Set a display name different than the user ID to be able to
 			// ensure in the tests that the right value was returned.
 			$this->setUserDisplayName($user);
+			$response = $this->userExists($user);
+			$this->assertStatusCode($response, 200);
 		}
-		$response = $this->userExists($user);
-		$this->assertStatusCode($response, 200);
 	}
 
 	private function userExists($user) {
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		return $client->get($this->baseUrl . 'ocs/v2.php/cloud/users/' . $user, $options);
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/cloud/users/' . $user);
+		$this->setCurrentUser($currentUser);
+		return $this->response;
 	}
 
 	private function createUser($user) {
-		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users';
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'body' => [
-				'userid' => $user,
-				'password' => '123456'
-			],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		$client->send($client->createRequest('POST', $userProvisioningUrl, $options));
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('POST', '/cloud/users', [
+			'userid' => $user,
+			'password' => '123456'
+		]);
+		$this->assertStatusCode($this->response, 200, 'Failed to create user');
 
 		//Quick hack to login once with the current user
-		$options2 = [
-			'auth' => [$user, '123456'],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		$client->send($client->createRequest('GET', $userProvisioningUrl . '/' . $user, $options2));
+		$this->setCurrentUser($user);
+		$this->sendRequest('GET', '/cloud/users' . '/' . $user);
+		$this->assertStatusCode($this->response, 200, 'Failed to do first login');
 
 		$this->createdUsers[] = $user;
+
+		$this->setCurrentUser($currentUser);
 	}
 
 	/**
@@ -987,43 +976,34 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		$this->deleteUser($user);
 		try {
 			$this->userExists($user);
-		} catch (\GuzzleHttp\Exception\ClientException $ex) {
+		} catch (ClientException $ex) {
 			$deleted = true;
 		}
 
 		if (!$deleted) {
-			PHPUnit_Framework_Assert::fail("User $user exists");
+			Assert::fail("User $user exists");
 		}
 	}
 
 	private function deleteUser($user) {
-		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users/' . $user;
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		$client->send($client->createRequest('DELETE', $userProvisioningUrl, $options));
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/cloud/users/' . $user);
+		$this->setCurrentUser($currentUser);
 
-		unset($this->createdUsers[array_search($user, $this->createdUsers)]);
+		unset($this->createdUsers[array_search($user, $this->createdUsers, true)]);
+
+		return $this->response;
 	}
 
 	private function setUserDisplayName($user) {
-		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/users/' . $user;
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'body' => [
-				'key' => 'displayname',
-				'value' => $user . '-displayname'
-			],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		$client->send($client->createRequest('PUT', $userProvisioningUrl, $options));
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('PUT', '/cloud/users/' . $user, [
+			'key' => 'displayname',
+			'value' => $user . '-displayname'
+		]);
+		$this->setCurrentUser($currentUser);
 	}
 
 	/**
@@ -1031,55 +1011,40 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $group
 	 */
 	public function assureGroupExists($group) {
-		try {
-			$this->groupExists($group);
-		} catch (\GuzzleHttp\Exception\ClientException $ex) {
-			$this->createGroup($group);
-		}
 		$response = $this->groupExists($group);
-		$this->assertStatusCode($response, 200);
+		if ($response->getStatusCode() !== 200) {
+			$this->createGroup($group);
+			$response = $this->groupExists($group);
+			$this->assertStatusCode($response, 200);
+		}
 	}
 
 	private function groupExists($group) {
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		return $client->get($this->baseUrl . 'ocs/v2.php/cloud/groups/' . $group, $options);
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('GET', '/cloud/groups/' . $group);
+		$this->setCurrentUser($currentUser);
+		return $this->response;
 	}
 
 	private function createGroup($group) {
-		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/groups';
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'body' => [
-				'groupid' => $group,
-			],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		$client->send($client->createRequest('POST', $userProvisioningUrl, $options));
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('POST', '/cloud/groups', [
+			'groupid' => $group,
+		]);
+		$this->setCurrentUser($currentUser);
 
 		$this->createdGroups[] = $group;
 	}
 
 	private function deleteGroup($group) {
-		$userProvisioningUrl = $this->baseUrl . 'ocs/v2.php/cloud/groups/' . $group;
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-		$client->send($client->createRequest('DELETE', $userProvisioningUrl, $options));
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->sendRequest('DELETE', '/cloud/groups/' . $group);
+		$this->setCurrentUser($currentUser);
 
-		unset($this->createdGroups[array_search($group, $this->createdGroups)]);
+		unset($this->createdGroups[array_search($group, $this->createdGroups, true)]);
 	}
 
 	/**
@@ -1088,19 +1053,12 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @param string $group
 	 */
 	public function addingUserToGroup($user, $group) {
-		$userProvisioningUrl = $this->baseUrl . "ocs/v2.php/cloud/users/$user/groups";
-		$client = new Client();
-		$options = [
-			'auth' => ['admin', 'admin'],
-			'body' => [
-				'groupid' => $group,
-			],
-			'headers' => [
-				'OCS-APIREQUEST' => 'true',
-			],
-		];
-
-		$this->response = $client->send($client->createRequest('POST', $userProvisioningUrl, $options));
+		$currentUser = $this->currentUser;
+		$this->setCurrentUser('admin');
+		$this->response = $this->sendRequest('POST', "ocs/v2.php/cloud/users/$user/groups", [
+			'groupid' => $group,
+		]);
+		$this->setCurrentUser($currentUser);
 	}
 
 	/*
@@ -1109,6 +1067,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 
 	/**
 	 * @Given /^user "([^"]*)" logs in$/
+	 * @param string $user
 	 */
 	public function userLogsIn(string $user) {
 		$loginUrl = $this->baseUrl . '/login';
@@ -1156,7 +1115,7 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	 * @When /^sending "([^"]*)" to "([^"]*)" with$/
 	 * @param string $verb
 	 * @param string $url
-	 * @param TableNode $body
+	 * @param TableNode|array|null $body
 	 * @param array $headers
 	 */
 	public function sendRequest($verb, $url, $body = null, array $headers = []) {
@@ -1171,6 +1130,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		if ($body instanceof TableNode) {
 			$fd = $body->getRowsHash();
 			$options['body'] = $fd;
+		} else if (is_array($body)) {
+			$options['form_params'] = $body;
 		}
 
 		$options['headers'] = array_merge($headers, [
@@ -1179,8 +1140,8 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 		]);
 
 		try {
-			$this->response = $client->send($client->createRequest($verb, $fullUrl, $options));
-		} catch (\GuzzleHttp\Exception\ClientException $ex) {
+			$this->response = $client->{$verb}($fullUrl, $options);
+		} catch (ClientException $ex) {
 			$this->response = $ex->getResponse();
 		}
 	}
@@ -1195,21 +1156,9 @@ class FeatureContext implements Context, SnippetAcceptingContext {
 	/**
 	 * @param ResponseInterface $response
 	 * @param int $statusCode
+	 * @param string $message
 	 */
-	protected function assertStatusCode(ResponseInterface $response, $statusCode) {
-		PHPUnit_Framework_Assert::assertEquals($statusCode, $response->getStatusCode());
-	}
-
-	protected function typeStringToInt($roomType) {
-		switch ($roomType) {
-			case 'one2one':
-				return 1;
-			case 'group':
-				return 2;
-			case 'public':
-				return 3;
-		}
-
-		throw new \RuntimeException('Invalid room type');
+	protected function assertStatusCode(ResponseInterface $response, int $statusCode, string $message = '') {
+		Assert::assertEquals($statusCode, $response->getStatusCode(), $message);
 	}
 }
