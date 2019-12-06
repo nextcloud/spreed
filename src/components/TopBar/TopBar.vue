@@ -23,7 +23,7 @@
 	<div class="top-bar">
 		<CallButton />
 		<Actions v-if="showOpenSidebarButton" class="top-bar__button" close-after-click="true">
-			<ActionButton icon="icon-menu-people" @click="handleClick" />
+			<ActionButton :icon="iconMenuPeople" @click="handleClick" />
 		</Actions>
 	</div>
 </template>
@@ -41,7 +41,22 @@ export default {
 		Actions,
 		CallButton,
 	},
+
+	props: {
+		forceWhiteIcons: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
 	computed: {
+		iconMenuPeople() {
+			if (this.forceWhiteIcons) {
+				return 'forced-white icon-menu-people'
+			}
+			return 'icon-menu-people'
+		},
+
 		showOpenSidebarButton() {
 			return !this.$store.getters.getSidebarStatus()
 		},

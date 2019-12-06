@@ -24,6 +24,9 @@
 &.icon-mail {
   background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
 }
+&.forced-white.icon-menu-people {
+  background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
+}
 &.icon-changelog {
   background-image: url('../img/changelog.svg');
 }

@@ -1,6 +1,6 @@
 <template>
 	<div class="chatview">
-		<TopBar />
+		<TopBar :force-white-icons="showChatInSidebar" />
 
 		<template v-if="!showChatInSidebar">
 			<MessagesList :token="token" />
