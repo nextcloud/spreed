@@ -167,6 +167,8 @@ OC.L10N.register(
     "Yesterday" : "Wczoraj",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Plik do udostępnienia",
+    "Invalid path selected" : "Wybrano nieprawidłową ścieżkę",
+    "Error while sharing file" : "Błąd podczas udostępniania pliku",
     "moderator" : "moderator",
     "Demote from moderator" : "Degraduj z moderatora",
     "Promote to moderator" : "Promuj na moderatora",
