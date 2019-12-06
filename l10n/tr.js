@@ -167,6 +167,8 @@ OC.L10N.register(
     "Yesterday" : "Dün",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Paylaşılacak dosya",
+    "Invalid path selected" : "Geçersiz yol seçildi",
+    "Error while sharing file" : "Dosya paylaşılırken hata",
     "moderator" : "sorumlu",
     "Demote from moderator" : "Sorumluluktan çıkar",
     "Promote to moderator" : "Sorumlu olarak ata",

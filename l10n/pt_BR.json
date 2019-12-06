@@ -165,6 +165,8 @@
     "Yesterday" : "Ontem",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Arquivo a compartilhar",
+    "Invalid path selected" : "Caminho inválido selecionado",
+    "Error while sharing file" : "Erro ao compartilhar arquivo",
     "moderator" : "moderador",
     "Demote from moderator" : "Excluído da moderação",
     "Promote to moderator" : "Promovido a moderador",

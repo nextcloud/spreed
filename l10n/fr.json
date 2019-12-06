@@ -165,6 +165,8 @@
     "Yesterday" : "Hier",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Fichier à partager",
+    "Invalid path selected" : "Chemin sélectionné non valide",
+    "Error while sharing file" : "Erreur lors du partage du fichier",
     "moderator" : "modérateur",
     "Demote from moderator" : "Destituer de modérateur",
     "Promote to moderator" : "Promouvoir en modérateur",
