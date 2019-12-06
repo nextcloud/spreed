@@ -167,6 +167,8 @@ OC.L10N.register(
     "Yesterday" : "Včera",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Soubor ke sdílení",
+    "Invalid path selected" : "Vybrán neplatný popis umístění",
+    "Error while sharing file" : "Chyba při sdílení souboru",
     "moderator" : "moderátor",
     "Demote from moderator" : "Odebrat práva moderátora",
     "Promote to moderator" : "Udělit práva moderátora",

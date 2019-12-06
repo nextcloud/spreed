@@ -167,6 +167,8 @@ OC.L10N.register(
     "Yesterday" : "Onte",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Ficheiro para compartir",
+    "Invalid path selected" : "Seleccionou unha ruta incorrecta.",
+    "Error while sharing file" : "Produciuse un erro ao compartir o ficheiro",
     "moderator" : "moderador",
     "Demote from moderator" : "Degradar de moderador",
     "Promote to moderator" : "Promover a moderador",
