@@ -22,11 +22,18 @@
 <template>
 	<div class="confirmation">
 		<template v-if="isLoading && !error">
-			<div v-if="!success" class="icon-loading confirmation__icon" />
-			<div v-if="success" class="icon-checkmark confirmation__icon" />
-			<p class="confirmation__warning">
-				{{ t('spreed', 'Please wait') }}
-			</p>
+			<template v-if="!success">
+				<div class="icon-loading confirmation__icon" />
+				<p class="confirmation__warning">
+					{{ t('spreed', 'Please wait') }}
+				</p>
+			</template>
+			<template v-if="success">
+				<div class="icon-checkmark confirmation__icon" />
+				<p class="confirmation__warning">
+					{{ t('spreed', 'All set') }}
+				</p>
+			</template>
 		</template>
 		<template v-else>
 			<div class="icon-error confirmation__icon" />
