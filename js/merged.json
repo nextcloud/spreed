@@ -7,6 +7,7 @@
   "vendor/At.js/dist/js/jquery.atwho.min.js",
   "simplewebrtc/bundled.js",
   "main.js",
+  "models/callparticipantmodel.js",
   "models/chatmessage.js",
   "models/chatmessagecollection.js",
   "models/localcallparticipantmodel.js",

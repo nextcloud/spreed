@@ -30,17 +30,7 @@
 	OCA.SpreedMe.Views = OCA.SpreedMe.Views || {};
 	OCA.Talk.Views = OCA.Talk.Views || {};
 
-	var ConnectionStatus = {
-		NEW: 'new',
-		CHECKING: 'checking',
-		CONNECTED: 'connected',
-		COMPLETED: 'completed',
-		DISCONNECTED: 'disconnected',
-		DISCONNECTED_LONG: 'disconnected-long',
-		FAILED: 'failed',
-		FAILED_NO_RESTART: 'failed-no-restart',
-		CLOSED: 'closed',
-	};
+	var ConnectionState = OCA.Talk.Models.CallParticipantModel.ConnectionState;
 
 	var VideoView = Marionette.View.extend({
 
@@ -48,7 +38,7 @@
 		className: 'videoContainer',
 
 		id: function() {
-			return 'container_' + this.options.peerId + '_video_incoming';
+			return 'container_' + this.model.get('peerId') + '_video_incoming';
 		},
 
 		template: OCA.Talk.Views.Templates['videoview'],
@@ -73,27 +63,50 @@
 			'click @ui.screenSharingIndicator': 'switchToScreen',
 		},
 
-		initialize: function() {
-			this._connectionStatus = ConnectionStatus.NEW;
+		modelEvents: {
+			'change:connectionState': function(model, connectionState) {
+				this._setConnectionState(connectionState);
+				// "_setParticipant" depends on "connectionState"
+				this._setParticipant(this._userId, this._rawParticipantName);
+			},
+			'change:userId': function(model, userId) {
+				this._setParticipant(userId, this.model.get('name'));
+			},
+			'change:name': function(model, name) {
+				this._setParticipant(this.model.get('userId'), name);
+			},
+			'change:stream': '_setStream',
+			'change:audioAvailable': '_setAudioAvailable',
+			'change:speaking': '_setSpeaking',
+			'change:videoAvailable': '_setVideoAvailable',
+			'change:screen': function(model, screen) {
+				this._setScreenAvailable(this.model.get('screen'));
+			},
+		},
 
+		initialize: function() {
 			// Video is enabled by default, even if it is not initially
 			// available.
 			this._videoEnabled = true;
 			this._screenVisible = false;
 
 			this.render();
-
-			this.$el.addClass('not-connected');
-
-			this.getUI('avatar').addClass('icon-loading');
-
-			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
-			this.getUI('hideRemoteVideoButton').addClass('hidden');
-
-			this.getUI('screenSharingIndicator').attr('data-original-title', t('spreed', 'Show screen'));
 		},
 
 		onRender: function() {
+			this.getUI('hideRemoteVideoButton').attr('data-original-title', t('spreed', 'Disable video'));
+
+			this.getUI('screenSharingIndicator').attr('data-original-title', t('spreed', 'Show screen'));
+
+			// Match current model state.
+			this._setConnectionState(this.model.get('connectionState'));
+			this._setParticipant(this.model.get('userId'), this.model.get('name'));
+			this._setStream(this.model, this.model.get('stream'));
+			this._setAudioAvailable(this.model, this.model.get('audioAvailable'));
+			this._setSpeaking(this.model, this.model.get('speaking'));
+			this._setVideoAvailable(this.model, this.model.get('videoAvailable'));
+			this._setScreenAvailable(this.model.get('screen'));
+
 			this.getUI('hideRemoteVideoButton').tooltip({
 				placement: 'top',
 				trigger: 'hover'
@@ -105,7 +118,7 @@
 			});
 		},
 
-		setParticipant: function(userId, participantName) {
+		_setParticipant: function(userId, participantName) {
 			// Needed for guest avatars, as if no name is given the avatar
 			// should show "?" instead of the first letter of the "Guest"
 			// placeholder.
@@ -113,59 +126,49 @@
 
 			// "Guest" placeholder is not shown until the initial connection for
 			// consistency with regular users.
-			if (!(userId && userId.length) && this._connectionStatus !== ConnectionStatus.NEW) {
+			if (!(userId && userId.length) && this.model.get('connectionState') !== ConnectionState.NEW) {
 				participantName = participantName || t('spreed', 'Guest');
 			}
 
-			if (this.hasOwnProperty('_userId') && this.hasOwnProperty('_rawParticipantName') && this.hasOwnProperty('_participantName') &&
-					userId === this._userId && rawParticipantName === this._rawParticipantName && participantName === this._participantName) {
-				// Do not set again the avatar if it has already been set to
-				// workaround the MCU setting the participant again and again
-				// and thus causing a loading icon to be shown on the avatar
-				// again and again.
-				return;
-			}
-
-			this._userId = userId;
-			this._rawParticipantName = rawParticipantName;
-			this._participantName = participantName;
-
 			// Restore icon if needed after "avatar()" resets it.
 			var restoreIconLoadingCallback = function() {
-				if (this._connectionStatus === ConnectionStatus.NEW ||
-						this._connectionStatus === ConnectionStatus.CHECKING ||
-						this._connectionStatus === ConnectionStatus.DISCONNECTED_LONG ||
-						this._connectionStatus === ConnectionStatus.FAILED) {
+				if (this.model.get('connectionState') === ConnectionState.NEW ||
+						this.model.get('connectionState') === ConnectionState.CHECKING ||
+						this.model.get('connectionState') === ConnectionState.DISCONNECTED_LONG ||
+						this.model.get('connectionState') === ConnectionState.FAILED) {
 					this.getUI('avatar').addClass('icon-loading');
 				}
 			}.bind(this);
 
 			if (userId && userId.length) {
 				this.getUI('avatar').avatar(userId, this.participantAvatarSize, undefined, undefined, restoreIconLoadingCallback);
-			} else {
+			} else if (userId !== undefined) {
 				this.getUI('avatar').imageplaceholder('?', rawParticipantName, this.participantAvatarSize);
 				this.getUI('avatar').css('background-color', '#b9b9b9');
 			}
 
-			this.getUI('nameIndicator').text(participantName);
+			if (rawParticipantName !== undefined) {
+				this.getUI('nameIndicator').text(participantName);
+			}
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		/**
-		 * Sets the current status of the connection.
+		 * Sets the current state of the connection.
 		 *
-		 * @param OCA.Talk.Views.VideoView.ConnectionStatus the connection
-		 *        status.
+		 * @param OCA.Talk.Models.CallParticipantModel.ConnectionState the
+		 *        connection state.
 		 */
-		setConnectionStatus: function(connectionStatus) {
-			this._connectionStatus = connectionStatus;
-
+		_setConnectionState: function(connectionState) {
 			this.$el.addClass('not-connected');
 
 			this.getUI('iceFailedIndicator').addClass('not-failed');
 
-			if (connectionStatus === ConnectionStatus.CHECKING ||
-					connectionStatus === ConnectionStatus.DISCONNECTED_LONG ||
-					connectionStatus === ConnectionStatus.FAILED) {
+			if (connectionState === ConnectionState.NEW ||
+					connectionState === ConnectionState.CHECKING ||
+					connectionState === ConnectionState.DISCONNECTED_LONG ||
+					connectionState === ConnectionState.FAILED) {
 				this.getUI('avatar').addClass('icon-loading');
 
 				return;
@@ -173,21 +176,52 @@
 
 			this.getUI('avatar').removeClass('icon-loading');
 
-			if (connectionStatus === ConnectionStatus.CONNECTED ||
-					connectionStatus === ConnectionStatus.COMPLETED) {
+			if (connectionState === ConnectionState.CONNECTED ||
+					connectionState === ConnectionState.COMPLETED) {
 				this.$el.removeClass('not-connected');
 
 				return;
 			}
 
-			if (connectionStatus === ConnectionStatus.FAILED_NO_RESTART) {
+			if (connectionState === ConnectionState.FAILED_NO_RESTART) {
 				this.getUI('muteIndicator').addClass('hidden');
 				this.getUI('hideRemoteVideoButton').addClass('hidden');
 				this.getUI('screenSharingIndicator').addClass('hidden');
 				this.getUI('iceFailedIndicator').removeClass('not-failed');
 
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
 				return;
 			}
+		},
+
+		_setStream: function(model, stream) {
+			if (!stream) {
+				this._setAudioElement(null);
+				this._setVideoElement(null);
+
+				return;
+			}
+
+			// If there is a video track Chromium does not play audio in a video
+			// element until the video track starts to play; an audio element is
+			// thus needed to play audio when the remote peer starts with the
+			// camera available but disabled.
+			var audio = OCA.Talk.Views.attachMediaStream(stream, null, { audio: true });
+			var video = OCA.Talk.Views.attachMediaStream(stream);
+
+			video.muted = true;
+
+			// At least Firefox, Opera and Edge move the video to a wrong
+			// position instead of keeping it unchanged	when
+			// "transform: scaleX(1)" is used ("transform: scaleX(-1)" is fine);
+			// as it should have no effect the transform is removed.
+			if (video.style.transform === 'scaleX(1)') {
+				video.style.transform = '';
+			}
+
+			this._setAudioElement(audio);
+			this._setVideoElement(video);
 		},
 
 		/**
@@ -196,7 +230,7 @@
 		 * @param HTMLVideoElement|null audioElement the element to set, or null
 		 *        to remove the current one.
 		 */
-		setAudioElement: function(audioElement) {
+		_setAudioElement: function(audioElement) {
 			this.getUI('audio').remove();
 
 			if (audioElement) {
@@ -208,12 +242,23 @@
 			this.getUI('audio').addClass('hidden');
 		},
 
-		setAudioAvailable: function(audioAvailable) {
+		_setAudioAvailable: function(model, audioAvailable) {
+			if (audioAvailable === undefined) {
+				this.getUI('muteIndicator')
+						.removeClass('audio-on')
+						.removeClass('audio-off');
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
+				return;
+			}
+
 			if (!audioAvailable) {
 				this.getUI('muteIndicator')
 						.removeClass('audio-on')
 						.addClass('audio-off');
-				this.setSpeaking(false);
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 
 				return;
 			}
@@ -221,10 +266,12 @@
 			this.getUI('muteIndicator')
 					.removeClass('audio-off')
 					.addClass('audio-on');
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
-		setSpeaking: function(speaking) {
-			this.$el.toggleClass('speaking', speaking);
+		_setSpeaking: function(model, speaking) {
+			this.$el.toggleClass('speaking', speaking || false);
 		},
 
 		/**
@@ -233,7 +280,7 @@
 		 * @param HTMLVideoElement|null videoElement the element to set, or null
 		 *        to remove the current one.
 		 */
-		setVideoElement: function(videoElement) {
+		_setVideoElement: function(videoElement) {
 			this.getUI('video').remove();
 
 			if (videoElement) {
@@ -251,11 +298,13 @@
 			this.getUI('video').addClass('hidden');
 		},
 
-		setVideoAvailable: function(videoAvailable) {
+		_setVideoAvailable: function(model, videoAvailable) {
 			if (!videoAvailable) {
 				this.getUI('avatarContainer').removeClass('hidden');
 				this.getUI('video').addClass('hidden');
 				this.getUI('hideRemoteVideoButton').addClass('hidden');
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 
 				return;
 			}
@@ -266,6 +315,8 @@
 				this.getUI('avatarContainer').addClass('hidden');
 				this.getUI('video').removeClass('hidden');
 			}
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setVideoEnabled: function(videoEnabled) {
@@ -279,6 +330,8 @@
 						.removeClass('icon-video')
 						.addClass('icon-video-off');
 
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
+
 				return;
 			}
 
@@ -288,6 +341,8 @@
 					.attr('data-original-title', t('spreed', 'Disable video'))
 					.removeClass('icon-video-off')
 					.addClass('icon-video');
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		toggleVideo: function() {
@@ -296,19 +351,19 @@
 			} else {
 				this.setVideoEnabled(true);
 			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.options.peerId);
 		},
 
 		setPromoted: function(promoted) {
 			this.$el.toggleClass('promoted', promoted);
 		},
 
-		setScreenAvailable: function(screenAvailable) {
+		_setScreenAvailable: function(screenAvailable) {
 			if (!screenAvailable) {
 				this.getUI('screenSharingIndicator')
 						.removeClass('screen-on')
 						.addClass('screen-off');
+
+				OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 
 				return;
 			}
@@ -316,6 +371,8 @@
 			this.getUI('screenSharingIndicator')
 					.removeClass('screen-off')
 					.addClass('screen-on');
+
+			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(this.model.get('peerId'));
 		},
 
 		setScreenVisible: function(screenVisible) {
@@ -326,7 +383,7 @@
 
 		switchToScreen: function() {
 			if (!this._screenVisible) {
-				OCA.SpreedMe.sharedScreens.switchScreenToId(this.options.peerId);
+				OCA.SpreedMe.sharedScreens.switchScreenToId(this.model.get('peerId'));
 			}
 
 			this.getUI('screenSharingIndicator').tooltip('hide');
@@ -360,6 +417,5 @@
 	});
 
 	OCA.Talk.Views.VideoView = VideoView;
-	OCA.Talk.Views.VideoView.ConnectionStatus = ConnectionStatus;
 
 })(OCA, Marionette);

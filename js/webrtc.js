@@ -3,7 +3,6 @@
 
 var webrtc;
 var guestNamesTable = {};
-var spreedMappingTable = {};
 var spreedPeerConnectionTable = [];
 
 (function(OCA, OC) {
@@ -116,9 +115,6 @@ var spreedPeerConnectionTable = [];
 
 		if (ownPeer) {
 			OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-			OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-			OCA.SpreedMe.videos.remove(ownPeer.id);
-			delete spreedMappingTable[ownPeer.id];
 			ownPeer.end();
 		}
 
@@ -169,12 +165,24 @@ var spreedPeerConnectionTable = [];
 
 			previousUsersInRoom.push(sessionId);
 
+			// Use null to differentiate between guest (null) and not known yet
+			// (undefined).
 			// TODO(fancycode): Adjust property name of internal PHP backend to be all lowercase.
-			spreedMappingTable[sessionId] = user.userId || user.userid;
+			var userId = user.userId || user.userid || null;
+
+			var callParticipantModel = OCA.SpreedMe.callParticipantModels[sessionId];
+			if (!callParticipantModel) {
+				callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
+					peerId: sessionId,
+					webRtc: OCA.SpreedMe.webrtc,
+				});
+				OCA.SpreedMe.callParticipantModels[sessionId] = callParticipantModel;
+			}
+			callParticipantModel.setUserId(userId);
 
 			var videoView = OCA.SpreedMe.videos.videoViews[sessionId];
 			if (!videoView) {
-				OCA.SpreedMe.videos.add(sessionId);
+				videoView = OCA.SpreedMe.videos.add(sessionId);
 			}
 
 			var createPeer = function() {
@@ -244,7 +252,7 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.removePeers(sessionId);
 			OCA.SpreedMe.speakers.remove(sessionId, true);
 			OCA.SpreedMe.videos.remove(sessionId);
-			delete spreedMappingTable[sessionId];
+			delete OCA.SpreedMe.callParticipantModels[sessionId];
 			delete guestNamesTable[sessionId];
 			if (delayedConnectionToPeer[sessionId]) {
 				clearInterval(delayedConnectionToPeer[sessionId]);
@@ -455,6 +463,8 @@ var spreedPeerConnectionTable = [];
 			OCA.SpreedMe.webrtc.sendDirectlyToAll(channel, message, payload);
 		};
 
+		OCA.SpreedMe.callParticipantModels = [];
+
 		OCA.SpreedMe.videos = {
 			videoViews: [],
 			add: function(id) {
@@ -467,10 +477,10 @@ var spreedPeerConnectionTable = [];
 					console.log("User has no stream", id);
 				}
 
-				var userId = spreedMappingTable[id];
+				var callParticipantModel = OCA.SpreedMe.callParticipantModels[id];
 
 				var videoView = new OCA.Talk.Views.VideoView({
-					peerId: id
+					model: callParticipantModel,
 				});
 
 				// When the MCU is used and the other participant has no streams
@@ -480,13 +490,8 @@ var spreedPeerConnectionTable = [];
 				// modified later and thus it needs to be fully set now.
 				if ((signaling.hasFeature('mcu') && user && !userHasStreams(user)) ||
 						(!signaling.hasFeature('mcu') && user && !userHasStreams(user) && !hasLocalMedia)) {
-					videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.COMPLETED);
-					videoView.setAudioAvailable(false);
-					videoView.setVideoAvailable(false);
+					callParticipantModel.setPeer(null);
 				}
-
-				videoView.setParticipant(userId);
-				videoView.setScreenAvailable(!!spreedListofSharedScreens[id]);
 
 				OCA.SpreedMe.videos.videoViews[id] = videoView;
 
@@ -524,30 +529,16 @@ var spreedPeerConnectionTable = [];
 				spreedPeerConnectionTable[peer.id] = 0;
 
 				peer.pc.addEventListener('iceconnectionstatechange', function () {
-					var userId = spreedMappingTable[peer.id];
+					peer.emit('extendedIceConnectionStateChange', peer.pc.iceConnectionState);
 
 					switch (peer.pc.iceConnectionState) {
 						case 'checking':
 							console.log('Connecting to peer...');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CHECKING);
 							break;
 						case 'connected':
 						case 'completed': // on caller side
 							console.log('Connection established.');
-
-							if (peer.pc.iceConnectionState === 'connected') {
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CONNECTED);
-							} else {
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.COMPLETED);
-							}
-
-							// Ensure that the peer name is shown, as the name
-							// indicator for registered users without microphone
-							// nor camera will not be updated later.
-							if (userId && userId.length) {
-								videoView.setParticipant(userId, peer.nick);
-							}
 
 							// Send the current information about the video and microphone state
 							if (!OCA.SpreedMe.webrtc.webrtc.isVideoEnabled()) {
@@ -573,14 +564,12 @@ var spreedPeerConnectionTable = [];
 						case 'disconnected':
 							console.log('Disconnected.');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED);
-
 							setTimeout(function() {
 								if (peer.pc.iceConnectionState !== 'disconnected') {
 									return;
 								}
 
-								videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.DISCONNECTED_LONG);
+								peer.emit('extendedIceConnectionStateChange', 'disconnected-long');
 
 								if (!signaling.hasFeature("mcu")) {
 									// ICE failures will be handled in "iceFailed"
@@ -601,8 +590,6 @@ var spreedPeerConnectionTable = [];
 						case 'failed':
 							console.log('Connection failed.');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED);
-
 							if (!signaling.hasFeature("mcu")) {
 								// ICE failures will be handled in "iceFailed"
 								// below for MCU installations.
@@ -616,7 +603,7 @@ var spreedPeerConnectionTable = [];
 								} else {
 									console.log('ICE failed after 5 tries.');
 
-									videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.FAILED_NO_RESTART);
+									peer.emit('extendedIceConnectionStateChange', 'failed-no-restart');
 								}
 							} else {
 								console.log('Request offer again');
@@ -633,11 +620,8 @@ var spreedPeerConnectionTable = [];
 						case 'closed':
 							console.log('Connection closed.');
 
-							videoView.setConnectionStatus(OCA.Talk.Views.VideoView.ConnectionStatus.CLOSED);
 							break;
 					}
-
-					OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(peer.id);
 				});
 			},
 			// The nick name below the avatar is distributed through the
@@ -741,11 +725,6 @@ var spreedPeerConnectionTable = [];
 
 				spreedListofSpeakers[id] = (new Date()).getTime();
 
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (videoView) {
-					videoView.setSpeaking(true);
-				}
-
 				if (latestSpeakerId === id) {
 					return;
 				}
@@ -759,11 +738,6 @@ var spreedPeerConnectionTable = [];
 
 				if (enforce) {
 					delete spreedListofSpeakers[id];
-				}
-
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (videoView) {
-					videoView.setSpeaking(false);
 				}
 
 				if (latestSpeakerId !== id) {
@@ -851,14 +825,6 @@ var spreedPeerConnectionTable = [];
 
 				spreedListofSharedScreens[id] = (new Date()).getTime();
 
-				var currentUser = OCA.SpreedMe.webrtc.connection.getSessionid();
-				if (currentUser !== id) {
-					var videoView = OCA.SpreedMe.videos.videoViews[id];
-					if (videoView) {
-						videoView.setScreenAvailable(true);
-					}
-				}
-
 				OCA.SpreedMe.sharedScreens.switchScreenToId(id);
 			},
 			remove: function(id) {
@@ -874,11 +840,6 @@ var spreedPeerConnectionTable = [];
 				}
 
 				delete spreedListofSharedScreens[id];
-
-				var videoView = OCA.SpreedMe.videos.videoViews[id];
-				if (videoView) {
-					videoView.setScreenAvailable(false);
-				}
 
 				var mostRecentTime = 0,
 					mostRecentId = null;
@@ -908,6 +869,26 @@ var spreedPeerConnectionTable = [];
 
 		OCA.SpreedMe.webrtc.on('createdPeer', function (peer) {
 			console.log('PEER CREATED', peer);
+
+			if (peer.id !== OCA.SpreedMe.webrtc.connection.getSessionid() && !peer.sharemyscreen) {
+				// In some strange cases a Peer can be added before its
+				// participant is found in the list of participants.
+				var callParticipantModel = OCA.SpreedMe.callParticipantModels[peer.id];
+				if (!callParticipantModel) {
+					callParticipantModel = new OCA.Talk.Models.CallParticipantModel({
+						peerId: peer.id,
+						webRtc: OCA.SpreedMe.webrtc,
+					});
+					OCA.SpreedMe.callParticipantModels[peer.id] = callParticipantModel;
+				}
+
+				if (peer.type === 'video') {
+					callParticipantModel.setPeer(peer);
+				} else {
+					callParticipantModel.setScreenPeer(peer);
+				}
+			}
+
 			if (peer.type === 'video') {
 				OCA.SpreedMe.videos.addPeer(peer);
 				// Make sure required data channels exist for all peers. This
@@ -995,9 +976,6 @@ var spreedPeerConnectionTable = [];
 		var forceReconnect = function(signaling, flags) {
 			if (ownPeer) {
 				OCA.SpreedMe.webrtc.removePeers(ownPeer.id);
-				OCA.SpreedMe.speakers.remove(ownPeer.id, true);
-				OCA.SpreedMe.videos.remove(ownPeer.id);
-				delete spreedMappingTable[ownPeer.id];
 				ownPeer.end();
 				ownPeer = null;
 			}
@@ -1162,22 +1140,6 @@ var spreedPeerConnectionTable = [];
 				return;
 			}
 
-			var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
-			if (videoView) {
-				var userId = spreedMappingTable[peer.id];
-				var guestName = guestNamesTable[peer.id];
-
-				var participantName = peer.nick;
-				if (!userId || !userId.length) {
-					participantName = peer.nick || guestName;
-				}
-
-				videoView.setParticipant(userId, participantName);
-
-				videoView.setVideoElement(video);
-				videoView.setAudioElement(audio);
-			}
-
 			var otherSpeakerPromoted = false;
 			for (var key in spreedListofSpeakers) {
 				if (spreedListofSpeakers.hasOwnProperty(key) && spreedListofSpeakers[key] > 1) {
@@ -1208,11 +1170,6 @@ var spreedPeerConnectionTable = [];
 				if (peer.type === 'video') {
 					// a removed peer can't speak anymore ;)
 					OCA.SpreedMe.speakers.remove(peer.id, true);
-
-					var videoView = OCA.SpreedMe.videos.videoViews[peer.id];
-					if (videoView) {
-						videoView.setVideoElement(null);
-					}
 				} else if (peer.type === 'screen') {
 					OCA.SpreedMe.sharedScreens.remove(peer.id);
 				}
@@ -1327,12 +1284,6 @@ var spreedPeerConnectionTable = [];
 
 		// Peer changed nick
 		OCA.SpreedMe.webrtc.on('nick', function(data) {
-			// Video
-			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
-			if (videoView) {
-				videoView.setParticipant(data.userid, data.name);
-			}
-
 			//Screen
 			var screenView = OCA.SpreedMe.sharedScreens.screenViews[data.id];
 			if (screenView) {
@@ -1340,42 +1291,10 @@ var spreedPeerConnectionTable = [];
 			}
 
 			if (!data.userid && data.name) {
-				guestNamesTable[data.id] = data.name;
+				// Use null to differentiate between empty (null) and not known
+				// yet (undefined).
+				guestNamesTable[data.id] = data.name || null;
 			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
-		});
-
-		// Peer is muted
-		OCA.SpreedMe.webrtc.on('mute', function(data) {
-			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
-			if (!videoView) {
-				return;
-			}
-
-			if (data.name === 'video') {
-				videoView.setVideoAvailable(false);
-			} else {
-				videoView.setAudioAvailable(false);
-			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
-		});
-
-		// Peer is umuted
-		OCA.SpreedMe.webrtc.on('unmute', function(data) {
-			var videoView = OCA.SpreedMe.videos.videoViews[data.id];
-			if (!videoView) {
-				return;
-			}
-
-			if (data.name === 'video') {
-				videoView.setVideoAvailable(true);
-			} else {
-				videoView.setAudioAvailable(true);
-			}
-
-			OCA.SpreedMe.speakers.updateVideoContainerDummyIfLatestSpeaker(data.id);
 		});
 	}
 
