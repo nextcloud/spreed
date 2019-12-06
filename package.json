@@ -11,8 +11,8 @@
 		"build": "NODE_ENV=production webpack --progress --hide-modules --config webpack.prod.js",
 		"lint": "eslint --ext .js,.vue src",
 		"lint:fix": "eslint --ext .js,.vue src --fix",
-		"stylelint": "stylelint src",
-		"stylelint:fix": "stylelint src --fix"
+		"stylelint": "stylelint -f verbose --config .stylelintrc src",
+		"stylelint:fix": "stylelint --config .stylelintrc src --fix"
 	},
 	"dependencies": {
 		"@nextcloud/auth": "^0.3.1",
