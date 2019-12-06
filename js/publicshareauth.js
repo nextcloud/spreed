@@ -68,8 +68,6 @@
 			$('#talk-sidebar').append(OCA.SpreedMe.app._callView.$el);
 			$('#talk-sidebar').append('<div id="emptycontent"><div id="emptycontent-icon" class="icon-loading"></div><h2></h2><p class="emptycontent-additional"></p></div>');
 
-			OCA.SpreedMe.app.mainCallElementSelector = '#call-container';
-
 			OCA.SpreedMe.app._emptyContentView = new OCA.SpreedMe.Views.EmptyContentView({
 				el: '#talk-sidebar > #emptycontent'
 			});

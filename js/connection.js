@@ -100,8 +100,6 @@
 			$('#video-fullscreen').addClass('hidden');
 			this.app.signaling.leaveCurrentRoom();
 
-			$(this.app.mainCallElementSelector).removeClass('incall');
-
 			roomsChannel.trigger('leaveCurrentRoom');
 		},
 		joinCall: function(token) {
@@ -133,7 +131,6 @@
 
 			this.app.signaling.leaveCurrentCall();
 			this.app.signaling.syncRooms();
-			$(this.app.mainCallElementSelector).removeClass('incall');
 		},
 	};
 

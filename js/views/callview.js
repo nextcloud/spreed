@@ -70,6 +70,7 @@
 
 			this._callViewSpeakers = new OCA.Talk.Views.CallViewSpeakers(this);
 
+			this._remoteParticipantsCount = 0;
 			this._screenSharingActive = false;
 			this._hasDarkBackground = false;
 
@@ -93,6 +94,8 @@
 			// Attach the child views again (or for the first time) after the
 			// template has been rendered.
 			this.showChildView('localVideo', this._localVideoView, { replaceElement: true } );
+
+			this._updateContainerState();
 		},
 
 		hasDarkBackground: function() {
@@ -100,9 +103,17 @@
 		},
 
 		_updateContainerState: function() {
+			var remoteParticipantsCountOld = this._remoteParticipantsCount;
 			var hasDarkBackgroundOld = this._hasDarkBackground;
 
-			if (Object.keys(this._videoViews).length > 0 || this._screenSharingActive) {
+			this._remoteParticipantsCount = Object.keys(this._videoViews).length;
+
+			this.$el.removeClass('participants-' + (remoteParticipantsCountOld + 1));
+			this.$el.addClass('participants-' + (this._remoteParticipantsCount + 1));
+			this.$el.toggleClass('incall', this._remoteParticipantsCount > 0);
+			this.$el.toggleClass('screensharing', this._screenSharingActive);
+
+			if (this._remoteParticipantsCount > 0 || this._screenSharingActive) {
 				this._hasDarkBackground = true;
 			} else {
 				this._hasDarkBackground = false;

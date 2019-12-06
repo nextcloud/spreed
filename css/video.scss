@@ -1,4 +1,3 @@
-.app-spreed #app-content,
 #call-container {
 	#videos {
 		position: absolute;
@@ -131,7 +130,7 @@
 
 
 
-	&.participants-1:not(.screensharing) #emptycontent {
+	&.participants-1:not(.screensharing) ~ #emptycontent {
 		display: block !important;
 	}
 

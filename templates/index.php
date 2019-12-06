@@ -22,7 +22,7 @@ script('spreed', 'merged');
 	</ul>
 </div>
 
-<div id="app-content" class="participants-1">
+<div id="app-content">
 
 	<div id="app-content-wrapper">
 		<button id="video-fullscreen" class="icon-fullscreen force-icon-white-in-call icon-shadow hidden" data-placement="bottom" data-toggle="tooltip" data-original-title="<?php p($l->t('Fullscreen (f)')) ?>"></button>

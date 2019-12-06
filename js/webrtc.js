@@ -18,29 +18,6 @@ var spreedPeerConnectionTable = [];
 	var delayedConnectionToPeer = [];
 	var callParticipantCollection = null;
 
-	function updateParticipantsUI(currentUsersNo) {
-		'use strict';
-		if (!currentUsersNo) {
-			currentUsersNo = 1;
-		}
-
-		var $appContentElement = $(OCA.SpreedMe.app.mainCallElementSelector),
-			participantsClass = 'participants-' + currentUsersNo;
-
-		var appContentElementClasses = $appContentElement.attr('class') || '';
-		var previousParticipantsClass = appContentElementClasses.match(/participants-\d+/g) || [];
-		previousParticipantsClass = previousParticipantsClass.join(' ');
-
-		$appContentElement.removeClass(previousParticipantsClass);
-		$appContentElement.addClass(participantsClass);
-
-		if (currentUsersNo > 1) {
-			$appContentElement.addClass('incall');
-		} else {
-			$appContentElement.removeClass('incall');
-		}
-	}
-
 	function createScreensharingPeer(signaling, sessionId) {
 		var currentSessionId = signaling.getSessionid();
 		var useMcu = signaling.hasFeature("mcu");
@@ -253,7 +230,6 @@ var spreedPeerConnectionTable = [];
 		});
 
 		previousUsersInRoom = previousUsersInRoom.diff(disconnectedSessionIds);
-		updateParticipantsUI(previousUsersInRoom.length + 1);
 	}
 
 	function usersInCallChanged(signaling, users) {
@@ -645,7 +621,6 @@ var spreedPeerConnectionTable = [];
 
 				screenSharingActive = true;
 				OCA.SpreedMe.app._callView.setScreenSharingActive(true);
-				$(OCA.SpreedMe.app.mainCallElementSelector).addClass('screensharing');
 			},
 			add: function(id) {
 				if (!(typeof id === 'string' || id instanceof String)) {
@@ -703,7 +678,6 @@ var spreedPeerConnectionTable = [];
 				if (!screens || !screens.hasChildNodes()) {
 					screenSharingActive = false;
 					OCA.SpreedMe.app._callView.setScreenSharingActive(false);
-					$(OCA.SpreedMe.app.mainCallElementSelector).removeClass('screensharing');
 					OCA.SpreedMe.app._callView.switchToUnpromotedLatestSpeaker();
 				}
 			}

@@ -54,9 +54,6 @@
 		/** @property {OCA.Talk.Signaling.base} signaling  */
 		signaling: null,
 
-		/** property {String} selector */
-		mainCallElementSelector: '#call-container',
-
 		_registerPageEvents: function() {
 			// Initialize button tooltips
 			$('[data-toggle="tooltip"]').tooltip({trigger: 'hover'}).click(function() {
