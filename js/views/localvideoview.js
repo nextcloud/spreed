@@ -107,11 +107,6 @@
 			var guestName = localStorage.getItem("nick");
 			this.setAvatar(userId, guestName);
 
-			if (!userId && !this._displayedGuestNameHint) {
-				OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
-				this._displayedGuestNameHint = true;
-			}
-
 			this.getUI('avatarContainer').removeClass('hidden');
 			this.getUI('video').addClass('hidden');
 		},

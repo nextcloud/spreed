@@ -106,6 +106,9 @@
 				if (this.pendingNickChange) {
 					this.setGuestName(this.pendingNickChange);
 					delete this.pendingNickChange;
+				} else if (!OCA.Talk.getCurrentUser().uid && !this._localStorageModel.get('nick') && !this._displayedGuestNameHint) {
+					OC.Notification.showTemporary(t('spreed', 'Set your name in the chat window so other participants can identify you better.'));
+					this._displayedGuestNameHint = true;
 				}
 			}.bind(this));
 
