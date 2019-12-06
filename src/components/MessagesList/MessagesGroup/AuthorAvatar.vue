@@ -87,7 +87,7 @@ export default {
 
 <style lang="scss" scoped>
 
-// size of avtars of chat message authors
+// size of avatars of chat message authors
 $author-avatar-size: 32px;
 
 .avatar {

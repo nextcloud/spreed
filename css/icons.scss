@@ -24,13 +24,33 @@
 &.icon-mail {
   background-image: url(icon-color-path('mail', 'actions', 'fff', 1, true));
 }
-&.forced-white.icon-menu-people {
-  background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
-}
 &.icon-changelog {
   background-image: url('../img/changelog.svg');
 }
 
+&.forced-white {
+	&.icon-menu-people {
+		background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
+	}
+	&.icon-audio {
+		background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
+	}
+	&.icon-audio-off {
+		background-image: url(icon-color-path('audio-off', 'actions', 'fff', 1, true));
+	}
+	&.icon-video {
+		background-image: url(icon-color-path('video', 'actions', 'fff', 1, true));
+	}
+	&.icon-video-off {
+		background-image: url(icon-color-path('video-off', 'actions', 'fff', 1, true));
+	}
+	&.icon-screen {
+		background-image: url(icon-color-path('screen', 'actions', 'fff', 1, true));
+	}
+	&.icon-screen-off {
+		background-image: url(icon-color-path('screen-off', 'actions', 'fff', 1, true));
+	}
+}
 
 /* Show favorite icon in yellow instead of default black. */
 @include icon-color('star-dark', 'actions', 'FC0', 1, true);
