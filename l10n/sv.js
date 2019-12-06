@@ -166,6 +166,8 @@ OC.L10N.register(
     "Yesterday" : "Igår",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Fil att dela",
+    "Invalid path selected" : "Ogiltig sökväg vald",
+    "Error while sharing file" : "Fel vid delning av fil",
     "moderator" : "moderator",
     "Demote from moderator" : "Degradera från moderator",
     "Promote to moderator" : "Befordra till moderator",
