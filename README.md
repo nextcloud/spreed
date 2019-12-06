@@ -35,6 +35,7 @@ There are some scenarios (users behind strict firewalls / symmetric NATs) where 
 
 Here's a short [video](https://youtu.be/KdTsWIy4eN0) on how it's done.
 
+If you need to use Talk in a enterprise environment, including the ability to have calls with more than 5-6 users, you can contact our sales team for access to our [high performance back-end](https://nextcloud.com/talk/#pricing). This is a set of components that replaces some of the PHP code with a more scalable and performant solution that decreases network traffic and allows dozens or hundreds of users in a call.
 
 ## Development setup
 
