@@ -114,9 +114,7 @@
     "A group call has started in {call}" : "已在 {call} 小组中开始通话",
     "You missed a group call in {call}" : "您在 {call} 中错过了一个组通话",
     "{email} is requesting the password to access {file}" : "{email} 请求密码以访问 {file}",
-    "{email} tried to requested the password to access {file}" : "{email} 试图请求密码以访问 {file}",
     "Someone is requesting the password to access {file}" : "有人请求密码以访问 {file}",
-    "Someone tried to requested the password to access {file}" : "有人试图请求密码以访问 {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "日期无效，日期格式必须为YYYY-MM-DD",
     "Conversation not found" : "没有找到会话",
     "Path is already shared with this room" : "路径已与此聊天室共享",
@@ -387,6 +385,8 @@
     "You are currently waiting in the lobby" : "您当前正在休息室等待。",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "您当前正在休息室等待。此会议预定于 {startTime} 开始",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "您似乎在静音时说话了，请将您自己的静音设置取消以使他人能听到",
+    "{email} tried to requested the password to access {file}" : "{email} 试图请求密码以访问 {file}",
+    "Someone tried to requested the password to access {file}" : "有人试图请求密码以访问 {file}",
     "Start time (optional)" : "开始时间（可选）"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

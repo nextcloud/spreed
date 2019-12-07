@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Групни разговор је започет у {call}",
     "You missed a group call in {call}" : "Пропустили сте групни позив у разговору {call}",
     "{email} is requesting the password to access {file}" : "{email} је затражио лозинку да приступи фајлу {file}",
-    "{email} tried to requested the password to access {file}" : "{email} је покушао да затражи лозинку да приступи фајлу {file}",
     "Someone is requesting the password to access {file}" : "Неко је затражио лозинку да приступи фајлу {file}",
-    "Someone tried to requested the password to access {file}" : "Неко је покушао да затражи лозинку да приступи фајлу {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Неисправан датим, формат датума мора бити ГГГГ-ММ-ДД",
     "Conversation not found" : "Разговор није нађен",
     "Path is already shared with this room" : "Путања је већ подељена са овом собом",
@@ -389,6 +387,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Тренутно чекате у лобију",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Тренутно чекате у лобију. Овај састанак је заказан за {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Изгледа да причате док сте утишани. Укључите звук да би Вас други чули",
+    "{email} tried to requested the password to access {file}" : "{email} је покушао да затражи лозинку да приступи фајлу {file}",
+    "Someone tried to requested the password to access {file}" : "Неко је покушао да затражи лозинку да приступи фајлу {file}",
     "Start time (optional)" : "Време почетка (опционо)"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

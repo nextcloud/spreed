@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "В «{call}» начался групповой вызов",
     "You missed a group call in {call}" : "Вы пропустили групповой вызов в обсуждении «{call}»",
     "{email} is requesting the password to access {file}" : "{email} запрашивает пароль для доступа к файлу «{file}»",
-    "{email} tried to requested the password to access {file}" : "{email} попытался запросить пароль для доступа к файлу «{file}»",
     "Someone is requesting the password to access {file}" : "Кто-то запрашивает пароль для доступа к файлу «{file}»",
-    "Someone tried to requested the password to access {file}" : "Кто-то попытался запросить пароль для доступа к файлу «{file}»",
     "Invalid date, date format must be YYYY-MM-DD" : "Неверная дата, дата должна быть в формате «ГГГГ-ММ-ДД»",
     "Conversation not found" : "Обсуждение не найдено",
     "Path is already shared with this room" : "Путь уже поделен с этой комнатой",
@@ -360,6 +358,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "В данный момент вы ожидаете в вестибюле",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "В данный момент вы ожидаете в вестибюле. Эта встреча запланирована на {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Похоже, что вы разговариваете с выключенным звуком, пожалуйста, включите звук, чтобы другие смогли услышать вас",
+    "{email} tried to requested the password to access {file}" : "{email} попытался запросить пароль для доступа к файлу «{file}»",
+    "Someone tried to requested the password to access {file}" : "Кто-то попытался запросить пароль для доступа к файлу «{file}»",
     "Start time (optional)" : "Время начала (необязательно)"
 },
 "nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);");
