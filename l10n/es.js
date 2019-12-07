@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Una llamada de grupo ha comenzado en {call}",
     "You missed a group call in {call}" : "Tienes una llamada de grupo perdida en {call}",
     "{email} is requesting the password to access {file}" : "{email} está solicitando la contraseña para acceder a {file}",
-    "{email} tried to requested the password to access {file}" : "{email} ha solicitado la contraseña para acceder a {file}",
     "Someone is requesting the password to access {file}" : "Alguien ha solicitado la contraseña para acceder a {file}",
-    "Someone tried to requested the password to access {file}" : "Alguien intentó solicitar la contraseña para acceder a {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Fecha inválida, el formato de las fechas debe ser AAAA-MM-DD",
     "Conversation not found" : "Conversación no encontrada",
     "Path is already shared with this room" : "La ruta ya se ha compartido con esta sala",
@@ -391,6 +389,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Ahora estás esperando en el recibidor.",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Ahora estás esperando en el recibidor. Esta reunión está planificada para las {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Parece que estabas hablando con el micro silenciado, por favor desactiva el modo silencio para que los demás te oigan.",
+    "{email} tried to requested the password to access {file}" : "{email} ha solicitado la contraseña para acceder a {file}",
+    "Someone tried to requested the password to access {file}" : "Alguien intentó solicitar la contraseña para acceder a {file}",
     "Start time (optional)" : "Hora de inicio (opcional)"
 },
 "nplurals=2; plural=(n != 1);");

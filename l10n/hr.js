@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Grupni poziv je pokrenut u {call}",
     "You missed a group call in {call}" : "Propustili ste grupni poziv u {call}",
     "{email} is requesting the password to access {file}" : "{email} traži zaporku za pristup {file}",
-    "{email} tried to requested the password to access {file}" : "{email} je pokušao zatražiti zaporku za pristup {file}",
     "Someone is requesting the password to access {file}" : "Netko traži zaporku za pristup {file}",
-    "Someone tried to requested the password to access {file}" : "Netko je pokušao zatražiti zaporku za pristup {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Nevažeći datum, oblik datuma mora biti GGGG-MM-DD",
     "Conversation not found" : "Razgovor nije pronađen",
     "Path is already shared with this room" : "Put je već podijeljen s ovom sobom",
@@ -382,6 +380,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Trenutno čekate u predvorju",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Trenutno čekate u predvorju. Sastanak počinje u {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Pričate dok je utišan zvuk, isključite utišavanje zvuka kako bi vas čuli drugi sudionici razgovora",
+    "{email} tried to requested the password to access {file}" : "{email} je pokušao zatražiti zaporku za pristup {file}",
+    "Someone tried to requested the password to access {file}" : "Netko je pokušao zatražiti zaporku za pristup {file}",
     "Start time (optional)" : "Vrijeme početka (neobvezno)"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

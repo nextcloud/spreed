@@ -114,9 +114,7 @@
     "A group call has started in {call}" : "V {call} byl zahájen skupinový hovor",
     "You missed a group call in {call}" : "Zmeškali jste skupinový hovor v {call}",
     "{email} is requesting the password to access {file}" : "{email} požádal(a) o heslo pro přístup k {file}",
-    "{email} tried to requested the password to access {file}" : "{email} se pokusil(a) vyžádat heslo pro přístup k {file}",
     "Someone is requesting the password to access {file}" : "Někdo si vyžádal heslo pro přístup k {file}",
-    "Someone tried to requested the password to access {file}" : "Někdo se pokusil požádat o heslo pro přístup k {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Neplatné datum, je třeba aby formát byl RRRR-MM-DD",
     "Conversation not found" : "Konverzace nenalezena",
     "Path is already shared with this room" : "Umístění je už sdíleno s touto místností",
@@ -389,6 +387,8 @@
     "You are currently waiting in the lobby" : "Nyní čekáte ve virtuální předsíni",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Momentálně jste v čekárně. Schůzka je naplánována na {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Zdá se, že mluvíte a přitom máte ztlumeno – zrušte ztlumení, aby vás ostatní slyšeli",
+    "{email} tried to requested the password to access {file}" : "{email} se pokusil(a) vyžádat heslo pro přístup k {file}",
+    "Someone tried to requested the password to access {file}" : "Někdo se pokusil požádat o heslo pro přístup k {file}",
     "Start time (optional)" : "Čas začátku (volitelný)"
 },"pluralForm" :"nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;"
 }

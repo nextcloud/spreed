@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Ett gruppsamtal har startats i {call}",
     "You missed a group call in {call}" : "Du missade ett gruppsamtal i {call}",
     "{email} is requesting the password to access {file}" : "{email} begär lösenordet för åtkomst till {file}",
-    "{email} tried to requested the password to access {file}" : "{email} försökte begära lösenordet för åtkomst till {file}",
     "Someone is requesting the password to access {file}" : "Någon begär lösenordet för att komma åt {file}",
-    "Someone tried to requested the password to access {file}" : "Någon försökte begära lösenordet för att komma åt {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Felaktigt datum, datumformat måste vara ÅÅÅÅ-MM-DD",
     "Conversation not found" : "Konversationen hittades inte",
     "Path is already shared with this room" : "Sökvägen är redan delad med detta rum",
@@ -390,6 +388,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Du väntar för närvarande i lobbyn",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du väntar för närvarande i lobbyn. Detta möte är planerat till {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Du verkar prata med avstängd mikrofon, sätt på mikrofonen för att andra ska höra dig",
+    "{email} tried to requested the password to access {file}" : "{email} försökte begära lösenordet för åtkomst till {file}",
+    "Someone tried to requested the password to access {file}" : "Någon försökte begära lösenordet för att komma åt {file}",
     "Start time (optional)" : "Starttid (valfritt)"
 },
 "nplurals=2; plural=(n != 1);");
