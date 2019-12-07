@@ -114,9 +114,7 @@
     "A group call has started in {call}" : "Uma chamada de grupo foi iniciada em {call}",
     "You missed a group call in {call}" : "Você perdeu uma ligação em grupo em {call}",
     "{email} is requesting the password to access {file}" : "{email} está solicitando a senha para acessar {file}",
-    "{email} tried to requested the password to access {file}" : "{email} tentou solicitar a senha para acessar {file}",
     "Someone is requesting the password to access {file}" : "Alguém está solicitando a senha para acessar {file}",
-    "Someone tried to requested the password to access {file}" : "Alguém tentou solicitar a senha para acessar {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Data inválida, o formato deve ser YYYY-MM-DD",
     "Conversation not found" : "Conversa não encontrada",
     "Path is already shared with this room" : "O caminho já está compartilhando nesta sala",
@@ -389,6 +387,8 @@
     "You are currently waiting in the lobby" : "Você está atualmente esperando no lobby",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Você está esperando no lobby no momento. Esta reunião está agendada para {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Parece que você está falando no \"mudo\". Ligue o microfone para outros ouvirem",
+    "{email} tried to requested the password to access {file}" : "{email} tentou solicitar a senha para acessar {file}",
+    "Someone tried to requested the password to access {file}" : "Alguém tentou solicitar a senha para acessar {file}",
     "Start time (optional)" : "Horário de início (opcional)"
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

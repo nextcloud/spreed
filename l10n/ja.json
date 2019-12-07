@@ -104,9 +104,7 @@
     "A group call has started in {call}" : "{call} のグループ通話が開始されました",
     "You missed a group call in {call}" : "{user}からのグループ着信に応答できませんでした。",
     "{email} is requesting the password to access {file}" : "{email}は{file}にアクセスするためのパスワードをリクエストしています",
-    "{email} tried to requested the password to access {file}" : "{email}が{file}にアクセスするためのパスワードを要求しようとしました",
     "Someone is requesting the password to access {file}" : "誰かが{file}にアクセスするためのパスワードを要求しています",
-    "Someone tried to requested the password to access {file}" : "誰かが{file}にアクセスするためにパスワードを要求しようとしました。",
     "Invalid date, date format must be YYYY-MM-DD" : "日付が無効です。日付形式はYYYY-MM-DDである必要があります",
     "Conversation not found" : "会話が見つかりません",
     "Path is already shared with this room" : "パスは既にこのルームで共有されています",
@@ -327,6 +325,8 @@
     "* Talk can now have commands, send \"/help\" as a chat message to see if your administrator configured some" : "* Talkでコマンドを使用したり、「/help」をチャットメッセージとして送信したりできるようになりました。",
     "* With projects you can create quick links between conversations, files and other items" : "* プロジェクトを使用すると、会話、ファイル、およびその他のアイテム間のクイックリンクを作成できます",
     "Invalid start time format" : "開始時間がフォーマットに沿っていません",
+    "{email} tried to requested the password to access {file}" : "{email}が{file}にアクセスするためのパスワードを要求しようとしました",
+    "Someone tried to requested the password to access {file}" : "誰かが{file}にアクセスするためにパスワードを要求しようとしました。",
     "Start time (optional)" : "開始時間（オプション）"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

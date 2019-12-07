@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "Groepsgesprek is begonnen in {call}",
     "You missed a group call in {call}" : "Je miste een groepsgesprek in {call}",
     "{email} is requesting the password to access {file}" : "{email} vraagt het wachtwoord voor het benaderen van {file}",
-    "{email} tried to requested the password to access {file}" : "{email} probeerde het wachtwoord op te vragen voor het openen van bestand {file}",
     "Someone is requesting the password to access {file}" : "Iemand vraagt het wachtwoord voor het benadeen van bestand {file}",
-    "Someone tried to requested the password to access {file}" : "Iemand probeerde het wachtwoord op te vragen voor het openen van bestand {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Ongeldige datum, formaat is YYYY-MM-DD",
     "Conversation not found" : "Gesprek niet gevonden.",
     "Path is already shared with this room" : "Pad is al gedeeld in deze ruimte",
@@ -375,6 +373,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Je wacht nu in de lobby",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Je wacht nu in de lobby. Deze vergadering staat gepland voor {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Je lijkt te spreken terwijl je gedempt bent. Haal de demping weg zodat anderen je ook horen",
+    "{email} tried to requested the password to access {file}" : "{email} probeerde het wachtwoord op te vragen voor het openen van bestand {file}",
+    "Someone tried to requested the password to access {file}" : "Iemand probeerde het wachtwoord op te vragen voor het openen van bestand {file}",
     "Start time (optional)" : "Begintijd (optioneel)"
 },
 "nplurals=2; plural=(n != 1);");
