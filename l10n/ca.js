@@ -116,9 +116,7 @@ OC.L10N.register(
     "A group call has started in {call}" : "S'ha iniciat una trucada grupal a {call}",
     "You missed a group call in {call}" : "Teniu una trucada de grup perduda a {call}",
     "{email} is requesting the password to access {file}" : "{email} està demanant la contrasenya per accedir a {file}",
-    "{email} tried to requested the password to access {file}" : "{email} ha intentat sol·licitar la contrasenya per accedir a {file}",
     "Someone is requesting the password to access {file}" : "Algú està demanant la contrasenya per accedir a {file}",
-    "Someone tried to requested the password to access {file}" : "Algú ha intentat sol·licitar la contrasenya per accedir a {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Data no vàlida, el format de la data ha de ser YYYY-MM-DD",
     "Conversation not found" : "No s'ha trobat la conversa",
     "Path is already shared with this room" : "Aquesta ruta ja ha estat compartida amb aquesta sala",
@@ -371,6 +369,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Ara esteu esperant al vestíbul.",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Ara esteu esperant al vestíbul. Aquesta reunió està prevista per a {startTime}",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Sembla que esteu parlant mentre esteu silenciat/da, si us plau, deixeu de silenciar-vos perquè altres persones us puguin sentir.",
+    "{email} tried to requested the password to access {file}" : "{email} ha intentat sol·licitar la contrasenya per accedir a {file}",
+    "Someone tried to requested the password to access {file}" : "Algú ha intentat sol·licitar la contrasenya per accedir a {file}",
     "Start time (optional)" : "Hora d'inici (opcional)"
 },
 "nplurals=2; plural=(n != 1);");
