@@ -30,7 +30,7 @@
 		</div>
 
 		<span class="participant-row__user-name">{{ computedName }}</span>
-		<span v-if="isModerator" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
+		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
@@ -56,7 +56,7 @@
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { PARTICIPANT } from '../../../../../constants'
+import { CONVERSATION, PARTICIPANT } from '../../../../../constants'
 
 export default {
 	name: 'Participant',
@@ -120,6 +120,11 @@ export default {
 				participantType: this.$store.getters.getUserId() !== null ? PARTICIPANT.TYPE.USER : PARTICIPANT.TYPE.GUEST,
 			}
 		},
+		conversation() {
+			return this.$store.getters.conversations[this.token] || {
+				type: CONVERSATION.TYPE.GROUP,
+			}
+		},
 
 		isSelf() {
 			// User
@@ -142,6 +147,10 @@ export default {
 		},
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
+		},
+		showModeratorLabel() {
+			return this.isModerator
+				&& [CONVERSATION.TYPE.ONE_TO_ONE, CONVERSATION.TYPE.CHANGELOG].indexOf(this.conversation.type) === -1
 		},
 		canModerate() {
 			return this.participantType !== PARTICIPANT.TYPE.OWNER && !this.isSelf && this.selfIsModerator
