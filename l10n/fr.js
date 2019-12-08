@@ -116,7 +116,9 @@ OC.L10N.register(
     "A group call has started in {call}" : "Un appel de groupe a démarré dans {call}",
     "You missed a group call in {call}" : "Vous avez manqué l'appel de groupe {call}",
     "{email} is requesting the password to access {file}" : "{email} demande le mot de passe pour accéder au fichier {file}",
+    "{email} tried to request the password to access {file}" : "{email} a essayé d'obtenir le mot de passe pour accéder au fichier {file}",
     "Someone is requesting the password to access {file}" : "Quelqu'un demande le mot de passe pour accéder au fichier {file}",
+    "Someone tried to request the password to access {file}" : "Quelqu'un a essayé d'obtenir le mot de passe pour accéder au fichier {file}",
     "Invalid date, date format must be YYYY-MM-DD" : "Date invalide, le format de date doit être YYYY-MM-DD",
     "Conversation not found" : "Discussion non trouvée",
     "Path is already shared with this room" : "Le chemin est déjà partagé avec cette discussion.",
@@ -387,8 +389,8 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Vous attendez actuellement dans la salle d'attente",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Vous attendez actuellement dans la salle d'attente. Le démarrage de cette réunion est prévu à %1$s",
     "You seem to be talking while muted, please unmute yourself for others to hear you" : "Vous semblez parler avec le micro coupé, s'il vous plaît, rétablissez votre son pour que les autres vous entendent",
-    "{email} tried to requested the password to access {file}" : "{email} a essayé de demander le mot de passe pour accéder au fichier {file}.",
-    "Someone tried to requested the password to access {file}" : "Quelqu'un a essayé de demander le mot de passe pour accéder au fichier {file}",
+    "{email} tried to requested the password to access {file}" : "{email} a essayé d'obtenir le mot de passe pour accéder au fichier {file}.",
+    "Someone tried to requested the password to access {file}" : "Quelqu'un a essayé d'obtenir le mot de passe pour accéder au fichier {file}",
     "Start time (optional)" : "Heure de début (optionelle)"
 },
 "nplurals=2; plural=(n > 1);");
