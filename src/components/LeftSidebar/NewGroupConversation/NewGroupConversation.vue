@@ -184,7 +184,7 @@ export default {
 				if (this.conversationName !== '') {
 					this.page = 1
 					this.hint = ''
-				} else if (this.conversationName === '') {
+				} else {
 					this.hint = t('spreed', 'Please enter a valid conversation name')
 				}
 			}

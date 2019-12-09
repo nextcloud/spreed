@@ -56,6 +56,12 @@ export default {
 				return this.conversationName
 			}
 		},
+		label() {
+			if (this.conversationName === '') {
+				return  t('spreed', 'Make your conversation public')
+			}
+			return  t('spreed', 'Make {name} public', { name: this.conversationDisplayName })
+		}
 	},
 	methods: {
 		handleInput(event) {

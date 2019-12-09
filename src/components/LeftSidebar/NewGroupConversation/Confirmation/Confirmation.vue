@@ -25,7 +25,7 @@
 			<template v-if="!success">
 				<div class="icon-loading confirmation__icon" />
 				<p class="confirmation__warning">
-					{{ t('spreed', 'Please wait') }}
+					{{ t('spreed', 'Creating your conversation') }}
 				</p>
 			</template>
 			<template v-if="success && isPublic">

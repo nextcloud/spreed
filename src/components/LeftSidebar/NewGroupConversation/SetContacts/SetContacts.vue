@@ -26,7 +26,7 @@
 			class="set-contacts__input"
 			type="text"
 			autofocus
-			:placeholder="t('spreed', `Search Participants`)"
+			:placeholder="t('spreed', 'Search Participants')"
 			@input="handleInput">
 		<template v-if="isSearching">
 			<Caption
