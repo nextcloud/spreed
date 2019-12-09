@@ -502,12 +502,18 @@ class RoomController extends AEnvironmentAwareController {
 		$participants = [];
 		foreach ($circle->getMembers() as $member) {
 			/** @var Member $member */
-			if ($member->getUserId() === '') {
+			if ($member->getType() === Member::TYPE_USER || $member->getUserId() === '') {
 				// Not a user?
 				continue;
 			}
+
 			if ($currentUser->getUID() === $member->getUserId()) {
 				// Current user is already added
+				continue;
+			}
+
+			if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
+				// Only allow invited and regular members
 				continue;
 			}
 
@@ -740,12 +746,17 @@ class RoomController extends AEnvironmentAwareController {
 			$participants = [];
 			foreach ($circle->getMembers() as $member) {
 				/** @var Member $member */
-				if ($member->getUserId() === '') {
+				if ($member->getType() === Member::TYPE_USER || $member->getUserId() === '') {
 					// Not a user?
 					continue;
 				}
 
 				if (\in_array($member->getUserId(), $participants, true)) {
+					continue;
+				}
+
+				if ($member->getStatus() !== Member::STATUS_INVITED && $member->getStatus() !== Member::STATUS_MEMBER) {
+					// Only allow invited and regular members
 					continue;
 				}
 
