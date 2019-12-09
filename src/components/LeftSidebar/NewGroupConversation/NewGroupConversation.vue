@@ -84,7 +84,7 @@
 						{{ t('spreed', 'Add participants') }}
 					</button>
 					<button
-						v-if="page===2 && this.error"
+						v-if="page===2 && error"
 						class="navigation__button-right primary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
@@ -104,11 +104,11 @@ import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
 import Confirmation from './Confirmation/Confirmation'
-import { addParticipant } from '../../../../services/participantsService'
+import { addParticipant } from '../../../services/participantsService'
 import {
 	createPublicConversation,
 	createPrivateConversation,
-} from '../../../../services/conversationsService'
+} from '../../../services/conversationsService'
 
 export default {
 
@@ -165,6 +165,12 @@ export default {
 		handleSetConversationName(event) {
 			this.page = 1
 		},
+
+		handleSetConversationType(event) {
+			console.log(event)
+			this.checked = event
+		},
+
 		handleClickForward() {
 			if (this.page === 0) {
 				if (this.conversationName !== '') {

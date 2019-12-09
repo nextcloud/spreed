@@ -42,11 +42,11 @@
 </template>
 
 <script>
-import Caption from '../../../../Caption'
-import Hint from '../../../../Hint'
-import ParticipantsList from '../../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
+import Caption from '../../../Caption'
+import Hint from '../../../Hint'
+import ParticipantsList from '../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
 import debounce from 'debounce'
-import { searchPossibleConversations } from '../../../../../services/conversationsService'
+import { searchPossibleConversations } from '../../../../services/conversationsService'
 
 export default {
 	name: 'SetContacts',

@@ -46,13 +46,6 @@
 				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
-
-				<Caption
-					:title="t('spreed', 'New conversation')" />
-				<NewPublicConversation
-					:search-text="searchText" />
-				<NewPrivateConversation
-					:search-text="searchText" />
 			</template>
 		</ul>
 	</AppNavigation>
@@ -65,14 +58,12 @@ import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
 import GroupsList from './GroupsList/GroupsList'
 import Hint from '../Hint'
-import NewPrivateConversation from './NewConversation/NewPrivateConversation'
-import NewPublicConversation from './NewConversation/NewPublicConversation'
-import SearchBox from './NewConversation/SearchBox'
+import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
-import NewGroupConversation from './NewConversation/NewGroupConversation/NewGroupConversation'
+import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 
 export default {
 
@@ -85,8 +76,6 @@ export default {
 		ConversationsList,
 		GroupsList,
 		Hint,
-		NewPrivateConversation,
-		NewPublicConversation,
 		SearchBox,
 		NewGroupConversation,
 	},
