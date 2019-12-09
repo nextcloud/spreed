@@ -23,6 +23,8 @@
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import MediaControls from './MediaControls'
+import { resetInternalSignaling } from '../../services/signaling/internalSignalingService'
+import { EventBus } from '../../services/EventBus'
 
 export default {
 	name: 'CallView',
@@ -30,6 +32,13 @@ export default {
 	components: {
 		Avatar,
 		MediaControls,
+	},
+
+	props: {
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 
 	computed: {
@@ -47,6 +56,13 @@ export default {
 			const customName = this.displayName !== t('spreed', 'Guest') ? this.displayName : '?'
 			return customName.charAt(0)
 		},
+	},
+
+	created() {
+		resetInternalSignaling(this.token)
+		EventBus.$on('routeChange', () => {
+			resetInternalSignaling(this.token)
+		})
 	},
 }
 </script>
