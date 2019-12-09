@@ -35,7 +35,7 @@
 
 		<span class="participant-row__user-name">{{ computedName }}</span>
 		<span v-if="isModerator" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
-		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
+		<Actions v-if="canModerate && !isSearched" class="participant-row__utils">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
 				@click="demoteFromModerator">
@@ -52,6 +52,7 @@
 				{{ t('spreed', 'Remove participant') }}
 			</ActionButton>
 		</Actions>
+		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</li>
 </template>
 
@@ -250,8 +251,14 @@ export default {
 		height: 44px;
 		cursor: pointer;
 	}
-	&__actions {
+	&__utils {
 		margin-left: auto;
+	}
+}
+
+.utils {
+	&__checkmark {
+		margin-right: 11px;
 	}
 }
 
