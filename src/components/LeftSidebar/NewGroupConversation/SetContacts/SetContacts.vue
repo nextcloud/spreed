@@ -28,16 +28,18 @@
 			autofocus
 			:placeholder="t('spreed', `Search Participants`)"
 			@input="handleInput">
-		<Caption
-			:title="t('spreed', `Add participants to ${conversationName}`)" />
-		<div class="set-contacts__participants">
-			<ParticipantsList
-				:add-on-click="false"
-				:items="searchResults"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
-			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-if="false" :hint="t('spreed', 'No search results')" />
-		</div>
+		<template v-if="isSearching">
+			<Caption
+				:title="t('spreed', `Select participants`)" />
+			<div class="set-contacts__participants">
+				<ParticipantsList
+					:add-on-click="false"
+					:items="searchResults"
+					@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+				<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-if="false" :hint="t('spreed', 'No search results')" />
+			</div>
+		</template>
 	</div>
 </template>
 
