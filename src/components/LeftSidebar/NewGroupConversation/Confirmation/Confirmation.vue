@@ -28,11 +28,12 @@
 					{{ t('spreed', 'Please wait') }}
 				</p>
 			</template>
-			<template v-if="success">
+			<template v-if="success && isPublic">
 				<div class="icon-checkmark confirmation__icon" />
 				<p class="confirmation__warning">
 					{{ t('spreed', 'All set') }}
 				</p>
+				<p>{{linkToConversation}}</p>
 			</template>
 		</template>
 		<template v-else>
@@ -68,7 +69,15 @@ export default {
 			type: Boolean,
 			required: true,
 		},
+		isPublic: {
+			type: Boolean,
+			required: true,
+		},
+		linkToConversation: {
+			type: String,
+		}
 	},
+
 }
 
 </script>

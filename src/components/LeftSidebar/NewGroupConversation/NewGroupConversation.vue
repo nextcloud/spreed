@@ -29,7 +29,7 @@
 		</Actions>
 		<Modal
 			v-if="modal"
-			size="full"
+			size="large"
 			@close="closeModal">
 			<div
 				class="new-group-conversation">
@@ -47,7 +47,7 @@
 							{{ hint }}
 						</p>
 						<SetConversationType
-							v-model="checked"
+							v-model="isPublic"
 							:conversation-name="conversationName" />
 					</template>
 					<template v-if="page === 1">
@@ -60,7 +60,9 @@
 							:conversation-name="conversationName"
 							:error="error"
 							:is-loading="isLoading"
-							:success="success" />
+							:success="success"
+							:isPublic="isPublic"
+							:linkToConversation="linkToConversation" />
 					</template>
 				</div>
 				<div
@@ -109,6 +111,7 @@ import {
 	createPublicConversation,
 	createPrivateConversation,
 } from '../../../services/conversationsService'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 
@@ -130,7 +133,7 @@ export default {
 			page: 0,
 			conversationNameInput: '',
 			hint: '',
-			checked: false,
+			isPublic: false,
 			isLoading: true,
 			token: '',
 			selectedParticipants: [],
@@ -142,6 +145,11 @@ export default {
 	computed: {
 		conversationName() {
 			return this.conversationNameInput.trim()
+		},
+		linkToConversation() {
+			if (this.token !== '') {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
+			} else return ''
 		},
 	},
 
@@ -155,7 +163,7 @@ export default {
 			this.page = 0
 			this.conversationNameInput = ''
 			this.hint = ''
-			this.checked = false
+			this.isPublic = false
 			this.isLoading = true
 			this.token = ''
 			this.selectedParticipants = []
@@ -168,7 +176,7 @@ export default {
 
 		handleSetConversationType(event) {
 			console.log(event)
-			this.checked = event
+			this.isPublic = event
 		},
 
 		handleClickForward() {
@@ -198,7 +206,7 @@ export default {
 
 		async handleCreateConversation() {
 			this.page = 2
-			if (this.checked) {
+			if (this.isPublic) {
 				try {
 					await this.createPublicConversation()
 				} catch (exeption) {
@@ -231,8 +239,10 @@ export default {
 			this.success = true
 			// Push the newly created conversation's route.
 			this.pushNewRoute()
-			// This displays the checkmark for a little while.
-			await setTimeout(() => this.closeModal(), 200)
+			// Close the modal right away if the conversation is public.
+			if (!this.isPublic) {
+				this.closeModal()
+			}
 		},
 
 		async createPrivateConversation() {
