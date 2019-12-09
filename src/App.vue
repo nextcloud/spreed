@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<Content :class="{'icon-loading': loading}" app-name="Talk">
+	<Content :class="{'icon-loading': loading, 'in-call': showChatInSidebar}" app-name="Talk">
 		<LeftSidebar v-if="getUserId" />
 		<AppContent>
 			<router-view />
@@ -291,5 +291,12 @@ export default {
 <style lang="scss" scoped>
 #content {
 	height: 100%;
+
+	&.in-call {
+		::v-deep #app-navigation-toggle:before {
+			/* Force white handle when inside a call */
+			color: #FFFFFF;
+		}
+	}
 }
 </style>
