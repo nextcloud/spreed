@@ -75,13 +75,13 @@
 						v-if="page===0"
 						class="navigation__button-right primary"
 						@click="handleClickForward">
-						{{ t('spreed', 'Next') }}
+						{{ t('spreed', 'Add participants') }}
 					</button>
 					<button
 						v-if="page===1"
 						class="navigation__button-right primary"
 						@click="handleCreateConversation">
-						{{ t('spreed', 'Add participants') }}
+						{{ t('spreed', 'Create conversation') }}
 					</button>
 					<button
 						v-if="page===2 && error"
