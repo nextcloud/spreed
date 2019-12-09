@@ -20,7 +20,7 @@ import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
 
 export default {
-	name: 'ChatView',
+	name: 'MainView',
 	components: {
 		CallView,
 		MessagesList,
