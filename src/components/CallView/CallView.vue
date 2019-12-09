@@ -23,6 +23,7 @@
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import MediaControls from './MediaControls'
+import { fetchSignalingSettings } from '../../services/signalingService'
 import { resetInternalSignaling } from '../../services/signaling/internalSignalingService'
 import { EventBus } from '../../services/EventBus'
 
@@ -39,6 +40,16 @@ export default {
 			type: String,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			showSignalingWarning: false,
+			turnServers: [],
+			stunServers: [],
+			signalingServer: [],
+			signalingTicket: '',
+		}
 	},
 
 	computed: {
@@ -63,6 +74,22 @@ export default {
 		EventBus.$on('routeChange', () => {
 			resetInternalSignaling(this.token)
 		})
+	},
+
+	methods: {
+		loadSignalingSettings() {
+			// FIXME move to MainView, so it's ready loaded when we start the call
+			try {
+				const response = fetchSignalingSettings(this.token)
+				this.showSignalingWarning = response.ocs.data.hideWarning
+				this.turnServers = response.ocs.data.turnserver
+				this.stunServers = response.ocs.data.stunserver
+				this.signalingServer = response.ocs.data.server
+				this.signalingTicket = response.ocs.data.ticket
+			} catch (exception) {
+				console.error('Error fetching signaling information', exception)
+			}
+		},
 	},
 }
 </script>
