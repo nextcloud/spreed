@@ -45,12 +45,27 @@
 				{{ t('spreed', 'Enable lobby') }}
 			</ActionCheckbox>
 		</template>
+		<AppSidebarTab
+			:order="1"
+			:name="t('spreed', 'Chat')"
+			icon="icon-comment">
+			<template v-if="showChatInSidebar">
+				<MessagesList :token="token" />
+				<NewMessageForm />
+			</template>
+			<template v-else>
+				This should be hidden, but the visibility of the tab can not change at the moment:
+				https://github.com/nextcloud/nextcloud-vue/issues/747
+			</template>
+		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
+			:order="2"
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
 			<ParticipantsTab :display-search-box="displaySearchBox" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
+			:order="3"
 			:name="t('spreed', 'Projects')"
 			icon="icon-projects">
 			<CollectionList v-if="conversation.token"
@@ -66,6 +81,8 @@ import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
+import MessagesList from '../MessagesList/MessagesList'
+import NewMessageForm from '../NewMessageForm/NewMessageForm'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
@@ -78,7 +95,16 @@ export default {
 		AppSidebar,
 		AppSidebarTab,
 		CollectionList,
+		MessagesList,
+		NewMessageForm,
 		ParticipantsTab,
+	},
+
+	props: {
+		showChatInSidebar: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
