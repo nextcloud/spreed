@@ -152,6 +152,10 @@ export default {
 		})
 	},
 
+	beforeDestroy() {
+		this.cancelLookForNewMessages()
+	},
+
 	beforeUpdate() {
 		/**
 		 * If the component is not initiated, scroll to the bottom of the message list.
