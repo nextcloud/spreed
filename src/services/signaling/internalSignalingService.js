@@ -27,20 +27,23 @@ const state = {
 	failedRequests: 0,
 	pendingMessages: [],
 	cancelFetch: () => {},
+	cancelSend: () => {},
 	isSendingMessages: false,
 }
 
 /**
- * Reset the state of the internal signaling
+ * Reset the state of the internal signaling and start polling
  * @param {string} token The conversation token to do signaling for.
  */
-const resetInternalSignaling = function(token) {
+const restartInternalSignaling = function(token) {
 	state.cancelFetch('canceled')
+	state.cancelSend('canceled')
 
 	state.token = token
 	state.pendingMessages = []
 	state.isSendingMessages = false
 	state.cancelFetch = () => {}
+	state.cancelSend = () => {}
 
 	if (token === '') {
 		return
@@ -54,22 +57,40 @@ const resetInternalSignaling = function(token) {
 	fetchSignalingMessages()
 }
 
+/**
+ * Stop polling for signaling messages
+ */
+const stopInternalSignaling = function() {
+	state.cancelFetch('canceled')
+	state.cancelSend('canceled')
+
+	state.token = ''
+	state.pendingMessages = []
+	state.isSendingMessages = false
+	state.cancelFetch = () => {}
+	state.cancelSend = () => {}
+}
+
 const sendSignalingMessages = async function() {
 	if (state.isSendingMessages) {
 		return
 	}
 	state.isSendingMessages = true
 
-	const pendingMessagesLength = state.spreedArrayConnection.length
+	const pendingMessagesLength = state.pendingMessages.length
 	if (pendingMessagesLength === 0) {
 		state.isSendingMessages = false
 		return
 	}
 
-	const messages = state.pendingSignalingMessages.splice(0, pendingMessagesLength)
+	const messages = state.pendingMessages.splice(0, pendingMessagesLength)
+
+	state.cancelSend('canceled')
+	const { request, cancel } = CancelableRequest(sendInternalMessages)
+	state.cancelSend = cancel
 
 	try {
-		await sendInternalMessages(state.token, messages)
+		await request(state.token, messages)
 	} catch (exception) {
 		console.error('Error while sending signaling messages')
 	}
@@ -83,7 +104,8 @@ const fetchSignalingMessages = async function() {
 	state.cancelFetch = cancel
 
 	try {
-		const response = await request({ token: state.token })
+		console.error({ token: state.token })
+		const response = await request(state.token)
 
 		// Successful request, reset the fail counter
 		state.failedRequests = 0
@@ -126,6 +148,7 @@ const fetchSignalingMessages = async function() {
 		if (state.failedRequests >= 3) {
 			// FIXME leave the call due to signaling errors
 			// this._trigger('pullMessagesStoppedOnFail')
+			throw exception
 		}
 	}
 
@@ -136,6 +159,6 @@ const fetchSignalingMessages = async function() {
 }
 
 export {
-	resetInternalSignaling,
-
+	restartInternalSignaling,
+	stopInternalSignaling,
 }

@@ -23,7 +23,7 @@
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import MediaControls from './MediaControls'
-import { resetInternalSignaling } from '../../services/signaling/internalSignalingService'
+import { restartInternalSignaling, stopInternalSignaling } from '../../services/signaling/internalSignalingService'
 import { EventBus } from '../../services/EventBus'
 
 export default {
@@ -82,10 +82,17 @@ export default {
 
 	created() {
 		if (!this.isUsingExternalSignaling) {
-			resetInternalSignaling(this.token)
+			console.error(this.token)
+			restartInternalSignaling(this.token)
 			EventBus.$on('routeChange', () => {
-				resetInternalSignaling(this.token)
+				restartInternalSignaling(this.token)
 			})
+		}
+	},
+
+	beforeDestroy() {
+		if (!this.isUsingExternalSignaling) {
+			stopInternalSignaling()
 		}
 	},
 }
