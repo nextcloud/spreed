@@ -82,7 +82,6 @@ export default {
 
 	created() {
 		if (!this.isUsingExternalSignaling) {
-			console.error(this.token)
 			restartInternalSignaling(this.token)
 			EventBus.$on('routeChange', () => {
 				restartInternalSignaling(this.token)

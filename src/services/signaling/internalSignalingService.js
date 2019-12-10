@@ -21,6 +21,7 @@
 import { fetchInternalMessages, sendInternalMessages } from '../signalingService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import axios from '@nextcloud/axios'
+import { EventBus } from '../../services/EventBus'
 
 const state = {
 	token: '',
@@ -103,26 +104,31 @@ const fetchSignalingMessages = async function() {
 	const { request, cancel } = CancelableRequest(fetchInternalMessages)
 	state.cancelFetch = cancel
 
+	if (!state.token) {
+		// Signaling is stopped
+		return
+	}
+
 	try {
-		console.error({ token: state.token })
 		const response = await request(state.token)
 
 		// Successful request, reset the fail counter
 		state.failedRequests = 0
 
 		response.data.ocs.data.forEach(message => {
-			// FIXME Processing of the messages
 			// this._trigger('onBeforeReceiveMessage', [message])
 			switch (message.type) {
 			case 'usersInRoom':
 				// this._trigger('usersInRoom', [message.data])
 				// this._trigger('participantListChanged')
+				EventBus.$emit('Signaling::usersInRoom', [message.data])
 				break
 			case 'message':
 				if (typeof (message.data) === 'string') {
 					message.data = JSON.parse(message.data)
 				}
 				// this._trigger('message', [message.data])
+				EventBus.$emit('Signaling::message', [message.data])
 				break
 			default:
 				console.info('Unknown Signaling Message')
@@ -139,15 +145,15 @@ const fetchSignalingMessages = async function() {
 		if (exception.response) {
 			if (exception.response.status === 403
 				|| exception.response.status === 404) {
-				// FIXME leave the call
 				// this._trigger('pullMessagesStoppedOnFail')
+				EventBus.$emit('Signaling::stoppedOnFail')
 			}
 		}
 		state.failedRequests++
 
 		if (state.failedRequests >= 3) {
-			// FIXME leave the call due to signaling errors
 			// this._trigger('pullMessagesStoppedOnFail')
+			EventBus.$emit('Signaling::stoppedOnFail')
 			throw exception
 		}
 	}

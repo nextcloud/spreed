@@ -179,6 +179,10 @@ export default {
 			}
 		})
 
+		EventBus.$on('Signaling::stoppedOnFail', () => {
+			this.$router.push('/apps/spreed')
+		})
+
 		/**
 		 * Global before guard, this is called whenever a navigation is triggered.
 		*/

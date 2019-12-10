@@ -147,6 +147,8 @@ export default {
 				this.getParticipants()
 			})
 		})
+
+		EventBus.$on('Signaling::usersInRoom', this.getParticipants)
 	},
 
 	methods: {
