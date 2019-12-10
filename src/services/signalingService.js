@@ -36,27 +36,6 @@ const fetchSignalingSettings = async function(token) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings')
 }
 
-/**
- * Send signaling messages to the signaling server
- * @param {string} token The token of the conversation to be messaged to.
- * @param {Array} messages The signaling messages to send
- */
-const sendInternalMessages = async function(token, messages) {
-	return axios.post(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token, {
-		messages: JSON.stringify(messages),
-	})
-}
-
-/**
- * Fetch signaling messages from the signaling server
- * @param {string} token The token of the conversation to be polled from.
- */
-const fetchInternalMessages = async function(token) {
-	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token)
-}
-
 export {
 	fetchSignalingSettings,
-	sendInternalMessages,
-	fetchInternalMessages,
 }

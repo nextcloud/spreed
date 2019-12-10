@@ -18,10 +18,10 @@
  *
  */
 
-import { fetchInternalMessages, sendInternalMessages } from '../signalingService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import axios from '@nextcloud/axios'
 import { EventBus } from '../../services/EventBus'
+import { generateOcsUrl } from '@nextcloud/router'
 
 const state = {
 	token: '',
@@ -30,6 +30,25 @@ const state = {
 	cancelFetch: () => {},
 	cancelSend: () => {},
 	isSendingMessages: false,
+}
+
+/**
+ * Send signaling messages to the signaling server
+ * @param {string} token The token of the conversation to be messaged to.
+ * @param {Array} messages The signaling messages to send
+ */
+const sendInternalMessages = async function(token, messages) {
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token, {
+		messages: JSON.stringify(messages),
+	})
+}
+
+/**
+ * Fetch signaling messages from the signaling server
+ * @param {string} token The token of the conversation to be polled from.
+ */
+const fetchInternalMessages = async function(token) {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token)
 }
 
 /**
