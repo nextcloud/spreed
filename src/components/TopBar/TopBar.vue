@@ -21,7 +21,8 @@
 
 <template>
 	<div class="top-bar">
-		<CallButton />
+		<CallButton
+			:signaling-initialised="signalingInitialised" />
 		<Actions v-if="showOpenSidebarButton" class="top-bar__button" close-after-click="true">
 			<ActionButton :icon="iconMenuPeople" @click="handleClick" />
 		</Actions>
@@ -44,6 +45,10 @@ export default {
 
 	props: {
 		forceWhiteIcons: {
+			type: Boolean,
+			default: false,
+		},
+		signalingInitialised: {
 			type: Boolean,
 			default: false,
 		},

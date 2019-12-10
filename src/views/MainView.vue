@@ -1,13 +1,20 @@
 <template>
 	<div class="chatview">
-		<TopBar :force-white-icons="showChatInSidebar" />
+		<TopBar
+			:force-white-icons="showChatInSidebar"
+			:signaling-initialised="signalingInitialised" />
 
 		<template v-if="!showChatInSidebar">
 			<MessagesList :token="token" />
 			<NewMessageForm />
 		</template>
 		<template v-else>
-			<CallView :token="token" />
+			<CallView
+				:token="token"
+				:signaling-server="signalingServer"
+				:signaling-ticket="signalingTicket"
+				:stun-servers="stunServers"
+				:turn-servers="turnServers" />
 		</template>
 	</div>
 </template>
@@ -18,20 +25,35 @@ import MessagesList from '../components/MessagesList/MessagesList'
 import NewMessageForm from '../components/NewMessageForm/NewMessageForm'
 import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
+import { fetchSignalingSettings } from '../services/signalingService'
 
 export default {
 	name: 'MainView',
+
 	components: {
 		CallView,
 		MessagesList,
 		NewMessageForm,
 		TopBar,
 	},
+
 	props: {
 		token: {
 			type: String,
 			required: true,
 		},
+	},
+
+	data() {
+		return {
+			signalingInitialised: false,
+
+			showSignalingWarning: false, // FIXME use
+			signalingServer: [],
+			signalingTicket: '',
+			stunServers: [],
+			turnServers: [],
+		}
 	},
 
 	computed: {
@@ -54,6 +76,29 @@ export default {
 
 		showChatInSidebar() {
 			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
+	},
+
+	created() {
+		this.loadSignalingSettings()
+	},
+
+	methods: {
+		async loadSignalingSettings() {
+			this.signalingInitialised = false
+			try {
+				const response = await fetchSignalingSettings(this.token)
+				const data = response.data.ocs.data
+				this.showSignalingWarning = data.hideWarning
+				this.signalingServer = data.server
+				this.signalingTicket = data.ticket
+				this.stunServers = data.stunservers
+				this.turnServers = data.turnservers
+
+				this.signalingInitialised = true
+			} catch (exception) {
+				console.error('Error fetching signaling information', exception)
+			}
 		},
 	},
 }

@@ -40,6 +40,13 @@ import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../constants'
 export default {
 	name: 'CallButton',
 
+	props: {
+		signalingInitialised: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
 	data() {
 		return {
 			loading: false,
@@ -84,7 +91,8 @@ export default {
 		},
 
 		startCallButtonDisabled() {
-			return (!this.conversation.canStartCall
+			return !this.signalingInitialised
+				|| (!this.conversation.canStartCall
 					&& !this.conversation.hasCall)
 				|| this.isBlockedByLobby
 		},
