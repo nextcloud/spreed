@@ -25,6 +25,7 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import MediaControls from './MediaControls'
 import { startSignaling, stopSignaling } from '../../services/signalingService'
 import { EventBus } from '../../services/EventBus'
+import {PARTICIPANT} from "../../constants"
 
 export default {
 	name: 'CallView',
@@ -73,6 +74,14 @@ export default {
 		displayName() {
 			return this.$store.getters.getDisplayName()
 		},
+		userId() {
+			return this.$store.getters.getUserId()
+		},
+		currentParticipant() {
+			return this.$store.getters.conversations[this.token].sessionId || {
+				sessionId: '0',
+			}
+		},
 
 		firstLetterOfGuestName() {
 			const customName = this.displayName !== t('spreed', 'Guest') ? this.displayName : '?'
@@ -94,11 +103,13 @@ export default {
 	methods: {
 		startSignaling() {
 			this.stopSignaling()
-			startSignaling(this.token, this.signalingServer, this.signalingTicket, this.stunServers, this.turnServers)
+			this.hasSignalingConnection = true
+			startSignaling(this.userId, this.currentParticipant.sessionId, this.token, this.signalingServer, this.signalingTicket, this.stunServers, this.turnServers)
 		},
 		stopSignaling() {
 			if (this.hasSignalingConnection) {
 				stopSignaling()
+				this.hasSignalingConnection = false
 			}
 		},
 	},

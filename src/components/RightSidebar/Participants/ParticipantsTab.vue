@@ -148,7 +148,7 @@ export default {
 			})
 		})
 
-		EventBus.$on('Signaling::usersInRoom', this.getParticipants)
+		EventBus.$on('Signaling::shouldRefreshParticipants', this.getParticipants)
 	},
 
 	methods: {

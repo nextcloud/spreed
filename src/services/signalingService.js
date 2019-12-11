@@ -51,16 +51,24 @@ const fetchSignalingSettings = async function(token) {
 /**
  * Create the connection to a given servers
  *
+ * @param {string} userId The user ID matching the signaling ticket
+ * @param {string} sessionId The Nextcloud Talk session ID
  * @param {string} token Conversation to do the signaling on
  * @param {object} signalingServer Signaling server information
  * @param {string} signalingTicket The ticket to authenticate on the signaling server
  * @param {array} stunServers List of stun servers: {url: <String>}
  * @param {array} turnServers List of turn servers: {url: <String>, username: <String>, credential: <String>}
  */
-const startSignaling = function(token, signalingServer, signalingTicket, stunServers, turnServers) {
+const startSignaling = function(userId,
+	sessionId,
+	token,
+	signalingServer,
+	signalingTicket,
+	stunServers,
+	turnServers) {
 	state.isUsingExternalSignaling = signalingServer && signalingServer.length
 	if (state.isUsingExternalSignaling) {
-		startExternalSignaling(token, signalingServer, signalingTicket, stunServers, turnServers)
+		startExternalSignaling(userId, sessionId, token, signalingServer, signalingTicket, stunServers, turnServers)
 	} else {
 		startInternalSignaling(token)
 	}
@@ -147,7 +155,7 @@ const invokeSignalingListeners = function(ev, args) {
 /**
  * TODO This is only temporary and should be migrated to a direct use instead
  */
-EventBus.$on('Signaling::usersInRoom', function(args) {
+EventBus.$on('Signaling::shouldRefreshParticipants', function(args) {
 	invokeSignalingListeners('usersInRoom', args)
 	invokeSignalingListeners('participantListChanged', [])
 })

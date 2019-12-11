@@ -32,6 +32,8 @@ const state = {
 	signalingSessionId: null,
 	forceReconnect: false,
 
+	userId: '',
+	sessionId: '',
 	currentCallFlags: PARTICIPANT.CALL_FLAG.IN_CALL,
 
 	callbacks: {},
@@ -48,14 +50,29 @@ const state = {
 /**
  * Start the signaling
  *
+ * @param {string} userId The user ID matching the signaling ticket
+ * @param {string} sessionId The Nextcloud Talk session ID
  * @param {string} token Conversation to do the signaling on
  * @param {object} signalingServer Signaling server information
  * @param {string} signalingTicket The ticket to authenticate on the signaling server
  * @param {array} stunServers List of stun servers: {url: <String>}
  * @param {array} turnServers List of turn servers: {url: <String>, username: <String>, credential: <String>}
  */
-const startExternalSignaling = function(token, signalingServer, signalingTicket, stunServers, turnServers) {
+const startExternalSignaling = function(userId,
+	sessionId,
+	token,
+	signalingServer,
+	signalingTicket,
+	stunServers,
+	turnServers) {
+
+	state.userId = userId
+	state.sessionId = sessionId
+	state.token = token
 	state.signalingUrl = getPseudoRandomSignalingServer(signalingServer)
+	state.signalingTicket = signalingTicket
+	state.stunServers = stunServers
+	state.turnServers = turnServers
 
 	connect()
 }
@@ -144,19 +161,10 @@ const connect = function() {
 			}
 			break
 		case 'room':
-			// FIXME
-			if (this.currentRoomToken && data.room.roomid !== this.currentRoomToken) {
-				this._trigger('roomChanged', [this.currentRoomToken, data.room.roomid])
-				this.joinedUsers = {}
-				this.currentRoomToken = null
-			} else {
-				// TODO(fancycode): Only fetch properties of room that was modified.
-				this.internalSyncRooms()
-			}
+			EventBus.$emit('Signaling::shouldRefreshConversations')
 			break
 		case 'event':
-			// FIXME
-			this.processEvent(data)
+			processEvent(data)
 			break
 		case 'message':
 			data.message.data.from = data.message.sender.sessionid
@@ -275,7 +283,6 @@ const sendHello = function() {
 	} else {
 		// Already reconnected with a new session.
 		state.forceReconnect = false
-		const user = OCA.Talk.getCurrentUser() // FIXME
 		const url = generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'backend'
 		msg = {
 			'type': 'hello',
@@ -284,7 +291,7 @@ const sendHello = function() {
 				'auth': {
 					'url': url,
 					'params': {
-						'userid': user.uid,
+						'userid': state.userId,
 						'ticket': state.ticket,
 					},
 				},
@@ -341,7 +348,7 @@ const helloResponseReceived = function(data) {
 		'type': 'room',
 		'room': {
 			'roomid': state.token,
-			'sessionid': state.sessionId, // FIXME this is not filled yet. Use actor store instead?
+			'sessionid': state.sessionId,
 		},
 	})
 }
@@ -354,6 +361,80 @@ const sendBye = function() {
 		})
 	}
 	state.resumeId = null
+}
+
+const processEvent = function(data) {
+	switch (data.event.target) {
+	case 'room':
+		processRoomEvent(data)
+		break
+	case 'roomlist':
+		EventBus.$emit('Signaling::shouldRefreshConversations')
+		break
+	case 'participants':
+		EventBus.$emit('Signaling::shouldRefreshParticipants')
+		break
+	default:
+		console.debug('Unsupported event target', data)
+		break
+	}
+}
+
+const processRoomEvent = function(data) {
+	switch (data.event.type) {
+	case 'join':
+		// const joinedUsers = data.event.join || []
+		if ((data.event.join || []).length) {
+			console.debug('Users joined', data.event.join | [])
+			// let leftUsers = {}
+			// if (state.reconnected) {
+			//  state.reconnected = false
+			//  // The browser reconnected, some of the previous sessions
+			//  // may now no longer exist.
+			//  leftUsers = _.extend({}, this.joinedUsers)
+			// }
+			// for (i = 0; i < joinedUsers.length; i++) {
+			//  this.joinedUsers[joinedUsers[i].sessionid] = true
+			//  delete leftUsers[joinedUsers[i].sessionid]
+			// }
+			// leftUsers = _.keys(leftUsers)
+			// if (leftUsers.length) {
+			//  this._trigger('usersLeft', [leftUsers])
+			// }
+			// this._trigger('usersJoined', [joinedUsers])
+			EventBus.$emit('Signaling::shouldRefreshParticipants')
+		}
+		break
+	case 'leave':
+		// const leftSessionIds = data.event.leave || []
+		if ((data.event.leave || []).length) {
+			console.debug('Users left', data.event.leave || [])
+			// for (i = 0; i < leftSessionIds.length; i++) {
+			//  delete this.joinedUsers[leftSessionIds[i]]
+			// }
+			// this._trigger('usersLeft', [leftSessionIds])
+			EventBus.$emit('Signaling::shouldRefreshParticipants')
+		}
+		break
+	case 'message':
+		processRoomMessageEvent(data.event.message.data)
+		break
+	default:
+		console.debug('Unknown room event', data)
+		break
+	}
+}
+
+/**
+ * @param {object} data Event data
+ * @deprecated
+ */
+const processRoomMessageEvent = function(data) {
+	if (data.type === 'chat') {
+		this._receiveChatMessages()
+	} else {
+		console.debug('Unknown room message event', data)
+	}
 }
 
 export {

@@ -49,6 +49,13 @@ export default {
 			default: '',
 		},
 	},
+
+	data() {
+		return {
+			refreshInterval: null,
+		}
+	},
+
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
@@ -65,10 +72,7 @@ export default {
 		this.fetchConversations()
 	},
 	mounted() {
-		/** Refreshes the conversations every 30 seconds */
-		window.setInterval(() => {
-			this.fetchConversations()
-		}, 30000)
+		this.restartRefreshInterval()
 
 		EventBus.$on('routeChange', ({ from, to }) => {
 			if (from.name === 'conversation') {
@@ -78,8 +82,25 @@ export default {
 				joinConversation(to.params.token)
 			}
 		})
+
+		EventBus.$on('Signaling::shouldRefreshConversations', () => {
+			this.restartRefreshInterval()
+			this.fetchConversations()
+		})
 	},
+
 	methods: {
+		restartRefreshInterval() {
+			if (this.refreshInterval) {
+				clearInterval(this.refreshInterval)
+			}
+
+			/** Refreshes the conversations every 30 seconds */
+			this.refreshInterval = window.setInterval(() => {
+				this.fetchConversations()
+			}, 30000)
+		},
+
 		sortConversations(conversation1, conversation2) {
 			if (conversation1.isFavorite !== conversation2.isFavorite) {
 				return conversation1.isFavorite ? -1 : 1

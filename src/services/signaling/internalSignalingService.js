@@ -137,7 +137,7 @@ const fetchSignalingMessages = async function() {
 		response.data.ocs.data.forEach(message => {
 			switch (message.type) {
 			case 'usersInRoom':
-				EventBus.$emit('Signaling::usersInRoom', [message.data])
+				EventBus.$emit('Signaling::shouldRefreshParticipants', [message.data])
 				break
 			case 'message':
 				if (typeof (message.data) === 'string') {
