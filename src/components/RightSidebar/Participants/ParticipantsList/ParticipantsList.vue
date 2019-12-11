@@ -32,11 +32,15 @@
 		</ul>
 		<template v-if="loading">
 			<div class="icon-loading participants-list__icon" />
-			<p class="participants-list__warning">{{t('spreed', 'Contacts loading')}}</p>
+			<p class="participants-list__warning">
+				{{ t('spreed', 'Contacts loading') }}
+			</p>
 		</template>
 		<template v-if="noResults">
 			<div class="icon-error participants-list__icon" />
-			<p class="participants-list__warning">{{t('spreed', 'No results')}}</p>
+			<p class="participants-list__warning">
+				{{ t('spreed', 'No results') }}
+			</p>
 		</template>
 	</div>
 </template>
@@ -93,7 +97,7 @@ export default {
 		noResults: {
 			type: Boolean,
 			default: false,
-		}
+		},
 	},
 
 	data() {

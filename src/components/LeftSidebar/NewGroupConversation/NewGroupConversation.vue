@@ -28,7 +28,7 @@
 					icon="icon-add"
 					@click="showModal" />
 			</Actions>
-			<p>{{t('spreed','Create a new group conversation')}}</p>
+			<p>{{ t('spreed','Create a new group conversation') }}</p>
 		</Popover>
 		<Modal
 			v-if="modal"
@@ -83,7 +83,7 @@
 						{{ t('spreed', 'Create conversation') }}
 					</button>
 					<button
-						v-if="page===2 && error"
+						v-if="page===2 && (error || isPublic)"
 						class="navigation__button-right primary"
 						@click="closeModal">
 						{{ t('spreed', 'Close') }}
@@ -272,7 +272,7 @@ $dialog-height: 440px;
 	/** This next 2 rules are pretty hacky, with the modal component somehow
 	the margin applied to the content is added to the total modal width,
 	so here we subtract it to the width and height of the content.
-	 */
+	*/
 	width: $dialog-width - $dialog-margin * 2;
 	height: $dialog-height - $dialog-margin * 2;
 	margin: $dialog-margin;

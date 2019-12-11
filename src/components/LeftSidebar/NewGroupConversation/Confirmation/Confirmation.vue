@@ -33,13 +33,18 @@
 				<p class="confirmation__warning">
 					{{ t('spreed', 'All set') }}
 				</p>
-				<button 
+				<button
 					id="copy-link"
+					slot="trigger"
 					v-clipboard:copy="linkToConversation"
-      				v-clipboard:success="onCopy"
-     				v-clipboard:error="onError">
-					<label for="copy-link">{{t('spreed', 'Copy conversation link')}}</label>
+					v-clipboard:success="onCopy"
+					v-clipboard:error="onError"
+					class="confirmation__copy-link">
+					<label for="copy-link">{{ t('spreed', 'Copy conversation link') }}</label>
 				</button>
+				<p class="confirmation__warning">
+					{{ confirmationText }}
+				</p>
 			</template>
 		</template>
 		<template v-else>
@@ -55,8 +60,6 @@
 
 export default {
 	name: 'Confirmation',
-	components: {
-	},
 
 	props: {
 		conversationName: {
@@ -84,14 +87,30 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			showTooltip: false,
+			confirmationText: '',
+			showConfirmationText: false,
+		}
+	},
+
 	methods: {
 		onCopy() {
-			console.log('copy')
+			this.confirmationText = t('spreed', 'Link copied to the clipboard!')
+			this.showConfirmationText = true
+			setTimeout(function() {
+				this.showConfirmationText = false
+			}, 800)
 		},
 		onError() {
-			console.log('error')
-		}
-	}
+			this.confirmationText = t('spreed', 'Error')
+			this.showConfirmationText = true
+			setTimeout(function() {
+				this.showConfirmationText = false
+			}, 800)
+		},
+	},
 
 }
 
@@ -99,14 +118,17 @@ export default {
 
 <style lang="scss" scoped>
 .confirmation {
-	margin: auto;
+	display: flex;
+	flex-direction: column;
 	&__icon{
 		padding-top: 80px;
 	}
 	&__warning{
-		margin: auto;
+		margin-top: 10px;
 		text-align: center;
-		font-size: 16px;
+	}
+	&__copy-link {
+		margin: 50px auto 0 auto;
 	}
 }
 </style>

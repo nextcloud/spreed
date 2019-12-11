@@ -36,15 +36,16 @@
 				:add-on-click="false"
 				height="250px"
 				:loading="contactsLoading"
-				:noResults="noResults"
+				:no-results="noResults"
 				:items="searchResults"
 				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 		</template>
 		<template v-if="!isSearching">
 			<div class="icon-contacts-dark set-contacts__icon" />
-			<p class="set-contacts__hint">{{t('spreed', 'Search participants')}}</p>
+			<p class="set-contacts__hint">
+				{{ t('spreed', 'Search participants') }}
+			</p>
 		</template>
-
 	</div>
 </template>
 
@@ -108,8 +109,8 @@ export default {
 				const response = await searchPossibleConversations(this.searchText)
 				this.searchResults = response.data.ocs.data
 				this.contactsLoading = false
-				if(this.searchResults.length === 0) {
-					this.noResults= true
+				if (this.searchResults.length === 0) {
+					this.noResults = true
 				}
 			} catch (exeption) {
 				console.error(exeption)
