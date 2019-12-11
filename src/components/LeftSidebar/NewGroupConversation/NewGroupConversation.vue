@@ -21,12 +21,15 @@
 
 <template>
 	<div>
-		<Actions>
-			<ActionButton
-				class="toggle"
-				icon="icon-add"
-				@click="showModal" />
-		</Actions>
+		<Popover trigger="hover" placement="bottom">
+			<Actions slot="trigger">
+				<ActionButton
+					class="toggle"
+					icon="icon-add"
+					@click="showModal" />
+			</Actions>
+			<p>{{t('spreed','Create a new group conversation')}}</p>
+		</Popover>
 		<Modal
 			v-if="modal"
 			size="full"
@@ -96,6 +99,7 @@
 import Modal from '@nextcloud/vue/dist/Components/Modal'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Popover from '@nextcloud/vue/dist/Components/Popover'
 import SetContacts from './SetContacts/SetContacts'
 import SetConversationName from './SetConversationName/SetConversationName'
 import SetConversationType from './SetConversationType/SetConversationType'
@@ -119,6 +123,7 @@ export default {
 		SetConversationName,
 		SetConversationType,
 		Confirmation,
+		Popover,
 	},
 
 	data() {
