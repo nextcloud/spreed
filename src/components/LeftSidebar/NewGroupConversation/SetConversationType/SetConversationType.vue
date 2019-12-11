@@ -27,7 +27,7 @@
 			class="checkbox"
 			:checked="value"
 			@change="handleInput">
-		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Allow guests to join via link ')}}</label>
+		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Allow guests to join via link ') }}</label>
 		<p class="conversation-type__hint">
 			{{ t('spreed', `If checked, you will be able to share this conversation with unregistered users once the conversation is created.`) }}
 		</p>

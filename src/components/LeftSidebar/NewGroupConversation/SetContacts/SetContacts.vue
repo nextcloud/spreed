@@ -22,24 +22,23 @@
 <template>
 	<div class="set-contacts">
 		<input
-			v-model="searchText"
-			class="set-contacts__input"
 			ref="setContacts"
+			v-model="searchText"
 			v-observe-visibility="visibilityChanged"
+			class="set-contacts__input"
 			type="text"
 			:placeholder="t('spreed', 'Search Participants')"
 			@input="handleInput">
 		<template v-if="isSearching">
 			<Caption
 				:title="t('spreed', `Select participants`)" />
-			<div class="set-contacts__participants">
-				<ParticipantsList
-					:add-on-click="false"
-					:items="searchResults"
-					@updateSelectedParticipants="handleUpdateSelectedParticipants" />
-				<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-if="false" :hint="t('spreed', 'No search results')" />
-			</div>
+			<ParticipantsList
+				:add-on-click="false"
+				height="250px"
+				:items="searchResults"
+				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+			<Hint v-if="false" :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
 </template>
@@ -118,19 +117,17 @@ export default {
 				// Focus the input field of the current componnent.
 				this.$refs.setContacts.focus()
 			}
-		}
+		},
 	},
 }
 </script>
 
 <style lang="scss" scoped>
 .set-contacts {
+	position: relative;
 	&__input {
 		width: 100%;
 		font-size: 16px;
-	}
-	&__participants {
-		overflow-y: auto;
 	}
 }
 

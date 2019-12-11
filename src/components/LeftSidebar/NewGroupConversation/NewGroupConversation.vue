@@ -29,7 +29,7 @@
 		</Actions>
 		<Modal
 			v-if="modal"
-			size="large"
+			size="full"
 			@close="closeModal">
 			<div
 				class="new-group-conversation">
@@ -146,7 +146,7 @@ export default {
 		},
 		disabled() {
 			return this.conversationName === ''
-		}
+		},
 	},
 
 	methods: {
@@ -255,24 +255,40 @@ export default {
 
 <style lang="scss" scoped>
 
+$dialog-margin: 20px;
+$dialog-width: 300px;
+$dialog-height: 440px;
+
 .toggle {
 	margin-left: 5px !important;
 }
 
 .new-group-conversation {
-	width: 300px;
-	height: 400px;
-	padding: 20px;
+	/** This next 2 rules are pretty hacky, with the modal component somehow
+	the margin applied to the content is added to the total modal width,
+	so here we subtract it to the width and height of the content.
+	 */
+	width: $dialog-width - $dialog-margin * 2;
+	height: $dialog-height - $dialog-margin * 2;
+	margin: $dialog-margin;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	&__content {
-		margin-bottom: 20px;
-	}
+	position: relative;
+}
+
+/** Size full in the modal component doesn't have border radius, this adds
+it back */
+::v-deep .modal-container {
+	border-radius: var(--border-radius-large) !important;
 }
 
 .navigation {
 	display: flex;
+	position: absolute;
+	bottom: 0;
+	// Same as above
+	width: $dialog-width - $dialog-margin * 2;
 	&__button-right {
 		margin-left:auto;
 	}

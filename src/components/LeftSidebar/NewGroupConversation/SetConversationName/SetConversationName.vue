@@ -22,10 +22,10 @@
 <template>
 	<div class="set-conversation-name">
 		<input
-			type="text"
-			:value="value"
 			ref="conversationName"
 			v-observe-visibility="visibilityChanged"
+			type="text"
+			:value="value"
 			class="conversation-name"
 			:placeholder="t('spreed', 'Conversation name')"
 			@input="handleInput">
@@ -52,7 +52,7 @@ export default {
 				// Focus the input field of the current componnent.
 				this.$refs.conversationName.focus()
 			}
-		}
+		},
 	},
 
 }
