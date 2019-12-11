@@ -57,9 +57,6 @@ export default {
 
 .conversation-name {
 	width: 100%;
-	outline: none;
-	border: none;
 	font-size: 16px;
-	padding-left: 0;
 }
 </style>
