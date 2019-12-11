@@ -26,7 +26,7 @@
 			type="checkbox"
 			class="checkbox"
 			:checked="value"
-			@change="handleInput" />
+			@change="handleInput">
 		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Make ') }}<strong>{{ conversationDisplayName }}</strong>{{ t('spreed', ' public') }}</label>
 		<p class="conversation-type__hint">
 			{{ t('spreed', `If checked, you will get a link that will allow you to share this conversation with unregistered users once the conversation is created.`) }}
@@ -41,7 +41,7 @@ export default {
 	props: {
 		value: {
 			type: Boolean,
-			required: true
+			required: true,
 		},
 		conversationName: {
 			type: String,
@@ -58,10 +58,10 @@ export default {
 		},
 		label() {
 			if (this.conversationName === '') {
-				return  t('spreed', 'Make your conversation public')
+				return t('spreed', 'Make your conversation public')
 			}
-			return  t('spreed', 'Make {name} public', { name: this.conversationDisplayName })
-		}
+			return t('spreed', 'Make {name} public', { name: this.conversationDisplayName })
+		},
 	},
 	methods: {
 		handleInput(event) {

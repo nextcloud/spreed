@@ -39,13 +39,7 @@
 						v-if="page === 0">
 						<SetConversationName
 							v-model="conversationNameInput"
-							@input="handleInput"
 							@setConversationName="handleSetConversationName" />
-						<p
-							v-if="hint !== ''"
-							class="warning">
-							{{ hint }}
-						</p>
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
@@ -61,8 +55,8 @@
 							:error="error"
 							:is-loading="isLoading"
 							:success="success"
-							:isPublic="isPublic"
-							:linkToConversation="linkToConversation" />
+							:is-public="isPublic"
+							:link-to-conversation="linkToConversation" />
 					</template>
 				</div>
 				<div
@@ -76,6 +70,7 @@
 					<button
 						v-if="page===0"
 						class="navigation__button-right primary"
+						:disabled="disabled"
 						@click="handleClickForward">
 						{{ t('spreed', 'Add participants') }}
 					</button>
@@ -132,7 +127,6 @@ export default {
 			modal: false,
 			page: 0,
 			conversationNameInput: '',
-			hint: '',
 			isPublic: false,
 			isLoading: true,
 			token: '',
@@ -151,6 +145,9 @@ export default {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
 			} else return ''
 		},
+		disabled() {
+			return this.conversationName === ''
+		}
 	},
 
 	methods: {
@@ -162,7 +159,6 @@ export default {
 			this.modal = false
 			this.page = 0
 			this.conversationNameInput = ''
-			this.hint = ''
 			this.isPublic = false
 			this.isLoading = true
 			this.token = ''
@@ -175,7 +171,6 @@ export default {
 		},
 
 		handleSetConversationType(event) {
-			console.log(event)
 			this.isPublic = event
 		},
 
@@ -183,20 +178,11 @@ export default {
 			if (this.page === 0) {
 				if (this.conversationName !== '') {
 					this.page = 1
-					this.hint = ''
-				} else {
-					this.hint = t('spreed', 'Please enter a valid conversation name')
 				}
 			}
 		},
 		handleClickBack() {
 			this.page = 0
-		},
-
-		handleInput() {
-			if (this.conversationName !== '') {
-				this.hint = ''
-			}
 		},
 
 		handleUpdateSelectedParticipants(e) {
@@ -285,9 +271,7 @@ export default {
 		margin-bottom: 20px;
 	}
 }
-.hint{
-	color: var(--color-)
-}
+
 .navigation {
 	display: flex;
 	&__button-right {

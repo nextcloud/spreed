@@ -24,8 +24,9 @@
 		<input
 			v-model="searchText"
 			class="set-contacts__input"
+			ref="setContacts"
+			v-observe-visibility="visibilityChanged"
 			type="text"
-			autofocus
 			:placeholder="t('spreed', 'Search Participants')"
 			@input="handleInput">
 		<template v-if="isSearching">
@@ -80,6 +81,11 @@ export default {
 		},
 	},
 
+	mounted() {
+		// Focus the input field of the current componnent.
+		this.$refs.setContacts.focus()
+	},
+
 	methods: {
 		handleInput() {
 			this.contactsLoading = true
@@ -107,6 +113,12 @@ export default {
 		handleUpdateSelectedParticipants(selectedParticipants) {
 			this.$emit('updateSelectedParticipants', selectedParticipants)
 		},
+		visibilityChanged(isVisible) {
+			if (isVisible) {
+				// Focus the input field of the current componnent.
+				this.$refs.setContacts.focus()
+			}
+		}
 	},
 }
 </script>

@@ -33,7 +33,7 @@
 				<p class="confirmation__warning">
 					{{ t('spreed', 'All set') }}
 				</p>
-				<p>{{linkToConversation}}</p>
+				<p>{{ linkToConversation }}</p>
 			</template>
 		</template>
 		<template v-else>
@@ -75,7 +75,7 @@ export default {
 		},
 		linkToConversation: {
 			type: String,
-		}
+		},
 	},
 
 }

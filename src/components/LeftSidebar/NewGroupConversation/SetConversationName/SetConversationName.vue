@@ -23,9 +23,11 @@
 	<div class="set-conversation-name">
 		<input
 			type="text"
-			autofocus
+			:value="value"
+			ref="conversationName"
+			v-observe-visibility="visibilityChanged"
 			class="conversation-name"
-			:placeholder="t('spreed', 'Choose a conversation name')"
+			:placeholder="t('spreed', 'Conversation name')"
 			@input="handleInput">
 	</div>
 </template>
@@ -45,6 +47,12 @@ export default {
 		handleInput(event) {
 			this.$emit('input', event.target.value)
 		},
+		visibilityChanged(isVisible) {
+			if (isVisible) {
+				// Focus the input field of the current componnent.
+				this.$refs.conversationName.focus()
+			}
+		}
 	},
 
 }
