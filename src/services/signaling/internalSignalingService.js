@@ -24,6 +24,7 @@ import { EventBus } from '../../services/EventBus'
 import { generateOcsUrl } from '@nextcloud/router'
 
 const state = {
+	sessionId: '',
 	token: '',
 	failedRequests: 0,
 	pendingMessages: [],
@@ -53,12 +54,14 @@ const fetchInternalMessages = async function(token) {
 
 /**
  * Reset the state of the internal signaling and start polling
+ * @param {string} sessionId The Nextcloud Talk session ID
  * @param {string} token The conversation token to do signaling for.
  */
-const startInternalSignaling = function(token) {
+const startInternalSignaling = function(sessionId, token) {
 	state.cancelFetch('canceled')
 	state.cancelSend('canceled')
 
+	state.sessionId = sessionId
 	state.token = token
 	state.pendingMessages = []
 	state.isSendingMessages = false
@@ -91,6 +94,20 @@ const stopInternalSignaling = function() {
 	state.cancelSend = () => {}
 }
 
+const sendCallMessageInternalSignaling = function(data) {
+	if (data.type === 'answer') {
+		console.debug('ANSWER', data)
+	} else if (data.type === 'offer') {
+		console.debug('OFFER', data)
+	}
+
+	state.pendingMessages.push({
+		ev: 'message',
+		fn: JSON.stringify(data),
+		sessionId: data.sessionId,
+	})
+}
+
 const sendSignalingMessages = async function() {
 	if (state.isSendingMessages) {
 		return
@@ -112,7 +129,7 @@ const sendSignalingMessages = async function() {
 	try {
 		await request(state.token, messages)
 	} catch (exception) {
-		console.error('Error while sending signaling messages')
+		console.error('Error while sending signaling messages', exception)
 	}
 
 	state.isSendingMessages = false
@@ -179,4 +196,5 @@ const fetchSignalingMessages = async function() {
 export {
 	startInternalSignaling,
 	stopInternalSignaling,
+	sendCallMessageInternalSignaling
 }

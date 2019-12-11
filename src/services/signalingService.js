@@ -25,8 +25,14 @@ import {
 	startExternalSignaling,
 	hasFeatureExternalSignaling,
 	stopExternalSignaling,
+	sendCallMessageExternalSignaling,
+	sendRoomMessageExternalSignaling,
 } from './signaling/externalSignalingService'
-import { startInternalSignaling, stopInternalSignaling } from './signaling/internalSignalingService'
+import {
+	startInternalSignaling,
+	stopInternalSignaling,
+	sendCallMessageInternalSignaling,
+} from './signaling/internalSignalingService'
 
 const state = {
 	listeners: {},
@@ -38,13 +44,7 @@ const state = {
  * @param {string} token The token of the conversation to be connected.
  */
 const fetchSignalingSettings = async function(token) {
-	/**
-	 * 'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
-	 * 'server' => $signaling,
-	 * 'ticket' => $this->getSignalingTicket($userId),
-	 * 'stunservers' => $stun,
-	 * 'turnservers' => $turn,
-	 */
+	// FIXME Make use of token and the information behind it.
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings')
 }
 
@@ -70,7 +70,7 @@ const startSignaling = function(userId,
 	if (state.isUsingExternalSignaling) {
 		startExternalSignaling(userId, sessionId, token, signalingServer, signalingTicket, stunServers, turnServers)
 	} else {
-		startInternalSignaling(token)
+		startInternalSignaling(sessionId, token)
 	}
 }
 
@@ -95,6 +95,35 @@ const stopSignaling = function() {
 		stopExternalSignaling()
 	} else {
 		stopInternalSignaling()
+	}
+}
+
+/**
+ * Send a call message to all users
+ *
+ * FIXME This seems to be invoked by signaling.emit('message', data)
+ * FIXME But I cant seem to figure our from where.
+ * @param {object} data The data
+ */
+const sendCallMessage = function(data) {
+	if (state.isUsingExternalSignaling) {
+		sendCallMessageExternalSignaling(data)
+	} else {
+		sendCallMessageInternalSignaling(data)
+	}
+}
+
+/**
+ * Send a room message to all users
+ * E.g. used to make users aware of screenshares
+ * @param {object} data Data to send
+ */
+const sendRoomMessage = function(data) {
+	if (state.isUsingExternalSignaling) {
+		sendRoomMessageExternalSignaling(data)
+	} else {
+		// Only need to notify clients here if running with MCU.
+		// Otherwise SimpleWebRTC will notify each client on its own.
 	}
 }
 
@@ -173,6 +202,9 @@ export {
 	startSignaling,
 	hasFeature,
 	stopSignaling,
+
+	sendCallMessage,
+	sendRoomMessage,
 
 	addSignalingListener,
 	removeSignalingListener,

@@ -114,6 +114,31 @@ const hasFeatureExternalSignaling = function(feature) {
 	return state.features && state.features[feature]
 }
 
+const sendCallMessageExternalSignaling = function(data) {
+	doSend({
+		'type': 'message',
+		'message': {
+			'recipient': {
+				'type': 'session',
+				'sessionid': data.to,
+			},
+			'data': data,
+		},
+	})
+}
+
+const sendRoomMessageExternalSignaling = function(data) {
+	doSend({
+		'type': 'message',
+		'message': {
+			'recipient': {
+				'type': 'room',
+			},
+			'data': data,
+		},
+	})
+}
+
 const connect = function() {
 	state.callbacks = {}
 	state.callbackId = 1
@@ -441,4 +466,6 @@ export {
 	startExternalSignaling,
 	hasFeatureExternalSignaling,
 	stopExternalSignaling,
+	sendCallMessageExternalSignaling,
+	sendRoomMessageExternalSignaling,
 }
