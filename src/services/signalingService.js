@@ -19,6 +19,7 @@
  */
 
 import axios from '@nextcloud/axios'
+import { EventBus } from './EventBus'
 import { generateOcsUrl } from '@nextcloud/router'
 import { restartInternalSignaling, stopInternalSignaling } from './signaling/internalSignalingService'
 
@@ -62,6 +63,21 @@ const startSignaling = function(token, signalingServer, signalingTicket, stunSer
 }
 
 /**
+ * Does the signaling server support a given feature
+ * @param {string} feature The feature to check for
+ * @returns {boolean}
+ */
+const hasFeature = function(feature) {
+	if (state.isUsingExternalSignaling) {
+		// External signaling server
+		// FIXME return hasFeatureExternalSignaling(feature)
+		return false
+	} else {
+		return false
+	}
+}
+
+/**
  * Stop the connection to the servers and abort all requests
  */
 const stopSignaling = function() {
@@ -80,6 +96,10 @@ const stopSignaling = function() {
  * @deprecated Use the EventBus instead, this is only for the transition between Talk 7 and 8 due to deadlines
  */
 const addSignalingListener = function(ev, handler) {
+	if (['onBeforeReceiveMessage', 'onAfterReceiveMessage'].indexOf(ev)) {
+		console.debug('The event "' + ev + '" is not supported anymore')
+	}
+
 	if (!state.listeners.hasOwnProperty(ev)) {
 		state.listeners[ev] = [handler]
 	} else {
@@ -105,11 +125,46 @@ const removeSignalingListener = function(ev, handler) {
 	}
 }
 
+/**
+ * Invoke the legacy listeners
+ * @param {string} ev Event identifier
+ * @param {*} args The data of the event
+ */
+const invokeSignalingListeners = function(ev, args) {
+	let handlers = state.listeners[ev]
+	if (!handlers) {
+		return
+	}
+
+	handlers = handlers.slice(0)
+	for (let i = 0, len = handlers.length; i < len; i++) {
+		const handler = handlers[i]
+		handler.apply(handler, args)
+	}
+}
+
+/**
+ * TODO This is only temporary and should be migrated to a direct use instead
+ */
+EventBus.$on('Signaling::usersInRoom', function(args) {
+	invokeSignalingListeners('usersInRoom', args)
+	invokeSignalingListeners('participantListChanged', [])
+})
+
+EventBus.$on('Signaling::message', function(args) {
+	invokeSignalingListeners('message', args)
+})
+
+EventBus.$on('Signaling::stoppedOnFail', function(args) {
+	invokeSignalingListeners('pullMessagesStoppedOnFail', args)
+})
+
 export {
 	fetchSignalingSettings,
+	startSignaling,
+	hasFeature,
+	stopSignaling,
+
 	addSignalingListener,
 	removeSignalingListener,
-
-	startSignaling,
-	stopSignaling,
 }

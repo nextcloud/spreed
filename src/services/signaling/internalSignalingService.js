@@ -135,25 +135,20 @@ const fetchSignalingMessages = async function() {
 		state.failedRequests = 0
 
 		response.data.ocs.data.forEach(message => {
-			// this._trigger('onBeforeReceiveMessage', [message])
 			switch (message.type) {
 			case 'usersInRoom':
-				// this._trigger('usersInRoom', [message.data])
-				// this._trigger('participantListChanged')
 				EventBus.$emit('Signaling::usersInRoom', [message.data])
 				break
 			case 'message':
 				if (typeof (message.data) === 'string') {
 					message.data = JSON.parse(message.data)
 				}
-				// this._trigger('message', [message.data])
 				EventBus.$emit('Signaling::message', [message.data])
 				break
 			default:
 				console.info('Unknown Signaling Message')
 				break
 			}
-			// this._trigger('onAfterReceiveMessage', [message])
 		})
 	} catch (exception) {
 		if (axios.isCancel(exception)) {
@@ -164,14 +159,12 @@ const fetchSignalingMessages = async function() {
 		if (exception.response) {
 			if (exception.response.status === 403
 				|| exception.response.status === 404) {
-				// this._trigger('pullMessagesStoppedOnFail')
 				EventBus.$emit('Signaling::stoppedOnFail')
 			}
 		}
 		state.failedRequests++
 
 		if (state.failedRequests >= 3) {
-			// this._trigger('pullMessagesStoppedOnFail')
 			EventBus.$emit('Signaling::stoppedOnFail')
 			throw exception
 		}
