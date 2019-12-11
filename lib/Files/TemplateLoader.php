@@ -23,15 +23,15 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Files;
 
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Util;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Helper class to add the Talk UI to the sidebar of the Files app.
  */
 class TemplateLoader {
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
+	public static function register(IEventDispatcher $dispatcher): void {
 		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', static function() {
 			self::loadTalkSidebarForFilesApp();
 		});

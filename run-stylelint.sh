@@ -8,5 +8,4 @@ if [ -z "$STYLELINT" ]; then
 fi
 
 echo Checking stylesheets with $STYLELINT ...
-find css/ -name "*.css" -print0 | xargs -0 $STYLELINT
-find css/ -name "*.scss" -print0 | xargs -0 $STYLELINT
+$STYLELINT -f verbose css

@@ -27,7 +27,8 @@
 			<form
 				class="new-message-form">
 				<button
-					class="new-message-form__button icon-clip-add-file" />
+					class="new-message-form__button icon-clip-add-file"
+					@click.prevent="handleFileShare" />
 				<div class="new-message-form__input">
 					<Quote
 						v-if="messageToBeReplied"
@@ -47,9 +48,19 @@
 </template>
 
 <script>
+import axios from '@nextcloud/axios'
 import AdvancedInput from './AdvancedInput/AdvancedInput'
+import { getFilePickerBuilder } from '@nextcloud/dialogs'
+import { generateOcsUrl } from '@nextcloud/router'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
+
+const picker = getFilePickerBuilder(t('spreed', 'File to share'))
+	.setMultiSelect(false)
+	.setModal(true)
+	.setType(1)
+	.allowDirectories()
+	.build()
 
 export default {
 	name: 'NewMessageForm',
@@ -116,6 +127,30 @@ export default {
 			const date = new Date()
 			return 'temp-' + date.getTime()
 		},
+
+		async handleFileShare() {
+			picker.pick()
+				.then(path => {
+					console.debug(`path ${path} selected for sharing`)
+					if (!path.startsWith('/')) {
+						throw new Error(t('files', 'Invalid path selected'))
+					}
+
+					axios.post(
+						generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
+						{
+							shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
+							path: path,
+							shareWith: this.token,
+						}
+					)
+				}).catch(error => {
+					console.error(`Error while sharing file: ${error.message || 'Unknown error'}`, { error })
+
+					OCP.Toast.error(error.message || t('files', 'Error while sharing file'))
+				})
+		},
+
 		/**
 		 * Sends the new message
 		 */

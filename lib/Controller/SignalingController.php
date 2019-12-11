@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace OCA\Talk\Controller;
 
 use OCA\Talk\Config;
+use OCA\Talk\Events\SignalingEvent;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Manager;
@@ -36,17 +37,18 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\OCSController;
 use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class SignalingController extends OCSController {
 
 	/** @var int */
 	private const PULL_MESSAGES_TIMEOUT = 30;
+
+	public const EVENT_BACKEND_SIGNALING_ROOMS = self::class . '::signalingBackendRoom';
 
 	/** @var Config */
 	private $config;
@@ -60,7 +62,7 @@ class SignalingController extends OCSController {
 	private $messages;
 	/** @var IUserManager */
 	private $userManager;
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	private $dispatcher;
 	/** @var ITimeFactory */
 	private $timeFactory;
@@ -75,7 +77,7 @@ class SignalingController extends OCSController {
 								IDBConnection $connection,
 								Messages $messages,
 								IUserManager $userManager,
-								EventDispatcherInterface $dispatcher,
+								IEventDispatcher $dispatcher,
 								ITimeFactory $timeFactory,
 								?string $UserId) {
 		parent::__construct($appName, $request);
@@ -426,13 +428,8 @@ class SignalingController extends OCSController {
 			}
 		}
 
-		$event = new GenericEvent($room, [
-			'action' => $action,
-			'participant' => $participant,
-			'sessionid' => $sessionId,
-			'userid' => $userId,
-		]);
-		$this->dispatcher->dispatch(self::class . '::signalingBackendRoom', $event);
+		$event = new SignalingEvent($room, $participant, $action);
+		$this->dispatcher->dispatch(self::EVENT_BACKEND_SIGNALING_ROOMS, $event);
 
 		$response = [
 			'type' => 'room',
@@ -445,8 +442,8 @@ class SignalingController extends OCSController {
 				],
 			],
 		];
-		if ($event->hasArgument('roomSession')) {
-			$response['room']['session'] = $event->getArgument('roomSession');
+		if ($event->getSession()) {
+			$response['room']['session'] = $event->getSession();
 		}
 		return new DataResponse($response);
 	}

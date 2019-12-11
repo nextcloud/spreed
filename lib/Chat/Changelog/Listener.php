@@ -23,14 +23,14 @@ declare(strict_types=1);
 namespace OCA\Talk\Chat\Changelog;
 
 use OCA\Talk\Controller\RoomController;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCA\Talk\Events\UserEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 
 class Listener {
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener(RoomController::class . '::preGetRooms', function(GenericEvent $event) {
-			$userId = $event->getArgument('userId');
+	public static function register(IEventDispatcher $dispatcher): void {
+		$dispatcher->addListener(RoomController::EVENT_BEFORE_ROOMS_GET, static function(UserEvent $event) {
+			$userId = $event->getUserId();
 
 			/** @var Listener $listener */
 			$listener = \OC::$server->query(self::class);

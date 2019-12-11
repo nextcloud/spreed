@@ -23,12 +23,11 @@ declare(strict_types=1);
 namespace OCA\Talk\Listener;
 
 
+use OCA\Talk\Events\ModifyParticipantEvent;
 use OCA\Talk\Exceptions\ForbiddenException;
-use OCA\Talk\Participant;
 use OCA\Talk\Room;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class RestrictStartingCalls {
 
@@ -39,9 +38,8 @@ class RestrictStartingCalls {
 		$this->config = $config;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$dispatcher->addListener(Room::class . '::preSessionJoinCall', function(GenericEvent $event) {
-
+	public static function register(IEventDispatcher $dispatcher): void {
+		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, static function(ModifyParticipantEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->checkStartCallPermissions($event);
@@ -49,16 +47,12 @@ class RestrictStartingCalls {
 	}
 
 	/**
-	 * @param GenericEvent $event
+	 * @param ModifyParticipantEvent $event
 	 * @throws ForbiddenException
 	 */
-	public function checkStartCallPermissions(GenericEvent $event): void {
-		/** @var Room $room */
-		$room = $event->getSubject();
-		/** @var string $sessionId */
-		$sessionId = $event->getArgument('sessionId');
-		/** @var Participant $participant */
-		$participant = $room->getParticipantBySession($sessionId);
+	public function checkStartCallPermissions(ModifyParticipantEvent $event): void {
+		$room = $event->getRoom();
+		$participant = $event->getParticipant();
 
 		if (!$participant->canStartCall() && !$room->hasSessionsInCall()) {
 			throw new ForbiddenException('Can not start a call');

@@ -23,12 +23,13 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Files;
 
+use OCA\Talk\Events\JoinRoomGuestEvent;
+use OCA\Talk\Events\JoinRoomUserEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\UnauthorizedException;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
+use OCP\EventDispatcher\IEventDispatcher;
 
 /**
  * Custom behaviour for rooms for files.
@@ -59,35 +60,31 @@ class Listener {
 		$this->talkSession = $talkSession;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+	public static function register(IEventDispatcher $dispatcher): void {
+		$listener = static function(JoinRoomUserEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
 			try {
-				$listener->preventUsersWithoutAccessToTheFileFromJoining($room, $event->getArgument('userId'));
-				$listener->addUserAsPersistentParticipant($room, $event->getArgument('userId'));
+				$listener->preventUsersWithoutAccessToTheFileFromJoining($event->getRoom(), $event->getUser()->getUID());
+				$listener->addUserAsPersistentParticipant($event->getRoom(), $event->getUser()->getUID());
 			} catch (UnauthorizedException $e) {
-				$event->setArgument('cancel', true);
+				$event->setCancelJoin(true);
 			}
 		};
-		$dispatcher->addListener(Room::class . '::preJoinRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_ROOM_CONNECT, $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(JoinRoomGuestEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 
 			try {
-				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($room);
+				$listener->preventGuestsFromJoiningIfNotPubliclyAccessible($event->getRoom());
 			} catch (UnauthorizedException $e) {
-				$event->setArgument('cancel', true);
+				$event->setCancelJoin( true);
 			}
 		};
-		$dispatcher->addListener(Room::class . '::preJoinRoomGuest', $listener);
+		$dispatcher->addListener(Room::EVENT_BEFORE_GUEST_CONNECT, $listener);
 	}
 
 	/**

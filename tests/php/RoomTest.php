@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2018 Peter Edens <petere@conceiva.com>
  *
@@ -20,40 +21,46 @@
  */
 namespace OCA\Talk\Tests\php;
 
+use OC\EventDispatcher\EventDispatcher;
+use OCA\Talk\Events\VerifyRoomPasswordEvent;
 use OCA\Talk\Manager;
 use OCA\Talk\Room;
 use OCA\Talk\Webinary;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\IDBConnection;
+use OCP\ILogger;
 use OCP\Security\IHasher;
 use OCP\Security\ISecureRandom;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Test\TestCase;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
-class PasswordVerificationTest extends TestCase {
+class RoomTest extends TestCase {
 
 	public function testVerifyPassword() {
-		$dispatcher = new EventDispatcher();
-		$dispatcher->addListener(Room::class . '::verifyPassword', function(GenericEvent $event) {
-			$password = $event->getArgument('password');
+		$dispatcher = new EventDispatcher(
+			new \Symfony\Component\EventDispatcher\EventDispatcher(),
+			\OC::$server,
+			$this->createMock(ILogger::class)
+		);
+		$dispatcher->addListener(Room::EVENT_PASSWORD_VERIFY, static function(VerifyRoomPasswordEvent $event) {
+			$password = $event->getPassword();
 
 			if ($password === '1234') {
-				$event->setArgument('result',  [ 'result' => true, 'url' => '']);
+				$event->setIsPasswordValid(true);
+				$event->setRedirectUrl('');
 			}
 			else {
-				$event->setArgument('result',  [ 'result' => false, 'url' => 'https://test']);
+				$event->setIsPasswordValid(false);
+				$event->setRedirectUrl('https://test');
 			}
 		});
 
-		$hasher = $this->createMock(IHasher::class);
 		$room = new Room(
 			$this->createMock(Manager::class),
 			$this->createMock(IDBConnection::class),
 			$this->createMock(ISecureRandom::class),
 			$dispatcher,
 			$this->createMock(ITimeFactory::class),
-			$hasher,
+			$this->createMock(IHasher::class),
 			1,
 			Room::PUBLIC_CALL,
 			Room::READ_WRITE,

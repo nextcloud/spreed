@@ -27,12 +27,17 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Share;
 
+use OCA\Talk\Events\ParticipantEvent;
+use OCA\Talk\Events\RemoveUserEvent;
+use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\Manager;
+use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\DB\QueryBuilder\IQueryBuilder;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\Folder;
 use OCP\Files\Node;
 use OCP\IDBConnection;
@@ -94,38 +99,35 @@ class RoomShareProvider implements IShareProvider {
 		$this->l = $l;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		$listener = function(GenericEvent $event)  {
-			/** @var Room $room */
-			$room = $event->getSubject();
+	public static function register(IEventDispatcher $dispatcher): void {
+		$listener = static function(ParticipantEvent $event)  {
+			$room = $event->getRoom();
 
-			if ($event->getArgument('selfJoin')) {
+			if ($event->getParticipant()->getParticipantType() === Participant::USER_SELF_JOINED) {
 				/** @var self $roomShareProvider */
 				$roomShareProvider = \OC::$server->query(self::class);
-				$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('userId'));
+				$roomShareProvider->deleteInRoom($room->getToken(), $event->getParticipant()->getUser());
 			}
 		};
-		$dispatcher->addListener(Room::class . '::postUserDisconnectRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(RemoveUserEvent $event) {
+			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
 			$roomShareProvider = \OC::$server->query(self::class);
-			$roomShareProvider->deleteInRoom($room->getToken(), $event->getArgument('user')->getUID());
+			$roomShareProvider->deleteInRoom($room->getToken(), $event->getUser()->getUID());
 		};
-		$dispatcher->addListener(Room::class . '::postRemoveUser', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 
-		$listener = function(GenericEvent $event) {
-			/** @var Room $room */
-			$room = $event->getSubject();
+		$listener = static function(RoomEvent $event) {
+			$room = $event->getRoom();
 
 			/** @var self $roomShareProvider */
 			$roomShareProvider = \OC::$server->query(self::class);
 			$roomShareProvider->deleteInRoom($room->getToken());
 		};
-		$dispatcher->addListener(Room::class . '::postDeleteRoom', $listener);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DELETE, $listener);
 	}
 
 	/**
@@ -166,6 +168,7 @@ class RoomShareProvider implements IShareProvider {
 		$existingShares = $this->getSharesByPath($share->getNode());
 		foreach ($existingShares as $existingShare) {
 			if ($existingShare->getSharedWith() === $share->getSharedWith()) {
+				// FIXME Should be moved away from GenericEvent as soon as OCP\Share20\IManager did move too
 				$this->dispatcher->dispatch(self::class . '::' . 'share_file_again', new GenericEvent($existingShare));
 				throw new GenericShareException('Already shared', $this->l->t('Path is already shared with this room'), 403);
 			}

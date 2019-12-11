@@ -24,11 +24,11 @@ namespace OCA\Talk;
 
 use OCP\Collaboration\AutoComplete\AutoCompleteEvent;
 use OCP\Collaboration\AutoComplete\IManager;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IUserSession;
 use OCP\Util;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Listener {
 
@@ -57,8 +57,8 @@ class Listener {
 		$this->config = $config;
 	}
 
-	public static function register(EventDispatcherInterface $dispatcher): void {
-		\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', function ($user) {
+	public static function register(IEventDispatcher $dispatcher): void {
+		\OC::$server->getUserManager()->listen('\OC\User', 'postDelete', static function ($user) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 			$listener->deleteUser($user);
@@ -66,7 +66,7 @@ class Listener {
 
 		Util::connectHook('OC_User', 'logout', self::class, 'logoutUserStatic');
 
-		$dispatcher->addListener(IManager::class . '::filterResults', function(AutoCompleteEvent $event) {
+		$dispatcher->addListener(IManager::class . '::filterResults', static function(AutoCompleteEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
 

@@ -61,7 +61,7 @@ class GuestController extends AEnvironmentAwareController {
 		}
 
 		try {
-			$this->guestManager->updateName($this->getRoom(), $participant->getSessionId(), $displayName);
+			$this->guestManager->updateName($this->getRoom(), $participant, $displayName);
 		} catch (DBALException $e) {
 			return new DataResponse([], Http::STATUS_INTERNAL_SERVER_ERROR);
 		}

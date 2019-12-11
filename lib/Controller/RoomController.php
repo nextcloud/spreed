@@ -28,6 +28,7 @@ namespace OCA\Talk\Controller;
 
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
+use OCA\Talk\Events\UserEvent;
 use OCA\Talk\Exceptions\InvalidPasswordException;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -42,16 +43,18 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\Comments\IComment;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class RoomController extends AEnvironmentAwareController {
+
+	public const EVENT_BEFORE_ROOMS_GET = self::class . '::preGetRooms';
+
 	/** @var string|null */
 	private $userId;
 	/** @var TalkSession */
@@ -66,7 +69,7 @@ class RoomController extends AEnvironmentAwareController {
 	private $guestManager;
 	/** @var ChatManager */
 	private $chatManager;
-	/** @var EventDispatcherInterface */
+	/** @var IEventDispatcher */
 	private $dispatcher;
 	/** @var MessageParser */
 	private $messageParser;
@@ -84,7 +87,7 @@ class RoomController extends AEnvironmentAwareController {
 								Manager $manager,
 								GuestManager $guestManager,
 								ChatManager $chatManager,
-								EventDispatcherInterface $dispatcher,
+								IEventDispatcher $dispatcher,
 								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
 								IL10N $l10n) {
@@ -110,9 +113,8 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function getRooms(): DataResponse {
-		$this->dispatcher->dispatch(self::class . '::preGetRooms', new GenericEvent(null, [
-			'userId' => $this->userId,
-		]));
+		$event = new UserEvent($this->userId);
+		$this->dispatcher->dispatch(self::EVENT_BEFORE_ROOMS_GET, $event);
 
 		$rooms = $this->manager->getRoomsForParticipant($this->userId, true);
 
@@ -660,7 +662,7 @@ class RoomController extends AEnvironmentAwareController {
 			\call_user_func_array([$this->room, 'addUsers'], $participantsToAdd);
 		} else if ($source === 'emails') {
 			$data = [];
-			if ($this->room->changeType(Room::PUBLIC_CALL)) {
+			if ($this->room->setType(Room::PUBLIC_CALL)) {
 				$data = ['type' => $this->room->getType()];
 			}
 
@@ -780,7 +782,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function makePublic(): DataResponse {
-		if (!$this->room->changeType(Room::PUBLIC_CALL)) {
+		if (!$this->room->setType(Room::PUBLIC_CALL)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -794,7 +796,7 @@ class RoomController extends AEnvironmentAwareController {
 	 * @return DataResponse
 	 */
 	public function makePrivate(): DataResponse {
-		if (!$this->room->changeType(Room::GROUP_CALL)) {
+		if (!$this->room->setType(Room::GROUP_CALL)) {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
@@ -924,7 +926,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$room->setParticipantType($participant, Participant::MODERATOR);
+		$room->setParticipantType($targetParticipant, Participant::MODERATOR);
 
 		return new DataResponse();
 	}
@@ -940,7 +942,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$room->setParticipantTypeBySession($targetParticipant, Participant::GUEST_MODERATOR);
+		$room->setParticipantType($targetParticipant, Participant::GUEST_MODERATOR);
 
 		return new DataResponse();
 	}
@@ -976,7 +978,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$room->setParticipantType($participant, Participant::USER);
+		$room->setParticipantType($targetParticipant, Participant::USER);
 
 		return new DataResponse();
 	}
@@ -996,7 +998,7 @@ class RoomController extends AEnvironmentAwareController {
 			return new DataResponse([], Http::STATUS_BAD_REQUEST);
 		}
 
-		$room->setParticipantTypeBySession($targetParticipant, Participant::GUEST);
+		$room->setParticipantType($targetParticipant, Participant::GUEST);
 
 		return new DataResponse();
 	}
