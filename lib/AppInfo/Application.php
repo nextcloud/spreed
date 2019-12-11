@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
+use OCA\Files\Event\LoadSidebar;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
@@ -37,14 +38,15 @@ use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Listener;
+use OCA\Talk\Listener\LoadSidebarListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
 use OCA\Talk\Notification\Listener as NotificationListener;
 use OCA\Talk\Notification\Notifier;
+use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
-use OCA\Talk\PublicShare\TemplateLoader as PublicShareTemplateLoader;
 use OCA\Talk\Room;
 use OCA\Talk\Settings\Personal;
 use OCA\Talk\Share\RoomShareProvider;
@@ -59,10 +61,13 @@ use OCP\Security\CSP\AddContentSecurityPolicyEvent;
 use OCP\Security\FeaturePolicy\AddFeaturePolicyEvent;
 use OCP\Settings\IManager;
 
+
 class Application extends App {
 
+	const APP_ID = 'spreed';
+
 	public function __construct(array $urlParams = []) {
-		parent::__construct('spreed', $urlParams);
+		parent::__construct(self::APP_ID, $urlParams);
 
 		// This needs to be in the constructor,
 		// because otherwise the middleware is registered on a wrong object,
@@ -100,6 +105,7 @@ class Application extends App {
 
 		$dispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
 		$dispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
+		$dispatcher->addServiceListener(LoadSidebar::class, LoadSidebarListener::class);
 
 		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
@@ -117,7 +123,7 @@ class Application extends App {
 		$resourceManager = $server->query(IResourceManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
 		\OC::$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
-			\OCP\Util::addScript('spreed', 'collections');
+			\OCP\Util::addScript(self::APP_ID, 'collections');
 		});
 	}
 
@@ -135,10 +141,10 @@ class Application extends App {
 			$config = $server->query(Config::class);
 			$user = $server->getUserSession()->getUser();
 			return [
-				'id' => 'spreed',
-				'name' => $server->getL10N('spreed')->t('Talk'),
+				'id' => self::APP_ID,
+				'name' => $server->getL10N(self::APP_ID)->t('Talk'),
 				'href' => $server->getURLGenerator()->linkToRouteAbsolute('spreed.Page.index'),
-				'icon' => $server->getURLGenerator()->imagePath('spreed', 'app.svg'),
+				'icon' => $server->getURLGenerator()->imagePath(self::APP_ID, 'app.svg'),
 				'order' => 3,
 				'type' => $user instanceof IUser && !$config->isDisabledForUser($user) ? 'link' : 'hidden',
 			];

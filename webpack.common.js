@@ -11,53 +11,54 @@ module.exports = {
 		'admin/stun-server': path.join(__dirname, 'src', 'StunServerSettings.js'),
 		'admin/turn-server': path.join(__dirname, 'src', 'TurnServerSettings.js'),
 		'collections': path.join(__dirname, 'src', 'collections.js'),
-		'talk': path.join(__dirname, 'src', 'main.js')
+		'talk': path.join(__dirname, 'src', 'main.js'),
+		'files-sidebar-tab': path.join(__dirname, 'src', 'FilesSidebarTab.js'),
 	},
 	output: {
 		path: path.resolve(__dirname, './js'),
 		publicPath: '/js/',
-		filename: '[name].js'
+		filename: '[name].js',
 	},
 	module: {
 		rules: [
 			{
 				test: /\.css$/,
-				use: ['vue-style-loader', 'css-loader']
+				use: ['vue-style-loader', 'css-loader'],
 			},
 			{
 				test: /\.scss$/,
-				use: ['vue-style-loader', 'css-loader', 'sass-loader']
+				use: ['vue-style-loader', 'css-loader', 'sass-loader'],
 			},
 			{
 				test: /\.(js|vue)$/,
 				use: 'eslint-loader',
 				exclude: /node_modules/,
-				enforce: 'pre'
+				enforce: 'pre',
 			},
 			{
 				test: /\.vue$/,
 				loader: 'vue-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
 			},
 			{
 				test: /\.js$/,
 				loader: 'babel-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
 			},
 			{
 				test: /\.(png|jpg|gif|svg)$/,
 				loader: 'file-loader',
 				options: {
-					name: '[name].[ext]?[hash]'
-				}
-			}
-		]
+					name: '[name].[ext]?[hash]',
+				},
+			},
+		],
 	},
 	plugins: [
 		new VueLoaderPlugin(),
-		new StyleLintPlugin()
+		new StyleLintPlugin(),
 	],
 	resolve: {
-		extensions: ['*', '.js', '.vue']
-	}
+		extensions: ['*', '.js', '.vue'],
+	},
 }
