@@ -55,7 +55,7 @@ const fetchInternalMessages = async function(token) {
  * Reset the state of the internal signaling and start polling
  * @param {string} token The conversation token to do signaling for.
  */
-const restartInternalSignaling = function(token) {
+const startInternalSignaling = function(token) {
 	state.cancelFetch('canceled')
 	state.cancelSend('canceled')
 
@@ -177,6 +177,6 @@ const fetchSignalingMessages = async function() {
 }
 
 export {
-	restartInternalSignaling,
+	startInternalSignaling,
 	stopInternalSignaling,
 }

@@ -21,8 +21,12 @@
 import axios from '@nextcloud/axios'
 import { EventBus } from './EventBus'
 import { generateOcsUrl } from '@nextcloud/router'
-import { hasFeatureExternalSignaling } from './signaling/externalSignalingService'
-import { restartInternalSignaling, stopInternalSignaling } from './signaling/internalSignalingService'
+import {
+	startExternalSignaling,
+	hasFeatureExternalSignaling,
+	stopExternalSignaling,
+} from './signaling/externalSignalingService'
+import { startInternalSignaling, stopInternalSignaling } from './signaling/internalSignalingService'
 
 const state = {
 	listeners: {},
@@ -56,10 +60,9 @@ const fetchSignalingSettings = async function(token) {
 const startSignaling = function(token, signalingServer, signalingTicket, stunServers, turnServers) {
 	state.isUsingExternalSignaling = signalingServer && signalingServer.length
 	if (state.isUsingExternalSignaling) {
-		// External signaling server
-		// FIXME
+		startExternalSignaling(token, signalingServer, signalingTicket, stunServers, turnServers)
 	} else {
-		restartInternalSignaling(token)
+		startInternalSignaling(token)
 	}
 }
 
@@ -81,8 +84,7 @@ const hasFeature = function(feature) {
  */
 const stopSignaling = function() {
 	if (state.isUsingExternalSignaling) {
-		// External signaling server
-		// FIXME stopExternalSignaling()
+		stopExternalSignaling()
 	} else {
 		stopInternalSignaling()
 	}
