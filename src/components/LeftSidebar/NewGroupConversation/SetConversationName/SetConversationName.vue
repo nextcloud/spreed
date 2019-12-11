@@ -60,8 +60,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.set-conversation-name {
-}
 
 .conversation-name {
 	width: 100%;

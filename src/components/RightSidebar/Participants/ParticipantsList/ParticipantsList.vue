@@ -21,7 +21,7 @@
 
 <template>
 	<div>
-		<ul v-if="!loading"
+		<ul v-if="!loading && !noResults"
 			:class="{'scrollable': scrollable }"
 			:style="{'height': height}">
 			<Participant
@@ -30,6 +30,14 @@
 				:participant="participant"
 				@clickParticipant="handleClickParticipant" />
 		</ul>
+		<template v-if="loading">
+			<div class="icon-loading participants-list__icon" />
+			<p class="participants-list__warning">{{t('spreed', 'Contacts loading')}}</p>
+		</template>
+		<template v-if="noResults">
+			<div class="icon-error participants-list__icon" />
+			<p class="participants-list__warning">{{t('spreed', 'No results')}}</p>
+		</template>
 	</div>
 </template>
 
@@ -72,11 +80,20 @@ export default {
 			type: String,
 			default: 'auto',
 		},
-
+		/**
+		 * Display loading state instead of list.
+		 */
 		loading: {
 			type: Boolean,
 			default: false,
 		},
+		/**
+		 * Display no-results state instead of list.
+		 */
+		noResults: {
+			type: Boolean,
+			default: false,
+		}
 	},
 
 	data() {
@@ -159,9 +176,20 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .scrollable {
 	overflow-y: scroll;
 	overflow-x: hidden;
 }
+
+.participants-list {
+	&__icon {
+		margin-top: 40px;
+	}
+	&__warning {
+		margin-top: 20px;
+		text-align: center;
+	}
+}
+
 </style>

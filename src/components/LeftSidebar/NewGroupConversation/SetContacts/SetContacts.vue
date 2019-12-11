@@ -27,7 +27,7 @@
 			v-observe-visibility="visibilityChanged"
 			class="set-contacts__input"
 			type="text"
-			:placeholder="t('spreed', 'Search Participants')"
+			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
 		<template v-if="isSearching">
 			<Caption
@@ -35,17 +35,21 @@
 			<ParticipantsList
 				:add-on-click="false"
 				height="250px"
+				:loading="contactsLoading"
+				:noResults="noResults"
 				:items="searchResults"
 				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
-			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-if="false" :hint="t('spreed', 'No search results')" />
 		</template>
+		<template v-if="!isSearching">
+			<div class="icon-contacts-dark set-contacts__icon" />
+			<p class="set-contacts__hint">{{t('spreed', 'Search participants')}}</p>
+		</template>
+
 	</div>
 </template>
 
 <script>
 import Caption from '../../../Caption'
-import Hint from '../../../Hint'
 import ParticipantsList from '../../../RightSidebar/Participants/ParticipantsList/ParticipantsList'
 import debounce from 'debounce'
 import { searchPossibleConversations } from '../../../../services/conversationsService'
@@ -54,7 +58,6 @@ export default {
 	name: 'SetContacts',
 	components: {
 		Caption,
-		Hint,
 		ParticipantsList,
 	},
 
@@ -70,6 +73,7 @@ export default {
 			searchText: '',
 			searchResults: [],
 			contactsLoading: false,
+			noResults: false,
 		}
 	},
 
@@ -87,6 +91,7 @@ export default {
 
 	methods: {
 		handleInput() {
+			this.noResults = false
 			this.contactsLoading = true
 			this.searchResults = []
 			this.debounceFetchSearchResults()
@@ -103,6 +108,9 @@ export default {
 				const response = await searchPossibleConversations(this.searchText)
 				this.searchResults = response.data.ocs.data
 				this.contactsLoading = false
+				if(this.searchResults.length === 0) {
+					this.noResults= true
+				}
 			} catch (exeption) {
 				console.error(exeption)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
@@ -128,6 +136,13 @@ export default {
 	&__input {
 		width: 100%;
 		font-size: 16px;
+	}
+	&__icon {
+		margin-top: 40px;
+	}
+	&__hint {
+		margin-top: 20px;
+		text-align: center;
 	}
 }
 
