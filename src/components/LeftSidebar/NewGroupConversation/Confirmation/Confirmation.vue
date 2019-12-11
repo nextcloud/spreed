@@ -33,7 +33,13 @@
 				<p class="confirmation__warning">
 					{{ t('spreed', 'All set') }}
 				</p>
-				<p>{{ linkToConversation }}</p>
+				<button 
+					id="copy-link"
+					v-clipboard:copy="linkToConversation"
+      				v-clipboard:success="onCopy"
+     				v-clipboard:error="onError">
+					<label for="copy-link">{{t('spreed', 'Copy conversation link')}}</label>
+				</button>
 			</template>
 		</template>
 		<template v-else>
@@ -77,6 +83,15 @@ export default {
 			type: String,
 		},
 	},
+
+	methods: {
+		onCopy() {
+			console.log('copy')
+		},
+		onError() {
+			console.log('error')
+		}
+	}
 
 }
 
