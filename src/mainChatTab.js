@@ -23,15 +23,11 @@
  */
 
 import Vue from 'vue'
-import App from './App'
+import App from './FilesSidebarTabApp'
 
 // Store
 import Vuex from 'vuex'
 import store from './store'
-
-// Router
-import VueRouter from 'vue-router'
-import router from './router/router'
 
 // Utils
 import { generateFilePath } from '@nextcloud/router'
@@ -39,7 +35,6 @@ import { getRequestToken } from '@nextcloud/auth'
 
 // Directives
 import contenteditableDirective from 'vue-contenteditable-directive'
-import VueClipboard from 'vue-clipboard2'
 import { translate, translatePlural } from '@nextcloud/l10n'
 
 // CSP config for webpack dynamic chunk loading
@@ -60,15 +55,16 @@ Vue.prototype.OCA = OCA
 
 Vue.use(contenteditableDirective)
 Vue.use(Vuex)
-Vue.use(VueRouter)
-Vue.use(VueClipboard)
 
-export default new Vue({
-	el: '#content',
+const newTab = () => new Vue({
 	store,
-	router,
-	propsData: {
-		fileInfo: null,
-	},
 	render: h => h(App),
+})
+
+if (!window.OCA.Talk) {
+	window.OCA.Talk = {}
+}
+Object.assign(window.OCA.Talk, {
+	fileInfo: null,
+	newTab,
 })
