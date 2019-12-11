@@ -27,9 +27,9 @@
 			class="checkbox"
 			:checked="value"
 			@change="handleInput">
-		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Make ') }}<strong>{{ conversationDisplayName }}</strong>{{ t('spreed', ' public') }}</label>
+		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Allow guests to join via link ')}}</label>
 		<p class="conversation-type__hint">
-			{{ t('spreed', `If checked, you will get a link that will allow you to share this conversation with unregistered users once the conversation is created.`) }}
+			{{ t('spreed', `If checked, you will be able to share this conversation with unregistered users once the conversation is created.`) }}
 		</p>
 	</div>
 </template>
@@ -42,25 +42,6 @@ export default {
 		value: {
 			type: Boolean,
 			required: true,
-		},
-		conversationName: {
-			type: String,
-			default: t('spreed', 'your conversation'),
-		},
-	},
-	computed: {
-		conversationDisplayName() {
-			if (this.conversationName === '') {
-				return t('spreed', 'your conversation')
-			} else {
-				return this.conversationName
-			}
-		},
-		label() {
-			if (this.conversationName === '') {
-				return t('spreed', 'Make your conversation public')
-			}
-			return t('spreed', 'Make {name} public', { name: this.conversationDisplayName })
 		},
 	},
 	methods: {

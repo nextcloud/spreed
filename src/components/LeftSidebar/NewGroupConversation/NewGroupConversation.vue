@@ -38,8 +38,7 @@
 					<template
 						v-if="page === 0">
 						<SetConversationName
-							v-model="conversationNameInput"
-							@setConversationName="handleSetConversationName" />
+							v-model="conversationNameInput" />
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
