@@ -23,7 +23,7 @@
 <script>
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import MediaControls from './MediaControls'
-import { restartInternalSignaling, stopInternalSignaling } from '../../services/signaling/internalSignalingService'
+import { startSignaling, stopSignaling } from '../../services/signalingService'
 import { EventBus } from '../../services/EventBus'
 
 export default {
@@ -57,6 +57,12 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			hasSignalingConnection: false,
+		}
+	},
+
 	computed: {
 		actorType() {
 			return this.$store.getters.getActorType()
@@ -72,27 +78,29 @@ export default {
 			const customName = this.displayName !== t('spreed', 'Guest') ? this.displayName : '?'
 			return customName.charAt(0)
 		},
-
-		isUsingExternalSignaling() {
-			return this.signalingServer
-				&& this.signalingServer.urls
-				&& this.signalingServer.urls.length > 0
-		},
 	},
 
 	created() {
-		if (!this.isUsingExternalSignaling) {
-			restartInternalSignaling(this.token)
-			EventBus.$on('routeChange', () => {
-				restartInternalSignaling(this.token)
-			})
-		}
+		this.startSignaling()
+		EventBus.$on('routeChange', () => {
+			this.startSignaling()
+		})
 	},
 
 	beforeDestroy() {
-		if (!this.isUsingExternalSignaling) {
-			stopInternalSignaling()
-		}
+		this.stopSignaling()
+	},
+
+	methods: {
+		startSignaling() {
+			this.stopSignaling()
+			startSignaling(this.token, this.signalingServer, this.signalingTicket, this.stunServers, this.turnServers)
+		},
+		stopSignaling() {
+			if (this.hasSignalingConnection) {
+				stopSignaling()
+			}
+		},
 	},
 }
 </script>
