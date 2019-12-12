@@ -12,19 +12,19 @@ const Signaling = {
 	settings: {},
 
 	/**
-		 * Loads the signaling settings.
-		 *
-		 * @param {string} token Conversation token to load the signaling settings for
-		 */
-	loadSettings(token) {
-		const response = fetchSignalingSettings(token)
-		this.settings = response.ocs.data
+	 * Loads the signaling settings.
+	 *
+	 * @param {string} token Conversation token to load the signaling settings for
+	 */
+	async loadSettings(token) {
+		const response = await fetchSignalingSettings(token)
+		this.settings = response.data.ocs.data
 	},
 
 	/**
-		 * Creates a connection to the signaling server
-		 * @returns {Standalone|Internal}
-		 */
+	 * Creates a connection to the signaling server
+	 * @returns {Standalone|Internal}
+	 */
 	createConnection() {
 		if (!this.settings) {
 			console.error('Signaling settings are not yet loaded')
@@ -1042,6 +1042,4 @@ Signaling.Standalone.prototype.sendOffer = function(sessionid, roomType) {
 	})
 }
 
-export default function IDontKnowHowStuffLikeThisWorks() {
-	return Signaling
-}
+export default Signaling
