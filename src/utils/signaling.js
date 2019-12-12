@@ -3,6 +3,7 @@
 /* eslint-disable no-console */
 
 import { fetchSignalingSettings } from '../services/signalingService'
+import { EventBus } from '../services/EventBus'
 
 (function(OCA, OC) {
 	'use strict'
@@ -160,51 +161,6 @@ import { fetchSignalingSettings } from '../services/signalingService'
 			this.currentCallToken = null
 			this.currentCallFlags = null
 		}
-	}
-
-	OCA.Talk.Signaling.Base.prototype.setRoomCollection = function(rooms) {
-		this.roomCollection = rooms
-		return this.syncRooms()
-	}
-
-	/**
-	 * Sets a single room to be synced.
-	 *
-	 * If there is a RoomCollection set the synchronization will be performed on
-	 * the RoomCollection instead and the given room will be ignored; setting a
-	 * single room is intended to be used only on public pages.
-	 *
-	 * @param {OCA.SpreedMe.Models.Room} room the room to sync.
-	 */
-	OCA.Talk.Signaling.Base.prototype.setRoom = function(room) {
-		this.room = room
-		return this.syncRooms()
-	}
-
-	OCA.Talk.Signaling.Base.prototype.syncRooms = function() {
-		const defer = $.Deferred()
-		if (this.roomCollection && OCA.Talk.getCurrentUser().uid) {
-			this.roomCollection.fetch({
-				success: function(roomCollection) {
-					defer.resolve(roomCollection)
-				},
-				error: function(roomCollection, response) {
-					defer.reject(roomCollection, response)
-				},
-			})
-		} else if (this.room) {
-			this.room.fetch({
-				success: function(room) {
-					defer.resolve(room)
-				},
-				error: function(room, response) {
-					defer.reject(room, response)
-				},
-			})
-		} else {
-			defer.resolve([])
-		}
-		return defer
 	}
 
 	OCA.Talk.Signaling.Base.prototype.joinRoom = function(token, password) {
@@ -493,10 +449,6 @@ import { fetchSignalingSettings } from '../services/signalingService'
 			window.clearInterval(this.sendInterval)
 			this.sendInterval = null
 		}
-		if (this.roomPoller) {
-			window.clearInterval(this.roomPoller)
-			this.roomPoller = null
-		}
 		OCA.Talk.Signaling.Base.prototype.disconnect.apply(this, arguments)
 	}
 
@@ -565,10 +517,6 @@ import { fetchSignalingSettings } from '../services/signalingService'
 	}
 
 	OCA.Talk.Signaling.Internal.prototype._doLeaveRoom = function(token) {
-		if (token === this.currentRoomToken && !this.roomCollection) {
-			window.clearInterval(this.roomPoller)
-			this.roomPoller = null
-		}
 	}
 
 	OCA.Talk.Signaling.Internal.prototype.sendCallMessage = function(data) {
@@ -582,25 +530,6 @@ import { fetchSignalingSettings } from '../services/signalingService'
 			fn: JSON.stringify(data),
 			sessionId: this.sessionId,
 		})
-	}
-
-	OCA.Talk.Signaling.Internal.prototype.setRoomCollection = function(/* rooms */) {
-		this._pollForRoomChanges()
-		return OCA.Talk.Signaling.Base.prototype.setRoomCollection.apply(this, arguments)
-	}
-
-	OCA.Talk.Signaling.Internal.prototype.setRoom = function(/* room */) {
-		this._pollForRoomChanges()
-		return OCA.Talk.Signaling.Base.prototype.setRoom.apply(this, arguments)
-	}
-
-	OCA.Talk.Signaling.Internal.prototype._pollForRoomChanges = function() {
-		if (this.roomPoller) {
-			window.clearInterval(this.roomPoller)
-		}
-		this.roomPoller = window.setInterval(function() {
-			this.syncRooms()
-		}.bind(this), 10000)
 	}
 
 	/**
@@ -717,11 +646,6 @@ import { fetchSignalingSettings } from '../services/signalingService'
 		this.reconnectIntervalMs = this.initialReconnectIntervalMs
 		this.joinedUsers = {}
 		this.rooms = []
-		window.setInterval(function() {
-			// Update the room list all 30 seconds to check for new messages and
-			// mentions as well as marking them read via other devices.
-			this.internalSyncRooms()
-		}.bind(this), 30000)
 		this.connect()
 	}
 
@@ -802,7 +726,7 @@ import { fetchSignalingSettings } from '../services/signalingService'
 					this.currentRoomToken = null
 				} else {
 					// TODO(fancycode): Only fetch properties of room that was modified.
-					this.internalSyncRooms()
+					EventBus.$emit('shouldRefreshConversations')
 				}
 				break
 			case 'event':
@@ -997,22 +921,12 @@ import { fetchSignalingSettings } from '../services/signalingService'
 
 		this._trigger('connect')
 		if (this.reconnected) {
-			// The list of rooms might have changed while we were not connected,
-			// so perform resync once; force it to ensure that the resync is not
-			// waiting to retry a pending one failed due to a lack of
-			// connection.
-			this._forceInternalSyncRooms()
 			// Load any chat messages that might have been missed.
 			this._receiveChatMessages()
 		}
 		if (!resumedSession && this.currentRoomToken) {
 			this.joinRoom(this.currentRoomToken)
 		}
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype.setRoom = function(/* room */) {
-		OCA.Talk.Signaling.Base.prototype.setRoom.apply(this, arguments)
-		return this.internalSyncRooms()
 	}
 
 	OCA.Talk.Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
@@ -1064,12 +978,12 @@ import { fetchSignalingSettings } from '../services/signalingService'
 
 	OCA.Talk.Signaling.Standalone.prototype._joinCallSuccess = function(/* token */) {
 		// Update room list to fetch modified properties.
-		this.internalSyncRooms()
+		EventBus.$emit('shouldRefreshConversations')
 	}
 
 	OCA.Talk.Signaling.Standalone.prototype._leaveCallSuccess = function(/* token */) {
 		// Update room list to fetch modified properties.
-		this.internalSyncRooms()
+		EventBus.$emit('shouldRefreshConversations')
 	}
 
 	OCA.Talk.Signaling.Standalone.prototype.joinResponseReceived = function(data, token) {
@@ -1185,88 +1099,9 @@ import { fetchSignalingSettings } from '../services/signalingService'
 		}
 	}
 
-	OCA.Talk.Signaling.Standalone.prototype.setRoomCollection = function(/* rooms */) {
-		OCA.Talk.Signaling.Base.prototype.setRoomCollection.apply(this, arguments)
-		// Retrieve initial list of rooms for this user.
-		return this.internalSyncRooms()
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype.syncRooms = function() {
-		if (this._pendingSyncRooms) {
-			// A sync request is already in progress, don't start another one.
-			return this._pendingSyncRooms
-		}
-
-		// Never manually sync rooms, will be done based on notifications
-		// from the signaling server.
-		const defer = $.Deferred()
-		defer.resolve(this.rooms)
-		return defer
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype.internalSyncRooms = function() {
-		if (this._pendingSyncRooms) {
-			// A sync request is already in progress, don't start another one.
-			return this._pendingSyncRooms
-		}
-
-		this._pendingSyncRooms = $.Deferred()
-		this._waitTimeUntilSyncRetry = 1
-		this._internalSyncRoomsWithRetry()
-		return this._pendingSyncRooms
-	}
-
-	/**
-	 * Forces the synchronization of rooms.
-	 *
-	 * The rooms are synchronized immediately, even if the synchronization
-	 * failed before and there is a scheduled retry for later (which is
-	 * cancelled).
-	 *
-	 * Use sparingly, only when it is very likely that synchronizing again will
-	 * succeed despite having failed earlier (for example, after the Internet
-	 * connection has been restored).
-	 */
-	OCA.Talk.Signaling.Standalone.prototype._forceInternalSyncRooms = function() {
-		if (!this._pendingSyncRooms) {
-			return this.internalSyncRooms()
-		}
-
-		if (this._delayedInternalSyncRoomsWithRetry) {
-			clearTimeout(this._delayedInternalSyncRoomsWithRetry)
-			this._waitTimeUntilSyncRetry = 1
-			this._internalSyncRoomsWithRetry()
-		} else {
-			// A synchronization is being performed right now, so there is
-			// nothing to do except for waiting.
-		}
-
-		return this._pendingSyncRooms
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype._internalSyncRoomsWithRetry = function() {
-		this._delayedInternalSyncRoomsWithRetry = null
-
-		OCA.Talk.Signaling.Base.prototype.syncRooms.apply(this, arguments).then(function(rooms) {
-			// Remove _pendingSyncRooms before resolving it to make possible to
-			// sync again from handlers if needed.
-			const pendingSyncRooms = this._pendingSyncRooms
-			this._pendingSyncRooms = null
-			this.rooms = rooms
-			pendingSyncRooms.resolve(rooms)
-		}.bind(this)).fail(function() {
-			this._delayedInternalSyncRoomsWithRetry = setTimeout(this._internalSyncRoomsWithRetry.bind(this), this._waitTimeUntilSyncRetry * 1000)
-
-			// Increase the wait time until retry to at most 8 seconds.
-			if (this._waitTimeUntilSyncRetry < 8) {
-				this._waitTimeUntilSyncRetry *= 2
-			}
-		}.bind(this))
-	}
-
 	OCA.Talk.Signaling.Standalone.prototype.processRoomListEvent = function(data) {
 		console.log('Room list event', data)
-		this.internalSyncRooms()
+		EventBus.$emit('shouldRefreshConversations')
 	}
 
 	OCA.Talk.Signaling.Standalone.prototype.processRoomParticipantsEvent = function(data) {
@@ -1274,7 +1109,7 @@ import { fetchSignalingSettings } from '../services/signalingService'
 		case 'update':
 			this._trigger('usersChanged', [data.event.update.users || []])
 			this._trigger('participantListChanged')
-			this.internalSyncRooms()
+			EventBus.$emit('shouldRefreshConversations')
 			break
 		default:
 			console.log('Unknown room participant event', data)
