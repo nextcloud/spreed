@@ -23,7 +23,7 @@ function arrayDiff(a, b) {
 }
 
 function createScreensharingPeer(signaling, sessionId) {
-	const currentSessionId = signaling.getSessionid()
+	const currentSessionId = signaling.getSessionId()
 	const useMcu = signaling.hasFeature('mcu')
 
 	if (useMcu && !webrtc.webrtc.getPeers(currentSessionId, 'screen').length) {
@@ -83,7 +83,7 @@ function createScreensharingPeer(signaling, sessionId) {
 
 function checkStartPublishOwnPeer(signaling) {
 	'use strict'
-	const currentSessionId = signaling.getSessionid()
+	const currentSessionId = signaling.getSessionId()
 	if (!webrtc.webrtc.localStreams.length || webrtc.webrtc.getPeers(currentSessionId, 'video').length) {
 		// No media yet or already publishing.
 		return
@@ -121,7 +121,7 @@ function userHasStreams(user) {
 
 function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 	'use strict'
-	const currentSessionId = signaling.getSessionid()
+	const currentSessionId = signaling.getSessionId()
 
 	const useMcu = signaling.hasFeature('mcu')
 	if (useMcu && newUsers.length) {
@@ -239,7 +239,7 @@ function usersChanged(signaling, newUsers, disconnectedSessionIds) {
 function usersInCallChanged(signaling, users) {
 	// The passed list are the users that are currently in the room,
 	// i.e. that are in the call and should call each other.
-	const currentSessionId = signaling.getSessionid()
+	const currentSessionId = signaling.getSessionId()
 	const currentUsersInRoom = []
 	const userMapping = {}
 	selfInCall = PARTICIPANT.CALL_FLAG.DISCONNECTED
@@ -561,7 +561,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 	webrtc.on('createdPeer', function(peer) {
 		console.log('PEER CREATED', peer)
 
-		if (peer.id !== signaling.getSessionid() && !peer.sharemyscreen) {
+		if (peer.id !== signaling.getSessionId() && !peer.sharemyscreen) {
 			// In some strange cases a Peer can be added before its
 			// participant is found in the list of participants.
 			let callParticipantModel = callParticipantCollection.get(peer.id)
@@ -580,7 +580,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		}
 
 		if (peer.type === 'video') {
-			if (peer.id === signaling.getSessionid()) {
+			if (peer.id === signaling.getSessionId()) {
 				console.log('Not adding ICE connection state handler for own peer', peer)
 
 				startSendingNick(peer)
@@ -842,7 +842,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 
 	// Local screen added.
 	webrtc.on('localScreenAdded', function(video) {
-		const currentSessionId = signaling.getSessionid()
+		const currentSessionId = signaling.getSessionId()
 		for (const sessionId in usersInCallMapping) {
 			if (!usersInCallMapping.hasOwnProperty(sessionId)) {
 				continue

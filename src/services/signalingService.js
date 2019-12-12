@@ -1,6 +1,5 @@
 /**
- *
- * @copyright Copyright (c) 2019, Daniel Calviño Sánchez (danxuliu@gmail.com)
+ * @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -19,36 +18,21 @@
  *
  */
 
-export default function LocalCallParticipantModel() {
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
-	this.attributes = {
-		peerId: null,
-		guestName: null,
-	}
-
+/**
+ * Fetches the signaling settings for a conversation
+ * @param {string} token The token of the conversation to be signaled.
+ */
+const fetchSignalingSettings = async function(token) {
+	// TODO: use token to get signaling settings depending on the conversation
+	// This would allow to not use the HPB in one-to-one conversations where it
+	// brings not much of an advantage. Make sure participants from one
+	// conversation all use the same signaling server, etc.
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings')
 }
 
-LocalCallParticipantModel.prototype = {
-
-	set: function(key, value) {
-		this.attributes[key] = value
-	},
-
-	setWebRtc: function(webRtc) {
-		this._webRtc = webRtc
-
-		this.set('peerId', this._webRtc.connection.getSessionId())
-		this.set('guestName', null)
-	},
-
-	setGuestName: function(guestName) {
-		if (!this._webRtc) {
-			throw new Error('WebRtc not initialized yet')
-		}
-
-		this.set('guestName', guestName)
-
-		this._webRtc.sendDirectlyToAll('status', 'nickChanged', guestName)
-	},
-
+export {
+	fetchSignalingSettings,
 }
