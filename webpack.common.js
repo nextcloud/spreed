@@ -47,6 +47,27 @@ module.exports = {
 				exclude: /node_modules/
 			},
 			{
+				/**
+				 * webrtc-adapter main module does no longer provide
+				 * "module.exports", which is expected by some elements using it
+				 * (like "attachmediastream"), so it needs to be added back with
+				 * a plugin.
+				 */
+				test: /node_modules\/webrtc-adapter\/.*\.js$/,
+				loader: 'babel-loader',
+				options: {
+					plugins: ['add-module-exports'],
+					presets: [
+						/**
+						 * From "add-module-exports" documentation:
+						 * "webpack doesn't perform commonjs transformation for
+						 * codesplitting. Need to set commonjs conversion."
+						 */
+						['@babel/env', { modules: 'commonjs' }]
+					]
+				}
+			},
+			{
 				test: /\.(png|jpg|gif|svg)$/,
 				loader: 'file-loader',
 				options: {
