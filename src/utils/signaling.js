@@ -51,9 +51,6 @@ import { EventBus } from '../services/EventBus'
 		this.currentCallFlags = null
 		this.handlers = {}
 		this.features = {}
-		this.pendingChatRequests = []
-		this._lastChatMessagesFetch = null
-		this.chatBatchSize = 100
 		this._sendVideoIfAvailable = true
 	}
 
@@ -177,7 +174,6 @@ import { EventBus } from '../services/EventBus'
 				console.log('Joined', result)
 				this.currentRoomToken = token
 				this._trigger('joinRoom', [token])
-				this._runPendingChatRequests()
 				if (this.currentCallToken === token) {
 					// We were in this call before, join again.
 					this.joinCall(token, this.currentCallFlags)
@@ -303,125 +299,6 @@ import { EventBus } from '../services/EventBus'
 				}
 			}.bind(this),
 		})
-	}
-
-	OCA.Talk.Signaling.Base.prototype._runPendingChatRequests = function() {
-		while (this.pendingChatRequests.length) {
-			const item = this.pendingChatRequests.shift()
-			this._doReceiveChatMessages.apply(this, item)
-		}
-	}
-
-	OCA.Talk.Signaling.Base.prototype.receiveChatMessages = function(lastKnownMessageId) {
-		const defer = $.Deferred()
-		if (!this.currentRoomToken) {
-			// Not in a room yet, defer loading of messages.
-			this.pendingChatRequests.push([defer, lastKnownMessageId])
-			return defer
-		}
-
-		return this._doReceiveChatMessages(defer, lastKnownMessageId)
-	}
-
-	OCA.Talk.Signaling.Base.prototype._getChatRequestData = function(lastKnownMessageId) {
-		return {
-			lastKnownMessageId: lastKnownMessageId,
-			limit: this.chatBatchSize,
-			lookIntoFuture: 1,
-		}
-	}
-
-	OCA.Talk.Signaling.Base.prototype._doReceiveChatMessages = function(defer, lastKnownMessageId) {
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/chat', 2) + this.currentRoomToken,
-			method: 'GET',
-			data: this._getChatRequestData(lastKnownMessageId),
-			beforeSend: function(request) {
-				defer.notify(request)
-				request.setRequestHeader('Accept', 'application/json')
-			},
-			success: function(data, status, request) {
-				if (status === 'notmodified') {
-					defer.resolve(null, request)
-				} else {
-					defer.resolve(data.ocs.data, request)
-				}
-			},
-			error: function(result) {
-				defer.reject(result)
-			},
-		})
-		return defer
-	}
-
-	OCA.Talk.Signaling.Base.prototype.startReceiveMessages = function(lastKnownMessageId) {
-		this._waitTimeUntilRetry = 1
-		this.receiveMessagesAgain = true
-		this.lastKnownMessageId = lastKnownMessageId
-
-		this._receiveChatMessages()
-	}
-
-	OCA.Talk.Signaling.Base.prototype.stopReceiveMessages = function() {
-		this.receiveMessagesAgain = false
-		if (this._lastChatMessagesFetch !== null) {
-			this._lastChatMessagesFetch.abort()
-		}
-	}
-
-	OCA.Talk.Signaling.Base.prototype._receiveChatMessages = function() {
-		if (this._lastChatMessagesFetch !== null) {
-			// Another request is currently in progress.
-			return
-		}
-
-		this.receiveChatMessages(this.lastKnownMessageId)
-			.progress(this._messagesReceiveStart.bind(this))
-			.done(this._messagesReceiveSuccess.bind(this))
-			.fail(this._messagesReceiveError.bind(this))
-	}
-
-	OCA.Talk.Signaling.Base.prototype._messagesReceiveStart = function(xhr) {
-		this._lastChatMessagesFetch = xhr
-	}
-
-	OCA.Talk.Signaling.Base.prototype._messagesReceiveSuccess = function(messages, xhr) {
-		const lastKnownMessageId = xhr.getResponseHeader('X-Chat-Last-Given')
-		if (lastKnownMessageId !== null) {
-			this.lastKnownMessageId = lastKnownMessageId
-		}
-
-		this._lastChatMessagesFetch = null
-
-		this._waitTimeUntilRetry = 1
-
-		// Fetch more messages if PHP backend, or if the returned status is not
-		// "304 Not modified" (as in that case there could be more messages that
-		// need to be fetched).
-		if (this.receiveMessagesAgain || xhr.status !== 304) {
-			this._receiveChatMessages()
-		}
-
-		if (messages && messages.length) {
-			this._trigger('chatMessagesReceived', [messages])
-		}
-	}
-
-	OCA.Talk.Signaling.Base.prototype._retryChatLoadingOnError = function() {
-		return this.receiveMessagesAgain
-	}
-
-	OCA.Talk.Signaling.Base.prototype._messagesReceiveError = function(/* result */) {
-		this._lastChatMessagesFetch = null
-
-		if (this._retryChatLoadingOnError()) {
-			_.delay(_.bind(this._receiveChatMessages, this), this._waitTimeUntilRetry * 1000)
-
-			// Increase the wait time until retry to at most 64 seconds.
-			if (this._waitTimeUntilRetry < 64) {
-				this._waitTimeUntilRetry *= 2
-			}
-		}
 	}
 
 	// Connection to the internal signaling server provided by the app.
@@ -920,10 +797,6 @@ import { EventBus } from '../services/EventBus'
 		}
 
 		this._trigger('connect')
-		if (this.reconnected) {
-			// Load any chat messages that might have been missed.
-			this._receiveChatMessages()
-		}
 		if (!resumedSession && this.currentRoomToken) {
 			this.joinRoom(this.currentRoomToken)
 		}
@@ -1092,7 +965,8 @@ import { EventBus } from '../services/EventBus'
 	OCA.Talk.Signaling.Standalone.prototype.processRoomMessageEvent = function(data) {
 		switch (data.type) {
 		case 'chat':
-			this._receiveChatMessages()
+			// FIXME this is not listened to
+			EventBus.$emit('shouldRefreshChatMessages')
 			break
 		default:
 			console.log('Unknown room message event', data)
@@ -1115,26 +989,6 @@ import { EventBus } from '../services/EventBus'
 			console.log('Unknown room participant event', data)
 			break
 		}
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype._getChatRequestData = function(/* lastKnownMessageId */) {
-		const data = OCA.Talk.Signaling.Base.prototype._getChatRequestData.apply(this, arguments)
-		// Don't keep connection open and wait for more messages, will be done
-		// through another event on the WebSocket.
-		data.timeout = 0
-		return data
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype._retryChatLoadingOnError = function() {
-		// We don't regularly poll for changes, so need to always retry loading
-		// of chat messages in case of errors.
-		return true
-	}
-
-	OCA.Talk.Signaling.Standalone.prototype.startReceiveMessages = function() {
-		OCA.Talk.Signaling.Base.prototype.startReceiveMessages.apply(this, arguments)
-		// We will be notified when to load new messages.
-		this.receiveMessagesAgain = false
 	}
 
 	OCA.Talk.Signaling.Standalone.prototype.requestOffer = function(sessionid, roomType) {
