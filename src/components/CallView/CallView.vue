@@ -37,7 +37,6 @@
 			<LocalVideo ref="localVideo"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
-				:has-dark-background="hasDarkBackground"
 				@switchScreenToId="_switchScreenToId" />
 		</div>
 		<div id="screens">
@@ -123,17 +122,9 @@ export default {
 			return this.screens.length > 0
 		},
 
-		hasDarkBackground() {
-			return this.remoteParticipantsCount > 0 || this.screenSharingActive
-		},
-
 	},
 
 	watch: {
-
-		hasDarkBackground: function(hasDarkBackground) {
-			this.$emit('hasDarkBackground', hasDarkBackground)
-		},
 
 		localScreen: function(localScreen) {
 			this._setScreenAvailable(this.localCallParticipantModel.attributes.peerId, localScreen)
@@ -298,10 +289,6 @@ export default {
 #call-container {
 	width: 100%;
 	height: 100%;
-}
-
-.incall,
-.screensharing {
 	background-color: #000;
 }
 
