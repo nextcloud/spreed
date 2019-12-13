@@ -160,7 +160,8 @@ export default {
 			if (this.$route.name === 'conversation') {
 				// Adjust the page title once the conversation list is loaded
 				this.setPageTitle(this.getConversationName(this.token), false)
-
+				// Update current token in the token store
+				this.$store.dispatch('updateToken', this.token)
 				// Automatically join the conversation as well
 				joinConversation(this.token)
 			}
@@ -190,6 +191,8 @@ export default {
 				// Page title
 				const NEXT_CONVERSATION_NAME = this.getConversationName(to.params.token)
 				this.setPageTitle(NEXT_CONVERSATION_NAME)
+				// Update current token in the token store
+				this.$store.dispatch('updateToken', to.params.token)
 			}
 			/**
 			 * Fires a global event that tells the whole app that the route has changed. The event
