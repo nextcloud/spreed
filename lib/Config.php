@@ -102,6 +102,7 @@ class Config {
 		}
 
 		return [
+			'userId' => $userId,
 			'hideWarning' => !empty($signaling) || $this->getHideSignalingWarning(),
 			'server' => $signaling,
 			'ticket' => $this->getSignalingTicket($userId),

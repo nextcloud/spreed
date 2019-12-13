@@ -22,7 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { joinCall as webRtcJoinCall } from '../utils/webrtc/index'
+import { joinCall as webRtcJoinCall, signaling } from '../utils/webrtc/index'
 
 /**
  * Join a call as participant
@@ -31,6 +31,7 @@ import { joinCall as webRtcJoinCall } from '../utils/webrtc/index'
  */
 const joinCall = async function(token, flags) {
 	try {
+		// FIXME flags is ignored?
 		await webRtcJoinCall(token)
 	} catch (error) {
 		console.debug('Error while joining call: ', error)

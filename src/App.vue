@@ -147,6 +147,8 @@ export default {
 	},
 
 	created() {
+		// FIXME Signaling should be done on conversation level, as the signaling information depends on it.
+		// FIXME This was just added as a quick hack because of timing
 		connectSignaling()
 	},
 

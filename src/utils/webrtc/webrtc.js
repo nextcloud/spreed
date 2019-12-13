@@ -4,7 +4,7 @@
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc'
 import { PARTICIPANT } from '../../constants.js'
-import { getCurrentUser } from './currentuser'
+import store from '../../store/index.js'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -373,7 +373,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		detectSpeakingEvents: true,
 		connection: signaling,
 		enableDataChannels: true,
-		nick: getCurrentUser().displayName,
+		nick: store.getters.getDisplayName()
 	})
 	if (signaling.hasFeature('mcu')) {
 		// Force "Plan-B" semantics if the MCU is used, which doesn't support
@@ -431,13 +431,12 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		stopSendingNick(peer)
 		peer.nickInterval = setInterval(function() {
 			let payload
-			const user = getCurrentUser()
-			if (!user.uid) {
+			if (signaling.settings.userId === null) {
 				payload = localStorage.getItem('nick')
 			} else {
 				payload = {
-					'name': user.displayName,
-					'userid': user.uid,
+					'name': store.getters.getDisplayName(),
+					'userid': signaling.settings.userId,
 				}
 			}
 			peer.sendDirectly('status', 'nickChanged', payload)
@@ -457,7 +456,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		} else {
 			webrtc.emit('audioOn')
 		}
-		if (!getCurrentUser()['uid']) {
+		if (signaling.settings.userId === null) {
 			const currentGuestNick = localStorage.getItem('nick')
 			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
 		}

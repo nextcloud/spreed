@@ -4,7 +4,6 @@
 
 import { fetchSignalingSettings } from '../services/signalingService'
 import { EventBus } from '../services/EventBus'
-import { getCurrentUser } from './webrtc/currentuser'
 
 const Signaling = {
 	Base: {},
@@ -756,7 +755,6 @@ Signaling.Standalone.prototype.sendHello = function() {
 	} else {
 		// Already reconnected with a new session.
 		this._forceReconnect = false
-		const user = getCurrentUser()
 		const url = OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + 'backend'
 		msg = {
 			'type': 'hello',
@@ -765,7 +763,7 @@ Signaling.Standalone.prototype.sendHello = function() {
 				'auth': {
 					'url': url,
 					'params': {
-						'userid': user.uid,
+						'userid': this.settings.userId,
 						'ticket': this.settings.ticket,
 					},
 				},

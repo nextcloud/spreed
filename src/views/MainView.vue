@@ -35,6 +35,15 @@ export default {
 		},
 	},
 
+	// FIXME reactivate once Signaling is done correctly per conversation again.
+	/*
+	data() {
+		return {
+			signaling: null,
+		}
+	},
+	*/
+
 	computed: {
 		participant() {
 			if (typeof this.token === 'undefined') {
@@ -58,11 +67,27 @@ export default {
 		},
 	},
 
+	// FIXME reactivate once Signaling is done correctly per conversation again.
+	/*
 	watch: {
 		token: function(token) {
 			this.loadSignalingSettings(token)
 		},
 	},
+
+	mounted() {
+		this.signaling = Signaling
+		this.loadSignalingSettings(this.token)
+	},
+
+	methods: {
+		loadSignalingSettings(token) {
+			console.debug('Loading signaling settings for ' + this.token)
+			// FIXME reset the settings so we can check it later on if loading is finished
+			this.signaling.loadSettings(token)
+		},
+	},
+	*/
 }
 </script>
 

@@ -33,6 +33,9 @@ import { signaling } from '../utils/webrtc/index'
 const joinConversation = async(token) => {
 	try {
 		signaling.joinRoom(token)
+		// FIXME Signaling should not handle joining a conversation
+		// const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
+		// return response
 	} catch (error) {
 		console.debug(error)
 	}
@@ -46,6 +49,9 @@ const joinConversation = async(token) => {
 const leaveConversation = async function(token) {
 	try {
 		signaling.leaveRoom(token)
+		// FIXME Signaling should not handle leaving a conversation
+		// const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
+		// return response
 	} catch (error) {
 		console.debug(error)
 	}
