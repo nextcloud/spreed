@@ -141,7 +141,7 @@ export default {
 	 * component only if the token is passed in so there's no need to check the
 	 * token prop.
 	 */
-	created() {
+	beforeMount() {
 		/**
 		 * Add a listener for when we joined a conversation
 		 * Until then guests can not grab any messages

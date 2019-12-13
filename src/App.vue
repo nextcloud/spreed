@@ -176,7 +176,6 @@ export default {
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', this.token)
 				// Automatically join the conversation as well
-				console.error('joinConversation', this.token)
 				joinConversation(this.token)
 			}
 

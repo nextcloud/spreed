@@ -33,9 +33,9 @@ import { EventBus } from '../services/EventBus'
  */
 const joinConversation = async(token) => {
 	try {
-		signaling.joinRoom(token)
-
-		EventBus.$emit('joinedConversation')
+		signaling.joinRoom(token).then(() => {
+			EventBus.$emit('joinedConversation')
+		})
 
 		// FIXME Signaling should not handle joining a conversation
 		// const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
