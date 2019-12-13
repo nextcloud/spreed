@@ -23,6 +23,7 @@
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
 import { signaling } from '../utils/webrtc/index'
+import { EventBus } from '../services/EventBus'
 
 /**
  * Joins the current user to a conversation specified with
@@ -33,6 +34,9 @@ import { signaling } from '../utils/webrtc/index'
 const joinConversation = async(token) => {
 	try {
 		signaling.joinRoom(token)
+
+		EventBus.$emit('joinedConversation')
+
 		// FIXME Signaling should not handle joining a conversation
 		// const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
 		// return response

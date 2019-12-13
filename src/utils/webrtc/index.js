@@ -25,6 +25,7 @@ import CallParticipantCollection from './models/CallParticipantCollection'
 import LocalCallParticipantModel from './models/LocalCallParticipantModel'
 import LocalMediaModel from './models/LocalMediaModel'
 import { PARTICIPANT } from '../../constants'
+import { EventBus } from '../../services/EventBus'
 
 let signaling = null
 let webRtc = null
@@ -34,8 +35,9 @@ const localMediaModel = new LocalMediaModel()
 
 async function connectSignaling() {
 	await Signaling.loadSettings(null)
-
 	signaling = Signaling.createConnection()
+
+	EventBus.$emit('signalingConnectionEstablished')
 }
 
 let currentToken = null
@@ -92,5 +94,5 @@ export {
 	localCallParticipantModel,
 	localMediaModel,
 	connectSignaling,
-	joinCall
+	joinCall,
 }

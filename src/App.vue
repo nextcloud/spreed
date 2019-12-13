@@ -146,12 +146,6 @@ export default {
 		},
 	},
 
-	created() {
-		// FIXME Signaling should be done on conversation level, as the signaling information depends on it.
-		// FIXME This was just added as a quick hack because of timing
-		connectSignaling()
-	},
-
 	beforeDestroy() {
 		document.removeEventListener('visibilitychange', this.changeWindowVisibility)
 	},
@@ -161,6 +155,10 @@ export default {
 			// Update current token in the token store
 			this.$store.dispatch('updateToken', this.$route.params.token)
 		}
+
+		// FIXME Signaling should be done on conversation level, as the signaling information depends on it.
+		// FIXME This was just added as a quick hack because of timing
+		connectSignaling()
 
 		window.addEventListener('resize', this.onResize)
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
@@ -178,6 +176,7 @@ export default {
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', this.token)
 				// Automatically join the conversation as well
+				console.error('joinConversation', this.token)
 				joinConversation(this.token)
 			}
 
@@ -226,14 +225,20 @@ export default {
 		}
 
 		if (this.getUserId === null) {
-			this.fetchSingleConversation(this.token)
-			window.setInterval(() => {
-				this.fetchSingleConversation(this.token)
-			}, 30000)
+			EventBus.$on('signalingConnectionEstablished', () => {
+				this.fixmeDelayedSetupOfGuestUsers()
+			})
 		}
 	},
 
 	methods: {
+		fixmeDelayedSetupOfGuestUsers() {
+			this.fetchSingleConversation(this.token)
+			window.setInterval(() => {
+				this.fetchSingleConversation(this.token)
+			}, 30000)
+		},
+
 		changeWindowVisibility() {
 			this.windowIsVisible = !document.hidden
 			if (this.windowIsVisible) {

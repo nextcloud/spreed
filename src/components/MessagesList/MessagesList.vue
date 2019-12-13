@@ -142,12 +142,11 @@ export default {
 	 * token prop.
 	 */
 	created() {
-		this.onRouteChange()
 		/**
-		 * Add a listener for routeChange event emitted by the App.vue component.
-		 * Call the onRouteChange method function whenever the route changes.
+		 * Add a listener for when we joined a conversation
+		 * Until then guests can not grab any messages
 		 */
-		EventBus.$on('routeChange', () => {
+		EventBus.$on('joinedConversation', () => {
 			this.onRouteChange()
 		})
 	},
