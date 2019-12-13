@@ -443,22 +443,6 @@ export default {
 	display: block !important;
 }
 
-::v-deep #screensharing-menu {
-	bottom: 44px;
-	left: calc(50% - 40px);
-	right: initial;
-	color: initial;
-	text-shadow: initial;
-	font-size: 13px;
-}
-
-::v-deep #screensharing-menu.app-navigation-entry-menu:after {
-	top: 100%;
-	left: calc(50% - 5px);
-	border-top-color: #fff;
-	border-bottom-color: transparent;
-}
-
 /* big speaker video */
 .participants-1 .videoContainer,
 .participants-2 .videoContainer,
@@ -560,98 +544,6 @@ export default {
 	padding: 12px 35%;
 }
 
-::v-deep .nameIndicator button {
-	background-color: transparent;
-	border: none;
-	margin: 0;
-	width: 44px;
-	height: 44px;
-}
-
-::v-deep .nameIndicator #screensharing-menu button {
-	width: 100%;
-	height: auto;
-}
-
-::v-deep .nameIndicator button {
-	background-size: 24px;
-}
-
-::v-deep .nameIndicator button.audio-disabled,
-::v-deep .nameIndicator button.video-disabled,
-::v-deep .nameIndicator button.screensharing-disabled {
-	opacity: .7;
-}
-
-::v-deep .nameIndicator button.audio-disabled:not(.no-audio-available),
-::v-deep .nameIndicator button.video-disabled:not(.no-video-available),
-::v-deep .nameIndicator button.screensharing-disabled {
-	&:hover,
-	&:focus {
-		opacity: 1;
-	}
-}
-
-::v-deep .nameIndicator button.no-audio-available,
-::v-deep .nameIndicator button.no-video-available {
-	opacity: .7;
-	cursor: not-allowed;
-}
-
-::v-deep .nameIndicator button.no-audio-available:active,
-::v-deep .nameIndicator button.no-video-available:active {
-	background-color: transparent;
-}
-
-::v-deep .mediaIndicator {
-	position: absolute;
-	width: 100%;
-	bottom: 44px;
-	left: 0;
-	background-size: 22px;
-	text-align: center;
-}
-
-::v-deep .muteIndicator,
-::v-deep .hideRemoteVideo,
-::v-deep .screensharingIndicator,
-::v-deep .iceFailedIndicator {
-	position: relative;
-	display: inline-block;
-	background-color: transparent !important;
-	border: none;
-	width: 32px;
-	height: 32px;
-	background-size: 22px;
-
-	&.hidden {
-		display: none;
-	}
-}
-
-::v-deep .muteIndicator.audio-on,
-::v-deep .muteIndicator:not(.audio-on):not(.audio-off),
-::v-deep .screensharingIndicator.screen-off,
-::v-deep .iceFailedIndicator.not-failed {
-	display: none;
-}
-
-::v-deep .muteIndicator.audio-off,
-::v-deep .hideRemoteVideo.icon-video-off {
-	opacity: .7;
-}
-
-::v-deep .hideRemoteVideo.icon-video-off {
-	&:hover,
-	&:focus {
-		opacity: 1;
-	}
-}
-
-::v-deep .iceFailedIndicator {
-	opacity: .8 !important;
-}
-
 #videos .videoContainer.speaking:not(.videoView) ::v-deep .nameIndicator,
 #videos .videoContainer.videoView.speaking ::v-deep .nameIndicator .icon-audio {
 	animation: pulse 1s;
@@ -668,34 +560,5 @@ export default {
 	100% {
 		opacity: 1;
 	}
-}
-
-::v-deep #muteWrapper {
-	display: inline-block;
-
-	/* Make the wrapper the positioning context of the volume indicator. */
-	position: relative;
-}
-
-::v-deep #muteWrapper .volume-indicator {
-	position: absolute;
-
-	width: 3px;
-	right: 0px;
-
-	/* The button height is 44px; the volume indicator button is 36px at
-	* maximum, but its value will be changed based on the current volume; the
-	* height change will reveal more or less of the gradient, which has
-	* absolute dimensions and thus does not change when the height changes. */
-	height: 36px;
-	bottom: 4px;
-
-	background: linear-gradient(0deg, green, yellow, red 36px);
-
-	opacity: 0.7;
-}
-
-::v-deep #muteWrapper .icon-audio-off + .volume-indicator {
-	background: linear-gradient(0deg, gray, white 36px);
 }
 </style>

@@ -359,4 +359,92 @@ export default {
 .forced-white {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
+
+#screensharing-menu {
+	bottom: 44px;
+	left: calc(50% - 40px);
+	right: initial;
+	color: initial;
+	text-shadow: initial;
+	font-size: 13px;
+}
+
+#screensharing-menu.app-navigation-entry-menu:after {
+	top: 100%;
+	left: calc(50% - 5px);
+	border-top-color: #fff;
+	border-bottom-color: transparent;
+}
+
+.nameIndicator button {
+	background-color: transparent;
+	border: none;
+	margin: 0;
+	width: 44px;
+	height: 44px;
+}
+
+.nameIndicator #screensharing-menu button {
+	width: 100%;
+	height: auto;
+}
+
+.nameIndicator button {
+	background-size: 24px;
+}
+
+.nameIndicator button.audio-disabled,
+.nameIndicator button.video-disabled,
+.nameIndicator button.screensharing-disabled {
+	opacity: .7;
+}
+
+.nameIndicator button.audio-disabled:not(.no-audio-available),
+.nameIndicator button.video-disabled:not(.no-video-available),
+.nameIndicator button.screensharing-disabled {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
+.nameIndicator button.no-audio-available,
+.nameIndicator button.no-video-available {
+	opacity: .7;
+	cursor: not-allowed;
+}
+
+.nameIndicator button.no-audio-available:active,
+.nameIndicator button.no-video-available:active {
+	background-color: transparent;
+}
+
+#muteWrapper {
+	display: inline-block;
+
+	/* Make the wrapper the positioning context of the volume indicator. */
+	position: relative;
+}
+
+#muteWrapper .volume-indicator {
+	position: absolute;
+
+	width: 3px;
+	right: 0px;
+
+	/* The button height is 44px; the volume indicator button is 36px at
+	* maximum, but its value will be changed based on the current volume; the
+	* height change will reveal more or less of the gradient, which has
+	* absolute dimensions and thus does not change when the height changes. */
+	height: 36px;
+	bottom: 4px;
+
+	background: linear-gradient(0deg, green, yellow, red 36px);
+
+	opacity: 0.7;
+}
+
+#muteWrapper .icon-audio-off + .volume-indicator {
+	background: linear-gradient(0deg, gray, white 36px);
+}
 </style>

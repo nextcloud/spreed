@@ -237,4 +237,53 @@ export default {
 .forced-white {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
+
+.mediaIndicator {
+	position: absolute;
+	width: 100%;
+	bottom: 44px;
+	left: 0;
+	background-size: 22px;
+	text-align: center;
+}
+
+.muteIndicator,
+.hideRemoteVideo,
+.screensharingIndicator,
+.iceFailedIndicator {
+	position: relative;
+	display: inline-block;
+	background-color: transparent !important;
+	border: none;
+	width: 32px;
+	height: 32px;
+	background-size: 22px;
+
+	&.hidden {
+		display: none;
+	}
+}
+
+.muteIndicator.audio-on,
+.muteIndicator:not(.audio-on):not(.audio-off),
+.screensharingIndicator.screen-off,
+.iceFailedIndicator.not-failed {
+	display: none;
+}
+
+.muteIndicator.audio-off,
+.hideRemoteVideo.icon-video-off {
+	opacity: .7;
+}
+
+.hideRemoteVideo.icon-video-off {
+	&:hover,
+	&:focus {
+		opacity: 1;
+	}
+}
+
+.iceFailedIndicator {
+	opacity: .8 !important;
+}
 </style>
