@@ -48,6 +48,7 @@ export default {
 		user-select: none;
 		pointer-events: none;
 		border-bottom: 1px solid var(--color-border-dark);
+		padding-left: 10px;
 
 		&:not(:first-child) {
 			margin-top: 22px;

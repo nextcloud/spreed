@@ -27,23 +27,27 @@
 				@input="debounceFetchSearchResults" />
 			<NewGroupConversation />
 		</div>
-		<ul>
+		<ul class="left-sidebar__list">
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
-
-			<ConversationsList
-				:search-text="searchText" />
-
+			<li>
+				<ConversationsList
+					:search-text="searchText" />
+			</li>
 			<template v-if="isSearching">
 				<Caption
 					:title="t('spreed', 'Contacts')" />
-				<ContactsList v-if="searchResultsUsers.length !== 0" :contacts="searchResultsUsers" />
+				<li v-if="searchResultsUsers.length !== 0">
+					<ContactsList :contacts="searchResultsUsers" />
+				</li>
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 
 				<Caption
 					:title="t('spreed', 'Groups')" />
-				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
+				<li v-if="searchResultsGroups.length !== 0">
+					<GroupsList :groups="searchResultsGroups" />
+				</li>
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
