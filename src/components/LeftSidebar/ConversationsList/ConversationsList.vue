@@ -78,6 +78,10 @@ export default {
 				joinConversation(to.params.token)
 			}
 		})
+
+		EventBus.$on('shouldRefreshConversations', () => {
+			this.fetchConversations()
+		})
 	},
 	methods: {
 		sortConversations(conversation1, conversation2) {

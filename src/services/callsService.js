@@ -22,6 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { joinCall as webRtcJoinCall, signaling } from '../utils/webrtc/index'
 
 /**
  * Join a call as participant
@@ -30,10 +31,8 @@ import { generateOcsUrl } from '@nextcloud/router'
  */
 const joinCall = async function(token, flags) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `call/${token}`, {
-			flags,
-		})
-		return response
+		// FIXME flags is ignored?
+		await webRtcJoinCall(token)
 	} catch (error) {
 		console.debug('Error while joining call: ', error)
 	}
@@ -45,8 +44,7 @@ const joinCall = async function(token, flags) {
  */
 const leaveCall = async function(token) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `call/${token}`)
-		return response
+		await signaling.leaveCurrentCall()
 	} catch (error) {
 		console.debug('Error while leaving call: ', error)
 	}

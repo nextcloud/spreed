@@ -58,6 +58,28 @@
 
 
 
+.icon-menu-people {
+	@include icon-color('menu-people', 'spreed', $color-primary-text, 1);
+}
+
+#talk-sidebar-trigger {
+	width: 44px;
+	height: 44px;
+
+	background-color: transparent;
+	border-color: transparent;
+
+	opacity: 0.6;
+
+	&:hover,
+	&:focus,
+	&:active {
+		opacity: 1;
+	}
+}
+
+
+
 /* Properties based on the app-sidebar */
 #talk-sidebar {
 	position: relative;
@@ -72,8 +94,8 @@
 	overflow-y: auto;
 	z-index: 500;
 
-	transition: 300ms width ease-in-out,
-				300ms min-width ease-in-out;
+	transition: var(--animation-quick) width ease-in-out,
+				var(--animation-quick) min-width ease-in-out;
 }
 
 #talk-sidebar.disappear {
@@ -89,6 +111,33 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+}
+
+#talk-sidebar .emptycontent.room-not-joined {
+	/* Override "margin-top: 30vh" set in server, as the message is already
+	 * centered in the Talk sidebar. */
+	margin-top: unset;
+
+	button {
+		padding-left: 24px;
+		padding-right: 24px;
+
+		.icon-loading-small {
+			/* Prevent the text from being moved when the icon is shown. */
+			position: absolute;
+
+			margin-left: 5px;
+			margin-top: 1px;
+
+			/* Unset the size set by the server for icons in empty content */
+			width: unset;
+			height: unset;
+
+			&.hidden {
+				display: none;
+			}
+		}
+	}
 }
 
 #talk-sidebar #emptycontent {
@@ -146,11 +195,11 @@
 }
 
 /* Video in Talk sidebar */
-#talk-sidebar #call-container-wrapper #videos {
+#talk-sidebar #call-container-wrapper #call-container #videos {
 	flex-grow: 1;
 }
 
-#talk-sidebar #call-container-wrapper .videoContainer.promoted video {
+#talk-sidebar #call-container-wrapper #call-container .videoContainer.promoted video {
 	/* Base the size of the video on its width instead of on its height;
 	 * otherwise the video could appear in full height but cropped on the sides
 	 * due to the space available in the sidebar being typically larger in
@@ -160,13 +209,24 @@
 }
 
 /* Screensharing in Talk sidebar */
-#talk-sidebar #call-container-wrapper #screens {
-	display: none;
+#talk-sidebar #call-container-wrapper #call-container.screensharing #screens {
+	/* The row with the participants is shorter in the Talk sidebar to make room
+	 * for the promoted video and the shared screens. */
+	height: calc(100% - 100px);
+}
+
+#talk-sidebar #call-container-wrapper #call-container.screensharing .videoContainer {
+	max-height: 100px;
+
+	/* Avatars slightly overflow the container; although they overlap the shared
+	 * screen it is not too bad and it is better than compressing even further
+	 * the shared screen. */
+	overflow: visible;
 }
 
 
 
-#talk-sidebar #videos .videoContainer:not(.promoted) video {
+#talk-sidebar #call-container #videos .videoContainer:not(.promoted) video {
 	/* Make the unpromoted videos smaller to not overlap too much the promoted
 	 * video */
 	max-height: 100px;
@@ -174,14 +234,30 @@
 
 /* The avatars are requested with a size of 128px, so reduce it to not overlap
  * too much the promoted video */
-#talk-sidebar #videos .videoContainer:not(.promoted) .avatar,
-#talk-sidebar #videos .videoContainer:not(.promoted) .avatar img {
+#talk-sidebar #call-container #videos .videoContainer:not(.promoted) .avatardiv,
+#talk-sidebar #call-container #videos .videoContainer:not(.promoted) .avatardiv img {
 	width: 64px !important;
 	height: 64px !important;
+	line-height: 64px !important;
+	/* imageplaceholder() sets font-size to "height * 0.55" */
+	font-size: 35.2px !important;
 }
 
-#talk-sidebar .participants-1 .videoView,
-#talk-sidebar .participants-2 .videoView {
+/* Text avatars need to be forced to 128px when promoted, as imageplaceholder()
+ * overrides the given size with the actual height of the element it was called
+ * on, so the text avatar may have a hardcoded height of 64px. Note that this
+ * does not apply to regular image avatars, as in that case they are always
+ * requested with a size of 128px. */
+#talk-sidebar #call-container #videos .videoContainer.promoted .avatardiv {
+	width: 128px !important;
+	height: 128px !important;
+	line-height: 128px !important;
+	/* imageplaceholder() sets font-size to "height * 0.55" */
+	font-size: 70.4px !important;
+}
+
+#talk-sidebar #call-container.participants-1 .videoView,
+#talk-sidebar #call-container.participants-2 .videoView {
 	/* Do not force the width to 200px, as otherwise the video is too tall and
 	 * overlaps too much with the promoted video. */
 	min-width: initial;
@@ -189,19 +265,19 @@
 	z-index: 1;
 }
 
-#talk-sidebar .nameIndicator {
+#talk-sidebar #call-container .nameIndicator {
 	/* Reduce padding to bring the name closer to the bottom */
 	padding: 3px;
 	/* Use default font size, as it takes too much space otherwise */
 	font-size: initial;
 }
 
-#talk-sidebar .participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+#talk-sidebar #call-container.participants-2 .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	/* Reduce padding to bring the name closer to the bottom */
 	padding: 3px 35%;
 }
 
-#talk-sidebar .mediaIndicator {
+#talk-sidebar #call-container .mediaIndicator {
 	/* Move the media indicator closer to the bottom */
 	bottom: 16px;
 }
