@@ -55,6 +55,9 @@
 import LocalVideo from './LocalVideo'
 import Screen from './Screen'
 import Video from './Video'
+import LocalMediaModel from '../../utils/webrtc/models/LocalMediaModel'
+import LocalCallParticipantModel from '../../utils/webrtc/models/LocalCallParticipantModel'
+import CallParticipantCollection from '../../utils/webrtc/models/CallParticipantCollection'
 
 export default {
 
@@ -88,6 +91,12 @@ export default {
 				screenVisible: true,
 			},
 			sharedDatas: {},
+
+			localMediaModel: {},
+			localCallParticipantModel: {},
+			callParticipantCollection: {
+				callParticipantModels: [],
+			},
 		}
 	},
 
@@ -206,6 +215,12 @@ export default {
 			this._setScreenVisible()
 		},
 
+	},
+
+	mounted() {
+		this.localMediaModel = new LocalMediaModel()
+		this.localCallParticipantModel = new LocalCallParticipantModel()
+		this.callParticipantCollection = new CallParticipantCollection()
 	},
 
 	methods: {
