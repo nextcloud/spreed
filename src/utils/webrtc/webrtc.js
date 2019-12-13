@@ -373,7 +373,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		detectSpeakingEvents: true,
 		connection: signaling,
 		enableDataChannels: true,
-		nick: store.getters.getDisplayName()
+		nick: store.getters.getDisplayName(),
 	})
 	if (signaling.hasFeature('mcu')) {
 		// Force "Plan-B" semantics if the MCU is used, which doesn't support

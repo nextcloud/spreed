@@ -84,6 +84,7 @@ export default {
 		},
 		linkToConversation: {
 			type: String,
+			required: true,
 		},
 	},
 
