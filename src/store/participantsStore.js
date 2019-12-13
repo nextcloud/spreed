@@ -192,9 +192,7 @@ const actions = {
 	async joinCall({ commit, getters }, { token, participantIdentifier, flags }) {
 		const index = getters.getParticipantIndex(token, participantIdentifier)
 		if (index === -1) {
-			console.error('Participant not found')
-			console.error(participantIdentifier)
-			console.error(flags)
+			console.error('Participant not found', participantIdentifier)
 			return
 		}
 
