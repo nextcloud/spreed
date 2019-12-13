@@ -20,13 +20,14 @@
 -->
 
 <template>
-	<Content :class="{'icon-loading': loading, 'in-call': showChatInSidebar}" app-name="Talk">
+	<Content :class="{ 'icon-loading': loading, 'in-call': isInCall }" app-name="Talk">
 		<LeftSidebar v-if="getUserId" />
 		<AppContent>
 			<router-view />
 		</AppContent>
 		<RightSidebar
-			:show-chat-in-sidebar="showChatInSidebar" />
+			:show-chat-in-sidebar="isInCall" />
+		<PreventUnload :when="isInCall" />
 	</Content>
 </template>
 
@@ -34,6 +35,7 @@
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 import Content from '@nextcloud/vue/dist/Components/Content'
 import LeftSidebar from './components/LeftSidebar/LeftSidebar'
+import PreventUnload from 'vue-prevent-unload'
 import Router from './router/router'
 import RightSidebar from './components/RightSidebar/RightSidebar'
 import { EventBus } from './services/EventBus'
@@ -45,10 +47,11 @@ import { PARTICIPANT } from './constants'
 export default {
 	name: 'App',
 	components: {
-		Content,
 		AppContent,
-		RightSidebar,
+		Content,
 		LeftSidebar,
+		PreventUnload,
+		RightSidebar,
 	},
 	data: function() {
 		return {
@@ -85,7 +88,7 @@ export default {
 			}
 		},
 
-		showChatInSidebar() {
+		isInCall() {
 			return this.participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
 
