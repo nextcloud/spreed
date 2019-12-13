@@ -42,7 +42,7 @@ export default new Store({
 		participantsStore,
 		quoteReplyStore,
 		sidebarStore,
-		tokenStore
+		tokenStore,
 	},
 
 	mutations,

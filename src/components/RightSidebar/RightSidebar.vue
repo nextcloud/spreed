@@ -121,7 +121,7 @@ export default {
 			return !!this.token && this.show
 		},
 		token() {
-			return this.$route.params.token
+			return this.$store.getters.getToken
 		},
 		conversation() {
 			if (this.$store.getters.conversations[this.token]) {

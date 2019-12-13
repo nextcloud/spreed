@@ -34,8 +34,8 @@ export default {
 	computed: {
 		fileInfo() {
 			return this.Talk.fileInfo
-		}
-	}
+		},
+	},
 }
 </script>
 

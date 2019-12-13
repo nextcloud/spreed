@@ -125,7 +125,7 @@ export default {
 			return this.participant.lastPing
 		},
 		token() {
-			return this.$route.params.token
+			return this.$store.getters.getToken
 		},
 		currentParticipant() {
 			return this.$store.getters.conversations[this.token] || {

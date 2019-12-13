@@ -48,7 +48,7 @@ export default {
 
 	computed: {
 		token() {
-			return this.$route.params.token
+			return this.$store.getters.getToken
 		},
 
 		conversation() {

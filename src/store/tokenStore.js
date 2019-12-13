@@ -35,6 +35,7 @@ const mutations = {
 	 * Updates the token
 	 *
 	 * @param {object} state current store state;
+	 * @param {string} newToken the new token,
 	 */
 	updateToken(state, newToken) {
 		state.token = newToken
@@ -47,6 +48,8 @@ const actions = {
 	 * Updates the token
 	 *
 	 * @param {object} context default store context;
+	 * @param {string} newToken the new token,
+
 	 */
 	updateToken(context, newToken) {
 		context.commit('updateToken', newToken)

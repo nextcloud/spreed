@@ -128,7 +128,7 @@ export default {
 		 * @returns {string} The token.
 		 */
 		token() {
-			return this.$route.params.token
+			return this.$store.getters.getToken
 		},
 	},
 

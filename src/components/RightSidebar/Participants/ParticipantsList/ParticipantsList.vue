@@ -108,7 +108,7 @@ export default {
 
 	computed: {
 		token() {
-			return this.$route.params.token
+			return this.$store.getters.getToken
 		},
 		/**
 		 * Creates a new array that combines the items (participants received as a prop)
