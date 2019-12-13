@@ -1,9 +1,10 @@
-/** @global console */
+/* global $, _ */
 
 /* eslint-disable no-console */
 
 import { fetchSignalingSettings } from '../services/signalingService'
 import { EventBus } from '../services/EventBus'
+import { getCurrentUser } from './webrtc/currentuser'
 
 const Signaling = {
 	Base: {},
@@ -149,66 +150,74 @@ Signaling.Base.prototype.leaveCurrentRoom = function() {
 }
 
 Signaling.Base.prototype.leaveCurrentCall = function() {
-	if (this.currentCallToken) {
-		this.leaveCall(this.currentCallToken)
-		this.currentCallToken = null
-		this.currentCallFlags = null
-	}
+	return new Promise((resolve, reject) => {
+		if (this.currentCallToken) {
+			this.leaveCall(this.currentCallToken).then(() => { resolve() }).catch(reason => { reject(reason) })
+			this.currentCallToken = null
+			this.currentCallFlags = null
+		} else {
+			resolve()
+		}
+	})
 }
 
 Signaling.Base.prototype.joinRoom = function(token, password) {
-	$.ajax({
-		url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
-		type: 'POST',
-		beforeSend: function(request) {
-			request.setRequestHeader('Accept', 'application/json')
-		},
-		data: {
-			password: password,
-		},
-		success: function(result) {
-			console.log('Joined', result)
-			this.currentRoomToken = token
-			this._trigger('joinRoom', [token])
-			if (this.currentCallToken === token) {
-				// We were in this call before, join again.
-				this.joinCall(token, this.currentCallFlags)
-			} else {
-				this.currentCallToken = null
-				this.currentCallFlags = null
-			}
-			this._joinRoomSuccess(token, result.ocs.data.sessionId)
-		}.bind(this),
-		error: function(result) {
-			if (result.status === 404 || result.status === 503) {
-				// Room not found or maintenance mode
-				OC.redirect(OC.generateUrl('apps/spreed'))
-			}
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
+			type: 'POST',
+			beforeSend: function(request) {
+				request.setRequestHeader('Accept', 'application/json')
+			},
+			data: {
+				password: password,
+			},
+			success: function(result) {
+				console.log('Joined', result)
+				this.currentRoomToken = token
+				this._trigger('joinRoom', [token])
+				resolve()
+				if (this.currentCallToken === token) {
+					// We were in this call before, join again.
+					this.joinCall(token, this.currentCallFlags)
+				} else {
+					this.currentCallToken = null
+					this.currentCallFlags = null
+				}
+				this._joinRoomSuccess(token, result.ocs.data.sessionId)
+			}.bind(this),
+			error: function(result) {
+				reject(new Error())
+				if (result.status === 404 || result.status === 503) {
+					// Room not found or maintenance mode
+					OC.redirect(OC.generateUrl('apps/spreed'))
+				}
 
-			if (result.status === 403) {
-				// This should not happen anymore since we ask for the password before
-				// even trying to join the call, but let's keep it for now.
-				OC.dialogs.prompt(
-					t('spreed', 'Please enter the password for this call'),
-					t('spreed', 'Password required'),
-					function(result, password) {
-						if (result && password !== '') {
-							this.joinRoom(token, password)
-						}
-					}.bind(this),
-					true,
-					t('spreed', 'Password'),
-					true
-				).then(function() {
-					const $dialog = $('.oc-dialog:visible')
-					$dialog.find('.ui-icon').remove()
+				if (result.status === 403) {
+					// This should not happen anymore since we ask for the password before
+					// even trying to join the call, but let's keep it for now.
+					OC.dialogs.prompt(
+						t('spreed', 'Please enter the password for this call'),
+						t('spreed', 'Password required'),
+						function(result, password) {
+							if (result && password !== '') {
+								this.joinRoom(token, password)
+							}
+						}.bind(this),
+						true,
+						t('spreed', 'Password'),
+						true
+					).then(function() {
+						const $dialog = $('.oc-dialog:visible')
+						$dialog.find('.ui-icon').remove()
 
-					const $buttons = $dialog.find('button')
-					$buttons.eq(0).text(t('core', 'Cancel'))
-					$buttons.eq(1).text(t('core', 'Submit'))
-				})
-			}
-		}.bind(this),
+						const $buttons = $dialog.find('button')
+						$buttons.eq(0).text(t('core', 'Cancel'))
+						$buttons.eq(1).text(t('core', 'Submit'))
+					})
+				}
+			}.bind(this),
+		})
 	})
 }
 
@@ -222,17 +231,23 @@ Signaling.Base.prototype.leaveRoom = function(token) {
 	this._trigger('leaveRoom', [token])
 	this._doLeaveRoom(token)
 
-	$.ajax({
-		url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
-		method: 'DELETE',
-		async: false,
-		success: function() {
-			this._leaveRoomSuccess(token)
-			// We left the current room.
-			if (token === this.currentRoomToken) {
-				this.currentRoomToken = null
-			}
-		}.bind(this),
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
+			method: 'DELETE',
+			async: false,
+			success: function() {
+				this._leaveRoomSuccess(token)
+				resolve()
+				// We left the current room.
+				if (token === this.currentRoomToken) {
+					this.currentRoomToken = null
+				}
+			}.bind(this),
+			error: function() {
+				reject(new Error())
+			},
+		})
 	})
 }
 
@@ -249,25 +264,29 @@ Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
 }
 
 Signaling.Base.prototype.joinCall = function(token, flags) {
-	$.ajax({
-		url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-		type: 'POST',
-		data: {
-			flags: flags,
-		},
-		beforeSend: function(request) {
-			request.setRequestHeader('Accept', 'application/json')
-		},
-		success: function() {
-			this.currentCallToken = token
-			this.currentCallFlags = flags
-			this._trigger('joinCall', [token])
-			this._joinCallSuccess(token)
-		}.bind(this),
-		error: function() {
-			// Room not found or maintenance mode
-			OC.redirect(OC.generateUrl('apps/spreed'))
-		},
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			type: 'POST',
+			data: {
+				flags: flags,
+			},
+			beforeSend: function(request) {
+				request.setRequestHeader('Accept', 'application/json')
+			},
+			success: function() {
+				this.currentCallToken = token
+				this.currentCallFlags = flags
+				this._trigger('joinCall', [token])
+				resolve()
+				this._joinCallSuccess(token)
+			}.bind(this),
+			error: function() {
+				reject(new Error())
+				// Room not found or maintenance mode
+				OC.redirect(OC.generateUrl('apps/spreed'))
+			},
+		})
 	})
 }
 
@@ -276,24 +295,30 @@ Signaling.Base.prototype._leaveCallSuccess = function(/* token */) {
 }
 
 Signaling.Base.prototype.leaveCall = function(token, keepToken) {
+	return new Promise((resolve, reject) => {
+		if (!token) {
+			reject(new Error())
+			return
+		}
 
-	if (!token) {
-		return
-	}
-
-	$.ajax({
-		url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-		method: 'DELETE',
-		async: false,
-		success: function() {
-			this._trigger('leaveCall', [token, keepToken])
-			this._leaveCallSuccess(token)
-			// We left the current call.
-			if (!keepToken && token === this.currentCallToken) {
-				this.currentCallToken = null
-				this.currentCallFlags = null
-			}
-		}.bind(this),
+		$.ajax({
+			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
+			method: 'DELETE',
+			async: false,
+			success: function() {
+				this._trigger('leaveCall', [token, keepToken])
+				this._leaveCallSuccess(token)
+				resolve()
+				// We left the current call.
+				if (!keepToken && token === this.currentCallToken) {
+					this.currentCallToken = null
+					this.currentCallFlags = null
+				}
+			}.bind(this),
+			error: function() {
+				reject(new Error())
+			},
+		})
 	})
 }
 

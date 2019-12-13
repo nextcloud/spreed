@@ -4,6 +4,7 @@
 
 import SimpleWebRTC from './simplewebrtc/simplewebrtc'
 import { PARTICIPANT } from '../../constants.js'
+import { getCurrentUser } from './currentuser'
 
 let webrtc
 const spreedPeerConnectionTable = []
@@ -372,7 +373,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		detectSpeakingEvents: true,
 		connection: signaling,
 		enableDataChannels: true,
-		nick: OCA.Talk.getCurrentUser().displayName,
+		nick: getCurrentUser().displayName,
 	})
 	if (signaling.hasFeature('mcu')) {
 		// Force "Plan-B" semantics if the MCU is used, which doesn't support
@@ -430,7 +431,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		stopSendingNick(peer)
 		peer.nickInterval = setInterval(function() {
 			let payload
-			const user = OCA.Talk.getCurrentUser()
+			const user = getCurrentUser()
 			if (!user.uid) {
 				payload = localStorage.getItem('nick')
 			} else {
@@ -456,7 +457,7 @@ export default function initWebRTC(signaling, _callParticipantCollection) {
 		} else {
 			webrtc.emit('audioOn')
 		}
-		if (!OCA.Talk.getCurrentUser()['uid']) {
+		if (!getCurrentUser()['uid']) {
 			const currentGuestNick = localStorage.getItem('nick')
 			sendDataChannelToAll('status', 'nickChanged', currentGuestNick)
 		}

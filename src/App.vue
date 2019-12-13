@@ -43,6 +43,7 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { fetchConversation } from './services/conversationsService'
 import { joinConversation } from './services/participantsService'
 import { PARTICIPANT } from './constants'
+import { connectSignaling } from './utils/webrtc/index'
 
 export default {
 	name: 'App',
@@ -143,6 +144,10 @@ export default {
 
 			this.setPageTitle(this.getConversationName(this.token), this.atLeastOneLastMessageIdChanged)
 		},
+	},
+
+	created() {
+		connectSignaling()
 	},
 
 	beforeDestroy() {

@@ -22,6 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
+import { signaling } from '../utils/webrtc/index'
 
 /**
  * Joins the current user to a conversation specified with
@@ -31,8 +32,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  */
 const joinConversation = async(token) => {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
-		return response
+		signaling.joinRoom(token)
 	} catch (error) {
 		console.debug(error)
 	}
@@ -45,8 +45,7 @@ const joinConversation = async(token) => {
  */
 const leaveConversation = async function(token) {
 	try {
-		const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
-		return response
+		signaling.leaveRoom(token)
 	} catch (error) {
 		console.debug(error)
 	}

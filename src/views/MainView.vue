@@ -8,8 +8,7 @@
 		</template>
 		<template v-else>
 			<CallView
-				:token="token"
-				:signaling="signaling" />
+				:token="token" />
 		</template>
 	</div>
 </template>
@@ -20,7 +19,6 @@ import MessagesList from '../components/MessagesList/MessagesList'
 import NewMessageForm from '../components/NewMessageForm/NewMessageForm'
 import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
-import Signaling from '../utils/signaling'
 
 export default {
 	name: 'MainView',
@@ -35,12 +33,6 @@ export default {
 			type: String,
 			required: true,
 		},
-	},
-
-	data() {
-		return {
-			signaling: null,
-		}
 	},
 
 	computed: {
@@ -69,19 +61,6 @@ export default {
 	watch: {
 		token: function(token) {
 			this.loadSignalingSettings(token)
-		},
-	},
-
-	mounted() {
-		this.signaling = Signaling
-		this.loadSignalingSettings(this.token)
-	},
-
-	methods: {
-		loadSignalingSettings(token) {
-			console.debug('Loading signaling settings for ' + this.token)
-			// FIXME reset the settings so we can check it later on if loading is finished
-			this.signaling.loadSettings(token)
 		},
 	},
 }

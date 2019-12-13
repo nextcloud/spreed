@@ -55,9 +55,8 @@
 import LocalVideo from './LocalVideo'
 import Screen from './Screen'
 import Video from './Video'
-import LocalMediaModel from '../../utils/webrtc/models/LocalMediaModel'
-import LocalCallParticipantModel from '../../utils/webrtc/models/LocalCallParticipantModel'
-import CallParticipantCollection from '../../utils/webrtc/models/CallParticipantCollection'
+
+import { localMediaModel, localCallParticipantModel, callParticipantCollection } from '../../utils/webrtc/index'
 
 export default {
 
@@ -67,17 +66,6 @@ export default {
 		LocalVideo,
 		Screen,
 		Video,
-	},
-
-	props: {
-		token: {
-			type: String,
-			required: true,
-		},
-		signaling: {
-			type: Object,
-			required: true,
-		},
 	},
 
 	data() {
@@ -92,9 +80,9 @@ export default {
 			},
 			sharedDatas: {},
 
-			localMediaModel: new LocalMediaModel(),
-			localCallParticipantModel: new LocalCallParticipantModel(),
-			callParticipantCollection: new CallParticipantCollection(),
+			localMediaModel: localMediaModel,
+			localCallParticipantModel: localCallParticipantModel,
+			callParticipantCollection: callParticipantCollection,
 		}
 	},
 
