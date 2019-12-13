@@ -26,7 +26,8 @@
 				:size="avatarSize"
 				:disable-menu="true"
 				:disable-tooltip="true"
-				:user="userId" />
+				:user="userId"
+				:display-name="displayName" />
 			<Avatar v-else
 				:size="avatarSize"
 				:disable-menu="true"
@@ -75,6 +76,10 @@ export default {
 
 		userId() {
 			return this.$store.getters.getUserId()
+		},
+
+		displayName() {
+			return this.$store.getters.getDisplayName()
 		},
 
 		guestName() {
