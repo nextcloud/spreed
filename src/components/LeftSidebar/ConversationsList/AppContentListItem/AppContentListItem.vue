@@ -103,7 +103,7 @@ export default {
 	},
 	computed: {
 		isActive() {
-			return this.to && this.$store.getters.getToken === this.to.params.token
+			return this.to && this.$store.getters.getToken() === this.to.params.token
 		},
 		hasDetails() {
 			return (this.details !== '' && !this.$slots.counter)

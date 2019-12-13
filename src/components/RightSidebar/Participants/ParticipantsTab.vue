@@ -94,7 +94,7 @@ export default {
 			return !!this.token && this.show
 		},
 		token() {
-			return this.$store.getters.getToken
+			return this.$store.getters.getToken()
 		},
 		conversation() {
 			if (this.$store.getters.conversations[this.token]) {
