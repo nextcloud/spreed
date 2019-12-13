@@ -147,6 +147,11 @@ export default {
 	},
 
 	beforeMount() {
+		if (this.$route.name === 'conversation') {
+			// Update current token in the token store
+			this.$store.dispatch('updateToken', this.$route.params.token)
+		}
+
 		window.addEventListener('resize', this.onResize)
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 
