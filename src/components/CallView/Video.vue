@@ -44,21 +44,21 @@
 		</div>
 		<div class="mediaIndicator">
 			<button v-show="!connectionStateFailedNoRestart"
-				class="muteIndicator force-icon-white-in-call icon-shadow icon-audio-off"
+				class="muteIndicator forced-white icon-audio-off"
 				:class="audioButtonClass"
 				disabled="true" />
 			<button v-show="!connectionStateFailedNoRestart && model.attributes.videoAvailable"
 				v-tooltip="videoButtonTooltip"
-				class="hideRemoteVideo force-icon-white-in-call icon-shadow"
+				class="hideRemoteVideo forced-white"
 				:class="videoButtonClass"
 				@click="toggleVideo" />
 			<button v-show="!connectionStateFailedNoRestart"
 				v-tooltip="t('spreed', 'Show screen')"
-				class="screensharingIndicator force-icon-white-in-call icon-shadow icon-screen"
+				class="screensharingIndicator forced-white icon-screen"
 				:class="screenSharingButtonClass"
 				@click="switchToScreen" />
 			<button v-show="connectionStateFailedNoRestart"
-				class="iceFailedIndicator force-icon-white-in-call icon-shadow icon-error"
+				class="iceFailedIndicator forced-white icon-error"
 				:class="{ 'not-failed': !connectionStateFailedNoRestart }"
 				disabled="true" />
 		</div>
@@ -232,3 +232,9 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+.forced-white {
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+</style>

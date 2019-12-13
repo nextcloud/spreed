@@ -25,7 +25,6 @@
 				id="mute"
 				v-tooltip="audioButtonTooltip"
 				:class="audioButtonClass"
-				class="force-icon-white-in-call icon-shadow"
 				@click="toggleAudio" />
 			<span v-show="model.attributes.audioAvailable"
 				ref="volumeIndicator"
@@ -36,14 +35,13 @@
 			id="hideVideo"
 			v-tooltip="videoButtonTooltip"
 			:class="videoButtonClass"
-			class="force-icon-white-in-call icon-shadow"
 			@click="toggleVideo" />
 		<button
 			v-if="!screenSharingButtonHidden"
 			id="screensharing-button"
 			v-tooltip="screenSharingButtonTooltip"
 			:class="screenSharingButtonClass"
-			class="app-navigation-entry-utils-menu-button force-icon-white-in-call icon-shadow"
+			class="app-navigation-entry-utils-menu-button"
 			@click="toggleScreenSharingMenu" />
 		<div id="screensharing-menu" :class="{ open: screenSharingMenuOpen }" class="app-navigation-entry-menu">
 			<ul>
@@ -98,6 +96,10 @@ export default {
 			type: Object,
 			required: true,
 		},
+		hasDarkBackground: {
+			type: Boolean,
+			required: true,
+		},
 	},
 
 	data() {
@@ -118,7 +120,7 @@ export default {
 				'audio-disabled': this.model.attributes.audioAvailable && !this.model.attributes.audioEnabled,
 				'icon-audio-off': !this.model.attributes.audioAvailable || !this.model.attributes.audioEnabled,
 				'no-audio-available': !this.model.attributes.audioAvailable,
-				'local-video-disabled': !this.model.attributes.videoEnabled,
+				'forced-white': this.model.attributes.videoEnabled || this.hasDarkBackground,
 			}
 		},
 
@@ -171,7 +173,7 @@ export default {
 				'video-disabled': this.model.attributes.videoAvailable && !this.model.attributes.videoEnabled,
 				'icon-video-off': !this.model.attributes.videoAvailable || !this.model.attributes.videoEnabled,
 				'no-video-available': !this.model.attributes.videoAvailable,
-				'local-video-disabled': !this.model.attributes.videoEnabled,
+				'forced-white': this.model.attributes.videoEnabled || this.hasDarkBackground,
 			}
 		},
 
@@ -196,7 +198,7 @@ export default {
 				'icon-screen': this.model.attributes.localScreen,
 				'screensharing-disabled': !this.model.attributes.localScreen,
 				'icon-screen-off': !this.model.attributes.localScreen,
-				'local-video-disabled': !this.model.attributes.videoEnabled,
+				'forced-white': this.model.attributes.videoEnabled || this.hasDarkBackground,
 			}
 		},
 
@@ -352,3 +354,9 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+.forced-white {
+	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
+}
+</style>

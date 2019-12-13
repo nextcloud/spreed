@@ -37,6 +37,7 @@
 		<LocalMediaControls ref="localMediaControls"
 			:model="localMediaModel"
 			:local-call-participant-model="localCallParticipantModel"
+			:has-dark-background="hasDarkBackground"
 			@switchScreenToId="$emit('switchScreenToId', $event)" />
 	</div>
 </template>
@@ -62,6 +63,10 @@ export default {
 		},
 		localCallParticipantModel: {
 			type: Object,
+			required: true,
+		},
+		hasDarkBackground: {
+			type: Boolean,
 			required: true,
 		},
 	},

@@ -37,6 +37,7 @@
 			<LocalVideo ref="localVideo"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
+				:has-dark-background="hasDarkBackground"
 				@switchScreenToId="_switchScreenToId" />
 		</div>
 		<div id="screens">
