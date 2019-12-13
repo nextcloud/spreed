@@ -7,7 +7,9 @@
 			<NewMessageForm />
 		</template>
 		<template v-else>
-			<CallView :token="token" />
+			<CallView
+				:token="token"
+				:signaling="signaling" />
 		</template>
 	</div>
 </template>

@@ -67,15 +67,11 @@ export default {
 	},
 
 	props: {
-		localMediaModel: {
-			type: Object,
+		token: {
+			type: String,
 			required: true,
 		},
-		localCallParticipantModel: {
-			type: Object,
-			required: true,
-		},
-		callParticipantCollection: {
+		signaling: {
 			type: Object,
 			required: true,
 		},
