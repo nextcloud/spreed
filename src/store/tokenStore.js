@@ -20,32 +20,39 @@
  *
  */
 
-import Vue from 'vue'
-import Vuex, { Store } from 'vuex'
-import actorStore from './actorStore'
-import conversationsStore from './conversationsStore'
-import messagesStore from './messagesStore'
-import participantsStore from './participantsStore'
-import quoteReplyStore from './quoteReplyStore'
-import sidebarStore from './sidebarStore'
-import tokenStore from './tokenStore'
+const state = {
+	token: '',
+}
 
-Vue.use(Vuex)
-
-const mutations = {}
-
-export default new Store({
-	modules: {
-		actorStore,
-		conversationsStore,
-		messagesStore,
-		participantsStore,
-		quoteReplyStore,
-		sidebarStore,
-		tokenStore,
+const getters = {
+	getToken: (state) => () => {
+		return state.token
 	},
+}
 
-	mutations,
+const mutations = {
+	/**
+	 * Updates the token
+	 *
+	 * @param {object} state current store state;
+	 * @param {string} newToken The token of the active conversation
+	 */
+	updateToken(state, newToken) {
+		state.token = newToken
+	},
+}
 
-	strict: process.env.NODE_ENV !== 'production',
-})
+const actions = {
+
+	/**
+	 * Updates the token
+	 *
+	 * @param {object} context default store context;
+	 * @param {string} newToken The token of the active conversation
+	 */
+	updateToken(context, newToken) {
+		context.commit('updateToken', newToken)
+	},
+}
+
+export default { state, mutations, getters, actions }

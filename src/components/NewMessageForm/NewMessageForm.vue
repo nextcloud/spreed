@@ -80,7 +80,7 @@ export default {
 		 * @returns {String}
 		 */
 		token() {
-			return this.$route.params.token
+			return this.$store.getters.getToken()
 		},
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
