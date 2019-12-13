@@ -92,11 +92,9 @@ export default {
 			},
 			sharedDatas: {},
 
-			localMediaModel: {},
-			localCallParticipantModel: {},
-			callParticipantCollection: {
-				callParticipantModels: [],
-			},
+			localMediaModel: new LocalMediaModel(),
+			localCallParticipantModel: new LocalCallParticipantModel(),
+			callParticipantCollection: new CallParticipantCollection(),
 		}
 	},
 
@@ -215,12 +213,6 @@ export default {
 			this._setScreenVisible()
 		},
 
-	},
-
-	mounted() {
-		this.localMediaModel = new LocalMediaModel()
-		this.localCallParticipantModel = new LocalCallParticipantModel()
-		this.callParticipantCollection = new CallParticipantCollection()
 	},
 
 	methods: {

@@ -74,7 +74,7 @@ export default {
 	computed: {
 
 		userId() {
-			return OCA.Talk.getCurrentUser().uid
+			return this.$store.getters.getUserId()
 		},
 
 		guestName() {
