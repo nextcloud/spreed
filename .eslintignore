@@ -1,8 +1,2 @@
-/js/admin/*
-/js/collections.js
-/js/simplewebrtc/bundled.js
-/js/tests/*
-/js/vendor/*
-/js/**/templates.js
+/js/*
 /tests/*
-/vue/*
