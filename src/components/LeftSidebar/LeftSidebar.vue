@@ -21,9 +21,12 @@
 
 <template>
 	<AppNavigation class="vue navigation">
-		<SearchBox
-			v-model="searchText"
-			@input="debounceFetchSearchResults" />
+		<div class="new-conversation">
+			<SearchBox
+				v-model="searchText"
+				@input="debounceFetchSearchResults" />
+			<NewGroupConversation />
+		</div>
 		<ul>
 			<Caption v-if="isSearching"
 				:title="t('spreed', 'Conversations')" />
@@ -43,13 +46,6 @@
 				<GroupsList v-if="searchResultsGroups.length !== 0" :groups="searchResultsGroups" />
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
-
-				<Caption
-					:title="t('spreed', 'New conversation')" />
-				<NewPublicConversation
-					:search-text="searchText" />
-				<NewPrivateConversation
-					:search-text="searchText" />
 			</template>
 		</ul>
 	</AppNavigation>
@@ -62,13 +58,12 @@ import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
 import GroupsList from './GroupsList/GroupsList'
 import Hint from '../Hint'
-import NewPrivateConversation from './NewConversation/NewPrivateConversation'
-import NewPublicConversation from './NewConversation/NewPublicConversation'
-import SearchBox from './NewConversation/SearchBox'
+import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
 import { searchPossibleConversations } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
+import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 
 export default {
 
@@ -81,9 +76,8 @@ export default {
 		ConversationsList,
 		GroupsList,
 		Hint,
-		NewPrivateConversation,
-		NewPublicConversation,
 		SearchBox,
+		NewGroupConversation,
 	},
 
 	data() {
@@ -144,6 +138,12 @@ export default {
 <style lang="scss" scoped>
 
 @import '../../assets/variables';
+
+.new-conversation {
+	display: flex;
+	padding: 6px;
+	border-bottom: 1px solid var(--color-border-dark);
+}
 
 .navigation {
 	width: $navigation-width;

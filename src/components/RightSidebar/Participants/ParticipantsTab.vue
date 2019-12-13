@@ -1,4 +1,4 @@
-<!--
+x<!--
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
@@ -54,7 +54,7 @@ import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
 import ParticipantsList from './ParticipantsList/ParticipantsList'
-import SearchBox from '../../LeftSidebar/NewConversation/SearchBox'
+import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'

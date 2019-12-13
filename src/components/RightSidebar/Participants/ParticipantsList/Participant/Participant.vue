@@ -21,7 +21,11 @@
 
 <template>
 	<li class="participant-row"
-		:class="{ offline: isOffline, currentUser: isSelf, guestUser: isGuest }"
+		:class="{
+			'offline': isOffline,
+			'currentUser': isSelf,
+			'guestUser': isGuest,
+			'selected': isSelected }"
 		@click="handleClick">
 		<div class="participant-row__avatar-wrapper">
 			<Avatar
@@ -48,6 +52,7 @@
 				{{ t('spreed', 'Remove participant') }}
 			</ActionButton>
 		</Actions>
+		<div v-if="isSelected" class="icon-checkmark participant-row__utils utils__checkmark" />
 	</li>
 </template>
 
@@ -75,6 +80,14 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * This parameter is automatically computed by the ParticipantsList component
+		 * when both component are used in the new-group-conversation-form context
+		 * @returns {array}
+		 */
+		isSelected() {
+			return this.participant.selected
+		},
 		/**
 		 * If the Participant component is used as to display a search result, it will
 		 * return true. We use this not to display actions on the searched contacts and
@@ -213,11 +226,19 @@ export default {
 
 <style lang="scss" scoped>
 
+.selected {
+	background-color: var(--color-primary-light);
+	border-radius: 5px;
+}
+
 .participant-row {
 	display: flex;
 	align-items: center;
 	height: 44px;
 	cursor: pointer;
+	padding: 0 5px;
+    margin: 5px 0;
+    border-radius: 22px;
 	&__avatar-wrapper {
 		height: 32px;
 		width: 32px;
@@ -227,6 +248,7 @@ export default {
 		display: inline-block;
 		vertical-align: middle;
 		line-height: normal;
+		cursor: pointer;
 	}
 	&__moderator-indicator {
 		color: var(--color-text-maxcontrast);
@@ -236,9 +258,16 @@ export default {
 	&__icon {
 		width: 32px;
 		height: 44px;
+		cursor: pointer;
 	}
-	&__actions {
+	&__utils {
 		margin-left: auto;
+	}
+}
+
+.utils {
+	&__checkmark {
+		margin-right: 11px;
 	}
 }
 

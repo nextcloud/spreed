@@ -20,37 +20,47 @@
 -->
 
 <template>
-	<li class="app-navigation-caption">
-		{{ title }}
-	</li>
+	<div class="conversation-type">
+		<input
+			id="checkbox"
+			type="checkbox"
+			class="checkbox"
+			:checked="value"
+			@change="handleInput">
+		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Allow guests to join via link ') }}</label>
+		<p class="conversation-type__hint">
+			{{ t('spreed', `If checked, you will be able to share this conversation with unregistered users once the conversation is created.`) }}
+		</p>
+	</div>
 </template>
 
 <script>
+
 export default {
-	name: 'Caption',
+	name: 'SetConversationType',
 	props: {
-		title: {
-			type: String,
+		value: {
+			type: Boolean,
 			required: true,
 		},
 	},
+	methods: {
+		handleInput(event) {
+			this.$emit('input', event.target.checked)
+		},
+	},
+
 }
+
 </script>
 
 <style lang="scss" scoped>
-	.app-navigation-caption {
-		color: var(--color-primary);
-		line-height: 44px;
-		list-style-type:none;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		box-shadow: none !important;
-		user-select: none;
-		pointer-events: none;
-		border-bottom: 1px solid var(--color-border-dark);
 
-		&:not(:first-child) {
-			margin-top: 22px;
-		}
+.conversation-type {
+	margin: 20px 0;
+	&__hint {
+		padding: 10px 0;
+		color: var(--color-text-light)
 	}
+}
 </style>

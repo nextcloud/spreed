@@ -21,13 +21,27 @@
 
 <template>
 	<div>
-		<ul>
+		<ul v-if="!loading && !noResults"
+			:class="{'scrollable': scrollable }"
+			:style="{'height': height}">
 			<Participant
-				v-for="participant in items"
+				v-for="participant in participants"
 				:key="participant.userId"
 				:participant="participant"
 				@clickParticipant="handleClickParticipant" />
 		</ul>
+		<template v-if="loading">
+			<div class="icon-loading participants-list__icon" />
+			<p class="participants-list__warning">
+				{{ t('spreed', 'Contacts loading') }}
+			</p>
+		</template>
+		<template v-if="noResults">
+			<div class="icon-error participants-list__icon" />
+			<p class="participants-list__warning">
+				{{ t('spreed', 'No results') }}
+			</p>
+		</template>
 	</div>
 </template>
 
@@ -35,6 +49,7 @@
 
 import Participant from './Participant/Participant'
 import { addParticipant } from '../../../../services/participantsService'
+import Vue from 'vue'
 
 export default {
 	name: 'ParticipantsList',
@@ -42,35 +57,143 @@ export default {
 	components: {
 		Participant,
 	},
-	/**
-	 * List of searched users or groups
-	 */
+
 	props: {
+		/**
+		 * List of searched users or groups
+		 */
 		items: {
 			type: Array,
 			required: true,
 		},
+		/**
+		 * If true, clicking the participant will add it to to the current conversation.
+		 * This behavior is used in the right sidebar for already existing conversations.
+		 * If false, clicking on the participant will add the participant to the
+		 * `selectedParticipants` array in the data.
+		 */
+		addOnClick: {
+			type: Boolean,
+			default: true,
+		},
+		/**
+		 * A fixed height can be passed in e.g. ('250px'). This will limit the height of
+		 * the ul and make it scrollable.
+		 */
+		height: {
+			type: String,
+			default: 'auto',
+		},
+		/**
+		 * Display loading state instead of list.
+		 */
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+		/**
+		 * Display no-results state instead of list.
+		 */
+		noResults: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
+	data() {
+		return {
+			selectedParticipants: [],
+		}
 	},
 
 	computed: {
 		token() {
 			return this.$route.params.token
 		},
+		/**
+		 * Creates a new array that combines the items (participants received as a prop)
+		 * with the current selectedParticipants so that each participant in the returned
+		 * array has a new 'selected' boolean key.
+		 * @returns {array} An array of 'participant' objects
+		 */
+		participants() {
+			/**
+			 * Compute this only in the new group conversation form.
+			 */
+			if (this.addOnClick === false) {
+				if (this.items !== []) {
+					const participants = this.items.slice()
+					participants.forEach(item => {
+						if (this.selectedParticipants.indexOf(item) !== -1) {
+							Vue.set(item, 'selected', true)
+						} else {
+							Vue.set(item, 'selected', false)
+						}
+					})
+					return participants
+				} else {
+					return []
+				}
+			} else {
+				return this.items
+			}
+		},
+		scrollable() {
+			return this.height !== 'auto'
+		},
 	},
 
 	methods: {
 		async handleClickParticipant(participant) {
-			try {
-				await addParticipant(this.token, participant.id, participant.source)
-				this.$emit('refreshCurrentParticipants')
-			} catch (exeption) {
-				console.debug(exeption)
+			if (this.addOnClick) {
+				/**
+				 * Add the clicked participant to the current conversation
+				 */
+				try {
+					await addParticipant(this.token, participant.id, participant.source)
+					this.$emit('refreshCurrentParticipants')
+				} catch (exeption) {
+					console.debug(exeption)
+				}
+			} else {
+				/**
+				 * Remove the clicked participant from the selected participants list
+				 */
+				if (this.selectedParticipants.indexOf(participant) !== -1) {
+					this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) => {
+						if (selectedParticipant.id === participant.id) {
+							return false
+						} return true
+					})
+					this.$emit('updateSelectedParticipants', this.selectedParticipants)
+				} else {
+					/**
+					 * Add the clicked participant from the selected participants list
+					 */
+					this.selectedParticipants = [...this.selectedParticipants, participant]
+					this.$emit('updateSelectedParticipants', this.selectedParticipants)
+				}
 			}
+
 		},
 	},
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.scrollable {
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.participants-list {
+	&__icon {
+		margin-top: 40px;
+	}
+	&__warning {
+		margin-top: 20px;
+		text-align: center;
+	}
+}
 
 </style>

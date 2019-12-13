@@ -20,37 +20,49 @@
 -->
 
 <template>
-	<li class="app-navigation-caption">
-		{{ title }}
-	</li>
+	<div class="set-conversation-name">
+		<input
+			ref="conversationName"
+			v-observe-visibility="visibilityChanged"
+			type="text"
+			:value="value"
+			class="conversation-name"
+			:placeholder="t('spreed', 'Conversation name')"
+			@input="handleInput">
+	</div>
 </template>
 
 <script>
+
 export default {
-	name: 'Caption',
+	name: 'SetConversationName',
 	props: {
-		title: {
+		value: {
 			type: String,
 			required: true,
 		},
 	},
+
+	methods: {
+		handleInput(event) {
+			this.$emit('input', event.target.value)
+		},
+		visibilityChanged(isVisible) {
+			if (isVisible) {
+				// Focus the input field of the current componnent.
+				this.$refs.conversationName.focus()
+			}
+		},
+	},
+
 }
+
 </script>
 
 <style lang="scss" scoped>
-	.app-navigation-caption {
-		color: var(--color-primary);
-		line-height: 44px;
-		list-style-type:none;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		box-shadow: none !important;
-		user-select: none;
-		pointer-events: none;
-		border-bottom: 1px solid var(--color-border-dark);
 
-		&:not(:first-child) {
-			margin-top: 22px;
-		}
-	}
+.conversation-name {
+	width: 100%;
+	font-size: 16px;
+}
 </style>
