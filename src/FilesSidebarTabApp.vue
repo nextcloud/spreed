@@ -31,17 +31,57 @@
 </template>
 
 <script>
+
+import { getFileConversation } from './services/filesIntegrationServices'
+import CancelableRequest from './utils/cancelableRequest'
+import Axios from '@nextcloud/axios'
+
 export default {
+
 	name: 'FilesSidebarTabApp',
+
 	data() {
 		return {
 			// needed for reactivity
 			Talk: OCA.Talk,
+			/**
+			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+			 */
+			cancelGetFileConversation: () => {},
 		}
 	},
+
 	computed: {
 		fileInfo() {
-			return this.Talk.fileInfo
+			return this.Talk.fileInfo || {}
+		},
+		fileId() {
+			return this.fileInfo.id
+		},
+		token() {
+			return this.$store.getters.getToken()
+		},
+	},
+
+	methods: {
+		async getFileConversation() {
+			// Clear previous requests if there's one pending
+			this.cancelGetFileConversation('canceled')
+			// Get a new cancelable request function and cancel function pair
+			const { request, cancel } = CancelableRequest(getFileConversation)
+			// Assign the new cancel function to our data value
+			this.cancelGetFileConversation = cancel
+			// Make the request
+			try {
+				const response = await request({ fileId: this.fileId })
+				this.$store.dispatch('updateToken', response.data.ocs.data.token)
+			} catch (exception) {
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
+				} else {
+					console.debug(exception)
+				}
+			}
 		},
 	},
 }
