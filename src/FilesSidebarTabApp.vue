@@ -19,23 +19,82 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-	<p>Talk tab coming soon</p>
+	<MainView v-if="token !==''" :token="token" />
 </template>
 
 <script>
+
+import { getFileConversation } from './services/filesIntegrationServices'
+import CancelableRequest from './utils/cancelableRequest'
+import MainView from './views/MainView'
+import Axios from 'axios'
+
+
 export default {
+
 	name: 'FilesSidebarTabApp',
+
 	data() {
 		return {
-			// needed for reactivity
-			Talk: OCA.Talk,
+		// needed for reactivity
+	 	Talk: OCA.Talk,
+		/**
+		 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+		 */
+		cancelGetFileConversation: () => {},
 		}
 	},
+
+	components: {
+		MainView,
+	},
+
+	mounted() {
+		console.log(this.Talk.fileInfo)
+		this.getFileConversation()
+	},
+
+	methods: {
+		async getFileConversation() {
+			/**
+			 * Clear previous requests if there's one pending
+			 */
+			this.cancelGetFileConversation('canceled')
+			debugger
+			// Get a new cancelable request function and cancel function pair
+			const { request, cancel } = CancelableRequest(getFileConversation)
+			// Assign the new cancel function to our data value
+			this.cancelGetFileConversation = cancel
+			// Make the request
+			try {
+				const response = await request(this.fileId)
+				consle.log(response)
+				this.$store.dispatch('updateToken', response.data.ocs.data.token)
+				
+			} catch (exception) {
+				console.debug(exception)
+				if (Axios.isCancel(exception)) {
+					console.debug('The request has been canceled', exception)
+				}
+			}
+		},
+	},
+
 	computed: {
 		fileInfo() {
 			return this.Talk.fileInfo
 		},
-	},
+		fileId() {
+			return this.Talk.fileInfo.id
+		},
+		token() {
+			if (this.$store.getters.getToken()) {
+				return this.$store.getters.getToken()
+			} else {
+				return ''
+			}
+		}
+	}
 }
 </script>
 
