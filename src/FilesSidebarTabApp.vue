@@ -19,7 +19,7 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-	<MainView v-if="token !==''" :token="token" />
+	<MainView :token="token" />
 </template>
 
 <script>
@@ -27,30 +27,45 @@
 import { getFileConversation } from './services/filesIntegrationServices'
 import CancelableRequest from './utils/cancelableRequest'
 import MainView from './views/MainView'
-import Axios from 'axios'
-
+import Axios from '@nextcloud/axios'
 
 export default {
 
 	name: 'FilesSidebarTabApp',
 
-	data() {
-		return {
-		// needed for reactivity
-	 	Talk: OCA.Talk,
-		/**
-		 * Stores the cancel function returned by `cancelableLookForNewMessages`,
-		 */
-		cancelGetFileConversation: () => {},
-		}
-	},
-
 	components: {
 		MainView,
 	},
 
+	data() {
+		return {
+			// needed for reactivity
+			Talk: OCA.Talk,
+			/**
+			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
+			 */
+			cancelGetFileConversation: () => {},
+		}
+	},
+
+	computed: {
+		fileInfo() {
+			return this.Talk.fileInfo || {}
+		},
+		fileId() {
+			return this.fileInfo.id || {}
+		},
+		token() {
+			if (this.$store.getters.getToken()) {
+				return this.$store.getters.getToken()
+			} else {
+				return ''
+			}
+		},
+	},
+
 	mounted() {
-		console.log(this.Talk.fileInfo)
+		console.log(this.fileInfo)
 		this.getFileConversation()
 	},
 
@@ -67,10 +82,10 @@ export default {
 			this.cancelGetFileConversation = cancel
 			// Make the request
 			try {
-				const response = await request(this.fileId)
-				consle.log(response)
+				const response = await request({ fileId: this.fileId } )
+				console.log(response)
 				this.$store.dispatch('updateToken', response.data.ocs.data.token)
-				
+
 			} catch (exception) {
 				console.debug(exception)
 				if (Axios.isCancel(exception)) {
@@ -79,22 +94,6 @@ export default {
 			}
 		},
 	},
-
-	computed: {
-		fileInfo() {
-			return this.Talk.fileInfo
-		},
-		fileId() {
-			return this.Talk.fileInfo.id
-		},
-		token() {
-			if (this.$store.getters.getToken()) {
-				return this.$store.getters.getToken()
-			} else {
-				return ''
-			}
-		}
-	}
 }
 </script>
 
