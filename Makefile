@@ -58,10 +58,12 @@ appstore:
 	--exclude=bower.json \
 	--exclude=.bowerrc \
 	--exclude=/build \
+	--exclude=check-vuejs-builds.sh \
 	--exclude=docs \
 	--exclude=.drone.yml \
 	--exclude=.eslintignore \
 	--exclude=.eslintrc.yml \
+	--exclude=.eslintrc.js \
 	--exclude=.git \
 	--exclude=.gitattributes \
 	--exclude=.github \
@@ -71,6 +73,7 @@ appstore:
 	--exclude=js/**.js.map \
 	--exclude=l10n/no-php \
 	--exclude=.l10nignore \
+	--exclude=mkdocs.yml \
 	--exclude=Makefile \
 	--exclude=node_modules \
 	--exclude=package.json \
@@ -81,9 +84,11 @@ appstore:
 	--exclude=.scrutinizer.yml \
 	--exclude=src \
 	--exclude=.stylelintrc \
+	--exclude=.stylelintignore \
 	--exclude=tests \
 	--exclude=.travis.yml \
 	--exclude=.tx \
+	--exclude=webpack.*.js \
 	$(project_dir)/  $(sign_dir)/$(app_name)
 	@if [ -f $(cert_dir)/$(app_name).key ]; then \
 		echo "Signing app files…"; \
