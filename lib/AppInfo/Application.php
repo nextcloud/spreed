@@ -37,6 +37,7 @@ use OCA\Talk\Events\ChatEvent;
 use OCA\Talk\Events\RoomEvent;
 use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
+use OCA\Talk\Flow\Operation;
 use OCA\Talk\Listener;
 use OCA\Talk\Listener\LoadSidebarListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
@@ -102,6 +103,7 @@ class Application extends App {
 		CommandListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
+		Operation::register($dispatcher);
 
 		$dispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
 		$dispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
