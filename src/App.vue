@@ -171,6 +171,14 @@ export default {
 		 */
 		EventBus.$once('conversationsReceived', () => {
 			if (this.$route.name === 'conversation') {
+				if (!getCurrentUser()) {
+					EventBus.$once('joinedConversation', () => {
+						// FIXME Refresh the data now that the user joined the conversation
+						// The join request returns this data already, but it's lost in the signaling code
+						this.fetchSingleConversation(this.token)
+					})
+				}
+
 				// Adjust the page title once the conversation list is loaded
 				this.setPageTitle(this.getConversationName(this.token), false)
 				// Update current token in the token store
@@ -298,7 +306,19 @@ export default {
 			 */
 			const response = await fetchConversation(token)
 			// this.$store.dispatch('purgeConversationsStore')
-			this.$store.dispatch('addConversation', response.data.ocs.data)
+			const conversationData = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversationData)
+			this.$store.dispatch('addParticipant', {
+				token,
+				participant: {
+					userId: getCurrentUser() ? getCurrentUser().uid : '', // TODO Does this work for public shares while being logged in, etc?
+					displayName: getCurrentUser() ? getCurrentUser().displayName : '', // TODO guest name from localstore?
+					inCall: conversationData.participantFlags,
+					lastPing: conversationData.lastPing,
+					sessionId: conversationData.sessionId,
+					participantType: conversationData.participantType,
+				},
+			})
 
 			/**
 			 * Emits a global event that is used in App.vue to update the page title once the

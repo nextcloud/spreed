@@ -856,7 +856,9 @@ Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
 		// callback, leading to two entries for anonymous participants.
 		console.log('Not connected to signaling server yet, defer joining room', token)
 		this.currentRoomToken = token
-		return
+		return new Promise((resolve, reject) => {
+			// FIXME ?
+		})
 	}
 
 	return Signaling.Base.prototype.joinRoom.apply(this, arguments)
