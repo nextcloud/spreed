@@ -191,7 +191,7 @@ OC.L10N.register(
     "Create a new group conversation" : "Neue Gruppenunterhaltung erstellen",
     "Back" : "Zurück",
     "Add participants" : "Teilnehmer hinzufügen",
-    "Create conversation" : "Erstelle Unterhaltung",
+    "Create conversation" : "Unterhaltung erstellen",
     "Close" : "Schließen",
     "Search participants" : "Suche Teilnehmer",
     "An error occurred while performing the search" : "Es ist ein Fehler während der Suche aufgetreten",
