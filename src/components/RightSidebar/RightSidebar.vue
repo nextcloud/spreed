@@ -198,28 +198,17 @@ export default {
 
 <style lang="scss" scoped>
 
-/* Force scroll bars in tabs content instead of in whole sidebar. */
-::v-deep .app-sidebar-tabs__content {
-	overflow: hidden;
-
-	section {
-		height: 100%;
-
-		overflow-y: auto;
-	}
-}
-
-.app-sidebar-tabs__content #tab-chat {
-	/* Remove padding to maximize the space for the chat view. */
-	padding: 0;
-}
-
 /** TODO: fix these in the nextcloud-vue library **/
 
-::v-deep .app-sidebar-header__menu {
+::v-deep .app-sidebar-header {
+	&__menu {
 	top: 6px !important;
 	margin-top: 0 !important;
 	right: 54px !important;
+	}
+	&__title {
+		line-height: inherit;
+	}
 }
 ::v-deep .app-sidebar__close {
 	top: 6px !important;
