@@ -326,7 +326,8 @@ export default {
 		&__text {
 			flex: 1 1 400px;
 			color: var(--color-text-light);
-
+			overflow-wrap: break-word;
+			max-width: $message-max-width;
 			&.single-emoji {
 				font-size: 250%;
 				line-height: 100%;

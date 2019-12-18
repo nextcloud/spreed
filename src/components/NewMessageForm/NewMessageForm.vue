@@ -193,7 +193,7 @@ export default {
 
 .new-message {
 	margin: auto;
-	max-width: $message-max-width + 88px;
+	max-width: $messages-list-max-width + 88px;
 	position: sticky;
 	position: -webkit-sticky;
 	bottom: 0;

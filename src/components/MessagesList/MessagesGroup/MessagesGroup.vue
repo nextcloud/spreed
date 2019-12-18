@@ -162,7 +162,7 @@ export default {
 }
 
 .wrapper {
-	max-width: $message-max-width;
+	max-width: $messages-list-max-width;
 	display: flex;
 	margin: auto;
 	padding: 0;
