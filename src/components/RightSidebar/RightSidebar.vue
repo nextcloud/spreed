@@ -26,20 +26,24 @@
 		:title="conversation.displayName"
 		:starred.sync="conversation.isFavorite"
 		@close="handleClose">
-		<template v-if="conversationHasSettings"
+		<template v-if="conversationHasSettings && showModerationMenu"
 			v-slot:secondary-actions>
 			<ActionText
+				v-if="canFullModerate"
 				icon="icon-shared"
 				:title="t('spreed', 'Guests')" />
 			<ActionCheckbox
+				v-if="canFullModerate"
 				:checked="isSharedPublicly"
 				@change="toggleGuests">
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
 			<ActionText
+				v-if="canFullModerate"
 				icon="icon-lobby"
 				:title="t('spreed', 'Webinar')" />
 			<ActionCheckbox
+				v-if="canFullModerate"
 				:checked="hasLobbyEnabled"
 				@change="toggleLobby">
 				{{ t('spreed', 'Enable lobby') }}
@@ -84,7 +88,7 @@ import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import MessagesList from '../MessagesList/MessagesList'
 import NewMessageForm from '../NewMessageForm/NewMessageForm'
 import { CollectionList } from 'nextcloud-vue-collections'
-import { CONVERSATION, WEBINAR } from '../../constants'
+import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
 
 export default {
@@ -157,6 +161,21 @@ export default {
 		},
 		isSearching() {
 			return this.searchText !== ''
+		},
+		participantType() {
+			return this.conversation.participantType
+		},
+
+		canFullModerate() {
+			return this.participantType === PARTICIPANT.TYPE.OWNER || this.participantType === PARTICIPANT.TYPE.MODERATOR
+		},
+
+		canModerate() {
+			return this.conversation.type !== CONVERSATION.TYPE.ONE_TO_ONE && (this.canFullModerate || this.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR)
+		},
+
+		showModerationMenu() {
+			return this.canModerate && (this.canFullModerate || this.isSharedPublicly)
 		},
 	},
 
