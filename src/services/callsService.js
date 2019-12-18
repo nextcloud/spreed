@@ -22,7 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { joinCall as webRtcJoinCall, signaling } from '../utils/webrtc/index'
+import { joinCall as webRtcJoinCall, getSignaling } from '../utils/webrtc/index'
 
 /**
  * Join a call as participant
@@ -44,6 +44,8 @@ const joinCall = async function(token, flags) {
  */
 const leaveCall = async function(token) {
 	try {
+		const signaling = await getSignaling()
+
 		await signaling.leaveCurrentCall()
 	} catch (error) {
 		console.debug('Error while leaving call: ', error)

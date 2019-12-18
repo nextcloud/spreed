@@ -22,7 +22,7 @@
 
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
-import { signaling } from '../utils/webrtc/index'
+import { getSignaling } from '../utils/webrtc/index'
 import { EventBus } from '../services/EventBus'
 
 /**
@@ -33,6 +33,8 @@ import { EventBus } from '../services/EventBus'
  */
 const joinConversation = async(token) => {
 	try {
+		const signaling = await getSignaling()
+
 		signaling.joinRoom(token).then(() => {
 			EventBus.$emit('joinedConversation')
 		})
@@ -52,6 +54,8 @@ const joinConversation = async(token) => {
  */
 const leaveConversation = async function(token) {
 	try {
+		const signaling = await getSignaling()
+
 		signaling.leaveRoom(token)
 		// FIXME Signaling should not handle leaving a conversation
 		// const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)

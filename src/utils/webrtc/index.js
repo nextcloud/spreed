@@ -33,11 +33,36 @@ const callParticipantCollection = new CallParticipantCollection()
 const localCallParticipantModel = new LocalCallParticipantModel()
 const localMediaModel = new LocalMediaModel()
 
-async function connectSignaling() {
-	await Signaling.loadSettings(null)
-	signaling = Signaling.createConnection()
+let pendingConnectSignaling = null
 
-	EventBus.$emit('signalingConnectionEstablished')
+async function connectSignaling() {
+	if (signaling) {
+		return
+	}
+
+	if (pendingConnectSignaling) {
+		return pendingConnectSignaling
+	}
+
+	pendingConnectSignaling = new Promise((resolve, reject) => {
+		Signaling.loadSettings(null).then(() => {
+			signaling = Signaling.createConnection()
+
+			EventBus.$emit('signalingConnectionEstablished')
+
+			pendingConnectSignaling = null
+
+			resolve()
+		})
+	})
+
+	return pendingConnectSignaling
+}
+
+async function getSignaling() {
+	await connectSignaling()
+
+	return signaling
 }
 
 let currentToken = null
@@ -77,6 +102,8 @@ function setupWebRtc() {
 }
 
 async function joinCall(token) {
+	await connectSignaling()
+
 	setupWebRtc()
 
 	currentToken = token
@@ -89,10 +116,10 @@ async function joinCall(token) {
 }
 
 export {
-	signaling,
 	callParticipantCollection,
 	localCallParticipantModel,
 	localMediaModel,
 	connectSignaling,
+	getSignaling,
 	joinCall,
 }
