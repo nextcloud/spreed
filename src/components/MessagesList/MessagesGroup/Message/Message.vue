@@ -324,7 +324,7 @@ export default {
 		justify-content: space-between;
 		min-width: 100%;
 		&__text {
-			flex: 1 1 400px;
+			flex: 1 1 auto;
 			color: var(--color-text-light);
 			overflow-wrap: break-word;
 			max-width: $message-max-width;
