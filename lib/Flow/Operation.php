@@ -24,7 +24,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Flow;
 
-use OC_Util;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Exceptions\ParticipantNotFoundException;
 use OCA\Talk\Exceptions\RoomNotFoundException;
@@ -37,6 +36,7 @@ use OCP\IL10N;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
+use OCP\Util;
 use OCP\WorkflowEngine\EntityContext\IDisplayText;
 use OCP\WorkflowEngine\EntityContext\IUrl;
 use OCP\WorkflowEngine\IEntity;
@@ -84,7 +84,7 @@ class Operation implements IOperation {
 		$dispatcher->addListener(FlowManager::EVENT_NAME_REG_OPERATION, function (GenericEvent $event) {
 			$operation = \OC::$server->query(Operation::class);
 			$event->getSubject()->registerOperation($operation);
-			OC_Util::addScript('spreed', 'flow');
+			Util::addScript('spreed', 'flow');
 		});
 	}
 
