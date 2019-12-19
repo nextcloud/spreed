@@ -35,21 +35,33 @@
 				{{ t('spreed', 'Share this file') }}
 			</button>
 		</div>
-		<p v-else>
-			Talk tab coming soon
-		</p>
+		<div v-else-if="isTalkSidebarSupportedForFile && !token" class="emptycontent room-not-joined">
+			<div class="icon icon-talk" />
+			<h2>{{ t('spreed', 'Discuss this file') }}</h2>
+			<button class="primary" @click="joinConversation">
+				{{ t('spreed', 'Join conversation') }}
+			</button>
+		</div>
+		<ChatView v-else :token="token" />
 	</div>
 </template>
 
 <script>
 
 import { getFileConversation } from './services/filesIntegrationServices'
+import { joinConversation, leaveConversation } from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
+import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
+import ChatView from './components/ChatView'
 
 export default {
 
 	name: 'FilesSidebarTabApp',
+
+	components: {
+		ChatView,
+	},
 
 	data() {
 		return {
@@ -73,18 +85,44 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+		fileIdForToken() {
+			return this.$store.getters.getFileIdForToken()
+		},
 	},
 
 	watch: {
 		fileInfo: {
 			immediate: true,
 			handler(fileInfo) {
+				if (this.token && (!fileInfo || fileInfo.id !== this.fileIdForToken)) {
+					this.leaveConversation()
+				}
+
 				this.setTalkSidebarSupportedForFile(fileInfo)
 			},
 		},
 	},
 
+	beforeMount() {
+		this.$store.dispatch('setCurrentUser', getCurrentUser())
+	},
+
 	methods: {
+		async joinConversation() {
+			await this.getFileConversation()
+
+			joinConversation(this.token)
+		},
+
+		leaveConversation() {
+			leaveConversation(this.token)
+
+			this.$store.dispatch('updateTokenAndFileIdForToken', {
+				newToken: null,
+				newFileId: null,
+			})
+		},
+
 		async getFileConversation() {
 			// Clear previous requests if there's one pending
 			this.cancelGetFileConversation('canceled')
@@ -95,7 +133,10 @@ export default {
 			// Make the request
 			try {
 				const response = await request({ fileId: this.fileId })
-				this.$store.dispatch('updateToken', response.data.ocs.data.token)
+				this.$store.dispatch('updateTokenAndFileIdForToken', {
+					newToken: response.data.ocs.data.token,
+					newFileId: this.fileId,
+				})
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
