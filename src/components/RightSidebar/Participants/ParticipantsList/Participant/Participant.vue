@@ -260,7 +260,8 @@ export default {
 		height: 44px;
 		cursor: pointer;
 	}
-	&__utils {
+	&__utils,
+	&__actions {
 		margin-left: auto;
 	}
 }
