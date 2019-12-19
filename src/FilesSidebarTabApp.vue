@@ -19,7 +19,15 @@
   - along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <template>
-	<p>Talk tab coming soon</p>
+	<div class="talkChatTab">
+		<div v-if="fileInfo && fileInfo.isDirectory()" class="emptycontent">
+			<div class="icon icon-talk" />
+			<h2>Conversations are not available for folders</h2>
+		</div>
+		<p v-else>
+			Talk tab coming soon
+		</p>
+	</div>
 </template>
 
 <script>
