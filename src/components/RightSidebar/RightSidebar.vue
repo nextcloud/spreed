@@ -49,10 +49,7 @@
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
-			<template v-if="showChatInSidebar">
-				<MessagesList :token="token" />
-				<NewMessageForm />
-			</template>
+			<ChatView v-if="showChatInSidebar" :token="token" />
 			<template v-else>
 				This should be hidden, but the visibility of the tab can not change at the moment:
 				https://github.com/nextcloud/nextcloud-vue/issues/747
@@ -81,8 +78,7 @@ import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import MessagesList from '../MessagesList/MessagesList'
-import NewMessageForm from '../NewMessageForm/NewMessageForm'
+import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
@@ -94,9 +90,8 @@ export default {
 		ActionText,
 		AppSidebar,
 		AppSidebarTab,
+		ChatView,
 		CollectionList,
-		MessagesList,
-		NewMessageForm,
 		ParticipantsTab,
 	},
 
