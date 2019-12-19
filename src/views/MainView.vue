@@ -1,5 +1,5 @@
 <template>
-	<div class="chatview">
+	<div class="mainView">
 		<TopBar :force-white-icons="showChatInSidebar" />
 
 		<template v-if="!showChatInSidebar">
@@ -92,7 +92,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chatview {
+.mainView {
 	height: 100%;
 	display: flex;
 	flex-grow: 1;
