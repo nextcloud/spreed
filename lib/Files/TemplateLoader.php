@@ -23,34 +23,41 @@ declare(strict_types=1);
 
 namespace OCA\Talk\Files;
 
+use OCA\Files\Event\LoadSidebar;
+use OCA\Talk\AppInfo\Application;
+use OCP\EventDispatcher\Event;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\EventDispatcher\IEventListener;
 use OCP\Util;
 
 /**
  * Helper class to add the Talk UI to the sidebar of the Files app.
  */
-class TemplateLoader {
+class TemplateLoader implements IEventListener {
 
 	public static function register(IEventDispatcher $dispatcher): void {
-		$dispatcher->addListener('OCA\Files::loadAdditionalScripts', static function() {
-			self::loadTalkSidebarForFilesApp();
-		});
+		$dispatcher->addServiceListener(LoadSidebar::class, TemplateLoader::class);
 	}
 
 	/**
 	 * Loads the Talk UI in the sidebar of the Files app.
 	 *
-	 * This method should be called when loading additional scripts for the
+	 * This method should be called when handling the LoadSidebar event of the
 	 * Files app.
 	 */
-	public static function loadTalkSidebarForFilesApp(): void {
+	public function handle(Event $event): void {
+		if (!($event instanceof LoadSidebar)) {
+			return;
+		}
+
 		$config = \OC::$server->getConfig();
 		if ($config->getAppValue('spreed', 'conversations_files', '1') !== '1') {
 			return;
 		}
 
-		Util::addStyle('spreed', 'merged-files');
-		Util::addScript('spreed', 'merged-files');
+		Util::addStyle(Application::APP_ID, 'merged-files');
+		Util::addScript(Application::APP_ID, 'files-sidebar-tab');
+		Util::addScript(Application::APP_ID, 'talk-chat-tab');
 	}
 
 }

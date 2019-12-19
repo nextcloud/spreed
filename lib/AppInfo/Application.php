@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace OCA\Talk\AppInfo;
 
-use OCA\Files\Event\LoadSidebar;
 use OCA\Talk\Activity\Listener as ActivityListener;
 use OCA\Talk\Capabilities;
 use OCA\Talk\Chat\Changelog\Listener as ChangelogListener;
@@ -39,7 +38,6 @@ use OCA\Talk\Files\Listener as FilesListener;
 use OCA\Talk\Files\TemplateLoader as FilesTemplateLoader;
 use OCA\Talk\Flow\Operation;
 use OCA\Talk\Listener;
-use OCA\Talk\Listener\LoadSidebarListener;
 use OCA\Talk\Listener\RestrictStartingCalls as RestrictStartingCallsListener;
 use OCA\Talk\Middleware\CanUseTalkMiddleware;
 use OCA\Talk\Middleware\InjectionMiddleware;
@@ -107,7 +105,6 @@ class Application extends App {
 
 		$dispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
 		$dispatcher->addServiceListener(AddFeaturePolicyEvent::class, Listener\FeaturePolicyListener::class);
-		$dispatcher->addServiceListener(LoadSidebar::class, LoadSidebarListener::class);
 
 		$this->registerNavigationLink($server);
 		$this->registerRoomActivityHooks($dispatcher);
