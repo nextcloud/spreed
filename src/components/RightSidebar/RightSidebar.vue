@@ -177,7 +177,18 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+/* Force scroll bars in tabs content instead of in whole sidebar. */
+::v-deep .app-sidebar-tabs__content {
+	overflow: hidden;
+
+	section {
+		height: 100%;
+
+		overflow-y: auto;
+	}
+}
 
 /** TODO: fix these in the nextcloud-vue library **/
 
