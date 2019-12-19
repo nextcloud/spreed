@@ -8,7 +8,7 @@
 @include icon-black-white('emoji-smile', 'spreed', 1);
 @include icon-black-white('lobby', 'spreed', 1);
 
-#call-container, #chat-view, #app-spreed, #talkChatTabView, #talk-sidebar, #videos {
+.app-Talk {
 	// We always want to use the white icons, this is why we don't use var(--color-white) here.
 	.icon-public {
 		background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
