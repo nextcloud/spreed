@@ -67,6 +67,7 @@ export default {
 		return {
 			// needed for reactivity
 			Talk: OCA.Talk,
+			sidebarState: OCA.Files.Sidebar.state,
 			/**
 			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
 			 */
@@ -88,6 +89,12 @@ export default {
 		fileIdForToken() {
 			return this.$store.getters.getFileIdForToken()
 		},
+		isChatTheActiveTab() {
+			// FIXME check for empty active tab is currently needed because the
+			// activeTab is not set when opening the sidebar from the "Details"
+			// action (which opens the first tab, which is the Chat tab).
+			return !this.sidebarState.activeTab || this.sidebarState.activeTab === 'chat'
+		},
 	},
 
 	watch: {
@@ -99,6 +106,13 @@ export default {
 				}
 
 				this.setTalkSidebarSupportedForFile(fileInfo)
+			},
+		},
+
+		isChatTheActiveTab: {
+			immediate: true,
+			handler(isChatTheActiveTab) {
+				this.forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab)
 			},
 		},
 	},
@@ -229,10 +243,47 @@ export default {
 		openSharingTab() {
 			OCA.Files.Sidebar.setActiveTab('sharing')
 		},
+
+		/**
+		 * Dirty hack to set the style in the tabs content container.
+		 *
+		 * This is needed to force the scroll bars on the tab content instead of
+		 * on the whole sidebar.
+		 *
+		 * Additionally a minimum height is forced to ensure that the height of
+		 * the chat view will be at least 300px, even if the info view is large
+		 * and the screen short; in that case a scroll bar will be shown for the
+		 * sidebar, but even if that looks really bad it is better than an
+		 * unusable chat view.
+		 *
+		 * @param {boolean} isChatTheActiveTab whether the active tab is the
+		 *        chat tab or not.
+		 */
+		forceTabsContentStyleWhenChatTabIsActive(isChatTheActiveTab) {
+			const tabsContent = document.querySelector('.app-sidebar-tabs__content')
+
+			if (isChatTheActiveTab) {
+				this.savedTabsContentMinHeight = tabsContent.style.minHeight
+				this.savedTabsContentOverflow = tabsContent.style.overflow
+				this.savedTabsContentStyle = true
+
+				tabsContent.style.minHeight = '300px'
+				tabsContent.style.overflow = 'hidden'
+			} else if (this.savedTabsContentStyle) {
+				tabsContent.style.minHeight = this.savedTabsContentMinHeight
+				tabsContent.style.overflow = this.savedTabsContentOverflow
+
+				delete this.savedTabsContentMinHeight
+				delete this.savedTabsContentOverflow
+				this.savedTabsContentStyle = false
+			}
+		},
 	},
 }
 </script>
 
 <style scoped>
-
+.talkChatTab {
+	height: 100%;
+}
 </style>

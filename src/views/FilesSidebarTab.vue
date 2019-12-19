@@ -96,3 +96,12 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+#tab-chat {
+	height: 100%;
+
+	/* Remove padding to maximize the space for the chat view. */
+	padding: 0;
+}
+</style>
