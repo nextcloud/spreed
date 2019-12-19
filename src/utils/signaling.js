@@ -851,17 +851,52 @@ Signaling.Standalone.prototype.helloResponseReceived = function(data) {
 
 Signaling.Standalone.prototype.joinRoom = function(token /*, password */) {
 	if (!this.sessionId) {
+		if (this._pendingJoinRoomPromise && this._pendingJoinRoomPromise.token === token) {
+			return this._pendingJoinRoomPromise
+		}
+
+		if (this._pendingJoinRoomPromise) {
+			this._pendingJoinRoomPromise.reject()
+		}
+
+		let pendingJoinRoomPromiseResolve
+		let pendingJoinRoomPromiseReject
+		this._pendingJoinRoomPromise = new Promise((resolve, reject) => {
+			// The Promise executor is run even before the Promise constructor
+			// has finished, so "this._pendingJoinRoomPromise" is not available
+			// yet.
+			pendingJoinRoomPromiseResolve = resolve
+			pendingJoinRoomPromiseReject = reject
+		})
+		this._pendingJoinRoomPromise.resolve = pendingJoinRoomPromiseResolve
+		this._pendingJoinRoomPromise.reject = pendingJoinRoomPromiseReject
+		this._pendingJoinRoomPromise.token = token
+
 		// If we would join without a connection to the signaling server here,
 		// the room would be re-joined again in the "helloResponseReceived"
 		// callback, leading to two entries for anonymous participants.
 		console.log('Not connected to signaling server yet, defer joining room', token)
 		this.currentRoomToken = token
-		return new Promise((resolve, reject) => {
-			// FIXME ?
-		})
+		return this._pendingJoinRoomPromise
 	}
 
-	return Signaling.Base.prototype.joinRoom.apply(this, arguments)
+	if (this._pendingJoinRoomPromise && this._pendingJoinRoomPromise.token !== token) {
+		this._pendingJoinRoomPromise.reject()
+		delete this._pendingJoinRoomPromise
+	}
+
+	if (!this._pendingJoinRoomPromise) {
+		return Signaling.Base.prototype.joinRoom.apply(this, arguments)
+	}
+
+	const pendingJoinRoomPromise = this._pendingJoinRoomPromise
+	delete this._pendingJoinRoomPromise
+
+	Signaling.Base.prototype.joinRoom.apply(this, arguments)
+		.then(() => { pendingJoinRoomPromise.resolve() })
+		.catch(reason => { pendingJoinRoomPromise.reject(reason) })
+
+	return pendingJoinRoomPromise
 }
 
 Signaling.Standalone.prototype._joinRoomSuccess = function(token, nextcloudSessionId) {
