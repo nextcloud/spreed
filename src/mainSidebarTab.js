@@ -21,8 +21,16 @@
  */
 
 import FilesSidebarTab from './views/FilesSidebarTab'
+
+const isEnabled = function(fileInfo) {
+	if (!fileInfo) {
+		return false
+	}
+	return !fileInfo.isDirectory()
+}
+
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('talk-chat', FilesSidebarTab))
+		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('talk-chat', FilesSidebarTab, isEnabled))
 	}
 })
