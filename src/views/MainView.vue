@@ -1,11 +1,8 @@
 <template>
-	<div class="chatview">
+	<div class="mainView">
 		<TopBar :force-white-icons="showChatInSidebar" />
 
-		<template v-if="!showChatInSidebar">
-			<MessagesList :token="token" />
-			<NewMessageForm />
-		</template>
+		<ChatView v-if="!showChatInSidebar" :token="token" />
 		<template v-else>
 			<CallView
 				:token="token" />
@@ -15,8 +12,7 @@
 
 <script>
 import CallView from '../components/CallView/CallView'
-import MessagesList from '../components/MessagesList/MessagesList'
-import NewMessageForm from '../components/NewMessageForm/NewMessageForm'
+import ChatView from '../components/ChatView'
 import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
 
@@ -24,8 +20,7 @@ export default {
 	name: 'MainView',
 	components: {
 		CallView,
-		MessagesList,
-		NewMessageForm,
+		ChatView,
 		TopBar,
 	},
 	props: {
@@ -92,7 +87,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.chatview {
+.mainView {
 	height: 100%;
 	display: flex;
 	flex-grow: 1;

@@ -53,10 +53,7 @@
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
-			<template v-if="showChatInSidebar">
-				<MessagesList :token="token" />
-				<NewMessageForm />
-			</template>
+			<ChatView v-if="showChatInSidebar" :token="token" />
 			<template v-else>
 				This should be hidden, but the visibility of the tab can not change at the moment:
 				https://github.com/nextcloud/nextcloud-vue/issues/747
@@ -85,8 +82,7 @@ import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import MessagesList from '../MessagesList/MessagesList'
-import NewMessageForm from '../NewMessageForm/NewMessageForm'
+import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
@@ -98,9 +94,8 @@ export default {
 		ActionText,
 		AppSidebar,
 		AppSidebarTab,
+		ChatView,
 		CollectionList,
-		MessagesList,
-		NewMessageForm,
 		ParticipantsTab,
 	},
 
@@ -201,7 +196,23 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+
+/* Force scroll bars in tabs content instead of in whole sidebar. */
+::v-deep .app-sidebar-tabs__content {
+	overflow: hidden;
+
+	section {
+		height: 100%;
+
+		overflow-y: auto;
+	}
+}
+
+.app-sidebar-tabs__content #tab-chat {
+	/* Remove padding to maximize the space for the chat view. */
+	padding: 0;
+}
 
 /** TODO: fix these in the nextcloud-vue library **/
 
