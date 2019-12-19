@@ -30,7 +30,9 @@
 		<div class="participant-row__avatar-wrapper">
 			<Avatar
 				:user="computedId"
-				:display-name="computedName" />
+				:display-name="computedName"
+				:disableMenu="true"
+				:disableTooltip="true" />
 		</div>
 
 		<span class="participant-row__user-name">{{ computedName }}</span>
