@@ -40,7 +40,7 @@
 				</div>
 				<button
 					type="submit"
-					class="new-message-form__button icon-confirm-fade"
+					class="new-message-form__button submit icon-confirm-fade"
 					@click.prevent="handleSubmit" />
 			</form>
 		</div>
@@ -193,7 +193,7 @@ export default {
 
 .new-message {
 	margin: auto;
-	max-width: $message-max-width + 88px;
+	max-width: $messages-list-max-width;
 	position: sticky;
 	position: -webkit-sticky;
 	bottom: 0;
@@ -206,6 +206,7 @@ export default {
 			max-height: $message-form-max-height;
 			overflow-y: scroll;
 			overflow-x: hidden;
+			max-width: $message-max-width;
 		}
 		&__button {
 			width: 44px;
@@ -213,6 +214,9 @@ export default {
 			margin-top: auto;
 			background-color: transparent;
 			border: none;
+			&.submit {
+				margin-left: 32px;
+			}
 		}
 	}
 }
