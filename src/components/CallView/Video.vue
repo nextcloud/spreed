@@ -31,6 +31,7 @@
 				:disable-menu="true"
 				:disable-tooltip="true"
 				:user="model.attributes.userId"
+				:display-name="model.attributes.name"
 				:class="avatarClass" />
 			<Avatar v-else
 				:size="avatarSize"
