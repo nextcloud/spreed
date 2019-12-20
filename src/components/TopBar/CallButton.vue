@@ -80,7 +80,7 @@ export default {
 
 		isBlockedByLobby() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
-				&& this.isParticipantTypeModerator(this.conversation.participantType)
+				&& !this.isParticipantTypeModerator(this.conversation.participantType)
 		},
 
 		startCallButtonDisabled() {
