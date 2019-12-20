@@ -52,7 +52,7 @@ use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Utility\ITimeFactory;
-use OCP\Collaboration\Resources\IManager as IResourceManager;
+use OCP\Collaboration\Resources\IProviderManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IServerContainer;
 use OCP\IUser;
@@ -118,8 +118,8 @@ class Application extends App {
 	}
 
 	protected function registerCollaborationResourceProvider(IServerContainer $server): void {
-		/** @var IResourceManager $resourceManager */
-		$resourceManager = $server->query(IResourceManager::class);
+		/** @var IProviderManager $resourceManager */
+		$resourceManager = $server->query(IProviderManager::class);
 		$resourceManager->registerResourceProvider(ConversationProvider::class);
 		\OC::$server->getEventDispatcher()->addListener('\OCP\Collaboration\Resources::loadAdditionalScripts', function () {
 			\OCP\Util::addScript(self::APP_ID, 'collections');
