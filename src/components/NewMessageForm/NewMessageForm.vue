@@ -94,8 +94,6 @@ export default {
 		 * @returns {Object}
 		 */
 		createTemporaryMessage() {
-			console.error(this.text)
-
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
 				actorId: this.$store.getters.getActorId(),
@@ -107,6 +105,7 @@ export default {
 				message: this.text,
 				messageParameters: {},
 				token: this.token,
+				isReplyable: false,
 			})
 			/**
 			 * If the current message is a quote-reply messag, add the parent key to the
