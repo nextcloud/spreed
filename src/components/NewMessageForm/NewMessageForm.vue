@@ -29,7 +29,7 @@
 				<div
 					class="new-message-form__button">
 					<button
-						v-if ="!currentUserIsGuest"
+						v-if="!currentUserIsGuest"
 						class="new-message-form__button icon-clip-add-file"
 						@click.prevent="handleFileShare" />
 				</div>
@@ -90,13 +90,8 @@ export default {
 			return this.$store.getters.getMessageToBeReplied(this.token)
 		},
 		currentUserIsGuest() {
-			// We assume the actor is a guest until we receive the actual actorType in the store
-			if (this.$store.getters.getActorType() === null) {
-				return true
-			} else {
-				return this.$store.getters.getActorType() === 'guests'
-			}
-		}
+			return this.$store.getters.getUserId() === null
+		},
 	},
 	methods: {
 		/**
@@ -106,8 +101,6 @@ export default {
 		 * @returns {Object}
 		 */
 		createTemporaryMessage() {
-			console.error(this.text)
-
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
 				actorId: this.$store.getters.getActorId(),
