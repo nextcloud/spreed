@@ -79,13 +79,12 @@ export default {
 	},
 	mounted() {
 		try {
+			OCA.Talk.fileInfo = this.fileInfo
 			this.tab = OCA.Talk.newTab()
 			this.tab.$mount('#talk-tab-mount')
-			OCA.Talk.fileInfo = this.fileInfo
 		} catch (error) {
 			console.error('Unable to mount Chat tab', error)
 		}
-		console.info(this.fileInfo)
 	},
 	beforeDestroy() {
 		try {
@@ -97,3 +96,12 @@ export default {
 	},
 }
 </script>
+
+<style scoped>
+#tab-chat {
+	height: 100%;
+
+	/* Remove padding to maximize the space for the chat view. */
+	padding: 0;
+}
+</style>

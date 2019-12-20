@@ -22,11 +22,15 @@
 
 const state = {
 	token: '',
+	fileIdForToken: null,
 }
 
 const getters = {
 	getToken: (state) => () => {
 		return state.token
+	},
+	getFileIdForToken: (state) => () => {
+		return state.fileIdForToken
 	},
 }
 
@@ -40,6 +44,18 @@ const mutations = {
 	updateToken(state, newToken) {
 		state.token = newToken
 	},
+
+	/**
+	 * Updates the file ID for the current token
+	 *
+	 * @param {object} state current store state
+	 * @param {string} newToken The token of the active conversation
+	 * @param {int} newFileId The file ID of the active conversation
+	 */
+	updateTokenAndFileIdForToken(state, { newToken, newFileId }) {
+		state.token = newToken
+		state.fileIdForToken = newFileId
+	},
 }
 
 const actions = {
@@ -52,6 +68,17 @@ const actions = {
 	 */
 	updateToken(context, newToken) {
 		context.commit('updateToken', newToken)
+	},
+
+	/**
+	 * Updates the file ID for the current token
+	 *
+	 * @param {object} context default store context
+	 * @param {string} newToken The token of the active conversation
+	 * @param {int} newFileId The file ID of the active conversation
+	 */
+	updateTokenAndFileIdForToken(context, { newToken, newFileId }) {
+		context.commit('updateTokenAndFileIdForToken', { newToken, newFileId })
 	},
 }
 
