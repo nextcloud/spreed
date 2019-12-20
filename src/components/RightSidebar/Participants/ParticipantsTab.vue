@@ -162,6 +162,13 @@ export default {
 				this.getParticipants()
 			})
 		})
+
+		// FIXME this works only temporary until signaling is fixed to be only on the calls
+		// Then we have to search for another solution. Maybe the room list which we update
+		// periodically gets a hash of all online sessions?
+		EventBus.$on('Signaling::participantListChanged', () => {
+			this.getParticipants()
+		})
 	},
 
 	methods: {

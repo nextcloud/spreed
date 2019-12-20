@@ -161,9 +161,7 @@ export default {
 				 */
 				if (this.selectedParticipants.indexOf(participant) !== -1) {
 					this.selectedParticipants = this.selectedParticipants.filter((selectedParticipant) => {
-						if (selectedParticipant.id === participant.id) {
-							return false
-						} return true
+						return selectedParticipant.id !== participant.id
 					})
 					this.$emit('updateSelectedParticipants', this.selectedParticipants)
 				} else {
