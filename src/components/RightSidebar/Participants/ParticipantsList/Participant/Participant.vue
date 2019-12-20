@@ -28,13 +28,18 @@
 			'selected': isSelected }"
 		@click="handleClick">
 		<div class="participant-row__avatar-wrapper">
-			<Avatar
+			<Avatar v-if="computedId"
 				:user="computedId"
 				:display-name="computedName" />
+			<div v-else
+				class="avatar guest">
+				{{ firstLetterOfGuestName }}
+			</div>
 		</div>
 
 		<span class="participant-row__user-name">{{ computedName }}</span>
 		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
+		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
 		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
@@ -98,13 +103,23 @@ export default {
 			return this.participant.userId === undefined
 		},
 		computedName() {
-			if (this.participant.displayName) {
-				return this.participant.displayName
+			if (!this.isSearched) {
+				const displayName = this.participant.displayName.trim()
+
+				if (displayName === '' && this.isGuest) {
+					return t('spreed', 'Guest')
+				}
+
+				if (displayName === '') {
+					return t('spreed', '[Unknown user name]')
+				}
+
+				return displayName
 			}
 			return this.participant.label
 		},
 		computedId() {
-			if (this.participant.userId) {
+			if (!this.isSearched) {
 				return this.participant.userId
 			}
 			return this.participant.id
@@ -157,6 +172,10 @@ export default {
 		},
 		isGuest() {
 			return [PARTICIPANT.TYPE.GUEST, PARTICIPANT.TYPE.GUEST_MODERATOR].indexOf(this.participantType) !== -1
+		},
+		firstLetterOfGuestName() {
+			const customName = this.computedName !== t('spreed', 'Guest') ? this.computedName : '?'
+			return customName.charAt(0)
 		},
 		isModerator() {
 			return this.participantTypeIsModerator(this.participantType)
@@ -237,11 +256,21 @@ export default {
 	height: 44px;
 	cursor: pointer;
 	padding: 0 5px;
-    margin: 5px 0;
-    border-radius: 22px;
+	margin: 5px 0;
+	border-radius: 22px;
 	&__avatar-wrapper {
 		height: 32px;
 		width: 32px;
+		.avatar {
+			&.guest {
+				padding: 0;
+				line-height: 32px;
+				border-radius: 50%;
+				background-color: #b9b9b9;
+				display: block;
+				text-align: center;
+			}
+		}
 	}
 	&__user-name {
 		margin-left: 6px;
@@ -250,6 +279,7 @@ export default {
 		line-height: normal;
 		cursor: pointer;
 	}
+	&__guest-indicator,
 	&__moderator-indicator {
 		color: var(--color-text-maxcontrast);
 		font-weight: 300;
