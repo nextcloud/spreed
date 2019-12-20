@@ -26,9 +26,13 @@
 			class="new-message">
 			<form
 				class="new-message-form">
-				<button
-					class="new-message-form__button icon-clip-add-file"
-					@click.prevent="handleFileShare" />
+				<div
+					class="new-message-form__button">
+					<button
+						v-if="!currentUserIsGuest"
+						class="new-message-form__button icon-clip-add-file"
+						@click.prevent="handleFileShare" />
+				</div>
 				<div class="new-message-form__input">
 					<Quote
 						v-if="messageToBeReplied"
@@ -84,6 +88,9 @@ export default {
 		},
 		messageToBeReplied() {
 			return this.$store.getters.getMessageToBeReplied(this.token)
+		},
+		currentUserIsGuest() {
+			return this.$store.getters.getUserId() === null
 		},
 	},
 	methods: {
