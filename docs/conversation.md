@@ -53,7 +53,8 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
     field | type | Description
     ------|------|------------
     `roomType` | int |
-    `invite` | string | user id (`roomType = 1`), group id (`roomType = 2` - optional)
+    `invite` | string | user id (`roomType = 1`), group id (`roomType = 2` - optional), circle id (`roomType = 2`, `inviteType = \OCP\IShare::TYPE_CIRCLES`], only available with `circles-support` capability))
+    `inviteSource` | string | The source for the invite, only supported on `roomType = 2` for `groups` and `circles` (only available with `circles-support` capability)
     `roomName` | string | conversation name (Not available for `roomType = 1`)
 
 * Response:

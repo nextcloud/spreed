@@ -33,6 +33,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
@@ -47,6 +48,8 @@ class RoomControllerTest extends \Test\TestCase {
 
 	/** @var string */
 	private $userId;
+	/** @var IAppManager|MockObject */
+	private $appManager;
 	/** @var TalkSession|MockObject */
 	private $talkSession;
 	/** @var IUserManager|MockObject */
@@ -73,6 +76,7 @@ class RoomControllerTest extends \Test\TestCase {
 		parent::setUp();
 
 		$this->userId = 'testUser';
+		$this->appManager = $this->createMock(IAppManager::class);
 		$this->talkSession = $this->createMock(TalkSession::class);
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->groupManager = $this->createMock(IGroupManager::class);
@@ -95,6 +99,7 @@ class RoomControllerTest extends \Test\TestCase {
 			'spreed',
 			$this->userId,
 			$this->createMock(IRequest::class),
+			$this->appManager,
 			$this->talkSession,
 			$this->userManager,
 			$this->groupManager,

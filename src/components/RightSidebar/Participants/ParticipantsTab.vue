@@ -45,6 +45,15 @@ x<!--
 				@refreshCurrentParticipants="getParticipants" />
 			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
+
+			<Caption
+				:title="t('spreed', 'Add circles')" />
+			<ParticipantsList
+				v-if="addableCircles.length !== 0"
+				:items="addableCircles"
+				@refreshCurrentParticipants="getParticipants" />
+			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
 </template>
@@ -131,6 +140,12 @@ export default {
 		addableGroups() {
 			if (this.searchResults !== []) {
 				return this.searchResults.filter((item) => item.source === 'groups')
+			}
+			return []
+		},
+		addableCircles() {
+			if (this.searchResults !== []) {
+				return this.searchResults.filter((item) => item.source === 'circles')
 			}
 			return []
 		},

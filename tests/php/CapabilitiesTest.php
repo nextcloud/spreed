@@ -93,6 +93,7 @@ class CapabilitiesTest extends TestCase {
 					'webinary-lobby',
 					'start-call-flag',
 					'chat-replies',
+					'circles-support',
 				],
 				'config' => [
 					'chat' => [
@@ -150,6 +151,7 @@ class CapabilitiesTest extends TestCase {
 					'webinary-lobby',
 					'start-call-flag',
 					'chat-replies',
+					'circles-support',
 				],
 				'config' => [
 					'chat' => [

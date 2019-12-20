@@ -55,7 +55,7 @@ const fetchConversation = async function(token) {
  */
 const searchPossibleConversations = async function(searchText) {
 	try {
-		const response = await axios.get(generateOcsUrl('core/autocomplete', 2) + `get` + `?format=json` + `&search=${searchText}` + `&itemType=call` + `&itemId=new` + `&shareTypes[]=${SHARE.TYPE.USER}&shareTypes[]=${SHARE.TYPE.GROUP}`)
+		const response = await axios.get(generateOcsUrl('core/autocomplete', 2) + `get` + `?format=json` + `&search=${searchText}` + `&itemType=call` + `&itemId=new` + `&shareTypes[]=${SHARE.TYPE.USER}&shareTypes[]=${SHARE.TYPE.GROUP}&shareTypes[]=${SHARE.TYPE.CIRCLE}`)
 		return response
 	} catch (error) {
 		console.debug('Error while searching possible conversations: ', error)
@@ -77,11 +77,12 @@ const createOneToOneConversation = async function(userId) {
 
 /**
  * Create a new group conversation.
- * @param {string} groupId The group ID, this parameter is optional.
+ * @param {string} invite The group/circle ID
+ * @param {string} source The source of the invite ID (defaults to groups)
  */
-const createGroupConversation = async function(groupId) {
+const createGroupConversation = async function(invite, source) {
 	try {
-		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, invite: groupId })
+		const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room`, { roomType: CONVERSATION.TYPE.GROUP, invite, source: source || 'groups' })
 		return response
 	} catch (error) {
 		console.debug('Error creating new group conversation: ', error)

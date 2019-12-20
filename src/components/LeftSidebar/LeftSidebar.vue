@@ -50,6 +50,14 @@
 				</li>
 				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
+
+				<Caption
+					:title="t('spreed', 'Circles')" />
+				<li v-if="searchResultsCircles.length !== 0">
+					<CirclesList :circles="searchResultsCircles" />
+				</li>
+				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 		</ul>
 	</AppNavigation>
@@ -58,6 +66,7 @@
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
+import CirclesList from './CirclesList/CirclesList'
 import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
 import GroupsList from './GroupsList/GroupsList'
@@ -77,6 +86,7 @@ export default {
 		AppNavigation,
 		Caption,
 		ContactsList,
+		CirclesList,
 		ConversationsList,
 		GroupsList,
 		Hint,
@@ -90,6 +100,7 @@ export default {
 			searchResults: {},
 			searchResultsUsers: [],
 			searchResultsGroups: [],
+			searchResultsCircles: [],
 			contactsLoading: false,
 		}
 	},
@@ -129,6 +140,7 @@ export default {
 					&& !this.hasOneToOneConversationWith(match.id)
 			})
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
+			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 			this.contactsLoading = false
 		},
 
