@@ -63,7 +63,7 @@
 		padding: 20px;
 	}
 	#room-list {
-		overflow-y: scroll;
+		overflow-y: auto;
 		flex: 0 1 auto;
 	}
 	li {

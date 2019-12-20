@@ -204,7 +204,7 @@ export default {
 		&__input {
 			flex-grow: 1;
 			max-height: $message-form-max-height;
-			overflow-y: scroll;
+			overflow-y: auto;
 			overflow-x: hidden;
 			max-width: $message-max-width;
 		}

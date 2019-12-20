@@ -182,7 +182,7 @@ export default {
 
 <style lang="scss" scoped>
 .scrollable {
-	overflow-y: scroll;
+	overflow-y: auto;
 	overflow-x: hidden;
 }
 
