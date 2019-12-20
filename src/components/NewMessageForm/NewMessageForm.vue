@@ -94,8 +94,6 @@ export default {
 		 * @returns {Object}
 		 */
 		createTemporaryMessage() {
-			console.error(this.text)
-
 			const message = Object.assign({}, {
 				id: this.createTemporaryMessageId(),
 				actorId: this.$store.getters.getActorId(),
