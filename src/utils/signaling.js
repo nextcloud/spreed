@@ -116,15 +116,16 @@ Signaling.Base.prototype.off = function(ev, handler) {
 
 Signaling.Base.prototype._trigger = function(ev, args) {
 	let handlers = this.handlers[ev]
-	if (!handlers) {
-		return
+
+	if (handlers) {
+		handlers = handlers.slice(0)
+		for (let i = 0, len = handlers.length; i < len; i++) {
+			const handler = handlers[i]
+			handler.apply(handler, args)
+		}
 	}
 
-	handlers = handlers.slice(0)
-	for (let i = 0, len = handlers.length; i < len; i++) {
-		const handler = handlers[i]
-		handler.apply(handler, args)
-	}
+	EventBus.$emit('Signaling::' + ev, args)
 }
 
 Signaling.Base.prototype.isNoMcuWarningEnabled = function() {
