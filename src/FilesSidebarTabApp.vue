@@ -42,7 +42,12 @@
 				{{ t('spreed', 'Join conversation') }}
 			</button>
 		</div>
-		<ChatView v-else :token="token" />
+		<template v-else>
+			<button class="call-button primary" :disabled="true">
+				Calls will return soon
+			</button>
+			<ChatView :token="token" />
+		</template>
 	</div>
 </template>
 
@@ -285,5 +290,26 @@ export default {
 <style scoped>
 .talkChatTab {
 	height: 100%;
+
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+}
+
+.call-button {
+	/* Center button horizontally. */
+	margin-left: auto;
+	margin-right: auto;
+
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.chatView {
+	/* The chat view shares its parent with the call button, so the default
+	* "height: 100%" needs to be unset. */
+	height: unset;
+
+	overflow: hidden;
 }
 </style>
