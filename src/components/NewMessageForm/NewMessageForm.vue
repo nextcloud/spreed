@@ -107,6 +107,7 @@ export default {
 				message: this.text,
 				messageParameters: {},
 				token: this.token,
+				isReplyable: false,
 			})
 			/**
 			 * If the current message is a quote-reply messag, add the parent key to the
