@@ -93,6 +93,7 @@ OC.L10N.register(
     "Conversation not found" : "Samtal fannst ekki",
     "Path is already shared with this room" : "Slóðinni er þegar deilt með þessu spjallsvæði",
     "Chat, video & audio-conferencing using WebRTC" : "Spjall, mynd- og hljóðfundir með WebRTC",
+    "Share this file" : "Deila þessari skrá",
     "None" : "Enginn",
     "User" : "Notandi",
     "Everyone" : "Allir",
@@ -307,7 +308,6 @@ OC.L10N.register(
     "Calls are disabled in this conversation." : "Símtöl eru óvirk í þessu samtali",
     "You can not send messages, because the conversation is locked." : "Þú getur ekki sent skilaboð því samtalið er læst.",
     "The conversation is locked." : "Samtalið er læst.",
-    "Share this file" : "Deila þessari skrá",
     "Start time (optional)" : "Upphafstími (valfrjálst)"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
