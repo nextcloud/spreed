@@ -1,0 +1,25 @@
+{ "translations": {
+    "None" : "ஒன்றுமில்லை",
+    "User" : "User",
+    "Users" : "பயனாளர்",
+    "Favorite" : "விருப்பமான",
+    "Remove from favorites" : "Remove from favorites",
+    "Add to favorites" : "Add to favorites",
+    "Contacts" : "தொடர்புகள்",
+    "Loading" : "Loading",
+    "Groups" : "குழுக்கள்",
+    "Error" : "வழு",
+    "Back" : "பின்னுக்கு",
+    "Close" : "மூடுக",
+    "Today" : "இன்று",
+    "Share link" : "Share link",
+    "Name" : "பெயர்",
+    "Password" : "கடவுச்சொல்",
+    "Cancel" : "இரத்து செய்க",
+    "Share" : "பகிர்வு",
+    "Change password" : "கடவுச்சொல்லை மாற்றுக",
+    "Rename" : "பெயர்மாற்றம்",
+    "Error while sharing" : "பகிரும் போதான வழு",
+    "Edit" : "தொகுக்க"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
