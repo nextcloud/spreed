@@ -18,7 +18,7 @@
 		"@nextcloud/auth": "^0.3.1",
 		"@nextcloud/axios": "^0.5.0",
 		"@nextcloud/dialogs": "^0.1.1",
-		"@nextcloud/initial-state": "^0.2.0",
+		"@nextcloud/initial-state": "^1.0.0",
 		"@nextcloud/l10n": "^0.2.1",
 		"@nextcloud/moment": "^0.2.2",
 		"@nextcloud/router": "^0.1.0",
