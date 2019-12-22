@@ -1,0 +1,26 @@
+{ "translations": {
+    "User" : "User",
+    "Copy link" : "Պատճենել հղումը",
+    "Remove from favorites" : "Remove from favorites",
+    "Add to favorites" : "Add to favorites",
+    "Loading" : "Loading",
+    "Groups" : "Խմբեր",
+    "Error" : "Սխալ",
+    "Close" : "Փակել",
+    "Today" : "այսօր",
+    "Yesterday" : "երեկ",
+    "guest" : "հյուր",
+    "Share link" : "Կիսվել հղմամբ",
+    "Name" : "Անուն",
+    "Saved" : "Պահված",
+    "Password" : "Գաղտնաբառ",
+    "Cancel" : "ընդհատել",
+    "Copy" : "պատճենահանել",
+    "Share" : "Կիսվել",
+    "Change password" : "Փոխել գաղտնաբառը",
+    "Rename" : "Վերանվանել",
+    "Send" : "Ուղարկել",
+    "Error while sharing" : "Սխալ տարածելիս",
+    "Edit" : "մշակել"
+},"pluralForm" :"nplurals=2; plural=(n != 1);"
+}
