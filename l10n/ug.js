@@ -1,0 +1,27 @@
+OC.L10N.register(
+    "spreed",
+    {
+    "None" : "يوق",
+    "User" : "User",
+    "Users" : "ئىشلەتكۈچىلەر",
+    "Favorite" : "يىغقۇچ",
+    "Remove from favorites" : "Remove from favorites",
+    "Add to favorites" : "Add to favorites",
+    "Contacts" : "ئالاقەداشلار",
+    "Loading" : "Loading",
+    "Groups" : "گۇرۇپپا",
+    "Error" : "خاتالىق",
+    "Close" : "ياپ",
+    "Reply" : "جاۋاب قايتۇر",
+    "Today" : "بۈگۈن",
+    "Share link" : "Share link",
+    "Name" : "ئاتى",
+    "Password" : "ئىم",
+    "Cancel" : "ۋاز كەچ",
+    "Share" : "ھەمبەھىر",
+    "Change password" : "ئىم ئۆزگەرت",
+    "Rename" : "ئات ئۆزگەرت",
+    "Send" : "يوللا",
+    "Edit" : "تەھرىر"
+},
+"nplurals=1; plural=0;");
