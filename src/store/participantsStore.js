@@ -132,7 +132,7 @@ const actions = {
 	 * @param {string} token the conversation to add the participant;
 	 * @param {object} participant the participant;
 	 */
-	addParticipantOnce({ commit }, { token, participant }) {
+	addParticipantOnce({ commit, getters }, { token, participant }) {
 		const index = getters.getParticipantIndex(token, participant)
 		if (index === -1) {
 			commit('addParticipant', { token, participant })
