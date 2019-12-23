@@ -222,6 +222,7 @@ OC.L10N.register(
     "No results" : "Nenhum resultado",
     "Add participants to the conversation" : "Adicionar participantes à conversa",
     "Add groups" : "Adicionar grupos",
+    "Add circles" : "Adicionar círculos",
     "An error occurred while toggling guests" : "Erro ao alternar convidados",
     "An error occurred while toggling the lobby" : "Erro ao alternar o lobby",
     "An error occurred while fetching the participants" : "Erro ao buscar os participantes",
