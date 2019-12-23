@@ -39,9 +39,7 @@
 			</button>
 		</div>
 		<template v-else>
-			<button class="call-button primary" :disabled="true">
-				Calls will return soon
-			</button>
+			<CallButton class="call-button" />
 			<ChatView :token="token" />
 		</template>
 	</div>
@@ -55,6 +53,7 @@ import { joinConversation, leaveConversation } from './services/participantsServ
 import CancelableRequest from './utils/cancelableRequest'
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
+import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
 
 export default {
@@ -62,6 +61,7 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
+		CallButton,
 		ChatView,
 	},
 
@@ -131,14 +131,23 @@ export default {
 
 			// The current participant (which is automatically set when fetching
 			// the current conversation) is needed for the MessagesList to start
-			// getting the messages. No need to wait for it, but fetching the
-			// conversation needs to be done once the user has joined the
-			// conversation (otherwise only limited data would be received if
-			// the user was not a participant of the conversation yet).
+			// getting the messages, and both the current conversation and the
+			// current participant are needed for CallButton. No need to wait
+			// for it, but fetching the conversation needs to be done once the
+			// user has joined the conversation (otherwise only limited data
+			// would be received if the user was not a participant of the
+			// conversation yet).
 			this.fetchCurrentConversation()
 		},
 
 		leaveConversation() {
+			// Remove the conversation to ensure that the old data is not used
+			// before fetching it again if this conversation is joined again.
+			this.$store.dispatch('deleteConversationByToken', this.token)
+			// Remove the participant to ensure that it will be set again fresh
+			// if this conversation is joined again.
+			this.$store.dispatch('purgeParticipantsStore', this.token)
+
 			leaveConversation(this.token)
 
 			this.$store.dispatch('updateTokenAndFileIdForToken', {
