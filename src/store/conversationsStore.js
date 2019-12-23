@@ -86,8 +86,8 @@ const actions = {
 				lastPing: conversation.lastPing,
 				sessionId: conversation.sessionId,
 				participantType: conversation.participantType,
-				userId: currentUser ? currentUser.uid : '',
-				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '',
+				userId: currentUser ? currentUser.uid : '', // TODO Does this work for public shares while being logged in, etc?
+				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '', // TODO guest name from localstore?
 			},
 		})
 	},

@@ -306,19 +306,7 @@ export default {
 			 */
 			const response = await fetchConversation(token)
 			// this.$store.dispatch('purgeConversationsStore')
-			const conversationData = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversationData)
-			this.$store.dispatch('addParticipant', {
-				token,
-				participant: {
-					userId: getCurrentUser() ? getCurrentUser().uid : '', // TODO Does this work for public shares while being logged in, etc?
-					displayName: getCurrentUser() ? getCurrentUser().displayName : '', // TODO guest name from localstore?
-					inCall: conversationData.participantFlags,
-					lastPing: conversationData.lastPing,
-					sessionId: conversationData.sessionId,
-					participantType: conversationData.participantType,
-				},
-			})
+			this.$store.dispatch('addConversation', response.data.ocs.data)
 
 			/**
 			 * Emits a global event that is used in App.vue to update the page title once the
