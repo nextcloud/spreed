@@ -56,8 +56,8 @@ class TemplateLoader implements IEventListener {
 		}
 
 		Util::addStyle(Application::APP_ID, 'merged-files');
-		Util::addScript(Application::APP_ID, 'files-sidebar-tab');
-		Util::addScript(Application::APP_ID, 'talk-chat-tab');
+		Util::addScript(Application::APP_ID, 'talk-files-sidebar');
+		Util::addScript(Application::APP_ID, 'talk-files-sidebar-loader');
 	}
 
 }

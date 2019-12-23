@@ -12,8 +12,8 @@ module.exports = {
 		'admin/turn-server': path.join(__dirname, 'src', 'TurnServerSettings.js'),
 		'collections': path.join(__dirname, 'src', 'collections.js'),
 		'talk': path.join(__dirname, 'src', 'main.js'),
-		'talk-chat-tab': path.join(__dirname, 'src', 'mainChatTab.js'),
-		'files-sidebar-tab': path.join(__dirname, 'src', 'mainSidebarTab.js'),
+		'talk-files-sidebar': path.join(__dirname, 'src', 'mainFilesSidebar.js'),
+		'talk-files-sidebar-loader': path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
 		'flow': path.join(__dirname, 'src', 'flow.js')
 	},
 	output: {
