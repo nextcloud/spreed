@@ -154,6 +154,8 @@ export default {
 		if (this.$route.name === 'conversation') {
 			// Update current token in the token store
 			this.$store.dispatch('updateToken', this.$route.params.token)
+			// Automatically join the conversation as well
+			joinConversation(this.$route.params.token)
 		}
 
 		// FIXME Signaling should be done on conversation level, as the signaling information depends on it.
@@ -181,10 +183,6 @@ export default {
 
 				// Adjust the page title once the conversation list is loaded
 				this.setPageTitle(this.getConversationName(this.token), false)
-				// Update current token in the token store
-				this.$store.dispatch('updateToken', this.token)
-				// Automatically join the conversation as well
-				joinConversation(this.token)
 			}
 
 			if (!getCurrentUser()) {
