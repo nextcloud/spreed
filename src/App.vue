@@ -151,6 +151,12 @@ export default {
 	},
 
 	beforeMount() {
+		if (!getCurrentUser()) {
+			EventBus.$once('joinedConversation', () => {
+				this.fixmeDelayedSetupOfGuestUsers()
+			})
+		}
+
 		if (this.$route.name === 'conversation') {
 			// Update current token in the token store
 			this.$store.dispatch('updateToken', this.$route.params.token)
@@ -173,14 +179,6 @@ export default {
 		 */
 		EventBus.$once('conversationsReceived', () => {
 			if (this.$route.name === 'conversation') {
-				if (!getCurrentUser()) {
-					EventBus.$once('joinedConversation', () => {
-						// FIXME Refresh the data now that the user joined the conversation
-						// The join request returns this data already, but it's lost in the signaling code
-						this.fetchSingleConversation(this.token)
-					})
-				}
-
 				// Adjust the page title once the conversation list is loaded
 				this.setPageTitle(this.getConversationName(this.token), false)
 			}
@@ -228,17 +226,14 @@ export default {
 		} else {
 			console.debug('Can not set current user because it\'s a guest')
 		}
-
-		if (this.getUserId === null) {
-			EventBus.$on('signalingConnectionEstablished', () => {
-				this.fixmeDelayedSetupOfGuestUsers()
-			})
-		}
 	},
 
 	methods: {
 		fixmeDelayedSetupOfGuestUsers() {
+			// FIXME Refresh the data now that the user joined the conversation
+			// The join request returns this data already, but it's lost in the signaling code
 			this.fetchSingleConversation(this.token)
+
 			window.setInterval(() => {
 				this.fetchSingleConversation(this.token)
 			}, 30000)
