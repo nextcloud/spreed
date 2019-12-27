@@ -23,7 +23,8 @@
  */
 
 import Vue from 'vue'
-import App from './FilesSidebarTabApp'
+import FilesSidebarCallViewApp from './FilesSidebarCallViewApp'
+import FilesSidebarTabApp from './FilesSidebarTabApp'
 
 // Store
 import Vuex from 'vuex'
@@ -56,9 +57,14 @@ Vue.prototype.OCA = OCA
 Vue.use(Vuex)
 Vue.use(vuescroll, { debounce: 600 })
 
+const newCallView = () => new Vue({
+	store,
+	render: h => h(FilesSidebarCallViewApp),
+})
+
 const newTab = () => new Vue({
 	store,
-	render: h => h(App),
+	render: h => h(FilesSidebarTabApp),
 })
 
 if (!window.OCA.Talk) {
@@ -66,6 +72,7 @@ if (!window.OCA.Talk) {
 }
 Object.assign(window.OCA.Talk, {
 	fileInfo: null,
+	newCallView,
 	newTab,
 	store: store,
 })
