@@ -8,7 +8,8 @@
 @include icon-black-white('emoji-smile', 'spreed', 1);
 @include icon-black-white('lobby', 'spreed', 1);
 
-.app-Talk {
+.app-Talk,
+#call-container {
 	// We always want to use the white icons, this is why we don't use var(--color-white) here.
 	.icon-public {
 		background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
@@ -85,5 +86,12 @@
 	.atwho-cur {
 		background: var(--color-primary);
 		color: var(--color-primary-text);
+	}
+}
+
+.app-files {
+	// Needed to use white color also in dark mode.
+	.app-sidebar__close.forced-white {
+		background-image: url(icon-color-path('close', 'actions', 'fff', 1, true));
 	}
 }

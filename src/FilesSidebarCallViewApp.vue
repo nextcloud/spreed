@@ -19,17 +19,20 @@
   -->
 
 <template>
-	<p v-show="isInCall">
-		Call in progress
-	</p>
+	<CallView v-show="isInCall" :token="token" />
 </template>
 
 <script>
 import { PARTICIPANT } from './constants'
+import CallView from './components/CallView/CallView'
 
 export default {
 
 	name: 'FilesSidebarCallViewApp',
+
+	components: {
+		CallView,
+	},
 
 	data() {
 		return {
@@ -108,7 +111,7 @@ export default {
 				// property in styleSheet objects. Therefore it is necessary to
 				// check the rules themselves, but as the order is undefined a
 				// matching rule needs to be looked for in all of them.
-				if (sheet.cssRules.length !== 1) {
+				if (sheet.cssRules.length !== 2) {
 					continue
 				}
 
@@ -125,6 +128,12 @@ export default {
 
 			// "insertRule" calls below need to be kept in sync with the
 			// condition above.
+
+			// Shadow is added to forced white icons to ensure that they are
+			// visible even against a bright video background.
+			// White color of forced white icons needs to be set in "icons.scss"
+			// file to be able to use the SCSS functions.
+			style.sheet.insertRule('.app-sidebar-header .forced-white { filter: drop-shadow(1px 1px 4px var(--color-box-shadow)); }', 0)
 
 			style.sheet.insertRule('.app-sidebar-header .hidden-by-call { display: none !important; }', 0)
 		},
@@ -144,7 +153,9 @@ export default {
 			for (let i = 0; i < header.children.length; i++) {
 				const headerChild = header.children[i]
 
-				if (!headerChild.classList.contains('app-sidebar__close')) {
+				if (headerChild.classList.contains('app-sidebar__close')) {
+					headerChild.classList.add('forced-white')
+				} else {
 					headerChild.classList.add('hidden-by-call')
 				}
 			}
@@ -165,7 +176,9 @@ export default {
 			for (let i = 0; i < header.children.length; i++) {
 				const headerChild = header.children[i]
 
-				if (!headerChild.classList.contains('app-sidebar__close')) {
+				if (headerChild.classList.contains('app-sidebar__close')) {
+					headerChild.classList.remove('forced-white')
+				} else {
 					headerChild.classList.remove('hidden-by-call')
 				}
 			}
@@ -178,3 +191,17 @@ export default {
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+#call-container {
+	position: relative;
+
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
+	/* Show the call container in a 16/9 proportion based on the sidebar
+	 * width. */
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+}
+</style>
