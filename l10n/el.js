@@ -34,6 +34,7 @@ OC.L10N.register(
     "Enable video" : "Ενεργοποίηση βίντεο",
     "Favorite" : "Προσθήκη στα αγαπημένα",
     "Copy link" : "Αντιγραφή συνδέσμου",
+    "Off" : "Απενεργοποίηση ",
     "Leave conversation" : "Εγκατάλειψη συνομιλίας",
     "Delete conversation" : "Διαγραφή συνομιλίας",
     "Remove from favorites" : "Αφαίρεση από τα αγαπημένα",
