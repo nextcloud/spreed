@@ -73,6 +73,7 @@ OC.L10N.register(
     "Favorite" : "Gogokoa",
     "Copy link" : "Kopiatu esteka",
     "All messages" : "Mezu guztiak",
+    "Off" : "Off",
     "Leave conversation" : "Atera elkarrizketatik",
     "Delete conversation" : "Ezabatu elkarrizketa",
     "Remove from favorites" : "Kendu gogokoetatik",
