@@ -24,7 +24,7 @@ import FlowPostToConversation from './views/FlowPostToConversation'
 
 window.OCA.WorkflowEngine.registerOperator({
 	id: 'OCA\\Talk\\Flow\\Operation',
-	color: 'tomato',
+	color: '#0082c9',
 	operation: '',
 	options: FlowPostToConversation,
 })
