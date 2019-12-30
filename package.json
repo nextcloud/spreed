@@ -15,7 +15,7 @@
 		"stylelint:fix": "stylelint --config .stylelintrc src --fix"
 	},
 	"dependencies": {
-		"@nextcloud/auth": "^0.3.1",
+		"@nextcloud/auth": "^1.1.0",
 		"@nextcloud/axios": "^1.1.0",
 		"@nextcloud/dialogs": "^1.0.0",
 		"@nextcloud/initial-state": "^1.0.0",
