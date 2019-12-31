@@ -19,7 +19,7 @@
   -->
 
 <template>
-	<CallView v-show="isInCall" :token="token" />
+	<CallView v-show="isInCall" :token="token" :use-constrained-layout="true" />
 </template>
 
 <script>
