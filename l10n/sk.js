@@ -143,6 +143,7 @@ OC.L10N.register(
     "Yesterday" : "Včera",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Súbor na zdieľanie",
+    "Invalid path selected" : "Bola vybraná neplatná cesta",
     "moderator" : "moderátor",
     "guest" : "hosť",
     "Demote from moderator" : "Odobrať moderovanie",
