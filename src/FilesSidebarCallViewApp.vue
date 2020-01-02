@@ -19,7 +19,10 @@
   -->
 
 <template>
-	<CallView v-show="isInCall" :token="token" :use-constrained-layout="true" />
+	<CallView v-if="isInFile"
+		v-show="isInCall"
+		:token="token"
+		:use-constrained-layout="true" />
 </template>
 
 <script>
@@ -62,10 +65,28 @@ export default {
 			return this.$store.getters.getFileIdForToken()
 		},
 
+		/**
+		 * Returns whether the sidebar is opened in the file of the current
+		 * conversation or not.
+		 *
+		 * Note that false is returned too when the sidebar is closed, even if
+		 * the conversation is active in the current file.
+		 *
+		 * @returns {Boolean} true if the sidebar is opened in the file, false
+		 *          otherwise.
+		 */
+		isInFile() {
+			if (this.fileId !== this.fileIdForToken) {
+				return false
+			}
+
+			return true
+		},
+
 		isInCall() {
 			// FIXME Remove participants as soon as the file changes so this
 			// condition is not needed.
-			if (this.fileId !== this.fileIdForToken) {
+			if (!this.isInFile) {
 				return false
 			}
 

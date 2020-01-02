@@ -159,6 +159,12 @@ export default {
 
 	},
 
+	created() {
+		// Ensure that data is properly initialized before mounting the
+		// subviews.
+		this.updateDataFromCallParticipantModels(this.callParticipantModels)
+	},
+
 	methods: {
 
 		/**
