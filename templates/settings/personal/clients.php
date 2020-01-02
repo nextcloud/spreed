@@ -25,10 +25,10 @@
 /** @var array $_ */
 ?>
 
-<div id="clients-talk" class="followupsection clientsbox">
+<div id="clients-talk" class="section clientsbox">
 	<h2><?php p($l->t('%s Talk on your mobile devices', [$theme->getName()]));?></h2>
 
-	<p><?php p($l->t('Join conversations at any time, any where, on any device.')); ?></p>
+	<p class="settings-hint"><?php p($l->t('Join conversations at any time, anywhere, on any device.')); ?></p>
 
 	<div class="clientslinks">
 		<a href="<?php p($_['clients']['android']); ?>" rel="noreferrer" target="_blank">
