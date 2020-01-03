@@ -109,6 +109,38 @@ export default {
 				this.restoreSidebarHeaderContents()
 			}
 		},
+
+		/**
+		 * Force restoring the sidebar header contents on file changes.
+		 *
+		 * If the sidebar is opened in a different file during a call the
+		 * sidebar header contents may not be properly restored due to the order
+		 * in which the updates are handled, so it needs to be executed again
+		 * when the FileInfo has been set and it does not match the current
+		 * conversation.
+		 *
+		 * @param {Object} fileInfo the watched FileInfo
+		 */
+		fileInfo: function(fileInfo) {
+			if (!fileInfo) {
+				return
+			}
+
+			if (this.isInFile) {
+				return
+			}
+
+			const headerAction = document.querySelector('.app-sidebar-header__action')
+			if (!headerAction) {
+				return
+			}
+
+			if (this.$el.parentElement === headerAction) {
+				return
+			}
+
+			this.restoreSidebarHeaderContents()
+		},
 	},
 
 	methods: {
