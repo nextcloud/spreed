@@ -49,6 +49,16 @@
 				@change="toggleLobby">
 				{{ t('spreed', 'Enable lobby') }}
 			</ActionCheckbox>
+			<ActionInput
+				v-if="canFullModerate && hasLobbyEnabled"
+				icon="icon-calendar-dark"
+				type="datetime-local"
+				v-bind="dateTimePickerAttrs"
+				:value="lobbyTimer"
+				:disabled="lobbyTimerLoading"
+				@change="setLobbyTimer">
+				{{ t('spreed', 'Start time (optional)') }}
+			</ActionInput>
 		</template>
 		<AppSidebarTab
 			:order="1"
@@ -80,6 +90,7 @@
 
 <script>
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
+import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
@@ -96,6 +107,7 @@ export default {
 	name: 'RightSidebar',
 	components: {
 		ActionCheckbox,
+		ActionInput,
 		ActionText,
 		AppSidebar,
 		AppSidebarTab,
@@ -114,6 +126,7 @@ export default {
 	data() {
 		return {
 			contactsLoading: false,
+			lobbyTimerLoading: false,
 		}
 	},
 
@@ -137,6 +150,7 @@ export default {
 				isFavorite: false,
 				type: CONVERSATION.TYPE.PUBLIC,
 				lobbyState: WEBINAR.LOBBY.NONE,
+				lobbyTimer: 0,
 			}
 		},
 
@@ -161,6 +175,36 @@ export default {
 		},
 		hasLobbyEnabled() {
 			return this.conversation.lobbyState === WEBINAR.LOBBY.NON_MODERATORS
+		},
+
+		lobbyTimer() {
+			// A timestamp of 0 means that there is no lobby, but it would be
+			// interpreted as the Unix epoch by the DateTimePicker.
+			if (this.conversation.lobbyTimer === 0) {
+				return undefined
+			}
+
+			// PHP timestamp is second-based; JavaScript timestamp is
+			// millisecond based.
+			return this.conversation.lobbyTimer * 1000
+		},
+
+		dateTimePickerAttrs() {
+			return {
+				format: 'YYYY-MM-DD HH:mm',
+				firstDayOfWeek: window.firstDay + 1, // Provided by server
+				lang: {
+					days: window.dayNamesShort, // Provided by server
+					months: window.monthNamesShort, // Provided by server
+				},
+				// Do not update the value until the confirm button has been
+				// pressed. Otherwise it would not be possible to set a lobby
+				// for today, because as soon as the day is selected the lobby
+				// timer would be set, but as no time was set at that point the
+				// lobby timer would be set to today at 00:00, which would
+				// disable the lobby due to being in the past.
+				confirm: true,
+			}
 		},
 
 		displaySearchBox() {
@@ -214,6 +258,24 @@ export default {
 				token: this.token,
 				enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
 			})
+		},
+
+		async setLobbyTimer(date) {
+			this.lobbyTimerLoading = true
+
+			let timestamp = 0
+			if (date) {
+				// PHP timestamp is second-based; JavaScript timestamp is
+				// millisecond based.
+				timestamp = date.getTime() / 1000
+			}
+
+			await this.$store.dispatch('setLobbyTimer', {
+				token: this.token,
+				timestamp: timestamp,
+			})
+
+			this.lobbyTimerLoading = false
 		},
 	},
 }

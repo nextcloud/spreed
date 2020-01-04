@@ -142,6 +142,19 @@ const actions = {
 
 		commit('addConversation', conversation)
 	},
+
+	async setLobbyTimer({ commit, getters }, { token, timestamp }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		// The backend requires the state and timestamp to be set together.
+		await changeLobbyState(token, conversation.lobbyState, timestamp)
+		conversation.lobbyTimer = timestamp
+
+		commit('addConversation', conversation)
+	},
 }
 
 export default { state, mutations, getters, actions }

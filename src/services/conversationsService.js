@@ -198,11 +198,13 @@ const makePrivate = async function(token) {
  * Change the lobby state
  * @param {string} token The token of the conversation to be modified
  * @param {int} newState The new lobby state to set
+ * @param {int} timestamp The UNIX timestamp (in seconds) to set, if any
  */
-const changeLobbyState = async function(token, newState) {
+const changeLobbyState = async function(token, newState, timestamp) {
 	try {
 		const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/webinar/lobby`, {
 			state: newState,
+			timer: timestamp,
 		})
 		return response
 	} catch (error) {
