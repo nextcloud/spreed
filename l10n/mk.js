@@ -43,7 +43,7 @@ OC.L10N.register(
     "Projects" : "Проекти",
     "Leave call" : "Напушти го повикот",
     "Start call" : "Повик",
-    "Limit to groups" : "Огранилчвање на групи",
+    "Limit to groups" : "Ограничување на групи",
     "Save changes" : "Зачувај ги промените",
     "Saving …" : "Зачувува ...",
     "Saved!" : "Зачувано!",
