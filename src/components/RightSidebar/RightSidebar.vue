@@ -102,6 +102,7 @@ import {
 	addToFavorites,
 	removeFromFavorites,
 } from '../../services/conversationsService'
+import isInLobby from '../../mixins/isInLobby'
 
 export default {
 	name: 'RightSidebar',
@@ -115,6 +116,10 @@ export default {
 		CollectionList,
 		ParticipantsTab,
 	},
+
+	mixins: [
+		isInLobby,
+	],
 
 	props: {
 		showChatInSidebar: {
@@ -135,7 +140,7 @@ export default {
 			return this.$store.getters.getSidebarStatus()
 		},
 		opened() {
-			return !!this.token && this.show
+			return !!this.token && !this.isInLobby && this.show
 		},
 		token() {
 			return this.$store.getters.getToken()

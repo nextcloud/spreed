@@ -1,11 +1,14 @@
 <template>
 	<div class="mainView">
-		<TopBar :force-white-icons="showChatInSidebar" />
-
-		<ChatView v-if="!showChatInSidebar" :token="token" />
+		<LobbyScreen v-if="isInLobby" />
 		<template v-else>
-			<CallView
-				:token="token" />
+			<TopBar :force-white-icons="showChatInSidebar" />
+
+			<ChatView v-if="!showChatInSidebar" :token="token" />
+			<template v-else>
+				<CallView
+					:token="token" />
+			</template>
 		</template>
 	</div>
 </template>
@@ -13,16 +16,22 @@
 <script>
 import CallView from '../components/CallView/CallView'
 import ChatView from '../components/ChatView'
+import LobbyScreen from '../components/LobbyScreen'
 import TopBar from '../components/TopBar/TopBar'
 import { PARTICIPANT } from '../constants'
+import isInLobby from '../mixins/isInLobby'
 
 export default {
 	name: 'MainView',
 	components: {
 		CallView,
 		ChatView,
+		LobbyScreen,
 		TopBar,
 	},
+	mixins: [
+		isInLobby,
+	],
 	props: {
 		token: {
 			type: String,
@@ -40,6 +49,10 @@ export default {
 	*/
 
 	computed: {
+		conversation() {
+			return this.$store.getters.conversations[this.token]
+		},
+
 		participant() {
 			if (typeof this.token === 'undefined') {
 				return {
