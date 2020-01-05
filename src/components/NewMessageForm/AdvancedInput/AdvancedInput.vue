@@ -38,7 +38,7 @@ export default {
 		 */
 		placeholderText: {
 			type: String,
-			default: 'New Message ...',
+			default: 'Write message, @ to mention someone …',
 		},
 
 		/**
