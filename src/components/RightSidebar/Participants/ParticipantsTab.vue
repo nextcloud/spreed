@@ -205,29 +205,6 @@ export default {
 			}
 		},
 
-		async toggleGuests() {
-			try {
-				await this.$store.dispatch('toggleGuests', {
-					token: this.token,
-					allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while toggling guests'))
-			}
-		},
-
-		async toggleLobby() {
-			try {
-				await this.$store.dispatch('toggleLobby', {
-					token: this.token,
-					enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while toggling the lobby'))
-			}
-		},
 		async getParticipants() {
 			if (this.token === '') {
 				return
