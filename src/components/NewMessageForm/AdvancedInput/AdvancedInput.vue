@@ -75,9 +75,10 @@ export default {
 		/**
 		 * Listen to routeChange global events and focus on the
 		 */
-		EventBus.$on('routeChange', () => {
-			this.focusInput()
-		})
+		EventBus.$on('routeChange', this.focusInput)
+	},
+	beforeDestroy() {
+		EventBus.$off('routeChange', this.focusInput)
 	},
 	methods: {
 		/**
