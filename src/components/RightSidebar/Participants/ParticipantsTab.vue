@@ -69,6 +69,7 @@ import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
 import { fetchParticipants } from '../../../services/participantsService'
+import isInLobby from '../../../mixins/isInLobby'
 
 export default {
 	name: 'ParticipantsTab',
@@ -79,6 +80,10 @@ export default {
 		Hint,
 		ParticipantsList,
 	},
+
+	mixins: [
+		isInLobby,
+	],
 
 	props: {
 		displaySearchBox: {
@@ -206,7 +211,7 @@ export default {
 		},
 
 		async getParticipants() {
-			if (this.token === '') {
+			if (this.token === '' || this.isInLobby) {
 				return
 			}
 
