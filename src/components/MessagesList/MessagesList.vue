@@ -310,6 +310,11 @@ export default {
 			await this.getOldMessages()
 			// Once the history is received, startslooking for new messages.
 			this.$nextTick(() => {
+				if (this._isBeingDestroyed || this._isDestroyed) {
+					console.debug('Prevent getting new messages on a destroyed MessagesList')
+					return
+				}
+
 				this.getNewMessages()
 			})
 		},
