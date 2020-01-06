@@ -150,7 +150,7 @@ export default {
 	cursor: pointer;
 	&__content {
 		width: 240px;
-		margin-left: 6px;
+		margin-left: 8px;
 		&__line-one {
 			display: flex;
 			justify-content: space-between;
