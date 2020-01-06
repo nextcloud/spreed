@@ -67,4 +67,5 @@ if (!window.OCA.Talk) {
 Object.assign(window.OCA.Talk, {
 	fileInfo: null,
 	newTab,
+	store: store,
 })
