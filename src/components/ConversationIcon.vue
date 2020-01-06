@@ -91,6 +91,9 @@ export default {
 
 <style lang="scss" scoped>
 .conversation-icon {
+	width: 44px;
+	height: 44px;
+
 	&__avatar {
 		// we request 40px avatars, but
 		// conversation icons are 44px
