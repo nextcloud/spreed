@@ -228,11 +228,14 @@ export default {
 			}
 
 			try {
-				const participants = await fetchParticipants(this.token)
-				this.$store.dispatch('purgeParticipantsStore', this.token)
+				// The token must be stored in a local variable to ensure that
+				// the same token is used after waiting.
+				const token = this.token
+				const participants = await fetchParticipants(token)
+				this.$store.dispatch('purgeParticipantsStore', token)
 				participants.data.ocs.data.forEach(participant => {
 					this.$store.dispatch('addParticipant', {
-						token: this.token,
+						token: token,
 						participant,
 					})
 				})
