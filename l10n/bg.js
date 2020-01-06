@@ -31,6 +31,7 @@ OC.L10N.register(
     "Reply" : "Отговори",
     "Today" : "Днес",
     "Yesterday" : "Вчера",
+    "Invalid path selected" : "Предоставен е невалиден път до файл.",
     "guest" : "гост",
     "No results" : "Няма резултати",
     "Guests" : "Гости",
