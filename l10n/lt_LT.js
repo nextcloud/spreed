@@ -3,7 +3,7 @@ OC.L10N.register(
     {
     "(Duration %s)" : "(Trukmė %s)",
     "You attended a call with {user1}" : "Jūs dalyvavote skambutyje su {user1}",
-    "_%n guest_::_%n guests_" : ["%n svečias","%n svečiai","%n svečių","%n svečių"],
+    "_%n guest_::_%n guests_" : ["%n svečias","%n svečiai","%n svečių","%n svečias"],
     "You attended a call with {user1} and {user2}" : "Jūs dalyvavote skambutyje su {user1} ir {user2}",
     "You attended a call with {user1}, {user2} and {user3}" : "Jūs dalyvavote skambutyje su {user1}, {user2} ir {user3}",
     "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Jūs dalyvavote skambutyje su {user1}, {user2}, {user3} ir {user4}",
