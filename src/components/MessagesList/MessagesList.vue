@@ -167,23 +167,15 @@ export default {
 		// is a participant in the old and the new conversation).
 		token: {
 			immediate: true,
-			handler(token) {
-				if (token && this.isParticipant) {
-					this.startGettingMessages()
-				} else {
-					this.cancelLookForNewMessages()
-				}
+			handler() {
+				this.handleStartGettingMessagesPreconditions()
 			},
 		},
 
 		isParticipant: {
 			immediate: true,
-			handler(isParticipant) {
-				if (this.token && isParticipant) {
-					this.startGettingMessages()
-				} else {
-					this.cancelLookForNewMessages()
-				}
+			handler() {
+				this.handleStartGettingMessagesPreconditions()
 			},
 		},
 	},
@@ -295,6 +287,14 @@ export default {
 				return moment()
 			}
 			return moment.unix(message.timestamp)
+		},
+
+		handleStartGettingMessagesPreconditions() {
+			if (this.token && this.isParticipant) {
+				this.startGettingMessages()
+			} else {
+				this.cancelLookForNewMessages()
+			}
 		},
 
 		/**
