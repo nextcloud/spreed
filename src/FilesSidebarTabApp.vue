@@ -20,11 +20,7 @@
 -->
 <template>
 	<div class="talkChatTab">
-		<div v-if="fileInfo && fileInfo.isDirectory()" class="emptycontent">
-			<div class="icon icon-talk" />
-			<h2>Conversations are not available for folders</h2>
-		</div>
-		<div v-else-if="isTalkSidebarSupportedForFile === undefined" class="emptycontent ui-not-ready-placeholder">
+		<div v-if="isTalkSidebarSupportedForFile === undefined" class="emptycontent ui-not-ready-placeholder">
 			<div class="icon icon-loading" />
 		</div>
 		<div v-else-if="!isTalkSidebarSupportedForFile" class="emptycontent file-not-shared">
