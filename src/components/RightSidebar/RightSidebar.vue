@@ -24,7 +24,8 @@
 	<AppSidebar
 		v-if="opened"
 		:title="conversation.displayName"
-		:starred.sync="conversation.isFavorite"
+		:starred="isFavorited"
+		@update:starred="onFavoriteChange"
 		@close="handleClose">
 		<template v-if="conversationHasSettings && showModerationMenu"
 			v-slot:secondary-actions>
@@ -86,6 +87,10 @@ import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
 import ParticipantsTab from './Participants/ParticipantsTab'
+import {
+	addToFavorites,
+	removeFromFavorites,
+} from '../../services/conversationsService'
 
 export default {
 	name: 'RightSidebar',
@@ -139,6 +144,14 @@ export default {
 			return this.$store.getters.getUserId()
 		},
 
+		isFavorited() {
+			if (!this.getUserId) {
+				return null
+			}
+
+			return this.conversation.isFavorite
+		},
+
 		conversationHasSettings() {
 			return this.conversation.type === CONVERSATION.TYPE.GROUP
 				|| this.conversation.type === CONVERSATION.TYPE.PUBLIC
@@ -177,6 +190,16 @@ export default {
 	methods: {
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
+		},
+
+		async onFavoriteChange() {
+			if (this.conversation.isFavorite) {
+				await removeFromFavorites(this.conversation.token)
+			} else {
+				await addToFavorites(this.conversation.token)
+			}
+
+			this.conversation.isFavorite = !this.conversation.isFavorite
 		},
 
 		async toggleGuests() {
