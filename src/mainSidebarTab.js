@@ -21,8 +21,28 @@
  */
 
 import FilesSidebarTab from './views/FilesSidebarTab'
+import { leaveConversation } from './services/participantsService'
+
+const isEnabled = function(fileInfo) {
+	if (fileInfo && !fileInfo.isDirectory()) {
+		return true
+	}
+
+	// If the Talk tab can not be displayed then the current conversation is
+	// left; this must be done here because "setFileInfo" will not get
+	// called with the new file if the tab can not be displayed.
+	leaveConversation(OCA.Talk.store.getters.getToken())
+
+	OCA.Talk.store.dispatch('updateTokenAndFileIdForToken', {
+		newToken: null,
+		newFileId: null,
+	})
+
+	return false
+}
+
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
-		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('talk-chat', FilesSidebarTab))
+		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('talk-chat', FilesSidebarTab, isEnabled))
 	}
 })
