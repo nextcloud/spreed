@@ -30,9 +30,7 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
-	<virtual-list :size="40"
-		:remain="8"
-		:variable="true"
+	<div
 		class="scroller">
 		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"
@@ -41,12 +39,11 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 			v-bind="item"
 			:messages="item"
 			@deleteMessage="handleDeleteMessage" />
-	</virtual-list>
+	</div>
 </template>
 
 <script>
 import moment from '@nextcloud/moment'
-import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import { EventBus } from '../../services/EventBus'
@@ -57,7 +54,6 @@ export default {
 	name: 'MessagesList',
 	components: {
 		MessagesGroup,
-		virtualList,
 	},
 
 	props: {
