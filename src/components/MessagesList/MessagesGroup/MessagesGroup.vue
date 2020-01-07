@@ -53,10 +53,13 @@ import Message from './Message/Message'
 
 export default {
 	name: 'MessagesGroup',
+
 	components: {
 		AuthorAvatar,
 		Message,
 	},
+	inheritAttrs: false,
+
 	props: {
 		/**
 		 * The message id.
