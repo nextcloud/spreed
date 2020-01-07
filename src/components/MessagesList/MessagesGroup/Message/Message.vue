@@ -78,6 +78,7 @@ import emojiRegex from 'emoji-regex'
 
 export default {
 	name: 'Message',
+
 	components: {
 		Actions,
 		ActionButton,
@@ -87,6 +88,8 @@ export default {
 		PlainText,
 		Quote,
 	},
+	inheritAttrs: false,
+
 	props: {
 		/**
 		 * The actor type of the sender of the message.
