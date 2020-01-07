@@ -368,5 +368,6 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	flex: 1 0;
+	overflow-y: auto;
 }
 </style>
