@@ -25,7 +25,7 @@
 			class="avatar icon"
 			:class="iconClass" />
 		<Avatar v-else
-			:size="40"
+			:size="44"
 			:user="item.name"
 			:display-name="item.displayName"
 			class="conversation-icon__avatar" />
@@ -94,11 +94,6 @@ export default {
 	width: 44px;
 	height: 44px;
 
-	&__avatar {
-		// we request 40px avatars, but
-		// conversation icons are 44px
-		margin: 2px;
-	}
 	.icon:not(.icon-favorite) {
 		width: 44px;
 		height: 44px;
