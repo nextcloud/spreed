@@ -30,7 +30,8 @@
 		<div class="participant-row__avatar-wrapper">
 			<Avatar v-if="computedId"
 				:user="computedId"
-				:display-name="computedName" />
+				:display-name="computedName"
+				menu-position="left" />
 			<div v-else
 				class="avatar guest">
 				{{ firstLetterOfGuestName }}
