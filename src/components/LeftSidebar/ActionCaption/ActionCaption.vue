@@ -49,7 +49,6 @@ export default {
 		pointer-events: none;
 
 		margin-left: 10px;
-		border-bottom: 1px solid var(--color-border-dark);
 
 		&:not(:first-child) {
 			margin-top: 22px;
