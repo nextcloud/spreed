@@ -25,9 +25,10 @@
 			class="avatar icon"
 			:class="iconClass" />
 		<Avatar v-else
-			:size="40"
+			:size="44"
 			:user="item.name"
-			:display-name="item.displayName" />
+			:display-name="item.displayName"
+			class="conversation-icon__avatar" />
 		<div v-if="showFavorite"
 			class="favorite-mark">
 			<span class="icon icon-favorite" />
@@ -90,41 +91,40 @@ export default {
 
 <style lang="scss" scoped>
 .conversation-icon {
-	width: 40px;
-	height: 40px;
-}
-
-.icon:not(.icon-favorite) {
 	width: 44px;
 	height: 44px;
-	line-height: 44px;
-	font-size: 24px;
-	background-color: var(--color-background-darker);
 
-	&.icon-changelog {
-		background-size: 44px;
+	.icon:not(.icon-favorite) {
+		width: 44px;
+		height: 44px;
+		line-height: 44px;
+		font-size: 24px;
+		background-color: var(--color-background-darker);
+
+		&.icon-changelog {
+			background-size: 44px;
+		}
+		&.icon-public,
+		&.icon-contacts,
+		&.icon-password,
+		&.icon-file,
+		&.icon-mail {
+			background-size: 20px;
+		}
+
 	}
-	&.icon-public,
-	&.icon-contacts,
-	&.icon-password,
-	&.icon-file,
-	&.icon-mail {
-		background-size: 20px;
-	}
 
-}
+	.favorite-mark {
+		position: absolute;
+		top: 8px;
+		left: calc(44px - 8px);
+		line-height: 100%;
 
-.favorite-mark {
-	position: absolute;
-	top: 8px;
-	left: calc(44px - 8px);
-	line-height: 100%;
-
-	.icon-favorite {
-		display: inline-block;
-		vertical-align: middle;
-		background-image: var(--icon-star-dark-FC0);
-		background-size: 20px;
+		.icon-favorite {
+			display: inline-block;
+			vertical-align: middle;
+			background-image: var(--icon-star-dark-FC0);
+		}
 	}
 }
 
