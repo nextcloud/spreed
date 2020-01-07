@@ -153,25 +153,31 @@ export default {
 
 	beforeMount() {
 		this.getParticipants()
-		/**
-		 * If the route changes, the search filter is reset and we get participants again
-		 */
-		EventBus.$on('routeChange', () => {
-			this.searchText = ''
-			this.$nextTick(() => {
-				this.getParticipants()
-			})
-		})
+
+		EventBus.$on('routeChange', this.onRouteChange)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
 		// periodically gets a hash of all online sessions?
-		EventBus.$on('Signaling::participantListChanged', () => {
-			this.getParticipants()
-		})
+		EventBus.$on('Signaling::participantListChanged', this.getParticipants)
+	},
+
+	beforeDestroy() {
+		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('Signaling::participantListChanged', this.getParticipants)
 	},
 
 	methods: {
+		/**
+		 * If the route changes, the search filter is reset and we get participants again
+		 */
+		onRouteChange() {
+			this.searchText = ''
+			this.$nextTick(() => {
+				this.getParticipants()
+			})
+		},
+
 		handleClose() {
 			this.$store.dispatch('hideSidebar')
 		},

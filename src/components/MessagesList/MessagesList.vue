@@ -146,12 +146,12 @@ export default {
 		 * Add a listener for when we joined a conversation
 		 * Until then guests can not grab any messages
 		 */
-		EventBus.$on('joinedConversation', () => {
-			this.onRouteChange()
-		})
+		EventBus.$on('joinedConversation', this.onRouteChange)
 	},
 
 	beforeDestroy() {
+		EventBus.$off('joinedConversation', this.onRouteChange)
+
 		this.cancelLookForNewMessages()
 	},
 

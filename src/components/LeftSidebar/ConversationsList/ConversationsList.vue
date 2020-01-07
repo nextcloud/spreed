@@ -70,20 +70,22 @@ export default {
 			this.fetchConversations()
 		}, 30000)
 
-		EventBus.$on('routeChange', ({ from, to }) => {
+		EventBus.$on('routeChange', this.onRouteChange)
+		EventBus.$on('shouldRefreshConversations', this.fetchConversations)
+	},
+	beforeDestroy() {
+		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('shouldRefreshConversations', this.fetchConversations)
+	},
+	methods: {
+		onRouteChange({ from, to }) {
 			if (from.name === 'conversation') {
 				leaveConversation(from.params.token)
 			}
 			if (to.name === 'conversation') {
 				joinConversation(to.params.token)
 			}
-		})
-
-		EventBus.$on('shouldRefreshConversations', () => {
-			this.fetchConversations()
-		})
-	},
-	methods: {
+		},
 		sortConversations(conversation1, conversation2) {
 			if (conversation1.isFavorite !== conversation2.isFavorite) {
 				return conversation1.isFavorite ? -1 : 1
