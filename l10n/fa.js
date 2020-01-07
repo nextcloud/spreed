@@ -22,6 +22,7 @@ OC.L10N.register(
     "guest" : "میهمان",
     "No results" : "نتیجه ای یافت نشد",
     "Share link" : "Share link",
+    "Limit to groups" : "محدود کردن به گروه ها",
     "Save changes" : "ذخیره تغییرات",
     "Name" : "نام",
     "Saved" : "ذخیره شد",
