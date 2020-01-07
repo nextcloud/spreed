@@ -250,6 +250,13 @@ export default {
 	line-height: inherit;
 	font-size: 12px;
 
+	/*
+	 * Always add the bubble
+	 */
+	padding: 4px 6px;
+	border-radius: 10px;
+	background-color: var(--color-background-darker);
+
 	span {
 		padding: 2px 6px;
 	}
