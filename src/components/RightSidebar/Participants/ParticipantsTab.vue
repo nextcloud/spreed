@@ -157,9 +157,8 @@ export default {
 	},
 
 	beforeMount() {
-		this.getParticipants()
-
 		EventBus.$on('routeChange', this.onRouteChange)
+		EventBus.$on('joinedConversation', this.onJoinedConversation)
 
 		// FIXME this works only temporary until signaling is fixed to be only on the calls
 		// Then we have to search for another solution. Maybe the room list which we update
@@ -169,15 +168,22 @@ export default {
 
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.onRouteChange)
+		EventBus.$off('joinedConversation', this.onJoinedConversation)
 		EventBus.$off('Signaling::participantListChanged', this.getParticipants)
 	},
 
 	methods: {
 		/**
-		 * If the route changes, the search filter is reset and we get participants again
+		 * If the route changes, the search filter is reset
 		 */
 		onRouteChange() {
 			this.searchText = ''
+		},
+
+		/**
+		 * If the conversation has been joined, we get the participants
+		 */
+		onJoinedConversation() {
 			this.$nextTick(() => {
 				this.getParticipants()
 			})
@@ -204,8 +210,8 @@ export default {
 				this.searchResults = response.data.ocs.data
 				this.getParticipants()
 				this.contactsLoading = false
-			} catch (exeption) {
-				console.error(exeption)
+			} catch (exception) {
+				console.error(exception)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
@@ -227,8 +233,8 @@ export default {
 						participant,
 					})
 				})
-			} catch (exeption) {
-				console.error(exeption)
+			} catch (exception) {
+				console.error(exception)
 				OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
 			}
 		},
