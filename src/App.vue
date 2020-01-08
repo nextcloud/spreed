@@ -59,11 +59,13 @@ export default {
 			savedLastMessageMap: {},
 			defaultPageTitle: false,
 			loading: false,
-			windowIsVisible: true,
 		}
 	},
 
 	computed: {
+		windowIsVisible() {
+			return this.$store.getters.windowIsVisible
+		},
 		conversations() {
 			return this.$store.getters.conversations
 		},
@@ -240,7 +242,7 @@ export default {
 		},
 
 		changeWindowVisibility() {
-			this.windowIsVisible = !document.hidden
+			this.store.dispatch('setWindowVisibility', !document.hidden)
 			if (this.windowIsVisible) {
 				// Remove the potential "*" marker for unread chat messages
 				this.setPageTitle(this.getConversationName(this.token), false)
