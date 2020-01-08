@@ -37,8 +37,36 @@ export default {
 
 	computed: {
 		text() {
-			return escapeHtml(this.data.text).replace(/\n/g, '<br>')
+			return this.clickableLinks(escapeHtml(this.data.text)).replace(/\n/g, '<br>')
+		},
+	},
+
+	methods: {
+		clickableLinks(message) {
+			/**
+			 * In Talk we only parse URLs with a protocol to avoid undesired
+			 * clickables like composer.json. Therefor the method and regex were
+			 * copied from OCP.Comments and adjusted accordingly.
+			 */
+			// var urlRegex = /(\s|^)(https?:\/\/)?((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(\s|$)/ig;
+			const urlRegex = /(\s|\(|^)(https?:\/\/)((?:[-A-Z0-9+_]+\.)+[-A-Z]+(?:\/[-A-Z0-9+&@#%?=~_|!:,.;()]*)*)(?=\s|\)|$)/ig
+			return message.replace(urlRegex, function(_, leadingSpace, protocol, url) {
+				let trailingClosingBracket = ''
+				if (url.substr(-1) === ')' && (url.indexOf('(') === -1 || leadingSpace === '(')) {
+					url = url.substr(0, url.length - 1)
+					trailingClosingBracket = ')'
+				}
+				const link = protocol + url
+
+				return leadingSpace + '<a class="external" target="_blank" rel="noopener noreferrer" href="' + link + '">' + link + '</a>' + trailingClosingBracket
+			})
 		},
 	},
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep .external:after {
+	content: " ↗";
+}
+</style>

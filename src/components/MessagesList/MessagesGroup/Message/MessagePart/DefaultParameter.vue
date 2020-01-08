@@ -21,7 +21,7 @@
 
 <template>
 	<a v-if="data.link"
-		:href="link"
+		:href="data.link"
 		class="external"
 		target="_blank"
 		rel="noopener noreferrer">
