@@ -22,20 +22,26 @@
 <template>
 	<AppContentListItem
 		:title="item.displayName"
-		:to="{ name: 'conversation', params: { token: item.token }}">
+		:to="{ name: 'conversation', params: { token: item.token }}"
+		:class="{ 'has-unread-messages': item.unreadMessages }">
 		<template v-slot:icon>
 			<ConversationIcon
 				:item="item"
 				:hide-favorite="false" />
 		</template>
 		<template v-slot:subtitle>
-			{{ simpleLastChatMessage }}
+			<strong v-if="item.unreadMessages">
+				{{ simpleLastChatMessage }}
+			</strong>
+			<template v-else>
+				{{ simpleLastChatMessage }}
+			</template>
 		</template>
 		<AppNavigationCounter v-if="item.unreadMessages"
 			slot="counter"
 			class="counter"
 			:highlighted="item.unreadMention">
-			{{ item.unreadMessages }}
+			<strong>{{ item.unreadMessages }}</strong>
 		</AppNavigationCounter>
 		<template slot="actions">
 			<ActionButton v-if="canFavorite"
@@ -261,6 +267,13 @@ export default {
 		padding: 2px 6px;
 	}
 }
+
+.has-unread-messages{
+	::v-deep .acli__content__line-one__title {
+		font-weight: bold;
+	}
+}
+
 .scroller {
 	flex: 1 0;
 }
