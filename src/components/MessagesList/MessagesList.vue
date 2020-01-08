@@ -31,6 +31,7 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div
+		v-scroll="handleScroll"
 		class="scroller">
 		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"
@@ -85,6 +86,8 @@ export default {
 			 * when quickly switching to a new conversation.
 			 */
 			cancelFetchMessages: () => {},
+
+			isScrolledToBottom: true,
 		}
 	},
 
@@ -129,6 +132,17 @@ export default {
 				}
 			}
 			return groups
+		},
+		/**
+		 * In order for the state of the component to be sticky, the browser window must be
+		 * active and the div .scroller must be scrolled to the bottom.
+		 * When isSticky is true, as new messages are appended to the list, the div .scroller
+		 * automatically scrolls down to the last message, if it's false, new messages are
+		 * appended but the scrolling position is not altered.
+		 * @returns {boolean}
+		 */
+		isSticky() {
+			return this.isScrolledToBottom && this.$store.getters.windowIsVisible()
 		},
 	},
 
@@ -314,6 +328,11 @@ export default {
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
+				// Scroll to the last message if sticky
+				if (this.isSticky) {
+					this.scrollToBottom()
+				}
+				// Recursive call
 				this.getNewMessages()
 			} catch (exception) {
 				if (exception.response) {
@@ -335,6 +354,20 @@ export default {
 		 */
 		handleDeleteMessage(event) {
 			this.$store.dispatch('deleteMessage', event.message)
+		},
+		/**
+		 * When the div is scrolled, this method checks if it's been scrolled to the
+		 * bottom.
+		 */
+		handleScroll() {
+			const scrollOffset = document.querySelector('.scroller').scrollHeight - document.querySelector('.scroller').scrollTop
+			const elementHeight = document.querySelector('.scroller').clientHeight
+			const tolerance = 3
+			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
+				this.isScrolledToBottom = true
+			} else {
+				this.isScrolledToBottom = false
+			}
 		},
 		/**
 		 * Scrolls to the bottom of the list.

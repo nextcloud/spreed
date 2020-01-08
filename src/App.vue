@@ -242,7 +242,7 @@ export default {
 		},
 
 		changeWindowVisibility() {
-			this.store.dispatch('setWindowVisibility', !document.hidden)
+			this.$store.dispatch('setWindowVisibility', !document.hidden)
 			if (this.windowIsVisible) {
 				// Remove the potential "*" marker for unread chat messages
 				this.setPageTitle(this.getConversationName(this.token), false)
