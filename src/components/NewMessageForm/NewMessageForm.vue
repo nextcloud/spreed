@@ -40,6 +40,7 @@
 						v-bind="messageToBeReplied" />
 					<AdvancedInput
 						v-model="text"
+						:token="token"
 						@submit="handleSubmit" />
 				</div>
 				<button

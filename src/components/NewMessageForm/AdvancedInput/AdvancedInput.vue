@@ -20,19 +20,33 @@
 -->
 
 <template>
-	<div ref="contentEditable"
-		v-contenteditable:text.dangerousHTML="activeInput"
-		:placeHolder="placeholderText"
-		class="new-message-form__advancedinput"
-		@keydown.enter="handleKeydown"
-		@paste="onPaste" />
+	<At ref="at"
+		v-model="text"
+		:members="autoCompleteMentionCandidates"
+		@at="handleAtEvent">
+		<div ref="contentEditable"
+			:contenteditable="activeInput"
+			:placeHolder="placeholderText"
+			class="new-message-form__advancedinput"
+			@keydown.enter="handleKeydown"
+			@paste="onPaste" />
+	</At>
 </template>
 
 <script>
+import At from 'vue-at'
+import VueAtReparenter from '../../../mixins/vueAtReparenter'
 import { EventBus } from '../../../services/EventBus'
+import { searchPossibleMentions } from '../../../services/mentionsService'
 
 export default {
 	name: 'AdvancedInput',
+	components: {
+		At,
+	},
+	mixins: [
+		VueAtReparenter,
+	],
 	props: {
 		/**
 		 * The placeholder for the input field
@@ -54,10 +68,19 @@ export default {
 			type: String,
 			required: true,
 		},
+
+		/**
+		 * The token of the conversation to get candidate mentions for.
+		 */
+		token: {
+			type: String,
+			required: true,
+		},
 	},
 	data: function() {
 		return {
 			text: '',
+			autoCompleteMentionCandidates: [],
 		}
 	},
 	watch: {
@@ -68,6 +91,14 @@ export default {
 		},
 		value(value) {
 			this.text = value
+		},
+		atwho(atwho) {
+			if (!atwho) {
+				// Clear mention candidates when closing the panel. Otherwise
+				// they would be shown when the panel is opened again until the
+				// new ones are received.
+				this.autoCompleteMentionCandidates = []
+			}
 		},
 	},
 	mounted() {
@@ -107,11 +138,38 @@ export default {
 		 * @param {object} event the event object;
 		 */
 		handleKeydown(event) {
+			// Prevent submit event when vue-at panel is open, as that should
+			// just select the mention from the panel.
+			if (this.atwho) {
+				return
+			}
+
 			// TODO: add support for CTRL+ENTER new line
 			if (!(event.shiftKey)) {
 				event.preventDefault()
 				this.$emit('submit', event)
 			}
+		},
+
+		/**
+		 * Sets the autocomplete mention candidates based on the matched text
+		 * after the "@".
+		 *
+		 * @param {String} chunk the matched text to look candidate mentions for.
+		 */
+		async handleAtEvent(chunk) {
+			const response = await searchPossibleMentions(this.token, chunk)
+			const possibleMentions = response.data.ocs.data
+
+			// Wrap mention ids with spaces in quotes.
+			possibleMentions.forEach(possibleMention => {
+				if (possibleMention.id.indexOf(' ') !== -1
+					|| possibleMention.id.indexOf('guest/') === 0) {
+					possibleMention.id = '"' + possibleMention.id + '"'
+				}
+			})
+
+			this.autoCompleteMentionCandidates = possibleMentions.map(possibleMention => possibleMention.id)
 		},
 	},
 }
