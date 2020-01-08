@@ -23,8 +23,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { generateUrl } from '@nextcloud/router'
-import WelcomeView from '../views/WelcomeView.vue'
 import MainView from '../views/MainView.vue'
+import NotFoundView from '../views/NotFoundView.vue'
+import WelcomeView from '../views/WelcomeView.vue'
 
 Vue.use(Router)
 
@@ -39,6 +40,12 @@ export default new Router({
 			path: '/apps/spreed',
 			name: 'root',
 			component: WelcomeView,
+			props: true,
+		},
+		{
+			path: '/apps/spreed/not-found',
+			name: 'notfound',
+			component: NotFoundView,
 			props: true,
 		},
 		{

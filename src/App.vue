@@ -322,7 +322,7 @@ export default {
 				})
 			} catch (exception) {
 				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
-				this.$router.push('/apps/spreed')
+				this.$router.push('/apps/spreed/not-found')
 				this.$store.dispatch('hideSidebar')
 			}
 		},
