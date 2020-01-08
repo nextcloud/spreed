@@ -92,8 +92,36 @@ export default {
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
 		},
+		parsedText() {
+			return this.rawToParsed(this.text)
+		},
 	},
 	methods: {
+		/**
+		 * Returns a parsed version of the given raw text of the content
+		 * editable div.
+		 *
+		 * The given raw text contains a plain text representation of HTML
+		 * content (like "first&nbsp;line<br>second&nbsp;line"). The returned
+		 * parsed text replaces the (known) HTML content with the format
+		 * expected by the server (like "first line\nsecond line").
+		 *
+		 * The parsed text is also trimmed.
+		 *
+		 * @param {String} text the raw text
+		 * @returns {String} the parsed text
+		 */
+		rawToParsed(text) {
+			text = text.replace(/<br>/g, '\n')
+			text = text.replace(/&nbsp;/g, ' ')
+
+			// Although the text is fully trimmed, at the very least the last
+			// "\n" occurrence should be always removed, as browsers add a
+			// "<br>" element as soon as some rich text is written in a content
+			// editable div (for example, if a new line is added the div content
+			// will be "<br><br>").
+			return text.trim()
+		},
 		/**
 		 * Create a temporary message that will be used until the
 		 * actual message object is retrieved from the server
@@ -109,7 +137,7 @@ export default {
 				timestamp: 0,
 				systemMessage: '',
 				messageType: '',
-				message: this.text,
+				message: this.parsedText,
 				messageParameters: {},
 				token: this.token,
 				isReplyable: false,
@@ -161,7 +189,7 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
-			if (this.text.trim() !== '') {
+			if (this.parsedText !== '') {
 				const temporaryMessage = this.createTemporaryMessage()
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''

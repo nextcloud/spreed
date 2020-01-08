@@ -21,7 +21,7 @@
 
 <template>
 	<div ref="contentEditable"
-		v-contenteditable:text="activeInput"
+		v-contenteditable:text.dangerousHTML="activeInput"
 		:placeHolder="placeholderText"
 		class="new-message-form__advancedinput"
 		@keydown.enter="handleKeydown"
