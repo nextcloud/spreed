@@ -41,12 +41,8 @@ const fetchConversations = async function() {
  * @param {string} token The token of the conversation to be fetched.
  */
 const fetchConversation = async function(token) {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
-		return response
-	} catch (error) {
-		console.debug('Error while fetching a conversation: ', error)
-	}
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}`)
+	return response
 }
 
 /**

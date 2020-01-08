@@ -174,6 +174,20 @@ export default {
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 
 		this.onResize()
+
+		EventBus.$on('conversationsReceived', (params) => {
+			if (this.$route.name === 'conversation'
+				&& !this.$store.getters.conversations[this.token]) {
+				if (!params.singleConversation) {
+					console.info('Conversations received, but the current conversation is not in the list, trying to get potential public conversation manually')
+					this.fetchSingleConversation(this.token)
+				} else {
+					console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
+					this.$router.push('/apps/spreed/not-found')
+				}
+			}
+		})
+
 		/**
 		 * Listens to the conversationsReceived globalevent, emitted by the conversationsList
 		 * component each time a new batch of conversations is received and processed in
@@ -189,13 +203,6 @@ export default {
 				// Set the current actor/participant for guests
 				const conversation = this.$store.getters.conversations[this.token]
 				this.$store.dispatch('setCurrentParticipant', conversation)
-			}
-		})
-
-		EventBus.$on('conversationsReceived', () => {
-			if (this.$route.name === 'conversation'
-				&& !this.$store.getters.conversations[this.token]) {
-				this.$router.push('/apps/spreed')
 			}
 		})
 
@@ -296,18 +303,28 @@ export default {
 		},
 
 		async fetchSingleConversation(token) {
-			/** Fetches the conversations from the server and then adds them one by one
-			 * to the store.
-			 */
-			const response = await fetchConversation(token)
-			// this.$store.dispatch('purgeConversationsStore')
-			this.$store.dispatch('addConversation', response.data.ocs.data)
+			try {
+				/**
+				 * Fetches the conversations from the server and then adds them one by one
+				 * to the store.
+				 */
+				const response = await fetchConversation(token)
 
-			/**
-			 * Emits a global event that is used in App.vue to update the page title once the
-			 * ( if the current route is a conversation and once the conversations are received)
-			 */
-			EventBus.$emit('conversationsReceived')
+				// this.$store.dispatch('purgeConversationsStore')
+				this.$store.dispatch('addConversation', response.data.ocs.data)
+
+				/**
+				 * Emits a global event that is used in App.vue to update the page title once the
+				 * ( if the current route is a conversation and once the conversations are received)
+				 */
+				EventBus.$emit('conversationsReceived', {
+					singleConversation: true,
+				})
+			} catch (exception) {
+				console.info('Conversation received, but the current conversation is not in the list. Redirecting to /apps/spreed')
+				this.$router.push('/apps/spreed')
+				this.$store.dispatch('hideSidebar')
+			}
 		},
 	},
 }
