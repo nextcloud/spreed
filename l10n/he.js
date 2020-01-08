@@ -107,7 +107,6 @@ OC.L10N.register(
     "The password is wrong. Try again." : "הססמה שגויה. נא לנסות שוב.",
     "TURN server" : "שרת TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "שרת ה־TURN משמש לתיווך התעבורה מהמשתמשים שנמצאים מאחורי חומת אש.",
-    "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר.",
     "Android app" : "יישומון ל־Android",
     "iOS app" : "יישומון ל־iOS",
     "Delete server" : "מחיקת שרת",
@@ -171,6 +170,7 @@ OC.L10N.register(
     "A group call has started" : "החלה שיחה קבוצתית",
     "Video & audio-conferencing using WebRTC" : "דיון עם קול ותמונה באמצעות WebRTC",
     "This call is password-protected" : "שיחה זו מוגנת בססמה",
-    "Signaling server" : "שרת איתות"
+    "Signaling server" : "שרת איתות",
+    "Join conversations at any time, any where, on any device." : "ניתן להצטרף לדיון בכל עת, מכל מקום, בכל מכשיר."
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

@@ -147,7 +147,6 @@ OC.L10N.register(
     "TURN server" : "Máy chủ TURN",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "Máy chủ TURN được sử dụng để ủy quyền lưu lượng truy cập từ những người tham gia đằng sau tường lửa.",
     "%s Talk on your mobile devices" : "%sNói chuyện trên thiết bị di động của bạn ",
-    "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị.",
     "Android app" : "Ứng dụng Android",
     "iOS app" : "Ứng dụng IOS",
     "Signaling server URL" : "URL máy chủ đăng ký",
@@ -212,6 +211,7 @@ OC.L10N.register(
     "A group call has started" : "Một cuộc gọi nhóm đã được thực hiện",
     "Video & audio-conferencing using WebRTC" : "Video & hội nghị âm thanh bằng WebRTC",
     "This call is password-protected" : "Cuộc gọi này được bảo vệ bằng mật khẩu",
-    "Signaling server" : "Máy chủ đăng ký"
+    "Signaling server" : "Máy chủ đăng ký",
+    "Join conversations at any time, any where, on any device." : "Tham gia cuộc trò chuyện bất kỳ lúc nào, ở bất kỳ đâu, trên mọi thiết bị."
 },
 "nplurals=1; plural=0;");
