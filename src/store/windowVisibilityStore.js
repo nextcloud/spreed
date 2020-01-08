@@ -20,34 +20,39 @@
  *
  */
 
-import Vue from 'vue'
-import Vuex, { Store } from 'vuex'
-import actorStore from './actorStore'
-import conversationsStore from './conversationsStore'
-import messagesStore from './messagesStore'
-import participantsStore from './participantsStore'
-import quoteReplyStore from './quoteReplyStore'
-import sidebarStore from './sidebarStore'
-import tokenStore from './tokenStore'
-import windowVisibilityStore from './windowVisibilityStore'
+const state = {
+	visible: true,
+}
 
-Vue.use(Vuex)
+const getters = {
+	windowIsVisible: (state) => () => {
+		return state.visible
+	},
+}
 
-const mutations = {}
+const mutations = {
+	/**
+	 * Sets the current visibility state
+	 *
+	 * @param {object} state current store state;
+	 * @param {boolean} value the value;
+	 */
+	setVisibility(state, value) {
+		state.visible = value
+	},
+}
 
-export default new Store({
-	modules: {
-		actorStore,
-		conversationsStore,
-		messagesStore,
-		participantsStore,
-		quoteReplyStore,
-		sidebarStore,
-		tokenStore,
-		windowVisibilityStore,
+const actions = {
+	/**
+	 * Sets the current visibility state
+	 *
+	 * @param {object} context the context object;
+	 * @param {boolean} value the value;
+	 */
+	setWindowVisibility(context, value) {
+		context.commit('setVisibility', value)
 	},
 
-	mutations,
+}
 
-	strict: process.env.NODE_ENV !== 'production',
-})
+export default { state, mutations, getters, actions }
