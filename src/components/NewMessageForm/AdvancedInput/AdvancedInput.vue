@@ -21,7 +21,7 @@
 
 <template>
 	<div ref="contentEditable"
-		v-contenteditable:text="active"
+		v-contenteditable:text="activeInput"
 		:placeHolder="placeholderText"
 		class="new-message-form__advancedinput"
 		@keydown.enter="handleKeydown"
@@ -57,7 +57,6 @@ export default {
 	},
 	data: function() {
 		return {
-			active: true,
 			text: '',
 		}
 	},
