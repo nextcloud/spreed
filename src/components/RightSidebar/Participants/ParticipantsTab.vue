@@ -26,7 +26,8 @@
 			v-model="searchText"
 			:placeholder-text="t('spreed', 'Add participants to the conversation')"
 			@input="handleInput" />
-		<CurrentParticipants />
+		<CurrentParticipants
+			:search-text="searchText" />
 		<template v-if="isSearching">
 			<template v-if="addableUsers.length !== 0">
 				<Caption

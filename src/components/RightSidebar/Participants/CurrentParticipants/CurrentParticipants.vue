@@ -35,6 +35,13 @@ export default {
 		ParticipantsList,
 	},
 
+	props: {
+		searchText: {
+			type: String,
+			default: '',
+		},
+	},
+
 	computed: {
 		token() {
 			return this.$store.getters.getToken()
@@ -46,7 +53,13 @@ export default {
 		 * @returns {array}
 		 */
 		participantsList() {
-			const participants = this.$store.getters.participantsList(this.token)
+			let participants = this.$store.getters.participantsList(this.token)
+
+			if (this.searchText !== '') {
+				const lowerSearchText = this.searchText.toLowerCase()
+				participants = participants.filter(participant => participant.displayName.toLowerCase().indexOf(lowerSearchText) !== -1 || participant.userId.toLowerCase().indexOf(lowerSearchText) !== -1)
+			}
+
 			return participants.slice().sort(this.sortParticipants)
 		},
 	},
