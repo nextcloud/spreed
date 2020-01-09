@@ -47,12 +47,17 @@ import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
+import isInLobby from '../../mixins/isInLobby'
 
 export default {
 	name: 'MessagesList',
 	components: {
 		MessagesGroup,
 	},
+
+	mixins: [
+		isInLobby,
+	],
 
 	props: {
 		/**
@@ -158,32 +163,35 @@ export default {
 
 			return true
 		},
+
+		conversation() {
+			return this.$store.getters.conversations[this.token]
+		},
 	},
 
 	watch: {
-		// Watchers for "token" and "isParticipant" need to be separated and can
-		// not be unified in a boolean computed property (as for example that
-		// would not change when the token changes but the current participant
-		// is a participant in the old and the new conversation).
+		// Watchers for "token", "isParticipant" and "isInLobby" need to be
+		// separated and can not be unified in a boolean computed property (as
+		// for example that would not change when the token changes but the
+		// current participant is a participant in the old and the new
+		// conversation).
 		token: {
 			immediate: true,
-			handler(token) {
-				if (token && this.isParticipant) {
-					this.startGettingMessages()
-				} else {
-					this.cancelLookForNewMessages()
-				}
+			handler() {
+				this.handleStartGettingMessagesPreconditions()
 			},
 		},
 
 		isParticipant: {
 			immediate: true,
-			handler(isParticipant) {
-				if (this.token && isParticipant) {
-					this.startGettingMessages()
-				} else {
-					this.cancelLookForNewMessages()
-				}
+			handler() {
+				this.handleStartGettingMessagesPreconditions()
+			},
+		},
+		isInLobby: {
+			immediate: true,
+			handler() {
+				this.handleStartGettingMessagesPreconditions()
 			},
 		},
 	},
@@ -295,6 +303,14 @@ export default {
 				return moment()
 			}
 			return moment.unix(message.timestamp)
+		},
+
+		handleStartGettingMessagesPreconditions() {
+			if (this.token && this.isParticipant && !this.isInLobby) {
+				this.startGettingMessages()
+			} else {
+				this.cancelLookForNewMessages()
+			}
 		},
 
 		/**

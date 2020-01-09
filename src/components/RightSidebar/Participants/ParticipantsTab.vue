@@ -1,4 +1,4 @@
-x<!--
+<!--
   - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
@@ -69,6 +69,7 @@ import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
 import { fetchParticipants } from '../../../services/participantsService'
+import isInLobby from '../../../mixins/isInLobby'
 
 export default {
 	name: 'ParticipantsTab',
@@ -79,6 +80,10 @@ export default {
 		Hint,
 		ParticipantsList,
 	},
+
+	mixins: [
+		isInLobby,
+	],
 
 	props: {
 		displaySearchBox: {
@@ -205,31 +210,8 @@ export default {
 			}
 		},
 
-		async toggleGuests() {
-			try {
-				await this.$store.dispatch('toggleGuests', {
-					token: this.token,
-					allowGuests: this.conversation.type !== CONVERSATION.TYPE.PUBLIC,
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while toggling guests'))
-			}
-		},
-
-		async toggleLobby() {
-			try {
-				await this.$store.dispatch('toggleLobby', {
-					token: this.token,
-					enableLobby: this.conversation.lobbyState !== WEBINAR.LOBBY.NON_MODERATORS,
-				})
-			} catch (exeption) {
-				console.error(exeption)
-				OCP.Toast.error(t('spreed', 'An error occurred while toggling the lobby'))
-			}
-		},
 		async getParticipants() {
-			if (this.token === '') {
+			if (this.token === '' || this.isInLobby) {
 				return
 			}
 
