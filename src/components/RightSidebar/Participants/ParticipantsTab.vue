@@ -34,28 +34,25 @@
 			<template v-if="addableUsers.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add contacts')" />
-				<ParticipantsList
-					v-if="addableUsers.length !== 0"
-					:items="addableUsers"
-					@refreshCurrentParticipants="getParticipants" />
+				<ContactsList
+					:contacts="addableUsers"
+					@click="addUserToParticipants" />
 			</template>
 
 			<template v-if="addableGroups.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add groups')" />
-				<ParticipantsList
-					v-if="addableGroups.length !== 0"
-					:items="addableGroups"
-					@refreshCurrentParticipants="getParticipants" />
+				<GroupsList
+					:groups="addableGroups"
+					@click="addGroupToParticipants" />
 			</template>
 
 			<template v-if="addableCircles.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add circles')" />
-				<ParticipantsList
-					v-if="addableCircles.length !== 0"
-					:items="addableCircles"
-					@refreshCurrentParticipants="getParticipants" />
+				<CirclesList
+					:circles="addableCircles"
+					@click="addCircleToParticipants" />
 			</template>
 
 			<Caption v-if="sourcesWithoutResults"
@@ -70,23 +67,30 @@
 import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
-import ParticipantsList from './ParticipantsList/ParticipantsList'
+import CirclesList from '../../LeftSidebar/CirclesList/CirclesList'
+import ContactsList from '../../LeftSidebar/ContactsList/ContactsList'
+import GroupsList from '../../LeftSidebar/GroupsList/GroupsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
-import { fetchParticipants } from '../../../services/participantsService'
+import {
+	addParticipant,
+	fetchParticipants,
+} from '../../../services/participantsService'
 import isInLobby from '../../../mixins/isInLobby'
 
 export default {
 	name: 'ParticipantsTab',
 	components: {
 		CurrentParticipants,
+		CirclesList,
+		ContactsList,
+		GroupsList,
 		SearchBox,
 		Caption,
 		Hint,
-		ParticipantsList,
 	},
 
 	mixins: [
@@ -254,6 +258,36 @@ export default {
 			} catch (exeption) {
 				console.error(exeption)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
+			}
+		},
+
+		async addUserToParticipants(userId) {
+			try {
+				await addParticipant(this.token, userId, 'users')
+				this.searchText = ''
+				this.getParticipants()
+			} catch (exception) {
+				console.debug(exception)
+			}
+		},
+
+		async addCircleToParticipants(circleId) {
+			try {
+				await addParticipant(this.token, circleId, 'circles')
+				this.searchText = ''
+				this.getParticipants()
+			} catch (exception) {
+				console.debug(exception)
+			}
+		},
+
+		async addGroupToParticipants(groupId) {
+			try {
+				await addParticipant(this.token, groupId, 'groups')
+				this.searchText = ''
+				this.getParticipants()
+			} catch (exception) {
+				console.debug(exception)
 			}
 		},
 
