@@ -20,7 +20,11 @@
 -->
 
 <template>
-	<UserBubble
+	<UserBubble v-if="isMentionToAll"
+		:display-name="data.name"
+		:avatar-image="'icon-group-forced-white'"
+		:primary="true" />
+	<UserBubble v-else
 		:display-name="data.name"
 		:user="data.id"
 		:primary="isCurrentUser" />
@@ -50,6 +54,9 @@ export default {
 	},
 
 	computed: {
+		isMentionToAll() {
+			return this.data.type === 'call'
+		},
 		isCurrentUser() {
 			return this.$store.getters.getActorType() === 'users'
 				&& this.data.id === this.$store.getters.getUserId()

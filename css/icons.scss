@@ -29,6 +29,12 @@
 		background-image: url('../img/changelog.svg');
 	}
 
+	// "forced-white" needs to be included in the class name as the UserBubble
+	// does not accept several classes.
+	.icon-group-forced-white {
+		background-image: url(icon-color-path('group', 'actions', 'fff', 1, true));
+	}
+
 	.forced-white {
 		&.icon-menu-people {
 			background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
