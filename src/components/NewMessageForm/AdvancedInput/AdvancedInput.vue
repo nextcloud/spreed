@@ -24,6 +24,7 @@
 		v-model="text"
 		name-key="label"
 		:members="autoCompleteMentionCandidates"
+		:filter-match="atFilter"
 		@at="handleAtEvent">
 		<template v-slot:item="scope">
 			<Avatar v-if="isMentionToAll(scope.item.id)"
@@ -155,6 +156,16 @@ export default {
 			e.preventDefault()
 			const text = e.clipboardData.getData('text/plain')
 			document.execCommand('insertText', false, text)
+		},
+
+		/**
+		 * The vue-at library only searches in the display name by default.
+		 * But luckily our server responds already only with matching items,
+		 * so we just filter none and show them all.
+		 * @returns {boolean} True as we never filter anything out
+		 */
+		atFilter() {
+			return true
 		},
 
 		/**
