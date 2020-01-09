@@ -22,17 +22,14 @@
 
 This component is a wrapper for the list of messages. It's main purpose it to
 get the messagesList array and loop through the list to generate the messages.
-In order not to render each and every messages that is in the store, we use
-the Vue virtual scroll list component, whose docs you can find [here.](https://github.com/tangbc/vue-virtual-scroll-list)
 
 </docs>
 
 <template>
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
-	<virtual-list :size="40"
-		:remain="8"
-		:variable="true"
+	<div
+		v-scroll="handleScroll"
 		class="scroller">
 		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"
@@ -41,12 +38,11 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 			v-bind="item"
 			:messages="item"
 			@deleteMessage="handleDeleteMessage" />
-	</virtual-list>
+	</div>
 </template>
 
 <script>
 import moment from '@nextcloud/moment'
-import virtualList from 'vue-virtual-scroll-list'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import { EventBus } from '../../services/EventBus'
@@ -57,7 +53,6 @@ export default {
 	name: 'MessagesList',
 	components: {
 		MessagesGroup,
-		virtualList,
 	},
 
 	props: {
@@ -89,6 +84,8 @@ export default {
 			 * when quickly switching to a new conversation.
 			 */
 			cancelFetchMessages: () => {},
+
+			isScrolledToBottom: true,
 		}
 	},
 
@@ -133,6 +130,17 @@ export default {
 				}
 			}
 			return groups
+		},
+		/**
+		 * In order for the state of the component to be sticky, the browser window must be
+		 * active and the div .scroller must be scrolled to the bottom.
+		 * When isSticky is true, as new messages are appended to the list, the div .scroller
+		 * automatically scrolls down to the last message, if it's false, new messages are
+		 * appended but the scrolling position is not altered.
+		 * @returns {boolean}
+		 */
+		isSticky() {
+			return this.isScrolledToBottom && this.$store.getters.windowIsVisible()
 		},
 	},
 
@@ -318,6 +326,11 @@ export default {
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
 				})
+				// Scroll to the last message if sticky
+				if (this.isSticky) {
+					this.scrollToBottom()
+				}
+				// Recursive call
 				this.getNewMessages()
 			} catch (exception) {
 				if (exception.response) {
@@ -339,6 +352,20 @@ export default {
 		 */
 		handleDeleteMessage(event) {
 			this.$store.dispatch('deleteMessage', event.message)
+		},
+		/**
+		 * When the div is scrolled, this method checks if it's been scrolled to the
+		 * bottom.
+		 */
+		handleScroll() {
+			const scrollOffset = document.querySelector('.scroller').scrollHeight - document.querySelector('.scroller').scrollTop
+			const elementHeight = document.querySelector('.scroller').clientHeight
+			const tolerance = 3
+			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
+				this.isScrolledToBottom = true
+			} else {
+				this.isScrolledToBottom = false
+			}
 		},
 		/**
 		 * Scrolls to the bottom of the list.
@@ -372,5 +399,6 @@ export default {
 <style lang="scss" scoped>
 .scroller {
 	flex: 1 0;
+	overflow-y: auto;
 }
 </style>
