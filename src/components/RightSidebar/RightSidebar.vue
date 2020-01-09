@@ -61,14 +61,11 @@
 			</ActionInput>
 		</template>
 		<AppSidebarTab
+			v-if="showChatInSidebar"
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
-			<ChatView v-if="showChatInSidebar" :token="token" />
-			<template v-else>
-				This should be hidden, but the visibility of the tab can not change at the moment:
-				https://github.com/nextcloud/nextcloud-vue/issues/747
-			</template>
+			<ChatView :token="token" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
 			:order="2"
