@@ -287,10 +287,12 @@ export default {
 				return PlainText
 			} else if (messagePartType === 'user') {
 				return Mention
-			} else if (messagePartType === 'call') {
-				return Mention
-			} else if (messagePartType === 'guest') {
-				return Mention
+			// FIXME Reenable once the UserBubble allows non-users
+			// FIXME Ref: https://github.com/nextcloud/nextcloud-vue/issues/796
+			// } else if (messagePartType === 'call') {
+			// return Mention
+			// } else if (messagePartType === 'guest') {
+			// return Mention
 			} else if (messagePartType === 'file') {
 				return FilePreview
 			}
