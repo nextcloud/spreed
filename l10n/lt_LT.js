@@ -184,6 +184,7 @@ OC.L10N.register(
     "Demote from moderator" : "Pažeminti iš moderatorių",
     "Promote to moderator" : "Paaukštinti į moderatorius",
     "Remove participant" : "Šalinti dalyvį",
+    "Contacts loading" : "Įkeliami adresatai",
     "No results" : "Rezultatų nėra",
     "Add participants to the conversation" : "Pridėti dalyvius į pokalbį",
     "Add groups" : "Pridėti grupes",
