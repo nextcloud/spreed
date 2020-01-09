@@ -24,7 +24,8 @@
 		v-contenteditable:text="active"
 		:placeHolder="placeholderText"
 		class="new-message-form__advancedinput"
-		@keydown.enter="handleKeydown" />
+		@keydown.enter="handleKeydown"
+		@paste="onPaste" />
 </template>
 
 <script>
@@ -81,6 +82,12 @@ export default {
 		EventBus.$off('routeChange', this.focusInput)
 	},
 	methods: {
+		onPaste(e) {
+			e.preventDefault()
+			const text = e.clipboardData.getData('text/plain')
+			document.execCommand('insertText', false, text)
+		},
+
 		/**
 		 * Focuses the contenteditable div input
 		 */
@@ -113,7 +120,7 @@ export default {
 
 <style lang="scss" scoped>
 .new-message-form__advancedinput {
-	overflow: show;
+	overflow: visible;
 	width: 100%;
 	border:none;
 	margin: 0;
