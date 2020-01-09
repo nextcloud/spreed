@@ -247,7 +247,7 @@ export default {
 
 		async fetchSearchResults() {
 			try {
-				const response = await searchPossibleConversations(this.searchText)
+				const response = await searchPossibleConversations(this.searchText, this.token)
 				this.searchResults = response.data.ocs.data
 				this.getParticipants()
 				this.contactsLoading = false

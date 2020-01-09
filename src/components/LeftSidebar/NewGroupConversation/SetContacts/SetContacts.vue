@@ -31,7 +31,7 @@
 			@input="handleInput">
 		<template v-if="isSearching">
 			<Caption
-				:title="t('spreed', `Select participants`)" />
+				:title="t('spreed', 'Select participants')" />
 			<ParticipantsList
 				:add-on-click="false"
 				height="250px"
@@ -79,7 +79,6 @@ export default {
 	},
 
 	computed: {
-
 		isSearching() {
 			return this.searchText !== ''
 		},
