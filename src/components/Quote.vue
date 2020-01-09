@@ -28,7 +28,7 @@ components.
 	<div class="quote">
 		<div class="quote__main">
 			<div class="quote__main__author">
-				<h6>{{ actorDisplayName }}</h6>
+				<h6>{{ getDisplayName }}</h6>
 			</div>
 			<div class="quote__main__text">
 				<p>{{ shortenQuotedMessage }}</p>
@@ -59,6 +59,10 @@ export default {
 		/**
 		 * The sender of the message to be replied to.
 		 */
+		actorType: {
+			type: String,
+			required: true,
+		},
 		actorDisplayName: {
 			type: String,
 			required: true,
@@ -101,6 +105,24 @@ export default {
 		},
 	},
 	computed: {
+		/**
+		 * The message actor display name.
+		 * @returns {string}
+		 */
+		getDisplayName() {
+			const displayName = this.actorDisplayName.trim()
+
+			if (displayName === '' && this.actorType === 'guests') {
+				return t('spreed', 'Guest')
+			}
+
+			if (displayName === '') {
+				return t('spreed', '[Unknown user name]')
+			}
+
+			return displayName
+		},
+
 		/**
 		 * This is a simplified version of the last chat message.
 		 * Parameters are parsed without markup (just replaced with the name),
