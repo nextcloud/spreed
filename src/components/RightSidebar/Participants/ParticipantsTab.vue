@@ -36,7 +36,7 @@
 					:title="t('spreed', 'Add contacts')" />
 				<ContactsList
 					:contacts="addableUsers"
-					@click="addUserToParticipants" />
+					@click="addParticipants" />
 			</template>
 
 			<template v-if="addableGroups.length !== 0">
@@ -44,7 +44,7 @@
 					:title="t('spreed', 'Add groups')" />
 				<GroupsList
 					:groups="addableGroups"
-					@click="addGroupToParticipants" />
+					@click="addParticipants" />
 			</template>
 
 			<template v-if="addableCircles.length !== 0">
@@ -52,7 +52,7 @@
 					:title="t('spreed', 'Add circles')" />
 				<CirclesList
 					:circles="addableCircles"
-					@click="addCircleToParticipants" />
+					@click="addParticipants" />
 			</template>
 
 			<Caption v-if="sourcesWithoutResults"
@@ -261,29 +261,15 @@ export default {
 			}
 		},
 
-		async addUserToParticipants(userId) {
+		/**
+		 * Add the selected group/user/circle to the conversation
+		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 * @param {string} item.id The ID of the target
+		 * @param {string} item.source The source of the target
+		 */
+		async addParticipants(item) {
 			try {
-				await addParticipant(this.token, userId, 'users')
-				this.searchText = ''
-				this.getParticipants()
-			} catch (exception) {
-				console.debug(exception)
-			}
-		},
-
-		async addCircleToParticipants(circleId) {
-			try {
-				await addParticipant(this.token, circleId, 'circles')
-				this.searchText = ''
-				this.getParticipants()
-			} catch (exception) {
-				console.debug(exception)
-			}
-		},
-
-		async addGroupToParticipants(groupId) {
-			try {
-				await addParticipant(this.token, groupId, 'groups')
+				await addParticipant(this.token, item.id, item.source)
 				this.searchText = ''
 				this.getParticipants()
 			} catch (exception) {

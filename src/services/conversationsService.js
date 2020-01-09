@@ -52,7 +52,7 @@ const fetchConversation = async function(token) {
 /**
  * Fetch possible conversations
  * @param {string} searchText The string that will be used in the search query.
- * @param {string} token The token of the conversation (if any)
+ * @param {string} [token] The token of the conversation (if any)
  */
 const searchPossibleConversations = async function(searchText, token) {
 	token = token || 'new'

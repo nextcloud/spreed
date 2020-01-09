@@ -25,7 +25,7 @@
 			v-for="item of circles"
 			:key="item.id"
 			:title="item.label"
-			@click="onClick(item.id)">
+			@click="onClick(item)">
 			<template v-slot:icon>
 				<ConversationIcon
 					:item="iconData" />
@@ -64,8 +64,8 @@ export default {
 	},
 	methods: {
 		// forward click event
-		onClick(circleId) {
-			this.$emit('click', circleId)
+		onClick(item) {
+			this.$emit('click', item)
 		},
 	},
 }

@@ -25,7 +25,7 @@
 			v-for="item of contacts"
 			:key="item.id"
 			:title="item.label"
-			@click="onClick(item.id)">
+			@click="onClick(item)">
 			<Avatar
 				slot="icon"
 				:size="44"
@@ -57,8 +57,8 @@ export default {
 	},
 	methods: {
 		// forward click event
-		onClick(userId) {
-			this.$emit('click', userId)
+		onClick(item) {
+			this.$emit('click', item)
 		},
 	},
 }

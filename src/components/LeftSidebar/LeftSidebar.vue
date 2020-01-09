@@ -41,7 +41,7 @@
 					<li v-if="searchResultsUsers.length !== 0">
 						<ContactsList
 							:contacts="searchResultsUsers"
-							@click="createAndJoinOneToOneConversation" />
+							@click="createAndJoinConversation" />
 					</li>
 				</template>
 
@@ -51,7 +51,7 @@
 					<li v-if="searchResultsGroups.length !== 0">
 						<GroupsList
 							:groups="searchResultsGroups"
-							@click="createAndJoinGroupConversation" />
+							@click="createAndJoinConversation" />
 					</li>
 				</template>
 
@@ -61,7 +61,7 @@
 					<li v-if="searchResultsCircles.length !== 0">
 						<CirclesList
 							:circles="searchResultsCircles"
-							@click="createAndJoinCircleConversation" />
+							@click="createAndJoinConversation" />
 					</li>
 				</template>
 
@@ -197,35 +197,18 @@ export default {
 		},
 
 		/**
-		 * Create a new conversation with the selected group.
-		 * @param {string} groupId the ID of the clicked group.
+		 * Create a new conversation with the selected group/user/circle
+		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 * @param {string} item.id The ID of the target
+		 * @param {string} item.source The source of the target
 		 */
-		async createAndJoinGroupConversation(groupId) {
-			const response = await createGroupConversation(groupId, 'groups')
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			EventBus.$emit('resetSearchFilter')
-		},
-
-		/**
-		 * Create a new conversation with the selected circle.
-		 * @param {string} circleId the ID of the clicked circle.
-		 */
-		async createAndJoinCircleConversation(circleId) {
-			const response = await createGroupConversation(circleId, 'circles')
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			EventBus.$emit('resetSearchFilter')
-		},
-
-		/**
-		 * Create a new conversation with the selected user.
-		 * @param {string} userId the ID of the clicked user.
-		 */
-		async createAndJoinOneToOneConversation(userId) {
-			const response = await createOneToOneConversation(userId)
+		async createAndJoinConversation(item) {
+			let response
+			if (item.source === 'users') {
+				response = await createOneToOneConversation(item.id)
+			} else {
+				response = await createGroupConversation(item.id, item.source)
+			}
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
