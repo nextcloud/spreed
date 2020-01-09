@@ -36,7 +36,6 @@
 					:title="t('spreed', 'Add contacts')" />
 				<ParticipantOptionsList
 					:items="addableUsers"
-					:type="CONVERSATION.TYPE.ONE_TO_ONE"
 					@click="addParticipants" />
 			</template>
 

@@ -26,22 +26,16 @@
 			:key="item.id"
 			:title="item.label"
 			@click="onClick(item)">
-			<template v-if="!useAvatar"
+			<template
 				v-slot:icon>
 				<ConversationIcon
-					:item="iconData" />
+					:item="iconData(item)" />
 			</template>
-			<Avatar v-else
-				slot="icon"
-				:size="44"
-				:user="item.id"
-				:display-name="item.label" />
 		</AppContentListItem>
 	</ul>
 </template>
 
 <script>
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import ConversationIcon from './ConversationIcon'
 import AppContentListItem from './LeftSidebar/ConversationsList/AppContentListItem/AppContentListItem'
 import { CONVERSATION } from '../constants'
@@ -49,7 +43,6 @@ import { CONVERSATION } from '../constants'
 export default {
 	name: 'ParticipantOptionsList',
 	components: {
-		Avatar,
 		ConversationIcon,
 		AppContentListItem,
 	},
@@ -58,29 +51,28 @@ export default {
 			type: Array,
 			required: true,
 		},
-		type: {
-			type: Number,
-			default: CONVERSATION.TYPE.GROUP,
-		},
 		isLoading: {
 			type: Boolean,
 			default: false,
-		},
-	},
-	computed: {
-		useAvatar() {
-			return this.type === CONVERSATION.TYPE.ONE_TO_ONE
-		},
-		iconData() {
-			return {
-				type: this.icon,
-			}
 		},
 	},
 	methods: {
 		// forward click event
 		onClick(item) {
 			this.$emit('click', item)
+		},
+		iconData(item) {
+			if (item.source === 'users') {
+				return {
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					displayName: item.label,
+					name: item.id,
+				}
+			}
+			return {
+				type: CONVERSATION.TYPE.GROUP,
+				objectType: item.source,
+			}
 		},
 	},
 }

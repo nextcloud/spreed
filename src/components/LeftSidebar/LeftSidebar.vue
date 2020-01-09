@@ -41,7 +41,6 @@
 					<li v-if="searchResultsUsers.length !== 0">
 						<ParticipantOptionsList
 							:items="searchResultsUsers"
-							:type="oneToOneType"
 							@click="createAndJoinConversation" />
 					</li>
 				</template>
@@ -114,7 +113,6 @@ export default {
 			searchResultsCircles: [],
 			contactsLoading: false,
 			isCirclesEnabled: true, // FIXME
-			oneToOneType: CONVERSATION.TYPE.ONE_TO_ONE,
 		}
 	},
 
