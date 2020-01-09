@@ -49,8 +49,8 @@
 					<Caption
 						:title="t('spreed', 'Groups')" />
 					<li v-if="searchResultsGroups.length !== 0">
-						<GroupsList
-							:groups="searchResultsGroups"
+						<ParticipantOptionsList
+							:items="searchResultsGroups"
 							@click="createAndJoinConversation" />
 					</li>
 				</template>
@@ -59,8 +59,8 @@
 					<Caption
 						:title="t('spreed', 'Circles')" />
 					<li v-if="searchResultsCircles.length !== 0">
-						<CirclesList
-							:circles="searchResultsCircles"
+						<ParticipantOptionsList
+							:items="searchResultsCircles"
 							@click="createAndJoinConversation" />
 					</li>
 				</template>
@@ -77,10 +77,9 @@
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
-import CirclesList from './CirclesList/CirclesList'
 import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
-import GroupsList from './GroupsList/GroupsList'
+import ParticipantOptionsList from '../ParticipantOptionsList'
 import Hint from '../Hint'
 import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
@@ -100,9 +99,8 @@ export default {
 		AppNavigation,
 		Caption,
 		ContactsList,
-		CirclesList,
 		ConversationsList,
-		GroupsList,
+		ParticipantOptionsList,
 		Hint,
 		SearchBox,
 		NewGroupConversation,

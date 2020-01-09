@@ -42,8 +42,8 @@
 			<template v-if="addableGroups.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add groups')" />
-				<GroupsList
-					:groups="addableGroups"
+				<ParticipantOptionsList
+					:items="addableGroups"
 					@click="addParticipants" />
 			</template>
 
@@ -58,8 +58,8 @@
 			<template v-if="addableCircles.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add circles')" />
-				<CirclesList
-					:circles="addableCircles"
+				<ParticipantOptionsList
+					:items="addableCircles"
 					@click="addParticipants" />
 			</template>
 
@@ -75,10 +75,8 @@
 import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
-import CirclesList from '../../LeftSidebar/CirclesList/CirclesList'
 import ContactsList from '../../LeftSidebar/ContactsList/ContactsList'
 import ParticipantOptionsList from '../../ParticipantOptionsList'
-import GroupsList from '../../LeftSidebar/GroupsList/GroupsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
@@ -94,10 +92,8 @@ export default {
 	name: 'ParticipantsTab',
 	components: {
 		CurrentParticipants,
-		CirclesList,
 		ContactsList,
 		ParticipantOptionsList,
-		GroupsList,
 		SearchBox,
 		Caption,
 		Hint,
