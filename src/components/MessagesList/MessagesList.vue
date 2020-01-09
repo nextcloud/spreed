@@ -22,8 +22,6 @@
 
 This component is a wrapper for the list of messages. It's main purpose it to
 get the messagesList array and loop through the list to generate the messages.
-In order not to render each and every messages that is in the store, we use
-the Vue virtual scroll list component, whose docs you can find [here.](https://github.com/tangbc/vue-virtual-scroll-list)
 
 </docs>
 
@@ -47,7 +45,6 @@ the Vue virtual scroll list component, whose docs you can find [here.](https://g
 import moment from '@nextcloud/moment'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
-import { EventBus } from '../../services/EventBus'
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 
@@ -139,27 +136,56 @@ export default {
 		isSticky() {
 			return this.isScrolledToBottom && this.$store.getters.windowIsVisible()
 		},
-	},
 
-	/**
-	 * Fetches the messages when the MessageList created. The router mounts this
-	 * component only if the token is passed in so there's no need to check the
-	 * token prop.
-	 */
-	beforeMount() {
 		/**
-		 * Add a listener for when we joined a conversation
-		 * Until then guests can not grab any messages
+		 * Returns whether the current participant is a participant of the
+		 * current conversation or not.
+		 *
+		 * @returns {Boolean} true if it is already a participant, false
+		 *          otherwise.
 		 */
-		EventBus.$on('joinedConversation', this.onRouteChange)
+		isParticipant() {
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			if (participantIndex === -1) {
+				return false
+			}
+
+			return true
+		},
 	},
 	mounted() {
 		this.scrollToBottom()
 	},
 
-	beforeDestroy() {
-		EventBus.$off('joinedConversation', this.onRouteChange)
+	watch: {
+		// Watchers for "token" and "isParticipant" need to be separated and can
+		// not be unified in a boolean computed property (as for example that
+		// would not change when the token changes but the current participant
+		// is a participant in the old and the new conversation).
+		token: {
+			immediate: true,
+			handler(token) {
+				if (token && this.isParticipant) {
+					this.startGettingMessages()
+				} else {
+					this.cancelLookForNewMessages()
+				}
+			},
+		},
 
+		isParticipant: {
+			immediate: true,
+			handler(isParticipant) {
+				if (this.token && isParticipant) {
+					this.startGettingMessages()
+				} else {
+					this.cancelLookForNewMessages()
+				}
+			},
+		},
+	},
+
+	beforeDestroy() {
 		this.cancelLookForNewMessages()
 	},
 
@@ -272,9 +298,15 @@ export default {
 			this.scrollToBottom()
 			// Once the history is received, startslooking for new messages.
 			this.$nextTick(() => {
+				if (this._isBeingDestroyed || this._isDestroyed) {
+					console.debug('Prevent getting new messages on a destroyed MessagesList')
+					return
+				}
+
 				this.getNewMessages()
 			})
 		},
+
 		async getOldMessages() {
 			/**
 			 * Clear previous requests if there's one pending
@@ -298,6 +330,7 @@ export default {
 				}
 			}
 		},
+
 		/**
 		 * Creates a long polling request for a new message.
 		 */
@@ -337,6 +370,7 @@ export default {
 				}
 			}
 		},
+
 		/**
 		 * Dispatches the deleteMessages action.
 		 * @param {object} event The deleteMessage event emitted by the Message component.
@@ -344,6 +378,22 @@ export default {
 		handleDeleteMessage(event) {
 			this.$store.dispatch('deleteMessage', event.message)
 		},
+
+		/**
+		 * When the div is scrolled, this method checks if it's been scrolled to the
+		 * bottom.
+		 */
+		handleScroll() {
+			const scrollOffset = document.querySelector('.scroller').scrollHeight - document.querySelector('.scroller').scrollTop
+			const elementHeight = document.querySelector('.scroller').clientHeight
+			const tolerance = 3
+			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
+				this.isScrolledToBottom = true
+			} else {
+				this.isScrolledToBottom = false
+			}
+		},
+
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the
 		 * bottom.

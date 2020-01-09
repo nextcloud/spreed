@@ -142,27 +142,32 @@ export default {
 // AppContentListItem
 .acli {
 	position: relative;
-	padding: 10px 2px 10px 8px;
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	flex: 0 0 auto;
+	justify-content: flex-start;
+	padding: 10px 2px 10px 8px;
 	cursor: pointer;
+
 	&__content {
 		width: 240px;
+		// same as the acli left padding for
+		// nice visual balance around the avatar
 		margin-left: 8px;
+
 		&__line-one {
 			display: flex;
-			justify-content: space-between;
 			align-items: center;
+			justify-content: space-between;
 			white-space: nowrap;
+
 			&__title {
-				flex-grow: 1;
 				overflow: hidden;
-				text-overflow: ellipsis;
-				color: var(--color-main-text);
+				flex-grow: 1;
 				padding-right: 4px;
 				cursor: pointer;
+				text-overflow: ellipsis;
+				color: var(--color-main-text);
 			}
 			&__actions {
 				margin: -5px 0 -3px 0;
@@ -173,19 +178,21 @@ export default {
 				}
 			}
 		}
+
 		&__line-two {
 			display: flex;
-			justify-content: space-between;
 			align-items: flex-start;
+			justify-content: space-between;
 			white-space: nowrap;
+
 			&__subtitle {
-				flex-grow: 1;
 				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
-				color: var(--color-text-lighter);
+				flex-grow: 1;
 				padding-right: 4px;
 				cursor: pointer;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				color: var(--color-text-lighter);
 			}
 			&__counter {
 				margin-right: 12px;
@@ -196,7 +203,7 @@ export default {
 
 .active {
 	background-color: var(--color-primary-light);
-	box-shadow: inset 4px 0 var(--color-primary)
+	box-shadow: inset 4px 0 var(--color-primary);
 }
 
 </style>

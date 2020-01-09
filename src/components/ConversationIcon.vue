@@ -90,34 +90,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$icon-size: 44px;
+
 .conversation-icon {
-	width: 44px;
-	height: 44px;
+	width: $icon-size;
+	height: $icon-size;
 
 	.icon:not(.icon-favorite) {
-		width: 44px;
-		height: 44px;
-		line-height: 44px;
-		font-size: 24px;
+		width: $icon-size;
+		height: $icon-size;
+		line-height: $icon-size;
+		font-size: $icon-size / 2;
 		background-color: var(--color-background-darker);
 
 		&.icon-changelog {
-			background-size: 44px;
+			background-size: $icon-size;
 		}
 		&.icon-public,
 		&.icon-contacts,
 		&.icon-password,
 		&.icon-file,
 		&.icon-mail {
-			background-size: 20px;
+			background-size: $icon-size / 2;
 		}
 
 	}
 
 	.favorite-mark {
 		position: absolute;
-		top: 8px;
-		left: calc(44px - 8px);
+		top: 6px;
+		left: $icon-size - 6px;
 		line-height: 100%;
 
 		.icon-favorite {
