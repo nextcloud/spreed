@@ -305,10 +305,10 @@ export default {
 	margin: 0;
 }
 
-//Support for the placehoder text in the div contenteditable
+// Support for the placeholder text in the div contenteditable
 [contenteditable]:empty:before{
 	content: attr(placeholder);
 	display: block;
-	color: gray;
+	color: var(--color-text-maxcontrast);
 }
 </style>
