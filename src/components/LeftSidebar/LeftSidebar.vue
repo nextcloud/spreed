@@ -35,28 +35,33 @@
 					:search-text="searchText" />
 			</li>
 			<template v-if="isSearching">
-				<Caption
-					:title="t('spreed', 'Contacts')" />
-				<li v-if="searchResultsUsers.length !== 0">
-					<ContactsList :contacts="searchResultsUsers" />
-				</li>
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No search results')" />
+				<template v-if="searchResultsUsers.length !== 0">
+					<Caption
+						:title="t('spreed', 'Contacts')" />
+					<li v-if="searchResultsUsers.length !== 0">
+						<ContactsList :contacts="searchResultsUsers" />
+					</li>
+				</template>
 
-				<Caption
-					:title="t('spreed', 'Groups')" />
-				<li v-if="searchResultsGroups.length !== 0">
-					<GroupsList :groups="searchResultsGroups" />
-				</li>
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-				<Hint v-else :hint="t('spreed', 'No search results')" />
+				<template v-if="searchResultsGroups.length !== 0">
+					<Caption
+						:title="t('spreed', 'Groups')" />
+					<li v-if="searchResultsGroups.length !== 0">
+						<GroupsList :groups="searchResultsGroups" />
+					</li>
+				</template>
 
-				<Caption
-					:title="t('spreed', 'Circles')" />
-				<li v-if="searchResultsCircles.length !== 0">
-					<CirclesList :circles="searchResultsCircles" />
-				</li>
-				<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+				<template v-if="searchResultsCircles.length !== 0">
+					<Caption
+						:title="t('spreed', 'Circles')" />
+					<li v-if="searchResultsCircles.length !== 0">
+						<CirclesList :circles="searchResultsCircles" />
+					</li>
+				</template>
+
+				<Caption v-if="sourcesWithoutResults"
+					:title="sourcesWithoutResultsList" />
+				<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 				<Hint v-else :hint="t('spreed', 'No search results')" />
 			</template>
 		</ul>
@@ -102,6 +107,7 @@ export default {
 			searchResultsGroups: [],
 			searchResultsCircles: [],
 			contactsLoading: false,
+			isCirclesEnabled: true, // FIXME
 		}
 	},
 
@@ -111,6 +117,43 @@ export default {
 		},
 		isSearching() {
 			return this.searchText !== ''
+		},
+
+		sourcesWithoutResults() {
+			return !this.searchResultsUsers.length
+				|| !this.searchResultsGroups.length
+				|| (this.isCirclesEnabled && !this.searchResultsCircles.length)
+		},
+
+		sourcesWithoutResultsList() {
+			if (!this.searchResultsUsers.length) {
+				if (!this.searchResultsGroups.length) {
+					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
+						return t('spreed', 'Contacts, groups and circles')
+					} else {
+						return t('spreed', 'Contacts and groups')
+					}
+				} else {
+					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
+						return t('spreed', 'Contacts and circles')
+					} else {
+						return t('spreed', 'Contacts')
+					}
+				}
+			} else {
+				if (!this.searchResultsGroups.length) {
+					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
+						return t('spreed', 'Groups and circles')
+					} else {
+						return t('spreed', 'Groups')
+					}
+				} else if (!this.searchResultsGroups.length) {
+					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
+						return t('spreed', 'Circles')
+					}
+				}
+			}
+			return t('spreed', 'Other sources')
 		},
 	},
 
