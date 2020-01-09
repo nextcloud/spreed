@@ -34,6 +34,9 @@
 	.icon-group-forced-white {
 		background-image: url(icon-color-path('group', 'actions', 'fff', 1, true));
 	}
+	.icon-user-forced-white {
+		background-image: url(icon-color-path('user', 'actions', 'fff', 1, true));
+	}
 
 	.forced-white {
 		&.icon-menu-people {

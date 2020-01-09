@@ -24,6 +24,10 @@
 		:display-name="data.name"
 		:avatar-image="'icon-group-forced-white'"
 		:primary="true" />
+	<UserBubble v-else-if="isMentionToGuest"
+		:display-name="data.name"
+		:avatar-image="'icon-user-forced-white'"
+		:primary="isCurrentGuest" />
 	<UserBubble v-else
 		:display-name="data.name"
 		:user="data.id"
@@ -56,6 +60,13 @@ export default {
 	computed: {
 		isMentionToAll() {
 			return this.data.type === 'call'
+		},
+		isMentionToGuest() {
+			return this.data.type === 'guest'
+		},
+		isCurrentGuest() {
+			return this.$store.getters.getActorType() === 'guests'
+				&& this.data.id === ('guest/' + this.$store.getters.getSessionHash())
 		},
 		isCurrentUser() {
 			return this.$store.getters.getActorType() === 'users'
