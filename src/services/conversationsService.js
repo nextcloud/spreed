@@ -56,9 +56,24 @@ const fetchConversation = async function(token) {
  */
 const searchPossibleConversations = async function(searchText, token) {
 	token = token || 'new'
+	const shareTypes = [
+		SHARE.TYPE.USER,
+		SHARE.TYPE.GROUP,
+		SHARE.TYPE.CIRCLE,
+	]
+	if (token !== 'new') {
+		shareTypes.push(SHARE.TYPE.EMAIL)
+	}
+
 	try {
-		const response = await axios.get(generateOcsUrl('core/autocomplete', 2) + `get` + `?format=json` + `&search=${searchText}` + `&itemType=call` + `&itemId=${token}` + `&shareTypes[]=${SHARE.TYPE.USER}&shareTypes[]=${SHARE.TYPE.GROUP}&shareTypes[]=${SHARE.TYPE.CIRCLE}`)
-		return response
+		return await axios.get(generateOcsUrl('core/autocomplete', 2) + `get`, {
+			params: {
+				search: searchText,
+				itemType: 'call',
+				itemId: token,
+				shareTypes,
+			},
+		})
 	} catch (error) {
 		console.debug('Error while searching possible conversations: ', error)
 	}

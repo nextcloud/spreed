@@ -47,6 +47,14 @@
 					@click="addParticipants" />
 			</template>
 
+			<template v-if="addableEmails.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add emails')" />
+				<ParticipantOptionsList
+					:items="addableEmails"
+					@click="addParticipants" />
+			</template>
+
 			<template v-if="addableCircles.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add circles')" />
@@ -69,6 +77,7 @@ import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
 import CirclesList from '../../LeftSidebar/CirclesList/CirclesList'
 import ContactsList from '../../LeftSidebar/ContactsList/ContactsList'
+import ParticipantOptionsList from '../../ParticipantOptionsList'
 import GroupsList from '../../LeftSidebar/GroupsList/GroupsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
@@ -87,6 +96,7 @@ export default {
 		CurrentParticipants,
 		CirclesList,
 		ContactsList,
+		ParticipantOptionsList,
 		GroupsList,
 		SearchBox,
 		Caption,
@@ -196,6 +206,12 @@ export default {
 		addableGroups() {
 			if (this.searchResults !== []) {
 				return this.searchResults.filter((item) => item.source === 'groups')
+			}
+			return []
+		},
+		addableEmails() {
+			if (this.searchResults !== []) {
+				return this.searchResults.filter((item) => item.source === 'emails')
 			}
 			return []
 		},
