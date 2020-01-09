@@ -161,7 +161,7 @@ export default {
 		 * Sends the new message
 		 */
 		async handleSubmit() {
-			if (this.text !== '') {
+			if (this.text.trim() !== '') {
 				const temporaryMessage = this.createTemporaryMessage()
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
