@@ -26,6 +26,22 @@
 		:members="autoCompleteMentionCandidates"
 		@at="handleAtEvent">
 		<template v-slot:item="scope">
+			<Avatar v-if="isMentionToAll(scope.item.id)"
+				:icon-class="'icon-group-forced-white'"
+				:disable-tooltip="true"
+				:disable-menu="true"
+				:is-no-user="true" />
+			<div v-else-if="isMentionToGuest(scope.item.id)"
+				class="avatar guest"
+				:style="getGuestAvatarStyle()">
+				{{ getFirstLetterOfGuestName(scope.item.label) }}
+			</div>
+			<Avatar v-else
+				:user="scope.item.id"
+				:display-name="scope.item.label"
+				:disable-tooltip="true"
+				:disable-menu="true" />
+			&nbsp;
 			<span>{{ scope.item.label }}</span>
 		</template>
 		<template v-slot:embeddedItem="scope">
@@ -47,11 +63,13 @@ import At from 'vue-at'
 import VueAtReparenter from '../../../mixins/vueAtReparenter'
 import { EventBus } from '../../../services/EventBus'
 import { searchPossibleMentions } from '../../../services/mentionsService'
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 
 export default {
 	name: 'AdvancedInput',
 	components: {
 		At,
+		Avatar,
 	},
 	mixins: [
 		VueAtReparenter,
@@ -118,6 +136,8 @@ export default {
 		 * Listen to routeChange global events and focus on the
 		 */
 		EventBus.$on('routeChange', this.focusInput)
+
+		this.addCustomAtWhoStyleSheet()
 	},
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.focusInput)
@@ -181,6 +201,63 @@ export default {
 			})
 
 			this.autoCompleteMentionCandidates = possibleMentions
+		},
+
+		isMentionToAll(mentionId) {
+			return mentionId === 'all'
+		},
+
+		isMentionToGuest(mentionId) {
+			// Guest ids, like ids of users with spaces, are wrapped in quotes.
+			return mentionId.startsWith('"guest/')
+		},
+
+		getGuestAvatarStyle() {
+			return {
+				'width': '32px',
+				'height': '32px',
+				'line-height': '32px',
+				'background-color': '#b9b9b9',
+				'text-align': 'center',
+			}
+		},
+
+		getFirstLetterOfGuestName(displayName) {
+			const customName = displayName !== t('spreed', 'Guest') ? displayName : '?'
+			return customName.charAt(0)
+		},
+
+		/**
+		 * Adds a special style sheet to customize atwho elements.
+		 *
+		 * The <style> section has no effect on the atwho elements, as the atwho
+		 * panel is reparented to the body, and the rules added there are rooted
+		 * on the AdvancedInput.
+		 */
+		addCustomAtWhoStyleSheet() {
+			for (let i = 0; i < document.styleSheets.length; i++) {
+				const sheet = document.styleSheets[i]
+				if (sheet.title === 'at-who-custom') {
+					return
+				}
+			}
+
+			const style = document.createElement('style')
+			style.setAttribute('title', 'at-who-custom')
+
+			document.head.appendChild(style)
+
+			// Override "width: 180px", as that makes the autocompletion panel
+			// too narrow.
+			style.sheet.insertRule('.atwho-view { width: unset; }', 0)
+			// Override autocompletion panel items height, as they are too short
+			// for the avatars and also need some padding.
+			style.sheet.insertRule('.atwho-li { height: unset; padding-top: 6px; padding-bottom: 6px; }', 0)
+
+			// Although the height of its wrapper is 32px the height of the icon
+			// is the default 16px. This is a temporary fix until it is fixed
+			// in the avatar component.
+			style.sheet.insertRule('.atwho-li .icon-group-forced-white { width: 32px; height: 32px; }', 0)
 		},
 	},
 }

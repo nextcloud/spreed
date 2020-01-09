@@ -67,3 +67,13 @@
 		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
 	}
 }
+
+// The atwho panel is a direct child of the body, so it is not affected by
+// .app-Talk rules above.
+.atwho-panel {
+	// "forced-white" needs to be included in the class name as the Avatar does
+	// not accept several classes.
+	.icon-group-forced-white {
+		background-image: url(icon-color-path('group', 'actions', 'fff', 1, true));
+	}
+}
