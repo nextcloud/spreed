@@ -35,9 +35,9 @@ const joinConversation = async(token) => {
 	try {
 		const signaling = await getSignaling()
 
-		signaling.joinRoom(token).then(() => {
-			EventBus.$emit('joinedConversation')
-		})
+		await signaling.joinRoom(token)
+
+		EventBus.$emit('joinedConversation')
 
 		// FIXME Signaling should not handle joining a conversation
 		// const response = await axios.post(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
@@ -56,7 +56,8 @@ const leaveConversation = async function(token) {
 	try {
 		const signaling = await getSignaling()
 
-		signaling.leaveRoom(token)
+		await signaling.leaveRoom(token)
+
 		// FIXME Signaling should not handle leaving a conversation
 		// const response = await axios.delete(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/participants/active`)
 		// return response

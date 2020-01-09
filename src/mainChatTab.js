@@ -36,6 +36,7 @@ import { getRequestToken } from '@nextcloud/auth'
 // Directives
 import contenteditableDirective from 'vue-contenteditable-directive'
 import { translate, translatePlural } from '@nextcloud/l10n'
+import vuescroll from 'vue-scroll'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -55,6 +56,7 @@ Vue.prototype.OCA = OCA
 
 Vue.use(contenteditableDirective)
 Vue.use(Vuex)
+Vue.use(vuescroll, { debounce: 600 })
 
 const newTab = () => new Vue({
 	store,

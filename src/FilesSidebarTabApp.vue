@@ -50,6 +50,7 @@
 <script>
 
 import { getFileConversation } from './services/filesIntegrationServices'
+import { fetchConversation } from './services/conversationsService'
 import { joinConversation, leaveConversation } from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
 import { getCurrentUser } from '@nextcloud/auth'
@@ -126,7 +127,15 @@ export default {
 		async joinConversation() {
 			await this.getFileConversation()
 
-			joinConversation(this.token)
+			await joinConversation(this.token)
+
+			// The current participant (which is automatically set when fetching
+			// the current conversation) is needed for the MessagesList to start
+			// getting the messages. No need to wait for it, but fetching the
+			// conversation needs to be done once the user has joined the
+			// conversation (otherwise only limited data would be received if
+			// the user was not a participant of the conversation yet).
+			this.fetchCurrentConversation()
 		},
 
 		leaveConversation() {
@@ -159,6 +168,15 @@ export default {
 					console.debug(exception)
 				}
 			}
+		},
+
+		async fetchCurrentConversation() {
+			if (!this.token) {
+				return
+			}
+
+			const response = await fetchConversation(this.token)
+			this.$store.dispatch('addConversation', response.data.ocs.data)
 		},
 
 		/**
@@ -302,10 +320,6 @@ export default {
 }
 
 .chatView {
-	/* The chat view shares its parent with the call button, so the default
-	 * "height: 100%" needs to be unset. */
-	height: unset;
-
 	overflow: hidden;
 }
 </style>
