@@ -22,7 +22,7 @@
 		"@nextcloud/l10n": "^1.0.0",
 		"@nextcloud/moment": "^1.0.0",
 		"@nextcloud/router": "^1.0.0",
-		"@nextcloud/vue": "^1.2.3",
+		"@nextcloud/vue": "^1.2.5",
 		"attachmediastream": "^2.1.0",
 		"crypto-js": "^3.1.9-1",
 		"debounce": "^1.2.0",
