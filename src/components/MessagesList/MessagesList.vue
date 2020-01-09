@@ -22,8 +22,6 @@
 
 This component is a wrapper for the list of messages. It's main purpose it to
 get the messagesList array and loop through the list to generate the messages.
-In order not to render each and every messages that is in the store, we use
-the Vue virtual scroll list component, whose docs you can find [here.](https://github.com/tangbc/vue-virtual-scroll-list)
 
 </docs>
 
