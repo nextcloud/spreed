@@ -147,7 +147,7 @@ export default {
 					} else {
 						return t('spreed', 'Groups')
 					}
-				} else if (!this.searchResultsGroups.length) {
+				} else {
 					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
 						return t('spreed', 'Circles')
 					}

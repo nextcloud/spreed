@@ -28,31 +28,36 @@
 			@input="handleInput" />
 		<CurrentParticipants />
 		<template v-if="isSearching">
-			<Caption
-				:title="t('spreed', 'Add participants')" />
-			<ParticipantsList
-				v-if="addableUsers.length !== 0"
-				:items="addableUsers"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
+			<template v-if="addableUsers.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add contacts')" />
+				<ParticipantsList
+					v-if="addableUsers.length !== 0"
+					:items="addableUsers"
+					@refreshCurrentParticipants="getParticipants" />
+			</template>
 
-			<Caption
-				:title="t('spreed', 'Add groups')" />
-			<ParticipantsList
-				v-if="addableGroups.length !== 0"
-				:items="addableGroups"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
+			<template v-if="addableGroups.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add groups')" />
+				<ParticipantsList
+					v-if="addableGroups.length !== 0"
+					:items="addableGroups"
+					@refreshCurrentParticipants="getParticipants" />
+			</template>
 
-			<Caption
-				:title="t('spreed', 'Add circles')" />
-			<ParticipantsList
-				v-if="addableCircles.length !== 0"
-				:items="addableCircles"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+			<template v-if="addableCircles.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add circles')" />
+				<ParticipantsList
+					v-if="addableCircles.length !== 0"
+					:items="addableCircles"
+					@refreshCurrentParticipants="getParticipants" />
+			</template>
+
+			<Caption v-if="sourcesWithoutResults"
+				:title="sourcesWithoutResultsList" />
+			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
@@ -97,6 +102,7 @@ export default {
 			searchText: '',
 			searchResults: [],
 			contactsLoading: false,
+			isCirclesEnabled: true, // FIXME
 		}
 	},
 
@@ -125,6 +131,44 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+
+		sourcesWithoutResults() {
+			return !this.addableUsers.length
+				|| !this.addableGroups.length
+				|| (this.isCirclesEnabled && !this.addableCircles.length)
+		},
+
+		sourcesWithoutResultsList() {
+			if (!this.addableUsers.length) {
+				if (!this.addableGroups.length) {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Contacts, groups and circles')
+					} else {
+						return t('spreed', 'Contacts and groups')
+					}
+				} else {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Contacts and circles')
+					} else {
+						return t('spreed', 'Contacts')
+					}
+				}
+			} else {
+				if (!this.addableGroups.length) {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Groups and circles')
+					} else {
+						return t('spreed', 'Groups')
+					}
+				} else {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Circles')
+					}
+				}
+			}
+			return t('spreed', 'Other sources')
+		},
+
 		addableUsers() {
 			if (this.searchResults !== []) {
 				const searchResultUsers = this.searchResults.filter(item => item.source === 'users')
