@@ -47,7 +47,13 @@
 		<template v-slot:embeddedItem="scope">
 			<!-- The root element itself is ignored, only its contents are taken
 			     into account. -->
-			<span>@{{ scope.current.id }}</span>
+			<span>
+				<!-- vue-at seems to try to create an embedded item at some
+				     strange times in which no item is selected and thus there
+				     is no data, so do not use the Mention component in those
+				     cases. -->
+				<Mention v-if="scope.current.id" :data="getDataForMentionComponent(scope.current)" :data-mention-id="scope.current.id" />
+			</span>
 		</template>
 		<div ref="contentEditable"
 			:contenteditable="activeInput"
@@ -64,12 +70,14 @@ import VueAtReparenter from '../../../mixins/vueAtReparenter'
 import { EventBus } from '../../../services/EventBus'
 import { searchPossibleMentions } from '../../../services/mentionsService'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
+import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
 
 export default {
 	name: 'AdvancedInput',
 	components: {
 		At,
 		Avatar,
+		Mention,
 	},
 	mixins: [
 		VueAtReparenter,
@@ -225,6 +233,21 @@ export default {
 		getFirstLetterOfGuestName(displayName) {
 			const customName = displayName !== t('spreed', 'Guest') ? displayName : '?'
 			return customName.charAt(0)
+		},
+
+		getDataForMentionComponent(candidate) {
+			let type = 'user'
+			if (this.isMentionToAll(candidate.id)) {
+				type = 'call'
+			} else if (this.isMentionToGuest(candidate.id)) {
+				type = 'guest'
+			}
+
+			return {
+				id: candidate.id,
+				name: candidate.label,
+				type: type,
+			}
 		},
 
 		/**

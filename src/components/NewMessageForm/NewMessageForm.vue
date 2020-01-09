@@ -100,7 +100,10 @@ export default {
 		contentEditableToParsed(contentEditable) {
 			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
 			mentions.forEach(mention => {
-				mention.replaceWith(mention.innerText.trim())
+				// FIXME Adding a space after the mention should be improved to
+				// do it or not based on the next element instead of always
+				// adding it.
+				mention.replaceWith('@' + mention.firstElementChild.attributes['data-mention-id'].value + ' ')
 			})
 
 			this.parsedText = this.rawToParsed(contentEditable.innerHTML)
