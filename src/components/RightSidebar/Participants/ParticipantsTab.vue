@@ -34,8 +34,9 @@
 			<template v-if="addableUsers.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add contacts')" />
-				<ContactsList
-					:contacts="addableUsers"
+				<ParticipantOptionsList
+					:items="addableUsers"
+					:type="CONVERSATION.TYPE.ONE_TO_ONE"
 					@click="addParticipants" />
 			</template>
 
@@ -75,7 +76,6 @@
 import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
-import ContactsList from '../../LeftSidebar/ContactsList/ContactsList'
 import ParticipantOptionsList from '../../ParticipantOptionsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
@@ -92,7 +92,6 @@ export default {
 	name: 'ParticipantsTab',
 	components: {
 		CurrentParticipants,
-		ContactsList,
 		ParticipantOptionsList,
 		SearchBox,
 		Caption,

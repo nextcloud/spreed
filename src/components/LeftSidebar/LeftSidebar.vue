@@ -39,8 +39,9 @@
 					<Caption
 						:title="t('spreed', 'Contacts')" />
 					<li v-if="searchResultsUsers.length !== 0">
-						<ContactsList
-							:contacts="searchResultsUsers"
+						<ParticipantOptionsList
+							:items="searchResultsUsers"
+							:type="oneToOneType"
 							@click="createAndJoinConversation" />
 					</li>
 				</template>
@@ -77,7 +78,6 @@
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
-import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
 import ParticipantOptionsList from '../ParticipantOptionsList'
 import Hint from '../Hint'
@@ -98,7 +98,6 @@ export default {
 	components: {
 		AppNavigation,
 		Caption,
-		ContactsList,
 		ConversationsList,
 		ParticipantOptionsList,
 		Hint,
@@ -115,6 +114,7 @@ export default {
 			searchResultsCircles: [],
 			contactsLoading: false,
 			isCirclesEnabled: true, // FIXME
+			oneToOneType: CONVERSATION.TYPE.ONE_TO_ONE,
 		}
 	},
 

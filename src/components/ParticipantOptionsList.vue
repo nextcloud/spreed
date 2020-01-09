@@ -26,15 +26,22 @@
 			:key="item.id"
 			:title="item.label"
 			@click="onClick(item)">
-			<template v-slot:icon>
+			<template v-if="!useAvatar"
+				v-slot:icon>
 				<ConversationIcon
 					:item="iconData" />
 			</template>
+			<Avatar v-else
+				slot="icon"
+				:size="44"
+				:user="item.id"
+				:display-name="item.label" />
 		</AppContentListItem>
 	</ul>
 </template>
 
 <script>
+import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import ConversationIcon from './ConversationIcon'
 import AppContentListItem from './LeftSidebar/ConversationsList/AppContentListItem/AppContentListItem'
 import { CONVERSATION } from '../constants'
@@ -42,6 +49,7 @@ import { CONVERSATION } from '../constants'
 export default {
 	name: 'ParticipantOptionsList',
 	components: {
+		Avatar,
 		ConversationIcon,
 		AppContentListItem,
 	},
@@ -50,15 +58,22 @@ export default {
 			type: Array,
 			required: true,
 		},
+		type: {
+			type: Number,
+			default: CONVERSATION.TYPE.GROUP,
+		},
 		isLoading: {
 			type: Boolean,
 			default: false,
 		},
 	},
 	computed: {
+		useAvatar() {
+			return this.type === CONVERSATION.TYPE.ONE_TO_ONE
+		},
 		iconData() {
 			return {
-				type: CONVERSATION.TYPE.GROUP,
+				type: this.icon,
 			}
 		},
 	},
