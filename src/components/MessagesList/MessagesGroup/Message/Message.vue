@@ -287,6 +287,10 @@ export default {
 				return PlainText
 			} else if (messagePartType === 'user') {
 				return Mention
+			} else if (messagePartType === 'call') {
+				return Mention
+			} else if (messagePartType === 'guest') {
+				return Mention
 			} else if (messagePartType === 'file') {
 				return FilePreview
 			}
