@@ -320,10 +320,6 @@ export default {
 }
 
 .chatView {
-	/* The chat view shares its parent with the call button, so the default
-	 * "height: 100%" needs to be unset. */
-	height: unset;
-
 	overflow: hidden;
 }
 </style>
