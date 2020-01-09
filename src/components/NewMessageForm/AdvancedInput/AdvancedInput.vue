@@ -22,8 +22,17 @@
 <template>
 	<At ref="at"
 		v-model="text"
+		name-key="label"
 		:members="autoCompleteMentionCandidates"
 		@at="handleAtEvent">
+		<template v-slot:item="scope">
+			<span>{{ scope.item.label }}</span>
+		</template>
+		<template v-slot:embeddedItem="scope">
+			<!-- The root element itself is ignored, only its contents are taken
+			     into account. -->
+			<span>@{{ scope.current.id }}</span>
+		</template>
 		<div ref="contentEditable"
 			:contenteditable="activeInput"
 			:placeHolder="placeholderText"
@@ -85,6 +94,8 @@ export default {
 	},
 	watch: {
 		text(text) {
+			this.$emit('update:contentEditable', this.$refs.contentEditable.cloneNode(true))
+
 			this.$emit('update:value', text)
 			this.$emit('input', text)
 			this.$emit('change', text)
@@ -169,7 +180,7 @@ export default {
 				}
 			})
 
-			this.autoCompleteMentionCandidates = possibleMentions.map(possibleMention => possibleMention.id)
+			this.autoCompleteMentionCandidates = possibleMentions
 		},
 	},
 }

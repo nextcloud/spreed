@@ -41,6 +41,7 @@
 					<AdvancedInput
 						v-model="text"
 						:token="token"
+						@update:contentEditable="contentEditableToParsed"
 						@submit="handleSubmit" />
 				</div>
 				<button
@@ -76,6 +77,7 @@ export default {
 	data: function() {
 		return {
 			text: '',
+			parsedText: '',
 		}
 	},
 	computed: {
@@ -93,11 +95,16 @@ export default {
 		currentUserIsGuest() {
 			return this.$store.getters.getUserId() === null
 		},
-		parsedText() {
-			return this.rawToParsed(this.text)
-		},
 	},
 	methods: {
+		contentEditableToParsed(contentEditable) {
+			const mentions = contentEditable.querySelectorAll('span[data-at-embedded]')
+			mentions.forEach(mention => {
+				mention.replaceWith(mention.innerText.trim())
+			})
+
+			this.parsedText = this.rawToParsed(contentEditable.innerHTML)
+		},
 		/**
 		 * Returns a parsed version of the given raw text of the content
 		 * editable div.
