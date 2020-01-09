@@ -34,7 +34,6 @@ import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 
 // Directives
-import contenteditableDirective from 'vue-contenteditable-directive'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import vuescroll from 'vue-scroll'
 
@@ -54,7 +53,6 @@ Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
-Vue.use(contenteditableDirective)
 Vue.use(Vuex)
 Vue.use(vuescroll, { debounce: 600 })
 

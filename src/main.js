@@ -38,7 +38,6 @@ import { generateFilePath } from '@nextcloud/router'
 import { getRequestToken } from '@nextcloud/auth'
 
 // Directives
-import contenteditableDirective from 'vue-contenteditable-directive'
 import VueClipboard from 'vue-clipboard2'
 import { translate, translatePlural } from '@nextcloud/l10n'
 import VueObserveVisibility from 'vue-observe-visibility'
@@ -60,7 +59,6 @@ Vue.prototype.n = translatePlural
 Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
-Vue.use(contenteditableDirective)
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueClipboard)
