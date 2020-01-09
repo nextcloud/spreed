@@ -70,11 +70,6 @@ export default {
 	data: function() {
 		return {
 			/**
-			 * Keeps track of the state of the component in order to trigger the scroll to
-			 * bottom.
-			 */
-			isInitiated: false,
-			/**
 			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
 			 * which allows to cancel the previous long polling request for new
 			 * messages before making another one.
@@ -158,21 +153,14 @@ export default {
 		 */
 		EventBus.$on('joinedConversation', this.onRouteChange)
 	},
+	mounted() {
+		this.scrollToBottom()
+	},
 
 	beforeDestroy() {
 		EventBus.$off('joinedConversation', this.onRouteChange)
 
 		this.cancelLookForNewMessages()
-	},
-
-	beforeUpdate() {
-		/**
-		 * If the component is not initiated, scroll to the bottom of the message list.
-		 */
-		if (!this.isInitiated) {
-			this.scrollToBottom()
-			this.isInitiated = true
-		}
 	},
 
 	methods: {
@@ -275,12 +263,13 @@ export default {
 		 * a long-polling request for new messages.
 		 */
 		onRouteChange() {
-			this.isInitiated = false
 			this.getMessages()
 		},
 		async getMessages() {
 			// Gets the history of the conversation.
 			await this.getOldMessages()
+			// Once the history is loaded, scroll to bottom
+			this.scrollToBottom()
 			// Once the history is received, startslooking for new messages.
 			this.$nextTick(() => {
 				this.getNewMessages()
