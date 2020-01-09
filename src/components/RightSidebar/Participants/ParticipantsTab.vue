@@ -26,6 +26,8 @@
 			v-model="searchText"
 			:placeholder-text="t('spreed', 'Add participants to the conversation')"
 			@input="handleInput" />
+		<Caption v-if="isSearching"
+			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants
 			:search-text="searchText" />
 		<template v-if="isSearching">
@@ -143,31 +145,31 @@ export default {
 			if (!this.addableUsers.length) {
 				if (!this.addableGroups.length) {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Contacts, groups and circles')
+						return t('spreed', 'Add contacts, groups or circles')
 					} else {
-						return t('spreed', 'Contacts and groups')
+						return t('spreed', 'Add contacts or groups')
 					}
 				} else {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Contacts and circles')
+						return t('spreed', 'Add contacts or circles')
 					} else {
-						return t('spreed', 'Contacts')
+						return t('spreed', 'Add contacts')
 					}
 				}
 			} else {
 				if (!this.addableGroups.length) {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Groups and circles')
+						return t('spreed', 'Add groups or circles')
 					} else {
-						return t('spreed', 'Groups')
+						return t('spreed', 'Add groups')
 					}
 				} else {
 					if (this.isCirclesEnabled && !this.addableCircles.length) {
-						return t('spreed', 'Circles')
+						return t('spreed', 'Add circles')
 					}
 				}
 			}
-			return t('spreed', 'Other sources')
+			return t('spreed', 'Add other sources')
 		},
 
 		addableUsers() {
