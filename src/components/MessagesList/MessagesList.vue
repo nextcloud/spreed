@@ -72,11 +72,6 @@ export default {
 	data: function() {
 		return {
 			/**
-			 * Keeps track of the state of the component in order to trigger the scroll to
-			 * bottom.
-			 */
-			isInitiated: false,
-			/**
 			 * Stores the cancel function returned by `cancelableLookForNewMessages`,
 			 * which allows to cancel the previous long polling request for new
 			 * messages before making another one.
@@ -195,19 +190,11 @@ export default {
 			},
 		},
 	},
-
+	mounted() {
+		this.scrollToBottom()
+	},
 	beforeDestroy() {
 		this.cancelLookForNewMessages()
-	},
-
-	beforeUpdate() {
-		/**
-		 * If the component is not initiated, scroll to the bottom of the message list.
-		 */
-		if (!this.isInitiated && this.messagesList.length > 0) {
-			this.scrollToBottom()
-			this.isInitiated = true
-		}
 	},
 
 	methods: {
@@ -307,7 +294,7 @@ export default {
 
 		handleStartGettingMessagesPreconditions() {
 			if (this.token && this.isParticipant && !this.isInLobby) {
-				this.startGettingMessages()
+				this.getMessages()
 			} else {
 				this.cancelLookForNewMessages()
 			}
@@ -317,13 +304,11 @@ export default {
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
 		 */
-		startGettingMessages() {
-			this.isInitiated = false
-			this.getMessages()
-		},
 		async getMessages() {
 			// Gets the history of the conversation.
 			await this.getOldMessages()
+			// Once the history is loaded, scroll to bottom
+			this.scrollToBottom()
 			// Once the history is received, startslooking for new messages.
 			this.$nextTick(() => {
 				if (this._isBeingDestroyed || this._isDestroyed) {
