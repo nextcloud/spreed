@@ -25,7 +25,7 @@
 			v-for="item of contacts"
 			:key="item.id"
 			:title="item.label"
-			@click="createAndJoinConversation(item.id)">
+			@click="onClick(item.id)">
 			<Avatar
 				slot="icon"
 				:size="44"
@@ -38,8 +38,6 @@
 <script>
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { EventBus } from '../../../services/EventBus'
-import { createOneToOneConversation } from '../../../services/conversationsService'
 
 export default {
 	name: 'ContactsList',
@@ -58,18 +56,9 @@ export default {
 		},
 	},
 	methods: {
-		/**
-		 * Create a new conversation with the selected user.
-		 * @param {string} userId the ID of the clicked user.
-		 */
-		async createAndJoinConversation(userId) {
-			console.debug(userId)
-			const response = await createOneToOneConversation(userId)
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			console.debug(response)
-			EventBus.$emit('resetSearchFilter')
+		// forward click event
+		onClick(userId) {
+			this.$emit('click', userId)
 		},
 	},
 }

@@ -25,7 +25,7 @@
 			v-for="item of circles"
 			:key="item.id"
 			:title="item.label"
-			@click="createAndJoinConversation(item.id)">
+			@click="onClick(item.id)">
 			<template v-slot:icon>
 				<ConversationIcon
 					:item="iconData" />
@@ -37,8 +37,6 @@
 <script>
 import ConversationIcon from '../../ConversationIcon'
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
-import { EventBus } from '../../../services/EventBus'
-import { createGroupConversation } from '../../../services/conversationsService'
 import { CONVERSATION } from '../../../constants'
 
 export default {
@@ -65,19 +63,9 @@ export default {
 		},
 	},
 	methods: {
-		/**
-		 * Create a new conversation with the selected circle.
-		 * @param {string} circleId the ID of the clicked circle.
-		 */
-		async createAndJoinConversation(circleId) {
-			console.debug('circles')
-			console.debug(circleId)
-			const response = await createGroupConversation(circleId, 'circles')
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			console.debug(response)
-			EventBus.$emit('resetSearchFilter')
+		// forward click event
+		onClick(circleId) {
+			this.$emit('click', circleId)
 		},
 	},
 }

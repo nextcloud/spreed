@@ -39,7 +39,9 @@
 					<Caption
 						:title="t('spreed', 'Contacts')" />
 					<li v-if="searchResultsUsers.length !== 0">
-						<ContactsList :contacts="searchResultsUsers" />
+						<ContactsList
+							:contacts="searchResultsUsers"
+							@click="createAndJoinOneToOneConversation" />
 					</li>
 				</template>
 
@@ -47,7 +49,9 @@
 					<Caption
 						:title="t('spreed', 'Groups')" />
 					<li v-if="searchResultsGroups.length !== 0">
-						<GroupsList :groups="searchResultsGroups" />
+						<GroupsList
+							:groups="searchResultsGroups"
+							@click="createAndJoinGroupConversation" />
 					</li>
 				</template>
 
@@ -55,7 +59,9 @@
 					<Caption
 						:title="t('spreed', 'Circles')" />
 					<li v-if="searchResultsCircles.length !== 0">
-						<CirclesList :circles="searchResultsCircles" />
+						<CirclesList
+							:circles="searchResultsCircles"
+							@click="createAndJoinCircleConversation" />
 					</li>
 				</template>
 
@@ -79,7 +85,10 @@ import Hint from '../Hint'
 import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
-import { searchPossibleConversations } from '../../services/conversationsService'
+import {
+	createGroupConversation, createOneToOneConversation,
+	searchPossibleConversations,
+} from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 
@@ -185,6 +194,42 @@ export default {
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 			this.contactsLoading = false
+		},
+
+		/**
+		 * Create a new conversation with the selected group.
+		 * @param {string} groupId the ID of the clicked group.
+		 */
+		async createAndJoinGroupConversation(groupId) {
+			const response = await createGroupConversation(groupId, 'groups')
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			EventBus.$emit('resetSearchFilter')
+		},
+
+		/**
+		 * Create a new conversation with the selected circle.
+		 * @param {string} circleId the ID of the clicked circle.
+		 */
+		async createAndJoinCircleConversation(circleId) {
+			const response = await createGroupConversation(circleId, 'circles')
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			EventBus.$emit('resetSearchFilter')
+		},
+
+		/**
+		 * Create a new conversation with the selected user.
+		 * @param {string} userId the ID of the clicked user.
+		 */
+		async createAndJoinOneToOneConversation(userId) {
+			const response = await createOneToOneConversation(userId)
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			EventBus.$emit('resetSearchFilter')
 		},
 
 		hasOneToOneConversationWith(userId) {

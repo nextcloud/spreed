@@ -25,7 +25,7 @@
 			v-for="item of groups"
 			:key="item.id"
 			:title="item.label"
-			@click="createAndJoinConversation(item.id)">
+			@click="onClick(item.id)">
 			<template v-slot:icon>
 				<ConversationIcon
 					:item="iconData" />
@@ -37,8 +37,6 @@
 <script>
 import ConversationIcon from '../../ConversationIcon'
 import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
-import { EventBus } from '../../../services/EventBus'
-import { createGroupConversation } from '../../../services/conversationsService'
 import { CONVERSATION } from '../../../constants'
 
 export default {
@@ -65,16 +63,9 @@ export default {
 		},
 	},
 	methods: {
-		/**
-		 * Create a new conversation with the selected group.
-		 * @param {string} groupId the ID of the clicked group.
-		 */
-		async createAndJoinConversation(groupId) {
-			const response = await createGroupConversation(groupId, 'groups')
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			EventBus.$emit('resetSearchFilter')
+		// forward click event
+		onClick(groupId) {
+			this.$emit('click', groupId)
 		},
 	},
 }
