@@ -97,12 +97,10 @@ export default {
 			type: Object,
 			required: true,
 		},
-	},
-
-	data() {
-		return {
-			avatarSize: 128,
-		}
+		useConstrainedLayout: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -114,6 +112,10 @@ export default {
 				'speaking': !this.placeholderForPromoted && this.model.attributes.speaking,
 				'promoted': !this.placeholderForPromoted && this.sharedData.promoted,
 			}
+		},
+
+		avatarSize() {
+			return (this.useConstrainedLayout && !this.sharedData.promoted) ? 64 : 128
 		},
 
 		avatarClass() {
@@ -246,6 +248,11 @@ export default {
 	left: 0;
 	background-size: 22px;
 	text-align: center;
+}
+
+.constrained-layout .mediaIndicator {
+	/* Move the media indicator closer to the bottom */
+	bottom: 16px;
 }
 
 .muteIndicator,

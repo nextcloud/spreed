@@ -37,6 +37,7 @@
 		<LocalMediaControls ref="localMediaControls"
 			:model="localMediaModel"
 			:local-call-participant-model="localCallParticipantModel"
+			:screen-sharing-button-hidden="useConstrainedLayout"
 			@switchScreenToId="$emit('switchScreenToId', $event)" />
 	</div>
 </template>
@@ -64,12 +65,10 @@ export default {
 			type: Object,
 			required: true,
 		},
-	},
-
-	data() {
-		return {
-			avatarSize: 128,
-		}
+		useConstrainedLayout: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	computed: {
@@ -84,6 +83,10 @@ export default {
 
 		guestName() {
 			return this.localCallParticipantModel.attributes.guestName || localStorage.getItem('nick') || '?'
+		},
+
+		avatarSize() {
+			return this.useConstrainedLayout ? 64 : 128
 		},
 
 	},

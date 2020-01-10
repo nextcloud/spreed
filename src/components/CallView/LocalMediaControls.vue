@@ -98,13 +98,16 @@ export default {
 			type: Object,
 			required: true,
 		},
+		screenSharingButtonHidden: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
 		return {
 			mounted: false,
 			speakingWhileMutedNotification: null,
-			screenSharingButtonHidden: false,
 			screenSharingMenuOpen: false,
 			splitScreenSharingMenu: false,
 		}
@@ -341,11 +344,6 @@ export default {
 				}
 			})
 		},
-
-		hideScreenSharingButton() {
-			this.screenSharingButtonHidden = true
-		},
-
 	},
 }
 </script>

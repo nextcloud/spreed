@@ -39,9 +39,7 @@
 			</button>
 		</div>
 		<template v-else>
-			<button class="call-button primary" :disabled="true">
-				Calls will return soon
-			</button>
+			<CallButton class="call-button" />
 			<ChatView :token="token" />
 		</template>
 	</div>
@@ -49,12 +47,15 @@
 
 <script>
 
+import { EventBus } from './services/EventBus'
 import { getFileConversation } from './services/filesIntegrationServices'
 import { fetchConversation } from './services/conversationsService'
 import { joinConversation, leaveConversation } from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
+import { getSignaling } from './utils/webrtc/index'
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
+import CallButton from './components/TopBar/CallButton'
 import ChatView from './components/ChatView'
 
 export default {
@@ -62,6 +63,7 @@ export default {
 	name: 'FilesSidebarTabApp',
 
 	components: {
+		CallButton,
 		ChatView,
 	},
 
@@ -119,6 +121,22 @@ export default {
 		},
 	},
 
+	created() {
+		// The fetchCurrentConversation event handler/callback is started and
+		// stopped from different FilesSidebarTabApp instances, so it needs to
+		// be stored in a common place. Moreover, as the bound method would be
+		// overriden when a new instance is created the one used as handler is
+		// a wrapper that calls the latest bound method. This makes possible to
+		// register and unregister it from different instances.
+		if (!OCA.Talk.fetchCurrentConversationWrapper) {
+			OCA.Talk.fetchCurrentConversationWrapper = function() {
+				OCA.Talk.fetchCurrentConversationBound()
+			}
+		}
+
+		OCA.Talk.fetchCurrentConversationBound = this.fetchCurrentConversation.bind(this)
+	},
+
 	beforeMount() {
 		this.$store.dispatch('setCurrentUser', getCurrentUser())
 	},
@@ -131,14 +149,42 @@ export default {
 
 			// The current participant (which is automatically set when fetching
 			// the current conversation) is needed for the MessagesList to start
-			// getting the messages. No need to wait for it, but fetching the
-			// conversation needs to be done once the user has joined the
-			// conversation (otherwise only limited data would be received if
-			// the user was not a participant of the conversation yet).
+			// getting the messages, and both the current conversation and the
+			// current participant are needed for CallButton. No need to wait
+			// for it, but fetching the conversation needs to be done once the
+			// user has joined the conversation (otherwise only limited data
+			// would be received if the user was not a participant of the
+			// conversation yet).
 			this.fetchCurrentConversation()
+
+			// FIXME The participant will not be updated with the server data
+			// when the conversation is got again (as "addParticipantOnce" is
+			// used), although that should not be a problem given that only the
+			// "inCall" flag (which is locally updated when joining and leaving
+			// a call) is currently used.
+			const signaling = await getSignaling()
+			if (signaling.url) {
+				EventBus.$on('shouldRefreshConversations', OCA.Talk.fetchCurrentConversationWrapper)
+			} else {
+				// The "shouldRefreshConversations" event is triggered only when
+				// the external signaling server is used; when the internal
+				// signaling server is used periodic polling has to be used
+				// instead.
+				OCA.Talk.fetchCurrentConversationIntervalId = window.setInterval(OCA.Talk.fetchCurrentConversationWrapper, 30000)
+			}
 		},
 
 		leaveConversation() {
+			EventBus.$off('shouldRefreshConversations', OCA.Talk.fetchCurrentConversationWrapper)
+			window.clearInterval(OCA.Talk.fetchCurrentConversationIntervalId)
+
+			// Remove the conversation to ensure that the old data is not used
+			// before fetching it again if this conversation is joined again.
+			this.$store.dispatch('deleteConversationByToken', this.token)
+			// Remove the participant to ensure that it will be set again fresh
+			// if this conversation is joined again.
+			this.$store.dispatch('purgeParticipantsStore', this.token)
+
 			leaveConversation(this.token)
 
 			this.$store.dispatch('updateTokenAndFileIdForToken', {

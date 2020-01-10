@@ -54,10 +54,10 @@ const mutations = {
 	/**
 	 * Deletes a conversation from the store.
 	 * @param {object} state current store state;
-	 * @param {object} conversation the message;
+	 * @param {object} token the token of the conversation to delete;
 	 */
-	deleteConversation(state, conversation) {
-		Vue.delete(state.conversations, conversation.token)
+	deleteConversation(state, token) {
+		Vue.delete(state.conversations, token)
 	},
 	/**
 	 * Resets the store to it's original state
@@ -99,8 +99,19 @@ const actions = {
 	 * @param {object} conversation the conversation to be deleted;
 	 */
 	deleteConversation(context, conversation) {
-		context.commit('deleteConversation', conversation)
+		context.commit('deleteConversation', conversation.token)
 	},
+
+	/**
+	 * Delete a object
+	 *
+	 * @param {object} context default store context;
+	 * @param {object} token the token of the conversation to be deleted;
+	 */
+	deleteConversationByToken(context, token) {
+		context.commit('deleteConversation', token)
+	},
+
 	/**
 	 * Resets the store to it's original state.
 	 * @param {object} context default store context;

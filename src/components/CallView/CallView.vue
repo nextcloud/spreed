@@ -26,17 +26,20 @@
 					:key="callParticipantModel.attributes.peerId"
 					:model="callParticipantModel"
 					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+					:use-constrained-layout="useConstrainedLayout"
 					@switchScreenToId="_switchScreenToId" />
 				<Video
 					:key="'placeholder' + callParticipantModel.attributes.peerId"
 					:placeholder-for-promoted="true"
 					:model="callParticipantModel"
 					:shared-data="sharedDatas[callParticipantModel.attributes.peerId]"
+					:use-constrained-layout="useConstrainedLayout"
 					@switchScreenToId="_switchScreenToId" />
 			</template>
 			<LocalVideo ref="localVideo"
 				:local-media-model="localMediaModel"
 				:local-call-participant-model="localCallParticipantModel"
+				:use-constrained-layout="useConstrainedLayout"
 				@switchScreenToId="_switchScreenToId" />
 		</div>
 		<div id="screens">
@@ -68,6 +71,13 @@ export default {
 		Video,
 	},
 
+	props: {
+		useConstrainedLayout: {
+			type: Boolean,
+			default: false,
+		},
+	},
+
 	data() {
 		return {
 			speakers: [],
@@ -92,6 +102,7 @@ export default {
 			const callViewClass = {
 				'incall': this.remoteParticipantsCount > 0,
 				'screensharing': this.screenSharingActive,
+				'constrained-layout': this.useConstrainedLayout,
 			}
 			callViewClass['participants-' + (this.remoteParticipantsCount + 1)] = true
 
@@ -131,6 +142,42 @@ export default {
 		},
 
 		callParticipantModels: function(models) {
+			this.updateDataFromCallParticipantModels(models)
+		},
+
+		'speakers': function() {
+			this._setPromotedParticipant()
+		},
+
+		'screenSharingActive': function() {
+			this._setPromotedParticipant()
+		},
+
+		'screens': function() {
+			this._setScreenVisible()
+		},
+
+	},
+
+	created() {
+		// Ensure that data is properly initialized before mounting the
+		// subviews.
+		this.updateDataFromCallParticipantModels(this.callParticipantModels)
+	},
+
+	methods: {
+
+		/**
+		 * Updates data properties that depend on the CallParticipantModels.
+		 *
+		 * The data contains some properties that can not be dynamically
+		 * computed but that depend on the current CallParticipantModels, so
+		 * this function adds and removes elements and watchers as needed based
+		 * on the given CallParticipantModels.
+		 *
+		 * @param {Array} models the array of CallParticipantModels
+		 */
+		updateDataFromCallParticipantModels(models) {
 			const addedModels = models.filter(model => !this.sharedDatas[model.attributes.peerId])
 			const removedModelIds = Object.keys(this.sharedDatas).filter(sharedDataId => models.find(model => model.attributes.peerId === sharedDataId) === undefined)
 
@@ -180,22 +227,6 @@ export default {
 				})
 			})
 		},
-
-		'speakers': function() {
-			this._setPromotedParticipant()
-		},
-
-		'screenSharingActive': function() {
-			this._setPromotedParticipant()
-		},
-
-		'screens': function() {
-			this._setScreenVisible()
-		},
-
-	},
-
-	methods: {
 
 		_setSpeaking(peerId, speaking) {
 			if (speaking) {
@@ -340,6 +371,15 @@ export default {
 	max-height: 200px;
 }
 
+.constrained-layout.screensharing .videoContainer {
+	max-height: 100px;
+
+	/* Avatars slightly overflow the container; although they overlap the shared
+	 * screen it is not too bad and it is better than compressing even further
+	 * the shared screen. */
+	overflow: visible;
+}
+
 ::v-deep video {
 	z-index: 0;
 	max-height: 100%;
@@ -376,6 +416,12 @@ export default {
 	box-shadow: 0 0 15px var(--color-box-shadow);
 }
 
+.constrained-layout #videos .videoContainer:not(.promoted) ::v-deep video {
+	/* Make the unpromoted videos smaller to not overlap too much the promoted
+	 * video */
+	max-height: 100px;
+}
+
 #videos .videoContainer ::v-deep .avatardiv {
 	box-shadow: 0 0 15px var(--color-box-shadow);
 }
@@ -395,19 +441,6 @@ export default {
 .videoContainer ::v-deep .avatar-container .avatardiv--unknown {
 	// Force grey background for guest avatars
 	background-color: #b9b9b9 !important;
-}
-
-/* Text avatars need to be forced to 128px, as imageplaceholder() overrides
-	* the given size with the actual height of the element it was called on, so
-	* the text avatar may have any hardcoded height. Note that this does not
-	* apply to regular image avatars, as in that case they are always requested
-	* with a size of 128px. */
-.videoContainer ::v-deep .avatar-container .avatardiv {
-	width: 128px !important;
-	height: 128px !important;
-	line-height: 128px !important;
-	/* imageplaceholder() sets font-size to "height * 0.55" */
-	font-size: 70.4px !important;
 }
 
 .videoContainer ::v-deep .avatar-container .avatardiv {
@@ -470,6 +503,12 @@ export default {
 		max-height: 35%;
 	}
 }
+.constrained-layout.participants-1 .videoView,
+.constrained-layout.participants-2 .videoView {
+	/* Do not force the width to 200px, as otherwise the video is too tall and
+	 * overlaps too much with the promoted video. */
+	min-width: initial;
+}
 .participants-1 .videoView ::v-deep video,
 .participants-2 .videoView ::v-deep video {
 	position: absolute;
@@ -485,6 +524,12 @@ export default {
 	height: calc(100% - 200px);
 	top: 0;
 	background-color: transparent;
+}
+
+.constrained-layout.screensharing #screens {
+	/* The row with the participants is shorter in the constrained layout to
+	 * make room for the promoted video and the shared screens. */
+	height: calc(100% - 100px);
 }
 
 .screensharing .screenContainer {
@@ -509,6 +554,13 @@ export default {
 	text-overflow: ellipsis;
 }
 
+.constrained-layout ::v-deep .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px;
+	/* Use default font size, as it takes too much space otherwise */
+	font-size: initial;
+}
+
 ::v-deep .videoView .nameIndicator {
 	padding: 0;
 	overflow: visible;
@@ -529,6 +581,11 @@ export default {
 /* ellipsize name in 1on1 calls */
 .participants-2 ::v-deep .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
 	padding: 12px 35%;
+}
+
+.constrained-layout.participants-2 ::v-deep .videoContainer.promoted + .videoContainer-dummy .nameIndicator {
+	/* Reduce padding to bring the name closer to the bottom */
+	padding: 3px 35%;
 }
 
 #videos .videoContainer.speaking:not(.videoView) ::v-deep .nameIndicator,
