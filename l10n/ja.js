@@ -161,9 +161,9 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "会話を終了する前に、新しいモデレータを昇格する必要があります。",
     "Conversations" : "会話",
     "Contacts" : "連絡先",
-    "Loading" : "読み込み中",
     "Groups" : "グループ",
     "Circles" : "サークル",
+    "Loading" : "読み込み中",
     "Error" : "エラー",
     "Back" : "戻る",
     "Close" : "閉じる",
@@ -183,6 +183,7 @@ OC.L10N.register(
     "Guests" : "ゲスト",
     "Share link" : "リンクの共有",
     "Webinar" : "ウェビナー",
+    "Start time (optional)" : "開始時間（オプション）",
     "Chat" : "チャット",
     "Participants" : "参加者",
     "Projects" : "プロジェクト",
@@ -343,7 +344,6 @@ OC.L10N.register(
     "* With projects you can create quick links between conversations, files and other items" : "* プロジェクトを使用すると、会話、ファイル、およびその他のアイテム間のクイックリンクを作成できます",
     "Invalid start time format" : "開始時間がフォーマットに沿っていません",
     "{email} tried to requested the password to access {file}" : "{email}が{file}にアクセスするためのパスワードを要求しようとしました",
-    "Someone tried to requested the password to access {file}" : "誰かが{file}にアクセスするためにパスワードを要求しようとしました。",
-    "Start time (optional)" : "開始時間（オプション）"
+    "Someone tried to requested the password to access {file}" : "誰かが{file}にアクセスするためにパスワードを要求しようとしました。"
 },
 "nplurals=1; plural=0;");

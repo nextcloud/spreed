@@ -3,8 +3,8 @@ OC.L10N.register(
     {
     "Users" : "Foydalanuvchilar",
     "Contacts" : "Kontaktlar",
-    "Loading" : "Yuklanmoqda",
     "Groups" : "Guruhlar",
+    "Loading" : "Yuklanmoqda",
     "Error" : "Xato",
     "Share link" : "Ulanishni ulashing",
     "Save changes" : "O'zgarishlarni saqlang",

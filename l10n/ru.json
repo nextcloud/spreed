@@ -170,13 +170,15 @@
     "You need to promote a new moderator before you can leave the conversation." : "Вам нужно назначить нового модератора перед тем, как покинуть обсуждение.",
     "Conversations" : "Беседы",
     "Contacts" : "Контакты",
-    "Loading" : "Загружается",
     "Groups" : "Группы",
     "Circles" : "Круги",
+    "Loading" : "Загружается",
     "Error" : "Ошибка",
     "Back" : "Назад",
     "Close" : "Закрыть",
     "Conversation name" : "Наименование обсуждения",
+    "You are currently waiting in the lobby" : "В данный момент вы ожидаете в вестибюле",
+    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "В данный момент вы ожидаете в вестибюле. Эта встреча запланирована на {startTime}",
     "Reply" : "Ответить",
     "[Unknown user name]" : "[Неизвестный пользователь]",
     "Today" : "Сегодня",
@@ -193,6 +195,7 @@
     "Share link" : "Поделиться ссылкой",
     "Webinar" : "Вебинар",
     "Enable lobby" : "Включить вестибюль",
+    "Start time (optional)" : "Время начала (необязательно)",
     "Chat" : "Чат",
     "Participants" : "Участники",
     "Projects" : "Проекты",
@@ -365,10 +368,7 @@
     "Error occurred while changing lobby state" : "Произошла ошибка при изменении состояния вестибюля",
     "Invalid start time format" : "Неверный формат времени начала",
     "Error occurred while setting the lobby start time" : "Произошла ошибка при настройке времени начала для вестибюля",
-    "You are currently waiting in the lobby" : "В данный момент вы ожидаете в вестибюле",
-    "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "В данный момент вы ожидаете в вестибюле. Эта встреча запланирована на {startTime}",
     "{email} tried to requested the password to access {file}" : "{email} попытался запросить пароль для доступа к файлу «{file}»",
-    "Someone tried to requested the password to access {file}" : "Кто-то попытался запросить пароль для доступа к файлу «{file}»",
-    "Start time (optional)" : "Время начала (необязательно)"
+    "Someone tried to requested the password to access {file}" : "Кто-то попытался запросить пароль для доступа к файлу «{file}»"
 },"pluralForm" :"nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);"
 }
