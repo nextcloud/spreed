@@ -20,9 +20,9 @@ OC.L10N.register(
     "Remove from favorites" : "Отстрани од фаворити",
     "Add to favorites" : "Додади во фаворити",
     "Contacts" : "Контакти",
-    "Loading" : "Се вчитува",
     "Groups" : "Групи",
     "Circles" : "Кругови",
+    "Loading" : "Се вчитува",
     "Error" : "Грешка",
     "Back" : "Назад",
     "Close" : "Затвори",
@@ -38,6 +38,7 @@ OC.L10N.register(
     "No results" : "Нема резултати",
     "Guests" : "Гости",
     "Share link" : "Сподели линк",
+    "Start time (optional)" : "Време на почеток (опционално)",
     "Chat" : "Разговор",
     "Participants" : "Учесници",
     "Projects" : "Проекти",
@@ -131,7 +132,6 @@ OC.L10N.register(
     "Error occurred while making the room private" : "Настана грешка при обидот за промена на собата во приватна",
     "You can not send messages, because the conversation is locked." : "Неможете да испратите порака, бидејќи разговорот е заклучен.",
     "The conversation is locked." : "Разговорот е заклучен.",
-    "Invalid start time format" : "Погрењен формат за време на почеток",
-    "Start time (optional)" : "Време на почеток (опционално)"
+    "Invalid start time format" : "Погрењен формат за време на почеток"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");
