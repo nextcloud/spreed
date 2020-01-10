@@ -114,6 +114,12 @@
 		max-width: unset;
 	}
 
+	// Override max height to show 4.5 mentions to make clear you can scroll for more options
+	.atwho-ul {
+		// (padding top: 6 + avatar height: 32 + padding bottom: 6) * visible mentions: 4.5
+		max-height: 198px;
+	}
+
 	// Override autocompletion panel items height, as they are too short
 	// for the avatars and also need some padding.
 	.atwho-li {
