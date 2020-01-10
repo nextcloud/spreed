@@ -129,4 +129,14 @@
 		width: 32px;
 		height: 32px;
 	}
+
+	.atwho-view {
+		background: var(--color-main-background);
+		color: var(--color-main-text);
+	}
+
+	.atwho-cur {
+		background: var(--color-primary);
+		color: var(--color-primary-text);
+	}
 }
