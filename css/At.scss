@@ -140,3 +140,11 @@
 		color: var(--color-primary-text);
 	}
 }
+
+// Override conflicting rules from the comments tab.
+.talk.candidate-mentions {
+	.atwho-view {
+		top: unset;
+		display: unset;
+	}
+}
