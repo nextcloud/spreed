@@ -39,8 +39,8 @@ export default {
 	data: function() {
 		return {
 			/**
-			* The selector for the HTML element to reparent the vue-at panel to.
-			*/
+			 * The selector for the HTML element to reparent the vue-at panel to.
+			 */
 			atWhoPanelParentSelector: 'body',
 			at: null,
 			atWhoPanelElement: null,
