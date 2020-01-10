@@ -152,8 +152,8 @@ export default {
 				try {
 					await addParticipant(this.token, participant.id, participant.source)
 					this.$emit('refreshCurrentParticipants')
-				} catch (exeption) {
-					console.debug(exeption)
+				} catch (exception) {
+					console.debug(exception)
 				}
 			} else {
 				/**

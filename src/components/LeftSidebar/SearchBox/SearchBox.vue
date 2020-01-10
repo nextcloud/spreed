@@ -79,7 +79,7 @@ export default {
 		EventBus.$off('routeChange', this.focusInput)
 	},
 	methods: {
-		// Focus the input field of the current componnent.
+		// Focus the input field of the current component.
 		focusInput() {
 			if (this.$route.name === 'root') {
 				this.$refs.searchConversations.focus()
