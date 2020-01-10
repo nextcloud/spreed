@@ -42,6 +42,10 @@ export default {
 			 * The selector for the HTML element to reparent the vue-at panel to.
 			 */
 			atWhoPanelParentSelector: 'body',
+			/**
+			 * Extra CSS classes to be set in the vue-at panel.
+			 */
+			atWhoPanelExtraClasses: '',
 			at: null,
 			atWhoPanelElement: null,
 			originalWrapElement: null,
@@ -63,6 +67,16 @@ export default {
 			}
 
 			return this.at.atwho
+		},
+
+		/**
+		 * Returns a list of CSS clases from the space separated string
+		 * "atWhoPanelExtraClasses".
+		 *
+		 * @returns {Array} the list of CSS classes
+		 */
+		atWhoPanelExtraClassesList() {
+			return this.atWhoPanelExtraClasses.split(' ').filter(cssClass => cssClass !== '')
 		},
 	},
 
@@ -92,6 +106,10 @@ export default {
 				// proper parent until that happens
 				Vue.nextTick(function() {
 					this.atWhoPanelElement = this.at.$refs.wrap.querySelector('.atwho-panel')
+
+					if (this.atWhoPanelExtraClassesList.length > 0) {
+						this.atWhoPanelElement.classList.add(...this.atWhoPanelExtraClassesList)
+					}
 
 					this.originalWrapElement = this.at.$refs.wrap
 					this.at.$refs.wrap = window.document.querySelector(this.atWhoPanelParentSelector)
