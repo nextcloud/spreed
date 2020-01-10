@@ -49,7 +49,7 @@ export default {
 		},
 		visibilityChanged(isVisible) {
 			if (isVisible) {
-				// Focus the input field of the current componnent.
+				// Focus the input field of the current component.
 				this.$refs.conversationName.focus()
 			}
 		},

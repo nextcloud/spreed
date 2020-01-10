@@ -85,7 +85,7 @@ export default {
 	},
 
 	mounted() {
-		// Focus the input field of the current componnent.
+		// Focus the input field of the current component.
 		this.$refs.setContacts.focus()
 	},
 
@@ -111,8 +111,8 @@ export default {
 				if (this.searchResults.length === 0) {
 					this.noResults = true
 				}
-			} catch (exeption) {
-				console.error(exeption)
+			} catch (exception) {
+				console.error(exception)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
@@ -122,7 +122,7 @@ export default {
 		},
 		visibilityChanged(isVisible) {
 			if (isVisible) {
-				// Focus the input field of the current componnent.
+				// Focus the input field of the current component.
 				this.$refs.setContacts.focus()
 			}
 		},

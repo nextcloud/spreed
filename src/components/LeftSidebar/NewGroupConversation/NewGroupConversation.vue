@@ -199,30 +199,30 @@ export default {
 			if (this.isPublic) {
 				try {
 					await this.createPublicConversation()
-				} catch (exeption) {
+				} catch (exception) {
 					this.isLoading = false
 					this.error = true
-					// Stop the execution of the method on exeptions.
+					// Stop the execution of the method on exceptions.
 					return
 				}
 			} else {
 				try {
 					await this.createPrivateConversation()
-				} catch (exeption) {
+				} catch (exception) {
 					this.isLoading = false
 					this.error = true
-					// Stop the execution of the method on exeptions.
+					// Stop the execution of the method on exceptions.
 					return
 				}
 			}
 			for (const participant of this.selectedParticipants) {
 				try {
 					await addParticipant(this.token, participant.id, participant.source)
-				} catch (exeption) {
-					console.debug(exeption)
+				} catch (exception) {
+					console.debug(exception)
 					this.isLoading = false
 					this.error = true
-					// Stop the execution of the method on exeptions.
+					// Stop the execution of the method on exceptions.
 					return
 				}
 			}
