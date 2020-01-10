@@ -61,8 +61,8 @@
 		}
 	}
 	.atwho-cur {
-	// background: #44a8f2;
-	background: #5BB8FF;
+		// background: #44a8f2;
+		background: #5BB8FF;
 		color: white;
 	}
 
@@ -130,14 +130,23 @@
 		height: 32px;
 	}
 
+	// Override all colors with our theming and dark mode
 	.atwho-view {
 		background: var(--color-main-background);
 		color: var(--color-main-text);
-	}
+		box-shadow: 0 0 5px var(--color-box-shadow);
 
-	.atwho-cur {
-		background: var(--color-primary);
-		color: var(--color-primary-text);
+		&::-webkit-scrollbar-track {
+			background-color: var(--color-background-dark);
+		}
+		&::-webkit-scrollbar-thumb {
+			background-color: var(--color-background-darker);
+		}
+
+		.atwho-cur {
+			background: var(--color-primary);
+			color: var(--color-primary-text);
+		}
 	}
 }
 
