@@ -38,7 +38,7 @@
 				{{ getFirstLetterOfGuestName(scope.item.label) }}
 			</div>
 			<Avatar v-else
-				:user="scope.item.id"
+				:user="atRemoveQuotesFromUserIdForAvatars(scope.item.id)"
 				:display-name="scope.item.label"
 				:disable-tooltip="true"
 				:disable-menu="true" />
@@ -195,6 +195,13 @@ export default {
 			return true
 		},
 
+		atRemoveQuotesFromUserIdForAvatars(userId) {
+			if (userId.startsWith('"')) {
+				return userId.substring(1, userId.length - 1)
+			}
+			return userId
+		},
+
 		/**
 		 * Focuses the contenteditable div input
 		 */
@@ -207,6 +214,7 @@ export default {
 				}, 0)
 			}
 		},
+
 		/**
 		 * Emits the submit event when enter is pressed (look
 		 * at the v-on in the template) unless shift is pressed:
