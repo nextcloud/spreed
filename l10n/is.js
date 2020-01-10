@@ -142,9 +142,9 @@ OC.L10N.register(
     "You need to promote a new moderator before you can leave the conversation." : "Þú þarft að uppfæra einhvern í stöðu umsjónarmanna áður en þú getur hætt í samtalinu.",
     "Conversations" : "Samtöl",
     "Contacts" : "Tengiliðir",
-    "Loading" : "Hleð inn",
     "Groups" : "Hópar",
     "Circles" : "Hringir",
+    "Loading" : "Hleð inn",
     "Error" : "Villa",
     "Back" : "Til baka",
     "Close" : "Loka",
@@ -164,6 +164,7 @@ OC.L10N.register(
     "No results" : "Engar niðurstöður",
     "Guests" : "Gestir",
     "Share link" : "Deila tengli",
+    "Start time (optional)" : "Upphafstími (valfrjálst)",
     "Chat" : "Spjall",
     "Participants" : "Þátttakendur",
     "Projects" : "Verkefni",
@@ -313,7 +314,6 @@ OC.L10N.register(
     "Room name can not be empty" : "Nafn á spjallsvæði má ekki vera autt",
     "Calls are disabled in this conversation." : "Símtöl eru óvirk í þessu samtali",
     "You can not send messages, because the conversation is locked." : "Þú getur ekki sent skilaboð því samtalið er læst.",
-    "The conversation is locked." : "Samtalið er læst.",
-    "Start time (optional)" : "Upphafstími (valfrjálst)"
+    "The conversation is locked." : "Samtalið er læst."
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");
