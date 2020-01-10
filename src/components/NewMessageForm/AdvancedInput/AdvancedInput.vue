@@ -271,15 +271,29 @@ export default {
 		addCustomAtWhoStyleSheet() {
 			for (let i = 0; i < document.styleSheets.length; i++) {
 				const sheet = document.styleSheets[i]
-				if (sheet.title === 'at-who-custom') {
-					return
+				// None of the default properties of a style sheet can be used
+				// as an ID. Adding a "data-id" attribute would work in Firefox,
+				// but not in Chromium, as it does not provide a "dataset"
+				// property in styleSheet objects. Therefore it is necessary to
+				// check the rules themselves, but as the order is undefined a
+				// matching rule needs to be looked for in all of them.
+				if (sheet.cssRules.length !== 3) {
+					continue
+				}
+
+				for (const cssRule of sheet.cssRules) {
+					if (cssRule.cssText === '.atwho-view { max-width: unset; }') {
+						return
+					}
 				}
 			}
 
 			const style = document.createElement('style')
-			style.setAttribute('title', 'at-who-custom')
 
 			document.head.appendChild(style)
+
+			// "insertRule" calls below need to be kept in sync with the
+			// condition above.
 
 			// Override "max-width: 180px", as that makes the autocompletion
 			// panel too narrow.
