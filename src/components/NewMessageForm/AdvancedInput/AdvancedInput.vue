@@ -281,9 +281,9 @@ export default {
 
 			document.head.appendChild(style)
 
-			// Override "width: 180px", as that makes the autocompletion panel
-			// too narrow.
-			style.sheet.insertRule('.atwho-view { width: unset; }', 0)
+			// Override "max-width: 180px", as that makes the autocompletion
+			// panel too narrow.
+			style.sheet.insertRule('.atwho-view { max-width: unset; }', 0)
 			// Override autocompletion panel items height, as they are too short
 			// for the avatars and also need some padding.
 			style.sheet.insertRule('.atwho-li { height: unset; padding-top: 6px; padding-bottom: 6px; }', 0)
