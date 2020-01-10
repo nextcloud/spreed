@@ -1,7 +1,7 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2019 Joas Schilling <coding@schilljs.com>
   -
-  - @author Marco Ambrosini <marcoambrosini@pm.me>
+  - @author Joas Schilling <coding@schilljs.com>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -22,33 +22,32 @@
 <template>
 	<ul class="contacts-list">
 		<AppContentListItem
-			v-for="item of contacts"
+			v-for="item of items"
 			:key="item.id"
 			:title="item.label"
-			@click="createAndJoinConversation(item.id)">
-			<Avatar
-				slot="icon"
-				:size="44"
-				:user="item.id"
-				:display-name="item.label" />
+			@click="onClick(item)">
+			<template
+				v-slot:icon>
+				<ConversationIcon
+					:item="iconData(item)" />
+			</template>
 		</AppContentListItem>
 	</ul>
 </template>
 
 <script>
-import AppContentListItem from '../ConversationsList/AppContentListItem/AppContentListItem'
-import Avatar from '@nextcloud/vue/dist/Components/Avatar'
-import { EventBus } from '../../../services/EventBus'
-import { createOneToOneConversation } from '../../../services/conversationsService'
+import ConversationIcon from './ConversationIcon'
+import AppContentListItem from './LeftSidebar/ConversationsList/AppContentListItem/AppContentListItem'
+import { CONVERSATION } from '../constants'
 
 export default {
-	name: 'ContactsList',
+	name: 'ParticipantOptionsList',
 	components: {
-		Avatar,
+		ConversationIcon,
 		AppContentListItem,
 	},
 	props: {
-		contacts: {
+		items: {
 			type: Array,
 			required: true,
 		},
@@ -58,18 +57,22 @@ export default {
 		},
 	},
 	methods: {
-		/**
-		 * Create a new conversation with the selected user.
-		 * @param {string} userId the ID of the clicked user.
-		 */
-		async createAndJoinConversation(userId) {
-			console.debug(userId)
-			const response = await createOneToOneConversation(userId)
-			const conversation = response.data.ocs.data
-			this.$store.dispatch('addConversation', conversation)
-			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
-			console.debug(response)
-			EventBus.$emit('resetSearchFilter')
+		// forward click event
+		onClick(item) {
+			this.$emit('click', item)
+		},
+		iconData(item) {
+			if (item.source === 'users') {
+				return {
+					type: CONVERSATION.TYPE.ONE_TO_ONE,
+					displayName: item.label,
+					name: item.id,
+				}
+			}
+			return {
+				type: CONVERSATION.TYPE.GROUP,
+				objectType: item.source,
+			}
 		},
 	},
 }
@@ -83,5 +86,4 @@ export default {
 	overflow: visible;
 	display: block;
 }
-
 </style>

@@ -75,6 +75,8 @@ export default {
 				return 'icon-file'
 			} else if (this.item.objectType === 'share:password') {
 				return 'icon-password'
+			} else if (this.item.objectType === 'emails') {
+				return 'icon-mail'
 			} else if (this.item.type === CONVERSATION.TYPE.CHANGELOG) {
 				return 'icon-changelog'
 			} else if (this.item.type === CONVERSATION.TYPE.GROUP) {

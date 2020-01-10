@@ -39,7 +39,9 @@
 					<Caption
 						:title="t('spreed', 'Contacts')" />
 					<li v-if="searchResultsUsers.length !== 0">
-						<ContactsList :contacts="searchResultsUsers" />
+						<ParticipantOptionsList
+							:items="searchResultsUsers"
+							@click="createAndJoinConversation" />
 					</li>
 				</template>
 
@@ -47,7 +49,9 @@
 					<Caption
 						:title="t('spreed', 'Groups')" />
 					<li v-if="searchResultsGroups.length !== 0">
-						<GroupsList :groups="searchResultsGroups" />
+						<ParticipantOptionsList
+							:items="searchResultsGroups"
+							@click="createAndJoinConversation" />
 					</li>
 				</template>
 
@@ -55,7 +59,9 @@
 					<Caption
 						:title="t('spreed', 'Circles')" />
 					<li v-if="searchResultsCircles.length !== 0">
-						<CirclesList :circles="searchResultsCircles" />
+						<ParticipantOptionsList
+							:items="searchResultsCircles"
+							@click="createAndJoinConversation" />
 					</li>
 				</template>
 
@@ -71,15 +77,16 @@
 <script>
 import AppNavigation from '@nextcloud/vue/dist/Components/AppNavigation'
 import Caption from '../Caption'
-import CirclesList from './CirclesList/CirclesList'
-import ContactsList from './ContactsList/ContactsList'
 import ConversationsList from './ConversationsList/ConversationsList'
-import GroupsList from './GroupsList/GroupsList'
+import ParticipantOptionsList from '../ParticipantOptionsList'
 import Hint from '../Hint'
 import SearchBox from './SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../services/EventBus'
-import { searchPossibleConversations } from '../../services/conversationsService'
+import {
+	createGroupConversation, createOneToOneConversation,
+	searchPossibleConversations,
+} from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 
@@ -90,10 +97,8 @@ export default {
 	components: {
 		AppNavigation,
 		Caption,
-		ContactsList,
-		CirclesList,
 		ConversationsList,
-		GroupsList,
+		ParticipantOptionsList,
 		Hint,
 		SearchBox,
 		NewGroupConversation,
@@ -147,7 +152,7 @@ export default {
 					} else {
 						return t('spreed', 'Groups')
 					}
-				} else if (!this.searchResultsGroups.length) {
+				} else {
 					if (this.isCirclesEnabled && !this.searchResultsCircles.length) {
 						return t('spreed', 'Circles')
 					}
@@ -185,6 +190,25 @@ export default {
 			this.searchResultsGroups = this.searchResults.filter((match) => match.source === 'groups')
 			this.searchResultsCircles = this.searchResults.filter((match) => match.source === 'circles')
 			this.contactsLoading = false
+		},
+
+		/**
+		 * Create a new conversation with the selected group/user/circle
+		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 * @param {string} item.id The ID of the target
+		 * @param {string} item.source The source of the target
+		 */
+		async createAndJoinConversation(item) {
+			let response
+			if (item.source === 'users') {
+				response = await createOneToOneConversation(item.id)
+			} else {
+				response = await createGroupConversation(item.id, item.source)
+			}
+			const conversation = response.data.ocs.data
+			this.$store.dispatch('addConversation', conversation)
+			this.$router.push({ name: 'conversation', params: { token: conversation.token } }).catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+			EventBus.$emit('resetSearchFilter')
 		},
 
 		hasOneToOneConversationWith(userId) {

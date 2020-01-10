@@ -26,33 +26,46 @@
 			v-model="searchText"
 			:placeholder-text="t('spreed', 'Add participants to the conversation')"
 			@input="handleInput" />
-		<CurrentParticipants />
+		<Caption v-if="isSearching"
+			:title="t('spreed', 'Participants')" />
+		<CurrentParticipants
+			:search-text="searchText" />
 		<template v-if="isSearching">
-			<Caption
-				:title="t('spreed', 'Add participants')" />
-			<ParticipantsList
-				v-if="addableUsers.length !== 0"
-				:items="addableUsers"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
+			<template v-if="addableUsers.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add contacts')" />
+				<ParticipantOptionsList
+					:items="addableUsers"
+					@click="addParticipants" />
+			</template>
 
-			<Caption
-				:title="t('spreed', 'Add groups')" />
-			<ParticipantsList
-				v-if="addableGroups.length !== 0"
-				:items="addableGroups"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
-			<Hint v-else :hint="t('spreed', 'No search results')" />
+			<template v-if="addableGroups.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add groups')" />
+				<ParticipantOptionsList
+					:items="addableGroups"
+					@click="addParticipants" />
+			</template>
 
-			<Caption
-				:title="t('spreed', 'Add circles')" />
-			<ParticipantsList
-				v-if="addableCircles.length !== 0"
-				:items="addableCircles"
-				@refreshCurrentParticipants="getParticipants" />
-			<Hint v-else-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+			<template v-if="addableEmails.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add emails')" />
+				<ParticipantOptionsList
+					:items="addableEmails"
+					@click="addParticipants" />
+			</template>
+
+			<template v-if="addableCircles.length !== 0">
+				<Caption
+					:title="t('spreed', 'Add circles')" />
+				<ParticipantOptionsList
+					:items="addableCircles"
+					@click="addParticipants" />
+			</template>
+
+			<Caption v-if="sourcesWithoutResults"
+				:title="sourcesWithoutResultsList" />
+			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
@@ -62,23 +75,26 @@
 import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
-import ParticipantsList from './ParticipantsList/ParticipantsList'
+import ParticipantOptionsList from '../../ParticipantOptionsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
 import { CONVERSATION, WEBINAR } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
-import { fetchParticipants } from '../../../services/participantsService'
+import {
+	addParticipant,
+	fetchParticipants,
+} from '../../../services/participantsService'
 import isInLobby from '../../../mixins/isInLobby'
 
 export default {
 	name: 'ParticipantsTab',
 	components: {
 		CurrentParticipants,
+		ParticipantOptionsList,
 		SearchBox,
 		Caption,
 		Hint,
-		ParticipantsList,
 	},
 
 	mixins: [
@@ -97,6 +113,7 @@ export default {
 			searchText: '',
 			searchResults: [],
 			contactsLoading: false,
+			isCirclesEnabled: true, // FIXME
 		}
 	},
 
@@ -125,6 +142,44 @@ export default {
 		isSearching() {
 			return this.searchText !== ''
 		},
+
+		sourcesWithoutResults() {
+			return !this.addableUsers.length
+				|| !this.addableGroups.length
+				|| (this.isCirclesEnabled && !this.addableCircles.length)
+		},
+
+		sourcesWithoutResultsList() {
+			if (!this.addableUsers.length) {
+				if (!this.addableGroups.length) {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Add contacts, groups or circles')
+					} else {
+						return t('spreed', 'Add contacts or groups')
+					}
+				} else {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Add contacts or circles')
+					} else {
+						return t('spreed', 'Add contacts')
+					}
+				}
+			} else {
+				if (!this.addableGroups.length) {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Add groups or circles')
+					} else {
+						return t('spreed', 'Add groups')
+					}
+				} else {
+					if (this.isCirclesEnabled && !this.addableCircles.length) {
+						return t('spreed', 'Add circles')
+					}
+				}
+			}
+			return t('spreed', 'Add other sources')
+		},
+
 		addableUsers() {
 			if (this.searchResults !== []) {
 				const searchResultUsers = this.searchResults.filter(item => item.source === 'users')
@@ -145,6 +200,12 @@ export default {
 		addableGroups() {
 			if (this.searchResults !== []) {
 				return this.searchResults.filter((item) => item.source === 'groups')
+			}
+			return []
+		},
+		addableEmails() {
+			if (this.searchResults !== []) {
+				return this.searchResults.filter((item) => item.source === 'emails')
 			}
 			return []
 		},
@@ -206,13 +267,29 @@ export default {
 
 		async fetchSearchResults() {
 			try {
-				const response = await searchPossibleConversations(this.searchText)
+				const response = await searchPossibleConversations(this.searchText, this.token)
 				this.searchResults = response.data.ocs.data
 				this.getParticipants()
 				this.contactsLoading = false
 			} catch (exception) {
 				console.error(exception)
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
+			}
+		},
+
+		/**
+		 * Add the selected group/user/circle to the conversation
+		 * @param {Object} item The autocomplete suggestion to start a conversation with
+		 * @param {string} item.id The ID of the target
+		 * @param {string} item.source The source of the target
+		 */
+		async addParticipants(item) {
+			try {
+				await addParticipant(this.token, item.id, item.source)
+				this.searchText = ''
+				this.getParticipants()
+			} catch (exception) {
+				console.debug(exception)
 			}
 		},
 
