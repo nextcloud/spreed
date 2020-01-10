@@ -215,11 +215,7 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 				this._joinRoomSuccess(token, result.ocs.data.sessionId)
 			}.bind(this),
 			error: function(result) {
-				reject(new Error())
-				if (result.status === 404 || result.status === 503) {
-					// Room not found or maintenance mode
-					OC.redirect(OC.generateUrl('apps/spreed'))
-				}
+				reject(result)
 
 				if (result.status === 403) {
 					// This should not happen anymore since we ask for the password before

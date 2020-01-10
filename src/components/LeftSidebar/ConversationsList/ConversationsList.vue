@@ -111,7 +111,9 @@ export default {
 			 * Emits a global event that is used in App.vue to update the page title once the
 			 * ( if the current route is a conversation and once the conversations are received)
 			 */
-			EventBus.$emit('conversationsReceived')
+			EventBus.$emit('conversationsReceived', {
+				singleConversation: false,
+			})
 		},
 	},
 }
