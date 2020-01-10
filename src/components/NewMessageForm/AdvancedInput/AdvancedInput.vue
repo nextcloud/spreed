@@ -73,6 +73,33 @@ import { searchPossibleMentions } from '../../../services/mentionsService'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
 
+/**
+ * Removes the default atwho style sheet added by the vue-at component.
+ *
+ * The rules in that style sheet are too broad and affect other elements
+ * besides those from the vue-at panel.
+ */
+function removeDefaultAtWhoStyleSheet() {
+	const styleElements = document.querySelectorAll('style')
+	for (let i = 0; i < styleElements.length; i++) {
+		const sheet = styleElements[i].sheet
+
+		if (sheet.cssRules.length !== 15) {
+			continue
+		}
+
+		for (const cssRule of sheet.cssRules) {
+			if (cssRule.cssText === '.atwho-view { color: rgb(0, 0, 0); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px; min-width: 120px; z-index: 11110 !important; }') {
+				styleElements[i].remove()
+
+				return
+			}
+		}
+	}
+}
+
+removeDefaultAtWhoStyleSheet()
+
 export default {
 	name: 'AdvancedInput',
 	components: {
@@ -146,7 +173,7 @@ export default {
 		 */
 		EventBus.$on('routeChange', this.focusInput)
 
-		this.addCustomAtWhoStyleSheet()
+		this.atWhoPanelExtraClasses = 'talk candidate-mentions'
 	},
 	beforeDestroy() {
 		EventBus.$off('routeChange', this.focusInput)
@@ -259,53 +286,6 @@ export default {
 				name: candidate.label,
 				type: type,
 			}
-		},
-
-		/**
-		 * Adds a special style sheet to customize atwho elements.
-		 *
-		 * The <style> section has no effect on the atwho elements, as the atwho
-		 * panel is reparented to the body, and the rules added there are rooted
-		 * on the AdvancedInput.
-		 */
-		addCustomAtWhoStyleSheet() {
-			for (let i = 0; i < document.styleSheets.length; i++) {
-				const sheet = document.styleSheets[i]
-				// None of the default properties of a style sheet can be used
-				// as an ID. Adding a "data-id" attribute would work in Firefox,
-				// but not in Chromium, as it does not provide a "dataset"
-				// property in styleSheet objects. Therefore it is necessary to
-				// check the rules themselves, but as the order is undefined a
-				// matching rule needs to be looked for in all of them.
-				if (sheet.cssRules.length !== 3) {
-					continue
-				}
-
-				for (const cssRule of sheet.cssRules) {
-					if (cssRule.cssText === '.atwho-view { max-width: unset; }') {
-						return
-					}
-				}
-			}
-
-			const style = document.createElement('style')
-
-			document.head.appendChild(style)
-
-			// "insertRule" calls below need to be kept in sync with the
-			// condition above.
-
-			// Override "max-width: 180px", as that makes the autocompletion
-			// panel too narrow.
-			style.sheet.insertRule('.atwho-view { max-width: unset; }', 0)
-			// Override autocompletion panel items height, as they are too short
-			// for the avatars and also need some padding.
-			style.sheet.insertRule('.atwho-li { height: unset; padding-top: 6px; padding-bottom: 6px; }', 0)
-
-			// Although the height of its wrapper is 32px the height of the icon
-			// is the default 16px. This is a temporary fix until it is fixed
-			// in the avatar component.
-			style.sheet.insertRule('.atwho-li .icon-group-forced-white { width: 32px; height: 32px; }', 0)
 		},
 	},
 }

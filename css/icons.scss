@@ -70,7 +70,7 @@
 
 // The atwho panel is a direct child of the body, so it is not affected by
 // .app-Talk rules above.
-.atwho-panel {
+.talk.candidate-mentions.atwho-panel {
 	// "forced-white" needs to be included in the class name as the Avatar does
 	// not accept several classes.
 	.icon-group-forced-white {
