@@ -31,6 +31,12 @@ get the messagesList array and loop through the list to generate the messages.
 	<div
 		class="scroller"
 		@scroll="debounceHandleScroll">
+		<div
+			v-if="isLoadingPreviousMessages"
+			class="scroller__loading">
+			<div
+				class="icon-loading" />
+		</div>
 		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"
 			:key="item[0].id"
@@ -86,6 +92,11 @@ export default {
 			cancelFetchMessages: () => {},
 
 			isScrolledToBottom: true,
+			/**
+			 * When scrolling to the top of the div .scroller we start loading previous
+			 * messages. This boolean allows us to show/hide the loader.
+			 */
+			isLoadingPreviousMessages: false
 		}
 	},
 
@@ -397,17 +408,24 @@ export default {
 			this.handleScroll()
 		}, 600),
 		/**
-		 * When the div is scrolled, this method checks if it's been scrolled to the
-		 * bottom.
+		 * When the div is scrolled, this method checks if it's been scrolled to the top
+		 * or to the bottom of the list bottom.
 		 */
 		handleScroll() {
-			const scrollOffset = document.querySelector('.scroller').scrollHeight - document.querySelector('.scroller').scrollTop
-			const elementHeight = document.querySelector('.scroller').clientHeight
-			const tolerance = 3
+			const scroller = document.querySelector('.scroller')
+			const scrollHeight = scroller.scrollHeight
+			const scrollTop = scroller.scrollTop
+			const scrollOffset = scrollHeight - scrollTop
+			const elementHeight = scroller.clientHeight
+			const tolerance = 4
 			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
 				this.isScrolledToBottom = true
+				this.isLoadingPreviousMessages = false
+			} else if (scrollHeight > elementHeight && scrollTop < 0 + tolerance) {
+				this.isLoadingPreviousMessages = true
 			} else {
 				this.isScrolledToBottom = false
+				this.isLoadingPreviousMessages = false
 			}
 		},
 
@@ -444,5 +462,11 @@ export default {
 .scroller {
 	flex: 1 0;
 	overflow-y: auto;
+	&__loading {
+		height: 50px;
+		display: flex;
+		justify-content: center;
+	}
 }
+
 </style>
