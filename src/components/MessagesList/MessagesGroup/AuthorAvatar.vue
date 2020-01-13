@@ -86,6 +86,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../assets/variables.scss';
 
 // size of avatars of chat message authors
 $author-avatar-size: 32px;
@@ -111,10 +112,11 @@ $author-avatar-size: 32px;
 	}
 
 	&.guest {
+		color: $color-guests-avatar;
+		background-color: $color-background-guests-avatar;
 		padding: 0;
 		line-height: $author-avatar-size;
 		border-radius: 50%;
-		background-color: #b9b9b9;
 		display: block;
 		text-align: center;
 	}
