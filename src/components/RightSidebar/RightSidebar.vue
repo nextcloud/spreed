@@ -39,6 +39,24 @@
 				@change="toggleGuests">
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
+			<!-- password -->
+			<ActionCheckbox
+				class="share-link-password-checkbox"
+				:checked="isPasswordProtected"
+				@check="handlePasswordEnable"
+				@uncheck="handlePasswordDisable">
+				{{ t('spreed', 'Password protection') }}
+			</ActionCheckbox>
+			<ActionInput
+				v-show="isEditingPassword"
+				class="share-link-password"
+				icon="icon-password"
+				type="password"
+				:value.sync="password"
+				autocomplete="new-password"
+				@submit="handleSetNewPassword">
+				{{ t('spreed', 'Enter a password') }}
+			</ActionInput>
 			<ActionText
 				v-if="canFullModerate"
 				icon="icon-lobby"
@@ -98,6 +116,7 @@ import ParticipantsTab from './Participants/ParticipantsTab'
 import {
 	addToFavorites,
 	removeFromFavorites,
+	setConversationPassword,
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 
@@ -129,6 +148,10 @@ export default {
 		return {
 			contactsLoading: false,
 			lobbyTimerLoading: false,
+			// The conversation's password
+			password: '',
+			// Switch for the password-editing operation
+			isEditingPassword: false,
 		}
 	},
 
@@ -231,6 +254,9 @@ export default {
 		showModerationMenu() {
 			return this.canModerate && (this.canFullModerate || this.isSharedPublicly)
 		},
+		isPasswordProtected() {
+			return this.$store.getters.conversations[this.token].hasPassword
+		},
 	},
 
 	methods: {
@@ -278,6 +304,23 @@ export default {
 			})
 
 			this.lobbyTimerLoading = false
+		},
+		async handlePasswordDisable() {
+			// disable the password protection for the current conversation
+			if (this.conversation.hasPassword) {
+				await setConversationPassword(this.token, '')
+			}
+			this.password = ''
+			this.isEditingPassword = false
+		},
+		async handlePasswordEnable() {
+			this.isEditingPassword = true
+		},
+
+		async handleSetNewPassword() {
+			await setConversationPassword(this.token, this.password)
+			this.password = ''
+			this.isEditingPassword = false
 		},
 	},
 }
