@@ -33,12 +33,11 @@
 				:user="model.attributes.userId"
 				:display-name="model.attributes.name"
 				:class="avatarClass" />
-			<Avatar v-else
-				:size="avatarSize"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:display-name="firstLetterOfGuestName"
-				:class="avatarClass" />
+			<div v-else
+				:class="avatarSizeClass"
+				class="avatar guest">
+				{{ firstLetterOfGuestName }}
+			</div>
 		</div>
 		<div class="nameIndicator">
 			{{ participantName }}
@@ -118,6 +117,10 @@ export default {
 			return (this.useConstrainedLayout && !this.sharedData.promoted) ? 64 : 128
 		},
 
+		avatarSizeClass() {
+			return 'avatar-' + this.avatarSize + 'px'
+		},
+
 		avatarClass() {
 			return {
 				'icon-loading': this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
@@ -125,7 +128,7 @@ export default {
 		},
 
 		firstLetterOfGuestName() {
-			return this.model.attributes.name || '?'
+			return (this.model.attributes.name || '?').substring(0, 1)
 		},
 
 		participantName() {
@@ -240,6 +243,10 @@ export default {
 .forced-white {
 	filter: drop-shadow(1px 1px 4px var(--color-box-shadow));
 }
+
+@import '../../assets/avatar.scss';
+@include avatar-mixin(64px);
+@include avatar-mixin(128px);
 
 .mediaIndicator {
 	position: absolute;

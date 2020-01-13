@@ -28,11 +28,11 @@
 				:disable-tooltip="true"
 				:user="userId"
 				:display-name="displayName" />
-			<Avatar v-else
-				:size="avatarSize"
-				:disable-menu="true"
-				:disable-tooltip="true"
-				:display-name="guestName" />
+			<div v-else
+				:class="avatarSizeClass"
+				class="avatar guest">
+				{{ firstLetterOfGuestName }}
+			</div>
 		</div>
 		<LocalMediaControls ref="localMediaControls"
 			:model="localMediaModel"
@@ -85,8 +85,16 @@ export default {
 			return this.localCallParticipantModel.attributes.guestName || localStorage.getItem('nick') || '?'
 		},
 
+		firstLetterOfGuestName() {
+			return this.guestName.substring(0, 1)
+		},
+
 		avatarSize() {
 			return this.useConstrainedLayout ? 64 : 128
+		},
+
+		avatarSizeClass() {
+			return 'avatar-' + this.avatarSize + 'px'
 		},
 
 	},
@@ -126,3 +134,9 @@ export default {
 
 }
 </script>
+
+<style lang="scss" scoped>
+@import '../../assets/avatar.scss';
+@include avatar-mixin(64px);
+@include avatar-mixin(128px);
+</style>

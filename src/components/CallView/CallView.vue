@@ -438,11 +438,6 @@ export default {
 	width: 100%;
 }
 
-.videoContainer ::v-deep .avatar-container .avatardiv--unknown {
-	// Force grey background for guest avatars
-	background-color: #b9b9b9 !important;
-}
-
 .videoContainer ::v-deep .avatar-container .avatardiv {
 	display: block;
 	margin-left: auto;

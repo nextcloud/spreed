@@ -25,17 +25,17 @@
 		:user="authorId"
 		:display-name="displayName" />
 	<div v-else-if="isDeletedUser"
-		class="avatar guest">
+		class="avatar-32px guest">
 		X
 	</div>
 	<div v-else-if="isGuest"
-		class="avatar guest">
+		class="avatar-32px guest">
 		{{ firstLetterOfGuestName }}
 	</div>
 	<div v-else-if="isChangelog"
 		class="avatar icon icon-changelog" />
 	<div v-else
-		class="avatar bot">
+		class="avatar-32px bot">
 		&gt;_
 	</div>
 </template>
@@ -86,39 +86,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../assets/variables.scss';
+@import '../../../assets/avatar.scss';
 
 // size of avatars of chat message authors
 $author-avatar-size: 32px;
+@include avatar-mixin($author-avatar-size);
 
-.avatar {
-	position: sticky;
-	top: 0;
-	height: $author-avatar-size;
-	width: $author-avatar-size;
-
-	&.icon {
-		padding: 20px 10px 10px 10px;
-		border-radius: 50%;
-		height: $author-avatar-size;
-		width: $author-avatar-size;
-	}
-
-	&.bot {
-		padding-left: 5px;
-		line-height: $author-avatar-size;
-		border-radius: 50%;
-		background-color: var(--color-background-darker);
-	}
-
-	&.guest {
-		color: $color-guests-avatar;
-		background-color: $color-background-guests-avatar;
-		padding: 0;
-		line-height: $author-avatar-size;
-		border-radius: 50%;
-		display: block;
-		text-align: center;
-	}
-}
 </style>

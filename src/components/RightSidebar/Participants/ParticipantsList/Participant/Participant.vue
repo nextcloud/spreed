@@ -29,14 +29,14 @@
 		@click="handleClick">
 		<div class="participant-row__avatar-wrapper">
 			<div v-if="iconClass"
-				class="avatar icon"
+				class="avatar-32px icon"
 				:class="iconClass" />
 			<Avatar v-else-if="computedId"
 				:user="computedId"
 				:display-name="computedName"
 				menu-position="left" />
 			<div v-else
-				class="avatar guest">
+				class="avatar-32px guest">
 				{{ firstLetterOfGuestName }}
 			</div>
 		</div>
@@ -258,10 +258,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../../../../assets/variables.scss';
-
-$icon-size: 32px;
-
 .selected {
 	background-color: var(--color-primary-light);
 	border-radius: 5px;
@@ -277,28 +273,12 @@ $icon-size: 32px;
 	border-radius: 22px;
 
 	&__avatar-wrapper {
-		height: $icon-size;
-		width: $icon-size;
+		$avatar-size: 32px;
+		height: $avatar-size;
+		width: $avatar-size;
 
-		.avatar {
-			width: $icon-size;
-			height: $icon-size;
-			line-height: $icon-size;
-			font-size: $icon-size / 2;
-			border-radius: 50%;
-
-			&.icon {
-				background-color: var(--color-background-darker);
-			}
-
-			&.guest {
-				color: $color-guests-avatar;
-				background-color: $color-background-guests-avatar;
-				padding: 0;
-				display: block;
-				text-align: center;
-			}
-		}
+		@import '../../../../../assets/avatar.scss';
+		@include avatar-mixin($avatar-size);
 	}
 	&__user-name {
 		margin-left: 6px;
