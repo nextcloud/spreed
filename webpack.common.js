@@ -14,6 +14,7 @@ module.exports = {
 		'talk': path.join(__dirname, 'src', 'main.js'),
 		'talk-files-sidebar': path.join(__dirname, 'src', 'mainFilesSidebar.js'),
 		'talk-files-sidebar-loader': path.join(__dirname, 'src', 'mainFilesSidebarLoader.js'),
+		'talk-public-share-auth-sidebar': path.join(__dirname, 'src', 'mainPublicShareAuthSidebar.js'),
 		'flow': path.join(__dirname, 'src', 'flow.js')
 	},
 	output: {
