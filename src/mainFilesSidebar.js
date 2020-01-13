@@ -36,7 +36,6 @@ import { getRequestToken } from '@nextcloud/auth'
 
 // Directives
 import { translate, translatePlural } from '@nextcloud/l10n'
-import vuescroll from 'vue-scroll'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -55,7 +54,6 @@ Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
-Vue.use(vuescroll, { debounce: 600 })
 
 const newCallView = () => new Vue({
 	store,

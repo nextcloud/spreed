@@ -29,8 +29,8 @@ get the messagesList array and loop through the list to generate the messages.
 	<!-- size and remain refer to the amount and initial height of the items that
 	are outside of the viewport -->
 	<div
-		v-scroll="handleScroll"
-		class="scroller">
+		class="scroller"
+		@scroll="debounceHandleScroll">
 		<MessagesGroup
 			v-for="item of messagesGroupedByAuthor"
 			:key="item[0].id"
@@ -48,6 +48,7 @@ import { fetchMessages, lookForNewMessages } from '../../services/messagesServic
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
 import isInLobby from '../../mixins/isInLobby'
+import debounce from 'debounce'
 
 export default {
 	name: 'MessagesList',
@@ -392,6 +393,9 @@ export default {
 			this.$store.dispatch('deleteMessage', event.message)
 		},
 
+		debounceHandleScroll: debounce(function() {
+			this.handleScroll()
+		}, 600),
 		/**
 		 * When the div is scrolled, this method checks if it's been scrolled to the
 		 * bottom.
