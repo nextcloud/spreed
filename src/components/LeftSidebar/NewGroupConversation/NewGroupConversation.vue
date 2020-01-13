@@ -35,7 +35,7 @@
 			size="full"
 			@close="closeModal">
 			<div
-				class="new-group-conversation">
+				class="new-group-conversation talk-modal">
 				<div
 					class="new-group-conversation__content">
 					<template

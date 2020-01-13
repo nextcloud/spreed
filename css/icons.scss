@@ -9,6 +9,7 @@
 @include icon-black-white('lobby', 'spreed', 1);
 
 .app-Talk,
+.talk-modal,
 #call-container {
 	// We always want to use the white icons, this is why we don't use var(--color-white) here.
 	.icon-public {
