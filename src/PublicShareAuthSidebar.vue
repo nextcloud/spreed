@@ -19,16 +19,18 @@
   -->
 
 <template>
-	<aside v-if="isOpen" id="talk-sidebar">
-		<div v-if="!token" class="emptycontent">
-			<div class="icon icon-talk" />
-			<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
-		</div>
-		<div v-else class="emptycontent">
-			<div class="icon icon-talk" />
-			<h2>Password requested</h2>
-		</div>
-	</aside>
+	<transition name="slide-right">
+		<aside v-if="isOpen" id="talk-sidebar">
+			<div v-if="!token" class="emptycontent">
+				<div class="icon icon-talk" />
+				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
+			</div>
+			<div v-else class="emptycontent">
+				<div class="icon icon-talk" />
+				<h2>Password requested</h2>
+			</div>
+		</aside>
+	</transition>
 </template>
 
 <script>
@@ -138,5 +140,23 @@ export default {
 	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 1500;
+}
+
+.slide-right-leave-active,
+.slide-right-enter-active {
+	transition-duration: var(--animation-quick);
+	transition-property: min-width, max-width;
+}
+
+.slide-right-enter-to,
+.slide-right-leave {
+	min-width: 300px;
+	max-width: 500px;
+}
+
+.slide-right-enter,
+.slide-right-leave-to {
+	min-width: 0 !important;
+	max-width: 0 !important;
 }
 </style>
