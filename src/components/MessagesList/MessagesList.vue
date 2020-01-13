@@ -32,8 +32,9 @@ get the messagesList array and loop through the list to generate the messages.
 		class="scroller"
 		@scroll="debounceHandleScroll">
 		<div
-			v-if="isLoadingPreviousMessages"
-			class="scroller__loading">
+			v-if="displayMessagesLoader"
+			class="scroller__loading"
+			disabled>
 			<div
 				class="icon-loading" />
 		</div>
@@ -90,13 +91,22 @@ export default {
 			 * when quickly switching to a new conversation.
 			 */
 			cancelFetchMessages: () => {},
-
+			/**
+			 * Initialised as true as when we open a new conversation we're scrolling to
+			 * the bottom for now. In the future when we'll open the conversation close
+			 * to the scroll position of the last red message, we wil need to change this.
+			 */
 			isScrolledToBottom: true,
 			/**
 			 * When scrolling to the top of the div .scroller we start loading previous
 			 * messages. This boolean allows us to show/hide the loader.
 			 */
-			isLoadingPreviousMessages: false
+			displayMessagesLoader: false,
+			/**
+			 * We store this value in order to determine wether the user has scrolled up
+			 * or down at each iteration of the debounceHandleScroll method.
+			 */
+			previousScrollTopValue: null,
 		}
 	},
 
@@ -332,7 +342,13 @@ export default {
 			})
 		},
 
-		async getOldMessages() {
+		/**
+		 * Get messages history.
+		 * @param {int} lastKnownMessageId The id of the last known messages.
+		 * @param {int} includeLastKnown Include or exclude the last known message in the response.
+		 * (0 for exclude, 1 for include)
+		 */
+		async getOldMessages(lastKnownMessageId, includeLastKnown) {
 			/**
 			 * Clear previous requests if there's one pending
 			 */
@@ -344,7 +360,7 @@ export default {
 			this.cancelFetchMessages = cancel
 			// Make the request
 			try {
-				const messages = await request({ token: this.token })
+				const messages = await request({ token: this.token, lastKnownMessageId, includeLastKnown })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					this.$store.dispatch('processMessage', message)
@@ -411,7 +427,7 @@ export default {
 		 * When the div is scrolled, this method checks if it's been scrolled to the top
 		 * or to the bottom of the list bottom.
 		 */
-		handleScroll() {
+		async handleScroll() {
 			const scroller = document.querySelector('.scroller')
 			const scrollHeight = scroller.scrollHeight
 			const scrollTop = scroller.scrollTop
@@ -420,12 +436,20 @@ export default {
 			const tolerance = 4
 			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
 				this.isScrolledToBottom = true
-				this.isLoadingPreviousMessages = false
-			} else if (scrollHeight > elementHeight && scrollTop < 0 + tolerance) {
-				this.isLoadingPreviousMessages = true
+				this.displayMessagesLoader = false
+				this.previousScrollTopValue = scrollTop
+			} else if (scrollHeight > elementHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
+				const firstMessageId = this.getFirstKnownMessageId()
+				if (scrollTop === 0) {
+					this.displayMessagesLoader = true
+				}
+				await this.getOldMessages(firstMessageId)
+				this.displayMessagesLoader = false
+				this.previousScrollTopValue = scrollTop
 			} else {
 				this.isScrolledToBottom = false
-				this.isLoadingPreviousMessages = false
+				this.displayMessagesLoader = false
+				this.previousScrollTopValue = scrollTop
 			}
 		},
 
@@ -453,6 +477,13 @@ export default {
 				}
 			}
 			return '0'
+		},
+		/**
+		 * gets the first message's id.
+		 * @returns {string}
+		 */
+		getFirstKnownMessageId() {
+			return this.messagesList[0].id.toString()
 		},
 	},
 }
