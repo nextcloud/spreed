@@ -30,8 +30,8 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {string} token the conversation token;
  * @param {object} options options
  */
-const fetchMessages = async function({ token }, options) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0', options)
+const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0' + `&lastKnownMessageId=${lastKnownMessageId || ''}` + `&includeLastKnown=${includeLastKnown || 0}`, options)
 	return response
 }
 
