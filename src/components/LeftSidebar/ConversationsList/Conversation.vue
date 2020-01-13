@@ -31,10 +31,10 @@
 		</template>
 		<template v-slot:subtitle>
 			<strong v-if="item.unreadMessages">
-				{{ simpleLastChatMessage }}
+				{{ conversationInformation }}
 			</strong>
 			<template v-else>
-				{{ simpleLastChatMessage }}
+				{{ conversationInformation }}
 			</template>
 		</template>
 		<AppNavigationCounter v-if="item.unreadMessages"
@@ -168,6 +168,33 @@ export default {
 			}
 			return 'icon-delete'
 		},
+
+		conversationInformation() {
+			if (!Object.keys(this.item.lastMessage).length) {
+				return ''
+			}
+
+			if (this.shortLastChatMessageAuthor === '') {
+				return this.simpleLastChatMessage
+			}
+
+			if (this.item.lastMessage.actorId === this.$store.getters.getUserId()) {
+				return t('spreed', 'You: {lastMessage}', {
+					lastMessage: this.simpleLastChatMessage,
+				})
+			}
+
+			if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
+				|| this.item.type === CONVERSATION.TYPE.CHANGELOG) {
+				return this.simpleLastChatMessage
+			}
+
+			return t('spreed', '{actor}: {lastMessage}', {
+				actor: this.shortLastChatMessageAuthor,
+				lastMessage: this.simpleLastChatMessage,
+			})
+		},
+
 		/**
 		 * This is a simplified version of the last chat message.
 		 * Parameters are parsed without markup (just replaced with the name),
@@ -180,7 +207,7 @@ export default {
 			}
 
 			const params = this.item.lastMessage.messageParameters
-			let subtitle = this.item.lastMessage.message
+			let subtitle = this.item.lastMessage.message.trim()
 
 			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 			Object.keys(params).forEach((parameterKey) => {
@@ -188,6 +215,27 @@ export default {
 			})
 
 			return subtitle
+		},
+		/**
+		 * @returns {string} Part of the name until the first space
+		 */
+		shortLastChatMessageAuthor() {
+			if (!Object.keys(this.item.lastMessage).length
+				|| this.item.lastMessage.systemMessage.length) {
+				return ''
+			}
+
+			let author = this.item.lastMessage.actorDisplayName.trim()
+			const spacePosition = author.indexOf(' ')
+			if (spacePosition !== -1) {
+				author = author.substring(0, spacePosition)
+			}
+
+			if (author.length === 0 && this.item.lastMessage.actorType === 'guests') {
+				return t('spreed', 'Guest')
+			}
+
+			return author
 		},
 	},
 	methods: {
