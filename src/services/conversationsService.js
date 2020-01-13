@@ -129,6 +129,16 @@ const createPublicConversation = async function(conversationName) {
 }
 
 /**
+ * Set a conversation's password
+ * @param {string} token the conversation's token
+ * @param {string} password the password to be set
+ */
+const setConversationPassword = async function(token, password) {
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room` + token + password)
+	return response
+}
+
+/**
  * Delete a conversation.
  * @param {string} token The token of the conversation to be deleted.
  */
@@ -240,4 +250,5 @@ export {
 	makePublic,
 	makePrivate,
 	changeLobbyState,
+	setConversationPassword,
 }

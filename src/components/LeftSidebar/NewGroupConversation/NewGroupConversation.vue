@@ -271,6 +271,10 @@ export default {
 		},
 		handleCheckboxInput(event) {
 			this.checked = event.target.checked
+			// Reinitialise the password value when unchecking the password-protect option.
+			if (this.checked === false) {
+				this.password = ''
+			}
 		},
 	},
 
