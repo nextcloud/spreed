@@ -34,7 +34,7 @@
 			<template v-if="addableUsers.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add contacts')" />
-				<ParticipantOptionsList
+				<ParticipantsList
 					:items="addableUsers"
 					@click="addParticipants" />
 			</template>
@@ -42,7 +42,7 @@
 			<template v-if="addableGroups.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add groups')" />
-				<ParticipantOptionsList
+				<ParticipantsList
 					:items="addableGroups"
 					@click="addParticipants" />
 			</template>
@@ -50,7 +50,7 @@
 			<template v-if="addableEmails.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add emails')" />
-				<ParticipantOptionsList
+				<ParticipantsList
 					:items="addableEmails"
 					@click="addParticipants" />
 			</template>
@@ -58,7 +58,7 @@
 			<template v-if="addableCircles.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add circles')" />
-				<ParticipantOptionsList
+				<ParticipantsList
 					:items="addableCircles"
 					@click="addParticipants" />
 			</template>
@@ -75,7 +75,7 @@
 import Caption from '../../Caption'
 import CurrentParticipants from './CurrentParticipants/CurrentParticipants'
 import Hint from '../../Hint'
-import ParticipantOptionsList from '../../ParticipantOptionsList'
+import ParticipantsList from './ParticipantsList/ParticipantsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
@@ -91,7 +91,7 @@ export default {
 	name: 'ParticipantsTab',
 	components: {
 		CurrentParticipants,
-		ParticipantOptionsList,
+		ParticipantsList,
 		SearchBox,
 		Caption,
 		Hint,

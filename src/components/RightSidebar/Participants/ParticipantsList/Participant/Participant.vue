@@ -28,7 +28,10 @@
 			'selected': isSelected }"
 		@click="handleClick">
 		<div class="participant-row__avatar-wrapper">
-			<Avatar v-if="computedId"
+			<div v-if="iconClass"
+				class="avatar icon"
+				:class="iconClass" />
+			<Avatar v-else-if="computedId"
 				:user="computedId"
 				:display-name="computedName"
 				menu-position="left" />
@@ -130,6 +133,16 @@ export default {
 		},
 		label() {
 			return this.participant.label
+		},
+		iconClass() {
+			if (!this.participant.source || this.participant.source === 'users') {
+				return ''
+			}
+			if (this.participant.source === 'emails') {
+				return 'icon-mail'
+			}
+			// source: groups, circles
+			return 'icon-contacts'
 		},
 		participantType() {
 			return this.participant.participantType
@@ -245,6 +258,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../../../../../assets/variables.scss';
+
+$icon-size: 32px;
 
 .selected {
 	background-color: var(--color-primary-light);
@@ -259,15 +275,26 @@ export default {
 	padding: 0 5px;
 	margin: 5px 0;
 	border-radius: 22px;
+
 	&__avatar-wrapper {
-		height: 32px;
-		width: 32px;
+		height: $icon-size;
+		width: $icon-size;
+
 		.avatar {
+			width: $icon-size;
+			height: $icon-size;
+			line-height: $icon-size;
+			font-size: $icon-size / 2;
+			border-radius: 50%;
+
+			&.icon {
+				background-color: var(--color-background-darker);
+			}
+
 			&.guest {
+				color: $color-guests-avatar;
+				background-color: $color-background-guests-avatar;
 				padding: 0;
-				line-height: 32px;
-				border-radius: 50%;
-				background-color: #b9b9b9;
 				display: block;
 				text-align: center;
 			}

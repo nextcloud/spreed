@@ -41,7 +41,7 @@ import AppContentListItem from './LeftSidebar/ConversationsList/AppContentListIt
 import { CONVERSATION } from '../constants'
 
 export default {
-	name: 'ParticipantOptionsList',
+	name: 'ConversationsOptionsList',
 	components: {
 		ConversationIcon,
 		AppContentListItem,

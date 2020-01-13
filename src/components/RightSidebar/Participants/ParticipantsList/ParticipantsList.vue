@@ -48,7 +48,6 @@
 <script>
 
 import Participant from './Participant/Participant'
-import { addParticipant } from '../../../../services/participantsService'
 import Vue from 'vue'
 
 export default {
@@ -146,15 +145,7 @@ export default {
 	methods: {
 		async handleClickParticipant(participant) {
 			if (this.addOnClick) {
-				/**
-				 * Add the clicked participant to the current conversation
-				 */
-				try {
-					await addParticipant(this.token, participant.id, participant.source)
-					this.$emit('refreshCurrentParticipants')
-				} catch (exception) {
-					console.debug(exception)
-				}
+				this.$emit('click', participant)
 			} else {
 				/**
 				 * Remove the clicked participant from the selected participants list
