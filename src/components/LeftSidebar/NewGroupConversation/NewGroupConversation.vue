@@ -45,6 +45,18 @@
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
+						<template v-if="isPublic">
+							<input
+								id="password-checkbox"
+								type="checkbox"
+								class="checkbox"
+								:checked="checked"
+								@input="handleCheckboxInput">
+							<label for="password-checkbox">{{ t('spreed', 'Password protect') }}</label>
+							<PasswordProtect
+								v-if="checked"
+								v-model="password" />
+						</template>
 					</template>
 					<template v-if="page === 1">
 						<SetContacts
@@ -110,6 +122,7 @@ import {
 	createPrivateConversation,
 } from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
+import PasswordProtect from './PasswordProtect/PasswordProtect'
 
 export default {
 
@@ -124,6 +137,7 @@ export default {
 		SetConversationType,
 		Confirmation,
 		Popover,
+		PasswordProtect,
 	},
 
 	data() {
@@ -137,6 +151,8 @@ export default {
 			selectedParticipants: [],
 			success: false,
 			error: false,
+			password: '',
+			checked: false,
 		}
 	},
 
@@ -150,7 +166,7 @@ export default {
 			} else return ''
 		},
 		disabled() {
-			return this.conversationName === ''
+			return this.conversationName === '' || (this.checked && this.password === '')
 		},
 	},
 
@@ -169,6 +185,7 @@ export default {
 			this.selectedParticipants = []
 			this.success = false
 			this.error = false
+			this.password = ''
 		},
 		handleSetConversationName(event) {
 			this.page = 1
@@ -251,6 +268,9 @@ export default {
 		pushNewRoute() {
 			this.$router.push({ name: 'conversation', params: { token: this.token } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+		handleCheckboxInput(event) {
+			this.checked = event.target.checked
 		},
 	},
 
