@@ -134,7 +134,7 @@ const createPublicConversation = async function(conversationName) {
  * @param {string} password the password to be set
  */
 const setConversationPassword = async function(token, password) {
-	const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room` + token + password)
+	const response = await axios.put(generateOcsUrl('apps/spreed/api/v1', 2) + `room/${token}/password?password=${password}`)
 	return response
 }
 

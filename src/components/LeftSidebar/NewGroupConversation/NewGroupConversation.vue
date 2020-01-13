@@ -50,11 +50,11 @@
 								id="password-checkbox"
 								type="checkbox"
 								class="checkbox"
-								:checked="checked"
+								:checked="passwordProtect"
 								@input="handleCheckboxInput">
 							<label for="password-checkbox">{{ t('spreed', 'Password protect') }}</label>
 							<PasswordProtect
-								v-if="checked"
+								v-if="passwordProtect"
 								v-model="password" />
 						</template>
 					</template>
@@ -120,6 +120,7 @@ import { addParticipant } from '../../../services/participantsService'
 import {
 	createPublicConversation,
 	createPrivateConversation,
+	setConversationPassword,
 } from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 import PasswordProtect from './PasswordProtect/PasswordProtect'
@@ -152,7 +153,7 @@ export default {
 			success: false,
 			error: false,
 			password: '',
-			checked: false,
+			passwordProtect: false,
 		}
 	},
 
@@ -166,7 +167,7 @@ export default {
 			} else return ''
 		},
 		disabled() {
-			return this.conversationName === '' || (this.checked && this.password === '')
+			return this.conversationName === '' || (this.passwordProtect && this.password === '')
 		},
 	},
 
@@ -216,7 +217,11 @@ export default {
 			if (this.isPublic) {
 				try {
 					await this.createPublicConversation()
+					if (this.password && this.passwordProtect) {
+						await setConversationPassword(this.token, this.password)
+					}
 				} catch (exception) {
+					console.debug(exception)
 					this.isLoading = false
 					this.error = true
 					// Stop the execution of the method on exceptions.
@@ -226,6 +231,7 @@ export default {
 				try {
 					await this.createPrivateConversation()
 				} catch (exception) {
+					console.debug(exception)
 					this.isLoading = false
 					this.error = true
 					// Stop the execution of the method on exceptions.
@@ -270,9 +276,9 @@ export default {
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
 		},
 		handleCheckboxInput(event) {
-			this.checked = event.target.checked
+			this.passwordProtect = event.target.checked
 			// Reinitialise the password value when unchecking the password-protect option.
-			if (this.checked === false) {
+			if (this.passwordProtect === false) {
 				this.password = ''
 			}
 		},
