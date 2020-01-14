@@ -67,6 +67,15 @@ const leaveConversation = async function(token) {
 }
 
 /**
+ * Leaves the conversation specified with the token.
+ *
+ * @param {string} token The conversation token;
+ */
+const leaveConversationSync = function(token) {
+	axios.delete(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active')
+}
+
+/**
  * Add a participant to a conversation.
  * @param {token} token the conversation token.
  * @param {string} newParticipant the id of the new participant
@@ -136,6 +145,7 @@ const fetchParticipants = async(token) => {
 export {
 	joinConversation,
 	leaveConversation,
+	leaveConversationSync,
 	addParticipant,
 	removeCurrentUserFromConversation,
 	removeUserFromConversation,

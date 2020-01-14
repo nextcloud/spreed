@@ -50,9 +50,16 @@
 import { EventBus } from './services/EventBus'
 import { getFileConversation } from './services/filesIntegrationServices'
 import { fetchConversation } from './services/conversationsService'
-import { joinConversation, leaveConversation } from './services/participantsService'
+import {
+	joinConversation,
+	leaveConversation,
+	leaveConversationSync,
+} from './services/participantsService'
 import CancelableRequest from './utils/cancelableRequest'
-import { getSignaling } from './utils/webrtc/index'
+import {
+	getSignaling,
+	getSignalingSync,
+} from './utils/webrtc/index'
 import { getCurrentUser } from '@nextcloud/auth'
 import Axios from '@nextcloud/axios'
 import CallButton from './components/TopBar/CallButton'
@@ -139,6 +146,19 @@ export default {
 
 	beforeMount() {
 		this.$store.dispatch('setCurrentUser', getCurrentUser())
+
+		window.addEventListener('unload', () => {
+			console.info('Navigating away, leaving conversation')
+			if (this.token) {
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				const signaling = getSignalingSync()
+				if (signaling) {
+					signaling.disconnect()
+				}
+				leaveConversationSync(this.token)
+			}
+		})
 	},
 
 	methods: {

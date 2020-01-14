@@ -41,9 +41,15 @@ import RightSidebar from './components/RightSidebar/RightSidebar'
 import { EventBus } from './services/EventBus'
 import { getCurrentUser } from '@nextcloud/auth'
 import { fetchConversation } from './services/conversationsService'
-import { joinConversation } from './services/participantsService'
+import {
+	joinConversation,
+	leaveConversationSync,
+} from './services/participantsService'
 import { PARTICIPANT } from './constants'
-import { connectSignaling } from './utils/webrtc/index'
+import {
+	connectSignaling,
+	getSignalingSync,
+} from './utils/webrtc/index'
 
 export default {
 	name: 'App',
@@ -174,6 +180,19 @@ export default {
 		document.addEventListener('visibilitychange', this.changeWindowVisibility)
 
 		this.onResize()
+
+		window.addEventListener('unload', () => {
+			console.info('Navigating away, leaving conversation')
+			if (this.token) {
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				const signaling = getSignalingSync()
+				if (signaling) {
+					signaling.disconnect()
+				}
+				leaveConversationSync(this.token)
+			}
+		})
 
 		EventBus.$on('conversationsReceived', (params) => {
 			if (this.$route.name === 'conversation'
