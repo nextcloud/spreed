@@ -25,15 +25,19 @@
 				<div class="icon icon-talk" />
 				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
 			</div>
-			<div v-else class="emptycontent">
-				<div class="icon icon-talk" />
-				<h2>Password requested</h2>
-			</div>
+			<template v-else>
+				<CallView :token="token" />
+				<ChatView :token="token" />
+			</template>
 		</aside>
 	</transition>
 </template>
 
 <script>
+import { getCurrentUser } from '@nextcloud/auth'
+import CallView from './components/CallView/CallView'
+import ChatView from './components/ChatView'
+import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import { fetchConversation } from './services/conversationsService'
 import { joinConversation } from './services/participantsService'
@@ -42,6 +46,11 @@ import { getSignaling } from './utils/webrtc/index'
 export default {
 
 	name: 'PublicShareAuthSidebar',
+
+	components: {
+		CallView,
+		ChatView,
+	},
 
 	data() {
 		return {
@@ -83,11 +92,16 @@ export default {
 		async joinConversation() {
 			await joinConversation(this.token)
 
-			// No need to wait for it, but fetching the conversation needs to be
-			// done once the user has joined the conversation (otherwise only
-			// limited data would be received if the user was not a participant
-			// of the conversation yet).
-			this.fetchCurrentConversation()
+			// Fetching the conversation needs to be done once the user has
+			// joined the conversation (otherwise only limited data would be
+			// received if the user was not a participant of the conversation
+			// yet).
+			await this.fetchCurrentConversation()
+
+			// Joining the call needs to be done once the participant identifier
+			// has been set, which is done once the conversation has been
+			// fetched.
+			this.joinCall()
 
 			// FIXME The participant will not be updated with the server data
 			// when the conversation is got again (as "addParticipantOnce" is
@@ -106,6 +120,14 @@ export default {
 			}
 		},
 
+		async joinCall() {
+			await this.$store.dispatch('joinCall', {
+				token: this.token,
+				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				flags: PARTICIPANT.CALL_FLAG.IN_CALL,
+			})
+		},
+
 		async fetchCurrentConversation() {
 			if (!this.token) {
 				return
@@ -114,6 +136,16 @@ export default {
 			try {
 				const response = await fetchConversation(this.token)
 				this.$store.dispatch('addConversation', response.data.ocs.data)
+
+				// Although the current participant is automatically added to
+				// the participants store it must be explicitly set in the
+				// actors store.
+				if (getCurrentUser()) {
+					this.$store.dispatch('setCurrentUser', getCurrentUser())
+				} else {
+					// Setting a guest only uses "sessionId" and "participantType".
+					this.$store.dispatch('setCurrentParticipant', response.data.ocs.data)
+				}
 			} catch (exception) {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)
 
@@ -158,5 +190,81 @@ export default {
 .slide-right-leave-to {
 	min-width: 0 !important;
 	max-width: 0 !important;
+}
+
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#talk-sidebar > .emptycontent {
+	/* Remove default margin-top as it is unneeded when showing only the empty
+	 * content in a flex sidebar. */
+	margin-top: 0;
+}
+
+#talk-sidebar #call-container {
+	position: relative;
+
+	flex-grow: 1;
+
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+#talk-sidebar #call-container ::v-deep .videoContainer {
+        /* The video container has some small padding to prevent the video from
+         * reaching the edges, but it also uses "width: 100%", so the padding should
+         * be included in the full width of the element. */
+        box-sizing: border-box;
+}
+
+#talk-sidebar #call-container ::v-deep .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+#talk-sidebar #call-container ::v-deep .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+#talk-sidebar .chatView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+}
+
+/* Unset conflicting rules from guest.css for the sidebar. */
+#talk-sidebar {
+	text-align: left;
+}
+
+#talk-sidebar ::v-deep .wrapper {
+	margin-top: 0;
+}
+
+/* Restore rules from style.scss overriden by guest.css for the sidebar. */
+#talk-sidebar ::v-deep a {
+	color: var(--color-main-text);
+	font-weight: inherit;
 }
 </style>
