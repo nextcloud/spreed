@@ -8,6 +8,7 @@ OC.L10N.register(
     "Users" : "کاربران",
     "Favorite" : "برگزیده",
     "Copy link" : "کپی کردن لینک",
+    "Off" : "خاموش",
     "Remove from favorites" : "Remove from favorites",
     "Add to favorites" : "Add to favorites",
     "Contacts" : "مخاطبین",
