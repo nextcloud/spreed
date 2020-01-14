@@ -19,15 +19,19 @@
   -->
 
 <template>
-	<CallView v-if="isInFile"
-		v-show="isInCall"
-		:token="token"
-		:use-constrained-layout="true" />
+	<div v-if="isInFile">
+		<CallView
+			v-show="isInCall"
+			:token="token"
+			:use-constrained-layout="true" />
+		<PreventUnload :when="isInCall" />
+	</div>
 </template>
 
 <script>
 import { PARTICIPANT } from './constants'
 import CallView from './components/CallView/CallView'
+import PreventUnload from 'vue-prevent-unload'
 
 export default {
 
@@ -35,6 +39,7 @@ export default {
 
 	components: {
 		CallView,
+		PreventUnload,
 	},
 
 	data() {

@@ -65,6 +65,10 @@ async function getSignaling() {
 	return signaling
 }
 
+function getSignalingSync() {
+	return signaling
+}
+
 let currentToken = null
 let startedCall = null
 
@@ -121,5 +125,6 @@ export {
 	localMediaModel,
 	connectSignaling,
 	getSignaling,
+	getSignalingSync,
 	joinCall,
 }
