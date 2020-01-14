@@ -40,9 +40,14 @@ import ChatView from './components/ChatView'
 import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import { fetchConversation } from './services/conversationsService'
-import { joinConversation } from './services/participantsService'
-import { getSignaling } from './utils/webrtc/index'
-
+import {
+	joinConversation,
+	leaveConversationSync,
+} from './services/participantsService'
+import {
+	getSignaling,
+	getSignalingSync,
+} from './utils/webrtc/index'
 export default {
 
 	name: 'PublicShareAuthSidebar',
@@ -85,6 +90,21 @@ export default {
 				window.setTimeout(() => { this.isWaitingToClose = false }, 5000)
 			}
 		},
+	},
+
+	beforeMount() {
+		window.addEventListener('unload', () => {
+			console.info('Navigating away, leaving conversation')
+			if (this.token) {
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				const signaling = getSignalingSync()
+				if (signaling) {
+					signaling.disconnect()
+				}
+				leaveConversationSync(this.token)
+			}
+		})
 	},
 
 	methods: {
