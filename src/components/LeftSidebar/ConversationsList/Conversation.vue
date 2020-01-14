@@ -309,14 +309,17 @@ export default {
 	 */
 	padding: 4px 6px;
 	border-radius: 10px;
-	background-color: var(--color-background-darker);
+
+	&:not(.app-navigation-entry__counter--highlighted) {
+		background-color: var(--color-background-darker);
+	}
 
 	span {
 		padding: 2px 6px;
 	}
 }
 
-.has-unread-messages{
+.has-unread-messages {
 	::v-deep .acli__content__line-one__title {
 		font-weight: bold;
 	}
