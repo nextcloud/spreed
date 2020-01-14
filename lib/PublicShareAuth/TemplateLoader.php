@@ -64,7 +64,7 @@ class TemplateLoader {
 		}
 
 		Util::addStyle('spreed', 'merged-share-auth');
-		Util::addScript('spreed', 'merged-share-auth');
+		Util::addScript('spreed', 'talk-public-share-auth-sidebar');
 	}
 
 }

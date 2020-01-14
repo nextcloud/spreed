@@ -1,0 +1,290 @@
+<!--
+  - @copyright Copyright (c) 2020, Daniel Calviño Sánchez <danxuliu@gmail.com>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -
+  -->
+
+<template>
+	<transition name="slide-right">
+		<aside v-if="isOpen" id="talk-sidebar">
+			<div v-if="!token" class="emptycontent">
+				<div class="icon icon-talk" />
+				<h2>{{ t('spreed', 'This conversation has ended') }}</h2>
+			</div>
+			<template v-else>
+				<CallView :token="token" />
+				<ChatView :token="token" />
+			</template>
+		</aside>
+	</transition>
+</template>
+
+<script>
+import { getCurrentUser } from '@nextcloud/auth'
+import CallView from './components/CallView/CallView'
+import ChatView from './components/ChatView'
+import { PARTICIPANT } from './constants'
+import { EventBus } from './services/EventBus'
+import { fetchConversation } from './services/conversationsService'
+import {
+	joinConversation,
+	leaveConversationSync,
+} from './services/participantsService'
+import {
+	getSignaling,
+	getSignalingSync,
+} from './utils/webrtc/index'
+export default {
+
+	name: 'PublicShareAuthSidebar',
+
+	components: {
+		CallView,
+		ChatView,
+	},
+
+	data() {
+		return {
+			fetchCurrentConversationIntervalId: null,
+			isWaitingToClose: false,
+		}
+	},
+
+	computed: {
+		token() {
+			return this.$store.getters.getToken()
+		},
+
+		conversation() {
+			return this.$store.getters.conversations[this.token]
+		},
+
+		isOpen() {
+			return this.conversation || this.isWaitingToClose
+		},
+	},
+
+	watch: {
+		token(token) {
+			if (token) {
+				this.joinConversation()
+			}
+		},
+		conversation(conversation) {
+			if (!conversation) {
+				this.isWaitingToClose = true
+				window.setTimeout(() => { this.isWaitingToClose = false }, 5000)
+			}
+		},
+	},
+
+	beforeMount() {
+		window.addEventListener('unload', () => {
+			console.info('Navigating away, leaving conversation')
+			if (this.token) {
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				const signaling = getSignalingSync()
+				if (signaling) {
+					signaling.disconnect()
+				}
+				leaveConversationSync(this.token)
+			}
+		})
+	},
+
+	methods: {
+
+		async joinConversation() {
+			await joinConversation(this.token)
+
+			// Fetching the conversation needs to be done once the user has
+			// joined the conversation (otherwise only limited data would be
+			// received if the user was not a participant of the conversation
+			// yet).
+			await this.fetchCurrentConversation()
+
+			// Joining the call needs to be done once the participant identifier
+			// has been set, which is done once the conversation has been
+			// fetched.
+			this.joinCall()
+
+			// FIXME The participant will not be updated with the server data
+			// when the conversation is got again (as "addParticipantOnce" is
+			// used), although that should not be a problem given that only the
+			// "inCall" flag (which is locally updated when joining and leaving
+			// a call) is currently used.
+			const signaling = await getSignaling()
+			if (signaling.url) {
+				EventBus.$on('shouldRefreshConversations', this.fetchCurrentConversation)
+			} else {
+				// The "shouldRefreshConversations" event is triggered only when
+				// the external signaling server is used; when the internal
+				// signaling server is used periodic polling has to be used
+				// instead.
+				this.fetchCurrentConversationIntervalId = window.setInterval(this.fetchCurrentConversation, 30000)
+			}
+		},
+
+		async joinCall() {
+			await this.$store.dispatch('joinCall', {
+				token: this.token,
+				participantIdentifier: this.$store.getters.getParticipantIdentifier(),
+				flags: PARTICIPANT.CALL_FLAG.IN_CALL,
+			})
+		},
+
+		async fetchCurrentConversation() {
+			if (!this.token) {
+				return
+			}
+
+			try {
+				const response = await fetchConversation(this.token)
+				this.$store.dispatch('addConversation', response.data.ocs.data)
+
+				// Although the current participant is automatically added to
+				// the participants store it must be explicitly set in the
+				// actors store.
+				if (getCurrentUser()) {
+					this.$store.dispatch('setCurrentUser', getCurrentUser())
+				} else {
+					// Setting a guest only uses "sessionId" and "participantType".
+					this.$store.dispatch('setCurrentParticipant', response.data.ocs.data)
+				}
+			} catch (exception) {
+				window.clearInterval(this.fetchCurrentConversationIntervalId)
+
+				this.$store.dispatch('deleteConversationByToken', this.token)
+				this.$store.dispatch('updateToken', '')
+			}
+		},
+	},
+}
+</script>
+
+<style lang="scss" scoped>
+/* Properties based on the app-sidebar */
+#talk-sidebar {
+	position: relative;
+	flex-shrink: 0;
+	width: 27vw;
+	min-width: 300px;
+	max-width: 500px;
+
+	background: var(--color-main-background);
+	border-left: 1px solid var(--color-border);
+
+	overflow-x: hidden;
+	overflow-y: auto;
+	z-index: 1500;
+}
+
+.slide-right-leave-active,
+.slide-right-enter-active {
+	transition-duration: var(--animation-quick);
+	transition-property: min-width, max-width;
+}
+
+.slide-right-enter-to,
+.slide-right-leave {
+	min-width: 300px;
+	max-width: 500px;
+}
+
+.slide-right-enter,
+.slide-right-leave-to {
+	min-width: 0 !important;
+	max-width: 0 !important;
+}
+
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#talk-sidebar > .emptycontent {
+	/* Remove default margin-top as it is unneeded when showing only the empty
+	 * content in a flex sidebar. */
+	margin-top: 0;
+}
+
+#talk-sidebar #call-container {
+	position: relative;
+
+	flex-grow: 1;
+
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+
+	/* Ensure that the background will be black also in voice only calls. */
+	background-color: #000;
+}
+
+#talk-sidebar #call-container ::v-deep .videoContainer {
+        /* The video container has some small padding to prevent the video from
+         * reaching the edges, but it also uses "width: 100%", so the padding should
+         * be included in the full width of the element. */
+        box-sizing: border-box;
+}
+
+#talk-sidebar #call-container ::v-deep .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+#talk-sidebar #call-container ::v-deep .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+#talk-sidebar .chatView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
+}
+
+/* Unset conflicting rules from guest.css for the sidebar. */
+#talk-sidebar {
+	text-align: left;
+}
+
+#talk-sidebar ::v-deep .wrapper {
+	margin-top: 0;
+}
+
+/* Restore rules from style.scss overriden by guest.css for the sidebar. */
+#talk-sidebar ::v-deep a {
+	color: var(--color-main-text);
+	font-weight: inherit;
+}
+</style>
