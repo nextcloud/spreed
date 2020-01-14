@@ -74,6 +74,7 @@ import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
 import PlainText from './MessagePart/PlainText'
 import Quote from '../../../Quote'
+import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
 
 export default {
@@ -309,6 +310,7 @@ export default {
 				messageParameters: this.messageParameters,
 				token: this.token,
 			})
+			EventBus.$emit('focusChatInput')
 		},
 		handleDelete() {
 			this.$store.dispatch('deleteMessage', this.message)
