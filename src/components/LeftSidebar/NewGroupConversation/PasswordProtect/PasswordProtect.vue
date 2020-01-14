@@ -1,5 +1,5 @@
 <!--
-  - @copyright Copyright (c) 2019 Marco Ambrosini <marcoambrosini@pm.me>
+  - @copyright Copyright (c) 2020 Marco Ambrosini <marcoambrosini@pm.me>
   -
   - @author Marco Ambrosini <marcoambrosini@pm.me>
   -
@@ -20,30 +20,37 @@
 -->
 
 <template>
-	<div class="conversation-type">
-		<input
-			id="checkbox"
-			type="checkbox"
-			class="checkbox"
-			:checked="value"
-			@change="handleInput">
-		<label for="checkbox" class="conversation-type__label">{{ t('spreed', 'Allow guests to join via link ') }}</label>
-	</div>
+	<input
+		ref="password"
+		v-observe-visibility="visibilityChanged"
+		type="text"
+		:value="value"
+		class="password-protect"
+		:placeholder="t('spreed', 'Choose a password')"
+		@input="handleInput">
 </template>
 
 <script>
 
 export default {
-	name: 'SetConversationType',
+	name: 'PasswordProtect',
+
 	props: {
 		value: {
-			type: Boolean,
+			type: String,
 			required: true,
 		},
 	},
+
 	methods: {
 		handleInput(event) {
-			this.$emit('input', event.target.checked)
+			this.$emit('input', event.target.value)
+		},
+		visibilityChanged(isVisible) {
+			if (isVisible) {
+				// Focus the input field of the current component.
+				this.$refs.password.focus()
+			}
 		},
 	},
 
@@ -53,11 +60,8 @@ export default {
 
 <style lang="scss" scoped>
 
-.conversation-type {
-	margin: 20px 0;
-	&__hint {
-		padding: 10px 0;
-		color: var(--color-text-light)
-	}
+.password-protect {
+	width: calc(100% - 18px);
+	margin-left: 18px;
 }
 </style>

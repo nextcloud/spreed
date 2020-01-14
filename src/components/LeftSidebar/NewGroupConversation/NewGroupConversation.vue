@@ -45,6 +45,18 @@
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
+						<template v-if="isPublic">
+							<input
+								id="password-checkbox"
+								type="checkbox"
+								class="checkbox"
+								:checked="passwordProtect"
+								@input="handleCheckboxInput">
+							<label for="password-checkbox">{{ t('spreed', 'Password protect') }}</label>
+							<PasswordProtect
+								v-if="passwordProtect"
+								v-model="password" />
+						</template>
 					</template>
 					<template v-if="page === 1">
 						<SetContacts
@@ -108,8 +120,10 @@ import { addParticipant } from '../../../services/participantsService'
 import {
 	createPublicConversation,
 	createPrivateConversation,
+	setConversationPassword,
 } from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
+import PasswordProtect from './PasswordProtect/PasswordProtect'
 
 export default {
 
@@ -124,6 +138,7 @@ export default {
 		SetConversationType,
 		Confirmation,
 		Popover,
+		PasswordProtect,
 	},
 
 	data() {
@@ -137,6 +152,8 @@ export default {
 			selectedParticipants: [],
 			success: false,
 			error: false,
+			password: '',
+			passwordProtect: false,
 		}
 	},
 
@@ -150,7 +167,7 @@ export default {
 			} else return ''
 		},
 		disabled() {
-			return this.conversationName === ''
+			return this.conversationName === '' || (this.passwordProtect && this.password === '')
 		},
 	},
 
@@ -169,6 +186,7 @@ export default {
 			this.selectedParticipants = []
 			this.success = false
 			this.error = false
+			this.password = ''
 		},
 		handleSetConversationName(event) {
 			this.page = 1
@@ -199,7 +217,11 @@ export default {
 			if (this.isPublic) {
 				try {
 					await this.createPublicConversation()
+					if (this.password && this.passwordProtect) {
+						await setConversationPassword(this.token, this.password)
+					}
 				} catch (exception) {
+					console.debug(exception)
 					this.isLoading = false
 					this.error = true
 					// Stop the execution of the method on exceptions.
@@ -209,6 +231,7 @@ export default {
 				try {
 					await this.createPrivateConversation()
 				} catch (exception) {
+					console.debug(exception)
 					this.isLoading = false
 					this.error = true
 					// Stop the execution of the method on exceptions.
@@ -251,6 +274,13 @@ export default {
 		pushNewRoute() {
 			this.$router.push({ name: 'conversation', params: { token: this.token } })
 				.catch(err => console.debug(`Error while pushing the new conversation's route: ${err}`))
+		},
+		handleCheckboxInput(event) {
+			this.passwordProtect = event.target.checked
+			// Reinitialise the password value when unchecking the password-protect option.
+			if (this.passwordProtect === false) {
+				this.password = ''
+			}
 		},
 	},
 
