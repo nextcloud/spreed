@@ -55,7 +55,7 @@
 				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
 
-			<ActionText class="separator" />
+			<ActionSeparator />
 
 			<ActionText
 				:title="t('spreed', 'Chat notifications')" />
@@ -78,7 +78,7 @@
 				{{ t('spreed', 'Off') }}
 			</ActionButton>
 
-			<ActionText class="separator" />
+			<ActionSeparator />
 
 			<ActionButton v-if="canLeaveConversation"
 				:icon="iconLeaveConversation"
@@ -96,6 +96,7 @@
 
 <script>
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionSeparator from '@nextcloud/vue/dist/Components/ActionSeparator'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
@@ -109,6 +110,7 @@ export default {
 	name: 'Conversation',
 	components: {
 		ActionButton,
+		ActionSeparator,
 		ActionText,
 		AppContentListItem,
 		AppNavigationCounter,
@@ -331,12 +333,6 @@ export default {
 
 .ellipsis {
 	text-overflow: ellipsis;
-}
-
-.separator {
-	height: 0;
-	margin: 5px 10px 5px 15px;
-	border-bottom: 1px solid var(--color-border-dark);
 }
 
 .forced-active {
