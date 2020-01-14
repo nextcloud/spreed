@@ -244,7 +244,8 @@ export default {
 					|| message1.actorId === 'changelog') // Apart from the changelog bot
 				&& (message1.systemMessage.length === 0) === (message2.systemMessage.length === 0) // Only group system messages with each others
 				&& message1.actorType === message2.actorType // To have the same author, the type
-				&& message1.actorId === message2.actorId //     and the id of the author must be the same
+				&& message1.actorId === message2.actorId // and the id of the author must be the same
+				&& message1.actorDisplayName === message2.actorDisplayName //FIXME: this is in case a guest user changes its username
 				&& !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
 		},
 

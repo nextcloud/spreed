@@ -100,6 +100,37 @@
 				type="room"
 				:name="conversation.displayName" />
 		</AppSidebarTab>
+		<!-- Guest username setting form -->
+		<form
+			v-if="!getUserId"
+			class="username-form"
+			@submit.prevent="handleChooseUserName">
+			<h3>
+				{{ t('spreed', 'Display name: ') }} <strong>{{ actorDisplayName ? actorDisplayName : t('spreed', 'Guest') }}</strong>
+				<button
+					class="icon-rename"
+					@click.prevent="handleEditUsername">
+					{{t("spreed", "Edit")}}
+				</button>
+			</h3>
+			<div
+				v-if="isEditingUsername"
+				class="username-form__wrapper">
+				<input
+					ref="usernameInput"
+					v-model="guestUserName"
+					:placeholder="t('spreed', 'Guest')"
+					class="username-form__input"
+					@keydown.enter="handleChooseUserName"
+					@keydown.esc="isEditingUsername = !isEditingUsername"
+					type="text">
+				<button
+					class="username-form__button"
+					type="submit">
+					<div class="icon-confirm" />
+				</button>
+			</div>
+		</form>
 	</AppSidebar>
 </template>
 
@@ -119,6 +150,7 @@ import {
 	setConversationPassword,
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
+import { setGuestUserName } from '../../services/participantsService'
 
 export default {
 	name: 'RightSidebar',
@@ -152,6 +184,8 @@ export default {
 			password: '',
 			// Switch for the password-editing operation
 			isEditingPassword: false,
+			guestUserName: '',
+			isEditingUsername: false,
 		}
 	},
 
@@ -181,6 +215,10 @@ export default {
 
 		getUserId() {
 			return this.$store.getters.getUserId()
+		},
+
+		actorDisplayName() {
+			return this.$store.getters.getDisplayName()
 		},
 
 		isFavorited() {
@@ -322,6 +360,23 @@ export default {
 			this.password = ''
 			this.isEditingPassword = false
 		},
+		async handleChooseUserName() {
+			try {
+				await setGuestUserName(this.token, this.guestUserName)
+				this.$store.dispatch('setDisplayName', this.guestUserName)
+				this.isEditingUsername = false
+			} catch (exception) {
+				console.debug(exception)
+			}
+		},
+
+		/** For when the currentUser is guest */
+		handleEditUsername() {
+			this.isEditingUsername = !this.isEditingUsername
+			this.$nextTick(() => {
+				this.$refs.usernameInput.focus()
+			})
+		}
 	},
 }
 </script>
@@ -358,6 +413,28 @@ export default {
 ::v-deep .app-sidebar__close {
 	top: 6px !important;
 	right: 6px !important;
+}
+
+/** Username form for guest users */
+.username-form {
+	padding: 0 12px;
+	& .icon-rename {
+		margin-left: 8px;
+		padding-left: 36px;
+		background-position: 12px;
+	}
+	&__wrapper {
+		display: flex;
+	}
+	&__input {
+		padding-right: var(--clickable-area);
+		width: 300px;
+	}
+	&__button {
+		margin-left: -44px;
+		background-color: transparent;
+		border: none;
+	}
 }
 
 </style>

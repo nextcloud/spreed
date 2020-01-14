@@ -36,7 +36,9 @@ the main body of the message as well as a quote.
 			<div v-if="isSingleEmoji"
 				class="message__main__text">
 				<Quote v-if="parent" v-bind="quote" />
-				<div class="single-emoji">{{ message }}</div>
+				<div class="single-emoji">
+					{{ message }}
+				</div>
 			</div>
 			<div v-else class="message__main__text">
 				<Quote v-if="parent" v-bind="quote" />
