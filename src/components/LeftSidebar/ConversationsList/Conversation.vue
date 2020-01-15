@@ -40,7 +40,7 @@
 		<AppNavigationCounter v-if="item.unreadMessages"
 			slot="counter"
 			class="counter"
-			:highlighted="item.unreadMention">
+			:highlighted="counterShouldBePrimary">
 			<strong>{{ item.unreadMessages }}</strong>
 		</AppNavigationCounter>
 		<template slot="actions">
@@ -137,6 +137,9 @@ export default {
 		},
 	},
 	computed: {
+		counterShouldBePrimary() {
+			return this.item.unreadMention || (this.item.unreadMessages && this.item.type === CONVERSATION.TYPE.ONE_TO_ONE)
+		},
 		linkToConversation() {
 			return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.item.token)
 		},
