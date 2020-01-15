@@ -29,16 +29,17 @@ the main body of the message as well as a quote.
 		class="message"
 		@mouseover="showActions=true"
 		@mouseleave="showActions=false">
-		<Quote v-if="parent" v-bind="quote" />
 		<div v-if="isFirstMessage && showAuthor" class="message__author">
 			<h6>{{ actorDisplayName }}</h6>
 		</div>
 		<div class="message__main">
 			<div v-if="isSingleEmoji"
-				class="message__main__text single-emoji">
-				{{ message }}
+				class="message__main__text">
+				<Quote v-if="parent" v-bind="quote" />
+				<div class="single-emoji">{{ message }}</div>
 			</div>
 			<div v-else class="message__main__text">
+				<Quote v-if="parent" v-bind="quote" />
 				<component
 					:is="getComponentInstanceForMessagePart(block.type)"
 					v-for="(block, i) in parsedMessage"
@@ -337,7 +338,7 @@ export default {
 			color: var(--color-text-light);
 			overflow-wrap: break-word;
 			max-width: $message-max-width;
-			&.single-emoji {
+			.single-emoji {
 				font-size: 250%;
 				line-height: 100%;
 			}
