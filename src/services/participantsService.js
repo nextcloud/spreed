@@ -142,6 +142,13 @@ const fetchParticipants = async(token) => {
 	return response
 }
 
+const setGuestUserName = async(token, userName) => {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/guest', 2) + token + '/name', {
+		displayName: userName,
+	})
+	return response
+}
+
 export {
 	joinConversation,
 	leaveConversation,
@@ -153,4 +160,5 @@ export {
 	promoteToModerator,
 	demoteFromModerator,
 	fetchParticipants,
+	setGuestUserName,
 }

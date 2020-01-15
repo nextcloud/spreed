@@ -155,6 +155,14 @@ const actions = {
 			// FIXME context.commit('setDisplayName', '')
 		}
 	},
+	/**
+	 * Sets displayName only, we currently use this for guests user names.
+	 * @param {object} context default store context;
+	 * @param {string} displayName the display name to be set;
+	 */
+	setDisplayName(context, displayName) {
+		context.commit('setDisplayName', displayName)
+	},
 }
 
 export default { state, mutations, getters, actions }
