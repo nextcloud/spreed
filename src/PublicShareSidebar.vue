@@ -31,6 +31,7 @@
 			</div>
 			<template v-else>
 				<CallView v-if="isInCall" :token="token" :use-constrained-layout="true" />
+				<PreventUnload :when="isInCall" />
 				<CallButton class="call-button" />
 				<ChatView :token="token" />
 			</template>
@@ -39,6 +40,7 @@
 </template>
 
 <script>
+import PreventUnload from 'vue-prevent-unload'
 import CallView from './components/CallView/CallView'
 import ChatView from './components/ChatView'
 import CallButton from './components/TopBar/CallButton'
@@ -57,6 +59,7 @@ export default {
 		CallButton,
 		CallView,
 		ChatView,
+		PreventUnload,
 	},
 
 	props: {
