@@ -269,6 +269,16 @@ class SystemMessage {
 				$userFolder = $this->rootFolder->getUserFolder($participant->getUser());
 				if ($userFolder instanceof Node) {
 					$userNodes = $userFolder->getById($node->getId());
+
+					if (empty($userNodes)) {
+						// FIXME This should be much more sensible, e.g.
+						// 1. Only be executed on "Waiting for new messages"
+						// 2. Once per request
+						\OC_Util::tearDownFS();
+						\OC_Util::setupFS($participant->getUser());
+						$userNodes = $userFolder->getById($node->getId());
+					}
+
 					if (empty($userNodes)) {
 						throw new NotFoundException('File was not found');
 					}
