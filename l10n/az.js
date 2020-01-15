@@ -20,6 +20,8 @@ OC.L10N.register(
     "Yesterday" : "Dünən",
     "guest" : "Qonaq",
     "Share link" : "Linki yayımla",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Name" : "Ad",
     "Saved" : "Saxlanıldı",
     "Password" : "Şifrə",
