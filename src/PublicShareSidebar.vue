@@ -48,8 +48,14 @@ import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import { fetchConversation } from './services/conversationsService'
 import { getPublicShareConversationData } from './services/filesIntegrationServices'
-import { joinConversation } from './services/participantsService'
-import { getSignaling } from './utils/webrtc/index'
+import {
+	joinConversation,
+	leaveConversationSync,
+} from './services/participantsService'
+import {
+	getSignaling,
+	getSignalingSync,
+} from './utils/webrtc/index'
 
 export default {
 
@@ -104,6 +110,20 @@ export default {
 
 			return participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
 		},
+	},
+
+	beforeMount() {
+		window.addEventListener('unload', () => {
+			if (this.token) {
+				// We have to do this synchronously, because in unload and beforeunload
+				// Promises, async and await are prohibited.
+				const signaling = getSignalingSync()
+				if (signaling) {
+					signaling.disconnect()
+				}
+				leaveConversationSync(this.token)
+			}
+		})
 	},
 
 	methods: {
