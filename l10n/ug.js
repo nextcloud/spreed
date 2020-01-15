@@ -15,6 +15,8 @@ OC.L10N.register(
     "Reply" : "جاۋاب قايتۇر",
     "Today" : "بۈگۈن",
     "Share link" : "Share link",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Name" : "ئاتى",
     "Password" : "ئىم",
     "Cancel" : "ۋاز كەچ",

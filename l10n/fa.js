@@ -1,6 +1,7 @@
 OC.L10N.register(
     "spreed",
     {
+    "Invalid date, date format must be YYYY-MM-DD" : "تاریخ نامعتبر است ، قالب تاریخ باید YYYY-MM-DD باشد",
     "None" : "هیچ‌کدام",
     "User" : "User",
     "Everyone" : "همه",
@@ -15,6 +16,7 @@ OC.L10N.register(
     "Groups" : "گروه ها",
     "Loading" : "در حال بار گزاری",
     "Error" : "خطا",
+    "Password protect" : "نگهداری کردن رمز عبور",
     "Back" : "بازگشت",
     "Close" : "بستن",
     "Reply" : "پاسخ",
@@ -23,6 +25,8 @@ OC.L10N.register(
     "guest" : "میهمان",
     "No results" : "نتیجه ای یافت نشد",
     "Share link" : "Share link",
+    "Password protection" : "Password protection",
+    "Enter a password" : "یک گذرواژه وارد کنید",
     "Limit to groups" : "محدود کردن به گروه ها",
     "Save changes" : "ذخیره تغییرات",
     "Name" : "نام",
