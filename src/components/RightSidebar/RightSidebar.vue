@@ -24,11 +24,22 @@
 	<AppSidebar
 		v-if="opened"
 		:title="conversation.displayName"
+		background="cdfgf"
 		:starred="isFavorited"
+		:title-editable="canModerate && isRenamingConversation"
 		@update:starred="onFavoriteChange"
+		@submit-title="handleSubmitTitle"
+		@dismiss-editing="isRenamingConversation = false"
 		@close="handleClose">
 		<template v-if="conversationHasSettings && showModerationMenu"
 			v-slot:secondary-actions>
+			<ActionButton
+				v-if="canModerate"
+				:close-after-click="true"
+				icon="icon-rename"
+				@click="handleRenameConversation">
+				{{ t('spreed', 'Rename conversation') }}
+			</ActionButton>
 			<ActionText
 				v-if="canFullModerate"
 				icon="icon-shared"
@@ -139,6 +150,7 @@ import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
@@ -148,6 +160,7 @@ import {
 	addToFavorites,
 	removeFromFavorites,
 	setConversationPassword,
+	setConversationName,
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 import { setGuestUserName } from '../../services/participantsService'
@@ -158,6 +171,7 @@ export default {
 		ActionCheckbox,
 		ActionInput,
 		ActionText,
+		ActionButton,
 		AppSidebar,
 		AppSidebarTab,
 		ChatView,
@@ -186,6 +200,10 @@ export default {
 			isEditingPassword: false,
 			guestUserName: '',
 			isEditingUsername: false,
+			// Changes the conversation title into an input field for renaming
+			isRenamingConversation: false,
+			// The conversation name (while editing)
+			conversationName: '',
 		}
 	},
 
@@ -377,6 +395,19 @@ export default {
 				this.$refs.usernameInput.focus()
 			})
 		},
+
+		handleRenameConversation() {
+			this.isRenamingConversation = true
+		},
+		async handleSubmitTitle(event) {
+			const name = event.target[0].value.trim()
+			try {
+				await setConversationName(this.token, name)
+				this.isRenamingConversation = false
+			} catch (exception) {
+				console.debug(exception)
+			}
+		},
 	},
 }
 </script>
@@ -399,20 +430,12 @@ export default {
 }
 
 /** TODO: fix these in the nextcloud-vue library **/
-
 ::v-deep .app-sidebar-header {
 	&__menu {
-	top: 6px !important;
-	margin-top: 0 !important;
-	right: 54px !important;
+		right: 56px !important;
+		top: 6px !important;
+		margin-top: 0 !important;
 	}
-	&__title {
-		line-height: inherit;
-	}
-}
-::v-deep .app-sidebar__close {
-	top: 6px !important;
-	right: 6px !important;
 }
 
 /** Username form for guest users */
