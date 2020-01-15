@@ -24,8 +24,9 @@
 			<div v-if="!conversation" class="emptycontent room-not-joined">
 				<div class="icon icon-talk" />
 				<h2>{{ t('spreed', 'Discuss this file') }}</h2>
-				<button class="primary" @click="joinConversation">
+				<button class="primary" :disabled="joiningConversation" @click="joinConversation">
 					{{ t('spreed', 'Join conversation') }}
+					<span v-if="joiningConversation" class="icon icon-loading-small" />
 				</button>
 			</div>
 			<div v-else class="emptycontent">
@@ -62,6 +63,7 @@ export default {
 	data() {
 		return {
 			fetchCurrentConversationIntervalId: null,
+			joiningConversation: false,
 		}
 	},
 
@@ -82,6 +84,8 @@ export default {
 	methods: {
 
 		async joinConversation() {
+			this.joiningConversation = true
+
 			await this.getPublicShareConversationToken()
 
 			await joinConversation(this.token)
@@ -129,6 +133,8 @@ export default {
 				this.$store.dispatch('deleteConversationByToken', this.token)
 				this.$store.dispatch('updateToken', '')
 			}
+
+			this.joiningConversation = false
 		},
 	},
 }
@@ -167,5 +173,18 @@ export default {
 .slide-right-leave-to {
 	min-width: 0 !important;
 	max-width: 0 !important;
+}
+
+#talk-sidebar .emptycontent button .icon {
+	/* Override rules set for the main icon of an empty content area when an
+	 * icon is shown in a button. */
+	background-size: unset;
+	width: unset;
+	height: unset;
+	margin: unset;
+
+	/* Frame the loading icon on the right border of the button. */
+	top: -3px;
+	right: -5px;
 }
 </style>
