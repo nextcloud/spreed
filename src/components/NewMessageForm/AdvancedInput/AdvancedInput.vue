@@ -74,6 +74,46 @@ import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
 
 /**
+ * Checks whether the given style sheet is the default style sheet from the
+ * vue-at component or not.
+ *
+ * @param {CSSStyleSheet} sheet the style sheet to check.
+ * @returns {Boolean} True if it is the style sheet from vue-at, false
+ *          otherwise.
+ */
+function isDefaultAtWhoStyleSheet(sheet) {
+	try {
+		// cssRules may not be defined in Chromium if the stylesheet is loaded
+		// from a different domain.
+		if (!sheet.cssRules) {
+			return false
+		}
+
+		if (sheet.cssRules.length !== 15) {
+			return false
+		}
+
+		for (const cssRule of sheet.cssRules) {
+			// The only way to identify the style sheet is by looking to its
+			// rules. Moreover, a rather complex rule is needed so the style
+			// sheet is not mismatched with a different atwho stylesheet, for
+			// example, the one added by the Comments app.
+			if (cssRule.cssText === '.atwho-view { color: rgb(0, 0, 0); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px; min-width: 120px; z-index: 11110 !important; }') {
+				return true
+			}
+		}
+	} catch (exception) {
+		// Accessing cssRules may throw a SecurityError in Firefox if the style
+		// sheet is loaded from a different domain.
+		if (exception.name !== 'SecurityError') {
+			throw exception
+		}
+	}
+
+	return false
+}
+
+/**
  * Removes the default atwho style sheet added by the vue-at component.
  *
  * The rules in that style sheet are too broad and affect other elements
@@ -82,18 +122,10 @@ import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mentio
 function removeDefaultAtWhoStyleSheet() {
 	const styleElements = document.querySelectorAll('style')
 	for (let i = 0; i < styleElements.length; i++) {
-		const sheet = styleElements[i].sheet
+		if (isDefaultAtWhoStyleSheet(styleElements[i].sheet)) {
+			styleElements[i].remove()
 
-		if (sheet.cssRules.length !== 15) {
-			continue
-		}
-
-		for (const cssRule of sheet.cssRules) {
-			if (cssRule.cssText === '.atwho-view { color: rgb(0, 0, 0); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 5px; min-width: 120px; z-index: 11110 !important; }') {
-				styleElements[i].remove()
-
-				return
-			}
+			return
 		}
 	}
 }
