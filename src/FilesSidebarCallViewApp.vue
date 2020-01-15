@@ -161,22 +161,43 @@ export default {
 		 * call.
 		 */
 		addCallInFilesSidebarStyleSheet() {
-			for (let i = 0; i < document.styleSheets.length; i++) {
-				const sheet = document.styleSheets[i]
-				// None of the default properties of a style sheet can be used
-				// as an ID. Adding a "data-id" attribute would work in Firefox,
-				// but not in Chromium, as it does not provide a "dataset"
-				// property in styleSheet objects. Therefore it is necessary to
-				// check the rules themselves, but as the order is undefined a
-				// matching rule needs to be looked for in all of them.
-				if (sheet.cssRules.length !== 2) {
-					continue
+			const isCallInFilesSidebarStyleSheet = (sheet) => {
+				try {
+					// cssRules may not be defined in Chromium if the stylesheet
+					// is loaded from a different domain.
+					if (!sheet.cssRules) {
+						return false
+					}
+
+					// None of the default properties of a style sheet can be used
+					// as an ID. Adding a "data-id" attribute would work in Firefox,
+					// but not in Chromium, as it does not provide a "dataset"
+					// property in styleSheet objects. Therefore it is necessary to
+					// check the rules themselves, but as the order is undefined a
+					// matching rule needs to be looked for in all of them.
+					if (sheet.cssRules.length !== 2) {
+						return false
+					}
+
+					for (const cssRule of sheet.cssRules) {
+						if (cssRule.cssText === '.app-sidebar-header .hidden-by-call { display: none !important; }') {
+							return true
+						}
+					}
+				} catch (exception) {
+					// Accessing cssRules may throw a SecurityError in Firefox
+					// if the style sheet is loaded from a different domain.
+					if (exception.name !== 'SecurityError') {
+						throw exception
+					}
 				}
 
-				for (const cssRule of sheet.cssRules) {
-					if (cssRule.cssText === '.app-sidebar-header .hidden-by-call { display: none !important; }') {
-						return
-					}
+				return false
+			}
+
+			for (let i = 0; i < document.styleSheets.length; i++) {
+				if (isCallInFilesSidebarStyleSheet(document.styleSheets[i])) {
+					return
 				}
 			}
 
