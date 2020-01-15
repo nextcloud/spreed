@@ -110,7 +110,7 @@
 				<button
 					class="icon-rename"
 					@click.prevent="handleEditUsername">
-					{{t("spreed", "Edit")}}
+					{{ t('spreed', 'Edit') }}
 				</button>
 			</h3>
 			<div
@@ -121,9 +121,9 @@
 					v-model="guestUserName"
 					:placeholder="t('spreed', 'Guest')"
 					class="username-form__input"
+					type="text"
 					@keydown.enter="handleChooseUserName"
-					@keydown.esc="isEditingUsername = !isEditingUsername"
-					type="text">
+					@keydown.esc="isEditingUsername = !isEditingUsername">
 				<button
 					class="username-form__button"
 					type="submit">
@@ -376,7 +376,7 @@ export default {
 			this.$nextTick(() => {
 				this.$refs.usernameInput.focus()
 			})
-		}
+		},
 	},
 }
 </script>

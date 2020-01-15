@@ -144,7 +144,7 @@ const fetchParticipants = async(token) => {
 
 const setGuestUserName = async(token, userName) => {
 	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/guest', 2) + token + '/name', {
-		displayName: userName
+		displayName: userName,
 	})
 	return response
 }
