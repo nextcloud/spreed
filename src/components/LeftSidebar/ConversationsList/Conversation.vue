@@ -186,6 +186,8 @@ export default {
 			if (this.item.lastMessage.actorId === this.$store.getters.getUserId()) {
 				return t('spreed', 'You: {lastMessage}', {
 					lastMessage: this.simpleLastChatMessage,
+				}, undefined, {
+					escape: false,
 				})
 			}
 
@@ -197,6 +199,8 @@ export default {
 			return t('spreed', '{actor}: {lastMessage}', {
 				actor: this.shortLastChatMessageAuthor,
 				lastMessage: this.simpleLastChatMessage,
+			}, undefined, {
+				escape: false,
 			})
 		},
 
