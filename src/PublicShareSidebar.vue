@@ -29,24 +29,35 @@
 					<span v-if="joiningConversation" class="icon icon-loading-small" />
 				</button>
 			</div>
-			<div v-else class="emptycontent">
-				<div class="icon icon-talk" />
-				<h2>Conversation joined</h2>
-			</div>
+			<template v-else>
+				<CallView v-if="isInCall" :token="token" :use-constrained-layout="true" />
+				<CallButton class="call-button" />
+				<ChatView :token="token" />
+			</template>
 		</aside>
 	</transition>
 </template>
 
 <script>
+import CallView from './components/CallView/CallView'
+import ChatView from './components/ChatView'
+import CallButton from './components/TopBar/CallButton'
+import { PARTICIPANT } from './constants'
 import { EventBus } from './services/EventBus'
 import { fetchConversation } from './services/conversationsService'
-import { getPublicShareConversationToken } from './services/filesIntegrationServices'
+import { getPublicShareConversationData } from './services/filesIntegrationServices'
 import { joinConversation } from './services/participantsService'
 import { getSignaling } from './utils/webrtc/index'
 
 export default {
 
 	name: 'PublicShareSidebar',
+
+	components: {
+		CallButton,
+		CallView,
+		ChatView,
+	},
 
 	props: {
 		shareToken: {
@@ -79,6 +90,17 @@ export default {
 		isOpen() {
 			return this.state.isOpen
 		},
+
+		isInCall() {
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			if (participantIndex === -1) {
+				return false
+			}
+
+			const participant = this.$store.getters.getParticipant(this.token, participantIndex)
+
+			return participant.inCall !== PARTICIPANT.CALL_FLAG.DISCONNECTED
+		},
 	},
 
 	methods: {
@@ -86,7 +108,7 @@ export default {
 		async joinConversation() {
 			this.joiningConversation = true
 
-			await this.getPublicShareConversationToken()
+			await this.getPublicShareConversationData()
 
 			await joinConversation(this.token)
 
@@ -113,10 +135,31 @@ export default {
 			}
 		},
 
-		async getPublicShareConversationToken() {
-			const token = await getPublicShareConversationToken(this.shareToken)
+		async getPublicShareConversationData() {
+			const data = await getPublicShareConversationData(this.shareToken)
 
-			this.$store.dispatch('updateToken', token)
+			this.$store.dispatch('updateToken', data.token)
+
+			if (data.userId) {
+				// Instead of using "getCurrentUser()" the current user is set
+				// from the data returned by the controller (as the public share
+				// page uses the incognito mode, and thus it always returns an
+				// anonymous user).
+				//
+				// When the external signaling server is used it should wait
+				// until the current user is set before trying to connect, as
+				// otherwise the connection would fail due to a mismatch between
+				// the user ID given when connecting to the backend (an
+				// anonymous user) and the user that fetched the signaling
+				// settings (the actual user). However, if that happens the
+				// signaling server will retry the connection again and again,
+				// so at some point the anonymous user will have been overriden
+				// with the current user and the connection will succeed.
+				this.$store.dispatch('setCurrentUser', {
+					uid: data.userId,
+					displayName: data.displayName,
+				})
+			}
 		},
 
 		async fetchCurrentConversation() {
@@ -127,6 +170,14 @@ export default {
 			try {
 				const response = await fetchConversation(this.token)
 				this.$store.dispatch('addConversation', response.data.ocs.data)
+
+				// Although the current participant is automatically added to
+				// the participants store it must be explicitly set in the
+				// actors store.
+				if (!this.$store.getters.getUserId()) {
+					// Setting a guest only uses "sessionId" and "participantType".
+					this.$store.dispatch('setCurrentParticipant', response.data.ocs.data)
+				}
 			} catch (exception) {
 				window.clearInterval(this.fetchCurrentConversationIntervalId)
 
@@ -175,6 +226,18 @@ export default {
 	max-width: 0 !important;
 }
 
+#talk-sidebar {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+#talk-sidebar > .emptycontent {
+	/* Remove default margin-top as it is unneeded when showing only the empty
+	 * content in a flex sidebar. */
+	margin-top: 0;
+}
+
 #talk-sidebar .emptycontent button .icon {
 	/* Override rules set for the main icon of an empty content area when an
 	 * icon is shown in a button. */
@@ -186,5 +249,67 @@ export default {
 	/* Frame the loading icon on the right border of the button. */
 	top: -3px;
 	right: -5px;
+}
+
+#talk-sidebar .call-button {
+	/* Center button horizontally. */
+	margin-left: auto;
+	margin-right: auto;
+
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#talk-sidebar #call-container {
+	position: relative;
+
+	flex-grow: 1;
+
+	/* Prevent shadows of videos from leaking on other elements. */
+	overflow: hidden;
+
+	/* Show the call container in a 16/9 proportion based on the sidebar
+	 * width. This is the same proportion used for previews of images by the
+	 * SidebarPreviewManager. */
+	padding-bottom: 56.25%;
+	max-height: 56.25%;
+
+	/* Override the call container height so it properly adjusts to the 16/9
+	 * proportion. */
+	height: unset;
+}
+
+#talk-sidebar #call-container ::v-deep .videoContainer {
+        /* The video container has some small padding to prevent the video from
+         * reaching the edges, but it also uses "width: 100%", so the padding should
+         * be included in the full width of the element. */
+        box-sizing: border-box;
+}
+
+#talk-sidebar #call-container ::v-deep .videoContainer.promoted video {
+	/* Base the size of the video on its width instead of on its height;
+	 * otherwise the video could appear in full height but cropped on the sides
+	 * due to the space available in the sidebar being typically larger in
+	 * vertical than in horizontal. */
+	width: 100%;
+	height: auto;
+}
+
+#talk-sidebar #call-container ::v-deep .nameIndicator {
+	/* The name indicator has some small padding to prevent the name from
+	 * reaching the edges, but it also uses "width: 100%", so the padding should
+	 * be included in the full width of the element. */
+	box-sizing: border-box;
+}
+
+#talk-sidebar .chatView {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Distribute available height between call container and chat view. */
+	height: 50%;
 }
 </style>

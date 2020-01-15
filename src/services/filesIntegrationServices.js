@@ -46,12 +46,12 @@ const getFileConversation = async function({ fileId }, options) {
  * @returns {String} the conversation token
  * @throws {Exception} if the conversation token could not be got
  */
-const getPublicShareConversationToken = async function(shareToken) {
+const getPublicShareConversationData = async function(shareToken) {
 	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `publicshare/${shareToken}`)
-	return response.data.ocs.data.token
+	return response.data.ocs.data
 }
 
 export {
 	getFileConversation,
-	getPublicShareConversationToken,
+	getPublicShareConversationData,
 }

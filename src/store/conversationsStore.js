@@ -78,7 +78,17 @@ const actions = {
 	addConversation(context, conversation) {
 		context.commit('addConversation', conversation)
 
-		const currentUser = getCurrentUser()
+		let currentUser = {
+			uid: context.getters.getUserId(),
+			displayName: context.getters.getDisplayName(),
+		}
+
+		// Fallback to getCurrentUser() only if if has not been set yet (as
+		// getCurrentUser() needs to be overriden in public share pages as it
+		// always returns an anonymous user).
+		if (!currentUser.uid) {
+			currentUser = getCurrentUser()
+		}
 		context.dispatch('addParticipantOnce', {
 			token: conversation.token,
 			participant: {
@@ -86,7 +96,7 @@ const actions = {
 				lastPing: conversation.lastPing,
 				sessionId: conversation.sessionId,
 				participantType: conversation.participantType,
-				userId: currentUser ? currentUser.uid : '', // TODO Does this work for public shares while being logged in, etc?
+				userId: currentUser ? currentUser.uid : '',
 				displayName: currentUser && currentUser.displayName ? currentUser.displayName : '', // TODO guest name from localstore?
 			},
 		})
