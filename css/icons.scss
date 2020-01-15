@@ -11,7 +11,8 @@
 .app-Talk,
 .talk-modal,
 #talk-sidebar,
-#call-container {
+#call-container,
+.talkChatTab {
 	// We always want to use the white icons, this is why we don't use var(--color-white) here.
 	.icon-public {
 		background-image: url(icon-color-path('public', 'actions', 'fff', 1, true));
