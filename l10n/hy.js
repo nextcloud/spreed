@@ -13,6 +13,8 @@ OC.L10N.register(
     "Yesterday" : "երեկ",
     "guest" : "հյուր",
     "Share link" : "Կիսվել հղմամբ",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Name" : "Անուն",
     "Saved" : "Պահված",
     "Password" : "Գաղտնաբառ",

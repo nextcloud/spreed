@@ -14,6 +14,8 @@ OC.L10N.register(
     "Today" : "Hari ini",
     "Yesterday" : "Semalam",
     "Share link" : "Share link",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
     "Name" : "Nama",
     "Password" : "Kata laluan",
     "Cancel" : "Batal",
