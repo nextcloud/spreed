@@ -67,7 +67,7 @@ class TemplateLoader {
 		}
 
 		Util::addStyle('spreed', 'merged-public-share');
-		Util::addScript('spreed', 'merged-public-share');
+		Util::addScript('spreed', 'talk-public-share-sidebar');
 	}
 
 }

@@ -1,0 +1,87 @@
+/* Special layout to include the Talk sidebar */
+
+/* The standard layout defined in the server includes a fixed header with a
+ * sticky sidebar. This causes the scroll bar for the main area to appear to the
+ * right of the sidebar, which looks confusing for the chat. Thus that layout is
+ * overridden with a static header and a content with full height without header
+ * to limit the vertical scroll bar only to it.
+ * Note that the flex layout can not be cascaded from the body element, as a
+ * flex display is not compatible with the absolute position set for the
+ * autocompletion panel, which is reparented to the body when shown. */
+#body-user #header,
+#body-public #header {
+	/* Override fixed position from server to include it in the body layout */
+	position: static;
+}
+
+#content {
+	&,
+	&.full-height {
+		/* Always full height without header. */
+		height: calc(100% - 50px);
+	}
+
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+
+	flex-grow: 1;
+
+	/* Override "min-height: 100%" and "padding-top: 50px" set in server, as the
+	 * header is part of the flex layout and thus the whole body is not
+	 * available for the content. */
+	min-height: 0;
+	padding-top: 0;
+
+	/* Does not change anything in normal mode, but ensures that the element
+	 * will stretch to the full width in full screen mode. */
+	width: 100%;
+
+	/* Override margin used in server, as the header is part of the flex layout
+	 * and thus the content does not need to be pushed down. */
+	margin-top: 0;
+}
+
+#app-content {
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	overflow-x: hidden;
+
+	flex-grow: 1;
+
+	margin-right: 0;
+}
+
+#files-public-content {
+	flex-grow: 1;
+}
+
+#content footer p a {
+	/* The server sets an height to the footer of 65px, but its contents are
+	 * slightly larger, which causes a scroll bar to be added to the content
+	 * even if there is enough space for the app content and the footer.
+	 * The padding of links is 10px, so in practice reducing the bottom padding
+	 * only affects the bottom padding of the last element (as in adjacent
+	 * paragraphs the paddings would get merged and there will still be 10px
+	 * from the top padding of the second element). */
+	padding-bottom: 8px;
+}
+
+
+
+#talk-sidebar-trigger {
+	width: 44px;
+	height: 44px;
+
+	background-color: transparent;
+	border-color: transparent;
+
+	opacity: 0.6;
+
+	&:hover,
+	&:focus,
+	&:active {
+		opacity: 1;
+	}
+}
