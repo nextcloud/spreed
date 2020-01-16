@@ -428,7 +428,6 @@ export default {
 				await this.$copyText(this.linkToConversation)
 				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
-				console.debug(error)
 				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
 			}
 		},
