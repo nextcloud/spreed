@@ -210,8 +210,8 @@ export default {
 	margin: 10px 0 10px 0;
 	padding: 0 0 0 10px;
 	display: flex;
-	max-width: $messages-list-max-width;
-	margin: 0 $message-utils-width 0 0;
+	max-width: $messages-list-max-width - $message-utils-width;
+	margin: 0;
 	&__main {
 		display: flex;
 		flex-direction: column;
@@ -221,6 +221,11 @@ export default {
 		}
 		&__text {
 			color: var(--color-text-light);
+			& p {
+				max-width: 662px;
+				text-overflow: ellipsis;
+				overflow: hidden;
+			}
 		}
 	}
 	&__right {

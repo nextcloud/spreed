@@ -269,9 +269,6 @@ export default {
 			margin-top: auto;
 			background-color: transparent;
 			border: none;
-			&.submit {
-				margin-left: 32px;
-			}
 		}
 	}
 }
