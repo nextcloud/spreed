@@ -37,7 +37,7 @@ export default {
 
 	computed: {
 		text() {
-			return this.clickableLinks(escapeHtml(this.data.text)).replace(/\n/g, '<br>')
+			return this.clickableLinks(escapeHtml(this.data.text))
 		},
 	},
 
@@ -68,5 +68,9 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .external:after {
 	content: " ↗";
+}
+
+span {
+	white-space:pre-wrap;
 }
 </style>
