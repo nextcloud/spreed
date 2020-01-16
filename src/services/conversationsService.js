@@ -28,12 +28,8 @@ import { CONVERSATION, SHARE } from '../constants'
  * Fetches the conversations from the server.
  */
 const fetchConversations = async function() {
-	try {
-		const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
-		return response
-	} catch (error) {
-		console.debug('Error while fetching conversations: ', error)
-	}
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + 'room')
+	return response
 }
 
 /**

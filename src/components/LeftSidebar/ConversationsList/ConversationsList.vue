@@ -103,17 +103,21 @@ export default {
 			 * to the store.
 			 */
 			const conversations = await fetchConversations()
-			this.$store.dispatch('purgeConversationsStore')
-			conversations.data.ocs.data.forEach(conversation => {
-				this.$store.dispatch('addConversation', conversation)
-			})
-			/**
-			 * Emits a global event that is used in App.vue to update the page title once the
-			 * ( if the current route is a conversation and once the conversations are received)
-			 */
-			EventBus.$emit('conversationsReceived', {
-				singleConversation: false,
-			})
+			try {
+				this.$store.dispatch('purgeConversationsStore')
+				conversations.data.ocs.data.forEach(conversation => {
+					this.$store.dispatch('addConversation', conversation)
+				})
+				/**
+				 * Emits a global event that is used in App.vue to update the page title once the
+				 * ( if the current route is a conversation and once the conversations are received)
+				 */
+				EventBus.$emit('conversationsReceived', {
+					singleConversation: false,
+				})
+			} catch (error) {
+				console.debug('Error while fetching conversations: ', error)
+			}
 		},
 	},
 }
