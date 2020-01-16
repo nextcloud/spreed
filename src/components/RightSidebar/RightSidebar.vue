@@ -51,6 +51,7 @@
 			</ActionCheckbox>
 			<!-- password -->
 			<ActionCheckbox
+				v-if="canFullModerate && isSharedPublicly"
 				class="share-link-password-checkbox"
 				:checked="isPasswordProtected"
 				@check="handlePasswordEnable"
