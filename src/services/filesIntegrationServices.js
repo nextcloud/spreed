@@ -39,6 +39,19 @@ const getFileConversation = async function({ fileId }, options) {
 	}
 }
 
+/**
+ * Gets the public share conversation token for a given share token.
+ *
+ * @param {String} shareToken the token of the share
+ * @returns {String} the conversation token
+ * @throws {Exception} if the conversation token could not be got
+ */
+const getPublicShareConversationData = async function(shareToken) {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1', 2) + `publicshare/${shareToken}`)
+	return response.data.ocs.data
+}
+
 export {
 	getFileConversation,
+	getPublicShareConversationData,
 }
