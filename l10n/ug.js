@@ -17,13 +17,13 @@ OC.L10N.register(
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "تەھرىر",
     "Name" : "ئاتى",
     "Password" : "ئىم",
     "Cancel" : "ۋاز كەچ",
     "Share" : "ھەمبەھىر",
     "Change password" : "ئىم ئۆزگەرت",
     "Rename" : "ئات ئۆزگەرت",
-    "Send" : "يوللا",
-    "Edit" : "تەھرىر"
+    "Send" : "يوللا"
 },
 "nplurals=1; plural=0;");

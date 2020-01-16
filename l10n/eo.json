@@ -30,6 +30,7 @@
     "Password protection" : "Protektita per pasvorto",
     "Enter a password" : "Entajpu pasvorton",
     "Chat" : "Babili",
+    "Edit" : "Modifi",
     "Limit to groups" : "Limigi al grupoj",
     "Save changes" : "Konservi ŝanĝojn",
     "Saving …" : "Konservado...",
@@ -56,7 +57,6 @@
     "You" : "Vi",
     "Send" : "Sendi",
     "Error while sharing" : "Eraro dum kunhavigo",
-    "Edit" : "Modifi",
     "Favorited" : "Pliŝatitaj",
     ", " : ", "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

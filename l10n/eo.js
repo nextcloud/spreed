@@ -32,6 +32,7 @@ OC.L10N.register(
     "Password protection" : "Protektita per pasvorto",
     "Enter a password" : "Entajpu pasvorton",
     "Chat" : "Babili",
+    "Edit" : "Modifi",
     "Limit to groups" : "Limigi al grupoj",
     "Save changes" : "Konservi ŝanĝojn",
     "Saving …" : "Konservado...",
@@ -58,7 +59,6 @@ OC.L10N.register(
     "You" : "Vi",
     "Send" : "Sendi",
     "Error while sharing" : "Eraro dum kunhavigo",
-    "Edit" : "Modifi",
     "Favorited" : "Pliŝatitaj",
     ", " : ", "
 },

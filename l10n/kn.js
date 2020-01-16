@@ -19,6 +19,7 @@ OC.L10N.register(
     "Share link" : "ಸಂಪರ್ಕ ಕೊಂಡಿಯನ್ನು  ﻿ಹಂಚಿಕೊಳ್ಳಬಹುದು",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "ಸಂಪಾದಿಸು",
     "Name" : "﻿ಹೆಸರು",
     "Saved" : "﻿ಉಳಿಸಿದ",
     "Password" : "ಗುಪ್ತ ಪದ",
@@ -28,7 +29,6 @@ OC.L10N.register(
     "Rename" : "﻿ಮರುಹೆಸರಿಸು",
     "Send" : "﻿ಕಳುಹಿಸಿ",
     "Error while sharing" : "ಹಂಚುವಾಗ ಏನೊ ಲೋಪವಾಗಿದೆ",
-    "Edit" : "ಸಂಪಾದಿಸು",
     "Favorited" : "ಅಚ್ಚುಮೆಚ್ಚಿನವು"
 },
 "nplurals=2; plural=(n > 1);");

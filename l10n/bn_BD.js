@@ -24,6 +24,7 @@ OC.L10N.register(
     "Share link" : "লিংক ভাগাভাগি করেন",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "সম্পাদনা",
     "Name" : "নাম",
     "Saved" : "সংরক্ষণ করা হলো",
     "Password" : "কূটশব্দ",
@@ -34,7 +35,6 @@ OC.L10N.register(
     "Rename" : "পূনঃনামকরণ",
     "Send" : "পাঠাও",
     "Error while sharing" : "ভাগাভাগি করতে সমস্যা দেখা দিয়েছে  ",
-    "Edit" : "সম্পাদনা",
     ", " : ", "
 },
 "nplurals=2; plural=(n != 1);");

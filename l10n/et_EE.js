@@ -28,6 +28,7 @@ OC.L10N.register(
     "Share link" : "Jaga link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Redigeeri",
     "Limit to groups" : "Luba gruppidele",
     "Save changes" : "Salvesta muudatused",
     "Saved!" : "Salvestatud!",
@@ -48,7 +49,6 @@ OC.L10N.register(
     "Rename" : "Nimeta ümber",
     "Send" : "Saada",
     "Error while sharing" : "Viga jagamisel",
-    "Edit" : "Redigeeri",
     "Favorited" : "Lemmikud",
     ", " : ", "
 },

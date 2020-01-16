@@ -21,6 +21,7 @@ OC.L10N.register(
     "Password protection" : "Password protection",
     "Enter a password" : "Skriv inn eit passord",
     "Chat" : "Lynmelding",
+    "Edit" : "Endra",
     "Name" : "Namn",
     "Saved" : "Lagra",
     "Password" : "Passord",
@@ -35,7 +36,6 @@ OC.L10N.register(
     "Rename" : "Gje nytt namn",
     "Send" : "Send",
     "Error while sharing" : "Feil ved deling",
-    "Edit" : "Endra",
     ", " : ", "
 },
 "nplurals=2; plural=(n != 1);");
