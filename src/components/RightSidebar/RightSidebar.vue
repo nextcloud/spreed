@@ -24,7 +24,6 @@
 	<AppSidebar
 		v-if="opened"
 		:title="conversation.displayName"
-		background="cdfgf"
 		:starred="isFavorited"
 		:title-editable="canModerate && isRenamingConversation"
 		@update:starred="onFavoriteChange"
@@ -427,15 +426,6 @@ export default {
 .app-sidebar-tabs__content #tab-chat {
 	/* Remove padding to maximize the space for the chat view. */
 	padding: 0;
-}
-
-/** TODO: fix these in the nextcloud-vue library **/
-::v-deep .app-sidebar-header {
-	&__menu {
-		right: 56px !important;
-		top: 6px !important;
-		margin-top: 0 !important;
-	}
 }
 
 /** Username form for guest users */
