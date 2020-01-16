@@ -49,6 +49,13 @@
 				@change="toggleGuests">
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
+			<ActionButton
+				v-if="canFullModerate"
+				icon="icon-clippy"
+				:close-after-click="true"
+				@click="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
+			</ActionButton>
 			<!-- password -->
 			<ActionCheckbox
 				v-if="canFullModerate && isSharedPublicly"
@@ -164,6 +171,7 @@ import {
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 import { setGuestUserName } from '../../services/participantsService'
+import { generateUrl } from '@nextcloud/router'
 
 export default {
 	name: 'RightSidebar',
@@ -313,6 +321,13 @@ export default {
 		isPasswordProtected() {
 			return this.$store.getters.conversations[this.token].hasPassword
 		},
+		linkToConversation() {
+			if (this.token !== '') {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
+			} else {
+				return ''
+			}
+		},
 	},
 
 	methods: {
@@ -406,6 +421,15 @@ export default {
 				this.isRenamingConversation = false
 			} catch (exception) {
 				console.debug(exception)
+			}
+		},
+		async handleCopyLink() {
+			try {
+				await this.$copyText(this.linkToConversation)
+				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
+			} catch (error) {
+				console.debug(error)
+				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
 			}
 		},
 	},
