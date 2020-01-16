@@ -5,9 +5,29 @@
  * the style for the adjusted layout, which is not the proper one for them, and
  * this would cause the elements to "jump" to their final position once the
  * layout was adjusted. */
-#body-login.talk-sidebar-enabled {
-	flex-direction: row;
-	align-items: stretch;
+body.talk-sidebar-enabled {
+	/* Move rules set for body by guest.scss to the wrapped body. */
+	display: unset;
+	flex-direction: unset;
+	justify-content: unset;
+	align-items: unset;
+
+	#body-login {
+		display: flex;
+		justify-content: center;
+
+		background-position: 50% 50%;
+		background-repeat: repeat;
+		background-size: 275px, contain;
+		background-attachment: fixed;
+
+		width: 100%;
+		height: 100%;
+
+		/* Changed from guest.scss. */
+		flex-direction: row;
+		align-items: stretch;
+	}
 }
 
 /* #body-login should be used to override the #content rules set in server. */
