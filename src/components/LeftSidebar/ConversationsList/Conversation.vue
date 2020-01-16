@@ -310,9 +310,7 @@ export default {
 
 <style lang="scss" scoped>
 ::v-deep .counter {
-	line-height: inherit;
 	font-size: 12px;
-
 	/*
 	 * Always add the bubble
 	 */
