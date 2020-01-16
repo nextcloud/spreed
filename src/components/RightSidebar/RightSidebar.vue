@@ -50,11 +50,11 @@
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
 			<ActionButton
-				v-clipboard:copy="linkToConversation"
-				icon="icon-clippy"
 				v-if="canFullModerate"
-				@click.stop.prevent="handleCopyLink">
-				{{ t('spreed', 'Copy link') }}	
+				icon="icon-clippy"
+				:close-after-click="true"
+				@click="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}
 			</ActionButton>
 			<!-- password -->
 			<ActionCheckbox
@@ -159,7 +159,6 @@ import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
@@ -174,7 +173,6 @@ import isInLobby from '../../mixins/isInLobby'
 import { setGuestUserName } from '../../services/participantsService'
 import { generateUrl } from '@nextcloud/router'
 
-
 export default {
 	name: 'RightSidebar',
 	components: {
@@ -187,7 +185,6 @@ export default {
 		ChatView,
 		CollectionList,
 		ParticipantsTab,
-		ActionButton,
 	},
 
 	mixins: [
@@ -422,6 +419,15 @@ export default {
 				this.isRenamingConversation = false
 			} catch (exception) {
 				console.debug(exception)
+			}
+		},
+		async handleCopyLink() {
+			try {
+				await this.$copyText(this.linkToConversation)
+				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
+			} catch (error) {
+				console.debug(error)
+				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
 			}
 		},
 	},
