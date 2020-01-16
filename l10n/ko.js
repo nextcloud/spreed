@@ -72,6 +72,7 @@ OC.L10N.register(
     "Remove participant" : "참가자 삭제",
     "No results" : "결과 없음",
     "Participants" : "참가자",
+    "Rename conversation" : "대화 제목 변경",
     "Guests" : "손님",
     "Share link" : "링크 공유",
     "Password protection" : "암호 보호",
