@@ -25,7 +25,12 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
-		<Hint v-if="searchText && !conversationsList.length"
+		<LoadingHint v-if="!initialisedConversations" />
+		<LoadingHint v-if="!initialisedConversations" />
+		<LoadingHint v-if="!initialisedConversations" />
+		<LoadingHint v-if="!initialisedConversations" />
+		<LoadingHint v-if="!initialisedConversations" />
+		<Hint v-else-if="searchText && !conversationsList.length"
 			:hint="t('spreed', 'No matches')" />
 	</ul>
 </template>
@@ -33,6 +38,7 @@
 <script>
 import Conversation from './Conversation'
 import Hint from '../../Hint'
+import LoadingHint from '../../LoadingHint'
 import { fetchConversations } from '../../../services/conversationsService'
 import { joinConversation, leaveConversation } from '../../../services/participantsService'
 import { EventBus } from '../../../services/EventBus'
@@ -42,6 +48,7 @@ export default {
 	components: {
 		Conversation,
 		Hint,
+		LoadingHint,
 	},
 	props: {
 		searchText: {
@@ -49,6 +56,13 @@ export default {
 			default: '',
 		},
 	},
+
+	data() {
+		return {
+			initialisedConversations: false,
+		}
+	},
+
 	computed: {
 		conversationsList() {
 			let conversations = this.$store.getters.conversationsList
@@ -104,6 +118,7 @@ export default {
 			 */
 			const conversations = await fetchConversations()
 			try {
+				this.initialisedConversations = true
 				this.$store.dispatch('purgeConversationsStore')
 				conversations.data.ocs.data.forEach(conversation => {
 					this.$store.dispatch('addConversation', conversation)
