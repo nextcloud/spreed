@@ -21,12 +21,14 @@
 
 <template>
 	<li class="message-placeholder">
-		<div class="icon-container" />
-		<div class="placeholder">
-			<div class="user" />
-			<div class="line" />
-			<div class="line" />
-			<div class="half-line" />
+		<div class="message-placeholder__wrapper">
+			<div class="icon-container" />
+			<div class="placeholder">
+				<div class="user" />
+				<div class="line" />
+				<div class="line" />
+				<div class="half-line" />
+			</div>
 		</div>
 	</li>
 </template>
@@ -43,9 +45,11 @@ export default {
 	.message-placeholder {
 		line-height: 44px;
 		list-style-type: none;
-		padding-left: 10px;
-		padding-bottom: 5px;
-
+		width: 100%;
+		&__wrapper{
+			width: $message-max-width + 60px;
+			margin: 0 auto;
+		}
 		$icon-size: 44px;
 		.icon-container {
 			width: $icon-size;
