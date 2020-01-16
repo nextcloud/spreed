@@ -148,6 +148,15 @@ export default {
 	justify-content: flex-start;
 	padding: 10px 2px 10px 8px;
 	cursor: pointer;
+	&.active,
+	&:active,
+	&:active ~ .app-navigation-entry__utils {
+		background-color: var(--color-primary-light);
+	}
+	&:hover,
+	&:focus  {
+	background-color: var(--color-background-hover);
+	}
 
 	&__content {
 		width: 240px;
@@ -199,11 +208,6 @@ export default {
 			}
 		}
 	}
-}
-
-.active {
-	background-color: var(--color-primary-light);
-	box-shadow: inset 4px 0 var(--color-primary);
 }
 
 </style>
