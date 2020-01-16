@@ -33,14 +33,12 @@
 				<span class="acli__content__line-one__title">
 					{{ title }}
 				</span>
-				<span>
-					<Actions
-						v-if="hasActions"
-						menu-align="right"
-						class="acli__content__line-one__actions">
-						<slot name="actions" />
-					</Actions>
-				</span>
+				<Actions
+					v-if="hasActions"
+					menu-align="right"
+					class="acli__content__line-one__actions">
+					<slot name="actions" />
+				</Actions>
 				<span
 					v-if="{hasDetails}"
 					class="acli__content__line-one__details">
@@ -173,10 +171,11 @@ export default {
 			&__title {
 				overflow: hidden;
 				flex-grow: 1;
-				padding-right: 4px;
+				padding-right: 48px;
 				cursor: pointer;
 				text-overflow: ellipsis;
 				color: var(--color-main-text);
+
 			}
 			&__actions {
 				margin: -5px 0 -3px 0;
