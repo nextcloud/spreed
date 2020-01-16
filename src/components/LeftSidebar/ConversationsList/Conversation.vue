@@ -251,9 +251,9 @@ export default {
 		async copyLinkToConversation() {
 			try {
 				await this.$copyText(this.linkToConversation)
-				OCP.Toast.success(t('spreed', 'Link to conversation copied to clipboard'))
+				OCP.Toast.success(t('spreed', 'Conversation link copied to clipboard.'))
 			} catch (error) {
-				OCP.Toast.error(t('spreed', 'Link to conversation was not copied to clipboard.'))
+				OCP.Toast.error(t('spreed', 'The link could not be copied.'))
 			}
 		},
 		async joinConversation() {
