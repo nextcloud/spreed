@@ -155,7 +155,7 @@ export default {
 	}
 	&:hover,
 	&:focus  {
-	background-color: var(--color-background-hover);
+		background-color: var(--color-background-hover);
 	}
 
 	&__content {
