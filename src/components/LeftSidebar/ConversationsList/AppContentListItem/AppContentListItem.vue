@@ -195,7 +195,7 @@ export default {
 				color: var(--color-text-lighter);
 			}
 			&__counter {
-				margin-right: 12px;
+				margin: -6px 9px 0 0;
 			}
 		}
 	}
