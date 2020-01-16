@@ -20,6 +20,7 @@
 
 <template>
 	<div id="call-container" :class="callViewClass">
+		<EmptyCallView v-if="!remoteParticipantsCount && !screenSharingActive" />
 		<div id="videos">
 			<template v-for="callParticipantModel in reversedCallParticipantModels">
 				<Video
@@ -55,6 +56,7 @@
 </template>
 
 <script>
+import EmptyCallView from './EmptyCallView'
 import LocalVideo from './LocalVideo'
 import Screen from './Screen'
 import Video from './Video'
@@ -66,6 +68,7 @@ export default {
 	name: 'CallView',
 
 	components: {
+		EmptyCallView,
 		LocalVideo,
 		Screen,
 		Video,
@@ -341,6 +344,11 @@ export default {
 
 #videos.hidden {
 	display: none;
+}
+
+#videos .emptycontent {
+	height: 50%;
+	transform: translateY(-50%)
 }
 
 .videoContainer,
