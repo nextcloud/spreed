@@ -14,6 +14,7 @@
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Sunting",
     "Name" : "Nama",
     "Password" : "Kata laluan",
     "Cancel" : "Batal",
@@ -25,7 +26,6 @@
     "Change password" : "Ubah kata laluan",
     "Rename" : "Namakan",
     "Send" : "Hantar",
-    "Edit" : "Sunting",
     ", " : ","
 },"pluralForm" :"nplurals=1; plural=0;"
 }

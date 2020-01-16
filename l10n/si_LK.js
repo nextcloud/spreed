@@ -17,6 +17,7 @@ OC.L10N.register(
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "සකසන්න",
     "Name" : "නම",
     "Password" : "මුර පදය",
     "Cancel" : "අවලංගු කරන්න",
@@ -27,7 +28,6 @@ OC.L10N.register(
     "Share" : "බෙදා හදා ගන්න",
     "Change password" : "මුරපදය වෙනස් කිරීම",
     "Rename" : "නැවත නම් කරන්න",
-    "Edit" : "සකසන්න",
     ", " : ", "
 },
 "nplurals=2; plural=(n != 1);");

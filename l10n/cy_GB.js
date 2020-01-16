@@ -13,12 +13,16 @@ OC.L10N.register(
     "Groups" : "Grwpiau",
     "Loading" : "Llwytho",
     "Error" : "Gwall",
+    "Password protect" : "Diogelu cyfrinair",
     "Back" : "Nôl",
     "Close" : "Cau",
     "Today" : "Heddiw",
     "Yesterday" : "Ddoe",
     "No results" : "Dim canlyniadau",
     "Share link" : "Rhannu dolen",
+    "Password protection" : "Password protection",
+    "Enter a password" : "Enter a password",
+    "Edit" : "Golygu",
     "Name" : "Enw",
     "Saved" : "Wedi'u cadw",
     "Password" : "Cyfrinair",
@@ -27,7 +31,6 @@ OC.L10N.register(
     "Share" : "Rhannu",
     "Rename" : "Ailenwi",
     "Send" : "Anfon",
-    "Error while sharing" : "Gwall wrth rannu",
-    "Edit" : "Golygu"
+    "Error while sharing" : "Gwall wrth rannu"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

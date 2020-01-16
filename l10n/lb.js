@@ -23,6 +23,7 @@ OC.L10N.register(
     "Share link" : "Link deelen",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Änneren",
     "Save changes" : "Ännerunge späicheren",
     "Name" : "Numm",
     "Saved" : "Gespäichert",
@@ -40,7 +41,6 @@ OC.L10N.register(
     "Rename" : "Ëmbenennen",
     "Send" : "Schécken",
     "Error while sharing" : "Feeler beim Deelen",
-    "Edit" : "Änneren",
     "Favorited" : "Favoriséiert",
     ", " : ", "
 },

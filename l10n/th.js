@@ -25,6 +25,7 @@ OC.L10N.register(
     "Share link" : "แชร์ลิงค์",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "แก้ไข",
     "Name" : "ชื่อ",
     "Saved" : "บันทึกแล้ว",
     "Password" : "รหัสผ่าน",
@@ -43,7 +44,6 @@ OC.L10N.register(
     "Rename" : "เปลี่ยนชื่อ",
     "Send" : "ส่ง",
     "Error while sharing" : "เกิดข้อผิดพลาดขณะกำลังแชร์ข้อมูล",
-    "Edit" : "แก้ไข",
     "Favorited" : "รายการโปรด",
     ", " : "หรือ"
 },

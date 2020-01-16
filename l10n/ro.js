@@ -27,6 +27,7 @@ OC.L10N.register(
     "Share link" : "Partajează link-ul",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Editează",
     "Limit to groups" : "Limitează pentru grupuri",
     "Limit app usage to groups." : "Limitare utilizare aplicație la grupuri",
     "Save changes" : "Salvează modificările",
@@ -52,7 +53,6 @@ OC.L10N.register(
     "Rename" : "Redenumire",
     "Send" : "Trimite",
     "Error while sharing" : "Eroare la partajare",
-    "Edit" : "Editează",
     "Favorited" : "Adăugate la favorite",
     ", " : ","
 },

@@ -16,6 +16,7 @@ OC.L10N.register(
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Sunting",
     "Name" : "Nama",
     "Password" : "Kata laluan",
     "Cancel" : "Batal",
@@ -27,7 +28,6 @@ OC.L10N.register(
     "Change password" : "Ubah kata laluan",
     "Rename" : "Namakan",
     "Send" : "Hantar",
-    "Edit" : "Sunting",
     ", " : ","
 },
 "nplurals=1; plural=0;");

@@ -26,6 +26,7 @@ OC.L10N.register(
     "Share link" : "Поширити посилання",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Редашувати",
     "Limit to groups" : "Обмежити групами",
     "Save changes" : "Зберегти зміни",
     "Saved!" : "Збережено!",
@@ -46,7 +47,6 @@ OC.L10N.register(
     "Rename" : "Перейменувати",
     "Send" : "Надіслати",
     "Error while sharing" : "Помилка при поширенні",
-    "Edit" : "Редашувати",
     "Favorited" : "Улюблений",
     ", " : ", "
 },

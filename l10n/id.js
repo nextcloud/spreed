@@ -26,6 +26,7 @@ OC.L10N.register(
     "Share link" : "Bagikan tautan",
     "Password protection" : "Password protection",
     "Enter a password" : "Masukkan kata sandi",
+    "Edit" : "Sunting",
     "Limit to groups" : "Batasi ke grup",
     "Save changes" : "Simpan perubahan",
     "Name" : "Nama",
@@ -47,7 +48,6 @@ OC.L10N.register(
     "Rename" : "Ubah nama",
     "Send" : "Kirim",
     "Error while sharing" : "Kesalahan saat membagikan",
-    "Edit" : "Sunting",
     "Favorited" : "Difavoritkan",
     ", " : "n"
 },

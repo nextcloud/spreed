@@ -20,6 +20,7 @@ OC.L10N.register(
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "កែប្រែ",
     "Name" : "ឈ្មោះ",
     "Saved" : "បាន​រក្សាទុក",
     "Password" : "ពាក្យសម្ងាត់",
@@ -30,7 +31,6 @@ OC.L10N.register(
     "Rename" : "ប្ដូរ​ឈ្មោះ",
     "Send" : "ផ្ញើ",
     "Error while sharing" : "កំហុស​ពេល​ចែក​រំលែក",
-    "Edit" : "កែប្រែ",
     ", " : ", "
 },
 "nplurals=1; plural=0;");

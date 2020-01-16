@@ -13,6 +13,7 @@
     "Share link" : "Կիսվել հղմամբ",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "մշակել",
     "Name" : "Անուն",
     "Saved" : "Պահված",
     "Password" : "Գաղտնաբառ",
@@ -22,7 +23,6 @@
     "Change password" : "Փոխել գաղտնաբառը",
     "Rename" : "Վերանվանել",
     "Send" : "Ուղարկել",
-    "Error while sharing" : "Սխալ տարածելիս",
-    "Edit" : "մշակել"
+    "Error while sharing" : "Սխալ տարածելիս"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

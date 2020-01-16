@@ -8,6 +8,7 @@ OC.L10N.register(
     "Add to favorites" : "په نښه کول",
     "Groups" : "ګروپونه",
     "Error" : "شسیب",
+    "Password protect" : "په پاسورډ خوندي کول",
     "Close" : "بندول",
     "Today" : "نن",
     "Yesterday" : "پرون",
