@@ -32,6 +32,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCA\Viewer\Event\LoadViewer;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
@@ -40,6 +41,7 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IRootFolder;
 use OCP\Files\NotPermittedException;
 use OCP\IInitialStateService;
@@ -53,6 +55,8 @@ use OCP\Notification\IManager as INotificationManager;
 class PageController extends Controller {
 	/** @var string|null */
 	private $userId;
+	/** @var IEventDispatcher */
+	private $eventDispatcher;
 	/** @var RoomController */
 	private $api;
 	/** @var TalkSession */
@@ -78,6 +82,7 @@ class PageController extends Controller {
 
 	public function __construct(string $appName,
 								IRequest $request,
+								IEventDispatcher $eventDispatcher,
 								RoomController $api,
 								TalkSession $session,
 								IUserSession $userSession,
@@ -91,6 +96,7 @@ class PageController extends Controller {
 								IRootFolder $rootFolder,
 								Config $config) {
 		parent::__construct($appName, $request);
+		$this->eventDispatcher = $eventDispatcher;
 		$this->api = $api;
 		$this->talkSession = $session;
 		$this->userSession = $userSession;
@@ -241,6 +247,10 @@ class PageController extends Controller {
 				} catch (NotPermittedException $e) {
 				}
 			}
+		}
+
+		if (class_exists(LoadViewer::class)) {
+			$this->eventDispatcher->dispatchTyped(new LoadViewer());
 		}
 
 		$params = [

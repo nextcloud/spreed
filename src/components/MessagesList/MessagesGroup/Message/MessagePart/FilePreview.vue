@@ -23,7 +23,8 @@
 	<a :href="link"
 		class="container"
 		target="_blank"
-		rel="noopener noreferrer">
+		rel="noopener noreferrer"
+		@click="showPreview">
 		<img v-if="!isLoading && !failed"
 			class="preview"
 			alt=""
@@ -53,6 +54,10 @@ export default {
 			required: true,
 		},
 		name: {
+			type: String,
+			required: true,
+		},
+		path: {
 			type: String,
 			required: true,
 		},
@@ -91,6 +96,27 @@ export default {
 				height: previewSize,
 			})
 		},
+		isViewerAvailable() {
+			if (!OCA.Viewer) {
+				return false
+			}
+
+			const availableHandlers = OCA.Viewer.availableHandlers
+			for (let i = 0; i < availableHandlers.length; i++) {
+				if (availableHandlers[i].mimes.includes(this.mimetype)) {
+					return true
+				}
+			}
+
+			return false
+		},
+		internalAbsolutePath() {
+			if (this.path.startsWith('/')) {
+				return this.path
+			}
+
+			return '/' + this.path
+		},
 	},
 	mounted() {
 		const img = new Image()
@@ -102,6 +128,22 @@ export default {
 			this.isLoading = false
 		}
 		img.src = this.previewUrl
+	},
+	methods: {
+		showPreview(event) {
+			if (!this.isViewerAvailable) {
+				// Regular event handling by opening the link.
+				return
+			}
+
+			event.stopPropagation()
+			event.preventDefault()
+
+			OCA.Viewer.open({
+				// Viewer expects an internal absolute path starting with "/".
+				path: this.internalAbsolutePath,
+			})
+		},
 	},
 }
 </script>
