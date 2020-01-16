@@ -2,8 +2,8 @@ OC.L10N.register(
     "spreed",
     {
     "Users" : "کارنان",
-    "Favorite" : "په نښه شوی",
     "Copy link" : "لېنک کاپي کول",
+    "Favorite" : "په نښه شوی",
     "Remove from favorites" : "له نښو ويستل",
     "Add to favorites" : "په نښه کول",
     "Groups" : "ګروپونه",
