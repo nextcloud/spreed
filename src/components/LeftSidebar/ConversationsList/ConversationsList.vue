@@ -25,11 +25,12 @@
 			v-for="item of conversationsList"
 			:key="item.id"
 			:item="item" />
-		<LoadingHint v-if="!initialisedConversations" />
-		<LoadingHint v-if="!initialisedConversations" />
-		<LoadingHint v-if="!initialisedConversations" />
-		<LoadingHint v-if="!initialisedConversations" />
-		<LoadingHint v-if="!initialisedConversations" />
+		<template
+			v-if="!initialisedConversations">
+			<LoadingHint
+				v-for="n in 5"
+				:key="n" />
+		</template>
 		<Hint v-else-if="searchText && !conversationsList.length"
 			:hint="t('spreed', 'No matches')" />
 	</ul>

@@ -29,12 +29,14 @@
 		<Caption v-if="isSearching"
 			:title="t('spreed', 'Participants')" />
 		<CurrentParticipants
-			:search-text="searchText" />
+			:search-text="searchText"
+			:participants-initialised="participantsInitialised" />
 		<template v-if="isSearching">
 			<template v-if="addableUsers.length !== 0">
 				<Caption
 					:title="t('spreed', 'Add contacts')" />
 				<ParticipantsList
+
 					:items="addableUsers"
 					@click="addParticipants" />
 			</template>
@@ -65,7 +67,7 @@
 
 			<Caption v-if="sourcesWithoutResults"
 				:title="sourcesWithoutResultsList" />
-			<Hint v-if="contactsLoading" :hint="t('spreed', 'Loading')" />
+			<Hint v-if="contactsLoading" :hint="t('spreed', 'Searching …')" />
 			<Hint v-else :hint="t('spreed', 'No search results')" />
 		</template>
 	</div>
@@ -113,6 +115,7 @@ export default {
 			searchText: '',
 			searchResults: [],
 			contactsLoading: false,
+			participantsInitialised: false,
 			isCirclesEnabled: true, // FIXME
 		}
 	},
@@ -238,6 +241,8 @@ export default {
 		 * If the route changes, the search filter is reset
 		 */
 		onRouteChange() {
+			// Reset participantsInitialised when there is only the current user in the participant list
+			this.participantsInitialised = this.$store.getters.participantsList(this.token).length > 1
 			this.searchText = ''
 		},
 
@@ -310,6 +315,7 @@ export default {
 						participant,
 					})
 				})
+				this.participantsInitialised = true
 			} catch (exception) {
 				console.error(exception)
 				OCP.Toast.error(t('spreed', 'An error occurred while fetching the participants'))
