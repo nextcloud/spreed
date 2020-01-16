@@ -45,12 +45,18 @@ get the messagesList array and loop through the list to generate the messages.
 			v-bind="item"
 			:messages="item"
 			@deleteMessage="handleDeleteMessage" />
+		<template v-if="!messagesGroupedByAuthor.length">
+			<LoadingMessage
+				v-for="n in 15"
+				:key="n" />
+		</template>
 	</div>
 </template>
 
 <script>
 import moment from '@nextcloud/moment'
 import MessagesGroup from './MessagesGroup/MessagesGroup'
+import LoadingMessage from './LoadingMessage'
 import { fetchMessages, lookForNewMessages } from '../../services/messagesService'
 import CancelableRequest from '../../utils/cancelableRequest'
 import Axios from '@nextcloud/axios'
@@ -60,6 +66,7 @@ import debounce from 'debounce'
 export default {
 	name: 'MessagesList',
 	components: {
+		LoadingMessage,
 		MessagesGroup,
 	},
 

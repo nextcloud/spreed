@@ -33,7 +33,7 @@
 		{{ firstLetterOfGuestName }}
 	</div>
 	<div v-else-if="isChangelog"
-		class="avatar icon icon-changelog" />
+		class="avatar-32px icon icon-changelog" />
 	<div v-else
 		class="avatar-32px bot">
 		&gt;_
