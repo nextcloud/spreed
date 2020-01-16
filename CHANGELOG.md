@@ -1,6 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.0 – 2020-01-17
+### Added
+- Recreation of the frontend in Vue.JS
+- Allow to reply directly to messages
+- Filter the conversations and participants list when searching
+- Ask for confirmation when a user navigates away while being in a call
+- Support for circles when creating a new conversation and adding participants
+- Add a first version of Flow support
+
+### Changed
+- Allow to write multiple chat messages in a row
+- Improve the way how conversations are created
+- Make single emojis bigger to improve readability
+
+### Fixed
+- A lot of fixes, see [Github](https://github.com/nextcloud/spreed/milestone/27?closed=1) for a complete list
+
 ## 7.0.2 – 2019-11-12
 ### Changed
 - Improve the settings for Talk and extend the explanations
