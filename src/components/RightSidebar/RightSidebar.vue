@@ -324,7 +324,9 @@ export default {
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
-			} else return ''
+			} else {
+				return ''
+			}
 		},
 	},
 
