@@ -225,17 +225,14 @@ export default {
 			}
 		})
 
-		/**
-		 * Global before guard, this is called whenever a navigation is triggered.
-		*/
-		Router.beforeEach((to, from, next) => {
+		const beforeRouteChangeListener = (to, from, next) => {
 			/**
 			 * This runs whenever the new route is a conversation.
 			 */
 			if (to.name === 'conversation') {
 				// Page title
-				const NEXT_CONVERSATION_NAME = this.getConversationName(to.params.token)
-				this.setPageTitle(NEXT_CONVERSATION_NAME)
+				const nextConversationName = this.getConversationName(to.params.token)
+				this.setPageTitle(nextConversationName)
 				// Update current token in the token store
 				this.$store.dispatch('updateToken', to.params.token)
 			}
@@ -246,6 +243,27 @@ export default {
 			EventBus.$emit('routeChange', { from, to })
 
 			next()
+		}
+
+		/**
+		 * Global before guard, this is called whenever a navigation is triggered.
+		*/
+		Router.beforeEach((to, from, next) => {
+			if (this.isInCall) {
+				OC.dialogs.confirm(
+					t('spreed', 'Do you really want to leave the call?'),
+					t('spreed', 'Leaving call'),
+					(decision) => {
+						if (!decision) {
+							return
+						}
+
+						beforeRouteChangeListener(to, from, next)
+					}
+				)
+			} else {
+				beforeRouteChangeListener(to, from, next)
+			}
 		})
 
 		if (getCurrentUser()) {
