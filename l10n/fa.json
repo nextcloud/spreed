@@ -22,9 +22,11 @@
     "Yesterday" : "دیروز",
     "guest" : "میهمان",
     "No results" : "نتیجه ای یافت نشد",
+    "Guests" : "میهمان ها",
     "Share link" : "Share link",
     "Password protection" : "Password protection",
     "Enter a password" : "یک گذرواژه وارد کنید",
+    "Edit" : "ویرایش",
     "Limit to groups" : "محدود کردن به گروه ها",
     "Save changes" : "ذخیره تغییرات",
     "Name" : "نام",
@@ -42,9 +44,9 @@
     "Share" : "هم‌رسانی",
     "Change password" : "تغییر گذر واژه",
     "Rename" : "تغییرنام",
+    "You" : "شما",
     "Send" : "ارسال",
     "Error while sharing" : "خطا درحال به اشتراک گذاشتن",
-    "Edit" : "ویرایش",
     "Favorited" : "برگزیده شده",
     ", " : ","
 },"pluralForm" :"nplurals=2; plural=(n > 1);"

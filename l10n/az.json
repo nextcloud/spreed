@@ -20,6 +20,7 @@
     "Share link" : "Linki yayımla",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Dəyişiklik et",
     "Name" : "Ad",
     "Saved" : "Saxlanıldı",
     "Password" : "Şifrə",
@@ -31,7 +32,6 @@
     "Change password" : "Şifrəni dəyiş",
     "Rename" : "Adı dəyiş",
     "Send" : "Göndər",
-    "Edit" : "Dəyişiklik et",
     "Favorited" : "İstəkləndi",
     ", " : ","
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

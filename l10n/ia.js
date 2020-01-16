@@ -26,6 +26,7 @@ OC.L10N.register(
     "Share link" : "Compartir ligamine",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Modificar",
     "Save changes" : "Salveguardar cambios",
     "Name" : "Nomine",
     "Saved" : "Salveguardate",
@@ -51,7 +52,6 @@ OC.L10N.register(
     "You" : "Tu",
     "Send" : "Inviar",
     "Error while sharing" : "Error al compartir",
-    "Edit" : "Modificar",
     "WebRTC is not supported in your browser :-/" : "WebRTC non es supportate per tu navigator  :-/",
     "Favorited" : "Favorite",
     ", " : ", "

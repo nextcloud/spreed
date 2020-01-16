@@ -22,6 +22,7 @@ OC.L10N.register(
     "Share link" : "Linki yayımla",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Dəyişiklik et",
     "Name" : "Ad",
     "Saved" : "Saxlanıldı",
     "Password" : "Şifrə",
@@ -33,7 +34,6 @@ OC.L10N.register(
     "Change password" : "Şifrəni dəyiş",
     "Rename" : "Adı dəyiş",
     "Send" : "Göndər",
-    "Edit" : "Dəyişiklik et",
     "Favorited" : "İstəkləndi",
     ", " : ","
 },

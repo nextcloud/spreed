@@ -22,6 +22,7 @@ OC.L10N.register(
     "Share link" : "分享連結",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "編輯",
     "Name" : "名稱",
     "Saved" : "已儲存",
     "Password" : "密碼",
@@ -37,7 +38,6 @@ OC.L10N.register(
     "Rename" : "重新命名",
     "Send" : "發送",
     "Error while sharing" : "分享時發生錯誤",
-    "Edit" : "編輯",
     ", " : ","
 },
 "nplurals=1; plural=0;");
