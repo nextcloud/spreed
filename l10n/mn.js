@@ -25,6 +25,7 @@ OC.L10N.register(
     "Share link" : "Холбоос хуваалцах",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "засварлах",
     "Save changes" : "Өөрчлөлтийг хадгалах",
     "Saved!" : "Хадгалагдлаа!",
     "Name" : "Нэр",
@@ -42,7 +43,6 @@ OC.L10N.register(
     "Rename" : "Нэрлэнэ үү",
     "Send" : "илгээх",
     "Error while sharing" : "Түгээхэд алдаа гарлаа",
-    "Edit" : "засварлах",
     ", " : ", "
 },
 "nplurals=2; plural=(n != 1);");

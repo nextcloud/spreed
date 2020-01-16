@@ -11,6 +11,7 @@
     "Groups" : "Groepe",
     "Loading" : "Laai tans..",
     "Error" : "Fout",
+    "Password protect" : "Beskerm met 'n wagwoord",
     "Back" : "Terug",
     "Close" : "Sluit",
     "Reply" : "Antwoord",
@@ -18,7 +19,9 @@
     "Yesterday" : "Gister",
     "Guests" : "Gaste",
     "Share link" : "Deelskakel",
+    "Enter a password" : "Gee ’n wagwoord",
     "Chat" : "Klets",
+    "Edit" : "Wysig",
     "Save changes" : "Bewaar veranderinge",
     "Saving …" : "Word gestoor …",
     "Saved!" : "Gestoor!",
@@ -40,7 +43,6 @@
     "Rename" : "Hernoem",
     "Send" : "Stuur",
     "Error while sharing" : "Fout terwyl deel",
-    "Edit" : "Wysig",
     "Favorited" : "As gunsteling ",
     ", " : ", "
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

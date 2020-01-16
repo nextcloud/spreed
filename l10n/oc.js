@@ -20,6 +20,7 @@ OC.L10N.register(
     "Share link" : "Partejar lo ligam",
     "Password protection" : "Password protection",
     "Enter a password" : "Enter a password",
+    "Edit" : "Modificar",
     "Name" : "Nom",
     "Saved" : "Enregistrat",
     "Password" : "Senhal",
@@ -31,7 +32,6 @@ OC.L10N.register(
     "Change password" : "Cambiar de senhal",
     "Rename" : "Renomenar",
     "Send" : "Mandar",
-    "Error while sharing" : "Error al moment del partiment",
-    "Edit" : "Modificar"
+    "Error while sharing" : "Error al moment del partiment"
 },
 "nplurals=2; plural=(n > 1);");
