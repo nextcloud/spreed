@@ -49,6 +49,13 @@
 				@change="toggleGuests">
 				{{ t('spreed', 'Share link') }}
 			</ActionCheckbox>
+			<ActionButton
+				v-clipboard:copy="linkToConversation"
+				icon="icon-clippy"
+				v-if="canFullModerate"
+				@click.stop.prevent="handleCopyLink">
+				{{ t('spreed', 'Copy link') }}	
+			</ActionButton>
 			<!-- password -->
 			<ActionCheckbox
 				v-if="canFullModerate && isSharedPublicly"
@@ -152,6 +159,7 @@ import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
 import { CONVERSATION, WEBINAR, PARTICIPANT } from '../../constants'
@@ -164,6 +172,8 @@ import {
 } from '../../services/conversationsService'
 import isInLobby from '../../mixins/isInLobby'
 import { setGuestUserName } from '../../services/participantsService'
+import { generateUrl } from '@nextcloud/router'
+
 
 export default {
 	name: 'RightSidebar',
@@ -177,6 +187,7 @@ export default {
 		ChatView,
 		CollectionList,
 		ParticipantsTab,
+		ActionButton,
 	},
 
 	mixins: [
@@ -312,6 +323,11 @@ export default {
 		},
 		isPasswordProtected() {
 			return this.$store.getters.conversations[this.token].hasPassword
+		},
+		linkToConversation() {
+			if (this.token !== '') {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
+			} else return ''
 		},
 	},
 
