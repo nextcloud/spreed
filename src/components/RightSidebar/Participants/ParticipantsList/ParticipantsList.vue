@@ -21,7 +21,7 @@
 
 <template>
 	<div>
-		<ul v-if="!loading && !noResults"
+		<ul v-if="(!loading || addOnClick) && !noResults"
 			:class="{'scrollable': scrollable }"
 			:style="{'height': height}">
 			<Participant
@@ -31,13 +31,20 @@
 				@clickParticipant="handleClickParticipant" />
 		</ul>
 		<template v-if="loading">
-			<div class="icon-loading participants-list__icon" />
-			<p class="participants-list__warning">
-				{{ t('spreed', 'Contacts loading') }}
-			</p>
+			<template v-if="addOnClick">
+				<LoadingParticipant
+					v-for="n in dummyParticipants"
+					:key="n" />
+			</template>
+			<template v-else>
+				<div class="icon-loading participants-list__icon" />
+				<p class="participants-list__warning">
+					{{ t('spreed', 'Contacts loading') }}
+				</p>
+			</template>
 		</template>
 		<template v-if="noResults">
-			<div class="icon-error participants-list__icon" />
+			<div class="icon-category-search participants-list__icon" />
 			<p class="participants-list__warning">
 				{{ t('spreed', 'No results') }}
 			</p>
@@ -47,6 +54,7 @@
 
 <script>
 
+import LoadingParticipant from './Participant/LoadingParticipant'
 import Participant from './Participant/Participant'
 import Vue from 'vue'
 
@@ -54,6 +62,7 @@ export default {
 	name: 'ParticipantsList',
 
 	components: {
+		LoadingParticipant,
 		Participant,
 	},
 
@@ -109,6 +118,12 @@ export default {
 		token() {
 			return this.$store.getters.getToken()
 		},
+
+		dummyParticipants() {
+			const dummies = 6 - this.items.length
+			return dummies > 0 ? dummies : 0
+		},
+
 		/**
 		 * Creates a new array that combines the items (participants received as a prop)
 		 * with the current selectedParticipants so that each participant in the returned

@@ -20,7 +20,9 @@
 -->
 
 <template>
-	<ParticipantsList :items="participantsList" />
+	<ParticipantsList
+		:items="participantsList"
+		:loading="!participantsInitialised" />
 </template>
 
 <script>
@@ -39,6 +41,10 @@ export default {
 		searchText: {
 			type: String,
 			default: '',
+		},
+		participantsInitialised: {
+			type: Boolean,
+			default: true,
 		},
 	},
 
