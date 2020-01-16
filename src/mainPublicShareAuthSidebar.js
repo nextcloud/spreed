@@ -51,6 +51,32 @@ Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
 
+/**
+ * Wraps all the body contents in its own container.
+ *
+ * The root element of the layout needs to be flex, but the body element can not
+ * be in order to properly place the autocompletion panel using an absolute
+ * position.
+ */
+function wrapBody() {
+	const bodyElement = document.querySelector('body')
+	const bodyWrapperElement = document.createElement('div')
+
+	while (bodyElement.childNodes.length) {
+		bodyWrapperElement.append(bodyElement.childNodes[0])
+	}
+
+	while (bodyElement.classList.length) {
+		bodyWrapperElement.classList.add(bodyElement.classList.item(0))
+		bodyElement.classList.remove(bodyElement.classList.item(0))
+	}
+
+	bodyWrapperElement.setAttribute('id', bodyElement.getAttribute('id'))
+	bodyElement.removeAttribute('id')
+
+	bodyElement.append(bodyWrapperElement)
+}
+
 function adjustLayout() {
 	const contentElement = document.createElement('div')
 	contentElement.setAttribute('id', 'content')
@@ -66,6 +92,8 @@ function adjustLayout() {
 	const talkSidebarElement = document.createElement('div')
 	talkSidebarElement.setAttribute('id', 'talk-sidebar')
 	document.querySelector('body').append(talkSidebarElement)
+
+	wrapBody()
 
 	document.querySelector('body').classList.add('talk-sidebar-enabled')
 }
