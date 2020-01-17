@@ -23,9 +23,11 @@
 		<div id="muteWrapper">
 			<button
 				id="mute"
+				v-shortkey="['m']"
 				v-tooltip="audioButtonTooltip"
 				:class="audioButtonClass"
 				class="forced-white"
+				@shortkey="toggleAudio"
 				@click="toggleAudio" />
 			<span v-show="model.attributes.audioAvailable"
 				ref="volumeIndicator"
@@ -34,9 +36,11 @@
 		</div>
 		<button
 			id="hideVideo"
+			v-shortkey="['v']"
 			v-tooltip="videoButtonTooltip"
 			:class="videoButtonClass"
 			class="forced-white"
+			@shortkey="toggleVideo"
 			@click="toggleVideo" />
 		<button
 			v-if="!screenSharingButtonHidden"
