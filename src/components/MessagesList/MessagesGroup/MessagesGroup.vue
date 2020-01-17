@@ -184,7 +184,7 @@ export default {
 		top: 44px;
 		height: 52px;
 		width: 52px;
-		padding: 0 10px 10px 10px;
+		padding: 18px 10px 10px 10px;
 	}
 }
 </style>
