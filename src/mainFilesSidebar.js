@@ -36,6 +36,7 @@ import { getRequestToken } from '@nextcloud/auth'
 
 // Directives
 import { translate, translatePlural } from '@nextcloud/l10n'
+import VueShortKey from 'vue-shortkey'
 
 // CSP config for webpack dynamic chunk loading
 // eslint-disable-next-line
@@ -54,6 +55,7 @@ Vue.prototype.OC = OC
 Vue.prototype.OCA = OCA
 
 Vue.use(Vuex)
+Vue.use(VueShortKey, { prevent: ['input', 'textarea', 'div'] })
 
 const newCallView = () => new Vue({
 	store,
