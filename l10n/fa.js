@@ -14,6 +14,7 @@ OC.L10N.register(
     "Add to favorites" : "Add to favorites",
     "Contacts" : "مخاطبین",
     "Groups" : "گروه ها",
+    "Circles" : "حلقه ها",
     "Loading" : "در حال بار گزاری",
     "Error" : "خطا",
     "Password protect" : "نگهداری کردن رمز عبور",

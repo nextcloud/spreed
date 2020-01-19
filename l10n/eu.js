@@ -22,6 +22,7 @@ OC.L10N.register(
     "You joined the call" : "Deira elkartu zara",
     "You left the call" : "Deitik atera zara",
     "You unlocked the conversation" : "Elkarrizketa desblokeatu duzu",
+    "You restricted the conversation to moderators" : "Elkarrizketa moderatzaileentzako murriztu duzu",
     "You allowed guests" : "Gonbidatuak baimendu dituzu",
     "{actor} disallowed guests" : "{actor} erabiltzaileak gonbidatuei baimena kendu die",
     "You disallowed guests" : "Gonbidatuei baimena kendu diezu",
