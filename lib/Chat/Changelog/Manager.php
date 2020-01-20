@@ -93,7 +93,11 @@ class Manager {
 			$this->l->t('- With projects you can create quick links between conversations, files and other items'),
 			$this->l->t('New in Talk 7'),
 			$this->l->t('- You can now mention guests in the chat'),
-			$this->l->t('- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait.'),
+			$this->l->t('- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait'),
+			$this->l->t('New in Talk 8'),
+			$this->l->t('- You can now directly reply to messages giving the other users more context what your message is about'),
+			$this->l->t('- Searching for conversations and participants will now also filter your existing conversations, making it much easier to find previous conversations'),
+			$this->l->t('- You can now add custom user groups to conversations when the circles app is installed'),
 		];
 	}
 }
