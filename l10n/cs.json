@@ -193,7 +193,7 @@
     "You: {lastMessage}" : "Vy: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
     "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
-    "No matches" : "Žádné výsledky.",
+    "No matches" : "Žádné výsledky",
     "Conversations" : "Konverzace",
     "Contacts" : "Kontakty",
     "Groups" : "Skupiny",

@@ -330,7 +330,7 @@
     "Please use a different browser like Firefox or Chrome" : "请使用 Firefox 或 Chrome 等其他浏览器",
     "Error while accessing microphone & camera" : "访问麦克风和摄像头时出错",
     "This conversation is password-protected" : "此会话受密码保护",
-    "The password is wrong. Try again." : "密码错误。请重试。",
+    "The password is wrong. Try again." : "用户名或密码错误！请重试",
     "Specify commands the users can use in chats" : "指定用户可以在聊天中使用的命令",
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "更大规模的安装可能需要一个外部发信服务器。若使用内部发信服务器请留空。",
     "TURN server" : "TURN 服务器",
