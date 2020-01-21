@@ -184,11 +184,7 @@ export default {
 			}
 
 			if (this.item.lastMessage.actorId === this.$store.getters.getUserId()) {
-				return t('spreed', 'You: {lastMessage}', {
-					lastMessage: this.simpleLastChatMessage,
-				}, undefined, {
-					escape: false,
-				})
+				return t('spreed', 'You: {lastMessage}').replace('{lastMessage}', this.simpleLastChatMessage)
 			}
 
 			if (this.item.type === CONVERSATION.TYPE.ONE_TO_ONE
@@ -196,12 +192,7 @@ export default {
 				return this.simpleLastChatMessage
 			}
 
-			return t('spreed', '{actor}: {lastMessage}', {
-				actor: this.shortLastChatMessageAuthor,
-				lastMessage: this.simpleLastChatMessage,
-			}, undefined, {
-				escape: false,
-			})
+			return t('spreed', '{actor}: {lastMessage}').replace('{actor}', this.shortLastChatMessageAuthor).replace('{lastMessage}', this.simpleLastChatMessage)
 		},
 
 		/**
