@@ -1,7 +1,14 @@
 OC.L10N.register(
     "spreed",
     {
+    "(Duration %s)" : "(Διάρκεια %s)",
+    "You attended a call with {user1}" : "Παρακολουθήσατε μια κλήση με {user1}",
     "_%n guest_::_%n guests_" : ["%n επισκέπτης","%n επισκέπτες"],
+    "You attended a call with {user1} and {user2}" : "Παρακολουθήσατε μια κλήση με {user1} και {user2}",
+    "You attended a call with {user1}, {user2} and {user3}" : "Παρακολουθήσατε μια κλήση με {user1}, {user2} και {user3}",
+    "You attended a call with {user1}, {user2}, {user3} and {user4}" : "Παρακολουθήσατε μια κλήση με {user1}, {user2}, {user3} και {user4}",
+    "You attended a call with {user1}, {user2}, {user3}, {user4} and {user5}" : "Παρακολουθήσατε μια κλήση με {user1}, {user2}, {user3}, {user4} και {user5}",
+    "Talk" : "Talk",
     "Guest" : "Επισκέπτης",
     "Private conversation" : "Ιδιωτική συνομιλία",
     "{user} wants to talk with you" : "Ο {user} θέλει να σας μιλήσει",
