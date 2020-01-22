@@ -8,6 +8,7 @@ OC.L10N.register(
     "Users" : "Користувачі",
     "Copy link" : "Скопіювати посилання",
     "Favorite" : "Улюблений",
+    "Off" : "Вимкнути",
     "Remove from favorites" : "Видалено з улюбленого",
     "Add to favorites" : "Додати до обраного",
     "Contacts" : "Контакти",

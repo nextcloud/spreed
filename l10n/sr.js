@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Уз помоћ пројеката можете да направите брзе везе између разговора, фајлова и других ставки",
     "New in Talk 7" : "Ново у Talk 7",
     "- You can now mention guests in the chat" : "- Сада можете поменути госте у ћаскању",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Разговори сада могу да имају лоби. Ово ће омогућити модераторима да се придруже разговору и да позову унапред да припреме састанак, док корисници и гости морају да чекају.",
     "There are currently no commands available." : "Тренутно нема доступних команди.",
     "The command does not exist" : "Команда не постоји",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Десила се грешка приликом извршавања команде. Замолите администратора да погледате логове.",
@@ -393,6 +392,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Грешка приликом мењања стања лобија",
     "Invalid start time format" : "Неисправан формат времена почетка",
     "Error occurred while setting the lobby start time" : "Грешка приликом постављања почетног времена лобија",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Разговори сада могу да имају лоби. Ово ће омогућити модераторима да се придруже разговору и да позову унапред да припреме састанак, док корисници и гости морају да чекају.",
     "{email} tried to requested the password to access {file}" : "{email} је покушао да затражи лозинку да приступи фајлу {file}",
     "Someone tried to requested the password to access {file}" : "Неко је покушао да затражи лозинку да приступи фајлу {file}"
 },

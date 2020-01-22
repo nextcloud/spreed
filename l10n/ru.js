@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- С помощью проектов вы можете создавать быстрые ссылки между обсуждениями, файлами и другими объектами",
     "New in Talk 7" : "Новое в Talk 7",
     "- You can now mention guests in the chat" : "- Теперь вы можете упоминать гостей в чате",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- У обсуждений теперь может быть вестибюль. Это позволит модераторам присоединяться к чату и к вызову, чтобы подготовить собрание, в то время как пользователям и гостям должны будут ожидать.",
     "There are currently no commands available." : "В настоящий момент нет доступных команд.",
     "The command does not exist" : "Команда не существует",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Произошла ошибка во время выполнения команды. Пожалуйста, попросите администратора проверить логи.",
@@ -374,6 +373,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Произошла ошибка при изменении состояния вестибюля",
     "Invalid start time format" : "Неверный формат времени начала",
     "Error occurred while setting the lobby start time" : "Произошла ошибка при настройке времени начала для вестибюля",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- У обсуждений теперь может быть вестибюль. Это позволит модераторам присоединяться к чату и к вызову, чтобы подготовить собрание, в то время как пользователям и гостям должны будут ожидать.",
     "{email} tried to requested the password to access {file}" : "{email} попытался запросить пароль для доступа к файлу «{file}»",
     "Someone tried to requested the password to access {file}" : "Кто-то попытался запросить пароль для доступа к файлу «{file}»"
 },

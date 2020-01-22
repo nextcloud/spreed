@@ -20,7 +20,6 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Naudodami projektus galite greitai sukurti sąsajas tarp pokalbių, failų bei kitų elementų",
     "New in Talk 7" : "Kas naujo Pokalbiuose 7",
     "- You can now mention guests in the chat" : "- Dabar, pokalbiuose galite minėti svečius",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Dabar, pokalbiuose yra laukimo salė. Tai leis moderatoriams prisijungti prie pokalbio ir skambinti, kad paruoštų susitikimą, kol tuo tarpu kiti naudotojai ir svečiai turės laukti.",
     "There are currently no commands available." : "Šiuo metu nėra prieinamų komandų.",
     "The command does not exist" : "Komandos nėra",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Vykdant komandą, įvyko klaida. Paprašykite administratoriaus, kad patikrintų žurnalus.",
@@ -362,6 +361,7 @@
     "Error occurred while renaming the conversation" : "Klaida pervadinant pokalbį",
     "Error occurred while changing lobby state" : "Klaida keičiant laukimo salės būseną",
     "Invalid start time format" : "Neteisingas pradžios laiko formatas",
-    "Error occurred while setting the lobby start time" : "Klaida nustatant laukimo salės pradžios laiką"
+    "Error occurred while setting the lobby start time" : "Klaida nustatant laukimo salės pradžios laiką",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Dabar, pokalbiuose yra laukimo salė. Tai leis moderatoriams prisijungti prie pokalbio ir skambinti, kad paruoštų susitikimą, kol tuo tarpu kiti naudotojai ir svečiai turės laukti."
 },"pluralForm" :"nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);"
 }

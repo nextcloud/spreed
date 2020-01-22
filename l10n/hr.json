@@ -22,7 +22,6 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Koristite se projektima za stvaranje brzih poveznica između razgovora, datoteka i drugih stavki",
     "New in Talk 7" : "Novosti aplikacije Talk 7",
     "- You can now mention guests in the chat" : "- Sada možete navesti goste u prozoru za razmjenu poruka",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Razgovori sada mogu imati predvorje. To omogućuje moderatorima da se priključe razmjeni poruka i pozivima kako bi pripremili sastanak dok korisnici i gosti čekaju.",
     "There are currently no commands available." : "Trenutno nema dostupnih naredbi.",
     "The command does not exist" : "Naredba ne postoji",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Došlo je do pogreške pri izvršenju naredbe. Zatražite od administratora da provjeri zapise.",
@@ -431,6 +430,7 @@
     "Error occurred while changing lobby state" : "Došlo je do pogreške pri promjeni stanja predvorja",
     "Invalid start time format" : "Netočan oblik vremena početka",
     "Error occurred while setting the lobby start time" : "Došlo je do pogreške pri postavljanju vremena početka za predvorje",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Razgovori sada mogu imati predvorje. To omogućuje moderatorima da se priključe razmjeni poruka i pozivima kako bi pripremili sastanak dok korisnici i gosti čekaju.",
     "{email} tried to requested the password to access {file}" : "{email} je pokušao zatražiti zaporku za pristup {file}",
     "Someone tried to requested the password to access {file}" : "Netko je pokušao zatražiti zaporku za pristup {file}"
 },"pluralForm" :"nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;"
