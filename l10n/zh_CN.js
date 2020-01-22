@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- 您可以使用项目来在会话、文件和其他项目间创建快速链接",
     "New in Talk 7" : "Talk 7中的新功能",
     "- You can now mention guests in the chat" : "－您现在可以在聊天中提起访客",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "－会话现在可以拥有休息室。休息室允许主持人加入准备会议的聊天和通话中，用户和访客则需要等待。",
     "There are currently no commands available." : "当前没有命令可用。",
     "The command does not exist" : "此命令不存在",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "执行命令时出错。请通知管理员检查日志。",
@@ -440,6 +439,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "更改休息室状态时出错",
     "Invalid start time format" : "非法的开始时间格式",
     "Error occurred while setting the lobby start time" : "设置休息开始时间时出错",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "－会话现在可以拥有休息室。休息室允许主持人加入准备会议的聊天和通话中，用户和访客则需要等待。",
     "{email} tried to requested the password to access {file}" : "{email} 试图请求密码以访问 {file}",
     "Someone tried to requested the password to access {file}" : "有人试图请求密码以访问 {file}"
 },

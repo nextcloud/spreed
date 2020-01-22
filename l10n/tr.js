@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Projeleri kullanarak görüşmeler, dosyalar ve diğer ögeler arasında hızlı bağlantılar oluşturabilirsiniz",
     "New in Talk 7" : "Sohbet 7 yenilikleri",
     "- You can now mention guests in the chat" : "- Artık görüşmedeki konukları anabilirsiniz",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Artık görüşmelerin bir girişi olabiliyor. Böylece kullanıcılar ve konuklar beklerken sorumlular önceden görüşmeye katılıp gerekli hazırlıkları yapabiliyor.",
     "There are currently no commands available." : "Şu anda kullanılabilecek bir komut yok.",
     "The command does not exist" : "Komut bulunamadı",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Komut yürütülürken bir sorun çıktı. Lütfen yöneticiden günlük kayıtlarına bakmasını isteyin.",
@@ -440,6 +439,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Giriş durumu değiştirilirken sorun çıktı",
     "Invalid start time format" : "Başlangıç zamanı biçimi geçersiz",
     "Error occurred while setting the lobby start time" : "Giriş başlangıç zamanı ayarlanırken sorun çıktı",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Artık görüşmelerin bir girişi olabiliyor. Böylece kullanıcılar ve konuklar beklerken sorumlular önceden görüşmeye katılıp gerekli hazırlıkları yapabiliyor.",
     "{email} tried to requested the password to access {file}" : "{email}, {file} dosyasına erişme parolasını istemeyi denedi",
     "Someone tried to requested the password to access {file}" : "Birisi {file} dosyasına erişme parolasını istemeyi denedi"
 },
