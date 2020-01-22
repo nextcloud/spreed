@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Mit Projekten können Sie einfach und schnell Verknüpfungen zwischen Unterhaltungen, Dateien und anderen Elementen erstellen",
     "New in Talk 7" : "Neu in Talk 7",
     "- You can now mention guests in the chat" : "- Sie können nun Gäste im Chat erwähnen",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Unterhaltungen können nun eine Lobby (Warteraum) haben. Dies erlaubt Moderatoren dem Chat beizutreten und Teilnehmer anzurufen um das Meeting vorzubereiten, wobei die Benutzer und Gäste noch warten müssen.",
     "There are currently no commands available." : "Aktuell stehen keine Befehle zur Verfügung.",
     "The command does not exist" : "Der Befehl existiert nicht",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Beim Ausführen des Befehls ist ein Fehler aufgetreten. Bitten Sie einen Administrator, die Protokolle zu überprüfen.",
@@ -440,6 +439,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Fehler beim Ändern des Status der Lobby",
     "Invalid start time format" : "Ungültiges Startzeit-Format",
     "Error occurred while setting the lobby start time" : "Ein Fehler ist beim Setzen der Lobby-Startzeit aufgetreten",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Unterhaltungen können nun eine Lobby (Warteraum) haben. Dies erlaubt Moderatoren dem Chat beizutreten und Teilnehmer anzurufen um das Meeting vorzubereiten, wobei die Benutzer und Gäste noch warten müssen.",
     "{email} tried to requested the password to access {file}" : "{email} hat versucht das Passwort für den Zugriff auf {file} anzufordern",
     "Someone tried to requested the password to access {file}" : "Jemand hat versucht das Passwort für den Zugriff auf {file} anzufordern"
 },

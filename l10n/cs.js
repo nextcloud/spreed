@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Pomocí projektů lze seskupovat konverzace, soubory a další položky",
     "New in Talk 7" : "Novinky v Talk verze 7",
     "- You can now mention guests in the chat" : "- Nově lze v konverzacích „zmiňovat“ i hosty.",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Konverzace nyní mohou mít \"čekárnu\". To umožňue moderátorům se připojit k chatu nebo rozhovoru aby setkání připravila, zatímco ostatní uživatelé a hosté čekají v čekárně.",
     "There are currently no commands available." : "V tuto chvíli nejsou k dispozici žádné příkazy.",
     "The command does not exist" : "Příkaz neexistuje",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Při spouštění příkazu došlo k chybě. Požádejte správce aby se podíval do záznamů událostí.",
@@ -440,6 +439,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Při změně stavu předsálí došlo k chybě",
     "Invalid start time format" : "Neplatný formát času začátku",
     "Error occurred while setting the lobby start time" : "Došlo chybě při nastavování času spuštění předsálí",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Konverzace nyní mohou mít \"čekárnu\". To umožňue moderátorům se připojit k chatu nebo rozhovoru aby setkání připravila, zatímco ostatní uživatelé a hosté čekají v čekárně.",
     "{email} tried to requested the password to access {file}" : "{email} se pokusil(a) vyžádat heslo pro přístup k {file}",
     "Someone tried to requested the password to access {file}" : "Někdo se pokusil požádat o heslo pro přístup k {file}"
 },

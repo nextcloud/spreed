@@ -22,7 +22,6 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Con i progetti puoi creare collegamenti rapidi tra conversazioni, file e altri elementi ",
     "New in Talk 7" : "Nuovo in Talk 7",
     "- You can now mention guests in the chat" : "- Ora puoi menzionare gli ospiti nella chat",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Le conversazioni orano possono avere un ingresso. Questo consente ai moderatori di entrare nella chat e preparare la riunione, mentre gli utenti e gli ospiti devono attendere.",
     "There are currently no commands available." : "Attualmente non ci sono comandi disponibili.",
     "The command does not exist" : "Il comando non esiste",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Si è verificato un errore durante l'esecuzione del comando. Chiedi a un amministratore di controllare i log.",
@@ -438,6 +437,7 @@
     "Error occurred while changing lobby state" : "Si è verificato un errore durante la modifica dello stato dell'anticamera",
     "Invalid start time format" : "Formato dell'ora iniziale non valido",
     "Error occurred while setting the lobby start time" : "Si è verificato un errore durante l'impostazione dell'orario di inizio dell'ingresso.",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Le conversazioni orano possono avere un ingresso. Questo consente ai moderatori di entrare nella chat e preparare la riunione, mentre gli utenti e gli ospiti devono attendere.",
     "{email} tried to requested the password to access {file}" : "{email} ha provato a richiedere la password per accedere a {file}",
     "Someone tried to requested the password to access {file}" : "Qualcuno ha provato a richiedere la password per accedere a {file}"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
