@@ -218,13 +218,13 @@ export default {
 				this.$nextTick(function() {
 					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
 				})
+				// Also remove the message to be replied for this conversation
+				this.$store.dispatch('removeMessageToBeReplied', this.token)
 				try {
 					// Posts the message to the server
 					const response = await postNewMessage(temporaryMessage)
 					// If successful, deletes the temporary message from the store
 					this.$store.dispatch('deleteMessage', temporaryMessage)
-					// Also remove the message to be replied for this conversation
-					this.$store.dispatch('removeMessageToBeReplied', this.token)
 					// And adds the complete version of the message received
 					// by the server
 					this.$store.dispatch('processMessage', response.data.ocs.data)
