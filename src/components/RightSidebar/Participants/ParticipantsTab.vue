@@ -88,6 +88,7 @@ import {
 	fetchParticipants,
 } from '../../../services/participantsService'
 import isInLobby from '../../../mixins/isInLobby'
+import { loadState } from '@nextcloud/initial-state'
 
 export default {
 	name: 'ParticipantsTab',
@@ -116,7 +117,7 @@ export default {
 			searchResults: [],
 			contactsLoading: false,
 			participantsInitialised: false,
-			isCirclesEnabled: true, // FIXME
+			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 		}
 	},
 
