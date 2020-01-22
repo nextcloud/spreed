@@ -441,7 +441,7 @@ export default {
 			const scrollTop = scroller.scrollTop
 			const scrollOffset = scrollHeight - scrollTop
 			const elementHeight = scroller.clientHeight
-			const tolerance = 4
+			const tolerance = 10
 			if (scrollOffset < elementHeight + tolerance && scrollOffset > elementHeight - tolerance) {
 				this.isScrolledToBottom = true
 				this.displayMessagesLoader = false
