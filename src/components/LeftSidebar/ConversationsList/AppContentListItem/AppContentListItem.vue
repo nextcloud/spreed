@@ -21,40 +21,43 @@
 
 <template>
 	<nav-element
-		:class="{ 'active' : isActive }"
-		v-bind="navElement"
-		href="#"
-		class="acli"
-		@click="onClick">
-		<!-- default slot for avatar or icon -->
-		<slot name="icon" />
-		<div class="acli__content">
-			<div class="acli__content__line-one">
-				<span class="acli__content__line-one__title">
-					{{ title }}
-				</span>
-				<Actions
-					v-if="hasActions"
-					menu-align="right"
-					class="acli__content__line-one__actions">
-					<slot name="actions" />
-				</Actions>
-				<span
-					v-if="{hasDetails}"
-					class="acli__content__line-one__details">
-					{{ details }}
-				</span>
+		class="acli_wrapper"
+		v-bind="navElement">
+		<a
+			:class="{ 'active' : isActive }"
+			href="#"
+			class="acli"
+			@click="onClick">
+			<!-- default slot for avatar or icon -->
+			<slot name="icon" />
+			<div class="acli__content">
+				<div class="acli__content__line-one">
+					<span class="acli__content__line-one__title">
+						{{ title }}
+					</span>
+					<span
+						v-if="{hasDetails}"
+						class="acli__content__line-one__details">
+						{{ details }}
+					</span>
+				</div>
+				<div class="acli__content__line-two">
+					<span class="acli__content__line-two__subtitle">
+						<slot name="subtitle" />
+					</span>
+					<span class="acli__content__line-two__counter">
+						<slot
+							name="counter" />
+					</span>
+				</div>
 			</div>
-			<div class="acli__content__line-two">
-				<span class="acli__content__line-two__subtitle">
-					<slot name="subtitle" />
-				</span>
-				<span class="acli__content__line-two__counter">
-					<slot
-						name="counter" />
-				</span>
-			</div>
-		</div>
+		</a>
+		<Actions
+			v-if="hasActions"
+			menu-align="right"
+			class="actions">
+			<slot name="actions" />
+		</Actions>
 	</nav-element>
 </template>
 
@@ -137,6 +140,15 @@ export default {
 
 <style lang="scss" scoped>
 
+.acli_wrapper{
+	position: relative;
+	.actions {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+	}
+}
+
 // AppContentListItem
 .acli {
 	position: relative;
@@ -170,8 +182,8 @@ export default {
 
 			&__title {
 				overflow: hidden;
+				padding-right: 52px;
 				flex-grow: 1;
-				padding-right: 48px;
 				cursor: pointer;
 				text-overflow: ellipsis;
 				color: var(--color-main-text);
