@@ -43,7 +43,7 @@ And in the works for the [coming versions](https://github.com/nextcloud/spreed/m
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/call-in-action.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/chat.png</screenshot>
 	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/screensharing.png</screenshot>
-	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/contacts-menu.png</screenshot>
+	<screenshot>https://raw.githubusercontent.com/nextcloud/spreed/master/docs/video-verfication.png</screenshot>
 
 	<dependencies>
 		<nextcloud min-version="19" max-version="19" />
