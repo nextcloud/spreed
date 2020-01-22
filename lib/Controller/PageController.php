@@ -32,6 +32,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCA\Talk\TalkSession;
+use OCP\App\IAppManager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\ContentSecurityPolicy;
@@ -39,12 +40,13 @@ use OCP\AppFramework\Http\RedirectResponse;
 use OCP\AppFramework\Http\Response;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Http\Template\PublicTemplateResponse;
+use OCP\IInitialStateService;
 use OCP\ILogger;
 use OCP\IRequest;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserSession;
-use OCP\Notification\IManager;
+use OCP\Notification\IManager as INotificationManager;
 
 class PageController extends Controller {
 	/** @var string|null */
@@ -61,8 +63,12 @@ class PageController extends Controller {
 	private $manager;
 	/** @var IURLGenerator */
 	private $url;
-	/** @var IManager */
+	/** @var INotificationManager */
 	private $notificationManager;
+	/** @var IAppManager */
+	private $appManager;
+	/** @var IInitialStateService */
+	private $initialStateService;
 	/** @var Config */
 	private $config;
 
@@ -75,7 +81,9 @@ class PageController extends Controller {
 								ILogger $logger,
 								Manager $manager,
 								IURLGenerator $url,
-								IManager $notificationManager,
+								INotificationManager $notificationManager,
+								IAppManager $appManager,
+								IInitialStateService $initialStateService,
 								Config $config) {
 		parent::__construct($appName, $request);
 		$this->api = $api;
@@ -86,6 +94,8 @@ class PageController extends Controller {
 		$this->manager = $manager;
 		$this->url = $url;
 		$this->notificationManager = $notificationManager;
+		$this->appManager = $appManager;
+		$this->initialStateService = $initialStateService;
 		$this->config = $config;
 	}
 
@@ -195,6 +205,11 @@ class PageController extends Controller {
 				return $this->redirectToConversation($data['token']);
 			}
 		}
+
+		$this->initialStateService->provideInitialState(
+			'talk', 'circles_enabled',
+			$this->appManager->isEnabledForUser('circles', $user)
+		);
 
 		$params = [
 			'token' => $token,
