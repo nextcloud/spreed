@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Com projetos você pode criar links rápidos entre conversas, arquivos e outros itens",
     "New in Talk 7" : "Novidades no Talk 7",
     "- You can now mention guests in the chat" : "- Agora você pode mencionar convidados no chat",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- As conversas agora podem ter um lobby. Isso permitirá que moderadores participem do bate-papo e já liguem para preparar a reunião, enquanto os usuários e convidados terão que esperar.",
     "There are currently no commands available." : "Sem comandos disponíveis no momento.",
     "The command does not exist" : "O comando não existe",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Ocorreu um erro ao executar o comando. Por favor, peça a um administrador para verificar os logs.",
@@ -440,6 +439,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Erro ao alterar o status do lobby",
     "Invalid start time format" : "Formato inválido do horário de início",
     "Error occurred while setting the lobby start time" : "Erro ao marcar o horário de início do lobby",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- As conversas agora podem ter um lobby. Isso permitirá que moderadores participem do bate-papo e já liguem para preparar a reunião, enquanto os usuários e convidados terão que esperar.",
     "{email} tried to requested the password to access {file}" : "{email} tentou solicitar a senha para acessar {file}",
     "Someone tried to requested the password to access {file}" : "Alguém tentou solicitar a senha para acessar {file}"
 },

@@ -22,7 +22,6 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Amb els projectes podeu crear ràpidament enllaços entre converses, fitxers i altres elements a Nextcloud",
     "New in Talk 7" : "Nou a Talk 7",
     "- You can now mention guests in the chat" : "- Ara ja podeu esmentar convidats al xat.",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Les converses poden tenir un vestíbul. Això permetrà als moderadors unir-se al xat i trucar immediatament per preparar la reunió, mentre que usuaris i convidats hauran d’esperar.",
     "There are currently no commands available." : "Actualment no hi ha comandaments disponibles.",
     "The command does not exist" : "No existeix aquest comandament.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "S'ha produït un error en executar l'ordre. Sol·liciteu a un administrador que comprovi els registres.",
@@ -376,6 +375,7 @@
     "Error occurred while changing lobby state" : "Hi ha hagut un error en canviar l'estat del vestíbul.",
     "Invalid start time format" : "El format d’hora d’inici no és vàlid.",
     "Error occurred while setting the lobby start time" : "Hi ha hagut un error establint l'hora d'inici del vestíbul.",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Les converses poden tenir un vestíbul. Això permetrà als moderadors unir-se al xat i trucar immediatament per preparar la reunió, mentre que usuaris i convidats hauran d’esperar.",
     "{email} tried to requested the password to access {file}" : "{email} ha intentat sol·licitar la contrasenya per accedir a {file}",
     "Someone tried to requested the password to access {file}" : "Algú ha intentat sol·licitar la contrasenya per accedir a {file}"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

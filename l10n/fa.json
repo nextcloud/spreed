@@ -22,7 +22,6 @@
     "- With projects you can create quick links between conversations, files and other items" : "- با پروژه ها می توانید پیوندهای سریع بین مکالمات ، پرونده ها و موارد دیگر ایجاد کنید",
     "New in Talk 7" : "جدید در Talk 7",
     "- You can now mention guests in the chat" : "- اکنون می توانید از مهمان ها در چت یاد کنید",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- مکالمات اکنون می توانند یک لابی داشته باشند. این به مدیران اجازه می دهد تا برای تهیه جلسه به چت بپیوندند و از قبل تماس بگیرند ، در حالی که کاربران و میهمانان باید منتظر بمانند.",
     "There are currently no commands available." : "در حال حاضر هیچ  فرمانی موجود نیست.",
     "The command does not exist" : "هیچ فرمان وجود ندارد",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "هنگام اجرای فرمان خطایی روی داد. لطفاً از سرپرست بخواهید که گزارش ها را بررسی کند.",
@@ -133,6 +132,7 @@
     "Send" : "ارسال",
     "Error while sharing" : "خطا درحال به اشتراک گذاشتن",
     "Favorited" : "برگزیده شده",
-    ", " : ","
+    ", " : ",",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- مکالمات اکنون می توانند یک لابی داشته باشند. این به مدیران اجازه می دهد تا برای تهیه جلسه به چت بپیوندند و از قبل تماس بگیرند ، در حالی که کاربران و میهمانان باید منتظر بمانند."
 },"pluralForm" :"nplurals=2; plural=(n > 1);"
 }

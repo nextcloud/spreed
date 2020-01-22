@@ -22,7 +22,6 @@
     "- With projects you can create quick links between conversations, files and other items" : "- Cos proxectos pode crear ligazóns rápidas entre conversas, ficheiros e outros elementos",
     "New in Talk 7" : "Novo en Talk 7",
     "- You can now mention guests in the chat" : "- Agora pode mencionar convidados na conversa",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- As conversas agora poden ter un vestíbulo. Isto permitirá aos moderadores unirse á conversa e chamar xa para preparar a xuntanza, mentres que os usuarios e convidados teñen que agardar.",
     "There are currently no commands available." : "Actualmente non hai ordes dispoñíbeis.",
     "The command does not exist" : "Non existe a orde",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Produciuse un erro ao executar a orde. Pídalle a un administrador que verifique os rexistros.",
@@ -438,6 +437,7 @@
     "Error occurred while changing lobby state" : "Produciuse un erro ao cambiar o estado do vestíbulo",
     "Invalid start time format" : "O formato de hora de inicio non é válido",
     "Error occurred while setting the lobby start time" : "Produciuse un erro ao configurar a hora de inicio do vestíbulo",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- As conversas agora poden ter un vestíbulo. Isto permitirá aos moderadores unirse á conversa e chamar xa para preparar a xuntanza, mentres que os usuarios e convidados teñen que agardar.",
     "{email} tried to requested the password to access {file}" : "{email} tentou solicitar o contrasinal para acceder a {file}",
     "Someone tried to requested the password to access {file}" : "Alguén tentou solicitar o contrasinal para acceder a {file}"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"

@@ -24,7 +24,6 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Avec Projects vous pouvez créer des liens rapides entre les conversations, les fichiers et d'autres éléments",
     "New in Talk 7" : "Nouveautés de Talk 7",
     "- You can now mention guests in the chat" : "- Désormais vous pouvez mentionner les invités dans la discussion",
-    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Les conversations peuvent désormais avoir une salle d'attente ce qui permet aux modérateurs de rejoindre la conversation et l'appel afin de préparer la réunion, pendant que les invités attendent.",
     "There are currently no commands available." : "Aucune commande n'est disponible actuellement.",
     "The command does not exist" : "Cette commande n'existe pas.",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Une erreur s'est produite lors de l'exécution de la commande. Veuillez demander à un administrateur de vérifier les logs.",
@@ -440,6 +439,7 @@ OC.L10N.register(
     "Error occurred while changing lobby state" : "Une erreur est survenue lors du changement de statut de la salle d'attente",
     "Invalid start time format" : "Format de la date de départ non valide",
     "Error occurred while setting the lobby start time" : "Une erreur est survenue lors de la définition de l'heure de début de l'attente",
+    "- Conversations can now have a lobby. This will allow moderators to join the chat and call already to prepare the meeting, while users and guests have to wait." : "- Les conversations peuvent désormais avoir une salle d'attente ce qui permet aux modérateurs de rejoindre la conversation et l'appel afin de préparer la réunion, pendant que les invités attendent.",
     "{email} tried to requested the password to access {file}" : "{email} a essayé d'obtenir le mot de passe pour accéder au fichier {file}.",
     "Someone tried to requested the password to access {file}" : "Quelqu'un a essayé d'obtenir le mot de passe pour accéder au fichier {file}"
 },
