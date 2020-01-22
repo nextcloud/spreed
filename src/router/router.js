@@ -22,18 +22,24 @@
 
 import Vue from 'vue'
 import Router from 'vue-router'
-import { generateUrl } from '@nextcloud/router'
+import { getRootUrl, generateUrl } from '@nextcloud/router'
 import MainView from '../views/MainView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 import WelcomeView from '../views/WelcomeView.vue'
 
 Vue.use(Router)
 
+const webRootWithIndexPHP = getRootUrl() + '/index.php'
+const doesURLContainIndexPHP = window.location.pathname.startsWith(webRootWithIndexPHP)
+const base = generateUrl('/', {}, {
+	noRewrite: doesURLContainIndexPHP,
+})
+
 export default new Router({
 	mode: 'history',
 	// if index.php is in the url AND we got this far, then it's working:
 	// let's keep using index.php in the url
-	base: generateUrl('/', ''),
+	base,
 	linkActiveClass: 'active',
 	routes: [
 		{
