@@ -44,6 +44,7 @@
 		<span class="participant-row__user-name">{{ computedName }}</span>
 		<span v-if="showModeratorLabel" class="participant-row__moderator-indicator">({{ t('spreed', 'moderator') }})</span>
 		<span v-if="isGuest" class="participant-row__guest-indicator">({{ t('spreed', 'guest') }})</span>
+		<span v-if="callIconClass" class="icon callstate-icon" :class="callIconClass" />
 		<Actions v-if="canModerate && !isSearched" class="participant-row__actions">
 			<ActionButton v-if="canBeDemoted"
 				icon="icon-rename"
@@ -143,6 +144,16 @@ export default {
 			}
 			// source: groups, circles
 			return 'icon-contacts'
+		},
+		callIconClass() {
+			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+				return ''
+			}
+			const hasVideo = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO
+			if (hasVideo) {
+				return 'icon-video'
+			}
+			return 'icon-audio'
 		},
 		participantType() {
 			return this.participant.participantType
@@ -301,6 +312,11 @@ export default {
 	&__utils,
 	&__actions {
 		margin-left: auto;
+	}
+
+	.callstate-icon {
+		opacity: .4;
+		margin-left: 5px;
 	}
 }
 
