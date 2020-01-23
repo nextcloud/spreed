@@ -24,6 +24,7 @@ import Vue from 'vue'
 import Vuex, { Store } from 'vuex'
 import actorStore from './actorStore'
 import conversationsStore from './conversationsStore'
+import guestNameStore from './guestNameStore'
 import messagesStore from './messagesStore'
 import participantsStore from './participantsStore'
 import quoteReplyStore from './quoteReplyStore'
@@ -39,6 +40,7 @@ export default new Store({
 	modules: {
 		actorStore,
 		conversationsStore,
+		guestNameStore,
 		messagesStore,
 		participantsStore,
 		quoteReplyStore,
