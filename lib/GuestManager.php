@@ -91,7 +91,7 @@ class GuestManager {
 		$dispatchEvent = true;
 
 		try {
-			$oldName = $this->getNameBySessionHash($sessionHash);
+			$oldName = $this->getNameBySessionHash($sessionHash, true);
 
 			if ($oldName !== $displayName) {
 				$query = $this->connection->getQueryBuilder();
@@ -117,10 +117,11 @@ class GuestManager {
 
 	/**
 	 * @param string $sessionHash
+	 * @param bool $allowEmpty
 	 * @return string
 	 * @throws ParticipantNotFoundException
 	 */
-	public function getNameBySessionHash(string $sessionHash): string {
+	public function getNameBySessionHash(string $sessionHash, bool $allowEmpty = false): string {
 		$query = $this->connection->getQueryBuilder();
 		$query->select('display_name')
 			->from('talk_guests')
@@ -130,7 +131,7 @@ class GuestManager {
 		$row = $result->fetch();
 		$result->closeCursor();
 
-		if (isset($row['display_name']) && $row['display_name'] !== '') {
+		if (isset($row['display_name']) && ($allowEmpty || $row['display_name'] !== '')) {
 			return $row['display_name'];
 		}
 
