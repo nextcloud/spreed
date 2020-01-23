@@ -252,7 +252,6 @@ export default {
 				&& (message1.systemMessage.length === 0) === (message2.systemMessage.length === 0) // Only group system messages with each others
 				&& message1.actorType === message2.actorType // To have the same author, the type
 				&& message1.actorId === message2.actorId // and the id of the author must be the same
-				&& message1.actorDisplayName === message2.actorDisplayName // FIXME: this is in case a guest user changes its username
 				&& !this.messagesHaveDifferentDate(message1, message2) // Posted on the same day
 		},
 
@@ -371,6 +370,9 @@ export default {
 				const messages = await request({ token: this.token, lastKnownMessageId, includeLastKnown })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
+					if (message.actorType === 'guests') {
+						this.$store.dispatch('setGuestNameIfEmpty', message)
+					}
 					this.$store.dispatch('processMessage', message)
 				})
 			} catch (exception) {
@@ -397,6 +399,9 @@ export default {
 				const messages = await request({ token: this.token, lastKnownMessageId })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
+					if (message.actorType === 'guests') {
+						this.$store.dispatch('forceGuestName', message)
+					}
 					this.$store.dispatch('processMessage', message)
 				})
 				// Scroll to the last message if sticky
