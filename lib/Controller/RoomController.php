@@ -502,7 +502,7 @@ class RoomController extends AEnvironmentAwareController {
 		$participants = [];
 		foreach ($circle->getMembers() as $member) {
 			/** @var Member $member */
-			if ($member->getType() === Member::TYPE_USER || $member->getUserId() === '') {
+			if ($member->getType() !== Member::TYPE_USER || $member->getUserId() === '') {
 				// Not a user?
 				continue;
 			}
@@ -743,10 +743,9 @@ class RoomController extends AEnvironmentAwareController {
 				return new DataResponse([], Http::STATUS_NOT_FOUND);
 			}
 
-			$participants = [];
 			foreach ($circle->getMembers() as $member) {
 				/** @var Member $member */
-				if ($member->getType() === Member::TYPE_USER || $member->getUserId() === '') {
+				if ($member->getType() !== Member::TYPE_USER || $member->getUserId() === '') {
 					// Not a user?
 					continue;
 				}
