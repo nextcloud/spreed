@@ -44,6 +44,9 @@ use OCP\Share\IShare;
 use PHPUnit\Framework\MockObject\MockObject;
 use Test\TestCase;
 
+/**
+ * @group DB
+ */
 class SystemMessageTest extends TestCase {
 
 	/** @var IUserManager|MockObject */
@@ -608,7 +611,7 @@ class SystemMessageTest extends TestCase {
 
 	public function testGetFileFromShareForRecipientThrows() {
 		$node = $this->createMock(Node::class);
-		$node->expects($this->once())
+		$node->expects($this->exactly(2))
 			->method('getId')
 			->willReturn('54');
 		$node->expects($this->once())
@@ -624,7 +627,7 @@ class SystemMessageTest extends TestCase {
 		$participant->expects($this->once())
 			->method('isGuest')
 			->willReturn(false);
-		$participant->expects($this->exactly(2))
+		$participant->expects($this->exactly(3))
 			->method('getUser')
 			->willReturn('user');
 
@@ -634,7 +637,7 @@ class SystemMessageTest extends TestCase {
 			->willReturn($share);
 
 		$userFolder = $this->createMock(Folder::class);
-		$userFolder->expects($this->once())
+		$userFolder->expects($this->exactly(2))
 			->method('getById')
 			->with('54')
 			->willReturn([]);
