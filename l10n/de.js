@@ -24,6 +24,8 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Mit Projekten kannst Du einfach und schnell Verknüpfungen zwischen Unterhaltungen, Dateien und anderen Elementen erstellen",
     "New in Talk 7" : "Neu in Talk 7",
     "- You can now mention guests in the chat" : "- Du kannst nun Gäste im Chat erwähnen",
+    "New in Talk 8" : "Neu in Talk 8",
+    "- You can now directly reply to messages giving the other users more context what your message is about" : "- Du kannst jetzt direkt auf Nachrichten antworten, um anderen Benutzern mehr über Deine Nachrichten mitzuteilen",
     "There are currently no commands available." : "Aktuell stehen keine Befehle zur Verfügung.",
     "The command does not exist" : "Der Befehl existiert nicht",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Beim Ausführen des Befehls ist ein Fehler aufgetreten. Bitte einen Administrator, die Protokolle zu überprüfen.",
