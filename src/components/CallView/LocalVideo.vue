@@ -46,6 +46,8 @@
 import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import LocalMediaControls from './LocalMediaControls'
+import Hex from 'crypto-js/enc-hex'
+import SHA1 from 'crypto-js/sha1'
 
 export default {
 
@@ -81,12 +83,20 @@ export default {
 			return this.$store.getters.getDisplayName()
 		},
 
-		guestName() {
-			return this.localCallParticipantModel.attributes.guestName || localStorage.getItem('nick') || '?'
+		firstLetterOfGuestName() {
+			const customName = this.guestName !== t('spreed', 'Guest') ? this.guestName : '?'
+			return customName.charAt(0)
 		},
 
-		firstLetterOfGuestName() {
-			return this.guestName.substring(0, 1)
+		sessionHash() {
+			return Hex.stringify(SHA1(this.localCallParticipantModel.attributes.peerId))
+		},
+
+		guestName() {
+			return this.$store.getters.getGuestName(
+				this.$store.getters.getToken(),
+				this.sessionHash,
+			) || localStorage.getItem('nick') || t('spreed', 'Guest')
 		},
 
 		avatarSize() {

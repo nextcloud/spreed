@@ -70,6 +70,8 @@ import attachMediaStream from 'attachmediastream'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Tooltip from '@nextcloud/vue/dist/Directives/Tooltip'
 import { ConnectionState } from '../../utils/webrtc/models/CallParticipantModel'
+import SHA1 from 'crypto-js/sha1'
+import Hex from 'crypto-js/enc-hex'
 
 export default {
 
@@ -126,18 +128,23 @@ export default {
 				'icon-loading': this.model.attributes.connectionState !== ConnectionState.CONNECTED && this.model.attributes.connectionState !== ConnectionState.COMPLETED && this.model.attributes.connectionState !== ConnectionState.FAILED_NO_RESTART,
 			}
 		},
-
 		firstLetterOfGuestName() {
-			return (this.model.attributes.name || '?').substring(0, 1)
+			const customName = this.participantName !== t('spreed', 'Guest') ? this.participantName : '?'
+			return customName.charAt(0)
+		},
+
+		sessionHash() {
+			return Hex.stringify(SHA1(this.model.attributes.peerId))
 		},
 
 		participantName() {
 			let participantName = this.model.attributes.name
 
-			// "Guest" placeholder is not shown until the initial connection for
-			// consistency with regular users.
-			if (!this.model.attributes.userId && this.model.attributes.connectionState !== ConnectionState.NEW) {
-				participantName = participantName || t('spreed', 'Guest')
+			if (!this.model.attributes.userId) {
+				participantName = this.$store.getters.getGuestName(
+					this.$store.getters.getToken(),
+					this.sessionHash,
+				)
 			}
 
 			return participantName
