@@ -162,6 +162,12 @@ export default {
 				token: this.token,
 				isReplyable: false,
 			})
+
+			if (this.$store.getters.getActorType() === 'guests') {
+				// Strip off "guests/" from the sessionHash
+				message.actorId = this.$store.getters.getActorId().substring(6)
+			}
+
 			/**
 			 * If the current message is a quote-reply messag, add the parent key to the
 			 * temporary message object.
