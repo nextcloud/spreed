@@ -88,6 +88,7 @@ import {
 	searchPossibleConversations,
 } from '../../services/conversationsService'
 import { CONVERSATION } from '../../constants'
+import { loadState } from '@nextcloud/initial-state'
 import NewGroupConversation from './NewGroupConversation/NewGroupConversation'
 
 export default {
@@ -112,7 +113,7 @@ export default {
 			searchResultsGroups: [],
 			searchResultsCircles: [],
 			contactsLoading: false,
-			isCirclesEnabled: true, // FIXME
+			isCirclesEnabled: loadState('talk', 'circles_enabled'),
 		}
 	},
 
