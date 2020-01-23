@@ -25,6 +25,7 @@
 		name-key="label"
 		:members="autoCompleteMentionCandidates"
 		:filter-match="atFilter"
+		tab-select="true"
 		@at="handleAtEvent">
 		<template v-slot:item="scope">
 			<Avatar v-if="isMentionToAll(scope.item.id)"
