@@ -146,7 +146,7 @@ export default {
 			return 'icon-contacts'
 		},
 		callIconClass() {
-			if (this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
+			if (this.isSearched || this.participant.inCall === PARTICIPANT.CALL_FLAG.DISCONNECTED) {
 				return ''
 			}
 			const hasVideo = this.participant.inCall & PARTICIPANT.CALL_FLAG.WITH_VIDEO
