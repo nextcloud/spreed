@@ -24,6 +24,7 @@ OC.L10N.register(
     "- With projects you can create quick links between conversations, files and other items" : "- Met projecten kun je snel links creëren tussen gesprekken, bestanden en andere objecten",
     "New in Talk 7" : "Nieuw in Talk 7",
     "- You can now mention guests in the chat" : "- Je kunt nu gasten waarschuwen in de chat met een mention",
+    "New in Talk 8" : "Nieuw in Talk 8",
     "There are currently no commands available." : "Er zijn nu geen commando's beschikbaar.",
     "The command does not exist" : "Het commando bestaat niet",
     "An error occurred while running the command. Please ask an administrator to check the logs." : "Er trad een fout op bij het uitvoeren van het commando. Vraag een beheerder de logs te controleren.",
