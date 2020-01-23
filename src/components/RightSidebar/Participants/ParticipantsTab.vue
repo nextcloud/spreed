@@ -81,7 +81,7 @@ import ParticipantsList from './ParticipantsList/ParticipantsList'
 import SearchBox from '../../LeftSidebar/SearchBox/SearchBox'
 import debounce from 'debounce'
 import { EventBus } from '../../../services/EventBus'
-import { CONVERSATION, WEBINAR } from '../../../constants'
+import { CONVERSATION, PARTICIPANT, WEBINAR } from '../../../constants'
 import { searchPossibleConversations } from '../../../services/conversationsService'
 import {
 	addParticipant,
@@ -89,6 +89,8 @@ import {
 } from '../../../services/participantsService'
 import isInLobby from '../../../mixins/isInLobby'
 import { loadState } from '@nextcloud/initial-state'
+import SHA1 from 'crypto-js/sha1'
+import Hex from 'crypto-js/enc-hex'
 
 export default {
 	name: 'ParticipantsTab',
@@ -315,6 +317,14 @@ export default {
 						token: token,
 						participant,
 					})
+					if (participant.participantType === PARTICIPANT.TYPE.GUEST
+						|| participant.participantType === PARTICIPANT.TYPE.GUEST_MODERATOR) {
+						this.$store.dispatch('forceGuestName', {
+							token: token,
+							actorId: Hex.stringify(SHA1(participant.sessionId)),
+							actorDisplayName: participant.displayName,
+						})
+					}
 				})
 				this.participantsInitialised = true
 			} catch (exception) {
