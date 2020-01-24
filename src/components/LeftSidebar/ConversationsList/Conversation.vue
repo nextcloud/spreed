@@ -86,7 +86,8 @@
 				{{ t('spreed', 'Leave conversation') }}
 			</ActionButton>
 			<ActionButton v-if="canDeleteConversation"
-				icon="icon-delete"
+				icon="icon-delete-critical"
+				class="critical"
 				@click.prevent.exact="deleteConversation">
 				{{ t('spreed', 'Delete conversation') }}
 			</ActionButton>
@@ -263,13 +264,28 @@ export default {
 		 * Deletes the conversation.
 		 */
 		async deleteConversation() {
-			try {
-				await deleteConversation(this.item.token)
-				// If successful, deletes the conversation from the store
-				this.$store.dispatch('deleteConversation', this.item)
-			} catch (error) {
-				console.debug(`error while deleting conversation ${error}`)
-			}
+			OC.dialogs.confirm(
+				t('spreed', 'Do you really want to delete "{displayName}"?', this.item),
+				t('spreed', 'Delete conversation'),
+				async function(decision) {
+					if (!decision) {
+						return
+					}
+
+					if (this.item.token === this.$store.getters.getToken()) {
+						this.$router.push('/apps/spreed')
+						this.$store.dispatch('updateToken', '')
+					}
+
+					try {
+						await deleteConversation(this.item.token)
+						// If successful, deletes the conversation from the store
+						this.$store.dispatch('deleteConversation', this.item)
+					} catch (error) {
+						console.debug(`error while deleting conversation ${error}`)
+					}
+				}.bind(this)
+			)
 		},
 		/**
 		 * Deletes the current user from the conversation.
@@ -329,6 +345,12 @@ export default {
 .has-unread-messages {
 	::v-deep .acli__content__line-one__title {
 		font-weight: bold;
+	}
+}
+
+.critical {
+	::v-deep .action-button__text {
+		color: var(--color-error) !important;
 	}
 }
 

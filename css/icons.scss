@@ -70,6 +70,14 @@
 		/* Show favorite icon in yellow instead of default black. */
 		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
 	}
+
+	.icon-delete-critical {
+		@include icon-color('delete', 'actions', $color-error, 1, true);
+		&:hover,
+		&:focus {
+			filter: initial;
+		}
+	}
 }
 
 // The atwho panel is a direct child of the body, so it is not affected by
