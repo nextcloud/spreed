@@ -131,6 +131,7 @@ OC.L10N.register(
     "Add participants to the conversation" : "Dodaj udeležence pogovora",
     "Participants" : "Udeleženci",
     "Add groups" : "Dodaj skupine",
+    "Add circles" : "Dodaj kroge",
     "Rename conversation" : "Preimenuj pogovor",
     "Guests" : "Gosti",
     "Share link" : "Povezava za souporabo",
