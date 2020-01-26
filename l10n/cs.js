@@ -198,6 +198,7 @@ OC.L10N.register(
     "Add to favorites" : "Přidat do oblíbených",
     "You: {lastMessage}" : "Vy: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "Opravdu chcete smazat „{displayName}“?",
     "You need to promote a new moderator before you can leave the conversation." : "Než budete moci konverzaci opustit, je třeba předat někomu roli moderátora.",
     "No matches" : "Žádné výsledky",
     "Conversations" : "Konverzace",

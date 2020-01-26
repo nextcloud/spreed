@@ -198,6 +198,7 @@ OC.L10N.register(
     "Add to favorites" : "Dodaj do ulubionych",
     "You: {lastMessage}" : "Ty: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "Czy na pewno chcesz usunąć \"{displayName}\"?",
     "You need to promote a new moderator before you can leave the conversation." : "Zanim opuścisz rozmowę, musisz promować nowego moderatora.",
     "No matches" : "Nie pasuje",
     "Conversations" : "Rozmowy",
