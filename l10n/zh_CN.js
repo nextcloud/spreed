@@ -198,6 +198,7 @@ OC.L10N.register(
     "Add to favorites" : "添加到收藏",
     "You: {lastMessage}" : "您：{lastMessage}",
     "{actor}: {lastMessage}" : "{actor}：{lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "你是否真的要删除“{displayName}”？",
     "You need to promote a new moderator before you can leave the conversation." : "在您离开会话之前您需要推举一位新的主持人。",
     "No matches" : "无匹配项",
     "Conversations" : "会话",
