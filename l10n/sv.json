@@ -195,6 +195,7 @@
     "Add to favorites" : "Lägg till som favorit",
     "You: {lastMessage}" : "Du: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "Vill du verkligen radera \"{displayName}\"?",
     "You need to promote a new moderator before you can leave the conversation." : "Du måste tilldela en ny moderator innan du kan lämna konversationen.",
     "No matches" : "Inga träffar",
     "Conversations" : "Konversationer",
