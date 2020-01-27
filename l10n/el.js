@@ -198,6 +198,7 @@ OC.L10N.register(
     "Add to favorites" : "Προσθήκη στα αγαπημένα ",
     "You: {lastMessage}" : "Εσείς: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "Θέλετε σίγουρα να διαγράψετε τον  \"{displayName}\"?",
     "You need to promote a new moderator before you can leave the conversation." : "Πρέπει να προάγεται νέο συντονιστή πρίν αποχωρήσετε από την συνομιλία.",
     "No matches" : "Καμιά αντιστοιχία",
     "Conversations" : "Συζητήσεις",
