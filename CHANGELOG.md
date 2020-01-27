@@ -1,6 +1,33 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.1 – 2020-01-27
+### Added
+- Add details to "New in Talk 8" list
+  [#2812](https://github.com/nextcloud/spreed/pull/2812)
+- Allow to "right click" > "Copy link address" on the conversations list again
+  [#2832](https://github.com/nextcloud/spreed/pull/2832)
+- Add an indicator to the participant list if a user is in the call
+  [#2840](https://github.com/nextcloud/spreed/pull/2840)
+
+### Changed
+- Require confirmation before deleting a conversation
+  [#2843](https://github.com/nextcloud/spreed/pull/2843)
+
+### Fixed
+- Re-add missing shortcuts for turning on/off audio (m) and video (v)
+  [#2828](https://github.com/nextcloud/spreed/pull/2828)
+- Fix visiting index.php/ links when rewrite is enabled
+  [#2833](https://github.com/nextcloud/spreed/pull/2833)
+- Adding a circle does not correctly add all accepted members
+  [#2834](https://github.com/nextcloud/spreed/pull/2834)
+- Correctly handle guest names in chats and calls when they are changed
+  [#2849](https://github.com/nextcloud/spreed/pull/2849)
+- Contacts menu not redirecting to one-to-one conversations on "Talk to …"
+  [#2809](https://github.com/nextcloud/spreed/pull/2809)
+- Increase tolerence for automatically show new messages and scroll to bottom
+  [#2821](https://github.com/nextcloud/spreed/pull/2821)
+
 ## 8.0.0 – 2020-01-17
 ### Added
 - Recreation of the frontend in Vue.JS
