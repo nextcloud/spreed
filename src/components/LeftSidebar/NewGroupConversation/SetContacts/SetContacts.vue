@@ -29,8 +29,10 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<template v-if="isSearching">
-			<Caption
+		<template>
+			<Caption v-if="contactsLoading"
+				:title="t('spreed', 'Loading contacts')" />
+			<Caption v-if="!contactsLoading"
 				:title="t('spreed', 'Select participants')" />
 			<ParticipantsList
 				:add-on-click="false"
@@ -39,12 +41,6 @@
 				:no-results="noResults"
 				:items="searchResults"
 				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
-		</template>
-		<template v-if="!isSearching">
-			<div class="icon-contacts-dark set-contacts__icon" />
-			<p class="set-contacts__hint">
-				{{ t('spreed', 'Search participants') }}
-			</p>
 		</template>
 	</div>
 </template>
@@ -73,20 +69,20 @@ export default {
 		return {
 			searchText: '',
 			searchResults: [],
-			contactsLoading: false,
+			// The loading state is true when the component is initialised as we perform a searc for 'contacts'
+			// with an empty screen as search text.
+			contactsLoading: true,
 			noResults: false,
 		}
 	},
 
-	computed: {
-		isSearching() {
-			return this.searchText !== ''
-		},
-	},
-
-	mounted() {
+	async mounted() {
 		// Focus the input field of the current component.
 		this.$refs.setContacts.focus()
+		// Perform a search with an empty string
+		await this.fetchSearchResults()
+
+		this.contactsLoading = false
 	},
 
 	methods: {
@@ -98,9 +94,7 @@ export default {
 		},
 
 		debounceFetchSearchResults: debounce(function() {
-			if (this.isSearching) {
-				this.fetchSearchResults()
-			}
+			this.fetchSearchResults()
 		}, 250),
 
 		async fetchSearchResults() {
