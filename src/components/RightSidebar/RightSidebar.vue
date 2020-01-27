@@ -394,11 +394,23 @@ export default {
 			this.isEditingPassword = false
 		},
 		async handleChooseUserName() {
+			const previousName = this.$store.getters.getDisplayName()
 			try {
-				await setGuestUserName(this.token, this.guestUserName)
 				this.$store.dispatch('setDisplayName', this.guestUserName)
+				this.$store.dispatch('forceGuestName', {
+					token: this.token,
+					actorId: this.$store.getters.getActorId().substring(6),
+					actorDisplayName: this.guestUserName,
+				})
+				await setGuestUserName(this.token, this.guestUserName)
 				this.isEditingUsername = false
 			} catch (exception) {
+				this.$store.dispatch('setDisplayName', previousName)
+				this.$store.dispatch('forceGuestName', {
+					token: this.token,
+					actorId: this.$store.getters.getActorId().substring(6),
+					actorDisplayName: previousName,
+				})
 				console.debug(exception)
 			}
 		},

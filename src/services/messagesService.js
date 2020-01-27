@@ -56,8 +56,8 @@ const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
  * @param {string} message The message object;
  * @param {Number} parent The id of the message to be replied to.
  */
-const postNewMessage = async function({ token, message, parent }) {
-	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName: '', replyTo: parent })
+const postNewMessage = async function({ token, message, actorDisplayName, parent }) {
+	const response = await axios.post(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, { message, actorDisplayName, replyTo: parent })
 	return response
 }
 
