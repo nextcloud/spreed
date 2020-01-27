@@ -113,8 +113,8 @@ export default {
 		actorDisplayName() {
 			const displayName = this.messages[0].actorDisplayName.trim()
 
-			if (displayName === '' && this.actorType === 'guests') {
-				return t('spreed', 'Guest')
+			if (this.actorType === 'guests') {
+				return this.$store.getters.getGuestName(this.token, this.actorId)
 			}
 
 			if (displayName === '') {
