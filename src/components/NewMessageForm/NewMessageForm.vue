@@ -220,6 +220,7 @@ export default {
 				const temporaryMessage = this.createTemporaryMessage()
 				this.$store.dispatch('addTemporaryMessage', temporaryMessage)
 				this.text = ''
+				this.parsedText = ''
 				// Scrolls the message list to the last added message
 				this.$nextTick(function() {
 					document.querySelector('.scroller').scrollTop = document.querySelector('.scroller').scrollHeight
