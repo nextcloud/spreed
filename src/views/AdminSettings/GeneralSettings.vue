@@ -39,6 +39,18 @@
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
 
+		<p>
+			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
+			<Multiselect id="default_group_notification"
+				v-model="defaultGroupNotification"
+				:options="defaultGroupNotificationOptions"
+				:placeholder="t('spreed', 'Default group notification for new groups')"
+				label="label"
+				track-by="value"
+				:disabled="loading || loadingStartCalls"
+				@input="saveDefaultGroupNotification" />
+		</p>
+
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
 		<p>
@@ -73,6 +85,12 @@ const startCallOptions = [
 	{ value: 1, label: t('spreed', 'Users and moderators') },
 	{ value: 2, label: t('spreed', 'Moderators only') },
 ]
+
+const defaultGroupNotificationOptions = [
+	{ value: 0, label: t('spreed', 'All messages') },
+	{ value: 1, label: t('spreed', '@-mentions only') },
+	{ value: 2, label: t('spreed', 'Off') },
+]
 export default {
 	name: 'GeneralSettings',
 
@@ -88,6 +106,9 @@ export default {
 
 			startCallOptions,
 			startCalls: startCallOptions[0],
+
+			defaultGroupNotificationOptions, 
+			defaultGroupNotification: defaultGroupNotificationOptions[0],
 
 			conversationsFiles: true,
 			conversationsFilesPublicShares: true,
@@ -107,6 +128,15 @@ export default {
 			this.loadingStartCalls = true
 
 			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
+				success: function() {
+					this.loadingStartCalls = false
+				}.bind(this),
+			})
+		},
+		saveDefaultGroupNotification() {
+			this.loadingStartCalls = true
+
+			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.startCalls.value, {
 				success: function() {
 					this.loadingStartCalls = false
 				}.bind(this),
