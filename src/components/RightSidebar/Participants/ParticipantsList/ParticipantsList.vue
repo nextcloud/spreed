@@ -22,13 +22,27 @@
 <template>
 	<div>
 		<ul v-if="(!loading || addOnClick) && !noResults"
-			:class="{'scrollable': scrollable }"
-			:style="{'height': height}">
+			:style="{'height': height}"
+			:class="{'scrollable': scrollable }">
 			<Participant
 				v-for="participant in participants"
 				:key="participant.userId"
 				:participant="participant"
 				@clickParticipant="handleClickParticipant" />
+			<!-- 'search for more' empty content to display at the end of the
+			participants list, this is useful in case the participants list is used
+			to display the results of a search. Upon clicking on it, an event is
+			emitted to the parent component in order to be able to focus on it's
+			input field -->
+			<li
+				v-if="displaySearchHint"
+				class="participants-list__hint"
+				@click="handleClickHint">
+				<div class="icon-contacts-dark set-contacts__icon" />
+				<p>
+					{{ t('spreed', 'Search for more contacts') }}
+				</p>
+			</li>
 		</ul>
 		<template v-if="loading">
 			<template v-if="addOnClick">
@@ -106,6 +120,13 @@ export default {
 			type: Boolean,
 			default: false,
 		},
+		/**
+		 * Display 'search for more' empty content at the end of the list.
+		 */
+		displaySearchHint: {
+			type: Boolean,
+			default: false,
+		},
 	},
 
 	data() {
@@ -180,6 +201,10 @@ export default {
 			}
 
 		},
+		handleClickHint() {
+			this.$emit('clickSearchHint')
+		}
+
 	},
 }
 </script>
@@ -197,6 +222,14 @@ export default {
 	&__warning {
 		margin-top: 20px;
 		text-align: center;
+	}
+	&__hint {
+		margin: 20px 0;
+		cursor: pointer;
+		p {
+			margin-top: 20px;
+			text-align: center;
+		}
 	}
 }
 

@@ -36,10 +36,11 @@
 				:title="t('spreed', 'Select participants')" />
 			<ParticipantsList
 				:add-on-click="false"
-				height="250px"
+				height="200px"
 				:loading="contactsLoading"
 				:no-results="noResults"
 				:items="searchResults"
+				:display-search-hint="!contactsLoading"
 				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 		</template>
 	</div>
@@ -69,7 +70,7 @@ export default {
 		return {
 			searchText: '',
 			searchResults: [],
-			// The loading state is true when the component is initialised as we perform a searc for 'contacts'
+			// The loading state is true when the component is initialised as we perform a search for 'contacts'
 			// with an empty screen as search text.
 			contactsLoading: true,
 			noResults: false,
@@ -81,7 +82,7 @@ export default {
 		this.$refs.setContacts.focus()
 		// Perform a search with an empty string
 		await this.fetchSearchResults()
-
+		// Once the contacts are fetched, remove the spinner.
 		this.contactsLoading = false
 	},
 
