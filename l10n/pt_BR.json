@@ -196,6 +196,7 @@
     "Add to favorites" : "Adicionar aos favoritos",
     "You: {lastMessage}" : "Você: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "Quer realmente excluir \"{displayName}\"?",
     "You need to promote a new moderator before you can leave the conversation." : "Você precisa promover um novo moderador antes de sair da conversa.",
     "No matches" : "Sem correspondência",
     "Conversations" : "Conversas",
