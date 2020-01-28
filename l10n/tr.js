@@ -198,6 +198,7 @@ OC.L10N.register(
     "Add to favorites" : "Sık kullanılanlara ekle",
     "You: {lastMessage}" : "Siz: {lastMessage}",
     "{actor}: {lastMessage}" : "{actor}: {lastMessage}",
+    "Do you really want to delete \"{displayName}\"?" : "\"{displayName}\" ögesini silmek istediğinize emin misiniz?",
     "You need to promote a new moderator before you can leave the conversation." : "Görüşmeden ayrılmadan önce yeni bir sorumlu atamalısınız.",
     "No matches" : "Eşleşme yok",
     "Conversations" : "Görüşmeler",
