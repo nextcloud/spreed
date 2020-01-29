@@ -248,15 +248,15 @@ class RoomController extends AEnvironmentAwareController {
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
+			} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
-
-				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
-					$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
+				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_DEFAULT);
+				if ($adminSetting === Participant::NOTIFY_DEFAULT) {
+					$roomData['notificationLevel'] = Participant::NOTIFY_MENTION;
 				} else {
-					$roomData['notificationLevel'] = (int) $this->config->getAppValue('spreed', 'default_group_notification', 1);
+					$roomData['notificationLevel'] = $adminSetting;
 				}
-
-				//$roomData['notificationLevel'] = $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
 			}
 		}
 
