@@ -64,5 +64,7 @@ export default {
 .conversation-name {
 	width: 100%;
 	font-size: 16px;
+	line-height: 34px;
+
 }
 </style>
