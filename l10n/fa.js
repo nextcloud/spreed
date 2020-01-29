@@ -117,6 +117,7 @@ OC.L10N.register(
     "Save changes" : "ذخیره تغییرات",
     "Name" : "نام",
     "Saved" : "ذخیره شد",
+    "Password required" : "رمز عبور لازم است",
     "Password" : "گذرواژه",
     "Cancel" : "لغو",
     "The password is wrong. Try again." : "رمزعبور اشتباه می باشد. دوباره امتحان کنید.",
