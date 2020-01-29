@@ -107,8 +107,8 @@ export default {
 			startCallOptions,
 			startCalls: startCallOptions[0],
 
-			defaultGroupNotificationOptions, 
-			defaultGroupNotification: defaultGroupNotificationOptions[0],
+			defaultGroupNotificationOptions,
+			defaultGroupNotification: defaultGroupNotificationOptions[1],
 
 			conversationsFiles: true,
 			conversationsFilesPublicShares: true,
