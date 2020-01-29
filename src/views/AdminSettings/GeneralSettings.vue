@@ -136,7 +136,7 @@ export default {
 		saveDefaultGroupNotification() {
 			this.loadingStartCalls = true
 
-			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.startCalls.value, {
+			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.defaultGroupNotification.value, {
 				success: function() {
 					this.loadingStartCalls = false
 				}.bind(this),
