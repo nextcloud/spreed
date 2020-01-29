@@ -79,6 +79,7 @@
 
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import { loadState } from '@nextcloud/initial-state'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
@@ -117,10 +118,10 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.startCalls = startCallOptions[parseInt(OCP.InitialState.loadState('talk', 'start_calls'))]
-		this.conversationsFiles = parseInt(OCP.InitialState.loadState('talk', 'conversations_files')) === 1
-		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(OCP.InitialState.loadState('talk', 'default_group_notification'))]
-		this.conversationsFilesPublicShares = parseInt(OCP.InitialState.loadState('talk', 'conversations_files_public_shares')) === 1
+		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
+		this.conversationsFiles = parseInt(loadState('talk', 'conversations_files')) === 1
+		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('talk', 'default_group_notification'))]
+		this.conversationsFilesPublicShares = parseInt(loadState('talk', 'conversations_files_public_shares')) === 1
 		this.loading = false
 	},
 
