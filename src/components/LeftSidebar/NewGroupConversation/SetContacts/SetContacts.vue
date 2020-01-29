@@ -21,14 +21,17 @@
 
 <template>
 	<div class="set-contacts">
-		<input
-			ref="setContacts"
-			v-model="searchText"
-			v-observe-visibility="visibilityChanged"
-			class="set-contacts__input"
-			type="text"
-			:placeholder="t('spreed', 'Search participants')"
-			@input="handleInput">
+		<span>
+			<div class="icon-search" />
+			<input
+				ref="setContacts"
+				v-model="searchText"
+				v-observe-visibility="visibilityChanged"
+				class="set-contacts__input"
+				type="text"
+				:placeholder="t('spreed', 'Search participants')"
+				@input="handleInput">
+		</span>
 		<template>
 			<Caption v-if="contactsLoading"
 				:title="t('spreed', 'Loading contacts')" />
@@ -135,6 +138,7 @@ export default {
 	&__input {
 		width: 100%;
 		font-size: 16px;
+		padding-left: 28px;
 	}
 	&__icon {
 		margin-top: 40px;
@@ -145,4 +149,9 @@ export default {
 	}
 }
 
+.icon-search {
+	position: absolute;
+	top: 12px;
+    left: 8px;
+}
 </style>
