@@ -41,7 +41,8 @@
 				:no-results="noResults"
 				:items="searchResults"
 				:display-search-hint="!contactsLoading"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
+				@updateSelectedParticipants="handleUpdateSelectedParticipants"
+				@clickSearchHint="focusInput" />
 		</template>
 	</div>
 </template>
@@ -79,7 +80,7 @@ export default {
 
 	async mounted() {
 		// Focus the input field of the current component.
-		this.$refs.setContacts.focus()
+		this.focusInput()
 		// Perform a search with an empty string
 		await this.fetchSearchResults()
 		// Once the contacts are fetched, remove the spinner.
@@ -118,9 +119,12 @@ export default {
 		visibilityChanged(isVisible) {
 			if (isVisible) {
 				// Focus the input field of the current component.
-				this.$refs.setContacts.focus()
+				this.focusInput()
 			}
 		},
+		focusInput() {
+			this.$refs.setContacts.focus()
+		}
 	},
 }
 </script>
