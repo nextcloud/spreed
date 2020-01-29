@@ -119,6 +119,7 @@ export default {
 		this.loading = true
 		this.startCalls = startCallOptions[parseInt(OCP.InitialState.loadState('talk', 'start_calls'))]
 		this.conversationsFiles = parseInt(OCP.InitialState.loadState('talk', 'conversations_files')) === 1
+		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(OCP.InitialState.loadState('talk', 'default_group_notification'))]
 		this.conversationsFilesPublicShares = parseInt(OCP.InitialState.loadState('talk', 'conversations_files_public_shares')) === 1
 		this.loading = false
 	},
