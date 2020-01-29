@@ -21,17 +21,15 @@
 
 <template>
 	<div class="set-contacts">
-		<span>
-			<div class="icon-search" />
-			<input
-				ref="setContacts"
-				v-model="searchText"
-				v-observe-visibility="visibilityChanged"
-				class="set-contacts__input"
-				type="text"
-				:placeholder="t('spreed', 'Search participants')"
-				@input="handleInput">
-		</span>
+		<div class="icon-search" />
+		<input
+			ref="setContacts"
+			v-model="searchText"
+			v-observe-visibility="visibilityChanged"
+			class="set-contacts__input"
+			type="text"
+			:placeholder="t('spreed', 'Search participants')"
+			@input="handleInput">
 		<template>
 			<Caption v-if="contactsLoading"
 				:title="t('spreed', 'Loading contacts')" />
