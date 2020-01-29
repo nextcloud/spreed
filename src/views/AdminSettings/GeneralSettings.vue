@@ -39,6 +39,8 @@
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
 
+		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
+
 		<p>
 			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
 			<Multiselect id="default_group_notification"
@@ -176,6 +178,11 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+
+h3 {
+	margin-top: 24px;
+}
+
 p {
 	display: flex;
 	align-items: center;
