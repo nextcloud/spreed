@@ -21,6 +21,7 @@
 
 <template>
 	<div>
+		<!-- Tooltip -->
 		<Popover trigger="hover" placement="bottom">
 			<Actions slot="trigger">
 				<ActionButton
@@ -30,14 +31,18 @@
 			</Actions>
 			<p>{{ t('spreed','Create a new group conversation') }}</p>
 		</Popover>
+		<!-- New group form -->
 		<Modal
 			v-if="modal"
 			size="full"
 			@close="closeModal">
+			<!-- Wrapper for content & navigation -->
 			<div
 				class="new-group-conversation talk-modal">
+				<!-- Content -->
 				<div
 					class="new-group-conversation__content">
+					<!-- First page -->
 					<template
 						v-if="page === 0">
 						<SetConversationName
@@ -45,6 +50,7 @@
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
+						<!-- Password protection -->
 						<template v-if="isPublic">
 							<input
 								id="password-checkbox"
@@ -58,11 +64,13 @@
 								v-model="password" />
 						</template>
 					</template>
+					<!-- Second page -->
 					<template v-if="page === 1">
 						<SetContacts
 							:conversation-name="conversationName"
 							@updateSelectedParticipants="handleUpdateSelectedParticipants" />
 					</template>
+					<!-- Third page -->
 					<template v-if="page === 2">
 						<Confirmation
 							:conversation-name="conversationName"
@@ -73,8 +81,19 @@
 							:link-to-conversation="linkToConversation" />
 					</template>
 				</div>
+				<!-- Navigation: different buttons with different actions and
+				placement are rendered depending on the current page -->
 				<div
 					class="navigation">
+					<!-- First page -->
+					<button
+						v-if="page===0"
+						class="navigation__button-right primary"
+						:disabled="disabled"
+						@click="handleSetConversationName">
+						{{ t('spreed', 'Add participants') }}
+					</button>
+					<!-- Second page -->
 					<button
 						v-if="page===1"
 						class="navigation__button-left"
@@ -82,18 +101,12 @@
 						{{ t('spreed', 'Back') }}
 					</button>
 					<button
-						v-if="page===0"
-						class="navigation__button-right primary"
-						:disabled="disabled"
-						@click="handleClickForward">
-						{{ t('spreed', 'Add participants') }}
-					</button>
-					<button
 						v-if="page===1"
 						class="navigation__button-right primary"
 						@click="handleCreateConversation">
 						{{ t('spreed', 'Create conversation') }}
 					</button>
+					<!-- Third page -->
 					<button
 						v-if="page===2 && (error || isPublic)"
 						class="navigation__button-right primary"
@@ -158,14 +171,17 @@ export default {
 	},
 
 	computed: {
+		// Trims whitespaces from the input string
 		conversationName() {
 			return this.conversationNameInput.trim()
 		},
+		// Generates the link to the current conversation
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
 			} else return ''
 		},
+		// Controls the disabled/enabled state of the first page's button.
 		disabled() {
 			return this.conversationName === '' || (this.passwordProtect && this.password === '')
 		},
@@ -175,7 +191,9 @@ export default {
 		showModal() {
 			this.modal = true
 		},
-		// Resets to the base state of the component
+		/** Reinitialise the component to it's initial state. This is necessary
+		 * because once the component is mounted it's data would persist even if
+		 * the modal closes */
 		closeModal() {
 			this.modal = false
 			this.page = 0
@@ -188,30 +206,22 @@ export default {
 			this.error = false
 			this.password = ''
 		},
-		handleSetConversationName(event) {
+		/** Switch to page 2 */
+		handleSetConversationName() {
 			this.page = 1
 		},
-
-		handleSetConversationType(event) {
-			this.isPublic = event
-		},
-
-		handleClickForward() {
-			if (this.page === 0) {
-				if (this.conversationName !== '') {
-					this.page = 1
-				}
-			}
-		},
+		/** Switch to page 1 from page 2 */
 		handleClickBack() {
 			this.page = 0
 		},
-
-		handleUpdateSelectedParticipants(e) {
-			console.debug(e)
-			this.selectedParticipants = e
+		/** Updates the selected participants array
+		 * @param {array} participants the participants array
+		 */
+		handleUpdateSelectedParticipants(participants) {
+			this.selectedParticipants = participants
 		},
-
+		/** Handles the creation of the group conversation, adds the seleced
+		 * participants to it and routes to it */
 		async handleCreateConversation() {
 			this.page = 2
 			if (this.isPublic) {
@@ -257,14 +267,16 @@ export default {
 				this.closeModal()
 			}
 		},
-
+		/** Creates a new private conversation, adds it to the store and sets
+		 * the local token value to the newly created conversation's token */
 		async createPrivateConversation() {
 			const response = await createPrivateConversation(this.conversationName)
 			const conversation = response.data.ocs.data
 			this.$store.dispatch('addConversation', conversation)
 			this.token = conversation.token
 		},
-
+		/** Creates a new public conversation, adds it to the store and sets
+		 * the local token value to the newly created conversation's token */
 		async createPublicConversation() {
 			const response = await createPublicConversation(this.conversationName)
 			const conversation = response.data.ocs.data

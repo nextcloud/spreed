@@ -35,6 +35,7 @@
 
 export default {
 	name: 'SetConversationType',
+	// The value of the checkbox
 	props: {
 		value: {
 			type: Boolean,
@@ -42,6 +43,9 @@ export default {
 		},
 	},
 	methods: {
+		/** Emits the input event with the checked bulean as a value
+		 * @param {object} event The checkbox click event object.
+		 */
 		handleInput(event) {
 			this.$emit('input', event.target.checked)
 		},
