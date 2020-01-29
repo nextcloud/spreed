@@ -90,9 +90,9 @@ const startCallOptions = [
 ]
 
 const defaultGroupNotificationOptions = [
-	{ value: 0, label: t('spreed', 'All messages') },
-	{ value: 1, label: t('spreed', '@-mentions only') },
-	{ value: 2, label: t('spreed', 'Off') },
+	{ value: 1, label: t('spreed', 'All messages') },
+	{ value: 2, label: t('spreed', '@-mentions only') },
+	{ value: 3, label: t('spreed', 'Off') },
 ]
 export default {
 	name: 'GeneralSettings',
@@ -122,7 +122,7 @@ export default {
 		this.loading = true
 		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
 		this.conversationsFiles = parseInt(loadState('talk', 'conversations_files')) === 1
-		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('talk', 'default_group_notification'))]
+		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('talk', 'default_group_notification')) - 1]
 		this.conversationsFilesPublicShares = parseInt(loadState('talk', 'conversations_files_public_shares')) === 1
 		this.loading = false
 	},
