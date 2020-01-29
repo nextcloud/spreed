@@ -21,6 +21,7 @@
 
 <template>
 	<div class="set-contacts">
+		<!-- Search -->
 		<div class="icon-search" />
 		<input
 			ref="setContacts"
@@ -30,21 +31,21 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<template>
-			<Caption v-if="contactsLoading"
-				:title="t('spreed', 'Loading contacts')" />
-			<Caption v-if="!contactsLoading"
-				:title="t('spreed', 'Select participants')" />
-			<ParticipantsList
-				:add-on-click="false"
-				height="200px"
-				:loading="contactsLoading"
-				:no-results="noResults"
-				:items="searchResults"
-				:display-search-hint="!contactsLoading"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants"
-				@clickSearchHint="focusInput" />
-		</template>
+		<!-- Loading state -->
+		<Caption v-if="contactsLoading"
+			:title="t('spreed', 'Loading contacts')" />
+		<!-- List of possilbe participants -->
+		<Caption v-if="!contactsLoading"
+			:title="t('spreed', 'Select participants')" />
+		<ParticipantsList
+			:add-on-click="false"
+			height="200px"
+			:loading="contactsLoading"
+			:no-results="noResults"
+			:items="searchResults"
+			:display-search-hint="!contactsLoading"
+			@updateSelectedParticipants="handleUpdateSelectedParticipants"
+			@clickSearchHint="focusInput" />
 	</div>
 </template>
 
@@ -113,7 +114,10 @@ export default {
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
-		// Forward the event from the children to the parent
+		/**
+		 * Forward the event from the children to the parent with thenew selected participants
+		 * @param {array} selectedParticipants the selected participants array
+		 */
 		handleUpdateSelectedParticipants(selectedParticipants) {
 			this.$emit('updateSelectedParticipants', selectedParticipants)
 		},
@@ -125,7 +129,7 @@ export default {
 		},
 		focusInput() {
 			this.$refs.setContacts.focus()
-		}
+		},
 	},
 }
 </script>
@@ -137,6 +141,7 @@ export default {
 		width: 100%;
 		font-size: 16px;
 		padding-left: 28px;
+		line-height: 34px;
 	}
 	&__icon {
 		margin-top: 40px;
