@@ -26,6 +26,7 @@
 		:members="autoCompleteMentionCandidates"
 		:filter-match="atFilter"
 		:tab-select="true"
+		:allow-spaces="false"
 		@at="handleAtEvent">
 		<template v-slot:item="scope">
 			<Avatar v-if="isMentionToAll(scope.item.id)"
@@ -73,6 +74,7 @@ import { EventBus } from '../../../services/EventBus'
 import { searchPossibleMentions } from '../../../services/mentionsService'
 import Avatar from '@nextcloud/vue/dist/Components/Avatar'
 import Mention from '../../MessagesList/MessagesGroup/Message/MessagePart/Mention'
+import debounce from 'debounce'
 
 /**
  * Checks whether the given style sheet is the default style sheet from the
@@ -279,7 +281,11 @@ export default {
 		 *
 		 * @param {String} chunk the matched text to look candidate mentions for.
 		 */
-		async handleAtEvent(chunk) {
+		handleAtEvent: debounce(function(chunk) {
+			this.queryPossibleMentions(chunk)
+		}, 400),
+
+		async queryPossibleMentions(chunk) {
 			const response = await searchPossibleMentions(this.token, chunk)
 			const possibleMentions = response.data.ocs.data
 
