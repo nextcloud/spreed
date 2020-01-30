@@ -33,13 +33,13 @@ Base endpoint is: `/ocs/v2.php/apps/spreed/api/v1`
 
     field | type | Description
     ------|------|------------
-    `newParticipant` | string | User, group or email to add
+    `newParticipant` | string | User, group, email or circle to add
     `source` | string | Source of the participant(s) as returned by the autocomplete suggestion endpoint (default is `users`)
 
 * Response:
     - Header:
         + `200 OK`
-        + `400 Bad Request` When the source type is unknown, currently `users`, `groups` and `emails` are supported
+        + `400 Bad Request` When the source type is unknown, currently `users`, `groups`, `emails` are supported. `circles` are supported with `circles-support` capability
         + `400 Bad Request` When the conversation is a one-to-one conversation
         + `403 Forbidden` When the current user is not a moderator or owner
         + `404 Not Found` When the conversation could not be found for the participant
