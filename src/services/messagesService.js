@@ -44,7 +44,7 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {int} lastKnownMessageId The id of the last message in the store.
  */
 const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + '&includeLastKnown=0' + `&lastKnownMessageId=${lastKnownMessageId}`, options)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + `&lastKnownMessageId=${lastKnownMessageId}` + '&includeLastKnown=0', options)
 	return response
 }
 
