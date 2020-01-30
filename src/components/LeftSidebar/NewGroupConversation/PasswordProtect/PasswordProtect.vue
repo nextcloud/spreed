@@ -23,7 +23,7 @@
 	<input
 		ref="password"
 		v-observe-visibility="visibilityChanged"
-		type="text"
+		type="password"
 		:value="value"
 		class="password-protect"
 		:placeholder="t('spreed', 'Choose a password')"
