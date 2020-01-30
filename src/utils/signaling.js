@@ -32,6 +32,8 @@
 
 import { fetchSignalingSettings } from '../services/signalingService'
 import { EventBus } from '../services/EventBus'
+import axios from '@nextcloud/axios'
+import { generateOcsUrl } from '@nextcloud/router'
 
 const Signaling = {
 	Base: {},
@@ -191,16 +193,10 @@ Signaling.Base.prototype.leaveCurrentCall = function() {
 
 Signaling.Base.prototype.joinRoom = function(token, password) {
 	return new Promise((resolve, reject) => {
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
-			type: 'POST',
-			beforeSend: function(request) {
-				request.setRequestHeader('Accept', 'application/json')
-			},
-			data: {
-				password: password,
-			},
-			success: function(result) {
+		axios.post(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active', {
+			password: password,
+		})
+			.then(function(result) {
 				console.log('Joined', result)
 				this.currentRoomToken = token
 				this._trigger('joinRoom', [token])
@@ -213,8 +209,8 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 					this.currentCallFlags = null
 				}
 				this._joinRoomSuccess(token, result.ocs.data.sessionId)
-			}.bind(this),
-			error: function(result) {
+			}.bind(this))
+			.catch(function(result) {
 				reject(result)
 
 				if (result.status === 403) {
@@ -240,8 +236,7 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 						$buttons.eq(1).text(t('core', 'Submit'))
 					})
 				}
-			}.bind(this),
-		})
+			}.bind(this))
 	})
 }
 
@@ -256,22 +251,18 @@ Signaling.Base.prototype.leaveRoom = function(token) {
 	this._doLeaveRoom(token)
 
 	return new Promise((resolve, reject) => {
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/room', 2) + token + '/participants/active',
-			method: 'DELETE',
-			async: false,
-			success: function() {
+		axios.delete(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active')
+			.then(function() {
 				this._leaveRoomSuccess(token)
 				resolve()
 				// We left the current room.
 				if (token === this.currentRoomToken) {
 					this.currentRoomToken = null
 				}
-			}.bind(this),
-			error: function() {
+			}.bind(this))
+			.catch(function() {
 				reject(new Error())
-			},
-		})
+			})
 	})
 }
 
@@ -289,28 +280,21 @@ Signaling.Base.prototype._joinCallSuccess = function(/* token */) {
 
 Signaling.Base.prototype.joinCall = function(token, flags) {
 	return new Promise((resolve, reject) => {
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-			type: 'POST',
-			data: {
-				flags: flags,
-			},
-			beforeSend: function(request) {
-				request.setRequestHeader('Accept', 'application/json')
-			},
-			success: function() {
+		axios.post(generateOcsUrl('apps/spreed/api/v1/call', 2) + token, {
+			flags: flags,
+		})
+			.then(function() {
 				this.currentCallToken = token
 				this.currentCallFlags = flags
 				this._trigger('joinCall', [token])
 				resolve()
 				this._joinCallSuccess(token)
-			}.bind(this),
-			error: function() {
+			}.bind(this))
+			.catch(function() {
 				reject(new Error())
 				// Room not found or maintenance mode
 				OC.redirect(OC.generateUrl('apps/spreed'))
-			},
-		})
+			})
 	})
 }
 
@@ -325,11 +309,8 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 			return
 		}
 
-		$.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/call', 2) + token,
-			method: 'DELETE',
-			async: false,
-			success: function() {
+		axios.delete(generateOcsUrl('apps/spreed/api/v1/call', 2) + token)
+			.then(function() {
 				this._trigger('leaveCall', [token, keepToken])
 				this._leaveCallSuccess(token)
 				resolve()
@@ -338,11 +319,10 @@ Signaling.Base.prototype.leaveCall = function(token, keepToken) {
 					this.currentCallToken = null
 					this.currentCallFlags = null
 				}
-			}.bind(this),
-			error: function() {
+			}.bind(this))
+			.catch(function() {
 				reject(new Error())
-			},
-		})
+			})
 	})
 }
 
@@ -415,22 +395,9 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 }
 
 Signaling.Internal.prototype._sendMessages = function(messages) {
-	const defer = $.Deferred()
-	$.ajax({
-		url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken,
-		type: 'POST',
-		data: { messages: JSON.stringify(messages) },
-		beforeSend: function(request) {
-			request.setRequestHeader('Accept', 'application/json')
-		},
-		success: function(result) {
-			defer.resolve(result)
-		},
-		error: function(xhr, textStatus, errorThrown) {
-			defer.reject(xhr, textStatus, errorThrown)
-		},
+	return axios.post(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken, {
+		messages: JSON.stringify(messages),
 	})
-	return defer
 }
 
 Signaling.Internal.prototype._joinRoomSuccess = function(token, sessionId) {
@@ -468,60 +435,52 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	}
 
 	// Connect to the messages endpoint and pull for new messages
-	this.pullMessagesRequest
-		= $.ajax({
-			url: OC.linkToOCS('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken,
-			type: 'GET',
-			dataType: 'json',
-			beforeSend: function(request) {
-				request.setRequestHeader('Accept', 'application/json')
-			},
-			success: function(result) {
-				this.pullMessagesFails = 0
-				$.each(result.ocs.data, function(id, message) {
-					this._trigger('onBeforeReceiveMessage', [message])
-					switch (message.type) {
-					case 'usersInRoom':
-						this._trigger('usersInRoom', [message.data])
-						this._trigger('participantListChanged')
-						break
-					case 'message':
-						if (typeof (message.data) === 'string') {
-							message.data = JSON.parse(message.data)
-						}
-						this._trigger('message', [message.data])
-						break
-					default:
-						console.log('Unknown Signaling Message')
-						break
+	this.pullMessagesRequest = axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken)
+		.then(function(result) {
+			this.pullMessagesFails = 0
+			$.each(result.ocs.data, function(id, message) {
+				this._trigger('onBeforeReceiveMessage', [message])
+				switch (message.type) {
+				case 'usersInRoom':
+					this._trigger('usersInRoom', [message.data])
+					this._trigger('participantListChanged')
+					break
+				case 'message':
+					if (typeof (message.data) === 'string') {
+						message.data = JSON.parse(message.data)
 					}
-					this._trigger('onAfterReceiveMessage', [message])
-				}.bind(this))
-				this._startPullingMessages()
-			}.bind(this),
-			error: function(jqXHR, textStatus/*, errorThrown */) {
-				if (jqXHR.status === 0 && textStatus === 'abort') {
-					// Request has been aborted. Ignore.
-				} else if (jqXHR.status === 404 || jqXHR.status === 403) {
-					console.log('Stop pulling messages because room does not exist or is not accessible')
-					this._trigger('pullMessagesStoppedOnFail')
-				} else if (this.currentRoomToken) {
-					if (this.pullMessagesFails >= 3) {
-						console.log('Stop pulling messages after repeated failures')
-
-						this._trigger('pullMessagesStoppedOnFail')
-
-						return
-					}
-
-					this.pullMessagesFails++
-					// Retry to pull messages after 5 seconds
-					window.setTimeout(function() {
-						this._startPullingMessages()
-					}.bind(this), 5000)
+					this._trigger('message', [message.data])
+					break
+				default:
+					console.log('Unknown Signaling Message')
+					break
 				}
-			}.bind(this),
-		})
+				this._trigger('onAfterReceiveMessage', [message])
+			}.bind(this))
+			this._startPullingMessages()
+		}.bind(this))
+		.catch(function(jqXHR, textStatus/*, errorThrown */) {
+			if (jqXHR.status === 0 && textStatus === 'abort') {
+				// Request has been aborted. Ignore.
+			} else if (jqXHR.status === 404 || jqXHR.status === 403) {
+				console.log('Stop pulling messages because room does not exist or is not accessible')
+				this._trigger('pullMessagesStoppedOnFail')
+			} else if (this.currentRoomToken) {
+				if (this.pullMessagesFails >= 3) {
+					console.log('Stop pulling messages after repeated failures')
+
+					this._trigger('pullMessagesStoppedOnFail')
+
+					return
+				}
+
+				this.pullMessagesFails++
+				// Retry to pull messages after 5 seconds
+				window.setTimeout(function() {
+					this._startPullingMessages()
+				}.bind(this), 5000)
+			}
+		}.bind(this))
 }
 
 /**
