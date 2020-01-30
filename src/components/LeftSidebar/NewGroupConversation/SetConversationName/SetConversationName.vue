@@ -28,7 +28,8 @@
 			:value="value"
 			class="conversation-name"
 			:placeholder="t('spreed', 'Conversation name')"
-			@input="handleInput">
+			@input="handleInput"
+			@keydown.enter="handleKeydown">
 	</div>
 </template>
 
@@ -52,6 +53,10 @@ export default {
 				// Focus the input field of the current component.
 				this.$refs.conversationName.focus()
 			}
+		},
+		// Forward the keydown event to the parent
+		handleKeydown() {
+			this.$emit('clickEnter')
 		},
 	},
 
