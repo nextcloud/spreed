@@ -181,7 +181,9 @@ export default {
 	},
 	watch: {
 		text(text) {
-			this.$emit('update:contentEditable', this.$refs.contentEditable.cloneNode(true))
+			this.$nextTick(() => {
+				this.$emit('update:contentEditable', this.$refs.contentEditable.cloneNode(true))
+			})
 
 			this.$emit('update:value', text)
 			this.$emit('input', text)
