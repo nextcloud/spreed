@@ -191,28 +191,14 @@ export default {
 		conversation() {
 			return this.$store.getters.conversations[this.token]
 		},
+
+		chatIdentifier() {
+			return this.token + ':' + this.isParticipant + ':' + this.isInLobby
+		},
 	},
 
 	watch: {
-		// Watchers for "token", "isParticipant" and "isInLobby" need to be
-		// separated and can not be unified in a boolean computed property (as
-		// for example that would not change when the token changes but the
-		// current participant is a participant in the old and the new
-		// conversation).
-		token: {
-			immediate: true,
-			handler() {
-				this.handleStartGettingMessagesPreconditions()
-			},
-		},
-
-		isParticipant: {
-			immediate: true,
-			handler() {
-				this.handleStartGettingMessagesPreconditions()
-			},
-		},
-		isInLobby: {
+		chatIdentifier: {
 			immediate: true,
 			handler() {
 				this.handleStartGettingMessagesPreconditions()
