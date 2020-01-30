@@ -201,7 +201,7 @@ OC.L10N.register(
     "Do you really want to delete \"{displayName}\"?" : "Θέλετε σίγουρα να διαγράψετε τον  \"{displayName}\"?",
     "You need to promote a new moderator before you can leave the conversation." : "Πρέπει να προάγεται νέο συντονιστή πρίν αποχωρήσετε από την συνομιλία.",
     "No matches" : "Καμιά αντιστοιχία",
-    "Conversations" : "Συζητήσεις",
+    "Conversations" : "Συνομιλίες",
     "Contacts" : "Επαφές",
     "Groups" : "Ομάδες",
     "Circles" : "Κύκλοι",
