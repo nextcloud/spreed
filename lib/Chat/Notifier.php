@@ -310,7 +310,7 @@ class Notifier {
 	 * @return bool
 	 */
 	private function shouldUserBeNotified($userId, IComment $comment): bool {
-		if ($userId === $comment->getActorId()) {
+		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
 		}
