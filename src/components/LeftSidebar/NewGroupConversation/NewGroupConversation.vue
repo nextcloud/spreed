@@ -46,7 +46,8 @@
 					<template
 						v-if="page === 0">
 						<SetConversationName
-							v-model="conversationNameInput" />
+							v-model="conversationNameInput"
+							@clickEnter="handleEnter" />
 						<SetConversationType
 							v-model="isPublic"
 							:conversation-name="conversationName" />
@@ -292,6 +293,13 @@ export default {
 			// Reinitialise the password value when unchecking the password-protect option.
 			if (this.passwordProtect === false) {
 				this.password = ''
+			}
+		},
+		/** Handles the press of the enter key */
+		handleEnter() {
+			if (!this.disabled) {
+				this.handleSetConversationName()
+				this.page = 1
 			}
 		},
 	},
