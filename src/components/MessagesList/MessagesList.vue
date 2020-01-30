@@ -180,12 +180,12 @@ export default {
 		 *          otherwise.
 		 */
 		isParticipant() {
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex === -1) {
+			if (!this.conversation) {
 				return false
 			}
 
-			return true
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			return participantIndex !== -1
 		},
 
 		conversation() {
