@@ -318,8 +318,11 @@ export default {
 						token: this.token,
 						id: this.conversation.lastReadMessage,
 					})
+
+					this.getMessages(true)
+				} else {
+					this.getMessages(false)
 				}
-				this.getMessages()
 			} else {
 				this.cancelLookForNewMessages()
 			}
@@ -328,10 +331,14 @@ export default {
 		/**
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
+		 * @param {boolean} loadOldMessages In case it is the first visit of this conversation, we need to load the history
 		 */
-		async getMessages() {
-			// Gets the history of the conversation.
-			await this.getOldMessages(true)
+		async getMessages(loadOldMessages) {
+			if (loadOldMessages) {
+				// Gets the history of the conversation.
+				await this.getOldMessages(true)
+			}
+
 			// Once the history is loaded, scroll to bottom
 			this.scrollToBottom()
 			// Once the history is received, startslooking for new messages.
