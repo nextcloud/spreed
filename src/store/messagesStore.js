@@ -24,6 +24,10 @@ import Vue from 'vue'
 const state = {
 	messages: {
 	},
+	firstKnown: {
+	},
+	lastKnown: {
+	},
 }
 
 const getters = {
@@ -63,6 +67,20 @@ const getters = {
 		}
 		return {}
 	},
+
+	getFirstKnownMessageId: (state) => (token) => {
+		if (state.firstKnown[token]) {
+			return state.firstKnown[token]
+		}
+		return null
+	},
+
+	getLastKnownMessageId: (state) => (token) => {
+		if (state.lastKnown[token]) {
+			return state.lastKnown[token]
+		}
+		return null
+	},
 }
 
 const mutations = {
@@ -99,6 +117,24 @@ const mutations = {
 	addTemporaryMessage(state, message) {
 		Vue.set(state.messages[message.token], message.id, message)
 	},
+
+	/**
+	 * @param {object} state current store state;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the first known chat message
+	 */
+	setFirstKnownMessageId(state, { token, id }) {
+		Vue.set(state.firstKnown, token, id)
+	},
+
+	/**
+	 * @param {object} state current store state;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the last known chat message
+	 */
+	setLastKnownMessageId(state, { token, id }) {
+		Vue.set(state.lastKnown, token, id)
+	},
 }
 
 const actions = {
@@ -133,13 +169,31 @@ const actions = {
 	/**
 	 * Add a temporary message generated in the client to
 	 * the store, these messages are deleted once the full
-	 * message object is recived from the server.
+	 * message object is received from the server.
 	 *
 	 * @param {object} context default store context;
 	 * @param {object} message the temporary message;
 	 */
 	addTemporaryMessage(context, message) {
 		context.commit('addTemporaryMessage', message)
+	},
+
+	/**
+	 * @param {object} context default store context;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the first known chat message
+	 */
+	setFirstKnownMessageId(context, { token, id }) {
+		context.commit('setFirstKnownMessageId', { token, id })
+	},
+
+	/**
+	 * @param {object} context default store context;
+	 * @param {string} token Token of the conversation
+	 * @param {string} id Id of the last known chat message
+	 */
+	setLastKnownMessageId(context, { token, id }) {
+		context.commit('setLastKnownMessageId', { token, id })
 	},
 }
 

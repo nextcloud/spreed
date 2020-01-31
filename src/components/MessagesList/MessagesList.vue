@@ -180,39 +180,25 @@ export default {
 		 *          otherwise.
 		 */
 		isParticipant() {
-			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
-			if (participantIndex === -1) {
+			if (!this.conversation) {
 				return false
 			}
 
-			return true
+			const participantIndex = this.$store.getters.getParticipantIndex(this.token, this.$store.getters.getParticipantIdentifier())
+			return participantIndex !== -1
 		},
 
 		conversation() {
 			return this.$store.getters.conversations[this.token]
 		},
+
+		chatIdentifier() {
+			return this.token + ':' + this.isParticipant + ':' + this.isInLobby
+		},
 	},
 
 	watch: {
-		// Watchers for "token", "isParticipant" and "isInLobby" need to be
-		// separated and can not be unified in a boolean computed property (as
-		// for example that would not change when the token changes but the
-		// current participant is a participant in the old and the new
-		// conversation).
-		token: {
-			immediate: true,
-			handler() {
-				this.handleStartGettingMessagesPreconditions()
-			},
-		},
-
-		isParticipant: {
-			immediate: true,
-			handler() {
-				this.handleStartGettingMessagesPreconditions()
-			},
-		},
-		isInLobby: {
+		chatIdentifier: {
 			immediate: true,
 			handler() {
 				this.handleStartGettingMessagesPreconditions()
@@ -323,7 +309,20 @@ export default {
 
 		handleStartGettingMessagesPreconditions() {
 			if (this.token && this.isParticipant && !this.isInLobby) {
-				this.getMessages()
+				if (this.$store.getters.getFirstKnownMessageId(this.token) === null) {
+					this.$store.dispatch('setFirstKnownMessageId', {
+						token: this.token,
+						id: this.conversation.lastReadMessage,
+					})
+					this.$store.dispatch('setLastKnownMessageId', {
+						token: this.token,
+						id: this.conversation.lastReadMessage,
+					})
+
+					this.getMessages(true)
+				} else {
+					this.getMessages(false)
+				}
 			} else {
 				this.cancelLookForNewMessages()
 			}
@@ -332,10 +331,14 @@ export default {
 		/**
 		 * Fetches the messages of a conversation given the conversation token. Triggers
 		 * a long-polling request for new messages.
+		 * @param {boolean} loadOldMessages In case it is the first visit of this conversation, we need to load the history
 		 */
-		async getMessages() {
-			// Gets the history of the conversation.
-			await this.getOldMessages()
+		async getMessages(loadOldMessages) {
+			if (loadOldMessages) {
+				// Gets the history of the conversation.
+				await this.getOldMessages(true)
+			}
+
 			// Once the history is loaded, scroll to bottom
 			this.scrollToBottom()
 			// Once the history is received, startslooking for new messages.
@@ -351,11 +354,9 @@ export default {
 
 		/**
 		 * Get messages history.
-		 * @param {int} lastKnownMessageId The id of the last known messages.
-		 * @param {int} includeLastKnown Include or exclude the last known message in the response.
-		 * (0 for exclude, 1 for include)
+		 * @param {boolean} includeLastKnown Include or exclude the last known message in the response
 		 */
-		async getOldMessages(lastKnownMessageId, includeLastKnown) {
+		async getOldMessages(includeLastKnown) {
 			/**
 			 * Clear previous requests if there's one pending
 			 */
@@ -367,7 +368,9 @@ export default {
 			this.cancelFetchMessages = cancel
 			// Make the request
 			try {
-				const messages = await request({ token: this.token, lastKnownMessageId, includeLastKnown })
+				const token = this.token
+				const lastKnownMessageId = this.$store.getters.getFirstKnownMessageId(token)
+				const messages = await request({ token, lastKnownMessageId, includeLastKnown: includeLastKnown ? '1' : '0' })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					if (message.actorType === 'guests') {
@@ -375,6 +378,13 @@ export default {
 					}
 					this.$store.dispatch('processMessage', message)
 				})
+
+				if (messages.headers['x-chat-last-given']) {
+					this.$store.dispatch('setFirstKnownMessageId', {
+						token: token,
+						id: messages.headers['x-chat-last-given'],
+					})
+				}
 			} catch (exception) {
 				if (Axios.isCancel(exception)) {
 					console.debug('The request has been canceled', exception)
@@ -393,10 +403,12 @@ export default {
 			// Assign the new cancel function to our data value
 			this.cancelLookForNewMessages = cancel
 			// Get the last message's id
-			const lastKnownMessageId = this.getLastKnownMessageId()
+			const token = this.token
+			const lastKnownMessageId = this.$store.getters.getLastKnownMessageId(token)
+
 			// Make the request
 			try {
-				const messages = await request({ token: this.token, lastKnownMessageId })
+				const messages = await request({ token, lastKnownMessageId })
 				// Process each messages and adds it to the store
 				messages.data.ocs.data.forEach(message => {
 					if (message.actorType === 'guests') {
@@ -404,6 +416,12 @@ export default {
 					}
 					this.$store.dispatch('processMessage', message)
 				})
+
+				this.$store.dispatch('setLastKnownMessageId', {
+					token: token,
+					id: messages.headers['x-chat-last-given'],
+				})
+
 				// Scroll to the last message if sticky
 				if (this.isSticky) {
 					this.scrollToBottom()
@@ -452,11 +470,10 @@ export default {
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 			} else if (scrollHeight > elementHeight && scrollTop < 800 && scrollTop <= this.previousScrollTopValue) {
-				const firstMessageId = this.getFirstKnownMessageId()
 				if (scrollTop === 0) {
 					this.displayMessagesLoader = true
 				}
-				await this.getOldMessages(firstMessageId)
+				await this.getOldMessages(false)
 				this.displayMessagesLoader = false
 				this.previousScrollTopValue = scrollTop
 			} else {
