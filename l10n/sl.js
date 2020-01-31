@@ -125,6 +125,7 @@ OC.L10N.register(
     "Yesterday" : "Včeraj",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
     "File to share" : "Datoteka z souporabo",
+    "Invalid path selected" : "Izbrana je neveljavna pot",
     "moderator" : "moderator",
     "guest" : "gost",
     "Demote from moderator" : "Ponižaj iz moderatorja",
