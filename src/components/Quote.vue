@@ -207,11 +207,10 @@ export default {
 
 .quote {
 	border-left: 4px solid var(--color-primary);
-	margin: 10px 0 10px 0;
-	padding: 0 0 0 10px;
+	margin: 4px 0 4px 8px;
+	padding-left: 8px;
 	display: flex;
 	max-width: $messages-list-max-width - $message-utils-width;
-	margin: 0;
 	&__main {
 		display: flex;
 		flex-direction: column;
@@ -221,8 +220,9 @@ export default {
 		}
 		&__text {
 			color: var(--color-text-light);
+			white-space: pre-wrap;
+			word-break: break-word;
 			& p {
-				max-width: 662px;
 				text-overflow: ellipsis;
 				overflow: hidden;
 			}
