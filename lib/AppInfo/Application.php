@@ -49,6 +49,7 @@ use OCA\Talk\PublicShareAuth\Listener as PublicShareAuthListener;
 use OCA\Talk\PublicShareAuth\TemplateLoader as PublicShareAuthTemplateLoader;
 use OCA\Talk\Room;
 use OCA\Talk\Settings\Personal;
+use OCA\Talk\Share\Listener as ShareListener;
 use OCA\Talk\Share\RoomShareProvider;
 use OCA\Talk\Signaling\Listener as SignalingListener;
 use OCP\AppFramework\App;
@@ -103,6 +104,7 @@ class Application extends App {
 		CollaboratorsListener::register($dispatcher);
 		ResourceListener::register($dispatcher);
 		ChangelogListener::register($dispatcher);
+		ShareListener::register($dispatcher);
 		Operation::register($dispatcher);
 
 		$dispatcher->addServiceListener(AddContentSecurityPolicyEvent::class, Listener\CSPListener::class);
