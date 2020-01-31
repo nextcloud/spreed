@@ -237,6 +237,7 @@ export default {
 	},
 
 	methods: {
+		// Used to allow selecting participants in a search.
 		handleClick() {
 			if (this.isSearched) {
 				this.$emit('clickParticipant', this.participant)
