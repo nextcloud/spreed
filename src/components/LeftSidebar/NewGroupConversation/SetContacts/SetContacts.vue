@@ -21,6 +21,8 @@
 
 <template>
 	<div class="set-contacts">
+		<!-- Search -->
+		<div class="icon-search" />
 		<input
 			ref="setContacts"
 			v-model="searchText"
@@ -29,23 +31,21 @@
 			type="text"
 			:placeholder="t('spreed', 'Search participants')"
 			@input="handleInput">
-		<template v-if="isSearching">
-			<Caption
-				:title="t('spreed', 'Select participants')" />
-			<ParticipantsList
-				:add-on-click="false"
-				height="250px"
-				:loading="contactsLoading"
-				:no-results="noResults"
-				:items="searchResults"
-				@updateSelectedParticipants="handleUpdateSelectedParticipants" />
-		</template>
-		<template v-if="!isSearching">
-			<div class="icon-contacts-dark set-contacts__icon" />
-			<p class="set-contacts__hint">
-				{{ t('spreed', 'Search participants') }}
-			</p>
-		</template>
+		<!-- Loading state -->
+		<Caption v-if="contactsLoading"
+			:title="t('spreed', 'Loading contacts')" />
+		<!-- List of possilbe participants -->
+		<Caption v-if="!contactsLoading"
+			:title="t('spreed', 'Select participants')" />
+		<ParticipantsList
+			:add-on-click="false"
+			height="200px"
+			:loading="contactsLoading"
+			:no-results="noResults"
+			:items="searchResults"
+			:display-search-hint="!contactsLoading"
+			@updateSelectedParticipants="handleUpdateSelectedParticipants"
+			@clickSearchHint="focusInput" />
 	</div>
 </template>
 
@@ -73,20 +73,20 @@ export default {
 		return {
 			searchText: '',
 			searchResults: [],
-			contactsLoading: false,
+			// The loading state is true when the component is initialised as we perform a search for 'contacts'
+			// with an empty screen as search text.
+			contactsLoading: true,
 			noResults: false,
 		}
 	},
 
-	computed: {
-		isSearching() {
-			return this.searchText !== ''
-		},
-	},
-
-	mounted() {
+	async mounted() {
 		// Focus the input field of the current component.
-		this.$refs.setContacts.focus()
+		this.focusInput()
+		// Perform a search with an empty string
+		await this.fetchSearchResults()
+		// Once the contacts are fetched, remove the spinner.
+		this.contactsLoading = false
 	},
 
 	methods: {
@@ -98,9 +98,7 @@ export default {
 		},
 
 		debounceFetchSearchResults: debounce(function() {
-			if (this.isSearching) {
-				this.fetchSearchResults()
-			}
+			this.fetchSearchResults()
 		}, 250),
 
 		async fetchSearchResults() {
@@ -116,15 +114,21 @@ export default {
 				OCP.Toast.error(t('spreed', 'An error occurred while performing the search'))
 			}
 		},
-		// Forward the event from the children to the parent
+		/**
+		 * Forward the event from the children to the parent with thenew selected participants
+		 * @param {array} selectedParticipants the selected participants array
+		 */
 		handleUpdateSelectedParticipants(selectedParticipants) {
 			this.$emit('updateSelectedParticipants', selectedParticipants)
 		},
 		visibilityChanged(isVisible) {
 			if (isVisible) {
 				// Focus the input field of the current component.
-				this.$refs.setContacts.focus()
+				this.focusInput()
 			}
+		},
+		focusInput() {
+			this.$refs.setContacts.focus()
 		},
 	},
 }
@@ -136,6 +140,8 @@ export default {
 	&__input {
 		width: 100%;
 		font-size: 16px;
+		padding-left: 28px;
+		line-height: 34px;
 	}
 	&__icon {
 		margin-top: 40px;
@@ -146,4 +152,9 @@ export default {
 	}
 }
 
+.icon-search {
+	position: absolute;
+	top: 12px;
+    left: 8px;
+}
 </style>
