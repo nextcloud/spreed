@@ -205,6 +205,7 @@ export default {
 			this.selectedParticipants = []
 			this.success = false
 			this.error = false
+			this.passwordProtect = false
 			this.password = ''
 		},
 		/** Switch to page 2 */
