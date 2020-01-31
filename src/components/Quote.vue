@@ -31,7 +31,7 @@ components.
 				<h6>{{ getDisplayName }}</h6>
 			</div>
 			<div class="quote__main__text">
-				<p>{{ simpleQuotedMessage }}</p>
+				<p>{{ shortenedQuoteMessage }}</p>
 			</div>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
@@ -143,6 +143,16 @@ export default {
 			})
 
 			return subtitle
+		},
+		// Shorten the message to 250 characters and append three dots to the end of the
+		// string. This is needed because on very wide screens, if the 250 characters
+		// fit, the css rules won't ellipsize the text-overflow.
+		shortenedQuoteMessage() {
+			if (this.simpleQuotedMessage.length >= 250) {
+				return this.simpleQuotedMessage.substring(0, 250) + '…'
+			} else {
+				return this.simpleQuotedMessage
+			}
 		},
 
 	},
