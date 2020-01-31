@@ -31,7 +31,7 @@ components.
 				<h6>{{ getDisplayName }}</h6>
 			</div>
 			<div class="quote__main__text">
-				<p>{{ shortenQuotedMessage }}</p>
+				<p>{{ simpleQuotedMessage }}</p>
 			</div>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
@@ -145,49 +145,6 @@ export default {
 			return subtitle
 		},
 
-		shortenQuotedMessage() {
-			let cutAtChar = 200
-
-			// We allow a maximum of 2 line breaks
-			const firstNewline = this.simpleQuotedMessage.indexOf('\n')
-			if (firstNewline !== -1) {
-				const secondNewline = this.simpleQuotedMessage.indexOf('\n', firstNewline + 1)
-				if (secondNewline !== -1) {
-					cutAtChar = Math.min(cutAtChar, secondNewline)
-				}
-			}
-
-			let cuttingAfterWord = true
-			if (cutAtChar <= this.simpleQuotedMessage.length) {
-				// When we cut the string, we look for the next space.
-				const nextSpace = this.simpleQuotedMessage.indexOf(' ', cutAtChar)
-				if (nextSpace !== -1 && nextSpace < cutAtChar + 15) {
-					// If it is in a reasonable distance, we finish the word and cut after it
-					cutAtChar = nextSpace
-				} else {
-					// If not, we look if there is a space reasonable before the cut position
-					const previousSpace = this.simpleQuotedMessage.lastIndexOf(' ', cutAtChar)
-					if (previousSpace !== -1 && previousSpace > cutAtChar - 15) {
-						cutAtChar = previousSpace
-					} else {
-						// We didn't find any space in near distance, so we cut
-						// just where we are and add the … at the position,
-						// since we cut in the middle of the word.
-						cuttingAfterWord = false
-					}
-				}
-			} else {
-				return this.simpleQuotedMessage
-			}
-
-			let message = this.simpleQuotedMessage.substr(0, cutAtChar)
-			if (cuttingAfterWord) {
-				message += ' …'
-			} else {
-				message += '…'
-			}
-			return message
-		},
 	},
 	methods: {
 		/**
@@ -225,6 +182,10 @@ export default {
 			& p {
 				text-overflow: ellipsis;
 				overflow: hidden;
+				// Allow 2 lines max and ellipsize the overflow;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
 			}
 		}
 	}
