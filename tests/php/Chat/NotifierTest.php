@@ -30,25 +30,27 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
+use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\IUserManager;
+use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
-class NotifierTest extends \Test\TestCase {
+class NotifierTest extends TestCase {
 
-	/** @var \OCP\Notification\IManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var INotificationManager|MockObject */
 	protected $notificationManager;
-
-	/** @var \OCP\IUserManager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IUserManager|MockObject */
 	protected $userManager;
-
-	/** @var \OCA\Talk\Manager|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var Manager|MockObject */
 	protected $manager;
-
-	/** @var \OCA\Talk\Files\Util|\PHPUnit_Framework_MockObject_MockObject */
+	/** @var IConfig|MockObject */
+	protected $config;
+	/** @var Util|MockObject */
 	protected $util;
 
-	/** @var \OCA\Talk\Chat\Notifier */
+	/** @var Notifier */
 	protected $notifier;
 
 	public function setUp(): void {
@@ -59,22 +61,21 @@ class NotifierTest extends \Test\TestCase {
 		$this->userManager = $this->createMock(IUserManager::class);
 		$this->userManager
 			->method('userExists')
-			->will($this->returnCallback(function($userId) {
-				if ($userId === 'unknownUser') {
-					return false;
-				}
-
-				return true;
-			}));
+			->willReturnCallback(function($userId) {
+				return $userId !== 'unknownUser';
+			});
 
 		$this->manager = $this->createMock(Manager::class);
-
+		$this->config = $this->createMock(IConfig::class);
 		$this->util = $this->createMock(Util::class);
 
-		$this->notifier = new Notifier($this->notificationManager,
-									   $this->userManager,
-									   $this->manager,
-									   $this->util);
+		$this->notifier = new Notifier(
+			$this->notificationManager,
+			$this->userManager,
+			$this->manager,
+			$this->config,
+			$this->util
+		);
 	}
 
 	private function newComment($id, $actorType, $actorId, $creationDateTime, $message) {
