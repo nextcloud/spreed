@@ -137,8 +137,8 @@ const demoteFromModerator = async(token, options) => {
 	return response
 }
 
-const fetchParticipants = async(token) => {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants')
+const fetchParticipants = async(token, options) => {
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants', options)
 	return response
 }
 
