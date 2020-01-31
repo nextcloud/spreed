@@ -327,7 +327,6 @@ export default {
 
 .message {
 	padding: 4px 0 4px 0;
-	flex-direction: column;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
