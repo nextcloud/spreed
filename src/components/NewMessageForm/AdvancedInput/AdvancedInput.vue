@@ -348,6 +348,8 @@ export default {
 	width: 100%;
 	border:none;
 	margin: 0;
+	word-break: break-word;
+	white-space: pre-wrap;
 }
 
 // Support for the placeholder text in the div contenteditable
