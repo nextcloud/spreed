@@ -28,10 +28,25 @@
 				class="new-message-form">
 				<div
 					class="new-message-form__button">
-					<button
-						v-if="!currentUserIsGuest"
-						class="new-message-form__button icon-clip-add-file"
-						@click.prevent="handleFileShare" />
+					<Actions
+						default-icon="icon-clip-add-file"
+						class="new-message-form__button">
+						<ActionText>Add a file</ActionText>
+						<ActionButton
+							v-if="!currentUserIsGuest"
+							:close-after-click="true"
+							icon="icon-upload"
+							@click.prevent="handleFileShare">
+							Upload from device
+						</ActionButton>
+						<ActionButton
+							v-if="!currentUserIsGuest"
+							:close-after-click="true"
+							icon="icon-folder"
+							@click.prevent="handleFileShare">
+							Add from Nextcloud
+						</ActionButton>
+					</Actions>
 				</div>
 				<div class="new-message-form__input">
 					<Quote
@@ -60,6 +75,9 @@ import { getFilePickerBuilder } from '@nextcloud/dialogs'
 import { generateOcsUrl } from '@nextcloud/router'
 import { postNewMessage } from '../../services/messagesService'
 import Quote from '../Quote'
+import Actions from '@nextcloud/vue/dist/Components/Actions'
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 
 const picker = getFilePickerBuilder(t('spreed', 'File to share'))
 	.setMultiSelect(false)
@@ -73,6 +91,9 @@ export default {
 	components: {
 		AdvancedInput,
 		Quote,
+		Actions,
+		ActionButton,
+		ActionText,
 	},
 	data: function() {
 		return {
