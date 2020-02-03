@@ -25,6 +25,10 @@
 			<SearchBox
 				v-model="searchText"
 				@input="debounceFetchSearchResults" />
+			<button
+				v-if="isSearching"
+				class="abort-search icon-close"
+				@click="abortSearch" />
 			<NewGroupConversation />
 		</div>
 		<ul class="left-sidebar__list">
@@ -33,7 +37,7 @@
 			<li>
 				<ConversationsList
 					:search-text="searchText"
-					@click-conversation="handleClickConversation" />
+					@click-conversation="abortSearch" />
 			</li>
 			<template v-if="isSearching">
 				<template v-if="searchResultsUsers.length !== 0">
@@ -240,7 +244,7 @@ export default {
 			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
 		// Reset the search text, therefore end the search operation.
-		handleClickConversation() {
+		abortSearch() {
 			this.searchText = ''
 		},
 
@@ -314,5 +318,12 @@ export default {
 	position: sticky;
 	bottom: 0;
 	border-top: 1px solid var(--color-border-dark);
+}
+
+.abort-search {
+	margin-left: -28px;
+    z-index: 1;
+    border: none;
+    background-color: transparent
 }
 </style>
