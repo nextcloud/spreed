@@ -176,7 +176,7 @@ export default {
 		},
 
 		conversationInformation() {
-			if (!Object.keys(this.item.lastMessage).length) {
+			if (!Object.keys(this.lastChatMessage).length) {
 				return ''
 			}
 
@@ -184,7 +184,7 @@ export default {
 				return this.simpleLastChatMessage
 			}
 
-			if (this.item.lastMessage.actorId === this.$store.getters.getUserId()) {
+			if (this.lastChatMessage.actorId === this.$store.getters.getUserId()) {
 				return t('spreed', 'You: {lastMessage}', {
 					lastMessage: this.simpleLastChatMessage,
 				}, undefined, {
@@ -205,6 +205,25 @@ export default {
 			})
 		},
 
+		// The messages array for this conversation
+		messages() {
+			return this.$store.getters.messages(this.item.token)
+		},
+
+		// Get the last message for this conversation from the message store instead
+		// of the conversateions store. The message store is updated immediately,
+		// while the conversations store is refreshed every 30 seconds. This allows
+		// to display message previews in this component as soon as new messages are
+		// received by the server.
+		lastChatMessage() {
+			if (Object.keys(this.messages).length > 0) {
+				const messagesKeys = Object.keys(this.messages)
+				const lastMessageId = messagesKeys[messagesKeys.length - 1]
+				return this.messages[lastMessageId]
+			}
+			return this.item.lastMessage
+		},
+
 		/**
 		 * This is a simplified version of the last chat message.
 		 * Parameters are parsed without markup (just replaced with the name),
@@ -212,12 +231,12 @@ export default {
 		 * @returns {string} A simple message to show below the conversation name
 		 */
 		simpleLastChatMessage() {
-			if (!Object.keys(this.item.lastMessage).length) {
+			if (!Object.keys(this.lastChatMessage).length) {
 				return ''
 			}
 
-			const params = this.item.lastMessage.messageParameters
-			let subtitle = this.item.lastMessage.message.trim()
+			const params = this.lastChatMessage.messageParameters
+			let subtitle = this.lastChatMessage.message.trim()
 
 			// We don't really use rich objects in the subtitle, instead we fall back to the name of the item
 			Object.keys(params).forEach((parameterKey) => {
@@ -230,18 +249,18 @@ export default {
 		 * @returns {string} Part of the name until the first space
 		 */
 		shortLastChatMessageAuthor() {
-			if (!Object.keys(this.item.lastMessage).length
-				|| this.item.lastMessage.systemMessage.length) {
+			if (!Object.keys(this.lastChatMessage).length
+				|| this.lastChatMessage.systemMessage.length) {
 				return ''
 			}
 
-			let author = this.item.lastMessage.actorDisplayName.trim()
+			let author = this.lastChatMessage.actorDisplayName.trim()
 			const spacePosition = author.indexOf(' ')
 			if (spacePosition !== -1) {
 				author = author.substring(0, spacePosition)
 			}
 
-			if (author.length === 0 && this.item.lastMessage.actorType === 'guests') {
+			if (author.length === 0 && this.lastChatMessage.actorType === 'guests') {
 				return t('spreed', 'Guest')
 			}
 
