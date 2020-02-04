@@ -32,7 +32,8 @@
 				:title="t('spreed', 'Conversations')" />
 			<li>
 				<ConversationsList
-					:search-text="searchText" />
+					:search-text="searchText"
+					@click-conversation="handleClickConversation" />
 			</li>
 			<template v-if="isSearching">
 				<template v-if="searchResultsUsers.length !== 0">
@@ -215,6 +216,10 @@ export default {
 		hasOneToOneConversationWith(userId) {
 			return !!this.conversationsList.find(conversation => conversation.type === CONVERSATION.TYPE.ONE_TO_ONE && conversation.name === userId)
 		},
+		// Reset the search text, therefore end the search operation.
+		handleClickConversation() {
+			this.searchText = ''
+		}
 	},
 }
 </script>
