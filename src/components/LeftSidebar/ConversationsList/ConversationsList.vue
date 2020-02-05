@@ -24,7 +24,8 @@
 		<Conversation
 			v-for="item of conversationsList"
 			:key="item.id"
-			:item="item" />
+			:item="item"
+			@click.native="handleConversationClick" />
 		<template
 			v-if="!initialisedConversations">
 			<LoadingHint
@@ -135,6 +136,10 @@ export default {
 				console.debug('Error while fetching conversations: ', error)
 			}
 		},
+		// Emit the click event so the search text in the leftsidebar can be reset.
+		handleConversationClick() {
+			this.$emit('click-conversation')
+		}
 	},
 }
 </script>
