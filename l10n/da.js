@@ -111,6 +111,7 @@ OC.L10N.register(
     "Disable video" : "Deaktiver video",
     "Enable video" : "Slå video til",
     "Favorite" : "Foretrukken",
+    "Off" : "Fra",
     "Leave conversation" : "Forlad samtale",
     "Delete conversation" : "Slet samtale",
     "Remove from favorites" : "Fjernet fra favoritter",
