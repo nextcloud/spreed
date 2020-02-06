@@ -31,7 +31,7 @@ components.
 				<h6>{{ getDisplayName }}</h6>
 			</div>
 			<div class="quote__main__text">
-				<p>{{ shortenQuotedMessage }}</p>
+				<p>{{ shortenedQuoteMessage }}</p>
 			</div>
 		</div>
 		<div v-if="isNewMessageFormQuote" class="quote__main__right">
@@ -144,50 +144,17 @@ export default {
 
 			return subtitle
 		},
-
-		shortenQuotedMessage() {
-			let cutAtChar = 200
-
-			// We allow a maximum of 2 line breaks
-			const firstNewline = this.simpleQuotedMessage.indexOf('\n')
-			if (firstNewline !== -1) {
-				const secondNewline = this.simpleQuotedMessage.indexOf('\n', firstNewline + 1)
-				if (secondNewline !== -1) {
-					cutAtChar = Math.min(cutAtChar, secondNewline)
-				}
-			}
-
-			let cuttingAfterWord = true
-			if (cutAtChar <= this.simpleQuotedMessage.length) {
-				// When we cut the string, we look for the next space.
-				const nextSpace = this.simpleQuotedMessage.indexOf(' ', cutAtChar)
-				if (nextSpace !== -1 && nextSpace < cutAtChar + 15) {
-					// If it is in a reasonable distance, we finish the word and cut after it
-					cutAtChar = nextSpace
-				} else {
-					// If not, we look if there is a space reasonable before the cut position
-					const previousSpace = this.simpleQuotedMessage.lastIndexOf(' ', cutAtChar)
-					if (previousSpace !== -1 && previousSpace > cutAtChar - 15) {
-						cutAtChar = previousSpace
-					} else {
-						// We didn't find any space in near distance, so we cut
-						// just where we are and add the … at the position,
-						// since we cut in the middle of the word.
-						cuttingAfterWord = false
-					}
-				}
+		// Shorten the message to 250 characters and append three dots to the end of the
+		// string. This is needed because on very wide screens, if the 250 characters
+		// fit, the css rules won't ellipsize the text-overflow.
+		shortenedQuoteMessage() {
+			if (this.simpleQuotedMessage.length >= 250) {
+				return this.simpleQuotedMessage.substring(0, 250) + '…'
 			} else {
 				return this.simpleQuotedMessage
 			}
-
-			let message = this.simpleQuotedMessage.substr(0, cutAtChar)
-			if (cuttingAfterWord) {
-				message += ' …'
-			} else {
-				message += '…'
-			}
-			return message
 		},
+
 	},
 	methods: {
 		/**
@@ -207,11 +174,10 @@ export default {
 
 .quote {
 	border-left: 4px solid var(--color-primary);
-	margin: 10px 0 10px 0;
-	padding: 0 0 0 10px;
+	margin: 4px 0 4px 8px;
+	padding-left: 8px;
 	display: flex;
 	max-width: $messages-list-max-width - $message-utils-width;
-	margin: 0;
 	&__main {
 		display: flex;
 		flex-direction: column;
@@ -221,10 +187,15 @@ export default {
 		}
 		&__text {
 			color: var(--color-text-light);
+			white-space: pre-wrap;
+			word-break: break-word;
 			& p {
-				max-width: 662px;
 				text-overflow: ellipsis;
 				overflow: hidden;
+				// Allow 2 lines max and ellipsize the overflow;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				-webkit-box-orient: vertical;
 			}
 		}
 	}

@@ -327,7 +327,6 @@ export default {
 
 .message {
 	padding: 4px 0 4px 0;
-	flex-direction: column;
 	&__author {
 		color: var(--color-text-maxcontrast);
 	}
@@ -338,7 +337,8 @@ export default {
 		&__text {
 			flex: 1 1 auto;
 			color: var(--color-text-light);
-			overflow-wrap: break-word;
+			white-space: pre-wrap;
+			word-break: break-word;
 			max-width: $message-max-width;
 			.single-emoji {
 				font-size: 250%;

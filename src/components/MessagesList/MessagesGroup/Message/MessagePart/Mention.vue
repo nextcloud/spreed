@@ -20,18 +20,20 @@
 -->
 
 <template>
-	<UserBubble v-if="isMentionToAll"
-		:display-name="data.name"
-		:avatar-image="'icon-group-forced-white'"
-		:primary="true" />
-	<UserBubble v-else-if="isMentionToGuest"
-		:display-name="data.name"
-		:avatar-image="'icon-user-forced-white'"
-		:primary="isCurrentGuest" />
-	<UserBubble v-else
-		:display-name="data.name"
-		:user="data.id"
-		:primary="isCurrentUser" />
+	<div class="mention">
+		<UserBubble v-if="isMentionToAll"
+			:display-name="data.name"
+			:avatar-image="'icon-group-forced-white'"
+			:primary="true" />
+		<UserBubble v-else-if="isMentionToGuest"
+			:display-name="data.name"
+			:avatar-image="'icon-user-forced-white'"
+			:primary="isCurrentGuest" />
+		<UserBubble v-else
+			:display-name="data.name"
+			:user="data.id"
+			:primary="isCurrentUser" />
+	</div>
 </template>
 
 <script>
@@ -75,3 +77,10 @@ export default {
 	},
 }
 </script>
+
+:<style lang="scss" scoped>
+.mention {
+	display: contents;
+	white-space: nowrap;
+}
+</style>
