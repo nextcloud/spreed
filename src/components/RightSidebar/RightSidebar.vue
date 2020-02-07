@@ -98,18 +98,21 @@
 		</template>
 		<AppSidebarTab
 			v-if="showChatInSidebar"
+			id="chat"
 			:order="1"
 			:name="t('spreed', 'Chat')"
 			icon="icon-comment">
 			<ChatView :token="token" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
+			id="participants"
 			:order="2"
 			:name="t('spreed', 'Participants')"
 			icon="icon-contacts-dark">
 			<ParticipantsTab :display-search-box="displaySearchBox" />
 		</AppSidebarTab>
 		<AppSidebarTab v-if="getUserId"
+			id="projects"
 			:order="3"
 			:name="t('spreed', 'Projects')"
 			icon="icon-projects">
