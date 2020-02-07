@@ -30,6 +30,7 @@ use OCA\Talk\Manager;
 use OCA\Talk\Participant;
 use OCA\Talk\Room;
 use OCP\Comments\IComment;
+use OCP\IConfig;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\Notification\INotification;
 use OCP\IUserManager;
@@ -45,23 +46,24 @@ class Notifier {
 
 	/** @var INotificationManager */
 	private $notificationManager;
-
 	/** @var IUserManager */
 	private $userManager;
-
 	/** @var Manager */
 	private $manager;
-
+	/** @var IConfig */
+	private $config;
 	/** @var Util */
 	private $util;
 
 	public function __construct(INotificationManager $notificationManager,
 								IUserManager $userManager,
 								Manager $manager,
+								IConfig $config,
 								Util $util) {
 		$this->notificationManager = $notificationManager;
 		$this->userManager = $userManager;
 		$this->manager = $manager;
+		$this->config = $config;
 		$this->util = $util;
 	}
 
@@ -97,7 +99,7 @@ class Notifier {
 				continue;
 			}
 
-			if ($this->shouldUserBeNotified($mentionedUserId, $comment)) {
+			if ($this->shouldMentionedUserBeNotified($mentionedUserId, $comment)) {
 				$notification->setUser($mentionedUserId);
 				$this->notificationManager->notify($notification);
 				$alreadyNotifiedUsers[] = $mentionedUserId;
@@ -126,7 +128,7 @@ class Notifier {
 			return [];
 		}
 
-		if (!$this->shouldUserBeNotified($replyTo->getActorId(), $comment)) {
+		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment)) {
 			return [];
 		}
 
@@ -155,21 +157,7 @@ class Notifier {
 
 		$notification = $this->createNotification($chat, $comment, 'chat');
 		foreach ($participants as $participant) {
-			if ($participant->isGuest()) {
-				continue;
-			}
-
-			if ($participant->getUser() === $comment->getActorId()) {
-				// Do not notify the author
-				continue;
-			}
-
-			if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
-				continue;
-			}
-
-			if ($participant->getSessionId() !== '0') {
-				// User is online
+			if (!$this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers)) {
 				continue;
 			}
 
@@ -177,25 +165,11 @@ class Notifier {
 			$this->notificationManager->notify($notification);
 		}
 
-		// Also notify default participants in one2one chats
-		if ($chat->getType() === Room::ONE_TO_ONE_CALL) {
+		// Also notify default participants in one2one chats or when the admin default is "always"
+		if ($this->getDefaultGroupNotification() === Participant::NOTIFY_ALWAYS || $chat->getType() === Room::ONE_TO_ONE_CALL) {
 			$participants = $chat->getParticipantsByNotificationLevel(Participant::NOTIFY_DEFAULT);
 			foreach ($participants as $participant) {
-				if ($participant->isGuest()) {
-					continue;
-				}
-
-				if ($participant->getUser() === $comment->getActorId()) {
-					// Do not notify the author
-					continue;
-				}
-
-				if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
-					continue;
-				}
-
-				if ($participant->getSessionId() !== '0') {
-					// User is online
+				if (!$this->shouldParticipantBeNotified($participant, $comment, $alreadyNotifiedUsers)) {
 					continue;
 				}
 
@@ -297,8 +271,12 @@ class Notifier {
 		return $notification;
 	}
 
+	protected function getDefaultGroupNotification(): int {
+		return (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_MENTION);
+	}
+
 	/**
-	 * Determinates whether a user should be notified about the mention:
+	 * Determines whether a user should be notified about the mention:
 	 *
 	 * 1. The user did not mention themself
 	 * 2. The user must exist
@@ -309,7 +287,7 @@ class Notifier {
 	 * @param IComment $comment
 	 * @return bool
 	 */
-	private function shouldUserBeNotified($userId, IComment $comment): bool {
+	protected function shouldMentionedUserBeNotified($userId, IComment $comment): bool {
 		if ($comment->getActorType() === 'users' && $userId === $comment->getActorId()) {
 			// Do not notify the user if they mentioned themselves
 			return false;
@@ -327,7 +305,15 @@ class Notifier {
 
 		try {
 			$participant = $room->getParticipant($userId);
-			return $participant->getNotificationLevel() !== Participant::NOTIFY_NEVER;
+			$notificationLevel = $participant->getNotificationLevel();
+			if ($participant->getNotificationLevel() === Participant::NOTIFY_DEFAULT) {
+				if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+					$notificationLevel = Participant::NOTIFY_ALWAYS;
+				} else {
+					$notificationLevel = $this->getDefaultGroupNotification();
+				}
+			}
+			return $notificationLevel !== Participant::NOTIFY_NEVER;
 		} catch (ParticipantNotFoundException $e) {
 			if ($room->getObjectType() === 'file' && $this->util->canUserAccessFile($room->getObjectId(), $userId)) {
 				// Users are added on mentions in file-rooms,
@@ -339,5 +325,40 @@ class Notifier {
 			}
 			return false;
 		}
+	}
+
+	/**
+	 * Determines whether a participant should be notified about the message:
+	 *
+	 * 1. The participant is not a guest
+	 * 2. The participant is not the writing user
+	 * 3. The participant was not mentioned already
+	 * 4. The participant must not be active in the room
+	 *
+	 * @param Participant $participant
+	 * @param IComment $comment
+	 * @param array $alreadyNotifiedUsers
+	 * @return bool
+	 */
+	protected function shouldParticipantBeNotified(Participant $participant, IComment $comment, array $alreadyNotifiedUsers): bool {
+		if ($participant->isGuest()) {
+			return false;
+		}
+
+		if ($comment->getActorType() === 'users' && $participant->getUser() === $comment->getActorId()) {
+			// Do not notify the author
+			return false;
+		}
+
+		if (\in_array($participant->getUser(), $alreadyNotifiedUsers, true)) {
+			return false;
+		}
+
+		if ($participant->getSessionId() !== '0') {
+			// User is online
+			return false;
+		}
+
+		return true;
 	}
 }

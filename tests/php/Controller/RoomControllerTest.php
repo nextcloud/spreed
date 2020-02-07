@@ -26,8 +26,6 @@ namespace OCA\Talk\Tests\php\Controller;
 use OCA\Talk\Chat\ChatManager;
 use OCA\Talk\Chat\MessageParser;
 use OCA\Talk\Controller\RoomController;
-use OCA\Talk\Exceptions\ParticipantNotFoundException;
-use OCA\Talk\Exceptions\RoomNotFoundException;
 use OCA\Talk\GuestManager;
 use OCA\Talk\Manager;
 use OCA\Talk\Participant;
@@ -38,13 +36,15 @@ use OCP\AppFramework\Http;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\IConfig;
 use OCP\IGroupManager;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IUserManager;
 use PHPUnit\Framework\MockObject\MockObject;
+use Test\TestCase;
 
-class RoomControllerTest extends \Test\TestCase {
+class RoomControllerTest extends TestCase {
 
 	/** @var string */
 	private $userId;
@@ -70,6 +70,8 @@ class RoomControllerTest extends \Test\TestCase {
 	protected $timeFactory;
 	/** @var IL10N|MockObject */
 	private $l;
+	/** @var IConfig|MockObject */
+	private $config;
 
 
 	public function setUp(): void {
@@ -87,6 +89,7 @@ class RoomControllerTest extends \Test\TestCase {
 		$this->messageParser = $this->createMock(MessageParser::class);
 		$this->timeFactory = $this->createMock(ITimeFactory::class);
 		$this->l = $this->createMock(IL10N::class);
+		$this->config = $this->createMock(IConfig::class);
 	}
 
 	/**
@@ -109,7 +112,8 @@ class RoomControllerTest extends \Test\TestCase {
 			$this->dispatcher,
 			$this->messageParser,
 			$this->timeFactory,
-			$this->l
+			$this->l,
+			$this->config
 		);
 		$controller->setRoom($room);
 		$controller->setParticipant($participant);
