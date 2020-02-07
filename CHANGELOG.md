@@ -1,6 +1,32 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.2 – 2020-02-07
+### Added
+- Allow admins to select a default notification level for group conversations
+  [#2903](https://github.com/nextcloud/spreed/pull/2903)
+- Add a red video icon to the conversation list when a call is in progress
+  [#2910](https://github.com/nextcloud/spreed/pull/2910)
+
+### Changed
+- Make unread message counter and last message preview more responsive
+  [#2865](https://github.com/nextcloud/spreed/pull/2865)
+  [#2904](https://github.com/nextcloud/spreed/pull/2904)
+- Further improve the dialog to create group conversations
+  [#2878](https://github.com/nextcloud/spreed/pull/2878)
+
+### Fixed
+- Improve loading performance of chats
+  [#2901](https://github.com/nextcloud/spreed/pull/2901)
+- Continue scrolling a conversation when new messages arrive while the tab is inactive
+  [#2901](https://github.com/nextcloud/spreed/pull/2901)
+- Do not send last message again when hitting enter on an empty input field
+  [#2868](https://github.com/nextcloud/spreed/pull/2868)
+- Fix flows to correctly send notifications on mentions
+  [#2867](https://github.com/nextcloud/spreed/pull/2867)
+- Reduce server load when using autocomplete on chat mentions
+  [#2871](https://github.com/nextcloud/spreed/pull/2871)
+
 ## 8.0.1 – 2020-01-27
 ### Added
 - Add details to "New in Talk 8" list
