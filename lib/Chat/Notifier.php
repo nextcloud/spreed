@@ -128,7 +128,7 @@ class Notifier {
 			return [];
 		}
 
-		if (!$this->shouldUserBeNotified($replyTo->getActorId(), $comment)) {
+		if (!$this->shouldMentionedUserBeNotified($replyTo->getActorId(), $comment)) {
 			return [];
 		}
 
