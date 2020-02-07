@@ -161,15 +161,15 @@ export default {
 		},
 
 		/**
-		 * In order for the state of the component to be sticky, the browser window must be
-		 * active and the div .scroller must be scrolled to the bottom.
+		 * In order for the state of the component to be sticky,
+		 * the div .scroller must be scrolled to the bottom.
 		 * When isSticky is true, as new messages are appended to the list, the div .scroller
 		 * automatically scrolls down to the last message, if it's false, new messages are
 		 * appended but the scrolling position is not altered.
 		 * @returns {boolean}
 		 */
 		isSticky() {
-			return this.isScrolledToBottom && this.$store.getters.windowIsVisible()
+			return this.isScrolledToBottom
 		},
 
 		/**
