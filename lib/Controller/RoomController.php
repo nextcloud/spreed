@@ -53,6 +53,7 @@ use OCP\IUser;
 use OCP\IUserManager;
 use OCP\IGroup;
 use OCP\IGroupManager;
+use OCP\IConfig;
 
 class RoomController extends AEnvironmentAwareController {
 
@@ -82,6 +83,8 @@ class RoomController extends AEnvironmentAwareController {
 	private $timeFactory;
 	/** @var IL10N */
 	private $l10n;
+	/** @var IConfig */
+	private $config;
 
 	public function __construct(string $appName,
 								?string $UserId,
@@ -96,7 +99,8 @@ class RoomController extends AEnvironmentAwareController {
 								IEventDispatcher $dispatcher,
 								MessageParser $messageParser,
 								ITimeFactory $timeFactory,
-								IL10N $l10n) {
+								IL10N $l10n,
+								IConfig $config) {
 		parent::__construct($appName, $request);
 		$this->session = $session;
 		$this->appManager = $appManager;
@@ -110,6 +114,7 @@ class RoomController extends AEnvironmentAwareController {
 		$this->messageParser = $messageParser;
 		$this->timeFactory = $timeFactory;
 		$this->l10n = $l10n;
+		$this->config = $config;
 	}
 
 	/**
@@ -243,8 +248,15 @@ class RoomController extends AEnvironmentAwareController {
 		if ($roomData['notificationLevel'] === Participant::NOTIFY_DEFAULT) {
 			if ($currentParticipant->isGuest()) {
 				$roomData['notificationLevel'] = Participant::NOTIFY_NEVER;
+			} else if ($room->getType() === Room::ONE_TO_ONE_CALL) {
+				$roomData['notificationLevel'] = Participant::NOTIFY_ALWAYS;
 			} else {
-				$roomData['notificationLevel'] = $room->getType() === Room::ONE_TO_ONE_CALL ? Participant::NOTIFY_ALWAYS : Participant::NOTIFY_MENTION;
+				$adminSetting = (int) $this->config->getAppValue('spreed', 'default_group_notification', Participant::NOTIFY_DEFAULT);
+				if ($adminSetting === Participant::NOTIFY_DEFAULT) {
+					$roomData['notificationLevel'] = Participant::NOTIFY_MENTION;
+				} else {
+					$roomData['notificationLevel'] = $adminSetting;
+				}
 			}
 		}
 

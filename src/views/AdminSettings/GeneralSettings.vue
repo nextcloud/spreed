@@ -39,6 +39,20 @@
 			<em>{{ t('spreed', 'When a call has started, everyone with access to the conversation can join the call.') }}</em>
 		</p>
 
+		<h3>{{ t('spreed', 'Default notification settings') }}</h3>
+
+		<p>
+			<label for="default_group_notification">{{ t('spreed', 'Default group notification') }}</label>
+			<Multiselect id="default_group_notification"
+				v-model="defaultGroupNotification"
+				:options="defaultGroupNotificationOptions"
+				:placeholder="t('spreed', 'Default group notification for new groups')"
+				label="label"
+				track-by="value"
+				:disabled="loading || loadingStartCalls"
+				@input="saveDefaultGroupNotification" />
+		</p>
+
 		<h3>{{ t('spreed', 'Integration into other apps') }}</h3>
 
 		<p>
@@ -67,11 +81,18 @@
 
 <script>
 import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
+import { loadState } from '@nextcloud/initial-state'
 
 const startCallOptions = [
 	{ value: 0, label: t('spreed', 'Everyone') },
 	{ value: 1, label: t('spreed', 'Users and moderators') },
 	{ value: 2, label: t('spreed', 'Moderators only') },
+]
+
+const defaultGroupNotificationOptions = [
+	{ value: 1, label: t('spreed', 'All messages') },
+	{ value: 2, label: t('spreed', '@-mentions only') },
+	{ value: 3, label: t('spreed', 'Off') },
 ]
 export default {
 	name: 'GeneralSettings',
@@ -89,6 +110,9 @@ export default {
 			startCallOptions,
 			startCalls: startCallOptions[0],
 
+			defaultGroupNotificationOptions,
+			defaultGroupNotification: defaultGroupNotificationOptions[1],
+
 			conversationsFiles: true,
 			conversationsFilesPublicShares: true,
 		}
@@ -96,9 +120,10 @@ export default {
 
 	mounted() {
 		this.loading = true
-		this.startCalls = startCallOptions[parseInt(OCP.InitialState.loadState('talk', 'start_calls'))]
-		this.conversationsFiles = parseInt(OCP.InitialState.loadState('talk', 'conversations_files')) === 1
-		this.conversationsFilesPublicShares = parseInt(OCP.InitialState.loadState('talk', 'conversations_files_public_shares')) === 1
+		this.startCalls = startCallOptions[parseInt(loadState('talk', 'start_calls'))]
+		this.conversationsFiles = parseInt(loadState('talk', 'conversations_files')) === 1
+		this.defaultGroupNotification = defaultGroupNotificationOptions[parseInt(loadState('talk', 'default_group_notification')) - 1]
+		this.conversationsFilesPublicShares = parseInt(loadState('talk', 'conversations_files_public_shares')) === 1
 		this.loading = false
 	},
 
@@ -107,6 +132,15 @@ export default {
 			this.loadingStartCalls = true
 
 			OCP.AppConfig.setValue('spreed', 'start_calls', this.startCalls.value, {
+				success: function() {
+					this.loadingStartCalls = false
+				}.bind(this),
+			})
+		},
+		saveDefaultGroupNotification() {
+			this.loadingStartCalls = true
+
+			OCP.AppConfig.setValue('spreed', 'default_group_notification', this.defaultGroupNotification.value, {
 				success: function() {
 					this.loadingStartCalls = false
 				}.bind(this),
@@ -144,6 +178,11 @@ export default {
 }
 </script>
 <style scoped lang="scss">
+
+h3 {
+	margin-top: 24px;
+}
+
 p {
 	display: flex;
 	align-items: center;
