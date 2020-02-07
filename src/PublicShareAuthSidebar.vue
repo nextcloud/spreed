@@ -156,6 +156,7 @@ export default {
 			try {
 				const response = await fetchConversation(this.token)
 				this.$store.dispatch('addConversation', response.data.ocs.data)
+				this.$store.dispatch('markConversationRead', this.item.token)
 
 				// Although the current participant is automatically added to
 				// the participants store it must be explicitly set in the

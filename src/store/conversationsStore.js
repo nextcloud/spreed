@@ -176,6 +176,18 @@ const actions = {
 
 		commit('addConversation', conversation)
 	},
+
+	async markConversationRead({ commit, getters }, token) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		conversation.unreadMessages = 0
+		conversation.unreadMention = false
+
+		commit('addConversation', conversation)
+	},
 }
 
 export default { state, mutations, getters, actions }
