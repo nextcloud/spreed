@@ -31,7 +31,13 @@ import { generateOcsUrl } from '@nextcloud/router'
  * @param {object} options options
  */
 const fetchMessages = async function({ token, lastKnownMessageId, includeLastKnown }, options) {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=0' + `&lastKnownMessageId=${lastKnownMessageId || ''}` + `&includeLastKnown=${includeLastKnown || 0}`, options)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
+		params: {
+			lookIntoFuture: 0,
+			lastKnownMessageId,
+			includeLastKnown: includeLastKnown || 0,
+		},
+	}))
 	return response
 }
 
@@ -44,7 +50,13 @@ const fetchMessages = async function({ token, lastKnownMessageId, includeLastKno
  * @param {int} lastKnownMessageId The id of the last message in the store.
  */
 const lookForNewMessages = async({ token, lastKnownMessageId }, options) => {
-	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token + '?lookIntoFuture=1' + '&includeLastKnown=0' + `&lastKnownMessageId=${lastKnownMessageId}`, options)
+	const response = await axios.get(generateOcsUrl('apps/spreed/api/v1/chat', 2) + token, Object.assign(options, {
+		params: {
+			lookIntoFuture: 1,
+			lastKnownMessageId,
+			includeLastKnown: 0,
+		},
+	}))
 	return response
 }
 
