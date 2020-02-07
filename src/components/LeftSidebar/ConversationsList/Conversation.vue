@@ -216,10 +216,15 @@ export default {
 		// to display message previews in this component as soon as new messages are
 		// received by the server.
 		lastChatMessage() {
+			const lastMessageTimestamp = this.item.lastMessage ? this.item.lastMessage.timestamp : 0
+
 			if (Object.keys(this.messages).length > 0) {
 				const messagesKeys = Object.keys(this.messages)
 				const lastMessageId = messagesKeys[messagesKeys.length - 1]
-				return this.messages[lastMessageId]
+
+				if (this.messages[lastMessageId].timestamp > lastMessageTimestamp) {
+					return this.messages[lastMessageId]
+				}
 			}
 			return this.item.lastMessage
 		},
