@@ -29,8 +29,13 @@
 			:user="item.name"
 			:display-name="item.displayName"
 			class="conversation-icon__avatar" />
+		<div v-if="showCall"
+			class="overlap-icon">
+			<span class="icon icon-active-call" />
+			<span class="hidden-visually">{{ t('spreed', 'Call in progress') }}</span>
+		</div>
 		<div v-if="showFavorite"
-			class="favorite-mark">
+			class="overlap-icon">
 			<span class="icon icon-favorite" />
 			<span class="hidden-visually">{{ t('spreed', 'Favorite') }}</span>
 		</div>
@@ -54,6 +59,10 @@ export default {
 			type: Boolean,
 			default: true,
 		},
+		hideCall: {
+			type: Boolean,
+			default: true,
+		},
 		item: {
 			type: Object,
 			default: function() {
@@ -67,6 +76,9 @@ export default {
 		},
 	},
 	computed: {
+		showCall() {
+			return !this.hideCall && this.item.hasCall
+		},
 		showFavorite() {
 			return !this.hideFavorite && this.item.isFavorite
 		},
@@ -98,7 +110,7 @@ $icon-size: 44px;
 	width: $icon-size;
 	height: $icon-size;
 
-	.icon:not(.icon-favorite) {
+	.avatar.icon {
 		width: $icon-size;
 		height: $icon-size;
 		line-height: $icon-size;
@@ -108,6 +120,7 @@ $icon-size: 44px;
 		&.icon-changelog {
 			background-size: $icon-size;
 		}
+
 		&.icon-public,
 		&.icon-contacts,
 		&.icon-password,
@@ -115,10 +128,9 @@ $icon-size: 44px;
 		&.icon-mail {
 			background-size: $icon-size / 2;
 		}
-
 	}
 
-	.favorite-mark {
+	.overlap-icon {
 		position: absolute;
 		top: 6px;
 		left: $icon-size - 6px;
@@ -128,6 +140,12 @@ $icon-size: 44px;
 			display: inline-block;
 			vertical-align: middle;
 			background-image: var(--icon-star-dark-FC0);
+		}
+
+		.icon-active-call {
+			display: inline-block;
+			vertical-align: middle;
+			background-image: var(--icon-video-E9322D);
 		}
 	}
 }

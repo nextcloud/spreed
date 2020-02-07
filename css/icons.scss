@@ -71,6 +71,11 @@
 		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
 	}
 
+	.icon-active-call {
+		/* Show red camera icon for ongoing calls. */
+		@include icon-color('video', 'actions', 'E9322D', 1, true);
+	}
+
 	.icon-delete-critical {
 		@include icon-color('delete', 'actions', $color-error, 1, true);
 		&:hover,
