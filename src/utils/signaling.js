@@ -386,9 +386,9 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		ev: ev,
 	}]
 
-	this._sendMessages(message).done(function(result) {
+	this._sendMessages(message).then(function(result) {
 		this._trigger(ev, [result.ocs.data])
-	}.bind(this)).fail(function(/* xhr, textStatus, errorThrown */) {
+	}.bind(this)).catch(function(/* xhr, textStatus, errorThrown */) {
 		console.log('Sending signaling message with callback has failed.')
 		// TODO: Add error handling
 	})
@@ -494,10 +494,10 @@ Signaling.Internal.prototype.sendPendingMessages = function() {
 	const pendingMessagesLength = this.spreedArrayConnection.length
 	this.isSendingMessages = true
 
-	this._sendMessages(this.spreedArrayConnection).done(function(/* result */) {
+	this._sendMessages(this.spreedArrayConnection).then(function(/* result */) {
 		this.spreedArrayConnection.splice(0, pendingMessagesLength)
 		this.isSendingMessages = false
-	}.bind(this)).fail(function(/* xhr, textStatus, errorThrown */) {
+	}.bind(this)).catch(function(/* xhr, textStatus, errorThrown */) {
 		console.log('Sending pending signaling messages has failed.')
 		this.isSendingMessages = false
 	}.bind(this))
