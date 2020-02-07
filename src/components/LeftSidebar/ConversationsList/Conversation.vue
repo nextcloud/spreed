@@ -211,7 +211,7 @@ export default {
 		},
 
 		// Get the last message for this conversation from the message store instead
-		// of the conversateions store. The message store is updated immediately,
+		// of the conversations store. The message store is updated immediately,
 		// while the conversations store is refreshed every 30 seconds. This allows
 		// to display message previews in this component as soon as new messages are
 		// received by the server.
@@ -278,6 +278,7 @@ export default {
 		},
 		async joinConversation() {
 			await joinConversation(this.item.token)
+			this.$store.dispatch('markConversationRead', this.item.token)
 		},
 		/**
 		 * Deletes the conversation.
