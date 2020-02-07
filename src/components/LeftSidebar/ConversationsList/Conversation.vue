@@ -27,7 +27,8 @@
 		<template v-slot:icon>
 			<ConversationIcon
 				:item="item"
-				:hide-favorite="false" />
+				:hide-favorite="false"
+				:hide-call="false" />
 		</template>
 		<template v-slot:subtitle>
 			<strong v-if="item.unreadMessages">
