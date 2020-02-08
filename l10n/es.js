@@ -235,6 +235,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Ahora estás esperando en el recibidor.",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Ahora estás esperando en el recibidor. Esta reunión está planificada para las {startTime}",
     "Reply" : "Responder",
+    "[Unknown username]" : "[Nombre de usuario desconocido]",
     "Today" : "Hoy",
     "Yesterday" : "Ayer",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
