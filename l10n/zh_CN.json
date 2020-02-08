@@ -233,6 +233,7 @@
     "You are currently waiting in the lobby" : "您当前正在休息室等待。",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "您当前正在休息室等待。此会议预定于 {startTime} 开始",
     "Reply" : "回复",
+    "[Unknown username]" : "[未知用户名]",
     "Today" : "今天",
     "Yesterday" : "昨天",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}，{absoluteDate}",

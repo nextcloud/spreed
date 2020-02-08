@@ -235,6 +235,7 @@ OC.L10N.register(
     "You are currently waiting in the lobby" : "Actualmente está agardando no vestíbulo.",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Actualmente está agardando no vestíbulo. Esta xuntanza está programada para as {startTime}",
     "Reply" : "Responder",
+    "[Unknown username]" : "[Nome de usuario descoñecido]",
     "Today" : "Hoxe",
     "Yesterday" : "Onte",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
