@@ -233,6 +233,7 @@
     "You are currently waiting in the lobby" : "Sie warten derzeit in der Lobby",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Sie warten aktuell in der Lobby. Dieses Meeting ist für {startTime} geplant",
     "Reply" : "Antworten",
+    "[Unknown username]" : "[Unknown username]",
     "Today" : "Heute",
     "Yesterday" : "Gestern",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",

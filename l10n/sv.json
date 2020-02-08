@@ -232,6 +232,7 @@
     "You are currently waiting in the lobby" : "Du väntar för närvarande i lobbyn",
     "You are currently waiting in the lobby. This meeting is scheduled for {startTime}" : "Du väntar för närvarande i lobbyn. Detta möte är planerat till {startTime}",
     "Reply" : "Svara",
+    "[Unknown username]" : "[Okänt användarnamn]",
     "Today" : "Idag",
     "Yesterday" : "Igår",
     "{relativeDate}, {absoluteDate}" : "{relativeDate}, {absoluteDate}",
