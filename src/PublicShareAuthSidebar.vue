@@ -110,6 +110,10 @@ export default {
 	methods: {
 
 		async joinConversation() {
+			if (getCurrentUser()) {
+				this.$store.dispatch('setCurrentUser', getCurrentUser())
+			}
+
 			await joinConversation(this.token)
 
 			// Fetching the conversation needs to be done once the user has
@@ -161,9 +165,7 @@ export default {
 				// Although the current participant is automatically added to
 				// the participants store it must be explicitly set in the
 				// actors store.
-				if (getCurrentUser()) {
-					this.$store.dispatch('setCurrentUser', getCurrentUser())
-				} else {
+				if (!this.$store.getters.getUserId()) {
 					// Setting a guest only uses "sessionId" and "participantType".
 					this.$store.dispatch('setCurrentParticipant', response.data.ocs.data)
 				}
