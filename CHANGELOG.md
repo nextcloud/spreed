@@ -1,6 +1,17 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.3 – 2020-02-10
+### Fixed
+- Fix calls not working anymore due to error when handling signaling messages
+  [#2928](https://github.com/nextcloud/spreed/pull/2928)
+- Do not show favorite and call icon overlapping each others
+  [#2927](https://github.com/nextcloud/spreed/pull/2927)
+- Fix issues in the participants list when there are multiple guests
+  [#2929](https://github.com/nextcloud/spreed/pull/2929)
+- Fix error in console when adding a conversation to favorites
+  [#2930](https://github.com/nextcloud/spreed/pull/2930)
+
 ## 8.0.2 – 2020-02-07
 ### Added
 - Allow admins to select a default notification level for group conversations
