@@ -208,7 +208,7 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 					this.currentCallToken = null
 					this.currentCallFlags = null
 				}
-				this._joinRoomSuccess(token, result.ocs.data.sessionId)
+				this._joinRoomSuccess(token, result.data.ocs.data.sessionId)
 			}.bind(this))
 			.catch(function(result) {
 				reject(result)
@@ -386,12 +386,17 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		ev: ev,
 	}]
 
-	this._sendMessages(message).then(function(result) {
-		this._trigger(ev, [result.ocs.data])
-	}.bind(this)).catch(function(/* xhr, textStatus, errorThrown */) {
-		console.log('Sending signaling message with callback has failed.')
-		// TODO: Add error handling
-	})
+	this._sendMessages(message)
+		.then(function(result) {
+			this._trigger(ev, [result.data.ocs.data])
+		}.bind(this))
+		.catch(function(err) {
+			console.error(err)
+			OC.Notification.show('Sending signaling message with callback has failed.', {
+				type: 'error',
+				timeout: 15,
+			})
+		})
 }
 
 Signaling.Internal.prototype._sendMessages = function(messages) {
@@ -438,7 +443,7 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 	this.pullMessagesRequest = axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken)
 		.then(function(result) {
 			this.pullMessagesFails = 0
-			$.each(result.ocs.data, function(id, message) {
+			$.each(result.data.ocs.data, function(id, message) {
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
 				case 'usersInRoom':
