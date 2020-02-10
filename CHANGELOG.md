@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## 8.0.4 – 2020-02-11
+### Fixed
+- Fix Files sidebar integration, public share page and video verification
+  [#2935](https://github.com/nextcloud/spreed/pull/2935)
+
 ## 8.0.3 – 2020-02-10
 ### Fixed
 - Fix calls not working anymore due to error when handling signaling messages
