@@ -30,7 +30,11 @@
 
 /* eslint-disable no-console */
 
-import { fetchSignalingSettings } from '../services/signalingService'
+import {
+	fetchSignalingSettings,
+	pullSignalingMessages,
+} from '../services/signalingService'
+import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -208,7 +212,7 @@ Signaling.Base.prototype.joinRoom = function(token, password) {
 					this.currentCallToken = null
 					this.currentCallFlags = null
 				}
-				this._joinRoomSuccess(token, result.ocs.data.sessionId)
+				this._joinRoomSuccess(token, result.data.ocs.data.sessionId)
 			}.bind(this))
 			.catch(function(result) {
 				reject(result)
@@ -386,12 +390,17 @@ Signaling.Internal.prototype._sendMessageWithCallback = function(ev) {
 		ev: ev,
 	}]
 
-	this._sendMessages(message).then(function(result) {
-		this._trigger(ev, [result.ocs.data])
-	}.bind(this)).catch(function(/* xhr, textStatus, errorThrown */) {
-		console.log('Sending signaling message with callback has failed.')
-		// TODO: Add error handling
-	})
+	this._sendMessages(message)
+		.then(function(result) {
+			this._trigger(ev, [result.data.ocs.data])
+		}.bind(this))
+		.catch(function(err) {
+			console.error(err)
+			OC.Notification.show('Sending signaling message with callback has failed.', {
+				type: 'error',
+				timeout: 15,
+			})
+		})
 }
 
 Signaling.Internal.prototype._sendMessages = function(messages) {
@@ -431,14 +440,16 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 
 	// Abort ongoing request
 	if (this.pullMessagesRequest !== null) {
-		this.pullMessagesRequest.abort()
+		this.pullMessagesRequest('canceled')
 	}
 
 	// Connect to the messages endpoint and pull for new messages
-	this.pullMessagesRequest = axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken)
+	const { request, cancel } = CancelableRequest(pullSignalingMessages)
+	this.pullMessagesRequest = cancel
+	request(this.currentRoomToken)
 		.then(function(result) {
 			this.pullMessagesFails = 0
-			$.each(result.ocs.data, function(id, message) {
+			$.each(result.data.ocs.data, function(id, message) {
 				this._trigger('onBeforeReceiveMessage', [message])
 				switch (message.type) {
 				case 'usersInRoom':
@@ -463,11 +474,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			if (jqXHR.status === 0 && textStatus === 'abort') {
 				// Request has been aborted. Ignore.
 			} else if (jqXHR.status === 404 || jqXHR.status === 403) {
-				console.log('Stop pulling messages because room does not exist or is not accessible')
+				console.error('Stop pulling messages because room does not exist or is not accessible')
 				this._trigger('pullMessagesStoppedOnFail')
 			} else if (this.currentRoomToken) {
 				if (this.pullMessagesFails >= 3) {
-					console.log('Stop pulling messages after repeated failures')
+					console.error('Stop pulling messages after repeated failures')
 
 					this._trigger('pullMessagesStoppedOnFail')
 
