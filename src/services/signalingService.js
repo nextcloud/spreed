@@ -25,7 +25,7 @@ import { generateOcsUrl } from '@nextcloud/router'
  * Fetches the signaling settings for a conversation
  * @param {string} token The token of the conversation to be signaled.
  */
-const fetchSignalingSettings = async function(token) {
+const fetchSignalingSettings = async(token) => {
 	// TODO: use token to get signaling settings depending on the conversation
 	// This would allow to not use the HPB in one-to-one conversations where it
 	// brings not much of an advantage. Make sure participants from one
@@ -33,6 +33,11 @@ const fetchSignalingSettings = async function(token) {
 	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + 'settings')
 }
 
+const pullSignalingMessages = async(token) => {
+	return axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + token)
+}
+
 export {
 	fetchSignalingSettings,
+	pullSignalingMessages,
 }
