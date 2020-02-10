@@ -143,7 +143,7 @@ export default {
 		// Emit the click event so the search text in the leftsidebar can be reset.
 		handleConversationClick() {
 			this.$emit('click-conversation')
-		}
+		},
 	},
 }
 </script>

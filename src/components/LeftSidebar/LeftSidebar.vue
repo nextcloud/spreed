@@ -219,7 +219,7 @@ export default {
 		// Reset the search text, therefore end the search operation.
 		handleClickConversation() {
 			this.searchText = ''
-		}
+		},
 	},
 }
 </script>
