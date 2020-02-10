@@ -30,7 +30,11 @@
 
 /* eslint-disable no-console */
 
-import { fetchSignalingSettings } from '../services/signalingService'
+import {
+	fetchSignalingSettings,
+	pullSignalingMessages,
+} from '../services/signalingService'
+import CancelableRequest from './cancelableRequest'
 import { EventBus } from '../services/EventBus'
 import axios from '@nextcloud/axios'
 import { generateOcsUrl } from '@nextcloud/router'
@@ -436,11 +440,13 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 
 	// Abort ongoing request
 	if (this.pullMessagesRequest !== null) {
-		this.pullMessagesRequest.abort()
+		this.pullMessagesRequest('canceled')
 	}
 
 	// Connect to the messages endpoint and pull for new messages
-	this.pullMessagesRequest = axios.get(generateOcsUrl('apps/spreed/api/v1/signaling', 2) + this.currentRoomToken)
+	const { request, cancel } = CancelableRequest(pullSignalingMessages)
+	this.pullMessagesRequest = cancel
+	request(this.currentRoomToken)
 		.then(function(result) {
 			this.pullMessagesFails = 0
 			$.each(result.data.ocs.data, function(id, message) {
@@ -468,11 +474,11 @@ Signaling.Internal.prototype._startPullingMessages = function() {
 			if (jqXHR.status === 0 && textStatus === 'abort') {
 				// Request has been aborted. Ignore.
 			} else if (jqXHR.status === 404 || jqXHR.status === 403) {
-				console.log('Stop pulling messages because room does not exist or is not accessible')
+				console.error('Stop pulling messages because room does not exist or is not accessible')
 				this._trigger('pullMessagesStoppedOnFail')
 			} else if (this.currentRoomToken) {
 				if (this.pullMessagesFails >= 3) {
-					console.log('Stop pulling messages after repeated failures')
+					console.error('Stop pulling messages after repeated failures')
 
 					this._trigger('pullMessagesStoppedOnFail')
 
