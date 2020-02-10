@@ -132,6 +132,7 @@ OC.L10N.register(
     "Password required" : "رمز عبور لازم است",
     "Password" : "گذرواژه",
     "Cancel" : "لغو",
+    "Submit" : "ارسال",
     "The password is wrong. Try again." : "رمزعبور اشتباه می باشد. دوباره امتحان کنید.",
     "Android app" : "اپ اندروید",
     "iOS app" : "اپ iOS",
