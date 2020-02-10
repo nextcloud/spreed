@@ -20,7 +20,13 @@
  *
  */
 import Vue from 'vue'
-import { makePublic, makePrivate, changeLobbyState } from '../services/conversationsService'
+import {
+	makePublic,
+	makePrivate,
+	changeLobbyState,
+	addToFavorites,
+	removeFromFavorites,
+} from '../services/conversationsService'
 import { getCurrentUser } from '@nextcloud/auth'
 import { CONVERSATION, WEBINAR } from '../constants'
 
@@ -143,6 +149,22 @@ const actions = {
 			await makePrivate(token)
 			conversation.type = CONVERSATION.TYPE.GROUP
 		}
+
+		commit('addConversation', conversation)
+	},
+
+	async toggleFavorite({ commit, getters }, { token, isFavorite }) {
+		const conversation = Object.assign({}, getters.conversations[token])
+		if (!conversation) {
+			return
+		}
+
+		if (isFavorite) {
+			await removeFromFavorites(token)
+		} else {
+			await addToFavorites(token)
+		}
+		conversation.isFavorite = !isFavorite
 
 		commit('addConversation', conversation)
 	},
