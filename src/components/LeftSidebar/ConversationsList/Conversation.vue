@@ -104,7 +104,10 @@ import AppContentListItem from './AppContentListItem/AppContentListItem'
 import AppNavigationCounter from '@nextcloud/vue/dist/Components/AppNavigationCounter'
 import ConversationIcon from './../../ConversationIcon'
 import { joinConversation, removeCurrentUserFromConversation } from '../../../services/participantsService'
-import { deleteConversation, addToFavorites, removeFromFavorites, setNotificationLevel } from '../../../services/conversationsService'
+import {
+	deleteConversation,
+	setNotificationLevel,
+} from '../../../services/conversationsService'
 import { generateUrl } from '@nextcloud/router'
 import { CONVERSATION, PARTICIPANT } from '../../../constants'
 
@@ -330,13 +333,7 @@ export default {
 			}
 		},
 		async toggleFavoriteConversation() {
-			if (this.item.isFavorite) {
-				await removeFromFavorites(this.item.token)
-			} else {
-				await addToFavorites(this.item.token)
-			}
-
-			this.item.isFavorite = !this.item.isFavorite
+			this.$store.dispatch('toggleFavorite', this.item)
 		},
 		/**
 		 * Set the notification level for the conversation
