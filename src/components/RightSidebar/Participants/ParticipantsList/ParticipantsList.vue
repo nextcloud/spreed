@@ -26,7 +26,7 @@
 			:class="{'scrollable': scrollable }">
 			<Participant
 				v-for="participant in participants"
-				:key="participant.userId"
+				:key="participant.userId + participant.sessionId"
 				:participant="participant"
 				@clickParticipant="handleClickParticipant" />
 			<!-- 'search for more' empty content to display at the end of the
