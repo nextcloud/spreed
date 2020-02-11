@@ -94,6 +94,7 @@ function getShareToken() {
 
 const talkSidebarVm = new Vue({
 	store,
+	id: 'talk-chat-tab',
 	propsData: {
 		shareToken: getShareToken(),
 		state: sidebarState,

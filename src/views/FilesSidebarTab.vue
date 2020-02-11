@@ -21,7 +21,11 @@
   -->
 
 <template>
-	<Tab :icon="icon" :name="name" :class="{ 'icon-loading': loading }">
+	<Tab
+		:id="id"
+		:icon="icon"
+		:name="name"
+		:class="{ 'icon-loading': loading }">
 		<div id="talk-tab-mount" />
 	</Tab>
 </template>
@@ -60,7 +64,7 @@ export default {
 		 * @returns {string}
 		 */
 		id() {
-			return this.name.toLowerCase().replace(/ /g, '-')
+			return 'chat'
 		},
 
 		/**
