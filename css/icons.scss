@@ -46,6 +46,9 @@
 		&.icon-menu-people {
 			background-image: url(icon-color-path('menu-people', 'spreed', 'fff', 1));
 		}
+		&.icon-fullscreen {
+			background-image: url(icon-color-path('fullscreen', 'actions', 'fff', 1, true));
+		}
 		&.icon-audio {
 			background-image: url(icon-color-path('audio', 'actions', 'fff', 1, true));
 		}
