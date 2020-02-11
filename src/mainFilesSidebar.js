@@ -64,6 +64,7 @@ const newCallView = () => new Vue({
 
 const newTab = () => new Vue({
 	store,
+	id: 'talk-chat-tab',
 	render: h => h(FilesSidebarTabApp),
 })
 
@@ -74,5 +75,5 @@ Object.assign(window.OCA.Talk, {
 	fileInfo: null,
 	newCallView,
 	newTab,
-	store: store,
+	store,
 })

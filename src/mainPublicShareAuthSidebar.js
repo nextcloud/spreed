@@ -109,6 +109,7 @@ function getShareToken() {
 
 const requestPasswordVm = new Vue({
 	store,
+	id: 'talk-video-verification',
 	propsData: {
 		shareToken: getShareToken(),
 	},
