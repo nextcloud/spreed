@@ -22,8 +22,21 @@
 <template>
 	<div class="top-bar">
 		<CallButton />
-		<Actions v-if="showOpenSidebarButton" class="top-bar__button" close-after-click="true">
-			<ActionButton :icon="iconMenuPeople" @click="handleClick" />
+		<Actions class="top-bar__button">
+			<ActionButton
+				v-shortkey="['f']"
+				:icon="iconFullscreen"
+				@shortkey.native="toggleFullscreen"
+				@click="toggleFullscreen">
+				{{ labelFullscreen }}
+			</ActionButton>
+		</Actions>
+		<Actions v-if="showOpenSidebarButton"
+			class="top-bar__button"
+			close-after-click="true">
+			<ActionButton
+				:icon="iconMenuPeople"
+				@click="openSidebar" />
 		</Actions>
 	</div>
 </template>
@@ -49,7 +62,27 @@ export default {
 		},
 	},
 
+	data() {
+		return {
+			isFullscreen: false,
+		}
+	},
+
 	computed: {
+		iconFullscreen() {
+			if (this.forceWhiteIcons) {
+				return 'forced-white icon-fullscreen'
+			}
+			return 'icon-fullscreen'
+		},
+
+		labelFullscreen() {
+			if (this.isFullscreen) {
+				return t('spreed', 'Exit fullscreen (f)')
+			}
+			return t('spreed', 'Fullscreen (f)')
+		},
+
 		iconMenuPeople() {
 			if (this.forceWhiteIcons) {
 				return 'forced-white icon-menu-people'
@@ -63,8 +96,43 @@ export default {
 	},
 
 	methods: {
-		handleClick() {
+		openSidebar() {
 			this.$store.dispatch('showSidebar')
+		},
+		toggleFullscreen() {
+			if (this.isFullscreen) {
+				this.disableFullscreen()
+				this.isFullscreen = false
+			} else {
+				this.enableFullscreen()
+				this.isFullscreen = true
+			}
+		},
+
+		enableFullscreen() {
+			const fullscreenElem = document.getElementById('content')
+
+			if (fullscreenElem.requestFullscreen) {
+				fullscreenElem.requestFullscreen()
+			} else if (fullscreenElem.webkitRequestFullscreen) {
+				fullscreenElem.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+			} else if (fullscreenElem.mozRequestFullScreen) {
+				fullscreenElem.mozRequestFullScreen()
+			} else if (fullscreenElem.msRequestFullscreen) {
+				fullscreenElem.msRequestFullscreen()
+			}
+		},
+
+		disableFullscreen() {
+			if (document.exitFullscreen) {
+				document.exitFullscreen()
+			} else if (document.webkitExitFullscreen) {
+				document.webkitExitFullscreen()
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen()
+			} else if (document.msExitFullscreen) {
+				document.msExitFullscreen()
+			}
 		},
 	},
 }
