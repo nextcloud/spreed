@@ -45,6 +45,6 @@ const isEnabled = function(fileInfo) {
 window.addEventListener('DOMContentLoaded', () => {
 	if (OCA.Files && OCA.Files.Sidebar) {
 		OCA.Files.Sidebar.registerSecondaryView(new FilesSidebarCallView())
-		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('talk-chat', FilesSidebarTab, isEnabled))
+		OCA.Files.Sidebar.registerTab(new OCA.Files.Sidebar.Tab('tab-chat', FilesSidebarTab, isEnabled))
 	}
 })
