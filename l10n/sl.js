@@ -167,6 +167,8 @@ OC.L10N.register(
     "Edit" : "Uredi",
     "Leave call" : "Zapusti klic",
     "Start call" : "Začni klic",
+    "Exit fullscreen (f)" : "Končaj celozaslonski način (f)",
+    "Fullscreen (f)" : "Celozaslonski način (f)",
     "Limit to groups" : "Omeji na skupine",
     "Limit app usage to groups." : "Omeji uporabo programov za skupine.",
     "Save changes" : "Shrani spremembe",
@@ -217,8 +219,6 @@ OC.L10N.register(
     "New group conversation" : "Nov skupinski pogovor",
     "{name} (public)" : "{name} (public)",
     "New conversation …" : "Nov pogovor ...",
-    "Exit fullscreen (f)" : "Končaj celozaslonski način (f)",
-    "Fullscreen (f)" : "Celozaslonski način (f)",
     "Copy" : "Kopiraj",
     "Copied!" : "Kopirano!",
     "Not supported!" : "Ni podprto!",
@@ -259,6 +259,7 @@ OC.L10N.register(
     "{user} invited you to a group conversation" : "{user} vam pošlje povabilo na skupinski pogovor",
     "A group call has started" : "Začet je skupinski pogovor",
     "Unnamed conversation" : "Neimenovan pogovor",
+    "This call is password-protected" : "Ta klic je zaščiten z geslom",
     "* You can now notify all participants by posting \"@all\" into the chat" : "Vse udeležence je mogoče obvestiti z uporabo ukaza »@all« v klepetalnem oknu"
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");
