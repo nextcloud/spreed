@@ -1,6 +1,15 @@
 OC.L10N.register(
     "spreed",
     {
+    "a conversation" : "розмова",
+    "(Duration %s)" : "(Тривалість %s)",
+    "Guest" : "Гість",
+    "{actor} started a call" : "{actor} розпочав розмову",
+    "You started a call" : "Ви почали розмову",
+    "{actor} joined the call" : "{actor} приєднався до розмови",
+    "You joined the call" : "Ви приєдналися до розмови",
+    "{actor} left the call" : "{actor} залишив розмову",
+    "You left the call" : "Ви залишили розмову",
     "None" : "Відсутній",
     "User" : "Користувач",
     "Everyone" : "Всі",
