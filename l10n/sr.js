@@ -291,7 +291,7 @@ OC.L10N.register(
     "An external signaling server can optionally be used for larger installations. Leave empty to use the internal signaling server." : "Спољни сигнализациони сервер се може опционо користити за веће инсталације. Оставите празним да бисте користили интерни сигнализациони сервер.",
     "TURN server" : "TURN сервер",
     "The TURN server is used to proxy the traffic from participants behind a firewall." : "TURN сервер се користи да проксира саобраћај учесника иза фајервола.",
-    "%s Talk on your mobile devices" : "%s Причајте преко мобилног",
+    "%s Talk on your mobile devices" : "%s „Разговор“ на мобилним уређајима",
     "Android app" : "Андроид апликација",
     "iOS app" : "iOS апликација",
     "Signaling server URL" : "Адреса сигнализационог сервера",
