@@ -44,6 +44,9 @@ class Listener {
 	/** @var ILogger */
 	protected $logger;
 
+	/** @var bool */
+	protected $shouldSendCallNotification = false;
+
 	public function __construct(IManager $notificationManager,
 								IUserSession $userSession,
 								ITimeFactory $timeFactory,
@@ -78,9 +81,16 @@ class Listener {
 		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
 			$listener = \OC::$server->query(self::class);
-			$listener->generateCallNotifications($event->getRoom());
+			$listener->checkCallNotifications($event->getRoom());
 		};
 		$dispatcher->addListener(Room::EVENT_BEFORE_SESSION_JOIN_CALL, $listener);
+
+		$listener = static function(RoomEvent $event) {
+			/** @var self $listener */
+			$listener = \OC::$server->query(self::class);
+			$listener->sendCallNotifications($event->getRoom());
+		};
+		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_JOIN_CALL, $listener);
 
 		$listener = static function(RoomEvent $event) {
 			/** @var self $listener */
@@ -161,13 +171,28 @@ class Listener {
 	 *
 	 * @param Room $room
 	 */
-	public function generateCallNotifications(Room $room): void {
+	public function checkCallNotifications(Room $room): void {
 		if ($room->getActiveSince() instanceof \DateTime) {
 			// Call already active => No new notifications
+			$this->shouldSendCallNotification = false;
 			return;
 		}
 
 		if ($room->getObjectType() === 'file') {
+			$this->shouldSendCallNotification = false;
+			return;
+		}
+
+		$this->shouldSendCallNotification = true;
+	}
+
+	/**
+	 * Call notification: "{user} wants to talk with you"
+	 *
+	 * @param Room $room
+	 */
+	public function sendCallNotifications(Room $room): void {
+		if (!$this->shouldSendCallNotification) {
 			return;
 		}
 
