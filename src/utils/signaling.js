@@ -250,24 +250,25 @@ Signaling.Base.prototype._leaveRoomSuccess = function(/* token */) {
 
 Signaling.Base.prototype.leaveRoom = function(token) {
 	this.leaveCurrentCall()
+		.then(() => {
+			this._trigger('leaveRoom', [token])
+			this._doLeaveRoom(token)
 
-	this._trigger('leaveRoom', [token])
-	this._doLeaveRoom(token)
-
-	return new Promise((resolve, reject) => {
-		axios.delete(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active')
-			.then(function() {
-				this._leaveRoomSuccess(token)
-				resolve()
-				// We left the current room.
-				if (token === this.currentRoomToken) {
-					this.currentRoomToken = null
-				}
-			}.bind(this))
-			.catch(function() {
-				reject(new Error())
+			return new Promise((resolve, reject) => {
+				axios.delete(generateOcsUrl('apps/spreed/api/v1/room', 2) + token + '/participants/active')
+					.then(function() {
+						this._leaveRoomSuccess(token)
+						resolve()
+						// We left the current room.
+						if (token === this.currentRoomToken) {
+							this.currentRoomToken = null
+						}
+					}.bind(this))
+					.catch(function() {
+						reject(new Error())
+					})
 			})
-	})
+		})
 }
 
 Signaling.Base.prototype.getSendVideoIfAvailable = function() {
