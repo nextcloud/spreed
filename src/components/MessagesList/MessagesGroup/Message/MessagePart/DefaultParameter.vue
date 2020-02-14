@@ -20,28 +20,35 @@
 -->
 
 <template>
-	<a v-if="data.link"
-		:href="data.link"
+	<a v-if="link"
+		:href="link"
 		class="external"
 		target="_blank"
 		rel="noopener noreferrer">
-		<strong>{{ data.name }}</strong>
+		<strong>{{ name }}</strong>
 	</a>
-	<strong v-else>{{ data.name }}</strong>
+	<strong v-else>{{ name }}</strong>
 </template>
 
 <script>
 export default {
 	name: 'DefaultParameter',
 	props: {
-		data: {
-			type: Object,
-			default() {
-				return {
-					name: '',
-					link: '',
-				}
-			},
+		type: {
+			type: String,
+			required: true,
+		},
+		id: {
+			type: String,
+			required: true,
+		},
+		name: {
+			type: String,
+			required: true,
+		},
+		link: {
+			type: String,
+			default: '',
 		},
 	},
 }

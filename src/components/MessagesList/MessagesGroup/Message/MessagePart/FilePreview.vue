@@ -20,7 +20,7 @@
 -->
 
 <template>
-	<a :href="data.link"
+	<a :href="link"
 		class="container"
 		target="_blank"
 		rel="noopener noreferrer">
@@ -34,7 +34,7 @@
 			:src="defaultIconUrl">
 		<span v-if="isLoading"
 			class="preview loading" />
-		<strong>{{ data.name }}</strong>
+		<strong>{{ name }}</strong>
 	</a>
 </template>
 
@@ -44,17 +44,29 @@ import { generateUrl, imagePath } from '@nextcloud/router'
 export default {
 	name: 'FilePreview',
 	props: {
-		data: {
-			type: Object,
-			default() {
-				return {
-					id: '',
-					name: '',
-					link: '',
-					mimetype: '',
-					'preview-available': '',
-				}
-			},
+		type: {
+			type: String,
+			required: true,
+		},
+		id: {
+			type: String,
+			required: true,
+		},
+		name: {
+			type: String,
+			required: true,
+		},
+		link: {
+			type: String,
+			default: '',
+		},
+		mimetype: {
+			type: String,
+			default: '',
+		},
+		previewAvailable: {
+			type: String,
+			default: 'no',
 		},
 	},
 	data() {
@@ -68,13 +80,13 @@ export default {
 			return imagePath('core', 'filetypes/file')
 		},
 		previewUrl() {
-			if (this.data['preview-available'] !== 'yes' || this.$store.getters.getUserId() === null) {
-				return OC.MimeType.getIconUrl(this.data.mimetype)
+			if (this.previewAvailable !== 'yes' || this.$store.getters.getUserId() === null) {
+				return OC.MimeType.getIconUrl(this.mimetype)
 			}
 
 			const previewSize = Math.ceil(128 * window.devicePixelRatio)
 			return generateUrl('/core/preview?fileId={fileId}&x={width}&y={height}', {
-				fileId: this.data.id,
+				fileId: this.id,
 				width: previewSize,
 				height: previewSize,
 			})
