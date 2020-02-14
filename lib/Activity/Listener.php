@@ -79,6 +79,7 @@ class Listener {
 		$dispatcher->addListener(Room::EVENT_AFTER_PARTICIPANT_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_USER_REMOVE, $listener);
 		$dispatcher->addListener(Room::EVENT_AFTER_SESSION_LEAVE_CALL, $listener, -100);
+		$dispatcher->addListener(Room::EVENT_AFTER_ROOM_DISCONNECT, $listener, -100);
 
 		$listener = static function(AddParticipantsEvent $event) {
 			/** @var self $listener */
