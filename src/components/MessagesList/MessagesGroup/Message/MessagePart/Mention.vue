@@ -22,16 +22,16 @@
 <template>
 	<div class="mention">
 		<UserBubble v-if="isMentionToAll"
-			:display-name="data.name"
+			:display-name="name"
 			:avatar-image="'icon-group-forced-white'"
 			:primary="true" />
 		<UserBubble v-else-if="isMentionToGuest"
-			:display-name="data.name"
+			:display-name="name"
 			:avatar-image="'icon-user-forced-white'"
 			:primary="isCurrentGuest" />
 		<UserBubble v-else
-			:display-name="data.name"
-			:user="data.id"
+			:display-name="name"
+			:user="id"
 			:primary="isCurrentUser" />
 	</div>
 </template>
@@ -48,31 +48,34 @@ export default {
 	},
 
 	props: {
-		data: {
-			type: Object,
-			default() {
-				return {
-					name: '',
-					link: '',
-				}
-			},
+		type: {
+			type: String,
+			required: true,
+		},
+		id: {
+			type: String,
+			required: true,
+		},
+		name: {
+			type: String,
+			required: true,
 		},
 	},
 
 	computed: {
 		isMentionToAll() {
-			return this.data.type === 'call'
+			return this.type === 'call'
 		},
 		isMentionToGuest() {
-			return this.data.type === 'guest'
+			return this.type === 'guest'
 		},
 		isCurrentGuest() {
 			return this.$store.getters.getActorType() === 'guests'
-				&& this.data.id === ('guest/' + this.$store.getters.getSessionHash())
+				&& this.id === ('guest/' + this.$store.getters.getSessionHash())
 		},
 		isCurrentUser() {
 			return this.$store.getters.getActorType() === 'users'
-				&& this.data.id === this.$store.getters.getUserId()
+				&& this.id === this.$store.getters.getUserId()
 		},
 	},
 }

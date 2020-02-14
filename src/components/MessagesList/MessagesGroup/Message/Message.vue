@@ -42,11 +42,7 @@ the main body of the message as well as a quote.
 			</div>
 			<div v-else class="message__main__text">
 				<Quote v-if="parent" v-bind="quote" />
-				<component
-					:is="getComponentInstanceForMessagePart(block.type)"
-					v-for="(block, i) in parsedMessage"
-					:key="i"
-					:data="block.data" />
+				<RichText :text="message" :arguments="richParameters" :autolink="true" />
 			</div>
 			<div class="message__main__right">
 				<div v-if="isTemporary" class="icon-loading-small" />
@@ -75,7 +71,7 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import DefaultParameter from './MessagePart/DefaultParameter'
 import FilePreview from './MessagePart/FilePreview'
 import Mention from './MessagePart/Mention'
-import PlainText from './MessagePart/PlainText'
+import RichText from '@juliushaertl/vue-richtext'
 import Quote from '../../../Quote'
 import { EventBus } from '../../../../services/EventBus'
 import emojiRegex from 'emoji-regex'
@@ -86,11 +82,8 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
-		DefaultParameter,
-		FilePreview,
-		Mention,
-		PlainText,
 		Quote,
+		RichText,
 	},
 	inheritAttrs: false,
 
@@ -226,80 +219,32 @@ export default {
 			return emojiStrings === this.message
 		},
 
-		/**
-		 * Messages are parsed in the following way:
-		 * 1. We try to find all `{placeholder}`s in the message
-		 * 2. Afterwards all parts (parameters and plain text) are added to an array
-		 * 3. On rendering we loop over the array and the different blocks are rendered
-		 *    by different components.
-		 * @returns {Array} the different message parts
-		 */
-		parsedMessage() {
-
-			const parameters = Object.keys(this.messageParameters)
-			const blocks = this.message.split('{')
-			const renderBlocks = []
-
-			blocks.forEach((block, index) => {
-				if (index === 0) {
-					// The first block does not need to get the leading curly brace
-					// as it was not split away before.
-					renderBlocks.push({
-						type: 'plain',
-						data: {
-							text: block,
-						},
-					})
-					return
-				}
-
-				const parts = block.split('}')
-				if (parts.length > 1 && parameters.indexOf(parts[0]) !== -1) {
-					// Valid parameter
-					const placeholder = parts.shift()
-					renderBlocks.push({
-						type: this.messageParameters[placeholder].type,
-						data: this.messageParameters[placeholder],
-					})
-
-					if (parts.join('}').length) {
-						renderBlocks.push({
-							type: 'plain',
-							data: {
-								text: parts.join('}'),
-							},
-						})
+		richParameters() {
+			const richParameters = {}
+			Object.keys(this.messageParameters).forEach(function(p) {
+				const type = this.messageParameters[p].type
+				if (type === 'user' || type === 'call' || type === 'guest') {
+					richParameters[p] = {
+						component: Mention,
+						props: this.messageParameters[p],
 					}
-
-				// Not a valid parameter - render as plain text
+				} else if (type === 'file') {
+					richParameters[p] = {
+						component: FilePreview,
+						props: this.messageParameters[p],
+					}
 				} else {
-					renderBlocks.push({
-						type: 'plain',
-						data: {
-							text: '{' + block,
-						},
-					})
+					richParameters[p] = {
+						component: DefaultParameter,
+						props: this.messageParameters[p],
+					}
 				}
-			})
-
-			return renderBlocks
+			}.bind(this))
+			return richParameters
 		},
 	},
+
 	methods: {
-		getComponentInstanceForMessagePart(messagePartType) {
-			if (messagePartType === 'plain') {
-				return PlainText
-			} else if (messagePartType === 'user') {
-				return Mention
-			} else if (messagePartType === 'call') {
-				return Mention
-			} else if (messagePartType === 'guest') {
-				return Mention
-			} else if (messagePartType === 'file') {
-				return FilePreview
-			}
-			return DefaultParameter
-		},
 		handleReply() {
 			this.$store.dispatch('addMessageToBeReplied', {
 				id: this.id,

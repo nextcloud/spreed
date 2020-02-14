@@ -307,7 +307,7 @@ class SystemMessage {
 
 		return [
 			'type' => 'file',
-			'id' => $node->getId(),
+			'id' => (string) $node->getId(),
 			'name' => $name,
 			'path' => $path,
 			'link' => $url,
