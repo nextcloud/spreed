@@ -131,6 +131,7 @@ OC.L10N.register(
     "Disable video" : "Zakázať video",
     "Enable video" : "Zapnúť video",
     "Favorite" : "Obľúbené",
+    "Off" : "Vypnúť",
     "Leave conversation" : "Odísť z rozhovoru",
     "Delete conversation" : "Zmazať rozhovor",
     "Remove from favorites" : "Odstrániť z obľúbených",
