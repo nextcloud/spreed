@@ -282,12 +282,15 @@ export default {
 		&__text {
 			flex: 1 1 auto;
 			color: var(--color-text-light);
-			white-space: pre-wrap;
-			word-break: break-word;
 			max-width: $message-max-width;
 			.single-emoji {
 				font-size: 250%;
 				line-height: 100%;
+			}
+
+			::v-deep .rich-text--wrapper {
+				white-space: pre-wrap;
+				word-break: break-word;
 			}
 
 			&--quote {
