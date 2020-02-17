@@ -36,6 +36,7 @@ export default class FilesSidebarCallView {
 		this.callViewInstance = OCA.Talk.newCallView()
 
 		this.$el = document.createElement('div')
+		this.id = 'FilesSidebarCallView'
 
 		this.callViewInstance.$mount(this.$el)
 		this.$el = this.callViewInstance.$el
