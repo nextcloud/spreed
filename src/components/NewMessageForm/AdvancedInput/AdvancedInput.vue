@@ -353,6 +353,11 @@ export default {
 }
 
 // Support for the placeholder text in the div contenteditable
+div[contenteditable] {
+	font-size: 14px;
+}
+
+// Support for the placeholder text in the div contenteditable
 [contenteditable]:empty:before{
 	content: attr(placeholder);
 	display: block;
