@@ -69,6 +69,12 @@
 		}
 	}
 
+	.forced-themed {
+		.icon-file {
+			background-image: url(icon-color-path('text', 'filetypes', $color-black, 1, true));
+		}
+	}
+
 	.icon-favorite {
 		/* Show favorite icon in yellow instead of default black. */
 		@include icon-color('star-dark', 'actions', 'FC0', 1, true);
