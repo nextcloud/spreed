@@ -34,8 +34,7 @@
 			v-slot:secondary-actions>
 			<ActionLink
 				v-if="isFileConversation"
-				icon="icon-file"
-				class="forced-themed"
+				icon="icon-text"
 				:href="linkToFile">
 				{{ t('spreed', 'Go to file') }}
 			</ActionLink>
