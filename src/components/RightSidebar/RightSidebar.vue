@@ -30,8 +30,14 @@
 		@submit-title="handleSubmitTitle"
 		@dismiss-editing="isRenamingConversation = false"
 		@close="handleClose">
-		<template v-if="conversationHasSettings && showModerationMenu"
+		<template v-if="isFileConversation || (conversationHasSettings && showModerationMenu)"
 			v-slot:secondary-actions>
+			<ActionLink
+				v-if="isFileConversation"
+				icon="icon-text"
+				:href="linkToFile">
+				{{ t('spreed', 'Go to file') }}
+			</ActionLink>
 			<ActionButton
 				v-if="canModerate"
 				:close-after-click="true"
@@ -156,11 +162,12 @@
 </template>
 
 <script>
+import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ActionInput from '@nextcloud/vue/dist/Components/ActionInput'
+import ActionLink from '@nextcloud/vue/dist/Components/ActionLink'
 import ActionText from '@nextcloud/vue/dist/Components/ActionText'
 import AppSidebar from '@nextcloud/vue/dist/Components/AppSidebar'
-import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import AppSidebarTab from '@nextcloud/vue/dist/Components/AppSidebarTab'
 import ChatView from '../ChatView'
 import { CollectionList } from 'nextcloud-vue-collections'
@@ -179,10 +186,11 @@ import { generateUrl } from '@nextcloud/router'
 export default {
 	name: 'RightSidebar',
 	components: {
+		ActionButton,
 		ActionCheckbox,
 		ActionInput,
 		ActionText,
-		ActionButton,
+		ActionLink,
 		AppSidebar,
 		AppSidebarTab,
 		ChatView,
@@ -327,6 +335,17 @@ export default {
 		linkToConversation() {
 			if (this.token !== '') {
 				return window.location.protocol + '//' + window.location.host + generateUrl('/call/' + this.token)
+			} else {
+				return ''
+			}
+		},
+
+		isFileConversation() {
+			return this.conversation.objectType === 'file' && this.conversation.objectId
+		},
+		linkToFile() {
+			if (this.isFileConversation) {
+				return window.location.protocol + '//' + window.location.host + generateUrl('/f/' + this.conversation.objectId)
 			} else {
 				return ''
 			}
