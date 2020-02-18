@@ -190,25 +190,35 @@ export default {
 
 		async handleFileShare() {
 			picker.pick()
-				.then(path => {
+				.then(async(path) => {
 					console.debug(`path ${path} selected for sharing`)
 					if (!path.startsWith('/')) {
 						throw new Error(t('files', 'Invalid path selected'))
 					}
 
-					// FIXME move to service
-					axios.post(
-						generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
-						{
-							shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
-							path: path,
-							shareWith: this.token,
+					try {
+						// FIXME move to service
+						await axios.post(
+							generateOcsUrl('apps/files_sharing/api/v1', 2) + 'shares',
+							{
+								shareType: 10, // OC.Share.SHARE_TYPE_ROOM,
+								path: path,
+								shareWith: this.token,
+							}
+						)
+					} catch (error) {
+						if (error.response
+							&& error.response.data
+							&& error.response.data.ocs
+							&& error.response.data.ocs.meta
+							&& error.response.data.ocs.meta.message) {
+							console.error(`Error while sharing file: ${error.response.data.ocs.meta.message || 'Unknown error'}`)
+							OCP.Toast.error(error.response.data.ocs.meta.message)
+						} else {
+							console.error(`Error while sharing file: Unknown error`)
+							OCP.Toast.error(t('files', 'Error while sharing file'))
 						}
-					)
-				}).catch(error => {
-					console.error(`Error while sharing file: ${error.message || 'Unknown error'}`, { error })
-
-					OCP.Toast.error(error.message || t('files', 'Error while sharing file'))
+					}
 				})
 		},
 
