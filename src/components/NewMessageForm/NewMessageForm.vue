@@ -22,6 +22,15 @@
 <template>
 	<div
 		class="wrapper">
+		<!--native file picker, hidden -->
+		<input id="file-upload"
+			ref="file-upload-input"
+			webkitdirectory
+			directory
+			multiple
+			type="file"
+			class="hidden-visually"
+			@change="processFile">
 		<div
 			class="new-message">
 			<form
@@ -32,11 +41,12 @@
 						default-icon="icon-clip-add-file"
 						class="new-message-form__button">
 						<ActionText>Add a file</ActionText>
+
 						<ActionButton
 							v-if="!currentUserIsGuest"
 							:close-after-click="true"
 							icon="icon-upload"
-							@click.prevent="handleFileShare">
+							@click.prevent="clickImportInput">
 							Upload from device
 						</ActionButton>
 						<ActionButton
@@ -271,6 +281,11 @@ export default {
 				}
 
 			}
+		},
+		// Clicks the hidden file input when clicking the correspondent ActionButton, thus
+		// opening the file-picker
+		clickImportInput() {
+			this.$refs['file-upload-input'].click()
 		},
 	},
 }
